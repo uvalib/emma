@@ -1,15 +1,32 @@
+<%# app/views/layouts/application.html.erb -%>
+<%-
+  # Application page layout.
+
+  @body_class ||= []
+  @body_class = Array.wrap(@body_class).uniq.join(' ').squish
+
+  @page_title ||= []
+  @page_title = Array.wrap(@page_title)
+  unless @page_title.last&.end_with?(app_name)
+    @page_title << '-' if @page_title.present?
+    @page_title << app_name
+  end
+  @page_title = @page_title.join(' ').squish
+
+  meta_options = { 'data-turbolinks-track': '' }
+
+-%>
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Emma</title>
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
-  </head>
-
-  <body>
-    <%= yield %>
-  </body>
+<head>
+  <title><%= @page_title -%></title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= favicon_link_tag       'favicon.ico', meta_options %>
+  <%= stylesheet_link_tag    'application', meta_options %>
+  <%= javascript_include_tag 'application', meta_options %>
+</head>
+<body class="<%= @body_class -%>">
+<%= yield %>
+</body>
 </html>

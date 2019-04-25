@@ -1,3 +1,20 @@
+# config/routes.rb
+#
+# frozen_string_literal: true
+# warn_indent:           true
+
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  # ===========================================================================
+  # :section: API test routes
+  # ===========================================================================
+
+  get '/api', to: 'api#index'
+
+  # ===========================================================================
+  # :section: Home page
+  # ===========================================================================
+
+  root to: 'api#index'
+
 end

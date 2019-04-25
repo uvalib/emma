@@ -1,0 +1,11 @@
+#! /usr/bin/env bash
+#
+# Script specified by Dockerfile to be run for Docker deployment.
+
+# Remove stale pid files.
+rm -f "$APP_HOME"/tmp/pids/* > /dev/null 2>&1
+
+# Run migrations if necessary.
+rake db:migrate
+
+rails server -b 0.0.0.0 -p 3000

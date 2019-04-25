@@ -1,22 +1,25 @@
-# app/controllers/application_controller.rb
+# app/controllers/api_controller.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
-# ApplicationController
+# ApiController
 #
-class ApplicationController < ActionController::Base
-
-  protect_from_forgery with: :exception
-
-  add_flash_types :error, :success
+# @see ApiHelper
+# @see app/views/api
+#
+class ApiController < ApplicationController
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
-  # TODO: ???
+  # == GET /api
+  # The main API test page.
+  #
+  def index
+  end
 
 end

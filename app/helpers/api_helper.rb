@@ -1,21 +1,20 @@
-# app/controllers/application_controller.rb
+# app/controllers/api_controller.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
-# ApplicationController
+# ApiHelper
 #
-class ApplicationController < ActionController::Base
-
-  protect_from_forgery with: :exception
-
-  add_flash_types :error, :success
+# @see ApiController
+# @see app/views/api
+#
+module ApiHelper
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # TODO: ???
 
