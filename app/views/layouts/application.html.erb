@@ -18,15 +18,15 @@
 -%>
 <!DOCTYPE html>
 <html>
-<head>
-  <title><%= @page_title -%></title>
-  <%= csrf_meta_tags %>
-  <%= csp_meta_tag %>
-  <%= favicon_link_tag       'favicon.ico', meta_options %>
-  <%= stylesheet_link_tag    'application', meta_options %>
-  <%= javascript_include_tag 'application', meta_options %>
-</head>
-<body class="<%= @body_class -%>">
-<%= yield %>
-</body>
+  <head>
+    <title><%= @page_title -%></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= favicon_link_tag       'favicon.ico', meta_options %>
+    <%= stylesheet_link_tag    'application', meta_options %>
+    <%= javascript_include_tag 'application', meta_options %>
+  </head>
+  <body class="<%= @body_class -%>">
+    <%= yield %>
+  </body>
 </html>
