@@ -23,4 +23,11 @@ Rails.application.routes.draw do
 
   root to: 'api#index'
 
+  # ===========================================================================
+  # health check and version endpoints
+  # ===========================================================================
+
+  resources :healthcheck, only: [ :index ]
+  resources :version, only: [ :index ]
+
 end
