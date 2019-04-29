@@ -74,5 +74,5 @@ RUN chown -R $USER:$GROUP $APP_HOME /home/$USER
 USER $USER:$GROUP
 
 # Define port and startup script.
-EXPOSE 3000
+EXPOSE 8080
 CMD bin/docker

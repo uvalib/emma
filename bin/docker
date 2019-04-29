@@ -8,4 +8,4 @@ rm -f "$APP_HOME"/tmp/pids/* > /dev/null 2>&1
 # Run migrations if necessary.
 rake db:migrate
 
-rails server -b 0.0.0.0 -p 3000
+rails server -b 0.0.0.0 -p 8080
