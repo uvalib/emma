@@ -38,9 +38,8 @@ class HealthcheckController < ApplicationController
     status = {}
 
     # check mysql
-    #connected = ActiveRecord::Base.connection_pool.with_connection { |con| con.active? }  rescue false
-    #status[ :mysql ] = Health.new( connected, connected ? '' : 'Database connection error' )
-    status[ :mysql ] = Health.new( true, '' )
+    connected = ActiveRecord::Base.connection_pool.with_connection { |con| con.active? }  rescue false
+    status[ :mysql ] = Health.new( connected, connected ? '' : 'Database connection error' )
 
     return( status )
   end
