@@ -42,6 +42,13 @@ end
 
 public
 
+# Control console debugging output.
+#
+# During normal operation this should be set to *false*.  Change the default
+# value here or override dynamically with the environment variable.
+#
+CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', true)
+
 # Control tracking of file load order.
 #
 # During normal operation this should be set to *false*.  Change the default
@@ -70,12 +77,41 @@ TRACE_CONCERNS = env('TRACE_CONCERNS', false)
 TRACE_NOTIFICATIONS = env('TRACE_NOTIFICATIONS', false)
 
 # =============================================================================
+# Debugging - console output
+# =============================================================================
+
+require 'io/console'
+
+CONS_INDENT = (' ' * 3).freeze
+
+# Write indented line(s) to $stderr.
+#
+# @param [Array<String>] args
+#
+# @return [nil]
+#
+def __output(*args)
+  args += Array.wrap(yield) if block_given?
+  lines = CONS_INDENT + args.join("\n").gsub(/\n/, "\n#{CONS_INDENT}").strip
+  $stderr.puts(lines)
+  $stderr.flush
+  nil
+end
+
+if CONSOLE_DEBUGGING
+  alias __debug __output
+else
+  def __debug(*)
+  end
+end
+
+# =============================================================================
 # Debugging - file load/require
 # =============================================================================
 
 if TRACE_LOADING
 
-  $stderr.puts("TRACE_LOADING = #{TRACE_LOADING.inspect}")
+  __output "TRACE_LOADING = #{TRACE_LOADING.inspect}"
 
   # Indentation for #__loading_level.
   @load_level = 0
@@ -106,7 +142,7 @@ if TRACE_LOADING
   # Place as the first non-comment line of a Ruby source file.
   #
   def __loading(file)
-    $stderr.puts("====== #{__loading_level}#{file}")
+    __output "====== #{__loading_level}#{file}"
   end
 
   # Display console output to indicate that a file is being loaded.
@@ -126,7 +162,7 @@ if TRACE_LOADING
     warning = warning.join(' <<<<<<<<<< ')
     @load_level += 1
     @load_table[file] = [@load_level, true]
-    $stderr.puts("====-> #{__loading_level}#{file}#{warning}")
+    __output "====-> #{__loading_level}#{file}#{warning}"
   end
 
   # Display console output to indicate the end of a file that is being loaded.
@@ -145,7 +181,7 @@ if TRACE_LOADING
     warning << "UNBALANCED - expected level #{expected}" if unbalanced
     warning << 'ALREADY CLOSED' unless still_open
     warning = warning.join(' <<<<<<<<<< ')
-    $stderr.puts("<-==== #{__loading_level}#{file}#{warning}")
+    __output "<-==== #{__loading_level}#{file}#{warning}"
     @load_table[file] = [@load_level, !still_open]
     @load_level -= 1
     @load_table.clear if @load_level.zero?
@@ -155,8 +191,10 @@ else
 
   def __loading(*)
   end
+
   def __loading_begin(*)
   end
+
   def __loading_end(*)
   end
 
@@ -168,7 +206,7 @@ end
 
 if TRACE_CONCERNS
 
-  $stderr.puts("TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}")
+  __output "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}"
 
   # Indicate invocation of a Concern's "included" block.
   #
@@ -178,7 +216,7 @@ if TRACE_CONCERNS
   # @return [void]
   #
   def __included(base, concern)
-    $stderr.puts "... including #{concern} in #{base}"
+    __output "... including #{concern} in #{base}"
   end
 
 else
@@ -238,7 +276,7 @@ if TRACE_NOTIFICATIONS
       else             /.*/
     end
 
-  $stderr.puts("TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}")
+  __output "TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}"
 
   # Limit each notification display to this number of characters.
   MAX_NOTIFICATION_SIZE = 1024
@@ -250,10 +288,10 @@ if TRACE_NOTIFICATIONS
     evt = ActiveSupport::Notifications::Event.new(*args)
     tid = @notifiers[evt.transaction_id] ||= @notifiers.size + 1
     args.shift(4)
-    $stderr.puts(
-      ("@@@ NOTIFIER [#{tid}] %-35s (%.2f ms) " % [evt.name, evt.duration]) <<
-        args.map { |arg| arg.inspect.truncate(MAX_NOTIFICATION_SIZE) }.join(', ')
-    )
+    args.map! { |arg| arg.inspect.truncate(MAX_NOTIFICATION_SIZE) }
+    line = "@@@ NOTIFIER [#{tid}] %-35s (%.2f ms)" % [evt.name, evt.duration]
+    line << ' ' << args.join(', ')
+    __output line
   end
 
 end

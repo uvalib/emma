@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class ApplicationController < ActionController::Base
 
+  include MetricsConcern
+
   protect_from_forgery with: :exception
 
   add_flash_types :error, :success

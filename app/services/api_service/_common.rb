@@ -94,7 +94,7 @@ class ApiService
       action  = "/#{action}" unless action.start_with?('/')
       headers = {}
       headers['Content-Type'] = 'application/json' if update
-      $stderr.puts ">>> #{__method__} | #{action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" # TODO: remove
+      __debug { ">>> #{__method__} | #{action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" }
       @response = connection.send(verb, action, params, headers)
 
     rescue SocketError, EOFError => error
@@ -102,13 +102,13 @@ class ApiService
       raise error # Handled by ApplicationController
 
     rescue => error
-      $stderr.puts "!!! #{__method__} | #{action.inspect} | ERROR: #{error.message}" # TODO: remove
+      __debug { "!!! #{__method__} | #{action.inspect} | ERROR: #{error.message}" }
       Log.error { "API #{__method__}: #{error.message}" }
       @exception = error
       return nil # To be handled in the calling method.
 
     ensure # TODO: remove
-      $stderr.puts "<<< #{__method__} | #{action.inspect} | data = #{@response&.body.inspect.truncate(256)}" # TODO: remove
+      __debug { "<<< #{__method__} | #{action.inspect} | data = #{@response&.body.inspect.truncate(256)}" }
 
     end
 
@@ -132,23 +132,23 @@ class ApiService
       action = args.join('/').strip
       action = "/#{action}" unless action.start_with?('/')
       type   = params[:grant_type] || GRANT_TYPE
-      $stderr.puts ">>> #{__method__} | #{action.inspect} | params = #{params.inspect}" # TODO: remove
+      __debug { ">>> #{__method__} | #{action.inspect} | params = #{params.inspect}" }
       #make_connection(type).post(action,  params) # TODO: restore
       oauth_response = make_connection(type).post(action,  params) # TODO: remove
 
     rescue SocketError, EOFError => error
-      $stderr.puts "!!! #{__method__} | #{action.inspect} | rescue1: #{error.message}" # TODO: remove
+      __debug { "!!! #{__method__} | #{action.inspect} | rescue1: #{error.message}" }
       @exception = error
       raise error # Handled by ApplicationController
 
     rescue => error
-      $stderr.puts "!!! #{__method__} | #{action.inspect} | rescue2: #{error.message}" # TODO: remove
+      __debug { "!!! #{__method__} | #{action.inspect} | rescue2: #{error.message}" }
       Log.error { "API #{__method__}: #{error.message}" }
       @exception = error
       return nil # To be handled in the calling method.
 
     ensure # TODO: remove
-      $stderr.puts "<<< #{__method__} | #{action.inspect} | response = #{oauth_response.inspect}" # TODO: remove
+      __debug { "<<< #{__method__} | #{action.inspect} | response = #{oauth_response.inspect}" }
 
     end
 

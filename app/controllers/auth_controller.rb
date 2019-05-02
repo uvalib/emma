@@ -23,7 +23,7 @@ class AuthController < ApplicationController
   #
   def callback
     options = params.to_unsafe_h.symbolize_keys
-    $stderr.puts "*** #{__method__} | options = #{options.inspect} | fragment = #{URI.parse(request.original_url).fragment.inspect}"
+    __debug { "*** #{__method__} | options = #{options.inspect} | fragment = #{URI.parse(request.original_url).fragment.inspect}" }
     if options[:code].present?
       ApiService.instance(options)    # Authorization code grant flow.
     elsif (data = URI.parse(request.original_url).fragment).present?

@@ -269,7 +269,7 @@ module Faraday
     # @return [nil]
     #
     def log(message)
-      $stderr.puts("Faraday #{message}") # TODO: delete
+      __debug { "Faraday #{message}" }
       logger&.info("Faraday #{message}")
       nil
     end

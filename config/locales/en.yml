@@ -8,3 +8,19 @@ en:
 
     api:
       title:            'Bookshare API Methods'
+
+    health:
+
+      mysql:
+        failed:         'Database connection error'
+
+      redis:
+        failed:         'Redis unresponsive'
+        healthy:        'NOT IMPLEMENTED' # TODO: future
+
+      bookshare:
+        failed:         'Bookshare API unresponsive'
+
+      ingest:
+        failed:         'Content ingest failing'
+        healthy:        'NOT IMPLEMENTED' # TODO: future

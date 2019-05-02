@@ -15,6 +15,8 @@ require 'api/record'
 #
 class Api::Message < Api::Record::Base
 
+  include TimeHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -33,8 +35,8 @@ class Api::Message < Api::Record::Base
   # @see Api::Record::Base#initialize
   #
   def initialize(data, **opt)
-    $stderr.puts "### #{self.class}.#{__method__}" # TODO: remove
-    start_time = Time.now
+    __debug { "### #{self.class}.#{__method__}" }
+    start_time = timestamp
     opt = opt.dup
     opt[:format] ||= self.format_of(data)
     opt[:error]  ||= true if opt[:format].blank?
@@ -49,8 +51,8 @@ class Api::Message < Api::Record::Base
     raise Api::ParseError, e
 =end
   ensure
-    elapsed_time = '%g msec.' % (Time.now - start_time).in_milliseconds
-    $stderr.puts "<<< #{self.class} processed in #{elapsed_time}"
+    elapsed_time = time_span(start_time)
+    __debug { "<<< #{self.class} processed in #{elapsed_time}" }
     Log.info { "#{self.class} processed in #{elapsed_time}"}
   end
 

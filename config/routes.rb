@@ -18,16 +18,27 @@ Rails.application.routes.draw do
   get '/api', to: 'api#index'
 
   # ===========================================================================
+  # :section: Metrics
+  # NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
+  # ===========================================================================
+
+  get '/metrics/test', to: 'metrics#test'
+
+  # ===========================================================================
+  # :section: Health check
+  # ===========================================================================
+
+  get '/health/check/:subsystem', to: 'health#check'
+  get '/health/check',            to: 'health#check'
+  get '/health/version',          to: 'health#version'
+
+  get '/healthcheck', to: 'health#check'
+  get '/version',     to: 'health#version'
+
+  # ===========================================================================
   # :section: Home page
   # ===========================================================================
 
   root to: 'api#index'
-
-  # ===========================================================================
-  # health check and version endpoints
-  # ===========================================================================
-
-  resources :healthcheck, only: [ :index ]
-  resources :version, only: [ :index ]
 
 end
