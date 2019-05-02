@@ -44,6 +44,45 @@ module Emma
       @logger = logger
     end
 
+    # Indicate whether control is within a block where logging is silenced.
+    #
+    def self.silenced?
+      @silenced.present?
+    end
+
+    # Control whether the logger is silent.
+    #
+    # @param [Boolean,nil] go_silent
+    #
+    # @return [Boolean]
+    # @return [nil]
+    #
+    def self.silent(go_silent = true)
+      if go_silent && !silenced?
+        @log_level = logger.local_level
+        logger.local_level = Logger::ERROR
+        @silenced = true
+      elsif silenced? && !go_silent
+        logger.local_level = @log_level if @log_level
+        @silenced = false
+      end
+    end
+
+    # Silences the logger for the duration of the block.
+    #
+    # @param [Numeric, nil] temporary_level
+    #
+    # @see LoggerSilence#silence
+    #
+    def self.silence(temporary_level = Logger::ERROR, &block)
+      if silenced?
+        block.call
+      else
+        @silenced = true
+        logger.silence(temporary_level, &block).tap { @silenced = false }
+      end
+    end
+
     # Add a log message.
     #
     # If the first element of *args* is a Symbol, that is taken to be the

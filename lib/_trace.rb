@@ -82,7 +82,9 @@ TRACE_NOTIFICATIONS = env('TRACE_NOTIFICATIONS', false)
 
 require 'io/console'
 
-CONS_INDENT = (' ' * 3).freeze
+# For AWS, add indentation prefix characters to help make debugging output
+# stand out from normal Rails.logger entries.
+CONS_INDENT = $stderr.isatty ? '' : '___'
 
 # Write indented line(s) to $stderr.
 #
@@ -91,6 +93,7 @@ CONS_INDENT = (' ' * 3).freeze
 # @return [nil]
 #
 def __output(*args)
+  return if defined?(Log) && Log.silenced?
   args += Array.wrap(yield) if block_given?
   lines = CONS_INDENT + args.join("\n").gsub(/\n/, "\n#{CONS_INDENT}").strip
   $stderr.puts(lines)
