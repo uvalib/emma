@@ -17,6 +17,8 @@ class Api::Serializer::Base < Representable::Decorator
   include Api::Schema
   include Api::Serializer::Associations
 
+  include TimeHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -66,20 +68,20 @@ class Api::Serializer::Base < Representable::Decorator
   # This method must be overridden by the derived class to pass in :method.
   #
   def serialize(method = nil, **opt)
-    $stderr.puts ">>> #{self.class} serialize #{method}" # TODO: remove
-    start_time = Time.now
+    __debug { ">>> #{self.class} serialize #{method}" }
+    start_time = timestamp
     case method
       when Symbol then send(method, **opt)
       when Proc   then method.call(**opt)
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    $stderr.puts "!!! #{self.class} #{__method__} ERROR #{error.message}"
+    __debug { "!!! #{self.class} #{__method__} ERROR #{error.message}" }
     raise error
   ensure
     if start_time
-      elapsed_time = '%g msec.' % (Time.now - start_time).in_milliseconds
-      $stderr.puts "--- #{self.class} serialized in #{elapsed_time}"
+      elapsed_time = time_span(start_time)
+      __debug { "--- #{self.class} serialized in #{elapsed_time}" }
       Log.info { "#{self.class} serialized in #{elapsed_time}" }
     end
   end
@@ -101,20 +103,20 @@ class Api::Serializer::Base < Representable::Decorator
   #
   def deserialize(data, method = nil)
     return unless set_source_data(data)
-    $stderr.puts ">>> #{self.class} deserialize #{method}" # TODO: remove
-    start_time = Time.now
+    __debug { ">>> #{self.class} deserialize #{method}" }
+    start_time = timestamp
     case method
       when Symbol then send(method, source_data)
       when Proc   then method.call(source_data)
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    $stderr.puts "!!! #{self.class} #{__method__} ERROR #{error.message}"
+    __debug { "!!! #{self.class} #{__method__} ERROR #{error.message}" }
     raise error
   ensure
     if start_time
-      elapsed_time = '%g msec.' % (Time.now - start_time).in_milliseconds
-      $stderr.puts "--- #{self.class} rendered in #{elapsed_time}"
+      elapsed_time = time_span(start_time)
+      __debug { "--- #{self.class} rendered in #{elapsed_time}" }
       Log.info { "#{self.class} parsed in #{elapsed_time}" }
     end
   end

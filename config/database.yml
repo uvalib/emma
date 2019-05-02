@@ -1,30 +1,60 @@
-# SQLite version 3.x
-#   gem install sqlite3
-#
-#   Ensure the SQLite 3 gem is defined in your Gemfile
-#   gem 'sqlite3'
-#
-default: &default
-  adapter: sqlite3
-  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  timeout: 5000
+# config/database.yml
 
-development:
-  <<: *default
-  database: db/development.sqlite3
+# =============================================================================
+# MySQL adapter settings
+# =============================================================================
 
-# Warning: The database defined as "test" will be erased and
-# re-generated from your development database when you run "rake".
-# Do not set this db to the same as development or production.
-test:
-  <<: *default
-  database: db/test.sqlite3
+_db_mysql:                                                            &DB_MYSQL
+  adapter:     mysql2
+  encoding:    utf8
+  host:        <%= ENV['DBHOST'] %>
+  database:    <%= ENV['DBNAME'] %>
+  username:    <%= ENV['DBUSER'] %>
+  password:    <%= ENV['DBPASSWD'] %>
+
+_db_mysql_prod:                                                  &DB_MYSQL_PROD
+  <<: *DB_MYSQL
+
+_db_mysql_dev:                                                    &DB_MYSQL_DEV
+  <<: *DB_MYSQL
+
+_db_mysql_test:                                                  &DB_MYSQL_TEST
+  <<: *DB_MYSQL
+
+# =============================================================================
+# SQLite adapter settings
+# =============================================================================
+
+_db_sqlite:                                                          &DB_SQLITE
+  adapter:  sqlite3
+  timeout:  5000
+  pool:     <%= ENV['RAILS_MAX_THREADS'] || 5 %>
+  database: <%= ENV['DBNAME'] %>
+
+_db_sqlite_prod:                                                &DB_SQLITE_PROD
+  <<: *DB_SQLITE
+  database: <%= ENV['DBNAME'] || 'db/production.sqlite3' %>
+
+_db_sqlite_dev:                                                  &DB_SQLITE_DEV
+  <<: *DB_SQLITE
+  database: <%= ENV['DBNAME'] || 'db/development.sqlite3' %>
+
+_db_sqlite_test:                                                &DB_SQLITE_TEST
+  <<: *DB_SQLITE
+  database: <%= ENV['DBNAME'] || 'db/test.sqlite3' %>
+
+# =============================================================================
+# Rails environments
+# =============================================================================
 
 production:
-  <<: *default
-  adapter: mysql2
-  encoding: utf8
-  host: <%= ENV['DBHOST'] %>
-  database: <%= ENV['DBNAME'] %>
-  username: <%= ENV['DBUSER'] %>
-  password: <%= ENV['DBPASSWD'] %>
+  <<: *DB_MYSQL_PROD
+
+development:
+  <<: *DB_SQLITE_DEV
+
+test:
+  <<: *DB_SQLITE_TEST
+
+# WARNING: The test database will be erased every time "rake test" is run.
+# NOTE: Do not set use the same database for either development or production.

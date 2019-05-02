@@ -29,18 +29,45 @@ DEBUG_REPRESENTABLE = false
 
 module Representable
 
+  module AppDebug
+
+    if DEBUG_REPRESENTABLE
+
+      LDR = '||| '
+      SEP = ' // '
+
+      def __debug(*args)
+        opt = args.extract_options!
+        args += Array.wrap(yield) if block_given?
+        line = "#{LDR}#{args.shift}"
+        if opt.present?
+          line << SEP << opt.map { |k, v| "#{k} = #{v.inspect}" }.join(SEP)
+        end
+        if args.present?
+          line << SEP << args.join(SEP)
+        end
+        __output(line)
+      end
+
+    else
+
+      def __debug(*)
+      end
+
+    end
+
+  end
+
   module CreateObject
+
+    extend AppDebug
 
     remove_const(:Class) if const_defined?(:Class, false)
 
     Class = ->(input, options) do
       binding = options[:binding]
       object_class = binding.evaluate_option(:class, input, options)
-      if DEBUG_REPRESENTABLE
-        $stderr.puts "||| Class #{object_class}" \
-                     " // input   = #{input.inspect}" \
-                     " // options = #{options.inspect}"
-      end
+      __debug("Class #{object_class}", input: input, options: options)
       unless object_class
         raise DeserializeError,
           ":class did not return class constant for `#{binding.name}`."
@@ -55,12 +82,10 @@ module Representable
 
     class Binding
 
+      include AppDebug
+
       def read(hash, as)
-        if DEBUG_REPRESENTABLE
-          $stderr.puts "||| Hash.#{__method__}" \
-                       " // as = #{as.inspect}" \
-                       " // hash = #{hash.inspect}"
-        end
+        __debug("Hash.#{__method__}", as: as, hash: hash)
         if hash.is_a?(Array)
           hash
         elsif hash.key?(as)
@@ -90,6 +115,8 @@ if DEBUG_REPRESENTABLE
 
   module Representable
 
+    extend AppDebug
+
     %i[
       AssignFragment
       ReadFragment
@@ -112,52 +139,52 @@ if DEBUG_REPRESENTABLE
     end
 
     AssignFragment = ->(input, options) do
-      $stderr.puts "||| AssignFragment // input = #{input.inspect}"
+      __debug('AssignFragment', input: input)
       options[:fragment] = input
     end
 
     ReadFragment = ->(input, options) do
-      $stderr.puts "||| ReadFragment // input = #{input.inspect}"
+      __debug('ReadFragment', input: input)
       options[:binding].read(input, options[:as])
     end
 
     Reader = ->(input, options) do
-      $stderr.puts "||| Reader // input = #{input.inspect}"
+      __debug('Reader', input: input)
       options[:binding].evaluate_option(:reader, input, options)
     end
 
     StopOnNotFound = ->(input, _options) do
-      $stderr.puts "||| StopOnNotFound // input = #{input.inspect}"
+      __debug('StopOnNotFound', input: input)
       Binding::FragmentNotFound == input ? Pipeline::Stop : input
     end
 
     StopOnNil = ->(input, _options) do
-      $stderr.puts "||| StopOnNil // input = #{input.inspect}"
+      __debug('StopOnNil', input: input)
       input.nil? ? Pipeline::Stop : input
     end
 
     OverwriteOnNil = ->(input, options) do
-      $stderr.puts "||| OverwriteOnNil // input = #{input.inspect}"
+      __debug('OverwriteOnNil', input: input)
       input.nil? ? (SetValue.(input, options); Pipeline::Stop) : input
     end
 
     Default = ->(input, options) do
-      $stderr.puts "||| Default // input = #{input.inspect}"
+      __debug('Default', input: input)
       Binding::FragmentNotFound == input ? options[:binding][:default] : input
     end
 
     SkipParse = ->(input, options) do
-      $stderr.puts "||| SkipParse // input = #{input.inspect}"
+      __debug('SkipParse', input: input)
       options[:binding].evaluate_option(:skip_parse, input, options) ? Pipeline::Stop : input
     end
 
     Deserializer = ->(input, options) do
-      $stderr.puts "||| Deserializer // input = #{input.inspect}"
+      __debug('Deserializer', input: input)
       options[:binding].evaluate_option(:deserialize, input, options)
     end
 
     Deserialize = ->(input, args) do
-      $stderr.puts "||| Deserialize // input = #{input.inspect}"
+      __debug('Deserialize', input: input)
       binding, fragment, options = args[:binding], args[:fragment], args[:options]
 
       # user_options:
@@ -167,36 +194,34 @@ if DEBUG_REPRESENTABLE
     end
 
     ParseFilter = ->(input, options) do
-      $stderr.puts "||| ParseFilter // input = #{input.inspect}"
+      __debug('ParseFilter', input: input)
       options[:binding][:parse_filter].(input, options)
     end
 
     Setter = ->(input, options) do
-      $stderr.puts "||| Setter // input = #{input.inspect}"
+      __debug('Setter', input: input)
       options[:binding].evaluate_option(:setter, input, options)
     end
 
     SetValue = ->(input, options) do
-      $stderr.puts "||| SetValue // input = #{input.inspect}"
+      __debug('SetValue', input: input)
       options[:binding]
         .send(:exec_context, options)
         .send(options[:binding].setter, input)
     end
 
     Stop = ->(*) do
-      $stderr.puts "||| Stop"
+      __debug('Stop')
       Pipeline::Stop
     end
 
     If = ->(input, options) do
-      $stderr.puts "||| If // input = #{input.inspect}"
+      __debug('If', input: input)
       options[:binding].evaluate_option(:if, nil, options) ? input : Pipeline::Stop
     end
 
     StopOnExcluded = ->(input, options) do
-      $stderr.puts "\n\n||| StopOnExcluded" \
-        " // input = #{input.inspect}" \
-        " // options = #{options.inspect}"
+      __debug('StopOnExcluded', input: input, options: options)
       return input unless options[:options]
       return input unless props = (options[:options][:exclude] || options[:options][:include])
 
@@ -210,10 +235,12 @@ if DEBUG_REPRESENTABLE
 
     module CreateObject
 
+      extend AppDebug
+
       remove_const(:Instance) if const_defined?(:Instance, false)
 
       Instance = ->(input, options) do
-        $stderr.puts "||| Instance // input = #{input.inspect}"
+        __debug('Instance', input: input)
         options[:binding].evaluate_option(:instance, input, options) ||
           raise(DeserializeError.new(":instance did not return class constant for `#{options[:binding].name}`."))
       end
@@ -224,10 +251,10 @@ if DEBUG_REPRESENTABLE
 
       class Binding
 
+        include AppDebug
+
         def read(hash, as)
-          $stderr.puts "||| Object.read" \
-                       " // as = #{as.inspect}" \
-                       " // hash = #{hash.inspect}"
+          __debug("Object.#{__method__}", as: as, hash: hash)
           fragment = hash.send(as) # :getter? no, that's for parsing!
 
           return FragmentNotFound if fragment.nil? and typed?
@@ -240,8 +267,10 @@ if DEBUG_REPRESENTABLE
 
     module ForCollection
 
+      include AppDebug
+
       def for_collection
-        $stderr.puts "||| ForCollection.#{__method__}"
+        __debug("ForCollection.#{__method__}")
         # this is done at run-time, not a big fan of this. however, it saves us
         # from inheritance/self problems.
         @collection_representer ||= collection_representer!({})
@@ -251,8 +280,7 @@ if DEBUG_REPRESENTABLE
       private
 
       def collection_representer!(options)
-        $stderr.puts "||| ForCollection.#{__method__}" \
-                     " // options = #{options.inspect}"
+        __debug("ForCollection.#{__method__}", options: options)
         singular = self
 
         # what happens here is basically
@@ -262,14 +290,12 @@ if DEBUG_REPRESENTABLE
           _features: [singular.collection_representer_class],
           _block:    ->(*) { items options.merge(:extend => singular) }
         ).tap do |result|
-          $stderr.puts "||| ForCollection.#{__method__}" \
-                       " // result = #{result.inspect}"
+          __debug("ForCollection.#{__method__}", result: result)
         end
       end
 
       def collection_representer(options={})
-        $stderr.puts "||| ForCollection.#{__method__}" \
-                     " // options = #{options.inspect}"
+        __debug("ForCollection.#{__method__}", options: options)
         @collection_representer = collection_representer!(options)
       end
 

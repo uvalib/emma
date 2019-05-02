@@ -127,7 +127,7 @@ class ApiService
     # @return [void]
     #
     def generate_token(auth = AUTH_TYPE, grant = GRANT_TYPE)
-      $stderr.puts "### #{__method__} auth=#{auth.inspect} grant=#{grant.inspect}" # TODO: remove
+      __debug { "### #{__method__} auth=#{auth.inspect} grant=#{grant.inspect}" }
       resp = @access_token = @refresh_token = nil
       case grant
         when 'authorization_code', 'refresh_token'
@@ -182,7 +182,7 @@ class ApiService
     # @see https://apidocs-qa.bookshare.org/auth/index.html#_oauth-authorize
     #
     def get_authorization(type = AUTH_TYPE)
-      $stderr.puts "### #{__method__} type=#{type.inspect}" # TODO: remove
+      __debug { "### #{__method__} type=#{type.inspect}" }
       params = {
         response_type: type,
         client_id:     API_KEY,
@@ -193,16 +193,16 @@ class ApiService
       oauth_response = oauth('authorize',  params)
       data = oauth_response&.body&.presence
       if !oauth_response&.success?
-        $stderr.puts "--- #{__method__} | ApiOauthTokenError | data = #{data.inspect.truncate(256)}" # TODO: remove
+        __debug { "--- #{__method__} | ApiOauthTokenError | data = #{data.inspect.truncate(256)}" }
         ApiOauthTokenError.new(data, error: @exception)
       elsif type == 'token'
-        $stderr.puts "--- #{__method__} | ApiOauthToken | data = #{data.inspect.truncate(256)}" # TODO: remove
+        __debug { "--- #{__method__} | ApiOauthToken | data = #{data.inspect.truncate(256)}" }
         ApiOauthToken.new(data, error: @exception)
       else
-        $stderr.puts "--- #{__method__} | ApiStatusModel | data = #{data.inspect.truncate(256)}" # TODO: remove
+        __debug { "--- #{__method__} | ApiStatusModel | data = #{data.inspect.truncate(256)}" }
         ApiStatusModel.new(data, format: :xml, error: @exception)
       end
-        .tap { |result| $stderr.puts "<<< #{__method__} result = #{result.inspect}" } # TODO: remove
+        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # TODO: remove
     end
 
     # get_token
@@ -224,7 +224,7 @@ class ApiService
       user:     nil,
       password: nil
     )
-      $stderr.puts "### #{__method__} type=#{type.inspect}" # TODO: remove
+      __debug { "### #{__method__} type=#{type.inspect}" }
       params = {
         grant_type: type,
         scope:      'basic'
@@ -243,13 +243,13 @@ class ApiService
       oauth_response = oauth('token',  params)
       data = oauth_response&.body&.presence
       if oauth_response&.success?
-        $stderr.puts "--- #{__method__} | ApiOauthToken | data = #{data.inspect}" # TODO: remove
+        __debug { "--- #{__method__} | ApiOauthToken | data = #{data.inspect}" }
         ApiOauthToken.new(data, error: @exception)
       else
-        $stderr.puts "--- #{__method__} | ApiOauthTokenError | data = #{data.inspect}" # TODO: remove
+        __debug { "--- #{__method__} | ApiOauthTokenError | data = #{data.inspect}" }
         ApiOauthTokenError.new(data, error: @exception)
       end
-        .tap { |result| $stderr.puts "<<< #{__method__} result = #{result.inspect}" } # TODO: remove
+        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # TODO: remove
     end
 
     # =========================================================================
