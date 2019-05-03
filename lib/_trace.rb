@@ -84,7 +84,7 @@ require 'io/console'
 
 # For AWS, add indentation prefix characters to help make debugging output
 # stand out from normal Rails.logger entries.
-CONS_INDENT = $stderr.isatty ? '' : '___'
+CONS_INDENT = $stderr.isatty ? '' : '_   '
 
 # Write indented line(s) to $stderr.
 #
