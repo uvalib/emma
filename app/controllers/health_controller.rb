@@ -18,8 +18,10 @@ class HealthController < ApplicationController
 
   public
 
+=begin # TODO: This approach is not currently thread-safe.
   before_action :suppress_logger,   only: :check
   after_action  :unsuppress_logger, only: :check
+=end
 
   # ===========================================================================
   # :section:
@@ -39,10 +41,18 @@ class HealthController < ApplicationController
   # == GET /health/check/:subsystem[?logging=true]
   #
   def check
-    values   = get_health_status(*subsystems)
-    response = HealthResponse.new(values)
-    status   = response.degraded? ? 500 : 200
-    render json: response, status: status
+    logging = params[:logging]
+    logging =
+      if subsystems.blank?
+        true?(logging)
+      else
+        logging.blank? || !false?(logging)
+      end
+    if logging
+      check_action
+    else
+      Log.silence { check_action }
+    end
   end
 
   # ===========================================================================
@@ -58,6 +68,15 @@ class HealthController < ApplicationController
   #
   def subsystems
     @subsystems ||= params[:subsystem].to_s.gsub(/\s/, '').split(',')
+  end
+
+  # Acquire health status and render.
+  #
+  def check_action
+    values   = get_health_status(*subsystems)
+    response = HealthResponse.new(values)
+    status   = response.degraded? ? 500 : 200
+    render json: response, status: status
   end
 
   # ===========================================================================

@@ -52,6 +52,8 @@ module Emma
 
     # Control whether the logger is silent.
     #
+    # TODO: Not thread-safe.
+    #
     # @param [Boolean,nil] go_silent
     #
     # @return [Boolean]
