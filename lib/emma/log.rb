@@ -44,47 +44,6 @@ module Emma
       @logger = logger
     end
 
-    # Indicate whether control is within a block where logging is silenced.
-    #
-    def self.silenced?
-      @silenced ||= false
-    end
-
-    # Control whether the logger is silent.
-    #
-    # TODO: Not thread-safe.
-    #
-    # @param [Boolean,nil] go_silent
-    #
-    # @return [Boolean]
-    # @return [nil]
-    #
-    def self.silent(go_silent = true)
-      if go_silent && !silenced?
-        @saved_log_level   = logger.local_level
-        logger.local_level = Logger::ERROR
-        @silenced = true
-      elsif !go_silent
-        logger.local_level = silenced? && @saved_log_level || logger.level
-        @silenced = false
-      end
-    end
-
-    # Silences the logger for the duration of the block.
-    #
-    # @param [Numeric, nil] temporary_level
-    #
-    # @see LoggerSilence#silence
-    #
-    def self.silence(temporary_level = Logger::ERROR, &block)
-      if silenced?
-        block.call
-      else
-        @silenced = true
-        logger.silence(temporary_level, &block).tap { @silenced = false }
-      end
-    end
-
     # Add a log message.
     #
     # If the first element of *args* is a Symbol, that is taken to be the
@@ -176,6 +135,140 @@ module Emma
     #
     def self.fatal(*args, &block)
       add(Logger::FATAL, *args, &block)
+    end
+
+    # =========================================================================
+    # :section: Module methods
+    # =========================================================================
+
+    public
+
+    # local_levels
+    #
+    # @return [Concurrent::Map]
+    #
+    # Compare with:
+    # @see ActiveSupport::LoggerThreadSafeLevel#local_levels
+    #
+    def self.local_levels
+      @local_levels ||= Concurrent::Map.new(initial_capacity: 2)
+    end
+
+    # local_log_id
+    #
+    # @return [Integer]
+    #
+    # Compare with:
+    # @see ActiveSupport::LoggerThreadSafeLevel#local_log_id
+    #
+    def self.local_log_id
+      Thread.current.__id__
+    end
+
+    # Get thread-safe log level.
+    #
+    # @return [Integer]
+    #
+    # Compare with:
+    # @see ActiveSupport::LoggerThreadSafeLevel#local_level
+    #
+    def self.local_level
+      local_levels[local_log_id]
+    end
+
+    # Set thread-safe log level.
+    #
+    # @return [Integer, nil]
+    #
+    # Compare with:
+    # @see ActiveSupport::LoggerThreadSafeLevel#local_level=
+    #
+    def self.local_level=(level)
+      if level
+        local_levels[local_log_id] = level
+      else
+        local_levels.delete(local_log_id)
+      end
+    end
+
+    # Thread-safe log level.
+    #
+    # @return [Integer]
+    #
+    # Compare with:
+    # @see ActiveSupport::LoggerThreadSafeLevel#level
+    #
+    def self.level
+      local_level || logger.level
+    end
+
+    # Thread-safe storage for silenced status.
+    #
+    # @return [Concurrent::Map]
+    #
+    def self.silenced_map
+      @silenced_map ||= Concurrent::Map.new(initial_capacity: 2)
+    end
+
+    # Indicate whether control is within a block where logging is silenced.
+    #
+    def self.silenced?
+      silenced.present?
+    end
+
+    # Get thread-safe silenced flag.
+    #
+    # @return [Boolean]
+    #
+    def self.silenced
+      silenced_map[local_log_id]
+    end
+
+    # Set thread-safe silenced flag.
+    #
+    def self.silenced=(flag)
+      silenced_map[local_log_id] = flag
+    end
+
+    # Thread-safe storage for silenced status.
+    #
+    # @return [Concurrent::Map]
+    #
+    def self.saved_log_level
+      @saved_log_level ||= Concurrent::Map.new(initial_capacity: 2)
+    end
+
+    # Control whether the logger is silent.
+    #
+    # @param [Boolean,nil] go_silent
+    #
+    # @return [Boolean]
+    # @return [nil]
+    #
+    def self.silent(go_silent = true)
+      if !go_silent
+        logger.local_level = saved_log_level.delete(local_log_id) || level
+        silenced = false
+      elsif !silenced?
+        saved_log_level[local_log_id] = logger.local_level
+        logger.local_level = Logger::ERROR
+        silenced = true
+      end
+    end
+
+    # Silences the logger for the duration of the block.
+    #
+    # @param [Numeric, nil] temporary_level
+    #
+    # @see LoggerSilence#silence
+    #
+    def self.silence(temporary_level = Logger::ERROR, &block)
+      if silenced?
+        block.call
+      else
+        silenced = true
+        logger.silence(temporary_level, &block).tap { silenced = false }
+      end
     end
 
     # Delegate any other method to @logger.
