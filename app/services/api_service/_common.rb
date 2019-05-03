@@ -30,7 +30,7 @@ class ApiService
     #
     # @type [String]
     #
-    USERNAME = ENV['TEST_USER']
+    USERNAME = ENV['TEST_USERNAME']
 
     # NOTE: only for GRANT_TYPE == 'password'
     #
