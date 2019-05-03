@@ -47,7 +47,7 @@ module Emma
     # Indicate whether control is within a block where logging is silenced.
     #
     def self.silenced?
-      @silenced.present?
+      @silenced ||= false
     end
 
     # Control whether the logger is silent.
@@ -59,11 +59,11 @@ module Emma
     #
     def self.silent(go_silent = true)
       if go_silent && !silenced?
-        @log_level = logger.local_level
+        @saved_log_level   = logger.local_level
         logger.local_level = Logger::ERROR
         @silenced = true
-      elsif silenced? && !go_silent
-        logger.local_level = @log_level if @log_level
+      elsif !go_silent
+        logger.local_level = silenced? && @saved_log_level || logger.level
         @silenced = false
       end
     end

@@ -72,7 +72,7 @@ module ParamsConcern
   # @see #suppress_logger
   #
   def unsuppress_logger
-    Log.silent(false) if @logger_suppressed
+    Log.silent(false)
     @logger_suppressed = nil
   end
 
