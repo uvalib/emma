@@ -22,9 +22,9 @@ class ApiService
   API_VERSION = 'v2'
 
   BASE_URL = ENV['BOOKSHARE_BASE_URL'] || 'https://api.bookshare.org'
-  AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || 'https://api.bookshare.org'
-  API_KEY  = ENV['BOOKSHARE_API_KEY']  || 'ep197f74cjwf0vse3uekpq1f'
-  CB_URL   = ENV['BOOKSHARE_CB_URL']   || 'http://d-137-54-155-141.dhcp.virginia.edu' # TODO: testing
+  AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || BASE_URL
+  API_KEY  = ENV['BOOKSHARE_API_KEY']
+  CB_URL   = ENV['BOOKSHARE_CB_URL']
 
   # Maximum accepted value for a :limit parameter.
   #
