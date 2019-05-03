@@ -16,27 +16,27 @@ class ApiService
     #
     # @type [String]
     #
-    AUTH_TYPE = 'token'
+    AUTH_TYPE = ENV['BOOKSHARE_AUTH_TYPE'] || 'token'
     #AUTH_TYPE = 'code'
 
     # OAuth2 grant type.
     #
     # @type [String]
     #
-    GRANT_TYPE = 'authorization_code'
+    GRANT_TYPE = ENV['BOOKSHARE_GRANT_TYPE'] || 'authorization_code'
     #GRANT_TYPE = 'password'
 
     # NOTE: only for GRANT_TYPE == 'password'
     #
     # @type [String]
     #
-    USERNAME = 'rwl@virginia.edu'
+    USERNAME = ENV['TEST_USER']
 
     # NOTE: only for GRANT_TYPE == 'password'
     #
     # @type [String]
     #
-    PASSWORD = USERNAME
+    PASSWORD = ENV['TEST_PASSWORD'] || USERNAME
 
     # Control whether information requests are ever cached.
     #
