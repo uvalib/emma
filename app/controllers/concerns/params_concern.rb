@@ -9,37 +9,16 @@ require 'emma/log'
 
 # Facilities for working with received URL parameters.
 #
+# @see ParamsHelper
+#
 module ParamsConcern
 
   extend ActiveSupport::Concern
 
+  include ParamsHelper
+
   included do |base|
     __included(base, 'ParamsConcern')
-  end
-
-  TRUE_VALUES  = %w(1 yes true).freeze
-  FALSE_VALUES = %w(0 no false).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [String, Boolean] value
-  #
-  def true?(value)
-    TRUE_VALUES.include?(value.to_s.strip.downcase)
-  end
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [String, Boolean] value
-  #
-  def false?(value)
-    FALSE_VALUES.include?(value.to_s.strip.downcase)
   end
 
   # ===========================================================================

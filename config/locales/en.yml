@@ -12,15 +12,21 @@ en:
     health:
 
       mysql:
+        restart:        true
         failed:         'Database connection error'
 
       redis:
-        failed:         'Redis unresponsive'
+        restart:        true
         healthy:        'NOT IMPLEMENTED' # TODO: future
+        failed:         'Redis unresponsive'
 
       bookshare:
+        restart:        false
+        degraded:       'Bookshare API degraded'
         failed:         'Bookshare API unresponsive'
 
       ingest:
-        failed:         'Content ingest failing'
+        restart:        false
         healthy:        'NOT IMPLEMENTED' # TODO: future
+        degraded:       'Content ingest degraded'
+        failed:         'Content ingest failing'

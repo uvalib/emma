@@ -27,6 +27,8 @@ module HealthConcern
   #
   class HealthEntry < Hash
 
+    include ParamsHelper
+
     # Initialize a new instance.
     #
     # @param [Hash, nil]                  hash      Another hash, if provided.
@@ -37,16 +39,37 @@ module HealthConcern
     #                                                 always reported healthy.
     #                                               - *false*: the subsystem is
     #                                                 always reported failed.
+    # @param [Boolean, nil] restart                 If *true*, a failed health
+    #                                                 check should result in a
+    #                                                 system restart in order
+    #                                                 to attempt to correct the
+    #                                                 underlying problem.
     # @param [String, nil] healthy                  Message if healthy.
+    # @param [String, nil] degraded                 Message if degraded.
     # @param [String, nil] failed                   Message if failed.
     #
-    def initialize(hash = nil, method: nil, healthy: nil, failed: nil)
+    def initialize(
+      hash =    nil,
+      method:   nil,
+      restart:  nil,
+      healthy:  nil,
+      degraded: nil,
+      failed:   nil
+    )
       if hash.is_a?(Hash)
-        method  ||= hash[:method]
-        healthy ||= hash[:healthy]
-        failed  ||= hash[:failed]
+        method   ||= hash[:method]
+        restart  ||= hash[:restart]
+        healthy  ||= hash[:healthy]
+        degraded ||= hash[:degraded]
+        failed   ||= hash[:failed]
       end
-      replace(method: method, healthy: healthy, failed: failed)
+      replace(
+        method:   method,
+        restart:  true?(restart),
+        healthy:  healthy,
+        degraded: degraded,
+        failed:   failed
+      )
     end
 
   end
@@ -58,12 +81,16 @@ module HealthConcern
     # @return [Boolean]
     attr_accessor :healthy
 
+    # @return [Boolean]
+    attr_accessor :degraded
+
     # @return [String]
     attr_accessor :message
 
-    def initialize(status, message = nil)
-      @healthy = status.present?
-      @message = message || (@healthy ? '' : 'Unknown error')
+    def initialize(status, degraded, message = nil)
+      @healthy  = status.present?
+      @degraded = degraded.present?
+      @message  = message || (@healthy ? '' : 'Unknown error')
     end
 
     def healthy?
@@ -75,7 +102,7 @@ module HealthConcern
     end
 
     def degraded?
-      false
+      @degraded
     end
 
   end
@@ -196,9 +223,13 @@ module HealthConcern
     message = "#{e.class}: #{e.message}"
     Log.warn { "#{subsystem}: #{message}" }
   ensure
+    warn_only = !entry[:restart]
+    degraded  = !healthy && warn_only
+    message   = degraded && entry[:degraded]
     message ||= healthy ? entry[:healthy] : entry[:failed]
     message ||= time_span(start)
-    return HealthStatus.new(healthy, message)
+    healthy   = true if warn_only
+    return HealthStatus.new(healthy, degraded, message)
   end
 
   # ===========================================================================
