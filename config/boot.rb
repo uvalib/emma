@@ -1,6 +1,34 @@
 # config/boot.rb
 #
+# frozen_string_literal: true
 # warn_indent:           true
+
+# =============================================================================
+# Global constants
+# =============================================================================
+
+# The time that the application was started.
+#
+# @type [Time]
+#
+BOOT_TIME = Time.now
+
+# The TeamCity build version.
+#
+# If there is (erroneously) more than one "buildtag.*" file, the build numbers
+# will be listed separated by commas.
+#
+# @type [String]
+#
+BUILD_VERSION =
+  Dir['buildtag.*'].map { |name| name.to_s.sub(/^.*buildtag\./, '') }.join(',')
+    .tap { |result| result.replace('unknown') if result.empty? }
+
+STDERR.puts "@@@ $0 = #{$0.inspect}" # TODO: debugging - remove
+STDERR.puts "@@@ $* = #{$*.inspect}" # TODO: debugging - remove
+STDERR.puts "@@@ $ARGV = #{$ARGV.inspect}" # TODO: debugging - remove
+STDERR.puts "@@@ APP_PATH = #{APP_PATH.inspect}" if defined?(APP_PATH) # TODO: debugging - remove
+STDERR.puts "@@@ ENV = #{ENV.inspect}" # TODO: debugging - remove
 
 # =============================================================================
 # Initial console/log message before the normal boot sequence.
@@ -18,17 +46,9 @@ def running_rails_application?
   $*.include?('server')
 end
 
-# The time that the application was started.  This value is available globally.
-BOOT_TIME = Time.now
-
-STDERR.puts "@@@ $0 = #{$0.inspect}" # TODO: debugging - remove
-STDERR.puts "@@@ $* = #{$*.inspect}" # TODO: debugging - remove
-STDERR.puts "@@@ $ARGV = #{$ARGV.inspect}" # TODO: debugging - remove
-STDERR.puts "@@@ APP_PATH = #{APP_PATH.inspect}" if defined?(APP_PATH) # TODO: debugging - remove
-STDERR.puts "@@@ ENV = #{ENV.inspect}" # TODO: debugging - remove
-
 if running_rails_application?
   STDERR.puts "boot @ #{BOOT_TIME}"
+  STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
 elsif !$0.end_with?('rake')
   STDERR.puts "Running #{$0.inspect}" unless $0.end_with?('rake')
 end

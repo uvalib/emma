@@ -141,14 +141,6 @@ module HealthConcern
 
   public
 
-  # The name of the build or 'unknown'.
-  #
-  # @type [String]
-  #
-  BUILD_VERSION =
-    Dir[Rails.root.join('buildtag.*')].first&.sub!(%r{^.*/buildtag\.}, '') ||
-      'unknown'
-
   # Subsystems to monitor for health status.
   #
   # @type [Hash{Symbol=>HealthEntry}]
