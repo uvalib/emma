@@ -1,0 +1,65 @@
+// app/assets/stylesheets/shared/_common.scss
+
+//=============================================================================
+// Common definitions.
+//=============================================================================
+
+// Counteract the effects of .sr-only (except for position and border).
+%not-sr-only {
+    width:       unset;
+    height:      unset;
+    padding:     unset;
+    margin:      unset;
+    white-space: unset;
+    overflow:    unset;
+    clip:        unset;
+}
+
+//=============================================================================
+// Common settings.
+//=============================================================================
+
+// Make focus outline more easily seen.
+:focus {
+    outline:        2px solid rgba(77, 144, 254, 0.5);
+    outline-offset: 2px;
+}
+
+/*
+// Convenience definition for Bootstrap "hidden on all" class.
+.hidden {
+    @extend .d-none;
+}
+*/
+
+.disabled {
+    cursor: default;
+    &:active { pointer-events: none; }
+}
+
+.forbidden {
+    cursor: not-allowed;
+    &:active { pointer-events: none; }
+}
+
+//=============================================================================
+// Flash
+//=============================================================================
+
+.flash {
+
+    > * {
+        margin:        1rem;
+        padding:       1rem;
+        border:        2px solid gray;
+        border-radius: 8px;
+    }
+
+    .notice {
+        background-color: #00ff0060;
+    }
+
+    .alert {
+        background-color: #ff000060;
+    }
+}

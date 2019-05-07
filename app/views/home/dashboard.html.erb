@@ -1,0 +1,23 @@
+<%# app/views/home/dashboard.html.erb -%>
+<%-
+  # Application main page for authenticated users.
+
+  # If the user is not authenticated, switch to the welcome screen.
+  return render template: 'home/welcome' if current_user.blank?
+
+  title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
+
+  api_page = t('emma.api.title', default: 'API')
+
+  links = {
+    api_page => api_path,
+    Logout:     destroy_user_session_path
+  }
+
+-%>
+<h1 class="heading"><%= title -%></h1>
+<div>
+  <%- links.each_pair do |label, path| -%>
+    <p><a href="<%= path -%>"><%= label -%></a></p>
+  <%- end -%>
+</div>

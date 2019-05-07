@@ -6,10 +6,13 @@
 Rails.application.routes.draw do
 
   # ===========================================================================
-  # :section: OAuth2
+  # :section: Authentication
   # ===========================================================================
 
-  match 'auth/callback', to: 'auth#callback', via: %i[get post]
+  devise_for :users, controllers: {
+    sessions:           'user/sessions',
+    omniauth_callbacks: 'user/omniauth_callbacks',
+  }
 
   # ===========================================================================
   # :section: API test routes
@@ -39,6 +42,14 @@ Rails.application.routes.draw do
   # :section: Home page
   # ===========================================================================
 
-  root to: 'api#index'
+  resources :home, only: [:index] do
+    get :welcome
+    get :dashboard
+  end
+
+  get '/welcome',   to: 'home#welcome'
+  get '/dashboard', to: 'home#dashboard'
+
+  root to: 'home#index'
 
 end

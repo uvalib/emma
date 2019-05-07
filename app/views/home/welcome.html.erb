@@ -1,0 +1,17 @@
+<%# app/views/home/welcome.html.erb -%>
+<%-
+  # Application main page for anonymous users.
+
+  title ||= t('emma.home.welcome.title', default: :'emma.home.title')
+
+  links = {
+    Login: new_user_session_path
+  }
+
+-%>
+<h1 class="heading"><%= title -%></h1>
+<div>
+  <%- links.each_pair do |label, path| -%>
+    <p><a href="<%= path -%>"><%= label -%></a></p>
+  <%- end -%>
+</div>

@@ -1,10 +1,20 @@
 # config/locales/en.yml
 
 en:
+
   emma:
 
     application:
       name:             'EMMA'
+
+    home:
+      title:            'EMMA Test Application'
+
+      welcome:
+        title:          'Welcome to EMMA'
+
+      dashboard:
+        title:          'EMMA Dashboard'
 
     api:
       title:            'Bookshare API Methods'

@@ -21,10 +21,16 @@ class ApiService
 
   API_VERSION = 'v2'
 
-  BASE_URL = ENV['BOOKSHARE_BASE_URL'] || 'https://api.bookshare.org'
-  AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || BASE_URL
-  API_KEY  = ENV['BOOKSHARE_API_KEY']  || 'ep197f74cjwf0vse3uekpq1f'
+  BASE_URL = ENV['BOOKSHARE_BASE_URL']
+  AUTH_URL = ENV['BOOKSHARE_AUTH_URL']
+  API_KEY  = ENV['BOOKSHARE_API_KEY']
   CB_URL   = ENV['BOOKSHARE_CB_URL']
+
+  if running_rails_application?
+    abort('Missing BOOKSHARE_BASE_URL') unless BASE_URL
+    abort('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
+    abort('Missing BOOKSHARE_API_KEY')  unless API_KEY
+  end
 
   # Maximum accepted value for a :limit parameter.
   #
@@ -145,9 +151,11 @@ class ApiService
         # Implicit grant flow.
         service.set_token(params)
 
+=begin
       elsif !service.authorized?
         # Request authorization.
         service.generate_token
+=end
       end
     end
   end

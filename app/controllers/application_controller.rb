@@ -11,14 +11,22 @@ class ApplicationController < ActionController::Base
 
   include MetricsConcern
 
-  protect_from_forgery with: :exception
-
-  add_flash_types :error, :success
-
   # Include the Emma constants in the compiled *.html.erb files.
   [Emma, Emma::Constants].each do |mod|
     ActionView::CompiledTemplates.send(:include, mod)
   end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protect_from_forgery with: :exception
+
+  # ===========================================================================
+  # :section: Helpers
+  # ===========================================================================
+
+  add_flash_types :error, :success
 
   # ===========================================================================
   # :section:
