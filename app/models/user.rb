@@ -26,6 +26,33 @@ class User < ApplicationRecord
     email
   end
 
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # from_omniauth
+  #
+  # @param [Hash] auth
+  #
+  # @return [User]
+  #
+  # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
+  #
+  def self.from_omniauth(auth)
+    $stderr.puts "#{__method__} | auth = #{auth.inspect}"
+    where(provider: auth.provider, uid: auth.uid).first_or_create do |user|
+      user.email = auth.info.email
+      #user.image       = auth.info.image  # assuming user model has an image
+      #user.name        = auth.info.name   # assuming user model has a name
+      #user.first_name  = auth.info.first_name
+      #user.last_name   = auth.info.last_name
+      #user.oauth_token = auth.credentials.token
+      #user.password = Devise.friendly_token[0, 20]
+    end
+  end
+
 =begin
   def self.from_omniauth(auth, signed_in_resource = nil)
     # Check whether there is already a user.

@@ -23,27 +23,37 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  # == GET /user/sign_in
+  # == GET /users/sign_in
   # Prompt the user for login credentials.
   #
   def new
-    __debug "User::SessionsController.#{__method__}"
-   super
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params = #{params.inspect}"
+    $stderr.puts "resource_class    = #{resource_class.inspect}"
+    $stderr.puts "sign_in_params    = #{sign_in_params.inspect}"
+    $stderr.puts "auth_options      = #{auth_options.inspect}"
+    $stderr.puts "serialize_options = #{serialize_options(resource).inspect}"
+    super
+    rs = resource rescue nil # TODO: debugging - delete
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
   end
 
-  # == POST /user/sign_in
+  # == POST /users/sign_in
   # Begin login session.
   #
   def create
-    __debug "User::SessionsController.#{__method__}"
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params #{params.inspect}"
     super
+    rs = resource rescue nil # TODO: debugging - delete
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
   end
 
-  # == DELETE /user/sign_out
+  # == DELETE /users/sign_out
   # End login session.
   #
   def destroy
-    __debug "User::SessionsController.#{__method__}"
+    rs = resource rescue nil # TODO: debugging - delete
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params #{params.inspect}"
+    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
     super
   end
 
