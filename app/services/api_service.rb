@@ -27,9 +27,9 @@ class ApiService
   CB_URL   = ENV['BOOKSHARE_CB_URL']
 
   if running_rails_application?
-    abort('Missing BOOKSHARE_BASE_URL') unless BASE_URL
-    abort('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
-    abort('Missing BOOKSHARE_API_KEY')  unless API_KEY
+    Log.error('Missing BOOKSHARE_BASE_URL') unless BASE_URL
+    Log.error('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
+    Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
   end
 
   # Maximum accepted value for a :limit parameter.
