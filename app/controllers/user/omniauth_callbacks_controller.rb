@@ -61,3 +61,5 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
 end
+
+__loading_end(__FILE__)
