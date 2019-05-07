@@ -1,28 +1,38 @@
 <%-
   #abort 'devise/shared/_links - This is not expected to be used'
+
+  opt = { 'data-turbolinks': false }
+
 -%>
-<%- if controller_name != 'sessions' %>
-  <%= link_to "Log in", new_session_path(resource_name) %><br />
-<% end %>
+<%- unless controller_name == 'sessions' -%>
+  <%- path = new_session_path(resource_name) -%>
+  <%= link_to 'Log in', path, opt %><br />
+<%- end -%>
 
-<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
-  <%= link_to "Sign up", new_registration_path(resource_name) %><br />
-<% end %>
+<%- if devise_mapping.registerable? && (controller_name != 'registrations') -%>
+  <%- path = new_registration_path(resource_name) -%>
+  <%= link_to 'Sign up', path, opt %><br />
+<%- end -%>
 
-<%- if devise_mapping.recoverable? && controller_name != 'passwords' && controller_name != 'registrations' %>
-  <%= link_to "Forgot your password?", new_password_path(resource_name) %><br />
-<% end %>
+<%- if devise_mapping.recoverable? && !%w(passwords registrations).include?(controller_name) -%>
+  <%- path = new_password_path(resource_name) -%>
+  <%= link_to 'Forgot your password?', path, opt %><br />
+<%- end -%>
 
-<%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-  <%= link_to "Didn't receive confirmation instructions?", new_confirmation_path(resource_name) %><br />
-<% end %>
+<%- if devise_mapping.confirmable? && (controller_name != 'confirmations') -%>
+  <%- path = new_confirmation_path(resource_name) -%>
+  <%= link_to "Didn't receive confirmation instructions?", path, opt %><br />
+<%- end -%>
 
-<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-  <%= link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name) %><br />
-<% end %>
+<%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && (controller_name != 'unlocks') -%>
+  <%- path = new_unlock_path(resource_name) -%>
+  <%= link_to "Didn't receive unlock instructions?", path, opt %><br />
+<%- end -%>
 
-<%- if devise_mapping.omniauthable? %>
-  <%- resource_class.omniauth_providers.each do |provider| %>
-    <%= link_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider) %><br />
-  <% end %>
-<% end %>
+<%- if devise_mapping.omniauthable? -%>
+  <%- resource_class.omniauth_providers.each do |provider| -%>
+    <%- prov = OmniAuth::Utils.camelize(provider) -%>
+    <%- path = omniauth_authorize_path(resource_name, provider) -%>
+    <%= link_to "Sign in with #{prov}", path, opt %><br />
+  <%- end -%>
+<%- end -%>

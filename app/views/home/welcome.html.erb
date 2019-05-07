@@ -4,14 +4,14 @@
 
   title ||= t('emma.home.welcome.title', default: :'emma.home.title')
 
-  links = {
-    Login: new_user_session_path
-  }
+  links = [
+    link_to('Sign in', new_user_session_path, 'data-turbolinks': false)
+  ]
 
 -%>
 <h1 class="heading"><%= title -%></h1>
 <div>
-  <%- links.each_pair do |label, path| -%>
-    <p><a href="<%= path -%>"><%= label -%></a></p>
+  <%- links.each do |link| -%>
+    <p><%= link -%></p>
   <%- end -%>
 </div>
