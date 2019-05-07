@@ -34,7 +34,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def oauth2
     auth_info = request.env['omniauth.auth']
-    $stderr.puts "User::OmniauthCallbacksController.#{__method__} | #{request.method} | omniauth.auth = #{auth_info.inspect}"
+    $stderr.puts "User::OmniauthCallbacksController.#{__method__} | #{request.method} | params #{params.inspect} | omniauth.auth = #{auth_info.inspect}"
     @user = User.from_omniauth(auth_info)
     if @user.persisted?
       $stderr.puts "User::OmniauthCallbacksController.#{__method__} | @user persisted"

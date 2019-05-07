@@ -32,6 +32,7 @@ class User::SessionsController < Devise::SessionsController
     $stderr.puts "sign_in_params    = #{sign_in_params.inspect}"
     $stderr.puts "auth_options      = #{auth_options.inspect}"
     $stderr.puts "serialize_options = #{serialize_options(resource).inspect}"
+    $stderr.puts "OmniAuth.config   = #{OmniAuth.config.inspect}"
     super
     rs = resource rescue nil # TODO: debugging - delete
     $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
