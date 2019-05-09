@@ -21,27 +21,31 @@ class ApiService
   # Password grant flow:
   # @see https://apidocs-qa.bookshare.org/auth/index.html#password-grant
   #
-  module Oauth
+  module Oauth # TODO: delete module
 
     include Common
 
+=begin
     # @type [Hash{Symbol=>String}]
     OAUTH_SEND_MESSAGE = {
 
-      # TODO: e.g.:
+      # todo: e.g.:
       no_items:      'There were no items to request',
       failed:        'Unable to request items right now',
 
     }.reverse_merge(API_SEND_MESSAGE).freeze
+=end
 
+=begin
     # @type [Hash{Symbol=>(String,Regexp,nil)}]
     OAUTH_SEND_RESPONSE = {
 
-      # TODO: e.g.:
+      # todo: e.g.:
       no_items:       'no items',
       failed:         nil
 
     }.reverse_merge(API_SEND_RESPONSE).freeze
+=end
 
     # =========================================================================
     # :section:
@@ -49,11 +53,15 @@ class ApiService
 
     public
 
+=begin
     # @return [String]
     attr_reader :access_token
+=end
 
+=begin
     # @return [String]
     attr_reader :refresh_token
+=end
 
     # =========================================================================
     # :section:
@@ -61,12 +69,15 @@ class ApiService
 
     public
 
+=begin
     # Indicate whether the session is authorized.
     #
     def authorized?
       access_token.present?
     end
+=end
 
+=begin
     # set_authorization_code
     #
     # @param [String, Hash] data
@@ -76,7 +87,7 @@ class ApiService
     def set_authorization_code(data)
       if data.is_a?(Hash)
         code  = data[:code]
-        state = data[:state] # TODO: ???
+        state = data[:state] # todo: ???
       else
         code  = data
         state = nil
@@ -89,7 +100,9 @@ class ApiService
         Log.error { "unexpected Bookshare response: #{resp.pretty_inspect}" }
       end
     end
+=end
 
+=begin
     # set_token
     #
     # @param [Hash, String] params
@@ -119,7 +132,9 @@ class ApiService
         Log.warn { "#{__method__}: unexpected params: #{params.inspect}" }
       end
     end
+=end
 
+=begin
     # generate_token
     #
     # @param [Api::AuthType] auth
@@ -137,7 +152,7 @@ class ApiService
               resp = nil if auth == 'code'
             when ApiOauthToken
               if auth == 'token'
-                code = resp.access_token # TODO: ???
+                code = resp.access_token # todo: ???
                 @access_token =
                   code.to_s.split('#').last.to_s.split('&').find do |kv|
                     k, v = kv.split('=')
@@ -164,6 +179,7 @@ class ApiService
         Log.error { "unexpected Bookshare response: #{resp.pretty_inspect}" }
       end
     end
+=end
 
     # =========================================================================
     # :section:
@@ -171,6 +187,7 @@ class ApiService
 
     public
 
+=begin
     # get_authorization
     #
     # @param [Api::AuthType] type
@@ -186,9 +203,9 @@ class ApiService
       params = {
         response_type: type,
         client_id:     API_KEY,
-        redirect_uri:  "#{@callback_url}/auth/callback", # TODO: ???
+        redirect_uri:  "#{@callback_url}/auth/callback", # todo: ???
         scope:         'basic',
-        state:         'state_value' # TODO: ???
+        state:         'state_value' # todo: ???
       }
       oauth_response = oauth('authorize',  params)
       data = oauth_response&.body&.presence
@@ -202,9 +219,11 @@ class ApiService
         __debug { "--- #{__method__} | ApiStatusModel | data = #{data.inspect.truncate(256)}" }
         ApiStatusModel.new(data, format: :xml, error: @exception)
       end
-        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # TODO: remove
+        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # todo: remove
     end
+=end
 
+=begin
     # get_token
     #
     # @param [Api::GrantType] type
@@ -249,8 +268,9 @@ class ApiService
         __debug { "--- #{__method__} | ApiOauthTokenError | data = #{data.inspect}" }
         ApiOauthTokenError.new(data, error: @exception)
       end
-        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # TODO: remove
+        .tap { |result| __debug { "<<< #{__method__} result = #{result.inspect}" } } # todo: remove
     end
+=end
 
     # =========================================================================
     # :section:
@@ -258,6 +278,7 @@ class ApiService
 
     protected
 
+=begin
     # raise_exception
     #
     # @param [Symbol, String] method  For log messages.
@@ -271,6 +292,7 @@ class ApiService
       message = request_error_message(method, response_table, message_table)
       raise Api::AuthError, message
     end
+=end
 
   end
 

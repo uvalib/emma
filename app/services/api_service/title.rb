@@ -76,7 +76,8 @@ class ApiService
     # @return [ApiStatusModel]
     #
     def download_title(bookshareId:, format:, **opt)
-      api(:get, 'titles', bookshareId, format, **opt)
+      validate_parameters(__method__, opt)
+      api(:get, 'titles', bookshareId, format, opt)
       data = response&.body&.presence
       ApiStatusModel.new(data, error: @exception)
     end
@@ -112,6 +113,7 @@ class ApiService
     # This request can be made without an Authorization header.
     #
     def get_titles(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'titles', opt)
       data = response&.body&.presence
       ApiTitleMetadataSummaryList.new(data, error: @exception)
@@ -136,6 +138,7 @@ class ApiService
     # This request can be made without an Authorization header.
     #
     def get_categories(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'categories', opt)
       data = response&.body&.presence
       ApiCategoriesList.new(data, error: @exception)
@@ -160,6 +163,7 @@ class ApiService
     # @return [ApiTitleMetadataCompleteList]
     #
     def get_catalog(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'catalog', opt)
       data = response&.body&.presence
       ApiTitleMetadataCompleteList.new(data, error: @exception)

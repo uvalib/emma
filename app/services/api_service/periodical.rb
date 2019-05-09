@@ -55,6 +55,7 @@ class ApiService
     # This request can be made without an Authorization header.
     #
     def get_periodicals(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'periodicals', opt)
       data = response&.body&.presence
       ApiPeriodicalSeriesMetadataSummaryList.new(data, error: @exception)
@@ -91,7 +92,8 @@ class ApiService
     # @return [ApiPeriodicalSeriesMetadataSummary]
     #
     def update_periodical(seriesId:, **opt)
-      api(:put, 'periodicals', seriesId, **opt)
+      validate_parameters(__method__, opt)
+      api(:put, 'periodicals', seriesId, opt)
       data = response&.body&.presence
       ApiPeriodicalSeriesMetadataSummary.new(data, error: @exception)
     end
@@ -108,6 +110,7 @@ class ApiService
     # @return [ApiPeriodicalEditionList]
     #
     def get_periodical_editions(seriesId:, **opt)
+      validate_parameters(__method__, opt)
       api(:get, 'periodicals', seriesId, 'editions', opt)
       data = response&.body&.presence
       ApiPeriodicalEditionList.new(data, error: @exception)
@@ -125,7 +128,8 @@ class ApiService
     # @return [ApiPeriodicalEdition]
     #
     def update_periodical_edition(seriesId:, editionId:, **opt)
-      api(:put, 'periodicals', seriesId, 'editions', editionId, **opt)
+      validate_parameters(__method__, opt)
+      api(:put, 'periodicals', seriesId, 'editions', editionId, opt)
       data = response&.body&.presence
       ApiPeriodicalEdition.new(data, error: @exception)
     end
@@ -142,7 +146,8 @@ class ApiService
     # @return [ApiStatusModel]
     #
     def download_periodical_edition(seriesId:, editionId:, format:, **opt)
-      api(:get, 'periodicals', seriesId, 'editions', editionId, format, **opt)
+      validate_parameters(__method__, opt)
+      api(:get, 'periodicals', seriesId, 'editions', editionId, format, opt)
       data = response&.body&.presence
       ApiStatusModel.new(data, error: @exception)
     end

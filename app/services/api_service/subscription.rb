@@ -39,11 +39,12 @@ class ApiService
 
     # get_subscriptions
     #
-    # @param [String] username
+    # @param [User, String] user
     #
     # @return [ApiUserSubscriptionList]
     #
-    def get_subscriptions(username:)
+    def get_subscriptions(user:)
+      username ||= user.is_a?(User) ? user.email : user.to_s
       api(:get, 'accounts', username, 'subscriptions')
       data = response&.body&.presence
       ApiUserSubscriptionList.new(data, error: @exception)
@@ -51,8 +52,8 @@ class ApiService
 
     # create_subscription
     #
-    # @param [String]    username
-    # @param [Hash, nil] opt
+    # @param [User, String] user
+    # @param [Hash, nil]    opt
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -63,10 +64,9 @@ class ApiService
     #
     # @return [ApiUserSubscription]
     #
-    def create_subscription(username:, **opt)
-      %i[startDate userSubscriptionType].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+    def create_subscription(user:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:post, 'accounts', username, 'subscriptions', opt)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)
@@ -74,12 +74,13 @@ class ApiService
 
     # get_subscription
     #
-    # @param [String]    username
-    # @param [String]    subscriptionId
+    # @param [User, String] user
+    # @param [String]       subscriptionId
     #
     # @return [ApiUserSubscription]
     #
-    def get_subscription(username:, subscriptionId:)
+    def get_subscription(user:, subscriptionId:)
+      username = get_username(user)
       api(:post, 'accounts', username, 'subscriptions', subscriptionId)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)
@@ -87,9 +88,9 @@ class ApiService
 
     # update_subscription
     #
-    # @param [String]    username
-    # @param [String]    subscriptionId
-    # @param [Hash, nil] opt
+    # @param [User, String] user
+    # @param [String]       subscriptionId
+    # @param [Hash, nil]    opt
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -100,10 +101,9 @@ class ApiService
     #
     # @return [ApiUserSubscription]
     #
-    def update_subscription(username:, subscriptionId:, **opt)
-      %i[startDate userSubscriptionType].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+    def update_subscription(user:, subscriptionId:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:put, 'accounts', username, 'subscriptions', subscriptionId, opt)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)

@@ -7,6 +7,34 @@ en:
     application:
       name:             'EMMA'
 
+    user:
+
+      sessions:
+        new:
+          action:       'Sign in'
+          title:        'Sign in with your Bookshare account'
+          submit:       'Sign in'
+
+      passwords:
+        new:
+          action:       'Forgot your password?'
+
+      registrations:
+        new:
+          action:       'Sign up'
+
+      confirmations:
+        new:
+          action:       "Didn't receive confirmation instructions?"
+
+      unlocks:
+        new:
+          action:       "Didn't receive unlock instructions?"
+
+      omniauth_callbacks:
+        new:
+          action:       'Sign in with %{provider}'
+
     home:
       title:            'EMMA Test Application'
 

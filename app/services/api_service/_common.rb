@@ -12,32 +12,6 @@ class ApiService
 
   module Common
 
-    # OAuth2 authorization type.
-    #
-    # @type [String]
-    #
-    AUTH_TYPE = ENV['BOOKSHARE_AUTH_TYPE'] || 'token'
-    #AUTH_TYPE = 'code'
-
-    # OAuth2 grant type.
-    #
-    # @type [String]
-    #
-    GRANT_TYPE = ENV['BOOKSHARE_GRANT_TYPE'] || 'authorization_code'
-    #GRANT_TYPE = 'password'
-
-    # NOTE: only for GRANT_TYPE == 'password'
-    #
-    # @type [String]
-    #
-    USERNAME = ENV['TEST_USERNAME']
-
-    # NOTE: only for GRANT_TYPE == 'password'
-    #
-    # @type [String]
-    #
-    PASSWORD = ENV['TEST_PASSWORD'] || USERNAME
-
     # Control whether information requests are ever cached.
     #
     # @type [Boolean]
@@ -65,6 +39,16 @@ class ApiService
       default: nil
     }.freeze
 
+    # @type [Hash{Symbol=>Array<Symbol>}]
+    REQUIRED_PARAMETERS = {
+      create_account:        %i[firstName lastName emailAddress address1 postalCode],
+      create_subscription:   %i[startDate userSubscriptionType],
+      create_user_agreement: %i[agreementType dateSigned printName],
+      create_user_pod:       %i[disabilityType proofSource],
+      update_subscription:   %i[startDate userSubscriptionType],
+      update_user_pod:       %i[proofSource],
+    }.deep_freeze
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -84,7 +68,7 @@ class ApiService
     # @return [Faraday::Response]
     #
     def api(verb, *args)
-      @exception = @response = nil
+      result = @exception = @response = nil
       update = %i[put post patch].include?(verb)
       params = { api_key: API_KEY }
       params.merge!(args.pop) if args.last.is_a?(Hash)
@@ -96,59 +80,26 @@ class ApiService
       headers['Content-Type'] = 'application/json' if update
       __debug { ">>> #{__method__} | #{action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" }
       @response = connection.send(verb, action, params, headers)
+      if @response.body[0,64].downcase.include?('page not found')
+        # NOTE: bad request but @response.status is 200
+      else
+        result = @response
+      end
 
     rescue SocketError, EOFError => error
       @exception = error
+      result = nil
       raise error # Handled by ApplicationController
 
     rescue => error
       __debug { "!!! #{__method__} | #{action.inspect} | ERROR: #{error.message}" }
       Log.error { "API #{__method__}: #{error.message}" }
       @exception = error
-      return nil # To be handled in the calling method.
+      result = nil # To be handled in the calling method.
 
     ensure # TODO: remove
-      __debug { "<<< #{__method__} | #{action.inspect} | data = #{@response&.body.inspect.truncate(256)}" }
-
-    end
-
-    # Send/receive OAuth messages.
-    #
-    # @param [Array<String>] args       Path components to the Bookshare API.
-    #
-    # args[0]   [String]  Path component.
-    # ...
-    # args[-2]  [String]  Path component.
-    # args[-1]  [Hash]    Post body data.
-    #
-    # @return [Faraday::Response]
-    #
-    def oauth(*args)
-      #@exception = nil # TODO: restore
-      @exception = oauth_response = nil # TODO: remove
-      params = {}
-      params.merge!(args.pop) if args.last.is_a?(Hash)
-      args.unshift('oauth') unless args.first == 'oauth'
-      action = args.join('/').strip
-      action = "/#{action}" unless action.start_with?('/')
-      type   = params[:grant_type] || GRANT_TYPE
-      __debug { ">>> #{__method__} | #{action.inspect} | params = #{params.inspect}" }
-      #make_connection(type).post(action,  params) # TODO: restore
-      oauth_response = make_connection(type).post(action,  params) # TODO: remove
-
-    rescue SocketError, EOFError => error
-      __debug { "!!! #{__method__} | #{action.inspect} | rescue1: #{error.message}" }
-      @exception = error
-      raise error # Handled by ApplicationController
-
-    rescue => error
-      __debug { "!!! #{__method__} | #{action.inspect} | rescue2: #{error.message}" }
-      Log.error { "API #{__method__}: #{error.message}" }
-      @exception = error
-      return nil # To be handled in the calling method.
-
-    ensure # TODO: remove
-      __debug { "<<< #{__method__} | #{action.inspect} | response = #{oauth_response.inspect}" }
+      __debug { "<<< #{__method__} | #{action.inspect} | status = #{@response&.status} | data = #{@response&.body.inspect.truncate(256)}" }
+      return result
 
     end
 
@@ -170,18 +121,17 @@ class ApiService
 
     # Get a connection.
     #
-    # @param [Api::GrantType, nil] oauth
-    #
     # @return [Faraday::Connection]
     #
-    def make_connection(oauth = nil)
-      conn_opts = { request: options.slice(:timeout, :open_timeout) }
-      if oauth
-        conn_opts[:url] = auth_url
-      else
-        conn_opts[:url] = base_url
-        conn_opts[:request][:params_encoder] = Faraday::FlatParamsEncoder
-      end
+    # TODO: @access_token needs to be supplied
+    # In fact, this connection may need to go through OAuth2::Client#connection
+    #
+    def make_connection
+      conn_opts = {
+        url:     base_url,
+        request: options.slice(:timeout, :open_timeout),
+      }
+      conn_opts[:request][:params_encoder] ||= Faraday::FlatParamsEncoder
 
       retry_opt = {
         max:                 options[:retry_after_limit],
@@ -190,19 +140,11 @@ class ApiService
         backoff_factor:      2,
       }
 
-      logger_opt = {}
-      logger_opt[:bodies] = true if oauth
-
-      passwd = (oauth == 'password') || (GRANT_TYPE == 'password')
-      token  = (@access_token.presence unless passwd)
-
       Faraday.new(conn_opts) do |conn|
-        conn.use           :api_caching_middleware  if CACHING && !oauth
-        conn.basic_auth    API_KEY, ''              if passwd
-        conn.authorization :Bearer, token           if token
-        conn.request       :url_encoded             if oauth
-        conn.request       :retry, retry_opt
-        conn.response      :logger, Rails.logger, logger_opt
+        conn.use           :api_caching_middleware if CACHING
+        conn.authorization :Bearer, @access_token  if @access_token.present?
+        conn.request       :retry,  retry_opt
+        conn.response      :logger, Log.logger
         conn.response      :raise_error
         conn.adapter       options[:adapter] || Faraday.default_adapter
       end
@@ -213,6 +155,33 @@ class ApiService
     # =========================================================================
 
     protected
+
+    # Extract the user name to be used for API parameters.
+    #
+    # @param [User, String] user
+    #
+    # @return [String]
+    #
+    def get_username(user)
+      user.is_a?(User) ? user.email : user.to_s
+    end
+
+    # Validate presence of required API parameters.
+    #
+    # @param [Symbol]             method
+    # @param [Hash]               parameters
+    # @param [Array<Symbol>, nil] required
+    #
+    # @raise RuntimeError
+    #
+    def validate_parameters(method, parameters, required = nil)
+      required ||= REQUIRED_PARAMETERS[method]
+      keys = Array.wrap(required).reject { |key| parameters[key] }
+      return unless keys.present?
+      params = 'parameter'.pluralize(keys.size)
+      keys   = keys.join(', ')
+      raise RuntimeError, "#{method} missing #{params} #{keys}"
+    end
 
     # validate_response
     #

@@ -3,7 +3,7 @@
   # API test page.
 
   title   ||= t('emma.api.title')
-  user    ||= ApiService::USERNAME
+  user    ||= current_user
   book    ||= '1933741'
   series  ||= '46424'
   edition ||= '2531073'
@@ -20,11 +20,11 @@
     get_my_assigned_titles:       [limit: limit],
     get_my_download_history:      [limit: limit],
     get_my_reading_lists:         [],
-    get_account:                  [username: user],
-    get_assigned_titles:          [username: user, limit: limit],
-    get_subscriptions:            [username: user],
-    get_user_agreements:          [username: user],
-    get_user_pod:                 [username: user],
+    get_account:                  [user: user],
+    get_assigned_titles:          [user: user, limit: limit],
+    get_subscriptions:            [user: user],
+    get_user_agreements:          [user: user],
+    get_user_pod:                 [user: user],
     get_organization_members:     [limit: limit],
     get_title_count:              nil,
     get_titles:                   [limit: limit],

@@ -9,9 +9,9 @@ __loading_begin(__FILE__)
 
 require 'omniauth/strategy'
 
-module OmniAuth::StrategyExt
+module OmniAuth
 
-  #module StrategyExt
+  module StrategyExt
 
 =begin
     attr_reader :app, :env, :options, :response
@@ -419,6 +419,7 @@ module OmniAuth::StrategyExt
     def name
       options[:name]
     end
+=end
 
     def redirect(uri)
       r = Rack::Response.new
@@ -432,7 +433,6 @@ module OmniAuth::StrategyExt
 
       r.finish
     end
-=end
 
 =begin
 
@@ -479,7 +479,7 @@ module OmniAuth::StrategyExt
     end
 =end
 
-  #end
+  end
 
 end
 

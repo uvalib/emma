@@ -18,7 +18,9 @@ Rails.application.routes.draw do
   # :section: API test routes
   # ===========================================================================
 
-  get '/api', to: 'api#index'
+  get   '/api',              to: 'api#index'
+  get   '/api/bypass',       to: 'api#bypass' # TODO: testing - remove
+  match '/api/v2/*api_path', to: 'api#v2', via: %i[get put post]
 
   # ===========================================================================
   # :section: Metrics

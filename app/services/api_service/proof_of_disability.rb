@@ -39,11 +39,12 @@ class ApiService
 
     # get_user_pod
     #
-    # @param [String]    username
+    # @param [User, String] user
     #
     # @return [ApiUserPodList]
     #
-    def get_user_pod(username:)
+    def get_user_pod(user:)
+      username = get_username(user)
       api(:post, 'accounts', username, 'pod')
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -51,18 +52,17 @@ class ApiService
 
     # create_user_pod
     #
-    # @param [String]    username
-    # @param [Hash, nil] opt
+    # @param [User, String] user
+    # @param [Hash, nil]    opt
     #
     # @option opt [DisabilityType]          :disabilityType   *REQUIRED*
     # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
     #
     # @return [ApiUserPodList]
     #
-    def create_user_pod(username:, **opt)
-      %i[disabilityType proofSource].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+    def create_user_pod(user:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:post, 'accounts', username, 'pod', opt)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -70,7 +70,7 @@ class ApiService
 
     # update_user_pod
     #
-    # @param [String]         username
+    # @param [User, String]   user
     # @param [DisabilityType] disabilityType
     # @param [Hash, nil]      opt
     #
@@ -78,10 +78,9 @@ class ApiService
     #
     # @return [ApiUserPodList]
     #
-    def update_user_pod(username:, disabilityType:, **opt)
-      %i[proofSource].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+    def update_user_pod(user:, disabilityType:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:put, 'accounts', username, 'pod', disabilityType, opt)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -89,12 +88,13 @@ class ApiService
 
     # remove_user_pod
     #
-    # @param [String]         username
+    # @param [User, String]   user
     # @param [DisabilityType] disabilityType
     #
     # @return [ApiUserPodList]
     #
-    def remove_user_pod(username:, disabilityType:)
+    def remove_user_pod(user:, disabilityType:)
+      username = get_username(user)
       api(:delete, 'accounts', username, 'pod', disabilityType)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)

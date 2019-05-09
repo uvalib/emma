@@ -7,8 +7,9 @@
 
 __loading_begin(__FILE__)
 
+require 'ext/oauth2/ext'
+require 'ext/omniauth/ext'
 require 'omniauth-oauth2'
-require_files(__FILE__, '../omniauth/ext.rb')
 require_subdir(__FILE__)
 
 __loading_end(__FILE__)

@@ -7,19 +7,17 @@
 
 __loading_begin(__FILE__)
 
+require 'ext/oauth2/ext'
+require 'ext/omniauth/ext'
 require 'omniauth/strategies/oauth2'
 
-module OmniAuth::Strategies::OAuth2Ext
+module OmniAuth
 
-  #module Strategies
+  module Strategies
 
-    #module OAuth2Ext
+    module OAuth2Ext
 
-    include OmniAuth::StrategyExt
-
-=begin
-      include OmniAuth::Strategy
-=end
+      include OmniAuth::StrategyExt
 
 =begin
       def self.inherited(subclass)
@@ -45,11 +43,9 @@ module OmniAuth::Strategies::OAuth2Ext
       attr_accessor :access_token
 =end
 
-=begin
       def client
         ::OAuth2::Client.new(options.client_id, options.client_secret, deep_symbolize(options.client_options))
       end
-=end
 
 =begin
       credentials do
@@ -62,10 +58,12 @@ module OmniAuth::Strategies::OAuth2Ext
 =end
 
       def request_phase
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | client    = #{client.inspect}"
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | auth_code = #{client.auth_code.inspect}"
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | dest. url = #{client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params)).inspect}"
-        super
+        _client    = client
+        _auth_code = _client.auth_code
+        _auth_url  = _auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
+        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | client        = #{_client.inspect}"
+        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | authorize_url = #{_auth_url.inspect}"
+        redirect _auth_url
 =begin
         redirect client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
 =end
@@ -82,9 +80,12 @@ module OmniAuth::Strategies::OAuth2Ext
         session["omniauth.state"] = params[:state]
         params
 =end
+=begin
         super.tap { |result|
           $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} => #{result.inspect}"
         }
+=end
+        super
       end
 
       def token_params
@@ -171,9 +172,9 @@ module OmniAuth::Strategies::OAuth2Ext
       end
 =end
 
-    #end
+    end
 
-  #end
+  end
 
 end
 

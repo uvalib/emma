@@ -251,7 +251,7 @@ module HealthConcern
   # @return [Boolean]
   #
   def bookshare_status(*)
-    ApiService.instance(false).get_title_count.to_i > 0
+    ApiService.instance.get_title_count.to_i > 0
   end
 
   # Health status of the ingest service.

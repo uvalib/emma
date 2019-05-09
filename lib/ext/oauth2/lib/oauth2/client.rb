@@ -9,9 +9,10 @@ __loading_begin(__FILE__)
 
 require 'oauth2/client'
 
-module OAuth2::ClientExt
+module OAuth2
 
   #class Client
+  module ClientExt
 
 =begin
     attr_reader :id, :secret, :site
@@ -180,14 +181,22 @@ module OAuth2::ClientExt
 =end
     end
 
-=begin
     # The Authorization Code strategy
     #
     # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.1
     def auth_code
+=begin
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self)
-    end
 =end
+=begin
+      super.tap { |result|
+        $stderr.puts "OAUTH2 #{__method__} => #{result.inspect}"
+      }
+=end
+      @auth_code ||= OAuth2::Strategy::AuthCode.new(self).tap { |result|
+        $stderr.puts "OAUTH2 #{__method__} => #{result.inspect}"
+      }
+    end
 
 =begin
     # The Implicit strategy
@@ -248,7 +257,7 @@ module OAuth2::ClientExt
     end
 =end
 
-  #end
+  end
 
 end
 
@@ -259,4 +268,3 @@ end
 override OAuth2::Client => OAuth2::ClientExt
 
 __loading_end(__FILE__)
-ActionDispatch::Request::Session

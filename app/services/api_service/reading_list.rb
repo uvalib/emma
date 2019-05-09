@@ -44,6 +44,7 @@ class ApiService
     # @return [ApiReadingListList]
     #
     def get_my_reading_lists(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'mylists', opt)
       data = response&.body&.presence
       ApiReadingListList.new(data, error: @exception)
@@ -57,6 +58,7 @@ class ApiService
     # @return [ApiReadingList]
     #
     def create_reading_list(name:, **opt)
+      validate_parameters(__method__, opt)
       opt = opt.reverse_merge(name: name)
       api(:post, 'mylists', opt)
       data = response&.body&.presence
@@ -71,6 +73,7 @@ class ApiService
     # @return [ApiReadingListUserView]
     #
     def subscribe_reading_list(readingListId:, **opt)
+      validate_parameters(__method__, opt)
       opt = opt.reverse_merge(enabled: true)
       api(:put, 'mylists', readingListId, 'subscription', opt)
       data = response&.body&.presence
@@ -85,6 +88,7 @@ class ApiService
     # @return [ApiReadingListUserView]
     #
     def unsubscribe_reading_list(readingListId:, **opt)
+      validate_parameters(__method__, opt)
       opt = opt.reverse_merge(enabled: false)
       api(:put, 'mylists', readingListId, 'subscription', opt)
       data = response&.body&.presence
@@ -99,6 +103,7 @@ class ApiService
     # @return [ApiReadingList]
     #
     def update_reading_list(readingListId:, **opt)
+      validate_parameters(__method__, opt)
       api(:put, 'lists', readingListId, opt)
       data = response&.body&.presence
       ApiReadingList.new(data, error: @exception)
@@ -112,6 +117,7 @@ class ApiService
     # @return [ApiReadingListTitlesList]
     #
     def get_reading_list_titles(readingListId:, **opt)
+      validate_parameters(__method__, opt)
       api(:get, 'mylists', readingListId, 'titles', opt)
       data = response&.body&.presence
       ApiReadingListTitlesList.new(data, error: @exception)
@@ -126,6 +132,7 @@ class ApiService
     # @return [ApiReadingListTitlesList]
     #
     def create_reading_list_title(readingListId:, bookshareId:, **opt)
+      validate_parameters(__method__, opt)
       opt = opt.reverse_merge(bookshareId: bookshareId)
       api(:post, 'lists', readingListId, 'titles', opt)
       data = response&.body&.presence
@@ -141,6 +148,7 @@ class ApiService
     # @return [ApiReadingListTitlesList]
     #
     def remove_reading_list_title(readingListId:, bookshareId:, **opt)
+      validate_parameters(__method__, opt)
       opt = opt.reverse_merge(bookshareId: bookshareId)
       api(:delete, 'lists', readingListId, 'titles', opt)
       data = response&.body&.presence

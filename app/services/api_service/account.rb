@@ -68,6 +68,7 @@ class ApiService
     # @return [ApiTitleDownloadList]
     #
     def get_my_download_history(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'myaccount', 'history', opt)
       data = response&.body&.presence
       ApiTitleDownloadList.new(data, error: @exception)
@@ -99,6 +100,7 @@ class ApiService
     # @return [ApiMyAccountPreferences]
     #
     def update_my_preferences(**opt)
+      validate_parameters(__method__, opt)
       api(:put, 'myaccount', 'preferences', opt)
       data = response&.body&.presence
       ApiMyAccountPreferences.new(data, error: @exception)
@@ -111,9 +113,7 @@ class ApiService
     # @return [ApiUserAccount]
     #
     def create_account(**opt)
-      %i[firstName lastName emailAddress address1 postalCode].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+      validate_parameters(__method__, opt)
       api(:post, 'accounts', opt)
       data = response&.body&.presence
       ApiUserAccount.new(data, error: @exception)
@@ -121,11 +121,12 @@ class ApiService
 
     # get_account
     #
-    # @param [String] username
+    # @param [User, String] user
     #
     # @return [ApiUserAccount]
     #
-    def get_account(username:)
+    def get_account(user:)
+      username = get_username(user)
       api(:get, 'accounts', username)
       data = response&.body&.presence
       ApiUserAccount.new(data, error: @exception)
@@ -133,12 +134,13 @@ class ApiService
 
     # update_account_password
     #
-    # @param [String] username
-    # @param [String] password
+    # @param [User, String] user
+    # @param [String]       password
     #
     # @return [ApiStatusModel]
     #
-    def update_account_password(username:, password:)
+    def update_account_password(user:, password:)
+      username = get_username(user)
       api(:put, 'accounts', username, 'password', password: password)
       data = response&.body&.presence
       ApiStatusModel.new(data, error: @exception)
@@ -162,6 +164,7 @@ class ApiService
     # @return [ApiTitleMetadataSummaryList]
     #
     def get_my_assigned_titles(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'myAssignedTitles', opt)
       data = response&.body&.presence
       ApiTitleMetadataSummaryList.new(data, error: @exception)
@@ -169,8 +172,8 @@ class ApiService
 
     # get_assigned_titles
     #
-    # @param [String]    username
-    # @param [Hash, nil] opt
+    # @param [User, String] user
+    # @param [Hash, nil]    opt
     #
     # @option opt [String]    :start
     # @option opt [Integer]   :limit        Default: 10
@@ -179,7 +182,9 @@ class ApiService
     #
     # @return [ApiAssignedTitleMetadataSummaryList]
     #
-    def get_assigned_titles(username:, **opt)
+    def get_assigned_titles(user:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:get, 'assignedTitles', username, opt)
       data = response&.body&.presence
       ApiAssignedTitleMetadataSummaryList.new(data, error: @exception)
@@ -203,6 +208,7 @@ class ApiService
     # @return [ApiUserAccountList]
     #
     def get_organization_members(**opt)
+      validate_parameters(__method__, opt)
       api(:get, 'myOrganization', 'members', opt)
       data = response&.body&.presence
       ApiUserAccountList.new(data, error: @exception)

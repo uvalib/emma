@@ -13,24 +13,43 @@ require_subdir(__FILE__)
 
 # Send/receive messages through the Bookshare API.
 #
+# == Authentication and authorization
+# Bookshare uses OAuth2, which is handled in this application by Devise and
+# OmniAuth.
+#
+# @see config/initializers/devise.rb
+#
+# TODO: @access_token needs to be supplied
+# In fact, the connection implemented in ApiService::Common needs to be
+# replaced so that requests go through OAuth2::Client#connection.
+#
+# The problem here is that *that* connection doesn't make use of middleware
+# for caching.
+#
 class ApiService
 
   include Api
   include Api::Common
   include Api::Schema
 
-  API_VERSION = 'v2'
+  API_VERSION      = 'v2'
+  DEFAULT_BASE_URL = 'https://api.bookshare.org'
+  DEFAULT_AUTH_URL = 'https://auth.bookshare.org'
+  DEFAULT_API_KEY  = nil # NOTE: Must be supplied at run time.
+  DEFAULT_USERNAME = 'rwl@virginia.edu' # For examples # TODO: ???
 
-  BASE_URL = ENV['BOOKSHARE_BASE_URL']
-  AUTH_URL = ENV['BOOKSHARE_AUTH_URL']
-  API_KEY  = ENV['BOOKSHARE_API_KEY']
-  CB_URL   = ENV['BOOKSHARE_CB_URL']
+  BASE_URL = ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL
+  AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || DEFAULT_AUTH_URL
+  API_KEY  = ENV['BOOKSHARE_API_KEY']  || DEFAULT_API_KEY
 
   if running_rails_application?
     Log.error('Missing BOOKSHARE_BASE_URL') unless BASE_URL
     Log.error('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
     Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
   end
+
+  BASE_HOST = URI(BASE_URL).host.freeze
+  AUTH_HOST = URI(AUTH_URL).host.freeze
 
   # Maximum accepted value for a :limit parameter.
   #
@@ -50,15 +69,6 @@ class ApiService
   # @return [String]
   attr_reader :base_url
 
-  # @return [String]
-  attr_reader :auth_url
-
-  # @return [String]
-  attr_accessor :callback_url
-
-  # @return [String]
-  attr_reader :user
-
   # @return [Hash]
   attr_reader :options
 
@@ -75,21 +85,9 @@ class ApiService
   # @option opt [String] :base_url      Base URL to the external service
   #                                       (default: #BASE_URL).
   #
-  # @option opt [String] :auth_url      Base URL for OAuth requests
-  #                                       (default: #AUTH_URL).
-  #
-  # @option opt [String] :callback_url  Base URL for OAuth callbacks
-  #                                       (default: #CB_URL).
-  #
-  # @option opt [String] :user
-  #
   def initialize(**opt)
-    opt = opt.dup
-    @base_url     = opt.delete(:base_url)     || BASE_URL
-    @auth_url     = opt.delete(:auth_url)     || AUTH_URL
-    @callback_url = opt.delete(:callback_url) || CB_URL
-    @user         = opt.delete(:user)         || API_KEY # TODO: testing
-    @options      = opt
+    @options  = opt.dup
+    @base_url = @options.delete(:base_url) || BASE_URL
   end
 
   # ===========================================================================
@@ -121,6 +119,39 @@ class ApiService
     SERVICE_METHODS
   end
 
+  # GET # TODO: experimental
+  #
+  # @param [String]    path
+  # @param [Hash, nil] opt
+  #
+  # @return [String, nil]
+  #
+  def api_get(path, **opt)
+    api(:get, path, opt)&.body&.presence
+  end
+
+  # PUT # TODO: experimental
+  #
+  # @param [String]    path
+  # @param [Hash, nil] opt
+  #
+  # @return [String, nil]
+  #
+  def api_put(path, **opt)
+    api(:put, path, opt)&.body&.presence
+  end
+
+  # POST # TODO: experimental
+  #
+  # @param [String]    path
+  # @param [Hash, nil] opt
+  #
+  # @return [String, nil]
+  #
+  def api_post(path, **opt)
+    api(:post, path, opt)&.body&.presence
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -129,8 +160,6 @@ class ApiService
 
   # The single instance of this class.
   #
-  # @param [Hash, String, Boolean, nil] params (Re-)set authorization token.
-  #
   # @return [ApiService]
   #
   # == Implementation Notes
@@ -138,26 +167,8 @@ class ApiService
   # per-request and not per-thread (potentially spanning multiple requests by
   # different users).
   #
-  def self.instance(params = nil)
-    (@@service_instance ||= new).tap do |service|
-      if params.is_a?(FalseClass)
-        # Do not request authorization yet.
-
-      elsif params.is_a?(Hash) && params[:code].present?
-        # Authorization code grant flow.
-        service.set_authorization_code(params)
-
-      elsif params.present?
-        # Implicit grant flow.
-        service.set_token(params)
-
-=begin
-      elsif !service.authorized?
-        # Request authorization.
-        service.generate_token
-=end
-      end
-    end
+  def self.instance
+    @@service_instance ||= new
   end
 
 end

@@ -39,11 +39,12 @@ class ApiService
 
     # get_user_agreements
     #
-    # @param [String] username
+    # @param [User, String] user
     #
     # @return [ApiUserSignedAgreementList]
     #
-    def get_user_agreements(username:)
+    def get_user_agreements(user:)
+      username = get_username(user)
       api(:post, 'accounts', username, 'agreements')
       data = response&.body&.presence
       ApiUserSignedAgreementList.new(data, error: @exception)
@@ -51,8 +52,8 @@ class ApiService
 
     # create_user_agreement
     #
-    # @param [String]    username
-    # @param [Hash, nil] opt
+    # @param [User, String] user
+    # @param [Hash, nil]    opt
     #
     # @option opt [AgreementType] :agreementType          *REQUIRED*
     # @option opt [String]        :dateSigned             *REQUIRED*
@@ -61,10 +62,9 @@ class ApiService
     #
     # @return [ApiUserSignedAgreement]
     #
-    def create_user_agreement(username:, **opt)
-      %i[agreementType dateSigned printName].each do |key|
-        raise RuntimeError, "#{__method__} missing #{key}" if opt[key].blank?
-      end
+    def create_user_agreement(user:, **opt)
+      validate_parameters(__method__, opt)
+      username = get_username(user)
       api(:post, 'accounts', username, 'agreements', opt)
       data = response&.body&.presence
       ApiUserSignedAgreement.new(data, error: @exception)
@@ -72,12 +72,13 @@ class ApiService
 
     # remove_user_agreement
     #
-    # @param [String] username
-    # @param [String] agreementId
+    # @param [User, String] user
+    # @param [String]       agreementId
     #
     # @return [ApiUserSignedAgreement]
     #
-    def remove_user_agreement(username:, agreementId:)
+    def remove_user_agreement(user:, agreementId:)
+      username = get_username(user)
       api(:post, 'accounts', username, 'agreements', agreementId, 'expired')
       data = response&.body&.presence
       ApiUserSignedAgreement.new(data, error: @exception)

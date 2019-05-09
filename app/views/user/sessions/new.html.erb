@@ -2,12 +2,17 @@
 <%-
   # Login page.
 
-  title ||= 'Sign in with your Bookshare account' # t('emma.sessions.title')
+  title ||= t('emma.user.sessions.new.title')
+
+  form_opt = {
+    as:  resource_name,
+    url: session_path(resource_name)
+  }
 
 -%>
 <h2><%= title -%></h2>
 
-<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| -%>
+<%= form_for(resource, form_opt) do |f| -%>
 
   <div class="field">
     <%= f.label :email %><br />
@@ -27,7 +32,7 @@
   <%- end -%>
 
   <div class="actions">
-    <%= f.submit 'Sign in' %>
+    <%= f.submit t('emma.user.sessions.new.submit') %>
   </div>
 
 <%- end -%>
