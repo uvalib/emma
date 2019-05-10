@@ -13,7 +13,9 @@ module OAuth2
 
   module ClientExt
 
-    include ParamsHelper
+    extend ParamsHelper
+
+    OAUTH_DEBUG = true?(ENV['OAUTH_DEBUG'])
 
 =begin
     attr_reader :id, :secret, :site
@@ -68,20 +70,25 @@ module OAuth2
     end
 =end
 
-=begin
-    # The Faraday connection object
+    # The Faraday connection object.
+    #
+    # @return [Faraday::Connection]
+    #
+    # == Implementation Notes
+    # This corrects the logic error of setting :logger repeatedly in #request
+    # by setting it once here.
+    #
     def connection
-      @connection ||= begin
-        conn = Faraday.new(site, options[:connection_opts])
-        if options[:connection_build]
-          conn.build do |b|
-            options[:connection_build].call(b)
+      @connection ||=
+        Faraday.new(site, options[:connection_opts]) do |bld|
+          bld.response :logger, ::Logger.new($stdout) if OAUTH_DEBUG
+          if options[:connection_build]
+            options[:connection_build].call(bld)
+          else
+            bld.adapter Faraday.default_adapter
           end
         end
-        conn
-      end
     end
-=end
 
 =begin
     # The authorize endpoint URL of the OAuth2 provider
@@ -123,21 +130,21 @@ module OAuth2
     # @see OAuth2::Client#request
     #
     # == Implementation Notes
-    # NOTE: There is currently a problem going directly to authorize_url.
-    # For some reason (probably related to headers), Location is returned
-    # as "https://auth.staging.bookshare.org/user_login", which fails.  The
-    # redirection response code rewrites the location to remove the ".staging"
-    # part of the URL since "https://auth.bookshare.org/user_login" appears to
-    # work correctly.
+    # 1 The original code had a problem in setting :logger here (repeatedly);
+    #   this has been moved to #connection so that it happens only once.
+    #
+    # 2 NOTE: There is currently a problem going directly to authorize_url.
+    #   For some reason (probably related to headers), Location is returned
+    #   as "https://auth.staging.bookshare.org/user_login", which fails.  The
+    #   redirection response code rewrites the location to remove the
+    #   ".staging" part of the URL since
+    #   "https://auth.bookshare.org/user_login" appears to work correctly.
     #
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
       opts ||= {}
       $stderr.puts "OAUTH2 #{__method__} | #{verb} #{url} | opts = #{opts.inspect}"
-      if true?(ENV['OAUTH_DEBUG'])
-        connection.response :logger, ::Logger.new($stdout)
-      end
 
       url = connection.build_url(url, opts[:params]).to_s
       parse = opts[:parse] || :automatic

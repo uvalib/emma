@@ -140,13 +140,13 @@ class ApiService
         backoff_factor:      2,
       }
 
-      Faraday.new(conn_opts) do |conn|
-        conn.use           :api_caching_middleware if CACHING
-        conn.authorization :Bearer, @access_token  if @access_token.present?
-        conn.request       :retry,  retry_opt
-        conn.response      :logger, Log.logger
-        conn.response      :raise_error
-        conn.adapter       options[:adapter] || Faraday.default_adapter
+      Faraday.new(conn_opts) do |bld|
+        bld.use           :api_caching_middleware if CACHING
+        bld.authorization :Bearer, @access_token  if @access_token.present?
+        bld.request       :retry,  retry_opt
+        bld.response      :logger, Log.logger
+        bld.response      :raise_error
+        bld.adapter       options[:adapter] || Faraday.default_adapter
       end
     end
 
