@@ -43,9 +43,11 @@ module OmniAuth
       attr_accessor :access_token
 =end
 
+=begin
       def client
         ::OAuth2::Client.new(options.client_id, options.client_secret, deep_symbolize(options.client_options))
       end
+=end
 
 =begin
       credentials do
@@ -57,6 +59,7 @@ module OmniAuth
       end
 =end
 
+=begin
       def request_phase
         _client    = client
         _auth_code = _client.auth_code
@@ -64,13 +67,12 @@ module OmniAuth
         $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | client        = #{_client.inspect}"
         $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | authorize_url = #{_auth_url.inspect}"
         redirect _auth_url
-=begin
-        redirect client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
-=end
+        #redirect client.auth_code.authorize_url({:redirect_uri => callback_url}.merge(authorize_params))
       end
+=end
 
-      def authorize_params
 =begin
+      def authorize_params
         options.authorize_params[:state] = SecureRandom.hex(24)
         params = options.authorize_params.merge(options_for("authorize"))
         if OmniAuth.config.test_mode
@@ -79,30 +81,17 @@ module OmniAuth
         end
         session["omniauth.state"] = params[:state]
         params
-=end
-=begin
-        super.tap { |result|
-          $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} => #{result.inspect}"
-        }
-=end
-        super
       end
+=end
 
+=begin
       def token_params
-=begin
         options.token_params.merge(options_for("token"))
-=end
-        super.tap { |result|
-          $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} => #{result.inspect}"
-        }
       end
+=end
 
-      def callback_phase
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | omniauth.origin = #{@env['omniauth.origin'].inspect}"
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | omniauth.params = #{@env['omniauth.params'].inspect}"
-        $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} | omniauth.auth   = #{@env['omniauth.auth'].inspect}"
-        super
 =begin
+      def callback_phase
         error = request.params["error_reason"] || request.params["error"]
         if error
           fail!(error, CallbackError.new(request.params["error"], request.params["error_description"] || request.params["error_reason"], request.params["error_uri"]))
@@ -119,20 +108,17 @@ module OmniAuth
         fail!(:timeout, e)
       rescue ::SocketError => e
         fail!(:failed_to_connect, e)
-=end
       end
+=end
 
     protected
 
-      def build_access_token
 =begin
+      def build_access_token
         verifier = request.params["code"]
         client.auth_code.get_token(verifier, {:redirect_uri => callback_url}.merge(token_params.to_hash(:symbolize_keys => true)), deep_symbolize(options.auth_token_params))
-=end
-        super.tap { |result|
-          $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} => #{result.inspect}"
-        }
       end
+=end
 
 =begin
       def deep_symbolize(options)
@@ -186,6 +172,8 @@ OmniAuth.config.add_camelization "oauth2", "OAuth2"
 # Override gem definitions
 # =============================================================================
 
+=begin
 override OmniAuth::Strategies::OAuth2 => OmniAuth::Strategies::OAuth2Ext
+=end
 
 __loading_end(__FILE__)

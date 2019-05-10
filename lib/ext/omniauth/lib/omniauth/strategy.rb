@@ -113,39 +113,48 @@ module OmniAuth
     end
 =end
 
+=begin
+    # Performs the steps necessary to run the request phase of a strategy.
+    #
+    # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+    #
+    # This method overrides:
+    # @see OmniAuth::Strategy#request_call
+    #
     def request_call
       setup_phase
       log :info, 'Request phase initiated.'
 
       # store query params from the request url, extracted in the callback_phase
-      session['omniauth.params'] = request.GET
+      session['omniauth.params'] = request.get? ? request.GET : request.POST
+      $stderr.puts "OMNIAUTH #{__method__} | method  = #{request.request_method}"
       $stderr.puts "OMNIAUTH #{__method__} | options = #{options.inspect}"
       $stderr.puts "OMNIAUTH #{__method__} | omniauth.params = #{session['omniauth.params'].inspect}"
       $stderr.puts "OMNIAUTH #{__method__} | session = #{session.to_hash.inspect}"
-      OmniAuth.config.before_request_phase.call(env) if OmniAuth.config.before_request_phase
+      OmniAuth.config.before_request_phase&.call(env)
 
-      if options.form.respond_to?(:call)
-        log :info, 'Rendering form from supplied Rack endpoint.'
-        options.form.call(env)
-      elsif options.form
-        log :info, 'Rendering form from underlying application.'
-        call_app!
-      elsif !options.origin_param
-        log :info, "OMNIAUTH #{__method__} !origin_param"
-        request_phase
-      else
-        if request.params[options.origin_param]
-          log :info, "OMNIAUTH #{__method__} | origin_param from request.params"
-          env['rack.session']['omniauth.origin'] = request.params[options.origin_param]
-        elsif env['HTTP_REFERER'] && !env['HTTP_REFERER'].match(/#{request_path}$/)
-          log :info, "OMNIAUTH #{__method__} | origin_param from HTTP_REFERER"
-          env['rack.session']['omniauth.origin'] = env['HTTP_REFERER']
+      if !options.form
+        if (op = options.origin_param) && (org = request.params[op])
+          log :info, "OMNIAUTH #{__method__} | origin from request.params"
+          env['rack.session']['omniauth.origin'] = org
+        elsif (ref = env['HTTP_REFERER']) && !ref.end_with?(request_path)
+          log :info, "OMNIAUTH #{__method__} | origin from HTTP_REFERER"
+          env['rack.session']['omniauth.origin'] = ref
         end
         $stderr.puts "OMNIAUTH #{__method__} | env['rack.session']['omniauth.origin'] = #{env['rack.session']['omniauth.origin'].inspect}"
-
         request_phase
+
+      elsif options.form.respond_to?(:call)
+        log :info, 'Rendering form from supplied Rack endpoint.'
+        options.form.call(env)
+
+      else # if options.form
+        log :info, 'Rendering form from underlying application.'
+        call_app!
+
       end
     end
+=end
 
 =begin
     # Performs the steps necessary to run the callback phase of a strategy.
@@ -308,13 +317,12 @@ module OmniAuth
     end
 =end
 
+=begin
     def callback_phase
       env['omniauth.auth'] = auth_hash
-      $stderr.puts "OMNIAUTH #{__method__} | omniauth.origin = #{@env['omniauth.origin'].inspect}"
-      $stderr.puts "OMNIAUTH #{__method__} | omniauth.params = #{@env['omniauth.params'].inspect}"
-      $stderr.puts "OMNIAUTH #{__method__} | omniauth.auth   = #{@env['omniauth.auth'].inspect}"
       call_app!
     end
+=end
 
 =begin
     def path_prefix
@@ -421,6 +429,7 @@ module OmniAuth
     end
 =end
 
+=begin
     def redirect(uri)
       r = Rack::Response.new
 
@@ -433,13 +442,15 @@ module OmniAuth
 
       r.finish
     end
+=end
 
 =begin
-
     def user_info
       {}
     end
+=end
 
+=begin
     def fail!(message_key, exception = nil)
       env['omniauth.error'] = exception
       env['omniauth.error.type'] = message_key.to_sym
@@ -453,23 +464,32 @@ module OmniAuth
 
       OmniAuth.config.on_failure.call(env)
     end
+=end
 
+=begin
     def dup
       super.tap do
         @options = @options.dup
       end
     end
+=end
 
+=begin
     class Options < OmniAuth::KeyStore; end
+=end
+
   protected
 
+=begin
     def merge_stack(stack)
       stack.inject({}) do |a, e|
         a.merge!(e)
         a
       end
     end
+=end
 
+=begin
     def ssl?
       request.env['HTTPS'] == 'on' ||
         request.env['HTTP_X_FORWARDED_SSL'] == 'on' ||
@@ -487,7 +507,9 @@ end
 # Override gem definitions
 # =============================================================================
 
+=begin
 override OmniAuth::Strategy => OmniAuth::StrategyExt
+=end
 
 
 __loading_end(__FILE__)

@@ -41,7 +41,7 @@
   }.deep_freeze
 
   parameter_list =
-    methods.map { |method, args|
+    methods.transform_values { |args|
       args = Array.wrap(args).presence
       args &&=
         args.map { |arg|
@@ -52,8 +52,8 @@
           end
         }.join(', ')
       args &&= "(#{args})"
-      [method, args]
-    }.to_h.deep_freeze
+      args.freeze
+    }
 
   service = ApiService.instance
   success = []
@@ -95,16 +95,16 @@
             .split(/\n/)
             .map { |line| content_tag(:div, line.html_safe, class: 'data') }
         end
-      [method, safe_join(value, "\n")]
-    }.to_h.deep_freeze
+      [method, safe_join(value, "\n").freeze]
+    }.to_h
 
   status =
     methods.keys.map { |method|
       classes = []
       classes << 'success' if success.include?(method)
       classes << 'error'   if error.include?(method)
-      [method, classes.join(' ').presence]
-    }.to_h.deep_freeze
+      [method, classes.join(' ').presence.freeze]
+    }.to_h
 
 -%>
 <h1 class="heading"><%= title -%></h1>

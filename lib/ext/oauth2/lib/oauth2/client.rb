@@ -11,8 +11,9 @@ require 'oauth2/client'
 
 module OAuth2
 
-  #class Client
   module ClientExt
+
+    include ParamsHelper
 
 =begin
     attr_reader :id, :secret, :site
@@ -103,52 +104,82 @@ module OAuth2
 
     # Makes a request relative to the specified site root.
     #
-    # @param [Symbol] verb one of :get, :post, :put, :delete
-    # @param [String] url URL path of request
-    # @param [Hash] opts the options to make the request with
-    # @option opts [Hash] :params additional query parameters for the URL of the request
-    # @option opts [Hash, String] :body the body of the request
-    # @option opts [Hash] :headers http request headers
-    # @option opts [Boolean] :raise_errors whether or not to raise an OAuth2::Error on 400+ status
+    # @param [Symbol] verb            One of :get, :post, :put, :delete.
+    # @param [String] url             URL path of request.
+    # @param [Hash]   opts            The options to make the request with.
+    #
+    # @option opts [Hash]         :params   additional query parameters for the URL of the request
+    # @option opts [Hash, String] :body     the body of the request
+    # @option opts [Hash]         :headers  http request headers
+    # @option opts [Boolean] :raise_errors  whether or not to raise an OAuth2::Error on 400+ status
     #   code response for this request.  Will default to client option
-    # @option opts [Symbol] :parse @see Response::initialize
-    # @yield [req] The Faraday request
-    def request(verb, url, opts = {})
+    # @option opts [Symbol]       :parse    @see Response#initialize
+    #
+    # @yieldparam [Faraday::Request] req    The Faraday request
+    #
+    # @return [OAuth2::Response]
+    #
+    # This method overrides:
+    # @see OAuth2::Client#request
+    #
+    # == Implementation Notes
+    # NOTE: There is currently a problem going directly to authorize_url.
+    # For some reason (probably related to headers), Location is returned
+    # as "https://auth.staging.bookshare.org/user_login", which fails.  The
+    # redirection response code rewrites the location to remove the ".staging"
+    # part of the URL since "https://auth.bookshare.org/user_login" appears to
+    # work correctly.
+    #
+    # @see OmniAuth::Strategies::Bookshare#request_phase
+    #
+    def request(verb, url, opts = nil)
+      opts ||= {}
       $stderr.puts "OAUTH2 #{__method__} | #{verb} #{url} | opts = #{opts.inspect}"
-=begin
-      super
-=end
-      connection.response :logger, ::Logger.new($stdout) if ENV['OAUTH_DEBUG'] == 'true'
+      if true?(ENV['OAUTH_DEBUG'])
+        connection.response :logger, ::Logger.new($stdout)
+      end
 
       url = connection.build_url(url, opts[:params]).to_s
-
-      response = connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
-        yield(req) if block_given?
-      end
-      response = Response.new(response, :parse => opts[:parse])
+      parse = opts[:parse] || :automatic
+      response =
+        connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
+          yield(req) if block_given?
+        end
+      response = Response.new(response, parse: parse)
 
       case response.status
+
         when 301, 302, 303, 307
+          # Redirect, or keep this response if beyond the limit of redirects.
           opts[:redirect_count] ||= 0
           opts[:redirect_count] += 1
-          return response if opts[:redirect_count] > options[:max_redirects]
-          if response.status == 303
-            verb = :get
-            opts.delete(:body)
+          if (max = options[:max_redirects]) && (opts[:redirect_count] <= max)
+            if response.status == 303
+              verb = :get
+              opts.delete(:body)
+            end
+            url = response.headers['Location'].to_s
+            # NOTE: temporarily(?) fixing Bookshare redirect problem...
+            url = url.sub(%r{(/auth\.)staging\.}, '\1')
+            response = request(verb, url, opts)
           end
-          request(verb, response.headers['location'], opts)
+
         when 200..299, 300..399
-          # on non-redirecting 3xx statuses, just return the response
-          response
+          # On non-redirecting 3xx statuses, just return the response.
+
         when 400..599
+          # Server error.
           error = Error.new(response)
           raise(error) if opts.fetch(:raise_errors, options[:raise_errors])
           response.error = error
-          response
+
         else
+          # Other error.
           error = Error.new(response)
           raise(error, "Unhandled status code value of #{response.status}")
+
       end
+      response
     end
 
     # Initializes an AccessToken by making a request to the token endpoint
@@ -187,11 +218,6 @@ module OAuth2
     def auth_code
 =begin
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self)
-=end
-=begin
-      super.tap { |result|
-        $stderr.puts "OAUTH2 #{__method__} => #{result.inspect}"
-      }
 =end
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self).tap { |result|
         $stderr.puts "OAUTH2 #{__method__} => #{result.inspect}"
