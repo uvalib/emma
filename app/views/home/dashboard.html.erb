@@ -9,7 +9,7 @@
 
   links = [
     link_to(t('emma.api.title', default: 'API'), api_path),
-    link_to('Sign out', destroy_user_session_path, 'data-turbolinks': false)
+    sign_out_link(provider: :bookshare)
   ]
 
 -%>

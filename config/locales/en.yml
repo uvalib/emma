@@ -6,34 +6,42 @@ en:
 
     application:
       name:             'EMMA'
+      tagline:          'Educational Materials Made Accessible'
 
     user:
 
       sessions:
         new:
-          action:       'Sign in'
+          label:        'Sign in'
           title:        'Sign in with your Bookshare account'
           submit:       'Sign in'
+        create:
+          success:      'Signed in as %{user}.'
+        destroy:
+          label:        'Sign out'
+          success:      'Signed out (%{user}).'
 
       passwords:
         new:
-          action:       'Forgot your password?'
+          label:        'Forgot your password?'
 
       registrations:
         new:
-          action:       'Sign up'
+          label:        'Sign up'
 
       confirmations:
         new:
-          action:       "Didn't receive confirmation instructions?"
+          label:        "Didn't receive confirmation instructions?"
 
       unlocks:
         new:
-          action:       "Didn't receive unlock instructions?"
+          label:        "Didn't receive unlock instructions?"
 
       omniauth_callbacks:
         new:
-          action:       'Sign in with %{provider}'
+          label:        'Sign in with %{provider}'
+        destroy:
+          label:        'Sign out of %{provider}'
 
     home:
       title:            'EMMA Test Application'
@@ -42,9 +50,11 @@ en:
         title:          'Welcome to EMMA'
 
       dashboard:
+        label:          'Dashboard'
         title:          'EMMA Dashboard'
 
     api:
+      label:            'API Methods'
       title:            'Bookshare API Methods'
 
     health:

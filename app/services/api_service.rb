@@ -38,7 +38,11 @@ class ApiService
   DEFAULT_API_KEY  = nil # NOTE: Must be supplied at run time.
   DEFAULT_USERNAME = 'rwl@virginia.edu' # For examples # TODO: ???
 
-  BASE_URL = ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL
+  BASE_URL =
+    (ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL)
+      .sub(%r{^(https?://)?}) { $1 || 'https://' }
+      .sub(%r{(/v\d+/?)?$})   {$1 || "/#{API_VERSION}" }
+      .freeze
   AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || DEFAULT_AUTH_URL
   API_KEY  = ENV['BOOKSHARE_API_KEY']  || DEFAULT_API_KEY
 
@@ -82,12 +86,16 @@ class ApiService
   #
   # @param [Hash, nil] opt
   #
+  # @option opt [User]   :user          User instance which includes a
+  #                                       Bookshare user identity and a token.
+  #
   # @option opt [String] :base_url      Base URL to the external service
   #                                       (default: #BASE_URL).
   #
   def initialize(**opt)
     @options  = opt.dup
     @base_url = @options.delete(:base_url) || BASE_URL
+    set_user(@options.delete(:user))
   end
 
   # ===========================================================================
@@ -160,6 +168,8 @@ class ApiService
 
   # The single instance of this class.
   #
+  # @param [Hash, nil] opt            @see #initialize
+  #
   # @return [ApiService]
   #
   # == Implementation Notes
@@ -167,8 +177,16 @@ class ApiService
   # per-request and not per-thread (potentially spanning multiple requests by
   # different users).
   #
-  def self.instance
-    @@service_instance ||= new
+  def self.instance(**opt)
+    @@service_instance ||= new(opt)
+  end
+
+  # clear_instance
+  #
+  # @return [nil]
+  #
+  def self.clear_instance
+    @@service_instance = nil
   end
 
 end

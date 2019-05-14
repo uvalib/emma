@@ -121,11 +121,11 @@ class ApiService
 
     # get_account
     #
-    # @param [User, String] user
+    # @param [User, String, nil] user       Default: @user
     #
     # @return [ApiUserAccount]
     #
-    def get_account(user:)
+    def get_account(user: @user)
       username = get_username(user)
       api(:get, 'accounts', username)
       data = response&.body&.presence
@@ -134,12 +134,12 @@ class ApiService
 
     # update_account_password
     #
-    # @param [User, String] user
-    # @param [String]       password
+    # @param [User, String, nil] user       Default: @user
+    # @param [String]            password
     #
     # @return [ApiStatusModel]
     #
-    def update_account_password(user:, password:)
+    def update_account_password(user: @user, password:)
       username = get_username(user)
       api(:put, 'accounts', username, 'password', password: password)
       data = response&.body&.presence
@@ -172,8 +172,8 @@ class ApiService
 
     # get_assigned_titles
     #
-    # @param [User, String] user
-    # @param [Hash, nil]    opt
+    # @param [User, String, nil] user       Default: @user
+    # @param [Hash, nil]         opt
     #
     # @option opt [String]    :start
     # @option opt [Integer]   :limit        Default: 10
@@ -182,7 +182,7 @@ class ApiService
     #
     # @return [ApiAssignedTitleMetadataSummaryList]
     #
-    def get_assigned_titles(user:, **opt)
+    def get_assigned_titles(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:get, 'assignedTitles', username, opt)

@@ -39,11 +39,11 @@ class ApiService
 
     # get_user_agreements
     #
-    # @param [User, String] user
+    # @param [User, String, nil] user       Default: @user
     #
     # @return [ApiUserSignedAgreementList]
     #
-    def get_user_agreements(user:)
+    def get_user_agreements(user: @user)
       username = get_username(user)
       api(:post, 'accounts', username, 'agreements')
       data = response&.body&.presence
@@ -52,8 +52,8 @@ class ApiService
 
     # create_user_agreement
     #
-    # @param [User, String] user
-    # @param [Hash, nil]    opt
+    # @param [User, String, nil] user       Default: @user
+    # @param [Hash, nil]         opt
     #
     # @option opt [AgreementType] :agreementType          *REQUIRED*
     # @option opt [String]        :dateSigned             *REQUIRED*
@@ -62,7 +62,7 @@ class ApiService
     #
     # @return [ApiUserSignedAgreement]
     #
-    def create_user_agreement(user:, **opt)
+    def create_user_agreement(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:post, 'accounts', username, 'agreements', opt)
@@ -72,12 +72,12 @@ class ApiService
 
     # remove_user_agreement
     #
-    # @param [User, String] user
-    # @param [String]       agreementId
+    # @param [User, String, nil] user         Default: @user
+    # @param [String]            agreementId
     #
     # @return [ApiUserSignedAgreement]
     #
-    def remove_user_agreement(user:, agreementId:)
+    def remove_user_agreement(user: @user, agreementId:)
       username = get_username(user)
       api(:post, 'accounts', username, 'agreements', agreementId, 'expired')
       data = response&.body&.presence

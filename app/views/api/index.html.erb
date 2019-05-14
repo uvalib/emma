@@ -3,12 +3,12 @@
   # API test page.
 
   title   ||= t('emma.api.title')
-  user    ||= current_user
+  user    ||= current_user&.to_s
   book    ||= '1933741'
   series  ||= '46424'
   edition ||= '2531073'
-  format  ||= 'PDF'
-  limit   ||= ApiService::MAX_LIMIT
+  format  ||= 'DAISY'
+  limit   ||= 5
 
   @body_class = 'api-index'
   @page_title = title

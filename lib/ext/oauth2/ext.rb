@@ -11,5 +11,3 @@ require 'oauth2'
 require_subdir(__FILE__)
 
 __loading_end(__FILE__)
-
-# TODO: debugging -- remove lib/ext/oauth2/** when done

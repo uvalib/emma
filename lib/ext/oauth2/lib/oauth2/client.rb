@@ -11,6 +11,8 @@ require 'oauth2/client'
 
 module OAuth2
 
+  # Override definitions to be prepended to OAuth2::Client.
+  #
   module ClientExt
 
     extend ParamsHelper
@@ -81,7 +83,7 @@ module OAuth2
     def connection
       @connection ||=
         Faraday.new(site, options[:connection_opts]) do |bld|
-          bld.response :logger, ::Logger.new($stdout) if OAUTH_DEBUG
+          bld.response :logger, ::Logger.new($stderr) if OAUTH_DEBUG
           if options[:connection_build]
             options[:connection_build].call(bld)
           else
@@ -199,23 +201,27 @@ module OAuth2
       $stderr.puts "OAUTH2 #{__method__} | access_token_opts = #{access_token_opts.inspect} | access_token_class = #{access_token_class.inspect}"
       super
 =begin
-      params = Authenticator.new(id, secret, options[:auth_scheme]).apply(params)
-      opts = {:raise_errors => options[:raise_errors], :parse => params.delete(:parse)}
-      headers = params.delete(:headers) || {}
-      if options[:token_method] == :post
+      method = options[:token_method]
+      mode   = options[:auth_scheme]
+      params = OAuth2::Authenticator.new(id, secret, mode).apply(params)
+      opts = {
+        raise_errors: options[:raise_errors],
+        parse:        (params.delete(:parse) || :automatic),
+        headers:      (params.delete(:headers)&.dup || {})
+      }
+      if method == :post
         opts[:body] = params
-        opts[:headers] = {'Content-Type' => 'application/x-www-form-urlencoded'}
+        opts[:headers]['Content-Type'] = 'application/x-www-form-urlencoded'
       else
         opts[:params] = params
-        opts[:headers] = {}
       end
-      opts[:headers].merge!(headers)
-      response = request(options[:token_method], token_url, opts)
-      if options[:raise_errors] && !(response.parsed.is_a?(Hash) && response.parsed['access_token'])
+      response = request(method, token_url, opts)
+      content  = response&.parsed || {}
+      if options[:raise_errors] && !content['access_token']
         error = Error.new(response)
         raise(error)
       end
-      access_token_class.from_hash(self, response.parsed.merge(access_token_opts))
+      access_token_class.from_hash(self, content.merge(access_token_opts))
 =end
     end
 

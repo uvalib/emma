@@ -15,6 +15,12 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
+  prepend_before_action :require_no_authentication, only: %i[new create sign_in_as]
+  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
+  prepend_before_action :verify_signed_out_user, only: %i[destroy]
+  prepend_before_action(only: %i[create destroy sign_in_as]) {
+    request.env['devise.skip_timeout'] = true
+  }
   # before_action :configure_sign_in_params, only: [:create]
 
   # ===========================================================================
@@ -27,47 +33,72 @@ class User::SessionsController < Devise::SessionsController
   # Prompt the user for login credentials.
   #
   def new
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params = #{params.inspect}"
-    $stderr.puts "resource_class    = #{resource_class.inspect}"
-    $stderr.puts "sign_in_params    = #{sign_in_params.inspect}"
-    $stderr.puts "auth_options      = #{auth_options.inspect}"
-    $stderr.puts "serialize_options = #{serialize_options(resource).inspect}"
-    $stderr.puts "OmniAuth.config   = #{OmniAuth.config.inspect}"
     super
-    rs = resource rescue nil # TODO: debugging - delete
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
   end
 
   # == POST /users/sign_in
   # Begin login session.
   #
   def create
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params #{params.inspect}"
-    super
-    rs = resource rescue nil # TODO: debugging - delete
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
+    super do
+      set_flash_notice(__method__)
+    end
   end
 
   # == DELETE /users/sign_out
   # End login session.
   #
   def destroy
-    rs = resource rescue nil # TODO: debugging - delete
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | params #{params.inspect}"
-    $stderr.puts "User::SessionsController.#{__method__} | #{request.method} | resource = #{rs.inspect}"
-    super
+    auth = session.delete('omniauth.auth')
+    ApiService.clear_instance
+    super do
+      set_flash_notice(__method__, auth)
+    end
+  end
+
+  # == GET /users/sign_in_as?id=:id
+  # NOTE: Temporary endpoint for signing in as a specific user.
+  #
+  def sign_in_as
+    auth = session['omniauth.auth'] ||=
+      OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
+    self.resource = warden.set_user(User.from_omniauth(auth))
+    sign_in(resource_name, resource)
+    set_flash_notice(:create)
+    respond_with resource, location: after_sign_in_path_for(resource)
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Callbacks
   # ===========================================================================
 
   protected
 
   # If you have extra params to permit, append them to the sanitizer.
   #
+  # @return [void]
+  #
   def configure_sign_in_params
     devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Set `flash[:notice]` based on the current action and user name.
+  #
+  # @param [Symbol, String]      action
+  # @param [String, Object, nil] username
+  #
+  # @return [void]
+  #
+  def set_flash_notice(action, username = nil)
+    username = username['uid'] if username.is_a?(Hash)
+    username ||= current_user.to_s.presence || 'unknown user'
+    flash[:notice] = t("emma.user.sessions.#{action}.success", user: username)
   end
 
 end

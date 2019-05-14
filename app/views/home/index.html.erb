@@ -1,7 +1,9 @@
 <%# app/views/home/index.html.erb -%>
 <%-
   # Application main page.
-  title ||= t('emma.home.title')
 -%>
-<h1 class="heading"><%= title -%></h1>
-<%= render template: 'home/dashboard' -%>
+<%- if current_user -%>
+  <%= render template: 'home/dashboard' -%>
+<%- else -%>
+  <%= render template: 'home/welcome' -%>
+<%- end -%>

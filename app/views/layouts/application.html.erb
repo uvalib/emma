@@ -15,11 +15,6 @@
 
   meta_options = { 'data-turbolinks-track': '' }
 
-  flash_messages =
-    %i[alert notice].map { |type|
-      content_tag(:p, flash[type], class: type.to_s) if flash[type]
-    }.compact.join("\n").html_safe.presence
-
 -%>
 <!DOCTYPE html>
 <html>
@@ -32,7 +27,12 @@
     <%= javascript_include_tag 'application', meta_options %>
   </head>
   <body class="<%= @body_class -%>">
-    <div class="flash"><%= flash_messages -%></div>
-    <%= yield %>
+    <%= render 'layouts/header' %>
+    <%= render 'layouts/navbar' %>
+    <main class="layout-content">
+      <%= render 'layouts/messages' %>
+      <%= yield %>
+    </main>
+    <%= render 'layouts/footer' %>
   </body>
 </html>

@@ -39,11 +39,11 @@ class ApiService
 
     # get_user_pod
     #
-    # @param [User, String] user
+    # @param [User, String, nil] user       Default: @user
     #
     # @return [ApiUserPodList]
     #
-    def get_user_pod(user:)
+    def get_user_pod(user: @user)
       username = get_username(user)
       api(:post, 'accounts', username, 'pod')
       data = response&.body&.presence
@@ -52,15 +52,15 @@ class ApiService
 
     # create_user_pod
     #
-    # @param [User, String] user
-    # @param [Hash, nil]    opt
+    # @param [User, String, nil] user       Default: @user
+    # @param [Hash, nil]         opt
     #
     # @option opt [DisabilityType]          :disabilityType   *REQUIRED*
     # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
     #
     # @return [ApiUserPodList]
     #
-    def create_user_pod(user:, **opt)
+    def create_user_pod(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:post, 'accounts', username, 'pod', opt)
@@ -70,15 +70,15 @@ class ApiService
 
     # update_user_pod
     #
-    # @param [User, String]   user
-    # @param [DisabilityType] disabilityType
-    # @param [Hash, nil]      opt
+    # @param [User, String, nil] user             Default: @user
+    # @param [DisabilityType]    disabilityType
+    # @param [Hash, nil]         opt
     #
     # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
     #
     # @return [ApiUserPodList]
     #
-    def update_user_pod(user:, disabilityType:, **opt)
+    def update_user_pod(user: @user, disabilityType:, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:put, 'accounts', username, 'pod', disabilityType, opt)
@@ -88,12 +88,12 @@ class ApiService
 
     # remove_user_pod
     #
-    # @param [User, String]   user
-    # @param [DisabilityType] disabilityType
+    # @param [User, String, nil] user             Default: @user
+    # @param [DisabilityType]    disabilityType
     #
     # @return [ApiUserPodList]
     #
-    def remove_user_pod(user:, disabilityType:)
+    def remove_user_pod(user: @user, disabilityType:)
       username = get_username(user)
       api(:delete, 'accounts', username, 'pod', disabilityType)
       data = response&.body&.presence

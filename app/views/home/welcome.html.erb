@@ -5,8 +5,12 @@
   title ||= t('emma.home.welcome.title', default: :'emma.home.title')
 
   links = [
-    link_to('Sign in', new_user_session_path, 'data-turbolinks': false)
+    sign_in_link(provider: :bookshare)
   ]
+  links +=
+    OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.keys.map { |id|
+      link_to("Sign in as #{id}", sign_in_as_path(id: id))
+    }
 
 -%>
 <h1 class="heading"><%= title -%></h1>

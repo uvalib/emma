@@ -8,25 +8,27 @@ body.api-index {
 
     background-color: snow;
 
-    %heading {
-        margin: 0.5rem 1rem;
+    %section {
+        margin: 0.5rem 0;
     }
 
     %panel {
-        display:    block;
-        max-height: 50vh;
-        max-width:  95vw;
-        margin:     0 1rem 1.5rem;
-        padding:    0.5rem;
-        overflow:   auto;
-        border:     2px solid gray;
+        display:       block;
+        max-height:    50vh;
+        max-width:     95vw;
+        margin:        0 0 1.5rem;
+        padding:       0.5rem;
+        overflow:      auto;
+        border:        2px solid gray;
+        border-radius: 0.25rem;
     }
 
     .heading {
 
-        @extend %heading;
+        @extend %section;
 
-        display: block;
+        display:    block;
+        margin-top: 2rem;
     }
 
     .methods {
@@ -55,7 +57,7 @@ body.api-index {
 
         .label {
 
-            @extend %heading;
+            @extend %section;
 
             display:     inline-flex;
             align-items: baseline;

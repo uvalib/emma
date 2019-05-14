@@ -188,28 +188,42 @@ module OAuth2
 
   private
 
+    # configure_authentication!
+    #
+    # @param [Hash] opts
+    #
+    # @return [void]
+    #
+    # This method overrides:
+    # @see OAuth2::AccessToken#configure_authentication!
+    #
+    def configure_authentication!(opts)
+      opts[:params] ||= {}
+      opts[:params][:api_key] = @client.id
+      super
 =begin
-    def configure_authentication!(opts) # rubocop:disable MethodLength, Metrics/AbcSize
       case options[:mode]
-      when :header
-        opts[:headers] ||= {}
-        opts[:headers].merge!(headers)
-      when :query
-        opts[:params] ||= {}
-        opts[:params][options[:param_name]] = token
-      when :body
-        opts[:body] ||= {}
-        if opts[:body].is_a?(Hash)
-          opts[:body][options[:param_name]] = token
+        when :header
+          opts[:headers] ||= {}
+          opts[:headers].merge!(headers)
+        when :query
+          opts[:params] ||= {}
+          opts[:params][options[:param_name]] = token
+          opts[:params][:api_key] = @client.options[:client_id]
+        when :body
+          opts[:body] ||= {}
+          if opts[:body].is_a?(Hash)
+            opts[:body][options[:param_name]] = token
+            opts[:body][:api_key] = @client.options[:client_id]
+          else
+            opts[:body] << "&#{options[:param_name]}=#{token}"
+            opts[:body] << "&api_key=#{@client.options[:client_id]}"
+          end
         else
-          opts[:body] << "&#{options[:param_name]}=#{token}"
-        end
-        # @todo support for multi-part (file uploads)
-      else
-        raise("invalid :mode option of #{options[:mode]}")
+          raise("invalid :mode option of #{options[:mode]}")
       end
-    end
 =end
+    end
 
   end
 

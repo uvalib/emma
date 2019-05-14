@@ -1,0 +1,21 @@
+<%# app/views/layouts/_header.html.erb -%>
+<%-
+  # Application header.
+
+  logo = t('emma.application.name')
+  logo = content_tag(:div, link_to(logo, root_path), class: 'logo')
+
+  tagline = t('emma.application.tagline')
+  tagline = content_tag(:div, tagline, class: 'tagline')
+
+  username = current_user.to_s
+  username = content_tag(:div, username, class: 'user')
+
+  session_link = current_user ? sign_out_link : sign_in_link
+  session_link = content_tag(:div, session_link, class: 'session')
+
+-%>
+<header class="layout-header">
+  <div class="logo-area"><%= logo + tagline %></div>
+  <div class="control-area"><%= username + session_link %></div>
+</header>

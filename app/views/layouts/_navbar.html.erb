@@ -1,0 +1,28 @@
+<%# app/views/layouts/_navbar.html.erb -%>
+<%-
+  # Navigation bar.
+
+  dashboard = t('emma.home.dashboard.label')
+  dashboard =
+    if current_user
+      link_to(dashboard, dashboard_path)
+    else
+      content_tag(:span, dashboard, class: 'disabled')
+    end
+
+  api = t('emma.api.label')
+  api = link_to(api, api_path)
+
+  separator = content_tag(:span, '|', class: 'separator')
+
+  items = {
+    dashboard:  dashboard,
+    api:        api
+  }.map { |css, content|
+    content_tag(:div, content, class: css)
+  }.join(separator).html_safe
+
+-%>
+<nav class="layout-navbar">
+  <div class="links"><%= items %></div>
+</nav>

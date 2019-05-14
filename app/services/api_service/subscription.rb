@@ -39,12 +39,12 @@ class ApiService
 
     # get_subscriptions
     #
-    # @param [User, String] user
+    # @param [User, String, nil] user       Default: @user
     #
     # @return [ApiUserSubscriptionList]
     #
-    def get_subscriptions(user:)
-      username ||= user.is_a?(User) ? user.email : user.to_s
+    def get_subscriptions(user: @user)
+      username = get_username(user)
       api(:get, 'accounts', username, 'subscriptions')
       data = response&.body&.presence
       ApiUserSubscriptionList.new(data, error: @exception)
@@ -52,8 +52,8 @@ class ApiService
 
     # create_subscription
     #
-    # @param [User, String] user
-    # @param [Hash, nil]    opt
+    # @param [User, String, nil] user       Default: @user
+    # @param [Hash, nil]         opt
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -64,7 +64,7 @@ class ApiService
     #
     # @return [ApiUserSubscription]
     #
-    def create_subscription(user:, **opt)
+    def create_subscription(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:post, 'accounts', username, 'subscriptions', opt)
@@ -74,12 +74,12 @@ class ApiService
 
     # get_subscription
     #
-    # @param [User, String] user
-    # @param [String]       subscriptionId
+    # @param [User, String, nil] user             Default: @user
+    # @param [String]            subscriptionId
     #
     # @return [ApiUserSubscription]
     #
-    def get_subscription(user:, subscriptionId:)
+    def get_subscription(user: @user, subscriptionId:)
       username = get_username(user)
       api(:post, 'accounts', username, 'subscriptions', subscriptionId)
       data = response&.body&.presence
@@ -88,9 +88,9 @@ class ApiService
 
     # update_subscription
     #
-    # @param [User, String] user
-    # @param [String]       subscriptionId
-    # @param [Hash, nil]    opt
+    # @param [User, String, nil] user             Default: @user
+    # @param [String]            subscriptionId
+    # @param [Hash, nil]         opt
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -101,7 +101,7 @@ class ApiService
     #
     # @return [ApiUserSubscription]
     #
-    def update_subscription(user:, subscriptionId:, **opt)
+    def update_subscription(user: @user, subscriptionId:, **opt)
       validate_parameters(__method__, opt)
       username = get_username(user)
       api(:put, 'accounts', username, 'subscriptions', subscriptionId, opt)

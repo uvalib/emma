@@ -18,9 +18,11 @@ class ApiController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  before_action :update_user
   ##before_action :authenticate_user! # TODO: testing - restore
   #before_action :authenticate_user!, except: :bypass # TODO: testing - remove
   before_action :authenticate_user!, except: %i[bypass v2] # TODO: testing - remove :v2
+  before_action :initialize_service
 
   # ===========================================================================
   # :section:
@@ -55,6 +57,30 @@ class ApiController < ApplicationController
       format.html
       format.json { render json: api_method(request.method, @path, @opt) }
     end
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Update the current user with previously-acquired authentication data.
+  #
+  # @return [void]
+  #
+  def update_user
+    auth_data = session['omniauth.auth']
+    warden    = request.env['warden']
+    warden.set_user(User.from_omniauth(auth_data)) if warden && auth_data
+  end
+
+  # Initialize API service.
+  #
+  # @return [void]
+  #
+  def initialize_service
+    ApiService.instance(user: current_user)
   end
 
 end

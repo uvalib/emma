@@ -3,17 +3,10 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# A extension/customization of OmniAuth::Strategies::OAuth2
+# A extension of OmniAuth::Strategies::OAuth2.
 
 __loading_begin(__FILE__)
 
-=begin
-require "oauth2"
-require "omniauth"
-require "securerandom"
-require "socket"       # for SocketError
-require "timeout"      # for Timeout::Error
-=end
 require 'ext/oauth2/ext'
 require 'omniauth/strategies/oauth2'
 
@@ -21,11 +14,29 @@ module OmniAuth
 
   module Strategies
 
-    # An extension/customization of OmniAuth::Strategies::OAuth2 which sets up
-    # some defaults that would otherwise have to be specified in
-    # config/initializers/devise.rb
+    # An extension of OmniAuth::Strategies::OAuth2 which sets up some defaults
+    # that would otherwise have to be specified in initializers/devise.rb.
+    #
+    # @see https://github.com/omniauth/omniauth-oauth2
     #
     class Bookshare < OmniAuth::Strategies::OAuth2
+
+      CONFIGURED_AUTH = {
+        'emmacollection@bookshare.org' => {
+          access_token: '8f4b4318-90c1-47ac-a6a1-39a11f53e7c4',
+          token_type:   'bearer',
+          scope:        'basic'
+        },
+        'EMMADSO@bookshare.org' => {
+          access_token: 'a237cc9b-0275-4e4b-9ca1-37db198c3fb3',
+          token_type:   'bearer',
+          scope:        'basic'
+        }
+      }.transform_values { |hash|
+        hash[:token_type] ||= 'bearer'
+        hash[:scope]      ||= 'basic'
+        hash.freeze
+      }.freeze
 
 =begin
       include OmniAuth::Strategy
@@ -35,21 +46,7 @@ module OmniAuth
       end
 =end
 
-=begin
       args %i[client_id client_secret]
-=end
-
-=begin
-      option :client_id, nil
-      option :client_secret, nil
-      option :client_options, {}
-      option :authorize_params, {}
-      option :authorize_options, [:scope]
-      option :token_params, {}
-      option :token_options, []
-      option :auth_token_params, {}
-      option :provider_ignores_state, false
-=end
 
       option :client_id,     ApiService::API_KEY
       option :client_secret, ''
@@ -60,14 +57,11 @@ module OmniAuth
         #max_redirects:   0,
         #connection_opts: { headers: { Host: ApiService::AUTH_HOST } }
       }
-
-      option :authorize_options, %i[scope]
-      option :authorize_params, {
-        scope: 'basic'
-      }
-
-      option :token_options, []
-      option :token_params, {}
+      option :authorize_options,      %i[scope]
+      option :authorize_params,       { scope: 'basic' }
+      option :token_options,          []
+      option :token_params,           {}
+      option :provider_ignores_state, false
 
       credentials do
         {
@@ -76,6 +70,57 @@ module OmniAuth
           expires_at:    (access_token.expires_at    if expires),
           refresh_token: (access_token.refresh_token if expires)
         }.reject { |_, v| v.nil? }.stringify_keys
+      end
+
+      # The following are called only after authentication has succeeded.
+
+      uid do
+        raw_info[:username]
+      end
+
+      info do
+        {
+          first_name: (first_name = raw_info.dig(:name, :firstName)),
+          last_name:  (last_name  = raw_info.dig(:name, :lastName)),
+          email:      raw_info[:username]
+        }
+      end
+
+=begin
+      extra do # TODO: ???
+        {
+          raw_info: raw_info
+        }
+      end
+=end
+
+      # Information about the user account.
+      #
+      # @return [Hash{Symbol=>Object}]
+      #
+      # == Implementation Notes
+      # NOTE: Needs to relate to:
+      # @see ApiService::Account#get_user_identity
+      #
+      # E.g.:
+      #
+      # {
+      #   username: 'john@smith.com',
+      #   links: [],
+      #   name: {
+      #     firstName: 'John',
+      #     lastName:  'Smith',
+      #     middle:    nil,
+      #     prefix:    nil,
+      #     suffix:    nil,
+      #     links:     []
+      #   }
+      # }
+      #
+      def raw_info
+        @raw_info ||=
+          access_token.get("#{ApiService::BASE_URL}/me").parsed
+            .deep_symbolize_keys
       end
 
       # =======================================================================
@@ -167,7 +212,7 @@ module OmniAuth
 
         return mock_call!(env) if OmniAuth.config.test_mode
         return options_call if on_auth_path? && options_request?
-        return request_call if on_request_path? && OmniAuth.config.allowed_request_methods.include?(request.request_method.downcase.to_sym)
+        return request_call if on_request_path? && OmniAuth.config.allowed_method?(request)
         return callback_call if on_callback_path?
         return other_phase if respond_to?(:other_phase)
 
@@ -176,12 +221,12 @@ module OmniAuth
 =end
 
 =begin
-    # Responds to an OPTIONS request.
-    def options_call
-      OmniAuth.config.before_options_phase.call(env) if OmniAuth.config.before_options_phase
-      verbs = OmniAuth.config.allowed_request_methods.collect(&:to_s).collect(&:upcase).join(', ')
-      [200, {'Allow' => verbs}, []]
-    end
+      # Responds to an OPTIONS request.
+      def options_call
+        OmniAuth.config.before_options_phase.call(env) if OmniAuth.config.before_options_phase
+        verbs = OmniAuth.config.allowed_request_methods.collect(&:to_s).collect(&:upcase).join(', ')
+        [200, {'Allow' => verbs}, []]
+      end
 =end
 
       # Performs the steps necessary to run the request phase of a strategy.
@@ -195,7 +240,7 @@ module OmniAuth
         setup_phase
         log :info, 'Request phase initiated.'
 
-        # store query params from the request url, extracted in the callback_phase
+        # Store query params to be passed back via #callback_call.
         session['omniauth.params'] = request.get? ? request.GET : request.POST
         $stderr.puts "OMNIAUTH #{__method__} | method  = #{request.request_method}"
         $stderr.puts "OMNIAUTH #{__method__} | options = #{options.inspect}"
@@ -203,7 +248,13 @@ module OmniAuth
         $stderr.puts "OMNIAUTH #{__method__} | session = #{session.to_hash.inspect}"
         OmniAuth.config.before_request_phase&.call(env)
 
-        if !options.form
+        if current_user
+          log :info, "OMNIAUTH #{__method__} | by-passing request_phase"
+          authorize_params # Generate session['omniauth.state']
+          request.params['state'] = session['omniauth.state']
+          callback_phase
+
+        elsif !options.form
           if (op = options.origin_param) && (org = request.params[op])
             log :info, "OMNIAUTH #{__method__} | origin from request.params"
             env['rack.session']['omniauth.origin'] = org
@@ -275,239 +326,317 @@ module OmniAuth
 =end
 
 =begin
-    # The setup phase looks for the `:setup` option to exist and,
-    # if it is, will call either the Rack endpoint supplied to the
-    # `:setup` option or it will call out to the setup path of the
-    # underlying application. This will default to `/auth/:provider/setup`.
-    def setup_phase
-      if options[:setup].respond_to?(:call)
-        log :info, 'Setup endpoint detected, running now.'
-        options[:setup].call(env)
-      elsif options[:setup]
-        log :info, 'Calling through to underlying application for setup.'
-        setup_env = env.merge('PATH_INFO' => setup_path, 'REQUEST_METHOD' => 'GET')
-        call_app!(setup_env)
-      end
-    end
-=end
-
-=begin
-    def uid
-      self.class.uid_stack(self).last
-    end
-=end
-
-=begin
-    def info
-      merge_stack(self.class.info_stack(self))
-    end
-=end
-
-=begin
-    def credentials
-      merge_stack(self.class.credentials_stack(self))
-    end
-=end
-
-=begin
-    def extra
-      merge_stack(self.class.extra_stack(self))
-    end
-=end
-
-=begin
-    def auth_hash
-      hash = AuthHash.new(:provider => name, :uid => uid)
-      hash.info = info unless skip_info?
-      hash.credentials = credentials if credentials
-      hash.extra = extra if extra
-      hash
-    end
-=end
-
-=begin
-    # Determines whether or not user info should be retrieved. This
-    # allows some strategies to save a call to an external API service
-    # for existing users. You can use it either by setting the `:skip_info`
-    # to true or by setting `:skip_info` to a Proc that takes a uid and
-    # evaluates to true when you would like to skip info.
-    #
-    # @example
-    #
-    #   use MyStrategy, :skip_info => lambda{|uid| User.find_by_uid(uid)}
-    def skip_info?
-      return false unless options.skip_info?
-      return true unless options.skip_info.respond_to?(:call)
-
-      options.skip_info.call(uid)
-    end
-=end
-
-=begin
-    def callback_phase
-      env['omniauth.auth'] = auth_hash
-      call_app!
-    end
-=end
-
-=begin
-    def path_prefix
-      options[:path_prefix] || OmniAuth.config.path_prefix
-    end
-=end
-
-=begin
-    def custom_path(kind)
-      if options[kind].respond_to?(:call)
-        result = options[kind].call(env)
-        return nil unless result.is_a?(String)
-
-        result
-      else
-        options[kind]
-      end
-    end
-=end
-
-=begin
-    def request_path
-      @request_path ||= options[:request_path].is_a?(String) ? options[:request_path] : "#{path_prefix}/#{name}"
-    end
-=end
-
-=begin
-    def callback_path
-      @callback_path ||= begin
-        path = options[:callback_path] if options[:callback_path].is_a?(String)
-        path ||= current_path if options[:callback_path].respond_to?(:call) && options[:callback_path].call(env)
-        path ||= custom_path(:request_path)
-        path ||= "#{path_prefix}/#{name}/callback"
-        path
-      end
-    end
-=end
-
-=begin
-    def setup_path
-      options[:setup_path] || "#{path_prefix}/#{name}/setup"
-    end
-=end
-
-=begin
-    CURRENT_PATH_REGEX = %r{/$}.freeze
-    EMPTY_STRING       = ''.freeze
-    def current_path
-      @current_path ||= request.path_info.downcase.sub(CURRENT_PATH_REGEX, EMPTY_STRING)
-    end
-=end
-
-=begin
-    def query_string
-      request.query_string.empty? ? '' : "?#{request.query_string}"
-    end
-=end
-
-=begin
-    def call_app!(env = @env)
-      @app.call(env)
-    end
-=end
-
-=begin
-    def full_host
-      case OmniAuth.config.full_host
-      when String
-        OmniAuth.config.full_host
-      when Proc
-        OmniAuth.config.full_host.call(env)
-      else
-        # in Rack 1.3.x, request.url explodes if scheme is nil
-        if request.scheme && request.url.match(URI::ABS_URI)
-          uri = URI.parse(request.url.gsub(/\?.*$/, ''))
-          uri.path = ''
-          # sometimes the url is actually showing http inside rails because the
-          # other layers (like nginx) have handled the ssl termination.
-          uri.scheme = 'https' if ssl? # rubocop:disable BlockNesting
-          uri.to_s
-        else ''
+      # This is called in lieu of the normal request process in the event that
+      # OmniAuth has been configured to be in test mode.
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#mock_call!
+      #
+      def mock_call!(*)
+        if on_request_path? && OmniAuth.config.allowed_method?(request)
+          mock_request_call
+        elsif on_callback_path?
+          mock_callback_call
+        else
+          call_app!
         end
       end
-    end
 =end
 
 =begin
-    def callback_url
-      full_host + script_name + callback_path + query_string
-    end
-=end
+      # mock_request_call
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#mock_request_call
+      #
+      def mock_request_call
+        setup_phase
+        log :info, 'MOCK - Request phase initiated.'
 
-=begin
-    def script_name
-      @env['SCRIPT_NAME'] || ''
-    end
-=end
+        # Store query params from the request URL extracted in #callback_phase.
+        session['omniauth.params'] = request.get? ? request.GET : request.POST
+        $stderr.puts "OMNIAUTH #{__method__} | method  = #{request.request_method}"
+        $stderr.puts "OMNIAUTH #{__method__} | options = #{options.inspect}"
+        $stderr.puts "OMNIAUTH #{__method__} | omniauth.params = #{session['omniauth.params'].inspect}"
+        $stderr.puts "OMNIAUTH #{__method__} | session = #{session.to_hash.inspect}"
+        OmniAuth.config.before_request_phase&.call(env)
 
-=begin
-    def session
-      @env['rack.session']
-    end
-=end
-
-=begin
-    def request
-      @request ||= Rack::Request.new(@env)
-    end
-=end
-
-=begin
-    def name
-      options[:name]
-    end
-=end
-
-=begin
-    def redirect(uri)
-      r = Rack::Response.new
-
-      if options[:iframe]
-        r.write("<script type='text/javascript' charset='utf-8'>top.location.href = '#{uri}';</script>")
-      else
-        r.write("Redirecting to #{uri}...")
-        r.redirect(uri)
+        if (op = options.origin_param) && (org = request.params[op])
+          log :info, "OMNIAUTH #{__method__} | origin from request.params"
+          env['rack.session']['omniauth.origin'] = org
+        elsif (ref = env['HTTP_REFERER']) && !ref.end_with?(request_path)
+          log :info, "OMNIAUTH #{__method__} | origin from HTTP_REFERER"
+          env['rack.session']['omniauth.origin'] = ref
+        end
+        $stderr.puts "OMNIAUTH #{__method__} | env['rack.session']['omniauth.origin'] = #{env['rack.session']['omniauth.origin'].inspect}"
+        redirect(callback_url)
       end
-
-      r.finish
-    end
 =end
 
 =begin
-    def user_info
-      {}
-    end
-=end
+      # mock_callback_call
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#mock_callback_call
+      #
+      def mock_callback_call
+        setup_phase
+        log :info, 'MOCK - Callback phase initiated.'
+        @env['omniauth.origin'] = session.delete('omniauth.origin')
+        @env['omniauth.origin'] = nil if env['omniauth.origin'] == ''
+        @env['omniauth.params'] = session.delete('omniauth.params') || {}
 
-=begin
-    def fail!(message_key, exception = nil)
-      env['omniauth.error'] = exception
-      env['omniauth.error.type'] = message_key.to_sym
-      env['omniauth.error.strategy'] = self
-
-      if exception
-        log :error, "Authentication failure! #{message_key}: #{exception.class}, #{exception.message}"
-      else
-        log :error, "Authentication failure! #{message_key} encountered."
+        mocked_auth = OmniAuth.mock_auth_for(name)
+        if mocked_auth.is_a?(Symbol)
+          fail!(mocked_auth)
+        else
+          @env['omniauth.auth'] = mocked_auth
+          OmniAuth.config.before_callback_phase&.call(@env)
+          call_app!
+        end
       end
-
-      OmniAuth.config.on_failure.call(env)
-    end
 =end
 
 =begin
-    def dup
-      super.tap do
-        @options = @options.dup
+      # The setup phase looks for the `:setup` option to exist and,
+      # if it is, will call either the Rack endpoint supplied to the
+      # `:setup` option or it will call out to the setup path of the
+      # underlying application. This will default to `/auth/:provider/setup`.
+      def setup_phase
+        if options[:setup].respond_to?(:call)
+          log :info, 'Setup endpoint detected, running now.'
+          options[:setup].call(env)
+        elsif options[:setup]
+          log :info, 'Calling through to underlying application for setup.'
+          setup_env = env.merge('PATH_INFO' => setup_path, 'REQUEST_METHOD' => 'GET')
+          call_app!(setup_env)
+        end
       end
-    end
+=end
+
+=begin
+      def uid
+        self.class.uid_stack(self).last
+      end
+=end
+
+=begin
+      def info
+        merge_stack(self.class.info_stack(self))
+      end
+=end
+
+=begin
+      def credentials
+        merge_stack(self.class.credentials_stack(self))
+      end
+=end
+
+=begin
+      def extra
+        merge_stack(self.class.extra_stack(self))
+      end
+=end
+
+=begin
+      def auth_hash
+        hash = AuthHash.new(:provider => name, :uid => uid)
+        hash.info = info unless skip_info?
+        hash.credentials = credentials if credentials
+        hash.extra = extra if extra
+        hash
+      end
+=end
+
+=begin
+      # Determines whether or not user info should be retrieved. This
+      # allows some strategies to save a call to an external API service
+      # for existing users. You can use it either by setting the `:skip_info`
+      # to true or by setting `:skip_info` to a Proc that takes a uid and
+      # evaluates to true when you would like to skip info.
+      #
+      # @example
+      #
+      #   use MyStrategy, :skip_info => lambda{|uid| User.find_by_uid(uid)}
+      def skip_info?
+        return false unless options.skip_info?
+        return true unless options.skip_info.respond_to?(:call)
+
+        options.skip_info.call(uid)
+      end
+=end
+
+=begin
+      def callback_phase
+        env['omniauth.auth'] = auth_hash
+        call_app!
+      end
+=end
+
+=begin
+      def path_prefix
+        options[:path_prefix] || OmniAuth.config.path_prefix
+      end
+=end
+
+=begin
+      def custom_path(kind)
+        if options[kind].respond_to?(:call)
+          result = options[kind].call(env)
+          return nil unless result.is_a?(String)
+
+          result
+        else
+          options[kind]
+        end
+      end
+=end
+
+=begin
+      def request_path
+        @request_path ||= options[:request_path].is_a?(String) ? options[:request_path] : "#{path_prefix}/#{name}"
+      end
+=end
+
+=begin
+      def callback_path
+        @callback_path ||= begin
+          path = options[:callback_path] if options[:callback_path].is_a?(String)
+          path ||= current_path if options[:callback_path].respond_to?(:call) && options[:callback_path].call(env)
+          path ||= custom_path(:request_path)
+          path ||= "#{path_prefix}/#{name}/callback"
+          path
+        end
+      end
+=end
+
+=begin
+      def setup_path
+        options[:setup_path] || "#{path_prefix}/#{name}/setup"
+      end
+=end
+
+=begin
+      CURRENT_PATH_REGEX = %r{/$}.freeze
+      EMPTY_STRING       = ''.freeze
+      def current_path
+        @current_path ||= request.path_info.downcase.sub(CURRENT_PATH_REGEX, EMPTY_STRING)
+      end
+=end
+
+=begin
+      def query_string
+        request.query_string.empty? ? '' : "?#{request.query_string}"
+      end
+=end
+
+=begin
+      def call_app!(env = @env)
+        @app.call(env)
+      end
+=end
+
+=begin
+      def full_host
+        case OmniAuth.config.full_host
+        when String
+          OmniAuth.config.full_host
+        when Proc
+          OmniAuth.config.full_host.call(env)
+        else
+          # in Rack 1.3.x, request.url explodes if scheme is nil
+          if request.scheme && request.url.match(URI::ABS_URI)
+            uri = URI.parse(request.url.gsub(/\?.*$/, ''))
+            uri.path = ''
+            # sometimes the url is actually showing http inside rails because the
+            # other layers (like nginx) have handled the ssl termination.
+            uri.scheme = 'https' if ssl? # rubocop:disable BlockNesting
+            uri.to_s
+          else ''
+          end
+        end
+      end
+=end
+
+=begin
+      def callback_url
+        full_host + script_name + callback_path + query_string
+      end
+=end
+
+=begin
+      def script_name
+        @env['SCRIPT_NAME'] || ''
+      end
+=end
+
+=begin
+      def session
+        @env['rack.session']
+      end
+=end
+
+=begin
+      def request
+        @request ||= Rack::Request.new(@env)
+      end
+=end
+
+=begin
+      def name
+        options[:name]
+      end
+=end
+
+=begin
+      def redirect(uri)
+        r = Rack::Response.new
+
+        if options[:iframe]
+          r.write("<script type='text/javascript' charset='utf-8'>top.location.href = '#{uri}';</script>")
+        else
+          r.write("Redirecting to #{uri}...")
+          r.redirect(uri)
+        end
+
+        r.finish
+      end
+=end
+
+=begin
+      def user_info
+        {}
+      end
+=end
+
+=begin
+      def fail!(message_key, exception = nil)
+        env['omniauth.error'] = exception
+        env['omniauth.error.type'] = message_key.to_sym
+        env['omniauth.error.strategy'] = self
+
+        if exception
+          log :error, "Authentication failure! #{message_key}: #{exception.class}, #{exception.message}"
+        else
+          log :error, "Authentication failure! #{message_key} encountered."
+        end
+
+        OmniAuth.config.on_failure.call(env)
+      end
+=end
+
+=begin
+      def dup
+        super.tap do
+          @options = @options.dup
+        end
+      end
 =end
 
       # =======================================================================
@@ -545,15 +674,20 @@ module OmniAuth
       attr_accessor :access_token
 =end
 
-=begin
+      # The OAuth2 client instance.
+      #
+      # @return [::OAuth2::Client]
+      #
       def client
-        ::OAuth2::Client.new(
-          options.client_id,
-          options.client_secret,
-          options.client_options.deep_symbolize_keys
-        )
+        @client ||=
+          ::OAuth2::Client.new(
+            options.client_id,
+            options.client_secret,
+            options.client_options.deep_symbolize_keys
+          ).tap { |result|
+            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}: #{result.inspect}"
+          }
       end
-=end
 
       # request_phase
       #
@@ -573,15 +707,15 @@ module OmniAuth
       # @see OAuth2::ClientExt#request
       #
       def request_phase
+        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | method = #{request.request_method.inspect}"
         auth_code = client.auth_code
         auth_parm = authorize_params.reverse_merge(redirect_uri: callback_url)
         auth_url  = auth_code.authorize_url(auth_parm)
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | method        = #{request.request_method.inspect}"
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | client        = #{client.inspect}"
         $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | authorize_url = #{auth_url.inspect}"
 
         # NOTE: temporarily(?) fixing Bookshare redirect problem...
         auth_url = client.request(:get, auth_url).response.env.url
+        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | modified authorize_url = #{auth_url.inspect}"
 
         redirect(auth_url)
 
@@ -600,7 +734,10 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#authorize_params
       #
       def authorize_params
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
+        super.tap { |result|
+          $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+        }
+=begin
         options.authorize_params[:state] = SecureRandom.hex(24)
         options.authorize_params.merge(options_for('authorize')).tap do |params|
           if OmniAuth.config.test_mode
@@ -608,10 +745,8 @@ module OmniAuth
             @env['rack.session'] ||= {}
           end
           session['omniauth.state'] = params[:state]
-=begin
-          $stderr.puts "OMNIAUTH-OAUTH2 #{__method__} => #{result.inspect}"
-=end
         end
+=end
       end
 
       # token_params
@@ -620,41 +755,57 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#token_params
       #
       def token_params
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
+        super.tap { |result|
+          $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+        }
+=begin
         options.token_params.merge(options_for('token'))
-          .tap { |result|
-            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-          }
+=end
       end
 
       # callback_phase
+      #
+      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#callback_phase
       #
       def callback_phase
         $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
-        e = result = nil
-        p = request.params.reject { |_, v| v.blank? }
-        error = p['error_reason'] || p['error']
+        result = e = nil
+        params = request.params.reject { |_, v| v.blank? }
+        error  = params['error_reason'] || params['error']
 
+        # Raise an exception if the response indicated an error.
         if error
-          description = p['error_description'] || p['error_reason']
-          raise CallbackError.new(error, description, p['error_uri'])
+          description = params['error_description'] || params['error_reason']
+          raise CallbackError.new(error, description, params['error_uri'])
         end
 
+        # Raise an exception if the returned state doesn't match.
         unless options.provider_ignores_state
-          unless p['state'] == session.delete('omniauth.state')
+          unless params['state'] == session.delete('omniauth.state')
             error = :csrf_detected
             raise CallbackError.new(error, 'CSRF detected')
           end
         end
 
-        self.access_token = build_access_token
-        self.access_token = access_token.refresh! if access_token.expired?
-        #super
-        env['omniauth.auth'] = auth_hash
-        result = call_app!
+        result =
+          if (username = current_user&.uid)
+            # Special case for a fixed user causes a redirect to the special
+            # endpoint for direct sign-in.
+            self.access_token        = configured_access_token(username)
+            session['omniauth.auth'] = configured_auth_hash(username)
+            [302, { 'Location' => "/users/sign_in_as?id=#{username}" }, []]
+
+          else
+            # Normal case results in a call to the remote service.
+            self.access_token = build_access_token
+            self.access_token = access_token.refresh! if access_token.expired?
+            env['omniauth.auth'] = auth_hash
+            call_app!
+
+          end
 
       rescue ::OAuth2::Error, CallbackError => e
         error ||= :invalid_credentials
@@ -676,7 +827,7 @@ module OmniAuth
 
       protected
 
-      # build_access_token
+      # Acquire the OAuth token from the remote service.
       #
       # @return [OAuth2::AccessToken]
       #
@@ -695,16 +846,6 @@ module OmniAuth
           }
       end
 
-=begin
-      def deep_symbolize(options)
-        hash = {}
-        options.each do |key, value|
-          hash[key.to_sym] = value.is_a?(Hash) ? deep_symbolize(value) : value
-        end
-        hash
-      end
-=end
-
       # options_for
       #
       # @param [String, Symbol] option
@@ -717,6 +858,81 @@ module OmniAuth
       def options_for(option)
         option_keys = options[:"#{option}_options"]
         options.slice(*option_keys).symbolize_keys
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # current_user
+      #
+      # @return [User, nil]
+      #
+      def current_user
+        env['warden']&.user
+      end
+
+      # configured_access_token
+      #
+      # @param [String] id            User ID.
+      #
+      # @return [::OAuth2::AccessToken, nil]
+      #
+      def configured_access_token(id)
+        hash = CONFIGURED_AUTH[id]
+        ::OAuth2::AccessToken.from_hash(client, hash) if hash.present?
+      end
+
+      # configured_auth_hash
+      #
+      # @param [String] id            Bookshare user identity (email address).
+      #
+      # @return [OmniAuth::AccessToken, nil]
+      #
+      def configured_auth_hash(id)
+        return unless (atoken = configured_access_token(id)).present?
+        AuthHash.new(provider: name, uid: id).tap do |hash|
+          hash.uid   = uid
+          hash.info  = info  unless skip_info?
+          hash.extra = extra if extra
+          hash.credentials = {
+            token:         atoken.token,
+            expires:       (expires = atoken.expires?),
+            expires_at:    (atoken.expires_at    if expires),
+            refresh_token: (atoken.refresh_token if expires)
+          }.reject { |_, v| v.nil? }.stringify_keys
+        end
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      public
+
+      # Generate an auth hash based on fixed information.
+      #
+      # @param [String] id            Bookshare user identity (email address).
+      #
+      # @return [OmniAuth::AccessToken]
+      #
+      def self.configured_auth_hash(id)
+        hash = {
+          provider: 'bookshare',
+          uid:      id,
+          info: {
+            first_name: '',
+            last_name:  '',
+            email:      id
+          },
+          credentials: {
+            token:   CONFIGURED_AUTH[id][:access_token],
+            expires: false
+          }
+        }.deep_stringify_keys
+        AuthHash.new(hash)
       end
 
     end

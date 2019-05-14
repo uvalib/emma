@@ -14,6 +14,11 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'user/omniauth_callbacks',
   }
 
+  # NOTE: for testing with fixed IDs
+  devise_scope :user do
+    get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
+  end
+
   # ===========================================================================
   # :section: API test routes
   # ===========================================================================

@@ -55,6 +55,34 @@ class ApiService
 
     protected
 
+    # @return [User]
+    attr_reader :user
+
+    # @return [String]
+    attr_reader :access_token
+
+    # @return [String]
+    attr_reader :refresh_token
+
+    # Set the user for the current session.
+    #
+    # @param [User] u
+    #
+    # @return [void]
+    #
+    def set_user(u)
+      return unless u.is_a?(User)
+      @user = u
+      @access_token  = @user.access_token
+      @refresh_token = @user.refresh_token
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
     # Get data from the API and update @response.
     #
     # @param [Symbol]        verb       One of :get, :post, :put, :delete
@@ -121,14 +149,13 @@ class ApiService
 
     # Get a connection.
     #
+    # @param [String, nil] url        Default: `#base_url`
+    #
     # @return [Faraday::Connection]
     #
-    # TODO: @access_token needs to be supplied
-    # In fact, this connection may need to go through OAuth2::Client#connection
-    #
-    def make_connection
+    def make_connection(url = nil)
       conn_opts = {
-        url:     base_url,
+        url:     (url || base_url),
         request: options.slice(:timeout, :open_timeout),
       }
       conn_opts[:request][:params_encoder] ||= Faraday::FlatParamsEncoder
@@ -142,7 +169,7 @@ class ApiService
 
       Faraday.new(conn_opts) do |bld|
         bld.use           :api_caching_middleware if CACHING
-        bld.authorization :Bearer, @access_token  if @access_token.present?
+        bld.authorization :Bearer, access_token if access_token.present?
         bld.request       :retry,  retry_opt
         bld.response      :logger, Log.logger
         bld.response      :raise_error
@@ -163,7 +190,11 @@ class ApiService
     # @return [String]
     #
     def get_username(user)
-      user.is_a?(User) ? user.email : user.to_s
+      case user
+        when User then user.email
+        when Hash then user['uid']
+        else           user.to_s
+      end
     end
 
     # Validate presence of required API parameters.
