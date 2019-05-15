@@ -39,7 +39,7 @@ module Faraday
       store:  :redis_cache_store,
 =end
       store:  :file_store,
-      logger: Rails.logger,
+      logger: Log.logger,
     }.freeze
 
   end

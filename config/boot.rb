@@ -43,6 +43,18 @@ end
 if running_rails_application?
   STDERR.puts "boot @ #{BOOT_TIME}"
   STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
+  STDERR.puts "$0       = #{$0.inspect}" # TODO: debugging - remove
+  STDERR.puts "$*       = #{$*.inspect}" # TODO: debugging - remove
+  STDERR.puts "$ARGV    = #{$ARGV.inspect}" # TODO: debugging - remove
+  STDERR.puts "APP_PATH = #{APP_PATH.inspect}" if defined?(APP_PATH) # TODO: debugging - remove
+  STDERR.puts "ENV:\n" + # TODO: debugging - remove
+    ENV.inspect
+      .sub(/\A\s*{\s*/, '')
+      .sub(/\s*}\s*\z/, '')
+      .split(/",\s+/)
+      .sort
+      .join(%Q(",\n))
+      .gsub(/"([^"]+)"=>/, '... \1 = ')
 elsif !$0.end_with?('rake')
   STDERR.puts "Running #{$0.inspect}" unless $0.end_with?('rake')
 end

@@ -7,10 +7,13 @@
   links = [
     sign_in_link(provider: :bookshare)
   ]
-  links +=
-    OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.keys.map { |id|
-      link_to("Sign in as #{id}", sign_in_as_path(id: id))
-    }
+
+  if defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
+    links +=
+      OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.keys.map { |id|
+        link_to("Sign in as #{id}", sign_in_as_path(id: id))
+      }
+  end
 
 -%>
 <h1 class="heading"><%= title -%></h1>

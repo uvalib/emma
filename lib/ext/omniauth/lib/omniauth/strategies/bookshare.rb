@@ -21,6 +21,15 @@ module OmniAuth
     #
     class Bookshare < OmniAuth::Strategies::OAuth2
 
+      # Pre-authorized users for development purposes.
+      #
+      # @type [Hash{String=>Hash}]
+      #
+      # == Usage Notes
+      # These exist because Bookshare has a problem with its authentication
+      # flow, so tokens were generated for two EMMA users which could be used
+      # directly (avoiding the OAuth2 flow).
+      #
       CONFIGURED_AUTH = {
         'emmacollection@bookshare.org' => {
           access_token: '8f4b4318-90c1-47ac-a6a1-39a11f53e7c4',
@@ -881,6 +890,7 @@ module OmniAuth
       # @return [::OAuth2::AccessToken, nil]
       #
       def configured_access_token(id)
+        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
         hash = CONFIGURED_AUTH[id]
         ::OAuth2::AccessToken.from_hash(client, hash) if hash.present?
       end
@@ -892,6 +902,7 @@ module OmniAuth
       # @return [OmniAuth::AccessToken, nil]
       #
       def configured_auth_hash(id)
+        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
         return unless (atoken = configured_access_token(id)).present?
         AuthHash.new(provider: name, uid: id).tap do |hash|
           hash.uid   = uid
@@ -919,6 +930,7 @@ module OmniAuth
       # @return [OmniAuth::AccessToken]
       #
       def self.configured_auth_hash(id)
+        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
         hash = {
           provider: 'bookshare',
           uid:      id,

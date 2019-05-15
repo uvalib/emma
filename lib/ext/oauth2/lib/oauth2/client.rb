@@ -83,7 +83,7 @@ module OAuth2
     def connection
       @connection ||=
         Faraday.new(site, options[:connection_opts]) do |bld|
-          bld.response :logger, ::Logger.new($stderr) if OAUTH_DEBUG
+          bld.response :logger, Log.logger if OAUTH_DEBUG
           if options[:connection_build]
             options[:connection_build].call(bld)
           else
