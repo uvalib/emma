@@ -18,11 +18,26 @@ class User < ApplicationRecord
 
   public
 
-  # Display the User instance as the email address.
+  # Display the User instance as the user identifier.
   #
   # @return [String]
   #
   def to_s
+    uid
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The user ID is the same as the Bookshare ID, which is the same as the email
+  # address.
+  #
+  # @return [String]
+  #
+  def uid
     email
   end
 

@@ -58,12 +58,6 @@ class ApiService
     # @return [User]
     attr_reader :user
 
-    # @return [String]
-    attr_reader :access_token
-
-    # @return [String]
-    attr_reader :refresh_token
-
     # Set the user for the current session.
     #
     # @param [User] u
@@ -71,10 +65,23 @@ class ApiService
     # @return [void]
     #
     def set_user(u)
-      return unless u.is_a?(User)
-      @user = u
-      @access_token  = @user.access_token
-      @refresh_token = @user.refresh_token
+      @user = (u if u.is_a?(User))
+    end
+
+    # The current OAuth2 access bearer token.
+    #
+    # @return [String, nil]
+    #
+    def access_token
+      @user&.access_token
+    end
+
+    # The current OAuth2 refresher token.
+    #
+    # @return [String, nil]
+    #
+    def refresh_token
+      @user&.refresh_token
     end
 
     # =========================================================================
@@ -190,11 +197,7 @@ class ApiService
     # @return [String]
     #
     def get_username(user)
-      case user
-        when User then user.email
-        when Hash then user['uid']
-        else           user.to_s
-      end
+      user.is_a?(Hash) ? user['uid'] : user.to_s
     end
 
     # Validate presence of required API parameters.

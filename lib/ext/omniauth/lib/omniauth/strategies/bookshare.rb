@@ -33,13 +33,9 @@ module OmniAuth
       CONFIGURED_AUTH = {
         'emmacollection@bookshare.org' => {
           access_token: '8f4b4318-90c1-47ac-a6a1-39a11f53e7c4',
-          token_type:   'bearer',
-          scope:        'basic'
         },
         'EMMADSO@bookshare.org' => {
           access_token: 'a237cc9b-0275-4e4b-9ca1-37db198c3fb3',
-          token_type:   'bearer',
-          scope:        'basic'
         }
       }.transform_values { |hash|
         hash[:token_type] ||= 'bearer'

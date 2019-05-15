@@ -19,13 +19,6 @@ require_subdir(__FILE__)
 #
 # @see config/initializers/devise.rb
 #
-# TODO: @access_token needs to be supplied
-# In fact, the connection implemented in ApiService::Common needs to be
-# replaced so that requests go through OAuth2::Client#connection.
-#
-# The problem here is that *that* connection doesn't make use of middleware
-# for caching.
-#
 class ApiService
 
   include Api
@@ -181,11 +174,28 @@ class ApiService
     @@service_instance ||= new(opt)
   end
 
-  # clear_instance
+  # Update the service instance with new information.
+  #
+  # @param [Hash, nil] opt            @see #initialize
+  #
+  # @return [ApiService]
+  #
+  def self.update(**opt)
+    @@service_instance ||= nil
+    current_user = @service_instance&.user&.uid
+    if opt[:user] && opt.except(:user).blank? && (opt[:user] == current_user)
+      @@service_instance
+    else
+      @@service_instance = new(opt)
+    end
+  end
+
+  # Remove the single instance of the class so that a fresh instance will be
+  # generated when #instance is accessed.
   #
   # @return [nil]
   #
-  def self.clear_instance
+  def self.clear
     @@service_instance = nil
   end
 

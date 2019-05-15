@@ -80,7 +80,7 @@ class ApiController < ApplicationController
   # @return [void]
   #
   def initialize_service
-    ApiService.instance(user: current_user)
+    ApiService.update(user: current_user)
   end
 
 end
