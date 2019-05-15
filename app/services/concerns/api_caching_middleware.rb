@@ -60,6 +60,25 @@ module Faraday
       super(app, opt)
     end
 
+    # =========================================================================
+    # :section: Faraday::CachingMiddlewareConcern overrides
+    # =========================================================================
+
+    public
+
+    # Generate cache key.
+    #
+    # @param [Faraday::Env] env
+    #
+    # @return [String, nil]
+    #
+    # This method overrides:
+    # @see Faraday::CachingMiddlewareConcern#key
+    #
+    def key(env)
+      super.sub(/([?&])api=[^&]+/, '\1') # TODO: include user ID
+    end
+
   end
 
 end

@@ -15,12 +15,12 @@ class User::SessionsController < Devise::SessionsController
 
   public
 
-  prepend_before_action :require_no_authentication, only: %i[new create sign_in_as]
+  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_as]
   prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
-  prepend_before_action :verify_signed_out_user, only: %i[destroy]
-  prepend_before_action(only: %i[create destroy sign_in_as]) {
+  prepend_before_action :verify_signed_out_user,       only: %i[destroy]
+  prepend_before_action(only: %i[create destroy sign_in_as]) do
     request.env['devise.skip_timeout'] = true
-  }
+  end
   # before_action :configure_sign_in_params, only: [:create]
 
   # ===========================================================================
@@ -71,7 +71,11 @@ class User::SessionsController < Devise::SessionsController
     sign_in(resource_name, resource)
     ApiService.update(user: resource)
     set_flash_notice(:create)
-    respond_with resource, location: after_sign_in_path_for(resource)
+    if params[:redirect]
+      redirect_to params[:redirect]
+    else
+      respond_with resource, location: after_sign_in_path_for(resource)
+    end
   end
 
   # ===========================================================================

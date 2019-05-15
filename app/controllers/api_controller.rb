@@ -19,9 +19,8 @@ class ApiController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  ##before_action :authenticate_user! # TODO: testing - restore
-  #before_action :authenticate_user!, except: :bypass # TODO: testing - remove
-  before_action :authenticate_user!, except: %i[bypass v2] # TODO: testing - remove :v2
+  #before_action :authenticate_user! # TODO: testing - restore
+  before_action :authenticate_user!, except: %i[v2] # TODO: testing - remove :v2
   before_action :initialize_service
 
   # ===========================================================================
@@ -36,15 +35,13 @@ class ApiController < ApplicationController
   def index
   end
 
-  # == GET /api/bypass
-  # The main API test page by-passing authentication.
-  #
-  def bypass # TODO: testing - remove
-    render 'api/index'
-  end
-
-  # == GET /api/v2
-  # Direct access to the API guarded by authentication.
+  # == GET /api/v2/API_PATH[?API_OPTIONS]
+  # == GET /api/v2/API_PATH[?user=API_USER]
+  # Direct access to the API guarded by authentication.  If the session is
+  # authenticated the endpoint will be (implicitly) contacted as that user.
+  # A configured user (one with a fixed OAuth2 token) may be specified in the
+  # URL options with "?user=xxx@bookshare.org" (or simply "?user=xxx" and
+  # "@bookshare.org" will be appended).
   #
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
@@ -53,9 +50,17 @@ class ApiController < ApplicationController
     @opt  = params.to_unsafe_h
     @opt  = @opt.except(:controller, :action, :format).symbolize_keys
     @path = @opt.delete(:api_path)
-    respond_to do |format|
-      format.html
-      format.json { render json: api_method(request.method, @path, @opt) }
+    if (user = @opt.delete(:user)).present?
+      user = user.downcase
+      user = "#{user}@bookshare.org" unless user.include?('@')
+      path = request.fullpath.sub(/\?.*/, '')
+      path << '?' << @opt.to_param if @opt.present?
+      redirect_to sign_in_as_path(id: user, redirect: path)
+    else
+      respond_to do |format|
+        format.html
+        format.json { render json: api_method(request.method, @path, @opt) }
+      end
     end
   end
 

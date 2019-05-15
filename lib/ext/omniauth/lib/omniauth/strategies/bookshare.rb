@@ -34,7 +34,7 @@ module OmniAuth
         'emmacollection@bookshare.org' => {
           access_token: '8f4b4318-90c1-47ac-a6a1-39a11f53e7c4',
         },
-        'EMMADSO@bookshare.org' => {
+        'emmadso@bookshare.org' => {
           access_token: 'a237cc9b-0275-4e4b-9ca1-37db198c3fb3',
         }
       }.transform_values { |hash|
@@ -80,7 +80,7 @@ module OmniAuth
       # The following are called only after authentication has succeeded.
 
       uid do
-        raw_info[:username]
+        raw_info[:username].to_s.downcase
       end
 
       info do
