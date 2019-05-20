@@ -1,8 +1,8 @@
 <%# app/views/api/v2.html.erb -%>
 <%-
-  # API path test.
+  # Display of results from an individual API call.
   url = @path
-  url += "?#{@opt.to_param}" if @opt.present?
+  url += (@path.include?('?') ? '&' : '?') + @opt.to_param if @opt.present?
   values = {
     method: request.method,
     path:   @path,

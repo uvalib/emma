@@ -81,7 +81,7 @@ class ApiService
     #
     def get_subscription(user: @user, subscriptionId:)
       username = get_username(user)
-      api(:post, 'accounts', username, 'subscriptions', subscriptionId)
+      api(:get, 'accounts', username, 'subscriptions', subscriptionId)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)
     end

@@ -1,14 +1,15 @@
 <%# app/views/api/index.html.erb -%>
 <%-
-  # API test page.
+  # API method call test page.
 
-  title   ||= t('emma.api.title')
-  user    ||= current_user&.to_s
-  book    ||= '1933741'
-  series  ||= '46424'
-  edition ||= '2531073'
-  format  ||= 'DAISY'
-  limit   ||= 5
+  title        ||= t('emma.api.title')
+  user         ||= current_user&.to_s
+  book         ||= '1933741'
+  series       ||= '46424'
+  edition      ||= '2531073'
+  subscription ||= '???'
+  format       ||= 'DAISY'
+  limit        ||= 5
 
   @body_class = 'api-index'
   @page_title = title
@@ -17,51 +18,46 @@
     get_user_identity:            nil,
     get_my_account:               nil,
     get_my_preferences:           nil,
-    get_my_assigned_titles:       [limit: limit],
-    get_my_download_history:      [limit: limit],
-    get_my_reading_lists:         [],
-    get_account:                  [user: user],
-    get_assigned_titles:          [user: user, limit: limit],
-    get_subscriptions:            [user: user],
-    get_user_agreements:          [user: user],
-    get_user_pod:                 [user: user],
-    get_organization_members:     [limit: limit],
+    get_my_assigned_titles:       { limit: limit },
+    get_my_download_history:      { limit: limit },
+    get_my_reading_lists:         {},
+    get_account:                  { user: user },
+    get_assigned_titles:          { user: user, limit: limit },
+    get_subscriptions:            { user: user },
+    get_subscription:             { user: user, subscriptionId: subscription },
+    get_user_agreements:          { user: user },
+    get_user_pod:                 { user: user },
+    get_organization_members:     { limit: limit },
     get_title_count:              nil,
-    get_titles:                   [limit: limit],
-    get_title:                    [bookshareId: book],
-    download_title:               [bookshareId: book, format: format],
-    get_periodicals:              [limit: limit],
-    get_periodical:               [seriesId: series],
-    get_periodical_editions:      [seriesId: series, limit: limit],
-    download_periodical_edition:  [seriesId: series, editionId: edition,
-                                   format: format],
-    get_categories:               [limit: limit],
-    get_catalog:                  [limit: limit],
+    get_titles:                   { limit: limit },
+    get_title:                    { bookshareId: book },
+    download_title:               { bookshareId: book, format: format },
+    get_periodicals:              { limit: limit },
+    get_periodical:               { seriesId: series },
+    get_periodical_editions:      { seriesId: series, limit: limit },
+    download_periodical_edition:  { seriesId: series, editionId: edition,
+                                    format: format },
+    get_categories:               { limit: limit },
+    get_catalog:                  { limit: limit },
     get_subscription_types:       nil,
   }.deep_freeze
 
+  # Parameters for each API method call formatted for display.
   parameter_list =
-    methods.transform_values { |args|
-      args = Array.wrap(args).presence
-      args &&=
-        args.map { |arg|
-          if arg.is_a?(Hash)
-            arg.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
-          else
-            arg.inspect
-          end
-        }.join(', ')
-      args &&= "(#{args})"
-      args.freeze
-    }
+  methods.transform_values { |opts|
+    opts = opts.presence
+    opts &&= '(' + opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ') + ')'
+    opts.freeze
+  }
 
   service = ApiService.instance
   success = []
   error   = []
 
+  # Results from each API method call.
   trials  =
-    methods.map { |method, args|
-      value = service.send(method, *args)
+    methods.map { |method, opts|
+      value = service.send(method, opts)
       value =
         if !value.is_a?(Api::Record::Base)
           # === Scalar response value ===
@@ -92,12 +88,14 @@
               '%s<a href="%s">%s</a>%s' % [quot, href, url, quot]
             }
             .gsub(/^( +)/) { |s| s.gsub(/ /, '&nbsp;&nbsp;') }
+            .gsub(/^([^:]+:) /, '\1&nbsp;')
             .split(/\n/)
             .map { |line| content_tag(:div, line.html_safe, class: 'data') }
         end
       [method, safe_join(value, "\n").freeze]
     }.to_h
 
+  # CSS classes representing the status of each API method call.
   status =
     methods.keys.map { |method|
       classes = []
@@ -112,28 +110,20 @@
 <div id="methods" class="methods">
   <%- service.service_methods.each do |method| -%>
     <%- if (css = status[method]).present? -%>
-      <a href="#__<%= method -%>" class="<%= css -%>" data-turbolinks="false">
-        <%= method %>
-      </a>
+      <%- href = '#__' + method.to_s -%>
+      <%= link_to(method, href, class: css, 'data-turbolinks': false) -%>
     <%- else -%>
-      <div>
-        <%= method %>
-      </div>
+      <div><%= method -%></div>
     <%- end -%>
   <%- end -%>
 </div>
 
 <div id="trials" class="trials">
   <%- trials.each_pair do |method, value| -%>
-    <%- classes = [] -%>
-    <%- classes << 'success' if success.include?(method) -%>
-    <%- classes << 'error'   if error.include?(method) -%>
     <h2 id="__<%= method -%>" class="label">
       <span class="method"><%= method -%></span>
       <span class="args"><%= parameter_list[method] -%></span>
     </h2>
-    <div class="value <%= status[method] -%>">
-      <%= value %>
-    </div>
+    <div class="value <%= status[method] -%>"><%= value -%></div>
   <%- end -%>
 </div>
