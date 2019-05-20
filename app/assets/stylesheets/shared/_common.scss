@@ -1,5 +1,7 @@
 // app/assets/stylesheets/shared/_common.scss
 
+// @use 'shared/variables'; // TODO: SASS 4.0
+
 //=============================================================================
 // Common definitions.
 //=============================================================================
@@ -30,7 +32,7 @@
     flex-direction:   row;
     justify-content:  space-between;
     margin:           0;
-    padding:          1rem 2rem;
+    padding:          $page-padding;
     color:            white;
     background-color: #24408e;
 
@@ -93,107 +95,7 @@ body {
     padding: 0;
 }
 
-// The <header> at the top of every page.
-.layout-header {
-
-    @extend %banner;
-
-    font-size: x-large;
-
-    //=========================================================================
-    // Header sections
-    //=========================================================================
-
-    > * {
-        display:        flex;
-        flex-direction: row;
-    }
-
-    .logo-area > * {
-        margin: auto 1rem auto 0;
-    }
-
-    .control-area > * {
-        margin: auto 0 auto 1rem;
-    }
-
-    //=========================================================================
-    // Header elements
-    //=========================================================================
-
-    .logo {
-        font-size: xx-large;
-    }
-
-    .tagline {
-        font-size:    smaller;
-        font-variant: small-caps;
-    }
-
-    .user {
-        font-size: smaller;
-    }
-
-    .session {
-        padding:       0.25rem 0.375rem;
-        border:        1px solid;
-        border-radius: 0.5rem;
-    }
-
-    .session-link:focus {
-        outline-offset: 1px;
-    }
-}
-
-// Navigation bar (<nav>) at the top of every page just below <header>.
-.layout-navbar {
-
-    @extend %banner;
-
-    //=========================================================================
-    // Navbar sections
-    //=========================================================================
-
-    .links {
-
-        display:        flex;
-        flex-direction: row;
-        font-size:      x-large;
-
-        > * {
-            margin-right: 0.5rem;
-        }
-    }
-}
-
 // The <main> content area of the page.
 .layout-content {
-    margin: 0 2rem;
-}
-
-// The <footer> at the bottom of every page.
-.layout-footer {
-    @extend %banner;
-}
-
-//=============================================================================
-// Flash message display.
-//=============================================================================
-
-.flash-messages {
-
-    > * {
-        margin:        1rem 0;
-        padding:       1rem;
-        border:        2px solid gray;
-        border-radius: 8px;
-    }
-
-    .notice {
-        background-color: #00ff0060;
-    }
-
-    .alert {
-        background-color: #ff000060;
-    }
+    margin: 0 $page-padding-x;
 }

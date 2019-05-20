@@ -1,0 +1,26 @@
+// app/assets/stylesheets/shared/_flash.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Flash message display.
+//=============================================================================
+
+.flash-messages {
+
+    > * {
+        margin:        1rem 0;
+        padding:       1rem;
+        border:        2px solid gray;
+        border-radius: 8px;
+    }
+
+    .notice {
+        background-color: #00ff0060;
+    }
+
+    .alert {
+        background-color: #ff000060;
+    }
+
+}

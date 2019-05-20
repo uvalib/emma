@@ -1,0 +1,108 @@
+// app/assets/stylesheets/shared/_variables.scss
+
+//=============================================================================
+// Screen dimension definitions.
+//=============================================================================
+
+$sm-width:  420px;      // All phones appear to be <= 414px in portrait mode.
+$lg-width:  1200px;     // E.g. 1280x800 laptop.
+
+$sm-height: $sm-width;  // Phone in landscape mode.
+$lg-height: 900px;      // 1440x900 laptop.
+
+// Interpolation strings for @media queries associated with specific horizontal
+// or vertical dimensional properties:
+
+// * Small-screen portrait mode.
+$narrow-screen: "screen and (max-width: #{$sm-width})";
+
+// * Small-screen landscape mode.
+$short-screen:  "screen and (max-height: #{$sm-height})";
+
+// * Large-screen landscape mode.
+$wide-screen:   "screen and (min-width: #{$lg-width})";
+
+// * Large-screen portrait mode.
+$tall-screen:   "screen and (min-height: #{$lg-height})";
+
+// * In-between screen width.
+$medium-width:
+    "screen and (min-width: #{$sm-width}) and (max-width: #{$lg-width})";
+
+// * In-between screen height.
+$medium-height:
+    "screen and (min-height: #{$sm-height}) and (max-height: #{lg-height})";
+
+// Interpolation strings for @media queries associated with the general size of
+// the screen:
+
+$small-screen:  $narrow-screen + "," + $short-screen;  // E.g., handheld mobile
+$large-screen:  $wide-screen   + "," + $tall-screen;   // E.g., desktop
+$medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
+
+//=============================================================================
+// Standard definitions.
+//=============================================================================
+
+// Page layout CSS variables.
+:root {
+    --page-padding: 2rem;
+    --flex-gap:     1rem;
+}
+
+//=============================================================================
+// Desktop - definitions specific to large screens.
+//=============================================================================
+
+@media #{$large-screen} {
+
+    // TODO: ???
+
+}
+
+//=============================================================================
+// Tablet - definitions specific to medium screens.
+//=============================================================================
+
+@media #{$medium-screen} {
+
+    // Page layout CSS variables.
+    :root {
+        --page-padding: 1rem;
+        --flex-gap:     0.75rem;
+    }
+
+}
+
+//=============================================================================
+// Mobile - definitions specific to small screens.
+//=============================================================================
+
+@media #{$small-screen} {
+
+    // Page layout CSS variables.
+    :root {
+        --page-padding: 0.75rem;
+        --flex-gap:     0.25rem;
+    }
+
+}
+
+//=============================================================================
+// Responsive definitions.
+//=============================================================================
+
+// Page layout properties.
+:root {
+    --page-padding-x: var(--page-padding);
+    --page-padding-y: calc(var(--page-padding) / 2);
+    --flex-gap-x:     var(--flex-gap);
+    --flex-gap-y:     var(--flex-gap);
+}
+
+$page-padding-x:    var(--page-padding-x);
+$page-padding-y:    var(--page-padding-y);
+$page-padding:      $page-padding-y $page-padding-x;
+$flex-gap-x:        var(--flex-gap-x);
+$flex-gap-y:        var(--flex-gap-y);
+$flex-gap:          $flex-gap-y $flex-gap-x;

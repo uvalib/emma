@@ -25,38 +25,6 @@ class ApiService
   include Api::Common
   include Api::Schema
 
-  API_VERSION      = 'v2'
-  DEFAULT_BASE_URL = 'https://api.bookshare.org'
-  DEFAULT_AUTH_URL = 'https://auth.bookshare.org'
-  DEFAULT_API_KEY  = nil # NOTE: Must be supplied at run time.
-  DEFAULT_USERNAME = 'rwl@virginia.edu' # For examples # TODO: ???
-
-  BASE_URL =
-    (ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL)
-      .sub(%r{^(https?://)?}) { $1 || 'https://' }
-      .sub(%r{(/v\d+/?)?$})   {$1 || "/#{API_VERSION}" }
-      .freeze
-  AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || DEFAULT_AUTH_URL
-  API_KEY  = ENV['BOOKSHARE_API_KEY']  || DEFAULT_API_KEY
-
-  if running_rails_application?
-    Log.error('Missing BOOKSHARE_BASE_URL') unless BASE_URL
-    Log.error('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
-    Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
-  end
-
-  BASE_HOST = URI(BASE_URL).host.freeze
-  AUTH_HOST = URI(AUTH_URL).host.freeze
-
-  # Maximum accepted value for a :limit parameter.
-  #
-  # @type [Integer]
-  #
-  # == Implementation Notes
-  # Determined experimentally.
-  #
-  MAX_LIMIT = 100
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -97,20 +65,28 @@ class ApiService
 
   public
 
-  TMP_INITIAL_INSTANCE_METHODS = instance_methods
+  # This section is performed conditionally because `rake assets:precompile`
+  # will load this class a second time, causing a warning that SERVICE_METHODS
+  # is already defined.
+  #
+  unless defined?(SERVICE_METHODS)
 
-  # Include send and receive modules from "app/services/api_service/*/*.rb".
-  constants(false).each do |name|
-    mod = "#{self}::#{name}".constantize
-    include mod if mod.is_a?(Module)
+    INITIAL_INSTANCE_METHODS = instance_methods
+
+    # Include send and receive modules from "app/services/api_service/*/*.rb".
+    constants(false).each do |name|
+      mod = "#{self}::#{name}".constantize
+      include mod if mod.is_a?(Module)
+    end
+
+    SERVICE_METHODS =
+      (instance_methods - INITIAL_INSTANCE_METHODS).select { |m|
+        m if m =~ /^(get|create|update|remove|download)_/
+      }.compact.sort.freeze
+
+    remove_const(:INITIAL_INSTANCE_METHODS)
+
   end
-
-  SERVICE_METHODS =
-    (instance_methods - TMP_INITIAL_INSTANCE_METHODS).select { |m|
-      m if m =~ /^(get|create|update|remove|download)_/
-    }.compact.sort.freeze
-
-  remove_const(:TMP_INITIAL_INSTANCE_METHODS)
 
   # service_methods
   #

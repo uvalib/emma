@@ -5,7 +5,7 @@
 //=============================================================================
 
 //@import 'bootstrap';
-//@import 'shared/variables';
+@import 'shared/variables';
 
 //=============================================================================
 // Local definitions
@@ -18,9 +18,9 @@
 //=============================================================================
 
 @import 'shared/common';
-//@import 'shared/header';
-//@import 'shared/footer';
-//@import 'shared/lens';
+@import 'shared/flash';
+@import 'shared/footer';
+@import 'shared/header';
 //@import 'shared/modal';
 
 //=============================================================================

@@ -1,5 +1,7 @@
 // app/assets/stylesheets/controllers/_api.scss
 
+// @use 'shared/common'; // TODO: SASS 4.0
+
 //=============================================================================
 // API test page
 //=============================================================================
@@ -28,7 +30,7 @@ body.api-index {
         @extend %section;
 
         display:    block;
-        margin-top: 2rem;
+        margin-top: $page-padding-y;
     }
 
     .methods {
@@ -36,7 +38,17 @@ body.api-index {
         @extend %panel;
 
         padding:      1rem;
-        column-count: 4;
+        column-count: auto;
+        column-width: 27.5vw;
+
+        @media #{$wide-screen} {
+            column-width: 15vw;
+        }
+
+        @media #{$narrow-screen} {
+            padding-top:  0;
+            column-width: unset;
+        }
 
         > * {
             display: block;
@@ -61,6 +73,10 @@ body.api-index {
 
             display:     inline-flex;
             align-items: baseline;
+
+            @media #{$narrow-screen} {
+                flex-direction: column;
+            }
 
             .method {
                 display: block;
@@ -88,6 +104,7 @@ body.api-index {
             }
 
             .data {
+                word-break:  keep-all;
                 font-family: monospace;
                 font-size:   larger;
             }

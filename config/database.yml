@@ -23,28 +23,6 @@ _db_mysql_test:                                                  &DB_MYSQL_TEST
   <<: *DB_MYSQL
 
 # =============================================================================
-# SQLite adapter settings
-# =============================================================================
-
-_db_sqlite:                                                          &DB_SQLITE
-  adapter:  sqlite3
-  timeout:  5000
-  pool:     <%= ENV['RAILS_MAX_THREADS'] || 5 %>
-  database: <%= ENV['DBNAME'] %>
-
-_db_sqlite_prod:                                                &DB_SQLITE_PROD
-  <<: *DB_SQLITE
-  database: <%= ENV['DBNAME'] || 'db/production.sqlite3' %>
-
-_db_sqlite_dev:                                                  &DB_SQLITE_DEV
-  <<: *DB_SQLITE
-  database: <%= ENV['DBNAME'] || 'db/development.sqlite3' %>
-
-_db_sqlite_test:                                                &DB_SQLITE_TEST
-  <<: *DB_SQLITE
-  database: <%= ENV['DBNAME'] || 'db/test.sqlite3' %>
-
-# =============================================================================
 # Rails environments
 # =============================================================================
 
@@ -52,10 +30,10 @@ production:
   <<: *DB_MYSQL_PROD
 
 development:
-  <<: *DB_SQLITE_DEV
+  <<: *DB_MYSQL_DEV
 
 test:
-  <<: *DB_SQLITE_TEST
+  <<: *DB_MYSQL_TEST
 
 # WARNING: The test database will be erased every time "rake test" is run.
 # NOTE: Do not set use the same database for either development or production.

@@ -6,10 +6,10 @@
   logo = content_tag(:div, link_to(logo, root_path), class: 'logo')
 
   tagline = t('emma.application.tagline')
-  tagline = content_tag(:div, tagline, class: 'tagline')
+  tagline = content_tag(:div, tagline, class: 'tagline', title: tagline)
 
   username = current_user.to_s
-  username = content_tag(:div, username, class: 'user')
+  username = content_tag(:div, username, class: 'user', title: username)
 
   session_link = current_user ? sign_out_link : sign_in_link
   session_link = content_tag(:div, session_link, class: 'session')
