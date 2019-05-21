@@ -15,11 +15,14 @@
 
   meta_options = { 'data-turbolinks-track': '' }
 
+  language = I18n.locale.to_s.downcase.sub(/-.*/, '')
+
 -%>
 <!DOCTYPE html>
-<html>
+<html lang="<%= language -%>">
   <head>
     <title><%= @page_title -%></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= favicon_link_tag       'favicon.ico', meta_options %>
