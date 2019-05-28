@@ -44,7 +44,7 @@ class ApiService
     # @return [ApiUserSubscriptionList]
     #
     def get_subscriptions(user: @user)
-      username = get_username(user)
+      username = name_of(user)
       api(:get, 'accounts', username, 'subscriptions')
       data = response&.body&.presence
       ApiUserSubscriptionList.new(data, error: @exception)
@@ -66,7 +66,7 @@ class ApiService
     #
     def create_subscription(user: @user, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'subscriptions', opt)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)
@@ -80,7 +80,7 @@ class ApiService
     # @return [ApiUserSubscription]
     #
     def get_subscription(user: @user, subscriptionId:)
-      username = get_username(user)
+      username = name_of(user)
       api(:get, 'accounts', username, 'subscriptions', subscriptionId)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)
@@ -103,7 +103,7 @@ class ApiService
     #
     def update_subscription(user: @user, subscriptionId:, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:put, 'accounts', username, 'subscriptions', subscriptionId, opt)
       data = response&.body&.presence
       ApiUserSubscription.new(data, error: @exception)

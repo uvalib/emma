@@ -44,7 +44,7 @@ class ApiService
     # @return [ApiUserPodList]
     #
     def get_user_pod(user: @user)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'pod')
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -62,7 +62,7 @@ class ApiService
     #
     def create_user_pod(user: @user, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'pod', opt)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -80,7 +80,7 @@ class ApiService
     #
     def update_user_pod(user: @user, disabilityType:, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:put, 'accounts', username, 'pod', disabilityType, opt)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)
@@ -94,7 +94,7 @@ class ApiService
     # @return [ApiUserPodList]
     #
     def remove_user_pod(user: @user, disabilityType:)
-      username = get_username(user)
+      username = name_of(user)
       api(:delete, 'accounts', username, 'pod', disabilityType)
       data = response&.body&.presence
       ApiUserPodList.new(data, error: @exception)

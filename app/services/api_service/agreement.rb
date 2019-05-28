@@ -44,7 +44,7 @@ class ApiService
     # @return [ApiUserSignedAgreementList]
     #
     def get_user_agreements(user: @user)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'agreements')
       data = response&.body&.presence
       ApiUserSignedAgreementList.new(data, error: @exception)
@@ -64,7 +64,7 @@ class ApiService
     #
     def create_user_agreement(user: @user, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'agreements', opt)
       data = response&.body&.presence
       ApiUserSignedAgreement.new(data, error: @exception)
@@ -78,7 +78,7 @@ class ApiService
     # @return [ApiUserSignedAgreement]
     #
     def remove_user_agreement(user: @user, agreementId:)
-      username = get_username(user)
+      username = name_of(user)
       api(:post, 'accounts', username, 'agreements', agreementId, 'expired')
       data = response&.body&.presence
       ApiUserSignedAgreement.new(data, error: @exception)

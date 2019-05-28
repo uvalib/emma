@@ -32,10 +32,10 @@ module OmniAuth
       #
       CONFIGURED_AUTH = {
         'emmacollection@bookshare.org' => {
-          access_token: '8f4b4318-90c1-47ac-a6a1-39a11f53e7c4',
+          access_token: '759b576b-0e13-4c84-bead-42045d91b83d',
         },
         'emmadso@bookshare.org' => {
-          access_token: 'a237cc9b-0275-4e4b-9ca1-37db198c3fb3',
+          access_token: '78c1bc8d-4dc0-4e02-ad3a-bc595445089e',
         }
       }.transform_values { |hash|
         hash[:token_type] ||= 'bearer'
@@ -85,8 +85,8 @@ module OmniAuth
 
       info do
         {
-          first_name: (first_name = raw_info.dig(:name, :firstName)),
-          last_name:  (last_name  = raw_info.dig(:name, :lastName)),
+          first_name: raw_info.dig(:name, :firstName),
+          last_name:  raw_info.dig(:name, :lastName),
           email:      raw_info[:username]
         }
       end

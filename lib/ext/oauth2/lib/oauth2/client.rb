@@ -191,12 +191,15 @@ module OAuth2
       response
     end
 
-    # Initializes an AccessToken by making a request to the token endpoint
+    # Initializes an AccessToken by making a request to the token endpoint.
     #
-    # @param [Hash] params a Hash of params for the token endpoint
-    # @param [Hash] access token options, to pass to the AccessToken object
-    # @param [Class] class of access token for easier subclassing OAuth2::AccessToken
-    # @return [AccessToken] the initalized AccessToken
+    # @param [Hash]  params               For the token endpoint.
+    # @param [Hash]  access_token_opts    Passed to the AccessToken object.
+    # @param [Class] access_token_class   Class of access token for easier
+    #                                       subclassing of OAuth2::AccessToken.
+    #
+    # @return [AccessToken]               The initialized AccessToken.
+    #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       $stderr.puts "OAUTH2 #{__method__} | access_token_opts = #{access_token_opts.inspect} | access_token_class = #{access_token_class.inspect}"
       super

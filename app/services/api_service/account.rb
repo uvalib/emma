@@ -126,7 +126,7 @@ class ApiService
     # @return [ApiUserAccount]
     #
     def get_account(user: @user)
-      username = get_username(user)
+      username = name_of(user)
       api(:get, 'accounts', username)
       data = response&.body&.presence
       ApiUserAccount.new(data, error: @exception)
@@ -140,7 +140,7 @@ class ApiService
     # @return [ApiStatusModel]
     #
     def update_account_password(user: @user, password:)
-      username = get_username(user)
+      username = name_of(user)
       api(:put, 'accounts', username, 'password', password: password)
       data = response&.body&.presence
       ApiStatusModel.new(data, error: @exception)
@@ -184,7 +184,7 @@ class ApiService
     #
     def get_assigned_titles(user: @user, **opt)
       validate_parameters(__method__, opt)
-      username = get_username(user)
+      username = name_of(user)
       api(:get, 'assignedTitles', username, opt)
       data = response&.body&.presence
       ApiAssignedTitleMetadataSummaryList.new(data, error: @exception)

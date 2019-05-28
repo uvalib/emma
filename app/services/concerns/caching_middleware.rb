@@ -128,11 +128,11 @@ module Faraday
 
     # Report the expiration based on the requested path.
     #
-    # @param [Faraday::Env] env
+    # @param [Faraday::Env] _env
     #
     # @return [Numeric]
     #
-    def expiration(env = nil)
+    def expiration(_env = nil)
       DEFAULT_EXPIRATION
     end
 

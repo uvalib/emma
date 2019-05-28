@@ -248,11 +248,11 @@ module Emma
     def self.silent(go_silent = true)
       if !go_silent
         logger.local_level = saved_log_level.delete(local_log_id) || level
-        silenced = false
+        self.silenced = false
       elsif !silenced?
         saved_log_level[local_log_id] = logger.local_level
         logger.local_level = Logger::ERROR
-        silenced = true
+        self.silenced = true
       end
     end
 
@@ -266,8 +266,8 @@ module Emma
       if silenced?
         block.call
       else
-        silenced = true
-        logger.silence(temporary_level, &block).tap { silenced = false }
+        self.silenced = true
+        logger.silence(temporary_level, &block).tap { self.silenced = false }
       end
     end
 

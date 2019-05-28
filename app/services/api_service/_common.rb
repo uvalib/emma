@@ -16,7 +16,7 @@ class ApiService
     DEFAULT_BASE_URL = 'https://api.bookshare.org'
     DEFAULT_AUTH_URL = 'https://auth.bookshare.org'
     DEFAULT_API_KEY  = nil # NOTE: Must be supplied at run time.
-    DEFAULT_USERNAME = 'rwl@virginia.edu' # For examples # TODO: ???
+    DEFAULT_USERNAME = 'anonymous' # For examples # TODO: ???
 
     BASE_URL =
       (ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL)
@@ -228,8 +228,10 @@ class ApiService
     #
     # @return [String]
     #
-    def get_username(user)
-      user.is_a?(Hash) ? user['uid'] : user.to_s
+    def name_of(user)
+      name = user
+      name = user['uid'] if user.is_a?(Hash)
+      name.to_s.presence || DEFAULT_USERNAME
     end
 
     # Validate presence of required API parameters.
@@ -295,7 +297,7 @@ class ApiService
     )
       # Extract information from the HTTP response.
       body    = response&.body&.presence
-      error   = body && ApiError.new(body)
+      error   = body && Api::Error.new(body)
       code    = error&.code
       message = error&.message&.presence
       level   = message ? Logger::WARN : Logger::Error
