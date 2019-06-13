@@ -94,6 +94,7 @@ module CategoryHelper
         opt = opt.merge(no_link: true)
       end
     end
+    opt = opt.merge(title: CATEGORY_SHOW_TOOLTIP) unless opt.key?(:title)
     item_link(item, label, **opt) { |term| title_index_path(categories: term) }
   end
 

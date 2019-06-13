@@ -2,8 +2,8 @@
 <%-
   # Catalog Title show page.
   item  ||= @item
-  title ||= item&.full_title || t('emma.title.show.title')
-  @page_title = item&.title
+  title ||= item&.label || t('emma.title.show.title')
+  @page_title = title
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -5,7 +5,7 @@
   # Artifact index.
   title ||= t('emma.artifact.index.title')
 
-  @page_title = t('emma.artifact.label')
+  @page_title = t('emma.artifact.index.label', default: title)
 
   item_list = artifact_list.presence
 

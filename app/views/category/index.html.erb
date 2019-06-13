@@ -3,7 +3,7 @@
   # Category index.
   title ||= t('emma.category.index.title')
 
-  @page_title = t('emma.category.label')
+  @page_title = t('emma.category.index.label', default: title)
 
   item_list = @page_items.presence
 

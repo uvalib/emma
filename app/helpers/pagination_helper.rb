@@ -14,6 +14,7 @@ module PaginationHelper
   end
 
   include ParamsHelper
+  include HtmlHelper
 
   # Default number of results per page if none was specified.
   #
@@ -24,44 +25,44 @@ module PaginationHelper
   #
   DEFAULT_PAGE_SIZE = I18n.t('emma.pagination.page_size').to_i
 
-  # Label for "start over" pagination control.
-  #
-  # @type [String]
-  #
-  # == Usage Notes
-  # To link to the base search without any search terms (a.k.a. "null search").
-  #
-  START_OVER_LABEL = I18n.t('emma.pagination.start_over').freeze
-
-  # Label for "first page" pagination control.
-  #
-  # @type [String]
-  #
-  FIRST_PAGE_LABEL = I18n.t('emma.pagination.first_page').freeze
-
-  # Label for "last page" pagination control.
-  #
-  # @type [String]
-  #
-  LAST_PAGE_LABEL = I18n.t('emma.pagination.last_page').freeze
-
-  # Label for "previous page" pagination control.
-  #
-  # @type [String]
-  #
-  PREV_PAGE_LABEL = I18n.t('emma.pagination.prev_page').freeze
-
-  # Label for "next page" pagination control.
-  #
-  # @type [String]
-  #
-  NEXT_PAGE_LABEL = I18n.t('emma.pagination.next_page').freeze
-
   # Separator between pagination controls.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PAGINATION_SEPARATOR = I18n.t('emma.pagination.separator').html_safe.freeze
+
+  # Properties for the "start over" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # == Usage Notes
+  # To link to the base search without any search terms (a.k.a. "null search").
+  #
+  START_OVER = I18n.t('emma.pagination.start_over').symbolize_keys.deep_freeze
+
+  # Properties for the "first page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  FIRST_PAGE = I18n.t('emma.pagination.first_page').symbolize_keys.deep_freeze
+
+  # Properties for the "last page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  LAST_PAGE = I18n.t('emma.pagination.last_page').symbolize_keys.deep_freeze
+
+  # Properties for the "previous page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  PREV_PAGE = I18n.t('emma.pagination.prev_page').symbolize_keys.deep_freeze
+
+  # Properties for the "next page" pagination control.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  NEXT_PAGE = I18n.t('emma.pagination.next_page').symbolize_keys.deep_freeze
 
   # ===========================================================================
   # :section:
@@ -231,13 +232,12 @@ module PaginationHelper
     sep: PAGINATION_SEPARATOR,
     **opt
   )
-    css = Array.wrap(opt[:class]).unshift('pagination').compact.uniq.join(' ')
-    content_tag(:div, opt.merge(class: css)) do
+    content_tag(:div, prepend_css_classes(opt, 'pagination')) do
       link_opt = { class: 'link' }
       controls = [
-        pagination_control(FIRST_PAGE_LABEL, fp, link_opt),
-        pagination_control(PREV_PAGE_LABEL,  pp, link_opt.merge(rel: 'prev')),
-        pagination_control(NEXT_PAGE_LABEL,  np, link_opt.merge(rel: 'next'))
+        pagination_control(FIRST_PAGE, fp, link_opt),
+        pagination_control(PREV_PAGE,  pp, link_opt.merge(rel: 'prev')),
+        pagination_control(NEXT_PAGE,  np, link_opt.merge(rel: 'next'))
       ]
       safe_join(controls, sep)
     end
@@ -252,18 +252,24 @@ module PaginationHelper
   # A pagination control link or a non-actionable placeholder if *path* is not
   # valid.
   #
-  # @param [String]      label
-  # @param [String, nil] path
-  # @param [Hash, nil]   opt
+  # @param [Hash, String] label
+  # @param [String, nil]  path
+  # @param [Hash, nil]    opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def pagination_control(label, path = nil, opt = {})
-    if path.present?
+    link = path.present?
+    if label.is_a?(Hash)
+      prop  = label
+      label = prop[:label]
+      tip   = link ? prop[:tooltip] : prop.dig(:no_link, :tooltip)
+      opt   = opt.merge(title: tip) if tip.present?
+    end
+    if link
       link_to(label, path, opt)
     else
-      classes = [opt[:class], 'disabled'].flatten.join(' ').squish
-      content_tag(:span, label, opt.merge(class: classes))
+      content_tag(:span, label, append_css_classes(opt, 'disabled'))
     end
   end
 

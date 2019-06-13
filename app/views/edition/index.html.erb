@@ -3,7 +3,7 @@
   # Edition index.
   title ||= t('emma.edition.index.title')
 
-  @page_title = t('emma.edition.label')
+  @page_title = t('emma.edition.index.label', default: title)
 
   item_list = edition_list.presence
 

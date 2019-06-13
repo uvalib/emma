@@ -54,9 +54,14 @@ module Api::Common::TitleMethods
   # @return [String]
   #
   def full_title
-    sub = respond_to?(:subtitle) && subtitle.to_s.presence
-    sub &&= ": #{sub}"
-    (sub && !title.include?(sub)) ? (title + sub) : title
+    ti = title.to_s.presence
+    st = respond_to?(:subtitle) && subtitle.to_s.presence
+    if ti && st
+      st = ": #{st}"
+      ti.include?(st) ? ti : (ti + st)
+    else
+      ti || st || '???'
+    end
   end
 
   # The number of pages if valid.

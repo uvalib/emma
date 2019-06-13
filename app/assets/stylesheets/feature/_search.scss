@@ -133,8 +133,15 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
     }
 
     .value {
+
         @media #{$narrow-screen} {
             margin-bottom: $results-entry-gap-y
+        }
+
+        &.field-None {
+            width:         max-content;
+            margin-top:    $results-entry-gap-y;
+            margin-bottom: $results-entry-gap-y;
         }
     }
 }

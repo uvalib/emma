@@ -3,7 +3,7 @@
   # Members results page.
   title ||= t('emma.member.index.title')
 
-  @page_title = t('emma.member.label')
+  @page_title = t('emma.member.index.label', default: title)
 
   item_list = member_list.presence
 

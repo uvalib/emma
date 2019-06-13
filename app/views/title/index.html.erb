@@ -3,7 +3,7 @@
   # Catalog Titles results page.
   title ||= t('emma.title.index.title')
 
-  @page_title = t('emma.title.label')
+  @page_title = t('emma.title.index.label', default: title)
 
   item_list = title_list.presence
 

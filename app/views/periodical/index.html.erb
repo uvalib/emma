@@ -3,7 +3,7 @@
   # Periodicals results page.
   title ||= t('emma.periodical.index.title')
 
-  @page_title = t('emma.periodical.label')
+  @page_title = t('emma.periodical.index.label', default: title)
 
   item_list = periodical_list.presence
 

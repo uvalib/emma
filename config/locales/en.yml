@@ -8,15 +8,45 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+    nav_bar:
+      controllers:
+        - category
+        - title
+        - periodical
+        - member
+        - api
+
     pagination:
-      #page_size:        20 # TODO: restore after testing
-      page_size:        5
-      start_over:       'CLEAR SEARCH TERMS'
-      first_page:       'FIRST'
-      last_page:        'LAST'
-      prev_page:        'PREV'
-      next_page:        'NEXT'
+      page_size:        10
       separator:        '&nbsp;|&nbsp;'
+
+      start_over:
+        label:          'START'
+        tooltip:        'Clear all search terms.'
+
+      first_page:
+        label:          'FIRST'
+        tooltip:        'Go to the first page of results.'
+        no_link:
+          tooltip:      'No search results.'
+
+      last_page:
+        label:          'LAST'
+        tooltip:        'Go to the last page of results.'
+        no_link:
+          tooltip:      'No search results.'
+
+      prev_page:
+        label:          'PREV'
+        tooltip:        'Go to the previous page of results.'
+        no_link:
+          tooltip:      'Currently on the first page of results.'
+
+      next_page:
+        label:          'NEXT'
+        tooltip:        'Go to the next page of results.'
+        no_link:
+          tooltip:      'Currently on the last page of results.'
 
     format:
       BRF:              'BRF'
@@ -34,37 +64,49 @@ en:
     user:
 
       sessions:
+
         new:
           label:        'Sign in'
           title:        'Sign in with your Bookshare account'
+          tooltip:      'Authentication is required for full access.'
           submit:       'Sign in'
+
         create:
           success:      'Signed in as %{user}.'
+
         destroy:
           label:        'Sign out'
+          tooltip:      'End your session.'
           success:      'Signed out (%{user}).'
 
       passwords:
+
         new:
           label:        'Forgot your password?'
 
       registrations:
+
         new:
           label:        'Sign up'
 
       confirmations:
+
         new:
           label:        "Didn't receive confirmation instructions?"
 
       unlocks:
+
         new:
           label:        "Didn't receive unlock instructions?"
 
       omniauth_callbacks:
+
         new:
           label:        'Sign in with %{provider}'
+
         destroy:
           label:        'Sign out of %{provider}'
+
         sign_in_as:
           label:        'Sign in as %{user}'
 
@@ -73,14 +115,18 @@ en:
     # =========================================================================
 
     home:
+      label:            'Home'
       title:            'EMMA Test Application'
 
       welcome:
+        label:          'Welcome'
         title:          'Welcome to EMMA'
+        tooltip:        'Return to the home page.'
 
       dashboard:
         label:          'Dashboard'
         title:          'EMMA Dashboard'
+        tooltip:        'Return to your account dashboard.'
 
     # =========================================================================
     # Category pages
@@ -89,11 +135,15 @@ en:
     category:
       label:            'Categories'
       title:            'Categories'
+      tooltip:          'Search for catalog items by topic.'
 
       index:
+        label:          'Categories'
         title:          'Category Index'
+        tooltip:        'Get a category listing.'
 
       show:
+        label:          'Category'
         title:          'Category'
         tooltip:        'See items in this category.'
 
@@ -104,20 +154,27 @@ en:
     title:
       label:            'Titles'
       title:            'Catalog Titles'
+      tooltip:          'Search for catalog items.'
 
       index:
+        label:          'Titles'
         title:          'Catalog Titles Index'
-        tooltip:        'Search for more items with %{terms}.'
+        tooltip:        'Search for more catalog items with %{terms}.'
 
       show:
+        label:          'Title'
         title:          'Catalog Title'
-        tooltip:        'See details about this item.'
+        tooltip:        'See details about this catalog title.'
 
       new:
+        label:          'Add'
         title:          'Add Catalog Title'
+        tooltip:        'Create an entry for a new catalog title.'
 
       edit:
+        label:          'Modify'
         title:          'Modify Catalog Title'
+        tooltip:        'Update the entry for an existing catalog title.'
 
     # =========================================================================
     # Periodical pages
@@ -126,20 +183,27 @@ en:
     periodical:
       label:            'Periodicals'
       title:            'Periodicals'
+      tooltip:          'Search for periodicals.'
 
       index:
+        label:          'Periodicals'
         title:          'Periodicals Index'
-        tooltip:        'Search for more items with %{terms}.'
+        tooltip:        'Search for more periodicals with %{terms}.'
 
       show:
+        label:          'Periodical'
         title:          'Periodical'
-        tooltip:        'See details about this item.'
+        tooltip:        'See details about this periodical.'
 
       new:
+        label:          'Add'
         title:          'Add Periodical'
+        tooltip:        'Create an entry for a new periodical.'
 
       edit:
+        label:          'Modify'
         title:          'Modify Periodical'
+        tooltip:        'Update the entry for an existing periodical.'
 
     # =========================================================================
     # Periodical edition pages
@@ -148,20 +212,27 @@ en:
     edition:
       label:            'Editions'
       title:            'Periodical Editions'
+      tooltip:          'List editions of this periodical.'
 
       index:
+        label:          'Editions'
         title:          'Editions'
         tooltip:        'Search for more periodical editions with %{terms}.'
 
       show:
+        label:          'Edition'
         title:          'Periodical Edition'
         tooltip:        'See details about this periodical edition.'
 
       new:
+        label:          'Add'
         title:          'Add Periodical Edition'
+        tooltip:        'Create an entry for a new periodical edition.'
 
       edit:
+        label:          'Modify'
         title:          'Modify Periodical Edition'
+        tooltip:        'Update the entry for an existing periodical edition.'
 
     # =========================================================================
     # Member pages
@@ -170,19 +241,27 @@ en:
     member:
       label:            'Members'
       title:            'Organization Members'
+      tooltip:          'List organization members.'
 
       index:
+        label:          'Members'
         title:          'Members Index'
+        tooltip:        'List organization members.'
 
       show:
+        label:          'Member'
         title:          'Member'
         tooltip:        'See details about this member.'
 
       new:
+        label:          'Add'
         title:          'Add Member'
+        tooltip:        'Create an entry for a new organization member.'
 
       edit:
+        label:          'Modify'
         title:          'Modify Member'
+        tooltip:        'Update the entry for an existing organization member.'
 
     # =========================================================================
     # Artifact pages
@@ -191,19 +270,27 @@ en:
     artifact:
       label:            'Artifacts'
       title:            'Artifacts (Remediated Content)'
-      tooltip:          'Download this item format.'
+      tooltip:          'List artifacts uploaded for this item.'
 
       index:
+        label:          'Artifacts'
         title:          'Artifacts Index'
+        tooltip:        'List artifacts.'
 
       show:
+        label:          'Artifact'
         title:          'Artifact'
+        tooltip:        'Download this item format.'
 
       new:
+        label:          'Upload'
         title:          'Add Artifact'
+        tooltip:        'Upload a new artifact.'
 
       edit:
+        label:          'Replace'
         title:          'Modify Artifact'
+        tooltip:        'Update an existing artifact.'
 
     # =========================================================================
     # API page
@@ -212,12 +299,17 @@ en:
     api:
       label:            'API Methods'
       title:            'Bookshare API Methods'
+      tooltip:          'Results for API methods run as the current user.'
 
       index:
+        label:          'API Methods'
         title:          'Bookshare API Methods'
+        tooltip:        'Results for API methods run as the current user.'
 
       v2:
-        title:          'Bookshare API Method'
+        label:          'API Method'
+        title:          'Bookshare API Method Output'
+        tooltip:        'Result for an API method run as the current user.'
 
     # =========================================================================
     # Health status

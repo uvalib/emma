@@ -39,7 +39,7 @@ module ResourceHelper
   # @param [Hash, nil]           opt
   #
   # @option opt [Boolean]       :no_link
-  # @option opt [Stringg]       :tooltip
+  # @option opt [String]        :tooltip
   # @option opt [Symbol,String] :label
   # @option opt [Symbol,String] :path
   #

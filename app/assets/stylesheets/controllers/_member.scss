@@ -8,16 +8,18 @@
 //=============================================================================
 
 .member-list {
-
     @extend .results-list;
-
-    .value.field-Name {
-        font-weight: bold;
-    }
 }
 
 .member-list-entry {
+
     @extend .results-entry;
+
+    .value {
+        &.field-Name {
+            font-weight: bold;
+        }
+    }
 }
 
 //=============================================================================

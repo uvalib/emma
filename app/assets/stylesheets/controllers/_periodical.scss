@@ -15,23 +15,31 @@
 
     @extend .results-entry;
 
-    .value.field-Title {
-
-        font-weight: bold;
-
-        a:not(:hover) {
-            text-decoration: none;
+    .label {
+        &.field-Title {
+            @media #{$narrow-screen} {
+                display: none;
+            }
         }
     }
 
-    @media #{$narrow-screen} {
+    .value {
 
-        .label.field-Title {
-            display: none;
+        &.field-Title {
+
+            font-weight: bold;
+
+            @media #{$narrow-screen} {
+                grid-column: 1 / -1;
+            }
+
+            a:not(:hover) {
+                text-decoration: none;
+            }
         }
 
-        .value.field-Title {
-            grid-column: 1 / -1;
+        &.field-None {
+            margin-bottom: 0;
         }
     }
 }

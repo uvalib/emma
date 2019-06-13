@@ -16,23 +16,19 @@
     justify-items: stretch;
 
     .number {
-        // TODO: ???
-    }
-
-    .thumbnail {
-        margin-bottom: $results-entry-gap-y;
-    }
-
-    @media #{$narrow-screen} {
-
-        // Push list number to the right and hide.
-        .number {
+        // Push item number to the right and hide.
+        @media #{$narrow-screen} {
             grid-column: 3 / -1;
             visibility:  hidden;
         }
+    }
+
+    .thumbnail {
+
+        margin-bottom: $results-entry-gap-y;
 
         // Push thumbnail to the right and occupy the right side of the entry.
-        .thumbnail {
+        @media #{$narrow-screen} {
             grid-column: 3 / -1;
             grid-row:    span 2;
         }
@@ -45,11 +41,23 @@
 
     grid-auto-rows: min-content;
 
+    .label {
+        &.field-Title {
+            @media #{$narrow-screen} {
+                display: none;
+            }
+        }
+    }
+
     .value {
 
         &.field-Title {
 
             font-weight: bold;
+
+            @media #{$narrow-screen} {
+                grid-column: 1 / -1;
+            }
 
             a:not(:hover) {
                 text-decoration: none;
@@ -57,19 +65,7 @@
         }
 
         &.field-None {
-            width:      max-content;
-            margin-top: $results-entry-gap-y;
-        }
-    }
-
-    @media #{$narrow-screen} {
-
-        .label.field-Title {
-            display: none;
-        }
-
-        .value.field-Title {
-            grid-column: 1 / -1;
+            margin-bottom: 0;
         }
     }
 }
@@ -107,9 +103,8 @@
             }
         }
 
-        @media #{$narrow-screen} {
-
-            &.field-Links {
+        &.field-Links {
+            @media #{$narrow-screen} {
                 word-break: break-word;
             }
         }

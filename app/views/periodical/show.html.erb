@@ -1,11 +1,12 @@
 <%# app/views/periodical/show.html.erb -%>
 <%-
   # Periodical show page.
-  item ||= @item
-  eds  ||= page_items
-  @page_title = item&.title
+  item  ||= @item
+  eds   ||= page_items
+  title ||= item&.label || t('emma.periodical.show.title')
+  @page_title = title
 -%>
 
-<h1 class="heading"><%= item.label -%></h1>
+<h1 class="heading"><%= title -%></h1>
 
 <%= render 'periodical/details', item: item, eds: eds %>
