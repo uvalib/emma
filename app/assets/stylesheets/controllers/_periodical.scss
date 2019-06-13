@@ -1,0 +1,45 @@
+// app/assets/stylesheets/controllers/_periodical.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Periodical index page
+//=============================================================================
+
+.periodical-list {
+    @extend .results-list;
+}
+
+.periodical-list-entry {
+
+    @extend .results-entry;
+
+    .value.field-Title {
+
+        font-weight: bold;
+
+        a:not(:hover) {
+            text-decoration: none;
+        }
+    }
+
+    @media #{$narrow-screen} {
+
+        .label.field-Title {
+            display: none;
+        }
+
+        .value.field-Title {
+            grid-column: 1 / -1;
+        }
+    }
+}
+
+//=============================================================================
+// Periodical show page
+//=============================================================================
+
+.periodical-details {
+    @extend .results-entry;
+}

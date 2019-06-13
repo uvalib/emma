@@ -8,6 +8,29 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+    pagination:
+      #page_size:        20 # TODO: restore after testing
+      page_size:        5
+      start_over:       'CLEAR SEARCH TERMS'
+      first_page:       'FIRST'
+      last_page:        'LAST'
+      prev_page:        'PREV'
+      next_page:        'NEXT'
+      separator:        '&nbsp;|&nbsp;'
+
+    format:
+      BRF:              'BRF'
+      DAISY:            'DAISY with Images'
+      DAISY_AUDIO:      'DAISY Audio'
+      DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
+      DOCX:             'MS Word'
+      EPUB3:            'EPUB 3'
+      PDF:              'PDF'
+
+    # =========================================================================
+    # Devise controllers
+    # =========================================================================
+
     user:
 
       sessions:
@@ -42,6 +65,12 @@ en:
           label:        'Sign in with %{provider}'
         destroy:
           label:        'Sign out of %{provider}'
+        sign_in_as:
+          label:        'Sign in as %{user}'
+
+    # =========================================================================
+    # Home page
+    # =========================================================================
 
     home:
       title:            'EMMA Test Application'
@@ -53,9 +82,146 @@ en:
         label:          'Dashboard'
         title:          'EMMA Dashboard'
 
+    # =========================================================================
+    # Category pages
+    # =========================================================================
+
+    category:
+      label:            'Categories'
+      title:            'Categories'
+
+      index:
+        title:          'Category Index'
+
+      show:
+        title:          'Category'
+        tooltip:        'See items in this category.'
+
+    # =========================================================================
+    # Catalog Title pages
+    # =========================================================================
+
+    title:
+      label:            'Titles'
+      title:            'Catalog Titles'
+
+      index:
+        title:          'Catalog Titles Index'
+        tooltip:        'Search for more items with %{terms}.'
+
+      show:
+        title:          'Catalog Title'
+        tooltip:        'See details about this item.'
+
+      new:
+        title:          'Add Catalog Title'
+
+      edit:
+        title:          'Modify Catalog Title'
+
+    # =========================================================================
+    # Periodical pages
+    # =========================================================================
+
+    periodical:
+      label:            'Periodicals'
+      title:            'Periodicals'
+
+      index:
+        title:          'Periodicals Index'
+        tooltip:        'Search for more items with %{terms}.'
+
+      show:
+        title:          'Periodical'
+        tooltip:        'See details about this item.'
+
+      new:
+        title:          'Add Periodical'
+
+      edit:
+        title:          'Modify Periodical'
+
+    # =========================================================================
+    # Periodical edition pages
+    # =========================================================================
+
+    edition:
+      label:            'Editions'
+      title:            'Periodical Editions'
+
+      index:
+        title:          'Editions'
+        tooltip:        'Search for more periodical editions with %{terms}.'
+
+      show:
+        title:          'Periodical Edition'
+        tooltip:        'See details about this periodical edition.'
+
+      new:
+        title:          'Add Periodical Edition'
+
+      edit:
+        title:          'Modify Periodical Edition'
+
+    # =========================================================================
+    # Member pages
+    # =========================================================================
+
+    member:
+      label:            'Members'
+      title:            'Organization Members'
+
+      index:
+        title:          'Members Index'
+
+      show:
+        title:          'Member'
+        tooltip:        'See details about this member.'
+
+      new:
+        title:          'Add Member'
+
+      edit:
+        title:          'Modify Member'
+
+    # =========================================================================
+    # Artifact pages
+    # =========================================================================
+
+    artifact:
+      label:            'Artifacts'
+      title:            'Artifacts (Remediated Content)'
+      tooltip:          'Download this item format.'
+
+      index:
+        title:          'Artifacts Index'
+
+      show:
+        title:          'Artifact'
+
+      new:
+        title:          'Add Artifact'
+
+      edit:
+        title:          'Modify Artifact'
+
+    # =========================================================================
+    # API page
+    # =========================================================================
+
     api:
       label:            'API Methods'
       title:            'Bookshare API Methods'
+
+      index:
+        title:          'Bookshare API Methods'
+
+      v2:
+        title:          'Bookshare API Method'
+
+    # =========================================================================
+    # Health status
+    # =========================================================================
 
     health:
 

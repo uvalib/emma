@@ -1,0 +1,43 @@
+// app/assets/stylesheets/feature/_lists.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// List definitions.
+//=============================================================================
+
+/// Grid-based tabular list.
+///
+/// @param {Numeric} $columns
+/// @param {Numeric} $y-gap
+/// @param {Numeric} $x-gap
+/// @param {String}  $ruleset
+///
+/// NOTE: A row separation ($y-gap) other than zero can be problematic because
+/// browsers seem not to be able to properly calculate the true height of the
+/// overall grid.  Increasing the margin below grid cell elements does not seem
+/// to have this problem.
+///
+@mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $ruleset: false) {
+    display:  grid;
+    grid-gap: $y-gap $x-gap;
+    @if $ruleset {
+        grid-template-columns: repeat($columns, $ruleset);
+    }
+}
+
+//=============================================================================
+// Tabular lists.
+//=============================================================================
+
+// A two-column list where each row is a label followed by a value.
+.list-2-column {
+    @include tabular-list(2);
+    grid-template-columns: [label] auto [value] 1fr;
+}
+
+// A three-column list where each row is a number, a label, and a value.
+.list-3-column {
+    @include tabular-list(3);
+    grid-template-columns: [number] minmax(2%, auto) [label] auto [value] 1fr;
+}

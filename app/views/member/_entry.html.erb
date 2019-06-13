@@ -1,0 +1,19 @@
+<%# app/views/member/_entry.html.erb -%>
+<%-
+  # A Member index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && %Q(id="member-#{item.identifier}").html_safe
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="member-list-entry" <%= id -%>>
+  <%= item ? member_field_values(item) : empty_field_value %>
+</div>

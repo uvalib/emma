@@ -6,8 +6,10 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/category_summary'
-require 'api/link'
+
+require_relative 'api/category_summary'
+require_relative 'api/link'
+require_relative 'api/common/sequence_methods'
 
 # ApiCategoriesList
 #
@@ -16,12 +18,14 @@ require 'api/link'
 class ApiCategoriesList < Api::Message
 
   schema do
-    has_many  :categories,   CategorySummary
+    has_many  :categories,   Api::CategorySummary
     attribute :limit,        Integer
-    has_many  :links,        Link
+    has_many  :links,        Api::Link
     attribute :next,         String
     attribute :totalResults, Integer
   end
+
+  include Api::Common::SequenceMethods
 
 end
 

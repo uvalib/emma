@@ -6,9 +6,11 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/name'
-require 'api/format'
-require 'api/link'
+
+require_relative 'format'
+require_relative 'link'
+require_relative 'name'
+require_relative 'common/title_methods'
 
 # Api::ReadingListTitle
 #
@@ -17,20 +19,20 @@ require 'api/link'
 class Api::ReadingListTitle < Api::Record::Base
 
   schema do
-    has_many  :allows,           String
-    has_many  :authors,          Name
+    has_many  :allows,           AllowsType
+    has_many  :authors,          Api::Name
     attribute :available,        Boolean
     attribute :award,            String
     attribute :bookshareId,      String
     attribute :category,         String
-    has_many  :composers,        Name
+    has_many  :composers,        Api::Name
     attribute :copyrightDate,    String
     attribute :dateAdded,        String
-    has_many  :formats,          Format
+    has_many  :formats,          Api::Format
     attribute :instruments,      String
     attribute :isbn13,           String
     has_many  :languages,        String
-    has_many  :links,            Link
+    has_many  :links,            Api::Link
     attribute :month,            Integer
     attribute :publishDate,      String
     attribute :ranking,          Integer
@@ -43,6 +45,8 @@ class Api::ReadingListTitle < Api::Record::Base
     attribute :vocalParts,       String
     attribute :year,             Integer
   end
+
+  include Api::Common::TitleMethods
 
 end
 

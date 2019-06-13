@@ -6,7 +6,8 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/link'
+
+require_relative 'link'
 
 # Api::Grade
 #
@@ -16,8 +17,44 @@ class Api::Grade < Api::Record::Base
 
   schema do
     attribute :gradeId, String
-    has_many  :links,   Link
+    has_many  :links,   Api::Link
     attribute :name,    String
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    name.to_s
+  end
+
+  # Return the unique identifier for the represented item.
+  #
+  # @return [String]
+  #
+  def identifier
+    gradeId.to_s
   end
 
 end

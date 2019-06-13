@@ -133,9 +133,11 @@ module Api::Record::Associations
       type = type.to_s.classify if type.is_a?(Symbol)
       name = type.to_s.presence || 'String'
       base = name.demodulize.to_sym
+      base = :FalseClass if %i[Boolean TrueClass].include?(base)
       if SCALAR_TYPES.include?(base)
-        base = :FalseClass if %i[Boolean TrueClass].include?(base)
         SCALAR_DEFAULTS[base]
+      elsif ENUMERATION_TYPES.include?(base)
+        ENUMERATION_DEFAULTS[base]
       elsif name.start_with?('Api::')
         type = type.constantize unless type.is_a?(Class)
         ->(**opt) { type.new(nil, opt) }

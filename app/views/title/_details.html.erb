@@ -1,0 +1,14 @@
+<%# app/views/title/_details.html.erb -%>
+<%-
+  # A Catalog Title metadata listing.
+  item  ||= ApiService.instance.get_title(bookshareId: params[:id])
+  image ||= nil
+  return if item.blank?
+-%>
+
+<div class="title-details-container">
+  <div class="title-details">
+    <%= title_field_values(item) %>
+  </div>
+  <%= image || cover_image(item) %>
+</div>

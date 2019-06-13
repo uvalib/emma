@@ -6,35 +6,48 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/user_account'
+
+require_relative 'api/user_account'
 
 # ApiUserAccount
 #
-# NOTE: This duplicates Api::UserAccount
-#
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_user_account
+#
+# NOTE: This duplicates:
+# @see Api::UserAccount
+#
+# == Implementation Notes
+# Similar to ApiMyAccountSummary, but adds the following fields:
+#   :deleted
+#   :emailAddress
+#   :language
+#   :locked
+#   :roles
+#   :site
 #
 class ApiUserAccount < Api::Message
 
   schema do
-    attribute :address,                 Address
+    has_one   :address,                 Api::Address
     attribute :allowAdultContent,       Boolean
     attribute :canDownload,             Boolean
     attribute :dateOfBirth,             String
     attribute :deleted,                 Boolean
     attribute :emailAddress,            String
-    attribute :guardian,                Name
+    has_one   :guardian,                Api::Name
     attribute :hasAgreement,            Boolean
     attribute :language,                String
-    has_many  :links,                   Link
+    has_many  :links,                   Api::Link
     attribute :locked,                  Boolean
-    attribute :name,                    Name
+    has_one   :name,                    Api::Name
     attribute :phoneNumber,             String
     attribute :proofOfDisabilityStatus, ProofOfDisabilityStatus
     has_many  :roles,                   String
     attribute :site,                    SiteType
     attribute :subscriptionStatus,      SubscriptionStatus
   end
+
+  include Api::Common::NameMethods
 
 end
 

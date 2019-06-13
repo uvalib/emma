@@ -1,0 +1,11 @@
+<%# app/views/periodical/show.html.erb -%>
+<%-
+  # Periodical show page.
+  item ||= @item
+  eds  ||= page_items
+  @page_title = item&.title
+-%>
+
+<h1 class="heading"><%= item.label -%></h1>
+
+<%= render 'periodical/details', item: item, eds: eds %>

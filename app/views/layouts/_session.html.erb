@@ -1,0 +1,17 @@
+<%# app/views/layouts/_session.html.erb -%>
+<%-
+  # Manage session state after reboot.
+  #
+  # Note that this should *not* be rendered into <head> because Turbolinks 5
+  # makes decisions about cache use based on whether the contents of <head>
+  # has changed.
+  #
+  @reset_browser_cache ||= false
+  return unless @reset_browser_cache
+  __debug { 'Turbolinks cache cleared for page' }
+-%>
+
+<script type="text/javascript" data-turbolinks-eval="false">
+    console.log('Turbolinks cache cleared');
+    Turbolinks.clearCache();
+</script>

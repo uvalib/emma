@@ -9,11 +9,11 @@ __loading_begin(__FILE__)
 #
 class User::SessionsController < Devise::SessionsController
 
+  include UserConcern
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
-
-  public
 
   prepend_before_action :require_no_authentication,    only: %i[new create sign_in_as]
   prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
@@ -21,7 +21,12 @@ class User::SessionsController < Devise::SessionsController
   prepend_before_action(only: %i[create destroy sign_in_as]) do
     request.env['devise.skip_timeout'] = true
   end
-  # before_action :configure_sign_in_params, only: [:create]
+
+=begin # TODO: configure_sign_in_params ???
+  before_action :configure_sign_in_params, only: [:create]
+=end
+
+  append_around_action :session_update
 
   # ===========================================================================
   # :section:
@@ -32,14 +37,22 @@ class User::SessionsController < Devise::SessionsController
   # == GET /users/sign_in
   # Prompt the user for login credentials.
   #
+  # This method overrides:
+  # @see Devise::SessionsController#new
+  #
   def new
+    auth_debug
     super
   end
 
   # == POST /users/sign_in
   # Begin login session.
   #
+  # This method overrides:
+  # @see Devise::SessionsController#create
+  #
   def create
+    auth_debug
     super do
       ApiService.update(user: resource)
       set_flash_notice(__method__)
@@ -49,25 +62,30 @@ class User::SessionsController < Devise::SessionsController
   # == DELETE /users/sign_out
   # End login session.
   #
+  # This method overrides:
+  # @see Devise::SessionsController#destroy
+  #
   def destroy
-    auth = session.delete('omniauth.auth')
+    auth_data = session.delete('omniauth.auth')
+    auth_debug { "session[omniauth.auth] = #{auth_data.inspect}" }
     super do
       ApiService.clear
-      set_flash_notice(__method__, auth)
+      set_flash_notice(__method__, auth_data)
     end
   end
 
   # == GET /users/sign_in_as?id=:id
-  # Sign in as a specific user.
+  # Sign in as the specified user.
   #
   # == Usage Notes
   # This can only be used if OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH
   # exists and contains pre-fetched OAuth2 bearer tokens.
   #
   def sign_in_as
-    auth = session['omniauth.auth'] ||=
+    auth_data = session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
-    self.resource = warden.set_user(User.from_omniauth(auth))
+    auth_debug { "session[omniauth.auth] = #{auth_data.inspect}" }
+    self.resource = warden.set_user(User.from_omniauth(auth_data))
     sign_in(resource_name, resource)
     ApiService.update(user: resource)
     set_flash_notice(:create)
@@ -106,6 +124,7 @@ class User::SessionsController < Devise::SessionsController
 
   protected
 
+=begin # TODO: configure_sign_in_params ???
   # If you have extra params to permit, append them to the sanitizer.
   #
   # @return [void]
@@ -113,6 +132,7 @@ class User::SessionsController < Devise::SessionsController
   def configure_sign_in_params
     devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   end
+=end
 
 end
 

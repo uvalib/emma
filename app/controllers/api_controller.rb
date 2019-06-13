@@ -12,16 +12,35 @@ __loading_begin(__FILE__)
 #
 class ApiController < ApplicationController
 
-  include ApiHelper
+  include ApiConcern
+  include UserConcern
+
+  # ===========================================================================
+  # :section: Authentication
+  # ===========================================================================
+
+  prepend_before_action :session_check
+=begin # TODO: authenticate_user ???
+  before_action :authenticate_user!
+=end
+
+  # ===========================================================================
+  # :section: Authorization
+  # ===========================================================================
+
+  before_action :update_user, except: %i[image]
+=begin # TODO: authorize_resource ???
+  load_and_authorize_resource User, instance_name: :user
+=end
+  skip_authorization_check
 
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :update_user
-  #before_action :authenticate_user! # TODO: testing - restore
-  before_action :authenticate_user!, except: %i[v2] # TODO: testing - remove :v2
-  before_action :initialize_service
+  before_action :initialize_service, except: %i[image]
+
+  append_around_action :session_update
 
   # ===========================================================================
   # :section:
@@ -46,9 +65,8 @@ class ApiController < ApplicationController
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
   def v2 # TODO: testing - remove
-    __debug "API #{__method__} | params = #{params.inspect}"
-    @opt  = params.to_unsafe_h
-    @opt  = @opt.except(:controller, :action, :format).symbolize_keys
+    __debug { "API #{__method__} | params = #{params.inspect}" }
+    @opt  = url_parameters.except(:format)
     @path = @opt.delete(:api_path)
     if (user = @opt.delete(:user)).present?
       user = user.downcase
@@ -64,28 +82,20 @@ class ApiController < ApplicationController
     end
   end
 
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  protected
-
-  # Update the current user with previously-acquired authentication data.
+  # == GET /api/image[?url=...]
+  # Get an image.
   #
-  # @return [void]
+  # @see app/assets/javascripts/feature/image.js
   #
-  def update_user
-    auth_data = session['omniauth.auth']
-    warden    = request.env['warden']
-    warden.set_user(User.from_omniauth(auth_data)) if warden && auth_data
-  end
-
-  # Initialize API service.
+  # == Usage Notes
+  # This provides JavaScript with a way of asynchronously getting images
+  # without having to contend with CSRF.
   #
-  # @return [void]
-  #
-  def initialize_service
-    ApiService.update(user: current_user)
+  def image
+    response   = Faraday.get(params[:url]) # TODO: caching
+    image_data = Base64.encode64(response.body)
+    mime_type  = response.headers['content-type']
+    render plain: image_data, format: mime_type, layout: false
   end
 
 end

@@ -1,6 +1,7 @@
 <%-
   abort 'devise/mailer/email_changed - This is not expected to be used'
 -%>
+
 <p>Hello <%= @email %>!</p>
 
 <% if @resource.try(:unconfirmed_email?) %>

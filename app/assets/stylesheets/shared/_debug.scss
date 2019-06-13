@@ -1,0 +1,23 @@
+// app/assets/stylesheets/shared/_debug.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Debugging.
+//=============================================================================
+
+.session-debug {
+
+    width:      100%;
+    word-break: break-word;
+
+    .key,
+    .value {
+        text-align:     left;
+        vertical-align: top;
+    }
+
+    .key {
+        word-break: keep-all;
+    }
+}

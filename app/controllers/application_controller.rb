@@ -17,6 +17,18 @@ class ApplicationController < ActionController::Base
   end
 
   # ===========================================================================
+  # :section: Authentication
+  # ===========================================================================
+
+  # Handled individually by each controller subclass.
+
+  # ===========================================================================
+  # :section: Authorization
+  # ===========================================================================
+
+  check_authorization unless: :devise_controller?
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
@@ -27,6 +39,14 @@ class ApplicationController < ActionController::Base
   # ===========================================================================
 
   add_flash_types :error, :success
+
+  # ===========================================================================
+  # :section: Exceptions
+  # ===========================================================================
+
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to dashboard_path, alert: exception.message
+  end
 
   # ===========================================================================
   # :section:

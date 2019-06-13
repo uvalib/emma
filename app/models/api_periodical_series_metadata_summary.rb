@@ -6,30 +6,34 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/periodical_series_metadata_summary'
+
+require_relative 'api/periodical_series_metadata_summary'
 
 # ApiPeriodicalSeriesMetadataSummary
 #
-# NOTE: This duplicates Api::PeriodicalSeriesMetadataSummary
-#
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_series_metadata_summary
+#
+# NOTE: This duplicates:
+# @see Api::PeriodicalSeriesMetadataSummary
 #
 class ApiPeriodicalSeriesMetadataSummary < Api::Message
 
   schema do
-    has_many  :categories,           Category
+    has_many  :categories,           Api::Category
     has_many  :countries,            String
     attribute :description,          String
     attribute :editionCount,         Integer
     attribute :externalCategoryCode, String
     attribute :issn,                 String
     has_many  :languages,            String
-    attribute :latestEdition,        PeriodicalEditionSummary
-    has_many  :links,                Link
+    has_one   :latestEdition,        Api::PeriodicalEditionSummary
+    has_many  :links,                Api::Link
     attribute :publisher,            String
     attribute :seriesId,             String
     attribute :title,                String
   end
+
+  include Api::Common::PeriodicalMethods
 
 end
 

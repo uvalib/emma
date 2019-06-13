@@ -2,32 +2,33 @@
 <%-
   # API method call test page.
 
-  title        ||= t('emma.api.title')
-  user         ||= current_user&.to_s
+  title        ||= t('emma.api.index.title')
+  user         ||= current_user.to_s.presence || ApiService::DEFAULT_USERNAME
   book         ||= '1933741'
   series       ||= '46424'
   edition      ||= '2531073'
-  subscription ||= '???'
-  format       ||= 'DAISY'
+  reading_list ||= '325853'
+  subscription ||= reading_list # TODO: probably isn't right...
+  format       ||= Api::FormatType.new.default
   limit        ||= 5
 
-  @body_class = 'api-index'
   @page_title = title
 
   methods = {
     get_user_identity:            nil,
     get_my_account:               nil,
+    get_account:                  { user: user },
     get_my_preferences:           nil,
     get_my_assigned_titles:       { limit: limit },
-    get_my_download_history:      { limit: limit },
-    get_my_reading_lists:         {},
-    get_account:                  { user: user },
     get_assigned_titles:          { user: user, limit: limit },
+    get_my_reading_lists:         {},
+    get_reading_list_titles:      { readingListId: reading_list },
+    get_my_download_history:      { limit: limit },
     get_subscriptions:            { user: user },
     get_subscription:             { user: user, subscriptionId: subscription },
     get_user_agreements:          { user: user },
     get_user_pod:                 { user: user },
-    get_organization_members:     { limit: limit },
+    get_organization_members:     {},
     get_title_count:              nil,
     get_titles:                   { limit: limit },
     get_title:                    { bookshareId: book },
@@ -44,11 +45,14 @@
 
   # Parameters for each API method call formatted for display.
   parameter_list =
-  methods.transform_values { |opts|
-    opts = opts.presence
-    opts &&= '(' + opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ') + ')'
-    opts.freeze
-  }
+    methods.transform_values { |opts|
+      opts = opts.presence
+      opts &&= '(' + opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ') + ')'
+      opts.freeze
+    }
+
+  # API URLs for each API method call.
+  endpoint = {}
 
   service = ApiService.instance
   success = []
@@ -58,41 +62,13 @@
   trials  =
     methods.map { |method, opts|
       value = service.send(method, opts)
-      value =
-        if !value.is_a?(Api::Record::Base)
-          # === Scalar response value ===
-          success << method
-          value.pretty_inspect
-            .split(/\n/)
-            .map { |line| content_tag(:div, line, class: 'data') }
-        elsif value.exception.present?
-          # === Exception or error response value ===
-          error << method
-          value.pretty_inspect
-            .split(/\n/)
-            .map { |line| content_tag(:div, line) }
-        else
-          # === Valid response value ===
-          success << method
-          h(value.to_json(pretty: true).gsub(/"([^"]+)":/, '\1: '))
-            .gsub(%r{&quot;https?://.+&quot;}) { |s|
-              quot = '&quot;'
-              part = s.split(quot)
-              url  = part[1]
-              key  = 'api_key=%s' % ApiService::API_KEY
-              href = url
-              if href.start_with?(ApiService::BASE_URL) && !href.include?(key)
-                href += (href.include?('?') ? '&' : '?')
-                href += key
-              end
-              '%s<a href="%s">%s</a>%s' % [quot, href, url, quot]
-            }
-            .gsub(/^( +)/) { |s| s.gsub(/ /, '&nbsp;&nbsp;') }
-            .gsub(/^([^:]+:) /, '\1&nbsp;')
-            .split(/\n/)
-            .map { |line| content_tag(:div, line.html_safe, class: 'data') }
-        end
-      [method, safe_join(value, "\n").freeze]
+      if value.is_a?(Api::Record::Base) && value.exception.present?
+        error << method
+      else
+        success << method
+      end
+      endpoint[method] = service.last_endpoint
+      [method, api_format_result(value).freeze]
     }.to_h
 
   # CSS classes representing the status of each API method call.
@@ -103,8 +79,8 @@
       classes << 'error'   if error.include?(method)
       [method, classes.join(' ').presence.freeze]
     }.to_h
-
 -%>
+
 <h1 class="heading"><%= title -%></h1>
 
 <div id="methods" class="methods">
@@ -123,6 +99,7 @@
     <h2 id="__<%= method -%>" class="label">
       <span class="method"><%= method -%></span>
       <span class="args"><%= parameter_list[method] -%></span>
+      <span class="endpoint"><%= endpoint[method] -%></span>
     </h2>
     <div class="value <%= status[method] -%>"><%= value -%></div>
   <%- end -%>

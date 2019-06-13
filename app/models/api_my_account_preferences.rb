@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/format'
-require 'api/link'
+
+require_relative 'api/format'
+require_relative 'api/link'
 
 # ApiMyAccountPreferences
 #
@@ -20,9 +21,9 @@ class ApiMyAccountPreferences < Api::Message
     attribute :brailleCellLineWidth, Integer
     attribute :brailleFormat,        BrailleFormat
     attribute :brailleGrade,         BrailleGrade
-    attribute :format,               Format
+    has_one   :format,               Api::Format
     attribute :language,             String
-    has_many  :links,                Link
+    has_many  :links,                Api::Link
     attribute :showAllBooks,         Boolean
     attribute :useUeb,               Boolean
   end

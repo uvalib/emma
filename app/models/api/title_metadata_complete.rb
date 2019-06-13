@@ -6,69 +6,89 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/name'
-require 'api/artifact_metadata'
-require 'api/category'
-require 'api/format'
-require 'api/grade'
-require 'api/link'
-require 'api/usage_restriction'
+
+require_relative 'artifact_metadata'
+require_relative 'category'
+require_relative 'format'
+require_relative 'grade'
+require_relative 'link'
+require_relative 'name'
+require_relative 'usage_restriction'
+require_relative 'common/title_methods'
 
 # Api::TitleMetadataComplete
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_metadata_complete
 #
+# == Implementation Notes
+# Similar to ApiTitleMetadataDetail, but without the following fields:
+#   :edition
+#   :readingAgeMaximum
+#   :readingAgeMinimum
+# And adds fields:
+#   :dtbookSize
+#   :numImages
+#   :proofreader
+#   :submitter
+#   :withdrawalDate
+#
 class Api::TitleMetadataComplete < Api::Record::Base
 
   schema do
-    attribute :adultContent,          Boolean
-    attribute :allowRecommended,      Boolean
-    has_many  :arrangers,             Name
-    has_many  :artifacts,             ArtifactMetadata
-    has_many  :authors,               Name
-    attribute :available,             Boolean
-    attribute :bookshareId,           String
-    has_many  :categories,            Category
-    has_many  :composers,             Name
-    attribute :copyright,             String
-    attribute :copyrightDate,         String
-    has_many  :countries,             String
-    attribute :dtbookSize,            Integer
-    attribute :externalCategoryCode,  String
-    has_many  :formats,               Format
-    has_many  :grades,                Grade
-    attribute :hasChordSymbols,       String
-    attribute :instruments,           String
-    attribute :isbn13,                String
-    attribute :key,                   String
-    has_many  :languages,             String
-    attribute :lastUpdatedDate,       String
-    has_many  :links,                 Link
-    attribute :movementNumber,        String
-    attribute :movementTitle,         String
-    attribute :musicLayout,           String
-    attribute :musicScoreType,        String
-    attribute :numImages,             Integer
-    attribute :numPages,              Integer
-    attribute :opus,                  String
-    attribute :proofreader,           String
-    attribute :publishDate,           String
-    attribute :publisher,             String
-    has_many  :relatedIsbns,          String
-    attribute :seriesNumber,          String
-    attribute :seriesSubtitle,        String
-    attribute :seriesTitle,           String
-    attribute :submitter,             String
-    attribute :subtitle,              String
-    attribute :synopsis,              String
-    attribute :title,                 String
-    attribute :titleContentType,      String
-    attribute :titleSource,           String
-    has_many  :translators,           Name
-    attribute :usageRestriction,      UsageRestriction
-    attribute :vocalParts,            String
-    attribute :withdrawalDate,        String
+    attribute :adultContent,         Boolean
+    attribute :allowRecommend,       Boolean
+    has_many  :arrangers,            Api::Name
+    has_many  :artifacts,            Api::ArtifactMetadata
+    has_many  :authors,              Api::Name
+    attribute :available,            Boolean
+    attribute :bookshareId,          String
+    has_many  :categories,           Api::Category
+    has_many  :composers,            Api::Name
+    has_many  :contentWarnings,      String
+    attribute :copyright,            String
+    attribute :copyrightDate,        String
+    has_many  :countries,            String
+    attribute :dtbookSize,           Integer
+    attribute :externalCategoryCode, String
+    has_many  :formats,              Api::Format
+    has_many  :grades,               Api::Grade
+    attribute :hasChordSymbols,      String
+    attribute :instruments,          String
+    attribute :isbn13,               String
+    attribute :key,                  String
+    has_many  :languages,            String
+    attribute :lastUpdatedDate,      String
+    has_many  :links,                Api::Link
+    has_many  :lyricists,            Api::Name
+    attribute :movementNumber,       String
+    attribute :movementTitle,        String
+    attribute :musicLayout,          String
+    attribute :musicScoreType,       String
+    attribute :notes,                String
+    attribute :numImages,            Integer
+    attribute :numPages,             Integer
+    attribute :opus,                 String
+    attribute :proofreader,          String
+    attribute :publishDate,          String
+    attribute :publisher,            String
+    has_many  :relatedIsbns,         String
+    attribute :replacementId,        String
+    attribute :seriesNumber,         String
+    attribute :seriesSubtitle,       String
+    attribute :seriesTitle,          String
+    attribute :submitter,            String
+    attribute :subtitle,             String
+    attribute :synopsis,             String
+    attribute :title,                String
+    attribute :titleContentType,     String
+    attribute :titleSource,          String
+    has_many  :translators,          Api::Name
+    has_one   :usageRestriction,     Api::UsageRestriction
+    attribute :vocalParts,           String
+    attribute :withdrawalDate,       String
   end
+
+  include Api::Common::TitleMethods
 
 end
 

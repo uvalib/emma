@@ -1,18 +1,19 @@
 <%# app/views/user/sessions/new.html.erb -%>
 <%-
   # Login page.
+  title ||= t('emma.user.sessions.new.label')
 
-  title ||= t('emma.user.sessions.new.title')
+  @page_title = title
 
   form_opt = {
-=begin # TODO: Is there a need for application-only accounts?
+=begin # TODO: application local accounts?
     as:  resource_name,
     url: session_path(resource_name)
 =end
   }
-
 -%>
-<h2><%= title -%></h2>
+
+<h1 class="heading"><%= title -%></h1>
 
 <%- if form_opt.present? -%>
   <%= form_for(resource, form_opt) do |f| -%>

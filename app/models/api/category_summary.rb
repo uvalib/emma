@@ -6,7 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/link'
+
+require_relative 'link'
+require_relative 'common/category_methods'
 
 # Api::CategorySummary
 #
@@ -16,10 +18,12 @@ class Api::CategorySummary < Api::Record::Base
 
   schema do
     attribute :description, String
-    has_many  :links,       Link
+    has_many  :links,       Api::Link
     attribute :name,        String
     attribute :titleCount,  Integer
   end
+
+  include Api::Common::CategoryMethods
 
 end
 

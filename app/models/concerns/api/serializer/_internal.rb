@@ -25,7 +25,7 @@ require 'representable/xml'
 require 'representable/coercion'
 
 # Set to *true* for debugging; set to *false* for normal operation.
-DEBUG_REPRESENTABLE = false
+DEBUG_REPRESENTABLE = false unless defined?(DEBUG_REPRESENTABLE)
 
 module Representable
 
@@ -109,11 +109,7 @@ module Representable
 
   end
 
-end
-
-if DEBUG_REPRESENTABLE
-
-  module Representable
+  if DEBUG_REPRESENTABLE
 
     extend AppDebug
 
@@ -235,8 +231,6 @@ if DEBUG_REPRESENTABLE
 
     module CreateObject
 
-      extend AppDebug
-
       remove_const(:Instance) if const_defined?(:Instance, false)
 
       Instance = ->(input, options) do
@@ -303,6 +297,6 @@ if DEBUG_REPRESENTABLE
 
   end
 
-end
+end unless defined?(Representable) && defined?(Representable::AppDebug)
 
 __loading_end(__FILE__)

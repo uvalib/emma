@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/narrator'
-require 'api/name'
+
+require_relative 'name'
+require_relative 'narrator'
 
 # Api::ArtifactMetadata
 #
@@ -20,17 +21,53 @@ class Api::ArtifactMetadata < Api::Record::Base
     attribute :brailleGrade,            BrailleGrade2
     attribute :brailleMusicScoreLayout, BrailleMusicScoreLayout
     attribute :brailleType,             BrailleType
-    attribute :dateAdded, IsoDate
-    attribute :duration, IsoDuration
+    attribute :dateAdded,               IsoDate
+    attribute :duration,                IsoDuration
     attribute :externalIdentifierCode,  String
     attribute :format,                  String
     attribute :fundingSource,           String
     attribute :globalBookServiceId,     String
-    attribute :narrator,                Narrator
+    has_one   :narrator,                Api::Narrator
     attribute :numberOfVolumes,         Integer
     attribute :producer,                String
     attribute :supplier,                String
-    attribute :transcriber,             Name
+    has_one   :transcriber,             Api::Name
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    format.to_s
+  end
+
+  # A relative identiier for the represented artifact.
+  #
+  # @return [String]
+  #
+  def identifier
+    format.to_s
   end
 
 end

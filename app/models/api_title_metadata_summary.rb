@@ -6,29 +6,32 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/title_metadata_summary'
+
+require_relative 'api/title_metadata_summary'
 
 # ApiTitleMetadataSummary
 #
-# NOTE: This duplicates Api::TitleMetadataSummary
-#
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_metadata_summary
+#
+# NOTE: This duplicates:
+# @see Api::TitleMetadataSummary
 #
 class ApiTitleMetadataSummary < Api::Message
 
   schema do
-    has_many  :arrangers,        Name
-    has_many  :authors,          Name
+    has_many  :arrangers,        Api::Name
+    has_many  :authors,          Api::Name
     attribute :available,        Boolean
     attribute :bookshareId,      String
-    has_many  :composers,        Name
+    has_many  :composers,        Api::Name
+    has_many  :contentWarnings,  String
     attribute :copyrightDate,    String
-    has_many  :formats,          Format
+    has_many  :formats,          Api::Format
     attribute :instruments,      String
     attribute :isbn13,           String
     has_many  :languages,        String
-    has_many  :links,            Link
-    has_many  :lyricists,        Name
+    has_many  :links,            Api::Link
+    has_many  :lyricists,        Api::Name
     attribute :publishDate,      String
     attribute :seriesNumber,     String
     attribute :seriesTitle,      String
@@ -36,9 +39,11 @@ class ApiTitleMetadataSummary < Api::Message
     attribute :synopsis,         String
     attribute :title,            String
     attribute :titleContentType, String
-    has_many  :translators,      Name
+    has_many  :translators,      Api::Name
     attribute :vocalParts,       String
   end
+
+  include Api::Common::TitleMethods
 
 end
 

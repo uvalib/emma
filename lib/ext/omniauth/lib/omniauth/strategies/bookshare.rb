@@ -32,10 +32,10 @@ module OmniAuth
       #
       CONFIGURED_AUTH = {
         'emmacollection@bookshare.org' => {
-          access_token: '759b576b-0e13-4c84-bead-42045d91b83d',
+          access_token: 'f8f24447-50ce-4b2a-baad-7f4412100e3e',
         },
         'emmadso@bookshare.org' => {
-          access_token: '78c1bc8d-4dc0-4e02-ad3a-bc595445089e',
+          access_token: '8249a042-a02d-42de-9d78-a8d2aa3e0697',
         }
       }.transform_values { |hash|
         hash[:token_type] ||= 'bearer'
@@ -876,7 +876,7 @@ module OmniAuth
       # @return [User, nil]
       #
       def current_user
-        env['warden']&.user
+        request&.env['warden']&.user
       end
 
       # configured_access_token

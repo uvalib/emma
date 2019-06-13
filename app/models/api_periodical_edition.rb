@@ -6,13 +6,15 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/periodical_edition'
+
+require_relative 'api/periodical_edition'
 
 # ApiPeriodicalEdition
 #
-# NOTE: This duplicates Api::PeriodicalEdition
-#
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition
+#
+# NOTE: This duplicates:
+# @see Api::PeriodicalEdition
 #
 class ApiPeriodicalEdition < Api::Message
 
@@ -20,10 +22,12 @@ class ApiPeriodicalEdition < Api::Message
     attribute :editionId,       String
     attribute :editionName,     String
     attribute :expirationDate,  String
-    has_many  :formats,         Format
-    has_many  :links,           Link
+    has_many  :formats,         Api::Format
+    has_many  :links,           Api::Link
     attribute :publicationDate, String
   end
+
+  include Api::Common::EditionMethods
 
 end
 

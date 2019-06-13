@@ -5,10 +5,13 @@
 
 __loading_begin(__FILE__)
 
+require 'faraday'
+
 require_relative 'api_caching_middleware'
 
 Faraday::Middleware.register_middleware(
-  api_caching_middleware: Faraday::ApiCachingMiddleware
+  instrumentation:        Faraday::Request::Instrumentation,
+  api_caching_middleware: ApiCachingMiddleware
 )
 
 __loading_end(__FILE__)

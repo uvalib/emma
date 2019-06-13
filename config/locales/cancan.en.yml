@@ -1,0 +1,31 @@
+# config/locales/cancan.en.yml
+
+en:
+
+  unauthorized:
+
+    default:      'You are not authorized to access that page.'
+
+    manage:
+      all:        'Not authorized to %{action} %{subject}.'
+      artifact:   'Not allowed to manage artifacts.'
+      title:      'Not allowed to manage catalog metadata.'
+      member:     'Not allowed to manage members.'
+
+    create:
+      all:        'Not authorized to %{action} %{subject}.'
+      artifact:   'Not allowed to upload artifacts.'
+      title:      'Not allowed to add catalog entries.'
+      member:     'Not allowed to add members.'
+
+    update:
+      all:        'Not authorized to %{action} %{subject}.'
+      artifact:   'Not allowed to modify artifacts.'
+      title:      'Not allowed to modify catalog entries.'
+      member:     'Not allowed to modify member information.'
+
+    read:
+      all:        'Not authorized to %{action} %{subject}.'
+      artifact:   'Not allowed to download artifacts.'
+      title:      'Not allowed to view catalog entries.'
+      member:     'Not allowed to view member information.'

@@ -1,25 +1,40 @@
 <%# app/views/api/v2.html.erb -%>
 <%-
   # Display of results from an individual API call.
-  url = @path
-  url += (@path.include?('?') ? '&' : '?') + @opt.to_param if @opt.present?
-  values = {
+  title ||= t('emma.api.v2.title')
+
+  url = make_path(@path, @opt)
+  url = "/v2/#{url}".squeeze('/') unless url.start_with?('/v2/')
+
+  @page_title = "#{title} #{url.inspect}"
+
+  request_values = {
     method: request.method,
     path:   @path,
     opt:    @opt.presence,
     url:    url,
   }
 
+  result = api_method(request.method, @path, @opt)
+  result = result[:result] || result[:exception]
+  result = api_format_result(result)
 -%>
-<table>
-  <tbody>
-    <%- values.each_pair do |k, v| -%>
-      <tr>
-        <th><%= k -%></th>
-        <td><%= v.is_a?(String) ? v : v.inspect -%></td>
-      </tr>
-    <%- end -%>
-  </tbody>
-</table>
-<br/>
-<%= api_method(request.method, @path, @opt) %>
+
+<h1 class="heading"><%= title -%></h1>
+
+<div class="session-debug">
+  <table>
+    <tbody>
+      <%- request_values.each_pair do |k, v| -%>
+        <tr>
+          <th class="key"><%= k -%></th>
+          <td class="value"><%= v.is_a?(String) ? v : v.inspect -%></td>
+        </tr>
+      <%- end -%>
+    </tbody>
+  </table>
+</div>
+
+<div class="trials">
+  <div class="value"><%= result -%></div>
+</div>

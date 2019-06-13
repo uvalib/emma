@@ -1,0 +1,140 @@
+// app/assets/stylesheets/feature/_search.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+// @use 'shared/mixins'; // TODO: SASS 4.0
+// @use 'feature/lists'; // TODO: SASS 4.0
+
+//=============================================================================
+// Definitions
+//=============================================================================
+
+$results-entry-gap-x: $page-padding-x;
+$results-entry-gap-y: calc(2 * #{$page-padding-y});
+
+//=============================================================================
+// Search controls
+//=============================================================================
+
+.applied-search-terms,
+.pagination-top,
+.pagination-bottom {
+    margin:      $results-entry-gap-y 0;
+    grid-column: 1 / -1;
+}
+
+.applied-search-terms + .pagination-top,
+.pagination-bottom {
+    margin-top: 0;
+}
+
+// A total count of the number of search results.
+.search-count {
+    display:     inline-block;
+    margin:      0.5em 0 0 0.5em;
+    font-weight: bold;
+}
+
+//=============================================================================
+// Search terms
+//=============================================================================
+
+// Search term(s) applied which yield the current result set.
+.search-terms {
+
+    @extend %control-group;
+
+    background-color: inherit;
+
+    @media #{$narrow-screen} {
+        flex-direction: column;
+    }
+
+    $term-gap-x: 0.5rem;
+
+    .label {
+
+        margin-right: $term-gap-x;
+        font-size:    large;
+        font-weight:  bold;
+
+        @media #{$narrow-screen} {
+            margin-right: 0;
+        }
+    }
+
+    .term {
+
+        .field {
+            font-size:    large;
+            font-variant: small-caps;
+        }
+
+        .separator {
+            margin-right: $term-gap-x / 2;
+        }
+
+        .value {
+
+            @media #{$narrow-screen} {
+                margin-right: 0;
+            }
+        }
+    }
+
+    .term-separator {
+
+        margin-right: $term-gap-x;
+
+        @media #{$narrow-screen} {
+            display: none;
+        }
+    }
+}
+
+//=============================================================================
+// Search result listing
+//=============================================================================
+
+.results-list {
+
+    @extend .list-2-column;
+
+    margin: -1rem auto 1rem;
+}
+
+//=============================================================================
+// Search item metadata
+//=============================================================================
+
+// One or more label/value pairs.
+.results-entry {
+
+    @extend .list-2-column;
+
+    @include break-inside(avoid);
+    @include break-after(right);
+
+    margin-bottom: $results-entry-gap-y;
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 100%;
+    }
+
+    .label,
+    .value {
+
+        @include break-inside(avoid);
+
+        margin-bottom: calc(#{$results-entry-gap-y} / 4);
+    }
+
+    .label {
+        font-weight: bold;
+    }
+
+    .value {
+        @media #{$narrow-screen} {
+            margin-bottom: $results-entry-gap-y
+        }
+    }
+}

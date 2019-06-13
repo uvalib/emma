@@ -6,29 +6,34 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/reading_list_subscription'
+
+require_relative 'api/reading_list_user_view'
 
 # ApiReadingListUserView
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_user_view
 #
+# NOTE: This duplicates:
+# @see Api::ReadingListUserView
+#
 class ApiReadingListUserView < Api::Message
 
   schema do
     attribute :access,        Access
-    has_many  :allows,        String
+    has_many  :allows,        AllowsType
     attribute :assignedBy,    String
     attribute :dateUpdated,   String
     attribute :description,   String
-    has_many  :links,         Link
+    has_many  :links,         Api::Link
     attribute :memberCount,   Integer
     attribute :name,          String
     attribute :owner,         String
     attribute :readingListId, String
-    attribute :subscription,  ReadingListSubscription
+    has_one   :subscription,  Api::ReadingListSubscription
     attribute :titleCount,    Integer
   end
+
+  include Api::Common::ReadingListMethods
 
 end
 

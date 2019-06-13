@@ -6,12 +6,14 @@
 // API test page
 //=============================================================================
 
-body.api-index {
+body.api-index,
+body.api-v2 {
 
     background-color: snow;
 
     %section {
-        margin: 0.5rem 0;
+        width:  99.625%;
+        margin: 1rem 0.125rem 0.5rem;
     }
 
     %panel {
@@ -29,8 +31,9 @@ body.api-index {
 
         @extend %section;
 
-        display:    block;
-        margin-top: $page-padding-y;
+        display:     block;
+        margin-top:  $page-padding-y;
+        padding-top: $page-padding-y;
     }
 
     .methods {
@@ -83,10 +86,19 @@ body.api-index {
             }
 
             .args {
+                display:        block;
+                margin-left:    0.1rem;
+                font-weight:    normal;
+                letter-spacing: -0.25px;
+                color:          #333;
+            }
+
+            .endpoint {
                 display:     block;
-                margin-left: 0.2rem;
-                font-weight: normal;
-                color:       #333;
+                margin-left: auto;
+                word-break:  keep-all;
+                word-wrap:   anywhere; // NOTE: valid but flagged by RubyMine
+                font-family: monospace;
             }
         }
 
@@ -110,5 +122,10 @@ body.api-index {
             }
         }
     }
+}
 
+body.api-v2 {
+    .session-debug {
+        margin: 2rem auto;
+    }
 }

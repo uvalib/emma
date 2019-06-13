@@ -37,7 +37,8 @@ class ApiService
 
     public
 
-    # get_subscriptions
+    # == GET /v2/accounts/:username/subscriptions
+    # Get the list of membership subscriptions for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
     #
@@ -46,11 +47,11 @@ class ApiService
     def get_subscriptions(user: @user)
       username = name_of(user)
       api(:get, 'accounts', username, 'subscriptions')
-      data = response&.body&.presence
-      ApiUserSubscriptionList.new(data, error: @exception)
+      ApiUserSubscriptionList.new(response, error: exception)
     end
 
-    # create_subscription
+    # == POST /v2/accounts/:username/subscriptions
+    # Create a new membership subscription for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
     # @param [Hash, nil]         opt
@@ -68,11 +69,11 @@ class ApiService
       validate_parameters(__method__, opt)
       username = name_of(user)
       api(:post, 'accounts', username, 'subscriptions', opt)
-      data = response&.body&.presence
-      ApiUserSubscription.new(data, error: @exception)
+      ApiUserSubscription.new(response, error: exception)
     end
 
-    # get_subscription
+    # == GET /v2/accounts/:username/subscriptions/:subscriptionId
+    # Get the specified membership subscription for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
     # @param [String]            subscriptionId
@@ -82,11 +83,11 @@ class ApiService
     def get_subscription(user: @user, subscriptionId:)
       username = name_of(user)
       api(:get, 'accounts', username, 'subscriptions', subscriptionId)
-      data = response&.body&.presence
-      ApiUserSubscription.new(data, error: @exception)
+      ApiUserSubscription.new(response, error: exception)
     end
 
-    # update_subscription
+    # == PUT /v2/accounts/:username/subscriptions/:subscriptionId
+    # Update an existing membership subscription for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
     # @param [String]            subscriptionId
@@ -105,18 +106,18 @@ class ApiService
       validate_parameters(__method__, opt)
       username = name_of(user)
       api(:put, 'accounts', username, 'subscriptions', subscriptionId, opt)
-      data = response&.body&.presence
-      ApiUserSubscription.new(data, error: @exception)
+      ApiUserSubscription.new(response, error: exception)
     end
 
-    # get_subscription_types
+    # == GET /v2/subscriptiontypes
+    # Get the list of subscription types available to users of the Membership
+    # Assistant’s site.
     #
     # @return [ApiUserSubscriptionTypeList]
     #
     def get_subscription_types(*)
       api(:get, 'subscriptiontypes')
-      data = response&.body&.presence
-      ApiUserSubscriptionTypeList.new(data, error: @exception)
+      ApiUserSubscriptionTypeList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -139,7 +140,7 @@ class ApiService
       raise Api::SubscriptionError, message
     end
 
-  end
+  end unless defined?(Subscription)
 
 end
 

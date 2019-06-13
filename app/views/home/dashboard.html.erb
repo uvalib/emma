@@ -3,19 +3,13 @@
   # Application main page for authenticated users.
 
   # If the user is not authenticated, switch to the welcome screen.
-  return render template: 'home/welcome' if current_user.blank?
+  return render template: 'home/welcome' unless current_user
 
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
 
-  links = [
-    link_to(t('emma.api.title', default: 'API'), api_path),
-    sign_out_link(provider: :bookshare)
-  ]
-
+  @page_title = title
 -%>
+
 <h1 class="heading"><%= title -%></h1>
-<div>
-  <%- links.each do |link| -%>
-    <p><%= link -%></p>
-  <%- end -%>
-</div>
+
+<%= render 'member/details' %>

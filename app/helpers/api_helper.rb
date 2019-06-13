@@ -16,6 +16,8 @@ module ApiHelper
     __included(base, '[ApiHelper]')
   end
 
+  include ParamsHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -24,7 +26,7 @@ module ApiHelper
 
   # Invoke an API method.
   #
-  # @param [Symbol]    method
+  # @param [Symbol]    method         One of ApiService#HTTP_METHODS.
   # @param [String]    path
   # @param [Hash, nil] opt
   #
@@ -33,7 +35,8 @@ module ApiHelper
   def api_method(method, path, **opt)
     type   = method
     method = "api_#{method}".downcase.to_sym
-    result = ApiService.instance.send(method, path, opt)
+    @api ||= ApiService.instance
+    result = @api.send(method, path, opt)
     if result.is_a?(Hash) && result[:invalid]
       result
     else
@@ -45,20 +48,73 @@ module ApiHelper
     end
   end
 
-  # Generate a URL or partial path.
+  # Generate HTML from the result of an API method invocation.
   #
-  # @param [String]    path
-  # @param [Hash, nil] opt
+  # @param [Api::Record::Base, String, Integer] value
+  # @param [String, nil]                        separator   Default: "\n".
   #
-  # @return [Hash]
+  # @return [ActiveSupport::SafeBuffer]
   #
-  def make_path(path, **opt)
-    result = path.to_s.dup
-    if opt.present?
-      result << (result.include?('?') ? '&' : '?')
-      result << opt.to_param
+  def api_format_result(value, separator = "\n")
+    elements =
+      if value.is_a?(Api::Record::Base) && value.exception.present?
+        # === Exception or error response value ===
+        mask_exception_value = false
+        value.pretty_inspect
+          .gsub(/(@exception=#<Faraday::ClientError)(.*?)(>,)/) { |substring|
+            substring = "#{$1} ... #{$3}" if mask_exception_value
+            mask_exception_value = true
+            substring
+          }
+          .split(/\n/)
+          .map { |line| content_tag(:div, line, class: 'exception') }
+
+      elsif value.is_a?(Api::Record::Base) || value.is_a?(String)
+        # === Valid JSON response value ===
+        link_opt = {}
+        link_opt[:target] = '_blank' unless params[:action] == 'v2'
+        quot = '&quot;'
+        pretty_json(value)
+          .gsub(/"([^"]+)":/, '\1: ')
+          .yield_self { |s| ERB::Util.h(s) }
+          .gsub(/^( +)/) { |s| s.gsub(/ /, '&nbsp;&nbsp;') }
+          .gsub(/^([^:]+:) /, '\1&nbsp;')
+          .gsub(%r{&quot;https?://.+&quot;}) { |s|
+            # Transform URLs into links, transforming Bookshare API URLs into
+            # local paths.
+            url = href = s.split(quot)[1].html_safe
+            if href.start_with?(ApiService::BASE_URL)
+              uri   = URI.parse(CGI.unescapeHTML(url))
+              query = uri.query&.sub(/api_key=[^&]*&?/, '').presence
+              href  = ERB::Util.h([uri.path, query].compact.join('?'))
+            end
+            quot + link_to(url, href, link_opt) + quot
+          }
+          .split(/\n/)
+          .map { |line| content_tag(:div, line.html_safe, class: 'data') }
+
+      else
+        # === Scalar response value ===
+        value.pretty_inspect
+          .split(/\n/)
+          .map { |line| content_tag(:div, line, class: 'data') }
+
+      end
+    safe_join(elements, separator)
+  end
+
+  # pretty_json
+  #
+  # @param [Api::Record::Base, String] value
+  #
+  # @return [String]
+  #
+  def pretty_json(value)
+    if value.is_a?(Api::Record::Base)
+      value.to_json(pretty: true)
+    else
+      MultiJson.dump(MultiJson.load(value), pretty: true)
     end
-    result
   end
 
 end

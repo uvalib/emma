@@ -23,7 +23,7 @@ class Api::Serializer::HashBase < Api::Serializer::Base
   #
   # @type [Boolean]
   #
-  SYMBOLIZE_KEYS = true
+  SYMBOLIZE_KEYS = true unless defined?(SYMBOLIZE_KEYS)
 
   # ===========================================================================
   # :section: Api::Serializer::Base overrides

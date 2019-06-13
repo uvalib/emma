@@ -9,6 +9,18 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::ReadingList
+  #
+  # == Usage Notes
+  #
+  # === According to API section 2.3 (Reading Lists):
+  # Reading lists can be created and deleted by individual members and
+  # sponsors, and titles can be added and removed from them. For sponsors,
+  # these lists can also be shared with student members to serve as a type of
+  # class syllabus. To do so, a sponsor can add a member from their
+  # organization to the reading list, and that member will be able to use that
+  # list but will not be able to modify it.
+  #
   module ReadingList
 
     include Common
@@ -37,23 +49,32 @@ class ApiService
 
     public
 
-    # get_my_reading_lists
+    # == GET /v2/mylists
+    # Get the reading lists visible to the current user.
     #
     # @param [Hash, nil] opt
+    #
+    # @option opt [String]                 :start
+    # @option opt [Integer]                :limit       Default: 10
+    # @option opt [MyReadingListSortOrder] :sortOrder   Default: 'name'
+    # @option opt [Direction]              :direction   Default: 'asc'
     #
     # @return [ApiReadingListList]
     #
     def get_my_reading_lists(**opt)
       validate_parameters(__method__, opt)
       api(:get, 'mylists', opt)
-      data = response&.body&.presence
-      ApiReadingListList.new(data, error: @exception)
+      ApiReadingListList.new(response, error: exception)
     end
 
-    # create_reading_list
+    # == POST /v2/mylists
+    # Create an empty reading list owned by the current user.
     #
     # @param [String]    name
     # @param [Hash, nil] opt
+    #
+    # @option opt [String] :description
+    # @option opt [Access] :access
     #
     # @return [ApiReadingList]
     #
@@ -61,14 +82,16 @@ class ApiService
       validate_parameters(__method__, opt)
       opt = opt.reverse_merge(name: name)
       api(:post, 'mylists', opt)
-      data = response&.body&.presence
-      ApiReadingList.new(data, error: @exception)
+      ApiReadingList.new(response, error: exception)
     end
 
-    # subscribe_reading_list
+    # == PUT /v2/mylists/:readingListId/subscription
+    # Subscribe to a reading list (that the user does not own).
     #
     # @param [String]    readingListId
     # @param [Hash, nil] opt
+    #
+    # @options opt [Boolean] :enabled   Default: true
     #
     # @return [ApiReadingListUserView]
     #
@@ -76,14 +99,16 @@ class ApiService
       validate_parameters(__method__, opt)
       opt = opt.reverse_merge(enabled: true)
       api(:put, 'mylists', readingListId, 'subscription', opt)
-      data = response&.body&.presence
-      ApiReadingListUserView.new(data, error: @exception)
+      ApiReadingListUserView.new(response, error: exception)
     end
 
-    # unsubscribe_reading_list
+    # == PUT /v2/mylists/:readingListId/subscription
+    # Unsubscribe from a reading list (that the user does not own).
     #
     # @param [String]    readingListId
     # @param [Hash, nil] opt
+    #
+    # @options opt [Boolean] :enabled   Default: false
     #
     # @return [ApiReadingListUserView]
     #
@@ -91,39 +116,48 @@ class ApiService
       validate_parameters(__method__, opt)
       opt = opt.reverse_merge(enabled: false)
       api(:put, 'mylists', readingListId, 'subscription', opt)
-      data = response&.body&.presence
-      ApiReadingListUserView.new(data, error: @exception)
+      ApiReadingListUserView.new(response, error: exception)
     end
 
-    # update_reading_list
+    # == PUT /v2/lists/:readingListId
+    # Edit the metadata of an existing reading list.
     #
     # @param [String]    readingListId
     # @param [Hash, nil] opt
+    #
+    # @option opt [String] :name
+    # @option opt [String] :description
+    # @option opt [Access] :access
     #
     # @return [ApiReadingList]
     #
     def update_reading_list(readingListId:, **opt)
       validate_parameters(__method__, opt)
       api(:put, 'lists', readingListId, opt)
-      data = response&.body&.presence
-      ApiReadingList.new(data, error: @exception)
+      ApiReadingList.new(response, error: exception)
     end
 
-    # get_reading_list_titles
+    # == GET /v2/lists/:readingListId/titles
+    # Get a listing of the Bookshare titles in the specified reading list.
     #
     # @param [String]    readingListId
     # @param [Hash, nil] opt
+    #
+    # @option opt [String]               :start
+    # @option opt [Integer]              :limit       Default: 10
+    # @option opt [ReadingListSortOrder] :sortOrder   Default: 'title'
+    # @option opt [Direction]            :direction   Default: 'asc'
     #
     # @return [ApiReadingListTitlesList]
     #
     def get_reading_list_titles(readingListId:, **opt)
       validate_parameters(__method__, opt)
-      api(:get, 'mylists', readingListId, 'titles', opt)
-      data = response&.body&.presence
-      ApiReadingListTitlesList.new(data, error: @exception)
+      api(:get, 'lists', readingListId, 'titles', opt)
+      ApiReadingListTitlesList.new(response, error: exception)
     end
 
-    # create_reading_list_title
+    # == POST /v2/lists/:readingListId/titles
+    # Add a Bookshare title to the specified reading list.
     #
     # @param [String]    readingListId
     # @param [String]    bookshareId
@@ -135,11 +169,11 @@ class ApiService
       validate_parameters(__method__, opt)
       opt = opt.reverse_merge(bookshareId: bookshareId)
       api(:post, 'lists', readingListId, 'titles', opt)
-      data = response&.body&.presence
-      ApiReadingListTitlesList.new(data, error: @exception)
+      ApiReadingListTitlesList.new(response, error: exception)
     end
 
-    # remove_reading_list_title
+    # == DELETE /v2/lists/:readingListId/titles/:bookshareId
+    # Remove a title from the specified reading list.
     #
     # @param [String]    readingListId
     # @param [String]    bookshareId
@@ -149,10 +183,8 @@ class ApiService
     #
     def remove_reading_list_title(readingListId:, bookshareId:, **opt)
       validate_parameters(__method__, opt)
-      opt = opt.reverse_merge(bookshareId: bookshareId)
-      api(:delete, 'lists', readingListId, 'titles', opt)
-      data = response&.body&.presence
-      ApiReadingListTitlesList.new(data, error: @exception)
+      api(:delete, 'lists', readingListId, 'titles', bookshareId, opt)
+      ApiReadingListTitlesList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -175,7 +207,7 @@ class ApiService
       raise Api::ReadingListError, message
     end
 
-  end
+  end unless defined?(ReadingList)
 
 end
 

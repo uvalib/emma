@@ -9,6 +9,22 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::Title
+  #
+  # == Usage Notes
+  #
+  # === According to API section 2.1 (Titles):
+  # A title represents a unique entry in the Bookshare collection. They are
+  # available to users based on a combination of the characteristics of the
+  # user (their subscription, their address, their age, etc) and the
+  # characteristics of the title (its distribution area, whether it is
+  # copyrighted, etc). Users can request a metadata representation of almost
+  # any title, but they can only request a file download if the user and title
+  # characteristics allow, and if the requested format is available for the
+  # particular title. The title metadata resource is where you will find links
+  # to the specific file format resources that are available for each specific
+  # title.
+  #
   module Title
 
     include Common
@@ -37,7 +53,8 @@ class ApiService
 
     public
 
-    # get_title_count
+    # == GET /v2/titles/count
+    # Get the current count of Bookshare titles.
     #
     # @return [Integer]
     #
@@ -50,7 +67,8 @@ class ApiService
       data.to_i
     end
 
-    # get_title
+    # == GET /v2/titles/:bookshareId
+    # Get metadata for the specified Bookshare title.
     #
     # @param [String] bookshareId
     #
@@ -61,11 +79,11 @@ class ApiService
     #
     def get_title(bookshareId:)
       api(:get, 'titles', bookshareId)
-      data = response&.body&.presence
-      ApiTitleMetadataDetail.new(data, error: @exception)
+      ApiTitleMetadataDetail.new(response, error: exception)
     end
 
-    # download_title
+    # == GET /v2/titles/:bookshareId/:format
+    # Download a Bookshare title artifact.
     #
     # @param [String]     bookshareId
     # @param [FormatType] format
@@ -78,11 +96,11 @@ class ApiService
     def download_title(bookshareId:, format:, **opt)
       validate_parameters(__method__, opt)
       api(:get, 'titles', bookshareId, format, opt)
-      data = response&.body&.presence
-      ApiStatusModel.new(data, error: @exception)
+      ApiStatusModel.new(response, error: exception)
     end
 
-    # get_titles
+    # == GET /v2/titles
+    # Search for Bookshare titles.
     #
     # @param [Hash, nil] opt
     #
@@ -92,7 +110,7 @@ class ApiService
     # @option opt [String]                :composer
     # @option opt [String]                :keyword
     # @option opt [String]                :isbn
-    # @option opt [String, Array<String>] :categories
+    # @option opt [String, Array<String>] :categories # NOTE: <string>array(multi)
     # @option opt [String]                :language
     # @option opt [String]                :country
     # @option opt [FormatType]            :format
@@ -104,7 +122,7 @@ class ApiService
     # @option opt [TitleContentType]      :titleContentType
     # @option opt [String]                :start
     # @option opt [Integer]               :limit
-    # @option opt [SortOrder]             :sortOrder
+    # @option opt [TitleSortOrder]        :sortOrder
     # @option opt [Direction]             :direction
     #
     # @return [ApiTitleMetadataSummaryList]
@@ -115,8 +133,7 @@ class ApiService
     def get_titles(**opt)
       validate_parameters(__method__, opt)
       api(:get, 'titles', opt)
-      data = response&.body&.presence
-      ApiTitleMetadataSummaryList.new(data, error: @exception)
+      ApiTitleMetadataSummaryList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -125,7 +142,8 @@ class ApiService
 
     public
 
-    # get_categories
+    # == GET /v2/categories
+    # Search for Bookshare categories.
     #
     # @param [Hash, nil] opt
     #
@@ -140,8 +158,7 @@ class ApiService
     def get_categories(**opt)
       validate_parameters(__method__, opt)
       api(:get, 'categories', opt)
-      data = response&.body&.presence
-      ApiCategoriesList.new(data, error: @exception)
+      ApiCategoriesList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -150,23 +167,38 @@ class ApiService
 
     public
 
-    # get_catalog
+    # == GET /v2/catalog
+    # For allowed roles, you can ask for titles that might not be visible to
+    # regular users, such as those that were once in the collection, but have
+    # since been removed. This allows administrators to manage the wider
+    # collection of titles.
     #
     # @param [Hash, nil] opt
     #
-    # @option opt [String]    :country
-    # @option opt [String]    :start
-    # @option opt [Integer]   :limit        Default: 10
-    # @option opt [SortOrder] :sortOrder    Default: 'title'
-    # @option opt [Direction] :direction    Default: 'asc'
+    # @option opt [String]           :country
+    # @option opt [String]           :isbn
+    # @option opt [String]           :start
+    # @option opt [Integer]          :limit        Default: 10
+    # @option opt [CatalogSortOrder] :sortOrder    Default: 'title'
+    # @option opt [Direction]        :direction    Default: 'asc'
     #
     # @return [ApiTitleMetadataCompleteList]
+    #
+    # == Usage Notes
+    #
+    # === According to API section 2.7 (Collection Assistant - Titles):
+    # Administrative users can search and update the entire collection of
+    # titles, not just those that are live for the public to see. This could
+    # include withdrawing live titles, publishing pending titles, or reviewing
+    # proofread scans. Collection Assistants can perform these functions, only
+    # restricted to the titles that are associated with their site. These
+    # functions are available exclusively to these roles, also known as
+    # "catalog administrator" roles, through the catalog endpoint.
     #
     def get_catalog(**opt)
       validate_parameters(__method__, opt)
       api(:get, 'catalog', opt)
-      data = response&.body&.presence
-      ApiTitleMetadataCompleteList.new(data, error: @exception)
+      ApiTitleMetadataCompleteList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -189,7 +221,7 @@ class ApiService
       raise Api::TitleError, message
     end
 
-  end
+  end unless defined?(Title)
 
 end
 

@@ -15,10 +15,24 @@ module ParamsConcern
 
   extend ActiveSupport::Concern
 
-  include ParamsHelper
-
   included do |base|
     __included(base, 'ParamsConcern')
+  end
+
+  include ParamsHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The full request URL without request parameters.
+  #
+  # @return [String]
+  #
+  def request_path
+    [request.base_url, request.path].join
   end
 
   # ===========================================================================

@@ -37,7 +37,8 @@ class ApiService
 
     public
 
-    # get_user_pod
+    # == GET /v2/accounts/:username/pod
+    # Get the list of disabilities for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
     #
@@ -46,11 +47,11 @@ class ApiService
     def get_user_pod(user: @user)
       username = name_of(user)
       api(:post, 'accounts', username, 'pod')
-      data = response&.body&.presence
-      ApiUserPodList.new(data, error: @exception)
+      ApiUserPodList.new(response, error: exception)
     end
 
-    # create_user_pod
+    # == POST /v2/accounts/:username/pod
+    # Create a new record of a disability for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
     # @param [Hash, nil]         opt
@@ -64,11 +65,11 @@ class ApiService
       validate_parameters(__method__, opt)
       username = name_of(user)
       api(:post, 'accounts', username, 'pod', opt)
-      data = response&.body&.presence
-      ApiUserPodList.new(data, error: @exception)
+      ApiUserPodList.new(response, error: exception)
     end
 
-    # update_user_pod
+    # == PUT /v2/accounts/:username/pod/:disabilityType
+    # Update the proof source for a disability for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
     # @param [DisabilityType]    disabilityType
@@ -82,11 +83,11 @@ class ApiService
       validate_parameters(__method__, opt)
       username = name_of(user)
       api(:put, 'accounts', username, 'pod', disabilityType, opt)
-      data = response&.body&.presence
-      ApiUserPodList.new(data, error: @exception)
+      ApiUserPodList.new(response, error: exception)
     end
 
-    # remove_user_pod
+    # == DELETE /v2/accounts/:username/pod/:disabilityType
+    # Remove a proof of disability for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
     # @param [DisabilityType]    disabilityType
@@ -96,8 +97,7 @@ class ApiService
     def remove_user_pod(user: @user, disabilityType:)
       username = name_of(user)
       api(:delete, 'accounts', username, 'pod', disabilityType)
-      data = response&.body&.presence
-      ApiUserPodList.new(data, error: @exception)
+      ApiUserPodList.new(response, error: exception)
     end
 
     # =========================================================================
@@ -120,7 +120,7 @@ class ApiService
       raise Api::AccountError, message
     end
 
-  end
+  end unless defined?(ProofOfDisability)
 
 end
 

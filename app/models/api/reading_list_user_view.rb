@@ -6,8 +6,10 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/link'
-require 'api/reading_list_subscription'
+
+require_relative 'link'
+require_relative 'reading_list_subscription'
+require_relative 'common/reading_list_methods'
 
 # Api::ReadingListUserView
 #
@@ -17,18 +19,20 @@ class Api::ReadingListUserView < Api::Record::Base
 
   schema do
     attribute :access,        Access
-    has_many  :allows,        String
+    has_many  :allows,        AllowsType
     attribute :assignedBy,    String
     attribute :dateUpdated,   String
     attribute :description,   String
-    has_many  :links,         Link
+    has_many  :links,         Api::Link
     attribute :memberCount,   Integer
     attribute :name,          String
     attribute :owner,         String
     attribute :readingListId, String
-    attribute :subscription,  ReadingListSubscription
+    has_one   :subscription,  Api::ReadingListSubscription
     attribute :titleCount,    Integer
   end
+
+  include Api::Common::ReadingListMethods
 
 end
 

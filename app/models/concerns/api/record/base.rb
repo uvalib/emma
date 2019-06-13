@@ -184,6 +184,14 @@ class Api::Record::Base
     self.class.property_defaults.deep_dup
   end
 
+  # The fields defined in the schema for this record.
+  #
+  # @return [Array<Symbol>]
+  #
+  def fields
+    serializer.representable_map.map { |v| v.name.to_sym }.sort
+  end
+
   # inspect
   #
   # @return [String]

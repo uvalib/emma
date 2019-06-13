@@ -25,8 +25,8 @@ class Api::Message < Api::Record::Base
 
   # Initialize a new instance.
   #
-  # @param [Hash, String] data
-  # @param [Hash, nil]    opt
+  # @param [Faraday::Response, Hash, String] data
+  # @param [Hash, nil]                       opt
   #
   # @option options [Symbol] :format  If not provided, this will be determined
   #                                     heuristically from *data*.
@@ -40,9 +40,10 @@ class Api::Message < Api::Record::Base
     opt = opt.dup
     opt[:format] ||= self.format_of(data)
     opt[:error]  ||= true if opt[:format].blank?
+    data = data.body.presence    if data.is_a?(Faraday::Response)
     data = wrap_outer(data, opt) if (opt[:format] == :xml) && !opt[:error]
     super(data, opt)
-=begin # TODO: ???
+=begin # TODO: log exceptions?
   rescue Api::RecvError => e
     Log.error { "#{self.class.name}: #{e}" }
     raise e

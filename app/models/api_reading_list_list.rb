@@ -6,8 +6,10 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/reading_list_user_view'
+
+require_relative 'api/link'
+require_relative 'api/reading_list_user_view'
+require_relative 'api/common/sequence_methods'
 
 # ApiReadingListList
 #
@@ -16,13 +18,15 @@ require 'api/reading_list_user_view'
 class ApiReadingListList < Api::Message
 
   schema do
-    has_many  :allows,        String
+    has_many  :allows,        AllowsType
     attribute :limit,         Integer
-    has_many  :links,         Link
-    has_many  :lists,         ReadingListUserView
+    has_many  :links,         Api::Link
+    has_many  :lists,         Api::ReadingListUserView
     attribute :next,          String
     attribute :totalResults,  Integer
   end
+
+  include Api::Common::SequenceMethods
 
 end
 

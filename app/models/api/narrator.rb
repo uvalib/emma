@@ -19,6 +19,34 @@ class Api::Narrator < Api::Record::Base
     attribute :type,   NarratorType
   end
 
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    name.to_s
+  end
+
 end
 
 __loading_end(__FILE__)

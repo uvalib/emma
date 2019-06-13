@@ -1,0 +1,43 @@
+// app/assets/stylesheets/controllers/_category.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Category index page
+//=============================================================================
+
+.category-list {
+
+    @extend .results-list;
+
+    .pagination-bottom {
+        margin-top: $results-entry-gap-y;
+    }
+}
+
+.category-list-entry {
+
+    @extend .results-entry;
+
+    display:       flex;
+    margin-bottom: 0;
+    gap:           0;
+
+    .value {
+
+        margin-left: calc(#{$flex-gap-x} / 2);
+
+        @media #{$narrow-screen} {
+            margin-left: $flex-gap-x;
+        }
+    }
+}
+
+//=============================================================================
+// Category show page
+//=============================================================================
+
+.category-details { // TODO: delete?
+    @extend .results-entry;
+}

@@ -1,0 +1,10 @@
+<%# app/views/title/_preferences.html.erb -%>
+<%-
+  # Member preferences listing.
+  item ||= @pref
+  return if item.blank?
+-%>
+
+<div class="member-preferences">
+  <%= member_preference_values(item) %>
+</div>

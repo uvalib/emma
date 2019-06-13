@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/user_subscription_type'
+
+require_relative 'api/link'
+require_relative 'api/user_subscription_type'
 
 # ApiUserSubscriptionTypeList
 #
@@ -16,8 +17,8 @@ require 'api/user_subscription_type'
 class ApiUserSubscriptionTypeList < Api::Message
 
   schema do
-    has_many :links,                 Link
-    has_many :userSubscriptionTypes, UserSubscriptionType
+    has_many :links,                 Api::Link
+    has_many :userSubscriptionTypes, Api::UserSubscriptionType
   end
 
 end

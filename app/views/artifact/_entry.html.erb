@@ -1,0 +1,21 @@
+<%# app/views/artifact/_entry.html.erb -%>
+<%-
+  abort 'artifact/_entry - This is not expected to be used'
+
+  # A single artifact index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && %Q(id="artifact-#{item.identifier}").html_safe
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="artifact-list-entry" <%= id -%>>
+  <%= item ? artifact_field_values(item) : empty_field_value %>
+</div>

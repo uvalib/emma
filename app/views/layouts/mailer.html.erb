@@ -1,12 +1,11 @@
 <%# app/views/layouts/mailer.html.erb -%>
 <%-
   # Mail page layout.
-
-  language = I18n.locale.to_s.downcase.sub(/-.*/, '')
+  @language ||= I18n.locale.to_s.downcase.sub(/-.*/, '')
 
 -%>
 <!DOCTYPE html>
-<html lang="<%= language -%>">
+<html lang="<%= @language -%>">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>

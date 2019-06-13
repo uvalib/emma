@@ -6,7 +6,6 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/link'
 
 # Api::DownloadTimeframe
 #
@@ -16,6 +15,34 @@ class Api::DownloadTimeframe < Api::Record::Base
 
   schema do
     attribute :name, Timeframe
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    name.to_s
   end
 
 end

@@ -22,6 +22,46 @@ class Api::Address < Api::Record::Base
     attribute :state,      String
   end
 
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    full_address
+  end
+
+  # Display the address attributes in a single string.
+  #
+  # @param [String, nil] separator    Default: ' '.
+  #
+  # @return [String]
+  #
+  def full_address(separator: ' ')
+    addr  = [address1, address2].reject(&:blank?).join(', ')
+    place = [city, state].reject(&:blank?).join(', ')
+    [addr, place, country, postalCode].reject(&:blank?).join(separator).squish
+  end
+
 end
 
 __loading_end(__FILE__)

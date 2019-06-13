@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/name'
+
+require_relative 'api/link'
+require_relative 'api/name'
 
 # ApiUserIdentity
 #
@@ -16,8 +17,8 @@ require 'api/name'
 class ApiUserIdentity < Api::Message
 
   schema do
-    has_many  :links,    Link
-    attribute :name,     Name
+    has_many  :links,    Api::Link
+    has_one   :name,     Api::Name
     attribute :username, String
   end
 

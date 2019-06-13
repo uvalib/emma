@@ -6,10 +6,12 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/name'
-require 'api/format'
-require 'api/link'
-require 'api/status_model'
+
+require_relative 'format'
+require_relative 'link'
+require_relative 'name'
+require_relative 'status_model'
+require_relative 'common/title_methods'
 
 # Api::TitleDownload
 #
@@ -18,15 +20,17 @@ require 'api/status_model'
 class Api::TitleDownload < Api::Record::Base
 
   schema do
-    has_many  :authors,        Name
+    has_many  :authors,        Api::Name
     attribute :dateDownloaded, String
     attribute :downloadedBy,   String
     attribute :downloadedFor,  String
-    attribute :format,         Format
-    has_many  :links,          Link
-    attribute :status,         StatusModel
+    has_one   :format,         Api::Format
+    has_many  :links,          Api::Link
+    has_one   :status,         Api::StatusModel
     attribute :title,          String
   end
+
+  include Api::Common::TitleMethods
 
 end
 

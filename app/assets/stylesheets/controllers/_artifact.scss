@@ -1,0 +1,24 @@
+// app/assets/stylesheets/controllers/_artifact.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Artifact index page
+//=============================================================================
+
+.artifact-list {
+    @extend .results-list;
+}
+
+.artifact-list-entry {
+    @extend .results-entry;
+}
+
+//=============================================================================
+// Artifact show page
+//=============================================================================
+
+.artifact-details {
+    @extend .results-entry;
+}

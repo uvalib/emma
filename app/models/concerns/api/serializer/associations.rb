@@ -22,7 +22,7 @@ module Api::Serializer::Associations
   # This is not currently an enforced maximum -- it's only used to distinguish
   # between #has_one and #has_many.
   #
-  MAX_HAS_MANY_COUNT = 9999
+  MAX_HAS_MANY_COUNT = 9999 unless defined?(MAX_HAS_MANY_COUNT)
 
   module ClassMethods
 
@@ -64,7 +64,11 @@ module Api::Serializer::Associations
 
       # Ensure that attributes get a type-appropriate default (otherwise they
       # will just be *nil*).
-      opt[:default] ||= SCALAR_DEFAULTS[type.to_s.demodulize.to_sym]
+      opt[:default] ||=
+        if type
+          base = type.to_s.demodulize.to_sym
+          SCALAR_DEFAULTS[base] || ENUMERATION_DEFAULTS[base]
+        end
 
       prepare_attribute!(type, opt)
 
@@ -179,7 +183,7 @@ module Api::Serializer::Associations
       name = type.to_s
       base = name.demodulize.to_sym
       base = :Boolean if %i[TrueClass FalseClass].include?(base)
-      if base.blank? || (base == :String)
+      if base.blank? || (base == :String) || ENUMERATION_TYPES.include?(base)
         type = nil
       elsif SCALAR_TYPES.include?(base)
         type = "Axiom::Types::#{base}"

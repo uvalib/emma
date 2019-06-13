@@ -1,0 +1,13 @@
+<%# app/views/artifact/edit.html.erb -%>
+<%-
+  # Artifact edit form.
+  title ||= t('emma.artifact.edit.title')
+  @page_title = title
+  can = current_user.is_artifact_submitter? ? 'can' : 'can NOT'
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<p>(User <%= current_user.to_s.inspect -%> <%= can -%> edit.)</p>
+
+<p>TODO</p>

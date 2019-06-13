@@ -6,8 +6,10 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/title_metadata_complete'
+
+require_relative 'api/link'
+require_relative 'api/title_metadata_complete'
+require_relative 'api/common/sequence_methods'
 
 # ApiTitleMetadataCompleteList
 #
@@ -16,13 +18,15 @@ require 'api/title_metadata_complete'
 class ApiTitleMetadataCompleteList < Api::Message
 
   schema do
-    has_many  :allows,       String
+    has_many  :allows,       AllowsType
     attribute :limit,        Integer
-    has_many  :links,        Link
+    has_many  :links,        Api::Link
     attribute :next,         String
-    has_many  :titles,       TitleMetadataComplete
+    has_many  :titles,       Api::TitleMetadataComplete
     attribute :totalResults, Integer
   end
+
+  include Api::Common::SequenceMethods
 
 end
 

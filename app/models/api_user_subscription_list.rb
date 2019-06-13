@@ -6,8 +6,10 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/user_subscription'
+
+require_relative 'api/link'
+require_relative 'api/user_subscription'
+require_relative 'api/common/sequence_methods'
 
 # ApiUserSubscriptionList
 #
@@ -16,13 +18,15 @@ require 'api/user_subscription'
 class ApiUserSubscriptionList < Api::Message
 
   schema do
-    has_many  :allows,            String
+    has_many  :allows,            AllowsType
     attribute :limit,             Integer
-    has_many  :links,             Link
+    has_many  :links,             Api::Link
     attribute :next,              String
     attribute :totalResults,      Integer
-    has_many  :userSubscriptions, UserSubscription
+    has_many  :userSubscriptions, Api::UserSubscription
   end
+
+  include Api::Common::SequenceMethods
 
 end
 

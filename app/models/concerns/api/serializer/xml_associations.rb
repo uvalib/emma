@@ -42,7 +42,7 @@ module Api::Serializer::XmlAssociations
   #
   # @type [TrueClass, FalseClass]
   #
-  WRAP_COLLECTIONS = false
+  WRAP_COLLECTIONS = false unless defined?(WRAP_COLLECTIONS)
 
   module ClassMethods
 

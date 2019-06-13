@@ -113,33 +113,204 @@ module Api
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # == Usage Notes
+  # :AllowsType     Compare with ApiService#HTTP_METHODS.
+  # :RoleType       Compare with Roles#BOOKSHARE_ROLES.
+  # :SiteType       The value 'emma' may not be honored by Bookshare yet.
+  # :TokenErrorType "unauthorized_client" appears as "unauthorized".
+  #
   ENUMERATIONS = {
-    Access:                   { values: %w(private shared org),                                   default: 'shared' },
-    AgreementType:            { values: %w(individual volunteer sponsor),                         default: 'individual' },
-    BrailleFormat:            { values: %w(refreshable embossable),                               default: 'embossable' },
-    BrailleGrade:             { values: %w(grade_1 grade_2),                                      default: 'grade_1' },
-    BrailleGrade2:            { values: %w(contracted uncontracted),                              default: 'uncontracted' },
-    BrailleMusicScoreLayout:  { values: ['bar over bar', 'bar by bar'],                           default: 'bar over bar' },
-    BrailleType:              { values: %w(automated transcribed),                                default: 'automated' },
-    CategoryType:             { values: %w(Bookshare BISAC),                                      default: 'Bookshare' },
-    Direction:                { values: %w(asc desc),                                             default: 'asc' },
-    DisabilityType:           { values: %w(visual learning physical nonspecific),                 default: 'nonspecific' },
-    FormatType:               { values: %w(DAISY DAISY_SEGMENTED DAISY_AUDIO BRF EPUB3 PDF DOCX), default: 'DAISY' },
-    Gender:                   { values: %w(Male Female Other),                                    default: 'Other' },
-    NarratorType:             { values: %w(TTS Human),                                            default: 'Human' },
-    ProofOfDisabilitySource:  { values: %w(schoolVerified faxed nls learningAlly partner hadley), default: 'schoolVerified' },
-    ProofOfDisabilityStatus:  { values: %w(active missing),                                       default: 'active' },
-    SiteType:                 { values: %w(bookshare cela rnib),                                  default: 'bookshare' },
-    SortOrder:                { values: %w(relevance title author dateAdded copyrightDate),       default: 'relevance' },
-    SubscriptionStatus:       { values: %w(active expired missing),                               default: 'active' },
-    TitleContentType:         { values: %w(text musicScore),                                      default: 'text' },
-    Timeframe:                { values: %w(monthly entireSubscription),                           default: 'monthly' },
 
-    AuthType:                 { values: %w(code token) },
-    GrantType:                { values: %w(authorization_code refresh_token password) },
-    #TokenErrorType:           { values: %w(invalid_request unauthorized_client access_denied unsupported_response_type invalid_scope server_error temporarily_unavailable) },
-    TokenErrorType:           { values: %w(invalid_request unauthorized access_denied unsupported_response_type invalid_scope server_error temporarily_unavailable) },
-  }
+    Access: {
+      values:   %w(private shared org),
+      default:  'shared'
+    },
+
+    AgreementType: {
+      values:   %w(individual volunteer sponsor),
+      default:  'individual'
+    },
+
+    AllowsType: {
+      values:   %w(PUT POST DELETE)
+    },
+
+    BrailleFormat: {
+      values:   %w(refreshable embossable),
+      default:  'embossable'
+    },
+
+    BrailleGrade: {
+      values:   %w(grade_1 grade_2),
+      default:  'grade_1'
+    },
+
+    BrailleGrade2: {
+      values:   %w(contracted uncontracted),
+      default:  'uncontracted'
+    },
+
+    BrailleMusicScoreLayout: {
+      values:   ['bar over bar', 'bar by bar'],
+      default:  'bar over bar'
+    },
+
+    BrailleType: {
+      values:   %w(automated transcribed),
+      default:  'automated'
+    },
+
+    CategoryType: {
+      values:   %w(Bookshare BISAC),
+      default:  'Bookshare'
+    },
+
+    Direction: {
+      values:   %w(asc desc),
+      default:  'asc'
+    },
+
+    Direction2: {
+      values:   %w(asc desc),
+      default:  'desc'
+    },
+
+    DisabilityType: {
+      values:   %w(visual learning physical nonspecific),
+      default:  'nonspecific'
+    },
+
+    FormatType: {
+      values:   %w(DAISY DAISY_SEGMENTED DAISY_AUDIO BRF EPUB3 PDF DOCX),
+      default:  'DAISY'
+    },
+
+    Gender: {
+      values:   %w(Male Female Other),
+      default:  'Other'
+    },
+
+    NarratorType: {
+      values:   %w(TTS Human),
+      default: 'Human'
+    },
+
+    ProofOfDisabilitySource: {
+      values:   %w(schoolVerified faxed nls learningAlly partner hadley),
+      default:  'schoolVerified'
+    },
+
+    ProofOfDisabilityStatus: {
+      values:   %w(active missing),
+      default:  'active'
+    },
+
+    RoleType: {
+      values: %w(individual volunteer trustedVolunteer collectionAssistant
+                membershipAssistant)
+    },
+
+    SiteType: {
+      values:   %w(bookshare cela rnib emma),
+      default:  'bookshare'
+    },
+
+    SubscriptionStatus: {
+      values:   %w(active expired missing),
+      default:  'active'
+    },
+
+    Timeframe: {
+      values:   %w(monthly entireSubscription),
+      default:  'monthly'
+    },
+
+    TitleContentType: {
+      values:   %w(text musicScore),
+      default:  'text'
+    },
+
+    TitleSortOrder: {
+      values:   %w(relevance title author dateAdded copyrightDate),
+      default:  'title'
+    },
+
+    # === Account ===
+
+    HistorySortOrder: {
+      values:   %w(title author dateDownloaded),
+      default:  'title'
+    },
+
+    # === Members ===
+
+    MemberSortOrder: {
+      values:   %w(dateAdded lastName firstName email userId district school
+                  grade birthDate status),
+      default:  'lastName'
+    },
+
+    # === Assigned Titles ===
+
+    MyAssignedSortOrder: {
+      values:   %w(title author),
+      default:  'title'
+    },
+
+    AssignedSortOrder: {
+      values:   %w(title author assignedBy assignedDate downloadDate),
+      default:  'title'
+    },
+
+    # === Periodicals ===
+
+    PeriodicalSortOrder: {
+      values:   %w(title),
+      default:  'title'
+    },
+
+    # === Periodical Editions ===
+
+    EditionSortOrder: {
+      values:   %w(editionName),
+      default:  'editionName'
+    },
+
+    # === Reading Lists ===
+
+    MyReadingListSortOrder: {
+      values:   %w(name owner dateUpdated),
+      default:  'name'
+    },
+
+    ReadingListSortOrder: {
+      values:   %w(title dateAddedToReadingList author),
+      default:  'title'
+    },
+
+    # === Catalog ===
+
+    CatalogSortOrder: {
+      values:   %w(relevance title author updatedDate copyrightDate),
+      default:  'title'
+    },
+
+    # === Authorization ===
+
+    AuthType: {
+      values:   %w(code token)
+    },
+
+    GrantType: {
+      values:   %w(authorization_code refresh_token password)
+    },
+
+    TokenErrorType: {
+      values:   %w(invalid_request unauthorized access_denied
+                  unsupported_response_type invalid_scope server_error
+                  temporarily_unavailable)
+    },
+  }.deep_freeze
 
   # Base class for enumeration scalar types.
   #
@@ -187,6 +358,6 @@ module Api
     class_eval("class #{type} < EnumType; end")
   end
 
-end
+end unless defined?(Api) && defined?(Api::Common)
 
 __loading_end(__FILE__)

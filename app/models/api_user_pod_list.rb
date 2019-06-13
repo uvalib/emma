@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/user_pod'
-require 'api/link'
+
+require_relative 'api/link'
+require_relative 'api/user_pod'
 
 # ApiUserPodList
 #
@@ -16,9 +17,9 @@ require 'api/link'
 class ApiUserPodList < Api::Message
 
   schema do
-    has_many :allows,       String
-    has_many :disabilities, UserPod
-    has_many :links,        Link
+    has_many :allows,       AllowsType
+    has_many :disabilities, Api::UserPod
+    has_many :links,        Api::Link
   end
 
 end

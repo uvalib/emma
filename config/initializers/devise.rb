@@ -273,18 +273,6 @@ Devise.setup do |config|
   # ==> OmniAuth
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
-=begin
-  config.omniauth :oauth2, ApiService::API_KEY, '',
-    authorize_params: {
-      scope: 'basic'
-    },
-    client_options: {
-      site:            ApiService::AUTH_URL,
-      auth_scheme:     :basic_auth,
-      #max_redirects:   0,
-      #connection_opts: { headers: { Host: ApiService::AUTH_HOST } }
-    }
-=end
   config.omniauth :bookshare, ApiService::API_KEY, ''
 
   # ==> Warden configuration

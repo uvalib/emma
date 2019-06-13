@@ -139,7 +139,6 @@
     .session-link:focus {
         outline-offset: 1px;
     }
-
 }
 
 // Navigation bar (<nav>) at the top of every page just below <header>.
@@ -158,8 +157,26 @@
         font-size:      x-large;
 
         > * {
+            width:        max-content;
             margin-right: 0.5rem;
         }
-    }
 
+        a:active {
+            outline: 2px dotted white;
+        }
+
+        .active {
+            text-decoration: underline;
+        }
+
+        // TODO: prefer hamburger menu for small screens?
+        @media #{$narrow-screen} {
+
+            flex-direction: column;
+
+            .separator {
+                display: none;
+            }
+        }
+    }
 }

@@ -1,0 +1,11 @@
+<%# app/views/member/show.html.erb -%>
+<%-
+  # Member show page.
+  item  ||= @item
+  title ||= item&.label || t('emma.member.show.title')
+  @page_title = title
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= render 'member/details', item: item %>

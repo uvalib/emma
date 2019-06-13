@@ -7,16 +7,30 @@ __loading_begin(__FILE__)
 
 # HealthController
 #
+# == Usage Notes
+# The endpoints implemented by this controller render only JSON and do not
+# require authentication of the requester.
+#
 class HealthController < ApplicationController
 
   include HealthConcern
   include ParamsConcern
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section: Authentication
   # ===========================================================================
 
-  public
+  # Not applicable.
+
+  # ===========================================================================
+  # :section: Authorization
+  # ===========================================================================
+
+  skip_authorization_check
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
 
 =begin # TODO: This approach is not currently thread-safe.
   before_action :suppress_logger,   only: :check

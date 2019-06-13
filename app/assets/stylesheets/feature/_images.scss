@@ -1,0 +1,60 @@
+// app/assets/stylesheets/feature/_images.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Common <img> properties.
+//=============================================================================
+
+%image {
+    object-fit:    contain;
+    border:        1px solid gray;
+    border-radius: 3px;
+}
+
+//=============================================================================
+// Cover images.
+//=============================================================================
+
+.cover-image {
+
+    img {
+
+        @extend %image;
+
+        &.placeholder {
+            display: block;
+            margin:  0 auto;
+        }
+    }
+}
+
+//=============================================================================
+// Thumbnail images.
+//=============================================================================
+
+.thumbnail {
+
+    img {
+
+        @extend %image;
+
+        max-width:  $thumbnail-max-x;
+        max-height: $thumbnail-max-y;
+        height:     $thumbnail-max-y;
+
+        &.placeholder {
+            width:     max-content;
+            transform: translateY(-50px);
+        }
+    }
+}
+
+//=============================================================================
+// Placeholder image.
+//=============================================================================
+
+// NOTE: For "loading-balls.gif"
+img.placeholder {
+    border: none;
+}

@@ -1,4 +1,4 @@
-# app/services/concerns/faraday/caching_middleware.rb
+# app/services/concerns/caching_middleware.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -8,11 +8,11 @@ __loading_begin(__FILE__)
 require 'active_support/concern'
 require 'faraday'
 
-module Faraday
+module CachingMiddleware
 
   # Common middleware default values.
   #
-  module CachingMiddlewareDefaults
+  module Defaults
 
     # Base temporary directory.
     TMP_ROOT_DIR =
@@ -24,7 +24,7 @@ module Faraday
     # Faraday cache directory for :file_store.
     FARADAY_CACHE_DIR = File.join(CACHE_ROOT_DIR, 'faraday').freeze
 
-=begin
+=begin # TODO: redis cache?
     # Redis server cache configuration.
     RAILS_CONFIG = Rails.application.config_for(:redis).deep_symbolize_keys
 =end
@@ -35,22 +35,22 @@ module Faraday
     # Default options appropriate for any including class.
     #
     DEFAULT_OPTIONS = {
-=begin
+=begin # TODO: redis cache?
       store:  :redis_cache_store,
 =end
       store:  :file_store,
       logger: Log.logger,
     }.freeze
 
-  end
+  end unless defined?(CachingMiddleware::Defaults)
 
   # A common implementation for locally-defined caching middleware.
   #
-  module CachingMiddlewareConcern
+  module Concern
 
     extend ActiveSupport::Concern
 
-    include CachingMiddlewareDefaults
+    include CachingMiddleware::Defaults
 
     # =========================================================================
     # :section:
@@ -327,7 +327,7 @@ module Faraday
             @cache_dir ||= FARADAY_CACHE_DIR
             params << @cache_dir
           when :redis_cache_store
-=begin
+=begin # TODO: redis cache?
             options.merge!(RAILS_CONFIG)
 =end
             options.merge!(namespace: @namespace)

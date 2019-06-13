@@ -10,51 +10,67 @@ $lg-width:  1200px;     // E.g. 1280x800 laptop.
 $sm-height: $sm-width;  // Phone in landscape mode.
 $lg-height: 900px;      // 1440x900 laptop.
 
-// Interpolation strings for @media queries associated with specific horizontal
-// or vertical dimensional properties:
+//=============================================================================
+// Horizontal dimension @media query interpolation strings.
+//=============================================================================
+
+$narrow-upper-bound: "(max-width: #{$sm-width})";
+$med-wd-lower-bound: "(min-width: #{$sm-width})";
+$med-wd-upper-bound: "(max-width: #{$lg-width})";
+$wide-lower-bound:   "(min-width: #{$lg-width})";
 
 // * Small-screen portrait mode.
-$narrow-screen: "screen and (max-width: #{$sm-width})";
-
-// * Small-screen landscape mode.
-$short-screen:  "screen and (max-height: #{$sm-height})";
-
-// * Large-screen landscape mode.
-$wide-screen:   "screen and (min-width: #{$lg-width})";
-
-// * Large-screen portrait mode.
-$tall-screen:   "screen and (min-height: #{$lg-height})";
+$narrow-screen: "screen and #{$narrow-upper-bound}";
 
 // * In-between screen width.
-$medium-width:
-    "screen and (min-width: #{$sm-width}) and (max-width: #{$lg-width})";
+$medium-width:  "screen and #{$med-wd-lower-bound} and #{$med-wd-upper-bound}";
+
+// * Large-screen landscape mode.
+$wide-screen:   "screen and #{$wide-lower-bound}";
+
+//=============================================================================
+// Vertical dimension @media query interpolation strings.
+//=============================================================================
+
+$short-upper-bound:  "(max-height: #{$sm-height})";
+$med-ht-lower-bound: "(min-height: #{$sm-height})";
+$med-ht-upper-bound: "(max-height: #{$lg-height})";
+$tall-lower-bound:   "(min-height: #{$lg-height})";
+
+// * Small-screen landscape mode.
+$short-screen:  "screen and #{$short-upper-bound}";
 
 // * In-between screen height.
-$medium-height:
-    "screen and (min-height: #{$sm-height}) and (max-height: #{lg-height})";
+$medium-height: "screen and #{$med-ht-lower-bound} and #{$med-ht-upper-bound}";
 
-// Interpolation strings for @media queries associated with the general size of
-// the screen:
+// * Large-screen portrait mode.
+$tall-screen:   "screen and #{$tall-lower-bound}";
+
+//=============================================================================
+// Screen size @media query interpolation strings.
+//=============================================================================
 
 $small-screen:  $narrow-screen + "," + $short-screen;  // E.g., handheld mobile
 $large-screen:  $wide-screen   + "," + $tall-screen;   // E.g., desktop
 $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 
 //=============================================================================
-// Standard definitions.
+// Generic - baseline definitions.
 //=============================================================================
 
 // Page layout CSS variables.
 :root {
-    --page-padding: 2rem;
-    --flex-gap:     1rem;
+    --page-padding:    2rem;
+    --flex-gap:        1rem;
+    --thumbnail-max-x: auto;
+    --thumbnail-max-y: 120px;
 }
 
 //=============================================================================
 // Desktop - definitions specific to large screens.
 //=============================================================================
 
-@media #{$large-screen} {
+@media #{$wide-screen} {
 
     // TODO: ???
 
@@ -64,28 +80,28 @@ $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 // Tablet - definitions specific to medium screens.
 //=============================================================================
 
-@media #{$medium-screen} {
-
+@media #{$medium-width} {
     // Page layout CSS variables.
     :root {
-        --page-padding: 1rem;
-        --flex-gap:     0.75rem;
+        --page-padding:    1rem;
+        --flex-gap:        0.75rem;
+        --thumbnail-max-x: 120px;
+        --thumbnail-max-y: 120px;
     }
-
 }
 
 //=============================================================================
 // Mobile - definitions specific to small screens.
 //=============================================================================
 
-@media #{$small-screen} {
-
+@media #{$narrow-screen} {
     // Page layout CSS variables.
     :root {
-        --page-padding: 0.75rem;
-        --flex-gap:     0.25rem;
+        --page-padding:    0.75rem;
+        --flex-gap:        0.25rem;
+        --thumbnail-max-x: 80px;
+        --thumbnail-max-y: 80px;
     }
-
 }
 
 //=============================================================================
@@ -103,6 +119,10 @@ $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 $page-padding-x:    var(--page-padding-x);
 $page-padding-y:    var(--page-padding-y);
 $page-padding:      $page-padding-y $page-padding-x;
+
 $flex-gap-x:        var(--flex-gap-x);
 $flex-gap-y:        var(--flex-gap-y);
 $flex-gap:          $flex-gap-y $flex-gap-x;
+
+$thumbnail-max-x:   var(--thumbnail-max-x);
+$thumbnail-max-y:   var(--thumbnail-max-y);

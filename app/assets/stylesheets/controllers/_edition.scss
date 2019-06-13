@@ -1,0 +1,29 @@
+// app/assets/stylesheets/controllers/_edition.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Periodical edition index page
+//=============================================================================
+
+.edition-list {
+
+    @extend .results-list;
+
+    display:        flex;
+    flex-direction: column;
+    margin-top:     1rem;
+}
+
+.edition-list-entry {
+    @extend .results-entry;
+}
+
+//=============================================================================
+// Periodical edition show page
+//=============================================================================
+
+.edition-details {
+    @extend .results-entry;
+}

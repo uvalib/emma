@@ -6,8 +6,9 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/user_signed_agreement'
+
+require_relative 'api/link'
+require_relative 'api/user_signed_agreement'
 
 # ApiUserSignedAgreementList
 #
@@ -16,9 +17,9 @@ require 'api/user_signed_agreement'
 class ApiUserSignedAgreementList < Api::Message
 
   schema do
-    has_many :allows,           String
-    has_many :links,            Link
-    has_many :signedAgreements, UserSignedAgreement
+    has_many :allows,           AllowsType
+    has_many :links,            Api::Link
+    has_many :signedAgreements, Api::UserSignedAgreement
   end
 
 end

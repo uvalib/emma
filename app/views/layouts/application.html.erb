@@ -2,26 +2,33 @@
 <%-
   # Application page layout.
 
-  @body_class ||= []
-  @body_class = Array.wrap(@body_class).uniq.join(' ').squish
+  @language ||= I18n.locale.to_s.downcase.sub(/-.*/, '')
 
-  @page_title ||= []
-  @page_title = Array.wrap(@page_title)
-  unless @page_title.last&.end_with?(app_name)
-    @page_title << '-' if @page_title.present?
-    @page_title << app_name
+  # Emit the <title> element with `data-turbolinks-eval="false"` so that it is
+  # not included in Turbolinks' determination of whether the contents of <head>
+  # have changed.
+  @page_title = Array.wrap(@page_title).join(' ').squish
+  if @page_title.blank?
+    @page_title = app_name
+  elsif !@page_title.end_with?(app_name)
+    @page_title << " - #{app_name}"
   end
-  @page_title = @page_title.join(' ').squish
 
+  # Note that 'reload' is the documented value for 'data-turbolinks-track'
+  # however (for some unknown reason) causes requests to be made twice.  By
+  # experimentation the value that works best here is the empty string.
   meta_options = { 'data-turbolinks-track': '' }
 
-  language = I18n.locale.to_s.downcase.sub(/-.*/, '')
+  @body_class = Array.wrap(@body_class)
+  @body_class.unshift("#{params[:controller]}-#{params[:action]}")
+  @body_class = @body_class.uniq.join(' ').squish
 
 -%>
 <!DOCTYPE html>
-<html lang="<%= language -%>">
+<html lang="<%= @language -%>">
+
   <head>
-    <title><%= @page_title -%></title>
+    <title data-turbolinks-eval="false"><%= @page_title -%></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -29,6 +36,9 @@
     <%= stylesheet_link_tag    'application', meta_options %>
     <%= javascript_include_tag 'application', meta_options %>
   </head>
+
+  <%= render 'layouts/session' %>
+
   <body class="<%= @body_class -%>">
     <%= render 'layouts/header' %>
     <%= render 'layouts/navbar' %>
@@ -38,4 +48,5 @@
     </main>
     <%= render 'layouts/footer' %>
   </body>
+
 </html>

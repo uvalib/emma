@@ -9,7 +9,32 @@ __loading_begin(__FILE__)
 #
 # @see app/views/home
 #
+# == Usage Notes
+# The endpoints implemented by this controller do not require authentication of
+# the requester because the methods/views react according to the identity
+# associated with the current session.
+#
 class HomeController < ApplicationController
+
+  include SessionConcern
+
+  # ===========================================================================
+  # :section: Authentication
+  # ===========================================================================
+
+  prepend_before_action :session_check
+
+  # ===========================================================================
+  # :section: Authorization
+  # ===========================================================================
+
+  skip_authorization_check
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  append_around_action :session_update
 
   # ===========================================================================
   # :section:
@@ -20,7 +45,16 @@ class HomeController < ApplicationController
   # == GET /home
   # The main application page.
   #
+  # == Implementation Notes
+  # There is no app/views/home/index.html.erb; this method renders the user
+  # dashboard for an authenticated session or the welcome screen otherwise.
+  #
   def index
+    if current_user
+      render template: 'home/dashboard'
+    else
+      render template: 'home/welcome'
+    end
   end
 
   # == GET /home/welcome

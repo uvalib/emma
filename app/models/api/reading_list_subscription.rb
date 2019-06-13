@@ -6,7 +6,8 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/link'
+
+require_relative 'link'
 
 # Api::ReadingListSubscription
 #
@@ -15,9 +16,9 @@ require 'api/link'
 class Api::ReadingListSubscription < Api::Record::Base
 
   schema do
-    has_many  :allows,  String
+    has_many  :allows,  AllowsType
     attribute :enabled, Boolean
-    has_many  :links,   Link
+    has_many  :links,   Api::Link
   end
 
 end

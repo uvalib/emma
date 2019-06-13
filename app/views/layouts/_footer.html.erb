@@ -1,11 +1,10 @@
 <%# app/views/layouts/_footer.html.erb -%>
 <%-
   # Application footer.
-
-  footer = content_for(:header)
-  return unless footer.present?
-
+  footer = content_for(:footer)
 -%>
+
 <footer class="layout-footer">
   <%= footer %>
+  <%= render 'layouts/debug' %>
 </footer>

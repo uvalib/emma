@@ -1,0 +1,28 @@
+<%# app/views/title/_entry.html.erb -%>
+<%-
+  # A single catalog title index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && %Q(id="title-#{item.identifier}").html_safe
+
+  metadata = item && {
+    Title:   title_link(item),
+    Authors: :authors,
+    Date:    item.year
+  }
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<%- if item -%>
+  <%= thumbnail(item) %>
+<%- end -%>
+<div class="title-list-entry" <%= id -%>>
+  <%= item ? field_values(item, metadata) : empty_field_value %>
+</div>

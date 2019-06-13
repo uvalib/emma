@@ -31,6 +31,21 @@ module Api
     #
     TYPE_OPTION_KEYS = %i[type extend decorator].freeze
 
+    # A table of schema property enumeration types mapped to literals which are
+    # their default values.
+    #
+    # @type [Hash{Symbol=>Object}]
+    #
+    ENUMERATION_DEFAULTS =
+      Api::ENUMERATIONS.transform_values { |prop| prop[:default] || '' }.freeze
+
+    # The enumeration types that may be given as the second argument to
+    # #attribute, #has_one, or #has_many definitions.
+    #
+    # @type [Array<Symbol>]
+    #
+    ENUMERATION_TYPES = ENUMERATION_DEFAULTS.keys.freeze
+
     # A table of schema property scalar types mapped to literals which are
     # their default values.
     #
@@ -140,8 +155,9 @@ module Api
     # @return [Symbol]
     #
     def scalar_type?(type)
-      name = type.to_s.demodulize.to_sym
-      SCALAR_TYPES.include?(name) || (type.parent == Object)
+      return true if type.parent == Object
+      base = type.to_s.demodulize.to_sym
+      SCALAR_TYPES.include?(base) || ENUMERATION_TYPES.include?(base)
     end
 
     # Transform *name* into the form indicated by the given naming mode.
@@ -161,7 +177,7 @@ module Api
       name
     end
 
-  end
+  end unless defined?(Schema)
 
 end
 

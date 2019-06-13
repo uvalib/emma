@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 require 'api/record'
 
+require_relative 'common/edition_methods'
+
 # Api::PeriodicalEditionSummary
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition_summary
@@ -17,6 +19,8 @@ class Api::PeriodicalEditionSummary < Api::Record::Base
     attribute :editionId,   String
     attribute :editionName, String
   end
+
+  include Api::Common::EditionMethods
 
 end
 

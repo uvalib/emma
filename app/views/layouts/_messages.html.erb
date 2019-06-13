@@ -1,7 +1,6 @@
 <%# app/views/layouts/_messages.html.erb -%>
 <%-
   # Flash messages.
-
   flash_messages =
     %i[alert notice].map { |type|
       content_tag(:p, flash[type], class: type.to_s) if flash[type]
@@ -10,8 +9,8 @@
 
   flash_messages = safe_join(flash_messages, "\n")
   flash.discard
-
 -%>
+
 <div class="flash-messages">
   <%= flash_messages %>
 </div>

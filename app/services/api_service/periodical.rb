@@ -9,6 +9,16 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::Title
+  #
+  # == Usage Notes
+  #
+  # === According to API section 2.2 (Periodicals):
+  # A periodical represents a magazine or newspaper, each of which can have
+  # multiple editions/issues. The editions/issues are available to users in the
+  # same way as titles, based on characteristics of the user and the
+  # periodical, and in formats that will be specified in the response.
+  #
   module Periodical
 
     include Common
@@ -37,17 +47,18 @@ class ApiService
 
     public
 
-    # get_periodicals
+    # == GET /v2/periodicals
+    # Search for Bookshare periodicals.
     #
     # @param [Hash, nil] opt
     #
-    # @option opt [String]    :title
-    # @option opt [String]    :issn
-    # @option opt [String]    :language
-    # @option opt [String]    :start
-    # @option opt [Integer]   :limit        Default: 10
-    # @option opt [SortOrder] :sortOrder    Default: 'title'
-    # @option opt [Direction] :direction    Default: 'asc'
+    # @option opt [String]              :title
+    # @option opt [String]              :issn
+    # @option opt [String]              :language
+    # @option opt [String]              :start
+    # @option opt [Integer]             :limit        Default: 10
+    # @option opt [PeriodicalSortOrder] :sortOrder    Default: 'title'
+    # @option opt [Direction]           :direction    Default: 'asc'
     #
     # @return [ApiPeriodicalSeriesMetadataSummaryList]
     #
@@ -57,11 +68,11 @@ class ApiService
     def get_periodicals(**opt)
       validate_parameters(__method__, opt)
       api(:get, 'periodicals', opt)
-      data = response&.body&.presence
-      ApiPeriodicalSeriesMetadataSummaryList.new(data, error: @exception)
+      ApiPeriodicalSeriesMetadataSummaryList.new(response, error: exception)
     end
 
-    # get_periodical
+    # == GET /v2/periodicals/:seriesId
+    # Get metadata for the specified Bookshare periodical.
     #
     # @param [String] seriesId
     #
@@ -72,11 +83,11 @@ class ApiService
     #
     def get_periodical(seriesId:)
       api(:get, 'periodicals', seriesId)
-      data = response&.body&.presence
-      ApiPeriodicalSeriesMetadataSummary.new(data, error: @exception)
+      ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
     end
 
-    # update_periodical
+    # == PUT /v2/periodicals/:seriesId
+    # Update the series metadata for an existing Bookshare periodical.
     #
     # @param [String]    seriesId
     # @param [Hash, nil] opt
@@ -86,37 +97,37 @@ class ApiService
     # @option opt [String]                :description
     # @option opt [String]                :publisher
     # @option opt [String]                :externalCategoryCode
-    # @option opt [String, Array<String>] :categories
-    # @option opt [String, Array<String>] :languages
+    # @option opt [String, Array<String>] :categories # NOTE: <string>array(multi)
+    # @option opt [String, Array<String>] :languages  # NOTE: <string>array(multi)
     #
     # @return [ApiPeriodicalSeriesMetadataSummary]
     #
     def update_periodical(seriesId:, **opt)
       validate_parameters(__method__, opt)
       api(:put, 'periodicals', seriesId, opt)
-      data = response&.body&.presence
-      ApiPeriodicalSeriesMetadataSummary.new(data, error: @exception)
+      ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
     end
 
-    # get_periodical_editions
+    # == GET /v2/periodicals/:seriesId/editions
+    # Get a list of editions for the specified Bookshare periodical.
     #
     # @param [String]    seriesId
     # @param [Hash, nil] opt
     #
-    # @option opt [Integer]   :limit        Default: 10
-    # @option opt [SortOrder] :sortOrder    Default: 'editionName'
-    # @option opt [Direction] :direction    Default: 'asc'
+    # @option opt [Integer]          :limit       Default: 10
+    # @option opt [EditionSortOrder] :sortOrder   Default: 'editionName'
+    # @option opt [Direction]        :direction   Default: 'asc'
     #
     # @return [ApiPeriodicalEditionList]
     #
     def get_periodical_editions(seriesId:, **opt)
       validate_parameters(__method__, opt)
       api(:get, 'periodicals', seriesId, 'editions', opt)
-      data = response&.body&.presence
-      ApiPeriodicalEditionList.new(data, error: @exception)
+      ApiPeriodicalEditionList.new(response, error: exception)
     end
 
-    # update_periodical_edition
+    # == PUT /v2/periodicals/:seriesId/editions/:editionId
+    # Update the metadata of an existing periodical edition.
     #
     # @param [String]    seriesId
     # @param [String]    editionId
@@ -130,11 +141,11 @@ class ApiService
     def update_periodical_edition(seriesId:, editionId:, **opt)
       validate_parameters(__method__, opt)
       api(:put, 'periodicals', seriesId, 'editions', editionId, opt)
-      data = response&.body&.presence
-      ApiPeriodicalEdition.new(data, error: @exception)
+      ApiPeriodicalEdition.new(response, error: exception)
     end
 
-    # download_periodical_edition
+    # == GET /v2/periodicals/:seriesId/editions/:editionId/:format
+    # Download an artifact of the specified edition of a Bookshare periodical.
     #
     # @param [String]     seriesId
     # @param [String]     editionId
@@ -148,8 +159,7 @@ class ApiService
     def download_periodical_edition(seriesId:, editionId:, format:, **opt)
       validate_parameters(__method__, opt)
       api(:get, 'periodicals', seriesId, 'editions', editionId, format, opt)
-      data = response&.body&.presence
-      ApiStatusModel.new(data, error: @exception)
+      ApiStatusModel.new(response, error: exception)
     end
 
     # =========================================================================
@@ -172,7 +182,7 @@ class ApiService
       raise Api::PeriodicalError, message
     end
 
-  end
+  end unless defined?(Periodical)
 
 end
 

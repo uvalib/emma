@@ -37,7 +37,8 @@ class ApiService
 
     public
 
-    # get_user_agreements
+    # == GET /v2/accounts/:username/agreements
+    # Get the list of signed agreements for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
     #
@@ -46,11 +47,11 @@ class ApiService
     def get_user_agreements(user: @user)
       username = name_of(user)
       api(:post, 'accounts', username, 'agreements')
-      data = response&.body&.presence
-      ApiUserSignedAgreementList.new(data, error: @exception)
+      ApiUserSignedAgreementList.new(response, error: exception)
     end
 
-    # create_user_agreement
+    # == POST /v2/accounts/:username/agreements
+    # Create a new signed agreement record for an existing user
     #
     # @param [User, String, nil] user       Default: @user
     # @param [Hash, nil]         opt
@@ -66,11 +67,11 @@ class ApiService
       validate_parameters(__method__, opt)
       username = name_of(user)
       api(:post, 'accounts', username, 'agreements', opt)
-      data = response&.body&.presence
-      ApiUserSignedAgreement.new(data, error: @exception)
+      ApiUserSignedAgreement.new(response, error: exception)
     end
 
-    # remove_user_agreement
+    # == POST /v2/accounts/:username/agreements/:agreementId/expired
+    # Expire a signed agreement.
     #
     # @param [User, String, nil] user         Default: @user
     # @param [String]            agreementId
@@ -80,8 +81,7 @@ class ApiService
     def remove_user_agreement(user: @user, agreementId:)
       username = name_of(user)
       api(:post, 'accounts', username, 'agreements', agreementId, 'expired')
-      data = response&.body&.presence
-      ApiUserSignedAgreement.new(data, error: @exception)
+      ApiUserSignedAgreement.new(response, error: exception)
     end
 
     # =========================================================================
@@ -104,7 +104,7 @@ class ApiService
       raise Api::AccountError, message
     end
 
-  end
+  end unless defined?(Agreement)
 
 end
 

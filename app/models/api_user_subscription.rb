@@ -6,25 +6,63 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/user_subscription'
+
+require_relative 'api/user_subscription'
 
 # ApiUserSubscription
 #
-# NOTE: This duplicates Api::UserSubscription
-#
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_user_subscription
+#
+# NOTE: This duplicates:
+# @see Api::UserSubscription
 #
 class ApiUserSubscription < Api::Message
 
   schema do
-    attribute :downloadTimeframe,    DownloadTimeframe
+    has_one   :downloadTimeframe,    Api::DownloadTimeframe
     attribute :endDate,              String
-    has_many  :links,                Link
+    has_many  :links,                Api::Link
     attribute :notes,                String
     attribute :numBooksAllowed,      Integer
     attribute :startDate,            String
     attribute :subscriptionId,       String
-    attribute :userSubscriptionType, UserSubscriptionType
+    has_one   :userSubscriptionType, Api::UserSubscriptionType
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
+
+  # Convert object to string.
+  #
+  # @return [String]
+  #
+  def to_s
+    label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # A label for the item.
+  #
+  # @return [String]
+  #
+  def label
+    userSubscriptionType.to_s
+  end
+
+  # Return the unique identifier for the represented item.
+  #
+  # @return [String]
+  #
+  def identifier
+    subscriptionId.to_s
   end
 
 end

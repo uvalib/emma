@@ -13,8 +13,8 @@
 
   session_link = current_user ? sign_out_link : sign_in_link
   session_link = content_tag(:div, session_link, class: 'session')
-
 -%>
+
 <header class="layout-header">
   <div class="logo-area"><%= logo + tagline %></div>
   <div class="control-area"><%= username + session_link %></div>

@@ -1,0 +1,144 @@
+// app/assets/stylesheets/controllers/_title.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'shared/mixins';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Catalog Title index page
+//=============================================================================
+
+.title-list {
+
+    @extend .results-list;
+    @extend .list-3-column;
+
+    justify-items: stretch;
+
+    .number {
+        // TODO: ???
+    }
+
+    .thumbnail {
+        margin-bottom: $results-entry-gap-y;
+    }
+
+    @media #{$narrow-screen} {
+
+        // Push list number to the right and hide.
+        .number {
+            grid-column: 3 / -1;
+            visibility:  hidden;
+        }
+
+        // Push thumbnail to the right and occupy the right side of the entry.
+        .thumbnail {
+            grid-column: 3 / -1;
+            grid-row:    span 2;
+        }
+    }
+}
+
+.title-list-entry {
+
+    @extend .results-entry;
+
+    grid-auto-rows: min-content;
+
+    .value {
+
+        &.field-Title {
+
+            font-weight: bold;
+
+            a:not(:hover) {
+                text-decoration: none;
+            }
+        }
+
+        &.field-None {
+            width:      max-content;
+            margin-top: $results-entry-gap-y;
+        }
+    }
+
+    @media #{$narrow-screen} {
+
+        .label.field-Title {
+            display: none;
+        }
+
+        .value.field-Title {
+            grid-column: 1 / -1;
+        }
+    }
+}
+
+//=============================================================================
+// Catalog Title show page
+//=============================================================================
+
+.title-details {
+
+    @extend .results-entry;
+
+    .value {
+
+        display:        flex;
+        flex-direction: column;
+
+        > * {
+
+            @include width-available;
+
+            margin-bottom: 0.375rem;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        &.field-Countries {
+
+            display: block;
+
+            > * {
+                margin-bottom: 0;
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            &.field-Links {
+                word-break: break-word;
+            }
+        }
+    }
+}
+
+// Wrapper for .title-details which displays the full-size cover image to the
+// right on large screens.
+.title-details-container {
+
+    @media #{$wide-screen} {
+        column-count: 2;
+    }
+
+    .cover-image {
+
+        position: relative;
+        bottom:   0;
+        width:    100%;
+
+        @media #{$wide-screen} {
+            max-height:  66vh;
+            margin-left: $results-entry-gap-x;
+        }
+
+        img {
+            @media #{$narrow-screen} {
+                width: 100%;
+            }
+        }
+    }
+}

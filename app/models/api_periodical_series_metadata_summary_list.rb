@@ -6,9 +6,11 @@
 __loading_begin(__FILE__)
 
 require 'api/message'
-require 'api/link'
-require 'api/status_model'
-require 'api/periodical_series_metadata_summary'
+
+require_relative 'api/link'
+require_relative 'api/periodical_series_metadata_summary'
+require_relative 'api/status_model'
+require_relative 'api/common/sequence_methods'
 
 # ApiPeriodicalSeriesMetadataSummaryList
 #
@@ -17,14 +19,16 @@ require 'api/periodical_series_metadata_summary'
 class ApiPeriodicalSeriesMetadataSummaryList < Api::Message
 
   schema do
-    has_many  :allows,       String
+    has_many  :allows,       AllowsType
     attribute :limit,        Integer
-    has_many  :links,        Link
-    attribute :message,      StatusModel
+    has_many  :links,        Api::Link
+    has_one   :message,      Api::StatusModel
     attribute :next,         String
-    has_many  :periodicals,  PeriodicalSeriesMetadataSummary
+    has_many  :periodicals,  Api::PeriodicalSeriesMetadataSummary
     attribute :totalResults, Integer
   end
+
+  include Api::Common::SequenceMethods
 
 end
 

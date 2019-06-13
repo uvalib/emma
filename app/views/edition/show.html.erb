@@ -1,0 +1,11 @@
+<%# app/views/edition/show.html.erb -%>
+<%-
+  # Edition show page.
+  item  ||= @item
+  title ||= item&.label || t('emma.edition.show.title')
+  @page_title = title
+-%>
+
+<h1 class="heading"><%= item.label -%></h1>
+
+<%= render 'edition/details', item: item %>

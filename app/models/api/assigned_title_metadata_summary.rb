@@ -6,9 +6,11 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
-require 'api/name'
-require 'api/format'
-require 'api/link'
+
+require_relative 'format'
+require_relative 'link'
+require_relative 'name'
+require_relative 'common/title_methods'
 
 # Api::AssignedTitleMetadataSummary
 #
@@ -18,18 +20,18 @@ class Api::AssignedTitleMetadataSummary < Api::Record::Base
 
   schema do
     attribute :assignedBy,       String
-    has_many  :authors,          Name
+    has_many  :authors,          Api::Name
     attribute :available,        Boolean
     attribute :bookshareId,      String
-    has_many  :composers,        Name
+    has_many  :composers,        Api::Name
     attribute :copyrightDate,    String
     attribute :dateAdded,        String
     attribute :dateDownloaded,   String # TODO: ???
-    has_many  :formats,          Format
+    has_many  :formats,          Api::Format
     attribute :instruments,      String
     attribute :isbn13,           String
     has_many  :languages,        String
-    has_many  :links,            Link
+    has_many  :links,            Api::Link
     attribute :publishDate,      String # TODO: ???
     attribute :seriesNumber,     String
     attribute :seriesTitle,      String
@@ -39,6 +41,8 @@ class Api::AssignedTitleMetadataSummary < Api::Record::Base
     attribute :titleContentType, String
     attribute :vocalParts,       String
   end
+
+  include Api::Common::TitleMethods
 
 end
 

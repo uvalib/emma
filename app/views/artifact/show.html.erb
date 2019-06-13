@@ -1,0 +1,11 @@
+<%# app/views/artifact/show.html.erb -%>
+<%-
+  # Artifact show
+  title ||= t('emma.artifact.show.title')
+  @page_title = title
+  # TODO: Should this all be occurring asynchronously from the client?
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<p>Fetching download...</p>

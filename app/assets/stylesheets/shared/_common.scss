@@ -1,6 +1,7 @@
 // app/assets/stylesheets/shared/_common.scss
 
 // @use 'shared/variables'; // TODO: SASS 4.0
+// @use 'shared/lists';     // TODO: SASS 4.0
 
 //=============================================================================
 // Common definitions.
@@ -59,6 +60,23 @@
     }
 }
 
+// A grouping of related controls into a single element.
+%control-group {
+
+    display:          inline-flex;
+    padding:          4px 8px;
+    background-color: lightgoldenrodyellow;
+    border:           2px solid goldenrod;
+    border-radius:    6px;
+    align-items:      baseline;
+
+    > * {
+        display:     inline-flex;
+        flex:        1 1 auto;
+        align-items: baseline;
+    }
+}
+
 //=============================================================================
 // Common settings.
 //=============================================================================
@@ -69,12 +87,14 @@
     outline-offset: 2px;
 }
 
-/*
 // Convenience definition for Bootstrap "hidden on all" class.
 .hidden {
-    @extend .d-none;
+    display: none !important;
 }
-*/
+
+.invisible {
+    visibility: hidden !important;
+}
 
 .disabled {
     @extend %disabled;
@@ -98,4 +118,9 @@ body {
 // The <main> content area of the page.
 .layout-content {
     margin: 0 $page-padding-x;
+}
+
+// For the heading at the top of the content area.
+.heading {
+    font-size: xx-large;
 }

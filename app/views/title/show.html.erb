@@ -1,0 +1,11 @@
+<%# app/views/title/show.html.erb -%>
+<%-
+  # Catalog Title show page.
+  item  ||= @item
+  title ||= item&.full_title || t('emma.title.show.title')
+  @page_title = item&.title
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= render 'title/details', item: item %>

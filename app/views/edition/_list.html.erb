@@ -1,0 +1,19 @@
+<%# app/views/edition/_list.html.erb -%>
+<%-
+  # Edition list.
+  title ||= t('emma.edition.index.title')
+  list  ||= []
+  count ||= list.size
+-%>
+
+<h2><%= title -%> (<%= count -%>)</h2>
+
+<div class="edition-list">
+  <%- if list.present? -%>
+    <%- list.each_with_index do |item, idx| -%>
+      <%= render 'edition/entry', item: item %>
+    <%- end -%>
+  <%- else -%>
+    <%= render 'edition/entry' %>
+  <%- end -%>
+</div>

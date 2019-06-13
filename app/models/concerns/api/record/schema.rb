@@ -74,11 +74,13 @@ module Api::Record::Schema
       # Add record field definitions to each format-specific serializer.
       @serializers =
         (serializer_types.presence || SERIALIZER_TYPES).map { |key|
-          key  = key.downcase.to_sym if key.is_a?(String)
-          type = key.to_s.capitalize
-          base = "Api::Serializer::#{type}Base".constantize
+          key   = key.downcase.to_sym if key.is_a?(String)
+          type  = key.to_s.capitalize
+          const = "#{type}Serializer"
+          base  = "Api::Serializer::#{type}Base".constantize
           serializer = Class.new(base, &block)
-          [key, const_set("#{type}Serializer", serializer)]
+          remove_const(const) if const_defined?(const)
+          [key, const_set(const, serializer)]
         }.to_h
     end
 

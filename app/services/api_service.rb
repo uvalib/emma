@@ -37,12 +37,6 @@ class ApiService
   # @return [Hash]
   attr_reader :options
 
-  # @return [Faraday::Response, nil]
-  attr_reader :response
-
-  # @return [Exception, nil]
-  attr_reader :exception
-
   # Initialize a new instance
   #
   # @param [Hash, nil] opt
@@ -158,8 +152,9 @@ class ApiService
   #
   def self.update(**opt)
     @@service_instance ||= nil
-    current_user = @service_instance&.user&.uid
-    if opt[:user] && opt.except(:user).blank? && (opt[:user] == current_user)
+    new_user     = opt[:user]&.uid
+    current_user = @@service_instance&.user&.uid
+    if new_user && (new_user == current_user) && opt.except(:user).blank?
       @@service_instance
     else
       @@service_instance = new(opt)

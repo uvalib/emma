@@ -1,0 +1,79 @@
+<%# app/views/title/index.html.erb -%>
+<%-
+  # Catalog Titles results page.
+  title ||= t('emma.title.index.title')
+
+  @page_title = t('emma.title.label')
+
+  item_list = title_list.presence
+
+  term_list =
+    if item_list
+      url_parameters.except(:start, :limit, :api_key).map { |k, v|
+        field = k.to_s.capitalize
+        value = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
+        [field, value]
+      }.to_h.presence
+    end
+
+  if term_list
+    @page_title += ' - ' + term_list.map { |k, v| "#{k}: #{v}" }.join(', ')
+  end
+
+  search_terms =
+    if term_list
+      separator = content_tag(:span, ';', class: 'term-separator')
+      term_list.map { |field, value|
+        content_tag(:div, class: 'term') {
+          content_tag(:span, field, class: 'field') <<
+          content_tag(:span, ':',   class: 'separator') <<
+          content_tag(:span, value, class: 'value')
+        }
+      }.join(separator).html_safe
+    end
+
+  if item_list
+    all_count    = nil
+    search_count =
+      content_tag(:div, "#{total_items} titles found.", class: 'search-count')
+    controls     = pagination_controls
+  else
+    all_count    = " (#{total_items})"
+    search_count = controls = nil
+  end
+-%>
+
+<h1 class="heading"><%= title -%><%= all_count -%></h1>
+
+<div class="title-list">
+
+  <%# === Applied search terms (when applicable) === -%>
+  <%- if search_terms -%>
+    <div class="applied-search-terms">
+      <div class="search-terms">
+        <div class="label">Search terms:</div>
+        <%= search_terms %>
+      </div>
+    </div>
+  <%- end -%>
+
+  <%# === Top pagination controls === -%>
+  <%- if controls -%>
+    <div class="pagination-top"><%= controls -%><%= search_count -%></div>
+  <%- end -%>
+
+  <%# === Items === -%>
+  <%- if item_list -%>
+    <%- item_list.each_with_index do |item, idx| -%>
+      <%= render 'title/entry', index: idx, item: item %>
+    <%- end -%>
+  <%- else -%>
+    <%= render 'title/entry', index: -1 %>
+  <%- end -%>
+
+  <%# === Bottom pagination controls === -%>
+  <%- if controls -%>
+    <div class="pagination-bottom"><%= controls -%></div>
+  <%- end -%>
+
+</div>

@@ -1,0 +1,19 @@
+// app/assets/stylesheets/feature/_pagination.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Pagination controls.
+//=============================================================================
+
+.pagination {
+
+    @extend %control-group;
+
+    width: min-content;
+
+    > * {
+        font-weight: bold;
+        font-size:   smaller;
+    }
+}

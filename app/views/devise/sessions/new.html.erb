@@ -1,13 +1,13 @@
 <%# app/views/devise/sessions/new.html.erb -%>
 <%-
-  abort '/app/views/user/session/new.html.erb is supposed to be used'
+  abort '/app/views/user/sessions/new.html.erb is supposed to be used'
 
   # Login page.
-
-  title ||= 'Log in' # t('emma.sessions.title')
-
+  title ||= t('emma.user.sessions.new.label')
+  @page_title = title
 -%>
-<h2><%= title -%></h2>
+
+<h1 class="heading"><%= title -%></h1>
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
   <div class="field">

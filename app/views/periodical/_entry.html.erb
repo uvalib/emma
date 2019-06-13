@@ -1,0 +1,25 @@
+<%# app/views/periodical/_entry.html.erb -%>
+<%-
+  # A single periodical index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && %Q(id="periodical-#{item.identifier}").html_safe
+
+  metadata = item && {
+    Title:      periodical_link(item),
+    Categories: periodical_category_links(item),
+    Languages:  periodical_language_links(item),
+  }
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="periodical-list-entry" <%= id -%>>
+  <%= item ? field_values(item, metadata) : empty_field_value %>
+</div>

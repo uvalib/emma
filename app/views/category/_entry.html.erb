@@ -1,0 +1,23 @@
+<%# app/views/category/_entry.html.erb -%>
+<%-
+  # A single catalog title index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && nil # %Q(id="category-#{item.identifier}").html_safe
+
+  metadata = item && {
+    category_link(item) => "(#{item.titleCount})"
+  }
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="category-list-entry" <%= id -%>>
+  <%= item ? field_values(item, metadata) : empty_field_value %>
+</div>

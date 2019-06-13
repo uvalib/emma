@@ -101,6 +101,8 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise'
 gem 'oauth2', '~> 1.4'
 gem 'omniauth-oauth2', '~> 1.6'
+gem 'cancancan'
+gem 'rolify'
 
 # Serialization
 gem 'faraday'
@@ -112,3 +114,7 @@ gem 'virtus', '~> 1.0'
 
 # Metrics
 gem 'prometheus-client'
+
+# Other
+gem 'iso-639'
+gem 'jquery-rails'

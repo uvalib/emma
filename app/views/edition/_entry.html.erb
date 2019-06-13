@@ -1,0 +1,19 @@
+<%# app/views/edition/_entry.html.erb -%>
+<%-
+  # A single edition index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}.")
+  id     = item  && %Q(id="edition-#{item.identifier}").html_safe
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="edition-list-entry" <%= id -%>>
+  <%= item ? edition_field_values(item) : empty_field_value %>
+</div>
