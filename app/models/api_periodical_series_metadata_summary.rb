@@ -16,6 +16,7 @@ require_relative 'api/periodical_series_metadata_summary'
 # NOTE: This duplicates:
 # @see Api::PeriodicalSeriesMetadataSummary
 #
+# noinspection RubyClassModuleNamingConvention
 class ApiPeriodicalSeriesMetadataSummary < Api::Message
 
   schema do

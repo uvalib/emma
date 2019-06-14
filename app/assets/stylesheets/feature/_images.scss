@@ -35,6 +35,7 @@
 
 .thumbnail {
 
+    // noinspection SassScssResolvedByNameOnly
     img {
 
         @extend %image;

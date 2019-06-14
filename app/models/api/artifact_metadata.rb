@@ -62,7 +62,7 @@ class Api::ArtifactMetadata < Api::Record::Base
     format.to_s
   end
 
-  # A relative identiier for the represented artifact.
+  # A relative identifier for the represented artifact.
   #
   # @return [String]
   #

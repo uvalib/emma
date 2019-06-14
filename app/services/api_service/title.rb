@@ -25,6 +25,7 @@ class ApiService
   # to the specific file format resources that are available for each specific
   # title.
   #
+  # noinspection RubyParameterNamingConvention
   module Title
 
     include Common

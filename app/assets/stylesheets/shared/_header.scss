@@ -7,6 +7,8 @@
 //=============================================================================
 
 // The <header> at the top of every page.
+//
+// noinspection SassScssResolvedByNameOnly
 .layout-header {
 
     @extend %banner;
@@ -142,6 +144,8 @@
 }
 
 // Navigation bar (<nav>) at the top of every page just below <header>.
+//
+// noinspection SassScssResolvedByNameOnly
 .layout-navbar {
 
     @extend %banner;

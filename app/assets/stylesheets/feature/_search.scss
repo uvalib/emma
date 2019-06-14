@@ -8,7 +8,10 @@
 // Definitions
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 $results-entry-gap-x: $page-padding-x;
+
+// noinspection SassScssResolvedByNameOnly
 $results-entry-gap-y: calc(2 * #{$page-padding-y});
 
 //=============================================================================
@@ -39,6 +42,8 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
 //=============================================================================
 
 // Search term(s) applied which yield the current result set.
+//
+// noinspection SassScssResolvedByNameOnly
 .search-terms {
 
     @extend %control-group;
@@ -107,6 +112,8 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
 //=============================================================================
 
 // One or more label/value pairs.
+//
+// noinspection SassScssResolvedByNameOnly
 .results-entry {
 
     @extend .list-2-column;

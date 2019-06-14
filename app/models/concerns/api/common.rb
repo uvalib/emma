@@ -27,6 +27,7 @@ module Api
 
   public
 
+  # noinspection RubyConstantNamingConvention
   Boolean = TrueClass
 
   # Base class for custom scalar types.
@@ -52,6 +53,7 @@ module Api
     end
 
     def set(v)
+      # noinspection RubyAssignmentExpressionInConditionalInspection
       unless v.nil? || valid?(v = v.to_s.strip)
         Log.error("#{self.class}: #{v.inspect}")
         v = nil
@@ -329,6 +331,7 @@ module Api
     end
 
     def set(v)
+      # noinspection RubyAssignmentExpressionInConditionalInspection
       unless v.nil? || valid?(v = v.to_s.strip)
         Log.warn("#{type}: #{v.inspect}: not in #{values}")
         v = nil

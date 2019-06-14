@@ -19,6 +19,7 @@ require_relative 'common/periodical_methods'
 # NOTE: This duplicates:
 # @see ApiPeriodicalSeriesMetadataSummary
 #
+# noinspection RubyClassModuleNamingConvention
 class Api::PeriodicalSeriesMetadataSummary < Api::Record::Base
 
   schema do

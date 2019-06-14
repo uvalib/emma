@@ -16,6 +16,9 @@ require_relative 'api/common/sequence_methods'
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_metadata_summary_list
 #
+# NOTE: This duplicates:
+# @see ApiAssignedTitleMetadataSummaryList
+#
 class ApiTitleMetadataSummaryList < Api::Message
 
   schema do

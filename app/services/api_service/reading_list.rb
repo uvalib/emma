@@ -21,6 +21,7 @@ class ApiService
   # organization to the reading list, and that member will be able to use that
   # list but will not be able to modify it.
   #
+  # noinspection RubyParameterNamingConvention
   module ReadingList
 
     include Common

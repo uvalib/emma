@@ -3,10 +3,11 @@
 //= require shared/assets
 //= require shared/definitions
 
+// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $placeholders = $('.placeholder').not('.hidden');
+    const $placeholders = $('.placeholder').not('.hidden');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
@@ -16,8 +17,9 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     $placeholders.each(function() {
-        var $image = $(this);
-        var src;
+        const $image = $(this);
+        let   src;
+        // noinspection JSAssignmentUsedAsCondition, AssignmentResultUsedJS
         if (src = $image.data('path')) {
             console.log('FETCHING IMAGE data-path == ' + src);
             loadImage($image, src);
@@ -41,11 +43,11 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [source]
      */
     function loadImage(image, source) {
-        var func   = 'loadImage: ';
-        var $image = $(image);
-        var src    = source || $image.data('path') || $image.attr('src');
-        var url    = urlProxyPath(src);
-        var start  = Date.now();
+        const func   = 'loadImage: ';
+        const $image = $(image);
+        const src    = source || $image.data('path') || $image.attr('src');
+        const url    = urlProxyPath(src);
+        const start  = Date.now();
         $.ajax({
 
             url:  url,
@@ -63,9 +65,9 @@ $(document).on('turbolinks:load', function() {
                     console.warn(func + 'no data from ' + url);
                 } else {
                     console.log(func + 'received ' + data.length);
-                    var content    = 'data:image/jpg;base64,' + data;
-                    var $new_image = $('<img>').attr('src', content);
-                    var $container = $image.parent();
+                    const content    = 'data:image/jpg;base64,' + data;
+                    const $new_image = $('<img>').attr('src', content);
+                    const $container = $image.parent();
                     if ($image.hasClass('placeholder')) {
                         $image.addClass('hidden');
                         $container.append($new_image);

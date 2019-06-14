@@ -147,6 +147,7 @@ module HealthConcern
   #
   # @see en.emma.health in config/locales/en.yml
   #
+  # noinspection RailsI18nInspection
   HEALTH_CHECK =
     I18n.t('emma.health').map { |subsystem, items|
       entry = HealthEntry.new(items)
@@ -198,6 +199,7 @@ module HealthConcern
   #
   # @return [HealthStatus]
   #
+  # noinspection RubyScope, RubyUnusedLocalVariable
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
     method  = entry[:method]

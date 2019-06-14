@@ -9,7 +9,7 @@ require_relative '_common'
 
 class ApiService
 
-  # ApiService::Title
+  # ApiService::Periodical
   #
   # == Usage Notes
   #
@@ -19,6 +19,7 @@ class ApiService
   # same way as titles, based on characteristics of the user and the
   # periodical, and in formats that will be specified in the response.
   #
+  # noinspection RubyParameterNamingConvention
   module Periodical
 
     include Common

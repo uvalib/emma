@@ -15,6 +15,10 @@ require_relative 'api/common/sequence_methods'
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_assigned_title_metadata_summary_list
 #
+# NOTE: This duplicates:
+# @see ApiTitleMetadataSummaryList
+#
+# noinspection RubyClassModuleNamingConvention
 class ApiAssignedTitleMetadataSummaryList < Api::Message
 
   schema do

@@ -6,6 +6,7 @@
 // API test page
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 body.api-index,
 body.api-v2 {
 
@@ -93,6 +94,7 @@ body.api-v2 {
                 color:          #333;
             }
 
+            // noinspection CssInvalidPropertyValue
             .endpoint {
                 display:     block;
                 margin-left: auto;

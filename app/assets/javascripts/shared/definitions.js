@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/definitions.js
 
 /** @type {number} */
-var LOAD_TIME;
+let LOAD_TIME;
 
 if (!LOAD_TIME) {
 
@@ -15,7 +15,7 @@ if (!LOAD_TIME) {
      * @constant
      * @type {number}
      */
-    var MS_PER_SECOND = 1000;
+    const MS_PER_SECOND = 1000;
 
     // ========================================================================
     // JSDoc typedefs
@@ -28,7 +28,7 @@ if (!LOAD_TIME) {
      * @typedef Selector
      * @type {string|HTMLElement|jQuery}
      */
-    var Selector;
+    let Selector;
 
     // ========================================================================
     // Function definitions - Time and date
@@ -78,13 +78,15 @@ if (!LOAD_TIME) {
      *
      * @return {boolean}
      */
+    // noinspection FunctionWithMultipleReturnPointsJS
     function isEmpty(item) {
+        // noinspection NegatedIfStatementJS
         if (!item) {
             return true;
         } else if (isDefined(item.length)) {
             return !item.length;
         } else if (typeof item === 'object') {
-            for (var property in item) {
+            for (let property in item) {
                 if (item.hasOwnProperty(property)) {
                     return false;
                 }

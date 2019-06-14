@@ -15,6 +15,9 @@ require_relative 'common/reading_list_methods'
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_user_view
 #
+# NOTE: This duplicates:
+# @see ApiReadingListUserView
+#
 class Api::ReadingListUserView < Api::Record::Base
 
   schema do

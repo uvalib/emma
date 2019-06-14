@@ -116,9 +116,16 @@ module ResourceHelper
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
+  # == Usage Notes
+  # If *label* is HTML then no ".field-???" class is included for the ".label"
+  # and ".value" elements.
+  #
   def field_value(label, value, separator: DEFAULT_LIST_SEPARATOR)
     return if value.blank? || false?(value)
-    type  = "field-#{label || 'None'}"
+    type =
+      unless label.is_a?(ActiveSupport::SafeBuffer)
+        "field-#{label || 'None'}"
+      end
     label = content_tag(:div, label.to_s, class: "label #{type}")
     value = safe_join(value, separator) + separator if value.is_a?(Array)
     value = content_tag(:div, value, class: "value #{type}")

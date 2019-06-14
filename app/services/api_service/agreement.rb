@@ -9,6 +9,9 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::Agreement
+  #
+  # noinspection RubyParameterNamingConvention
   module Agreement
 
     include Common

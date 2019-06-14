@@ -8,6 +8,7 @@
 // Catalog Title index page
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 .title-list {
 
     @extend .results-list;
@@ -35,6 +36,7 @@
     }
 }
 
+// noinspection SassScssResolvedByNameOnly
 .title-list-entry {
 
     @extend .results-entry;
@@ -74,6 +76,7 @@
 // Catalog Title show page
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 .title-details {
 
     @extend .results-entry;
@@ -113,6 +116,8 @@
 
 // Wrapper for .title-details which displays the full-size cover image to the
 // right on large screens.
+//
+// noinspection SassScssResolvedByNameOnly
 .title-details-container {
 
     @media #{$wide-screen} {

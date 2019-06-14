@@ -56,6 +56,7 @@ class Ability
   #
   def initialize(user)
     user ||= User.new # Guest user (not logged in).
+    # noinspection RubyResolve
     if user.is_administrator?
       act_as_administrator
     elsif user.is_membership_manager? # TODO: doesn't really distinguish between primary/staff/sponsor

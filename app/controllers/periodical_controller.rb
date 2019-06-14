@@ -84,7 +84,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == GET /periodical/:id/edit
-  # Modify metadata of an existing periodical entr.
+  # Modify metadata of an existing periodical entry.
   #
   def edit
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }

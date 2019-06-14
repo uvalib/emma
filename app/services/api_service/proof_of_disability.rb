@@ -9,6 +9,9 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::ProofOfDisability
+  #
+  # noinspection RubyParameterNamingConvention
   module ProofOfDisability
 
     include Common

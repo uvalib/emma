@@ -64,6 +64,7 @@ module Representable
 
     remove_const(:Class) if const_defined?(:Class, false)
 
+    # noinspection RubyConstantNamingConvention
     Class = ->(input, options) do
       binding = options[:binding]
       object_class = binding.evaluate_option(:class, input, options)
@@ -134,51 +135,61 @@ module Representable
       remove_const(constant) if const_defined?(constant, false)
     end
 
+    # noinspection RubyConstantNamingConvention
     AssignFragment = ->(input, options) do
       __debug('AssignFragment', input: input)
       options[:fragment] = input
     end
 
+    # noinspection RubyConstantNamingConvention
     ReadFragment = ->(input, options) do
       __debug('ReadFragment', input: input)
       options[:binding].read(input, options[:as])
     end
 
+    # noinspection RubyConstantNamingConvention
     Reader = ->(input, options) do
       __debug('Reader', input: input)
       options[:binding].evaluate_option(:reader, input, options)
     end
 
+    # noinspection RubyConstantNamingConvention
     StopOnNotFound = ->(input, _options) do
       __debug('StopOnNotFound', input: input)
       Binding::FragmentNotFound == input ? Pipeline::Stop : input
     end
 
+    # noinspection RubyConstantNamingConvention
     StopOnNil = ->(input, _options) do
       __debug('StopOnNil', input: input)
       input.nil? ? Pipeline::Stop : input
     end
 
+    # noinspection RubyConstantNamingConvention
     OverwriteOnNil = ->(input, options) do
       __debug('OverwriteOnNil', input: input)
       input.nil? ? (SetValue.(input, options); Pipeline::Stop) : input
     end
 
+    # noinspection RubyConstantNamingConvention
     Default = ->(input, options) do
       __debug('Default', input: input)
       Binding::FragmentNotFound == input ? options[:binding][:default] : input
     end
 
+    # noinspection RubyConstantNamingConvention
     SkipParse = ->(input, options) do
       __debug('SkipParse', input: input)
       options[:binding].evaluate_option(:skip_parse, input, options) ? Pipeline::Stop : input
     end
 
+    # noinspection RubyConstantNamingConvention
     Deserializer = ->(input, options) do
       __debug('Deserializer', input: input)
       options[:binding].evaluate_option(:deserialize, input, options)
     end
 
+    # noinspection RubyConstantNamingConvention
     Deserialize = ->(input, args) do
       __debug('Deserialize', input: input)
       binding, fragment, options = args[:binding], args[:fragment], args[:options]
@@ -189,16 +200,19 @@ module Representable
       input.send(binding.deserialize_method, fragment, child_options)
     end
 
+    # noinspection RubyConstantNamingConvention
     ParseFilter = ->(input, options) do
       __debug('ParseFilter', input: input)
       options[:binding][:parse_filter].(input, options)
     end
 
+    # noinspection RubyConstantNamingConvention
     Setter = ->(input, options) do
       __debug('Setter', input: input)
       options[:binding].evaluate_option(:setter, input, options)
     end
 
+    # noinspection RubyConstantNamingConvention
     SetValue = ->(input, options) do
       __debug('SetValue', input: input)
       options[:binding]
@@ -206,25 +220,33 @@ module Representable
         .send(options[:binding].setter, input)
     end
 
+    # noinspection RubyConstantNamingConvention
     Stop = ->(*) do
       __debug('Stop')
       Pipeline::Stop
     end
 
+    # noinspection RubyConstantNamingConvention
     If = ->(input, options) do
       __debug('If', input: input)
       options[:binding].evaluate_option(:if, nil, options) ? input : Pipeline::Stop
     end
 
+    # noinspection RubyConstantNamingConvention
     StopOnExcluded = ->(input, options) do
       __debug('StopOnExcluded', input: input, options: options)
+      # noinspection RubyJumpError
       return input unless options[:options]
+      # noinspection RubyJumpError
+      # noinspection RubyAssignmentExpressionInConditionalInspection
       return input unless props = (options[:options][:exclude] || options[:options][:include])
 
       res = props.include?(options[:binding].name.to_sym)
       # false with include: Stop. false with exclude: go!
 
+      # noinspection RubyJumpError
       return input if options[:options][:include]&&res
+      # noinspection RubyJumpError
       return input if options[:options][:exclude]&&!res
       Pipeline::Stop
     end
@@ -233,6 +255,7 @@ module Representable
 
       remove_const(:Instance) if const_defined?(:Instance, false)
 
+      # noinspection RubyConstantNamingConvention
       Instance = ->(input, options) do
         __debug('Instance', input: input)
         options[:binding].evaluate_option(:instance, input, options) ||
@@ -282,7 +305,7 @@ module Representable
         nested_builder.(
           _base:     default_nested_class,
           _features: [singular.collection_representer_class],
-          _block:    ->(*) { items options.merge(:extend => singular) }
+          _block:    ->(*) { items options.merge(extend: singular) }
         ).tap do |result|
           __debug("ForCollection.#{__method__}", result: result)
         end

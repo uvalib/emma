@@ -76,6 +76,7 @@ module Emma
           e = args.shift
           if [YAML::SyntaxError].include?(e)
             note = (" - #{args.shift}" if args.present?)
+            # noinspection RubyNilAnalysis
             args.prepend("#{e.class}: #{e.message}#{note}")
           else
             args.append("#{e.message} [#{e.class}]")
@@ -299,6 +300,8 @@ module Emma
 end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".
+#
+# noinspection RubyConstantNamingConvention
 Log = Emma::Log
 
 __loading_end(__FILE__)

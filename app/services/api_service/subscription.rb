@@ -9,6 +9,9 @@ require_relative '_common'
 
 class ApiService
 
+  # ApiService::Subscription
+  #
+  # noinspection RubyParameterNamingConvention
   module Subscription
 
     include Common

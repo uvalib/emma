@@ -775,6 +775,7 @@ module OmniAuth
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#callback_phase
       #
+      # noinspection RubyScope
       def callback_phase
         $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
         result = e = nil
@@ -795,6 +796,7 @@ module OmniAuth
           end
         end
 
+        # noinspection RubyStringKeysInHashInspection
         result =
           if (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special

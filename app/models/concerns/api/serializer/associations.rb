@@ -166,6 +166,7 @@ module Api::Serializer::Associations
     def extract_type_option!(opt)
       type_options = opt&.slice(*TYPE_OPTION_KEYS) || {}
       opt.replace(opt.except(*type_options.keys)) if type_options.present?
+      # noinspection RubyNilAnalysis
       type_options.values.first
     end
 

@@ -162,6 +162,7 @@ module CachingMiddleware
       elsif (response_env = read_cache(env, cache_key))
         to_response(response_env)
       else
+        # noinspection RubyScope
         @app.call(env).on_complete do |response_env|
           if response_env
             response_env.response_headers[http_header] = 'MISS'

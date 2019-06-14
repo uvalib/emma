@@ -11,6 +11,9 @@ require 'api/record'
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_status_model
 #
+# NOTE: This duplicates:
+# @see ApiStatusModel
+#
 class Api::StatusModel < Api::Record::Base
 
   schema do

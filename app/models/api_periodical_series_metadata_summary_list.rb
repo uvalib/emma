@@ -16,6 +16,7 @@ require_relative 'api/common/sequence_methods'
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_series_metadata_summary_list
 #
+# noinspection RubyClassModuleNamingConvention
 class ApiPeriodicalSeriesMetadataSummaryList < Api::Message
 
   schema do
