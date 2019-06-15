@@ -65,6 +65,27 @@ module ApplicationHelper
       (request.format.json? if defined?(request))
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Strip off the hash elements identified by *keys* to return two hashes:
+  # - First, a copy of *original* without the local option keys and values.
+  # - Second, a hash containing only the local option keys and values.
+  #
+  # @param [Hash]          original
+  # @param [Array<Symbol>] keys
+  #
+  # @return [Array<(Hash, Hash)>]
+  #
+  def extract_local_options(original, *keys)
+    keys.flatten!
+    keys.map!(&:to_sym)
+    return original.except(*keys), original.slice(*keys)
+  end
+
 end
 
 __loading_end(__FILE__)

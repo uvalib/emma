@@ -55,7 +55,7 @@ module ApiHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def api_format_result(value, separator = "\n")
+  def api_format_result(value, separator: "\n")
     elements =
       if value.is_a?(Api::Record::Base) && value.exception.present?
         # === Exception or error response value ===
@@ -80,15 +80,16 @@ module ApiHelper
           .gsub(/^( +)/) { |s| s.gsub(/ /, '&nbsp;&nbsp;') }
           .gsub(/^([^:]+:) /, '\1&nbsp;')
           .gsub(%r{&quot;https?://.+&quot;}) { |s|
-            # Transform URLs into links, transforming Bookshare API URLs into
+            # Transform URLs into links, translating Bookshare API hrefs into
             # local paths.
             url = href = s.split(quot)[1].html_safe
             if href.start_with?(ApiService::BASE_URL)
-              uri   = URI.parse(CGI.unescapeHTML(url))
-              query = uri.query&.sub(/api_key=[^&]*&?/, '').presence
-              href  = ERB::Util.h([uri.path, query].compact.join('?'))
+              uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
+              query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
+              href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
             end
-            quot + link_to(url, href, link_opt) + quot
+            url = link_to(url, href, link_opt) if href.present?
+            "#{quot}#{url}#{quot}"
           }
           .split(/\n/)
           .map { |line| content_tag(:div, line.html_safe, class: 'data') }

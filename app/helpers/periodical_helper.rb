@@ -34,17 +34,6 @@ module PeriodicalHelper
 
   public
 
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_show_tooltip
-  #
-  def default_show_tooltip
-    PERIODICAL_SHOW_TOOLTIP
-  end
-
   # Default of results per page.
   #
   # @return [Integer]
@@ -80,21 +69,25 @@ module PeriodicalHelper
   #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    @see ResourceHelper#item_link
+  # @param [Hash, nil]           opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def periodical_link(item, label = nil, **opt)
     path = periodical_path(id: item.identifier)
+    opt  = opt.merge(tooltip: PERIODICAL_SHOW_TOOLTIP)
     item_link(item, label, path, **opt)
   end
 
   # Item categories as search links.
   #
   # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_link
+  # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # TitleHelper#category_links
   #
   def periodical_category_links(item, **opt)
     opt = opt.merge(all_words: true)
@@ -104,9 +97,12 @@ module PeriodicalHelper
   # Item formats as search links.
   #
   # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_link
+  # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # TitleHelper#format_links
   #
   def periodical_format_links(item, **opt)
     opt = opt.merge(method: :format, all_words: true)
@@ -116,9 +112,12 @@ module PeriodicalHelper
   # Item languages as search links.
   #
   # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_link
+  # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # TitleHelper#language_links
   #
   def periodical_language_links(item, **opt)
     opt = opt.merge(all_words: true)
@@ -132,9 +131,12 @@ module PeriodicalHelper
   # country codes result in the same results.
   #
   # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_link
+  # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # TitleHelper#country_links
   #
   def periodical_country_links(item, **opt)
     opt = opt.merge(all_words: true, no_link: true)
@@ -144,41 +146,21 @@ module PeriodicalHelper
   # Item terms as search links.
   #
   # @param [Object]      item
-  # @param [Symbol, nil] field        Default: :keyword
-  # @param [Hash, nil]   opt
-  #
-  # @option opt [Symbol, String] :field
-  # @option opt [Symbol]         :method
-  # @option opt [String]         :separator   Def.: #DEFAULT_ELEMENT_SEPARATOR
+  # @param [Symbol, nil] field        Default: :title
+  # @param [Hash, nil]   opt          Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def periodical_search_links(item, field = nil, **opt)
-
-    field  = opt[:field]  || field || :title
-    method = opt[:method] || field.to_s.pluralize.to_sym
-    return unless item.respond_to?(method)
-
-    sep  = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
-    opt  = opt.except(:field, :method, :separator)
-    null = opt.include?(:no_link).presence
-    Array.wrap(item.send(method)).map { |s|
-      no_link = null
-      no_link ||=
-        case field
-          when :categories then !s.bookshare_category
-        end
-      link_opt = no_link ? opt.merge(no_link: no_link) : opt
-      periodical_search_link(s, field, **link_opt)
-    }.sort.uniq.join(sep).html_safe
-
+    field ||= opt[:field] || :title
+    search_links(item, field, opt.merge(link_method: :periodical_search_link))
   end
 
   # Create a link to the search results index page for the given term(s).
   #
-  # @param [String]                     terms
-  # @param [Symbol, Array<Symbol>, nil] field   Default: :keyword
-  # @param [Hash, nil]                  opt
+  # @param [String]      terms
+  # @param [Symbol, nil] field        Default: :title
+  # @param [Hash, nil]   opt          Passed to #search_link.
   #
   # @option opt [Symbol]  :field
   # @option opt [Boolean] :all_words
@@ -187,30 +169,8 @@ module PeriodicalHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def periodical_search_link(terms, field = nil, **opt)
-    label   = terms = terms.to_s
-    field   = opt[:field] || field || :title
-    words   = opt[:all_words]
-    no_link = opt[:no_link]
-    opt     = opt.except(:field, :all_words, :no_link)
-
-    # If this instance should not be rendered as a link, return now.
-    return content_tag(:span, label, **opt) if no_link
-
-    # Otherwise, wrap the terms phrase in quotes unless directed to handled
-    # each word of the phrase separately.
-    if words
-      words = terms.split(/\s/).compact.map { |t| %Q("#{t}") }
-      tip_terms = +''
-      tip_terms << 'containing ' if words.size > 1
-      tip_terms << words.join(', ')
-    else
-      tip_terms = terms = %Q("#{terms}")
-    end
-    opt[:title] =
-      I18n.t('emma.periodical.index.tooltip', terms: "#{field} #{tip_terms}")
-    search = Array.wrap(field).map { |f| [f, terms] }.to_h
-    path   = periodical_index_path(search)
-    link_to(label, path, opt)
+    field ||= opt[:field] || :title
+    search_link(terms, field, opt.merge(scope: :periodical))
   end
 
   # ===========================================================================

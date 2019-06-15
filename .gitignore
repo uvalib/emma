@@ -117,7 +117,7 @@ tmtags
 /db/*.sqlite3-journal
 
 # === SASS
-/.sass-cache/
+.sass-cache/
 
 # === Ctags
 tags

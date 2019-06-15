@@ -16,11 +16,23 @@ module ArtifactHelper
   include ResourceHelper
   include PaginationHelper
 
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  ARTIFACT_SHOW_TOOLTIP = I18n.t('emma.artifact.show.tooltip').freeze
+
   # Default number of results per page if none was specified.
   #
   # @type [Integer]
   #
   DEFAULT_ARTIFACT_PAGE_SIZE = DEFAULT_PAGE_SIZE
+
+  # Options consumed by #artifact_link.
+  #
+  # @type [Array<Symbol>]
+  #
+  ARTIFACT_LINK_OPTIONS = %i[label type format].freeze
 
   # ===========================================================================
   # :section: PaginationHelper overrides
@@ -63,29 +75,29 @@ module ArtifactHelper
   #
   # @param [Object]                   item
   # @param [Api::Format, String, nil] format
-  # @param [Hash, nil]                opt
+  # @param [Hash, nil]                opt     Passed to #item_link except for:
   #
-  # @option opt [Symbol, String] :label
-  # @option opt [String]         :type  One of `Api::FormatType.values`
+  # @option opt [Symbol, String]      :label
+  # @option opt [Api::Format, String] :type     One of `Api::FormatType.values`
+  # @option opt [Api::Format, String] :format   Alias for :type.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format = nil, **opt)
-    label = opt[:label]
+    opt, local = extract_local_options(opt, ARTIFACT_LINK_OPTIONS)
+    type  = local[:type] || local[:format]
+    label = local[:label]
     if format.is_a?(Api::Format)
-      type = format.identifier
-      name = format.label
+      type  ||= format.identifier
+      label ||= I18n.t("emma.format.#{type}", default: nil) || format.label
     else
-      type = opt[:type] || opt[:format] || Api::FormatType.new.default
-      name = item.label
-      label ||= format
+      type  ||= Api::FormatType.new.default
+      label ||= I18n.t("emma.format.#{type}", default: nil) || item.label
     end
-    label ||= I18n.t("emma.format.#{type}", default: nil) || name
     path = artifact_path(id: item.identifier, type: type)
-    opt = opt.except(:label, :type, :format)
-    opt[:title] = 'Download this artifact.'
+    opt[:tooltip] = ARTIFACT_SHOW_TOOLTIP
     opt[:'data-turbolinks'] = false
-    link_to(label, path, opt)
+    item_link(item, label, path, **opt)
   end
 
   # ===========================================================================

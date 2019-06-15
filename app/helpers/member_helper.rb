@@ -34,17 +34,6 @@ module MemberHelper
 
   public
 
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_show_tooltip
-  #
-  def default_show_tooltip
-    MEMBER_SHOW_TOOLTIP
-  end
-
   # Default of results per page.
   #
   # @return [Integer]
@@ -80,12 +69,13 @@ module MemberHelper
   #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    @see ResourceHelper#item_link
+  # @param [Hash, nil]           opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_link(item, label = nil, **opt)
     path = member_path(id: item.identifier)
+    opt  = opt.merge(tooltip: MEMBER_SHOW_TOOLTIP)
     item_link(item, label, path, **opt)
   end
 

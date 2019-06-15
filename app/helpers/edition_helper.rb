@@ -28,22 +28,17 @@ module EditionHelper
   #
   DEFAULT_EDITION_PAGE_SIZE = DEFAULT_PAGE_SIZE
 
+  # Options consumed by #edition_link.
+  #
+  # @type [Array<Symbol>]
+  #
+  EDITION_LINK_OPTIONS = %i[editionId edition].freeze
+
   # ===========================================================================
   # :section: PaginationHelper overrides
   # ===========================================================================
 
   public
-
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_show_tooltip
-  #
-  def default_show_tooltip
-    EDITION_SHOW_TOOLTIP
-  end
 
   # Default of results per page.
   #
@@ -80,7 +75,7 @@ module EditionHelper
   #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    @see ResourceHelper#item_link
+  # @param [Hash, nil]           opt    Passed to #item_link except for:
   #
   # @option opt [String] :editionId
   # @option opt [String] :edition       Alias for :editionId
@@ -88,14 +83,10 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_link(item, label = nil, **opt)
-    keys    = %i[editionId edition]
-    edition = opt.slice(*keys).compact.values.first
-    opt     = opt.except(*keys)
-=begin # TODO: edition show page?
-    series  = item.identifier
-    path    = edition_path(series, editionId: edition)
-=end
-    path    = "#edition-#{edition}"
+    opt, local = extract_local_options(opt, EDITION_LINK_OPTIONS)
+    eid  = local.values.first
+    path = "#edition-#{eid}" # TODO: edition show page?
+    opt[:tooltip] = EDITION_SHOW_TOOLTIP
     item_link(item, label, path, **opt)
   end
 

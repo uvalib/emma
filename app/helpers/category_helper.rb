@@ -34,17 +34,6 @@ module CategoryHelper
 
   public
 
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_show_tooltip
-  #
-  def default_show_tooltip
-    CATEGORY_SHOW_TOOLTIP
-  end
-
   # Default of results per page.
   #
   # @return [Integer]
@@ -80,7 +69,7 @@ module CategoryHelper
   #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    @see ResourceHelper#item_link
+  # @param [Hash, nil]           opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -89,12 +78,10 @@ module CategoryHelper
   # transformed into links.
   #
   def category_link(item, label = nil, **opt)
-    unless opt.key?(:no_link) || !item.respond_to?(:categoryType)
-      if item.categoryType&.casecmp('bookshare')&.nonzero?
-        opt = opt.merge(no_link: true)
-      end
+    opt = opt.merge(tooltip: CATEGORY_SHOW_TOOLTIP)
+    if !opt.key?(:no_link) && item.respond_to?(:categoryType)
+      opt[:no_link] = true if item.categoryType&.casecmp('bookshare')&.nonzero?
     end
-    opt = opt.merge(title: CATEGORY_SHOW_TOOLTIP) unless opt.key?(:title)
     item_link(item, label, **opt) { |term| title_index_path(categories: term) }
   end
 

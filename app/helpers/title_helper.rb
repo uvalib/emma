@@ -29,22 +29,17 @@ module TitleHelper
   #
   DEFAULT_TITLE_PAGE_SIZE = DEFAULT_PAGE_SIZE
 
+  # Options consumed by #download_links.
+  #
+  # @type [Array<Symbol>]
+  #
+  DOWNLOAD_LINKS_OPTIONS = %i[type format separator].freeze
+
   # ===========================================================================
   # :section: PaginationHelper overrides
   # ===========================================================================
 
   public
-
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_show_tooltip
-  #
-  def default_show_tooltip
-    TITLE_SHOW_TOOLTIP
-  end
 
   # Default of results per page.
   #
@@ -81,12 +76,13 @@ module TitleHelper
   #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    @see ResourceHelper#item_link
+  # @param [Hash, nil]           opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def title_link(item, label = nil, **opt)
     path = title_path(id: item.identifier)
+    opt  = opt.merge(tooltip: TITLE_SHOW_TOOLTIP)
     item_link(item, label, path, **opt)
   end
 
@@ -117,21 +113,22 @@ module TitleHelper
   # Create links to download each artifact of the given item.
   #
   # @param [Object]    item
-  # @param [Hash, nil] opt            @see #artifact_link
+  # @param [Hash, nil] opt            Passed to #artifact_link except for:
   #
-  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @option opt [String] :type        Limit results to this format.
+  # @option opt [String] :format      Alias for :type.
+  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_links(item, **opt)
-    fid = opt[:type]      || opt[:format]
-    sep = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
-    opt = opt.except(:type, :format, :separator)
+    opt, local = extract_local_options(opt, DOWNLOAD_LINKS_OPTIONS)
+    format_id  = local[:type]      || local[:format]
+    separator  = local[:separator] || DEFAULT_ELEMENT_SEPARATOR
     item.formats.map { |format|
-      next if fid && (fid != format.formatId)
+      next if format_id && (format_id != format.formatId)
       artifact_link(item, format, opt)
-    }.compact.sort.join(sep).html_safe
+    }.compact.sort.join(separator).html_safe
   end
 
   # Item categories as search links.
@@ -140,6 +137,9 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # PeriodicalHelper#periodical_category_links
   #
   def category_links(item, **opt)
     opt = opt.merge(all_words: true)
@@ -175,6 +175,9 @@ module TitleHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # Compare with:
+  # PeriodicalHelper#periodical_format_links
+  #
   def format_links(item, **opt)
     opt = opt.merge(method: :format, all_words: true)
     title_search_links(item, :format, **opt)
@@ -186,6 +189,9 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # Compare with:
+  # PeriodicalHelper#periodical_language_links
   #
   def language_links(item, **opt)
     opt = opt.merge(all_words: true)
@@ -203,88 +209,41 @@ module TitleHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # Compare with:
+  # PeriodicalHelper#periodical_country_links
+  #
   def country_links(item, **opt)
     opt = opt.merge(all_words: true, no_link: true)
     title_search_links(item, :country, **opt)
   end
 
-  # Item terms as search links.
+  # Catalog item search links.
+  #
+  # Items in returned in two separately sorted groups: actionable links (<a>
+  # elements) followed by items which are not linkable (<span> elements).
   #
   # @param [Object]      item
   # @param [Symbol, nil] field        Default: :keyword
-  # @param [Hash, nil]   opt          @see #title_search_link
-  #
-  # @option opt [Symbol, String] :field
-  # @option opt [Symbol]         :method
-  # @option opt [String]         :separator   Def.: #DEFAULT_ELEMENT_SEPARATOR
+  # @param [Hash, nil]   opt          Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer, nil]
   #
   def title_search_links(item, field = nil, **opt)
-
-    field  = opt[:field]  || field || :keyword
-    method = opt[:method] || field.to_s.pluralize.to_sym
-    return unless item.respond_to?(method)
-
-    sep  = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
-    opt  = opt.except(:field, :method, :separator)
-    null = opt.include?(:no_link).presence
-    Array.wrap(item.send(method)).map { |s|
-      no_link = null
-      no_link ||=
-        case field
-          when :categories then !s.bookshare_category
-        end
-      link_opt = no_link ? opt.merge(no_link: no_link) : opt
-      title_search_link(s, field, **link_opt)
-    }.sort.uniq.join(sep).html_safe
-
+    field ||= opt[:field] || :keyword
+    search_links(item, field, opt.merge(link_method: :title_search_link))
   end
 
-  TITLE_SEARCH_LINK_OPTIONS = %i[field all_words no_link].freeze
-
-  # Create a link to the search results index page for the given term(s).
+  # A link to the catalog item search results index page for the given term(s).
   #
-  # @param [String]                     terms
-  # @param [Symbol, Array<Symbol>, nil] field   Default: :keyword
-  # @param [Hash, nil]                  opt     @see #link_to
-  #
-  # @option opt [Symbol]  :field
-  # @option opt [Boolean] :all_words
-  # @option opt [Boolean] :no_link
+  # @param [String]      terms
+  # @param [Symbol, nil] field        Default: :keyword
+  # @param [Hash, nil]   opt          Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def title_search_link(terms, field = nil, **opt)
-    terms = terms.to_s
-    local = opt.slice(*TITLE_SEARCH_LINK_OPTIONS)
-    opt   = opt.except(*TITLE_SEARCH_LINK_OPTIONS)
-    field = local[:field] || field || :keyword
-
-    # Generate the link label.
-    label =
-      if %i[language languages].include?(field)
-        ISO_639.find(terms)&.english_name
-      end
-    label ||= terms
-
-    # If this instance should not be rendered as a link, return now.
-    return content_tag(:span, label, **opt) if local[:no_link]
-
-    # Otherwise, wrap the terms phrase in quotes unless directed to handled
-    # each word of the phrase separately.
-    if local[:all_words]
-      words = terms.split(/\s/).compact.map { |t| %Q("#{t}") }
-      tip_terms = +''
-      tip_terms << 'containing ' if words.size > 1
-      tip_terms << words.join(', ')
-    else
-      tip_terms = terms = %Q("#{terms}")
-    end
-    opt[:title] =
-      I18n.t('emma.title.index.tooltip', terms: "#{field} #{tip_terms}")
-    search = Array.wrap(field).map { |f| [f, terms] }.to_h
-    link_to(label, title_index_path(search), opt)
+    field ||= opt[:field] || :keyword
+    search_link(terms, field, opt.merge(scope: :title))
   end
 
   # ===========================================================================
@@ -335,7 +294,7 @@ module TitleHelper
 
     # === Audience ===
     AdultContent:         :adultContent,
-    Grades:               :grades,
+    GradeLevel:           :grades,
     MinReadingAge:        :readingAgeMinimum,
     MaxReadingAge:        :readingAgeMaximum,
 
@@ -356,8 +315,8 @@ module TitleHelper
     HasChordSymbols:      :hasChordSymbols,
 
     # === Publisher/provider information ===
-    PublishDate:          :publishDate,
     Publisher:            :publisher,
+    PublishDate:          :publishDate,
 
     # === Rights ===
     UsageRestriction:     :usageRestriction,
@@ -366,11 +325,6 @@ module TitleHelper
 
     # === Other ===
     Notes:                :notes,
-
-    # === Item instances ===
-    Formats:              :formats,
-    Artifacts:            :artifacts,
-    DtBookSize:           :dtbookSize,
 
     # === Assignment information ===
     AssignedBy:           :assignedBy,
@@ -381,12 +335,17 @@ module TitleHelper
     BookshareId:          :bookshareId,
     ReplacementId:        :replacementId,
     ContentWarnings:      :contentWarnings,
-    Available:            :available,
     Submitter:            :submitter,
     Proofreader:          :proofreader,
     LastUpdatedDate:      :lastUpdatedDate,
     WithdrawalDate:       :withdrawalDate,
     AllowRecommend:       :allowRecommend,
+    Available:            :available,
+
+    # === Item instances ===
+    DtBookSize:           :dtbookSize,
+    Artifacts:            :artifacts,
+    Formats:              :formats,
     Links:                :links,
 
   }.freeze

@@ -75,14 +75,6 @@ module PaginationHelper
 
   public
 
-  # Default tooltip for item links.
-  #
-  # @return [String]
-  #
-  def default_show_tooltip
-    ''
-  end
-
   # Default of results per page.
   #
   # @return [Integer]
