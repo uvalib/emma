@@ -6,10 +6,11 @@
   return render template: 'home/welcome' unless current_user
 
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
+  item  ||= @item
 
   @page_title = title
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'member/details' %>
+<%= render 'member/details', item: @item %>

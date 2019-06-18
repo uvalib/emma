@@ -16,8 +16,13 @@
     @extend .results-entry;
 
     .value {
+
         &.field-Name {
             font-weight: bold;
+        }
+
+        &.field-None {
+            margin-bottom: 0;
         }
     }
 }

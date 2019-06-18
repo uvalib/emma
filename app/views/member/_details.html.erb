@@ -1,7 +1,7 @@
-<%# app/views/title/_details.html.erb -%>
+<%# app/views/member/_details.html.erb -%>
 <%-
   # A Member metadata listing.
-  item ||= ApiService.instance.get_my_account
+  item ||= @item
   return if item.blank?
 
   added_fields = {

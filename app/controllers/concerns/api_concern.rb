@@ -36,6 +36,37 @@ module ApiConcern
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Fill @item and @pref with account information and preferences.
+  #
+  # @param [String] id                If *nil*, assumes the current user.
+  #
+  # @return [Array<(ApiMyAccountSummary, ApiMyAccountPreferences)>]
+  # @return [Array<(nil,nil)>] If there was a problem.
+  #
+  def fetch_my_account(id: nil)
+    api   = ApiService.instance
+    error = nil
+    if id && (item = api.get_account(user: id)).error?
+      error = item.error_message
+    elsif !id && (item = api.get_my_account).error?
+      error = item.error_message
+    elsif (pref = api.get_my_preferences).error?
+      error = pref.error_message
+    end
+    if error
+      flash.clear
+      flash[:alert] = error
+      item = pref = nil
+    end
+    return item, pref
+  end
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 

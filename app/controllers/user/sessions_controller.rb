@@ -92,7 +92,8 @@ class User::SessionsController < Devise::SessionsController
     if params[:redirect]
       redirect_to params[:redirect]
     else
-      respond_with resource, location: after_sign_in_path_for(resource)
+      store_location_for(resource, dashboard_path)
+      redirect_to after_sign_in_path_for(resource)
     end
   end
 

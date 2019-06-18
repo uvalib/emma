@@ -35,6 +35,20 @@ class ApiService
     BASE_HOST = URI(BASE_URL).host.freeze
     AUTH_HOST = URI(AUTH_URL).host.freeze
 
+    # Users with pre-generated OAuth tokens for development purposes.
+    #
+    # @type [Hash{String=>String}]
+    #
+    # == Usage Notes
+    # These exist because Bookshare has a problem with its authentication
+    # flow, so tokens were generated for two EMMA users which could be used
+    # directly (avoiding the OAuth2 flow).
+    #
+    TEST_USERS = {
+      'emmacollection@bookshare.org' => 'd94e6ae4-f432-421a-90a5-95cab6500bd0',
+      'emmadso@bookshare.org'        => '5d40f0d1-232d-4813-913a-2ca9e7d0af19'
+    }.freeze
+
     # Maximum accepted value for a :limit parameter.
     #
     # @type [Integer]
@@ -233,6 +247,13 @@ class ApiService
       @exception = error
       result = nil
       raise error # Handled by ApplicationController
+
+    rescue Faraday::ClientError => error
+      resp  = error.response
+      desc  = MultiJson.load(resp[:body])['error_description'] rescue nil
+      error = Faraday::ClientError.new(desc, resp) if desc.present?
+      @exception = error
+      result = nil # To be handled in the calling method.
 
     rescue => error
       __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }

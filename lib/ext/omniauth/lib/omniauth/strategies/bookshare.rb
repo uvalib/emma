@@ -30,18 +30,10 @@ module OmniAuth
       # flow, so tokens were generated for two EMMA users which could be used
       # directly (avoiding the OAuth2 flow).
       #
-      CONFIGURED_AUTH = {
-        'emmacollection@bookshare.org' => {
-          access_token: 'f8f24447-50ce-4b2a-baad-7f4412100e3e',
-        },
-        'emmadso@bookshare.org' => {
-          access_token: '8249a042-a02d-42de-9d78-a8d2aa3e0697',
-        }
-      }.transform_values { |hash|
-        hash[:token_type] ||= 'bearer'
-        hash[:scope]      ||= 'basic'
-        hash.freeze
-      }.freeze
+      CONFIGURED_AUTH =
+        ApiService::TEST_USERS.transform_values { |token|
+          { access_token: token, token_type: 'bearer', scope: 'basic' }
+        }.deep_freeze
 
 =begin
       include OmniAuth::Strategy

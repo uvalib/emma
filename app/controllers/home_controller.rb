@@ -16,6 +16,7 @@ __loading_begin(__FILE__)
 #
 class HomeController < ApplicationController
 
+  include ApiConcern
   include SessionConcern
 
   # ===========================================================================
@@ -67,6 +68,7 @@ class HomeController < ApplicationController
   # The main application page for authenticated users.
   #
   def dashboard
+    @item, @pref = fetch_my_account
   end
 
 end
