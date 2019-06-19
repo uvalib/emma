@@ -4,7 +4,7 @@
 // @use 'shared/lists';     // TODO: SASS 4.0
 
 //=============================================================================
-// Common definitions.
+// Placeholder classes
 //=============================================================================
 
 // Make an actionable item (e.g. <a>) appear non-functional.
@@ -89,23 +89,39 @@
     outline-offset: 2px;
 }
 
-// Convenience definition for Bootstrap "hidden on all" class.
+// Include to remove an element from the display.
 .hidden {
     display: none !important;
 }
 
+// Include to hide the contents of an element while maintaining the space it
+// occupies on the display.
 .invisible {
     visibility: hidden !important;
 }
 
+// Include to "de-activate" an active element like a button or link.
 .disabled {
     @extend %disabled;
     cursor: default;
 }
 
+// Include to "de-activate" an active element because it is an invalid choice.
 .forbidden {
     @extend %disabled;
     cursor: not-allowed;
+}
+
+// Include to make an element only visible to screen readers.
+.sr-only {
+    position: absolute;
+    width:    1px;
+    height:   1px;
+    padding:  0;
+    margin:   -1px;
+    overflow: hidden;
+    clip:     rect(0 0 0 0);
+    border:   0;
 }
 
 //=============================================================================

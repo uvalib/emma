@@ -13,6 +13,8 @@ class TitleController < ApplicationController
 
   include ApiConcern
   include UserConcern
+  include ParamsConcern
+  include SessionConcern
   include PaginationConcern
 
   include TitleHelper
@@ -21,14 +23,13 @@ class TitleController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
   before_action :authenticate_user!, except: %i[index show]
+  before_action :update_user
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  before_action :update_user
   authorize_resource
 
   # ===========================================================================
@@ -37,8 +38,6 @@ class TitleController < ApplicationController
 
   before_action :initialize_service
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

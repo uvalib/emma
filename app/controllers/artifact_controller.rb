@@ -17,6 +17,8 @@ class ArtifactController < ApplicationController
 
   include ApiConcern
   include UserConcern
+  include ParamsConcern
+  include SessionConcern
   include PaginationConcern
 
   include ArtifactHelper
@@ -25,14 +27,13 @@ class ArtifactController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
   before_action :authenticate_user!
+  before_action :update_user
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  before_action :update_user
   authorize_resource
 
   # ===========================================================================
@@ -42,8 +43,6 @@ class ArtifactController < ApplicationController
   before_action :initialize_service
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
   before_action { @format = params[:type] || Api::FormatType.new.default }
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

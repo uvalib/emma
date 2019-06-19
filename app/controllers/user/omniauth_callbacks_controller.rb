@@ -11,7 +11,8 @@ __loading_begin(__FILE__)
 #
 class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
-  include UserConcern
+  include SessionConcern
+  include User::DebugConcern
 
   PROVIDERS = %i[bookshare]
 
@@ -40,7 +41,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user = User.from_omniauth(auth_data)
     if user.persisted?
       auth_debug { 'user persisted' }
-      session_update
+      last_operation_update
       #sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)
       set_flash_message(:notice, :success, kind: 'Bookshare')

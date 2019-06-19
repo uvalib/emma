@@ -1,21 +1,14 @@
 <%# app/views/layouts/_header.html.erb -%>
 <%-
   # Application header.
-
-  logo_label   = t('emma.application.name')
-  home_link    = link_to(logo_label, root_path)
-  tagline      = t('emma.application.tagline', default: '')
-  username     = current_user.to_s
-  session_link = current_user ? sign_out_link : sign_in_link
+  skip_nav_bar         ||= false
+  skip_search_bar      ||= false
+  skip_search_controls ||= false
 -%>
 
 <header class="layout-header">
-  <div class="logo-area">
-    <div class="logo" title="<%= tagline -%>"><%= home_link -%></div>
-    <div class="tagline"><%= tagline -%></div>
-  </div>
-  <div class="control-area">
-    <div class="user" title="<%= username -%>"><%= username -%></div>
-    <div class="session"><%= session_link -%></div>
-  </div>
+  <%= render 'layouts/banner' %>
+  <%= render 'layouts/nav_bar',         skip: skip_nav_bar %>
+  <%= render 'layouts/search_bar',      skip: skip_search_bar %>
+  <%= render 'layouts/search_controls', skip: skip_search_controls %>
 </header>

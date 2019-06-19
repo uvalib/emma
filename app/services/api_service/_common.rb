@@ -45,8 +45,8 @@ class ApiService
     # directly (avoiding the OAuth2 flow).
     #
     TEST_USERS = {
-      'emmacollection@bookshare.org' => 'd94e6ae4-f432-421a-90a5-95cab6500bd0',
-      'emmadso@bookshare.org'        => '5d40f0d1-232d-4813-913a-2ca9e7d0af19'
+      'emmacollection@bookshare.org' => '1cdc0e01-eb96-4a18-8bfe-ac10c50ef10b',
+      'emmadso@bookshare.org'        => '3381d630-f081-46e5-a407-7f911551bfa0'
     }.freeze
 
     # Maximum accepted value for a :limit parameter.

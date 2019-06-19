@@ -1,0 +1,10 @@
+<%# app/views/layouts/_search_controls.html.erb -%>
+<%-
+  # Search controls (sort, per-page).
+  skip ||= false
+  return if skip
+-%>
+
+<div class="layout-section">
+  <%= search_controls %>
+</div>

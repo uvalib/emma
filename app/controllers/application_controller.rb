@@ -35,6 +35,12 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   # ===========================================================================
+  # :section: Session management
+  # ===========================================================================
+
+  # Handled individually by each controller subclass including SessionConcern.
+
+  # ===========================================================================
   # :section: Helpers
   # ===========================================================================
 

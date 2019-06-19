@@ -17,6 +17,8 @@ class EditionController < ApplicationController
 
   include ApiConcern
   include UserConcern
+  include ParamsConcern
+  include SessionConcern
   include PaginationConcern
 
   include EditionHelper
@@ -25,14 +27,13 @@ class EditionController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
   before_action :authenticate_user!, except: %i[index show]
+  before_action :update_user
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  before_action :update_user
   authorize_resource
 
   # ===========================================================================
@@ -43,8 +44,6 @@ class EditionController < ApplicationController
   before_action { @series_id  = params[:seriesId]  || params[:id] }
   before_action { @edition_id = params[:editionId] || params[:id] }
   before_action { @format     = params[:type] || Api::FormatType.new.default }
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

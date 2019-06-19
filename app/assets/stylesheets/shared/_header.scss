@@ -6,17 +6,72 @@
 // Page header.
 //=============================================================================
 
-// The <header> at the top of every page.
+// The <header> area of the page.
+.layout-header {
+    display:         flex;
+    flex-direction:  column;
+    justify-content: flex-start;
+    margin:          0;
+    padding:         0;
+}
+
+//=============================================================================
+// Variables
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+$label-gap: calc(#{$flex-gap-x} / 2);
+
+//=============================================================================
+// Placeholder classes
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+%header-section {
+    display:        flex;
+    flex-direction: row;
+    width:          100%;
+}
+
+// noinspection SassScssResolvedByNameOnly
+%header-search-section {
+
+    @extend %header-section;
+
+    width:     33%;
+    min-width: calc(#{$sm-width} - (2 * #{$page-padding-x}));
+    max-width: calc(#{$lg-width} - (2 * #{$page-padding-x}));
+
+    @media #{$narrow-screen} {
+        width:     100%;
+        min-width: unset;
+        max-width: unset;
+    }
+}
+
+%inside-text-black {
+    * { color: black; }
+}
+
+//=============================================================================
+// Sections
+//=============================================================================
+
+// The content at the top of every page.
 //
 // noinspection SassScssResolvedByNameOnly
-.layout-header {
+.layout-banner {
 
     @extend %banner;
 
     font-size: x-large;
 
+    @media #{$narrow-screen} {
+        flex-direction: column;
+    }
+
     //=========================================================================
-    // Header sections
+    // Sections
     //=========================================================================
 
     > * {
@@ -74,7 +129,7 @@
     }
 
     //=========================================================================
-    // Header elements
+    // Elements
     //=========================================================================
 
     // The fixed-size EMMA logo element.
@@ -138,12 +193,13 @@
         }
     }
 
+    // Sign-in button link element.
     .session-link:focus {
         outline-offset: 1px;
     }
 }
 
-// Navigation bar (<nav>) at the top of every page just below <header>.
+// Navigation bar (<nav>) at the top of every page just below the top banner.
 //
 // noinspection SassScssResolvedByNameOnly
 .layout-navbar {
@@ -151,14 +207,14 @@
     @extend %banner;
 
     //=========================================================================
-    // Navbar sections
+    // Sections
     //=========================================================================
 
     .links {
 
-        display:        flex;
-        flex-direction: row;
-        font-size:      x-large;
+        @extend %header-section;
+
+        font-size: x-large;
 
         > * {
             width:        max-content;
@@ -175,12 +231,67 @@
 
         // TODO: prefer hamburger menu for small screens?
         @media #{$narrow-screen} {
-
-            flex-direction: column;
-
             .separator {
                 display: none;
             }
+        }
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+.layout-section {
+
+    @extend %banner;
+
+    padding-top: 0;
+}
+
+// Search input.
+.layout-section {
+    .search-bar {
+
+        @extend %header-search-section;
+        @extend %inside-text-black;
+
+        .search-input {
+            flex: 1 1 auto;
+        }
+
+        .search-button {
+            margin-left: $label-gap;
+            flex:        0 0 auto;
+        }
+    }
+}
+
+// Search controls (sort, per-page).
+.layout-section {
+    .search-controls {
+
+        @extend %header-search-section;
+
+        .control-label {
+            margin-right: $label-gap;
+            flex:         0 0 auto;
+        }
+
+        * + .control-label {
+            margin-left:  $label-gap;
+        }
+
+        .sort-menu {
+            @extend %inside-text-black;
+            flex: 1 0 auto;
+        }
+
+        .size-menu {
+            @extend %inside-text-black;
+            flex: 1 0 auto;
+        }
+
+        .language-menu {
+            @extend %inside-text-black;
+            flex: 0 1 auto;
         }
     }
 }

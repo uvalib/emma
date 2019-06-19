@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 class HealthController < ApplicationController
 
   include HealthConcern
-  include ParamsConcern
+  include LogConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -94,7 +94,7 @@ class HealthController < ApplicationController
   end
 
   # ===========================================================================
-  # :section: ParamsConcern overrides
+  # :section: LogConcern overrides
   # ===========================================================================
 
   protected
@@ -107,7 +107,7 @@ class HealthController < ApplicationController
   # performed unless the URL parameter 'logging=false' is included.
   #
   # This method overrides:
-  # @see ParamsConcern#suppress_logger
+  # @see LogConcern#suppress_logger
   #
   def suppress_logger
     logging = params[:logging]

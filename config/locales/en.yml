@@ -16,6 +16,19 @@ en:
         - member
         - api
 
+    search_bar:
+      input:
+        label:          'Terms:'
+        placeholder:    'Enter search term...'
+      button:
+        label:          'Search'
+      sort:
+        label:          'Sort By'
+      size:
+        label:          'Page Size'
+      language:
+        label:          'Language'
+
     pagination:
       page_size:        10
       separator:        '&nbsp;|&nbsp;'
@@ -56,6 +69,10 @@ en:
       DOCX:             'MS Word'
       EPUB3:            'EPUB 3'
       PDF:              'PDF'
+
+    error:
+      api:
+        unknown:        'Unknown Bookshare API error'
 
     # =========================================================================
     # Devise controllers

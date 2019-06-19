@@ -14,24 +14,22 @@ class ApiController < ApplicationController
 
   include ApiConcern
   include UserConcern
+  include ParamsConcern
+  include SessionConcern
 
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
 =begin # TODO: authenticate_user ???
   before_action :authenticate_user!
 =end
+  before_action :update_user, except: %i[image]
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  before_action :update_user, except: %i[image]
-=begin # TODO: authorize_resource ???
-  load_and_authorize_resource User, instance_name: :user
-=end
   skip_authorization_check
 
   # ===========================================================================
@@ -39,8 +37,6 @@ class ApiController < ApplicationController
   # ===========================================================================
 
   before_action :initialize_service, except: %i[image]
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

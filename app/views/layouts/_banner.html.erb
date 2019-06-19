@@ -1,0 +1,22 @@
+<%# app/views/layouts/_banner.html.erb -%>
+<%-
+  # Main top application header.
+  skip ||= false
+  return if skip
+  logo_label   = t('emma.application.name')
+  home_link    = link_to(logo_label, root_path)
+  tagline      = t('emma.application.tagline', default: '')
+  username     = current_user.to_s
+  session_link = current_user ? sign_out_link : sign_in_link
+-%>
+
+<div class="layout-banner">
+  <div class="logo-area">
+    <div class="logo" title="<%= tagline -%>"><%= home_link -%></div>
+    <div class="tagline"><%= tagline -%></div>
+  </div>
+  <div class="control-area">
+    <div class="user" title="<%= username -%>"><%= username -%></div>
+    <div class="session"><%= session_link -%></div>
+  </div>
+</div>

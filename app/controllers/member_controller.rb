@@ -13,6 +13,8 @@ class MemberController < ApplicationController
 
   include ApiConcern
   include UserConcern
+  include ParamsConcern
+  include SessionConcern
   include PaginationConcern
 
   include MemberHelper
@@ -21,14 +23,13 @@ class MemberController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
   before_action :authenticate_user!
+  before_action :update_user
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  before_action :update_user
   authorize_resource
 
   # ===========================================================================
@@ -37,8 +38,6 @@ class MemberController < ApplicationController
 
   before_action :initialize_service
   before_action { @user_id = params[:username] || params[:id] }
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

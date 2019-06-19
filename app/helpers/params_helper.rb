@@ -44,21 +44,6 @@ module ParamsHelper
     FALSE_VALUES.include?(value.to_s.strip.downcase)
   end
 
-  # Return URL parameters as a hash.
-  #
-  # @param [ActionController::Parameters, Hash] p   Default: `#params`.
-  #
-  # @return [Hash{Symbol=>String}]
-  #
-  # @see #IGNORED_PARAMETERS
-  #
-  def url_parameters(p = nil)
-    p ||= respond_to?(:params) ? params : {}
-    p = p.except(*IGNORED_PARAMETERS)
-    p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
-    p.symbolize_keys
-  end
-
   # Generate a URL or partial path.
   #
   # @param [String]    path
@@ -73,6 +58,35 @@ module ParamsHelper
       result << opt.to_param
     end
     result
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The full request URL without request parameters.
+  #
+  # @return [String]
+  #
+  def request_path
+    [request.base_url, request.path].join
+  end
+
+  # Return URL parameters as a hash.
+  #
+  # @param [ActionController::Parameters, Hash] p   Default: `#params`.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  # @see #IGNORED_PARAMETERS
+  #
+  def url_parameters(p = nil)
+    p ||= respond_to?(:params) ? params : {}
+    p = p.except(*IGNORED_PARAMETERS)
+    p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
+    p.symbolize_keys
   end
 
 end

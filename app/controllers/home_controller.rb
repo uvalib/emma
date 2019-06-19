@@ -17,25 +17,20 @@ __loading_begin(__FILE__)
 class HomeController < ApplicationController
 
   include ApiConcern
+  include ParamsConcern
   include SessionConcern
 
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
+  # Not applicable.
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
   skip_authorization_check
-
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:
@@ -51,6 +46,7 @@ class HomeController < ApplicationController
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
   def index
+    __debug { "HOME #{__method__} | params = #{params.inspect}" }
     if current_user
       render template: 'home/dashboard'
     else
@@ -62,12 +58,14 @@ class HomeController < ApplicationController
   # The main application page for anonymous users.
   #
   def welcome
+    __debug { "HOME #{__method__} | params = #{params.inspect}" }
   end
 
   # == GET /home/dashboard
   # The main application page for authenticated users.
   #
   def dashboard
+    __debug { "HOME #{__method__} | params = #{params.inspect}" }
     @item, @pref = fetch_my_account
   end
 

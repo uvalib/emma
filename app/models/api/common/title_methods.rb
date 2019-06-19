@@ -89,7 +89,9 @@ module Api::Common::TitleMethods
   #
   def year
     %i[copyrightDate publishDate].map { |date|
-      send(date).to_s.sub(/^(\d{4}).*/, '\1').to_i if respond_to?(date)
+      next unless respond_to?(date)
+      value = send(date).to_s.sub(/^(\d{4}).*/, '\1').to_i
+      value unless value.zero?
     }.compact.sort.first
   end
 

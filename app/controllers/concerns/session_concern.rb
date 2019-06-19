@@ -12,16 +12,60 @@ module SessionConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'SessionConcern')
+
+    include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+
+    # =========================================================================
+    # :section: Session management
+    # =========================================================================
+
+    prepend_before_action :session_check,  unless: :devise_controller?
+    append_around_action  :session_update, unless: :devise_controller?
+
   end
 
-  include ParamsConcern
+  include ParamsHelper
+
+  include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
+
+  # ===========================================================================
+  # :section: Devise::Controllers::Helpers overrides
+  # ===========================================================================
+
+  protected
+
+  # after_sign_in_path_for
+  #
+  # @param [Object] resource_or_scope
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Devise::Controllers::Helpers#after_sign_in_path_for
+  #
+  def after_sign_in_path_for(resource_or_scope)
+    store_location_for(resource_or_scope, dashboard_path)
+    session[:current_path].presence || super(resource_or_scope)
+  end
+
+  # after_sign_in_path_for
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Devise::Controllers::Helpers#after_sign_out_path_for
+  #
+  def after_sign_out_path_for(*)
+    welcome_path
+  end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Information about the last operation performed in this session.
   #
@@ -57,6 +101,9 @@ module SessionConcern
     }
     values.merge(hash) if hash.present?
     last_operation.merge!(values.stringify_keys)
+      .tap {
+        __debug { "session_update 'time' = #{last_operation_time.inspect}" }
+      }
   end
 
   # ===========================================================================
@@ -90,8 +137,10 @@ module SessionConcern
   #
   def session_update
     yield.tap do
+      error = defined?(@api) && @api&.exception
+      error &&= error.message.presence || I18n.t('emma.error.api.unknown')
+      flash[:alert] = error if error
       last_operation_update
-      __debug { "#{__method__} 'time' = #{last_operation_time.inspect}" }
     end
   end
 

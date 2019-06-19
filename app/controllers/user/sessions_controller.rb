@@ -9,7 +9,8 @@ __loading_begin(__FILE__)
 #
 class User::SessionsController < Devise::SessionsController
 
-  include UserConcern
+  include SessionConcern
+  include User::DebugConcern
 
   # ===========================================================================
   # :section: Callbacks
@@ -25,6 +26,10 @@ class User::SessionsController < Devise::SessionsController
 =begin # TODO: configure_sign_in_params ???
   before_action :configure_sign_in_params, only: [:create]
 =end
+
+  # ===========================================================================
+  # :section: Session management
+  # ===========================================================================
 
   append_around_action :session_update
 
@@ -92,7 +97,6 @@ class User::SessionsController < Devise::SessionsController
     if params[:redirect]
       redirect_to params[:redirect]
     else
-      store_location_for(resource, dashboard_path)
       redirect_to after_sign_in_path_for(resource)
     end
   end

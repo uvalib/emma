@@ -15,6 +15,7 @@ __loading_begin(__FILE__)
 class CategoryController < ApplicationController
 
   include ApiConcern
+  include ParamsConcern
   include SessionConcern
   include PaginationConcern
 
@@ -24,7 +25,7 @@ class CategoryController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  prepend_before_action :session_check
+  # Not applicable.
 
   # ===========================================================================
   # :section: Authorization
@@ -37,8 +38,6 @@ class CategoryController < ApplicationController
   # ===========================================================================
 
   before_action :initialize_service
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section:

@@ -15,7 +15,6 @@ module PaginationConcern
     __included(base, 'PaginationConcern')
   end
 
-  include SessionConcern
   include PaginationHelper
 
   # ===========================================================================
