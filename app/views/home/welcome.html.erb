@@ -6,22 +6,16 @@
 
   @page_title = title
 
-  links = [
-    sign_in_link(provider: :bookshare)
-  ]
-
-  if defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
-    links +=
-      OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.keys.map { |id|
-        link_to("Sign in as #{id}", sign_in_as_path(id: id))
-      }
-  end
+  sign_in = t('emma.user.sessions.new.label')
+  sign_in = link_to(sign_in, new_user_session_path)
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<div>
-  <%- links.each do |link| -%>
-    <p><%= link -%></p>
-  <%- end -%>
+<div class="panel">
+  <%= t('emma.home.welcome.text_html') %>
+</div>
+
+<div class="sign-in">
+  <%= t('emma.home.welcome.notice_html', link: sign_in) %>
 </div>

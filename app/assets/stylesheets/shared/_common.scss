@@ -62,15 +62,23 @@
     }
 }
 
-// A grouping of related controls into a single element.
-%control-group {
-
-    display:          inline-flex;
-    padding:          4px 8px;
+// A panel for highlighting content;
+%panel {
+    display:          block;
+    padding:          0.5rem;
     background-color: lightgoldenrodyellow;
     border:           2px solid goldenrod;
     border-radius:    6px;
-    align-items:      baseline;
+}
+
+// A grouping of related controls into a single element.
+%control-group {
+
+    @extend %panel;
+
+    display:     inline-flex;
+    padding:     4px 8px;
+    align-items: baseline;
 
     > * {
         display:     inline-flex;

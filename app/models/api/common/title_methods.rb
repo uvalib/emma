@@ -6,6 +6,7 @@
 __loading_begin(__FILE__)
 
 require_relative 'sequence_methods'
+require 'sanitize'
 
 # Methods mixed in to record elements related to catalog titles.
 #
@@ -93,6 +94,20 @@ module Api::Common::TitleMethods
       value = send(date).to_s.sub(/^(\d{4}).*/, '\1').to_i
       value unless value.zero?
     }.compact.sort.first
+  end
+
+  # Display :synopsis with rudimentary formatting.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def contents
+    %i[synopsis description].find do |method|
+      next unless respond_to?(method) && (text = send(method)).present?
+      text.gsub!(/<br>/, '<br/>')
+      text.gsub!(/(<P>)+/, '<br/><br/>')
+      text.gsub!(/(?<![&])(#\d{1,5};)/, '&\1')
+      return Sanitize.fragment(text).html_safe
+    end
   end
 
   # Return a link to a title's thumbnail image if present.

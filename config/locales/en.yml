@@ -28,6 +28,7 @@ en:
         label:          'Page Size'
       language:
         label:          'Language'
+        placeholder:    '(Select)'
 
     pagination:
       page_size:        10
@@ -69,6 +70,8 @@ en:
       DOCX:             'MS Word'
       EPUB3:            'EPUB 3'
       PDF:              'PDF'
+      HTML:             'HTML' # NOTE: Exists but not in the API docs.
+      TEXT:             'Text' # NOTE: Exists but not in the API docs.
 
     error:
       api:
@@ -139,6 +142,13 @@ en:
         label:          'Welcome'
         title:          'Welcome to EMMA'
         tooltip:        'Return to the home page.'
+        notice_html:    'You must %{link} to access your account.'
+        text_html:      |
+          <h2>Introductory text</h2>
+          <p>First paragraph.</p>
+          <p>Second paragraph.</p>
+          <p><a href="https://mellon.org/resources/news/articles/grants-university-libraries-develop-accessibility-infrastructure-and-best-practices/">
+            Read more</a> about the project.</p>
 
       dashboard:
         label:          'Dashboard'

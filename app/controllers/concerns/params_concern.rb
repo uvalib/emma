@@ -26,14 +26,27 @@ module ParamsConcern
     # =========================================================================
 
     before_action :set_current_path
-    before_action :set_origin,            only: [:index]
-    before_action :resolve_sort,          only: [:index]
+    before_action :set_origin,           only:   [:index]
+    before_action :resolve_sort,         only:   [:index]
+    before_action :initialize_menus,     except: [:index] # TODO: keep?
     before_action :cleanup_parameters
     before_action :conditional_redirect
 
   end
 
   include ParamsHelper
+
+  # URL parameters related to search menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_KEYS = %i[keyword sort limit language]
+
+  # URL parameters related to search sort menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_SORT_KEYS = %i[sortOrder direction]
 
   # ===========================================================================
   # :section:
@@ -75,10 +88,15 @@ module ParamsConcern
   #
   def set_current_path
     return if params[:controller].to_s.start_with?('devise')
+    if session[:current_path].present?
+      session[:return_path] = session[:current_path].dup
+    else
+      session.delete(:return_path)
+    end
     if request.path == root_path
       session.delete(:current_path)
     else
-      session[:current_path] = request.path
+      session[:current_path] = make_path(request.path, url_parameters)
     end
   end
 
@@ -95,7 +113,8 @@ module ParamsConcern
     session[:origin] = origin || :root
   end
 
-  # Resolve reverse sort into Bookshare-style parameters.
+  # Resolve the menu-generated :sort selection into the appropriate pair of
+  # :sortOrder and :direction parameters.
   #
   # @return [void]
   #
@@ -103,22 +122,62 @@ module ParamsConcern
   #
   def resolve_sort
     changed = false
+
+    # Remember current search parameters.
+    session_section = params[:controller]
+    ss = session[session_section] ||= {}
+    keys = SEARCH_KEYS
+    keys += SEARCH_SORT_KEYS if params[:sort].blank?
+    keys.each do |key|
+      ss_key = key.to_s
+      if params[key].present?
+        ss[ss_key] = params[key]
+      else
+        ss.delete(ss_key)
+      end
+    end
+
+    # Process the menu-generated :sort parameter.
     if (sort = params.delete(:sort))
-      session_section = params[:controller]
-      ss = session[session_section] ||= {}
-      ss['sort'] = sort.dup
-      reverse = sort.delete_suffix!(LayoutHelper::REVERSE_SORT)
-      params[:sortOrder] = sort
-      params[:direction] = reverse ? 'desc' : 'asc'
+      set_sort_params(sort)
       changed = true
     end
+
     will_redirect if changed
+  end
+
+  # Load `params` with values last set when searching.
+  #
+  # @return [void]
+  #
+  def initialize_menus
+    session_section = params[:controller]
+    ss = session[session_section] ||= {}
+    SEARCH_KEYS.each do |key|
+      ss_value = ss[key.to_s]
+      if ss_value.present?
+        if key == :sort
+          set_sort_params(ss_value)
+        else
+          params[key] = ss_value
+        end
+      elsif key == :sort
+        SEARCH_SORT_KEYS.each do |k|
+          v = ss[k.to_s]
+          params[k] = v if v.present?
+        end
+      end
+    end
   end
 
   # Clean up URL parameters and redirect.
   #
   # This eliminates "noise" parameters injected by the advanced search forms
   # and other situations where empty or unneeded parameters accumulate.
+  #
+  # == Usage Notes
+  # If a callback relies on the :commit parameter, it must be run before this
+  # callback.
   #
   def cleanup_parameters
     changed = false
@@ -145,6 +204,25 @@ module ParamsConcern
     path = session.delete(:redirect)
     path = params.to_unsafe_h if path.is_a?(TrueClass)
     redirect_to(path) if path.present?
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  private
+
+  # Set :sortOrder and :direction parameters.
+  #
+  # @param [String] sort_value
+  #
+  # @return [void]
+  #
+  def set_sort_params(sort_value)
+    rev_ind = LayoutHelper::REVERSE_SORT
+    reverse = sort_value.end_with?(rev_ind)
+    params[:sortOrder] = sort_value.delete_suffix(rev_ind)
+    params[:direction] = reverse ? 'desc' : 'asc'
   end
 
 end

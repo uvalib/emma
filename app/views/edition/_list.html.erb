@@ -11,9 +11,9 @@
 <div class="edition-list">
   <%- if list.present? -%>
     <%- list.each_with_index do |item, idx| -%>
-      <%= render 'edition/entry', item: item %>
+      <%= render 'edition/entry', index: idx, item: item %>
     <%- end -%>
   <%- else -%>
-    <%= render 'edition/entry' %>
+    <%= render 'edition/entry', index: -1 %>
   <%- end -%>
 </div>

@@ -48,6 +48,7 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
 
     @extend %control-group;
 
+    flex-wrap:        wrap;
     background-color: inherit;
 
     @media #{$narrow-screen} {

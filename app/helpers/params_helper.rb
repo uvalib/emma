@@ -20,7 +20,7 @@ module ParamsHelper
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS = %i[controller action]
+  IGNORED_PARAMETERS = %i[controller action utf8 commit]
 
   # ===========================================================================
   # :section:

@@ -1,0 +1,40 @@
+// app/assets/stylesheets/controllers/_home.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Welcome page
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+body.home-index,
+body.home-welcome {
+
+    .panel {
+
+        @extend %panel;
+
+        width:     fit-content;
+        min-width: 50%;
+        max-width: 100%;
+
+        > * {
+            margin-top: 0.5rem;
+            &:first-child { margin-top: 0; }
+        }
+    }
+
+    .sign-in {
+        margin:      2rem 0;
+        font-weight: bold;
+    }
+}
+
+//=============================================================================
+// Dashboard
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+body.home-dashboard {
+    // TODO: ???
+}

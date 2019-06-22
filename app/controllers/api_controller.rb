@@ -48,6 +48,10 @@ class ApiController < ApplicationController
   # The main API test page.
   #
   def index
+    service      = ApiService.instance
+    @all_methods = service.service_methods
+    @api_results = ApiTesting.run_trials(user: current_user.to_s.presence)
+    service.discard_exception
   end
 
   # == GET /api/v2/API_PATH[?API_OPTIONS]
@@ -62,18 +66,19 @@ class ApiController < ApplicationController
   #
   def v2 # TODO: testing - remove
     __debug { "API #{__method__} | params = #{params.inspect}" }
-    @opt  = url_parameters.except(:format)
-    @path = @opt.delete(:api_path)
-    if (user = @opt.delete(:user)).present?
+    opt  = url_parameters.except(:format)
+    path = opt.delete(:api_path)
+    if (user = opt.delete(:user)).present?
       user = user.downcase
       user = "#{user}@bookshare.org" unless user.include?('@')
       path = request.fullpath.sub(/\?.*/, '')
-      path << '?' << @opt.to_param if @opt.present?
+      path << '?' << opt.to_param if opt.present?
       redirect_to sign_in_as_path(id: user, redirect: path)
     else
+      @result = api_method(request.method, path, opt)
       respond_to do |format|
         format.html
-        format.json { render json: api_method(request.method, @path, @opt) }
+        format.json { render json: @result }
       end
     end
   end

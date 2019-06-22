@@ -3,43 +3,23 @@
   # Catalog Titles results page.
   title ||= t('emma.title.index.title')
 
-  @page_title = t('emma.title.index.label', default: title)
-
   item_list = title_list.presence
 
-  term_list =
-    if item_list
-      url_parameters.except(:start, :limit, :api_key).map { |k, v|
-        field = k.to_s.capitalize
-        value = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
-        [field, value]
-      }.to_h.presence
-    end
-
-  if term_list
-    @page_title += ' - ' + term_list.map { |k, v| "#{k}: #{v}" }.join(', ')
+  if item_list
+    all_count     = nil
+    search_count  = "#{total_items} titles found." # TODO: I18n
+    search_count  = content_tag(:div, search_count, class: 'search-count')
+    controls      = pagination_controls
+    term_list     = search_terms.presence
+    terms_control = term_list && applied_search_terms(term_list)
+  else
+    all_count     = " (#{total_items})"
+    search_count  = controls = term_list = terms_control = nil
   end
 
-  search_terms =
-    if term_list
-      separator = content_tag(:span, ';', class: 'term-separator')
-      term_list.map { |field, value|
-        content_tag(:div, class: 'term') {
-          content_tag(:span, field, class: 'field') <<
-          content_tag(:span, ':',   class: 'separator') <<
-          content_tag(:span, value, class: 'value')
-        }
-      }.join(separator).html_safe
-    end
-
-  if item_list
-    all_count    = nil
-    search_count =
-      content_tag(:div, "#{total_items} titles found.", class: 'search-count')
-    controls     = pagination_controls
-  else
-    all_count    = " (#{total_items})"
-    search_count = controls = nil
+  @page_title = t('emma.title.index.label', default: title)
+  if term_list.present?
+    @page_title += ' - ' + term_list.map { |k, v| "#{k}: #{v}" }.join(', ')
   end
 -%>
 
@@ -48,14 +28,7 @@
 <div class="title-list">
 
   <%# === Applied search terms (when applicable) === -%>
-  <%- if search_terms -%>
-    <div class="applied-search-terms">
-      <div class="search-terms">
-        <div class="label">Search terms:</div>
-        <%= search_terms %>
-      </div>
-    </div>
-  <%- end -%>
+  <%= terms_control %>
 
   <%# === Top pagination controls === -%>
   <%- if controls -%>

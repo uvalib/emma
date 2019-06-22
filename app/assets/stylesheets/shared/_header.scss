@@ -39,7 +39,6 @@ $label-gap: calc(#{$flex-gap-x} / 2);
     @extend %header-section;
 
     width:     33%;
-    min-width: calc(#{$sm-width} - (2 * #{$page-padding-x}));
     max-width: calc(#{$lg-width} - (2 * #{$page-padding-x}));
 
     @media #{$narrow-screen} {
@@ -49,7 +48,7 @@ $label-gap: calc(#{$flex-gap-x} / 2);
     }
 }
 
-%inside-text-black {
+%color-black-inside {
     * { color: black; }
 }
 
@@ -65,10 +64,6 @@ $label-gap: calc(#{$flex-gap-x} / 2);
     @extend %banner;
 
     font-size: x-large;
-
-    @media #{$narrow-screen} {
-        flex-direction: column;
-    }
 
     //=========================================================================
     // Sections
@@ -206,6 +201,11 @@ $label-gap: calc(#{$flex-gap-x} / 2);
 
     @extend %banner;
 
+    // TODO: prefer hamburger menu for small screens?
+    @media #{$narrow-screen} {
+        flex-direction: column;
+    }
+
     //=========================================================================
     // Sections
     //=========================================================================
@@ -214,6 +214,7 @@ $label-gap: calc(#{$flex-gap-x} / 2);
 
         @extend %header-section;
 
+        flex-wrap: wrap;
         font-size: x-large;
 
         > * {
@@ -228,30 +229,27 @@ $label-gap: calc(#{$flex-gap-x} / 2);
         .active {
             text-decoration: underline;
         }
-
-        // TODO: prefer hamburger menu for small screens?
-        @media #{$narrow-screen} {
-            .separator {
-                display: none;
-            }
-        }
     }
 }
 
+// Search input bar.
+// Search controls (sort, per-page, language).
+//
 // noinspection SassScssResolvedByNameOnly
 .layout-section {
 
     @extend %banner;
 
     padding-top: 0;
-}
 
-// Search input.
-.layout-section {
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
     .search-bar {
 
         @extend %header-search-section;
-        @extend %inside-text-black;
+        @extend %color-black-inside;
 
         .search-input {
             flex: 1 1 auto;
@@ -262,36 +260,56 @@ $label-gap: calc(#{$flex-gap-x} / 2);
             flex:        0 0 auto;
         }
     }
-}
 
-// Search controls (sort, per-page).
-.layout-section {
     .search-controls {
 
         @extend %header-search-section;
 
-        .control-label {
-            margin-right: $label-gap;
-            flex:         0 0 auto;
+        display:               grid;
+        grid-template-columns: auto;
+        grid-template-rows:    [sort] auto [limit] auto [language] auto;
+        width:                 100%;
+
+        @media #{$wide-screen} {
+            grid-template-columns: [sort] 1fr [limit] 1fr [language] 1fr;
+            grid-template-rows:    auto;
+            width:                 auto;
         }
 
-        * + .control-label {
-            margin-left:  $label-gap;
+        //=====================================================================
+        // Sections
+        //=====================================================================
+
+        .menu-container {
+
+            display:               grid;
+            grid-template-columns: [label] 0.25fr [control] 1fr;
+            margin:                calc(#{$flex-gap-y} / 2) 0;
+
+            @media #{$wide-screen} {
+
+                grid-template-columns: [label] auto [control] 1fr;
+                margin:                auto;
+
+                &:first-of-type { margin-left: 0; }
+            }
         }
 
-        .sort-menu {
-            @extend %inside-text-black;
-            flex: 1 0 auto;
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        .menu-label {
+
+            margin: 0;
+
+            @media #{$wide-screen} {
+                margin-right: $label-gap;
+            }
         }
 
-        .size-menu {
-            @extend %inside-text-black;
-            flex: 1 0 auto;
-        }
-
-        .language-menu {
-            @extend %inside-text-black;
-            flex: 0 1 auto;
+        .menu-control {
+            @extend %color-black-inside;
         }
     }
 }

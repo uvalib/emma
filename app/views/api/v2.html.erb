@@ -2,22 +2,7 @@
 <%-
   # Display of results from an individual API call.
   title ||= t('emma.api.v2.title')
-
-  url = make_path(@path, @opt)
-  url = "/v2/#{url}".squeeze('/') unless url.start_with?('/v2/')
-
-  @page_title = "#{title} #{url.inspect}"
-
-  request_values = {
-    method: request.method,
-    path:   @path,
-    opt:    @opt.presence,
-    url:    url,
-  }
-
-  result = api_method(request.method, @path, @opt)
-  result = result[:result] || result[:exception]
-  result = api_format_result(result)
+  @page_title = "#{title} #{@result[:url].inspect}"
 -%>
 
 <h1 class="heading"><%= title -%></h1>
@@ -25,7 +10,7 @@
 <div class="session-debug">
   <table>
     <tbody>
-      <%- request_values.each_pair do |k, v| -%>
+      <%- @result.except(:exception, :result).each_pair do |k, v| -%>
         <tr>
           <th class="key"><%= k -%></th>
           <td class="value"><%= v.is_a?(String) ? v : v.inspect -%></td>
@@ -36,5 +21,7 @@
 </div>
 
 <div class="trials">
-  <div class="value"><%= result -%></div>
+  <div class="value">
+    <%= api_format_result(@result[:exception] || @result[:result]) %>
+  </div>
 </div>

@@ -118,3 +118,4 @@ gem 'prometheus-client'
 # Other
 gem 'iso-639'
 gem 'jquery-rails'
+gem 'sanitize'

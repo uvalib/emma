@@ -112,7 +112,10 @@ module SessionConcern
 
   protected
 
-  # Clean out-dated session information between reboots.
+  # Clean out-dated session information.
+  #
+  # If a reboot occurred since the last session update, ensure consistency by
+  # performing a sign-out and cleaning up related session data.
   #
   # @return [void]
   #
@@ -120,6 +123,14 @@ module SessionConcern
   # This must be invoked as a :before_action.
   #
   def session_check
+
+    # Clean out empty session values.
+    session.keys.each do |key|
+      value = session[key]
+      session.delete(key) if value.nil? || (value.is_a?(Hash) && value.empty?)
+    end
+
+    # Reset authentication state after a reboot.
     return if (t_boot = BOOT_TIME.to_i) < (t_last = last_operation_time)
     if t_last.nonzero?
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
@@ -128,9 +139,11 @@ module SessionConcern
     sign_out
     session.delete('omniauth.auth')
     @reset_browser_cache = true
+
   end
 
-  # Remember the last operation performed in this session.
+  # Remember the last operation performed in this session and set the flash
+  # alert if there is an unprocessed ApiSession exception.
   #
   # == Usage Notes
   # This must be invoked as an :around_action.

@@ -5,10 +5,9 @@
     %i[alert notice].map { |type|
       content_tag(:p, flash[type], class: type.to_s) if flash[type]
     }.compact
+  flash.clear
   return if flash_messages.blank?
-
   flash_messages = safe_join(flash_messages, "\n")
-  flash.discard
 -%>
 
 <div class="flash-messages">

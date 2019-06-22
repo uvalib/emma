@@ -13,6 +13,8 @@ module LayoutHelper
     __included(base, '[LayoutHelper]')
   end
 
+  include HtmlHelper
+
   # ===========================================================================
   # :section: Nav bar
   # ===========================================================================
@@ -60,6 +62,12 @@ module LayoutHelper
   # ===========================================================================
 
   public
+
+  # Indicate whether it is appropriate to show the nav bar.
+  #
+  def show_nav_bar?
+    true
+  end
 
   # Generate an element containing links for the main page of each controller.
   #
@@ -140,6 +148,12 @@ module LayoutHelper
   # ===========================================================================
 
   public
+
+  # Indicate whether it is appropriate to show the search bar.
+  #
+  def show_search_bar?
+    true
+  end
 
   # Generate an element for entering search terms.
   #
@@ -227,6 +241,13 @@ module LayoutHelper
 
   public
 
+  # Indicate whether it is appropriate to show the search controls.
+  #
+  def show_search_controls?
+    (params[:action] == 'index') &&
+      %w(title periodical).include?(params[:controller])
+  end
+
   # search_controls
   #
   # @param [Symbol, String, nil] type   Default: :title.
@@ -247,48 +268,65 @@ module LayoutHelper
 
   private
 
-  # make_menu
+  # From the values of a subclass of Api::EnumType, generate an array of
+  # label/value pairs to be used with #select_tag.
   #
-  # @param [Class] type               @see Api::EnumType
+  # @param [Class, Array<String,Numeric>] type
   #
   # @return [Array<Array<(String,String)>>]
   #
-  def self.make_sort_menu(type)
-    type.new.values.flat_map do |v|
-      value = v.to_s
-      label = value
-      label = "#{label[0].upcase}#{label[1..-1]}" if label[0] =~ /^[a-z]/
-      no_reverse = (label == 'Relevance')
+  def self.make_menu(type)
+    (type.is_a?(Class) ? type.new.values : type).flat_map do |v|
+      label = v.to_s.titleize.squish
+      rev   = label.delete('0-9').present? && (label != 'Relevance')
       pairs = []
-      pairs << [label, value]
-      pairs << ["#{label} (rev)", "#{value}#{REVERSE_SORT}"] unless no_reverse
+      pairs << [label, v]
+      pairs << ["#{label} (rev)", "#{v}#{REVERSE_SORT}"] if rev
       pairs
     end
   end
 
   # @type [Hash{Symbol=>Array<Array<(String,String)>>}]
   SORT_MENU = {
-    title:      make_sort_menu(Api::TitleSortOrder),
-    member:     make_sort_menu(Api::MemberSortOrder),
-    periodical: make_sort_menu(Api::PeriodicalSortOrder)
+    title:      make_menu(Api::TitleSortOrder),
+    member:     make_menu(Api::MemberSortOrder),
+    periodical: make_menu(Api::PeriodicalSortOrder)
   }.deep_freeze
 
   # @type [Array<Array<(String,String)>>]
-  SIZE_MENU = %w(10 25 50 100).map { |v| [v, v] }.deep_freeze
+  SIZE_MENU = make_menu([10, 25, 50, 100]).deep_freeze
+
+  # Patterns matching the names of languages that should not be included in
+  # #LANGUAGE_MENU.
+  #
+  # @type [Array<Regexp>]
+  #
+  BOGUS_LANGUAGE = %w(
+    ^Bliss
+    ^Klingon
+    ^Reserved
+    ^Sign
+    ^Undetermined
+    \\\(
+    content
+    jargon
+    language
+    pidgin
+  ).map { |term| Regexp.new(term) }.deep_freeze
 
   # @type [Array<Array<(String,String)>>]
   LANGUAGE_MENU =
     ISO_639::ISO_639_2.map { |entry|
       label = entry.english_name.sub(/;.*$/, '')
-      case label
-        when /^Greek, Modern/ then label = 'Greek'
-      end
-      next if %w(Bliss Klingon Reserved).any? { |s| label.start_with?(s) }
-      next if %w(Sign Undetermined).any? { |s| label.start_with?(s) }
-      next if %w(language jargon pidgin content).any? { |s| label.include?(s) }
-      next if label.include?('(')
+      label.sub!(/^Greek, Modern.*$/, 'Greek')
+      next if BOGUS_LANGUAGE.any? { |pattern| label.match?(pattern) }
       [label, entry.alpha3_bibliographic]
-    }.compact.sort.unshift(%w(English eng)).uniq.deep_freeze
+    }.compact
+      .sort
+      .unshift(%w(Spanish spa))
+      .unshift(%w(English eng))
+      .uniq
+      .deep_freeze
 
   # ===========================================================================
   # :section: Search controls
@@ -307,18 +345,21 @@ module LayoutHelper
     value.end_with?(REVERSE_SORT) ? value : (value + REVERSE_SORT) if value
   end
 
-  # sort_menu
+  # Perform a search specifying a collation order for the results.
   #
   # @param [String, nil]         selected  Default: `params[id]`.
   # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #form_tag.
+  # @param [Hash, nil]           opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see #SORT_MENU
+  # @see #SEARCH_SORT_LABEL
   # @see ParamsConcern#resolve_sort
   #
   # == Implementation Notes
-  #
+  # This method produces a URL parameter (:sort) which is translated into the
+  # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #
   def sort_menu(selected = nil, type: :title, **opt)
     id   = :sort
@@ -326,40 +367,48 @@ module LayoutHelper
     menu = SORT_MENU[type] || [["type: #{type} unexpected", '']]
     selected ||= params[id] || params[:sortOrder]
     selected &&= reverse_sort(selected) if params[:direction] == 'desc'
-    label_tag(id, SEARCH_SORT_LABEL, class: 'control-label') +
-      menu_control(id, menu, selected, type: type, **opt)
+    opt[:label] ||= SEARCH_SORT_LABEL
+    menu_container(id, menu, selected, type: type, **opt)
   end
 
-  # size_menu
+  # Perform a search specifying a results page size.
   #
   # @param [String, nil]         selected  Default: `params[id]`.
   # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #form_tag.
+  # @param [Hash, nil]           opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #SIZE_MENU
+  # @see #SEARCH_SIZE_LABEL
   #
   def size_menu(selected = nil, type: :title, **opt)
     id   = :limit
     opt  = prepend_css_classes(opt, 'size-menu')
     menu = SIZE_MENU
-    label_tag(id, SEARCH_SIZE_LABEL, class: 'control-label') +
-      menu_control(id, menu, selected, type: type, **opt)
+    selected ||= params[id] || (page_size if defined?(page_size))
+    selected &&= selected.to_i
+    opt[:label] ||= SEARCH_SIZE_LABEL
+    menu_container(id, menu, selected, type: type, **opt)
   end
 
-  # language_menu
+  # Perform a search limited to the selected language.
   #
   # @param [String, nil]         selected  Default: `params[id]`.
   # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #form_tag.
+  # @param [Hash, nil]           opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #LANGUAGE_MENU
+  # @see #SEARCH_LANGUAGE_LABEL
   #
   def language_menu(selected = nil, type: :title, **opt)
     id   = :language
     opt  = prepend_css_classes(opt, 'language-menu')
     menu = LANGUAGE_MENU
-    label_tag(id, SEARCH_LANGUAGE_LABEL, class: 'control-label') +
-      menu_control(id, menu, selected, type: type, **opt)
+    opt[:label] ||= SEARCH_LANGUAGE_LABEL
+    menu_container(id, menu, selected, type: type, **opt)
   end
 
   # ===========================================================================
@@ -368,21 +417,57 @@ module LayoutHelper
 
   public
 
+  # A menu control preceded by a menu label (if provided).
+  #
+  # @param [Symbol, String]      id        Associated menu element.
+  # @param [Array]               menu      Menu entries.
+  # @param [String, nil]         selected  Default: `params[id]`.
+  # @param [Symbol, String, nil] type      Default: `params[:controller]`.
+  # @param [Hash, nil]           opt       Passed to #menu_control except for:
+  #
+  # @option opt [String] :label       If missing, no label is included.
+  #
+  def menu_container(id, menu, selected = nil, type: :current, **opt)
+    label = opt.key?(:label) && (opt = opt.dup).delete(:label)
+    content_tag(:div, class: 'menu-container') do
+      parts = []
+      parts << label_tag(id, label, class: 'menu-label') if label.present?
+      parts << menu_control(id, menu, selected, type: type, **opt)
+      safe_join(parts)
+    end
+  end
+
   # A dropdown menu element.
   #
+  # If no option is currently selected, an initial "null" selection is
+  # prepended.
+  #
   # @param [Symbol, String]      id
-  # @param [Array]               menu       Menu elements.
+  # @param [Array]               menu       Menu entries.
   # @param [String, nil]         selected   Default: `params[id]`.
-  # @param [Symbol, String, nil] type       Default: :title.
-  # @param [Hash, nil]           opt        Passed to #form_tag.
+  # @param [Symbol, String, nil] type       Default: `params[:controller]`.
+  # @param [Hash, nil]           opt        Passed to #search_form.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def menu_control(id, menu, selected = nil, type: :title, **opt)
+  def menu_control(id, menu, selected = nil, type: :current, **opt)
+    opt = prepend_css_classes(opt, 'menu-control')
     selected ||= params[id]
-    menu = options_for_select(menu, selected.to_s)
+    if selected.blank?
+      selected = I18n.t("emma.search_bar.#{id}.placeholder", default: nil)
+      menu = [%W(#{selected} '')] + menu if selected
+    elsif menu.none? { |pair| pair.last == selected }
+      label = selected.to_s.titleize.squish
+      menu += [[label, selected]]
+      if selected.is_a?(String)
+        menu.sort!
+      else
+        menu.sort_by!(&:last)
+      end
+    end
     search_form(id, type: type, **opt) do
-      select_tag(id, menu, onchange: 'this.form.submit();')
+      option_tags = options_for_select(menu, selected)
+      select_tag(id, option_tags, onchange: 'this.form.submit();')
     end
   end
 
@@ -390,26 +475,83 @@ module LayoutHelper
   #
   # If currently searching for the indicated *type*, then the current URL
   # parameters are included as hidden fields so that the current search is
-  # augmented.  Otherwise a new search is assumed.
+  # repeated but augmented with the added parameter.  Otherwise a new search is
+  # assumed.
   #
   # @param [Symbol, String]      id
-  # @param [Symbol, String, nil] type   Default: :title.
+  # @param [Symbol, String, nil] type   Default: `params[:controller]`.
   # @param [Hash, nil]           opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_form(id, type: :title, **opt)
+  def search_form(id, type: :current, **opt)
     opt  = opt.merge(method: :get) unless opt[:method]
+    type = params[:controller] if type == :current
     path = url_for(controller: "/#{type}", action: :index, only_path: true)
-    same_path = (path == request.path)
-    hidden_fields = same_path ? params.to_unsafe_h.except(id, :start) : {}
+    augment = (path == request.path)
+    hidden_fields = augment ? params.to_unsafe_h.except(id, :start) : {}
     form_tag(path, opt) do
-      inner = hidden_fields.map { |k, v| hidden_field_tag(k, v) }
-      inner << yield
-      safe_join(Array.wrap(inner).flatten)
+      fields = hidden_fields.map { |k, v| hidden_field_tag(k, v) }
+      fields << yield
+      safe_join(Array.wrap(fields).flatten)
     end
   end
 
+  # ===========================================================================
+  # :section: # TODO: move to ResourceHelper
+  # ===========================================================================
+
+  public
+
+  # Active search terms.
+  #
+  # @param [Hash, nil]                 pairs    Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol, nil] only
+  # @param [Symbol, Array<Symbol, nil] except
+  #
+  # @return [Hash{String=>String}]
+  #
+  def search_terms(pairs = nil, only: nil, except: nil)
+    only   = Array.wrap(only).presence
+    except = Array.wrap(except) + %i[start limit api_key]
+    pairs ||= url_parameters
+    pairs.slice!(*only)    if only
+    pairs.except!(*except) if except
+    pairs.map { |k, v|
+      plural = v.is_a?(Enumerable) && (v.size > 1)
+      field  = labelize(k)
+      field  = (plural ? field.pluralize : field.singularize).html_safe
+      value  = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
+      [field, value]
+    }.to_h
+  end
+
+  # A control displaying the currently-applied search terms in the current
+  # scope (by default).
+  #
+  # @param [Hash, nil] term_list      Default: `#search_terms`.
+  # @param [Hash, nil] opt            Passed to the innermost :content_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def applied_search_terms(term_list = nil, **opt)
+    opt = prepend_css_classes(opt, 'term')
+    leader = 'Search terms:' # TODO: I18n
+    leader &&= content_tag(:div, leader, class: 'label')
+    separator = content_tag(:span, ';', class: 'term-separator')
+    terms =
+      (term_list || search_terms).map do |field, value|
+        label = content_tag(:span, field, class: 'field')
+        sep   = content_tag(:span, ':',   class: 'separator')
+        value = content_tag(:span, value, class: 'value')
+        content_tag(:div, (label + sep + value), opt)
+      end
+    content_tag(:div, class: 'applied-search-terms') do
+      content_tag(:div, class: 'search-terms') do
+        leader + safe_join(terms, separator)
+      end
+    end
+  end
 end
 
 __loading_end(__FILE__)

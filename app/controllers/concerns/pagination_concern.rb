@@ -36,7 +36,7 @@ module PaginationConcern
     ss  = session[session_section] ||= {}
     opt = url_parameters(opt)
     this_page = request.original_fullpath
-    page_size(opt[:limit] || ss[:page_size])
+    ss['limit'] = page_size(opt[:limit] || ss[:page_size])
     ss['page_offset'] ||= 0
     if ss['prev_page'] == this_page
       ss['prev_page']    = prev_page(nil) # TODO: ???

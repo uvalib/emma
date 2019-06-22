@@ -1,7 +1,7 @@
 <%# app/views/layouts/_search_controls.html.erb -%>
 <%-
   # Search controls (sort, per-page).
-  skip ||= false
+  skip ||= !show_search_controls?
   return if skip
 -%>
 

@@ -1,7 +1,7 @@
 <%# app/views/title/_details.html.erb -%>
 <%-
   # A Catalog Title metadata listing.
-  item  ||= ApiService.instance.get_title(bookshareId: params[:id])
+  item  ||= nil
   image ||= nil
   return if item.blank?
 -%>

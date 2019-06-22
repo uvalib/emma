@@ -159,6 +159,16 @@ class ApiService
       @verb.to_s.upcase
     end
 
+    # Cause an exception to be ignored to avoid generation of a flash message.
+    #
+    # @return [void]
+    #
+    # @see SessionConcern#session_update
+    #
+    def discard_exception
+      @exception = nil
+    end
+
     # Last HTTP request type.
     #
     # @param [Boolean, nil] api_key   If *true* include the :api_key parameter
@@ -218,48 +228,69 @@ class ApiService
     # args[0]   [String]  Path component.
     # ...
     # args[-2]  [String]  Path component.
-    # args[-1]  [Hash]    URL parameters.
+    # args[-1]  [Hash]    URL parameters except for:
+    #
+    # @option args.last [Boolean] :no_raise       If *true*, set @exception but
+    #                                             do not raise it.
+    #
+    # @option args.last [Boolean] :no_exception   If *true*, neither set
+    #                                             @exception nor raise it.
     #
     # @return [Faraday::Response]
     #
     def api(verb, *args)
-      result  = @verb = @action = @response = @exception = nil
-      @verb   = verb
-      update  = %i[put post patch].include?(@verb)
-      params  = { api_key: API_KEY }
-      params.merge!(args.pop) if args.last.is_a?(Hash)
-      @params = params
-      params  = params.to_json if update
+      result = @verb = @action = @response = @exception = nil
+      headers = {}
+
+      # Build API call parameters (minus local options).
+      @params = { api_key: API_KEY }
+      @params.merge!(args.pop) if args.last.is_a?(Hash)
+      @params.transform_keys! { |k| (k == :fmt) ? :format : k }
+      noexcp  = @params.delete(:no_exception)
+      noraise = @params.delete(:no_raise) || noexcp
+      params  = @params
+
+      # Form the API path from the remaining arguments.
       args.unshift(API_VERSION) unless args.first == API_VERSION
       @action = args.join('/').strip
       @action = "/#{@action}" unless @action.start_with?('/')
-      headers = {}
-      headers['Content-Type'] = 'application/json' if update
+
+      # Determine whether the HTTP method indicates a write rather than a read
+      # and prepare the HTTP headers accordingly.
+      @verb = verb
+      if %i[put post patch].include?(@verb)
+        headers['Content-Type'] = 'application/json'
+        params = params.to_json
+      end
+
+      # Invoke the API.
       __debug { ">>> #{__method__} | #{@action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" }
       @response = connection.send(@verb, @action, params, headers)
       if @response.body[0,64].downcase.include?('page not found')
-        # NOTE: bad request but @response is HTML and @response.status is 200
+        __debug { "!!! #{__method__} | #{@action.inspect} | invalid response" }
       else
         result = @response
       end
 
     rescue SocketError, EOFError => error
-      @exception = error
       result = nil
-      raise error # Handled by ApplicationController
+      @exception = error unless noexcp
+      raise error        unless noraise # Handled by ApplicationController
 
     rescue Faraday::ClientError => error
-      resp  = error.response
-      desc  = MultiJson.load(resp[:body])['error_description'] rescue nil
-      error = Faraday::ClientError.new(desc, resp) if desc.present?
-      @exception = error
-      result = nil # To be handled in the calling method.
+      unless noexcp
+        resp  = error.response
+        desc  = MultiJson.load(resp[:body])['error_description'] rescue nil
+        error = Faraday::ClientError.new(desc, resp) if desc.present?
+        @exception = error
+      end
+      result = nil
 
     rescue => error
       __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }
       Log.error { "API #{__method__}: #{error.message}" }
-      @exception = error
-      result = nil # To be handled in the calling method.
+      @exception = error unless noexcp
+      result = nil
 
     ensure # TODO: remove
       __debug { "<<< #{__method__} | #{@action.inspect} | status = #{@response&.status} | data = #{@response&.body.inspect.truncate(256)}" }

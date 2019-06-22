@@ -1,7 +1,7 @@
 <%# app/views/layouts/_search_bar.html.erb -%>
 <%-
   # Search input.
-  skip ||= false
+  skip ||= !show_search_bar?
   return if skip
 -%>
 

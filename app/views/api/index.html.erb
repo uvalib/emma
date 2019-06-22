@@ -1,91 +1,15 @@
 <%# app/views/api/index.html.erb -%>
 <%-
   # API method call test page.
-
-  title        ||= t('emma.api.index.title')
-  user         ||= current_user.to_s.presence || ApiService::DEFAULT_USERNAME
-  book         ||= '1933741'
-  series       ||= '46424'
-  edition      ||= '2531073'
-  reading_list ||= '325853'
-  subscription ||= reading_list # TODO: probably isn't right...
-  format       ||= Api::FormatType.new.default
-  limit        ||= 5
-
+  title ||= t('emma.api.index.title')
   @page_title = title
-
-  methods = {
-    get_user_identity:            nil,
-    get_my_account:               nil,
-    get_account:                  { user: user },
-    get_my_preferences:           nil,
-    get_my_assigned_titles:       { limit: limit },
-    get_assigned_titles:          { user: user, limit: limit },
-    get_my_reading_lists:         {},
-    get_reading_list_titles:      { readingListId: reading_list },
-    get_my_download_history:      { limit: limit },
-    get_subscriptions:            { user: user },
-    get_subscription:             { user: user, subscriptionId: subscription },
-    get_user_agreements:          { user: user },
-    get_user_pod:                 { user: user },
-    get_organization_members:     {},
-    get_title_count:              nil,
-    get_titles:                   { limit: limit },
-    get_title:                    { bookshareId: book },
-    download_title:               { bookshareId: book, format: format },
-    get_periodicals:              { limit: limit },
-    get_periodical:               { seriesId: series },
-    get_periodical_editions:      { seriesId: series, limit: limit },
-    download_periodical_edition:  { seriesId: series, editionId: edition,
-                                    format: format },
-    get_categories:               { limit: limit },
-    get_catalog:                  { limit: limit },
-    get_subscription_types:       nil,
-  }.deep_freeze
-
-  # Parameters for each API method call formatted for display.
-  parameter_list =
-    methods.transform_values { |opts|
-      opts = opts.presence
-      opts &&= '(' + opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ') + ')'
-      opts.freeze
-    }
-
-  # API URLs for each API method call.
-  endpoint = {}
-
-  service = ApiService.instance
-  success = []
-  error   = []
-
-  # Results from each API method call.
-  trials  =
-    methods.map { |method, opts|
-      value = service.send(method, opts)
-      if value.is_a?(Api::Record::Base) && value.exception.present?
-        error << method
-      else
-        success << method
-      end
-      endpoint[method] = service.last_endpoint
-      [method, api_format_result(value).freeze]
-    }.to_h
-
-  # CSS classes representing the status of each API method call.
-  status =
-    methods.keys.map { |method|
-      classes = []
-      classes << 'success' if success.include?(method)
-      classes << 'error'   if error.include?(method)
-      [method, classes.join(' ').presence.freeze]
-    }.to_h
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
 <div id="methods" class="methods">
-  <%- service.service_methods.each do |method| -%>
-    <%- if (css = status[method]).present? -%>
+  <%- @all_methods.each do |method| -%>
+    <%- if (css = @api_results.dig(method, :status)).present? -%>
       <%- href = '#__' + method.to_s -%>
       <%= link_to(method, href, class: css, 'data-turbolinks': false) -%>
     <%- else -%>
@@ -95,12 +19,14 @@
 </div>
 
 <div id="trials" class="trials">
-  <%- trials.each_pair do |method, value| -%>
+  <%- @api_results.each_pair do |method, result| -%>
     <h2 id="__<%= method -%>" class="label">
       <span class="method"><%= method -%></span>
-      <span class="args"><%= parameter_list[method] -%></span>
-      <span class="endpoint"><%= endpoint[method] -%></span>
+      <span class="args"><%= result[:parameters] -%></span>
+      <span class="endpoint"><%= result[:endpoint] -%></span>
     </h2>
-    <div class="value <%= status[method] -%>"><%= value -%></div>
+    <div class="value <%= result[:status] -%>">
+      <%= api_format_result(result[:value]) -%>
+    </div>
   <%- end -%>
 </div>

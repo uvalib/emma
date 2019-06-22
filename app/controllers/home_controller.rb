@@ -48,6 +48,7 @@ class HomeController < ApplicationController
   def index
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     if current_user
+      @item, @pref = fetch_my_account
       render template: 'home/dashboard'
     else
       render template: 'home/welcome'

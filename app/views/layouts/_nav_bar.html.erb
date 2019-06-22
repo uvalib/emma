@@ -1,7 +1,7 @@
 <%# app/views/layouts/_nav_bar.html.erb -%>
 <%-
   # Navigation bar.
-  skip ||= false
+  skip ||= !show_nav_bar?
   return if skip
 -%>
 

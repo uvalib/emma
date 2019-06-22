@@ -105,6 +105,10 @@
             }
         }
 
+        &.field-Synopsis {
+            margin-bottom: calc(#{$results-entry-gap-y} / 2);
+        }
+
         &.field-Countries {
 
             display: block;

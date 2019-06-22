@@ -1,7 +1,7 @@
 <%# app/views/member/_details.html.erb -%>
 <%-
   # A Member metadata listing.
-  item ||= @item
+  item ||= nil
   return if item.blank?
 
   added_fields = {

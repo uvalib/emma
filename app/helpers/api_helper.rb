@@ -33,18 +33,21 @@ module ApiHelper
   # @return [Hash]
   #
   def api_method(method, path, **opt)
-    type   = method
+    url = make_path(path, opt)
+    url = "/v2/#{url}".squeeze('/') unless url.start_with?('/v2/')
+    result = {
+      method: method.to_s.upcase,
+      path:   path,
+      opt:    opt.presence,
+      url:    url
+    }
     method = "api_#{method}".downcase.to_sym
     @api ||= ApiService.instance
-    result = @api.send(method, path, opt)
-    if result.is_a?(Hash) && result[:invalid]
-      result
+    data   = @api.send(method, path, opt)
+    if data.is_a?(Hash) && data[:invalid]
+      result.merge(exception: data[:exception])
     else
-      {
-        method:  type.to_s.upcase,
-        request: make_path(path, opt),
-        result:  result
-      }
+      result.merge(result: data)
     end
   end
 
