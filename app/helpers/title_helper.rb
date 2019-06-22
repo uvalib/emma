@@ -33,7 +33,7 @@ module TitleHelper
   #
   # @type [Array<Symbol>]
   #
-  DOWNLOAD_LINKS_OPTIONS = %i[type format separator].freeze
+  DOWNLOAD_LINKS_OPTIONS = %i[fmt separator].freeze
 
   # ===========================================================================
   # :section: PaginationHelper overrides
@@ -115,15 +115,14 @@ module TitleHelper
   # @param [Object]    item
   # @param [Hash, nil] opt            Passed to #artifact_link except for:
   #
-  # @option opt [String] :type        Limit results to this format.
-  # @option opt [String] :format      Alias for :type.
+  # @option opt [String] :fmt         One of `Api::FormatType.values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_links(item, **opt)
     opt, local = extract_local_options(opt, DOWNLOAD_LINKS_OPTIONS)
-    format_id  = local[:type]      || local[:format]
+    format_id  = local[:fmt]
     separator  = local[:separator] || DEFAULT_ELEMENT_SEPARATOR
     item.formats.map { |format|
       next if format_id && (format_id != format.formatId)
@@ -179,8 +178,8 @@ module TitleHelper
   # PeriodicalHelper#periodical_format_links
   #
   def format_links(item, **opt)
-    opt = opt.merge(method: :format, all_words: true)
-    title_search_links(item, :format, **opt)
+    opt = opt.merge(all_words: true)
+    title_search_links(item, :fmt, **opt)
   end
 
   # Item languages as search links.
@@ -288,7 +287,7 @@ module TitleHelper
     # === Description ===
     Year:                 :year,
     Languages:            :languages,
-    Synopsis:             :synopsis,
+    Synopsis:             :contents,
     Categories:           :categories,
     Countries:            :countries,
 
@@ -345,7 +344,7 @@ module TitleHelper
     # === Item instances ===
     DtBookSize:           :dtbookSize,
     Artifacts:            :artifacts,
-    Formats:              :formats,
+    Formats:              :fmts,
     Links:                :links,
 
   }.freeze
@@ -361,8 +360,8 @@ module TitleHelper
     field_values(item) do
       TITLE_SHOW_FIELDS.merge(opt).transform_values do |v|
         case v
-          when :formats then download_links(item)
-          else               v
+          when :fmts then download_links(item)
+          else            v
         end
       end
     end

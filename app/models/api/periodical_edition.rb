@@ -10,6 +10,7 @@ require 'api/record'
 require_relative 'format'
 require_relative 'link'
 require_relative 'common/edition_methods'
+require_relative 'common/artifact_methods'
 
 # Api::PeriodicalEdition
 #
@@ -30,6 +31,7 @@ class Api::PeriodicalEdition < Api::Record::Base
   end
 
   include Api::Common::EditionMethods
+  include Api::Common::ArtifactMethods
 
 end
 

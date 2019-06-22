@@ -32,7 +32,7 @@ module ArtifactHelper
   #
   # @type [Array<Symbol>]
   #
-  ARTIFACT_LINK_OPTIONS = %i[label type format].freeze
+  ARTIFACT_LINK_OPTIONS = %i[fmt label].freeze
 
   # ===========================================================================
   # :section: PaginationHelper overrides
@@ -77,24 +77,23 @@ module ArtifactHelper
   # @param [Api::Format, String, nil] format
   # @param [Hash, nil]                opt     Passed to #item_link except for:
   #
+  # @option opt [Api::Format, String] :fmt    One of `Api::FormatType.values`
   # @option opt [Symbol, String]      :label
-  # @option opt [Api::Format, String] :type     One of `Api::FormatType.values`
-  # @option opt [Api::Format, String] :format   Alias for :type.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format = nil, **opt)
     opt, local = extract_local_options(opt, ARTIFACT_LINK_OPTIONS)
-    type  = local[:type] || local[:format]
+    fmt   = local[:fmt]
     label = local[:label]
     if format.is_a?(Api::Format)
-      type  ||= format.identifier
-      label ||= I18n.t("emma.format.#{type}", default: nil) || format.label
+      fmt   ||= format.identifier
+      label ||= I18n.t("emma.format.#{fmt}", default: nil) || format.label
     else
-      type  ||= Api::FormatType.new.default
-      label ||= I18n.t("emma.format.#{type}", default: nil) || item.label
+      fmt   ||= Api::FormatType.new.default
+      label ||= I18n.t("emma.format.#{fmt}", default: nil) || item.label
     end
-    path = artifact_path(id: item.identifier, type: type)
+    path = artifact_path(id: item.identifier, fmt: fmt)
     opt[:tooltip] = ARTIFACT_SHOW_TOOLTIP
     opt[:'data-turbolinks'] = false
     item_link(item, label, path, **opt)
@@ -111,7 +110,7 @@ module ArtifactHelper
   # @type [Hash{Symbol=>Symbol}]
   #
   ARTIFACT_SHOW_FIELDS = {
-    Format:                   :format,
+    Format:                   :fmt,
     BrailleType:              :brailleType,
     BrailleCode:              :brailleCode,
     BrailleGrade:             :brailleGrade,

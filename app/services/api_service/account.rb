@@ -95,6 +95,7 @@ class ApiService
     # @option opt [Boolean]       :showAllBooks           Default: *false*
     # @option opt [String]        :language
     # @option opt [FormatType]    :format
+    # @option opt [FormatType]    :fmt                    Alias for :format
     # @option opt [BrailleGrade]  :brailleGrade
     # @option opt [BrailleFormat] :brailleFormat
     # @option opt [Boolean]       :useUeb                 Default: *false*

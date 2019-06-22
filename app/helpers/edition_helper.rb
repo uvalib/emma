@@ -105,7 +105,7 @@ module EditionHelper
     EditionName:     :editionName,
     PublicationDate: :publicationDate,
     ExpirationDate:  :expirationDate,
-    Formats:         :formats,
+    Formats:         :fmts,
     Links:           :links,
   }.freeze
 
@@ -120,8 +120,8 @@ module EditionHelper
     field_values(item) do
       EDITION_SHOW_FIELDS.merge(opt).transform_values do |v|
         case v
-          when :formats then download_links(item)
-          else               v
+          when :fmts then download_links(item)
+          else            v
         end
       end
     end

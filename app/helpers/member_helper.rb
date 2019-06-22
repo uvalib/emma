@@ -130,7 +130,7 @@ module MemberHelper
     UseUEB:                  :useUeb,
     PreferredBrailleFormat:  :brailleFormat,
     BrailleCellLineWidth:    :brailleCellLineWidth,
-    PreferredDownloadFormat: :format,
+    PreferredDownloadFormat: :fmt,
     PreferredLanguage:       :language,
   }.freeze
 

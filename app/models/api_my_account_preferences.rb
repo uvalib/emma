@@ -9,6 +9,7 @@ require 'api/message'
 
 require_relative 'api/format'
 require_relative 'api/link'
+require_relative 'api/common/artifact_methods'
 
 # ApiMyAccountPreferences
 #
@@ -27,6 +28,8 @@ class ApiMyAccountPreferences < Api::Message
     attribute :showAllBooks,         Boolean
     attribute :useUeb,               Boolean
   end
+
+  include Api::Common::ArtifactMethods
 
 end
 

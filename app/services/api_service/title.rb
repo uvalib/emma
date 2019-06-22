@@ -115,6 +115,7 @@ class ApiService
     # @option opt [String]                :language
     # @option opt [String]                :country
     # @option opt [FormatType]            :format
+    # @option opt [FormatType]            :fmt              Alias for :format
     # @option opt [NarratorType]          :narratorType
     # @option opt [BrailleType]           :brailleType
     # @option opt [Integer]               :readingAge

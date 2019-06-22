@@ -11,6 +11,7 @@ require_relative 'format'
 require_relative 'link'
 require_relative 'name'
 require_relative 'common/title_methods'
+require_relative 'common/artifact_methods'
 
 # Api::TitleMetadataSummary
 #
@@ -47,6 +48,7 @@ class Api::TitleMetadataSummary < Api::Record::Base
   end
 
   include Api::Common::TitleMethods
+  include Api::Common::ArtifactMethods
 
 end
 

@@ -43,7 +43,7 @@ class EditionController < ApplicationController
   before_action :initialize_service
   before_action { @series_id  = params[:seriesId]  || params[:id] }
   before_action { @edition_id = params[:editionId] || params[:id] }
-  before_action { @format     = params[:type] || Api::FormatType.new.default }
+  before_action { @format     = params[:fmt] || Api::FormatType.new.default }
 
   # ===========================================================================
   # :section:

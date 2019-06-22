@@ -9,6 +9,7 @@ require 'api/record'
 
 require_relative 'name'
 require_relative 'narrator'
+require_relative 'common/artifact_methods'
 
 # Api::ArtifactMetadata
 #
@@ -33,6 +34,8 @@ class Api::ArtifactMetadata < Api::Record::Base
     attribute :supplier,                String
     has_one   :transcriber,             Api::Name
   end
+
+  include Api::Common::ArtifactMethods
 
   # ===========================================================================
   # :section: Object overrides
@@ -59,7 +62,7 @@ class Api::ArtifactMetadata < Api::Record::Base
   # @return [String]
   #
   def label
-    format.to_s
+    fmt
   end
 
   # A relative identifier for the represented artifact.
@@ -67,7 +70,7 @@ class Api::ArtifactMetadata < Api::Record::Base
   # @return [String]
   #
   def identifier
-    format.to_s
+    fmt
   end
 
 end

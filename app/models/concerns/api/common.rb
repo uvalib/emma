@@ -117,6 +117,7 @@ module Api
   #
   # == Usage Notes
   # :AllowsType     Compare with ApiService#HTTP_METHODS.
+  # :FormatType     The API does not mention 'HTML' or 'TEXT' but they exist.
   # :RoleType       Compare with Roles#BOOKSHARE_ROLES.
   # :SiteType       The value 'emma' may not be honored by Bookshare yet.
   # :TokenErrorType "unauthorized_client" appears as "unauthorized".
@@ -183,7 +184,8 @@ module Api
     },
 
     FormatType: {
-      values:   %w(DAISY DAISY_SEGMENTED DAISY_AUDIO BRF EPUB3 PDF DOCX),
+      values:   %w(DAISY DAISY_SEGMENTED DAISY_AUDIO BRF EPUB3 PDF DOCX) +
+                  %w(HTML TEXT),
       default:  'DAISY'
     },
 

@@ -105,8 +105,8 @@ module PeriodicalHelper
   # TitleHelper#format_links
   #
   def periodical_format_links(item, **opt)
-    opt = opt.merge(method: :format, all_words: true)
-    periodical_search_links(item, :format, **opt)
+    opt = opt.merge(all_words: true)
+    periodical_search_links(item, :fmt, **opt)
   end
 
   # Item languages as search links.
@@ -226,7 +226,6 @@ module PeriodicalHelper
         case v
           when :latestEdition then edition_link(item, eid, edition: eid)
           when :categories    then periodical_category_links(item)
-          when :formats       then periodical_format_links(item)
           when :languages     then periodical_language_links(item)
           when :countries     then periodical_country_links(item)
           else                     v

@@ -103,6 +103,7 @@ module ResourceHelper
 
     field  = opt[:field]  || field || :title
     method = opt[:method] || field.to_s.pluralize.to_sym
+    __debug { "#{__method__}: item.#{method} invalid" } unless item.respond_to?(method)
     return unless item.respond_to?(method)
 
     opt, local  = extract_local_options(opt, OPTIONS[__method__])
@@ -220,6 +221,8 @@ module ResourceHelper
         when :countries   then v = country_links(item)
         when :cover       then v = cover_image(item)
         when :cover_image then v = cover_image(item)
+        when :fmt         then v = format_links(item)
+        when :fmts        then v = format_links(item)
         when :format      then v = format_links(item)
         when :formats     then v = format_links(item)
         when :languages   then v = language_links(item)
@@ -246,13 +249,14 @@ module ResourceHelper
   #
   def field_value(label, value, separator: DEFAULT_LIST_SEPARATOR)
     return if value.blank? || false?(value)
-    type =
-      unless label.is_a?(ActiveSupport::SafeBuffer)
-        "field-#{label || 'None'}"
-      end
-    label = content_tag(:div, label.to_s, class: "label #{type}")
+    type = nil
+    unless label.is_a?(ActiveSupport::SafeBuffer)
+      type  = " field-#{label || 'None'}"
+      label = labelize(label)
+    end
+    label = content_tag(:div, label, class: "label#{type}")
     value = safe_join(value, separator) + separator if value.is_a?(Array)
-    value = content_tag(:div, value, class: "value #{type}")
+    value = content_tag(:div, value, class: "value#{type}")
     label << value
   end
 

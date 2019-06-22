@@ -12,6 +12,7 @@ require_relative 'link'
 require_relative 'name'
 require_relative 'status_model'
 require_relative 'common/title_methods'
+require_relative 'common/artifact_methods'
 
 # Api::TitleDownload
 #
@@ -31,6 +32,7 @@ class Api::TitleDownload < Api::Record::Base
   end
 
   include Api::Common::TitleMethods
+  include Api::Common::ArtifactMethods
 
 end
 

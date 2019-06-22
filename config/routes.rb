@@ -46,7 +46,7 @@ Rails.application.routes.draw do
 
   resources :artifact, except: %i[index]
 
-  get '/artifact/:bookshareId/:type', to: 'artifact#show', as: 'download'
+  get '/artifact/:bookshareId/:fmt', to: 'artifact#show', as: 'download'
 
   # ===========================================================================
   # :section: Organization operations

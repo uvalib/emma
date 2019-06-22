@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 require 'api/message'
 
 require_relative 'api/title_metadata_summary'
+require_relative 'api/common/artifact_methods'
 
 # ApiTitleMetadataSummary
 #
@@ -44,6 +45,7 @@ class ApiTitleMetadataSummary < Api::Message
   end
 
   include Api::Common::TitleMethods
+  include Api::Common::ArtifactMethods
 
 end
 

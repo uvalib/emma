@@ -42,7 +42,7 @@ class ArtifactController < ApplicationController
 
   before_action :initialize_service
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
-  before_action { @format = params[:type] || Api::FormatType.new.default }
+  before_action { @format = params[:fmt] || Api::FormatType.new.default }
 
   # ===========================================================================
   # :section:
@@ -65,7 +65,7 @@ class ArtifactController < ApplicationController
 =end
 
   # == GET /artifact/:id
-  # == GET /artifact/:bookshareId/:type
+  # == GET /artifact/:bookshareId/:fmt
   # Download an artifact of the indicated Bookshare format type.
   #
   def show

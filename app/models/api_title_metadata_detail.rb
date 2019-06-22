@@ -15,6 +15,7 @@ require_relative 'api/link'
 require_relative 'api/name'
 require_relative 'api/usage_restriction'
 require_relative 'api/common/title_methods'
+require_relative 'api/common/artifact_methods'
 
 # ApiTitleMetadataDetail
 #
@@ -86,6 +87,7 @@ class ApiTitleMetadataDetail < Api::Message
   end
 
   include Api::Common::TitleMethods
+  include Api::Common::ArtifactMethods
 
 end
 
