@@ -22,9 +22,10 @@
 
     @extend .results-entry;
 
-    display:       flex;
-    margin-bottom: 0;
-    gap:           0;
+    display:        flex;
+    flex-direction: row;
+    margin-bottom:  0;
+    gap:            0;
 
     //=========================================================================
     // Classes
@@ -32,7 +33,7 @@
 
     .value {
 
-        margin-left: calc(#{$flex-gap-x} / 2);
+        margin-left: $flex-gap-x / 2;
 
         @media #{$narrow-screen} {
             margin-left: $flex-gap-x;

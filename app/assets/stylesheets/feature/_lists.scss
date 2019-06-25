@@ -19,10 +19,18 @@
 /// to have this problem.
 ///
 @mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $ruleset: false) {
+
     display:  grid;
     grid-gap: $y-gap $x-gap;
+
     @if $ruleset {
         grid-template-columns: repeat($columns, $ruleset);
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$browser-ie} {
+        display:        flex;
+        flex-direction: column;
     }
 }
 

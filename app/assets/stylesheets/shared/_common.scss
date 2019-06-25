@@ -35,7 +35,7 @@
     flex-direction:   row;
     justify-content:  space-between;
     margin:           0;
-    padding:          $page-padding;
+    padding:          $page-padding-y $page-padding-x;
     color:            white;
     background-color: #24408e;
 
@@ -92,7 +92,8 @@
 //=============================================================================
 
 // Make focus outline more easily seen.
-:focus {
+a:focus,
+input:focus {
     outline:        2px solid rgba(77, 144, 254, 0.5);
     outline-offset: 2px;
 }
@@ -145,7 +146,15 @@ body {
 //
 // noinspection SassScssResolvedByNameOnly
 .layout-content {
+
     margin: 0 $page-padding-x;
+
+    @media #{$browser-ie} {
+        > * {
+            margin-left:  inherit;
+            margin-right: inherit;
+        }
+    }
 }
 
 // For the heading at the top of the content area.

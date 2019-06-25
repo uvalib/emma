@@ -13,9 +13,23 @@
 // noinspection CssInvalidPropertyValue
 @mixin width-available($fall-back: 50%) {
     width: $fall-back;
-    width: -webkit-fill-available;    // NOTE: valid but flagged by RubyMine
+    width: -webkit-fill-available;      // NOTE: valid but flagged by RubyMine
     width: -moz-available;
     width: available;
+}
+
+/// Set max width to the available width.
+///
+/// @param {String} $fall-back        The value that will be used for MS Edge
+///                                     and Internet Explorer (since they don't
+///                                     support any "fit-content" variant).
+///
+// noinspection CssInvalidPropertyValue
+@mixin max-width-available($fall-back: 100%) {
+    max-width: $fall-back;
+    max-width: -webkit-fill-available;  // NOTE: valid but flagged by RubyMine
+    max-width: -moz-available;          // NOTE: valid but flagged by RubyMine
+    max-width: available;
 }
 
 /// Set width to fit the content.
@@ -27,7 +41,7 @@
 // noinspection CssInvalidPropertyValue
 @mixin width-fit-content($fall-back: auto) {
     width: $fall-back;
-    width: -webkit-fit-content;       // NOTE: valid but flagged by RubyMine
+    width: -webkit-fit-content;         // NOTE: valid but flagged by RubyMine
     width: -moz-fit-content;
     width: fit-content;
 }
@@ -45,8 +59,8 @@
 // noinspection CssInvalidPropertyValue
 @mixin height-available($fall-back: 50%) {
     height: $fall-back;
-    height: -webkit-fill-available;   // NOTE: valid but flagged by RubyMine
-    height: -moz-available;
+    height: -webkit-fill-available;     // NOTE: valid but flagged by RubyMine
+    height: -moz-available;             // NOTE: valid but flagged by RubyMine
     height: available;
 }
 
@@ -59,8 +73,8 @@
 // noinspection CssInvalidPropertyValue
 @mixin height-fit-content($fall-back: auto) {
     height: $fall-back;
-    height: -webkit-fit-content;      // NOTE: valid but flagged by RubyMine
-    height: -moz-fit-content;
+    height: -webkit-fit-content;        // NOTE: valid but flagged by RubyMine
+    height: -moz-fit-content;           // NOTE: valid but flagged by RubyMine
     height: fit-content;
 }
 

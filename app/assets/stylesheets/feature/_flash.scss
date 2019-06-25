@@ -15,11 +15,13 @@
         border-radius: 8px;
     }
 
+    // noinspection SassScssResolvedByNameOnly
     .notice {
-        background-color: #00ff0060;
+        background-color: $notice-bg;
     }
 
+    // noinspection SassScssResolvedByNameOnly
     .alert {
-        background-color: #ff000060;
+        background-color: $alert-bg;
     }
 }

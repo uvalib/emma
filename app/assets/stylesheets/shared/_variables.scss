@@ -1,6 +1,17 @@
 // app/assets/stylesheets/shared/_variables.scss
 
 //=============================================================================
+// Colors.
+//=============================================================================
+
+$green: #00ff00;
+$red:   #ff0000;
+$blue:  #0000ff;
+
+$notice-bg: rgba($green, 0.375);
+$alert-bg:  rgba($red,   0.375);
+
+//=============================================================================
 // Screen dimension definitions.
 //=============================================================================
 
@@ -55,25 +66,27 @@ $large-screen:  $wide-screen   + "," + $tall-screen;   // E.g., desktop
 $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 
 //=============================================================================
+// Internet Explorer 10+ detection
+//=============================================================================
+
+$browser-ie:  "(-ms-high-contrast: none), (-ms-high-contrast: active)";
+$browser-std: "(-ms-high-contrast: '')";
+
+//=============================================================================
 // Generic - baseline definitions.
 //=============================================================================
 
-// Page layout CSS variables.
-:root {
-    --page-padding:    2rem;
-    --flex-gap:        1rem;
-    --thumbnail-max-x: auto;
-    --thumbnail-max-y: 120px;
-}
+$root-page-padding:    2rem;
+$root-flex-gap:        1rem;
+$root-thumbnail-max-x: auto;
+$root-thumbnail-max-y: 120px;
 
 //=============================================================================
 // Desktop - definitions specific to large screens.
 //=============================================================================
 
 @media #{$wide-screen} {
-
     // TODO: ???
-
 }
 
 //=============================================================================
@@ -81,13 +94,10 @@ $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 //=============================================================================
 
 @media #{$medium-width} {
-    // Page layout CSS variables.
-    :root {
-        --page-padding:    1rem;
-        --flex-gap:        0.75rem;
-        --thumbnail-max-x: 120px;
-        --thumbnail-max-y: 120px;
-    }
+    $root-page-padding:    1rem;
+    $root-flex-gap:        0.75rem;
+    $root-thumbnail-max-x: 120px;
+    $root-thumbnail-max-y: 120px;
 }
 
 //=============================================================================
@@ -95,34 +105,19 @@ $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 //=============================================================================
 
 @media #{$narrow-screen} {
-    // Page layout CSS variables.
-    :root {
-        --page-padding:    0.75rem;
-        --flex-gap:        0.25rem;
-        --thumbnail-max-x: 80px;
-        --thumbnail-max-y: 80px;
-    }
+    $root-page-padding:    0.75rem;
+    $root-flex-gap:        0.25rem;
+    $root-thumbnail-max-x: 80px;
+    $root-thumbnail-max-y: 80px;
 }
 
 //=============================================================================
 // Responsive definitions.
 //=============================================================================
 
-// Page layout properties.
-:root {
-    --page-padding-x: var(--page-padding);
-    --page-padding-y: calc(var(--page-padding) / 2);
-    --flex-gap-x:     var(--flex-gap);
-    --flex-gap-y:     var(--flex-gap);
-}
-
-$page-padding-x:    var(--page-padding-x);
-$page-padding-y:    var(--page-padding-y);
-$page-padding:      $page-padding-y $page-padding-x;
-
-$flex-gap-x:        var(--flex-gap-x);
-$flex-gap-y:        var(--flex-gap-y);
-$flex-gap:          $flex-gap-y $flex-gap-x;
-
-$thumbnail-max-x:   var(--thumbnail-max-x);
-$thumbnail-max-y:   var(--thumbnail-max-y);
+$page-padding-x:  $root-page-padding;
+$page-padding-y:  ($root-page-padding / 2);
+$flex-gap-x:      $root-flex-gap;
+$flex-gap-y:      $root-flex-gap;
+$thumbnail-max-x: $root-thumbnail-max-x;
+$thumbnail-max-y: $root-thumbnail-max-y;

@@ -20,7 +20,7 @@
 //=============================================================================
 
 // noinspection SassScssResolvedByNameOnly
-$label-gap: calc(#{$flex-gap-x} / 2);
+$label-gap: $flex-gap-x / 2;
 
 //=============================================================================
 // Placeholder classes
@@ -145,6 +145,10 @@ $label-gap: calc(#{$flex-gap-x} / 2);
         font-size:    smaller;
         font-variant: small-caps;
         flex:         0 1 auto;
+
+        @media #{$browser-ie} {
+            margin-top: 0.5rem;
+        }
 
         @media #{$medium-width} {
             font-size: small;
@@ -271,9 +275,14 @@ $label-gap: calc(#{$flex-gap-x} / 2);
         width:                 100%;
 
         @media #{$wide-screen} {
+
             grid-template-columns: [sort] 1fr [limit] 1fr [language] 1fr;
             grid-template-rows:    auto;
             width:                 auto;
+
+            @media #{$browser-ie} {
+                width: 50%;
+            }
         }
 
         //=====================================================================
@@ -284,7 +293,12 @@ $label-gap: calc(#{$flex-gap-x} / 2);
 
             display:               grid;
             grid-template-columns: [label] 0.25fr [control] 1fr;
-            margin:                calc(#{$flex-gap-y} / 2) 0;
+            margin:                ($flex-gap-y / 2) 0;
+
+            @media #{$browser-ie} {
+                display:        flex;
+                flex-direction: row;
+            }
 
             @media #{$wide-screen} {
 

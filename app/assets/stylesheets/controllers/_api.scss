@@ -43,6 +43,11 @@ body.api-v2 {
         display:     block;
         margin-top:  $page-padding-y;
         padding-top: $page-padding-y;
+
+        @media #{$browser-ie} {
+            margin-left:  inherit;
+            margin-right: inherit;
+        }
     }
 
     .methods {
@@ -52,6 +57,11 @@ body.api-v2 {
         padding:      1rem;
         column-count: auto;
         column-width: 27.5vw;
+
+        @media #{$browser-ie} {
+            margin-left:  inherit;
+            margin-right: inherit;
+        }
 
         @media #{$wide-screen} {
             column-width: 15vw;

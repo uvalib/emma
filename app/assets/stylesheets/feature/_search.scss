@@ -12,7 +12,7 @@
 $results-entry-gap-x: $page-padding-x;
 
 // noinspection SassScssResolvedByNameOnly
-$results-entry-gap-y: calc(2 * #{$page-padding-y});
+$results-entry-gap-y: 2 * $page-padding-y;
 
 //=============================================================================
 // Search controls
@@ -109,7 +109,15 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
 
     @extend .list-2-column;
 
-    margin: -1rem auto 1rem;
+    margin-top:   -1rem;
+    margin-bottom: 1rem;
+
+    // Make items easier to differentiate with "flex-direction: column".
+    @media #{$browser-ie} {
+        .number {
+            border-top: 1px solid darkgray;
+        }
+    }
 }
 
 //=============================================================================
@@ -123,10 +131,10 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
 
     @extend .list-2-column;
 
-    @include break-inside(avoid);
-    @include break-after(right);
-
     margin-bottom: $results-entry-gap-y;
+    break-inside:  avoid;
+    break-inside:  avoid-column;
+    break-after:   left;
 
     @media #{$narrow-screen} {
         grid-template-columns: 100%;
@@ -139,9 +147,14 @@ $results-entry-gap-y: calc(2 * #{$page-padding-y});
     .label,
     .value {
 
-        @include break-inside(avoid);
+        margin-bottom: $results-entry-gap-y / 4;
+        word-break:    break-word;
+        break-inside:  avoid;
+        break-inside:  avoid-column;
 
-        margin-bottom: calc(#{$results-entry-gap-y} / 4);
+        @media #{$browser-ie} {
+            break-inside: auto;
+        }
     }
 
     .label {
