@@ -47,6 +47,8 @@ body.api-v2 {
         @media #{$browser-ie} {
             margin-left:  inherit;
             margin-right: inherit;
+            margin-top:   $ie-page-padding-y;
+            padding-top:  $ie-page-padding-y;
         }
     }
 

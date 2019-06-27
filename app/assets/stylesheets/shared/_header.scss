@@ -16,13 +16,6 @@
 }
 
 //=============================================================================
-// Variables
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-$label-gap: $flex-gap-x / 2;
-
-//=============================================================================
 // Placeholder classes
 //=============================================================================
 
@@ -40,6 +33,10 @@ $label-gap: $flex-gap-x / 2;
 
     width:     33%;
     max-width: calc(#{$lg-width} - (2 * #{$page-padding-x}));
+
+    @media #{$browser-ie} {
+        max-width: calc(#{$lg-width} - (2 * #{$ie-page-padding-x}));
+    }
 
     @media #{$narrow-screen} {
         width:     100%;
@@ -86,6 +83,12 @@ $label-gap: $flex-gap-x / 2;
             margin: auto $flex-gap-x auto 0;
         }
 
+        @media #{$browser-ie} {
+            > * {
+                margin: auto $ie-flex-gap-x auto 0;
+            }
+        }
+
         @media #{$narrow-screen} {
 
             flex-direction: column;
@@ -109,6 +112,12 @@ $label-gap: $flex-gap-x / 2;
 
         > * {
             margin: auto 0 auto $flex-gap-x;
+        }
+
+        @media #{$browser-ie} {
+            > * {
+                margin: auto 0 auto $ie-flex-gap-x;
+            }
         }
 
         @media #{$narrow-screen} {
@@ -260,8 +269,13 @@ $label-gap: $flex-gap-x / 2;
         }
 
         .search-button {
-            margin-left: $label-gap;
+
+            margin-left: $gap-x;
             flex:        0 0 auto;
+
+            @media #{$browser-ie} {
+                margin-left: $ie-gap-x;
+            }
         }
     }
 
@@ -293,11 +307,12 @@ $label-gap: $flex-gap-x / 2;
 
             display:               grid;
             grid-template-columns: [label] 0.25fr [control] 1fr;
-            margin:                ($flex-gap-y / 2) 0;
+            margin:                $gap-y 0;
 
             @media #{$browser-ie} {
                 display:        flex;
                 flex-direction: row;
+                margin:         $ie-gap-y 0;
             }
 
             @media #{$wide-screen} {
@@ -318,7 +333,11 @@ $label-gap: $flex-gap-x / 2;
             margin: 0;
 
             @media #{$wide-screen} {
-                margin-right: $label-gap;
+                margin-right: $gap-x;
+            }
+
+            @media #{$browser-ie} {
+                margin-right: $ie-gap-x;
             }
         }
 

@@ -14,7 +14,8 @@ body.home-welcome {
 
         @extend %panel;
 
-        width:     fit-content;
+        @include width-fit-content;
+
         min-width: 50%;
         max-width: 100%;
 

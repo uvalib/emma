@@ -8,8 +8,9 @@
 //=============================================================================
 
 // Make an actionable item (e.g. <a>) appear non-functional.
-// NOTE: The link should also have attribute 'tab-index="-1"'.
+// NOTE: The link should also have attribute 'tabindex="-1"'.
 %disabled {
+    text-decoration: none;
     &:active { pointer-events:  none; }
     &:hover  { text-decoration: none; }
     &:focus  { outline:         none; }
@@ -38,6 +39,10 @@
     padding:          $page-padding-y $page-padding-x;
     color:            white;
     background-color: #24408e;
+
+    @media #{$browser-ie} {
+        padding: $ie-page-padding-y $ie-page-padding-x;
+    }
 
     * {
         margin: auto 0;
@@ -150,6 +155,9 @@ body {
     margin: 0 $page-padding-x;
 
     @media #{$browser-ie} {
+
+        margin: 0 $ie-page-padding-x;
+
         > * {
             margin-left:  inherit;
             margin-right: inherit;

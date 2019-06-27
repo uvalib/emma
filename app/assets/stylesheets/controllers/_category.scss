@@ -13,7 +13,12 @@
     @extend .results-list;
 
     .pagination-bottom {
+
         margin-top: $results-entry-gap-y;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-results-entry-gap-y;
+        }
     }
 }
 
@@ -33,10 +38,14 @@
 
     .value {
 
-        margin-left: $flex-gap-x / 2;
+        margin-left: $gap-x;
+
+        @media #{$browser-ie} {
+            margin-left: $ie-gap-x;
+        }
 
         @media #{$narrow-screen} {
-            margin-left: $flex-gap-x;
+            margin-left: calc(2 * #{$gap-x});
         }
     }
 }

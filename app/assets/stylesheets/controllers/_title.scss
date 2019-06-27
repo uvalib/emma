@@ -32,6 +32,10 @@
 
         margin-bottom: $results-entry-gap-y;
 
+        @media #{$browser-ie} {
+            margin-bottom: $ie-results-entry-gap-y;
+        }
+
         // Push thumbnail to the right and occupy the right side of the entry.
         @media #{$narrow-screen} {
             grid-column: 3 / -1;
@@ -108,7 +112,12 @@
         }
 
         &.field-Synopsis {
-            margin-bottom: $results-entry-gap-y / 2;
+
+            margin-bottom: calc(#{$results-entry-gap-y} / 2);
+
+            @media #{$browser-ie} {
+                margin-bottom: $ie-results-entry-gap-y / 2;
+            }
         }
 
         &.field-Countries {
@@ -142,8 +151,13 @@
         width: 100%;
 
         @media #{$wide-screen} {
+
             max-height:  66vh;
             margin-left: $results-entry-gap-x;
+
+            @media #{$browser-ie} {
+                margin-left: $ie-results-entry-gap-x;
+            }
         }
 
         img {
