@@ -28,7 +28,10 @@
         }
     }
 
+    // @see TitleHelper#thumbnail
     .thumbnail {
+
+        @extend %thumbnail-dimensions;
 
         margin-bottom: $results-entry-gap-y;
 
@@ -129,6 +132,7 @@
             }
         }
 
+        // noinspection CssOverwrittenProperties
         &.field-Links {
             word-break: break-all;
             word-break: break-word;
@@ -146,6 +150,7 @@
         column-count: 2;
     }
 
+    // @see TitleHelper#cover_image
     .cover-image {
 
         width: 100%;

@@ -38,9 +38,9 @@ module HtmlHelper
     }.compact.uniq.join(' ').html_safe
   end
 
-  # If CSS class name(s) are provided, return a copy of *hash* where the names
-  # are append to the existing `hash[:class]` value.  If no CSS class names
-  # are provided the original *hash* is returned.
+  # If CSS class name(s) are provided, return a copy of *opt* where the names
+  # are append to the existing `opt[:class]` value.  In all cases a new hash is
+  # returned.
   #
   # @param [Hash]                 opt     The target options hash.
   # @param [Array<String, Array>] args    CSS class names.
@@ -53,17 +53,19 @@ module HtmlHelper
   # @see #prepend_css_classes
   #
   def append_css_classes(opt, *args, &block)
-    classes = css_classes(*args, &block).presence
-    if opt && classes
-      opt.merge(class: css_classes(opt[:class], classes))
+    added_classes = css_classes(*args, &block)
+    if added_classes.blank?
+      opt&.dup || {}
+    elsif opt.blank?
+      { class: added_classes }
     else
-      opt || { class: classes }
+      opt.merge(class: css_classes(opt[:class], added_classes))
     end
   end
 
-  # If CSS class name(s) are provided, return a copy of *hash* where the names
-  # are prepended to the existing `hash[:class]` value.  If no CSS class names
-  # are provided the original *hash* is returned.
+  # If CSS class name(s) are provided, return a copy of *opt* where the names
+  # are prepended to the existing `opt[:class]` value.  In all cases a new hash
+  # is returned.
   #
   # @param [Hash]                 opt     The target options hash.
   # @param [Array<String, Array>] args    CSS class names.
@@ -76,11 +78,13 @@ module HtmlHelper
   # @see #append_css_classes
   #
   def prepend_css_classes(opt, *args, &block)
-    classes = css_classes(*args, &block).presence
-    if opt && classes
-      opt.merge(class: css_classes(classes, opt[:class]))
+    added_classes = css_classes(*args, &block)
+    if added_classes.blank?
+      opt&.dup || {}
+    elsif opt.blank?
+      { class: added_classes }
     else
-      opt || { class: classes }
+      opt.merge(class: css_classes(added_classes, opt[:class]))
     end
   end
 

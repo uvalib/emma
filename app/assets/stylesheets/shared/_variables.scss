@@ -1,5 +1,7 @@
 // app/assets/stylesheets/shared/_variables.scss
 
+// @use 'shared/functions'; // TODO: SASS 4.0
+
 //=============================================================================
 // Colors.
 //=============================================================================
@@ -8,8 +10,48 @@ $green: #00ff00;
 $red:   #ff0000;
 $blue:  #0000ff;
 
-$notice-bg: rgba($green, 0.375);
-$alert-bg:  rgba($red,   0.375);
+// Observed Bookshare site colors.
+$bookshare-blue:   #24408e;
+$bookshare-orange: #e65d24;
+
+// @see https://brand.virginia.edu/brand-essentials/colors
+$uva-blue:   #232d4b;
+$uva-orange: #e57200;
+
+// UVA text colors.
+// @see https://brand.virginia.edu/brand-essentials/colors/web-palette
+$uva-text-blue:   $uva-blue;
+$uva-text-orange: $uva-orange; // >= 24px normal; >= 18px bold
+
+// UVA accent colors.
+// @see https://brand.virginia.edu/brand-essentials/colors/web-palette
+$uva-accent-blue:    #141e3c;
+$uva-accent-cyan:    #008fdf;
+$uva-accent-green:   #62bb46;
+$uva-accent-magenta: #ef3f6b;
+$uva-accent-orange:  #eb5f0c;
+$uva-accent-teal:    #25cad3;
+$uva-accent-yellow:  #fdda24;
+$uva-light-gray:     #f1f1ef;
+$uva-medium-gray:    #dadada;
+$uva-text-gray:      #666666;
+$uva-emergency-red:  #df1e43;
+
+// Status backgrounds.
+$failure-bg:    lighter($uva-accent-magenta, 50%);
+$success-bg:    lighter($uva-accent-green,   50%);
+
+// Flash backgrounds.
+$alert-bg:      $failure-bg;
+$notice-bg:     $success-bg;
+$failure-bg:    $alert-bg;
+$success-bg:    $notice-bg;
+
+// Other colors.
+$header-bg:     $uva-blue;
+$panel-bg:      lighter($uva-accent-orange, 75%);
+$panel-accent:  $uva-accent-orange;
+$focus-accent:  $uva-accent-teal;
 
 //=============================================================================
 // Screen dimension definitions.
@@ -75,11 +117,15 @@ $browser-ie: "(-ms-high-contrast: none), (-ms-high-contrast: active)";
 // Generic - baseline definitions.
 //=============================================================================
 
+// The typical thumbnail dimensions.
+$nominal-thumbnail-x:  80px;
+$nominal-thumbnail-y:  120px;
+
 $root-page-padding:    2rem;
 $root-flex-gap:        1rem;
 $root-gap:             0.5rem;
 $root-thumbnail-max-x: auto;
-$root-thumbnail-max-y: 120px;
+$root-thumbnail-max-y: $nominal-thumbnail-y;
 
 //=============================================================================
 // Desktop - definitions specific to large screens.
@@ -104,8 +150,8 @@ $root-thumbnail-max-y: 120px;
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
-        --thumbnail-max-x: 80px;
-        --thumbnail-max-y: 80px;
+        --thumbnail-max-x: #{$nominal-thumbnail-x};
+        --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
 }
 
@@ -118,8 +164,8 @@ $root-thumbnail-max-y: 120px;
         --page-padding:    0.75rem;
         --flex-gap:        0.25rem;
         --gap:             0.25rem;
-        --thumbnail-max-x: 80px;
-        --thumbnail-max-y: 80px;
+        --thumbnail-max-x: #{$nominal-thumbnail-x};
+        --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
 }
 

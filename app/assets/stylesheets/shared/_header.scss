@@ -137,10 +137,23 @@
     //=========================================================================
 
     // The fixed-size EMMA logo element.
+    //
+    // @see LayoutHelper#logo_element
+    //
     .logo {
+
         margin-top: 0;
+        max-height: 3rem;
         font-size:  xx-large;
         flex:       0 0 auto;
+
+        @media #{$narrow-screen} {
+            max-height: 5rem;
+        }
+
+        * {
+            max-height: inherit;
+        }
     }
 
     // The EMMA tagline next to the logo.
@@ -202,6 +215,10 @@
     }
 
     // Sign-in button link element.
+    //
+    // @see SessionsHelper#sign_in_link
+    // @see SessionsHelper#sign_out_link
+    //
     .session-link:focus {
         outline-offset: 1px;
     }
@@ -259,15 +276,18 @@
     // Sections
     //=========================================================================
 
+    // @see LayoutHelper#search_bar
     .search-bar {
 
         @extend %header-search-section;
         @extend %color-black-inside;
 
+        // @see LayoutHelper#search_input
         .search-input {
             flex: 1 1 auto;
         }
 
+        // @see LayoutHelper#search_button
         .search-button {
 
             margin-left: $gap-x;
@@ -303,6 +323,7 @@
         // Sections
         //=====================================================================
 
+        // @see LayoutHelper#menu_container
         .menu-container {
 
             display:               grid;
@@ -328,6 +349,7 @@
         // Elements
         //=====================================================================
 
+        // @see LayoutHelper#menu_container
         .menu-label {
 
             margin: 0;
@@ -341,8 +363,15 @@
             }
         }
 
+        // @see LayoutHelper#menu_control
         .menu-control {
+
             @extend %color-black-inside;
+
+            &:focus-within {
+                outline-offset: 2px;
+                outline:        1px solid white;
+            }
         }
     }
 }

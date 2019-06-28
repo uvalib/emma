@@ -29,12 +29,6 @@ module TitleHelper
   #
   DEFAULT_TITLE_PAGE_SIZE = DEFAULT_PAGE_SIZE
 
-  # Options consumed by #download_links.
-  #
-  # @type [Array<Symbol>]
-  #
-  DOWNLOAD_LINKS_OPTIONS = %i[fmt separator].freeze
-
   # ===========================================================================
   # :section: PaginationHelper overrides
   # ===========================================================================
@@ -89,25 +83,43 @@ module TitleHelper
   # Thumbnail element for the given catalog title.
   #
   # @param [Api::Common::TitleMethods] item
+  # @param [Hash, nil]                 opt    Passed to #image_element except:
+  #
+  # @option opt [Boolean] :link           If *true* make the image a link to
+  #                                         the show page for the item.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no thumbnail.
   #
-  def thumbnail(item)
+  def thumbnail(item, **opt)
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
-    image_element(url, 'thumbnail') if url.present?
+    return if url.blank?
+    id  = item.identifier
+    opt = prepend_css_classes(opt, 'thumbnail')
+    opt[:alt]  ||= I18n.t('emma.title.index.thumbnail.image.alt', item: id)
+    opt[:link] &&= title_path(id: id)
+    image_element(url, opt)
   end
 
   # Cover image element for the given catalog title.
   #
   # @param [Api::Common::TitleMethods] item
+  # @param [Hash, nil]                 opt    Passed to #image_element except:
+  #
+  # @option opt [Boolean] :link           If *true* make the image a link to
+  #                                         the show page for the item.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no cover image.
   #
-  def cover_image(item)
+  def cover_image(item, **opt)
     url = item.respond_to?(:cover_image) && item.cover_image
-    image_element(url, 'cover-image') if url.present?
+    return if url.blank?
+    id  = item.identifier
+    opt = prepend_css_classes(opt, 'cover-image')
+    opt[:alt]  ||= I18n.t('emma.title.show.cover.image.alt', item: id)
+    opt[:link] &&= title_path(id: id)
+    image_element(url, opt)
   end
 
   # Create links to download each artifact of the given item.
@@ -121,7 +133,7 @@ module TitleHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_links(item, **opt)
-    opt, local = extract_local_options(opt, DOWNLOAD_LINKS_OPTIONS)
+    opt, local = extract_local_options(opt, :fmt, :separator)
     format_id  = local[:fmt]
     separator  = local[:separator] || DEFAULT_ELEMENT_SEPARATOR
     item.formats.map { |format|

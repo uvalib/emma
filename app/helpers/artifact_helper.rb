@@ -28,12 +28,6 @@ module ArtifactHelper
   #
   DEFAULT_ARTIFACT_PAGE_SIZE = DEFAULT_PAGE_SIZE
 
-  # Options consumed by #artifact_link.
-  #
-  # @type [Array<Symbol>]
-  #
-  ARTIFACT_LINK_OPTIONS = %i[fmt label].freeze
-
   # ===========================================================================
   # :section: PaginationHelper overrides
   # ===========================================================================
@@ -83,7 +77,7 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format = nil, **opt)
-    opt, local = extract_local_options(opt, ARTIFACT_LINK_OPTIONS)
+    opt, local = extract_local_options(opt, :fmt, :label)
     fmt   = local[:fmt]
     label = local[:label]
     if format.is_a?(Api::Format)

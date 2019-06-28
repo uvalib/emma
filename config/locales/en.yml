@@ -8,6 +8,30 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+    format:
+      BRF:              'BRF'
+      DAISY:            'DAISY with Images'
+      DAISY_AUDIO:      'DAISY Audio'
+      DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
+      DOCX:             'MS Word'
+      EPUB3:            'EPUB 3'
+      PDF:              'PDF'
+      HTML:             'HTML' # NOTE: Exists but not in the API docs.
+      TEXT:             'Text' # NOTE: Exists but not in the API docs.
+
+    error:
+      api:
+        unknown:        'Unknown Bookshare API error'
+
+    # =========================================================================
+    # Layout
+    # =========================================================================
+
+    logo:
+      image:
+        alt:            'EMMA logo'
+        asset:          'EMMA-logo-UVAbg.png'
+
     nav_bar:
       controllers:
         - category
@@ -29,6 +53,10 @@ en:
       language:
         label:          'Language'
         placeholder:    '(Select)'
+
+    # =========================================================================
+    # Controls
+    # =========================================================================
 
     pagination:
       page_size:        10
@@ -61,21 +89,6 @@ en:
         tooltip:        'Go to the next page of results.'
         no_link:
           tooltip:      'Currently on the last page of results.'
-
-    format:
-      BRF:              'BRF'
-      DAISY:            'DAISY with Images'
-      DAISY_AUDIO:      'DAISY Audio'
-      DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
-      DOCX:             'MS Word'
-      EPUB3:            'EPUB 3'
-      PDF:              'PDF'
-      HTML:             'HTML' # NOTE: Exists but not in the API docs.
-      TEXT:             'Text' # NOTE: Exists but not in the API docs.
-
-    error:
-      api:
-        unknown:        'Unknown Bookshare API error'
 
     # =========================================================================
     # Devise controllers
@@ -188,10 +201,22 @@ en:
         title:          'Catalog Titles Index'
         tooltip:        'Search for more catalog items with %{terms}.'
 
+        thumbnail:
+          image:
+            alt:        'Thumbnail image for %{item}'
+
       show:
         label:          'Title'
         title:          'Catalog Title'
         tooltip:        'See details about this catalog title.'
+
+        cover:
+          image:
+            alt:        'Cover image for %{item}'
+          placeholder:
+            image:
+              asset:    'loading-balls.gif'
+              alt:      'Image downloading...'
 
       new:
         label:          'Add'

@@ -16,12 +16,12 @@ body.api-v2 {
     // Placeholder classes
     //=========================================================================
 
-    %section {
+    %api-section {
         width:  99.625%;
         margin: 1rem 0.125rem 0.5rem;
     }
 
-    %panel {
+    %api-panel {
         display:       block;
         max-height:    50vh;
         max-width:     95vw;
@@ -38,7 +38,7 @@ body.api-v2 {
 
     .heading {
 
-        @extend %section;
+        @extend %api-section;
 
         display:     block;
         margin-top:  $page-padding-y;
@@ -54,7 +54,7 @@ body.api-v2 {
 
     .methods {
 
-        @extend %panel;
+        @extend %api-panel;
 
         padding:      1rem;
         column-count: auto;
@@ -97,7 +97,7 @@ body.api-v2 {
 
         .label {
 
-            @extend %section;
+            @extend %api-section;
 
             display:     inline-flex;
             align-items: baseline;
@@ -134,7 +134,7 @@ body.api-v2 {
 
         .value {
 
-            @extend %panel;
+            @extend %api-panel;
 
             &.success {
                 background-color: white;

@@ -1,0 +1,58 @@
+// app/assets/stylesheets/shared/_functions.scss
+
+//=============================================================================
+// SASS functions - numeric
+//=============================================================================
+
+/// Convert a number to a percentage.
+///
+/// @param {Number} $value.           Percentage or fraction.
+///
+/// == Implementation Notes
+/// This replaces the SASS percentage() function in order to accept either a
+/// percentage or a unit-less number.
+///
+// noinspection CssInvalidFunction
+@function percent($value) {
+    $result: $value + 0%;
+    @return if((abs($result) < 1%), ($result * 100), $result);
+}
+
+//=============================================================================
+// SASS functions - color
+//=============================================================================
+
+/// Scale a color lighter (or darker).
+///
+/// @param {String} $color
+/// @param {Number} $level            Percentage or fraction:
+///                                     -100% == black
+///                                        0% == no change
+///                                      100% == white
+///
+/// == Usage Notes
+/// Some accessibility checkers can't handle RGBA colors; use this instead of
+///     rgba() if the intent of using transparency is to lighten a color.
+///
+/// Use this in place of the SASS lighten() or darken() functions since the
+///     may have unintended consequences versus scale-color():
+///
+/// @see https://sass-lang.com/documentation/functions/color#darken
+/// @see https://sass-lang.com/documentation/functions/color#lighten
+///
+// noinspection CssInvalidFunction
+@function lighter($color, $level) {
+    @return scale-color($color, $lightness: percent($level));
+}
+
+/// Scale a color darker (or lighter).
+///
+/// @param {String} $color
+/// @param {Number} $level            Percentage or fraction:
+///                                     -100% == white
+///                                        0% == no change
+///                                      100% == black
+///
+@function darker($color, $level) {
+    @return lighter($color, -($level));
+}

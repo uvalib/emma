@@ -31,6 +31,7 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
     margin:      $results-entry-gap-y 0;
     grid-column: 1 / -1;
 
+    // noinspection SassScssResolvedByNameOnly
     @media #{$browser-ie} {
         margin: $ie-results-entry-gap-y 0;
     }
@@ -124,6 +125,7 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
     margin-bottom: 1rem;
 
     // Make items easier to differentiate with "flex-direction: column".
+    // noinspection SassScssResolvedByNameOnly
     @media #{$browser-ie} {
         .number {
             border-top: 1px solid darkgray;
@@ -137,7 +139,7 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
 
 // One or more label/value pairs.
 //
-// noinspection SassScssResolvedByNameOnly
+// noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
 .results-entry {
 
     @extend .list-2-column;
@@ -159,6 +161,7 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
     // Classes
     //=========================================================================
 
+    // noinspection CssOverwrittenProperties
     .label,
     .value {
 

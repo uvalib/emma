@@ -21,7 +21,7 @@
   <div class="number"><%= number -%></div>
 <%- end -%>
 <%- if item -%>
-  <%= thumbnail(item) %>
+  <%= thumbnail(item, link: true) %>
 <%- end -%>
 <div class="title-list-entry" <%= id -%>>
   <%= item ? field_values(item, metadata) : empty_field_value %>

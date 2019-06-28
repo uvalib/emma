@@ -27,6 +27,20 @@ module ImageHelper
   #
   ASYNCHRONOUS_IMAGES = false
 
+  # Asynchronous image placeholder image relative asset path.
+  #
+  # @type [String]
+  #
+  PLACEHOLDER_ASSET =
+    I18n.t('emma.title.show.cover.placeholder.image.asset').freeze
+
+  # Asynchronous image placeholder image alt text.
+  #
+  # @type [String]
+  #
+  PLACEHOLDER_ALT_TEXT =
+    I18n.t('emma.title.show.cover.placeholder.image.alt').freeze
+
   # ===========================================================================
   # :section: Images
   # ===========================================================================
@@ -35,31 +49,48 @@ module ImageHelper
 
   # Create an HTML image element.
   #
-  # @param [String]      url
-  # @param [String, nil] css_class
-  # @param [Hash, nil]   opt              See #content_tag
+  # @param [String]    url
+  # @param [Hash, nil] opt                Passed to #content_tag except for:
+  #
+  # @option opt [String] :link            If *true* make the image a link to
+  #                                         the given path.
+  # @option opt [String] :alt             Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *url* is invalid.
   #
-  def image_element(url, css_class = nil, **opt)
+  def image_element(url, **opt)
     return if url.blank?
-    image = ASYNCHRONOUS_IMAGES ? placeholder(url) : image_tag(url)
-    opt   = append_css_classes(opt, css_class)
-    content_tag(:div, image, opt)
+    opt, local = extract_local_options(opt, :alt, :link)
+    image =
+      if ASYNCHRONOUS_IMAGES
+        placeholder(url)
+      else
+        alt = local[:alt] || 'Placeholder' # TODO: I18n
+        image_tag(url, alt: alt)
+      end
+    if local[:link].is_a?(String)
+      link_to(image, local[:link], opt)
+    else
+      content_tag(:div, image, opt)
+    end
   end
 
   # Placeholder image.
   #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'
+  # @param [Hash, nil]   opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def placeholder(url, image = nil)
-    image ||= asset_path('loading-balls.gif')
-    html_data = { path: url, turbolinks_track: false }
-    image_tag(image, class: 'placeholder', data: html_data)
+  def placeholder(url, image = nil, **opt)
+    opt = prepend_css_classes(opt, 'placeholder')
+    opt[:alt]  ||= PLACEHOLDER_ALT_TEXT
+    opt[:data] ||= {}
+    opt[:data].merge!(path: url, turbolinks_track: false)
+    image ||= asset_path(PLACEHOLDER_ASSET)
+    image_tag(image, opt)
   end
 
 end

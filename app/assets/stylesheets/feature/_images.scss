@@ -12,48 +12,17 @@
     border-radius: 3px;
 }
 
-//=============================================================================
-// Cover images.
-//=============================================================================
+// noinspection SassScssResolvedByNameOnly
+%thumbnail-dimensions {
 
-.cover-image {
+    max-width:  $thumbnail-max-x;
+    max-height: $thumbnail-max-y;
+    height:     $thumbnail-max-y;
 
-    img {
-
-        @extend %image;
-
-        &.placeholder {
-            display: block;
-            margin:  0 auto;
-        }
-    }
-}
-
-//=============================================================================
-// Thumbnail images.
-//=============================================================================
-
-.thumbnail {
-
-    // noinspection SassScssResolvedByNameOnly
-    img {
-
-        @extend %image;
-
-        max-width:  $thumbnail-max-x;
-        max-height: $thumbnail-max-y;
-        height:     $thumbnail-max-y;
-
-        @media #{$browser-ie} {
-            max-width:  $ie-thumbnail-max-x;
-            max-height: $ie-thumbnail-max-y;
-            height:     $ie-thumbnail-max-y;
-        }
-
-        &.placeholder {
-            width:     max-content;
-            transform: translateY(-50px);
-        }
+    @media #{$browser-ie} {
+        max-width:  $ie-thumbnail-max-x;
+        max-height: $ie-thumbnail-max-y;
+        height:     $ie-thumbnail-max-y;
     }
 }
 
@@ -62,6 +31,42 @@
 //=============================================================================
 
 // NOTE: For "loading-balls.gif"
-img.placeholder {
+.placeholder {
     border: none;
+}
+
+//=============================================================================
+// Cover images.
+//=============================================================================
+
+// @see TitleHelper#cover_image
+.cover-image {
+
+    img {
+        @extend %image;
+    }
+
+    .placeholder {
+        display: block;
+        margin:  0 auto;
+    }
+}
+
+//=============================================================================
+// Thumbnail images.
+//=============================================================================
+
+// @see TitleHelper#thumbnail
+.thumbnail {
+
+    // noinspection SassScssResolvedByNameOnly
+    img {
+        @extend %image;
+        @extend %thumbnail-dimensions;
+    }
+
+    .placeholder {
+        width:     max-content;
+        transform: translateY(-50px);
+    }
 }

@@ -21,6 +21,31 @@ module LayoutHelper
 
   public
 
+  # Text logo.
+  #
+  # @type [String]
+  #
+  LOGO_TEXT =
+    I18n.t('emma.logo.text.label', default: :'emma.application.name').freeze
+
+  # Logo image relative asset path.
+  #
+  # @type [String]
+  #
+  LOGO_ASSET = I18n.t('emma.logo.image.asset').freeze
+
+  # Logo image alt text.
+  #
+  # @type [String]
+  #
+  LOGO_ALT_TEXT = I18n.t('emma.logo.image.alt').freeze
+
+  # Logo tagline.
+  #
+  # @type [String]
+  #
+  LOGO_TAGLINE = I18n.t('emma.application.tagline', default: '').freeze
+
   # The controllers included on the nav bar.
   #
   # @type [Array<Symbol>]
@@ -56,6 +81,37 @@ module LayoutHelper
     NAV_BAR_CONTROLLERS.map { |c|
       [c, I18n.t("emma.#{c}.tooltip", default: '')]
     }.to_h.deep_freeze
+
+  # ===========================================================================
+  # :section: Logo
+  # ===========================================================================
+
+  public
+
+  # The application logo.
+  #
+  # @param [Symbol]    mode           Either :text or :image; default: :image.
+  # @param [Hash, nil] opt            Passed to outer #content_tag except for:
+  #
+  # @option opt [String] :alt         Passed to #image_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def logo_element(mode: :image, **opt)
+    opt = prepend_css_classes(opt, 'logo')
+    alt = opt.delete(:alt)
+    content_tag(:div, opt) do
+      link_to(root_path, title: LOGO_TAGLINE) do
+        if mode == :text
+          LOGO_TEXT
+        else
+          image = asset_path(LOGO_ASSET)
+          alt ||= LOGO_ALT_TEXT
+          image_tag(image, alt: alt)
+        end
+      end
+    end
+  end
 
   # ===========================================================================
   # :section: Nav bar

@@ -53,8 +53,8 @@ module ApiConcern
   # @return [Array<(nil,nil)>] If there was a problem.
   #
   def fetch_my_account(id: nil)
-    api   = ApiService.instance
-    error = nil
+    api  = ApiService.instance
+    item = pref = error = nil
     if id && (item = api.get_account(user: id)).error?
       error = item.error_message
     elsif !id && (item = api.get_my_account).error?

@@ -38,7 +38,7 @@
     margin:           0;
     padding:          $page-padding-y $page-padding-x;
     color:            white;
-    background-color: #24408e;
+    background-color: $header-bg;
 
     @media #{$browser-ie} {
         padding: $ie-page-padding-y $ie-page-padding-x;
@@ -67,12 +67,13 @@
     }
 }
 
-// A panel for highlighting content;
+// A panel for highlighting content.
+// noinspection SassScssResolvedByNameOnly
 %panel {
     display:          block;
     padding:          0.5rem;
-    background-color: lightgoldenrodyellow;
-    border:           2px solid goldenrod;
+    background-color: $panel-bg;
+    border:           2px solid $panel-accent;
     border-radius:    6px;
 }
 
@@ -97,9 +98,10 @@
 //=============================================================================
 
 // Make focus outline more easily seen.
+// noinspection SassScssResolvedByNameOnly
 a:focus,
 input:focus {
-    outline:        2px solid rgba(77, 144, 254, 0.5);
+    outline:        2px solid $focus-accent;
     outline-offset: 2px;
 }
 
@@ -136,6 +138,9 @@ input:focus {
     overflow: hidden;
     clip:     rect(0 0 0 0);
     border:   0;
+    // Satisfy accessibility checks for contrast:
+    color:            black;
+    background-color: white;
 }
 
 //=============================================================================

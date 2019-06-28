@@ -28,12 +28,6 @@ module EditionHelper
   #
   DEFAULT_EDITION_PAGE_SIZE = DEFAULT_PAGE_SIZE
 
-  # Options consumed by #edition_link.
-  #
-  # @type [Array<Symbol>]
-  #
-  EDITION_LINK_OPTIONS = %i[editionId edition].freeze
-
   # ===========================================================================
   # :section: PaginationHelper overrides
   # ===========================================================================
@@ -83,7 +77,7 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_link(item, label = nil, **opt)
-    opt, local = extract_local_options(opt, EDITION_LINK_OPTIONS)
+    opt, local = extract_local_options(opt, :editionId, :edition)
     eid  = local.values.first
     path = "#edition-#{eid}" # TODO: edition show page?
     opt[:tooltip] = EDITION_SHOW_TOOLTIP
