@@ -16,6 +16,7 @@ $(document).on('turbolinks:load', function() {
     // Actions
     // ========================================================================
 
+    //noinspection JSUnresolvedFunction
     $placeholders.each(function() {
         const $image = $(this);
         let   src;
@@ -43,61 +44,74 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [source]
      */
     function loadImage(image, source) {
+
         const func   = 'loadImage: ';
         const $image = $(image);
         const src    = source || $image.data('path') || $image.attr('src');
         const url    = urlProxyPath(src);
         const start  = Date.now();
-        $.ajax({
 
+        let err, content;
+        $.ajax({
             url:  url,
             type: 'GET',
-
-            /**
-             * Create an <img> from the supplied data and insert in $element.
-             *
-             * @param {object}         data
-             * @param {string}         status
-             * @param {XMLHttpRequest} xhr
-             */
-            success: function(data, status, xhr) {
-                if (isMissing(data)) {
-                    console.warn(func + 'no data from ' + url);
-                } else {
-                    console.log(func + 'received ' + data.length);
-                    const content    = 'data:image/jpg;base64,' + data;
-                    const $new_image = $('<img>').attr('src', content);
-                    const $container = $image.parent();
-                    if ($image.hasClass('placeholder')) {
-                        $image.addClass('hidden');
-                        $container.append($new_image);
-                    } else {
-                        $container.empty().append($new_image);
-                    }
-                }
-            },
-
-            /**
-             * Note failures on the console.
-             *
-             * @param {XMLHttpRequest} xhr
-             * @param {string}         status
-             * @param {string}         error
-             */
-            error: function(xhr, status, error) {
-                console.warn(func + status + ': ' + error);
-            },
-
-            /**
-             * Actions after the request is completed.
-             *
-             * @param {XMLHttpRequest} xhr
-             * @param {string}         status
-             */
-            complete: function(xhr, status) {
-                console.log(func + 'complete ' + secondsSince(start) + 'sec.');
-            }
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
         });
+
+        /**
+         * Create an <img> from the supplied data and insert in $element.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            console.log(func + 'received ' + data.length + ' bytes.');
+            console.log(func + 'contents:\n' + JSON.stringify(data));
+            if (isMissing(data)) {
+                err = 'no data';
+            } else {
+                content = 'data:image/jpg;base64,' + data;
+            }
+        }
+
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         error
+         */
+        function onError(xhr, status, error) {
+            err = status + ': ' + error;
+        }
+
+        /**
+         * Actions after the request is completed.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            if (err) {
+                console.warn(func + url + ': ' + err);
+            } else {
+                const $new_image = $('<img>').attr('src', content);
+                const $container = $image.parent();
+                if ($image.hasClass('placeholder')) {
+                    // Add this for accessibility analyzers that don't
+                    // ignore hidden images:
+                    $image.attr('alt', 'Downloading...');
+                    $image.addClass('hidden');
+                    $container.append($new_image);
+                } else {
+                    $container.empty().append($new_image);
+                }
+            }
+            console.log(func + 'complete ' + secondsSince(start) + 'sec.');
+        }
     }
 
     /**

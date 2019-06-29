@@ -216,7 +216,6 @@ en:
           placeholder:
             image:
               asset:    'loading-balls.gif'
-              alt:      'Image downloading...'
 
       new:
         label:          'Add'

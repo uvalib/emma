@@ -6,9 +6,11 @@
 // Common <img> properties.
 //=============================================================================
 
+$image-border-width: 1px;
+
 %image {
     object-fit:    contain;
-    border:        1px solid gray;
+    border:        $image-border-width solid gray;
     border-radius: 3px;
 }
 
@@ -26,13 +28,8 @@
     }
 }
 
-//=============================================================================
-// Placeholder image.
-//=============================================================================
-
-// NOTE: For "loading-balls.gif"
-.placeholder {
-    border: none;
+%placeholder-image {
+    border-color: transparent;
 }
 
 //=============================================================================
@@ -47,6 +44,9 @@
     }
 
     .placeholder {
+
+        @extend %placeholder-image;
+
         display: block;
         margin:  0 auto;
     }
@@ -59,6 +59,11 @@
 // @see TitleHelper#thumbnail
 .thumbnail {
 
+    // NOTE: Determined experimentally for consistency across results pages.
+    $min-thumbnail-width: 94px;
+
+    min-width: $min-thumbnail-width;
+
     // noinspection SassScssResolvedByNameOnly
     img {
         @extend %image;
@@ -66,7 +71,23 @@
     }
 
     .placeholder {
-        width:     max-content;
-        transform: translateY(-50px);
+
+        @extend %placeholder-image;
+
+        width:     $min-thumbnail-width - (2 * $image-border-width);
+        height:    auto;
+        transform: scale(0.5);
+    }
+}
+
+// When a thumbnail is the content of a link, display the focus outline on the
+// image and not on the enclosing <a> element.
+a.thumbnail:focus {
+
+    outline: none;
+
+    // noinspection SassScssResolvedByNameOnly
+    img {
+        @extend %focus;
     }
 }

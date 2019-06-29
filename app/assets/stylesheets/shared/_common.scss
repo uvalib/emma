@@ -93,16 +93,21 @@
     }
 }
 
+// Make focus outline more easily seen.
+// noinspection SassScssResolvedByNameOnly
+%focus {
+    outline:        2px solid $focus-accent;
+    outline-offset: 2px;
+}
+
 //=============================================================================
 // Common settings.
 //=============================================================================
 
 // Make focus outline more easily seen.
-// noinspection SassScssResolvedByNameOnly
 a:focus,
 input:focus {
-    outline:        2px solid $focus-accent;
-    outline-offset: 2px;
+    @extend %focus;
 }
 
 // Include to remove an element from the display.

@@ -21,11 +21,7 @@ module ImageHelper
   #
   # @type [Boolean]
   #
-  # == Implementation Notes
-  # This will be useful when caching is implemented, but for now it results in
-  # too much re-fetching of images.
-  #
-  ASYNCHRONOUS_IMAGES = false
+  ASYNCHRONOUS_IMAGES = true
 
   # Asynchronous image placeholder image relative asset path.
   #
@@ -38,8 +34,11 @@ module ImageHelper
   #
   # @type [String]
   #
-  PLACEHOLDER_ALT_TEXT =
-    I18n.t('emma.title.show.cover.placeholder.image.alt').freeze
+  # == Implementation Notes
+  # This text is added in app/assets/javascripts/feature/image.js; it should
+  # only be defined as a blank string here.
+  #
+  PLACEHOLDER_ALT_TEXT = ''
 
   # ===========================================================================
   # :section: Images
