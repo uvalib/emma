@@ -12,6 +12,10 @@
     @extend .results-list;
 
     margin-top: 1rem;
+
+    .number {
+        margin-top: -0.125rem;
+    }
 }
 
 .edition-list-entry {

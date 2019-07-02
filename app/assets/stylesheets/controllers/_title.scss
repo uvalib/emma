@@ -125,7 +125,9 @@
 
         &.field-Countries {
 
-            display: block;
+            display:     block;
+            font-family: monospace;
+            font-size:   larger;
 
             > * {
                 margin-bottom: 0;

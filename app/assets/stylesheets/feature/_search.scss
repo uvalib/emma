@@ -44,9 +44,8 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
 
 // A total count of the number of search results.
 .search-count {
-    display:     inline-block;
-    margin:      0.5em 0 0 0.5em;
-    font-weight: bold;
+    display: inline-block;
+    margin:  0.5rem 0 0 0.5rem;
 }
 
 //=============================================================================
@@ -117,6 +116,7 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
 // Search result listing
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 .results-list {
 
     @extend .list-2-column;
@@ -124,10 +124,12 @@ $ie-results-entry-gap-y: 2 * $ie-page-padding-y;
     margin-top:   -1rem;
     margin-bottom: 1rem;
 
-    // Make items easier to differentiate with "flex-direction: column".
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$browser-ie} {
-        .number {
+    .number {
+
+        font-family: $font-condensed;
+
+        // Make items easier to differentiate with "flex-direction: column".
+        @media #{$browser-ie} {
             border-top: 1px solid darkgray;
         }
     }
