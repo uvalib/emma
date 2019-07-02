@@ -12,6 +12,13 @@ $(document).on('turbolinks:load', function() {
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
 
+    /**
+     * Flag controlling console debug output.
+     *
+     * @type {boolean}
+     */
+    const DEBUGGING = true;
+
     // ========================================================================
     // Actions
     // ========================================================================
@@ -22,14 +29,14 @@ $(document).on('turbolinks:load', function() {
         let   src;
         // noinspection JSAssignmentUsedAsCondition, AssignmentResultUsedJS
         if (src = $image.data('path')) {
-            console.log('FETCHING IMAGE data-path == ' + src);
+            debug('FETCHING IMAGE data-path ==', src);
             loadImage($image, src);
         } else if ((src = $image.attr('src')) && src.match(/^http/)) {
-            console.log('REPLACING IMAGE src == ' + src);
+            debug('REPLACING IMAGE src ==', src);
             $image.parent().append(imagePlaceholder());
             loadImage($image, src);
         } else {
-            console.log('USING IMAGE src == ' + src);
+            debug('USING IMAGE src ==', src);
         }
     });
 
@@ -68,8 +75,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            console.log(func + 'received ' + data.length + ' bytes.');
-            console.log(func + 'contents:\n' + JSON.stringify(data));
+            debug(func, 'received', data.length, 'bytes.');
             if (isMissing(data)) {
                 err = 'no data';
             } else {
@@ -96,7 +102,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onComplete(xhr, status) {
             if (err) {
-                console.warn(func + url + ': ' + err);
+                consoleWarn(func, (url + ':'), err);
             } else {
                 const $new_image = $('<img>').attr('src', content);
                 const $container = $image.parent();
@@ -110,7 +116,7 @@ $(document).on('turbolinks:load', function() {
                     $container.empty().append($new_image);
                 }
             }
-            console.log(func + 'complete ' + secondsSince(start) + 'sec.');
+            debug(func, 'complete', secondsSince(start), 'sec.');
         }
     }
 
@@ -135,6 +141,15 @@ $(document).on('turbolinks:load', function() {
             .addClass('placeholder')
             .data('turbolinks-track', false)
             .attr('src', LOADING_IMAGE);
+    }
+
+    /**
+     * Emit a console message if debugging.
+     */
+    function debug() {
+        if (DEBUGGING) {
+            consoleLog(arguments);
+        }
     }
 
 });

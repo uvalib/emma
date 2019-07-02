@@ -3,9 +3,15 @@
   # Flash messages.
   flash_messages =
     %i[alert notice].map { |type|
+      content_tag(:p, flash.now[type], class: type.to_s) if flash.now[type]
+    }
+  flash_messages +=
+    %i[alert notice].map { |type|
       content_tag(:p, flash[type], class: type.to_s) if flash[type]
-    }.compact
+    }
   flash.clear
+  flash_messages.compact!
+  flash_messages.uniq!
   return if flash_messages.blank?
   flash_messages = safe_join(flash_messages, "\n")
 -%>

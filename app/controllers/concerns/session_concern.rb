@@ -47,7 +47,9 @@ module SessionConcern
   #
   def after_sign_in_path_for(resource_or_scope)
     store_location_for(resource_or_scope, dashboard_path)
-    session[:current_path].presence || super(resource_or_scope)
+    path = session[:current_path]
+    path = nil if path == welcome_path
+    path || super(resource_or_scope)
   end
 
   # after_sign_in_path_for
@@ -89,17 +91,21 @@ module SessionConcern
   # @param [Hash, nil]   hash
   # @param [Time, nil]   time         Default: `Time.now`.
   # @param [String, nil] path         Default: `request.path`.
-  # @param [String, nil] params       Default: `#url_parameters`.
+  # @param [Hash, nil]   url_params   Default: `#url_parameters`.
   #
   # @return [Hash]
   #
-  def last_operation_update(hash = nil, time: nil, path: nil, params: nil)
+  def last_operation_update(hash = nil, time: nil, path: nil, url_params: nil)
+    url_params ||= params.to_unsafe_h
+    case url_params[:controller]
+      when 'api' then return if url_params[:action] == 'image'
+    end
     values = {
-      time:   time&.to_i || Time.now.to_i,
-      path:   path       || request.path,
-      params: params     || url_parameters
+      time:   (time || Time.now).to_i,
+      path:   (path || request.path),
+      params: url_params.except!(*IGNORED_PARAMETERS)
     }
-    values.merge(hash) if hash.present?
+    values.merge!(hash) if hash.present?
     last_operation.merge!(values.stringify_keys)
       .tap {
         __debug { "session_update 'time' = #{last_operation_time.inspect}" }
@@ -152,7 +158,7 @@ module SessionConcern
     yield.tap do
       error = defined?(@api) && @api&.exception
       error &&= error.message.presence || I18n.t('emma.error.api.unknown')
-      flash[:alert] = error if error
+      flash.now[:alert] = error if error
       last_operation_update
     end
   end

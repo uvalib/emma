@@ -45,7 +45,7 @@ module ApiConcern
 
   public
 
-  # Fill @item and @pref with account information and preferences.
+  # Return account summary information and account preferences.
   #
   # @param [String] id                If *nil*, assumes the current user.
   #
@@ -64,7 +64,7 @@ module ApiConcern
     end
     if error
       flash.clear
-      flash[:alert] = error
+      flash.now[:alert] = error
       item = pref = nil
     end
     return item, pref

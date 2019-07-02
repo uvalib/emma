@@ -71,9 +71,14 @@ class ArtifactController < ApplicationController
   def show
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
     result   = @api.download_title(bookshareId: @bookshare_id, format: @format)
-    complete = result.key.to_s.casecmp('COMPLETED').zero?
-    dl_link  = complete && result.messages.first
-    redirect_to dl_link if dl_link.present?
+    @error   = result.error_message
+    state    = result.key.to_s.upcase
+    dl_link  = (result.messages.first.presence if state == 'COMPLETED')
+    @exception = result.exception
+    respond_to do |format|
+      format.html { redirect_to dl_link if dl_link }
+      format.json { render json: { url: dl_link, state: state } }
+    end
   end
 
   # == GET /artifact/new[?id=:id]

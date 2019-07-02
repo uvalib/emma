@@ -27,8 +27,7 @@ module ImageHelper
   #
   # @type [String]
   #
-  PLACEHOLDER_ASSET =
-    I18n.t('emma.title.show.cover.placeholder.image.asset').freeze
+  PLACEHOLDER_ASSET = I18n.t('emma.placeholder.image.asset').freeze
 
   # Asynchronous image placeholder image alt text.
   #

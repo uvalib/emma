@@ -90,6 +90,12 @@ en:
         no_link:
           tooltip:      'Currently on the last page of results.'
 
+    placeholder:
+      format:           'this'
+      image:            &PLACEHOLDER_IMAGE
+        alt:            'Retrieving...'
+        asset:          'loading-balls.gif'
+
     # =========================================================================
     # Devise controllers
     # =========================================================================
@@ -215,7 +221,7 @@ en:
             alt:        'Cover image for %{item}'
           placeholder:
             image:
-              asset:    'loading-balls.gif'
+              <<:       *PLACEHOLDER_IMAGE
 
       new:
         label:          'Add'
@@ -331,7 +337,32 @@ en:
       show:
         label:          'Artifact'
         title:          'Artifact'
-        tooltip:        'Download this item format.'
+        tooltip:        'Get a copy of the item in this format.'
+        complete:
+          tooltip:      'Click on the button to retrieve the file.'
+        error:
+          server:       'This item could not be downloaded.'
+          javascript:   'You must have JavaScript enabled.'
+
+        link:
+          tooltip:      'Download this item in %{fmt} format.'
+          complete:
+            tooltip:    'Click on the "%{button}" button to retrieve the file.'
+
+        progress:
+          tooltip:      'Click here to cancel the download.'
+          image:
+            <<:         *PLACEHOLDER_IMAGE
+            alt:        'Downloading...'
+
+        failure:
+          prefix:       'Download failed: '
+          cancelled:    'Download cancelled.'
+          unknown:      'unknown error'
+
+        button:
+          label:        'Download'
+          tooltip:      'Click here to retrieve %{fmt} file.'
 
       new:
         label:          'Upload'

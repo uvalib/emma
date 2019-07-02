@@ -87,7 +87,11 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    return if params[:controller].to_s.start_with?('devise')
+    case params[:controller]
+      when 'api'      then return if params[:action] == 'image'
+      when 'artifact' then return if params[:action] == 'show'
+      when /^devise/  then return
+    end
     if session[:current_path].present?
       session[:return_path] = session[:current_path].dup
     else
