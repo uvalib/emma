@@ -7,7 +7,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    const $placeholders = $('.placeholder').not('.hidden');
+    var $placeholders = $('.placeholder').not('.hidden');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
@@ -15,9 +15,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @type {boolean}
+     * @constant {boolean}
      */
-    const DEBUGGING = true;
+    var DEBUGGING = true;
 
     // ========================================================================
     // Actions
@@ -25,8 +25,8 @@ $(document).on('turbolinks:load', function() {
 
     //noinspection JSUnresolvedFunction
     $placeholders.each(function() {
-        const $image = $(this);
-        let   src;
+        var $image = $(this);
+        var src;
         // noinspection JSAssignmentUsedAsCondition, AssignmentResultUsedJS
         if (src = $image.data('path')) {
             debug('FETCHING IMAGE data-path ==', src);
@@ -52,13 +52,13 @@ $(document).on('turbolinks:load', function() {
      */
     function loadImage(image, source) {
 
-        const func   = 'loadImage: ';
-        const $image = $(image);
-        const src    = source || $image.data('path') || $image.attr('src');
-        const url    = urlProxyPath(src);
-        const start  = Date.now();
+        var func   = 'loadImage: ';
+        var $image = $(image);
+        var src    = source || $image.data('path') || $image.attr('src');
+        var url    = urlProxyPath(src);
+        var start  = Date.now();
 
-        let err, content;
+        var err, content;
         $.ajax({
             url:  url,
             type: 'GET',
@@ -104,8 +104,8 @@ $(document).on('turbolinks:load', function() {
             if (err) {
                 consoleWarn(func, (url + ':'), err);
             } else {
-                const $new_image = $('<img>').attr('src', content);
-                const $container = $image.parent();
+                var $new_image = $('<img>').attr('src', content);
+                var $container = $image.parent();
                 if ($image.hasClass('placeholder')) {
                     // Add this for accessibility analyzers that don't
                     // ignore hidden images:
@@ -148,7 +148,7 @@ $(document).on('turbolinks:load', function() {
      */
     function debug() {
         if (DEBUGGING) {
-            consoleLog(Array.from(arguments));
+            consoleLog.apply(null, arguments);
         }
     }
 

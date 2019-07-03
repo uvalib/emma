@@ -4,10 +4,8 @@
 // Basic values and enumerations
 // ============================================================================
 
-/**
- * @type {number}
- */
-const SECOND = 1000; // milliseconds
+/** @constant {number} */
+var SECOND = 1000; // milliseconds
 
 // ============================================================================
 // JSDoc typedefs
@@ -21,7 +19,7 @@ const SECOND = 1000; // milliseconds
  * @typedef Selector
  * @type {string|HTMLElement|jQuery}
  */
-let Selector;
+var Selector;
 
 // ============================================================================
 // Function definitions - Time and date
@@ -79,7 +77,7 @@ function isEmpty(item) {
     } else if (isDefined(item.length)) {
         return !item.length;
     } else if (typeof item === 'object') {
-        for (let property in item) {
+        for (var property in item) {
             if (item.hasOwnProperty(property)) {
                 return false;
             }
@@ -128,51 +126,65 @@ function isPresent(item) {
 
 /**
  * Emit a console log message.
+ *
+ * @param {*} arguments
  */
 function consoleLog() {
-    console.log(logJoin(Array.from(arguments)));
+    console.log(logJoin.apply(null, arguments));
 }
 
 /**
  * Emit a console warning message.
+ *
+ * @param {*} arguments
  */
 function consoleWarn() {
-    console.warn(logJoin(Array.from(arguments)));
+    console.warn(logJoin.apply(null, arguments));
 }
 
 /**
  * Emit a console warning message.
+ *
+ * @param {*} arguments
  */
 function consoleError() {
-    console.error(logJoin(Array.from(arguments)));
+    console.error(logJoin.apply(null, arguments));
 }
 
 /**
  * Join strings into a single message.
  *
+ * @param {*} arguments
+ *
  * @return {string}
  */
 function logJoin() {
-    let message = [];
-    for (let i = 0; i < arguments.length; i++) {
-        let arg = arguments[i] || '';
-        if (arg instanceof Array) {
-            for (let j = 0; j < arg.length; j++) {
-                let argj = arg[j] || '';
-                if (argj instanceof Array) {
-                    for (let k = 0; k < argj.length; k++) {
-                        let argk = argj[k] || '';
-                        if (argk) {
-                            message.push(argk.toString().trim());
-                        }
-                    }
-                } else if (argj) {
-                    message.push(argj.toString().trim());
-                }
-            }
-        } else if (arg) {
-            message.push(arg.toString().trim());
+    var args  = Array.prototype.slice.call(arguments);
+    var parts = logFlatArray(args);
+    return parts.join(' ');
+}
+
+/**
+ * Flatten nested arrays to yield a single array of strings.
+ *
+ * @param {Array|*} arg
+ *
+ * @return {Array}
+ */
+function logFlatArray(arg) {
+    var result = [];
+    if (arg === false) {
+        result.push('false');
+    } else if (isEmpty(arg)) {
+        // No change to result.
+    } else if (arg instanceof Array) {
+        for (var i = 0; i < arg.length; i++) {
+            result = result.concat(logFlatArray(arg[i]));
         }
+    } else if (typeof arg === 'object') {
+        result.push(JSON.stringify(arg));
+    } else {
+        result.push(arg.toString().trim());
     }
-    return message.join(' ');
+    return result;
 }

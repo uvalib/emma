@@ -6,9 +6,9 @@
  * Load Typekit fonts, adding the script if it is not already present.
  */
 (function() {
-    const $head  = $('head');
-    let $script  = $head.find('script[src*="/use.typekit.net/"]');
-    const adding = isMissing($script);
+    var $head   = $('head');
+    var $script = $head.find('script[src*="/use.typekit.net/"]');
+    var adding  = isMissing($script);
     if (adding) {
         $script =
             $('<script>')

@@ -7,7 +7,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    const $artifact_links = $('.artifact .link');
+    var $artifact_links = $('.artifact .link');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($artifact_links)) { return; }
@@ -19,30 +19,30 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @type {boolean}
+     * @constant {boolean}
      */
-    const DEBUGGING = true;
+    var DEBUGGING = true;
 
     /**
      * Frequency for re-requesting a download link.
      *
-     * @type {number}
+     * @constant {number}
      */
-    const RETRY_PERIOD = 1 * SECOND;
+    var RETRY_PERIOD = 1 * SECOND;
 
     /**
      * Frequency for re-requesting a download link for DAISY_AUDIO.
      *
-     * @type {number}
+     * @constant {number}
      */
-    const RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
+    var RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
 
     /**
      * Retry period value which indicates the end of retrying.
      *
-     * @type {number}
+     * @constant {number}
      */
-    const NO_RETRY = -1;
+    var NO_RETRY = -1;
 
     /**
      * Download link state.  Each key represents a state and each value is the
@@ -52,12 +52,12 @@ $(document).on('turbolinks:load', function() {
      * REQUESTING: The request to generate an artifact is in progress.
      * READY:      A direct link to the generated artifact is available.
      *
-     * @type {{FAILED: string, REQUESTING: string, READY: string}}
+     * @constant {{FAILED: string, REQUESTING: string, READY: string}}
      */
-    const STATE = {
+    var STATE = {
         FAILED:     'failed',
         REQUESTING: 'requesting',
-        READY:      'complete',
+        READY:      'complete'
     };
 
     // ========================================================================
@@ -66,10 +66,11 @@ $(document).on('turbolinks:load', function() {
 
     // Override download links in order to get the artifact asynchronously.
     $artifact_links.click(function(event) {
-        const $link = $(this || event.target);
+        var $link = $(this || event.target);
         if ($link.hasClass(STATE.READY)) {
             endRequesting($link);
         } else if (!$link.hasClass(STATE.REQUESTING)) {
+            beginRequesting($link);
             requestArtifact($link);
         }
         return false;
@@ -86,13 +87,13 @@ $(document).on('turbolinks:load', function() {
      */
     function requestArtifact(link) {
 
-        const func  = 'requestArtifact: ';
-        const $link = $(link);
-        const url   = $link.attr('href');
-        const start = Date.now();
+        var func  = 'requestArtifact: ';
+        var $link = $(link);
+        var url   = $link.attr('href');
+        var start = Date.now();
 
         debug(func, 'VIA', url);
-        let err, delay, target;
+        var err, delay, target;
         $.ajax({
             url:      url,
             type:     'GET',
@@ -152,7 +153,6 @@ $(document).on('turbolinks:load', function() {
                 consoleWarn(func, (url + ':'), err);
                 endRequesting($link, err);
             } else {
-                beginRequesting($link);
                 setTimeout(function() { requestArtifact($link); }, delay);
             }
             debug(func, 'complete', secondsSince(start), 'sec.');
@@ -200,11 +200,11 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} event
      */
     function cancelRequest(event) {
-        const state = STATE.REQUESTING;
-        let $link = $(this || event.target);
+        var state = STATE.REQUESTING;
+        var $link = $(this || event.target);
         if (!$link.hasClass(state)) {
-            const selector = '.' + state;
-            let $e = $link.siblings(selector);
+            var selector = '.' + state;
+            var $e = $link.siblings(selector);
             if (!$e.hasClass(state)) {
                 $e = $link.parents(selector);
             }
@@ -221,9 +221,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Progress indicator element selector.
      *
-     * @type {string}
+     * @constant {string}
      */
-    const PROGRESS_SELECTOR = '.' + ARTIFACT_PROGRESS_CLASS; // '.progress';
+    var PROGRESS_SELECTOR = '.' + ARTIFACT_PROGRESS_CLASS;
 
     /**
      * Display a "downloading" progress indicator.
@@ -231,8 +231,10 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function showProgressIndicator($link) {
-        const $indicator = $link.siblings(PROGRESS_SELECTOR);
-        $indicator.removeClass('hidden').on('click', cancelRequest);
+        var $indicator = $link.siblings(PROGRESS_SELECTOR);
+        if ($indicator.hasClass('hidden')) {
+            $indicator.removeClass('hidden').on('click', cancelRequest);
+        }
     }
 
     /**
@@ -241,7 +243,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideProgressIndicator($link) {
-        const $indicator = $link.siblings(PROGRESS_SELECTOR);
+        var $indicator = $link.siblings(PROGRESS_SELECTOR);
         $indicator.addClass('hidden').off('click', cancelRequest);
     }
 
@@ -252,9 +254,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Failure message element selector.
      *
-     * @type {string}
+     * @constant {string}
      */
-    const FAILURE_SELECTOR = '.' + ARTIFACT_FAILURE_CLASS; // '.failure';
+    var FAILURE_SELECTOR = '.' + ARTIFACT_FAILURE_CLASS;
 
     /**
      * Display a download failure message after the download link.
@@ -263,11 +265,11 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [error]
      */
     function showFailureMessage($link, error) {
-        let content = error || '';
+        var content = error || '';
         if (!content.match(/cancelled/)) {
             content = FAILURE_PREFIX + (error || UNKNOWN_ERROR);
         }
-        const $failure = $link.siblings(FAILURE_SELECTOR);
+        var $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.attr('title', content).text(content).removeClass('hidden');
     }
 
@@ -277,7 +279,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideFailureMessage($link) {
-        const $failure = $link.siblings(FAILURE_SELECTOR);
+        var $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.addClass('hidden');
     }
 
@@ -288,9 +290,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Download button element selector.
      *
-     * @type {string}
+     * @constant {string}
      */
-    const BUTTON_SELECTOR = '.' + ARTIFACT_BUTTON_CLASS; // '.button';
+    var BUTTON_SELECTOR = '.' + ARTIFACT_BUTTON_CLASS;
 
     /**
      * Show the button to download the artifact.
@@ -299,20 +301,20 @@ $(document).on('turbolinks:load', function() {
      * @param {string|jQuery} [target]
      */
     function showDownloadButton(link, target) {
-        const $link = $(link);
-        const url   = target || $link.data('path');
+        var $link = $(link);
+        var url   = target || $link.data('path');
         if (target) {
             $link.data('path', url);
         }
         debug('showDownloadButton: FROM', url);
-        const new_tip = $link.data('complete_tooltip');
+        var new_tip = $link.data('complete_tooltip');
         if (new_tip) {
-            const original_tip = $link.attr('title');
+            var original_tip = $link.attr('title');
             $link.data('tooltip', original_tip);
             $link.attr('title', new_tip);
         }
         $link.addClass('disabled').attr('tabindex', -1);
-        const $button = $link.siblings(BUTTON_SELECTOR);
+        var $button = $link.siblings(BUTTON_SELECTOR);
         $button.attr('href', url).removeClass('hidden');
     }
 
@@ -322,14 +324,14 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function hideDownloadButton(link) {
-        const $link = $(link);
-        const original_tip = $link.data('tooltip');
+        var $link = $(link);
+        var original_tip = $link.data('tooltip');
         if (original_tip) {
             $link.attr('title', original_tip);
         }
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
-        const $button = $link.siblings(BUTTON_SELECTOR);
+        var $button = $link.siblings(BUTTON_SELECTOR);
         $button.addClass('hidden');
     }
 
@@ -344,8 +346,8 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function set(new_state, $link) {
-        for (const key in STATE) {
-            const state = STATE[key];
+        for (var key in STATE) {
+            var state = STATE[key];
             if (state === new_state) {
                 $link.addClass(state);
             } else {
@@ -371,9 +373,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Name of the data attribute holding the link's retry period.
      *
-     * @type {string}
+     * @constant {string}
      */
-    const RETRY_ATTRIBUTE = 'retry';
+    var RETRY_ATTRIBUTE = 'retry';
 
     /**
      * Get the retry period for a download link.
@@ -393,7 +395,7 @@ $(document).on('turbolinks:load', function() {
      * @param {number} [value]        Default: RETRY_PERIOD.
      */
     function setRetryPeriod($link, value) {
-        let period = value || defaultRetryPeriod($link);
+        var period = value || defaultRetryPeriod($link);
         $link.data(RETRY_ATTRIBUTE, period);
     }
 
@@ -414,7 +416,7 @@ $(document).on('turbolinks:load', function() {
      * @return {number}
      */
     function defaultRetryPeriod($link) {
-        const href = $link.attr('href') || '';
+        var href = $link.attr('href') || '';
         return href.match(/DAISY_AUDIO/) ? RETRY_DAISY_AUDIO : RETRY_PERIOD;
     }
 
@@ -427,7 +429,7 @@ $(document).on('turbolinks:load', function() {
      */
     function debug() {
         if (DEBUGGING) {
-            consoleLog(Array.from(arguments));
+            consoleLog.apply(null, arguments);
         }
     }
 
