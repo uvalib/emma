@@ -126,8 +126,12 @@ class User < ApplicationRecord
     super
     # NOTE: for temporary test users
     case uid
-      when 'emmacollection@bookshare.org' then add_role(:administrator)
-      when 'emmadso@bookshare.org'        then add_role(:membership_manager)
+      when 'emmacollection@bookshare.org'
+        find_or_create_by(email: uid)
+        add_role(:administrator)
+      when 'emmadso@bookshare.org'
+        find_or_create_by(email: uid)
+        add_role(:membership_manager)
     end
     add_role(DEFAULT_EMMA_ROLE) if roles.blank?
   end
