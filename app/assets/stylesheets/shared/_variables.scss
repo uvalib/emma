@@ -128,6 +128,9 @@ $browser-ie: "(-ms-high-contrast: none), (-ms-high-contrast: active)";
 $nominal-thumbnail-x:  80px;
 $nominal-thumbnail-y:  120px;
 
+// The typical cover image dimensions.
+$nominal-cover-x:      500px;
+
 $root-page-padding:    2rem;
 $root-flex-gap:        1rem;
 $root-gap:             0.5rem;

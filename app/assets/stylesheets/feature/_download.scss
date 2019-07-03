@@ -11,15 +11,20 @@
 
     // @see ArtifactHelper#artifact_link
     .link {
-        // TODO: ???
+        &.complete {
+            color: black;
+        }
     }
 
     // Properties for hidden controls that are shown at different stages.
     // @see app/assets/javascripts/feature/download.js
     %transient-control {
 
-        cursor:      pointer;
-        margin-left: $gap-x;
+        margin-left:     $gap-x;
+        font-weight:     bold;
+        font-size:       smaller;
+        text-decoration: none;
+        cursor:          pointer;
 
         @media #{$browser-ie} {
             margin-left: $ie-gap-x;
@@ -36,12 +41,10 @@
 
         @extend %transient-control;
 
-        padding:          4px;
-        font-weight:      bold;
-        text-decoration:  none;
+        padding:          3px 6px;
         color:            black;
         background-color: $alert-bg;
-        border-radius:    4px;
+        border-radius:    3px;
         cursor:           default;
     }
 
@@ -50,13 +53,14 @@
 
         @extend %transient-control;
 
-        padding:          2px;
-        font-weight:      bold;
-        text-decoration:  none;
-        color:            black;
+        padding:          2px 6px;
         background-color: $success-bg;
-        border-radius:    4px;
+        border-radius:    6px;
         border:           1px solid black;
+
+        &:hover {
+            text-decoration: underline;
+        }
     }
 
 }

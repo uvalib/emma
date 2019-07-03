@@ -148,18 +148,32 @@
 // noinspection SassScssResolvedByNameOnly
 .title-details-container {
 
+    // Making this "display: flex" results in the cover image always showing up
+    // at the top of the second column (and is crucial for avoiding occasional
+    // inconsistencies in Firefox).
     @media #{$wide-screen} {
+
+        display:      flex;
         column-count: 2;
+
+        // Making this "flex: 1 1" seems to be required for MS IE11 to make
+        // room for the cover image; it's disastrous for other browsers.
+        @media #{$browser-ie} {
+            .title-details {
+                flex: 1 1;
+            };
+        }
     }
 
     // @see TitleHelper#cover_image
     .cover-image {
 
-        width: 100%;
+        // Reserve width to avoid watching the page re-layout if a cover image
+        // is acquired asynchronously.
+        min-width: $nominal-cover-x;
 
         @media #{$wide-screen} {
 
-            max-height:  66vh;
             margin-left: $results-entry-gap-x;
 
             @media #{$browser-ie} {
