@@ -75,7 +75,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            debug(func, 'received', data.length, 'bytes.');
+            debug(func, 'received', (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 err = 'no data';
             } else {
@@ -148,7 +148,7 @@ $(document).on('turbolinks:load', function() {
      */
     function debug() {
         if (DEBUGGING) {
-            consoleLog(arguments);
+            consoleLog(Array.from(arguments));
         }
     }
 

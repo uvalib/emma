@@ -129,40 +129,48 @@ function isPresent(item) {
 /**
  * Emit a console log message.
  */
-function consoleLog(...args) {
-    console.log(logJoin(args));
+function consoleLog() {
+    console.log(logJoin(Array.from(arguments)));
 }
 
 /**
  * Emit a console warning message.
  */
-function consoleWarn(...args) {
-    console.warn(logJoin(args));
+function consoleWarn() {
+    console.warn(logJoin(Array.from(arguments)));
 }
 
 /**
  * Emit a console warning message.
  */
-function consoleError(...args) {
-    console.error(logJoin(args));
+function consoleError() {
+    console.error(logJoin(Array.from(arguments)));
 }
 
 /**
  * Join strings into a single message.
  *
- * @param {Arguments, Array} args
- *
  * @return {string}
  */
-function logJoin(args) {
+function logJoin() {
     let message = [];
-    for (let i = 0; i < args.length; i++) {
-        let arg = args[i];
-        if (typeof arg === 'object') {
+    for (let i = 0; i < arguments.length; i++) {
+        let arg = arguments[i] || '';
+        if (arg instanceof Array) {
             for (let j = 0; j < arg.length; j++) {
-                message.push(arg[j].toString().trim());
+                let argj = arg[j] || '';
+                if (argj instanceof Array) {
+                    for (let k = 0; k < argj.length; k++) {
+                        let argk = argj[k] || '';
+                        if (argk) {
+                            message.push(argk.toString().trim());
+                        }
+                    }
+                } else if (argj) {
+                    message.push(argj.toString().trim());
+                }
             }
-        } else {
+        } else if (arg) {
             message.push(arg.toString().trim());
         }
     }
