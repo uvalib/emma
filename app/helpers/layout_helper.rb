@@ -545,9 +545,9 @@ module LayoutHelper
     type = params[:controller] if type == :current
     path = url_for(controller: "/#{type}", action: :index, only_path: true)
     augment = (path == request.path)
-    hidden_fields = augment ? params.to_unsafe_h.except(id, :start) : {}
+    hidden  = augment ? request_parameters.except(id, :offset, :start) : {}
     form_tag(path, opt) do
-      fields = hidden_fields.map { |k, v| hidden_field_tag(k, v) }
+      fields = hidden.map { |k, v| hidden_field_tag(k, v) }
       fields << yield
       safe_join(Array.wrap(fields).flatten)
     end
@@ -569,7 +569,7 @@ module LayoutHelper
   #
   def search_terms(pairs = nil, only: nil, except: nil)
     only   = Array.wrap(only).presence
-    except = Array.wrap(except) + %i[start limit api_key]
+    except = Array.wrap(except) + %i[offset start limit api_key]
     pairs ||= url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except

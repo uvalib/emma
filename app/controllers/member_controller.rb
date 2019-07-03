@@ -53,9 +53,9 @@ class MemberController < ApplicationController
     opt  = pagination_setup
     opt.delete(:limit) # TODO: testing to see whether this screws up Bookshare
     list = @api.get_organization_members(**opt)
-    page_items(list.userAccounts)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.userAccounts
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 
   # == GET /member/:id

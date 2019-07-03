@@ -52,9 +52,9 @@ class CategoryController < ApplicationController
     __debug { "CATEGORY #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
     list = @api.get_categories(**opt)
-    page_items(list.categories)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.categories
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 
 end

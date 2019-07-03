@@ -45,8 +45,8 @@ class ApiService
     # directly (avoiding the OAuth2 flow).
     #
     TEST_USERS = {
-      'emmacollection@bookshare.org' => '1cdc0e01-eb96-4a18-8bfe-ac10c50ef10b',
-      'emmadso@bookshare.org'        => '3381d630-f081-46e5-a407-7f911551bfa0'
+      'emmacollection@bookshare.org' => '044e15f3-15de-4c46-b25e-57f9f58510c5',
+      'emmadso@bookshare.org'        => 'f1fbe518-9564-4351-ba6b-9e5b600e9ba5'
     }.freeze
 
     # Maximum accepted value for a :limit parameter.
@@ -97,6 +97,12 @@ class ApiService
       update_subscription:   %i[startDate userSubscriptionType],
       update_user_pod:       %i[proofSource],
     }.deep_freeze
+
+    # Original request parameters which should not be passed on to the API.
+    #
+    # @type [Array<Symbol>]
+    #
+    IGNORED_PARAMETERS = (ParamsHelper::IGNORED_PARAMETERS + %i[offset]).freeze
 
     # HTTP methods used by the API.
     #
@@ -245,6 +251,7 @@ class ApiService
       # Build API call parameters (minus local options).
       @params = { api_key: API_KEY }
       @params.merge!(args.pop) if args.last.is_a?(Hash)
+      @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
       @params.transform_keys! { |k| (k == :fmt) ? :format : k }
       noexcp  = @params.delete(:no_exception)
       noraise = @params.delete(:no_raise) || noexcp

@@ -22,6 +22,7 @@ module SessionConcern
     # =========================================================================
 
     prepend_before_action :session_check,  unless: :devise_controller?
+    before_action         :cleanup_session
     append_around_action  :session_update, unless: :devise_controller?
 
   end
@@ -29,6 +30,19 @@ module SessionConcern
   include ParamsHelper
 
   include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
+
+  # Keys for session values that should not be touched by #cleanup_session.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  IGNORE_SESSION_KEYS = [
+    'flash',
+    'session_id',
+    '_csrf_token',
+    '_turbolinks_location',
+    /\./,
+    /_return_to$/,
+  ].freeze
 
   # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
@@ -47,7 +61,7 @@ module SessionConcern
   #
   def after_sign_in_path_for(resource_or_scope)
     store_location_for(resource_or_scope, dashboard_path)
-    path = session[:current_path]
+    path = session['current_path']
     path = nil if path == welcome_path
     path || super(resource_or_scope)
   end
@@ -74,8 +88,7 @@ module SessionConcern
   # @return [Hash]
   #
   def last_operation
-    session['last_op'] = {} unless session['last_op']
-    session['last_op']
+    session_section('last_op')
   end
 
   # Time of the last operation performed in this session.
@@ -96,7 +109,7 @@ module SessionConcern
   # @return [Hash]
   #
   def last_operation_update(hash = nil, time: nil, path: nil, url_params: nil)
-    url_params ||= params.to_unsafe_h
+    url_params ||= request_parameters
     case url_params[:controller]
       when 'api' then return if url_params[:action] == 'image'
     end
@@ -112,14 +125,40 @@ module SessionConcern
       }
   end
 
+  # Application-specific `#session` keys.
+  #
+  # @return [Array<String>]
+  #
+  def session_keys
+    session.keys.reject do |key|
+      IGNORE_SESSION_KEYS.any? do |ignore_key|
+        ignore_key.is_a?(Regexp) ? key.match?(ignore_key) : (key == ignore_key)
+      end
+    end
+  end
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
   protected
 
-  # Clean out-dated session information.
+  # Clean out empty session values.
   #
+  # @return [void]
+  #
+  def cleanup_session
+    return unless request.get?
+    case params[:controller]
+      when 'api'      then return if params[:action] == 'image'
+      when 'artifact' then return if params[:action] == 'show'
+    end
+    session_keys.each do |key|
+      value = session[key]
+      session.delete(key) if value.is_a?(Hash) ? value.empty? : value.nil?
+    end
+  end
+
   # If a reboot occurred since the last session update, ensure consistency by
   # performing a sign-out and cleaning up related session data.
   #
@@ -129,14 +168,6 @@ module SessionConcern
   # This must be invoked as a :before_action.
   #
   def session_check
-
-    # Clean out empty session values.
-    session.keys.each do |key|
-      value = session[key]
-      session.delete(key) if value.nil? || (value.is_a?(Hash) && value.empty?)
-    end
-
-    # Reset authentication state after a reboot.
     return if (t_boot = BOOT_TIME.to_i) < (t_last = last_operation_time)
     if t_last.nonzero?
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
@@ -145,7 +176,6 @@ module SessionConcern
     sign_out
     session.delete('omniauth.auth')
     @reset_browser_cache = true
-
   end
 
   # Remember the last operation performed in this session and set the flash

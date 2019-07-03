@@ -22,29 +22,6 @@ module PeriodicalHelper
   #
   PERIODICAL_SHOW_TOOLTIP = I18n.t('emma.periodical.show.tooltip').freeze
 
-  # Default number of results per page if none was specified.
-  #
-  # @type [Integer]
-  #
-  DEFAULT_PERIODICAL_PAGE_SIZE = DEFAULT_PAGE_SIZE
-
-  # ===========================================================================
-  # :section: PaginationHelper overrides
-  # ===========================================================================
-
-  public
-
-  # Default of results per page.
-  #
-  # @return [Integer]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_page_size
-  #
-  def default_page_size
-    DEFAULT_PERIODICAL_PAGE_SIZE
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================

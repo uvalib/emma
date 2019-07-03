@@ -12,16 +12,26 @@ module PaginationConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'PaginationConcern')
+
+    include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+
+    # =========================================================================
+    # :section: Callbacks
+    # =========================================================================
+
+    before_action :cleanup_pagination, only: [:index]
+
   end
 
   include PaginationHelper
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Pagination setup.
   #
@@ -32,47 +42,87 @@ module PaginationConcern
   # @return [Hash]                    URL parameters.
   #
   def pagination_setup(opt = params)
-    session_section = opt[:controller]&.to_s || 'all'
-    ss  = session[session_section] ||= {}
+
+    # Get values from parameters or session.
     opt = url_parameters(opt)
-    this_page = request.original_fullpath
-    ss['limit'] = page_size(opt[:limit] || ss[:page_size])
-    ss['page_offset'] ||= 0
-    if ss['prev_page'] == this_page
-      ss['prev_page']    = prev_page(nil) # TODO: ???
-      ss['page_offset'] -= page_size if ss['page_offset'] >= page_size
-    elsif !opt[:start]
-      ss['prev_page']    = prev_page(nil)
-      ss['page_offset']  = 0
+    ss  = session_section
+    page_size   = opt[:limit]&.to_i  || ss['limit']&.to_i  || self.page_size
+    page_offset = opt[:offset]&.to_i || ss['offset']&.to_i || self.page_offset
+
+    # Get first and current page paths; adjust values if currently on the first
+    # page of results.
+    current    = request.original_fullpath
+    first_page = make_path(request.path, opt.except(:start, :offset))
+    on_first   = (current == first_page)
+    first_page = make_path(request.path, opt.except(:start, :offset, :limit))
+    on_first ||= (current == first_page)
+    prev_page  =
+      if on_first
+        page_offset = 0
+        first_page  = nil
+      elsif "#{request.referer}/".start_with?(root_url)
+        :back
+      end
+
+    # Set current values for the including controller.
+    self.page_size   = page_size
+    self.page_offset = page_offset
+    self.first_page  = first_page
+    self.prev_page   = prev_page
+
+    # Set session values to be used by the subsequent page.
+    ss['limit']  = page_size
+    ss['offset'] = page_offset + page_size
+
+    # Adjust parameters to be transmitted to the API.
+    opt[:limit] = page_size
+    if page_offset.zero?
+      opt.delete(:offset)
     else
-      ss['prev_page']    = prev_page(ss['this_page'])
-      ss['page_offset'] += page_size
+      opt[:offset] = page_offset
     end
-    ss['this_page'] = this_page
-    page_offset(ss['page_offset'])
-    first_page(make_path(request_path, opt.except(:start)))
-    opt.merge(limit: page_size)
+    opt
   end
 
   # Analyze the *list* object to generate the path for the next page of
   # results.
   #
-  # @param [Object] list
-  # @param [Hash]   url_params
+  # @param [Object]    list
+  # @param [Hash, nil] url_params     For `list.next`.
   #
   # @return [String, nil]
   #
-  def next_page_path(list, url_params)
+  def next_page_path(list, url_params = nil)
     if list.respond_to?(:next) && list.next.present?
-      make_path(request.path, url_params.merge(start: list.next))
+      opt = url_params&.except(:limit) || {}
+      opt[:offset] ||= page_offset
+      opt[:offset]  += page_size
+      make_path(request.path, opt.merge(start: list.next))
     elsif list.respond_to?(:get_link)
       list.get_link('next')
-    elsif list.respond_to?(:links) && list.links.is_a?(Array)
-      raise 'Should use :get_link' # TODO: remove section
-      list.links.find { |link|
-        break link.href if (link.rel == 'next') && link.href.present?
-      }
     end
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Clean up pagination-related parameters.
+  #
+  # @return [void]
+  #
+  def cleanup_pagination
+    original_count = request_parameter_count
+
+    # Eliminate :offset if :start is not present.
+    if params[:offset].present? && params[:start].blank?
+      params.delete(:offset)
+    end
+
+    # If parameters were removed, redirect to the corrected URL.
+    will_redirect unless request_parameter_count == original_count
   end
 
 end

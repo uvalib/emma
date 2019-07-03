@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Authentication-related links.
+# Authentication-related methods.
 #
 module SessionsHelper
 

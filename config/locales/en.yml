@@ -70,13 +70,13 @@ en:
         label:          'FIRST'
         tooltip:        'Go to the first page of results.'
         no_link:
-          tooltip:      'No search results.'
+          tooltip:      'Already on the first page of results.'
 
       last_page:
         label:          'LAST'
         tooltip:        'Go to the last page of results.'
         no_link:
-          tooltip:      'No search results.'
+          tooltip:      'Already on the last page of results.'
 
       prev_page:
         label:          'PREV'
@@ -187,6 +187,9 @@ en:
         label:          'Categories'
         title:          'Category Index'
         tooltip:        'Get a category listing.'
+
+        pagination:
+          page_size:    20
 
       show:
         label:          'Category'
@@ -357,7 +360,7 @@ en:
 
         failure:
           prefix:       'Download failed: '
-          cancelled:    'Download cancelled.'
+          cancelled:    'Download cancelled'
           unknown:      'unknown error'
 
         button:

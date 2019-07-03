@@ -52,9 +52,9 @@ class PeriodicalController < ApplicationController
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
     list = @api.get_periodicals(**opt)
-    page_items(list.periodicals)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.periodicals
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 
   # == GET /periodical/:id
@@ -64,8 +64,8 @@ class PeriodicalController < ApplicationController
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
     @item = @api.get_periodical(seriesId: @series_id)
     list  = @api.get_periodical_editions(seriesId: @series_id)
-    page_items(list.periodicalEditions)
-    total_items(list.totalResults)
+    self.page_items  = list.periodicalEditions
+    self.total_items = list.totalResults
   end
 
   # == GET /periodical/new[?id=:id]

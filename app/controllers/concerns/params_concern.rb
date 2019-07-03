@@ -30,7 +30,8 @@ module ParamsConcern
     before_action :resolve_sort,         only:   [:index]
     before_action :initialize_menus,     except: [:index] # TODO: keep?
     before_action :cleanup_parameters
-    before_action :conditional_redirect
+
+    append_before_action :conditional_redirect
 
   end
 
@@ -70,9 +71,9 @@ module ParamsConcern
   #
   def will_redirect(url = nil)
     if url.present?
-      session[:redirect] = url
+      session['redirect'] = url
     else
-      session[:redirect] ||= true
+      session['redirect'] ||= true
     end
   end
 
@@ -92,15 +93,16 @@ module ParamsConcern
       when 'artifact' then return if params[:action] == 'show'
       when /^devise/  then return
     end
-    if session[:current_path].present?
-      session[:return_path] = session[:current_path].dup
+    if session['current_path'].present?
+      session['return_path'] = session['current_path'].dup
     else
-      session.delete(:return_path)
+      session.delete('return_path')
     end
     if request.path == root_path
-      session.delete(:current_path)
+      session.delete('current_path')
     else
-      session[:current_path] = make_path(request.path, url_parameters)
+      request_params = url_parameters.except(:id)
+      session['current_path'] = make_path(request.path, request_params)
     end
   end
 
@@ -114,7 +116,7 @@ module ParamsConcern
   def set_origin
     return unless params[:action] == 'index'
     origin = (params[:controller].presence unless request.path == root_path)
-    session[:origin] = origin || :root
+    session['origin'] = origin || 'root'
   end
 
   # Resolve the menu-generated :sort selection into the appropriate pair of
@@ -128,8 +130,7 @@ module ParamsConcern
     changed = false
 
     # Remember current search parameters.
-    session_section = params[:controller]
-    ss = session[session_section] ||= {}
+    ss   = session_section
     keys = SEARCH_KEYS
     keys += SEARCH_SORT_KEYS if params[:sort].blank?
     keys.each do |key|
@@ -155,8 +156,7 @@ module ParamsConcern
   # @return [void]
   #
   def initialize_menus
-    session_section = params[:controller]
-    ss = session[session_section] ||= {}
+    ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]
       if ss_value.present?
@@ -184,16 +184,14 @@ module ParamsConcern
   # callback.
   #
   def cleanup_parameters
-    changed = false
-    original_size = params.to_unsafe_h.size
+    original_count = request_parameter_count
 
     # Eliminate "noise" parameters.
     params.delete_if { |k, v| k.blank? || v.blank? }
     %w(utf8 commit).each { |k| params.delete(k) }
 
     # If parameters were removed, redirect to the corrected URL.
-    changed ||= (params.to_unsafe_h.size != original_size)
-    will_redirect if changed
+    will_redirect unless request_parameter_count == original_count
   end
 
   # To be run after all before_actions that modify params and require a
@@ -205,8 +203,8 @@ module ParamsConcern
   #
   def conditional_redirect
     return unless request.get?
-    path = session.delete(:redirect)
-    path = params.to_unsafe_h if path.is_a?(TrueClass)
+    path = session.delete('redirect')
+    path = request_parameters if path.is_a?(TrueClass)
     redirect_to(path) if path.present?
   end
 

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Time and time span methods.
+# Support methods related to `#params` and `#session`.
 #
 module ParamsHelper
 
@@ -74,19 +74,62 @@ module ParamsHelper
     [request.base_url, request.path].join
   end
 
-  # Return URL parameters as a hash.
+  # All request parameters (including :controller and :action) as a Hash.
+  #
+  # @return [Integer]
+  #
+  def request_parameter_count(p = nil)
+    p ||= respond_to?(:params) ? params : {}
+    p.keys.size
+  end
+
+  # All request parameters (including :controller and :action) as a Hash.
   #
   # @param [ActionController::Parameters, Hash] p   Default: `#params`.
   #
   # @return [Hash{Symbol=>String}]
   #
+  def request_parameters(p = nil)
+    p ||= respond_to?(:params) ? params : {}
+    p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
+    p.symbolize_keys
+  end
+
+  # The meaningful request URL parameters as a Hash (not including :controller
+  # or :action).
+  #
+  # @param [ActionController::Parameters, Hash] p   Default: `#params`.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  # @see #request_parameters
   # @see #IGNORED_PARAMETERS
   #
   def url_parameters(p = nil)
-    p ||= respond_to?(:params) ? params : {}
-    p = p.except(*IGNORED_PARAMETERS)
-    p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
-    p.symbolize_keys
+    request_parameters(p).except(*IGNORED_PARAMETERS)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Get a reference to `session[section]`.
+  #
+  # @param [String, Symbol, nil] section
+  # @param [Hash, nil]           opt        Default: `#params`.
+  #
+  # @return [Hash]
+  #
+  def session_section(section = nil, opt = nil)
+    if section.is_a?(Hash)
+      opt = section
+      section = nil
+    end
+    section ||= (opt || params)[:controller]&.to_s || 'all'
+    session[section] = {} unless session[section].is_a?(Hash)
+    session[section]
   end
 
 end

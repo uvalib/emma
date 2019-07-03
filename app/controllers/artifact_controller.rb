@@ -58,9 +58,9 @@ class ArtifactController < ApplicationController
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
     list = @api.get_organization_members(**opt)
-    page_items(list.userAccounts)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.userAccounts
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 =end
 
@@ -70,10 +70,10 @@ class ArtifactController < ApplicationController
   #
   def show
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
-    result   = @api.download_title(bookshareId: @bookshare_id, format: @format)
-    @error   = result.error_message
-    state    = result.key.to_s.upcase
-    dl_link  = (result.messages.first.presence if state == 'COMPLETED')
+    result  = @api.download_title(bookshareId: @bookshare_id, format: @format)
+    @error  = result.error_message
+    state   = result.key.to_s.upcase
+    dl_link = (result.messages.first.presence if state == 'COMPLETED')
     @exception = result.exception
     respond_to do |format|
       format.html { redirect_to dl_link if dl_link }

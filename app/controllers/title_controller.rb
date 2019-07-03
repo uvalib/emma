@@ -52,9 +52,9 @@ class TitleController < ApplicationController
     __debug { "TITLE #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
     list = @api.get_titles(**opt)
-    page_items(list.titles)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.titles
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 
   # == GET /title/:id

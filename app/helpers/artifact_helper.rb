@@ -86,34 +86,11 @@ module ArtifactHelper
   ARTIFACT_BUTTON_TOOLTIP =
     I18n.t('emma.artifact.show.button.tooltip').freeze
 
-  # Default number of results per page if none was specified.
-  #
-  # @type [Integer]
-  #
-  DEFAULT_ARTIFACT_PAGE_SIZE = DEFAULT_PAGE_SIZE
-
   # Generic reference to format type for label construction.
   #
   # @type [String]
   #
   THIS_FORMAT = I18n.t('emma.placeholder.format').freeze
-
-  # ===========================================================================
-  # :section: PaginationHelper overrides
-  # ===========================================================================
-
-  public
-
-  # Default of results per page.
-  #
-  # @return [Integer]
-  #
-  # This method overrides:
-  # @see PaginationHelper#default_page_size
-  #
-  def default_page_size
-    DEFAULT_ARTIFACT_PAGE_SIZE
-  end
 
   # ===========================================================================
   # :section:
@@ -213,6 +190,7 @@ module ArtifactHelper
     opt = prepend_css_classes(opt, ARTIFACT_PROGRESS_CLASS)
     opt[:title] ||= ARTIFACT_PROGRESS_TOOLTIP
     opt[:alt]   ||= ARTIFACT_PROGRESS_ALT_TEXT
+    opt[:role]  ||= 'button'
     image       ||= asset_path(ARTIFACT_PROGRESS_ASSET)
     image_tag(image, opt)
   end
@@ -245,6 +223,7 @@ module ArtifactHelper
     label = opt.delete(:label) || label || ARTIFACT_BUTTON_LABEL
     fmt   = format_label(opt.delete(:fmt))
     opt[:title] ||= I18n.t('emma.artifact.show.button.tooltip', fmt: fmt)
+    opt[:role]  ||= 'button'
     link_to(label, '#', **opt)
   end
 

@@ -58,9 +58,9 @@ class EditionController < ApplicationController
     __debug { "EDITION #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
     list = @api.get_periodical_editions(seriesId: @series_id, **opt)
-    page_items(list.periodicalEditions)
-    total_items(list.totalResults)
-    next_page(next_page_path(list, opt))
+    self.page_items  = list.periodicalEditions
+    self.total_items = list.totalResults
+    self.next_page   = next_page_path(list, opt)
   end
 
   # == GET /edition/:edition_id?seriesId=:seriesId

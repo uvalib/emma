@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Pagination values.
+# Pagination support methods.
 #
 module PaginationHelper
 
@@ -15,15 +15,6 @@ module PaginationHelper
 
   include ParamsHelper
   include HtmlHelper
-
-  # Default number of results per page if none was specified.
-  #
-  # @type [Integer]
-  #
-  # == Implementation Notes
-  # This is translated to the API :limit parameter.
-  #
-  DEFAULT_PAGE_SIZE = I18n.t('emma.pagination.page_size').to_i
 
   # Separator between pagination controls.
   #
@@ -80,130 +71,206 @@ module PaginationHelper
   # @return [Integer]
   #
   def default_page_size
-    DEFAULT_PAGE_SIZE
+    @default_page_size ||=
+      begin
+        keys = []
+        if defined?(params)
+          if (controller = params[:controller]).present?
+            if (action = params[:action]).present?
+              keys << :"emma.#{controller}.#{action}.pagination.page_size"
+              keys << :"emma.#{controller}.#{action}.page_size"
+            end
+            keys << :"emma.#{controller}.pagination.page_size"
+            keys << :"emma.#{controller}.page_size"
+          end
+        end
+        keys << :'emma.pagination.page_size'
+        I18n.t(keys.shift, default: keys)
+      end
   end
 
-  # Number of results per page.
-  #
-  # @param [Integer, nil] value       Used only to set @page_size.
+  # Get the number of results per page.
   #
   # @return [Integer]
   #
-  def page_size(value = nil)
-    @page_size = value.to_i unless value.nil?
+  def page_size
     @page_size ||= default_page_size
   end
 
-  # URL to first page of results.
+  # Set the number of results per page.
   #
-  # @param [String, nil] value        Used only to set @first_page.
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def page_size=(value)
+    @page_size = value&.to_i || default_page_size
+  end
+
+  # Get the path to the first page of results.
   #
   # @return [String]
   # @return [nil]                     If @first_page is unset.
   #
-  def first_page(value = nil)
-    @first_page = value.to_s unless value.nil?
+  def first_page
     @first_page ||= nil
   end
 
-  # URL to last page of results.
+  # Set the path to the first page of results.
   #
-  # @param [String, nil] value        Used only to set @last_page.
+  # @param [String, Symbol] value
+  #
+  # @return [String]
+  # @return [nil]                     If @first_page is unset.
+  #
+  def first_page=(value)
+    @first_page = page_path(value)
+  end
+
+  # Get the path to the last page of results.
   #
   # @return [String]
   # @return [nil]                     If @last_page is unset.
   #
-  def last_page(value = nil)
-    @last_page = value.to_s unless value.nil?
+  def last_page
     @last_page ||= nil
   end
 
-  # URL to next page of results. # TODO: ???
+  # Set the path to the last page of results.
   #
-  # @param [String, nil] value        Used only to set @next_page.
+  # @param [String, Symbol] value
+  #
+  # @return [String]
+  # @return [nil]                     If @last_page is unset.
+  #
+  def last_page=(value)
+    @last_page = page_path(value)
+  end
+
+  # Get the path to the next page of results
   #
   # @return [String]
   # @return [nil]                     If @next_page is unset.
   #
-  def next_page(value = nil)
-    @next_page = value.to_s unless value.nil?
+  def next_page
     @next_page ||= nil
   end
 
-  # URL to previous page of results. # TODO: session stack?
+  # Set the path to the next page of results
   #
-  # @param [String, nil] value        Used only to set @prev_page.
+  # @param [String, Symbol] value
+  #
+  # @return [String]
+  # @return [nil]                     If @next_page is unset.
+  #
+  def next_page=(value)
+    @next_page = page_path(value)
+  end
+
+  # Get the path to the previous page of results.
   #
   # @return [String]
   # @return [nil]                     If @prev_page is unset.
   #
-  def prev_page(value = nil)
-    @prev_page = value.to_s unless value.nil?
+  def prev_page
     @prev_page ||= nil
   end
 
-  # Offset of the current page into the total set of results.
+  # Set the path to the previous page of results.
   #
-  # @param [Integer, nil] value       Used only to set @page_size.
+  # @param [String, Symbol] value
+  #
+  # @return [String]
+  # @return [nil]                     If @prev_page is unset.
+  #
+  def prev_page=(value)
+    @prev_page = page_path(value)
+  end
+
+  # Get the offset of the current page into the total set of results.
   #
   # @return [Integer]
   #
-  def page_offset(value = nil)
-    @page_offset = value.to_i unless value.nil?
+  def page_offset
     @page_offset ||= 0
   end
 
-  # Increase the page offset.
+  # Set the offset of the current page into the total set of results.
   #
-  # @param [Integer] delta
-  #
-  # @return [Integer]
-  #
-  def page_offset_increment(delta)
-    if (delta = delta.to_i) < 0
-      page_offset_decrement(delta.abs)
-    else
-      @page_offset ||= 0
-      @page_offset += delta.to_i
-    end
-  end
-
-  # Reduce the page offset.
-  #
-  # @param [Integer] delta
+  # @param [Integer] value
   #
   # @return [Integer]
   #
-  def page_offset_decrement(delta)
-    if (delta = delta.to_i) < 0
-      page_offset_increment(delta.abs)
-    elsif @page_offset.to_i <= delta
-      @page_offset = 0
-    else
-      @page_offset -= delta
-    end
+  def page_offset=(value)
+    @page_offset = value.to_i
   end
 
-  # Current page of results.
-  #
-  # @param [Array<Object>, nil] values  Used only to set @page_items.
+  # Get the current page of results.
   #
   # @return [Array<Object>]
   #
-  def page_items(values = nil)
-    @page_items = Array.wrap(values) unless values.nil?
+  def page_items
     @page_items ||= []
   end
 
-  # Total results count.
+  # Set the current page of results.
   #
-  # @param [Integer, nil] value       Used only to set @total_items.
+  # @param [Array<Object>] values
+  #
+  # @return [Array<Object>]
+  #
+  def page_items=(values)
+    @page_items = Array.wrap(values)
+  end
+
+  # Get the total results count.
   #
   # @return [Integer]
   #
-  def total_items(value = nil)
-    @total_items = value.to_i unless value.nil?
+  def total_items
     @total_items ||= 0
+  end
+
+  # Set the total results count.
+  #
+  # @param [Integer] value
+  #
+  # @return [Integer]
+  #
+  def total_items=(value)
+    @total_items = value.to_i
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Interpret *value* as a URL path or a JavaScript action.
+  #
+  # @param [String, Symbol] value     One of [:back, :forward, :go].
+  # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
+  #
+  # @return [String]
+  # @return [nil]                     If *value* is invalid.
+  #
+  def page_path(value, page = nil)
+    case value
+      when String then value
+      when Symbol then page_history(value, page)
+    end
+  end
+
+  # A value to use in place of a path in order to engage browser history.
+  #
+  # @param [Symbol]       action      One of [:back, :forward, :go].
+  # @param [Integer, nil] page        History page if *directive* is :go.
+  #
+  # @return [String]
+  #
+  def page_history(action, page = nil)
+    "javascript:history.#{action}(#{page});"
   end
 
   # ===========================================================================
@@ -230,7 +297,7 @@ module PaginationHelper
     **opt
   )
     content_tag(:div, prepend_css_classes(opt, 'pagination')) do
-      link_opt = { class: 'link' }
+      link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
         pagination_control(FIRST_PAGE, fp, link_opt),
         pagination_control(PREV_PAGE,  pp, link_opt.merge(rel: 'prev')),
