@@ -67,8 +67,8 @@ module MemberHelper
   # @type [Hash{Symbol=>Symbol}]
   #
   MEMBER_SHOW_FIELDS = {
-    EmailAddress:       :identifier,
     Name:               :name,
+    EmailAddress:       :identifier,
     PhoneNumber:        :phoneNumber,
     Address:            :address,
     DateOfBirth:        :dateOfBirth,

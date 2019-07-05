@@ -42,8 +42,8 @@ en:
 
     search_bar:
       input:
-        label:          'Terms:'
-        placeholder:    'Enter search term...'
+        label:          'Search terms:'
+        placeholder:    'Enter search terms...'
       button:
         label:          'Search'
       sort:

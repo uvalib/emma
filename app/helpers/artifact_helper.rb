@@ -50,7 +50,7 @@ module ArtifactHelper
   ARTIFACT_PROGRESS_ASSET =
     I18n.t(
       'emma.artifact.show.progress.image.asset',
-      #default: ImageHelper::PLACEHOLDER_ASSET
+      default: ImageHelper::PLACEHOLDER_IMAGE_ASSET
     ).freeze
 
   # Artifact download progress indicator alt text.

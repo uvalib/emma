@@ -7,7 +7,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $placeholders = $('.placeholder').not('.hidden');
+    var $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
@@ -104,17 +104,27 @@ $(document).on('turbolinks:load', function() {
             if (err) {
                 consoleWarn(func, (url + ':'), err);
             } else {
-                var $new_image = $('<img>').attr('src', content);
+                // Prepare the image container.
                 var $container = $image.parent();
                 if ($image.hasClass('placeholder')) {
                     // Add this for accessibility analyzers that don't
                     // ignore hidden images:
                     $image.attr('alt', 'Downloading...');
                     $image.addClass('hidden');
-                    $container.append($new_image);
                 } else {
-                    $container.empty().append($new_image);
+                    $container.empty();
                 }
+
+                // Insert the new image element.
+                var id  = $image.data('id')  || $container.data('id');
+                var alt = $image.data('alt') || $container.data('alt');
+                $('<img>')
+                    .attr('src', content)
+                    .attr('alt', (alt || ''))
+                    .attr('id',  (id  || imageId(src)))
+                    .data('turbolinks-permanent', true)
+                    .appendTo($container);
+                $container.addClass('complete');
             }
             debug(func, 'complete', secondsSince(start), 'sec.');
         }
@@ -132,15 +142,28 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * Generate an element ID from a source URL.
+     *
+     * @param {string} url
+     *
+     * @returns {string}
+     */
+    function imageId(url) {
+        var file_name = url.replace(/^.*\//, '');
+        return 'img-' + escape(file_name);
+    }
+
+    /**
      * Create a placeholder image element.
      *
      * @return {jQuery}
      */
     function imagePlaceholder() {
         return $('<img>')
-            .addClass('placeholder')
+            .attr('src', PLACEHOLDER_IMAGE_ASSET)
+            .attr('alt', PLACEHOLDER_IMAGE_ALT)
             .data('turbolinks-track', false)
-            .attr('src', LOADING_IMAGE);
+            .addClass('placeholder');
     }
 
     /**

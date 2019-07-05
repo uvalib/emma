@@ -75,6 +75,8 @@ module TitleHelper
     opt = prepend_css_classes(opt, 'thumbnail')
     opt[:alt]  ||= I18n.t('emma.title.index.thumbnail.image.alt', item: id)
     opt[:link] &&= title_path(id: id)
+    opt[:id] = 'container-img-' + CGI.escapeHTML(id)
+    opt[:'data-turbolinks-permanent'] = true
     image_element(url, opt)
   end
 

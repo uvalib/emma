@@ -241,11 +241,17 @@ module LayoutHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_input(id = :keyword, value = nil, **opt)
+    # Screen-reader-only label element.
+    label_id  = "#{id}-label"
+    label_opt = { id: label_id, class: 'sr-only' }
+    label = label_tag(label_id, SEARCH_INPUT_LABEL, label_opt)
+    # Input field element.
     opt = prepend_css_classes(opt, 'search-input')
-    opt[:placeholder] ||= SEARCH_INPUT_PLACEHOLDER
-    value ||= params[id]
-    label_tag(id, SEARCH_INPUT_LABEL, class: 'sr-only') +
-      search_field_tag(id, value, opt)
+    opt[:placeholder]       ||= SEARCH_INPUT_PLACEHOLDER
+    opt[:'aria-labelledby'] ||= label_id
+    input = search_field_tag(id, (value || params[id]), opt)
+    # Result.
+    label + input
   end
 
   # Generate a form submit control.
@@ -541,13 +547,17 @@ module LayoutHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_form(id, type: :current, **opt)
-    opt  = opt.merge(method: :get) unless opt[:method]
+    opt  = opt.merge(method: :get) if opt[:method].blank?
     type = params[:controller] if type == :current
     path = url_for(controller: "/#{type}", action: :index, only_path: true)
-    augment = (path == request.path)
-    hidden  = augment ? request_parameters.except(id, :offset, :start) : {}
+    hidden_fields =
+      if path == request.path
+        request_parameters.except(id, :offset, :start).map do |k, v|
+          hidden_field_tag(k, v, id: "#{id}-#{k}")
+        end
+      end
     form_tag(path, opt) do
-      fields = hidden.map { |k, v| hidden_field_tag(k, v) }
+      fields = hidden_fields || []
       fields << yield
       safe_join(Array.wrap(fields).flatten)
     end

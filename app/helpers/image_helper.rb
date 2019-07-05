@@ -27,17 +27,18 @@ module ImageHelper
   #
   # @type [String]
   #
-  PLACEHOLDER_ASSET = I18n.t('emma.placeholder.image.asset').freeze
+  PLACEHOLDER_IMAGE_ASSET = I18n.t('emma.placeholder.image.asset').freeze
 
   # Asynchronous image placeholder image alt text.
   #
   # @type [String]
   #
   # == Implementation Notes
-  # This text is added in app/assets/javascripts/feature/image.js; it should
-  # only be defined as a blank string here.
+  # This is defined as an empty string because display of the alt text by the
+  # (for the brief time that the placeholder image might be unavailable) is
+  # disruptive to the entire display layout.
   #
-  PLACEHOLDER_ALT_TEXT = ''
+  PLACEHOLDER_IMAGE_ALT = ''
 
   # ===========================================================================
   # :section: Images
@@ -60,12 +61,12 @@ module ImageHelper
   def image_element(url, **opt)
     return if url.blank?
     opt, local = extract_local_options(opt, :alt, :link)
+    local[:alt] ||= 'Illustration' # TODO: I18n
     image =
       if ASYNCHRONOUS_IMAGES
-        placeholder(url)
+        placeholder(url, alt: local[:alt])
       else
-        alt = local[:alt] || 'Placeholder' # TODO: I18n
-        image_tag(url, alt: alt)
+        image_tag(url, alt: local[:alt])
       end
     if local[:link].is_a?(String)
       link_to(image, local[:link], opt)
@@ -76,6 +77,8 @@ module ImageHelper
 
   # Placeholder image.
   #
+  # If :alt text is provided in *opt* it is preserved as 'data-alt'.
+  #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'
   # @param [Hash, nil]   opt          Passed to #image_tag.
@@ -83,11 +86,12 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def placeholder(url, image = nil, **opt)
-    opt = prepend_css_classes(opt, 'placeholder')
-    opt[:alt]  ||= PLACEHOLDER_ALT_TEXT
-    opt[:data] ||= {}
-    opt[:data].merge!(path: url, turbolinks_track: false)
-    image ||= asset_path(PLACEHOLDER_ASSET)
+    opt  = prepend_css_classes(opt, 'placeholder')
+    data = { path: url, 'turbolinks-track': false }
+    data[:alt] = opt[:alt] if opt[:alt]
+    opt[:data] = opt[:data]&.merge(data) || data
+    opt[:alt]  = PLACEHOLDER_IMAGE_ALT
+    image ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
     image_tag(image, opt)
   end
 
