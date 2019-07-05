@@ -154,9 +154,14 @@ input:focus {
 
 // noinspection SassScssResolvedByNameOnly
 body {
+
     margin:      0;
     padding:     0;
     font-family: $font-normal;
+
+    @media #{$narrow-screen} {
+        font-size: large;
+    }
 }
 
 // The <main> content area of the page.
@@ -178,6 +183,14 @@ body {
 }
 
 // For the heading at the top of the content area.
+//
+// noinspection SassScssResolvedByNameOnly
 .heading {
+
     font-size: xx-large;
+    margin:    $page-padding auto;
+
+    @media #{$wide-screen} {
+        margin-bottom: calc(#{$page-padding} / 2);
+    }
 }

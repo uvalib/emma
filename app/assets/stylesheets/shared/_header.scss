@@ -45,8 +45,11 @@
     }
 }
 
-%color-black-inside {
-    * { color: black; }
+%control-interior {
+    * {
+        color:     black;
+        font-size: large;
+    }
 }
 
 //=============================================================================
@@ -107,6 +110,7 @@
         flex-wrap:       wrap-reverse;
         justify-content: flex-end;
         margin-top:      auto;
+        margin-left:     $page-padding-x;
         overflow:        hidden;
         flex:            1 1 auto;
 
@@ -280,7 +284,13 @@
     .search-bar {
 
         @extend %header-search-section;
-        @extend %color-black-inside;
+        @extend %control-interior;
+
+        margin: $gap-y 0;
+
+        @media #{$narrow-screen} {
+            * { font-size: larger; }
+        }
 
         // @see LayoutHelper#search_input
         .search-input {
@@ -290,6 +300,7 @@
         // @see LayoutHelper#search_button
         .search-button {
 
+            height:      100%;
             margin-left: $gap-x;
             flex:        0 0 auto;
 
@@ -327,14 +338,8 @@
         .menu-container {
 
             display:               grid;
-            grid-template-columns: [label] 0.25fr [control] 1fr;
+            grid-template-columns: [label] 0.33fr [control] 1fr;
             margin:                $gap-y 0;
-
-            @media #{$browser-ie} {
-                display:        flex;
-                flex-direction: row;
-                margin:         $ie-gap-y 0;
-            }
 
             @media #{$wide-screen} {
 
@@ -342,6 +347,12 @@
                 margin:                auto;
 
                 &:first-of-type { margin-left: 0; }
+            }
+
+            @media #{$browser-ie} {
+                display:        flex;
+                flex-direction: row;
+                margin:         $ie-gap-y 0;
             }
         }
 
@@ -352,7 +363,8 @@
         // @see LayoutHelper#menu_container
         .menu-label {
 
-            margin: 0;
+            margin:    0;
+            font-size: large;
 
             @media #{$wide-screen} {
                 margin-right: $gap-x;
@@ -366,11 +378,17 @@
         // @see LayoutHelper#menu_control
         .menu-control {
 
-            @extend %color-black-inside;
+            @extend %control-interior;
 
             &:focus-within {
                 outline-offset: 2px;
                 outline:        1px solid white;
+            }
+
+            select {
+                @media #{$narrow-screen} {
+                    width: 100%;
+                }
             }
         }
     }

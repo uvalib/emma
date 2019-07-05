@@ -74,7 +74,7 @@ module ApiHelper
 
       elsif value.is_a?(Api::Record::Base) || value.is_a?(String)
         # === Valid JSON response value ===
-        link_opt = {}
+        link_opt = { rel: 'noreferrer' }
         link_opt[:target] = '_blank' unless params[:action] == 'v2'
         quot = '&quot;'
         pretty_json(value)

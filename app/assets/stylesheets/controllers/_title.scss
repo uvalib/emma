@@ -155,6 +155,7 @@
 
         display:      flex;
         column-count: 2;
+        margin-top:   $page-padding;
 
         // Making this "flex: 1 1" seems to be required for MS IE11 to make
         // room for the cover image; it's disastrous for other browsers.
@@ -172,13 +173,17 @@
         // is acquired asynchronously.
         min-width: $nominal-cover-x;
 
+        @media #{$narrow-screen} {
+            min-width: unset;
+            max-width: 100%;
+        }
+
         @media #{$wide-screen} {
-
             margin-left: $results-entry-gap-x;
+        }
 
-            @media #{$browser-ie} {
-                margin-left: $ie-results-entry-gap-x;
-            }
+        @media #{$browser-ie} {
+            margin-left: $ie-results-entry-gap-x;
         }
 
         img {

@@ -14,7 +14,11 @@
     width: min-content;
 
     > * {
+
         font-weight: bold;
-        font-size:   smaller;
+
+        @media #{$wide-screen} {
+            font-size: small;
+        }
     }
 }

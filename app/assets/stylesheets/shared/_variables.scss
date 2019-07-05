@@ -183,14 +183,18 @@ $root-thumbnail-max-y: $nominal-thumbnail-y;
 // Internet Explorer definitions.
 //=============================================================================
 
-$ie-page-padding-x:  $root-page-padding;
-$ie-page-padding-y:  ($root-page-padding / 2);
-$ie-flex-gap-x:      $root-flex-gap;
-$ie-flex-gap-y:      $root-flex-gap;
-$ie-gap-x:           $root-gap;
-$ie-gap-y:           $root-gap;
+$ie-page-padding:    $root-page-padding;
+$ie-flex-gap:        $root-flex-gap;
+$ie-gap:             $root-gap;
 $ie-thumbnail-max-x: $root-thumbnail-max-x;
 $ie-thumbnail-max-y: $root-thumbnail-max-y;
+
+$ie-page-padding-x:  $ie-page-padding;
+$ie-page-padding-y:  ($ie-page-padding / 2);
+$ie-flex-gap-x:      $ie-flex-gap;
+$ie-flex-gap-y:      $ie-flex-gap;
+$ie-gap-x:           $ie-gap;
+$ie-gap-y:           $ie-gap;
 
 //=============================================================================
 // Responsive definitions.
@@ -205,11 +209,15 @@ $ie-thumbnail-max-y: $root-thumbnail-max-y;
     --gap-y:          var(--gap);
 }
 
+$page-padding:      var(--page-padding);
+$flex-gap:          var(--flex-gap);
+$gap:               var(--gap);
+$thumbnail-max-x:   var(--thumbnail-max-x);
+$thumbnail-max-y:   var(--thumbnail-max-y);
+
 $page-padding-x:    var(--page-padding-x);
 $page-padding-y:    var(--page-padding-y);
 $flex-gap-x:        var(--flex-gap-x);
 $flex-gap-y:        var(--flex-gap-y);
 $gap-x:             var(--gap-x);
 $gap-y:             var(--gap-y);
-$thumbnail-max-x:   var(--thumbnail-max-x);
-$thumbnail-max-y:   var(--thumbnail-max-y);

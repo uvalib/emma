@@ -21,6 +21,11 @@ $image-border-width: 1px;
     max-height: $thumbnail-max-y;
     height:     $thumbnail-max-y;
 
+    @media #{$narrow-screen} {
+        max-height: unset;
+        height:     auto;
+    }
+
     @media #{$browser-ie} {
         max-width:  $ie-thumbnail-max-x;
         max-height: $ie-thumbnail-max-y;
