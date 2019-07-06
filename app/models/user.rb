@@ -128,9 +128,20 @@ class User < ApplicationRecord
     case uid
       when 'emmacollection@bookshare.org'
         find_or_create_by(email: uid)
+        add_role(:catalog_searcher)
+        add_role(:catalog_curator)
+        add_role(:artifact_downloader)
+        add_role(:artifact_submitter)
+        add_role(:membership_viewer)
+        add_role(:membership_manager)
         add_role(:administrator)
       when 'emmadso@bookshare.org'
         find_or_create_by(email: uid)
+        add_role(:catalog_searcher)
+        add_role(:catalog_curator)
+        add_role(:artifact_downloader)
+        add_role(:artifact_submitter)
+        add_role(:membership_viewer)
         add_role(:membership_manager)
     end
     add_role(DEFAULT_EMMA_ROLE) if roles.blank?
