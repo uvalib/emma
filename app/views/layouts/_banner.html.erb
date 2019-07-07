@@ -5,6 +5,7 @@
   return if skip
   tagline      = LayoutHelper::LOGO_TAGLINE
   username     = current_user.to_s
+  username_tip = t('emma.user.tooltip', user: username)
   session_link = current_user ? sign_out_link : sign_in_link
 -%>
 
@@ -14,7 +15,7 @@
     <div class="tagline"><%= tagline -%></div>
   </div>
   <div class="control-area">
-    <div class="user" title="<%= username -%>"><%= username -%></div>
+    <div class="user" title="<%= username_tip -%>"><%= username -%></div>
     <div class="session"><%= session_link -%></div>
   </div>
 </div>

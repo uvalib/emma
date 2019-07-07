@@ -61,15 +61,15 @@ module ImageHelper
   def image_element(url, **opt)
     return if url.blank?
     opt, local = extract_local_options(opt, :alt, :link)
-    local[:alt] ||= 'Illustration' # TODO: I18n
-    image =
-      if ASYNCHRONOUS_IMAGES
-        placeholder(url, alt: local[:alt])
-      else
-        image_tag(url, alt: local[:alt])
-      end
-    if local[:link].is_a?(String)
-      link_to(image, local[:link], opt)
+    alt  = local[:alt] || 'Illustration' # TODO: I18n
+    link = local[:link].presence
+    iopt = { alt: alt }
+    iopt[:'aria-hidden'] = true if link
+    image = ASYNCHRONOUS_IMAGES ? placeholder(url, iopt) : image_tag(url, iopt)
+    if link
+      opt[:'aria-hidden'] = true
+      opt[:tabindex]      = -1
+      link_to(image, link, opt)
     else
       content_tag(:div, image, opt)
     end

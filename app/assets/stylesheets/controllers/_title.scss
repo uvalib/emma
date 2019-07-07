@@ -186,10 +186,8 @@
             margin-left: $ie-results-entry-gap-x;
         }
 
-        img {
-            @media #{$narrow-screen} {
-                width: 100%;
-            }
+        img:not(.placeholder) {
+            width: 100%;
         }
     }
 }

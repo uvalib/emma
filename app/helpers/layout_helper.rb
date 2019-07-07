@@ -244,7 +244,7 @@ module LayoutHelper
     # Screen-reader-only label element.
     label_id  = "#{id}-label"
     label_opt = { id: label_id, class: 'sr-only' }
-    label = label_tag(label_id, SEARCH_INPUT_LABEL, label_opt)
+    label = content_tag(:span, SEARCH_INPUT_LABEL, label_opt)
     # Input field element.
     opt = prepend_css_classes(opt, 'search-input')
     opt[:placeholder]       ||= SEARCH_INPUT_PLACEHOLDER
