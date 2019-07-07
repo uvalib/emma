@@ -196,11 +196,15 @@ module Roles
     administrator
   ].freeze
 
-  # EMMA role for an anonymous user.
+  # EMMA role(s) for prototypical users.
   #
-  # @type [Symbol]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  DEFAULT_EMMA_ROLE = EMMA_ROLES[0]
+  DEFAULT_ROLES = {
+    admin:     EMMA_ROLES,
+    dso:       (EMMA_ROLES - %i[administrator]),
+    anonymous: %i[catalog_searcher],
+  }.deep_freeze
 
 end
 

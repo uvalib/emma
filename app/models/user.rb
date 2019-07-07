@@ -102,7 +102,7 @@ class User < ApplicationRecord
   # ===========================================================================
 
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  # :confirmable, :lockable, :timeoutable, :trackable
   devise :database_authenticatable, :rememberable, :omniauthable,
          omniauth_providers: User::OmniauthCallbacksController::PROVIDERS
 
@@ -111,6 +111,12 @@ class User < ApplicationRecord
   # ===========================================================================
 
   rolify
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  after_create :assign_default_role
 
   # ===========================================================================
   # :section:
@@ -122,29 +128,9 @@ class User < ApplicationRecord
   #
   # @param [Hash, nil] attributes
   #
-  def initialize(attributes = nil)
+  def initialize(attributes = nil) # TODO: keep?
     super
-    # NOTE: for temporary test users
-    case uid
-      when 'emmacollection@bookshare.org'
-        find_or_create_by(email: uid)
-        add_role(:catalog_searcher)
-        add_role(:catalog_curator)
-        add_role(:artifact_downloader)
-        add_role(:artifact_submitter)
-        add_role(:membership_viewer)
-        add_role(:membership_manager)
-        add_role(:administrator)
-      when 'emmadso@bookshare.org'
-        find_or_create_by(email: uid)
-        add_role(:catalog_searcher)
-        add_role(:catalog_curator)
-        add_role(:artifact_downloader)
-        add_role(:artifact_submitter)
-        add_role(:membership_viewer)
-        add_role(:membership_manager)
-    end
-    add_role(DEFAULT_EMMA_ROLE) if roles.blank?
+    assign_default_role # TODO: remove after tmp test users have been updated
   end
 
   # ===========================================================================
@@ -187,6 +173,49 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # assign_default_role
+  #
+  # @return [void]
+  #
+  # == Implementation Notes
+  # A new User will be created the first time a new person authenticates via
+  # Bookshare -- this may be the place to query the Bookshare API for that
+  # user's Bookshare role in order to map it onto EMMA "prototype user".
+  #
+  def assign_default_role
+    return if self.roles.present?
+    prototype_user =
+      case self.uid
+        when 'emmacollection@bookshare.org' then :admin # NOTE: tmp test user
+        when 'emmadso@bookshare.org'        then :dso   # NOTE: tmp test user
+        else                                     :anonymous
+      end
+    add_roles(prototype_user)
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  private
+
+  # Add EMMA role(s) to the current user based on its prototype.
+  #
+  # @param [Symbol] prototype_user    @see `Roles#DEFAULT_ROLES.keys`.
+  #
+  # @return [Array<Role>]             Added role(s).
+  #
+  def add_roles(prototype_user)
+    added_roles = DEFAULT_ROLES[prototype_user] || DEFAULT_ROLES[:anonymous]
+    added_roles.map { |role| add_role(role) }
+  end
+
+  # ===========================================================================
   # :section: Class methods
   # ===========================================================================
 
@@ -204,7 +233,7 @@ class User < ApplicationRecord
   def self.from_omniauth(data)
     return unless data.is_a?(Hash)
     data = OmniAuth::AuthHash.new(data)
-    find_or_create_by(email: data.uid).tap do |user|
+    find_or_create_by(email: data.uid.downcase).tap do |user|
       # user.email       = auth.info.email
       user.first_name    = data.info.first_name
       user.last_name     = data.info.last_name

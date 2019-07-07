@@ -15,8 +15,10 @@ ActiveRecord::Schema.define(version: 2019_05_28_203060) do
   create_table "artifacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "format"
     t.bigint "title_id"
+    t.bigint "edition_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["edition_id"], name: "index_artifacts_on_edition_id"
     t.index ["title_id"], name: "index_artifacts_on_title_id"
   end
 
@@ -94,6 +96,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_203060) do
     t.index ["user_id"], name: "index_users_roles_on_user_id"
   end
 
+  add_foreign_key "artifacts", "editions"
   add_foreign_key "artifacts", "titles"
   add_foreign_key "editions", "reading_lists"
   add_foreign_key "members", "users"
