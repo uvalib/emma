@@ -13,6 +13,12 @@ module TimeHelper
     __included(base, '[TimeHelper]')
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   MICROSECONDS_PER_SECOND = 1000000.0
   MILLISECONDS_PER_SECOND = 1000.0
 

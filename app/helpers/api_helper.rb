@@ -16,6 +16,7 @@ module ApiHelper
     __included(base, '[ApiHelper]')
   end
 
+  include GenericHelper
   include ParamsHelper
 
   # ===========================================================================

@@ -13,19 +13,21 @@ class ApiCachingMiddleware < Faraday::Middleware
 
   include CachingMiddleware::Concern
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Default options.
+  #
+  # @type [Hash{Symbol=>Object}]
   #
   DEFAULT_OPTIONS =
     CachingMiddleware::Defaults::DEFAULT_OPTIONS.merge(
       namespace:  'api',
       expires_in: DEFAULT_EXPIRATION,
     ).deep_freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # Initialize an instance.
   #

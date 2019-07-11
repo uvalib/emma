@@ -24,6 +24,28 @@ en:
         unknown:        'Unknown Bookshare API error'
 
     # =========================================================================
+    # HTML page head.
+    # =========================================================================
+
+    head:
+
+      title:
+        prefix:         ''
+        suffix:         'EMMA'
+
+      description:
+        prefix:         'Print-disability accessible content'
+
+      favicon:
+        asset:          'favicon.ico'
+
+      stylesheets:
+        - 'application'
+
+      javascripts:
+        - 'application'
+
+    # =========================================================================
     # Layout
     # =========================================================================
 
@@ -34,11 +56,11 @@ en:
 
     nav_bar:
       controllers:
-        - category
-        - title
-        - periodical
-        - member
-        - api
+        - 'category'
+        - 'title'
+        - 'periodical'
+        - 'member'
+        - 'api'
 
     search_bar:
       input:

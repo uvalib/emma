@@ -26,6 +26,12 @@ class ApiService
 
     include Common
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # @type [Hash{Symbol=>String}]
     READING_LIST_SEND_MESSAGE = {
 

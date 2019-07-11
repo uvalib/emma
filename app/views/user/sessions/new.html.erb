@@ -3,7 +3,9 @@
   # Login page.
   title ||= t('emma.user.sessions.new.label')
 
-  @page_title = title
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex, :nofollow)
 
   form_opt = {
 =begin # TODO: application local accounts?

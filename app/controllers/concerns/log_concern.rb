@@ -17,7 +17,7 @@ module LogConcern
     __included(base, 'LogConcern')
   end
 
-  include ParamsHelper
+  include GenericHelper
 
   # ===========================================================================
   # :section: Callbacks

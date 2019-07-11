@@ -3,7 +3,9 @@
   # Edition show page.
   item  ||= @item
   title ||= item&.label || t('emma.edition.show.title')
-  @page_title = title
+
+  set_page_title(title)
+  set_page_description(title)
 -%>
 
 <h1 class="heading"><%= title -%></h1>

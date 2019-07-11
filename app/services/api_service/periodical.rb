@@ -24,6 +24,12 @@ class ApiService
 
     include Common
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # @type [Hash{Symbol=>String}]
     PERIODICAL_SEND_MESSAGE = {
 

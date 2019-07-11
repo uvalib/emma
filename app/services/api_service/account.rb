@@ -15,6 +15,12 @@ class ApiService
 
     include Common
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # @type [Hash{Symbol=>String}]
     ACCOUNT_SEND_MESSAGE = {
 
@@ -114,24 +120,24 @@ class ApiService
     #
     # @param [Hash, nil] opt
     #
-    # @options opt [String]   :firstName          *REQUIRED*
-    # @options opt [String]   :lastName           *REQUIRED*
-    # @options opt [String]   :phoneNumber
-    # @options opt [String]   :emailAddress       *REQUIRED*
-    # @options opt [String]   :address1           *REQUIRED*
-    # @options opt [String]   :address2
-    # @options opt [String]   :city               *REQUIRED*
-    # @options opt [String]   :state
-    # @options opt [String]   :country            *REQUIRED*
-    # @options opt [String]   :postalCode         *REQUIRED*
-    # @options opt [String]   :guardianFirstName
-    # @options opt [String]   :guardianLastName
-    # @options opt [String]   :dateOfBirth
-    # @options opt [String]   :language
-    # @options opt [Boolean]  :allowAdultContent
-    # @options opt [SiteType] :site
-    # @options opt [RoleType] :role
-    # @options opt [String]   :password
+    # @option opt [String]   :firstName          *REQUIRED*
+    # @option opt [String]   :lastName           *REQUIRED*
+    # @option opt [String]   :phoneNumber
+    # @option opt [String]   :emailAddress       *REQUIRED*
+    # @option opt [String]   :address1           *REQUIRED*
+    # @option opt [String]   :address2
+    # @option opt [String]   :city               *REQUIRED*
+    # @option opt [String]   :state
+    # @option opt [String]   :country            *REQUIRED*
+    # @option opt [String]   :postalCode         *REQUIRED*
+    # @option opt [String]   :guardianFirstName
+    # @option opt [String]   :guardianLastName
+    # @option opt [String]   :dateOfBirth
+    # @option opt [String]   :language
+    # @option opt [Boolean]  :allowAdultContent
+    # @option opt [SiteType] :site
+    # @option opt [RoleType] :role
+    # @option opt [String]   :password
     #
     # @return [ApiUserAccount]
     #

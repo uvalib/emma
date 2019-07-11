@@ -28,7 +28,7 @@ class Api::Message < Api::Record::Base
   # @param [Faraday::Response, Hash, String] data
   # @param [Hash, nil]                       opt
   #
-  # @option options [Symbol] :format  If not provided, this will be determined
+  # @option opt [Symbol] :format      If not provided, this will be determined
   #                                     heuristically from *data*.
   #
   # This method overrides:

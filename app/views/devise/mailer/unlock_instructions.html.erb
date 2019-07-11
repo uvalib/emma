@@ -1,5 +1,7 @@
 <%-
   abort 'devise/mailer/unlock_instructions - This is not expected to be used'
+
+  set_page_robots(:noindex, :nofollow)
 -%>
 
 <p>Hello <%= @resource.email %>!</p>

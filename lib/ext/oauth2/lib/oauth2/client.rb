@@ -15,7 +15,7 @@ module OAuth2
   #
   module ClientExt
 
-    extend ParamsHelper
+    extend GenericHelper
 
     OAUTH_DEBUG = true?(ENV['OAUTH_DEBUG'])
 

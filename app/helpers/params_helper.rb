@@ -13,58 +13,17 @@ module ParamsHelper
     __included(base, '[ParamsHelper]')
   end
 
-  TRUE_VALUES  = %w(1 yes true).freeze
-  FALSE_VALUES = %w(0 no false).freeze
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Request parameters that are not relevant to the application.
   #
   # @type [Array<Symbol>]
   #
   IGNORED_PARAMETERS = %i[controller action utf8 commit]
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [String, Boolean] value
-  #
-  def true?(value)
-    TRUE_VALUES.include?(value.to_s.strip.downcase)
-  end
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [String, Boolean] value
-  #
-  def false?(value)
-    FALSE_VALUES.include?(value.to_s.strip.downcase)
-  end
-
-  # Generate a URL or partial path.
-  #
-  # @param [String]    path
-  # @param [Hash, nil] opt
-  #
-  # @return [String]
-  #
-  def make_path(path, **opt)
-    result = path.to_s.dup
-    if opt.present?
-      result << (result.include?('?') ? '&' : '?')
-      result << opt.to_param
-    end
-    result
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # The full request URL without request parameters.
   #

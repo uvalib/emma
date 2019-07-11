@@ -4,7 +4,8 @@
 
   title ||= t('emma.home.welcome.title', default: :'emma.home.title')
 
-  @page_title = title
+  set_page_title(title)
+  set_page_description(title)
 
   sign_in = t('emma.user.sessions.new.label')
   sign_in = link_to(sign_in, new_user_session_path)

@@ -16,6 +16,12 @@ module ArtifactHelper
   include ResourceHelper
   include PaginationHelper
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Default link tooltip.
   #
   # @type [String]
@@ -124,9 +130,9 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format = nil, **opt)
-    opt, local = extract_local_options(opt, :fmt, :label)
-    fmt   = local[:fmt]
-    label = local[:label]
+    html_opt, opt = extract_options(opt, :fmt, :label)
+    fmt   = opt[:fmt]
+    label = opt[:label]
     if format.is_a?(Api::Format)
       fmt   ||= format.identifier
       label ||= I18n.t("emma.format.#{fmt}", default: nil) || format.label
@@ -135,22 +141,22 @@ module ArtifactHelper
       label ||= I18n.t("emma.format.#{fmt}", default: nil) || item.label
     end
     path = artifact_path(id: item.identifier, fmt: fmt)
-    opt[:class] = css_classes(opt[:class], 'link')
-    opt[:tooltip] =
+    append_css_classes!(html_opt, 'link')
+    html_opt[:tooltip] =
       I18n.t(
         'emma.artifact.show.link.tooltip',
         fmt:     format_label(label),
         default: ARTIFACT_SHOW_TOOLTIP
       )
-    opt[:'data-complete_tooltip'] =
+    html_opt[:'data-turbolinks'] = false
+    html_opt[:'data-complete_tooltip'] =
       I18n.t(
         'emma.artifact.show.link.complete.tooltip',
         button:  I18n.t('emma.artifact.show.button.label'),
         default: ARTIFACT_COMPLETE_TOOLTIP
       )
-    opt[:'data-turbolinks'] = false
     content_tag(:div, class: 'artifact') do
-      item_link(item, label, path, **opt) +
+      item_link(item, label, path, **html_opt) +
         download_progress(class: 'hidden') +
         download_button(class: 'hidden', fmt: label) +
         download_failure(class: 'hidden')

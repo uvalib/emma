@@ -3,7 +3,9 @@
   # Catalog Title show page.
   item  ||= @item
   title ||= item&.label || t('emma.title.show.title')
-  @page_title = title
+
+  set_page_title(title)
+  set_page_description(Title: title)
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -16,12 +16,6 @@ module PeriodicalHelper
   include ResourceHelper
   include PaginationHelper
 
-  # Default link tooltip.
-  #
-  # @type [String]
-  #
-  PERIODICAL_SHOW_TOOLTIP = I18n.t('emma.periodical.show.tooltip').freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -41,6 +35,12 @@ module PeriodicalHelper
   # ===========================================================================
 
   public
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  PERIODICAL_SHOW_TOOLTIP = I18n.t('emma.periodical.show.tooltip').freeze
 
   # Create a link to the details show page for the given item.
   #

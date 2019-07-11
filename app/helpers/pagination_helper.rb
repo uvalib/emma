@@ -16,6 +16,12 @@ module PaginationHelper
   include ParamsHelper
   include HtmlHelper
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Separator between pagination controls.
   #
   # @type [ActiveSupport::SafeBuffer]
@@ -296,7 +302,8 @@ module PaginationHelper
     sep: PAGINATION_SEPARATOR,
     **opt
   )
-    content_tag(:div, prepend_css_classes(opt, 'pagination')) do
+    opt = prepend_css_classes(opt, 'pagination')
+    content_tag(:div, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
         pagination_control(FIRST_PAGE, fp, link_opt),

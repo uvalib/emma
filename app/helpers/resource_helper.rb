@@ -13,6 +13,15 @@ module ResourceHelper
     __included(base, '[ResourceHelper]')
   end
 
+  include GenericHelper
+  include ParamsHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Separator for a list formed by HTML elements.
   #
   # @type [ActiveSupport::SafeBuffer]
@@ -30,7 +39,7 @@ module ResourceHelper
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  OPTIONS = {
+  RESOURCE_LINK_OPTIONS = {
     item_link:    %i[label no_link path path_method tooltip scope controller],
     search_links: %i[field method separator link_method],
     search_link:  %i[field all_words no_link scope controller],
@@ -64,22 +73,22 @@ module ResourceHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def item_link(item, label = nil, path = nil, **opt)
-    opt, local = extract_local_options(opt, OPTIONS[__method__])
-    label = local[:label] || label || :label
+    html_opt, opt = extract_options(opt, RESOURCE_LINK_OPTIONS[__method__])
+    label = opt[:label] || label || :label
     label = item.send(label) if label.is_a?(Symbol)
-    if local[:no_link]
-      content_tag(:span, label, opt)
+    if opt[:no_link]
+      content_tag(:span, label, html_opt)
     else
       path = yield(label) if block_given?
-      path = local[:path] || local[:path_method] || path
+      path = opt[:path] || opt[:path_method] || path
       path = path.call(item, label) if path.is_a?(Proc)
-      unless (opt[:title] ||= local[:tooltip])
-        scope = local[:scope] || local[:controller]
+      unless (html_opt[:title] ||= opt[:tooltip])
+        scope = opt[:scope] || opt[:controller]
         scope ||= (params[:controller] if defined?(params))
         scope &&= "emma.#{scope}.show.tooltip"
-        opt[:title] = I18n.t(scope, default: '')
+        html_opt[:title] = I18n.t(scope, default: '')
       end
-      link_to(label, path, opt)
+      link_to(label, path, html_opt)
     end
   end
 
@@ -106,14 +115,14 @@ module ResourceHelper
     __debug { "#{__method__}: item.#{method} invalid" } unless item.respond_to?(method)
     return unless item.respond_to?(method)
 
-    opt, local  = extract_local_options(opt, OPTIONS[__method__])
-    separator   = local[:separator]   || DEFAULT_ELEMENT_SEPARATOR
-    link_method = local[:link_method] || :search_link
-    check_link  = !local.key?(:no_link)
+    html_opt, opt = extract_options(opt, RESOURCE_LINK_OPTIONS[__method__])
+    separator   = opt[:separator]   || DEFAULT_ELEMENT_SEPARATOR
+    link_method = opt[:link_method] || :search_link
+    check_link  = !opt.key?(:no_link)
 
     Array.wrap(item.send(method))
       .map { |record|
-        link_opt = opt
+        link_opt = html_opt
         if check_link
           no_link =
             case field
@@ -148,8 +157,8 @@ module ResourceHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_link(terms, field = nil, **opt)
-    opt, local = extract_local_options(opt, OPTIONS[__method__])
-    field = local[:field] || field || :title
+    html_opt, opt = extract_options(opt, RESOURCE_LINK_OPTIONS[__method__])
+    field = opt[:field] || field || :title
     terms = terms.to_s
 
     # Generate the link label.
@@ -160,31 +169,32 @@ module ResourceHelper
     label ||= terms
 
     # If this instance should not be rendered as a link, return now.
-    return content_tag(:span, label, **opt) if local[:no_link]
+    return content_tag(:span, label, **html_opt) if opt[:no_link]
 
     # Otherwise, wrap the terms phrase in quotes unless directed to handled
     # each word of the phrase separately.
-    ctrl   = local[:scope] || local[:controller]
+    ctrl   = opt[:scope] || opt[:controller]
     ctrl ||= (params[:controller] if defined?(params))
-    phrase = !local[:all_words]
+    phrase = !opt[:all_words]
     terms  = %Q("#{terms}") if phrase
 
     # Create a tooltip unless one was provided.
-    unless (opt[:title] ||= local[:tooltip])
+    unless (html_opt[:title] ||= opt[:tooltip])
       scope = ctrl && "emma.#{ctrl}.index.tooltip"
-      tip_terms =
+      tip_terms = +"#{field} "
+      tip_terms <<
         if phrase
           terms
         else
           words = terms.split(/\s/).compact.map { |t| %Q("#{t}") }
           (words.size > 1) ? ('containing ' + words.join(', ')) : words.first
         end
-      opt[:title] = I18n.t(scope, terms: "#{field} #{tip_terms}", default: '')
+      html_opt[:title] = I18n.t(scope, terms: tip_terms, default: '')
     end
 
     search = Array.wrap(field).map { |f| [f, terms] }.to_h
     path   = url_for(search.merge(controller: ctrl, action: :index))
-    link_to(label, path, opt)
+    link_to(label, path, html_opt)
   end
 
   # ===========================================================================
@@ -268,6 +278,63 @@ module ResourceHelper
   #
   def empty_field_value(message = 'NONE FOUND') # TODO: I18n
     field_value(nil, message)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Active search terms.
+  #
+  # @param [Hash, nil]                 pairs    Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol, nil] only
+  # @param [Symbol, Array<Symbol, nil] except
+  #
+  # @return [Hash{String=>String}]
+  #
+  def search_terms(pairs = nil, only: nil, except: nil)
+    only    = Array.wrap(only).presence
+    except  = Array.wrap(except) + %i[offset start limit api_key]
+    pairs &&= pairs.dup if only || except
+    pairs ||= url_parameters
+    pairs.slice!(*only)    if only
+    pairs.except!(*except) if except
+    pairs.map { |k, v|
+      plural = v.is_a?(Enumerable) && (v.size > 1)
+      field  = labelize(k)
+      field  = (plural ? field.pluralize : field.singularize).html_safe
+      value  = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
+      [field, value]
+    }.to_h
+  end
+
+  # A control displaying the currently-applied search terms in the current
+  # scope (by default).
+  #
+  # @param [Hash, nil] term_list      Default: `#search_terms`.
+  # @param [Hash, nil] opt            Passed to the innermost :content_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def applied_search_terms(term_list = nil, **opt)
+    opt = prepend_css_classes(opt, 'term')
+    leader = 'Search terms:' # TODO: I18n
+    leader &&= content_tag(:div, leader, class: 'label')
+    separator = content_tag(:span, ';', class: 'term-separator')
+    terms =
+      (term_list || search_terms).map do |field, value|
+        label = content_tag(:span, field, class: 'field')
+        sep   = content_tag(:span, ':',   class: 'separator')
+        value = content_tag(:span, value, class: 'value')
+        content_tag(:div, (label + sep + value), opt)
+      end
+    content_tag(:div, class: 'applied-search-terms') do
+      content_tag(:div, class: 'search-terms') do
+        leader + safe_join(terms, separator)
+      end
+    end
   end
 
 end

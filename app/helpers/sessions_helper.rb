@@ -13,6 +13,12 @@ module SessionsHelper
     __included(base, '[SessionsHelper]')
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Default sign-in tooltip.
   #
   # @type [String]
@@ -24,12 +30,6 @@ module SessionsHelper
   # @type [String]
   #
   SIGN_OUT_TOOLTIP = I18n.t('emma.user.sessions.destroy.tooltip').freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # Sign in (via Bookshare) link.
   #

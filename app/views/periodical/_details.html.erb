@@ -4,6 +4,11 @@
   item ||= nil
   eds  ||= nil
   return if item.blank?
+
+  append_page_description(
+    ISSN:     item.issn,
+    Language: item.languages&.first(3),
+  )
 -%>
 
 <div class="periodical-details">

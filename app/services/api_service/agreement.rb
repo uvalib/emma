@@ -16,6 +16,12 @@ class ApiService
 
     include Common
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # @type [Hash{Symbol=>String}]
     AGREEMENT_SEND_MESSAGE = {
 

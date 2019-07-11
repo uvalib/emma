@@ -3,7 +3,9 @@
   # Artifact show
   title ||= t('emma.artifact.show.title')
 
-  @page_title = title
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex, :nofollow)
 
   @error &&= t('emma.artifact.show.error.server')
   @error ||= t('emma.artifact.show.error.javascript')

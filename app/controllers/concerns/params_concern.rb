@@ -35,7 +35,14 @@ module ParamsConcern
 
   end
 
+  include GenericHelper
   include ParamsHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # URL parameters related to search menu settings.
   #

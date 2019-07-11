@@ -11,11 +11,11 @@ module HealthConcern
 
   extend ActiveSupport::Concern
 
-  include TimeHelper
-
   included do |base|
     __included(base, 'HealthConcern')
   end
+
+  include TimeHelper
 
   # ===========================================================================
   # :section:
@@ -27,7 +27,7 @@ module HealthConcern
   #
   class HealthEntry < Hash
 
-    include ParamsHelper
+    include GenericHelper
 
     # Initialize a new instance.
     #
@@ -178,8 +178,8 @@ module HealthConcern
   # @see #HEALTH_CHECK
   #
   def get_health_status(*subsystem)
-    subsystem.map!(&:to_sym).reject!(&:blank?)
-    entries = subsystem.map { |ss| [ss, nil] }.to_h.presence || HEALTH_CHECK
+    subsystem = subsystem.flatten.reject(&:blank?).map!(&:to_sym).presence
+    entries   = subsystem&.map { |ss| [ss, nil] }&.to_h || HEALTH_CHECK
     entries.map { |type, entry| [type, status_report(type, entry)] }.to_h
   end
 

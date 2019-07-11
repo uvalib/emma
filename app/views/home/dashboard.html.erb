@@ -8,7 +8,9 @@
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
   item  ||= @item
 
-  @page_title = title
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex)
 -%>
 
 <h1 class="heading"><%= title -%></h1>

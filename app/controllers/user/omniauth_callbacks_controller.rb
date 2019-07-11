@@ -14,6 +14,16 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include SessionConcern
   include User::DebugConcern
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # OAuth2 providers recognized by this application.
+  #
+  # @type [Array<Symbol>]
+  #
   PROVIDERS = %i[bookshare]
 
   # ===========================================================================

@@ -13,7 +13,119 @@ module LayoutHelper
     __included(base, '[LayoutHelper]')
   end
 
+  include ParamsHelper
   include HtmlHelper
+
+  # ===========================================================================
+  # :section: Page language
+  # ===========================================================================
+
+  public
+
+  # The language code for the language of the current page for use with the
+  # "<html>" element.
+  #
+  # @return [String]
+  #
+  def page_language
+    @page_language ||= I18n.locale.to_s.downcase.sub(/-.*$/, '')
+  end
+
+  # Specify the language code for the current page.
+  #
+  # @param [String, Symbol] lang
+  #
+  # @return [String]
+  #
+  # == Usage Notes
+  # Only use as an override if the page is in a language that has not been set
+  # via I18n::Config#locale.
+  #
+  def set_page_language(lang)
+    @page_language = lang.to_s.downcase.sub(/-.*$/, '')
+  end
+
+  # ===========================================================================
+  # :section: Page body
+  # ===========================================================================
+
+  public
+
+  # Access the classes for the "<body>" element.
+  #
+  # If a block is given, this invocation is being used to accumulate CSS class
+  # names; otherwise this invocation is being used to emit the CSS classes for
+  # inclusion in the "<body>" element definition.
+  #
+  # @return [String]                      If no block given.
+  # @return [Array<String>]               If block given.
+  #
+  def page_classes
+    if block_given?
+      set_page_classes(*yield)
+    else
+      emit_page_classes
+    end
+  end
+
+  # Set the classes for the "<body>" element, eliminating any previous value.
+  #
+  # @param [Array] values
+  #
+  # @return [Array<String>]           The current @page_classes contents.
+  #
+  def set_page_classes(*values)
+    @page_classes = []
+    @page_classes += values
+    @page_classes += Array.wrap(yield) if block_given?
+    @page_classes
+  end
+
+  # Add to the classes for the "<body>" element.
+  #
+  # @param [Array] values
+  #
+  # @return [Array<String>]           The current @page_classes contents.
+  #
+  def append_page_classes(*values)
+    @page_classes ||= default_page_classes
+    @page_classes += values
+    @page_classes += Array.wrap(yield) if block_given?
+    @page_classes
+  end
+
+  # Emit the CSS classes for inclusion in the "<body>" element definition.
+  #
+  # @return [String]
+  #
+  # == Implementation Notes
+  # Invalid CSS name characters are converted to '_'; e.g.:
+  # 'user/sessions' -> 'user_sessions'.
+  #
+  def emit_page_classes
+    @page_classes ||= default_page_classes
+    @page_classes.flatten!
+    @page_classes.reject!(&:blank?)
+    @page_classes.map! { |c| c.to_s.gsub(/[^a-z_0-9-]/i, '_') }
+    @page_classes.join(' ')
+  end
+
+  # default_page_classes
+  #
+  # @param [Hash] p                   Default: `#params`.
+  #
+  # @return [Array<String>]
+  #
+  def default_page_classes(p = nil)
+    p ||= defined?(params) ? params : {}
+    c = p[:controller].to_s.presence
+    a = p[:action].to_s.presence
+    result = []
+    result << "#{c}-#{a}" if c && a
+    result << c           if c
+    result << a           if a
+    result
+  end
 
   # ===========================================================================
   # :section: Nav bar
@@ -474,10 +586,10 @@ module LayoutHelper
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Search controls
   # ===========================================================================
 
-  public
+  private
 
   # A menu control preceded by a menu label (if provided).
   #
@@ -563,61 +675,6 @@ module LayoutHelper
     end
   end
 
-  # ===========================================================================
-  # :section: # TODO: move to ResourceHelper
-  # ===========================================================================
-
-  public
-
-  # Active search terms.
-  #
-  # @param [Hash, nil]                 pairs    Default: `#url_parameters`.
-  # @param [Symbol, Array<Symbol, nil] only
-  # @param [Symbol, Array<Symbol, nil] except
-  #
-  # @return [Hash{String=>String}]
-  #
-  def search_terms(pairs = nil, only: nil, except: nil)
-    only   = Array.wrap(only).presence
-    except = Array.wrap(except) + %i[offset start limit api_key]
-    pairs ||= url_parameters
-    pairs.slice!(*only)    if only
-    pairs.except!(*except) if except
-    pairs.map { |k, v|
-      plural = v.is_a?(Enumerable) && (v.size > 1)
-      field  = labelize(k)
-      field  = (plural ? field.pluralize : field.singularize).html_safe
-      value  = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
-      [field, value]
-    }.to_h
-  end
-
-  # A control displaying the currently-applied search terms in the current
-  # scope (by default).
-  #
-  # @param [Hash, nil] term_list      Default: `#search_terms`.
-  # @param [Hash, nil] opt            Passed to the innermost :content_tag.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def applied_search_terms(term_list = nil, **opt)
-    opt = prepend_css_classes(opt, 'term')
-    leader = 'Search terms:' # TODO: I18n
-    leader &&= content_tag(:div, leader, class: 'label')
-    separator = content_tag(:span, ';', class: 'term-separator')
-    terms =
-      (term_list || search_terms).map do |field, value|
-        label = content_tag(:span, field, class: 'field')
-        sep   = content_tag(:span, ':',   class: 'separator')
-        value = content_tag(:span, value, class: 'value')
-        content_tag(:div, (label + sep + value), opt)
-      end
-    content_tag(:div, class: 'applied-search-terms') do
-      content_tag(:div, class: 'search-terms') do
-        leader + safe_join(terms, separator)
-      end
-    end
-  end
 end
 
 __loading_end(__FILE__)

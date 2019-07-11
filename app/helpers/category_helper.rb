@@ -16,12 +16,6 @@ module CategoryHelper
   include ResourceHelper
   include PaginationHelper
 
-  # Default link tooltip.
-  #
-  # @type [String]
-  #
-  CATEGORY_SHOW_TOOLTIP = I18n.t('emma.category.show.tooltip').freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -41,6 +35,12 @@ module CategoryHelper
   # ===========================================================================
 
   public
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  CATEGORY_SHOW_TOOLTIP = I18n.t('emma.category.show.tooltip').freeze
 
   # Create a link to the catalog title search for the given category.
   #

@@ -16,12 +16,6 @@ module MemberHelper
   include ResourceHelper
   include PaginationHelper
 
-  # Default link tooltip.
-  #
-  # @type [String]
-  #
-  MEMBER_SHOW_TOOLTIP = I18n.t('emma.member.show.tooltip').freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -41,6 +35,12 @@ module MemberHelper
   # ===========================================================================
 
   public
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  MEMBER_SHOW_TOOLTIP = I18n.t('emma.member.show.tooltip').freeze
 
   # Create a link to the details show page for the given item.
   #

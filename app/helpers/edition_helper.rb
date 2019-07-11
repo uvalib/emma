@@ -16,12 +16,6 @@ module EditionHelper
   include ResourceHelper
   include PaginationHelper
 
-  # Default link tooltip.
-  #
-  # @type [String]
-  #
-  EDITION_SHOW_TOOLTIP = I18n.t('emma.edition.show.tooltip').freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -42,6 +36,12 @@ module EditionHelper
 
   public
 
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  EDITION_SHOW_TOOLTIP = I18n.t('emma.edition.show.tooltip').freeze
+
   # Create a link to the details show page for the given item.
   #
   # @param [Object]              item
@@ -54,11 +54,11 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_link(item, label = nil, **opt)
-    opt, local = extract_local_options(opt, :editionId, :edition)
-    eid  = local.values.first
+    html_opt, opt = extract_options(opt, :editionId, :edition)
+    eid  = opt.values.first
     path = "#edition-#{eid}" # TODO: edition show page?
-    opt[:tooltip] = EDITION_SHOW_TOOLTIP
-    item_link(item, label, path, **opt)
+    html_opt[:tooltip] = EDITION_SHOW_TOOLTIP
+    item_link(item, label, path, **html_opt)
   end
 
   # ===========================================================================

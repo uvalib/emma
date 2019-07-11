@@ -4,6 +4,13 @@
   item  ||= nil
   image ||= nil
   return if item.blank?
+
+  append_page_description(
+    Series:   item.seriesTitle,
+    ISBN:     item.isbn,
+    Language: item.languages&.first(3),
+    Author:   item.authors&.first(3),
+  )
 -%>
 
 <div class="title-details-container">

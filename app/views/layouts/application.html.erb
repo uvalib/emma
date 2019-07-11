@@ -1,43 +1,19 @@
 <%# app/views/layouts/application.html.erb -%>
-<%-
-  # Application page layout.
-
-  @language ||= I18n.locale.to_s.downcase.sub(/-.*/, '')
-
-  # Emit the <title> element with `data-turbolinks-eval="false"` so that it is
-  # not included in Turbolinks' determination of whether the contents of <head>
-  # have changed.
-  @page_title = Array.wrap(@page_title).join(' ').squish
-  if @page_title.blank?
-    @page_title = app_name
-  elsif !@page_title.end_with?(app_name)
-    @page_title << " - #{app_name}"
-  end
-
-  # Note that 'reload' is the documented value for 'data-turbolinks-track'
-  # however (for some unknown reason) causes requests to be made twice.  By
-  # experimentation the value that works best here is the empty string.
-  meta_options = { 'data-turbolinks-track': '' }
-
-  @body_class = Array.wrap(@body_class)
-  @body_class.unshift("#{params[:controller]}-#{params[:action]}")
-  @body_class = @body_class.uniq.join(' ').squish
-
--%>
 <!DOCTYPE html>
-<html lang="<%= @language -%>">
+<html lang="<%= page_language -%>">
 
   <head>
-    <title data-turbolinks-eval="false"><%= @page_title -%></title>
+    <%= page_title %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-    <%= favicon_link_tag       'favicon.ico', meta_options %>
-    <%= stylesheet_link_tag    'application', meta_options %>
-    <%= javascript_include_tag 'application', meta_options %>
+    <%= page_meta_tags %>
+    <%= page_favicon %>
+    <%= page_stylesheets %>
+    <%= page_javascripts %>
   </head>
 
-  <body class="<%= @body_class -%>">
+  <body class="<%= page_classes -%>">
     <%= render 'layouts/session' %>
     <%= render 'layouts/header' %>
     <main class="layout-content">

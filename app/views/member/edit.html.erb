@@ -2,7 +2,11 @@
 <%-
   # Member edit form.
   title ||= t('emma.member.edit.title')
-  @page_title = title
+
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex)
+
   can = current_user.is_membership_manager? ? 'can' : 'can NOT'
 -%>
 

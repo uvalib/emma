@@ -25,6 +25,7 @@ module PaginationConcern
 
   end
 
+  include GenericHelper
   include PaginationHelper
 
   # ===========================================================================

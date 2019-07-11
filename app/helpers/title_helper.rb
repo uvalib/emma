@@ -17,12 +17,6 @@ module TitleHelper
   include PaginationHelper
   include ArtifactHelper
 
-  # Default link tooltip.
-  #
-  # @type [String]
-  #
-  TITLE_SHOW_TOOLTIP = I18n.t('emma.title.show.tooltip').freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -42,6 +36,12 @@ module TitleHelper
   # ===========================================================================
 
   public
+
+  # Default link tooltip.
+  #
+  # @type [String]
+  #
+  TITLE_SHOW_TOOLTIP = I18n.t('emma.title.show.tooltip').freeze
 
   # Create a link to the details show page for the given item.
   #
@@ -112,12 +112,12 @@ module TitleHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_links(item, **opt)
-    opt, local = extract_local_options(opt, :fmt, :separator)
-    format_id  = local[:fmt]
-    separator  = local[:separator] || DEFAULT_ELEMENT_SEPARATOR
+    html_opt, opt = extract_options(opt, :fmt, :separator)
+    format_id = opt[:fmt]
+    separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     item.formats.map { |format|
       next if format_id && (format_id != format.formatId)
-      artifact_link(item, format, opt)
+      artifact_link(item, format, html_opt)
     }.compact.sort.join(separator).html_safe
   end
 
@@ -289,7 +289,7 @@ module TitleHelper
     MaxReadingAge:        :readingAgeMaximum,
 
     # === Identifiers ===
-    ISBN:                 :isbn13,
+    ISBN:                 :isbn,
     RelatedISBNs:         :relatedIsbns,
     ExternalCategoryCode: :externalCategoryCode,
 

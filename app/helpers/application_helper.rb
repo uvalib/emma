@@ -14,16 +14,12 @@ module ApplicationHelper
   end
 
   include Emma::Constants
+  include GenericHelper
   include ParamsHelper
   include HtmlHelper
+  include HeadHelper
   include LayoutHelper
   include ImageHelper
-
-  # The name of this application for display purposes.
-  #
-  # @type [String]
-  #
-  APP_NAME = I18n.t('emma.application.name')
 
   # ===========================================================================
   # :section:
@@ -33,11 +29,23 @@ module ApplicationHelper
 
   # The name of this application for display purposes.
   #
+  # @type [String]
+  #
+  APP_NAME = I18n.t('emma.application.name')
+
+  # The name of this application for display purposes.
+  #
   # @return [String]
   #
   def app_name
     APP_NAME
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Indicate whether the ultimate target format is HTML.
   #
@@ -63,27 +71,6 @@ module ApplicationHelper
   def rendering_json?(opt)
     ((opt[:format].to_s.downcase == 'json') if opt.is_a?(Hash)) ||
       (request.format.json? if defined?(request))
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Strip off the hash elements identified by *keys* to return two hashes:
-  # - First, a copy of *original* without the local option keys and values.
-  # - Second, a hash containing only the local option keys and values.
-  #
-  # @param [Hash]          original
-  # @param [Array<Symbol>] keys
-  #
-  # @return [Array<(Hash, Hash)>]
-  #
-  def extract_local_options(original, *keys)
-    keys.flatten!
-    keys.map!(&:to_sym)
-    return original.except(*keys), original.slice(*keys)
   end
 
 end

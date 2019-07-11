@@ -58,11 +58,22 @@ module Api::Common::TitleMethods
     ti = title.to_s.presence
     st = respond_to?(:subtitle) && subtitle.to_s.presence
     if ti && st
-      st = ": #{st}"
-      ti.include?(st) ? ti : (ti + st)
-    else
-      ti || st || '???'
+      # Remove the automatically-appended subtitle (in the case of search
+      # results entries).
+      ti = ti.delete_suffix(st).rstrip.delete_suffix(':') if ti.end_with?(st)
+      # Append the subtitle only if it doesn't appear to already be included in
+      # the base title itself.
+      ti = "#{ti}: #{st}" unless significant(ti).include?(significant(st))
     end
+    ti || st || '???'
+  end
+
+  # The ISBN if valid.
+  #
+  # @return [String, nil]
+  #
+  def isbn
+    isbn13 if respond_to?(:isbn13)
   end
 
   # The number of pages if valid.
@@ -124,6 +135,23 @@ module Api::Common::TitleMethods
   #
   def cover_image
     get_link('coverimage')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Reduce a string for comparision with another by eliminating characters to
+  # ignore for comparision.
+  #
+  # @param [String]
+  #
+  # @return [String]
+  #
+  def significant(string)
+    string.to_s.gsub(/[[:space:][:punct:]]/, '').downcase
   end
 
 end

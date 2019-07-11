@@ -3,7 +3,10 @@
   # Member show page.
   item  ||= @item
   title ||= item&.label || t('emma.member.show.title')
-  @page_title = title
+
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex)
 -%>
 
 <h1 class="heading"><%= title -%></h1>

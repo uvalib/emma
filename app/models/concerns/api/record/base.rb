@@ -37,7 +37,7 @@ class Api::Record::Base
   # @param [Hash, String, nil] data
   # @param [Hash, nil]         opt
   #
-  # @option options [Symbol] :format    One of Api::Schema#SERIALIZER_TYPES.
+  # @option opt [Symbol] :format      One of Api::Schema#SERIALIZER_TYPES.
   #
   def initialize(data = nil, **opt)
     @exception =

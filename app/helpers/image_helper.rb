@@ -13,7 +13,14 @@ module ImageHelper
     __included(base, '[ImageHelper]')
   end
 
+  include GenericHelper
   include HtmlHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # If this value is true, a placeholder image will be displayed initially and
   # client-side JavaScript will be responsible for replacing fetching the image
@@ -40,12 +47,6 @@ module ImageHelper
   #
   PLACEHOLDER_IMAGE_ALT = ''
 
-  # ===========================================================================
-  # :section: Images
-  # ===========================================================================
-
-  public
-
   # Create an HTML image element.
   #
   # @param [String]    url
@@ -60,18 +61,17 @@ module ImageHelper
   #
   def image_element(url, **opt)
     return if url.blank?
-    opt, local = extract_local_options(opt, :alt, :link)
-    alt  = local[:alt] || 'Illustration' # TODO: I18n
-    link = local[:link].presence
+    html_opt, opt = extract_options(opt, :alt, :link)
+    alt  = opt[:alt] || 'Illustration' # TODO: I18n
+    link = opt[:link].presence
     iopt = { alt: alt }
-    iopt[:'aria-hidden'] = true if link
     image = ASYNCHRONOUS_IMAGES ? placeholder(url, iopt) : image_tag(url, iopt)
     if link
-      opt[:'aria-hidden'] = true
-      opt[:tabindex]      = -1
-      link_to(image, link, opt)
+      content_tag(:div, link, class: html_opt[:class], 'aria-hidden': true) do
+        link_to(image, link, html_opt.merge(tabindex: -1))
+      end
     else
-      content_tag(:div, image, opt)
+      content_tag(:div, image, html_opt)
     end
   end
 

@@ -2,7 +2,11 @@
 <%-
   # Periodical edit form.
   title ||= t('emma.periodical.edit.title')
-  @page_title = title
+
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex)
+
   can = current_user.is_catalog_curator? ? 'can' : 'can NOT'
 -%>
 

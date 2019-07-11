@@ -31,6 +31,12 @@ module SessionConcern
 
   include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Keys for session values that should not be touched by #cleanup_session.
   #
   # @type [Array<String,Regexp>]
@@ -116,7 +122,7 @@ module SessionConcern
     values = {
       time:   (time || Time.now).to_i,
       path:   (path || request.path),
-      params: url_params.except!(*IGNORED_PARAMETERS)
+      params: url_params.except(*IGNORED_PARAMETERS)
     }
     values.merge!(hash) if hash.present?
     last_operation.merge!(values.stringify_keys)
