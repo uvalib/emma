@@ -23,7 +23,7 @@ $(document).on('turbolinks:load', function() {
     // Actions
     // ========================================================================
 
-    //noinspection JSUnresolvedFunction
+    // noinspection JSUnresolvedFunction
     $placeholders.each(function() {
         var $image = $(this);
         var src;

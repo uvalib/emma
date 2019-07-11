@@ -11,7 +11,7 @@ var SECOND = 1000; // milliseconds
 // JSDoc typedefs
 // ============================================================================
 
-//noinspection LocalVariableNamingConventionJS
+// noinspection LocalVariableNamingConventionJS
 /**
  * Indicates a function parameter that expects a {@link jQuery} object or
  * something that can be used to generate a {@link jQuery} object.

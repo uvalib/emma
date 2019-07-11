@@ -217,19 +217,24 @@
 
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.
-        min-width: $nominal-cover-x;
+        @media #{$wide-screen} {
+
+            min-width:   $nominal-cover-x;
+            margin-left: $results-entry-gap-x;
+
+            @media #{$browser-ie} {
+                margin-left: $ie-results-entry-gap-x;
+            }
+        }
+
+        @media #{$medium-width} {
+            min-width: unset;
+            max-width: $nominal-cover-x;
+        }
 
         @media #{$narrow-screen} {
             min-width: unset;
             max-width: 100%;
-        }
-
-        @media #{$wide-screen} {
-            margin-left: $results-entry-gap-x;
-        }
-
-        @media #{$browser-ie} {
-            margin-left: $ie-results-entry-gap-x;
         }
 
         img:not(.placeholder) {

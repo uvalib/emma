@@ -42,6 +42,12 @@
     // Classes
     //=========================================================================
 
+    .label {
+        @media #{$narrow-screen} {
+            flex: 1 1 75%;
+        }
+    }
+
     .value {
 
         margin-left: $gap-x;
@@ -52,10 +58,13 @@
 
         @media #{$narrow-screen} {
 
-            margin-left: calc(2 * #{$gap-x});
+            margin-left:  calc(2 * #{$gap-x});
+            margin-right: calc(2 * #{$gap-x});
+            flex:         0 0 auto;
 
             @media #{$browser-ie} {
-                margin-left: (2 * $ie-gap-x);
+                margin-left:  (2 * $ie-gap-x);
+                margin-right: (2 * $ie-gap-x);
             }
         }
     }
