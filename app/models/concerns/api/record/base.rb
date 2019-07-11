@@ -155,7 +155,8 @@ class Api::Record::Base
 
   # Returns *nil* unless this instance is an error placeholder.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If there is no exception.
   #
   def error_message
     exception&.message

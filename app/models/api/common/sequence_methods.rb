@@ -19,7 +19,8 @@ module Api::Common::SequenceMethods
   #
   # @param [String, Symbol] rel_name
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If *rel_name* is not present.
   #
   def get_link(rel_name)
     return unless respond_to?(:links) && links.is_a?(Array)

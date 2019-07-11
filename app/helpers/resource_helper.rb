@@ -106,7 +106,8 @@ module ResourceHelper
   # @option opt [String] :separator     Default: #DEFAULT_ELEMENT_SEPARATOR
   # @option opt [Symbol] :link_method   Default: :search_link
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If item method cannot be determined.
   #
   def search_links(item, field = nil, **opt)
 
@@ -132,6 +133,7 @@ module ResourceHelper
         end
         send(link_method, record, field, **link_opt)
       }
+      .compact
       .sort_by { |html_element|
         term   = html_element.to_s
         prefix = term.start_with?('<a') ? '' : 'ZZZ'
@@ -155,11 +157,13 @@ module ResourceHelper
   # @option opt [Symbol, String] :controller
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                             If no *terms* were provided.
   #
   def search_link(terms, field = nil, **opt)
     html_opt, opt = extract_options(opt, RESOURCE_LINK_OPTIONS[__method__])
     field = opt[:field] || field || :title
-    terms = terms.to_s
+    terms = terms.to_s.strip
+    return if terms.blank?
 
     # Generate the link label.
     label =
@@ -251,7 +255,8 @@ module ResourceHelper
   # @param [String, Array<String>] value
   # @param [String, nil]           separator    Def.: #DEFAULT_LIST_SEPARATOR
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                               If *value* is blank.
   #
   # == Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"

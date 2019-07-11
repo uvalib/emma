@@ -127,6 +127,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # PeriodicalHelper#periodical_category_links
@@ -142,6 +143,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def author_links(item, **opt)
     title_search_links(item, :author, **opt)
@@ -153,6 +155,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def composer_links(item, **opt)
     title_search_links(item, :composer, **opt)
@@ -164,6 +167,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # PeriodicalHelper#periodical_format_links
@@ -179,6 +183,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # PeriodicalHelper#periodical_language_links
@@ -198,6 +203,7 @@ module TitleHelper
   # @param [Hash, nil] opt            @see #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # PeriodicalHelper#periodical_country_links
@@ -216,7 +222,8 @@ module TitleHelper
   # @param [Symbol, nil] field        Default: :keyword
   # @param [Hash, nil]   opt          Passed to #search_links.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def title_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :keyword
@@ -230,6 +237,7 @@ module TitleHelper
   # @param [Hash, nil]   opt          Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def title_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :keyword

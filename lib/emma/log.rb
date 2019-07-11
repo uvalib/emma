@@ -179,7 +179,10 @@ module Emma
 
     # Set thread-safe log level.
     #
-    # @return [Integer, nil]
+    # @param [Integer, nil] level
+    #
+    # @return [Integer]
+    # @return [nil]                   If *level* is *nil*.
     #
     # Compare with:
     # @see ActiveSupport::LoggerThreadSafeLevel#local_level=

@@ -61,7 +61,8 @@ class ApiCachingMiddleware < Faraday::Middleware
   #
   # @param [Faraday::Env] env
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If there is no request active.
   #
   # This method overrides:
   # @see CachingMiddleware::Concern#key

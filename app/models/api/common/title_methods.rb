@@ -68,36 +68,40 @@ module Api::Common::TitleMethods
     ti || st || '???'
   end
 
-  # The ISBN if valid.
+  # The ISBN.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
   #
   def isbn
     isbn13 if respond_to?(:isbn13)
   end
 
-  # The number of pages if valid.
+  # The number of pages.
   #
-  # @return [Integer, nil]
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
   #
   def page_count
     count = respond_to?(:numPages) ? numPages.to_i : 0
     count if count > 0
   end
 
-  # The number of images if valid.
+  # The number of images.
   #
-  # @return [Integer, nil]
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
   #
   def image_count
     count = respond_to?(:numImages) ? numImages.to_i : 0
     count if count > 0
   end
 
-  # Return the year of publication (from :publishDate or :copyrightDate,
-  # whichever is earlier).
+  # The year of publication (:publishDate or :copyrightDate, whichever is
+  # earlier).
   #
-  # @return [Integer, nil]
+  # @return [Integer]
+  # @return [nil]                     If the value cannot be determined.
   #
   def year
     %i[copyrightDate publishDate].map { |date|
@@ -107,9 +111,10 @@ module Api::Common::TitleMethods
     }.compact.sort.first
   end
 
-  # Display :synopsis with rudimentary formatting.
+  # The synopsis or description with rudimentary formatting.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If the value cannot be determined.
   #
   def contents
     %i[synopsis description].find do |method|
@@ -121,17 +126,19 @@ module Api::Common::TitleMethods
     end
   end
 
-  # Return a link to a title's thumbnail image if present.
+  # A link to a title's thumbnail image.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
   #
   def thumbnail_image
     get_link('thumbnail')
   end
 
-  # Return a link to a title's cover image if present.
+  # A link to a title's cover image if present.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
   #
   def cover_image
     get_link('coverimage')

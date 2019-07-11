@@ -91,7 +91,8 @@ module PaginationConcern
   # @param [Object]    list
   # @param [Hash, nil] url_params     For `list.next`.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If there is no next page.
   #
   def next_page_path(list, url_params = nil)
     if list.respond_to?(:next) && list.next.present?

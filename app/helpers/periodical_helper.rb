@@ -62,6 +62,7 @@ module PeriodicalHelper
   # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # TitleHelper#category_links
@@ -77,6 +78,7 @@ module PeriodicalHelper
   # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # TitleHelper#format_links
@@ -92,6 +94,7 @@ module PeriodicalHelper
   # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # TitleHelper#language_links
@@ -111,6 +114,7 @@ module PeriodicalHelper
   # @param [Hash, nil] opt            @see #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   # Compare with:
   # TitleHelper#country_links
@@ -126,7 +130,8 @@ module PeriodicalHelper
   # @param [Symbol, nil] field        Default: :title
   # @param [Hash, nil]   opt          Passed to #search_links.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def periodical_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :title
@@ -144,6 +149,7 @@ module PeriodicalHelper
   # @option opt [Boolean] :no_link
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
   def periodical_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :title

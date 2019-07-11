@@ -83,7 +83,7 @@ module SessionsHelper
   # @param [String, Symbol]      action
   # @param [String, Symbol, nil] provider
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def get_label(action, provider = nil)
     provider = provider.to_s.capitalize

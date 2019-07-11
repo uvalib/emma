@@ -206,7 +206,8 @@ class ApiService
 
     # The current OAuth2 access bearer token.
     #
-    # @return [String, nil]
+    # @return [String]
+    # @return [nil]                   If there is no @user.
     #
     def access_token
       @user&.access_token
@@ -214,7 +215,8 @@ class ApiService
 
     # The current OAuth2 refresher token.
     #
-    # @return [String, nil]
+    # @return [String]
+    # @return [nil]                   If there is no @user.
     #
     def refresh_token
       @user&.refresh_token

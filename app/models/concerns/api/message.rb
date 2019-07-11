@@ -68,7 +68,7 @@ class Api::Message < Api::Record::Base
   # @param [String, Hash] data
   # @param [Hash, nil]    opt
   #
-  # @return [String, Hash]
+  # @return [String, Hash]            Returned as the same type as *data*.
   #
   def wrap_outer(data, **opt)
     name = self.class.name.demodulize.camelcase(:lower)

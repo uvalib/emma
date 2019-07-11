@@ -867,7 +867,8 @@ module OmniAuth
 
       # current_user
       #
-      # @return [User, nil]
+      # @return [User]
+      # @return [nil]
       #
       def current_user
         request&.env['warden']&.user
@@ -877,7 +878,8 @@ module OmniAuth
       #
       # @param [String] id            User ID.
       #
-      # @return [::OAuth2::AccessToken, nil]
+      # @return [::OAuth2::AccessToken]
+      # @return [nil]                 If *id* is not valid.
       #
       def configured_access_token(id)
         abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
@@ -889,7 +891,8 @@ module OmniAuth
       #
       # @param [String] id            Bookshare user identity (email address).
       #
-      # @return [OmniAuth::AccessToken, nil]
+      # @return [OmniAuth::AccessToken]
+      # @return [nil]                 If *id* is not valid.
       #
       def configured_auth_hash(id)
         abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)

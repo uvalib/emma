@@ -31,10 +31,10 @@ class Api::Category < Api::Record::Base
 
   public
 
-  # Translate to Bookshare category if necessary; return *nil* if not
-  # translatable.
+  # Translate to Bookshare category if necessary.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If not translatable.
   #
   # This method overrides
   # @see Api::Common::CategoryMethods#bookshare_category

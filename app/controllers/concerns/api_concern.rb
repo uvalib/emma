@@ -50,7 +50,7 @@ module ApiConcern
   # @param [String] id                If *nil*, assumes the current user.
   #
   # @return [Array<(ApiMyAccountSummary, ApiMyAccountPreferences)>]
-  # @return [Array<(nil,nil)>] If there was a problem.
+  # @return [Array<(nil,nil)>]        If there was a problem.
   #
   def fetch_my_account(id: nil)
     api  = ApiService.instance

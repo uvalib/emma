@@ -95,7 +95,8 @@ class ApiService
   # @param [String]    path
   # @param [Hash, nil] opt
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]
   #
   def api_get(path, **opt)
     api(:get, path, opt)&.body&.presence
@@ -106,7 +107,8 @@ class ApiService
   # @param [String]    path
   # @param [Hash, nil] opt
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]
   #
   def api_put(path, **opt)
     api(:put, path, opt)&.body&.presence
@@ -117,7 +119,8 @@ class ApiService
   # @param [String]    path
   # @param [Hash, nil] opt
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]
   #
   def api_post(path, **opt)
     api(:post, path, opt)&.body&.presence

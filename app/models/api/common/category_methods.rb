@@ -37,10 +37,10 @@ module Api::Common::CategoryMethods
     name.to_s
   end
 
-  # Translate to Bookshare category if necessary; return *nil* if not
-  # translatable.
+  # Translate to Bookshare category if necessary.
   #
-  # @return [String, nil]
+  # @return [String]
+  # @return [nil]                     If not translatable.
   #
   def bookshare_category
     name.to_s

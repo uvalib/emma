@@ -104,7 +104,8 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # @return [String, nil]
+    # @return [String]
+    # @return [nil]                   If there is no request active.
     #
     def key(env)
       request_url(env)
@@ -114,7 +115,8 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # @return [Faraday::Response, nil]
+    # @return [Faraday::Response]
+    # @return [nil]
     #
     def call(env)
       dup.call!(env)
@@ -140,7 +142,8 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # @return [String, nil]
+    # @return [String]
+    # @return [nil]                   If there is no request active.
     #
     def request_url(env)
       env&.url&.request_uri
@@ -150,7 +153,8 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # @return [Faraday::Response, nil]
+    # @return [Faraday::Response]
+    # @return [nil]
     #
     def call!(env)
       cache_key = key(env)
@@ -202,7 +206,8 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
-    # @return [String, nil]           Either 'HIT' or 'MISS' if present.
+    # @return [String]                Either 'HIT' or 'MISS'.
+    # @return [nil]                   No request or response active.
     #
     def hit_status(env)
       env&.response_headers&.dig(http_header) ||
@@ -214,7 +219,8 @@ module CachingMiddleware
     # @param [Faraday::Env] env
     # @param [String, nil]  cache_key
     #
-    # @return [Faraday::Env, nil]
+    # @return [Faraday::Env]
+    # @return [nil]                   Could not determine *cache_key*.
     #
     def read_cache(env, cache_key = nil)
       return unless cache_key ||= key(env)
@@ -229,7 +235,8 @@ module CachingMiddleware
     # @param [Faraday::Env] env
     # @param [String, nil]  cache_key
     #
-    # @return [TrueClass, FalseClass, nil]
+    # @return [TrueClass, FalseClass]
+    # @return [nil]                   Could not determine *cache_key*.
     #
     def write_cache(env, cache_key = nil)
       return unless (cache_key ||= key(env))

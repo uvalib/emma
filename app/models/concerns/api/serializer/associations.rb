@@ -161,7 +161,8 @@ module Api::Serializer::Associations
     #
     # @param [Hash] opt               May be modified.
     #
-    # @return [Object, nil]
+    # @return [Object]
+    # @return [nil]
     #
     def extract_type_option!(opt)
       type_options = opt&.slice(*TYPE_OPTION_KEYS) || {}
