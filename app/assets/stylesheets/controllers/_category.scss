@@ -12,6 +12,12 @@
 
     @extend .results-list;
 
+    .number {
+        @media #{$browser-ie} {
+            margin-top: $ie-gap-y;
+        }
+    }
+
     .pagination-bottom {
 
         margin-top: $results-entry-gap-y;
@@ -25,7 +31,7 @@
 // noinspection SassScssResolvedByNameOnly
 .category-list-entry {
 
-    @extend .results-entry;
+    @extend .list-entry;
 
     display:        flex;
     flex-direction: row;
@@ -45,7 +51,12 @@
         }
 
         @media #{$narrow-screen} {
+
             margin-left: calc(2 * #{$gap-x});
+
+            @media #{$browser-ie} {
+                margin-left: (2 * $ie-gap-x);
+            }
         }
     }
 }
@@ -55,5 +66,5 @@
 //=============================================================================
 
 .category-details { // TODO: delete?
-    @extend .results-entry;
+    @extend .details-entry;
 }

@@ -119,6 +119,9 @@
         }
 
         @media #{$browser-ie} {
+
+            margin-left: $ie-page-padding-x;
+
             > * {
                 margin: auto 0 auto $ie-flex-gap-x;
             }
@@ -173,7 +176,7 @@
         flex:         0 1 auto;
 
         @media #{$browser-ie} {
-            margin-top: 0.5rem;
+            margin-top: 0.75rem;
         }
 
         @media #{$medium-width} {
@@ -212,6 +215,10 @@
         border:        1px solid;
         border-radius: 0.5rem;
         flex:          0 0 auto;
+
+        @media #{$browser-ie} {
+            padding: 0.5rem;
+        }
 
         @media #{$narrow-screen} {
             margin-top: $flex-gap-y;
@@ -252,8 +259,14 @@
         font-size: x-large;
 
         > * {
+
             width:        max-content;
             margin-right: 0.5rem;
+
+            @media #{$narrow-screen} {
+                margin-top:    0;
+                margin-bottom: 0.5rem;
+            }
         }
 
         a:active {
@@ -353,6 +366,7 @@
                 display:        flex;
                 flex-direction: row;
                 margin:         $ie-gap-y 0;
+                margin-left:    $ie-flex-gap-y;
             }
         }
 

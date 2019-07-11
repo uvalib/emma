@@ -80,7 +80,7 @@ body.api-v2 {
 
         > * {
             display:       block;
-            margin-bottom: 0.125rem;
+            margin-bottom: 0.75rem;
         }
 
         .success {
@@ -88,7 +88,7 @@ body.api-v2 {
         }
 
         .error {
-            color: red;
+            color: $text-red;
         }
     }
 

@@ -20,6 +20,9 @@ $results-entry-gap-y:    $page-padding;
 // noinspection SassScssResolvedByNameOnly
 $ie-results-entry-gap-y: $ie-page-padding;
 
+$results-entry-margin-y:    calc(#{$results-entry-gap-y} * 0.33);
+$ie-results-entry-margin-y: $ie-results-entry-gap-y * 0.33;
+
 //=============================================================================
 // Search controls
 //=============================================================================
@@ -38,7 +41,12 @@ $ie-results-entry-gap-y: $ie-page-padding;
 
     // noinspection SassScssResolvedByNameOnly
     @media #{$narrow-screen} {
+
         margin: calc(2 * #{$results-entry-gap-y}) 0;
+
+        @media #{$browser-ie} {
+            margin: (2 * $ie-results-entry-gap-y) 0;
+        }
     }
 }
 
@@ -135,7 +143,10 @@ $ie-results-entry-gap-y: $ie-page-padding;
 
         // Make items easier to differentiate with "flex-direction: column".
         @media #{$browser-ie} {
-            border-top: 1px solid darkgray;
+            border-top:     1px solid darkgray;
+            font-family:    $font-normal;
+            padding-top:    $ie-gap-y;
+            padding-bottom: $ie-gap-y;
         }
     }
 }
@@ -147,7 +158,7 @@ $ie-results-entry-gap-y: $ie-page-padding;
 // One or more label/value pairs.
 //
 // noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
-.results-entry {
+.label-value-pairs {
 
     @extend .list-2-column;
 
@@ -171,20 +182,25 @@ $ie-results-entry-gap-y: $ie-page-padding;
     // Make focus outline follow the perimeter of the area of clickable text
     // rather than the individual lines.
     a {
-        display: inline-block;
+        display:   inline-block;
+        min-width: 48px; // Accessibility best practice. // TODO: reference
+
+        @media #{$browser-ie} {
+            display: inline;
+        }
     }
 
     // noinspection CssOverwrittenProperties
     .label,
     .value {
 
-        margin-bottom: calc(#{$results-entry-gap-y} / 4);
+        margin-bottom: $results-entry-margin-y;
         word-break:    break-word;
         break-inside:  avoid;
         break-inside:  avoid-column;
 
         @media #{$browser-ie} {
-            margin-bottom: $ie-results-entry-gap-y / 4;
+            margin-bottom: $ie-results-entry-margin-y;
             break-inside:  auto;
         }
     }
@@ -194,11 +210,22 @@ $ie-results-entry-gap-y: $ie-page-padding;
     }
 
     .value {
-
         @media #{$narrow-screen} {
-            margin-bottom: $results-entry-gap-y
+            margin-bottom: $results-entry-gap-y;
         }
+    }
+}
 
+// Metadata label/value pairs on index pages.
+.list-entry {
+
+    @extend .label-value-pairs;
+
+    //=========================================================================
+    // Classes
+    //=========================================================================
+
+    .value {
         &.field-None {
 
             width:         max-content;
@@ -209,6 +236,23 @@ $ie-results-entry-gap-y: $ie-page-padding;
                 margin-top:    $ie-results-entry-gap-y;
                 margin-bottom: $ie-results-entry-gap-y;
             }
+        }
+    }
+}
+
+// Metadata label/value pairs on show pages.
+.details-entry {
+
+    @extend .label-value-pairs;
+
+    // Add a top margin except to the first label/value pair.
+    .value + .label,
+    .value + .label + .value {
+
+        margin-top: $results-entry-margin-y;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-results-entry-margin-y;
         }
     }
 }

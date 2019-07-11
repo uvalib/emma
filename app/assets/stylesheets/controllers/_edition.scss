@@ -19,7 +19,7 @@
 }
 
 .edition-list-entry {
-    @extend .results-entry;
+    @extend .list-entry;
 }
 
 //=============================================================================
@@ -27,5 +27,5 @@
 //=============================================================================
 
 .edition-details {
-    @extend .results-entry;
+    @extend .details-entry;
 }

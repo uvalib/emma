@@ -13,7 +13,7 @@
 
 .member-list-entry {
 
-    @extend .results-entry;
+    @extend .list-entry;
 
     .value {
 
@@ -32,7 +32,7 @@
 //=============================================================================
 
 .member-details {
-    @extend .results-entry;
+    @extend .details-entry;
 }
 
 .member-preferences {

@@ -14,7 +14,7 @@
 // noinspection SassScssResolvedByNameOnly
 .periodical-list-entry {
 
-    @extend .results-entry;
+    @extend .list-entry;
 
     .label {
         &.field-Title {
@@ -50,5 +50,5 @@
 //=============================================================================
 
 .periodical-details {
-    @extend .results-entry;
+    @extend .details-entry;
 }

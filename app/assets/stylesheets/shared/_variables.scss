@@ -10,6 +10,11 @@ $green: #00ff00;
 $red:   #ff0000;
 $blue:  #0000ff;
 
+$text-green: $green;
+$text-red:   #a80000;   // Passes WCAG AAA on "background-color: snow".
+//$text-red: #b30000;   // Passes WCAG AAA on "background-color: white".
+$text-blue:  $blue;
+
 // Observed Bookshare site colors.
 $bookshare-blue:   #24408e;
 $bookshare-orange: #e65d24;

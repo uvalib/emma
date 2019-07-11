@@ -12,7 +12,7 @@
 }
 
 .artifact-list-entry {
-    @extend .results-entry;
+    @extend .list-entry;
 }
 
 //=============================================================================
@@ -20,5 +20,5 @@
 //=============================================================================
 
 .artifact-details {
-    @extend .results-entry;
+    @extend .details-entry;
 }
