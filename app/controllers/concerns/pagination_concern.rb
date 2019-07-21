@@ -101,7 +101,7 @@ module PaginationConcern
       opt[:offset]  += page_size
       make_path(request.path, opt.merge(start: list.next))
     elsif list.respond_to?(:get_link)
-      list.get_link('next')
+      list.get_link(:next)
     end
   end
 

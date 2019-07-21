@@ -1,0 +1,15 @@
+<%# app/views/title/page_controls/_show.html.erb -%>
+<%-
+  # Page controls on a Member show page for an authorized user.
+  return if cannot?(:delete, Member)
+
+  id ||= params[:id]
+
+  path_opt = { id: id }
+-%>
+
+<label class="label"><%= page_controls_label -%>:</label>
+<div class="controls">
+  <%= link_to_action(:member, :edit,    path_opt) %>
+  <%= link_to_action(:member, :delete,  path_opt) %>
+</div>

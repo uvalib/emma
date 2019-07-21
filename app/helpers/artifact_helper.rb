@@ -85,13 +85,6 @@ module ArtifactHelper
   ARTIFACT_BUTTON_LABEL =
     I18n.t('emma.artifact.show.button.label').freeze
 
-  # Artifact download button tooltip.
-  #
-  # @type [String]
-  #
-  ARTIFACT_BUTTON_TOOLTIP =
-    I18n.t('emma.artifact.show.button.tooltip').freeze
-
   # Generic reference to format type for label construction.
   #
   # @type [String]
@@ -134,12 +127,13 @@ module ArtifactHelper
     fmt   = opt[:fmt]
     label = opt[:label]
     if format.is_a?(Api::Format)
-      fmt   ||= format.identifier
-      label ||= I18n.t("emma.format.#{fmt}", default: nil) || format.label
+      fmt ||= format.identifier
+      def_label = format.label
     else
-      fmt   ||= Api::FormatType.new.default
-      label ||= I18n.t("emma.format.#{fmt}", default: nil) || item.label
+      fmt ||= Api::FormatType.new.default
+      def_label = item.label
     end
+    label ||= I18n.t("emma.format.#{fmt}", default: def_label)
     path = artifact_path(id: item.identifier, fmt: fmt)
     append_css_classes!(html_opt, 'link')
     html_opt[:tooltip] =
@@ -152,7 +146,7 @@ module ArtifactHelper
     html_opt[:'data-complete_tooltip'] =
       I18n.t(
         'emma.artifact.show.link.complete.tooltip',
-        button:  I18n.t('emma.artifact.show.button.label'),
+        button:  ARTIFACT_BUTTON_LABEL,
         default: ARTIFACT_COMPLETE_TOOLTIP
       )
     content_tag(:div, class: 'artifact') do

@@ -88,6 +88,8 @@ module PaginationHelper
             end
             keys << :"emma.#{controller}.pagination.page_size"
             keys << :"emma.#{controller}.page_size"
+            keys << :'emma.generic.pagination.page_size'
+            keys << :'emma.generic.page_size'
           end
         end
         keys << :'emma.pagination.page_size'

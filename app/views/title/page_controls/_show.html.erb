@@ -1,0 +1,16 @@
+<%# app/views/title/page_controls/_show.html.erb -%>
+<%-
+  # Page controls on a Catalog Title show page for an authorized user.
+  return if cannot?(:delete, Title)
+
+  id ||= params[:id]
+
+  path_opt = { id: id }
+-%>
+
+<label class="label"><%= page_controls_label -%>:</label>
+<div class="controls">
+  <%= link_to_action(:title, :history, path_opt) %>
+  <%= link_to_action(:title, :edit,    path_opt) %>
+  <%= link_to_action(:title, :delete,  path_opt) %>
+</div>

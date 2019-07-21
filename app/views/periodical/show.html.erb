@@ -2,8 +2,8 @@
 <%-
   # Periodical show page.
   item  ||= @item
-  eds   ||= page_items
   title ||= item&.label || t('emma.periodical.show.title')
+  eds   ||= page_items
 
   set_page_title(title)
   set_page_description(Title: title)

@@ -47,7 +47,7 @@ module SessionsHelper
       title:             SIGN_IN_TOOLTIP,
       'data-turbolinks': false,
     }
-    html_opt.merge!(opt) if opt.present?
+    merge_html_options!(html_opt, opt)
     link_to(label, new_user_session_path, html_opt)
   end
 
@@ -68,7 +68,7 @@ module SessionsHelper
       'data-turbolinks': false,
       method:            :delete,
     }
-    html_opt.merge!(opt) if opt.present?
+    merge_html_options!(html_opt, opt)
     link_to(label, destroy_user_session_path, html_opt)
   end
 

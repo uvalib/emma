@@ -8,7 +8,8 @@
 
 // noinspection SassScssResolvedByNameOnly
 body.home-index,
-body.home-welcome {
+body.home-welcome,
+body.home-dashboard {
 
     .panel {
 
@@ -36,11 +37,25 @@ body.home-welcome {
     }
 }
 
+// noinspection SassScssResolvedByNameOnly
+body.home-index,
+body.home-welcome {
+
+    .ability-debug {
+        margin-top: 50vh;
+    }
+
+}
+
 //=============================================================================
 // Dashboard
 //=============================================================================
 
 // noinspection SassScssResolvedByNameOnly
 body.home-dashboard {
-    // TODO: ???
+
+    .ability-debug {
+        margin-top: $page-padding;
+    }
+
 }

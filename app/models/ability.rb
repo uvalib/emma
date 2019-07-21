@@ -19,6 +19,53 @@ class Ability
 
   include CanCan::Ability
 
+  # Existing pre-defined action aliases.
+  #
+  # This does not include the :manage action (which is an implicit alias for
+  # "all actions").
+  #
+  # @type [Hash{Symbol, Array<Symbol>}]
+  #
+  # @see CanCan::Ability::Actions#default_alias_actions
+  # @see CanCan::Rule#matches_action?
+  #
+  PREDEFINED_ACTION_ALIAS = {
+    read:   %i[index show],
+    create: %i[new],
+    update: %i[edit],
+  }.deep_freeze
+
+  # Locally-defined aliases.
+  #
+  # @type [Hash{Symbol, Array<Symbol>}]
+  #
+  LOCAL_ACTION_ALIAS = {
+    download: %i[show],     # NOTE: only used with Artifact
+    history:  %i[manage],   # NOTE: only used for Title and Member
+    delete:   %i[destroy],
+    list:     %i[index],
+  }.deep_freeze
+
+  # Both existing and new action aliases.
+  #
+  # This does not include the standard CRUD controller actions:
+  #
+  # :index    (included in alias :read)
+  # :show     (included in alias :read)
+  # :new      (alias :create)
+  # :edit     (alias :update)
+  # :destroy  (alias :delete)
+  #
+  # @type [Hash{Symbol, Array<Symbol>}]
+  #
+  ACTION_ALIAS = LOCAL_ACTION_ALIAS.merge(PREDEFINED_ACTION_ALIAS).freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Create a new instance.
   #
   # @param [::User, nil] user
@@ -55,21 +102,27 @@ class Ability
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
   def initialize(user)
+    ACTION_ALIAS.each_pair do |actions, action_alias|
+      alias_action actions, to: action_alias
+    end
     user ||= User.new # Guest user (not logged in).
-    # noinspection RubyResolve
-    if user.is_administrator?
+    if user.has_role?(:administrator)
       act_as_administrator
-    elsif user.is_membership_manager? # TODO: doesn't really distinguish between primary/staff/sponsor
+=begin # TODO: These are not (yet?) supported by Bookshare
+    elsif user.has_role?(:membership_manager)
       act_as_dso_primary
-    elsif user.is_membership_viewer?
+    elsif user.has_role?(:membership_viewer)
       act_as_dso_staff
-    elsif user.is_catalog_curator?
+=end
+    elsif user.has_role?(:catalog_curator)
       act_as_library_staff
-    elsif user.is_artifact_submitter?
+    elsif user.has_role?(:membership_manager)
+      act_as_dso_sponsor
+    elsif user.has_role?(:artifact_submitter?)
       act_as_dso_delegate
     elsif user.linked_account?
       act_as_individual_member
-    elsif user.is_artifact_downloader?
+    elsif user.has_role?(:artifact_downloader)
       act_as_dso_member
     else
       act_as_guest
@@ -106,24 +159,20 @@ class Ability
   #
   def act_as_dso_primary
     act_as_dso_staff
-    can :manage, Member
   end
 
   # Indicate that the user can perform as a DSO Staff member.
   #
-  # TODO: Maybe this should be merged with DSO Primary?
+  # TODO: Maybe this should be merged with DSO Primary and/or DSO "sponsor"?
   #
   # @return [void]
   #
   def act_as_dso_staff
     act_as_library_staff
-    can :manage, Artifact
-    can :read,   Member
+    act_as_dso_sponsor
   end
 
   # Indicate that the user can perform as an assistant to a DSO Sponsor.
-  #
-  # TODO: Maybe this should be merged with DSO Staff?
   #
   # @return [void]
   #
@@ -135,7 +184,9 @@ class Ability
   #
   def act_as_dso_sponsor
     act_as_individual_member
+    can :manage, Artifact
     can :manage, Member
+    can :manage, ReadingList
   end
 
   # Indicate that the user can perform as an assistant to a DSO Staff member.
@@ -159,10 +210,10 @@ class Ability
   # @return [void]
   #
   def act_as_library_staff
-    act_as_individual_member
-    can :manage, Edition
-    can :manage, Periodical
+    act_as_guest
     can :manage, Title
+    can :manage, Periodical
+    can :manage, Edition
   end
 
   # Indicate that the user can act as a student with a personal Bookshare
@@ -187,7 +238,7 @@ class Ability
   #
   def act_as_individual_member
     act_as_guest
-    can :read, Artifact
+    can :download, Artifact
   end
 
   # Indicate that the user can act as a student with a membership account
@@ -221,7 +272,7 @@ class Ability
   #
   def act_as_dso_member
     act_as_guest
-    can :read, Artifact do |artifact|
+    can :download, Artifact do |artifact|
       ReadingList.any? { |list| list.include?(artifact) }
     end
   end
@@ -231,9 +282,10 @@ class Ability
   # @return [void]
   #
   def act_as_guest
-    can :read, Edition
-    can :read, Periodical
+    can :list, Artifact
     can :read, Title
+    can :read, Periodical
+    can :read, Edition
   end
 
 end

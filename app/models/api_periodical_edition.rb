@@ -30,6 +30,7 @@ class ApiPeriodicalEdition < Api::Message
 
   include Api::Common::EditionMethods
   include Api::Common::ArtifactMethods
+  include Api::Common::SequenceMethods
 
 end
 

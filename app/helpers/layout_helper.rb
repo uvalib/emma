@@ -233,7 +233,7 @@ module LayoutHelper
 
   # Indicate whether it is appropriate to show the nav bar.
   #
-  def show_nav_bar?
+  def show_nav_bar?(*)
     true
   end
 
@@ -319,7 +319,7 @@ module LayoutHelper
 
   # Indicate whether it is appropriate to show the search bar.
   #
-  def show_search_bar?
+  def show_search_bar?(*)
     true
   end
 
@@ -417,9 +417,11 @@ module LayoutHelper
 
   # Indicate whether it is appropriate to show the search controls.
   #
-  def show_search_controls?
-    (params[:action] == 'index') &&
-      %w(title periodical).include?(params[:controller])
+  # @param [Hash, nil] p              Default: `#params`.
+  #
+  def show_search_controls?(p = nil)
+    p ||= params
+    (p[:action] == 'index') && %w(title periodical).include?(p[:controller])
   end
 
   # search_controls
@@ -673,6 +675,37 @@ module LayoutHelper
       fields << yield
       safe_join(Array.wrap(fields).flatten)
     end
+  end
+
+  # ===========================================================================
+  # :section: Page controls
+  # ===========================================================================
+
+  public
+
+  # Indicate whether it is appropriate to show page controls.
+  #
+  # @param [Hash, nil] p              Default: `#params`.
+  #
+  def show_page_controls?(p = nil)
+    p ||= params
+    !p[:controller].to_s.include?('devise')
+  end
+
+  # page_controls
+  #
+  # @param [Hash, nil] p              Default: `#params`.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def page_controls(p = nil)
+    p ||= params
+    partial = p[:action].to_s
+    act_al  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s
+    partial = act_al if act_al
+    partial = "#{p[:controller]}/page_controls/#{partial}"
+    render(partial) if partial_exists?(partial)
   end
 
 end

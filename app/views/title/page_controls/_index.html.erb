@@ -1,0 +1,14 @@
+<%# app/views/title/page_controls/_index.html.erb -%>
+<%-
+  # Page controls on a Catalog Title index page for an authorized user.
+  return if cannot?(:create, Title)
+
+  id ||= params[:id]
+
+  path_opt = {}
+-%>
+
+<label class="label"><%= page_controls_label -%>:</label>
+<div class="controls">
+  <%= link_to_action(:title, :new, path_opt) %>
+</div>

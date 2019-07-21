@@ -129,19 +129,19 @@ module Api::Common::TitleMethods
   # A link to a title's thumbnail image.
   #
   # @return [String]
-  # @return [nil]                     If the value cannot be determined.
+  # @return [nil]                     If the link was not present.
   #
   def thumbnail_image
-    get_link('thumbnail')
+    get_link(:thumbnail)
   end
 
   # A link to a title's cover image if present.
   #
   # @return [String]
-  # @return [nil]                     If the value cannot be determined.
+  # @return [nil]                     If the link was not present.
   #
   def cover_image
-    get_link('coverimage')
+    get_link(:coverimage)
   end
 
   # ===========================================================================

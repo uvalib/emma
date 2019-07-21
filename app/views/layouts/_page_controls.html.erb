@@ -1,0 +1,10 @@
+<%# app/views/layouts/_page_controls.html.erb -%>
+<%-
+  # Controller- and action-specific page controls.
+  skip ||= !show_page_controls?
+  return if skip || (controls = page_controls).blank?
+-%>
+
+<div class="layout-section page">
+  <%= controls %>
+</div>

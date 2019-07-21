@@ -21,3 +21,45 @@
         word-break: keep-all;
     }
 }
+
+// noinspection SassScssResolvedByNameOnly
+.ability-debug {
+
+    width: 50%;
+    margin-top: $page-padding;
+
+    @media #{$browser-ie} {
+        margin-top: $ie-page-padding;
+    }
+
+    table {
+
+        width:        100%;
+        border:       2px solid $uva-accent-orange;
+        table-layout: fixed;
+
+        thead {
+            color:            white;
+            background-color: gray;
+        }
+
+        tbody {
+            .blank-row td {
+                height: 0.5rem;
+                border-bottom: 2px solid gray;
+            }
+        }
+
+        .model,
+        .action,
+        .status {
+            padding-left: 0.25rem;
+            text-align:   start;
+        }
+
+        .can {
+            font-weight:      bold;
+            background-color: $success-bg;
+        }
+    }
+}

@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 module Api::Common::PeriodicalMethods
 
+  include Api::Common::SequenceMethods
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================

@@ -198,10 +198,60 @@ en:
         tooltip:        'Return to your account dashboard.'
 
     # =========================================================================
+    # Generic (parameterized) page definitions
+    # =========================================================================
+
+    generic:
+      unit:
+        brief:          'item'
+        long:           'item'
+      label:            '%{Items}'
+      title:            '%{Items}'
+      tooltip:          'Search for %{items}.'
+
+      page_controls:
+        label:
+          one:          'Manage this %{item}'
+          many:         '%{Item} operations'
+
+      index:
+        label:          '%{Items}'
+        title:          '%{Item} Index'
+        tooltip:        'Search for more %{items} with %{terms}.'
+
+      show:
+        label:          '%{Item}'
+        title:          '%{Item}'
+        tooltip:        'See details about this %{item}.'
+
+      new:
+        label:          'Add'
+        title:          'Add %{Item}'
+        tooltip:        'Create a new %{item}.'
+
+      edit:
+        label:          'Modify'
+        title:          'Modify %{Item}'
+        tooltip:        'Update an existing %{item}.'
+
+      delete:
+        label:          'Remove'
+        title:          'Remove %{Item}'
+        tooltip:        'Remove an existing %{item}.'
+
+      history:
+        label:          'History'
+        title:          '%{Item} History'
+        tooltip:        'View modifications for this %{item}.'
+
+    # =========================================================================
     # Category pages
     # =========================================================================
 
     category:
+      unit:
+        brief:          'category'
+        long:           'catalog category'
       label:            'Categories'
       title:            'Categories'
       tooltip:          'Search for catalog items by topic.'
@@ -224,9 +274,17 @@ en:
     # =========================================================================
 
     title:
+      unit:
+        brief:          'title'
+        long:           'catalog title'
       label:            'Titles'
       title:            'Catalog Titles'
       tooltip:          'Search for catalog items.'
+
+      page_controls:
+        label:
+          one:          'Manage this catalog entry'
+          many:         'Catalog operations'
 
       index:
         label:          'Titles'
@@ -255,15 +313,25 @@ en:
         tooltip:        'Create an entry for a new catalog title.'
 
       edit:
-        label:          'Modify'
         title:          'Modify Catalog Title'
-        tooltip:        'Update the entry for an existing catalog title.'
+        tooltip:        'Update an existing catalog title.'
+
+      delete:
+        title:          'Remove Catalog Title'
+        tooltip:        'Remove a title from the catalog.'
+
+      history:
+        title:          'Catalog Title History'
+        tooltip:        'View modifications for this catalog title.'
 
     # =========================================================================
     # Periodical pages
     # =========================================================================
 
     periodical:
+      unit:
+        brief:          'periodical'
+        long:           'periodical'
       label:            'Periodicals'
       title:            'Periodicals'
       tooltip:          'Search for periodicals.'
@@ -279,20 +347,29 @@ en:
         tooltip:        'See details about this periodical.'
 
       new:
-        label:          'Add'
         title:          'Add Periodical'
         tooltip:        'Create an entry for a new periodical.'
 
       edit:
-        label:          'Modify'
         title:          'Modify Periodical'
         tooltip:        'Update the entry for an existing periodical.'
+
+      delete:
+        title:          'Remove Periodical'
+        tooltip:        'Remove the entry for an existing periodical.'
+
+      history:
+        title:          'Periodical History'
+        tooltip:        'View modifications for this periodical.'
 
     # =========================================================================
     # Periodical edition pages
     # =========================================================================
 
     edition:
+      unit:
+        brief:          'edition'
+        long:           'periodical edition'
       label:            'Editions'
       title:            'Periodical Editions'
       tooltip:          'List editions of this periodical.'
@@ -308,20 +385,29 @@ en:
         tooltip:        'See details about this periodical edition.'
 
       new:
-        label:          'Add'
         title:          'Add Periodical Edition'
         tooltip:        'Create an entry for a new periodical edition.'
 
       edit:
-        label:          'Modify'
         title:          'Modify Periodical Edition'
         tooltip:        'Update the entry for an existing periodical edition.'
+
+      delete:
+        title:          'Remove Periodical Edition'
+        tooltip:        'Remove an edition from a periodical.'
+
+      history:
+        title:          'Periodical Edition History'
+        tooltip:        'View modifications for this periodical edition.'
 
     # =========================================================================
     # Member pages
     # =========================================================================
 
     member:
+      unit:
+        brief:          'member'
+        long:           'organizational member'
       label:            'Members'
       title:            'Organization Members'
       tooltip:          'List organization members.'
@@ -337,20 +423,29 @@ en:
         tooltip:        'See details about this member.'
 
       new:
-        label:          'Add'
         title:          'Add Member'
         tooltip:        'Create an entry for a new organization member.'
 
       edit:
-        label:          'Modify'
         title:          'Modify Member'
         tooltip:        'Update the entry for an existing organization member.'
+
+      delete:
+        title:          'Remove Member'
+        tooltip:        'Remove a member from the organization.'
+
+      history:
+        title:          'Member History'
+        tooltip:        'View modifications for this organization member.'
 
     # =========================================================================
     # Artifact pages
     # =========================================================================
 
     artifact:
+      unit:
+        brief:          'artifact'
+        long:           'artifact'
       label:            'Artifacts'
       title:            'Artifacts (Remediated Content)'
       tooltip:          'List artifacts uploaded for this item.'
@@ -398,7 +493,16 @@ en:
       edit:
         label:          'Replace'
         title:          'Modify Artifact'
-        tooltip:        'Update an existing artifact.'
+        tooltip:        'Update artifact metadata.'
+
+      delete:
+        label:          'Delete'
+        title:          'Delete Artifact'
+        tooltip:        'Delete an artifact.'
+
+      history:
+        title:          'Artifact History'
+        tooltip:        'View modifications for this artifact.'
 
     # =========================================================================
     # API page

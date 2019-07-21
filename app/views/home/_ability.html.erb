@@ -1,0 +1,36 @@
+<%# app/views/home/_ability.html.erb -%>
+<%-
+  # NOTE: DEBUGGING
+  # Displays the individual abilities of the current user.
+  actions = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
+  models  = [Title, Artifact, Periodical, Edition, Member, ReadingList]
+-%>
+
+<div class="ability-debug">
+  <table>
+    <thead>
+      <tr>
+        <th class="model">Model</th>
+        <th class="action">Action</th>
+        <th class="status">Can perform?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%- idx = 0 -%>
+      <%- models.each do |model| -%>
+        <%- actions.each do |action| -%>
+          <%- next if (action == :download) && (model != Artifact) -%>
+          <%- status = can?(action, model) -%>
+          <%- can    = ('can' if status) -%>
+          <tr class="<%= can -%>">
+            <td class="model <%= can -%>"><%= model -%></td>
+            <td class="action <%= can -%>"><%= action -%></td>
+            <td class="status <%= can -%>"><%= status -%></td>
+          </tr>
+        <%- end -%>
+        <%- break if (idx += 1) >= models.size -%>
+        <tr class="blank-row"><td/><td/><td/></tr>
+      <%- end -%>
+    </tbody>
+  </table>
+</div>

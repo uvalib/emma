@@ -1,7 +1,7 @@
-<%# app/views/title/edit.html.erb -%>
+<%# app/views/title/history.html.erb -%>
 <%-
-  # Catalog Title edit form.
-  title ||= t('emma.title.edit.title')
+  # Catalog Title history.
+  title ||= t('emma.title.history.title')
   id    ||= @bookshare_id
 
   set_page_title(title)
@@ -15,4 +15,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>Click <%= here -%> to edit catalog title metadata.</p>
+<p>Click <%= here -%> for catalog title update history.</p>

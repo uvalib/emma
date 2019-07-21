@@ -115,6 +115,7 @@ module TitleHelper
     html_opt, opt = extract_options(opt, :fmt, :separator)
     format_id = opt[:fmt]
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
+    append_css_classes!(html_opt, 'disabled') if cannot?(:download, Artifact)
     item.formats.map { |format|
       next if format_id && (format_id != format.formatId)
       artifact_link(item, format, html_opt)

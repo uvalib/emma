@@ -7,11 +7,12 @@
   set_page_description(title)
   set_page_robots(:noindex)
 
-  can = current_user.is_membership_manager? ? 'can' : 'can NOT'
+  name = current_user.to_s.inspect
+  can  = can?(:new, Member) ? 'can' : 'can NOT'
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>(User <%= current_user.to_s.inspect -%> <%= can -%> create.)</p>
+<p>(User <%= name -%> <%= can -%> add a member.)</p>
 
 <p>TODO</p>

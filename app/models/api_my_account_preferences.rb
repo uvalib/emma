@@ -30,6 +30,7 @@ class ApiMyAccountPreferences < Api::Message
   end
 
   include Api::Common::ArtifactMethods
+  include Api::Common::SequenceMethods
 
 end
 

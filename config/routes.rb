@@ -31,7 +31,11 @@ Rails.application.routes.draw do
   # :section: Catalog Title operations
   # ===========================================================================
 
-  resources :title
+  resources :title do
+    member do
+      get 'history'
+    end
+  end
 
   # ===========================================================================
   # :section: Periodical operations

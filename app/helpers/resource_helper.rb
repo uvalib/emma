@@ -15,6 +15,7 @@ module ResourceHelper
 
   include GenericHelper
   include ParamsHelper
+  include BookshareHelper
 
   # ===========================================================================
   # :section:
@@ -197,8 +198,10 @@ module ResourceHelper
     end
 
     search = Array.wrap(field).map { |f| [f, terms] }.to_h
-    path   = url_for(search.merge(controller: ctrl, action: :index))
-    link_to(label, path, html_opt)
+    search[:controller] = ctrl
+    search[:action]     = :index
+    search[:only_path]  = true
+    link_to(label, url_for(search), html_opt)
   end
 
   # ===========================================================================
@@ -240,6 +243,7 @@ module ResourceHelper
         when :format      then v = format_links(item)
         when :formats     then v = format_links(item)
         when :languages   then v = language_links(item)
+        when :links       then v = item.record_links
         when :numImages   then v = item.image_count
         when :numPages    then v = item.page_count
         when :thumbnail   then v = thumbnail(item)

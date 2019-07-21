@@ -19,6 +19,38 @@ module HtmlHelper
 
   public
 
+  # Merge values from one or more options hashes.
+  #
+  # @param [Hash]        opt          The target options hash.
+  # @param [Array<Hash>] args         Options hash(es) to merge into *opt*.
+  #
+  # @return [Hash]                    A new hash.
+  #
+  # @see #merge_html_options!
+  #
+  def merge_html_options(opt, *args)
+    opt = opt&.dup || {}
+    merge_html_options!(opt, *args)
+  end
+
+  # Merge values from one or more hashes into an options hash.
+  #
+  # @param [Hash]        opt          The target options hash.
+  # @param [Array<Hash>] args         Options hash(es) to merge into *opt*.
+  #
+  # @return [Hash]                    The modified *opt* hash.
+  #
+  # @see #append_css_classes!
+  #
+  def merge_html_options!(opt, *args)
+    args.each do |arg|
+      next unless arg.is_a?(Hash)
+      opt.merge!(arg.except(:class))
+      append_css_classes!(opt, arg[:class])
+    end
+    opt
+  end
+
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #

@@ -15,6 +15,7 @@ module ApplicationHelper
 
   include Emma::Constants
   include GenericHelper
+  include I18nHelper
   include ParamsHelper
   include HtmlHelper
   include HeadHelper
@@ -31,7 +32,7 @@ module ApplicationHelper
   #
   # @type [String]
   #
-  APP_NAME = I18n.t('emma.application.name')
+  APP_NAME = I18n.t('emma.application.name').freeze
 
   # The name of this application for display purposes.
   #
@@ -71,6 +72,29 @@ module ApplicationHelper
   def rendering_json?(opt)
     ((opt[:format].to_s.downcase == 'json') if opt.is_a?(Hash)) ||
       (request.format.json? if defined?(request))
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether a view template partial exists.
+  #
+  # @param [String] path
+  # @param [Array]  prefixes          Default: [params[:controller]].
+  #
+  # @option prefixes.last [Hash]      Hash values to use in place of `#params`.
+  #
+  def partial_exists?(path, *prefixes)
+    return if path.blank?
+    p = (prefixes.pop if prefixes.last.is_a?(Hash))
+    if prefixes.blank? && !path.include?('/')
+      p ||= params
+      prefixes << p[:controller]
+    end
+    lookup_context.template_exists?(path, prefixes, true)
   end
 
 end

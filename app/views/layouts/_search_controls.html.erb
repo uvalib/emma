@@ -2,9 +2,9 @@
 <%-
   # Search controls (sort, per-page).
   skip ||= !show_search_controls?
-  return if skip
+  return if skip || (controls = search_controls).blank?
 -%>
 
-<div class="layout-section">
-  <%= search_controls %>
+<div class="layout-section search">
+  <%= controls %>
 </div>

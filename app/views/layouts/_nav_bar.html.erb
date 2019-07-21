@@ -2,9 +2,9 @@
 <%-
   # Navigation bar.
   skip ||= !show_nav_bar?
-  return if skip
+  return if skip || (controls = nav_bar_links).blank?
 -%>
 
 <nav class="layout-navbar">
-  <%= nav_bar_links %>
+  <%= controls %>
 </nav>

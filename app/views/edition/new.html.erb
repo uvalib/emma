@@ -7,11 +7,12 @@
   set_page_description(title)
   set_page_robots(:noindex, :nofollow)
 
-  can = current_user.is_catalog_curator? ? 'can' : 'can NOT'
+  name = current_user.to_s.inspect
+  can  = can?(:new, Edition) ? 'can' : 'can NOT'
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>(User <%= current_user.to_s.inspect -%> <%= can -%> create.)</p>
+<p>(User <%= name -%> <%= can -%> add an edition.)</p>
 
 <p>TODO</p>

@@ -191,8 +191,8 @@ class User < ApplicationRecord
     return if self.roles.present?
     prototype_user =
       case self.uid
-        when 'emmacollection@bookshare.org' then :admin # NOTE: tmp test user
-        when 'emmadso@bookshare.org'        then :dso   # NOTE: tmp test user
+        when 'emmacollection@bookshare.org' then :collection # NOTE: tmp test user
+        when 'emmadso@bookshare.org'        then :dso        # NOTE: tmp test user
         else                                     :anonymous
       end
     add_roles(prototype_user)

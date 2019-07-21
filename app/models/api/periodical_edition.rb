@@ -32,6 +32,7 @@ class Api::PeriodicalEdition < Api::Record::Base
 
   include Api::Common::EditionMethods
   include Api::Common::ArtifactMethods
+  include Api::Common::SequenceMethods
 
 end
 

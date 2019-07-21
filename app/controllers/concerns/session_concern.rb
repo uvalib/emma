@@ -50,6 +50,12 @@ module SessionConcern
     /_return_to$/,
   ].freeze
 
+  # Default API error message
+  #
+  # @type [String]
+  #
+  UNKNOWN_API_ERROR = I18n.t('emma.error.api.unknown').freeze
+
   # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
   # ===========================================================================
@@ -193,7 +199,7 @@ module SessionConcern
   def session_update
     yield.tap do
       error = defined?(@api) && @api&.exception
-      error &&= error.message.presence || I18n.t('emma.error.api.unknown')
+      error &&= error.message.presence || UNKNOWN_API_ERROR
       flash.now[:alert] = error if error
       last_operation_update
     end

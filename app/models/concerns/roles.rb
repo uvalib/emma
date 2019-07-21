@@ -201,8 +201,17 @@ module Roles
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   DEFAULT_ROLES = {
-    admin:     EMMA_ROLES,
-    dso:       (EMMA_ROLES - %i[administrator]),
+    collection: %i[
+      catalog_searcher
+      catalog_curator
+    ],
+    dso: %i[
+      catalog_searcher
+      artifact_downloader
+      artifact_submitter
+      membership_viewer
+      membership_manager
+    ],
     anonymous: %i[catalog_searcher],
   }.deep_freeze
 

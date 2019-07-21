@@ -55,18 +55,22 @@ module GenericHelper
 
   # Generate a URL or partial path.
   #
-  # @param [String]    path           URL path (with or without URL options).
-  # @param [Hash, nil] opt            URL options to include in the result.
+  # @param [Array] args               URL path components, except:
   #
-  # @return [String]                  A new path string with *opt* included.
+  # @option args.last [Hash]          URL options to include in the result.
   #
-  def make_path(path, **opt)
-    result = path.is_a?(String) ? path.dup : path.to_s
-    if opt.present?
-      result << (result.include?('?') ? '&' : '?')
-      result << opt.to_param
+  # @return [String]
+  #
+  def make_path(*args)
+    opt = args.extract_options!
+    args.flatten.join('/').strip.tap do |result|
+      if opt.present?
+        result << (result.include?('?') ? '&' : '?')
+        result << opt.to_param
+      else
+        result.delete_suffix('?')
+      end
     end
-    result
   end
 
   # Strip off the hash elements identified by *keys* to return two hashes:

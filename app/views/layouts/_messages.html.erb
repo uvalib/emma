@@ -1,21 +1,18 @@
 <%# app/views/layouts/_messages.html.erb -%>
 <%-
   # Flash messages.
-  flash_messages =
-    %i[alert notice].map { |type|
-      content_tag(:p, flash.now[type], class: type.to_s) if flash.now[type]
-    }
-  flash_messages +=
-    %i[alert notice].map { |type|
-      content_tag(:p, flash[type], class: type.to_s) if flash[type]
-    }
+  messages =
+    %i[alert notice].flat_map { |type|
+      [flash.now[type], flash[type]].map { |msg|
+        content_tag(:p, msg, class: type.to_s) if msg.present?
+      }
+    }.compact.uniq.presence
+  messages &&= safe_join(messages.unshift(nil).push(nil), "\n")
+
   flash.clear
-  flash_messages.compact!
-  flash_messages.uniq!
-  return if flash_messages.blank?
-  flash_messages = safe_join(flash_messages, "\n")
+
+  css = 'flash-messages'
+  css = css_classes(css, 'hidden') if messages.blank?
 -%>
 
-<div class="flash-messages">
-  <%= flash_messages %>
-</div>
+<div class="<%= css -%>"><%= messages -%></div>

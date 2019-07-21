@@ -1,0 +1,14 @@
+<%# app/views/member/page_controls/_index.html.erb -%>
+<%-
+  # Page controls on a Member index page for an authorized user.
+  return if cannot?(:create, Member)
+
+  id ||= params[:id]
+
+  path_opt = {}
+-%>
+
+<label class="label"><%= page_controls_label -%>:</label>
+<div class="controls">
+  <%= link_to_action(:member, :new, path_opt) %>
+</div>

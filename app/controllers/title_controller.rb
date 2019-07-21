@@ -101,6 +101,13 @@ class TitleController < ApplicationController
     __debug { "TITLE #{__method__} | params = #{params.inspect}" }
   end
 
+  # == GET /title/:id/history
+  # Show processing history for this catalog title.
+  #
+  def history
+    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+  end
+
 end
 
 __loading_end(__FILE__)
