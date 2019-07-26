@@ -1,0 +1,82 @@
+// app/assets/stylesheets/controllers/_reading_list.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Reading List index page
+//=============================================================================
+
+// Reading List metadata label/value pairs for index listings.
+.reading_list-list-entry {
+    @extend .index-entry;
+}
+
+// Zero or more .reading_list-list-entry elements.
+.reading_list-list {
+    @extend .index-list;
+}
+
+//=============================================================================
+// Reading List show page
+//=============================================================================
+
+// Reading List metadata values.
+.reading_list-details {
+    @extend .details-entry;
+}
+
+// Listing of catalog titles associated with the Reading List.
+.reading_list-titles {
+
+    flex:          1 1 50%;
+    align-content: flex-start;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    > :first-child {
+        margin-top: 0;
+    }
+
+    .title-list {
+
+        // NOTE: If ReadingListHelper#READING_LIST_THUMBNAIL is *false*
+        //  then uncomment the following to accomodate the lack of a
+        //  thumbnail column.
+        // @extend .list-2-column;
+
+        margin: 0;
+    }
+}
+
+// Container for a .reading_list-details and .title-list in a two-column format
+// for wide screens.
+.reading_list-container {
+
+    @extend .details-container;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .reading_list-details {}
+
+    // Listing of catalog titles associated with the Reading List.
+    //
+    // noinspection SassScssResolvedByNameOnly
+    .title-list {
+
+        // NOTE: If ReadingListHelper#READING_LIST_THUMBNAIL is *false*
+        //  then uncomment the following to accomodate the lack of a
+        //  thumbnail column.
+        // @extend .list-2-column;
+
+        // Move the column up a bit so that the baseline of the heading matches
+        // the baseline of the text on the left-hand side.
+        @media #{$wide-screen} {
+            margin-top: -0.5rem;
+        }
+    }
+}

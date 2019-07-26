@@ -126,6 +126,21 @@ class ApiService
       ApiReadingListUserView.new(response, error: exception)
     end
 
+    # == GET /v2/lists/:readingListId
+    # Get metadata for an existing reading list.
+    #
+    # NOTE: This is not a real Bookshare API call.
+    #
+    # @param [String] readingListId
+    #
+    # @return [ApiReadingListUserView]
+    #
+    def get_reading_list(readingListId:)
+      all = get_my_reading_lists(limit: :max)
+      rl  = all.lists.find { |list| list.identifier == readingListId }
+      ApiReadingListUserView.new(rl)
+    end
+
     # == PUT /v2/lists/:readingListId
     # Edit the metadata of an existing reading list.
     #

@@ -1,0 +1,27 @@
+<%# app/views/title/_list.html.erb -%>
+<%-
+  # Title list.
+  list ||= []
+  skip ||= nil
+
+  skip = Array.wrap(skip)
+  heading =
+    unless skip.include?(:title)
+      title ||= t('emma.title.index.title')
+      unless skip.include?(:count)
+        count ||= list.size
+        title += " (#{count})"
+      end
+      content_tag(:h2, h(title), class: 'list-heading')
+    end
+-%>
+
+<%= heading %>
+
+<%- if list.present? -%>
+  <%- list.each_with_index do |item, idx| -%>
+    <%= render 'title/entry', offset: 0, index: idx, item: item %>
+  <%- end -%>
+<%- else -%>
+  <%= render 'title/entry', index: -1 %>
+<%- end -%>

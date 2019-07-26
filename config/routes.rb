@@ -57,6 +57,7 @@ Rails.application.routes.draw do
   # ===========================================================================
 
   resources :member
+  resources :reading_list
 
   # ===========================================================================
   # :section: Health check

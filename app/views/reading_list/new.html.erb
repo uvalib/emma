@@ -1,0 +1,18 @@
+<%# app/views/reading_list/new.html.erb -%>
+<%-
+  # New Reading List form.
+  title ||= t('emma.reading_list.new.title')
+
+  set_page_title(title)
+  set_page_description(title)
+  set_page_robots(:noindex)
+
+  name = current_user.to_s.inspect
+  can  = can?(:new, ReadingList) ? 'can' : 'can NOT'
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<p>(User <%= name -%> <%= can -%> add a reading list.)</p>
+
+<p>TODO</p>

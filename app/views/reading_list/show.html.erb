@@ -1,0 +1,16 @@
+<%# app/views/reading_list/show.html.erb -%>
+<%-
+  # Reading List show page.
+  item  ||= @item
+  title ||= item&.label || t('emma.reading_list.show.title')
+  list  ||= page_items
+
+  set_page_title(title)
+  set_page_description(Title: title)
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<div class="reading_list-container">
+  <%= render 'reading_list/details', item: item, list: list %>
+</div>

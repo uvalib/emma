@@ -1,0 +1,17 @@
+<%# app/views/reading_list/_details.html.erb -%>
+<%-
+  # A reading list metadata listing.
+  item ||= nil
+  list ||= nil
+  return if item.blank?
+
+  list_title = 'Reading List Titles' # TODO: I18n
+-%>
+
+<div class="reading_list-details">
+  <%= reading_list_field_values(item) %>
+</div>
+
+<div class="title-list">
+  <%= render 'title/list', title: list_title, list: list %>
+</div>

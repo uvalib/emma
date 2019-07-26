@@ -1,0 +1,24 @@
+<%# app/views/reading_list/_entry.html.erb -%>
+<%-
+  # A single reading list index entry.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+
+  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  id     = item  && %Q(id="reading_list-#{h(item.identifier)}").html_safe
+
+  metadata = item && {
+    Name:        reading_list_link(item),
+    Description: :description,
+  }
+-%>
+
+<%- if number -%>
+  <div class="number"><%= number -%></div>
+<%- end -%>
+<div class="reading_list-list-entry" <%= id -%>>
+  <%= item ? field_values(item, metadata) : empty_field_value %>
+</div>
