@@ -8,7 +8,7 @@
   offset ||= page_offset
 
   number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && nil # %Q(id="category-#{item.identifier}").html_safe
+  id     = item  && nil # %Q(id="category-#{h(item.identifier)}").html_safe
 
   metadata = item && {
     category_link(item) => "(#{item.titleCount})"

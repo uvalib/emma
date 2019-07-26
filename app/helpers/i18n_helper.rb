@@ -83,8 +83,10 @@ module I18nHelper
     I18n.t("emma.#{controller}.page_controls.label.#{mode}", default: nil) ||
       I18n.t(
         "emma.generic.page_controls.label.#{mode}",
-        Item:    (unit = unit_of(controller, capitalize: true)),
-        Items:   unit.pluralize,
+        item:    (unit = unit_of(controller)),
+        items:   unit.pluralize,
+        Item:    unit.capitalize,
+        Items:   unit.capitalize.pluralize,
         default: [
           :"emma.#{controller}.page_controls.label",
           :'emma.generic.page_controls.label',

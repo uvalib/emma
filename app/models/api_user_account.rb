@@ -47,7 +47,8 @@ class ApiUserAccount < Api::Message
     attribute :subscriptionStatus,      SubscriptionStatus
   end
 
-  include Api::Common::NameMethods
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
 end
 

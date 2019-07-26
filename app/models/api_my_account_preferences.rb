@@ -10,6 +10,7 @@ require 'api/message'
 require_relative 'api/format'
 require_relative 'api/link'
 require_relative 'api/common/artifact_methods'
+require_relative 'api/common/link_methods'
 
 # ApiMyAccountPreferences
 #
@@ -30,7 +31,7 @@ class ApiMyAccountPreferences < Api::Message
   end
 
   include Api::Common::ArtifactMethods
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
 end
 

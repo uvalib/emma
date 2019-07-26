@@ -9,7 +9,7 @@ require 'api/message'
 
 require_relative 'api/category_summary'
 require_relative 'api/link'
-require_relative 'api/common/sequence_methods'
+require_relative 'api/common/link_methods'
 
 # ApiCategoriesList
 #
@@ -25,7 +25,7 @@ class ApiCategoriesList < Api::Message
     attribute :totalResults, Integer
   end
 
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
 end
 

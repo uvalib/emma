@@ -14,8 +14,9 @@ require_relative 'api/grade'
 require_relative 'api/link'
 require_relative 'api/name'
 require_relative 'api/usage_restriction'
-require_relative 'api/common/title_methods'
 require_relative 'api/common/artifact_methods'
+require_relative 'api/common/link_methods'
+require_relative 'api/common/title_methods'
 
 # ApiTitleMetadataDetail
 #
@@ -86,8 +87,9 @@ class ApiTitleMetadataDetail < Api::Message
     attribute :vocalParts,           String
   end
 
-  include Api::Common::TitleMethods
   include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
 end
 

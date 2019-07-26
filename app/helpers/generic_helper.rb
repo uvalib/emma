@@ -11,6 +11,7 @@ module GenericHelper
 
   def self.included(base)
     __included(base, '[GenericHelper]')
+    base.send(:extend, self)
   end
 
   # ===========================================================================
@@ -64,11 +65,12 @@ module GenericHelper
   def make_path(*args)
     opt = args.extract_options!
     args.flatten.join('/').strip.tap do |result|
+      ready_for_options = result.end_with?('?', '&')
       if opt.present?
-        result << (result.include?('?') ? '&' : '?')
+        result << (result.include?('?') ? '&' : '?') unless ready_for_options
         result << opt.to_param
-      else
-        result.delete_suffix('?')
+      elsif ready_for_options
+        result.sub!(/.$/)
       end
     end
   end
@@ -83,8 +85,44 @@ module GenericHelper
   # @return [Array<(Hash, Hash)>]
   #
   def extract_options(hash, *keys)
-    keys = keys.flatten.map!(&:to_sym)
+    keys = keys.flatten.compact.map(&:to_sym).uniq
     return hash.except(*keys), hash.slice(*keys)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Fully URL-encode (including transforming '.' to '%2E').
+  #
+  # @param [String] s
+  #
+  # @return [String]
+  #
+  def url_escape(s)
+    CGI.escape(s.to_s).gsub(/\./, '%2E')
+  end
+
+  # Extract the named references in a format string.
+  #
+  # @param [String] format_string
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see Kernel#sprintf
+  #
+  def named_format_references(format_string)
+    keys = []
+    if format_string.present?
+      format_string.scan(/%<([^<>]+)>/) { |name| keys += name } # "%<name>s"
+      format_string.scan(/%{([^{}]+)}/) { |name| keys += name } # "%{name}"
+      keys.reject!(&:blank?)
+      keys.uniq!
+      keys.map!(&:to_sym)
+    end
+    keys
   end
 
   # ===========================================================================

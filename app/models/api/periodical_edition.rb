@@ -5,12 +5,11 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'format'
 require_relative 'link'
-require_relative 'common/edition_methods'
 require_relative 'common/artifact_methods'
+require_relative 'common/edition_methods'
+require_relative 'common/link_methods'
 
 # Api::PeriodicalEdition
 #
@@ -30,9 +29,9 @@ class Api::PeriodicalEdition < Api::Record::Base
     attribute :publicationDate, String
   end
 
-  include Api::Common::EditionMethods
   include Api::Common::ArtifactMethods
-  include Api::Common::SequenceMethods
+  include Api::Common::EditionMethods
+  include Api::Common::LinkMethods
 
 end
 

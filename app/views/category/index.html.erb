@@ -3,9 +3,9 @@
   # Category index.
   title ||= t('emma.category.index.title')
 
-  item_list = page_items.presence
+  item_list = page_items
 
-  if item_list
+  if item_list.present?
     all_count    = nil
     search_count = "#{total_items} categories found." # TODO: I18n
     search_count = content_tag(:div, search_count, class: 'search-count')
@@ -34,13 +34,7 @@
   <%- end -%>
 
   <%# === Items === -%>
-  <%- if item_list -%>
-    <%- item_list.each_with_index do |item, idx| -%>
-      <%= render 'category/entry', index: idx, item: item %>
-    <%- end -%>
-  <%- else -%>
-    <%= render 'category/entry', index: -1 %>
-  <%- end -%>
+  <%= render 'category/list', list: item_list, skip: :title %>
 
   <%# === Bottom pagination controls === -%>
   <%- if controls -%>

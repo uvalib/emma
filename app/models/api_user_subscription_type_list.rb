@@ -9,6 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/user_subscription_type'
+require_relative 'api/common/link_methods'
 
 # ApiUserSubscriptionTypeList
 #
@@ -20,6 +21,8 @@ class ApiUserSubscriptionTypeList < Api::Message
     has_many :links,                 Api::Link
     has_many :userSubscriptionTypes, Api::UserSubscriptionType
   end
+
+  include Api::Common::LinkMethods
 
 end
 

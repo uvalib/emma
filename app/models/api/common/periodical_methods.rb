@@ -5,11 +5,11 @@
 
 __loading_begin(__FILE__)
 
+require 'api/record'
+
 # Methods mixed in to record elements related to periodicals.
 #
 module Api::Common::PeriodicalMethods
-
-  include Api::Common::SequenceMethods
 
   # ===========================================================================
   # :section: Object overrides

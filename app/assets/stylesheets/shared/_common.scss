@@ -7,13 +7,21 @@
 // Placeholder classes
 //=============================================================================
 
+// Make focus outline more easily seen.
+//
+// noinspection SassScssResolvedByNameOnly
+%focus {
+    outline:        2px solid $focus-accent;
+    outline-offset: 2px;
+}
+
 // Make an actionable item (e.g. <a>) appear non-functional.
 // NOTE: The link should also have attribute 'tabindex="-1"'.
 %disabled {
     text-decoration: none;
     &:active { pointer-events:  none; }
-    &:hover  { text-decoration: none; }
     &:focus  { outline:         none; }
+    &:hover  { text-decoration: none; }
 }
 
 // Counteract the effects of .sr-only (except for position and border).
@@ -53,12 +61,12 @@
 
         text-decoration: none;
 
-        &:hover {
-            text-decoration: underline;
-        }
-
         &:focus {
             outline: 2px dotted white;
+        }
+
+        &:hover {
+            text-decoration: underline;
         }
     }
 
@@ -68,6 +76,7 @@
 }
 
 // A panel for highlighting content.
+//
 // noinspection SassScssResolvedByNameOnly
 %panel {
     display:          block;
@@ -93,11 +102,21 @@
     }
 }
 
-// Make focus outline more easily seen.
+// Highlight button on hover.
+//
 // noinspection SassScssResolvedByNameOnly
-%focus {
-    outline:        2px solid $focus-accent;
-    outline-offset: 2px;
+%button {
+
+    cursor: pointer;
+
+    &:focus {
+        text-decoration: underline;
+    }
+
+    &:hover {
+        text-decoration: underline;
+        box-shadow:      0 0 8px 4px $uva-accent-orange;
+    }
 }
 
 //=============================================================================

@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'name'
 require_relative 'narrator'
 require_relative 'common/artifact_methods'

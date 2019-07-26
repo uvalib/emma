@@ -5,11 +5,10 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'download_timeframe'
 require_relative 'link'
 require_relative 'user_subscription_type'
+require_relative 'common/link_methods'
 
 # Api::UserSubscription
 #
@@ -30,6 +29,8 @@ class Api::UserSubscription < Api::Record::Base
     attribute :subscriptionId,       String
     has_one   :userSubscriptionType, Api::UserSubscriptionType
   end
+
+  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

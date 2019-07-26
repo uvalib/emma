@@ -34,6 +34,7 @@ class ApiPeriodicalSeriesMetadataSummary < Api::Message
     attribute :title,                String
   end
 
+  include Api::Common::LinkMethods
   include Api::Common::PeriodicalMethods
 
 end

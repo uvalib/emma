@@ -123,7 +123,7 @@ class Ability
     elsif user.linked_account?
       act_as_individual_member
     elsif user.has_role?(:artifact_downloader)
-      act_as_dso_member
+      act_as_organization_member
     else
       act_as_guest
     end
@@ -214,6 +214,7 @@ class Ability
     can :manage, Title
     can :manage, Periodical
     can :manage, Edition
+    can :manage, ReadingList
   end
 
   # Indicate that the user can act as a student with a personal Bookshare
@@ -270,7 +271,7 @@ class Ability
   #
   # @see https://www.bookshare.org/cms/help-center/access-nimac-books
   #
-  def act_as_dso_member
+  def act_as_organization_member
     act_as_guest
     can :download, Artifact do |artifact|
       ReadingList.any? { |list| list.include?(artifact) }

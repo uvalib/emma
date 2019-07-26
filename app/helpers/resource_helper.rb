@@ -16,6 +16,7 @@ module ResourceHelper
   include GenericHelper
   include ParamsHelper
   include BookshareHelper
+  include ApiHelper
 
   # ===========================================================================
   # :section:
@@ -44,6 +45,7 @@ module ResourceHelper
     item_link:    %i[label no_link path path_method tooltip scope controller],
     search_links: %i[field method separator link_method],
     search_link:  %i[field all_words no_link scope controller],
+    record_links: %i[no_link separator],
   }.deep_freeze
 
   # ===========================================================================
@@ -57,7 +59,7 @@ module ResourceHelper
   # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label    Default: `item.label`.
   # @param [Proc, String, nil]   path     From block if not provided here.
-  # @param [Hash, nil]           opt      Passed to #link_to except for:
+  # @param [Hash, nil]           opt      Passed to #make_link except for:
   #
   # @option opt [Boolean]        :no_link
   # @option opt [String]         :tooltip
@@ -89,7 +91,7 @@ module ResourceHelper
         scope &&= "emma.#{scope}.show.tooltip"
         html_opt[:title] = I18n.t(scope, default: '')
       end
-      link_to(label, path, html_opt)
+      make_link(label, path, html_opt)
     end
   end
 
@@ -149,7 +151,7 @@ module ResourceHelper
   #
   # @param [Api::Record::Base, String] terms
   # @param [Symbol, nil]               field  Default: :title
-  # @param [Hash, nil]                 opt    Passed to #link_to except for:
+  # @param [Hash, nil]                 opt    Passed to #make_link except for:
   #
   # @option opt [Symbol]         :field
   # @option opt [Boolean]        :all_words
@@ -197,11 +199,42 @@ module ResourceHelper
       html_opt[:title] = I18n.t(scope, terms: tip_terms, default: '')
     end
 
+    # Generate the search path.
     search = Array.wrap(field).map { |f| [f, terms] }.to_h
     search[:controller] = ctrl
     search[:action]     = :index
     search[:only_path]  = true
-    link_to(label, url_for(search), html_opt)
+    path = url_for(search)
+
+    make_link(label, path, html_opt)
+  end
+
+  # Create record links to an external target or via the internal API interface
+  # endpoint.
+  #
+  # @param [Array, Api::Record::Base] links
+  # @param [Hash, nil]                opt     Passed to #make_link except for:
+  #
+  # @option opt [Boolean] :no_link
+  # @option opt [String]  :separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def record_links(links, **opt)
+    html_opt, opt = extract_options(opt, RESOURCE_LINK_OPTIONS[__method__])
+    prepend_css_classes!(html_opt, 'external-link')
+    separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
+    no_link   = opt[:no_link]
+    links = links.record_links if links.is_a?(Api::Record::Base)
+    Array.wrap(links).map { |link|
+      next if link.blank?
+      path = (external_url(link) unless no_link)
+      if path.present? && !path.match?(/[{}]/)
+        make_link(link, path, html_opt)
+      else
+        content_tag(:div, link, class: 'non-link')
+      end
+    }.compact.join(separator).html_safe
   end
 
   # ===========================================================================
@@ -221,6 +254,7 @@ module ResourceHelper
   # @option pairs [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @yield [item]
+  # @yieldparam  [Api::Record::Base] item
   # @yieldreturn [Hash]                   The value for *label_value_pairs*.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -243,7 +277,7 @@ module ResourceHelper
         when :format      then v = format_links(item)
         when :formats     then v = format_links(item)
         when :languages   then v = language_links(item)
-        when :links       then v = item.record_links
+        when :links       then v = record_links(item)
         when :numImages   then v = item.image_count
         when :numPages    then v = item.page_count
         when :thumbnail   then v = thumbnail(item)

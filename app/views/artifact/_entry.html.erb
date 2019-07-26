@@ -10,7 +10,7 @@
   offset ||= page_offset
 
   number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="artifact-#{item.identifier}").html_safe
+  id     = item  && %Q(id="artifact-#{h(item.identifier)}").html_safe
 -%>
 
 <%- if number -%>

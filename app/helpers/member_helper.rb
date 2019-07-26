@@ -44,6 +44,8 @@ module MemberHelper
 
   # Create a link to the details show page for the given item.
   #
+  # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
+  #
   # @param [Object]              item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash, nil]           opt    Passed to #item_link.
@@ -51,7 +53,7 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_link(item, label = nil, **opt)
-    path = member_path(id: item.identifier)
+    path = member_path(id: url_escape(item.identifier))
     opt  = opt.merge(tooltip: MEMBER_SHOW_TOOLTIP)
     item_link(item, label, path, **opt)
   end
@@ -68,18 +70,19 @@ module MemberHelper
   #
   MEMBER_SHOW_FIELDS = {
     Name:               :name,
-    EmailAddress:       :identifier,
+    Username:           :username,
+    EmailAddress:       :emailAddress,
     PhoneNumber:        :phoneNumber,
     Address:            :address,
     DateOfBirth:        :dateOfBirth,
-    Deleted:            :deleted,
-    Locked:             :locked,
     Language:           :language,
-    CanDownload:        :canDownload,
     SubscriptionStatus: :subscriptionStatus,
-    AllowAdultContent:  :allowAdultContent,
     HasAgreement:       :hasAgreement,
     ProofOfDisability:  :proofOfDisabilityStatus,
+    CanDownload:        :canDownload,
+    AllowAdultContent:  :allowAdultContent,
+    Deleted:            :deleted,
+    Locked:             :locked,
     Guardian:           :guardian,
     Site:               :site,
     Roles:              :roles,

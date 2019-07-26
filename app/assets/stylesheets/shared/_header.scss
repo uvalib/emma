@@ -44,7 +44,7 @@
     }
 }
 
-%control-interior {
+%header-control-interior {
     * {
         color:     black;
         font-size: large;
@@ -158,6 +158,10 @@
             max-height: inherit;
             max-width:  100%;
         }
+
+        a:hover {
+            box-shadow: 0 -10px 16px 12px $uva-accent-orange;
+        }
     }
 
     // The EMMA tagline next to the logo.
@@ -209,7 +213,7 @@
         min-width:     max-content;
         max-width:     max-content;
         padding:       0.25rem 0.375rem;
-        border:        1px solid;
+        border:        1.5px solid;
         border-radius: 0.5rem;
         flex:          0 0 auto;
 
@@ -298,7 +302,7 @@
     .search-bar {
 
         @extend %header-search-section;
-        @extend %control-interior;
+        @extend %header-control-interior;
 
         flex-wrap: wrap;
         margin:    $gap-y 0;
@@ -330,6 +334,8 @@
 
         // @see LayoutHelper#search_button
         .search-button {
+
+            @extend %button;
 
             height: auto;
             flex:   0 0 auto;
@@ -409,7 +415,7 @@
         // @see LayoutHelper#menu_control
         .menu-control {
 
-            @extend %control-interior;
+            @extend %header-control-interior;
 
             &:focus-within {
                 outline-offset: 2px;
@@ -471,18 +477,14 @@
 
     .control {
 
+        @extend %button;
+
         display:         block;
         padding:         2px 6px;
         line-height:     1;
         text-decoration: none;
         font-size:       larger;
         border-radius:   6px;
-        border:          1px solid white;
-        cursor:          pointer;
-
-        &:hover {
-            text-decoration:  underline;
-            background-color: #ffffff40;
-        }
+        border:          1.5px solid;
     }
 }

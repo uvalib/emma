@@ -17,6 +17,7 @@ module ApiHelper
   end
 
   include GenericHelper
+  include HtmlHelper
   include ParamsHelper
 
   # ===========================================================================
@@ -25,22 +26,38 @@ module ApiHelper
 
   public
 
+  # Generate a URL to an external (Bookshare-related) site, but refactor API
+  # URL's so that they are passed through the application's "API explorer".
+  #
+  # @param [String]    path
+  # @param [Hash, nil] opt            Passed to #make_path.
+  #
+  # @return [String]
+  #
+  def external_url(path, **opt)
+    api_version = "/#{ApiService::API_VERSION}/"
+    make_path(path, opt).tap do |result|
+      result.delete_prefix!(ApiService::BASE_URL)
+      unless result.start_with?('http', api_version)
+        result.prepend(api_version).squeeze!('/')
+      end
+    end
+  end
+
   # Invoke an API method.
   #
   # @param [Symbol]    method         One of ApiService#HTTP_METHODS.
   # @param [String]    path
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] opt            Passed to #api_get, etc.
   #
   # @return [Hash]
   #
   def api_method(method, path, **opt)
-    url = make_path(path, opt)
-    url = "/v2/#{url}".squeeze('/') unless url.start_with?('/v2/')
     result = {
-      method: method.to_s.upcase,
+      method: (method ||= :get).to_s.upcase,
       path:   path,
       opt:    opt.presence,
-      url:    url
+      url:    external_url(path, opt)
     }
     method = "api_#{method}".downcase.to_sym
     @api ||= ApiService.instance
@@ -92,7 +109,7 @@ module ApiHelper
               query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
               href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
             end
-            url = link_to(url, href, link_opt) if href.present?
+            url = make_link(url, href, link_opt) if href.present?
             "#{quot}#{url}#{quot}"
           }
           .split(/\n/)

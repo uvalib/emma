@@ -33,7 +33,7 @@ body.api-v2 {
     }
 
     //=========================================================================
-    // Classes
+    // Sections
     //=========================================================================
 
     .heading {
@@ -108,7 +108,7 @@ body.api-v2 {
             }
 
             //=================================================================
-            // Classes
+            // Sections
             //=================================================================
 
             .method {
@@ -125,11 +125,16 @@ body.api-v2 {
 
             // noinspection CssInvalidPropertyValue
             .endpoint {
+
                 display:     block;
                 margin-left: auto;
                 word-break:  keep-all;
                 word-wrap:   anywhere; // NOTE: valid but flagged by RubyMine
                 font-family: monospace;
+
+                @media #{$narrow-screen} {
+                    word-break: break-word;
+                }
             }
         }
 

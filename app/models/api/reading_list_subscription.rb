@@ -5,9 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'link'
+require_relative 'common/link_methods'
 
 # Api::ReadingListSubscription
 #
@@ -20,6 +19,8 @@ class Api::ReadingListSubscription < Api::Record::Base
     attribute :enabled, Boolean
     has_many  :links,   Api::Link
   end
+
+  include Api::Common::LinkMethods
 
 end
 

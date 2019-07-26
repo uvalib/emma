@@ -692,20 +692,55 @@ module LayoutHelper
     !p[:controller].to_s.include?('devise')
   end
 
-  # page_controls
+  # Render the appropriate partial to insert page controls if they are defined
+  # for the current controller/action.
   #
   # @param [Hash, nil] p              Default: `#params`.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def page_controls(p = nil)
+  def render_page_controls(p = nil)
     p ||= params
     partial = p[:action].to_s
     act_al  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s
     partial = act_al if act_al
     partial = "#{p[:controller]}/page_controls/#{partial}"
     render(partial) if partial_exists?(partial)
+  end
+
+  # Generate a list of controller/action pairs that the current user is able to
+  # perform.
+  #
+  # @param [Class,Symbol,String] model
+  # @param [Array<Symbol>]       actions
+  #
+  # @return [Array<Array<(Symbol,Symbol)>>]
+  #
+  def page_control_actions(model, *actions)
+    if model.is_a?(Class)
+      controller = model.to_s.underscore
+    else
+      controller = model.to_sym
+      model      = model.to_s.camelize.constantize
+    end
+    actions.map { |action|
+      [controller, action] if (action = action&.to_sym) && can?(action, model)
+    }.compact
+  end
+
+  # Generate controls specified by #page_controls_actions.
+  #
+  # @param [Array<Array<(Symbol,Symbol)>>] controller_action_pairs
+  # @param [Hash]                          path_opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def page_controls(*controller_action_pairs, **path_opt)
+    controller_action_pairs.map { |pair|
+      link_to_action(*pair, **path_opt) if pair.present?
+    }.compact.join("\n").html_safe.presence
   end
 
 end

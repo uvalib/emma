@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 require 'api/message'
 
 require_relative 'api/link'
+require_relative 'api/common/link_methods'
 require_relative 'api/common/reading_list_methods'
 
 # ApiReadingList
@@ -31,6 +32,7 @@ class ApiReadingList < Api::Message
     attribute :titleCount,      Integer
   end
 
+  include Api::Common::LinkMethods
   include Api::Common::ReadingListMethods
 
 end

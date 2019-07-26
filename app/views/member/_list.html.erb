@@ -1,13 +1,13 @@
-<%# app/views/edition/_list.html.erb -%>
+<%# app/views/member/_list.html.erb -%>
 <%-
-  # Edition list.
+  # List list.
   list ||= []
   skip ||= nil
 
   skip = Array.wrap(skip)
   heading =
     unless skip.include?(:title)
-      title ||= t('emma.edition.index.title')
+      title ||= t('emma.member.index.title')
       unless skip.include?(:count)
         count ||= list.size
         title += " (#{count})"
@@ -20,8 +20,8 @@
 
 <%- if list.present? -%>
   <%- list.each_with_index do |item, idx| -%>
-    <%= render 'edition/entry', index: idx, item: item %>
+    <%= render 'member/entry', index: idx, item: item %>
   <%- end -%>
 <%- else -%>
-  <%= render 'edition/entry', index: -1 %>
+  <%= render 'member/entry', index: -1 %>
 <%- end -%>

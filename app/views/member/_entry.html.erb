@@ -8,12 +8,17 @@
   offset ||= page_offset
 
   number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="member-#{h(item.name)}").html_safe
+  id     = item  && %Q(id="member-#{h(item.identifier)}").html_safe
+
+  metadata = item && {
+    Name:  member_link(item),
+    Roles: :roles
+  }
 -%>
 
 <%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
 <div class="member-list-entry" <%= id -%>>
-  <%= item ? member_field_values(item) : empty_field_value %>
+  <%= item ? field_values(item, metadata) : empty_field_value %>
 </div>

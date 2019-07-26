@@ -5,14 +5,15 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'sequence_methods'
 require 'sanitize'
+
+require_relative 'link_methods'
 
 # Methods mixed in to record elements related to catalog titles.
 #
 module Api::Common::TitleMethods
 
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

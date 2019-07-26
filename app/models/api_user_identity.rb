@@ -9,6 +9,8 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/name'
+require_relative 'api/common/account_methods'
+require_relative 'api/common/link_methods'
 
 # ApiUserIdentity
 #
@@ -21,6 +23,9 @@ class ApiUserIdentity < Api::Message
     has_one   :name,     Api::Name
     attribute :username, String
   end
+
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
 end
 

@@ -25,11 +25,15 @@
 // noinspection SassScssResolvedByNameOnly
 .ability-debug {
 
-    width: 50%;
+    width:      50%;
     margin-top: $page-padding;
 
     @media #{$browser-ie} {
         margin-top: $ie-page-padding;
+    }
+
+    @media #{$narrow-screen} {
+        width: 100%;
     }
 
     table {

@@ -9,6 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/user_pod'
+require_relative 'api/common/link_methods'
 
 # ApiUserPodList
 #
@@ -21,6 +22,8 @@ class ApiUserPodList < Api::Message
     has_many :disabilities, Api::UserPod
     has_many :links,        Api::Link
   end
+
+  include Api::Common::LinkMethods
 
 end
 

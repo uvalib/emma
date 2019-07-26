@@ -2,7 +2,7 @@
 <%-
   # Controller- and action-specific page controls.
   skip ||= !show_page_controls?
-  return if skip || (controls = page_controls).blank?
+  return if skip || (controls = render_page_controls).blank?
 -%>
 
 <div class="layout-section page">

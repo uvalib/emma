@@ -5,9 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'link'
+require_relative 'common/link_methods'
 
 # Api::Grade
 #
@@ -20,6 +19,8 @@ class Api::Grade < Api::Record::Base
     has_many  :links,   Api::Link
     attribute :name,    String
   end
+
+  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

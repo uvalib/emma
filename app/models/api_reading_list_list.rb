@@ -9,7 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/reading_list_user_view'
-require_relative 'api/common/sequence_methods'
+require_relative 'api/common/link_methods'
 
 # ApiReadingListList
 #
@@ -26,7 +26,7 @@ class ApiReadingListList < Api::Message
     attribute :totalResults,  Integer
   end
 
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
 end
 

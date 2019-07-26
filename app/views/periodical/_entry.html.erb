@@ -8,7 +8,7 @@
   offset ||= page_offset
 
   number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="periodical-#{item.identifier}").html_safe
+  id     = item  && %Q(id="periodical-#{h(item.identifier)}").html_safe
 
   metadata = item && {
     Title:      periodical_link(item),

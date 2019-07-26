@@ -9,7 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/title_metadata_complete'
-require_relative 'api/common/sequence_methods'
+require_relative 'api/common/link_methods'
 
 # ApiTitleMetadataCompleteList
 #
@@ -26,7 +26,7 @@ class ApiTitleMetadataCompleteList < Api::Message
     attribute :totalResults, Integer
   end
 
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
 end
 

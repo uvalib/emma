@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
+require_relative 'api/user_signed_agreement'
+
 # ApiUserSignedAgreement
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_user_signed_agreement

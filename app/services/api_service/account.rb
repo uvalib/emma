@@ -276,6 +276,21 @@ class ApiService
       ApiUserAccountList.new(response, error: exception)
     end
 
+    # == GET /v2/myOrganization/members/:id
+    # Get a member of the current (sponsor) user's organization.
+    #
+    # NOTE: This is not a real Bookshare API call.
+    #
+    # @param [String] username
+    #
+    # @return [Api::UserAccount]
+    #
+    def get_organization_member(username:)
+      all = get_organization_members(limit: :max)
+      om  = all.userAccounts.find { |list| list.identifier == username }
+      ApiUserAccount.new(om)
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================

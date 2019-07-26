@@ -5,10 +5,9 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'link'
 require_relative 'common/category_methods'
+require_relative 'common/link_methods'
 
 # Api::Category
 #
@@ -24,6 +23,7 @@ class Api::Category < Api::Record::Base
   end
 
   include Api::Common::CategoryMethods
+  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Api::Common::CategoryMethods overrides

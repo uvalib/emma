@@ -8,7 +8,7 @@
   offset ||= page_offset
 
   number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="edition-#{item.identifier}").html_safe
+  id     = item  && %Q(id="edition-#{h(item.identifier)}").html_safe
 -%>
 
 <%- if number -%>

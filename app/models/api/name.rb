@@ -5,9 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'link'
+require_relative 'common/link_methods'
 
 # Api::Name
 #
@@ -23,6 +22,8 @@ class Api::Name < Api::Record::Base
     attribute :prefix,    String
     attribute :suffix,    String
   end
+
+  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

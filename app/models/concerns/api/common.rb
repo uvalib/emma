@@ -86,7 +86,7 @@ module Api
     end
 
     def year?(v = @value)
-      v.to_s.match?(/^\d{4}/)
+      v.to_s.match?(/^\d{4}$/)
     end
 
     def day?(v = @value)
@@ -359,9 +359,43 @@ module Api
 
   end
 
-  ENUMERATIONS.each_key do |type|
-    class_eval("class #{type} < EnumType; end")
-  end
+  # ENUMERATIONS.each_key { |et| class_eval("class #{et} < EnumType; end") }
+
+  class Access                  < EnumType; end
+  class AgreementType           < EnumType; end
+  class AllowsType              < EnumType; end
+  class BrailleFormat           < EnumType; end
+  class BrailleGrade            < EnumType; end
+  class BrailleGrade2           < EnumType; end
+  class BrailleMusicScoreLayout < EnumType; end
+  class BrailleType             < EnumType; end
+  class CategoryType            < EnumType; end
+  class Direction               < EnumType; end
+  class Direction2              < EnumType; end
+  class DisabilityType          < EnumType; end
+  class FormatType              < EnumType; end
+  class Gender                  < EnumType; end
+  class NarratorType            < EnumType; end
+  class ProofOfDisabilitySource < EnumType; end
+  class ProofOfDisabilityStatus < EnumType; end
+  class RoleType                < EnumType; end
+  class SiteType                < EnumType; end
+  class SubscriptionStatus      < EnumType; end
+  class Timeframe               < EnumType; end
+  class TitleContentType        < EnumType; end
+  class TitleSortOrder          < EnumType; end
+  class HistorySortOrder        < EnumType; end
+  class MemberSortOrder         < EnumType; end
+  class MyAssignedSortOrder     < EnumType; end
+  class AssignedSortOrder       < EnumType; end
+  class PeriodicalSortOrder     < EnumType; end
+  class EditionSortOrder        < EnumType; end
+  class MyReadingListSortOrder  < EnumType; end
+  class ReadingListSortOrder    < EnumType; end
+  class CatalogSortOrder        < EnumType; end
+  class AuthType                < EnumType; end
+  class GrantType               < EnumType; end
+  class TokenErrorType          < EnumType; end
 
 end unless defined?(Api) && defined?(Api::Common)
 

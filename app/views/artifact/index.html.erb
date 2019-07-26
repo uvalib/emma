@@ -5,9 +5,9 @@
   # Artifact index.
   title ||= t('emma.artifact.index.title')
 
-  item_list = artifact_list.presence
+  item_list = artifact_list
 
-  if item_list
+  if item_list.present?
     all_count    = nil
     search_count = "#{total_items} items found." # TODO: I18n
     search_count = content_tag(:div, search_count, class: 'search-count')
@@ -37,13 +37,7 @@
   <%- end -%>
 
   <%# === Items === -%>
-  <%- if item_list -%>
-    <%- item_list.each_with_index do |item, idx| -%>
-      <%= render 'artifact/entry', index: idx, item: item %>
-    <%- end -%>
-  <%- else -%>
-    <%= render 'artifact/entry', index: -1 %>
-  <%- end -%>
+  <%= render 'artifact/list', list: item_list, skip: :title %>
 
   <%# === Bottom pagination controls === -%>
   <%- if controls -%>

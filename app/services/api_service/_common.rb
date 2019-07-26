@@ -21,7 +21,7 @@ class ApiService
     BASE_URL =
       (ENV['BOOKSHARE_BASE_URL'] || DEFAULT_BASE_URL)
         .sub(%r{^(https?://)?}) { $1 || 'https://' }
-        .sub(%r{(/v\d+/?)?$})   {$1 || "/#{API_VERSION}" }
+        .sub(%r{(/v\d+/?)?$})   { $1 || "/#{API_VERSION}" }
         .freeze
     AUTH_URL = ENV['BOOKSHARE_AUTH_URL'] || DEFAULT_AUTH_URL
     API_KEY  = ENV['BOOKSHARE_API_KEY']  || DEFAULT_API_KEY
@@ -255,6 +255,7 @@ class ApiService
       @params.merge!(args.pop) if args.last.is_a?(Hash)
       @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
       @params.transform_keys! { |k| (k == :fmt) ? :format : k }
+      @params[:limit] = MAX_LIMIT if @params[:limit].to_s == 'max'
       noexcp  = @params.delete(:no_exception)
       noraise = @params.delete(:no_raise) || noexcp
       params  = @params

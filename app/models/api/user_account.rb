@@ -5,12 +5,11 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'address'
 require_relative 'link'
 require_relative 'name'
-require_relative 'common/name_methods'
+require_relative 'common/account_methods'
+require_relative 'common/link_methods'
 
 # Api::UserAccount
 #
@@ -41,7 +40,8 @@ class Api::UserAccount < Api::Record::Base
     attribute :subscriptionStatus,      SubscriptionStatus
   end
 
-  include Api::Common::NameMethods
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
 end
 

@@ -7,14 +7,16 @@
 // Periodical index page
 //=============================================================================
 
-.periodical-list {
-    @extend .results-list;
-}
-
+// Periodical metadata label/value pairs for index listings.
+//
 // noinspection SassScssResolvedByNameOnly
 .periodical-list-entry {
 
-    @extend .list-entry;
+    @extend .index-entry;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .label {
         &.field-Title {
@@ -45,10 +47,39 @@
     }
 }
 
+// Zero or more .periodical-list-entry elements.
+.periodical-list {
+    @extend .index-list;
+}
+
 //=============================================================================
 // Periodical show page
 //=============================================================================
 
+// Periodical metadata values.
 .periodical-details {
     @extend .details-entry;
+}
+
+// Container for a .periodical-details and .edition-list in a two-column format
+// for wide screens.
+//
+// noinspection SassScssResolvedByNameOnly
+.periodical-container {
+
+    @extend .details-container;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .periodical-details {}
+
+    .edition-list {
+        // Move the column up a bit so that the baseline of the heading matches
+        // the baseline of the text on the left-hand side.
+        @media #{$wide-screen} {
+            margin-top: -0.75rem;
+        }
+    }
 }

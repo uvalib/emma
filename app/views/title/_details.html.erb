@@ -3,7 +3,10 @@
   # A Catalog Title metadata listing.
   item  ||= nil
   image ||= nil
+  skip  ||= nil
   return if item.blank?
+
+  skip = Array.wrap(skip)
 
   append_page_description(
     Series:   item.seriesTitle,
@@ -13,9 +16,8 @@
   )
 -%>
 
-<div class="title-details-container">
-  <div class="title-details">
-    <%= title_field_values(item) %>
-  </div>
-  <%= image || cover_image(item) %>
+<div class="title-details">
+  <%= title_field_values(item) %>
 </div>
+
+<%= image || cover_image(item) unless skip.include?(:cover_image) %>

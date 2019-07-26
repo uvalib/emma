@@ -7,25 +7,35 @@
 // Periodical edition index page
 //=============================================================================
 
+// Periodical edition metadata label/value pairs for index listings.
+.edition-list-entry {
+    @extend .index-entry;
+}
+
+// Zero or more .edition-list-entry elements.
 .edition-list {
 
-    @extend .results-list;
+    @extend .index-list;
 
-    margin-top: 1rem;
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .number {
         margin-top: -0.125rem;
     }
 }
 
-.edition-list-entry {
-    @extend .list-entry;
-}
-
 //=============================================================================
 // Periodical edition show page
 //=============================================================================
 
+// Periodical edition metadata values.
 .edition-details {
     @extend .details-entry;
+}
+
+// Container for an .edition-details.
+.edition-container {
+    @extend .details-container;
 }

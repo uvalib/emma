@@ -29,6 +29,8 @@ class ApiUserSubscription < Api::Message
     has_one   :userSubscriptionType, Api::UserSubscriptionType
   end
 
+  include Api::Common::LinkMethods
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================

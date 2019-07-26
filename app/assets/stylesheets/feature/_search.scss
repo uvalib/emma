@@ -81,7 +81,7 @@ $results-entry-margin-y: 0.67rem;
     }
 
     //=========================================================================
-    // Classes
+    // Components
     //=========================================================================
 
     $term-gap-x: 0.5rem;
@@ -127,36 +127,10 @@ $results-entry-margin-y: 0.67rem;
 }
 
 //=============================================================================
-// Search result listing
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-.results-list {
-
-    @extend .list-2-column;
-
-    margin-top:   -1rem;
-    margin-bottom: 1rem;
-
-    .number {
-
-        font-family: $font-condensed;
-
-        // Make items easier to differentiate with "flex-direction: column".
-        @media #{$browser-ie} {
-            border-top:     1px solid darkgray;
-            font-family:    $font-normal;
-            padding-top:    $ie-gap-y;
-            padding-bottom: $ie-gap-y;
-        }
-    }
-}
-
-//=============================================================================
 // Search item metadata
 //=============================================================================
 
-// One or more label/value pairs.
+// A collection of one or more label/value pairs.
 //
 // noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
 .label-value-pairs {
@@ -167,6 +141,7 @@ $results-entry-margin-y: 0.67rem;
     break-inside:  avoid;
     break-inside:  avoid-column;
     break-after:   left;
+    align-content: flex-start;
 
     @media #{$browser-ie} {
         margin-bottom: $ie-results-entry-gap-y;
@@ -185,11 +160,16 @@ $results-entry-margin-y: 0.67rem;
     a {
         display:   inline-block;
         min-width: 48px; // Accessibility best practice. // TODO: reference
+        max-width: max-content;
 
         @media #{$browser-ie} {
             display: inline;
         }
     }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     // noinspection CssOverwrittenProperties
     .label,
@@ -210,20 +190,44 @@ $results-entry-margin-y: 0.67rem;
     }
 
     .value {
+
         @media #{$narrow-screen} {
             margin-bottom: $results-entry-gap-y;
+        }
+
+        // noinspection CssOverwrittenProperties
+        &.field-Links {
+
+            word-break: break-all;
+            word-break: break-word;
+
+            > * {
+
+                display: block;
+                margin-top: $results-entry-margin-y;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+            }
         }
     }
 }
 
+//=============================================================================
+// Index page metadata
+//=============================================================================
+
 // Metadata label/value pairs on index pages.
-.list-entry {
+.index-entry {
 
     @extend .label-value-pairs;
 
     //=========================================================================
-    // Classes
+    // Components
     //=========================================================================
+
+    .label {}
 
     .value {
         &.field-None {
@@ -241,14 +245,111 @@ $results-entry-margin-y: 0.67rem;
     }
 }
 
+// Zero or more .index-entry elements.
+//
+// noinspection SassScssResolvedByNameOnly
+.index-list {
+
+    @extend .list-2-column;
+
+    margin-top:    -1rem;
+    margin-bottom: 1rem;
+    align-content: flex-start;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .number {
+
+        font-family: $font-condensed;
+
+        // Make items easier to differentiate with "flex-direction: column".
+        @media #{$browser-ie} {
+            border-top:     1px solid darkgray;
+            font-family:    $font-normal;
+            padding-top:    $ie-gap-y;
+            padding-bottom: $ie-gap-y;
+        }
+    }
+}
+
+//=============================================================================
+// Show page metadata
+//=============================================================================
+
 // Metadata label/value pairs on show pages.
 .details-entry {
 
     @extend .label-value-pairs;
 
+    //=========================================================================
+    // Components
+    //=========================================================================
+
     // Add a top margin except to the first label/value pair.
     .value + .label,
     .value + .label + .value {
         margin-top: $results-entry-margin-y;
+    }
+}
+
+// Wrapper for item details which supports a second column of information to
+// the right of the details listing.
+//
+// noinspection SassScssResolvedByNameOnly
+.details-container {
+
+    display:        flex;
+    flex-direction: column;
+
+    @media #{$wide-screen} {
+
+        margin-top:     $page-padding;
+        flex-direction: row;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-page-padding;
+        }
+    }
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    > * {
+
+        margin: 0 0 $page-padding-y 0;
+
+        @media #{$browser-ie} {
+            margin-bottom: $ie-page-padding-y;
+        }
+
+        @media #{$wide-screen} {
+
+            flex:         1 1 50%;
+            margin-right: $page-padding-x;
+
+            @media #{$browser-ie} {
+                margin-right: $ie-page-padding-x;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            margin-top: calc(2 * #{$page-padding});
+
+            @media #{$browser-ie} {
+                margin-top: 2 * $ie-page-padding;
+            }
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
     }
 }

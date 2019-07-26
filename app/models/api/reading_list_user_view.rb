@@ -5,10 +5,9 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'link'
 require_relative 'reading_list_subscription'
+require_relative 'common/link_methods'
 require_relative 'common/reading_list_methods'
 
 # Api::ReadingListUserView
@@ -35,6 +34,7 @@ class Api::ReadingListUserView < Api::Record::Base
     attribute :titleCount,    Integer
   end
 
+  include Api::Common::LinkMethods
   include Api::Common::ReadingListMethods
 
 end

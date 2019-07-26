@@ -11,7 +11,8 @@ require_relative 'api/address'
 require_relative 'api/link'
 require_relative 'api/name'
 require_relative 'api/student_status'
-require_relative 'api/common/name_methods'
+require_relative 'api/common/account_methods'
+require_relative 'api/common/link_methods'
 
 # ApiMyAccountSummary
 #
@@ -43,7 +44,8 @@ class ApiMyAccountSummary < Api::Message
     attribute :username,                String
   end
 
-  include Api::Common::NameMethods
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
 end
 

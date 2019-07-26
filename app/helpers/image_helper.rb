@@ -68,7 +68,7 @@ module ImageHelper
     image = ASYNCHRONOUS_IMAGES ? placeholder(url, iopt) : image_tag(url, iopt)
     if link
       content_tag(:div, link, class: html_opt[:class], 'aria-hidden': true) do
-        link_to(image, link, html_opt.merge(tabindex: -1))
+        make_link(image, link, html_opt.merge(tabindex: -1))
       end
     else
       content_tag(:div, image, html_opt)

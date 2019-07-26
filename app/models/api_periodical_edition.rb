@@ -8,7 +8,6 @@ __loading_begin(__FILE__)
 require 'api/message'
 
 require_relative 'api/periodical_edition'
-require_relative 'api/common/artifact_methods'
 
 # ApiPeriodicalEdition
 #
@@ -28,9 +27,9 @@ class ApiPeriodicalEdition < Api::Message
     attribute :publicationDate, String
   end
 
-  include Api::Common::EditionMethods
   include Api::Common::ArtifactMethods
-  include Api::Common::SequenceMethods
+  include Api::Common::EditionMethods
+  include Api::Common::LinkMethods
 
 end
 

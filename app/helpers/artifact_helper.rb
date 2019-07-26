@@ -136,12 +136,21 @@ module ArtifactHelper
     label ||= I18n.t("emma.format.#{fmt}", default: def_label)
     path = artifact_path(id: item.identifier, fmt: fmt)
     append_css_classes!(html_opt, 'link')
+
+    # Set up the tooltip to be shown before the item has been requested.
     html_opt[:tooltip] =
       I18n.t(
         'emma.artifact.show.link.tooltip',
         fmt:     format_label(label),
         default: ARTIFACT_SHOW_TOOLTIP
       )
+    if has_class?(html_opt, 'disabled')
+      sign_in = 'SIGN-IN REQUIRED' # TODO: I18n
+      html_opt[:tooltip].sub!(/\.?$/, " (#{sign_in})")
+    end
+
+    # Set up the tooltip to be shown after the item is actually available for
+    # download.
     html_opt[:'data-turbolinks'] = false
     html_opt[:'data-complete_tooltip'] =
       I18n.t(
@@ -149,6 +158,8 @@ module ArtifactHelper
         button:  ARTIFACT_BUTTON_LABEL,
         default: ARTIFACT_COMPLETE_TOOLTIP
       )
+
+    # Emit the link and hidden auxiliary elements.
     content_tag(:div, class: 'artifact') do
       item_link(item, label, path, **html_opt) +
         download_progress(class: 'hidden') +
@@ -211,7 +222,7 @@ module ArtifactHelper
   # An element for direct download of an artifact.
   #
   # @param [String, nil] label
-  # @param [Hash, nil]   opt          Passed to #link_to except for:
+  # @param [Hash, nil]   opt          Passed to #make_link except for:
   #
   # @option opt [String] :label
   # @option opt [String] :fmt         Format label.
@@ -224,7 +235,7 @@ module ArtifactHelper
     fmt   = format_label(opt.delete(:fmt))
     opt[:title] ||= I18n.t('emma.artifact.show.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
-    link_to(label, '#', **opt)
+    make_link(label, '#', **opt)
   end
 
   # ===========================================================================

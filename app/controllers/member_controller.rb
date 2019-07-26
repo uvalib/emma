@@ -37,7 +37,12 @@ class MemberController < ApplicationController
   # ===========================================================================
 
   before_action :initialize_service
-  before_action { @user_id = params[:username] || params[:id] }
+
+  # Undo the over-encoding required in MemberHelper#member_link.
+  before_action do
+    @user_id = params[:username] || params[:id]
+    @user_id &&= CGI.unescape(@user_id)
+  end
 
   # ===========================================================================
   # :section:
@@ -51,7 +56,6 @@ class MemberController < ApplicationController
   def index
     __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
     opt  = pagination_setup
-    opt.delete(:limit) # TODO: testing to see whether this screws up Bookshare
     list = @api.get_organization_members(**opt)
     self.page_items  = list.userAccounts
     self.total_items = list.totalResults
@@ -63,7 +67,8 @@ class MemberController < ApplicationController
   #
   def show
     __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
-    @item, @pref = fetch_my_account
+    @item = @api.get_organization_member(username: @user_id)
+    @pref = nil # TODO: ???
   end
 
   # == GET /member/new[?id=:id]

@@ -14,7 +14,7 @@
   <%- @all_methods.each do |method| -%>
     <%- if (css = @api_results.dig(method, :status)).present? -%>
       <%- href = '#__' + method.to_s -%>
-      <%= link_to(method, href, class: css, 'data-turbolinks': false) -%>
+      <%= make_link(method, href, class: css, 'data-turbolinks': false) -%>
     <%- else -%>
       <div><%= method -%></div>
     <%- end -%>

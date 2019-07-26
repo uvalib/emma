@@ -1,13 +1,15 @@
-# app/models/api/common/sequence_methods.rb
+# app/models/api/common/link_methods.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
+require 'api/record'
+
 # Methods mixed in to record elements with links.
 #
-module Api::Common::SequenceMethods
+module Api::Common::LinkMethods
 
   # ===========================================================================
   # :section:

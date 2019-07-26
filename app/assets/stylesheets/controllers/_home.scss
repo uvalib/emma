@@ -42,7 +42,12 @@ body.home-index,
 body.home-welcome {
 
     .ability-debug {
+
         margin-top: 50vh;
+
+        @media #{$narrow-screen} {
+            margin-top: $page-padding;
+        }
     }
 
 }

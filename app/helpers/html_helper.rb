@@ -19,6 +19,17 @@ module HtmlHelper
 
   public
 
+  # Indicate whether the HTML options include any of the given CSS classes.
+  #
+  # @param [Hash]          opt        The target options hash.
+  # @param [Array<String>] classes    CSS classes to find.
+  #
+  def has_class?(opt, *classes)
+    opt_classes = opt&.dig(:class)
+    opt_classes = opt_classes.to_s.split(' ') if opt_classes.is_a?(String)
+    Array.wrap(opt_classes).any? { |c| classes.include?(c) }
+  end
+
   # Merge values from one or more options hashes.
   #
   # @param [Hash]        opt          The target options hash.
@@ -168,6 +179,34 @@ module HtmlHelper
         .compact
     text = words.join(' ')
     ERB::Util.h(text).gsub(/\s/, '&nbsp;').html_safe
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Produce a link with appropriate accessibility settings.
+  #
+  # @param [String]    label
+  # @param [String]    path
+  # @param [Hash, nil] opt            Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def make_link(label, path, opt = nil, &block)
+    opt ||= {}
+    if opt[:target] == '_blank'
+      opt[:rel] = 'noopener'
+    end
+    unless opt.key?(:tabindex)
+      opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')
+    end
+    unless opt.key?(:'aria-hidden')
+      opt[:'aria-hidden'] = true if opt[:tabindex] == -1
+    end
+    link_to(label, path, opt, &block)
   end
 
 end

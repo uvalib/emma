@@ -7,18 +7,26 @@
 // Artifact index page
 //=============================================================================
 
-.artifact-list {
-    @extend .results-list;
+// Artifact metadata label/value pairs for index listings.
+.artifact-list-entry {
+    @extend .index-entry;
 }
 
-.artifact-list-entry {
-    @extend .list-entry;
+// Zero or more .artifact-list-entry elements.
+.artifact-list {
+    @extend .index-list;
 }
 
 //=============================================================================
 // Artifact show page
 //=============================================================================
 
-.artifact-details {
+// Artifact metadata values.
+.artifact-details { // TODO: delete?
     @extend .details-entry;
+}
+
+// Container for an .artifact-details.
+.artifact-container { // TODO: delete?
+    @extend .details-container;
 }

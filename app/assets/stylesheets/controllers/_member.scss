@@ -7,13 +7,14 @@
 // Member index page
 //=============================================================================
 
-.member-list {
-    @extend .results-list;
-}
-
+// Member metadata label/value pairs for index listings.
 .member-list-entry {
 
-    @extend .list-entry;
+    @extend .index-entry;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .value {
 
@@ -27,14 +28,44 @@
     }
 }
 
+// Zero or more .member-list-entry elements.
+.member-list {
+    @extend .index-list;
+}
+
 //=============================================================================
 // Member show page
 //=============================================================================
 
+// Member metadata values.
 .member-details {
     @extend .details-entry;
 }
 
+// Member preference settings.
 .member-preferences {
     @extend .member-details;
+}
+
+// Container for a .member-details and .member-preferences in a two-column
+// format for wide screens.
+//
+// noinspection SassScssResolvedByNameOnly
+.member-container {
+
+    @extend .details-container;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .member-details {}
+
+    .member-preferences {
+        // Move the column up a bit so that the baseline of the heading matches
+        // the baseline of the text on the left-hand side.
+        @media #{$wide-screen} {
+            margin-top: -0.5rem;
+        }
+    }
 }

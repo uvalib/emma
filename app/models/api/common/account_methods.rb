@@ -1,17 +1,15 @@
-# app/models/api/common/name_methods.rb
+# app/models/api/common/account_methods.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-require_relative 'sequence_methods'
+require 'api/record'
 
 # Methods mixed in to record elements related to user identities.
 #
-module Api::Common::NameMethods
-
-  include Api::Common::SequenceMethods
+module Api::Common::AccountMethods
 
   # ===========================================================================
   # :section: Object overrides
@@ -38,7 +36,7 @@ module Api::Common::NameMethods
   # @return [String]
   #
   def label
-    respond_to?(:name) ? name.to_s : identifier
+    name.to_s
   end
 
   # Return the unique identifier for the represented person.
@@ -46,7 +44,10 @@ module Api::Common::NameMethods
   # @return [String]
   #
   def identifier
-    respond_to?(:username) ? username.to_s : emailAddress.to_s
+    result   = (username if respond_to?(:username))
+    result ||= (emailAddress if respond_to?(:emailAddress))
+    result ||= name
+    result.to_s
   end
 
 end

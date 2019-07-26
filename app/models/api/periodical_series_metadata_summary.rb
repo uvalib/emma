@@ -5,11 +5,10 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 require_relative 'category'
 require_relative 'link'
 require_relative 'periodical_edition_summary'
+require_relative 'common/link_methods'
 require_relative 'common/periodical_methods'
 
 # Api::PeriodicalSeriesMetadataSummary
@@ -37,6 +36,7 @@ class Api::PeriodicalSeriesMetadataSummary < Api::Record::Base
     attribute :title,                String
   end
 
+  include Api::Common::LinkMethods
   include Api::Common::PeriodicalMethods
 
 end

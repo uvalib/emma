@@ -9,7 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/user_account'
-require_relative 'api/common/sequence_methods'
+require_relative 'api/common/link_methods'
 
 # ApiUserAccountList
 #
@@ -26,7 +26,7 @@ class ApiUserAccountList < Api::Message
     has_many  :userAccounts, Api::UserAccount
   end
 
-  include Api::Common::SequenceMethods
+  include Api::Common::LinkMethods
 
 end
 

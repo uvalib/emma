@@ -9,6 +9,7 @@ require 'api/message'
 
 require_relative 'api/link'
 require_relative 'api/user_signed_agreement'
+require_relative 'api/common/link_methods'
 
 # ApiUserSignedAgreementList
 #
@@ -21,6 +22,8 @@ class ApiUserSignedAgreementList < Api::Message
     has_many :links,            Api::Link
     has_many :signedAgreements, Api::UserSignedAgreement
   end
+
+  include Api::Common::LinkMethods
 
 end
 

@@ -95,11 +95,14 @@ module PaginationConcern
   # @return [nil]                     If there is no next page.
   #
   def next_page_path(list, url_params = nil)
-    if list.respond_to?(:next) && list.next.present?
-      opt = url_params&.except(:limit) || {}
+    if (start = list.respond_to?(:next) && list.next).present?
+      opt = url_params&.dup || {}
+      opt[:start]    = start
+      opt[:limit]  ||= page_size
       opt[:offset] ||= page_offset
-      opt[:offset]  += page_size
-      make_path(request.path, opt.merge(start: list.next))
+      opt[:offset]  += opt[:limit]
+      opt.delete(:limit) if opt[:limit] == default_page_size
+      make_path(request.path, opt)
     elsif list.respond_to?(:get_link)
       list.get_link(:next)
     end

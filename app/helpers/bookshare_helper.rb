@@ -14,6 +14,7 @@ module BookshareHelper
   end
 
   include GenericHelper
+  include HtmlHelper
   include I18nHelper
 
   # ===========================================================================
@@ -34,46 +35,54 @@ module BookshareHelper
   # @type [Hash{Symbol=>(Hash|String)}]
   #
   BOOKSHARE_ACTION = {
-    bookActionHistory:        "#{BOOKSHARE_CATALOG}/bookActionHistory",
-    submitBook:               "#{BOOKSHARE_CATALOG}/submitBook",
-    bookEditMetadata:         "#{BOOKSHARE_CATALOG}/bookEditMetadata",
-    bookWithdrawal:           "#{BOOKSHARE_CATALOG}/bookWithdrawal",
-    myReadingListsCreate:     "#{BOOKSHARE_SITE}/myReadingLists/create",                    # TODO: controller
-    myReadingListsEdit:       "#{BOOKSHARE_SITE}/myReadingLists/%{id}/edit",                # TODO: controller
-    myReadingListsDelete:     "#{BOOKSHARE_SITE}/myReadingLists/%{id}?delete",              # TODO: controller, HTTP DELETE
-    orgAccountMembersAdd:     "#{BOOKSHARE_SITE}/orgAccountMembers/edit",                   # TODO: ???
-    orgAccountMembersEdit:    "#{BOOKSHARE_SITE}/orgAccountMembers/edit",
-    orgAccountMembersRemove:  "#{BOOKSHARE_SITE}/orgAccountMembers/remove?userIds=%{ids}",  # TODO: array param insertion, HTTP POST
-    orgAccountSponsorsAdd:    "#{BOOKSHARE_SITE}/orgAccountSponsors/edit",                  # TODO: ???
-    orgAccountSponsorsEdit:   "#{BOOKSHARE_SITE}/orgAccountSponsors/edit",                  # TODO: controller, model
-    orgAccountSponsorsRemove: "#{BOOKSHARE_SITE}/orgAccountSponsors/remove?userIds=%{ids}", # TODO: controller, model, array param insertion, HTTP POST
-
-=begin # TODO: ???
-    myReadingLists: {
-      Create: "#{BOOKSHARE_SITE}/%{KEY}/create",
-      Edit:   "#{BOOKSHARE_SITE}/%{KEY}/%{id}/edit",
-      Delete: "#{BOOKSHARE_SITE}/%{KEY}/%{id}?delete",
-    },
+    bookActionHistory:  "#{BOOKSHARE_CATALOG}/bookActionHistory",
+    submitBook:         "#{BOOKSHARE_CATALOG}/submitBook",
+    bookEditMetadata:   "#{BOOKSHARE_CATALOG}/bookEditMetadata",
+    bookWithdrawal:     "#{BOOKSHARE_CATALOG}/bookWithdrawal",
     orgAccountMembers: {
-      Add:    "#{BOOKSHARE_SITE}/%{KEY}/edit",
-      Edit:   "#{BOOKSHARE_SITE}/%{KEY}/edit",
-      Remove: "#{BOOKSHARE_SITE}/%{KEY}/remove?userIds=%{ids}",
+      Add:    "#{BOOKSHARE_SITE}/orgAccountMembers/edit",                                     # TODO: ???
+      Edit:   "#{BOOKSHARE_SITE}/orgAccountMembers/edit",
+      Remove: "#{BOOKSHARE_SITE}/orgAccountMembers/remove?userIds=%{ids}",                    # TODO: HTTP POST
     },
     orgAccountSponsors: {
-      Add:    "#{BOOKSHARE_SITE}/%{KEY}/edit",
-      Edit:   "#{BOOKSHARE_SITE}/%{KEY}/edit",
-      Remove: "#{BOOKSHARE_SITE}/%{KEY}/remove?userIds=%{ids}",
+      Add:    "#{BOOKSHARE_SITE}/orgAccountSponsors/edit",                                    # TODO: ???
+      Edit:   "#{BOOKSHARE_SITE}/orgAccountSponsors/edit",                                    # TODO: controller/model
+      Remove: "#{BOOKSHARE_SITE}/orgAccountSponsors/remove?userIds=%{ids}",                   # TODO: controller/model, HTTP POST
     },
-=end
-
+    myReadingLists: {
+      Add:    "#{BOOKSHARE_SITE}/myReadingLists?readingListId=%{id}&addTitle=%{bookshareId}", # TODO: HTTP POST
+      Create: "#{BOOKSHARE_SITE}/myReadingLists/create",
+      Edit:   "#{BOOKSHARE_SITE}/myReadingLists/%{id}/edit",
+      Delete: "#{BOOKSHARE_SITE}/myReadingLists/%{id}?delete",                                # TODO: HTTP DELETE
+    },
   }.deep_freeze
 
   # Mapping of application URL parameters to Bookshare URL parameters.
   #
-  # @type [Hash{Symbol=>Symbol}]
+  # @type [Hash{Symbol=>Hash{Symbol=>Symbol}}]
   #
   PARAM_MAPPING = {
-    id: :titleInstanceId
+    title: {
+      id: :titleInstanceId
+    },
+    periodical: {
+      id: :seriesId
+    },
+    edition: {
+      id: :editionId
+    },
+    member: {
+      id: nil
+    },
+    sponsor: {
+      # TODO: sponsor?
+    },
+    reading_list: {
+      id: :readingListId
+    },
+    subscription: { # TODO: subscription controller/model
+      id: :subscriptionId
+    },
   }.freeze
 
   # Mapping of an application action (expressed as "controller-action") to the
@@ -84,46 +93,18 @@ module BookshareHelper
   ACTION_MAPPING = {
     title: {
       history: :bookActionHistory,
-      new:     :submitBook,               # TODO: Bookshare way to create a catalog title without uploading an artifact?
-      create:  :submitBook,               # TODO: ditto
+      new:     :submitBook,         # TODO: Bookshare way to create a catalog title without uploading an artifact?
+      create:  :submitBook,         # TODO: ditto
       edit:    :bookEditMetadata,
       update:  :bookEditMetadata,
       delete:  :bookWithdrawal,
       destroy: :bookWithdrawal,
     },
-    reading_list: {                       # TODO: controller
-      new:     :myReadingListsCreate,
-      create:  :myReadingListsCreate,
-      edit:    :myReadingListsEdit,
-      update:  :myReadingListsEdit,
-      delete:  :myReadingListsDelete,
-      destroy: :myReadingListsDelete,
+    periodical: {
+      # TODO: periodical?
     },
-    member: {
-      new:     :orgAccountMembersAdd,
-      create:  :orgAccountMembersAdd,
-      edit:    :orgAccountMembersEdit,
-      update:  :orgAccountMembersEdit,
-      delete:  :orgAccountMembersRemove,  # TODO: method
-      destroy: :orgAccountMembersRemove,  # TODO: method
-    },
-    sponsor: {                            # TODO: controller, model
-      new:     :orgAccountSponsorsAdd,
-      create:  :orgAccountSponsorsAdd,
-      edit:    :orgAccountSponsorsEdit,
-      update:  :orgAccountSponsorsEdit,
-      delete:  :orgAccountSponsorsRemove,
-      destroy: :orgAccountSponsorsRemove,
-    },
-
-=begin # TODO: ???
-    reading_list: {                           # TODO: controller
-      new:     %i[myReadingLists Create],
-      create:  %i[myReadingLists Create],
-      edit:    %i[myReadingLists Edit],
-      update:  %i[myReadingLists Edit],
-      delete:  %i[myReadingLists Delete],
-      destroy: %i[myReadingLists Delete],
+    edition: {
+      # TODO: edition?
     },
     member: {
       new:     %i[orgAccountMembers Add],
@@ -133,7 +114,8 @@ module BookshareHelper
       delete:  %i[orgAccountMembers Remove],  # TODO: method
       destroy: %i[orgAccountMembers Remove],  # TODO: method
     },
-    sponsor: {                                # TODO: controller, model
+    sponsor: {
+      # TODO: sponsor controller/model?
       new:     %i[orgAccountSponsors Add],
       create:  %i[orgAccountSponsors Add],
       edit:    %i[orgAccountSponsors Edit],
@@ -141,8 +123,17 @@ module BookshareHelper
       delete:  %i[orgAccountSponsors Remove],
       destroy: %i[orgAccountSponsors Remove],
     },
-=end
-
+    reading_list: {
+      new:     %i[myReadingLists Create],
+      create:  %i[myReadingLists Create],
+      edit:    %i[myReadingLists Edit],
+      update:  %i[myReadingLists Edit],
+      delete:  %i[myReadingLists Delete],
+      destroy: %i[myReadingLists Delete],
+    },
+    subscription: {
+      # TODO: subscription?
+    },
   }.deep_freeze
 
   # Generate overrides for route helpers of actions that must be performed on
@@ -186,72 +177,43 @@ module BookshareHelper
   # @return [nil]                     If the URL could not be determined.
   #
   def bookshare_url(path = nil, controller: nil, action: nil, **path_opt)
-    parts = []
-    path ||= bookshare_action(controller: controller, action: action)
 
-    if path.blank?
-      return
-
-    elsif path.match?(/^https?:/)
-      parts << path
-
-    elsif (entry = BOOKSHARE_ACTION[path.to_sym]).is_a?(String)
-      keys = parameter_references(entry)
-      path_opt, ref_opt = extract_options(path_opt, *keys)
-      parts << (entry % ref_opt)
-
-    elsif entry.is_a?(Array)
-      parts +=
-        entry.map do |e|
-          keys = parameter_references(e)
-          path_opt, ref_opt = extract_options(path_opt, *keys)
-          e % ref_opt
-        end
-
-=begin # TODO: should the BOOKSHARE_ACTION value always just be a String?
-    elsif entry.is_a?(Hash)
-      url  = entry[:url] || BOOKSHARE_SITE
-      keys = parameter_references(url)
-      path_opt, ref_opt = extract_options(path_opt, *keys)
-      parts << (url % ref_opt)
-      parts << path
-=end
-
-    else
-      Log.warn { "#{__method__}: unexpected #{path.inspect}" }
-      parts << path
-    end
-
-    make_bookshare_path(*parts, path_opt)
-  end
-
-  # Report the Bookshare action for the current context.
-  #
-  # @param [String, Symbol] controller    Default: `params[:controller]`.
-  # @param [String, Symbol] action        Default: `params[:action]`.
-  #
-  # @return [Symbol]
-  # @return [nil]                     If the action could not be determined.
-  #
-  def bookshare_action(controller: nil, action: nil)
+    # If *path* was not given, get a #BOOKSHARE_ACTION reference based on the
+    # current or specified controller/action.
     controller ||= params[:controller]
     action     ||= params[:action]
-    ACTION_MAPPING.dig(controller&.to_sym, action&.to_sym)
-  end
+    path       ||= ACTION_MAPPING.dig(controller.to_sym, action.to_sym)
+    return if path.blank?
 
-  # Generate a Bookshare URL path from components.
-  #
-  # @param [Array] args               URL path components, except:
-  #
-  # @option args.last [Hash]          URL options to include in the result.
-  #
-  # @return [String]
-  #
-  def make_bookshare_path(*args)
-    if args.last.is_a?(Hash)
-      args << args.pop.transform_keys { |k| PARAM_MAPPING[k] || k }
+    # If *path* was not given as a full URL, attempt to locate an associated
+    # path within #BOOKSHARE_ACTION.  If one was not found then *path* is
+    # assumed to be one or more parts of a literal URL.
+    lookup_path = BOOKSHARE_ACTION.dig(*path)
+    path = Array.wrap(lookup_path || path)
+    path.unshift(BOOKSHARE_SITE) unless path.first.start_with?('http')
+    path = path.join('/')
+
+    # If the path contains format references (e.g., "%{id}" or "%<id>") then
+    # they should be satisfied by the options passed in to the method.
+    if (keys = named_format_references(path)).present?
+      path_opt, ref_opt = extract_options(path_opt, *keys)
+      ref_opt.delete_if { |_, v| v.blank? }
+      ref_opt.transform_values! { |v|
+        v.is_a?(String) ? CGI.escape(v).gsub(/\./, '%2E') : v
+      }
+      ref_opt[:ids] = ref_opt[:id]
+      path = format(path, ref_opt)
     end
-    make_path(*args)
+
+    # Before using the (remaining) options as URL parameters, apply parameter
+    # name translations.
+    param_map = PARAM_MAPPING[controller.to_sym] || {}
+    path_opt =
+      path_opt.map { |k, v|
+        k = param_map[k] if param_map.key?(k)
+        [k, v] unless k.blank? || v.blank?
+      }.compact.to_h
+    make_path(path, path_opt)
   end
 
   # ===========================================================================
@@ -281,53 +243,25 @@ module BookshareHelper
     controller, action = [action, nil] unless controller.present?
     controller ||= params[:controller]
     action     ||= params[:action]
-    path =
+    path_helper =
       case action.to_sym
         when :index then "#{controller}_index_path"
         when :show  then "#{controller}_path"
         else             "#{action}_#{controller}_path"
       end
-    path =
-      if !respond_to?(path)
-        Log.warn("#{__method__}: invalid path #{path.inspect}")
-      elsif (path_result = send(path, path_opt)).blank?
-        Log.warn("#{__method__}: invalid path #{path.inspect}")
-      else
-        path_result
-      end
-    return if path.blank?
+    path = respond_to?(path_helper) && send(path_helper, path_opt)
+    if path.blank?
+      Log.warn("#{__method__}: invalid path #{path_helper.inspect}")
+      return
+    end
 
     label ||= action_label(action, controller)
     html_opt = { class: 'control' }
     html_opt[:target]  = '_blank' if path.match?(/^https?:/)
     html_opt[:method]  = :delete  if %i[delete destroy].include?(action)
     merge_html_options!(html_opt, link_opt)
-    html_opt[:rel]     = 'noopener' if html_opt[:target] == '_blank'
     html_opt[:title] ||= action_tooltip(action, controller)
-    link_to(label, path, html_opt)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  # Extract the named references in a format string.
-  #
-  # @param [String] format_string
-  #
-  # @return [Array<Symbol>]
-  #
-  def parameter_references(format_string)
-    [].tap do |keys|
-      if format_string.present?
-        format_string.scan(/%<([^>]+)>/) { |k| keys << k }
-        format_string.scan(/%{([^}]+)}/) { |k| keys << k }
-        keys.reject!(&:blank?)
-        keys.map!(&:to_sym)
-      end
-    end
+    make_link(label, path, html_opt)
   end
 
 end
