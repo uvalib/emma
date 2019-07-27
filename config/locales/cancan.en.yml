@@ -4,28 +4,85 @@ en:
 
   unauthorized:
 
-    default:      'You are not authorized to access that page.'
+    default:        'You are not authorized to access this page.'
 
     manage:
-      all:        'Not authorized to %{action} %{subject}.'
-      artifact:   'Not allowed to manage artifacts.'
-      title:      'Not allowed to manage catalog metadata.'
-      member:     'Not allowed to manage members.'
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to manage artifacts.'
+      edition:      'You are not authorized to manage periodical editions.'
+      member:       'You are not authorized to manage organization members.'
+      periodical:   'You are not authorized to manage periodicals.'
+      reading_list: 'You are not authorized to manage reading lists.'
+      title:        'You are not authorized to manage catalog metadata.'
+
+    list:
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to list artifacts.'
+      edition:      'You are not authorized to list periodical editions.'
+      member:       'You are not authorized to list organization members.'
+      periodical:   'You are not authorized to list periodicals.'
+      reading_list: 'You are not authorized to list reading lists.'
+      title:        'You are not authorized to list catalog entries.'
 
     create:
-      all:        'Not authorized to %{action} %{subject}.'
-      artifact:   'Not allowed to upload artifacts.'
-      title:      'Not allowed to add catalog entries.'
-      member:     'Not allowed to add members.'
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to upload artifacts.'
+      edition:      'You are not authorized to add periodical editions.'
+      member:       'You are not authorized to add organization members.'
+      periodical:   'You are not authorized to add periodicals.'
+      reading_list: 'You are not authorized to add reading lists.'
+      title:        'You are not authorized to add catalog entries.'
 
     update:
-      all:        'Not authorized to %{action} %{subject}.'
-      artifact:   'Not allowed to modify artifacts.'
-      title:      'Not allowed to modify catalog entries.'
-      member:     'Not allowed to modify member information.'
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to modify artifact metadata.'
+      edition:      'You are not authorized to modify periodical editions.'
+      member:       'You are not authorized to modify member information.'
+      periodical:   'You are not authorized to modify periodical entries.'
+      reading_list: 'You are not authorized to modify reading lists.'
+      title:        'You are not authorized to modify catalog entries.'
 
     read:
-      all:        'Not authorized to %{action} %{subject}.'
-      artifact:   'Not allowed to download artifacts.'
-      title:      'Not allowed to view catalog entries.'
-      member:     'Not allowed to view member information.'
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to download artifacts.'
+      edition:      'You are not authorized to view periodical editions.'
+      member:       'You are not authorized to view member information.'
+      periodical:   'You are not authorized to view periodicals.'
+      reading_list: 'You are not authorized to view reading lists.'
+      title:        'You are not authorized to view catalog entries.'
+
+    index:
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to list artifacts.'
+      edition:      'You are not authorized to list periodical editions.'
+      member:       'You are not authorized to list organization members.'
+      periodical:   'You are not authorized to list periodicals.'
+      reading_list: 'You are not authorized to list reading lists.'
+      title:        'You are not authorized to list catalog entries.'
+
+    show:
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to access artifacts.'
+      edition:      'You are not authorized to access periodical editions.'
+      member:       'You are not authorized to access organization members.'
+      periodical:   'You are not authorized to access periodicals.'
+      reading_list: 'You are not authorized to access reading lists.'
+      title:        'You are not authorized to access catalog entries.'
+
+    new:
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to upload artifacts.'
+      edition:      'You are not authorized to add periodical editions.'
+      member:       'You are not authorized to add organization members.'
+      periodical:   'You are not authorized to add periodicals.'
+      reading_list: 'You are not authorized to add reading lists.'
+      title:        'You are not authorized to add catalog entries.'
+
+    edit:
+      all:          'You are not authorized to %{action} %{subject}.'
+      artifact:     'You are not authorized to modify artifact metadata.'
+      edition:      'You are not authorized to modify periodical editions.'
+      member:       'You are not authorized to modify member information.'
+      periodical:   'You are not authorized to modify periodical entries.'
+      reading_list: 'You are not authorized to modify reading lists.'
+      title:        'You are not authorized to modify catalog entries.'

@@ -1,18 +1,27 @@
 <%# app/views/edition/edit.html.erb -%>
 <%-
   # Edition edit form.
-  title ||= t('emma.edition.edit.title')
+
+  # NOTE: Currently this is a fall-back in case there was a problem with the
+  # link to Bookshare.  Normally, it would only be seen if going directly to
+  # the EMMA endpoint.
+
+  title  ||= t('emma.edition.edit.title')
+  id     ||= @edition_id
+  series ||= @series_id
 
   set_page_title(title)
   set_page_description(title)
   set_page_robots(:noindex, :nofollow)
 
-  name = current_user.to_s.inspect
-  can  = can?(:edit, Edition) ? 'can' : 'can NOT'
+  click_to =
+    if can?(:edit, Edition)
+      'Click %s to' % link_to_action(label: 'here', id: id, seriesId: series)
+    else
+      'User %s cannot' % current_user.to_s.inspect
+    end.html_safe
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>(User <%= name -%> <%= can -%> modify edition metadata.)</p>
-
-<p>TODO</p>
+<p><%= click_to -%> modify edition metadata.</p>

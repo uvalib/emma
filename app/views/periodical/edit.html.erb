@@ -1,18 +1,26 @@
 <%# app/views/periodical/edit.html.erb -%>
 <%-
   # Periodical edit form.
+
+  # NOTE: Currently this is a fall-back in case there was a problem with the
+  # link to Bookshare.  Normally, it would only be seen if going directly to
+  # the EMMA endpoint.
+
   title ||= t('emma.periodical.edit.title')
+  id    ||= @series_id
 
   set_page_title(title)
   set_page_description(title)
-  set_page_robots(:noindex)
+  set_page_robots(:noindex, :nofollow)
 
-  name = current_user.to_s.inspect
-  can  = can?(:edit, Periodical) ? 'can' : 'can NOT'
+  click_to =
+    if can?(:edit, Periodical)
+      'Click %s to' % link_to_action(label: 'here', id: id)
+    else
+      'User %s cannot' % current_user.to_s.inspect
+    end.html_safe
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>(User <%= name -%> <%= can -%> modify periodical metadata.)</p>
-
-<p>TODO</p>
+<p><%= click_to -%> modify periodical metadata.</p>

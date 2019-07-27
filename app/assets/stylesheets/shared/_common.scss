@@ -61,10 +61,6 @@
 
         text-decoration: none;
 
-        &:focus {
-            outline: 2px dotted white;
-        }
-
         &:hover {
             text-decoration: underline;
         }
@@ -115,7 +111,7 @@
 
     &:hover {
         text-decoration: underline;
-        box-shadow:      0 0 8px 4px $uva-accent-orange;
+        box-shadow:      0 0 0.5rem 0.25rem $uva-accent-orange;
     }
 }
 

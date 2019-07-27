@@ -108,7 +108,6 @@
         justify-content: flex-end;
         margin-top:      auto;
         margin-left:     $page-padding-x;
-        overflow:        hidden;
         flex:            1 1 auto;
 
         @media #{$browser-ie} {
@@ -154,13 +153,18 @@
             max-height: 5rem;
         }
 
+        &:hover {
+            box-shadow: 0 0 1rem 0.25rem $uva-accent-orange;
+        }
+
         * {
+            display:    block;
             max-height: inherit;
             max-width:  100%;
         }
 
-        a:hover {
-            box-shadow: 0 -10px 16px 12px $uva-accent-orange;
+        a:focus {
+            outline-offset: 3px;
         }
     }
 
@@ -208,11 +212,21 @@
     // This always appears in the upper-right corner of the display due to the
     // .content-area settings.
     //
+    // Note that .session-link doesn't underline on hover because .session is
+    // set up to do that.  The font size adjustments keep the underline from
+    // being overly thick.
+    //
+    // @see SessionsHelper#sign_in_link
+    // @see SessionsHelper#sign_out_link
+    //
     .session {
+
+        @extend %button;
 
         min-width:     max-content;
         max-width:     max-content;
         padding:       0.25rem 0.375rem;
+        font-size:     smaller;
         border:        1.5px solid;
         border-radius: 0.5rem;
         flex:          0 0 auto;
@@ -224,15 +238,18 @@
         @media #{$narrow-screen} {
             margin-top: $flex-gap-y;
         }
-    }
 
-    // Sign-in button link element.
-    //
-    // @see SessionsHelper#sign_in_link
-    // @see SessionsHelper#sign_out_link
-    //
-    .session-link:focus {
-        outline-offset: 1px;
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .session-link {
+
+            font-size: larger;
+
+            &:focus { outline-offset:  0.575rem; }
+            &:hover { text-decoration: none; }
+        }
     }
 }
 
@@ -268,10 +285,6 @@
                 margin-top:    0;
                 margin-bottom: 0.5rem;
             }
-        }
-
-        a:active {
-            outline: 2px dotted white;
         }
 
         .active {
@@ -418,8 +431,7 @@
             @extend %header-control-interior;
 
             &:focus-within {
-                outline-offset: 2px;
-                outline:        1px solid white;
+                @extend %focus;
             }
 
             select {

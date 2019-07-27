@@ -1,14 +1,23 @@
 <%# app/views/member/new.html.erb -%>
 <%-
   # New Member form.
+
+  # NOTE: Currently this is a fall-back in case there was a problem with the
+  # link to Bookshare.  Normally, it would only be seen if going directly to
+  # the EMMA endpoint.
+
   title ||= t('emma.member.new.title')
 
   set_page_title(title)
   set_page_description(title)
-  set_page_robots(:noindex)
+  set_page_robots(:noindex, :nofollow)
 
-  name = current_user.to_s.inspect
-  can  = can?(:new, Member) ? 'can' : 'can NOT'
+  click_to =
+    if can?(:new, Member)
+      'Click %s to' % link_to_action(label: 'here')
+    else
+      'User %s cannot' % current_user.to_s.inspect
+    end.html_safe
 
 =begin # NOTE: fields from Bookshare path orgAccountMembers/edit
 
@@ -44,6 +53,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<p>(User <%= name -%> <%= can -%> add a member.)</p>
-
-<p>TODO</p>
+<p><%= click_to -%> add an organization member.</p>
