@@ -11,6 +11,12 @@ require 'api/record'
 #
 module Api::Common::ReadingListMethods
 
+  # Listings of reading lists expect a non-blank description string.
+  #
+  # @type [String]
+  #
+  DEF_READING_LIST_DESCRIPTION = '(none)' # TODO: I18n
+
   # ===========================================================================
   # :section: Object overrides
   # ===========================================================================

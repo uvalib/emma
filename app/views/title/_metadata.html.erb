@@ -1,0 +1,10 @@
+<%# app/views/title/_metadata.html.erb -%>
+<%-
+  # A catalog Title metadata listing.
+  item ||= nil
+  return if item.blank?
+-%>
+
+<div class="title-metadata">
+  <%= title_field_values(item) %>
+</div>

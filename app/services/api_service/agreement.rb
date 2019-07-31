@@ -49,7 +49,7 @@ class ApiService
     # == GET /v2/accounts/:username/agreements
     # Get the list of signed agreements for an existing user.
     #
-    # @param [User, String, nil] user       Default: @user
+    # @param [User, String, nil] user   Default: @user
     #
     # @return [ApiUserSignedAgreementList]
     #
@@ -62,8 +62,8 @@ class ApiService
     # == POST /v2/accounts/:username/agreements
     # Create a new signed agreement record for an existing user
     #
-    # @param [User, String, nil] user       Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [AgreementType] :agreementType          *REQUIRED*
     # @option opt [String]        :dateSigned             *REQUIRED*
@@ -75,7 +75,7 @@ class ApiService
     def create_user_agreement(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:post, 'accounts', username, 'agreements', opt)
+      api(:post, 'accounts', username, 'agreements', **opt)
       ApiUserSignedAgreement.new(response, error: exception)
     end
 

@@ -1,0 +1,23 @@
+<%# app/views/reading_list/_titles.html.erb -%>
+<%-
+  # Reading List titles listing.
+  list   ||= nil
+  return if list.blank?
+
+  title  ||= 'Reading List Titles' # TODO: I18n
+  count  ||= nil
+  offset ||= 0
+  skip   ||= nil
+
+  template_opt = {
+    title:  title,
+    list:   list,
+    count:  count,
+    offset: offset,
+    skip:   skip,
+  }
+-%>
+
+<div class="title-list">
+  <%= render 'title/list', template_opt %>
+</div>

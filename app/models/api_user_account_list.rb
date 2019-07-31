@@ -7,9 +7,8 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/user_account'
 require_relative 'api/common/link_methods'
+require_relative 'api/user_account'
 
 # ApiUserAccountList
 #
@@ -19,14 +18,14 @@ require_relative 'api/common/link_methods'
 #
 class ApiUserAccountList < Api::Message
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many  :allows,       AllowsType
     has_many  :links,        Api::Link
     attribute :totalResults, Integer
     has_many  :userAccounts, Api::UserAccount
   end
-
-  include Api::Common::LinkMethods
 
 end
 

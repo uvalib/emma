@@ -6,6 +6,7 @@
 __loading_begin(__FILE__)
 
 require 'api/record'
+require_relative '../link'
 
 # Methods mixed in to record elements with links.
 #
@@ -36,7 +37,7 @@ module Api::Common::LinkMethods
 
   # Return the links present in the record.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash] opt
   #
   # @option opt [Symbol,String,Array] :only     Limit to these rel name(s).
   # @option opt [Symbol,String,Array] :except   Exclude these rel name(s).

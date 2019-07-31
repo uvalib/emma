@@ -26,6 +26,56 @@ class ApiService
   include Api::Schema
 
   # ===========================================================================
+  # :section: Exceptions
+  # ===========================================================================
+
+  public
+
+  # ApiService::ResponseError exception.
+  #
+  class ResponseError < Faraday::ClientError
+
+    # Initialize a new instance.
+    #
+    # @param [Faraday::Response, nil] response
+    # @param [String, nil]            message
+    #
+    def initialize(response = nil, message = nil)
+      message ||= 'Bad API response'
+      super(message, response)
+    end
+
+  end
+
+  # ApiService::EmptyResult exception.
+  #
+  class EmptyResult < ResponseError
+
+    # Initialize a new instance.
+    #
+    # @param [Faraday::Response, nil] response
+    # @param [String, nil]            message
+    #
+    def initialize(response = nil, message = nil)
+      super(response, (message || 'Empty API result body'))
+    end
+
+  end
+
+  # ApiService::HtmlResult exception.
+  #
+  class HtmlResult < ResponseError
+
+    # @param [Faraday::Response, nil] response
+    # @param [String, nil]            message
+    #
+    def initialize(response = nil, message = nil)
+      super(response, (message || 'Invalid (HTML) result body'))
+    end
+
+  end
+
+  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -39,7 +89,7 @@ class ApiService
 
   # Initialize a new instance
   #
-  # @param [Hash, nil] opt
+  # @param [Hash] opt
   #
   # @option opt [User]   :user          User instance which includes a
   #                                       Bookshare user identity and a token.
@@ -70,7 +120,7 @@ class ApiService
     # Include send and receive modules from "app/services/api_service/*/*.rb".
     constants(false).each do |name|
       mod = "#{self}::#{name}".constantize
-      include mod if mod.is_a?(Module)
+      include mod if mod.is_a?(Module) && !mod.is_a?(Class)
     end
 
     SERVICE_METHODS =
@@ -92,8 +142,8 @@ class ApiService
 
   # GET # TODO: experimental
   #
-  # @param [String]    path
-  # @param [Hash, nil] opt
+  # @param [String] path
+  # @param [Hash]   opt
   #
   # @return [String]
   # @return [nil]
@@ -104,8 +154,8 @@ class ApiService
 
   # PUT # TODO: experimental
   #
-  # @param [String]    path
-  # @param [Hash, nil] opt
+  # @param [String] path
+  # @param [Hash]   opt
   #
   # @return [String]
   # @return [nil]
@@ -116,8 +166,8 @@ class ApiService
 
   # POST # TODO: experimental
   #
-  # @param [String]    path
-  # @param [Hash, nil] opt
+  # @param [String] path
+  # @param [Hash]   opt
   #
   # @return [String]
   # @return [nil]
@@ -134,7 +184,7 @@ class ApiService
 
   # The single instance of this class.
   #
-  # @param [Hash, nil] opt            @see #initialize
+  # @param [Hash] opt                 Passed to ApiService#initialize.
   #
   # @return [ApiService]
   #
@@ -149,7 +199,7 @@ class ApiService
 
   # Update the service instance with new information.
   #
-  # @param [Hash, nil] opt            @see #initialize
+  # @param [Hash] opt                 Passed to ApiService#initialize.
   #
   # @return [ApiService]
   #

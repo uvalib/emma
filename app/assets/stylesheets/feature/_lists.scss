@@ -55,6 +55,10 @@
             @media #{$browser-ie} {
                 margin-bottom: $ie-page-padding;
             }
+
+            &.empty {
+                margin-bottom: 0;
+            }
         }
     }
 }

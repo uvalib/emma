@@ -87,11 +87,11 @@
 //=============================================================================
 
 // Category metadata values.
-.category-details { // TODO: delete?
+.category-metadata { // TODO: delete?
     @extend .details-entry;
 }
 
-// Container for a .category-details.
+// Container for a .category-metadata.
 .category-container { // TODO: delete?
     @extend .details-container;
 }

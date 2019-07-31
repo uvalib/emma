@@ -1,16 +1,21 @@
 <%# app/views/member/_details.html.erb -%>
 <%-
-  # A Member metadata listing.
+  # A Member metadata listing with preferences and history.
   item ||= nil
   return if item.blank?
 
-  added_fields = {
-    EmmaRoles: current_user.roles.map(&:to_s).join(', ')
-  }
+  pref ||= nil
+  hist ||= nil
+  skip ||= nil
+
+  skip = Array.wrap(skip)
+  pref = nil if skip.include?(:preferences)
+  hist = nil if skip.include?(:history)
 -%>
 
-<div class="member-details">
-  <%= member_field_values(item, added_fields) %>
+<div class="member-container">
+  <%= render 'member/metadata',    item: item %>
+  <%= render 'member/preferences', pref: pref %>
 </div>
 
-<%= render 'member/preferences' %>
+<%= render 'member/history', hist: hist %>

@@ -7,16 +7,17 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
+require_relative 'api/common/link_methods'
 require_relative 'api/periodical_edition'
 require_relative 'api/status_model'
-require_relative 'api/common/link_methods'
 
 # ApiPeriodicalEditionList
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition_list
 #
 class ApiPeriodicalEditionList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :allows,             AllowsType
@@ -27,8 +28,6 @@ class ApiPeriodicalEditionList < Api::Message
     has_many  :periodicalEditions, Api::PeriodicalEdition
     attribute :totalResults,       Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

@@ -16,7 +16,10 @@ require_relative 'api/user_subscription'
 # NOTE: This duplicates:
 # @see Api::UserSubscription
 #
+# noinspection DuplicatedCode
 class ApiUserSubscription < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_one   :downloadTimeframe,    Api::DownloadTimeframe
@@ -28,8 +31,6 @@ class ApiUserSubscription < Api::Message
     attribute :subscriptionId,       String
     has_one   :userSubscriptionType, Api::UserSubscriptionType
   end
-
-  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

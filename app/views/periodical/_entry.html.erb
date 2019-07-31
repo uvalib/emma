@@ -1,14 +1,20 @@
 <%# app/views/periodical/_entry.html.erb -%>
 <%-
-  # A single periodical index entry.
+  # A single Periodical index entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
 
   offset ||= page_offset
+  skip   ||= nil
 
-  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="periodical-#{h(item.identifier)}").html_safe
+  skip    = Array.wrap(skip)
+  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  number  = nil if skip.include?(:number)
+  image   = false # item && !skip.include?(:thumbnail)
+  classes = 'periodical-list-entry'
+  classes = css_classes(classes, 'empty') unless item
+  id      = item && %Q(id="periodical-#{h(item.identifier)}").html_safe
 
   metadata = item && {
     Title:      periodical_link(item),
@@ -20,6 +26,11 @@
 <%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
-<div class="periodical-list-entry" <%= id -%>>
+
+<%- if image -%>
+  <%= thumbnail(item, link: true) %>
+<%- end -%>
+
+<div class="<%= classes -%>" <%= id -%>>
   <%= item ? field_values(item, metadata) : empty_field_value %>
 </div>

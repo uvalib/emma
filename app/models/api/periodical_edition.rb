@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'format'
-require_relative 'link'
 require_relative 'common/artifact_methods'
 require_relative 'common/edition_methods'
 require_relative 'common/link_methods'
@@ -20,6 +18,10 @@ require_relative 'common/link_methods'
 #
 class Api::PeriodicalEdition < Api::Record::Base
 
+  include Api::Common::ArtifactMethods
+  include Api::Common::EditionMethods
+  include Api::Common::LinkMethods
+
   schema do
     attribute :editionId,       String
     attribute :editionName,     String
@@ -28,10 +30,6 @@ class Api::PeriodicalEdition < Api::Record::Base
     has_many  :links,           Api::Link
     attribute :publicationDate, String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::EditionMethods
-  include Api::Common::LinkMethods
 
 end
 

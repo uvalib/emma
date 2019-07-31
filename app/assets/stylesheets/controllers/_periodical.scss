@@ -27,7 +27,6 @@
     }
 
     .value {
-
         &.field-Title {
 
             font-weight: bold;
@@ -39,10 +38,6 @@
             a:not(:hover) {
                 text-decoration: none;
             }
-        }
-
-        &.field-None {
-            margin-bottom: 0;
         }
     }
 }
@@ -57,12 +52,12 @@
 //=============================================================================
 
 // Periodical metadata values.
-.periodical-details {
+.periodical-metadata {
     @extend .details-entry;
 }
 
-// Container for a .periodical-details and .edition-list in a two-column format
-// for wide screens.
+// Container for a .periodical-metadata and .edition-list in a two-column
+// format for wide screens.
 //
 // noinspection SassScssResolvedByNameOnly
 .periodical-container {
@@ -73,7 +68,7 @@
     // Sections
     //=========================================================================
 
-    .periodical-details {}
+    .periodical-metadata {}
 
     .edition-list {
         // Move the column up a bit so that the baseline of the heading matches

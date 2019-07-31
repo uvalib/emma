@@ -230,8 +230,9 @@ class ApiService
 
     # Get data from the API and update @response.
     #
-    # @param [Symbol]        verb       One of :get, :post, :put, :delete
-    # @param [Array<String>] args       Path components to the Bookshare API.
+    # @param [Symbol, String] verb    One of :get, :post, :put, :delete
+    # @param [Array<String>]  args    Path components to the Bookshare API.
+    # @param [Hash]           opt     API URL parameters
     #
     # args[0]   [String]  Path component.
     # ...
@@ -246,13 +247,12 @@ class ApiService
     #
     # @return [Faraday::Response]
     #
-    def api(verb, *args)
+    def api(verb, *args, **opt)
       result = @verb = @action = @response = @exception = nil
       headers = {}
 
       # Build API call parameters (minus local options).
-      @params = { api_key: API_KEY }
-      @params.merge!(args.pop) if args.last.is_a?(Hash)
+      @params = opt.merge(api_key: API_KEY)
       @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
       @params.transform_keys! { |k| (k == :fmt) ? :format : k }
       @params[:limit] = MAX_LIMIT if @params[:limit].to_s == 'max'
@@ -267,7 +267,7 @@ class ApiService
 
       # Determine whether the HTTP method indicates a write rather than a read
       # and prepare the HTTP headers accordingly.
-      @verb = verb
+      @verb = verb.to_s.downcase.to_sym
       if %i[put post patch].include?(@verb)
         headers['Content-Type'] = 'application/json'
         params = params.to_json
@@ -276,34 +276,45 @@ class ApiService
       # Invoke the API.
       __debug { ">>> #{__method__} | #{@action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" }
       @response = connection.send(@verb, @action, params, headers)
-      if @response.body[0,64].downcase.include?('page not found')
-        __debug { "!!! #{__method__} | #{@action.inspect} | invalid response" }
-      else
-        result = @response
-      end
+      body = @response&.body
+      raise ApiService::EmptyResult.new(@response) unless body.present?
+      raise ApiService::HtmlResult.new(@response)  if body.match?(/^\s*</)
+      result = @response
 
     rescue SocketError, EOFError => error
-      result = nil
+      __debug { "!!! #{__method__} | #{@action.inspect} | #{error.message}" }
       @exception = error unless noexcp
       raise error        unless noraise # Handled by ApplicationController
 
+    rescue ApiService::ResponseError => error
+      __debug { "!!! #{__method__} | #{@action.inspect} | #{error.message}" }
+      @exception = error unless noexcp
+
     rescue Faraday::ClientError => error
+      __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }
       unless noexcp
-        resp  = error.response
-        desc  = MultiJson.load(resp[:body])['error_description'] rescue nil
+        resp = error.response
+        json = MultiJson.load(resp[:body]) rescue nil
+        desc = json&.dig('error_description')&.presence
+        desc ||=
+          Array.wrap(json&.dig('messages')).find { |msg|
+            parts = msg.split(/=/)
+            tag   = parts.shift
+            next unless tag.include?('error_description')
+            break parts.join('=').gsub(/\\"/, '').presence
+          }
         error = Faraday::ClientError.new(desc, resp) if desc.present?
         @exception = error
       end
-      result = nil
 
     rescue => error
       __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }
       Log.error { "API #{__method__}: #{error.message}" }
       @exception = error unless noexcp
-      result = nil
 
-    ensure # TODO: remove
+    ensure # TODO: remove?
       __debug { "<<< #{__method__} | #{@action.inspect} | status = #{@response&.status} | data = #{@response&.body.inspect.truncate(256)}" }
+      @response = result
       return result
 
     end
@@ -344,6 +355,7 @@ class ApiService
         backoff_factor:      2,
       }
 
+      # noinspection RubyYardReturnMatch
       Faraday.new(conn_opts) do |bld|
         bld.use           :instrumentation
         bld.use           :api_caching_middleware if CACHING
@@ -404,8 +416,8 @@ class ApiService
     def validate_response(response = @response)
       case response&.status
         when 200..299 then return if response&.body&.present?
+        else               raise_exception(__method__)
       end
-      raise_exception(__method__)
     end
 
     # raise_exception
@@ -464,6 +476,7 @@ class ApiService
         if template_table.present?
           key =
             response_table&.find { |_, pattern|
+              # noinspection RubyCaseWithoutElseBlockInspection
               case pattern
                 when nil    then true
                 when String then message.include?(pattern)

@@ -7,15 +7,16 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/reading_list_user_view'
 require_relative 'api/common/link_methods'
+require_relative 'api/reading_list_user_view'
 
 # ApiReadingListList
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_list
 #
 class ApiReadingListList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :allows,        AllowsType
@@ -25,8 +26,6 @@ class ApiReadingListList < Api::Message
     attribute :next,          String
     attribute :totalResults,  Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

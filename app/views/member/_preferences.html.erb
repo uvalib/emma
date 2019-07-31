@@ -1,19 +1,20 @@
 <%# app/views/member/_preferences.html.erb -%>
 <%-
-  # Member preferences listing.
-  item ||= @pref
-  return if item.blank?
+  # Organization Member preferences listing.
+  pref ||= @preferences
+  return if pref.blank?
+
   skip ||= nil
 
   skip = Array.wrap(skip)
   heading =
     unless skip.include?(:title)
-      title ||= 'Preferences' # TODO: I18n
+      title ||= t('emma.member.preferences.title')
       content_tag(:h2, h(title), class: 'list-heading')
     end
 -%>
 
 <div class="member-preferences">
   <%= heading %>
-  <%= member_preference_values(item) %>
+  <%= member_preference_values(pref) %>
 </div>

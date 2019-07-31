@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/format'
-require_relative 'api/link'
 require_relative 'api/common/artifact_methods'
 require_relative 'api/common/link_methods'
 
@@ -17,6 +15,9 @@ require_relative 'api/common/link_methods'
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_myaccount_preferences
 #
 class ApiMyAccountPreferences < Api::Message
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
 
   schema do
     attribute :allowAdultContent,    Boolean
@@ -29,9 +30,6 @@ class ApiMyAccountPreferences < Api::Message
     attribute :showAllBooks,         Boolean
     attribute :useUeb,               Boolean
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
 
 end
 

@@ -1,14 +1,20 @@
 <%# app/views/member/_entry.html.erb -%>
 <%-
-  # A Member index entry.
+  # A single Member index entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
 
   offset ||= page_offset
+  skip   ||= nil
 
-  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="member-#{h(item.identifier)}").html_safe
+  skip    = Array.wrap(skip)
+  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  number  = nil if skip.include?(:number)
+  image   = false # item && !skip.include?(:thumbnail)
+  classes = 'member-list-entry'
+  classes = css_classes(classes, 'empty') unless item
+  id      = item && %Q(id="member-#{h(item.identifier)}").html_safe
 
   metadata = item && {
     Name:  member_link(item),
@@ -19,6 +25,11 @@
 <%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
-<div class="member-list-entry" <%= id -%>>
+
+<%- if image -%>
+  <%= thumbnail(item, link: true) %>
+<%- end -%>
+
+<div class="<%= classes -%>" <%= id -%>>
   <%= item ? field_values(item, metadata) : empty_field_value %>
 </div>

@@ -2,17 +2,17 @@
 <%-
   # Periodicals results page.
   title ||= t('emma.periodical.index.title')
+  list  ||= periodical_list
+  count ||= total_items
 
-  item_list = periodical_list
-
-  if item_list.present?
+  if list.present?
     all_count    = nil
-    search_count = "#{total_items} titles found." # TODO: I18n
+    search_count = "#{count} periodicals found." # TODO: I18n
     search_count = content_tag(:div, search_count, class: 'search-count')
     controls     = pagination_controls
     terms        = search_terms.presence
   else
-    all_count    = " (#{total_items})"
+    all_count    = " (#{count})"
     search_count = controls = terms = nil
   end
 
@@ -35,7 +35,7 @@
   <%- end -%>
 
   <%# === Items === -%>
-  <%= render 'periodical/list', list: item_list, skip: :title %>
+  <%= render 'periodical/list', list: list, count: count, skip: :title %>
 
   <%# === Bottom pagination controls === -%>
   <%- if controls -%>

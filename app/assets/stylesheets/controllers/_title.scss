@@ -69,10 +69,6 @@
                 }
             }
         }
-
-        &.field-None {
-            margin-bottom: 0;
-        }
     }
 }
 
@@ -124,7 +120,7 @@
 // Catalog Title metadata values.
 //
 // noinspection SassScssResolvedByNameOnly
-.title-details {
+.title-metadata {
 
     @extend .details-entry;
 
@@ -192,7 +188,7 @@
     }
 }
 
-// Wrapper for .title-details which displays the full-size cover image to the
+// Wrapper for .title-metadata which displays the full-size cover image to the
 // right on large screens.
 //
 // noinspection SassScssResolvedByNameOnly
@@ -204,14 +200,19 @@
     // Sections
     //=========================================================================
 
-    .title-details {}
+    .title-metadata {}
 
     // @see TitleHelper#cover_image
     .cover-image {
 
         // Prevent flex from trying to equalize the width of this column with
-        // the .title-details column.
-        flex-basis: 0;
+        // the .title-metadata column.
+        flex-basis:  0;
+        margin-left: $page-padding-x;
+
+        @media #{$browser-ie} {
+            margin-left: $ie-page-padding-x;
+        }
 
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.

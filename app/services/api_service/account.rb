@@ -68,7 +68,7 @@ class ApiService
     # == GET /v2/myaccount/history
     # Get a listing of downloads made by the current user.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [Integer]          :limit
     # @option opt [HistorySortOrder] :sortOrder   Default: 'title'
@@ -78,7 +78,7 @@ class ApiService
     #
     def get_my_download_history(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'myaccount', 'history', opt)
+      api(:get, 'myaccount', 'history', **opt)
       ApiTitleDownloadList.new(response, error: exception)
     end
 
@@ -95,7 +95,7 @@ class ApiService
     # == PUT /v2/myaccount/preferences
     # Update the account preferences associated with the current user.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [Boolean]       :allowAdultContent
     # @option opt [Boolean]       :showAllBooks           Default: *false*
@@ -111,14 +111,14 @@ class ApiService
     #
     def update_my_preferences(**opt)
       validate_parameters(__method__, opt)
-      api(:put, 'myaccount', 'preferences', opt)
+      api(:put, 'myaccount', 'preferences', **opt)
       ApiMyAccountPreferences.new(response, error: exception)
     end
 
     # == POST /v2/accounts
     # Create a new user account.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]   :firstName          *REQUIRED*
     # @option opt [String]   :lastName           *REQUIRED*
@@ -143,7 +143,7 @@ class ApiService
     #
     def create_account(**opt)
       validate_parameters(__method__, opt)
-      api(:post, 'accounts', opt)
+      api(:post, 'accounts', **opt)
       ApiUserAccount.new(response, error: exception)
     end
 
@@ -183,7 +183,7 @@ class ApiService
     # == GET /v2/myAssignedTitles
     # Get the titles assigned to the current user (organization member).
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]              :start
     # @option opt [Integer]             :limit        Default: 10
@@ -194,15 +194,15 @@ class ApiService
     #
     def get_my_assigned_titles(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'myAssignedTitles', opt)
+      api(:get, 'myAssignedTitles', **opt)
       ApiTitleMetadataSummaryList.new(response, error: exception)
     end
 
     # == GET /v2/assignedTitles/:username
     # Get a list of titles assigned to the specified organization member.
     #
-    # @param [User, String, nil] user       Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [String]            :start
     # @option opt [Integer]           :limit        Default: 10
@@ -214,15 +214,15 @@ class ApiService
     def get_assigned_titles(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:get, 'assignedTitles', username, opt)
+      api(:get, 'assignedTitles', username, **opt)
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
     end
 
     # == POST /v2/assignedTitles/:username
     # Assign a title to the specified organization member.
     #
-    # @param [User, String, nil] user       Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [String]    :bookshareId
     #
@@ -231,15 +231,15 @@ class ApiService
     def create_assigned_title(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:post, 'assignedTitles', username, opt)
+      api(:post, 'assignedTitles', username, **opt)
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
     end
 
     # == DELETE /v2/assignedTitles/:username
     # Assign a title to the specified organization member.
     #
-    # @param [User, String, nil] user         Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [String]    :bookshareId
     #
@@ -248,7 +248,7 @@ class ApiService
     def remove_assigned_title(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:delete, 'assignedTitles', username, opt)
+      api(:delete, 'assignedTitles', username, **opt)
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
     end
 
@@ -261,7 +261,7 @@ class ApiService
     # == GET /v2/myOrganization/members
     # Get a list of members of the current (sponsor) user's organization.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]          :start
     # @option opt [Integer]         :limit        Default: 10
@@ -272,7 +272,7 @@ class ApiService
     #
     def get_organization_members(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'myOrganization', 'members', opt)
+      api(:get, 'myOrganization', 'members', **opt)
       ApiUserAccountList.new(response, error: exception)
     end
 
@@ -283,7 +283,7 @@ class ApiService
     #
     # @param [String] username
     #
-    # @return [Api::UserAccount]
+    # @return [ApiUserAccount]
     #
     def get_organization_member(username:)
       all = get_organization_members(limit: :max)

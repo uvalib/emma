@@ -25,7 +25,11 @@ require_relative 'api/user_account'
 #   :roles
 #   :site
 #
+# noinspection DuplicatedCode
 class ApiUserAccount < Api::Message
+
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
   schema do
     has_one   :address,                 Api::Address
@@ -46,9 +50,6 @@ class ApiUserAccount < Api::Message
     attribute :site,                    SiteType
     attribute :subscriptionStatus,      SubscriptionStatus
   end
-
-  include Api::Common::AccountMethods
-  include Api::Common::LinkMethods
 
 end
 

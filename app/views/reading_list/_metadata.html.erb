@@ -1,0 +1,10 @@
+<%# app/views/reading_list/_metadata.html.erb -%>
+<%-
+  # A Reading List metadata listing.
+  item ||= nil
+  return if item.blank?
+-%>
+
+<div class="reading_list-metadata">
+  <%= reading_list_field_values(item) %>
+</div>

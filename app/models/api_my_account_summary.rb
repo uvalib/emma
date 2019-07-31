@@ -7,12 +7,11 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/address'
-require_relative 'api/link'
-require_relative 'api/name'
-require_relative 'api/student_status'
 require_relative 'api/common/account_methods'
 require_relative 'api/common/link_methods'
+require_relative 'api/address'
+require_relative 'api/name'
+require_relative 'api/student_status'
 
 # ApiMyAccountSummary
 #
@@ -29,6 +28,9 @@ require_relative 'api/common/link_methods'
 #
 class ApiMyAccountSummary < Api::Message
 
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
+
   schema do
     has_one   :address,                 Api::Address
     attribute :canDownload,             Boolean
@@ -43,9 +45,6 @@ class ApiMyAccountSummary < Api::Message
     attribute :subscriptionStatus,      SubscriptionStatus
     attribute :username,                String
   end
-
-  include Api::Common::AccountMethods
-  include Api::Common::LinkMethods
 
 end
 

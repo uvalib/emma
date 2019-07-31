@@ -67,8 +67,7 @@ class MemberController < ApplicationController
   #
   def show
     __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
-    @item = @api.get_organization_member(username: @user_id)
-    @pref = nil # TODO: ???
+    @item, @preferences, @history = get_account_details(id: @user_id)
   end
 
   # == GET /member/new[?id=:id]

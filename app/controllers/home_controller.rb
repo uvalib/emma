@@ -17,6 +17,7 @@ __loading_begin(__FILE__)
 class HomeController < ApplicationController
 
   include ApiConcern
+  include UserConcern
   include ParamsConcern
   include SessionConcern
 
@@ -31,6 +32,12 @@ class HomeController < ApplicationController
   # ===========================================================================
 
   skip_authorization_check
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  before_action :initialize_service
 
   # ===========================================================================
   # :section:
@@ -48,7 +55,7 @@ class HomeController < ApplicationController
   def index
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     if current_user
-      @item, @pref = fetch_my_account
+      @item, @preferences, @history = get_account_details
       render template: 'home/dashboard'
     else
       render template: 'home/welcome'
@@ -67,7 +74,7 @@ class HomeController < ApplicationController
   #
   def dashboard
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
-    @item, @pref = fetch_my_account
+    @item, @preferences, @history = get_account_details
   end
 
 end

@@ -16,7 +16,12 @@ require_relative 'api/title_metadata_summary'
 # NOTE: This duplicates:
 # @see Api::TitleMetadataSummary
 #
+# noinspection DuplicatedCode
 class ApiTitleMetadataSummary < Api::Message
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     has_many  :arrangers,        Api::Name
@@ -42,10 +47,6 @@ class ApiTitleMetadataSummary < Api::Message
     has_many  :translators,      Api::Name
     attribute :vocalParts,       String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

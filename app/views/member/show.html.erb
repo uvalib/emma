@@ -1,7 +1,9 @@
 <%# app/views/member/show.html.erb -%>
 <%-
-  # Member show page.
+  # An organization Member show page.
   item  ||= @item
+  pref  ||= @preferences
+  hist  ||= @history
   title ||= item&.label || t('emma.member.show.title')
 
   set_page_title(title)
@@ -11,6 +13,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<div class="member-container">
-  <%= render 'member/details', item: item %>
-</div>
+<%= render 'member/details', item: item, pref: pref, hist: hist %>

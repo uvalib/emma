@@ -1,18 +1,19 @@
 <%# app/views/category/_list.html.erb -%>
 <%-
-  # Category list.
-  list ||= []
-  skip ||= nil
+  # Category listing.
+  list   ||= []
+  count  ||= list.size
+  offset ||= page_offset
+  skip   ||= nil
 
   skip = Array.wrap(skip)
   heading =
     unless skip.include?(:title)
       title ||= t('emma.category.index.title')
-      unless skip.include?(:count)
-        count ||= list.size
-        title += " (#{count})"
-      end
-      content_tag(:h2, h(title), class: 'list-heading')
+      title  += " (#{count})" unless skip.include?(:count)
+      classes = 'list-heading'
+      classes = css_classes(classes, 'empty') if list.blank?
+      content_tag(:h2, h(title), class: classes)
     end
 -%>
 
@@ -20,7 +21,7 @@
 
 <%- if list.present? -%>
   <%- list.each_with_index do |item, idx| -%>
-    <%= render 'category/entry', index: idx, item: item %>
+    <%= render 'category/entry', index: idx, item: item, offset: offset %>
   <%- end -%>
 <%- else -%>
   <%= render 'category/entry', index: -1 %>

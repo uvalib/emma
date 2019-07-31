@@ -1,9 +1,10 @@
 <%# app/views/reading_list/show.html.erb -%>
 <%-
-  # Reading List show page.
+  # A Reading List show page.
   item  ||= @item
-  title ||= item&.label || t('emma.reading_list.show.title')
   list  ||= page_items
+  count ||= total_items
+  title ||= item&.label || t('emma.reading_list.show.title')
 
   set_page_title(title)
   set_page_description(Title: title)
@@ -11,6 +12,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<div class="reading_list-container">
-  <%= render 'reading_list/details', item: item, list: list %>
-</div>
+<%= render 'reading_list/details', item: item, list: list, count: count %>

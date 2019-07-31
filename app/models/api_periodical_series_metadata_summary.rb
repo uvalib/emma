@@ -16,8 +16,11 @@ require_relative 'api/periodical_series_metadata_summary'
 # NOTE: This duplicates:
 # @see Api::PeriodicalSeriesMetadataSummary
 #
-# noinspection RubyClassModuleNamingConvention
+# noinspection RubyClassModuleNamingConvention,DuplicatedCode
 class ApiPeriodicalSeriesMetadataSummary < Api::Message
+
+  include Api::Common::LinkMethods
+  include Api::Common::PeriodicalMethods
 
   schema do
     has_many  :categories,           Api::Category
@@ -33,9 +36,6 @@ class ApiPeriodicalSeriesMetadataSummary < Api::Message
     attribute :seriesId,             String
     attribute :title,                String
   end
-
-  include Api::Common::LinkMethods
-  include Api::Common::PeriodicalMethods
 
 end
 

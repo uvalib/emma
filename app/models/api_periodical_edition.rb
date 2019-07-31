@@ -18,6 +18,10 @@ require_relative 'api/periodical_edition'
 #
 class ApiPeriodicalEdition < Api::Message
 
+  include Api::Common::ArtifactMethods
+  include Api::Common::EditionMethods
+  include Api::Common::LinkMethods
+
   schema do
     attribute :editionId,       String
     attribute :editionName,     String
@@ -26,10 +30,6 @@ class ApiPeriodicalEdition < Api::Message
     has_many  :links,           Api::Link
     attribute :publicationDate, String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::EditionMethods
-  include Api::Common::LinkMethods
 
 end
 

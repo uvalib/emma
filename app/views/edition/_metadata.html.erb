@@ -1,0 +1,10 @@
+<%# app/views/edition/_metadata.html.erb -%>
+<%-
+  # A periodical Edition metadata listing.
+  item ||= nil
+  return if item.blank?
+-%>
+
+<div class="edition-metadata">
+  <%= edition_field_values(item) %>
+</div>

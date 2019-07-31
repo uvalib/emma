@@ -14,6 +14,7 @@ require 'api/record'
 # NOTE: This duplicates:
 # @see ApiUserSignedAgreement
 #
+# noinspection DuplicatedCode
 class Api::UserSignedAgreement < Api::Record::Base
 
   schema do

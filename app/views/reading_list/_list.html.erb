@@ -1,18 +1,19 @@
 <%# app/views/reading_list/_list.html.erb -%>
 <%-
-  # Edition list.
-  list ||= []
-  skip ||= nil
+  # A list of Reading Lists.
+  list   ||= []
+  count  ||= list.size
+  offset ||= page_offset
+  skip   ||= nil
 
   skip = Array.wrap(skip)
   heading =
     unless skip.include?(:title)
       title ||= t('emma.reading_list.index.title')
-      unless skip.include?(:count)
-        count ||= list.size
-        title += " (#{count})"
-      end
-      content_tag(:h2, h(title), class: 'list-heading')
+      title  += " (#{count})" unless skip.include?(:count)
+      classes = 'list-heading'
+      classes = css_classes(classes, 'empty') if list.blank?
+      content_tag(:h2, h(title), class: classes)
     end
 -%>
 
@@ -20,7 +21,7 @@
 
 <%- if list.present? -%>
   <%- list.each_with_index do |item, idx| -%>
-    <%= render 'reading_list/entry', index: idx, item: item %>
+    <%= render 'reading_list/entry', index: idx, item: item, offset: offset %>
   <%- end -%>
 <%- else -%>
   <%= render 'reading_list/entry', index: -1 %>

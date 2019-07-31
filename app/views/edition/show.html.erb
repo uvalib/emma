@@ -1,6 +1,6 @@
 <%# app/views/edition/show.html.erb -%>
 <%-
-  # Edition show page.
+  # A periodical Edition show page.
   item  ||= @item
   title ||= item&.label || t('emma.edition.show.title')
 
@@ -10,6 +10,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<div class="edition-container">
-  <%= render 'edition/details', item: item %>
-</div>
+<%= render 'edition/details', item: item %>

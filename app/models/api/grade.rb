@@ -5,7 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'link'
 require_relative 'common/link_methods'
 
 # Api::Grade
@@ -14,13 +13,13 @@ require_relative 'common/link_methods'
 #
 class Api::Grade < Api::Record::Base
 
+  include Api::Common::LinkMethods
+
   schema do
     attribute :gradeId, String
     has_many  :links,   Api::Link
     attribute :name,    String
   end
-
-  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

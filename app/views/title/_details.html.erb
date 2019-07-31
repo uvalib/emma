@@ -1,10 +1,11 @@
 <%# app/views/title/_details.html.erb -%>
 <%-
-  # A Catalog Title metadata listing.
+  # A catalog Title metadata listing with cover image.
   item  ||= nil
+  return if item.blank?
+
   image ||= nil
   skip  ||= nil
-  return if item.blank?
 
   skip = Array.wrap(skip)
 
@@ -16,8 +17,7 @@
   )
 -%>
 
-<div class="title-details">
-  <%= title_field_values(item) %>
+<div class="title-container">
+  <%= render 'title/metadata', item: item %>
+  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
 </div>
-
-<%= image || cover_image(item) unless skip.include?(:cover_image) %>

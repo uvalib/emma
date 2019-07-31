@@ -1,0 +1,11 @@
+<%# app/views/periodical/_editions.html.erb -%>
+<%-
+  # Periodical editions listing.
+  list  ||= nil
+  count ||= nil
+  return if list.blank?
+-%>
+
+<div class="edition-list">
+  <%= render 'edition/list', list: list, count: count %>
+</div>

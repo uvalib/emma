@@ -7,15 +7,16 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/title_metadata_complete'
 require_relative 'api/common/link_methods'
+require_relative 'api/title_metadata_complete'
 
 # ApiTitleMetadataCompleteList
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_metadata_complete_list
 #
 class ApiTitleMetadataCompleteList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :allows,       AllowsType
@@ -25,8 +26,6 @@ class ApiTitleMetadataCompleteList < Api::Message
     has_many  :titles,       Api::TitleMetadataComplete
     attribute :totalResults, Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

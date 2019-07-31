@@ -7,16 +7,13 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/artifact_metadata'
-require_relative 'api/category'
-require_relative 'api/format'
-require_relative 'api/grade'
-require_relative 'api/link'
-require_relative 'api/name'
-require_relative 'api/usage_restriction'
 require_relative 'api/common/artifact_methods'
 require_relative 'api/common/link_methods'
 require_relative 'api/common/title_methods'
+require_relative 'api/artifact_metadata'
+require_relative 'api/category'
+require_relative 'api/grade'
+require_relative 'api/usage_restriction'
 
 # ApiTitleMetadataDetail
 #
@@ -35,6 +32,10 @@ require_relative 'api/common/title_methods'
 #   :readingAgeMinimum
 #
 class ApiTitleMetadataDetail < Api::Message
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     attribute :adultContent,         Boolean
@@ -86,10 +87,6 @@ class ApiTitleMetadataDetail < Api::Message
     has_one   :usageRestriction,     Api::UsageRestriction
     attribute :vocalParts,           String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

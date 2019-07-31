@@ -5,11 +5,10 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'address'
-require_relative 'link'
-require_relative 'name'
 require_relative 'common/account_methods'
 require_relative 'common/link_methods'
+require_relative 'address'
+require_relative 'name'
 
 # Api::UserAccount
 #
@@ -18,7 +17,11 @@ require_relative 'common/link_methods'
 # NOTE: This duplicates:
 # @see ApiUserAccount
 #
+# noinspection DuplicatedCode
 class Api::UserAccount < Api::Record::Base
+
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
 
   schema do
     has_one   :address,                 Api::Address
@@ -39,9 +42,6 @@ class Api::UserAccount < Api::Record::Base
     attribute :site,                    SiteType
     attribute :subscriptionStatus,      SubscriptionStatus
   end
-
-  include Api::Common::AccountMethods
-  include Api::Common::LinkMethods
 
 end
 

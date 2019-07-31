@@ -7,10 +7,9 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/assigned_title_metadata_summary'
-require_relative 'api/link'
-require_relative 'api/status_model'
 require_relative 'api/common/link_methods'
+require_relative 'api/assigned_title_metadata_summary'
+require_relative 'api/status_model'
 
 # ApiAssignedTitleMetadataSummaryList
 #
@@ -22,6 +21,8 @@ require_relative 'api/common/link_methods'
 # noinspection RubyClassModuleNamingConvention
 class ApiAssignedTitleMetadataSummaryList < Api::Message
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many  :allows,       AllowsType
     attribute :limit,        Integer
@@ -31,8 +32,6 @@ class ApiAssignedTitleMetadataSummaryList < Api::Message
     has_many  :titles,       Api::AssignedTitleMetadataSummary
     attribute :totalResults, Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

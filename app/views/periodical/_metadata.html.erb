@@ -1,0 +1,10 @@
+<%# app/views/periodical/_metadata.html.erb -%>
+<%-
+  # A Periodical metadata listing.
+  item ||= nil
+  return if item.blank?
+-%>
+
+<div class="periodical-metadata">
+  <%= periodical_field_values(item) %>
+</div>

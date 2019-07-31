@@ -7,6 +7,8 @@
 
   title ||= t('emma.home.dashboard.title', default: :'emma.home.title')
   item  ||= @item
+  pref  ||= @preferences
+  hist  ||= @history
 
   set_page_title(title)
   set_page_description(title)
@@ -15,8 +17,6 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<div class="member-container">
-  <%= render 'member/details', item: item %>
-</div>
+<%= render 'member/details', item: item, pref: pref, hist: hist %>
 
 <%= render 'ability' %>

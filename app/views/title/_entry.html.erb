@@ -1,6 +1,6 @@
 <%# app/views/title/_entry.html.erb -%>
 <%-
-  # A single catalog title index entry.
+  # A single catalog Title index entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
@@ -8,9 +8,13 @@
   offset ||= page_offset
   skip   ||= nil
 
-  skip   = Array.wrap(skip)
-  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="title-#{h(item.identifier)}").html_safe
+  skip    = Array.wrap(skip)
+  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  number  = nil if skip.include?(:number)
+  image   = item && !skip.include?(:thumbnail)
+  classes = 'title-list-entry'
+  classes = css_classes(classes, 'empty') unless item
+  id      = item && %Q(id="title-#{h(item.identifier)}").html_safe
 
   metadata = item && {
     Title:   title_link(item),
@@ -19,14 +23,14 @@
   }
 -%>
 
-<%- if number && !skip.include?(:number) -%>
+<%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
 
-<%- if item && !skip.include?(:thumbnail) -%>
+<%- if image -%>
   <%= thumbnail(item, link: true) %>
 <%- end -%>
 
-<div class="title-list-entry" <%= id -%>>
+<div class="<%= classes -%>" <%= id -%>>
   <%= item ? field_values(item, metadata) : empty_field_value %>
 </div>

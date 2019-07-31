@@ -5,10 +5,9 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'link'
-require_relative 'reading_list_subscription'
 require_relative 'common/link_methods'
 require_relative 'common/reading_list_methods'
+require_relative 'reading_list_subscription'
 
 # Api::ReadingListUserView
 #
@@ -17,14 +16,18 @@ require_relative 'common/reading_list_methods'
 # NOTE: This duplicates:
 # @see ApiReadingListUserView
 #
+# noinspection DuplicatedCode
 class Api::ReadingListUserView < Api::Record::Base
+
+  include Api::Common::LinkMethods
+  include Api::Common::ReadingListMethods
 
   schema do
     attribute :access,        Access
     has_many  :allows,        AllowsType
     attribute :assignedBy,    String
     attribute :dateUpdated,   String
-    attribute :description,   String
+    attribute :description,   String, default: DEF_READING_LIST_DESCRIPTION
     has_many  :links,         Api::Link
     attribute :memberCount,   Integer
     attribute :name,          String
@@ -33,9 +36,6 @@ class Api::ReadingListUserView < Api::Record::Base
     has_one   :subscription,  Api::ReadingListSubscription
     attribute :titleCount,    Integer
   end
-
-  include Api::Common::LinkMethods
-  include Api::Common::ReadingListMethods
 
 end
 

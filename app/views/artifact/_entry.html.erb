@@ -1,21 +1,34 @@
 <%# app/views/artifact/_entry.html.erb -%>
 <%-
-  abort 'artifact/_entry - This is not expected to be used'
-
-  # A single artifact index entry.
+  # A single Artifact index entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
 
   offset ||= page_offset
+  skip   ||= nil
 
-  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="artifact-#{h(item.identifier)}").html_safe
+  skip    = Array.wrap(skip)
+  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  number  = nil if skip.include?(:number)
+  image   = false # item && !skip.include?(:thumbnail)
+  classes = 'artifact-list-entry'
+  classes = css_classes(classes, 'empty') unless item
+  id      = item && %Q(id="artifact-#{h(item.identifier)}").html_safe
 -%>
 
 <%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
-<div class="artifact-list-entry" <%= id -%>>
+
+<%- if image -%>
+  <%= thumbnail(item, link: true) %>
+<%- end -%>
+
+<div class="<%= classes -%>" <%= id -%>>
   <%= item ? artifact_field_values(item) : empty_field_value %>
 </div>
+
+<%-
+  abort 'artifact/_entry - This is not expected to be used'
+-%>

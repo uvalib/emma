@@ -115,13 +115,6 @@ module Api
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # == Usage Notes
-  # :AllowsType     Compare with ApiService#HTTP_METHODS.
-  # :FormatType     The API does not mention 'HTML' or 'TEXT' but they exist.
-  # :RoleType       Compare with Roles#BOOKSHARE_ROLES.
-  # :SiteType       The value 'emma' may not be honored by Bookshare yet.
-  # :TokenErrorType "unauthorized_client" appears as "unauthorized".
-  #
   ENUMERATIONS = {
 
     Access: {
@@ -134,6 +127,7 @@ module Api
       default:  'individual'
     },
 
+    # NOTE: Compare with ApiService#HTTP_METHODS.
     AllowsType: {
       values:   %w(PUT POST DELETE)
     },
@@ -183,6 +177,7 @@ module Api
       default:  'nonspecific'
     },
 
+    # NOTE: The API does not mention 'HTML' or 'TEXT' but they exist.
     FormatType: {
       values:   %w(DAISY DAISY_SEGMENTED DAISY_AUDIO BRF EPUB3 PDF DOCX) +
                   %w(HTML TEXT),
@@ -209,11 +204,13 @@ module Api
       default:  'active'
     },
 
+    # NOTE: Compare with Roles#BOOKSHARE_ROLES.
     RoleType: {
       values: %w(individual volunteer trustedVolunteer collectionAssistant
                 membershipAssistant)
     },
 
+    # NOTE: The value 'emma' may not be honored by Bookshare yet.
     SiteType: {
       values:   %w(bookshare cela rnib emma),
       default:  'bookshare'
@@ -282,8 +279,9 @@ module Api
 
     # === Reading Lists ===
 
+    # NOTE: "count" (by title count) is undocumented.
     MyReadingListSortOrder: {
-      values:   %w(name owner dateUpdated),
+      values:   %w(name owner dateUpdated count),
       default:  'name'
     },
 
@@ -309,6 +307,7 @@ module Api
       values:   %w(authorization_code refresh_token password)
     },
 
+    # NOTE: "unauthorized" is documented as "unauthorized_client".
     TokenErrorType: {
       values:   %w(invalid_request unauthorized access_denied
                   unsupported_response_type invalid_scope server_error

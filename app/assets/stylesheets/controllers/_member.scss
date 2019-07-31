@@ -17,13 +17,8 @@
     //=========================================================================
 
     .value {
-
         &.field-Name {
             font-weight: bold;
-        }
-
-        &.field-None {
-            margin-bottom: 0;
         }
     }
 }
@@ -38,16 +33,35 @@
 //=============================================================================
 
 // Member metadata values.
-.member-details {
+.member-metadata {
     @extend .details-entry;
 }
 
 // Member preference settings.
 .member-preferences {
-    @extend .member-details;
+    @extend .details-entry;
 }
 
-// Container for a .member-details and .member-preferences in a two-column
+// Member download history.
+.member-history {
+
+    display: block;
+
+    .history-entry {
+
+        @extend .details-entry;
+
+        padding-top: 1rem;
+        border-top:  1px solid gray;
+
+        &:last-of-type {
+            padding-bottom: 1rem;
+            border-bottom:  1px solid gray;
+        }
+    }
+}
+
+// Container for a .member-metadata and .member-preferences in a two-column
 // format for wide screens.
 //
 // noinspection SassScssResolvedByNameOnly
@@ -59,13 +73,22 @@
     // Sections
     //=========================================================================
 
-    .member-details {}
+    .member-metadata {}
 
     .member-preferences {
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
         @media #{$wide-screen} {
             margin-top: -0.5rem;
+        }
+    }
+
+    .member-history {
+
+        margin-top: $page-padding;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-page-padding;
         }
     }
 }

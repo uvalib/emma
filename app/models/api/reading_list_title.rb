@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'format'
-require_relative 'link'
-require_relative 'name'
 require_relative 'common/artifact_methods'
 require_relative 'common/link_methods'
 require_relative 'common/title_methods'
@@ -17,6 +14,10 @@ require_relative 'common/title_methods'
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_title
 #
 class Api::ReadingListTitle < Api::Record::Base
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     has_many  :allows,           AllowsType
@@ -45,10 +46,6 @@ class Api::ReadingListTitle < Api::Record::Base
     attribute :vocalParts,       String
     attribute :year,             Integer
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

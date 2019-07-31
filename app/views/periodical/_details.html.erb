@@ -1,9 +1,15 @@
 <%# app/views/periodical/_details.html.erb -%>
 <%-
-  # A Periodical metadata listing.
-  item ||= nil
-  eds  ||= nil
+  # A Periodical metadata listing with editions list.
+  item  ||= nil
   return if item.blank?
+
+  list  ||= nil
+  count ||= nil
+  skip  ||= nil
+
+  skip = Array.wrap(skip)
+  list = nil if skip.include?(:editions)
 
   append_page_description(
     ISSN:     item.issn,
@@ -11,10 +17,7 @@
   )
 -%>
 
-<div class="periodical-details">
-  <%= periodical_field_values(item) %>
-</div>
-
-<div class="edition-list">
-  <%= render 'edition/list', list: eds %>
+<div class="periodical-container">
+  <%= render 'periodical/metadata', item: item %>
+  <%= render 'periodical/editions', list: list, count: count %>
 </div>

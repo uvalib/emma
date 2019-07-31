@@ -22,11 +22,11 @@
 //=============================================================================
 
 // Artifact metadata values.
-.artifact-details { // TODO: delete?
+.artifact-metadata { // TODO: delete?
     @extend .details-entry;
 }
 
-// Container for an .artifact-details.
+// Container for an .artifact-metadata.
 .artifact-container { // TODO: delete?
     @extend .details-container;
 }

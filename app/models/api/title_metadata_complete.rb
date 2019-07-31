@@ -5,16 +5,13 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'artifact_metadata'
-require_relative 'category'
-require_relative 'format'
-require_relative 'grade'
-require_relative 'link'
-require_relative 'name'
-require_relative 'usage_restriction'
 require_relative 'common/artifact_methods'
 require_relative 'common/link_methods'
 require_relative 'common/title_methods'
+require_relative 'artifact_metadata'
+require_relative 'category'
+require_relative 'grade'
+require_relative 'usage_restriction'
 
 # Api::TitleMetadataComplete
 #
@@ -33,6 +30,10 @@ require_relative 'common/title_methods'
 #   :withdrawalDate
 #
 class Api::TitleMetadataComplete < Api::Record::Base
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     attribute :adultContent,         Boolean
@@ -87,10 +88,6 @@ class Api::TitleMetadataComplete < Api::Record::Base
     attribute :vocalParts,           String
     attribute :withdrawalDate,       String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

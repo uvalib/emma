@@ -5,7 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'link'
 require_relative 'common/link_methods'
 
 # Api::ReadingListSubscription
@@ -14,13 +13,13 @@ require_relative 'common/link_methods'
 #
 class Api::ReadingListSubscription < Api::Record::Base
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many  :allows,  AllowsType
     attribute :enabled, Boolean
     has_many  :links,   Api::Link
   end
-
-  include Api::Common::LinkMethods
 
 end
 

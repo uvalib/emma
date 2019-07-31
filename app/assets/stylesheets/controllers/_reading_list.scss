@@ -22,7 +22,7 @@
 //=============================================================================
 
 // Reading List metadata values.
-.reading_list-details {
+.reading_list-metadata {
     @extend .details-entry;
 }
 
@@ -51,8 +51,8 @@
     }
 }
 
-// Container for a .reading_list-details and .title-list in a two-column format
-// for wide screens.
+// Container for a .reading_list-metadata and .title-list in a two-column
+// format for wide screens.
 .reading_list-container {
 
     @extend .details-container;
@@ -61,7 +61,7 @@
     // Sections
     //=========================================================================
 
-    .reading_list-details {}
+    .reading_list-metadata {}
 
     // Listing of catalog titles associated with the Reading List.
     //

@@ -7,9 +7,8 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/user_signed_agreement'
 require_relative 'api/common/link_methods'
+require_relative 'api/user_signed_agreement'
 
 # ApiUserSignedAgreementList
 #
@@ -17,13 +16,13 @@ require_relative 'api/common/link_methods'
 #
 class ApiUserSignedAgreementList < Api::Message
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many :allows,           AllowsType
     has_many :links,            Api::Link
     has_many :signedAgreements, Api::UserSignedAgreement
   end
-
-  include Api::Common::LinkMethods
 
 end
 

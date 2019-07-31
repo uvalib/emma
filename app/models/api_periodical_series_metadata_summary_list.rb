@@ -7,10 +7,9 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
+require_relative 'api/common/link_methods'
 require_relative 'api/periodical_series_metadata_summary'
 require_relative 'api/status_model'
-require_relative 'api/common/link_methods'
 
 # ApiPeriodicalSeriesMetadataSummaryList
 #
@@ -18,6 +17,8 @@ require_relative 'api/common/link_methods'
 #
 # noinspection RubyClassModuleNamingConvention
 class ApiPeriodicalSeriesMetadataSummaryList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :allows,       AllowsType
@@ -28,8 +29,6 @@ class ApiPeriodicalSeriesMetadataSummaryList < Api::Message
     has_many  :periodicals,  Api::PeriodicalSeriesMetadataSummary
     attribute :totalResults, Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

@@ -62,8 +62,8 @@ class ApiService
     # == POST /v2/accounts/:username/subscriptions
     # Create a new membership subscription for an existing user.
     #
-    # @param [User, String, nil] user       Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -77,7 +77,7 @@ class ApiService
     def create_subscription(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:post, 'accounts', username, 'subscriptions', opt)
+      api(:post, 'accounts', username, 'subscriptions', **opt)
       ApiUserSubscription.new(response, error: exception)
     end
 
@@ -100,7 +100,7 @@ class ApiService
     #
     # @param [User, String, nil] user             Default: @user
     # @param [String]            subscriptionId
-    # @param [Hash, nil]         opt
+    # @param [Hash]              opt              API URL parameters
     #
     # @option opt [IsoDay]    :startDate              *REQUIRED*
     # @option opt [IsoDay]    :endDate
@@ -114,7 +114,7 @@ class ApiService
     def update_subscription(user: @user, subscriptionId:, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:put, 'accounts', username, 'subscriptions', subscriptionId, opt)
+      api(:put, 'accounts', username, 'subscriptions', subscriptionId, **opt)
       ApiUserSubscription.new(response, error: exception)
     end
 

@@ -5,15 +5,17 @@
 
 __loading_begin(__FILE__)
 
+require_relative 'common/artifact_methods'
 require_relative 'name'
 require_relative 'narrator'
-require_relative 'common/artifact_methods'
 
 # Api::ArtifactMetadata
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_artifact_metadata
 #
 class Api::ArtifactMetadata < Api::Record::Base
+
+  include Api::Common::ArtifactMethods
 
   schema do
     attribute :brailleCode,             String
@@ -32,8 +34,6 @@ class Api::ArtifactMetadata < Api::Record::Base
     attribute :supplier,                String
     has_one   :transcriber,             Api::Name
   end
-
-  include Api::Common::ArtifactMethods
 
   # ===========================================================================
   # :section: Object overrides

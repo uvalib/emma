@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'format'
-require_relative 'link'
-require_relative 'name'
 require_relative 'common/artifact_methods'
 require_relative 'common/link_methods'
 require_relative 'common/title_methods'
@@ -19,7 +16,12 @@ require_relative 'common/title_methods'
 # NOTE: This duplicates:
 # @see ApiTitleMetadataSummary
 #
+# noinspection DuplicatedCode
 class Api::TitleMetadataSummary < Api::Record::Base
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     has_many  :arrangers,        Api::Name
@@ -45,10 +47,6 @@ class Api::TitleMetadataSummary < Api::Record::Base
     has_many  :translators,      Api::Name
     attribute :vocalParts,       String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

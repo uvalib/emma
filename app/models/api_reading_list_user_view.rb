@@ -16,14 +16,18 @@ require_relative 'api/reading_list_user_view'
 # NOTE: This duplicates:
 # @see Api::ReadingListUserView
 #
+# noinspection DuplicatedCode
 class ApiReadingListUserView < Api::Message
+
+  include Api::Common::LinkMethods
+  include Api::Common::ReadingListMethods
 
   schema do
     attribute :access,        Access
     has_many  :allows,        AllowsType
     attribute :assignedBy,    String
     attribute :dateUpdated,   String
-    attribute :description,   String
+    attribute :description,   String, default: DEF_READING_LIST_DESCRIPTION
     has_many  :links,         Api::Link
     attribute :memberCount,   Integer
     attribute :name,          String
@@ -32,9 +36,6 @@ class ApiReadingListUserView < Api::Message
     has_one   :subscription,  Api::ReadingListSubscription
     attribute :titleCount,    Integer
   end
-
-  include Api::Common::LinkMethods
-  include Api::Common::ReadingListMethods
 
 end
 

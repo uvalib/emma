@@ -37,7 +37,7 @@ module ReadingListHelper
   # If #READING_LIST_THUMBNAIL is *false*, this method always returns *nil*.
   #
   # @param [Api::ReadingListTitle] item
-  # @param [Hash, nil]             opt    Passed to TitleHelper#thumbnail.
+  # @param [Hash]                  opt    Passed to TitleHelper#thumbnail.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no thumbnail.
@@ -82,9 +82,9 @@ module ReadingListHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link except for:
+  # @param [Hash]                opt    Passed to #item_link except for:
   #
   # @option opt [String] :readingListId
   #
@@ -92,10 +92,31 @@ module ReadingListHelper
   #
   def reading_list_link(item, label = nil, **opt)
     html_opt, opt = extract_options(opt, :readingListId)
-    eid  = opt.values.first
-    path = reading_list_path(id: item.identifier)
+    id   = opt[:readingListId] || item.identifier
+    path = reading_list_path(id: id)
     html_opt[:tooltip] = READING_LIST_SHOW_TOOLTIP
     item_link(item, label, path, **html_opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Show reading list subscriptions.
+  #
+  # TODO: The API doesn't yet seem to provide useful information here.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #record_links.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def reading_list_subscriptions(item, **opt)
+    subscription = item.respond_to?(:subscription) && item.subscription
+    record_links(subscription.links, opt) if subscription&.enabled
   end
 
   # ===========================================================================
@@ -125,12 +146,19 @@ module ReadingListHelper
   # reading_list_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def reading_list_field_values(item, **opt)
-    field_values(item, READING_LIST_SHOW_FIELDS.merge(opt))
+    field_values(item) do
+      READING_LIST_SHOW_FIELDS.merge(opt).transform_values do |v|
+        case v
+          when :subscription then reading_list_subscriptions(item)
+          else                    v
+        end
+      end
+    end
   end
 
 end

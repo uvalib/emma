@@ -7,15 +7,16 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/category_summary'
-require_relative 'api/link'
 require_relative 'api/common/link_methods'
+require_relative 'api/category_summary'
 
 # ApiCategoriesList
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_categories_list
 #
 class ApiCategoriesList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :categories,   Api::CategorySummary
@@ -24,8 +25,6 @@ class ApiCategoriesList < Api::Message
     attribute :next,         String
     attribute :totalResults, Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

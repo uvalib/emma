@@ -40,37 +40,6 @@ module ApiConcern
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Return account summary information and account preferences.
-  #
-  # @param [String] id                If *nil*, assumes the current user.
-  #
-  # @return [Array<(ApiMyAccountSummary, ApiMyAccountPreferences)>]
-  # @return [Array<(nil,nil)>]        If there was a problem.
-  #
-  def fetch_my_account(id: nil)
-    api  = ApiService.instance
-    item = pref = error = nil
-    if id && (item = api.get_account(user: id)).error?
-      error = item.error_message
-    elsif !id && (item = api.get_my_account).error?
-      error = item.error_message
-    elsif (pref = api.get_my_preferences).error?
-      error = pref.error_message
-    end
-    if error
-      flash.clear
-      flash.now[:alert] = error
-      item = pref = nil
-    end
-    return item, pref
-  end
-
-  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
@@ -115,6 +84,7 @@ module ApiConcern
       get_my_assigned_titles:       { limit: nil },
       get_assigned_titles:          { user: nil, limit: nil },
       get_my_reading_lists:         {},
+      get_reading_lists:            {},
       get_reading_list_titles:      { readingListId: nil },
       get_my_download_history:      { limit: nil },
       get_subscriptions:            { user: nil },
@@ -148,16 +118,17 @@ module ApiConcern
     #
     def self.trial_methods(
       user:         ApiService::DEFAULT_USERNAME,
-        book:         BOOK,
-        series:       SERIES,
-        edition:      EDITION,
-        reading_list: READING_LIST,
-        subscription: SUBSCRIPTION,
-        format:       FORMAT,
-        limit:        LIMIT
+      book:         BOOK,
+      series:       SERIES,
+      edition:      EDITION,
+      reading_list: READING_LIST,
+      subscription: SUBSCRIPTION,
+      format:       FORMAT,
+      limit:        LIMIT
     )
       METHODS.transform_values do |args|
         args&.map { |k, v|
+          # noinspection RubyCaseWithoutElseBlockInspection
           case k
             when :bookshareId    then v = book
             when :editionId      then v = edition

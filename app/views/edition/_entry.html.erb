@@ -1,19 +1,30 @@
 <%# app/views/edition/_entry.html.erb -%>
 <%-
-  # A single edition index entry.
+  # A single periodical Edition index entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
 
   offset ||= page_offset
+  skip   ||= nil
 
-  number = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  id     = item  && %Q(id="edition-#{h(item.identifier)}").html_safe
+  skip    = Array.wrap(skip)
+  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
+  number  = nil if skip.include?(:number)
+  image   = false # item && !skip.include?(:thumbnail)
+  classes = 'edition-list-entry'
+  classes = css_classes(classes, 'empty') unless item
+  id      = item && %Q(id="edition-#{h(item.identifier)}").html_safe
 -%>
 
 <%- if number -%>
   <div class="number"><%= number -%></div>
 <%- end -%>
-<div class="edition-list-entry" <%= id -%>>
+
+<%- if image -%>
+  <%= thumbnail(item, link: true) %>
+<%- end -%>
+
+<div class="<%= classes -%>" <%= id -%>>
   <%= item ? edition_field_values(item) : empty_field_value %>
 </div>

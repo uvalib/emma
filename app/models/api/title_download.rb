@@ -5,19 +5,20 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'format'
-require_relative 'link'
-require_relative 'name'
-require_relative 'status_model'
 require_relative 'common/artifact_methods'
 require_relative 'common/link_methods'
 require_relative 'common/title_methods'
+require_relative 'status_model'
 
 # Api::TitleDownload
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_download
 #
 class Api::TitleDownload < Api::Record::Base
+
+  include Api::Common::ArtifactMethods
+  include Api::Common::LinkMethods
+  include Api::Common::TitleMethods
 
   schema do
     has_many  :authors,        Api::Name
@@ -29,10 +30,6 @@ class Api::TitleDownload < Api::Record::Base
     has_one   :status,         Api::StatusModel
     attribute :title,          String
   end
-
-  include Api::Common::ArtifactMethods
-  include Api::Common::LinkMethods
-  include Api::Common::TitleMethods
 
 end
 

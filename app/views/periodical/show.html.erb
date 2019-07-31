@@ -1,9 +1,10 @@
 <%# app/views/periodical/show.html.erb -%>
 <%-
-  # Periodical show page.
+  # A Periodical show page.
   item  ||= @item
+  list  ||= page_items
+  count ||= total_items
   title ||= item&.label || t('emma.periodical.show.title')
-  eds   ||= page_items
 
   set_page_title(title)
   set_page_description(Title: title)
@@ -11,6 +12,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<div class="periodical-container">
-  <%= render 'periodical/details', item: item, eds: eds %>
-</div>
+<%= render 'periodical/details', item: item, list: list, count: count %>

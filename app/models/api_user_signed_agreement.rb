@@ -16,6 +16,7 @@ require_relative 'api/user_signed_agreement'
 # NOTE: This duplicates:
 # @see Api::UserSignedAgreement
 #
+# noinspection DuplicatedCode
 class ApiUserSignedAgreement < Api::Message
 
   schema do

@@ -7,9 +7,8 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/user_pod'
 require_relative 'api/common/link_methods'
+require_relative 'api/user_pod'
 
 # ApiUserPodList
 #
@@ -17,13 +16,13 @@ require_relative 'api/common/link_methods'
 #
 class ApiUserPodList < Api::Message
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many :allows,       AllowsType
     has_many :disabilities, Api::UserPod
     has_many :links,        Api::Link
   end
-
-  include Api::Common::LinkMethods
 
 end
 

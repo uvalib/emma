@@ -5,10 +5,9 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'download_timeframe'
-require_relative 'link'
-require_relative 'user_subscription_type'
 require_relative 'common/link_methods'
+require_relative 'download_timeframe'
+require_relative 'user_subscription_type'
 
 # Api::UserSubscription
 #
@@ -17,7 +16,10 @@ require_relative 'common/link_methods'
 # NOTE: This duplicates:
 # @see ApiUserSubscription
 #
+# noinspection DuplicatedCode
 class Api::UserSubscription < Api::Record::Base
+
+  include Api::Common::LinkMethods
 
   schema do
     has_one   :downloadTimeframe,    Api::DownloadTimeframe
@@ -29,8 +31,6 @@ class Api::UserSubscription < Api::Record::Base
     attribute :subscriptionId,       String
     has_one   :userSubscriptionType, Api::UserSubscriptionType
   end
-
-  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

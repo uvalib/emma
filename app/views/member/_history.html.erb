@@ -1,0 +1,27 @@
+<%# app/views/member/_history.html.erb -%>
+<%-
+  # Organization Member download history.
+
+  # @type [ApiTitleDownloadList]
+  hist  ||= @history
+  return if hist.blank?
+
+  list  ||= hist.titleDownloads
+  count ||= hist.totalResults || list.size
+  skip  ||= nil
+
+  skip = Array.wrap(skip)
+  heading =
+    unless skip.include?(:title)
+      title ||= t('emma.member.history.title')
+      title  += " (#{count} events)" unless skip.include?(:count)
+      classes = 'list-heading'
+      classes = css_classes(classes, 'empty') if list.blank?
+      content_tag(:h2, h(title), class: classes)
+    end
+-%>
+
+<div class="member-history">
+  <%= heading %>
+  <%= member_history(list) %>
+</div>

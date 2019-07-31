@@ -1,0 +1,14 @@
+<%# app/views/member/_metadata.html.erb -%>
+<%-
+  # A Member metadata listing.
+  item ||= nil
+  return if item.blank?
+
+  added_fields = {
+    EmmaRoles: current_user.roles.map(&:to_s).join(', ')
+  }
+-%>
+
+<div class="member-metadata">
+  <%= member_field_values(item, added_fields) %>
+</div>

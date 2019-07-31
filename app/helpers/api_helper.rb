@@ -29,8 +29,8 @@ module ApiHelper
   # Generate a URL to an external (Bookshare-related) site, but refactor API
   # URL's so that they are passed through the application's "API explorer".
   #
-  # @param [String]    path
-  # @param [Hash, nil] opt            Passed to #make_path.
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #make_path.
   #
   # @return [String]
   #
@@ -46,39 +46,41 @@ module ApiHelper
 
   # Invoke an API method.
   #
-  # @param [Symbol]    method         One of ApiService#HTTP_METHODS.
-  # @param [String]    path
-  # @param [Hash, nil] opt            Passed to #api_get, etc.
+  # @param [Symbol] method            One of ApiService#HTTP_METHODS.
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #api_get, etc.
   #
   # @return [Hash]
   #
   def api_method(method, path, **opt)
+    method ||= :get
     result = {
-      method: (method ||= :get).to_s.upcase,
+      method: method.to_s.upcase,
       path:   path,
       opt:    opt.presence,
       url:    external_url(path, opt)
     }
     method = "api_#{method}".downcase.to_sym
     @api ||= ApiService.instance
-    data   = @api.send(method, path, opt)
-    if data.is_a?(Hash) && data[:invalid]
-      result.merge(exception: data[:exception])
-    else
+    if (data = @api.send(method, path, opt))
       result.merge(result: data)
+    else
+      result.merge(exception: @api.exception)
     end
   end
 
   # Generate HTML from the result of an API method invocation.
   #
-  # @param [Api::Record::Base, String, Integer] value
-  # @param [String, nil]                        separator   Default: "\n".
+  # @param [Faraday::Response, Api::Record::Base, Exception, Integer, String] value
+  # @param [String, nil] separator    Default: "\n".
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def api_format_result(value, separator: "\n")
+    record = value.is_a?(Api::Record::Base)
+    value  = value.body if value.is_a?(Faraday::Response)
     elements =
-      if value.is_a?(Api::Record::Base) && value.exception.present?
+      if record && value.exception.present?
         # === Exception or error response value ===
         mask_exception_value = false
         value.pretty_inspect
@@ -90,7 +92,7 @@ module ApiHelper
           .split(/\n/)
           .map { |line| content_tag(:div, line, class: 'exception') }
 
-      elsif value.is_a?(Api::Record::Base) || value.is_a?(String)
+      elsif record || value.is_a?(Exception) || value.is_a?(String)
         # === Valid JSON response value ===
         link_opt = { rel: 'noreferrer' }
         link_opt[:target] = '_blank' unless params[:action] == 'v2'
@@ -125,18 +127,50 @@ module ApiHelper
     safe_join(elements, separator)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  PJ_INDENT      = ' '
+  PJ_NEWLINE     = "\n#{PJ_INDENT}"
+  PJ_OPEN_BRACE  = "{\n#{PJ_INDENT}#{PJ_INDENT}"
+  PJ_CLOSE_BRACE = "\n#{PJ_INDENT}}"
+
   # pretty_json
   #
-  # @param [Api::Record::Base, String] value
+  # @param [Api::Record::Base, Exception, Numeric, String] value
   #
   # @return [String]
   #
   def pretty_json(value)
-    if value.is_a?(Api::Record::Base)
-      value.to_json(pretty: true)
-    else
-      MultiJson.dump(MultiJson.load(value), pretty: true)
+    case value
+      when ApiService::HtmlResult
+        value.response.body
+      when Faraday::ClientError
+        response =
+          value.response.pretty_inspect
+            .gsub(/\n/,    PJ_NEWLINE)
+            .sub(/\A{/,    PJ_OPEN_BRACE)
+            .sub(/}\s*\z/, PJ_CLOSE_BRACE)
+        [
+          "#<#{value.class}",
+          "#{PJ_INDENT}message  = #{value.message.inspect}",
+          "#{PJ_INDENT}response = #{response}",
+          '>'
+        ].join("\n")
+      when Exception
+        value.pretty_inspect.gsub(/@[^=]+=/, (PJ_NEWLINE + '\0'))
+      when Api::Record::Base
+        value.to_json(pretty: true)
+      when Numeric
+        value.inspect
+      else
+        MultiJson.dump(MultiJson.load(value), pretty: true)
     end
+  rescue
+    value.pretty_inspect
   end
 
 end

@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 require 'sanitize'
 
 require_relative 'link_methods'
+require_relative '../name'
 
 # Methods mixed in to record elements related to catalog titles.
 #

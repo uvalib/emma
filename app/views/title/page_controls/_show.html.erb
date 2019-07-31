@@ -1,6 +1,6 @@
 <%# app/views/title/page_controls/_show.html.erb -%>
 <%-
-  # Page controls on a Catalog Title show page for an authorized user.
+  # Page controls on a catalog Title show page for an authorized user.
   actions = page_control_actions(Title, :history, :edit, :delete)
   return if actions.blank?
   id ||= params[:id]

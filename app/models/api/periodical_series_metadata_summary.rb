@@ -5,11 +5,10 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'category'
-require_relative 'link'
-require_relative 'periodical_edition_summary'
 require_relative 'common/link_methods'
 require_relative 'common/periodical_methods'
+require_relative 'category'
+require_relative 'periodical_edition_summary'
 
 # Api::PeriodicalSeriesMetadataSummary
 #
@@ -18,8 +17,11 @@ require_relative 'common/periodical_methods'
 # NOTE: This duplicates:
 # @see ApiPeriodicalSeriesMetadataSummary
 #
-# noinspection RubyClassModuleNamingConvention
+# noinspection RubyClassModuleNamingConvention,DuplicatedCode
 class Api::PeriodicalSeriesMetadataSummary < Api::Record::Base
+
+  include Api::Common::LinkMethods
+  include Api::Common::PeriodicalMethods
 
   schema do
     has_many  :categories,           Api::Category
@@ -35,9 +37,6 @@ class Api::PeriodicalSeriesMetadataSummary < Api::Record::Base
     attribute :seriesId,             String
     attribute :title,                String
   end
-
-  include Api::Common::LinkMethods
-  include Api::Common::PeriodicalMethods
 
 end
 

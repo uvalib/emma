@@ -5,7 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'link'
 require_relative 'common/link_methods'
 
 # Api::Name
@@ -13,6 +12,8 @@ require_relative 'common/link_methods'
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_name
 #
 class Api::Name < Api::Record::Base
+
+  include Api::Common::LinkMethods
 
   schema do
     attribute :firstName, String
@@ -22,8 +23,6 @@ class Api::Name < Api::Record::Base
     attribute :prefix,    String
     attribute :suffix,    String
   end
-
-  include Api::Common::LinkMethods
 
   # ===========================================================================
   # :section: Object overrides

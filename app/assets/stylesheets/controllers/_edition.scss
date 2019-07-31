@@ -31,11 +31,11 @@
 //=============================================================================
 
 // Periodical edition metadata values.
-.edition-details {
+.edition-metadata {
     @extend .details-entry;
 }
 
-// Container for an .edition-details.
+// Container for an .edition-metadata.
 .edition-container {
     @extend .details-container;
 }

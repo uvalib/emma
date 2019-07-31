@@ -62,8 +62,8 @@ class ApiService
     # == POST /v2/accounts/:username/pod
     # Create a new record of a disability for an existing user.
     #
-    # @param [User, String, nil] user       Default: @user
-    # @param [Hash, nil]         opt
+    # @param [User, String, nil] user   Default: @user
+    # @param [Hash]              opt    API URL parameters
     #
     # @option opt [DisabilityType]          :disabilityType   *REQUIRED*
     # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
@@ -73,7 +73,7 @@ class ApiService
     def create_user_pod(user: @user, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:post, 'accounts', username, 'pod', opt)
+      api(:post, 'accounts', username, 'pod', **opt)
       ApiUserPodList.new(response, error: exception)
     end
 
@@ -82,7 +82,7 @@ class ApiService
     #
     # @param [User, String, nil] user             Default: @user
     # @param [DisabilityType]    disabilityType
-    # @param [Hash, nil]         opt
+    # @param [Hash]              opt              API URL parameters
     #
     # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
     #
@@ -91,7 +91,7 @@ class ApiService
     def update_user_pod(user: @user, disabilityType:, **opt)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:put, 'accounts', username, 'pod', disabilityType, opt)
+      api(:put, 'accounts', username, 'pod', disabilityType, **opt)
       ApiUserPodList.new(response, error: exception)
     end
 

@@ -7,10 +7,9 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/name'
 require_relative 'api/common/account_methods'
 require_relative 'api/common/link_methods'
+require_relative 'api/name'
 
 # ApiUserIdentity
 #
@@ -18,14 +17,14 @@ require_relative 'api/common/link_methods'
 #
 class ApiUserIdentity < Api::Message
 
+  include Api::Common::AccountMethods
+  include Api::Common::LinkMethods
+
   schema do
     has_many  :links,    Api::Link
     has_one   :name,     Api::Name
     attribute :username, String
   end
-
-  include Api::Common::AccountMethods
-  include Api::Common::LinkMethods
 
 end
 

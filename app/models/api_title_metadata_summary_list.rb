@@ -7,10 +7,9 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
+require_relative 'api/common/link_methods'
 require_relative 'api/status_model'
 require_relative 'api/title_metadata_summary'
-require_relative 'api/common/link_methods'
 
 # ApiTitleMetadataSummaryList
 #
@@ -21,6 +20,8 @@ require_relative 'api/common/link_methods'
 #
 class ApiTitleMetadataSummaryList < Api::Message
 
+  include Api::Common::LinkMethods
+
   schema do
     has_many  :allows,       AllowsType
     attribute :limit,        Integer
@@ -30,8 +31,6 @@ class ApiTitleMetadataSummaryList < Api::Message
     has_many  :titles,       Api::TitleMetadataSummary
     attribute :totalResults, Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 

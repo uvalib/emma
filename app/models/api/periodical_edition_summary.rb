@@ -13,12 +13,12 @@ require_relative 'common/edition_methods'
 #
 class Api::PeriodicalEditionSummary < Api::Record::Base
 
+  include Api::Common::EditionMethods
+
   schema do
     attribute :editionId,   String
     attribute :editionName, String
   end
-
-  include Api::Common::EditionMethods
 
 end
 

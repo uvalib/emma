@@ -46,9 +46,9 @@ module MemberHelper
   #
   # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -92,9 +92,9 @@ module MemberHelper
   # member_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def member_field_values(item, **opt)
     field_values(item, MEMBER_SHOW_FIELDS.merge(opt))
@@ -117,12 +117,41 @@ module MemberHelper
   # member_preference_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def member_preference_values(item, **opt)
     field_values(item, MEMBER_PREFERENCE_FIELDS.merge(opt))
+  end
+
+  # Fields from Api::TitleDownload.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  MEMBER_HISTORY_FIELDS = {
+    DateDownloaded: :dateDownloaded,
+    Title:          :title,
+    Authors:        :authors,
+    Format:         :fmt,
+    Status:         :status,
+    DownloadedBy:   :downloadedBy,
+    DownloadedFor:  :downloadedFor,
+  }.freeze
+
+  # member_history
+  #
+  # @param [Api::Record::Base, Array<Api::TitleDownload>] item
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def member_history(item)
+    item = item.titleDownloads if item.respond_to?(:titleDownloads)
+    Array.wrap(item).map { |entry|
+      content_tag(:div, class: 'history-entry') do
+        field_values(entry, MEMBER_HISTORY_FIELDS)
+      end
+    }.join("\n").html_safe
   end
 
 end

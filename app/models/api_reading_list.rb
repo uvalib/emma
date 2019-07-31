@@ -7,7 +7,6 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
 require_relative 'api/common/link_methods'
 require_relative 'api/common/reading_list_methods'
 
@@ -17,12 +16,15 @@ require_relative 'api/common/reading_list_methods'
 #
 class ApiReadingList < Api::Message
 
+  include Api::Common::LinkMethods
+  include Api::Common::ReadingListMethods
+
   schema do
     attribute :access,          Access
     has_many  :allows,          AllowsType
     attribute :assignedBy,      String
     attribute :dateUpdated,     String
-    attribute :description,     String
+    attribute :description,     String, default: DEF_READING_LIST_DESCRIPTION
     has_many  :links,           Api::Link
     attribute :memberCount,     Integer
     attribute :name,            String
@@ -31,9 +33,6 @@ class ApiReadingList < Api::Message
     attribute :subscriberCount, Integer
     attribute :titleCount,      Integer
   end
-
-  include Api::Common::LinkMethods
-  include Api::Common::ReadingListMethods
 
 end
 

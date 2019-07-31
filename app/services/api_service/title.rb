@@ -94,7 +94,7 @@ class ApiService
     #
     # @param [String]     bookshareId
     # @param [FormatType] format
-    # @param [Hash, nil]  opt
+    # @param [Hash]       opt         API URL parameters
     #
     # @option opt [String] :forUser
     #
@@ -102,14 +102,14 @@ class ApiService
     #
     def download_title(bookshareId:, format:, **opt)
       validate_parameters(__method__, opt)
-      api(:get, 'titles', bookshareId, format, opt)
+      api(:get, 'titles', bookshareId, format, **opt)
       ApiStatusModel.new(response, error: exception)
     end
 
     # == GET /v2/titles
     # Search for Bookshare titles.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]                :title
     # @option opt [String]                :author
@@ -140,7 +140,7 @@ class ApiService
     #
     def get_titles(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'titles', opt)
+      api(:get, 'titles', **opt)
       ApiTitleMetadataSummaryList.new(response, error: exception)
     end
 
@@ -153,7 +153,7 @@ class ApiService
     # == GET /v2/categories
     # Search for Bookshare categories.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]  :start
     # @option opt [Integer] :limit    Default: 100
@@ -165,7 +165,7 @@ class ApiService
     #
     def get_categories(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'categories', opt)
+      api(:get, 'categories', **opt)
       ApiCategoriesList.new(response, error: exception)
     end
 
@@ -181,7 +181,7 @@ class ApiService
     # since been removed. This allows administrators to manage the wider
     # collection of titles.
     #
-    # @param [Hash, nil] opt
+    # @param [Hash] opt               API URL parameters
     #
     # @option opt [String]           :country
     # @option opt [String]           :isbn
@@ -205,7 +205,7 @@ class ApiService
     #
     def get_catalog(**opt)
       validate_parameters(__method__, opt)
-      api(:get, 'catalog', opt)
+      api(:get, 'catalog', **opt)
       ApiTitleMetadataCompleteList.new(response, error: exception)
     end
 

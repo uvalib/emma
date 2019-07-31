@@ -7,15 +7,16 @@ __loading_begin(__FILE__)
 
 require 'api/message'
 
-require_relative 'api/link'
-require_relative 'api/title_download'
 require_relative 'api/common/link_methods'
+require_relative 'api/title_download'
 
 # ApiTitleDownloadList
 #
 # @see https://apidocs-qa.bookshare.org/reference/index.html#_title_download_list
 #
 class ApiTitleDownloadList < Api::Message
+
+  include Api::Common::LinkMethods
 
   schema do
     has_many  :allows,         AllowsType
@@ -24,8 +25,6 @@ class ApiTitleDownloadList < Api::Message
     has_many  :titleDownloads, Api::TitleDownload
     attribute :totalResults,   Integer
   end
-
-  include Api::Common::LinkMethods
 
 end
 
