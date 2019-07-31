@@ -264,10 +264,7 @@ module PaginationHelper
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
-    case value
-      when String then value
-      when Symbol then page_history(value, page)
-    end
+    value.is_a?(Symbol) ? page_history(value, page) : value.to_s
   end
 
   # A value to use in place of a path in order to engage browser history.
@@ -293,7 +290,7 @@ module PaginationHelper
   # @param [String, nil] pp           Default: `#prev_page`.
   # @param [String, nil] np           Default: `#next_page`.
   # @param [String, nil] sep          Default: `#PAGINATION_SEPARATOR`.
-  # @param [Hash, nil]   opt          Options to .pagination wrapper element.
+  # @param [Hash]        opt          Options to .pagination wrapper element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -308,9 +305,9 @@ module PaginationHelper
     content_tag(:div, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
-        pagination_control(FIRST_PAGE, fp, link_opt),
-        pagination_control(PREV_PAGE,  pp, link_opt.merge(rel: 'prev')),
-        pagination_control(NEXT_PAGE,  np, link_opt.merge(rel: 'next'))
+        pagination_control(FIRST_PAGE, fp, **link_opt),
+        pagination_control(PREV_PAGE,  pp, **link_opt.merge(rel: 'prev')),
+        pagination_control(NEXT_PAGE,  np, **link_opt.merge(rel: 'next'))
       ]
       safe_join(controls, sep)
     end
@@ -327,11 +324,11 @@ module PaginationHelper
   #
   # @param [Hash, String] label
   # @param [String, nil]  path
-  # @param [Hash, nil]    opt
+  # @param [Hash]         opt         Passed to #link_to or <span> element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_control(label, path = nil, opt = {})
+  def pagination_control(label, path = nil, **opt)
     link = path.present?
     if label.is_a?(Hash)
       prop  = label

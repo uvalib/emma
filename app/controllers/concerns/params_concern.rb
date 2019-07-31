@@ -95,6 +95,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
+    # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller]
       when 'api'      then return if params[:action] == 'image'
       when 'artifact' then return if params[:action] == 'show'

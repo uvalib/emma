@@ -202,8 +202,8 @@ module LayoutHelper
 
   # The application logo.
   #
-  # @param [Symbol]    mode           Either :text or :image; default: :image.
-  # @param [Hash, nil] opt            Passed to outer #content_tag except for:
+  # @param [Symbol] mode              Either :text or :image; default: :image.
+  # @param [Hash]   opt               Passed to outer #content_tag except for:
   #
   # @option opt [String] :alt         Passed to #image_tag.
   #
@@ -319,23 +319,46 @@ module LayoutHelper
 
   # Indicate whether it is appropriate to show the search bar.
   #
-  def show_search_bar?(*)
-    true
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Hash, nil]           p      Default: `#params`.
+  #
+  def show_search_bar?(type = nil, p = nil)
+    search_input_type(type, p).present?
   end
 
   # Generate an element for entering search terms.
   #
-  # @param [Symbol, String, nil] id     Default: :keyword.
-  # @param [Symbol, String, nil] type   Default: :title.
-  # @param [Hash, nil]           opt    Passed to #form_tag.
+  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Hash]                opt    Passed to #search_form.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If search is not available for *type*.
   #
-  def search_bar(id = :keyword, type: :title, **opt)
-    opt = prepend_css_classes(opt, 'search-bar')
-    search_form(id, type: type, **opt) do
-      search_input(id) + search_button
+  def search_bar(id: nil, type: nil, **opt)
+    type ||= search_input_type
+    id   ||= search_field_key(type)
+    opt    = prepend_css_classes(opt, 'search-bar')
+    search_form(id, type, **opt) do
+      search_input(id, type) + search_button(type)
     end
+  end
+
+  # The URL parameter to which search terms should be applied.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  #
+  # @return [String]
+  #
+  def search_field_key(type = nil)
+    type ||= search_input_type
+    I18n.t(
+      "emma.#{type}.search_bar.input.field",
+      default: [
+        :'emma.search_bar.input.field',
+        'keyword'
+      ]
+    )
   end
 
   # ===========================================================================
@@ -344,38 +367,110 @@ module LayoutHelper
 
   private
 
+  # search_input_type
+  #
+  # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
+  # @param [Hash, nil]           p      Default: `#params`.
+  #
+  # @return [String]                  The controller used for searching.
+  # @return [FalseClass]              If searching should not be enabled.
+  #
+  def search_input_type(type = nil, p = nil)
+    if p
+      type ||= p[:controller]
+      result =
+        I18n.t(
+          "emma.#{type}.search_bar.input.enabled",
+          default: :'emma.search_bar.input.enabled'
+        )
+      if true?(result)
+        type.to_s
+      elsif false?(result)
+        false
+      else
+        result || 'title'
+      end
+    elsif @search_input_type.nil?
+      @search_input_type = search_input_type(type, params)
+    else
+      @search_input_type
+    end
+  end
+
   # Generate a form search field input control.
   #
-  # @param [Symbol, String, nil] id     Default: :keyword.
-  # @param [String, nil]         value  Default: `params[id]`.
-  # @param [Hash, nil]           opt    Passed to #form_tag.
+  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [String, nil]         value  Default: `#params[id]`.
+  # @param [Hash]                opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_input(id = :keyword, value = nil, **opt)
+  def search_input(id = nil, type = nil, value = nil, **opt)
+    type ||= search_input_type
+    id   ||= search_field_key(type)
+
     # Screen-reader-only label element.
-    label_id  = "#{id}-label"
-    label_opt = { id: label_id, class: 'sr-only' }
-    label = content_tag(:span, SEARCH_INPUT_LABEL, label_opt)
+    label_id = "#{id}-label"
+    label = search_input_label(type)
+    label = content_tag(:span, label, id: label_id, class: 'sr-only')
+
     # Input field element.
     opt = prepend_css_classes(opt, 'search-input')
-    opt[:placeholder]       ||= SEARCH_INPUT_PLACEHOLDER
-    opt[:'aria-labelledby'] ||= label_id
+    opt[:'aria-labelledby'] = label_id
+    opt[:placeholder] ||= search_input_placeholder(type)
     input = search_field_tag(id, (value || params[id]), opt)
+
     # Result.
     label + input
   end
 
   # Generate a form submit control.
   #
-  # @param [String, nil] label  Default: #SEARCH_BUTTON_LABEL.
-  # @param [Hash, nil]   opt    Passed to #form_tag.
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [String, nil]         label  Default: `#search_button_label(type)`.
+  # @param [Hash]                opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_button(label = SEARCH_BUTTON_LABEL, **opt)
+  def search_button(type = nil, label = nil, **opt)
+    type  ||= search_input_type
+    label ||= search_button_label(type)
     opt = prepend_css_classes(opt, 'search-button')
     submit_tag(label, opt)
+  end
+
+  # search_input_label
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_input_label(type)
+    I18n.t("emma.#{type}.search_bar.input.label", default: nil) ||
+      SEARCH_INPUT_LABEL
+  end
+
+  # search_input_placeholder
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_input_placeholder(type)
+    I18n.t("emma.#{type}.search_bar.input.placeholder", default: nil) ||
+      SEARCH_INPUT_PLACEHOLDER
+  end
+
+  # search_button_label
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_button_label(type)
+    I18n.t("emma.#{type}.search_bar.button.label", default: nil) ||
+      SEARCH_BUTTON_LABEL
   end
 
   # ===========================================================================
@@ -421,21 +516,25 @@ module LayoutHelper
   #
   def show_search_controls?(p = nil)
     p ||= params
-    (p[:action] == 'index') && %w(title periodical).include?(p[:controller])
+    p[:action] == 'index'
   end
 
   # search_controls
   #
-  # @param [Symbol, String, nil] type   Default: :title.
-  # @param [Hash, nil]           opt    Passed to #content_tag.
+  # @param [Symbol, String, nil] type   Default: `#menu_search_type`
+  # @param [Hash]                opt    Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
   #
-  def search_controls(type: :title, **opt)
+  def search_controls(type: nil, **opt)
     opt = prepend_css_classes(opt, 'search-controls')
-    content_tag(:div, opt) do
-      sort_menu(type: type) + size_menu(type: type) + language_menu(type: type)
-    end
+    controls = []
+    controls << sort_menu(type: type)
+    controls << size_menu(type: type)
+    controls << language_menu(type: type)
+    controls.reject!(&:blank?)
+    content_tag(:div, safe_join(controls, "\n"), opt) if controls.present?
   end
 
   # ===========================================================================
@@ -462,18 +561,37 @@ module LayoutHelper
     end
   end
 
-  # @type [Hash{Symbol=>Array<Array<(String,String)>>}]
+  # Sort menus for each controller type that should have a sort menu.
+  #
+  # @type [Hash{String=>Array<Array<(String,String)>>}]
+  #
   SORT_MENU = {
-    title:      make_menu(Api::TitleSortOrder),
-    member:     make_menu(Api::MemberSortOrder),
-    periodical: make_menu(Api::PeriodicalSortOrder)
-  }.deep_freeze
+    member:       make_menu(Api::MemberSortOrder),
+    periodical:   make_menu(Api::PeriodicalSortOrder),
+    reading_list: make_menu(Api::MyReadingListSortOrder),
+    title:        make_menu(Api::TitleSortOrder),
+  }.stringify_keys.deep_freeze
 
+  # The generic page size menu.
+  #
   # @type [Array<Array<(String,String)>>]
-  SIZE_MENU = make_menu([10, 25, 50, 100]).deep_freeze
+  #
+  GENERIC_SIZE_MENU = make_menu([10, 25, 50, 100]).deep_freeze
+
+  # Page size menus for each controller type that should have a page size menu.
+  #
+  # @type [Hash{String=>Array<Array<(String,String)>>}]
+  #
+  SIZE_MENU = {
+    category:     GENERIC_SIZE_MENU,
+    member:       GENERIC_SIZE_MENU,
+    periodical:   GENERIC_SIZE_MENU,
+    reading_list: GENERIC_SIZE_MENU,
+    title:        GENERIC_SIZE_MENU,
+  }.stringify_keys.deep_freeze
 
   # Patterns matching the names of languages that should not be included in
-  # #LANGUAGE_MENU.
+  # #GENERIC_LANGUAGE_MENU.
   #
   # @type [Array<Regexp>]
   #
@@ -490,8 +608,11 @@ module LayoutHelper
     pidgin
   ).map { |term| Regexp.new(term) }.deep_freeze
 
+  # The generic language menu.
+  #
   # @type [Array<Array<(String,String)>>]
-  LANGUAGE_MENU =
+  #
+  GENERIC_LANGUAGE_MENU =
     ISO_639::ISO_639_2.map { |entry|
       label = entry.english_name.sub(/;.*$/, '')
       label.sub!(/^Greek, Modern.*$/, 'Greek')
@@ -504,11 +625,38 @@ module LayoutHelper
       .uniq
       .deep_freeze
 
+  # Language menus for each controller type that should have a language menu.
+  #
+  # @type [Hash{String=>Array<Array<(String,String)>>}]
+  #
+  LANGUAGE_MENU = {
+    periodical: GENERIC_LANGUAGE_MENU,
+    title:      GENERIC_LANGUAGE_MENU,
+  }.stringify_keys.deep_freeze
+
   # ===========================================================================
   # :section: Search controls
   # ===========================================================================
 
   private
+
+  # menu_search_type
+  #
+  # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
+  # @param [Hash, nil]           p      Default: `#params`.
+  #
+  # @return [String]                  The controller used for searching.
+  # @return [FalseClass]              If searching should not be enabled.
+  #
+  def menu_search_type(type = nil, p = nil)
+    if p
+      p[:controller]
+    elsif @menu_search_type.nil?
+      @menu_search_type = menu_search_type(type, params)
+    else
+      @menu_search_type
+    end
+  end
 
   # Change :sort value to indicate a reverse sort.
   #
@@ -523,11 +671,12 @@ module LayoutHelper
 
   # Perform a search specifying a collation order for the results.
   #
-  # @param [String, nil]         selected  Default: `params[id]`.
-  # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #menu_container.
+  # @param [String, nil]         selected  Default: `#params[id]`.
+  # @param [Symbol, String, nil] type      Default: `#menu_search_type`
+  # @param [Hash]                opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If menu is not available for *type*.
   #
   # @see #SORT_MENU
   # @see #SEARCH_SORT_LABEL
@@ -537,54 +686,59 @@ module LayoutHelper
   # This method produces a URL parameter (:sort) which is translated into the
   # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #
-  def sort_menu(selected = nil, type: :title, **opt)
-    id   = :sort
-    opt  = prepend_css_classes(opt, 'sort-menu')
-    menu = SORT_MENU[type] || [["type: #{type} unexpected", '']]
+  def sort_menu(selected = nil, type: nil, **opt)
+    type ||= menu_search_type
+    return if (menu = SORT_MENU[type]).blank?
+    id  = :sort
+    opt = prepend_css_classes(opt, 'sort-menu')
     selected ||= params[id] || params[:sortOrder]
     selected &&= reverse_sort(selected) if params[:direction] == 'desc'
-    opt[:label] ||= SEARCH_SORT_LABEL
-    menu_container(id, menu, selected, type: type, **opt)
+    opt[:label] ||= search_sort_label(type)
+    menu_container(id, menu, selected, type, **opt)
   end
 
   # Perform a search specifying a results page size.
   #
-  # @param [String, nil]         selected  Default: `params[id]`.
-  # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #menu_container.
+  # @param [String, nil]         selected  Default: `#params[id]`.
+  # @param [Symbol, String, nil] type      Default: `#menu_search_type`
+  # @param [Hash]                opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If menu is not available for *type*.
   #
   # @see #SIZE_MENU
   # @see #SEARCH_SIZE_LABEL
   #
-  def size_menu(selected = nil, type: :title, **opt)
-    id   = :limit
-    opt  = prepend_css_classes(opt, 'size-menu')
-    menu = SIZE_MENU
+  def size_menu(selected = nil, type: nil, **opt)
+    type ||= menu_search_type
+    return if (menu = SIZE_MENU[type]).blank?
+    id  = :limit
+    opt = prepend_css_classes(opt, 'size-menu')
     selected ||= params[id] || (page_size if defined?(page_size))
     selected &&= selected.to_i
-    opt[:label] ||= SEARCH_SIZE_LABEL
-    menu_container(id, menu, selected, type: type, **opt)
+    opt[:label] ||= search_size_label(type)
+    menu_container(id, menu, selected, type, **opt)
   end
 
   # Perform a search limited to the selected language.
   #
-  # @param [String, nil]         selected  Default: `params[id]`.
-  # @param [Symbol, String, nil] type      Default: :title.
-  # @param [Hash, nil]           opt       Passed to #menu_container.
+  # @param [String, nil]         selected  Default: `#params[id]`.
+  # @param [Symbol, String, nil] type      Default: `#menu_search_type`
+  # @param [Hash]                opt       Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If menu is not available for *type*.
   #
   # @see #LANGUAGE_MENU
   # @see #SEARCH_LANGUAGE_LABEL
   #
-  def language_menu(selected = nil, type: :title, **opt)
-    id   = :language
-    opt  = prepend_css_classes(opt, 'language-menu')
-    menu = LANGUAGE_MENU
-    opt[:label] ||= SEARCH_LANGUAGE_LABEL
-    menu_container(id, menu, selected, type: type, **opt)
+  def language_menu(selected = nil, type: nil, **opt)
+    type ||= menu_search_type
+    return if (menu = LANGUAGE_MENU[type]).blank?
+    id  = :language
+    opt = prepend_css_classes(opt, 'language-menu')
+    opt[:label] ||= search_language_label(type)
+    menu_container(id, menu, selected, type, **opt)
   end
 
   # ===========================================================================
@@ -593,23 +747,60 @@ module LayoutHelper
 
   private
 
+  # search_sort_label
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_sort_label(type)
+    I18n.t("emma.#{type}.search_bar.sort.label", default: nil) ||
+      SEARCH_SORT_LABEL
+  end
+
+  # search_size_label
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_size_label(type)
+    I18n.t("emma.#{type}.search_bar.size.label", default: nil) ||
+      SEARCH_SIZE_LABEL
+  end
+
+  # search_language_label
+  #
+  # @param [String, Symbol] type
+  #
+  # @return [String]
+  #
+  def search_language_label(type)
+    I18n.t("emma.#{type}.search_bar.language.label", default: nil) ||
+      SEARCH_LANGUAGE_LABEL
+  end
+
   # A menu control preceded by a menu label (if provided).
   #
   # @param [Symbol, String]      id        Associated menu element.
   # @param [Array]               menu      Menu entries.
-  # @param [String, nil]         selected  Default: `params[id]`.
-  # @param [Symbol, String, nil] type      Default: `params[:controller]`.
-  # @param [Hash, nil]           opt       Passed to #menu_control except for:
+  # @param [String, nil]         selected  Default: `#params[id]`.
+  # @param [Symbol, String, nil] type      Default: `#menu_search_type`
+  # @param [Hash]                opt       Passed to #menu_control except for:
   #
   # @option opt [String] :label       If missing, no label is included.
   #
-  def menu_container(id, menu, selected = nil, type: :current, **opt)
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If menu is not available for *type*.
+  #
+  def menu_container(id, menu, selected = nil, type = nil, **opt)
     label = opt.key?(:label) && (opt = opt.dup).delete(:label)
+    menus = menu_control(id, menu, selected, type, **opt)
+    return if menus.blank?
+    label &&= label_tag(id, label, class: 'menu-label')
+    label ||= ''.html_safe
     content_tag(:div, class: 'menu-container') do
-      parts = []
-      parts << label_tag(id, label, class: 'menu-label') if label.present?
-      parts << menu_control(id, menu, selected, type: type, **opt)
-      safe_join(parts)
+      label + menus
     end
   end
 
@@ -620,13 +811,15 @@ module LayoutHelper
   #
   # @param [Symbol, String]      id
   # @param [Array]               menu       Menu entries.
-  # @param [String, nil]         selected   Default: `params[id]`.
-  # @param [Symbol, String, nil] type       Default: `params[:controller]`.
-  # @param [Hash, nil]           opt        Passed to #search_form.
+  # @param [String, nil]         selected   Default: `#params[id]`.
+  # @param [Symbol, String, nil] type       Default: `#menu_search_type`.
+  # @param [Hash]                opt        Passed to #search_form.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If menu is not available for *type*.
   #
-  def menu_control(id, menu, selected = nil, type: :current, **opt)
+  def menu_control(id, menu, selected = nil, type = nil, **opt)
+    return if menu.blank? || (type ||= menu_search_type).blank?
     opt = prepend_css_classes(opt, 'menu-control')
     selected ||= params[id]
     if selected.blank?
@@ -641,11 +834,17 @@ module LayoutHelper
         menu.sort_by!(&:last)
       end
     end
-    search_form(id, type: type, **opt) do
+    search_form(id, type, **opt) do
       option_tags = options_for_select(menu, selected)
       select_tag(id, option_tags, onchange: 'this.form.submit();')
     end
   end
+
+  # ===========================================================================
+  # :section: Search bar and search controls
+  # ===========================================================================
+
+  private
 
   # A form used to create/modify a search.
   #
@@ -654,16 +853,16 @@ module LayoutHelper
   # repeated but augmented with the added parameter.  Otherwise a new search is
   # assumed.
   #
-  # @param [Symbol, String]      id
-  # @param [Symbol, String, nil] type   Default: `params[:controller]`.
-  # @param [Hash, nil]           opt    Passed to #form_tag.
+  # @param [Symbol, String] id
+  # @param [Symbol, String] type
+  # @param [Hash]           opt       Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If search is not available for *type*.
   #
-  def search_form(id, type: :current, **opt)
-    opt  = opt.merge(method: :get) if opt[:method].blank?
-    type = params[:controller] if type == :current
-    path = url_for(controller: "/#{type}", action: :index, only_path: true)
+  def search_form(id, type, **opt)
+    return if (path = search_target(type)).blank?
+    opt = opt.merge(method: :get) if opt[:method].blank?
     hidden_fields =
       if path == request.path
         request_parameters.except(id, :offset, :start).map do |k, v|
@@ -675,6 +874,20 @@ module LayoutHelper
       fields << yield
       safe_join(Array.wrap(fields).flatten)
     end
+  end
+
+  # The target path for searches from the search bar.
+  #
+  # @param [Symbol, String] type
+  # @param [Hash]           opt       Passed to #url_for.
+  #
+  # @return [String]
+  #
+  def search_target(type, **opt)
+    opt = opt.merge(controller: "/#{type}", action: :index, only_path: true)
+    url_for(opt)
+  rescue ActionController::UrlGenerationError
+    search_target(:title)
   end
 
   # ===========================================================================
@@ -729,16 +942,17 @@ module LayoutHelper
     }.compact
   end
 
-  # Generate controls specified by #page_controls_actions.
+  # Generate controls specified by controller/action pairs generated by
+  # #page_controls_actions.
   #
-  # @param [Array<Array<(Symbol,Symbol)>>] controller_action_pairs
+  # @param [Array<Array<(Symbol,Symbol)>>] pairs
   # @param [Hash]                          path_opt
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def page_controls(*controller_action_pairs, **path_opt)
-    controller_action_pairs.map { |pair|
+  def page_controls(*pairs, **path_opt)
+    pairs.map { |pair|
       link_to_action(*pair, **path_opt) if pair.present?
     }.compact.join("\n").html_safe.presence
   end

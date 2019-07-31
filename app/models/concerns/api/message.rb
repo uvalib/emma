@@ -26,7 +26,7 @@ class Api::Message < Api::Record::Base
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Hash, String] data
-  # @param [Hash, nil]                       opt
+  # @param [Hash]                            opt
   #
   # @option opt [Symbol] :format      If not provided, this will be determined
   #                                     heuristically from *data*.
@@ -66,7 +66,7 @@ class Api::Message < Api::Record::Base
   # wrap_outer
   #
   # @param [String, Hash] data
-  # @param [Hash, nil]    opt
+  # @param [Hash]         opt
   #
   # @return [String, Hash]            Returned as the same type as *data*.
   #

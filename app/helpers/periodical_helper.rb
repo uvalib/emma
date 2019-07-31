@@ -44,9 +44,9 @@ module PeriodicalHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -58,8 +58,8 @@ module PeriodicalHelper
 
   # Item categories as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -74,8 +74,8 @@ module PeriodicalHelper
 
   # Item formats as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -90,8 +90,8 @@ module PeriodicalHelper
 
   # Item languages as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -110,8 +110,8 @@ module PeriodicalHelper
   # Although an invalid country code will result in no results, all valid
   # country codes result in the same results.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #periodical_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -126,23 +126,23 @@ module PeriodicalHelper
 
   # Item terms as search links.
   #
-  # @param [Object]      item
-  # @param [Symbol, nil] field        Default: :title
-  # @param [Hash, nil]   opt          Passed to #search_links.
+  # @param [Api::Record::Base] item
+  # @param [Symbol, nil]       field  Default: :title
+  # @param [Hash]              opt    Passed to #search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   def periodical_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :title
-    search_links(item, field, opt.merge(link_method: :periodical_search_link))
+    search_links(item, field, **opt.merge(link_method: :periodical_search_link))
   end
 
   # Create a link to the search results index page for the given term(s).
   #
   # @param [String]      terms
   # @param [Symbol, nil] field        Default: :title
-  # @param [Hash, nil]   opt          Passed to #search_link.
+  # @param [Hash]        opt          Passed to #search_link.
   #
   # @option opt [Symbol]  :field
   # @option opt [Boolean] :all_words
@@ -153,7 +153,7 @@ module PeriodicalHelper
   #
   def periodical_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :title
-    search_link(terms, field, opt.merge(scope: :periodical))
+    search_link(terms, field, **opt.merge(scope: :periodical))
   end
 
   # ===========================================================================
@@ -198,9 +198,9 @@ module PeriodicalHelper
   # periodical_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def periodical_field_values(item, **opt)
     field_values(item) do

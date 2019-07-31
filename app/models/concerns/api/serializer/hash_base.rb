@@ -35,7 +35,7 @@ class Api::Serializer::HashBase < Api::Serializer::Base
   #
   # @param [Symbol, Proc, nil] method           Default: :to_hash
   # @param [Boolean, nil]      symbolize_keys
-  # @param [Hash, nil]         opt              Options argument for *method*.
+  # @param [Hash]              opt              Options argument for *method*.
   #
   # @return [String]
   #

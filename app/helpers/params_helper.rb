@@ -57,7 +57,7 @@ module ParamsHelper
   # The meaningful request URL parameters as a Hash (not including :controller
   # or :action).
   #
-  # @param [ActionController::Parameters, Hash] p   Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `#params`.
   #
   # @return [Hash{Symbol=>String}]
   #
@@ -77,16 +77,13 @@ module ParamsHelper
   # Get a reference to `session[section]`.
   #
   # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           opt        Default: `#params`.
+  # @param [Hash, nil]           p        Default: `#params`.
   #
   # @return [Hash]
   #
-  def session_section(section = nil, opt = nil)
-    if section.is_a?(Hash)
-      opt = section
-      section = nil
-    end
-    section ||= (opt || params)[:controller]&.to_s || 'all'
+  def session_section(section = nil, p = nil)
+    section, p = [nil, section] if section.is_a?(Hash)
+    section ||= (p || params)[:controller]&.to_s || 'all'
     session[section] = {} unless session[section].is_a?(Hash)
     session[section]
   end

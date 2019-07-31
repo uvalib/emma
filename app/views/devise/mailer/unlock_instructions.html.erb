@@ -1,6 +1,4 @@
 <%-
-  abort 'devise/mailer/unlock_instructions - This is not expected to be used'
-
   set_page_robots(:noindex, :nofollow)
 -%>
 
@@ -11,3 +9,7 @@
 <p>Click the link below to unlock your account:</p>
 
 <p><%= link_to 'Unlock my account', unlock_url(@resource, unlock_token: @token) %></p>
+
+<%-
+  abort 'devise/mailer/unlock_instructions - This is not expected to be used'
+-%>

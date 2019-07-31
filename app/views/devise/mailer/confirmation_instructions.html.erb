@@ -1,6 +1,4 @@
 <%-
-  abort 'devise/mailer/confirmation_instructions - This is not expected to be used'
-
   set_page_robots(:noindex, :nofollow)
 -%>
 
@@ -9,3 +7,7 @@
 <p>You can confirm your account email through the link below:</p>
 
 <p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+
+<%-
+  abort 'devise/mailer/confirmation_instructions - This is not expected to be used'
+-%>

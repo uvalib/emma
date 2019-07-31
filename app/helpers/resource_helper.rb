@@ -36,6 +36,12 @@ module ResourceHelper
   #
   DEFAULT_LIST_SEPARATOR = "<br/>\n".html_safe.freeze
 
+  # Displayed in place of a results list.
+  #
+  # @type [String]
+  #
+  NO_RESULTS = 'NONE FOUND' # TODO: I18n
+
   # Options which are consumed locally by the named methods and are not passed
   # on to the underlying method.
   #
@@ -59,7 +65,7 @@ module ResourceHelper
   # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label    Default: `item.label`.
   # @param [Proc, String, nil]   path     From block if not provided here.
-  # @param [Hash, nil]           opt      Passed to #make_link except for:
+  # @param [Hash]                opt      Passed to #make_link except for:
   #
   # @option opt [Boolean]        :no_link
   # @option opt [String]         :tooltip
@@ -102,7 +108,7 @@ module ResourceHelper
   #
   # @param [Api::Record::Base] item
   # @param [Symbol, nil]       field  Default: :title
-  # @param [Hash, nil]         opt    Passed to :link_method except for:
+  # @param [Hash]              opt    Passed to :link_method except for:
   #
   # @option opt [Symbol] :field
   # @option opt [Symbol] :method
@@ -151,7 +157,7 @@ module ResourceHelper
   #
   # @param [Api::Record::Base, String] terms
   # @param [Symbol, nil]               field  Default: :title
-  # @param [Hash, nil]                 opt    Passed to #make_link except for:
+  # @param [Hash]                      opt    Passed to #make_link except for:
   #
   # @option opt [Symbol]         :field
   # @option opt [Boolean]        :all_words
@@ -212,8 +218,8 @@ module ResourceHelper
   # Create record links to an external target or via the internal API interface
   # endpoint.
   #
-  # @param [Array, Api::Record::Base] links
-  # @param [Hash, nil]                opt     Passed to #make_link except for:
+  # @param [Api::Record::Base, Array<String>] links
+  # @param [Hash] opt                 Passed to #make_link except for:
   #
   # @option opt [Boolean] :no_link
   # @option opt [String]  :separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
@@ -265,6 +271,7 @@ module ResourceHelper
     separator = pairs[:separator] || DEFAULT_ELEMENT_SEPARATOR
     pairs.map { |k, v|
       next if k == :separator
+      # noinspection RubyCaseWithoutElseBlockInspection
       case v
         when :authors     then v = author_links(item)
         when :categories  then v = category_links(item)
@@ -315,11 +322,11 @@ module ResourceHelper
 
   # An indicator that can be used to stand for an empty list.
   #
-  # @param [String, nil] message
+  # @param [String, nil] message      Default: #NO_RESULTS.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def empty_field_value(message = 'NONE FOUND') # TODO: I18n
+  def empty_field_value(message = NO_RESULTS)
     field_value(nil, message)
   end
 
@@ -357,7 +364,7 @@ module ResourceHelper
   # scope (by default).
   #
   # @param [Hash, nil] term_list      Default: `#search_terms`.
-  # @param [Hash, nil] opt            Passed to the innermost :content_tag.
+  # @param [Hash]      opt            Passed to the innermost :content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

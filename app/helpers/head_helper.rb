@@ -90,7 +90,7 @@ module HeadHelper
 
   # Emit the "<title>" element (within "<head>").
   #
-  # @param [Hash, nil] opt            Passed to #content_tag.
+  # @param [Hash] opt                 Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -147,7 +147,7 @@ module HeadHelper
 
   # Emit the shortcut icon "<link>" tag appropriate for the current page.
   #
-  # @param [Hash, nil] opt            Passed to #favicon_link_tag
+  # @param [Hash] opt                 Passed to #favicon_link_tag
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -211,7 +211,7 @@ module HeadHelper
 
   # Emit the stylesheet "<link>" tag(s) appropriate for the current page.
   #
-  # @param [Hash, nil] opt            Passed to #stylesheet_link_tag
+  # @param [Hash] opt                 Passed to #stylesheet_link_tag
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -279,7 +279,7 @@ module HeadHelper
 
   # Emit the "<script>" tag(s) appropriate for the current page.
   #
-  # @param [Hash, nil] opt            Passed to #javascript_include_tag
+  # @param [Hash] opt                 Passed to #javascript_include_tag
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -339,7 +339,8 @@ module HeadHelper
   def set_page_meta_tags(source)
     @page_meta_tags = {}
     merge_meta_tags!(source)
-    merge_meta_tags!(block_given? && yield)
+    merge_meta_tags!(yield) if block_given?
+    @page_meta_tags
   end
 
   # Add to the meta tags for this page.
@@ -351,7 +352,8 @@ module HeadHelper
   def append_page_meta_tags(source)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
     merge_meta_tags!(source)
-    merge_meta_tags!(block_given? && yield)
+    merge_meta_tags!(yield) if block_given?
+    @page_meta_tags
   end
 
   # Replace existing (or add new) meta tags for this page.
@@ -369,7 +371,7 @@ module HeadHelper
 
   # Emit the "<meta>" tag(s) appropriate for the current page.
   #
-  # @param [Hash, nil] opt                Passed to #emit_meta_tag except for:
+  # @param [Hash] opt                 Passed to #emit_meta_tag except for:
   #
   # @option opt [String] :tag_separator   Default: #META_TAG_SEPARATOR
   #
@@ -407,7 +409,7 @@ module HeadHelper
 
   # Include common options for "<link>" and "<script>" tags.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash] opt
   #
   # @return [Hash]
   #
@@ -422,7 +424,7 @@ module HeadHelper
 
   # Merge hashes, accumulating values as arrays for overlapping keys.
   #
-  # @param [Hash] src
+  # @param [Hash, nil] src
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
@@ -446,7 +448,7 @@ module HeadHelper
   #
   # @param [Symbol]                key
   # @param [String, Symbol, Array] value
-  # @param [Hash, nil]             opt        Passed to #tag except for:
+  # @param [Hash]                  opt        Passed to #tag except for:
   #
   # @option opt [String]  :content_separator  Def.: #META_TAG_CONTENT_SEPARATOR
   # @option opt [String]  :list_separator     Passed to #array_string.
@@ -456,7 +458,7 @@ module HeadHelper
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag(key, value, opt)
+  def emit_meta_tag(key, value, **opt)
 
     tag_opt, list_opt = extract_options(opt, EMIT_META_TAG_OPTIONS)
     sep   = list_opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR

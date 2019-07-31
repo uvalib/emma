@@ -44,9 +44,9 @@ module EditionHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link except for:
+  # @param [Hash]                opt    Passed to #item_link except for:
   #
   # @option opt [String] :editionId
   # @option opt [String] :edition       Alias for :editionId
@@ -83,9 +83,9 @@ module EditionHelper
   # edition_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def edition_field_values(item, **opt)
     field_values(item) do

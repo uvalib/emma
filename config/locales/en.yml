@@ -65,10 +65,16 @@ en:
 
     search_bar:
       input:
-        label:          'Search terms:'
-        placeholder:    'Enter search terms...'
+        enabled:        'title'
+        field:          'keyword'
+        label:          'Catalog search terms:'
+        placeholder:    'Enter catalog search terms...'
       button:
         label:          'Search'
+      controls:
+        - 'sort'
+        - 'size'
+        - 'language'
       sort:
         label:          'Sort By'
       size:
@@ -273,6 +279,10 @@ en:
       title:            'Categories'
       tooltip:          'Search for catalog items by topic.'
 
+      search_bar:
+        controls:
+          - 'size'
+
       index:
         label:          'Categories'
         title:          'Category Index'
@@ -362,6 +372,13 @@ en:
       title:            'Periodicals'
       tooltip:          'Search for periodicals.'
 
+      search_bar:
+        input:
+          enabled:      true
+          field:        'title'
+          label:        'Periodical search terms:'
+          placeholder:  'Search periodical titles...'
+
       index:
         label:          'Periodicals'
         title:          'Periodicals Index'
@@ -442,6 +459,11 @@ en:
       title:            'Organization Members'
       tooltip:          'Show organization members.'
 
+      search_bar:
+        controls:
+          - 'sort'
+          - 'size'
+
       index:
         label:          'Members'
         title:          'Members Index'
@@ -467,6 +489,11 @@ en:
       history:
         title:          'Member History'
         tooltip:        'View modifications for this organization member.'
+
+      preferences:
+        label:          'Preferences'
+        title:          'Preferences'
+        tooltip:        'View preference settings for this member.'
 
     # =========================================================================
     # Artifact pages
@@ -550,6 +577,11 @@ en:
       label:            'Lists'
       title:            'Reading Lists'
       tooltip:          'Show subscribed reading lists.'
+
+      search_bar:
+        controls:
+          - 'sort'
+          - 'size'
 
       page_controls:
         label:

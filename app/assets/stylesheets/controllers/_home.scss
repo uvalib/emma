@@ -35,32 +35,11 @@ body.home-dashboard {
         margin-bottom: 2rem;
         font-weight:   bold;
     }
-}
 
-// noinspection SassScssResolvedByNameOnly
-body.home-index,
-body.home-welcome {
-
-    .ability-debug {
-
-        margin-top: 50vh;
-
-        @media #{$narrow-screen} {
-            margin-top: $page-padding;
+    .sign-in + .ability-debug {
+        @media #{$wide-screen} {
+            margin-top: 50vh;
         }
-    }
-
-}
-
-//=============================================================================
-// Dashboard
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-body.home-dashboard {
-
-    .ability-debug {
-        margin-top: $page-padding;
     }
 
 }

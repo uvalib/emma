@@ -2,11 +2,13 @@
 <%-
   # NOTE: DEBUGGING
   # Displays the individual abilities of the current user.
+  user    = current_user&.to_s&.presence || 'guest'
   actions = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
   models  = [Title, Artifact, Periodical, Edition, Member, ReadingList]
 -%>
 
 <div class="ability-debug">
+  <h2 class="ability-header">Authorization for user "<%= user -%>"</h2>
   <table>
     <thead>
       <tr>
@@ -16,20 +18,22 @@
       </tr>
     </thead>
     <tbody>
-      <%- idx = 0 -%>
       <%- models.each do |model| -%>
         <%- actions.each do |action| -%>
           <%- next if (action == :download) && (model != Artifact) -%>
           <%- status = can?(action, model) -%>
-          <%- can    = ('can' if status) -%>
-          <tr class="<%= can -%>">
+          <%- can    = status ? 'can' : 'cannot' -%>
+          <tr class="<%= can -%> <%= action %>-<%= model -%>">
             <td class="model <%= can -%>"><%= model -%></td>
             <td class="action <%= can -%>"><%= action -%></td>
             <td class="status <%= can -%>"><%= status -%></td>
           </tr>
         <%- end -%>
-        <%- break if (idx += 1) >= models.size -%>
-        <tr class="blank-row"><td/><td/><td/></tr>
+        <tr class="blank-row">
+          <td class="model"></td>
+          <td class="action"></td>
+          <td class="status"></td>
+        </tr>
       <%- end -%>
     </tbody>
   </table>

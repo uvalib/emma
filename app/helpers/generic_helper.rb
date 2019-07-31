@@ -156,8 +156,8 @@ module GenericHelper
 
   # Generate a rendering of a hash as a delimited list of key-value pairs.
   #
-  # @param [Hash]      hash
-  # @param [Hash, nil] opt
+  # @param [Hash] hash
+  # @param [Hash] opt
   #
   # @option opt [String] :pair_separator   Default: #PAIR_SEPARATOR.
   #
@@ -170,8 +170,8 @@ module GenericHelper
 
   # Generate a rendering of an array as a delimited list of elements.
   #
-  # @param [Array]     array
-  # @param [Hash, nil] opt
+  # @param [Array] array
+  # @param [Hash]  opt                Passed to #normalized_list except for:
   #
   # @option opt [String] :list_separator   Default: #LIST_SEPARATOR.
   #
@@ -184,8 +184,8 @@ module GenericHelper
 
   # Normalize nested arrays/hashes into a flat array of strings.
   #
-  # @param [Array<String,Symbol,Hash>] values
-  # @param [Hash, nil]                 opt
+  # @param [String, Symbol, Hash, Array<String,Symbol,Hash>] values
+  # @param [Hash]                                            opt
   #
   # @option opt [String]  :pair_separator   Passed to #hash_string.
   # @option opt [String]  :list_separator   Passed to #array_string.

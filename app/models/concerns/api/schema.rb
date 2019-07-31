@@ -152,8 +152,6 @@ module Api
     #
     # @param [Class, nil] type
     #
-    # @return [Symbol]
-    #
     def scalar_type?(type)
       return true if type.parent == Object
       base = type.to_s.demodulize.to_sym
@@ -168,13 +166,12 @@ module Api
     # @return [String]
     #
     def element_name(name, mode = nil)
-      name = name.to_s
       case mode
-        when :underscore     then name = name.underscore
-        when :camelcase      then name = name.camelcase(:lower)
-        when :full_camelcase then name = name.camelcase(:upper)
+        when :underscore     then name.to_s.underscore
+        when :camelcase      then name.to_s.camelcase(:lower)
+        when :full_camelcase then name.to_s.camelcase(:upper)
+        else                      name.to_s
       end
-      name
     end
 
   end unless defined?(Schema)

@@ -45,9 +45,9 @@ module TitleHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -59,8 +59,8 @@ module TitleHelper
 
   # Thumbnail element for the given catalog title.
   #
-  # @param [Api::Common::TitleMethods] item
-  # @param [Hash, nil]                 opt    Passed to #image_element except:
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #image_element except for:
   #
   # @option opt [Boolean] :link           If *true* make the image a link to
   #                                         the show page for the item.
@@ -82,8 +82,8 @@ module TitleHelper
 
   # Cover image element for the given catalog title.
   #
-  # @param [Api::Common::TitleMethods] item
-  # @param [Hash, nil]                 opt    Passed to #image_element except:
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #image_element except for:
   #
   # @option opt [Boolean] :link           If *true* make the image a link to
   #                                         the show page for the item.
@@ -103,8 +103,8 @@ module TitleHelper
 
   # Create links to download each artifact of the given item.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            Passed to #artifact_link except for:
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #artifact_link except for:
   #
   # @option opt [String] :fmt         One of `Api::FormatType.values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
@@ -116,16 +116,16 @@ module TitleHelper
     format_id = opt[:fmt]
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     append_css_classes!(html_opt, 'disabled') if cannot?(:download, Artifact)
-    item.formats.map { |format|
-      next if format_id && (format_id != format.formatId)
-      artifact_link(item, format, html_opt)
+    item.formats.map { |fmt|
+      next if format_id && (format_id != fmt.formatId)
+      artifact_link(item, fmt, html_opt)
     }.compact.sort.join(separator).html_safe
   end
 
   # Item categories as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -140,8 +140,8 @@ module TitleHelper
 
   # Item authors as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -152,8 +152,8 @@ module TitleHelper
 
   # Item composers as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -164,8 +164,8 @@ module TitleHelper
 
   # Item formats as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -180,8 +180,8 @@ module TitleHelper
 
   # Item languages as search links.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -200,8 +200,8 @@ module TitleHelper
   # Although an invalid country code will result in no results, all valid
   # country codes result in the same results.
   #
-  # @param [Object]    item
-  # @param [Hash, nil] opt            @see #title_search_links
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -219,30 +219,30 @@ module TitleHelper
   # Items in returned in two separately sorted groups: actionable links (<a>
   # elements) followed by items which are not linkable (<span> elements).
   #
-  # @param [Object]      item
-  # @param [Symbol, nil] field        Default: :keyword
-  # @param [Hash, nil]   opt          Passed to #search_links.
+  # @param [Api::Record::Base] item
+  # @param [Symbol, nil]       field  Default: :keyword
+  # @param [Hash]              opt    Passed to #search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   def title_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :keyword
-    search_links(item, field, opt.merge(link_method: :title_search_link))
+    search_links(item, field, **opt.merge(link_method: :title_search_link))
   end
 
   # A link to the catalog item search results index page for the given term(s).
   #
   # @param [String]      terms
   # @param [Symbol, nil] field        Default: :keyword
-  # @param [Hash, nil]   opt          Passed to #search_links.
+  # @param [Hash]        opt          Passed to #search_link
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   def title_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :keyword
-    search_link(terms, field, opt.merge(scope: :title))
+    search_link(terms, field, **opt.merge(scope: :title))
   end
 
   # ===========================================================================
@@ -352,9 +352,9 @@ module TitleHelper
   # title_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def title_field_values(item, **opt)
     field_values(item) do

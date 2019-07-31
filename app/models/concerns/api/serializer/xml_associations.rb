@@ -90,6 +90,7 @@ module Api::Serializer::XmlAssociations
     # @see Api::Serializer::Associations#prepare_collection!
     #
     def prepare_collection!(wrapper, element, options)
+      # noinspection RubyCaseWithoutElseBlockInspection
       wrap =
         case options[:wrap]
           when false then options.delete(:wrap)

@@ -28,8 +28,8 @@ module Api::Record::Associations
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array]     args
-    # @param [Hash, nil] opt
+    # @param [Array] args
+    # @param [Hash]  opt
     #
     # @return [void]
     #
@@ -43,8 +43,8 @@ module Api::Record::Associations
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array]     args
-    # @param [Hash, nil] opt
+    # @param [Array] args
+    # @param [Hash]  opt
     #
     # @return [void]
     #
@@ -58,8 +58,8 @@ module Api::Record::Associations
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array]     args
-    # @param [Hash, nil] opt
+    # @param [Array] args
+    # @param [Hash]  opt
     #
     # @return [void]
     #
@@ -78,8 +78,8 @@ module Api::Record::Associations
 
     # Define a single data element property.
     #
-    # @param [Array]     args
-    # @param [Hash, nil] opt
+    # @param [Array] args
+    # @param [Hash]  opt
     #
     # args[0]   The attribute name
     # args[1]   The attribute type (if given).
@@ -87,14 +87,14 @@ module Api::Record::Associations
     def add_single_property(*args, **opt)
       name  = args.shift
       type  = args.shift
-      value = make_default(name, type, opt)
+      value = make_default(name, type, **opt)
       add_property(name, value)
     end
 
     # Define an array data element property.
     #
-    # @param [Array]     args
-    # @param [Hash, nil] _opt        Unused
+    # @param [Array] args
+    # @param [Hash]  _opt             Unused
     #
     # args[0]   The attribute name
     #
@@ -123,7 +123,7 @@ module Api::Record::Associations
     #
     # @param [Symbol]                     property_name
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash, nil]                  opt
+    # @param [Hash]                       opt
     #
     # @return [Object]  A literal value.
     # @return [Proc]    An anonymous method that generates the default value.

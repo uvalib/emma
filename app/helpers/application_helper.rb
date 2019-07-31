@@ -50,28 +50,30 @@ module ApplicationHelper
 
   # Indicate whether the ultimate target format is HTML.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] p              Default: `#params`
   #
-  def rendering_html?(opt)
-    ((opt[:format].to_s.downcase == 'html') if opt.is_a?(Hash)) ||
-      (request.format.html? if defined?(request))
+  def rendering_html?(p = nil)
+    p ||= (defined?(params) ? params : {})
+    (p[:format].to_s.downcase == 'html') ||
+      (defined?(request) && request.format.html?)
   end
 
   # Indicate whether the ultimate target format is something other than HTML.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] p              Default: `#params`
   #
-  def rendering_non_html?(opt)
-    !rendering_html?(opt)
+  def rendering_non_html?(p = nil)
+    !rendering_html?(p)
   end
 
   # Indicate whether the ultimate target format is JSON.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash, nil] p              Default: `#params`
   #
-  def rendering_json?(opt)
-    ((opt[:format].to_s.downcase == 'json') if opt.is_a?(Hash)) ||
-      (request.format.json? if defined?(request))
+  def rendering_json?(p = nil)
+    p ||= (defined?(params) ? params : {})
+    (p[:format].to_s.downcase == 'json') ||
+      (defined?(request) && request.format.html?)
   end
 
   # ===========================================================================

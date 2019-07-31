@@ -1,6 +1,4 @@
 <%-
-  abort 'devise/registrations/edit - This is not expected to be used'
-
   set_page_robots(:noindex, :nofollow)
 -%>
 
@@ -47,3 +45,7 @@
 <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
 
 <%= link_to "Back", :back %>
+
+<%-
+  abort 'devise/registrations/edit - This is not expected to be used'
+-%>

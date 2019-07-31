@@ -60,7 +60,7 @@ class Api::Serializer::Base < Representable::Decorator
   # Render data elements in serialized format.
   #
   # @param [Symbol, Proc] method
-  # @param [Hash, nil]    opt         Options argument for *method*.
+  # @param [Hash]         opt         Options argument for *method*.
   #
   # @return [String]
   #
@@ -95,7 +95,7 @@ class Api::Serializer::Base < Representable::Decorator
   # @param [String, Hash] data
   # @param [Symbol, Proc] method
   #
-  # @return [Hash]
+  # @return [Api::Record::Base]
   # @return [nil]
   #
   # == Usage Notes

@@ -24,7 +24,7 @@ module I18nHelper
   # The description of a model managed by a controller.
   #
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash, nil]           opt
+  # @param [Hash]                opt
   #
   # @option opt [Boolean] :brief      Default.
   # @option opt [Boolean] :long
@@ -66,7 +66,7 @@ module I18nHelper
   # page_controls_label
   #
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash, nil]           opt
+  # @param [Hash]                opt
   #
   # @option opt [String, Symbol] :mode        Either 'one' or 'many'.
   # @option opt [Boolean]        :one
@@ -105,7 +105,7 @@ module I18nHelper
   #
   # @param [String, Symbol, nil] action       Default: `#params[:action]`.
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash, nil]           opt          Passed to `I18n#t`.
+  # @param [Hash]                opt          Passed to `I18n#t`.
   #
   # @return [String]
   #
@@ -117,7 +117,7 @@ module I18nHelper
   #
   # @param [String, Symbol, nil] action       Default: `#params[:action]`.
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash, nil]           opt          Passed to `I18n#t`.
+  # @param [Hash]                opt          Passed to `I18n#t`.
   #
   # @return [String]
   #
@@ -130,7 +130,7 @@ module I18nHelper
   # @param [String, Symbol]      value        Value to lookup.
   # @param [String, Symbol, nil] action       Default: `#params[:action]`.
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash, nil]           opt          Passed to `I18n#t`.
+  # @param [Hash]                opt          Passed to `I18n#t`.
   #
   # @return [String]
   #
@@ -145,28 +145,6 @@ module I18nHelper
         "emma.generic.#{action}.#{value}",
         opt.reverse_merge(item: unit_of(controller), default: '')
       )
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  def i18n_lookup(key, **opt)
-    I18n.t(i18n_key(key), opt.reverse_merge(default: nil))
-  end
-
-  # i18n_key
-  #
-  # @param [Array<String>] args       Key components
-  #
-  # @return [String]
-  #
-  def i18n_key(*args)
-    args.flatten.compact.join('.').tap do |s|
-      s.prepend('emma.') unless s.blank? || s.start_with?('emma.')
-    end
   end
 
 end

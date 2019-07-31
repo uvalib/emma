@@ -35,7 +35,7 @@ module SessionsHelper
   #
   # @param [String, nil]         label
   # @param [Symbol, String, nil] provider   Default: :bookshare
-  # @param [Hash, nil]           opt
+  # @param [Hash]                opt        Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -55,7 +55,7 @@ module SessionsHelper
   #
   # @param [String, nil]         label
   # @param [Symbol, String, nil] provider   Default: :bookshare
-  # @param [Hash, nil]           opt
+  # @param [Hash]                opt        Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

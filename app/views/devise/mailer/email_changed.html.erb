@@ -1,6 +1,4 @@
 <%-
-  abort 'devise/mailer/email_changed - This is not expected to be used'
-
   set_page_robots(:noindex, :nofollow)
 -%>
 
@@ -11,3 +9,7 @@
 <% else %>
   <p>We're contacting you to notify you that your email has been changed to <%= @resource.email %>.</p>
 <% end %>
+
+<%-
+  abort 'devise/mailer/email_changed - This is not expected to be used'
+-%>

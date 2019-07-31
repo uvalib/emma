@@ -40,7 +40,7 @@ module Api::Serializer::Associations
     #
     # @param [Symbol]                     name
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash, nil]                  opt
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
@@ -80,7 +80,7 @@ module Api::Serializer::Associations
     #
     # @param [Symbol]                     name
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash, nil]                  opt
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
@@ -113,7 +113,7 @@ module Api::Serializer::Associations
     # @param [Symbol]                     name
     # @param [Class, String, Symbol, nil] type
     # @param [Numeric, nil]               count
-    # @param [Hash, nil]                  opt
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
@@ -173,7 +173,7 @@ module Api::Serializer::Associations
 
     # Determine the class to be associated with a data element.
     #
-    # @param [Symbol]                     property_name
+    # @param [Symbol, nil]                property_name
     # @param [Class, String, Symbol, nil] type
     #
     # @return [Class]

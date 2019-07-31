@@ -113,9 +113,9 @@ module ArtifactHelper
 
   # Create an element containing a link to download the given item.
   #
-  # @param [Object]                   item
+  # @param [Api::Record::Base]        item
   # @param [Api::Format, String, nil] format
-  # @param [Hash, nil]                opt     Passed to #item_link except for:
+  # @param [Hash]                     opt     Passed to #item_link except for:
   #
   # @option opt [Api::Format, String] :fmt    One of `Api::FormatType.values`
   # @option opt [Symbol, String]      :label
@@ -193,7 +193,7 @@ module ArtifactHelper
   # An element to be shown while an artifact is being acquired.
   #
   # @param [String, nil] image        Default: 'loading-balls.gif'
-  # @param [Hash, nil]   opt          Passed to #image_tag.
+  # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -208,7 +208,7 @@ module ArtifactHelper
 
   # An element to indicate failure.
   #
-  # @param [Hash, nil] opt            Passed to #content_tag.
+  # @param [Hash] opt                 Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -222,7 +222,7 @@ module ArtifactHelper
   # An element for direct download of an artifact.
   #
   # @param [String, nil] label
-  # @param [Hash, nil]   opt          Passed to #make_link except for:
+  # @param [Hash]   opt               Passed to #make_link except for:
   #
   # @option opt [String] :label
   # @option opt [String] :fmt         Format label.
@@ -235,7 +235,7 @@ module ArtifactHelper
     fmt   = format_label(opt.delete(:fmt))
     opt[:title] ||= I18n.t('emma.artifact.show.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
-    make_link(label, '#', **opt)
+    make_link(label, '#', opt)
   end
 
   # ===========================================================================
@@ -269,9 +269,9 @@ module ArtifactHelper
   # artifact_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_field_values(item, **opt)
     field_values(item, ARTIFACT_SHOW_FIELDS.merge(opt))

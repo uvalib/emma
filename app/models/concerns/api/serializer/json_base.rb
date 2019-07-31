@@ -27,7 +27,7 @@ class Api::Serializer::JsonBase < Api::Serializer::Base
   # Render data elements in JSON format.
   #
   # @param [Symbol, Proc, nil] method   Default: :to_json
-  # @param [Hash, nil]         opt      Options argument for *method*.
+  # @param [Hash]              opt      Options argument for *method*.
   #
   # @return [String]
   #

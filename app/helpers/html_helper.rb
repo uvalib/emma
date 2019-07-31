@@ -189,14 +189,13 @@ module HtmlHelper
 
   # Produce a link with appropriate accessibility settings.
   #
-  # @param [String]    label
-  # @param [String]    path
-  # @param [Hash, nil] opt            Passed to #link_to.
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def make_link(label, path, opt = nil, &block)
-    opt ||= {}
+  def make_link(label, path, **opt, &block)
     if opt[:target] == '_blank'
       opt[:rel] = 'noopener'
     end

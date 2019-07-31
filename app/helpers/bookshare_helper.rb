@@ -171,7 +171,7 @@ module BookshareHelper
   # @param [String, nil]    path
   # @param [String, Symbol] controller  Default: `params[:controller]`.
   # @param [String, Symbol] action      Default: `params[:action]`.
-  # @param [Hash, nil]      path_opt    Passed to #make_bookshare_path.
+  # @param [Hash]           path_opt    Passed to #make_bookshare_path.
   #
   # @return [String]
   # @return [nil]                     If the URL could not be determined.
@@ -228,7 +228,7 @@ module BookshareHelper
   # @param [String, Symbol] action        Default: `params[:action]`.
   # @param [String]         label         Label passed to #link_to.
   # @param [Hash]           link_opt      Options passed to #link_to.
-  # @param [Hash, nil]      path_opt      Path options.
+  # @param [Hash]           path_opt      Path options.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]

@@ -44,9 +44,9 @@ module CategoryHelper
 
   # Create a link to the catalog title search for the given category.
   #
-  # @param [Object]              item
+  # @param [Api::Record::Base]   item
   # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash, nil]           opt    Passed to #item_link.
+  # @param [Hash]                opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -76,9 +76,9 @@ module CategoryHelper
   # category_field_values
   #
   # @param [Api::Record::Base] item
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt    Additional field mappings.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [ActiveSupport::SafeBuffer]
   #
   def category_field_values(item, **opt)
     field_values(item, CATEGORY_SHOW_FIELDS.merge(opt))

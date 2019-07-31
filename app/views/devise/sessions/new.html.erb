@@ -1,7 +1,5 @@
 <%# app/views/devise/sessions/new.html.erb -%>
 <%-
-  abort '/app/views/user/sessions/new.html.erb is supposed to be used'
-
   # Login page.
   title ||= t('emma.user.sessions.new.label')
 
@@ -36,3 +34,5 @@
 <% end %>
 
 <%= render 'devise/shared/links' %>
+
+<%- abort '/app/views/user/sessions/new.html.erb is supposed to be used' -%>

@@ -27,7 +27,7 @@ class Api::Serializer::XmlBase < Api::Serializer::Base
   # Render data elements in XML format.
   #
   # @param [Symbol, Proc, nil] method   Default: :to_xml
-  # @param [Hash, nil]         opt      Options argument for *method*.
+  # @param [Hash]              opt      Options argument for *method*.
   #
   # @return [String]
   #

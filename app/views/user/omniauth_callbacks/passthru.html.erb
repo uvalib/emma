@@ -1,7 +1,5 @@
 <%# app/views/user/omniauth_callbacks/passthru.html.erb -%>
 <%-
-  abort 'user/omniauth_callbacks/passthru - This is not expected to be used'
-
   # NOTE: This will only be displayed for a fixed user identity.
   title ||= "PASSTHRU USER #{current_user}"
 
@@ -15,3 +13,7 @@
 <a href="<%= api_index_path -%>">GO TO /api</a>
 <%= sign_out_link %>
 <p>current_user = <%= current_user.pretty_inspect -%></p>
+
+<%-
+  abort 'user/omniauth_callbacks/passthru - This is not expected to be used'
+-%>

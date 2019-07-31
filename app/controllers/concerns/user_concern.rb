@@ -15,6 +15,18 @@ module UserConcern
     __included(base, 'UserConcern')
   end
 
+  unless ONLY_FOR_DOCUMENTATION
+
+    # Defined by Devise.
+    #
+    # @return [void]
+    #
+    # @see Devise::Controllers::Helpers#define_helpers
+    #
+    def authenticate_user!; end
+
+  end
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================

@@ -49,8 +49,8 @@ module ImageHelper
 
   # Create an HTML image element.
   #
-  # @param [String]    url
-  # @param [Hash, nil] opt                Passed to #content_tag except for:
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #content_tag except for:
   #
   # @option opt [String] :link            If *true* make the image a link to
   #                                         the given path.
@@ -65,10 +65,11 @@ module ImageHelper
     alt  = opt[:alt] || 'Illustration' # TODO: I18n
     link = opt[:link].presence
     iopt = { alt: alt }
-    image = ASYNCHRONOUS_IMAGES ? placeholder(url, iopt) : image_tag(url, iopt)
+    image =
+      ASYNCHRONOUS_IMAGES ? placeholder(url, **iopt) : image_tag(url, **iopt)
     if link
       content_tag(:div, link, class: html_opt[:class], 'aria-hidden': true) do
-        make_link(image, link, html_opt.merge(tabindex: -1))
+        make_link(image, link, **html_opt.merge(tabindex: -1))
       end
     else
       content_tag(:div, image, html_opt)
@@ -81,7 +82,7 @@ module ImageHelper
   #
   # @param [String]      url
   # @param [String, nil] image        Default: 'loading-balls.gif'
-  # @param [Hash, nil]   opt          Passed to #image_tag.
+  # @param [Hash]        opt          Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

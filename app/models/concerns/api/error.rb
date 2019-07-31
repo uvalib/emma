@@ -26,6 +26,7 @@ module Api
     def initialize(*args)
       msg = nil
       while (arg = args.shift)
+        # noinspection RubyCaseWithoutElseBlockInspection
         case arg
           when String    then msg = arg
           when Exception then @original_exception = arg

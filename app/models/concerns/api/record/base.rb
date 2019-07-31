@@ -35,11 +35,12 @@ class Api::Record::Base
   # Initialize a new instance.
   #
   # @param [Hash, String, nil] data
-  # @param [Hash, nil]         opt
+  # @param [Hash]              opt
   #
   # @option opt [Symbol] :format      One of Api::Schema#SERIALIZER_TYPES.
   #
   def initialize(data = nil, **opt)
+    # noinspection RubyCaseWithoutElseBlockInspection
     @exception =
       case opt[:error]
         when Exception then opt[:error]
@@ -98,7 +99,7 @@ class Api::Record::Base
   # Serialize data elements to the indicated format.
   #
   # @param [Symbol, nil] type         Default: #serializer_type
-  # @param [Hash, nil]   opt
+  # @param [Hash]        opt          Passed to Api::Serializer::Base#serialize
   #
   # @return [String]
   #
@@ -110,7 +111,7 @@ class Api::Record::Base
 
   # Serialize the record instance into JSON format.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash] opt                 Passed to #serialize.
   #
   # @return [String]
   #
@@ -122,7 +123,7 @@ class Api::Record::Base
 
   # Serialize the record instance into XML format.
   #
-  # @param [Hash, nil] opt
+  # @param [Hash] opt                 Passed to #serialize.
   #
   # @return [String]
   #
@@ -135,7 +136,7 @@ class Api::Record::Base
   # Serialize the record instance into a Hash.
   #
   # @param [Boolean, nil] symbolize_keys
-  # @param [Hash, nil]    opt
+  # @param [Hash]         opt             Passed to #serialize.
   #
   # @return [Hash]
   #
@@ -222,6 +223,7 @@ class Api::Record::Base
   #
   def initialize_attributes(data = nil)
     (data || default_data).each_pair do |attr, value|
+      # noinspection RubyCaseWithoutElseBlockInspection
       case value
         when Class then value = value.new
         when Proc  then value = value.call(error: exception)

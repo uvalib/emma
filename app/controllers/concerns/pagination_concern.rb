@@ -36,13 +36,13 @@ module PaginationConcern
 
   # Pagination setup.
   #
-  # @param [ActionController::Parameters, Hash, nil] opt    Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] opt  Default: `#params`.
   #
   # @options opt [Symbol] :controller
   #
   # @return [Hash]                    URL parameters.
   #
-  def pagination_setup(opt = params)
+  def pagination_setup(opt = nil)
 
     # Get values from parameters or session.
     opt = url_parameters(opt)
