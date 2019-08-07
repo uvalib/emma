@@ -276,33 +276,38 @@ module Api::Common::TitleMethods
   # [2]  Transform one or more newlines into a pair of breaks.
   # [3]  Normalize space characters.
   # [4]  Strip leading/trailing spaces only after normalization.
-  # [5]  Normalize breaks, removing any leading spaces.
-  # [6]  Put explicit list elements on their own lines.
-  # [7]  Put implied list elements on their own lines.
-  # [8]  Put *apparent* list elements on their own lines.
-  # [9]  Treat a run of spaces as an implied paragraph break.
-  # [10] Special paragraph break.
-  # [11] Reduce runs of breaks to just a pair of breaks.
-  # [12] Remove leading breaks.
-  # [13] Remove trailing breaks.
+  # [5]  Eliminate sequences like "<p><p>".
+  # [6]  Normalize breaks, removing any leading spaces.
+  # [7]  Eliminate orphaned elements like "<p><br/>".
+  # [8]  Put explicit list elements on their own lines.
+  # [9]  Put implied list elements on their own lines.
+  # [10] Put *apparent* list elements on their own lines.
+  # [11] Treat a run of spaces as an implied paragraph break.
+  # [12] Special paragraph break.
+  # [13] Reduce runs of breaks to just a pair of breaks.
+  # [14] Remove leading breaks.
+  # [15] Remove trailing breaks.
   #
   def contents
     %i[synopsis description].find do |method|
       next unless respond_to?(method) && (text = send(method)).present?
+      $stderr.puts "@@@ #{__method__} | text -> #{text.inspect}"
       text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]
       text.gsub!(/([[:space:]]*\n)+/,      '<br/><br/>')      # [2]
       text.gsub!(/[[:space:]]/,            ' ')               # [3]
       text.strip!                                             # [4]
-      text.gsub!(/\s*<br\s*\/?>/,          '<br/>')           # [5]
-      text.gsub!(/([•∙·]+)\s*/,            '<br/>•&nbsp;')    # [6]
-      text.gsub!(/<br.>\s{2,}/,            '<br/>•&nbsp;')    # [7]
-      text.gsub!(/\s+(\d+\.|[*?+])\s+/,    '<br/>\1&nbsp;')   # [8]
-      text.gsub!(/\s+(--|—)\s*([A-Z0-9])/, '<br/>\1&nbsp;\2') # [8]
-      text.gsub!(/\s{3,}/,                 '<br/><br/>')      # [9]
-      text.gsub!(/(<P>)+/,                 '<br/><br/>')      # [10]
-      text.gsub!(/(<br.>){3,}/,            '<br/><br/>')      # [11]
-      text.sub!( /\A(<br.>)+/,             '')                # [12]
-      text.sub!( /(<br.>)+\z/,             '')                # [13]
+      text.gsub!(/<([^>])>(<\1>)+/,        '')                # [5]
+      text.gsub!(/\s*<br\s*\/?>/,          '<br/>')           # [6]
+      text.gsub!(/<[^>]><br.>/,            '<br/>')           # [7]
+      text.gsub!(/([•∙·]+)\s*/,            '<br/>•&nbsp;')    # [8]
+      text.gsub!(/<br.>\s{2,}/,            '<br/>•&nbsp;')    # [9]
+      text.gsub!(/\s+(\d+\.|[*?+])\s+/,    '<br/>\1&nbsp;')   # [10]
+      text.gsub!(/\s+(--|—)\s*([A-Z0-9])/, '<br/>\1&nbsp;\2') # [10]
+      text.gsub!(/\s{3,}/,                 '<br/><br/>')      # [11]
+      text.gsub!(/(<P>)+/,                 '<br/><br/>')      # [12]
+      text.gsub!(/(<br.>){3,}/,            '<br/><br/>')      # [13]
+      text.sub!( /\A(<br.>)+/,             '')                # [14]
+      text.sub!( /(<br.>)+\z/,             '')                # [15]
       return CONTENT_SANITIZE.fragment(text).html_safe
     end
   end
