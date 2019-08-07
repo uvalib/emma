@@ -12,10 +12,8 @@ class Periodical < ApplicationRecord
 
   belongs_to :reading_list, optional: true
 
-=begin # TODO: artifacts?
-  has_many :artifacts
-=end
   has_many :editions
+  has_many :artifacts, through: :editions
 
   # ===========================================================================
   # :section: Authorization

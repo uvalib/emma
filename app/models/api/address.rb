@@ -9,7 +9,13 @@ require 'api/record'
 
 # Api::Address
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_address
+# @attr [String] address1
+# @attr [String] address2
+# @attr [String] city
+# @attr [String] postalCode
+# @attr [String] state
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_address
 #
 class Api::Address < Api::Record::Base
 

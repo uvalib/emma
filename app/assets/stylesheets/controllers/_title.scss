@@ -128,7 +128,23 @@
     // Components
     //=========================================================================
 
-    .label {}
+    $break-height:           2 * $results-entry-margin-y / 3;
+
+    $synopsis-padding:       $results-entry-margin-y;
+    $synopsis-border-width:  2px;
+    $synopsis-border-color:  $image-border-color;
+    $synopsis-border-radius: 4 * $synopsis-border-width;
+
+    .label {
+        &.field-Synopsis {
+
+            padding-top: calc(#{$synopsis-padding} + #{$synopsis-border-width});
+
+            @media #{$browser-ie} {
+                padding-top: $synopsis-padding;
+            }
+        }
+    }
 
     .value {
 
@@ -148,16 +164,48 @@
             }
         }
 
+        > br {
+            margin-top: $break-height;
+            &:first-child { margin-top: $break-height; }
+        }
+
         a + a {
             margin-top: $results-entry-margin-y;
+        }
+
+        &.field-Authors {
+            @media #{$wide-screen}, #{$medium-width} {
+
+                flex-direction: row;
+                flex-wrap:      wrap;
+
+                > * {
+                    flex:   1 0 auto;
+                    margin: 0 $results-entry-margin-y $results-entry-margin-y 0;
+                    &:last-child { margin-right: 0; }
+                }
+            }
         }
 
         &.field-Synopsis {
 
             margin-bottom: calc(#{$results-entry-gap-y} / 2);
+            padding:       $synopsis-padding;
+            line-height:   1.375;
+            border:        $synopsis-border-width solid $synopsis-border-color;
+            border-radius: $synopsis-border-radius;
 
             @media #{$browser-ie} {
                 margin-bottom: ($ie-results-entry-gap-y / 2);
+            }
+
+            @media #{$medium-width} {
+
+                margin-right: #{$results-entry-gap-y};
+
+                @media #{$browser-ie} {
+                    margin-right: $ie-results-entry-gap-y;
+                }
             }
         }
 
@@ -172,12 +220,20 @@
         &.field-Countries {
 
             display:     block;
+            max-height:  6.6vh;
+            overflow:    auto;
             font-family: monospace;
             font-size:   larger;
 
             > * {
                 margin-bottom: 0;
             }
+        }
+
+        &.field-RelatedISBNs {
+            width:      100%;
+            max-height: 7.5vh;
+            overflow:   auto;
         }
 
         &.field-Formats {

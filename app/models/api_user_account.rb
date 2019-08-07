@@ -11,7 +11,26 @@ require_relative 'api/user_account'
 
 # ApiUserAccount
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_account
+# @attr [Api::Address]            address
+# @attr [Boolean]                 allowAdultContent
+# @attr [Boolean]                 canDownload
+# @attr [String]                  dateOfBirth
+# @attr [Boolean]                 deleted
+# @attr [String]                  emailAddress
+# @attr [Api::Name]               guardian
+# @attr [Boolean]                 hasAgreement
+# @attr [String]                  language
+# @attr [Array<Api::Link>]        links
+# @attr [Boolean]                 locked
+# @attr [Api::Name]               name
+# @attr [String]                  phoneNumber
+# @attr [ProofOfDisabilityStatus] proofOfDisabilityStatus
+# @attr [Array<String>]           roles
+# @attr [SiteType]                site
+# @attr [SubscriptionStatus]      subscriptionStatus
+# @attr [String]                  userAccountId
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
 # NOTE: This duplicates:
 # @see Api::UserAccount
@@ -49,6 +68,7 @@ class ApiUserAccount < Api::Message
     has_many  :roles,                   String
     attribute :site,                    SiteType
     attribute :subscriptionStatus,      SubscriptionStatus
+    attribute :userAccountId,           String
   end
 
 end

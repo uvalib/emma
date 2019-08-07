@@ -17,7 +17,7 @@ module Api
 
     public
 
-    # TODO: ???
+    # TODO: Api::Common methods ???
 
   end
 
@@ -162,6 +162,18 @@ module Api
       default:  'Bookshare'
     },
 
+    ContentWarning: {
+      values:   %w(contentWarning sex violence drugs language intolerance) +
+                  %w(anyAdult unrated),
+      default:  'unrated'
+    },
+
+    ContributorType: {
+      values:   %w(author coWriter epilogueBy forwardBy introductionBy) +
+                  %w(editor composer arranger lyricist translator) +
+                  %w(transcriber abridger adapter),
+    },
+
     Direction: {
       values:   %w(asc desc),
       default:  'asc'
@@ -170,6 +182,10 @@ module Api
     Direction2: {
       values:   %w(asc desc),
       default:  'desc'
+    },
+
+    DisabilityPlan: {
+      values:   %w(iep section504),
     },
 
     DisabilityType: {
@@ -184,6 +200,7 @@ module Api
       default:  'DAISY'
     },
 
+    # NOTE: might be: %w(male female otherNonBinary)
     Gender: {
       values:   %w(Male Female Other),
       default:  'Other'
@@ -369,8 +386,11 @@ module Api
   class BrailleMusicScoreLayout < EnumType; end
   class BrailleType             < EnumType; end
   class CategoryType            < EnumType; end
+  class ContentWarning          < EnumType; end
+  class ContributorType         < EnumType; end
   class Direction               < EnumType; end
   class Direction2              < EnumType; end
+  class DisabilityPlan          < EnumType; end
   class DisabilityType          < EnumType; end
   class FormatType              < EnumType; end
   class Gender                  < EnumType; end

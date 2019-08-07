@@ -12,7 +12,14 @@ require_relative 'api/title_metadata_complete'
 
 # ApiTitleMetadataCompleteList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_title_metadata_complete_list
+# @attr [Array<AllowsType>]                 allows
+# @attr [Integer]                           limit
+# @attr [Array<Api::Link>]                  links
+# @attr [String]                            next
+# @attr [Array<Api::TitleMetadataComplete>] titles
+# @attr [Integer]                           totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_complete_list
 #
 class ApiTitleMetadataCompleteList < Api::Message
 

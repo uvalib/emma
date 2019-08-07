@@ -34,18 +34,30 @@ module GenericHelper
 
   # Indicate whether the item represents a true value.
   #
-  # @param [String, Boolean] value
+  # @param [Object] value
   #
   def true?(value)
-    TRUE_VALUES.include?(value.to_s.strip.downcase)
+    case value
+      when NilClass    then false
+      when TrueClass   then true
+      when FalseClass  then false
+      when Array, Hash then false
+      else                  TRUE_VALUES.include?(value.to_s.strip.downcase)
+    end
   end
 
   # Indicate whether the item represents a true value.
   #
-  # @param [String, Boolean] value
+  # @param [Object] value
   #
   def false?(value)
-    FALSE_VALUES.include?(value.to_s.strip.downcase)
+    case value
+      when NilClass    then false
+      when TrueClass   then false
+      when FalseClass  then true
+      when Array, Hash then false
+      else                  FALSE_VALUES.include?(value.to_s.strip.downcase)
+    end
   end
 
   # ===========================================================================

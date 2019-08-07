@@ -10,7 +10,12 @@ require_relative 'common/link_methods'
 
 # Api::CategorySummary
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_category_summary
+# @attr [String]           description
+# @attr [Array<Api::Link>] links
+# @attr [String]           name
+# @attr [Integer]          titleCount
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_category_summary
 #
 class Api::CategorySummary < Api::Record::Base
 

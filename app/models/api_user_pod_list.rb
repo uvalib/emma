@@ -12,7 +12,11 @@ require_relative 'api/user_pod'
 
 # ApiUserPodList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_pod_list
+# @attr [Array<AllowsType>]   allows
+# @attr [Array<Api::UserPod>] disabilities
+# @attr [Array<Api::Link>]    links
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_pod_list
 #
 class ApiUserPodList < Api::Message
 

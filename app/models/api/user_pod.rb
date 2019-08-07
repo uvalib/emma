@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::UserPod
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_pod
+# @attr [String] disabilityType
+# @attr [String] proofSource
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_pod
 #
 class Api::UserPod < Api::Record::Base
 

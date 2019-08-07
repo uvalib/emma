@@ -12,7 +12,11 @@ require_relative 'api/user_signed_agreement'
 
 # ApiUserSignedAgreementList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_signed_agreement_list
+# @attr [Array<AllowsType>]               allows
+# @attr [Array<Api::Link>]                links
+# @attr [Array<Api::UserSignedAgreement>] signedAgreements
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_signed_agreement_list
 #
 class ApiUserSignedAgreementList < Api::Message
 

@@ -11,7 +11,23 @@ require_relative 'narrator'
 
 # Api::ArtifactMetadata
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_artifact_metadata
+# @attr [String]                  brailleCode
+# @attr [BrailleGrade2]           brailleGrade
+# @attr [BrailleMusicScoreLayout] brailleMusicScoreLayout
+# @attr [BrailleType]             brailleType
+# @attr [IsoDate]                 dateAdded
+# @attr [IsoDuration]             duration
+# @attr [String]                  externalIdentifierCode
+# @attr [String]                  format
+# @attr [String]                  fundingSource
+# @attr [String]                  globalBookServiceId
+# @attr [Api::Narrator]           narrator
+# @attr [Integer]                 numberOfVolumes
+# @attr [String]                  producer
+# @attr [String]                  supplier
+# @attr [Api::Name]               transcriber
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_artifact_metadata
 #
 class Api::ArtifactMetadata < Api::Record::Base
 

@@ -28,6 +28,11 @@ body.home-dashboard {
             margin-top: 0.5rem;
             &:first-child { margin-top: 0; }
         }
+
+        > br {
+            margin-top: 0.25rem;
+            &:first-child { margin-top: 0.25rem; }
+        }
     }
 
     .sign-in {

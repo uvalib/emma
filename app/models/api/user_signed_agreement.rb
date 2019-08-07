@@ -9,7 +9,16 @@ require 'api/record'
 
 # Api::UserSignedAgreement
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_signed_agreement
+# @attr [String]        agreementId
+# @attr [AgreementType] agreementType
+# @attr [String]        dateExpired
+# @attr [String]        dateSigned
+# @attr [String]        printName
+# @attr [String]        recordingUser
+# @attr [Boolean]       signedByLegalGuardian
+# @attr [String]        username
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_signed_agreement
 #
 # NOTE: This duplicates:
 # @see ApiUserSignedAgreement

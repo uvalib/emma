@@ -13,9 +13,17 @@ require_relative 'api/status_model'
 
 # ApiAssignedTitleMetadataSummaryList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_assigned_title_metadata_summary_list
+# @attr [Array<AllowsType>]                        allows
+# @attr [Integer]                                  limit
+# @attr [Array<Api::Link>]                         links
+# @attr [Api::StatusModel]                         message
+# @attr [String]                                   next
+# @attr [Array<Api::AssignedTitleMetadataSummary>] titles
+# @attr [Integer]                                  totalResults
 #
-# NOTE: This duplicates:
+# @see https://apidocs.bookshare.org/reference/index.html#_assigned_title_metadata_summary_list
+#
+# NOTE: This duplicates the form of:
 # @see ApiTitleMetadataSummaryList
 #
 # noinspection RubyClassModuleNamingConvention

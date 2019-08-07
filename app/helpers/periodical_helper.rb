@@ -135,7 +135,8 @@ module PeriodicalHelper
   #
   def periodical_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :title
-    search_links(item, field, **opt.merge(link_method: :periodical_search_link))
+    opt = opt.merge(link_method: :periodical_search_link)
+    search_links(item, field, **opt)
   end
 
   # Create a link to the search results index page for the given term(s).
@@ -153,7 +154,8 @@ module PeriodicalHelper
   #
   def periodical_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :title
-    search_link(terms, field, **opt.merge(scope: :periodical))
+    opt = opt.merge(scope: :periodical)
+    search_link(terms, field, **opt)
   end
 
   # ===========================================================================

@@ -12,7 +12,10 @@ require_relative 'api/user_subscription_type'
 
 # ApiUserSubscriptionTypeList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_subscription_type_list
+# @attr [Array<Api::Link>]                 links
+# @attr [Array<Api::UserSubscriptionType>] userSubscriptionTypes
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription_type_list
 #
 class ApiUserSubscriptionTypeList < Api::Message
 

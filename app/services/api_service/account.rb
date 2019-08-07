@@ -115,6 +115,59 @@ class ApiService
       ApiMyAccountPreferences.new(response, error: exception)
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # == GET /v2/accounts/{userIdentifier}
+    # Get details about the specified user account.
+    #
+    # @param [User, String, nil] user       Default: @user
+    #
+    # @return [ApiUserAccount]
+    #
+    def get_account(user: @user)
+      username = name_of(user)
+      api(:get, 'accounts', username)
+      ApiUserAccount.new(response, error: exception)
+    end
+
+    # == PUT /v2/accounts/{userIdentifier}
+    # Update an existing user account.
+    #
+    # @param [User, String, nil] user       Default: @user
+    # @param [Hash]              opt        API URL parameters
+    #
+    # @option opt [String]   :firstName
+    # @option opt [String]   :lastName
+    # @option opt [String]   :phoneNumber
+    # @option opt [String]   :emailAddress
+    # @option opt [String]   :address1
+    # @option opt [String]   :address2
+    # @option opt [String]   :city
+    # @option opt [String]   :state
+    # @option opt [String]   :country
+    # @option opt [String]   :postalCode
+    # @option opt [String]   :guardianFirstName
+    # @option opt [String]   :guardianLastName
+    # @option opt [String]   :dateOfBirth
+    # @option opt [String]   :language
+    # @option opt [Boolean]  :allowAdultContent
+    # @option opt [SiteType] :site
+    # @option opt [RoleType] :role
+    # @option opt [String]   :password
+    #
+    # @return [ApiUserAccount]
+    #
+    def update_account(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:put, 'accounts', username, **opt)
+      ApiUserAccount.new(response, error: exception)
+    end
+
     # == POST /v2/accounts
     # Create a new user account.
     #
@@ -147,20 +200,7 @@ class ApiService
       ApiUserAccount.new(response, error: exception)
     end
 
-    # == GET /v2/accounts/:username
-    # Get details about the specified user account.
-    #
-    # @param [User, String, nil] user       Default: @user
-    #
-    # @return [ApiUserAccount]
-    #
-    def get_account(user: @user)
-      username = name_of(user)
-      api(:get, 'accounts', username)
-      ApiUserAccount.new(response, error: exception)
-    end
-
-    # == PUT /v2/accounts/:username/password
+    # == PUT /v2/accounts/{userIdentifier}/password
     # Update the password for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
@@ -198,7 +238,7 @@ class ApiService
       ApiTitleMetadataSummaryList.new(response, error: exception)
     end
 
-    # == GET /v2/assignedTitles/:username
+    # == GET /v2/assignedTitles/{userIdentifier}
     # Get a list of titles assigned to the specified organization member.
     #
     # @param [User, String, nil] user   Default: @user
@@ -218,7 +258,7 @@ class ApiService
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
     end
 
-    # == POST /v2/assignedTitles/:username
+    # == POST /v2/assignedTitles/{userIdentifier}
     # Assign a title to the specified organization member.
     #
     # @param [User, String, nil] user   Default: @user
@@ -235,7 +275,7 @@ class ApiService
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
     end
 
-    # == DELETE /v2/assignedTitles/:username
+    # == DELETE /v2/assignedTitles/{userIdentifier}/{bookshareId}
     # Assign a title to the specified organization member.
     #
     # @param [User, String, nil] user   Default: @user
@@ -250,45 +290,6 @@ class ApiService
       username = name_of(user)
       api(:delete, 'assignedTitles', username, **opt)
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # == GET /v2/myOrganization/members
-    # Get a list of members of the current (sponsor) user's organization.
-    #
-    # @param [Hash] opt               API URL parameters
-    #
-    # @option opt [String]          :start
-    # @option opt [Integer]         :limit        Default: 10
-    # @option opt [MemberSortOrder] :sortOrder    Default: 'lastName'
-    # @option opt [Direction]       :direction    Default: 'asc'
-    #
-    # @return [ApiUserAccountList]
-    #
-    def get_organization_members(**opt)
-      validate_parameters(__method__, opt)
-      api(:get, 'myOrganization', 'members', **opt)
-      ApiUserAccountList.new(response, error: exception)
-    end
-
-    # == GET /v2/myOrganization/members/:id
-    # Get a member of the current (sponsor) user's organization.
-    #
-    # NOTE: This is not a real Bookshare API call.
-    #
-    # @param [String] username
-    #
-    # @return [ApiUserAccount]
-    #
-    def get_organization_member(username:)
-      all = get_organization_members(limit: :max)
-      om  = all.userAccounts.find { |list| list.identifier == username }
-      ApiUserAccount.new(om)
     end
 
     # =========================================================================
@@ -311,7 +312,7 @@ class ApiService
       raise Api::AccountError, message
     end
 
-  end unless defined?(Account)
+  end unless defined?(ApiService::Account)
 
 end
 

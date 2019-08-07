@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::ErrorModel
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_error_model
+# @attr [String]        key
+# @attr [Array<String>] messages
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_error_model
 #
 class Api::ErrorModel < Api::Record::Base
 

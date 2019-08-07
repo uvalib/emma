@@ -10,7 +10,12 @@ require_relative 'common/link_methods'
 
 # Api::Category
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_category
+# @attr [CategoryType]     categoryType
+# @attr [String]           description
+# @attr [Array<Api::Link>] links
+# @attr [String]           name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_category
 #
 class Api::Category < Api::Record::Base
 

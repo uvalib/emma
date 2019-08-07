@@ -9,7 +9,9 @@ require 'api/record'
 
 # Api::DownloadTimeframe
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_download_timeframe
+# @attr [Timeframe] name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_download_timeframe
 #
 class Api::DownloadTimeframe < Api::Record::Base
 

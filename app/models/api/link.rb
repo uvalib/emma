@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::Link
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_link
+# @attr [String] href
+# @attr [String] rel
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_link
 #
 class Api::Link < Api::Record::Base
 

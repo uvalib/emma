@@ -78,7 +78,7 @@ class ApiService
       ApiPeriodicalSeriesMetadataSummaryList.new(response, error: exception)
     end
 
-    # == GET /v2/periodicals/:seriesId
+    # == GET /v2/periodicals/{seriesId}
     # Get metadata for the specified Bookshare periodical.
     #
     # @param [String] seriesId
@@ -93,7 +93,7 @@ class ApiService
       ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
     end
 
-    # == PUT /v2/periodicals/:seriesId
+    # == PUT /v2/periodicals/{seriesId}
     # Update the series metadata for an existing Bookshare periodical.
     #
     # @param [String] seriesId
@@ -104,8 +104,8 @@ class ApiService
     # @option opt [String]                :description
     # @option opt [String]                :publisher
     # @option opt [String]                :externalCategoryCode
-    # @option opt [String, Array<String>] :categories # NOTE: <string>array(multi)
-    # @option opt [String, Array<String>] :languages  # NOTE: <string>array(multi)
+    # @option opt [String, Array<String>] :categories
+    # @option opt [String, Array<String>] :languages
     #
     # @return [ApiPeriodicalSeriesMetadataSummary]
     #
@@ -115,7 +115,7 @@ class ApiService
       ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
     end
 
-    # == GET /v2/periodicals/:seriesId/editions
+    # == GET /v2/periodicals/{seriesId}/editions
     # Get a list of editions for the specified Bookshare periodical.
     #
     # @param [String] seriesId
@@ -133,7 +133,7 @@ class ApiService
       ApiPeriodicalEditionList.new(response, error: exception)
     end
 
-    # == PUT /v2/periodicals/:seriesId/editions/:editionId
+    # == PUT /v2/periodicals/{seriesId}/editions/{editionId}
     # Update the metadata of an existing periodical edition.
     #
     # @param [String] seriesId
@@ -151,7 +151,7 @@ class ApiService
       ApiPeriodicalEdition.new(response, error: exception)
     end
 
-    # == GET /v2/periodicals/:seriesId/editions/:editionId/:format
+    # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}
     # Download an artifact of the specified edition of a Bookshare periodical.
     #
     # @param [String]     seriesId
@@ -189,7 +189,7 @@ class ApiService
       raise Api::PeriodicalError, message
     end
 
-  end unless defined?(Periodical)
+  end unless defined?(ApiService::Periodical)
 
 end
 

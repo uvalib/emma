@@ -12,7 +12,20 @@ require_relative 'periodical_edition_summary'
 
 # Api::PeriodicalSeriesMetadataSummary
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_series_metadata_summary
+# @attr [Array<Api::Category>]          categories
+# @attr [Array<String>]                 countries
+# @attr [String]                        description
+# @attr [Integer]                       editionCount
+# @attr [String]                        externalCategoryCode
+# @attr [String]                        issn
+# @attr [Array<String>]                 languages
+# @attr [Api::PeriodicalEditionSummary] latestEdition
+# @attr [Array<Api::Link>]              links
+# @attr [String]                        publisher
+# @attr [String]                        seriesId
+# @attr [String]                        title
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary
 #
 # NOTE: This duplicates:
 # @see ApiPeriodicalSeriesMetadataSummary

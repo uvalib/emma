@@ -13,7 +13,15 @@ require_relative 'api/status_model'
 
 # ApiPeriodicalEditionList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition_list
+# @attr [Array<AllowsType>]             allows
+# @attr [Integer]                       limit
+# @attr [Array<Api::Link>]              links
+# @attr [Api::StatusModel]              message
+# @attr [String]                        next
+# @attr [Array<Api::PeriodicalEdition>] periodicalEditions
+# @attr [Integer]                       totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition_list
 #
 class ApiPeriodicalEditionList < Api::Message
 

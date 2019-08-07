@@ -87,15 +87,50 @@ class ApiService
 
     # @type [Hash{Symbol=>Array<Symbol>}]
     REQUIRED_PARAMETERS = {
-      create_account:        %i[firstName lastName emailAddress address1 city
-                                country postalCode],
-      create_subscription:   %i[startDate userSubscriptionType],
+
+      create_account: %i[
+        firstName
+        lastName
+        emailAddress
+        address1
+        city
+        country
+        postalCode
+      ],
+
       create_assigned_title: %i[bookshareId],
       remove_assigned_title: %i[bookshareId],
-      create_user_agreement: %i[agreementType dateSigned printName],
-      create_user_pod:       %i[disabilityType proofSource],
+
+      create_organization: %i[
+        organizationName
+        address1
+        city
+        country
+        postalCode
+        organizationType
+        contactFirstName
+        contactLastName
+        contactPhoneNumber
+        contactTitle
+        contactEmailAddress
+      ],
+      create_organization_member: %i[
+        firstName
+        lastName
+        dateOfBirth
+        grade
+        disabilityType
+        proofSource
+      ],
+
+      create_subscription:   %i[startDate userSubscriptionType],
       update_subscription:   %i[startDate userSubscriptionType],
+
+      create_user_agreement: %i[agreementType dateSigned printName],
+
+      create_user_pod:       %i[disabilityType proofSource],
       update_user_pod:       %i[proofSource],
+
     }.deep_freeze
 
     # Original request parameters which should not be passed on to the API.
@@ -312,7 +347,7 @@ class ApiService
       Log.error { "API #{__method__}: #{error.message}" }
       @exception = error unless noexcp
 
-    ensure # TODO: remove?
+    ensure
       __debug { "<<< #{__method__} | #{@action.inspect} | status = #{@response&.status} | data = #{@response&.body.inspect.truncate(256)}" }
       @response = result
       return result
@@ -496,7 +531,7 @@ class ApiService
       end
     end
 
-  end unless defined?(Common)
+  end unless defined?(ApiService::Common)
 
 end
 

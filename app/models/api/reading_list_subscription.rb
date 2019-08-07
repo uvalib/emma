@@ -9,7 +9,11 @@ require_relative 'common/link_methods'
 
 # Api::ReadingListSubscription
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_subscription
+# @attr [Array<AllowsType>] allows
+# @attr [Boolean]           enabled
+# @attr [Array<Api::Link>]  links
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_subscription
 #
 class Api::ReadingListSubscription < Api::Record::Base
 

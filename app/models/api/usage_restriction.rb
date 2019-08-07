@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::UsageRestriction
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_usage_restriction
+# @attr [String] name
+# @attr [String] usageRestrictionId
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_usage_restriction
 #
 class Api::UsageRestriction < Api::Record::Base
 

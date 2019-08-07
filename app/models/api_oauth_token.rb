@@ -9,7 +9,13 @@ require 'api/message'
 
 # ApiOauthToken
 #
-# @see https://apidocs-qa.bookshare.org/auth/index.html#_token
+# @attr [String] access_token
+# @attr [String] expires_in
+# @attr [String] refresh_token
+# @attr [String] scope
+# @attr [String] token_type
+#
+# @see https://apidocs.bookshare.org/auth/index.html#_token
 #
 class ApiOauthToken < Api::Message
 

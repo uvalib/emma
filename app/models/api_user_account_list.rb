@@ -12,9 +12,14 @@ require_relative 'api/user_account'
 
 # ApiUserAccountList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_account_list
+# @attr [Array<AllowsType>]       allows
+# @attr [Array<Api::Link>]        links
+# @attr [Integer]                 totalResults
+# @attr [Array<Api::UserAccount>] userAccounts
 #
-# TODO: If this is a sequence then why no :next member?
+# @see https://apidocs.bookshare.org/reference/index.html#_user_account_list
+#
+# NOTE: If this is a sequence then why no :next member?
 #
 class ApiUserAccountList < Api::Message
 

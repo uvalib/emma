@@ -198,6 +198,8 @@ module HtmlHelper
   def make_link(label, path, **opt, &block)
     if opt[:target] == '_blank'
       opt[:rel] = 'noopener'
+      opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
+      opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
     end
     unless opt.key?(:tabindex)
       opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')

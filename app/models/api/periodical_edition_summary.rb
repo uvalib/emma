@@ -9,7 +9,10 @@ require_relative 'common/edition_methods'
 
 # Api::PeriodicalEditionSummary
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition_summary
+# @attr [String] editionId
+# @attr [String] editionName
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition_summary
 #
 class Api::PeriodicalEditionSummary < Api::Record::Base
 

@@ -174,7 +174,7 @@ module Api
       end
     end
 
-  end unless defined?(Schema)
+  end unless defined?(Api::Schema)
 
 end
 

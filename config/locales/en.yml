@@ -240,7 +240,7 @@ en:
       index:
         label:          '%{Items}'
         title:          '%{Item} Index'
-        tooltip:        'Search for more %{items} with %{terms}.'
+        tooltip:        'Find more %{items} with %{terms}.'
 
       show:
         label:          '%{Item}'
@@ -321,7 +321,7 @@ en:
       index:
         label:          'Titles'
         title:          'Catalog Titles Index'
-        tooltip:        'Search for more catalog items with %{terms}.'
+        tooltip:        'Find more catalog items with %{terms}.'
 
         thumbnail:
           image:
@@ -382,7 +382,7 @@ en:
       index:
         label:          'Periodicals'
         title:          'Periodicals Index'
-        tooltip:        'Search for more periodicals with %{terms}.'
+        tooltip:        'Find more periodicals with %{terms}.'
 
       show:
         label:          'Periodical'
@@ -424,7 +424,7 @@ en:
       index:
         label:          'Editions'
         title:          'Editions'
-        tooltip:        'Search for more periodical editions with %{terms}.'
+        tooltip:        'Find more periodical editions with %{terms}.'
 
       show:
         label:          'Edition'

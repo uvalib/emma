@@ -12,7 +12,13 @@ require_relative 'api/category_summary'
 
 # ApiCategoriesList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_categories_list
+# @attr [Array<Api::CategorySummary>] categories
+# @attr [Integer]                     limit
+# @attr [Array<Api::Link>]            links
+# @attr [String]                      next
+# @attr [Integer]                     totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_categories_list
 #
 class ApiCategoriesList < Api::Message
 

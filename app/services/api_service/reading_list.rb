@@ -92,7 +92,7 @@ class ApiService
       ApiReadingList.new(response, error: exception)
     end
 
-    # == PUT /v2/mylists/:readingListId/subscription
+    # == PUT /v2/mylists/{readingListId}/subscription
     # Subscribe to a reading list (that the user does not own).
     #
     # @param [String] readingListId
@@ -109,7 +109,7 @@ class ApiService
       ApiReadingListUserView.new(response, error: exception)
     end
 
-    # == PUT /v2/mylists/:readingListId/subscription
+    # == PUT /v2/mylists/{readingListId}/subscription
     # Unsubscribe from a reading list (that the user does not own).
     #
     # @param [String] readingListId
@@ -150,7 +150,7 @@ class ApiService
       ApiReadingListList.new(response, error: exception)
     end
 
-    # == GET /v2/lists/:readingListId
+    # == GET /v2/lists/{readingListId}
     # Get metadata for an existing reading list.
     #
     # NOTE: This is not a real Bookshare API call.
@@ -165,7 +165,7 @@ class ApiService
       ApiReadingListUserView.new(rl)
     end
 
-    # == PUT /v2/lists/:readingListId
+    # == PUT /v2/lists/{readingListId}
     # Edit the metadata of an existing reading list.
     #
     # @param [String] readingListId
@@ -183,7 +183,7 @@ class ApiService
       ApiReadingList.new(response, error: exception)
     end
 
-    # == GET /v2/lists/:readingListId/titles
+    # == GET /v2/lists/{readingListId}/titles
     # Get a listing of the Bookshare titles in the specified reading list.
     #
     # @param [String] readingListId
@@ -202,7 +202,7 @@ class ApiService
       ApiReadingListTitlesList.new(response, error: exception)
     end
 
-    # == POST /v2/lists/:readingListId/titles
+    # == POST /v2/lists/{readingListId}/titles
     # Add a Bookshare title to the specified reading list.
     #
     # @param [String] readingListId
@@ -218,7 +218,7 @@ class ApiService
       ApiReadingListTitlesList.new(response, error: exception)
     end
 
-    # == DELETE /v2/lists/:readingListId/titles/:bookshareId
+    # == DELETE /v2/lists/{readingListId}/titles/{bookshareId}
     # Remove a title from the specified reading list.
     #
     # @param [String] readingListId
@@ -253,7 +253,7 @@ class ApiService
       raise Api::ReadingListError, message
     end
 
-  end unless defined?(ReadingList)
+  end unless defined?(ApiService::ReadingList)
 
 end
 

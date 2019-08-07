@@ -37,7 +37,7 @@ module LogConcern
   #
   def suppress_logger(logging = nil)
     logging = params[:logging] if logging.nil?
-    @logger_suppressed = (false?(logging) unless logging.nil?)
+    @logger_suppressed = false?(logging)
     Log.silent(true) if @logger_suppressed
   end
 

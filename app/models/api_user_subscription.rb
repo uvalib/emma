@@ -11,7 +11,16 @@ require_relative 'api/user_subscription'
 
 # ApiUserSubscription
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_subscription
+# @attr [Api::DownloadTimeframe]    downloadTimeframe
+# @attr [String]                    endDate
+# @attr [Array<Api::Link>]          links
+# @attr [String]                    notes
+# @attr [Integer]                   numBooksAllowed
+# @attr [String]                    startDate
+# @attr [String]                    subscriptionId
+# @attr [Api::UserSubscriptionType] userSubscriptionType
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription
 #
 # NOTE: This duplicates:
 # @see Api::UserSubscription

@@ -15,10 +15,24 @@ require_relative 'api/student_status'
 
 # ApiMyAccountSummary
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_myaccount_summary
+# @attr [Api::Address]            address
+# @attr [Boolean]                 canDownload
+# @attr [String]                  dateOfBirth
+# @attr [Api::Name]               guardian
+# @attr [Boolean]                 hasAgreement
+# @attr [Array<Api::Link>]        links
+# @attr [Api::Name]               name
+# @attr [String]                  phoneNumber
+# @attr [ProofOfDisabilityStatus] proofOfDisabilityStatus
+# @attr [Api::StudentStatus]      studentStatus
+# @attr [SubscriptionStatus]      subscriptionStatus
+# @attr [String]                  username
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_myaccount_summary
 #
 # == Implementation Notes
 # Similar to ApiUserAccount, but without the following fields:
+#   :allowAdultContent
 #   :deleted
 #   :emailAddress
 #   :language
@@ -34,7 +48,7 @@ class ApiMyAccountSummary < Api::Message
   schema do
     has_one   :address,                 Api::Address
     attribute :canDownload,             Boolean
-    attribute :dateOfBirth,             String # TODO: ???
+    attribute :dateOfBirth,             String
     has_one   :guardian,                Api::Name
     attribute :hasAgreement,            Boolean
     has_many  :links,                   Api::Link

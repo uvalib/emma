@@ -9,7 +9,10 @@ require_relative 'grade'
 
 # Api::StudentStatus
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_studentstatus
+# @attr [Api:Grade] grade
+# @attr [String]    organizationName
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_studentstatus
 #
 class Api::StudentStatus < Api::Record::Base
 

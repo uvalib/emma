@@ -13,7 +13,11 @@ require_relative 'api/name'
 
 # ApiUserIdentity
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_identity
+# @attr [Array<Api::Link>] links
+# @attr [Api::Name]        name
+# @attr [String]           username
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_identity
 #
 class ApiUserIdentity < Api::Message
 

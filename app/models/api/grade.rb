@@ -9,16 +9,22 @@ require_relative 'common/link_methods'
 
 # Api::Grade
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_grade
+# @attr [String]           gradeCode
+# @attr [String]           gradeId    *deprecated*
+# @attr [Array<Api::Link>] links
+# @attr [String]           name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_grade
 #
 class Api::Grade < Api::Record::Base
 
   include Api::Common::LinkMethods
 
   schema do
-    attribute :gradeId, String
-    has_many  :links,   Api::Link
-    attribute :name,    String
+    attribute :gradeCode, String
+    attribute :gradeId,   String                            # NOTE: deprecated
+    has_many  :links,     Api::Link
+    attribute :name,      String
   end
 
   # ===========================================================================
@@ -54,7 +60,7 @@ class Api::Grade < Api::Record::Base
   # @return [String]
   #
   def identifier
-    gradeId.to_s
+    gradeCode&.to_s || gradeId.to_s
   end
 
 end

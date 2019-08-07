@@ -9,7 +9,14 @@ require_relative 'common/link_methods'
 
 # Api::Name
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_name
+# @attr [String]           firstName
+# @attr [String]           lastName
+# @attr [Array<Api::Link>] links
+# @attr [String]           middle
+# @attr [String]           prefix
+# @attr [String]           suffix
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_name
 #
 class Api::Name < Api::Record::Base
 

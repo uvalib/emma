@@ -46,7 +46,7 @@ class ApiService
 
     public
 
-    # == GET /v2/accounts/:username/agreements
+    # == GET /v2/accounts/{userIdentifier}/agreements
     # Get the list of signed agreements for an existing user.
     #
     # @param [User, String, nil] user   Default: @user
@@ -59,7 +59,7 @@ class ApiService
       ApiUserSignedAgreementList.new(response, error: exception)
     end
 
-    # == POST /v2/accounts/:username/agreements
+    # == POST /v2/accounts/{userIdentifier}/agreements
     # Create a new signed agreement record for an existing user
     #
     # @param [User, String, nil] user   Default: @user
@@ -79,7 +79,7 @@ class ApiService
       ApiUserSignedAgreement.new(response, error: exception)
     end
 
-    # == POST /v2/accounts/:username/agreements/:agreementId/expired
+    # == POST /v2/accounts/{userIdentifier}/agreements/{id}/expired
     # Expire a signed agreement.
     #
     # @param [User, String, nil] user         Default: @user
@@ -113,7 +113,7 @@ class ApiService
       raise Api::AccountError, message
     end
 
-  end unless defined?(Agreement)
+  end unless defined?(ApiService::Agreement)
 
 end
 

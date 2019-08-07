@@ -104,6 +104,10 @@ module Api
   #
   class ReadingListError < RequestError; end
 
+  # Exception raised to indicate a problem with an organization operation.
+  #
+  class OrganizationError < RequestError; end
+
 end
 
 __loading_end(__FILE__)

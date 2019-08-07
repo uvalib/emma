@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::Format
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_format
+# @attr [String] formatId
+# @attr [String] name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_format
 #
 class Api::Format < Api::Record::Base
 

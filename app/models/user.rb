@@ -7,13 +7,11 @@ __loading_begin(__FILE__)
 
 # Model for the representation of an EMMA/Bookshare user.
 #
-# NOTE: Section 1.8 of the API documentation ("User Types") is TBD.
-#
 # == Implementation Notes
 # NOTE: There is still some friction between the concepts of User and Member.
 #
 # === Documented "types" of "users"
-# Section 2.2 of the API documentation mentions "Membership Assistants" and
+# Section 2.6 of the API documentation mentions "Membership Assistants" and
 # "administrators" as being able to access "/v2/accounts" where:
 # - A Membership Assistant is allowed to see and manage only those user
 #   accounts that are associated with their site.

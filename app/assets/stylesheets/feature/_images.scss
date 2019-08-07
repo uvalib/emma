@@ -7,10 +7,11 @@
 //=============================================================================
 
 $image-border-width: 1px;
+$image-border-color: gray;
 
 %image {
     object-fit:    contain;
-    border:        $image-border-width solid gray;
+    border:        $image-border-width solid $image-border-color;
     border-radius: 3px;
 }
 

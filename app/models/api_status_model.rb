@@ -9,7 +9,10 @@ require 'api/message'
 
 # ApiStatusModel
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_status_model
+# @attr [String]        key
+# @attr [Array<String>] messages
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_status_model
 #
 # NOTE: This duplicates:
 # @see Api::StatusModel

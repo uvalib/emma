@@ -13,7 +13,15 @@ require_relative 'api/reading_list_title'
 
 # ApiReadingListTitlesList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_titles_list
+# @attr [Array<AllowsType>]            allows
+# @attr [Integer]                      limit
+# @attr [Array<Api::Link>]             links
+# @attr [String]                       next
+# @attr [String]                       readingListId
+# @attr [Array<Api::ReadingListTitle>] titles
+# @attr [Integer]                      totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_titles_list
 #
 class ApiReadingListTitlesList < Api::Message
 

@@ -9,7 +9,11 @@ require 'api/record'
 
 # Api::Narrator
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_narrator
+# @attr [Gender]       gender
+# @attr [String]       name
+# @attr [NarratorType] type
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_narrator
 #
 class Api::Narrator < Api::Record::Base
 

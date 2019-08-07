@@ -11,7 +11,33 @@ require_relative 'common/title_methods'
 
 # Api::ReadingListTitle
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_title
+# @attr [Array<AllowsType>]  allows
+# @attr [Array<Api::Name>]   authors            *deprecated*
+# @attr [Boolean]            available
+# @attr [String]             award
+# @attr [String]             bookshareId
+# @attr [String]             category
+# @attr [Array<Api::Name>]   composers          *deprecated*
+# @attr [String]             copyrightDate
+# @attr [String]             dateAdded
+# @attr [Array<Api::Format>] formats
+# @attr [String]             instruments
+# @attr [String]             isbn13
+# @attr [Array<String>]      languages
+# @attr [Array<Api::Link>]   links
+# @attr [Integer]            month
+# @attr [String]             publishDate
+# @attr [Integer]            ranking
+# @attr [String]             seriesNumber
+# @attr [String]             seriesTitle
+# @attr [String]             subtitle
+# @attr [String]             synopsis
+# @attr [String]             title
+# @attr [String]             titleContentType
+# @attr [String]             vocalParts
+# @attr [Integer]            year
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_title
 #
 class Api::ReadingListTitle < Api::Record::Base
 
@@ -21,12 +47,12 @@ class Api::ReadingListTitle < Api::Record::Base
 
   schema do
     has_many  :allows,           AllowsType
-    has_many  :authors,          Api::Name
+    has_many  :authors,          Api::Name                  # NOTE: deprecated
     attribute :available,        Boolean
     attribute :award,            String
     attribute :bookshareId,      String
     attribute :category,         String
-    has_many  :composers,        Api::Name
+    has_many  :composers,        Api::Name                  # NOTE: deprecated
     attribute :copyrightDate,    String
     attribute :dateAdded,        String
     has_many  :formats,          Api::Format

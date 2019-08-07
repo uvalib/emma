@@ -138,7 +138,7 @@ module TitleHelper
     title_search_links(item, :categories, **opt)
   end
 
-  # Item authors as search links.
+  # Item author(s) as search links.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Passed to #title_search_links
@@ -147,10 +147,23 @@ module TitleHelper
   # @return [nil]
   #
   def author_links(item, **opt)
-    title_search_links(item, :author, **opt)
+    title_search_links(item, :author_list, **opt)
   end
 
-  # Item composers as search links.
+  # Item editor(s) as search links.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def editor_links(item, **opt)
+    opt = opt.merge(method_opt: { role: true })
+    title_search_links(item, :editor_list, **opt)
+  end
+
+  # Item composer(s) as search links.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Passed to #title_search_links
@@ -159,7 +172,34 @@ module TitleHelper
   # @return [nil]
   #
   def composer_links(item, **opt)
-    title_search_links(item, :composer, **opt)
+    opt = opt.merge(method_opt: { role: true })
+    title_search_links(item, :composer_list, **opt)
+  end
+
+  # Item narrator(s) as search links.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def narrator_links(item, **opt)
+    opt = opt.merge(method_opt: { role: true })
+    title_search_links(item, :narrator_list, **opt)
+  end
+
+  # Item creator(s) as search links.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #title_search_links
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def creator_links(item, **opt)
+    opt = opt.merge(method_opt: { role: true })
+    title_search_links(item, :creator_list, **opt)
   end
 
   # Item formats as search links.
@@ -228,7 +268,8 @@ module TitleHelper
   #
   def title_search_links(item, field = nil, **opt)
     field ||= opt[:field] || :keyword
-    search_links(item, field, **opt.merge(link_method: :title_search_link))
+    opt = opt.merge(link_method: :title_search_link)
+    search_links(item, field, **opt)
   end
 
   # A link to the catalog item search results index page for the given term(s).
@@ -242,7 +283,8 @@ module TitleHelper
   #
   def title_search_link(terms, field = nil, **opt)
     field ||= opt[:field] || :keyword
-    search_link(terms, field, **opt.merge(scope: :title))
+    opt = opt.merge(scope: :title)
+    search_link(terms, field, **opt)
   end
 
   # ===========================================================================
@@ -251,8 +293,8 @@ module TitleHelper
 
   public
 
-  # Fields from Api::TitleMetadataComplete, Api::TitleMetadataSummary,
-  # Api::TitleMetadataDetail, Api::AssignedTitleMetadataSummary.
+  # Fields from Api::AssignedTitleMetadataSummary, Api::TitleMetadataComplete,
+  # Api::TitleMetadataSummary, ApiTitleMetadataDetail.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -279,6 +321,7 @@ module TitleHelper
 
     # === Contributors ===
     Authors:              :authors,
+    Editors:              :editors,
     Composers:            :composers,
     Lyricists:            :lyricists,
     Arrangers:            :arrangers,
@@ -286,8 +329,8 @@ module TitleHelper
 
     # === Description ===
     Year:                 :year,
-    Languages:            :languages,
     Synopsis:             :contents,
+    Languages:            :languages,
     Categories:           :categories,
     Countries:            :countries,
 

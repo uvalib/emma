@@ -12,7 +12,14 @@ require_relative 'api/reading_list_user_view'
 
 # ApiReadingListList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_list
+# @attr [Array<AllowsType>]               allows
+# @attr [Integer]                         limit
+# @attr [Array<Api::Link>]                links
+# @attr [Array<Api::ReadingListUserView>] lists
+# @attr [String]                          next
+# @attr [Integer]                         totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_list
 #
 class ApiReadingListList < Api::Message
 

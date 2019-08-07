@@ -13,7 +13,15 @@ require_relative 'api/status_model'
 
 # ApiPeriodicalSeriesMetadataSummaryList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_series_metadata_summary_list
+# @attr [Array<AllowsType>]                           allows
+# @attr [Integer]                                     limit
+# @attr [Array<Api::Link>]                            links
+# @attr [Api::StatusModel]                            message
+# @attr [String]                                      next
+# @attr [Array<Api::PeriodicalSeriesMetadataSummary>] periodicals
+# @attr [Integer]                                     totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary_list
 #
 # noinspection RubyClassModuleNamingConvention
 class ApiPeriodicalSeriesMetadataSummaryList < Api::Message

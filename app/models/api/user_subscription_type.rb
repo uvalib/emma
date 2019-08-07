@@ -9,7 +9,10 @@ require 'api/record'
 
 # Api::UserSubscriptionType
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_user_subscription_type
+# @attr [String] description
+# @attr [String] name
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription_type
 #
 class Api::UserSubscriptionType < Api::Record::Base
 

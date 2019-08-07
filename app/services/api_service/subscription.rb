@@ -46,7 +46,7 @@ class ApiService
 
     public
 
-    # == GET /v2/accounts/:username/subscriptions
+    # == GET /v2/accounts/{userIdentifier}/subscriptions
     # Get the list of membership subscriptions for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
@@ -59,7 +59,7 @@ class ApiService
       ApiUserSubscriptionList.new(response, error: exception)
     end
 
-    # == POST /v2/accounts/:username/subscriptions
+    # == POST /v2/accounts/{userIdentifier}/subscriptions
     # Create a new membership subscription for an existing user.
     #
     # @param [User, String, nil] user   Default: @user
@@ -81,7 +81,7 @@ class ApiService
       ApiUserSubscription.new(response, error: exception)
     end
 
-    # == GET /v2/accounts/:username/subscriptions/:subscriptionId
+    # == GET /v2/accounts/{userIdentifier}/subscriptions/{subscriptionId}
     # Get the specified membership subscription for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
@@ -95,7 +95,7 @@ class ApiService
       ApiUserSubscription.new(response, error: exception)
     end
 
-    # == PUT /v2/accounts/:username/subscriptions/:subscriptionId
+    # == PUT /v2/accounts/{userIdentifier}/subscriptions/{subscriptionId}
     # Update an existing membership subscription for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
@@ -117,6 +117,12 @@ class ApiService
       api(:put, 'accounts', username, 'subscriptions', subscriptionId, **opt)
       ApiUserSubscription.new(response, error: exception)
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
 
     # == GET /v2/subscriptiontypes
     # Get the list of subscription types available to users of the Membership
@@ -149,7 +155,7 @@ class ApiService
       raise Api::SubscriptionError, message
     end
 
-  end unless defined?(Subscription)
+  end unless defined?(ApiService::Subscription)
 
 end
 

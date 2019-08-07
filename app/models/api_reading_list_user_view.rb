@@ -11,7 +11,20 @@ require_relative 'api/reading_list_user_view'
 
 # ApiReadingListUserView
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_reading_list_user_view
+# @attr [Access]                       access
+# @attr [Array<AllowsType>]            allows
+# @attr [String]                       assignedBy
+# @attr [String]                       dateUpdated
+# @attr [String]                       description
+# @attr [Array<Api::Link>]             links
+# @attr [Integer]                      memberCount
+# @attr [String]                       name
+# @attr [String]                       owner
+# @attr [String]                       readingListId
+# @attr [Api::ReadingListSubscription] subscription
+# @attr [Integer]                      titleCount
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_reading_list_user_view
 #
 # NOTE: This duplicates:
 # @see Api::ReadingListUserView

@@ -11,7 +11,14 @@ require_relative 'api/periodical_edition'
 
 # ApiPeriodicalEdition
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_periodical_edition
+# @attr [String]             editionId
+# @attr [String]             editionName
+# @attr [String]             expirationDate
+# @attr [Array<Api::Format>] formats
+# @attr [Array<Api::Link>]   links
+# @attr [String]             publicationDate
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition
 #
 # NOTE: This duplicates:
 # @see Api::PeriodicalEdition

@@ -42,6 +42,13 @@ module ResourceHelper
   #
   NO_RESULTS = 'NONE FOUND' # TODO: I18n
 
+  # Creator field categories.
+  #
+  # @type [Array<Symbol>]
+  #
+  CREATOR_FIELDS =
+    Api::Common::TitleMethods::CREATOR_TYPES.map(&:to_sym).freeze
+
   # Options which are consumed locally by the named methods and are not passed
   # on to the underlying method.
   #
@@ -49,7 +56,7 @@ module ResourceHelper
   #
   RESOURCE_LINK_OPTIONS = {
     item_link:    %i[label no_link path path_method tooltip scope controller],
-    search_links: %i[field method separator link_method],
+    search_links: %i[field method method_opt separator link_method],
     search_link:  %i[field all_words no_link scope controller],
     record_links: %i[no_link separator],
   }.deep_freeze
@@ -112,6 +119,7 @@ module ResourceHelper
   #
   # @option opt [Symbol] :field
   # @option opt [Symbol] :method
+  # @option opt [Hash]   :method_opt    Passed to *method* call.
   # @option opt [String] :separator     Default: #DEFAULT_ELEMENT_SEPARATOR
   # @option opt [Symbol] :link_method   Default: :search_link
   #
@@ -120,8 +128,19 @@ module ResourceHelper
   #
   def search_links(item, field = nil, **opt)
 
-    field  = opt[:field]  || field || :title
-    method = opt[:method] || field.to_s.pluralize.to_sym
+    method = opt[:method]
+    field  = (opt[:field] || field || :title).to_s
+    case field
+      when 'creator_list'
+        method ||= field.to_sym
+        field    = :author
+      when /_list$/
+        method ||= field.to_sym
+        field    = field.delete_suffix('_list').to_sym
+      else
+        method ||= field.pluralize.to_sym
+        field    = field.to_sym
+    end
     __debug { "#{__method__}: item.#{method} invalid" } unless item.respond_to?(method)
     return unless item.respond_to?(method)
 
@@ -130,10 +149,13 @@ module ResourceHelper
     link_method = opt[:link_method] || :search_link
     check_link  = !opt.key?(:no_link)
 
-    Array.wrap(item.send(method))
+    method_opt = (opt[:method_opt].presence if item.method(method).arity >= 0)
+    values = method_opt ? item.send(method, **method_opt) : item.send(method)
+    Array.wrap(values)
       .map { |record|
         link_opt = html_opt
         if check_link
+          # noinspection RubyCaseWithoutElseBlockInspection
           no_link =
             case field
               when :categories then !record.bookshare_category
@@ -175,11 +197,9 @@ module ResourceHelper
     return if terms.blank?
 
     # Generate the link label.
-    label =
-      if %i[language languages].include?(field)
-        ISO_639.find(terms)&.english_name
-      end
-    label ||= terms
+    ftype = field_category(field)
+    label = (ftype == :language) && ISO_639.find(terms)&.english_name || terms
+    terms = terms.sub(/\s+\([^)]+\)$/, '') if CREATOR_FIELDS.include?(ftype)
 
     # If this instance should not be rendered as a link, return now.
     return content_tag(:span, label, **html_opt) if opt[:no_link]
@@ -218,7 +238,7 @@ module ResourceHelper
   # Create record links to an external target or via the internal API interface
   # endpoint.
   #
-  # @param [Api::Record::Base, Array<String>] links
+  # @param [Api::Record::Base, Array<String>, String] links
   # @param [Hash] opt                 Passed to #make_link except for:
   #
   # @option opt [Boolean] :no_link
@@ -241,6 +261,32 @@ module ResourceHelper
         content_tag(:div, link, class: 'non-link')
       end
     }.compact.join(separator).html_safe
+  end
+
+  # A direct link to a Bookshare page to open in a new browser tab.
+  #
+  # @overload bookshare_link(item)
+  #   @param [Api::Record::Base] item
+  #
+  # @overload bookshare_link(item, path, **path_opt)
+  #   @param [String] item
+  #   @param [String] path
+  #   @param [Hash]   path_opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bookshare_link(item, path = nil, **path_opt)
+    html_opt = { target: '_blank' }
+    if item.is_a?(Api::Record::Base)
+      label = item.identifier
+      path  = bookshare_url("browse/book/#{label}", **path_opt)
+      tip   = 'View this item on the Bookshare website.' # TODO: I18n
+    else
+      label = item.to_s
+      path  = bookshare_url(path, **path_opt)
+      tip   = 'View on the Bookshare website.' # TODO: I18n
+    end
+    make_link(label, path, target: '_blank', title: tip)
   end
 
   # ===========================================================================
@@ -273,22 +319,30 @@ module ResourceHelper
       next if k == :separator
       # noinspection RubyCaseWithoutElseBlockInspection
       case v
-        when :authors     then v = author_links(item)
-        when :categories  then v = category_links(item)
-        when :composers   then v = composer_links(item)
-        when :countries   then v = country_links(item)
-        when :cover       then v = cover_image(item)
-        when :cover_image then v = cover_image(item)
-        when :fmt         then v = format_links(item)
-        when :fmts        then v = format_links(item)
-        when :format      then v = format_links(item)
-        when :formats     then v = format_links(item)
-        when :languages   then v = language_links(item)
-        when :links       then v = record_links(item)
-        when :numImages   then v = item.image_count
-        when :numPages    then v = item.page_count
-        when :thumbnail   then v = thumbnail(item)
-        when Symbol       then v = item.respond_to?(v) && item.send(v)
+        when FalseClass
+          v = v.to_s
+        when Symbol
+          v =
+            case field_category(v)
+              when :author      then author_links(item)
+              when :bookshareId then bookshare_link(item)
+              when :category    then category_links(item)
+              when :composer    then composer_links(item)
+              when :country     then country_links(item)
+              when :cover       then cover_image(item)
+              when :cover_image then cover_image(item)
+              when :creator     then creator_links(item)
+              when :editor      then editor_links(item)
+              when :fmt         then format_links(item)
+              when :format      then format_links(item)
+              when :language    then language_links(item)
+              when :link        then record_links(item)
+              when :narrator    then narrator_links(item)
+              when :numImage    then item.image_count
+              when :numPage     then item.page_count
+              when :thumbnail   then thumbnail(item)
+              else                   item.send(v) if item.respond_to?(v)
+            end
       end
       field_value(k, v)
     }.compact.join(separator).html_safe
@@ -296,9 +350,9 @@ module ResourceHelper
 
   # Field/value pair.
   #
-  # @param [String, Symbol]        label
-  # @param [String, Array<String>] value
-  # @param [String, nil]           separator    Def.: #DEFAULT_LIST_SEPARATOR
+  # @param [String, Symbol] label
+  # @param [Object]         value
+  # @param [String, nil]    separator   Def.: #DEFAULT_LIST_SEPARATOR
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                               If *value* is blank.
@@ -317,6 +371,7 @@ module ResourceHelper
     label = content_tag(:div, label, class: "label#{type}")
     value = safe_join(value, separator) + separator if value.is_a?(Array)
     value = content_tag(:div, value, class: "value#{type}")
+    # noinspection RubyYardReturnMatch
     label << value
   end
 
@@ -328,6 +383,17 @@ module ResourceHelper
   #
   def empty_field_value(message = NO_RESULTS)
     field_value(nil, message)
+  end
+
+  # The type of named field regardless of pluralization or presence of a
+  # "_list" suffix.
+  #
+  # @param [Symbol, String] name
+  #
+  # @return [Symbol]
+  #
+  def field_category(name)
+    name.to_s.delete_suffix('_list').singularize.to_sym
   end
 
   # ===========================================================================

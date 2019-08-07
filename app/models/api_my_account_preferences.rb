@@ -12,7 +12,17 @@ require_relative 'api/common/link_methods'
 
 # ApiMyAccountPreferences
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_myaccount_preferences
+# @attr [Boolean]          allowAdultContent
+# @attr [Integer]          brailleCellLineWidth
+# @attr [BrailleFormat]    brailleFormat
+# @attr [BrailleGrade]     brailleGrade
+# @attr [Api::Format]      format
+# @attr [String]           language
+# @attr [Array<Api::Link>] links
+# @attr [Boolean]          showAllBooks
+# @attr [Boolean]          useUeb
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_myaccount_preferences
 #
 class ApiMyAccountPreferences < Api::Message
 

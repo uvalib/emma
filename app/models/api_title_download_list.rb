@@ -12,7 +12,13 @@ require_relative 'api/title_download'
 
 # ApiTitleDownloadList
 #
-# @see https://apidocs-qa.bookshare.org/reference/index.html#_title_download_list
+# @attr [Array<AllowsType>]         allows
+# @attr [Array<Api::Link>]          links
+# @attr [String]                    next
+# @attr [Array<Api::TitleDownload>] titleDownloads
+# @attr [Integer]                   totalResults
+#
+# @see https://apidocs.bookshare.org/reference/index.html#_title_download_list
 #
 class ApiTitleDownloadList < Api::Message
 

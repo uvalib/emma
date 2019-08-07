@@ -54,6 +54,13 @@ class ApiService
 
     }.reverse_merge(API_SEND_RESPONSE).freeze
 
+    # URL parameter fields which, if passed in as an array, are transformed
+    # into a list of space-separated values.
+    #
+    # @type [Array<Symbol>]
+    #
+    MULTIVALUED_FIELDS = %i[author narrator composer].freeze
+
     # =========================================================================
     # :section:
     # =========================================================================
@@ -74,7 +81,7 @@ class ApiService
       data.to_i
     end
 
-    # == GET /v2/titles/:bookshareId
+    # == GET /v2/titles/{bookshareId}
     # Get metadata for the specified Bookshare title.
     #
     # @param [String] bookshareId
@@ -89,7 +96,7 @@ class ApiService
       ApiTitleMetadataDetail.new(response, error: exception)
     end
 
-    # == GET /v2/titles/:bookshareId/:format
+    # == GET /v2/titles/{bookshareId}/{format}
     # Download a Bookshare title artifact.
     #
     # @param [String]     bookshareId
@@ -111,27 +118,29 @@ class ApiService
     #
     # @param [Hash] opt               API URL parameters
     #
-    # @option opt [String]                :title
-    # @option opt [String]                :author
-    # @option opt [String]                :narrator
-    # @option opt [String]                :composer
-    # @option opt [String]                :keyword
-    # @option opt [String]                :isbn
-    # @option opt [String, Array<String>] :categories # NOTE: <string>array(multi)
-    # @option opt [String]                :language
-    # @option opt [String]                :country
-    # @option opt [FormatType]            :format
-    # @option opt [FormatType]            :fmt              Alias for :format
-    # @option opt [NarratorType]          :narratorType
-    # @option opt [BrailleType]           :brailleType
-    # @option opt [Integer]               :readingAge
-    # @option opt [String]                :externalIdentifierCode
-    # @option opt [IsoDuration]           :maxDuration
-    # @option opt [TitleContentType]      :titleContentType
-    # @option opt [String]                :start
-    # @option opt [Integer]               :limit
-    # @option opt [TitleSortOrder]        :sortOrder
-    # @option opt [Direction]             :direction
+    # @option opt [String]                       :title
+    # @option opt [String, Array<String>]        :author
+    # @option opt [String, Array<String>]        :narrator
+    # @option opt [String, Array<String>]        :composer
+    # @option opt [String]                       :keyword
+    # @option opt [String]                       :isbn
+    # @option opt [String, Array<String>]        :categories
+    # @option opt [String]                       :language
+    # @option opt [String]                       :country
+    # @option opt [FormatType]                   :format
+    # @option opt [FormatType]                   :fmt       Alias for :format
+    # @option opt [NarratorType]                 :narratorType
+    # @option opt [BrailleType]                  :brailleType
+    # @option opt [Integer]                      :readingAge
+    # @option opt [ContentWarning, Array<String] :excludedContentWarnings
+    # @option opt [ContentWarning, Array<String] :includedContentWarnings
+    # @option opt [String]                       :externalIdentifierCode
+    # @option opt [IsoDuration]                  :maxDuration
+    # @option opt [TitleContentType]             :titleContentType
+    # @option opt [String]                       :start
+    # @option opt [Integer]                      :limit
+    # @option opt [TitleSortOrder]               :sortOrder
+    # @option opt [Direction]                    :direction
     #
     # @return [ApiTitleMetadataSummaryList]
     #
@@ -140,6 +149,13 @@ class ApiService
     #
     def get_titles(**opt)
       validate_parameters(__method__, opt)
+      transformed_opt =
+        MULTIVALUED_FIELDS.map { |field|
+          next unless opt[field].is_a?(Array)
+          terms = opt[field].map { |v| %Q("#{v}") }.join(' ')
+          [field, terms]
+        }.compact.to_h
+      opt = opt.merge(transformed_opt) if transformed_opt.present?
       api(:get, 'titles', **opt)
       ApiTitleMetadataSummaryList.new(response, error: exception)
     end
@@ -194,7 +210,7 @@ class ApiService
     #
     # == Usage Notes
     #
-    # === According to API section 2.7 (Collection Assistant - Titles):
+    # === According to API section 2.8 (Collection Assistant - Titles):
     # Administrative users can search and update the entire collection of
     # titles, not just those that are live for the public to see. This could
     # include withdrawing live titles, publishing pending titles, or reviewing
@@ -229,7 +245,7 @@ class ApiService
       raise Api::TitleError, message
     end
 
-  end unless defined?(Title)
+  end unless defined?(ApiService::Title)
 
 end
 

@@ -46,7 +46,7 @@ class ApiService
 
     public
 
-    # == GET /v2/accounts/:username/pod
+    # == GET /v2/accounts/{userIdentifier}/pod
     # Get the list of disabilities for an existing user.
     #
     # @param [User, String, nil] user       Default: @user
@@ -59,7 +59,7 @@ class ApiService
       ApiUserPodList.new(response, error: exception)
     end
 
-    # == POST /v2/accounts/:username/pod
+    # == POST /v2/accounts/{userIdentifier}/pod
     # Create a new record of a disability for an existing user.
     #
     # @param [User, String, nil] user   Default: @user
@@ -77,7 +77,7 @@ class ApiService
       ApiUserPodList.new(response, error: exception)
     end
 
-    # == PUT /v2/accounts/:username/pod/:disabilityType
+    # == PUT /v2/accounts/{userIdentifier}/pod/{disabilityType}
     # Update the proof source for a disability for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
@@ -95,7 +95,7 @@ class ApiService
       ApiUserPodList.new(response, error: exception)
     end
 
-    # == DELETE /v2/accounts/:username/pod/:disabilityType
+    # == DELETE /v2/accounts/{userIdentifier}/pod/{disabilityType}
     # Remove a proof of disability for an existing user.
     #
     # @param [User, String, nil] user             Default: @user
@@ -129,7 +129,7 @@ class ApiService
       raise Api::AccountError, message
     end
 
-  end unless defined?(ProofOfDisability)
+  end unless defined?(ApiService::ProofOfDisability)
 
 end
 
