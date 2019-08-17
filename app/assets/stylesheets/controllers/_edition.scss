@@ -9,13 +9,13 @@
 
 // Periodical edition metadata label/value pairs for index listings.
 .edition-list-entry {
-    @extend .index-entry;
+    @extend .item-list-entry;
 }
 
 // Zero or more .edition-list-entry elements.
 .edition-list {
 
-    @extend .index-list;
+    @extend .item-list;
 
     //=========================================================================
     // Components
@@ -31,11 +31,11 @@
 //=============================================================================
 
 // Periodical edition metadata values.
-.edition-metadata {
-    @extend .details-entry;
+.edition-details {
+    @extend .item-details;
 }
 
-// Container for an .edition-metadata.
+// Container for an .edition-details.
 .edition-container {
-    @extend .details-container;
+    @extend .item-container;
 }

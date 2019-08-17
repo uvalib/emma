@@ -50,8 +50,11 @@ module Emma
     # calling method.  If the next element of *args* is an Exception, a message
     # is constructed from its contents.
     #
-    # @param [Numeric, Symbol, nil]             severity
-    # @param [Array<Symbol, Exception, String>] args
+    # @yield Supplies additional parts to the log entry.
+    # @yieldreturn [String, Array<String>]
+    #
+    # @param [Numeric, Symbol, nil]           severity
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #
@@ -76,7 +79,6 @@ module Emma
           e = args.shift
           if [YAML::SyntaxError].include?(e)
             note = (" - #{args.shift}" if args.present?)
-            # noinspection RubyNilAnalysis
             args.prepend("#{e.class}: #{e.message}#{note}")
           else
             args.append("#{e.message} [#{e.class}]")
@@ -90,7 +92,7 @@ module Emma
 
     # Add a DEBUG-level log message.
     #
-    # @param [Array<Symbol, Exception, String>] args
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #
@@ -100,7 +102,7 @@ module Emma
 
     # Add an INFO-level log message.
     #
-    # @param [Array<Symbol, Exception, String>] args
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #
@@ -110,7 +112,7 @@ module Emma
 
     # Add a WARN-level log message.
     #
-    # @param [Array<Symbol, Exception, String>] args
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #
@@ -120,7 +122,7 @@ module Emma
 
     # Add an ERROR-level log message.
     #
-    # @param [Array<Symbol, Exception, String>] args
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #
@@ -130,7 +132,7 @@ module Emma
 
     # Add a FATAL-level log message.
     #
-    # @param [Array<Symbol, Exception, String>] args
+    # @param [Array<String,Symbol,Exception>] args
     #
     # @return [nil]
     #

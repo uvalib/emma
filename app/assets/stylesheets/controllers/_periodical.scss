@@ -12,7 +12,7 @@
 // noinspection SassScssResolvedByNameOnly
 .periodical-list-entry {
 
-    @extend .index-entry;
+    @extend .item-list-entry;
 
     //=========================================================================
     // Components
@@ -44,7 +44,7 @@
 
 // Zero or more .periodical-list-entry elements.
 .periodical-list {
-    @extend .index-list;
+    @extend .item-list;
 }
 
 //=============================================================================
@@ -52,23 +52,23 @@
 //=============================================================================
 
 // Periodical metadata values.
-.periodical-metadata {
-    @extend .details-entry;
+.periodical-details {
+    @extend .item-details;
 }
 
-// Container for a .periodical-metadata and .edition-list in a two-column
-// format for wide screens.
+// Container for a .periodical-details and .edition-list in a two-column format
+// for wide screens.
 //
 // noinspection SassScssResolvedByNameOnly
 .periodical-container {
 
-    @extend .details-container;
+    @extend .item-container;
 
     //=========================================================================
     // Sections
     //=========================================================================
 
-    .periodical-metadata {}
+    .periodical-details {}
 
     .edition-list {
         // Move the column up a bit so that the baseline of the heading matches

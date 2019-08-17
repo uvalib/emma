@@ -1,41 +1,19 @@
 <%# app/views/reading_list/_entry.html.erb -%>
 <%-
-  # A single Reading List index entry.
+  # A single Reading List list entry.
   item   ||= nil
   index  ||= nil
   return unless item || index
 
   offset ||= page_offset
+  add    ||= {}
+  level  ||= 2
   skip   ||= nil
 
-  skip    = Array.wrap(skip)
-  number  = index && ((index < 0) ? '' : "#{offset + index + 1}")
-  number  = nil if skip.include?(:number)
-  image   = false # item && !skip.include?(:thumbnail)
-  classes = 'reading_list-list-entry'
-  classes = css_classes(classes, 'empty') unless item
-  id      = item && %Q(id="reading_list-#{h(item.identifier)}").html_safe
-
-  metadata =
-    if item
-      desc = item.description.presence
-      desc ||= Api::Common::ReadingListMethods::DEF_READING_LIST_DESCRIPTION
-      {
-        Name:        reading_list_link(item),
-        Description: desc,
-        DateUpdated: :dateUpdated
-      }
-    end
+  skip = Array.wrap(skip) << :thumbnail
+  opt  = { index: index, offset: offset, level: level, skip: skip }
 -%>
 
-<%- if number -%>
-  <div class="number"><%= number -%></div>
-<%- end -%>
-
-<%- if image -%>
-  <%= thumbnail(item, link: true) %>
-<%- end -%>
-
-<div class="<%= classes -%>" <%= id -%>>
-  <%= item ? field_values(item, metadata) : empty_field_value %>
-</div>
+<%= list_entry_number(item, opt) unless skip.include?(:number) %>
+<%= thumbnail(item, link: true)  unless skip.include?(:thumbnail) %>
+<%= reading_list_list_entry(item, add) %>

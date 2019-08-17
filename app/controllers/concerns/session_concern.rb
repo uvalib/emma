@@ -113,15 +113,16 @@ module SessionConcern
 
   # Persist information about the last operation performed in this session.
   #
-  # @param [Hash, nil]   hash
-  # @param [Time, nil]   time         Default: `Time.now`.
-  # @param [String, nil] path         Default: `request.path`.
-  # @param [Hash, nil]   url_params   Default: `#url_parameters`.
+  # @param [Hash, nil] hash
+  # @param [Time]      time           Default: `Time.now`.
+  # @param [String]    path           Default: `request.path`.
+  # @param [Hash]      url_params     Default: `#url_parameters`.
   #
   # @return [Hash]
   #
   def last_operation_update(hash = nil, time: nil, path: nil, url_params: nil)
     url_params ||= request_parameters
+    # noinspection RubyCaseWithoutElseBlockInspection
     case url_params[:controller]
       when 'api' then return if url_params[:action] == 'image'
     end
@@ -161,6 +162,7 @@ module SessionConcern
   #
   def cleanup_session
     return unless request.get?
+    # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller]
       when 'api'      then return if params[:action] == 'image'
       when 'artifact' then return if params[:action] == 'show'

@@ -121,7 +121,8 @@
 
 // Make focus outline more easily seen.
 a:focus,
-input:focus {
+input:focus,
+select:focus {
     @extend %focus;
 }
 
@@ -163,49 +164,17 @@ input:focus {
     background-color: white;
 }
 
-//=============================================================================
-// General layout.
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-body {
-
-    margin:      0;
-    padding:     0;
-    font-family: $font-normal;
-
-    @media #{$narrow-screen} {
-        font-size: large;
-    }
-}
-
-// The <main> content area of the page.
-//
-// noinspection SassScssResolvedByNameOnly
-.layout-content {
-
-    margin: 0 $page-padding-x;
-
-    @media #{$browser-ie} {
-
-        margin: 0 $ie-page-padding-x;
-
-        > * {
-            margin-left:  inherit;
-            margin-right: inherit;
-        }
-    }
-}
-
-// For the heading at the top of the content area.
-//
-// noinspection SassScssResolvedByNameOnly
-.heading {
-
-    font-size: xx-large;
-    margin:    $page-padding auto;
-
-    @media #{$wide-screen} {
-        margin-bottom: calc(#{$page-padding} / 2);
-    }
+// Include as the first class of an element which should not inherit the
+// default styling imposed by the browser (particularly for h1-h6 elements
+// being used to define document structure but intended to be styled by
+// supplied CSS class(es).
+.clear-default-styling {
+    margin:         0;
+    margin-block:   0;
+    margin-inline:  0;
+    padding:        0;
+    padding-block:  0;
+    padding-inline: 0;
+    font-size:      inherit;
+    font-weight:    inherit;
 }

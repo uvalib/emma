@@ -87,6 +87,7 @@ class User::SessionsController < Devise::SessionsController
   # exists and contains pre-fetched OAuth2 bearer tokens.
   #
   def sign_in_as
+    # noinspection RubyYardParamTypeMatch
     auth_data = session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
     auth_debug { "session[omniauth.auth] = #{auth_data.inspect}" }

@@ -13,6 +13,9 @@ module ReadingListHelper
     __included(base, '[ReadingListHelper]')
   end
 
+  include GenericHelper
+  include PaginationHelper
+  include ResourceHelper
   include TitleHelper
 
   # ===========================================================================
@@ -46,6 +49,7 @@ module ReadingListHelper
   # @see TitleHelper#thumbnail
   #
   def thumbnail(item, **opt)
+    return if item.blank?
     super || super(@api.get_title(bookshareId: item.bookshareId), **opt)
   end
 
@@ -65,6 +69,7 @@ module ReadingListHelper
   # @return [Array<Api::ReadingListUserView>]
   #
   def reading_list_list
+    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -91,7 +96,7 @@ module ReadingListHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def reading_list_link(item, label = nil, **opt)
-    html_opt, opt = extract_options(opt, :readingListId)
+    opt, html_opt = partition_options(opt, :readingListId)
     id   = opt[:readingListId] || item.identifier
     path = reading_list_path(id: id)
     html_opt[:tooltip] = READING_LIST_SHOW_TOOLTIP
@@ -125,6 +130,29 @@ module ReadingListHelper
 
   public
 
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Object]            value
+  #
+  # @return [Object]
+  #
+  # @see ResourceHelper#render_value
+  #
+  def reading_list_render_value(item, value)
+    case field_category(value)
+      when :name, :label then reading_list_link(item)
+      when :subscription then reading_list_subscriptions(item)
+      else                    render_value(item, value)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item details (show page) support
+  # ===========================================================================
+
+  public
+
   # Fields from Api::ReadingListUserView.
   #
   # @type [Hash{Symbol=>Symbol}]
@@ -143,22 +171,42 @@ module ReadingListHelper
     Links:          :links,
   }.freeze
 
-  # reading_list_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def reading_list_field_values(item, **opt)
-    field_values(item) do
-      READING_LIST_SHOW_FIELDS.merge(opt).transform_values do |v|
-        case v
-          when :subscription then reading_list_subscriptions(item)
-          else                    v
-        end
-      end
-    end
+  def reading_list_details(item, **opt)
+    item_details(item, :reading_list, READING_LIST_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from Api::ReadingListUserView.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  READING_LIST_INDEX_FIELDS = {
+    Name:        :name,
+    Description: :description,
+    DateUpdated: :dateUpdated
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def reading_list_list_entry(item, **opt)
+    item_list_entry(item, :reading_list, READING_LIST_INDEX_FIELDS.merge(opt))
   end
 
 end

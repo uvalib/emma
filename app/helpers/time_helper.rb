@@ -58,6 +58,7 @@ module TimeHelper
   # @see Process#clock_gettime
   #
   def timestamp(unit = :float_second)
+    # noinspection RubyYardReturnMatch
     Process.clock_gettime(Process::CLOCK_MONOTONIC, unit)
   end
 

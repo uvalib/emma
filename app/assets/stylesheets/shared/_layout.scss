@@ -1,0 +1,50 @@
+// app/assets/stylesheets/shared/_layout.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// General layout.
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+body {
+
+    margin:      0;
+    padding:     0;
+    font-family: $font-normal;
+
+    @media #{$narrow-screen} {
+        font-size: large;
+    }
+}
+
+// The <main> content area of the page.
+//
+// noinspection SassScssResolvedByNameOnly
+.layout-content {
+
+    margin: 0 $page-padding-x;
+
+    @media #{$browser-ie} {
+
+        margin: 0 $ie-page-padding-x;
+
+        > * {
+            margin-left:  inherit;
+            margin-right: inherit;
+        }
+    }
+}
+
+// For the heading at the top of the content area.
+//
+// noinspection SassScssResolvedByNameOnly
+.heading {
+
+    font-size: xx-large;
+    margin:    $page-padding auto;
+
+    @media #{$wide-screen} {
+        margin-bottom: calc(#{$page-padding} / 2);
+    }
+}

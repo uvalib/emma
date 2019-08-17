@@ -414,7 +414,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery} $link
      *
-     * @return {number}
+     * @returns {number}
      */
     function defaultRetryPeriod($link) {
         var href = $link.attr('href') || '';

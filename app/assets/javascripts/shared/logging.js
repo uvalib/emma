@@ -20,6 +20,7 @@ function consoleWarn() {
     console.warn(logJoin.apply(null, arguments));
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Emit a console warning message.
  *
@@ -34,7 +35,7 @@ function consoleError() {
  *
  * @param {*} arguments
  *
- * @return {string}
+ * @returns {string}
  */
 function logJoin() {
     var args  = Array.prototype.slice.call(arguments);
@@ -47,7 +48,7 @@ function logJoin() {
  *
  * @param {Array|*} arg
  *
- * @return {Array}
+ * @returns {Array}
  */
 function logFlatArray(arg) {
     var result = [];

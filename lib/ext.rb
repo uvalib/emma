@@ -43,6 +43,7 @@ end
 #
 # @param [Hash, Class, Module] mod    The class or module to override
 # @param [Module, nil]         mod2   Module to prepend to *mod*.
+# @param [Proc]                block  Passed to Module#new.
 #
 # @overload override mod => mod2
 #   Used outside of the definition of *mod2* to override *mod* definitions.

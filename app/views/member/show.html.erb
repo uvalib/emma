@@ -6,6 +6,8 @@
   hist  ||= @history
   title ||= item&.label || t('emma.member.show.title')
 
+  add = { EmmaRoles: current_user.roles.map(&:to_s).join(', ') }
+
   set_page_title(title)
   set_page_description(title)
   set_page_robots(:noindex)
@@ -13,4 +15,4 @@
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'member/details', item: item, pref: pref, hist: hist %>
+<%= render 'member/details', item: item, pref: pref, hist: hist, add: add %>

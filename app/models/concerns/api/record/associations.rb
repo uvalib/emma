@@ -28,46 +28,52 @@ module Api::Record::Associations
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array] args
-    # @param [Hash]  opt
+    # @param [Symbol]                     name
+    # @param [Class, String, Symbol, nil] type
+    # @param [Array]                      _ignored  Additional args discarded.
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#attribute
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def attribute(*args, **opt)
-      add_single_property(*args, **opt)
+    def attribute(name, type = nil, *_ignored, **opt)
+      add_single_property(name, type, **opt)
     end
 
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array] args
-    # @param [Hash]  opt
+    # @param [Symbol]                     name
+    # @param [Class, String, Symbol, nil] type
+    # @param [Array]                      _ignored  Additional args discarded.
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_one(*args, **opt)
-      add_single_property(*args, **opt)
+    def has_one(name, type = nil, *_ignored, **opt)
+      add_single_property(name, type, **opt)
     end
 
     # In the context of a class derived from Api::Record::Base, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Array] args
-    # @param [Hash]  opt
+    # @param [Symbol]                     name
+    # @param [Class, String, Symbol, nil] type
+    # @param [Array]                      _ignored  Additional args discarded.
+    # @param [Hash]                       opt
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_many(*args, **opt)
-      add_collection_property(*args, **opt)
+    def has_many(name, type = nil, *_ignored, **opt)
+      add_collection_property(name, type, **opt)
     end
 
     # =========================================================================
@@ -78,28 +84,25 @@ module Api::Record::Associations
 
     # Define a single data element property.
     #
-    # @param [Array] args
-    # @param [Hash]  opt
+    # @param [Symbol]                     name
+    # @param [Class, String, Symbol, nil] type
+    # @param [Array]                      _ignored  Additional args discarded.
+    # @param [Hash]                       opt       Passed to #make_default.
     #
-    # args[0]   The attribute name
-    # args[1]   The attribute type (if given).
-    #
-    def add_single_property(*args, **opt)
-      name  = args.shift
-      type  = args.shift
+    def add_single_property(name, type, *_ignored, **opt)
       value = make_default(name, type, **opt)
       add_property(name, value)
     end
 
     # Define an array data element property.
     #
-    # @param [Array] args
-    # @param [Hash]  _opt             Unused
+    # @param [Symbol] name
+    # @param [Array]  _ignored        Additional arguments are discarded.
+    # @param [Hash]   _opt            Options are tolerated but discarded.
     #
     # args[0]   The attribute name
     #
-    def add_collection_property(*args, **_opt)
-      name  = args.first
+    def add_collection_property(name, *_ignored, **_opt)
       value = []
       add_property(name, value)
     end

@@ -31,6 +31,12 @@ module SessionsHelper
   #
   SIGN_OUT_TOOLTIP = I18n.t('emma.user.sessions.destroy.tooltip').freeze
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Sign in (via Bookshare) link.
   #
   # @param [String, nil]         label

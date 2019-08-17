@@ -13,8 +13,9 @@ module PeriodicalHelper
     __included(base, '[PeriodicalHelper]')
   end
 
-  include ResourceHelper
   include PaginationHelper
+  include ResourceHelper
+  include EditionHelper
 
   # ===========================================================================
   # :section:
@@ -158,8 +159,48 @@ module PeriodicalHelper
     search_link(terms, field, **opt)
   end
 
+  # Create a link to latest periodical edition.
+  #
+  # @param [Api::Record::Base]   item
+  # @param [Symbol, String, nil] label  Default: `latestEdition.identifier`.
+  # @param [Hash]                opt    Passed to #edition_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def latest_edition_link(item, label = nil, **opt)
+    eid = item.latestEdition.identifier
+    label ||= eid
+    edition_link(item, label, **opt.merge(edition: eid))
+  end
+
   # ===========================================================================
   # :section:
+  # ===========================================================================
+
+  public
+
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Object]            value
+  #
+  # @return [Object]
+  #
+  # @see ResourceHelper#render_value
+  #
+  def periodical_render_value(item, value)
+    case field_category(value)
+      when :title         then periodical_link(item)
+      when :latestEdition then latest_edition_link(item)
+      when :category      then periodical_category_links(item)
+      when :language      then periodical_language_links(item)
+      when :country       then periodical_country_links(item)
+      else                     render_value(item, value)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
@@ -197,26 +238,45 @@ module PeriodicalHelper
 
   }.freeze
 
-  # periodical_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def periodical_field_values(item, **opt)
-    field_values(item) do
-      eid = item.latestEdition.identifier
-      PERIODICAL_SHOW_FIELDS.merge(opt).transform_values do |v|
-        case v
-          when :latestEdition then edition_link(item, eid, edition: eid)
-          when :categories    then periodical_category_links(item)
-          when :languages     then periodical_language_links(item)
-          when :countries     then periodical_country_links(item)
-          else                     v
-        end
-      end
-    end
+  def periodical_details(item, **opt)
+    item_details(item, :periodical, PERIODICAL_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from  Api::PeriodicalSeriesMetadataSummary.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  # Compare with:
+  # @see TitleHelper#TITLE_INDEX_FIELDS
+  #
+  PERIODICAL_INDEX_FIELDS = {
+    Title:      :title,
+    Categories: :categories,
+    Languages:  :languages,
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def periodical_list_entry(item, **opt)
+    item_list_entry(item, :periodical, PERIODICAL_INDEX_FIELDS.merge(opt))
   end
 
 end

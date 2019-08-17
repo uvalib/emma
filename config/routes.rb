@@ -88,10 +88,12 @@ Rails.application.routes.draw do
   resources :api, only: %i[index] do
     collection do
       get   'image',        to: 'api#image'
+      # noinspection RailsParamDefResolve
       match 'v2/*api_path', to: 'api#v2', via: %i[get put post delete]
     end
   end
 
+  # noinspection RailsParamDefResolve
   match 'v2/*api_path', to: 'api#v2', as: 'v2_api', via: %i[get put post delete]
 
   # ===========================================================================
@@ -108,4 +110,26 @@ Rails.application.routes.draw do
     get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
   end
 
+end
+
+# RubyMine isn't good at using the routes to figure out the implied URL helper
+# function names.  This non-functional block gives them definitions so that
+# they are not flagged as unknown.
+#
+unless ONLY_FOR_DOCUMENTATION
+  def api_index_path;             api_index_path;             end
+  def confirmation_path;          confirmation_path;          end
+  def confirmation_url;           confirmation_url;           end
+  def dashboard_path;             dashboard_path;             end
+  def destroy_user_session_path;  destroy_user_session_path;  end
+  def edit_password_url;          edit_password_url;          end
+  def new_user_session_path;      new_user_session_path;      end
+  def password_path;              password_path;              end
+  def registration_path;          registration_path;          end
+  def root_url;                   root_url;                   end
+  def session_path;               session_path;               end
+  def title_index_path;           title_index_path;           end
+  def unlock_path;                unlock_path;                end
+  def unlock_url;                 unlock_url;                 end
+  def welcome_path;               welcome_path;               end
 end

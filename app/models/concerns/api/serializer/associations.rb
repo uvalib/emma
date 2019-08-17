@@ -81,6 +81,7 @@ module Api::Serializer::Associations
     # @param [Symbol]                     name
     # @param [Class, String, Symbol, nil] type
     # @param [Hash]                       opt
+    # @param [Proc]                       block   Passed to #has_many.
     #
     # @return [void]
     #
@@ -114,6 +115,7 @@ module Api::Serializer::Associations
     # @param [Class, String, Symbol, nil] type
     # @param [Numeric, nil]               count
     # @param [Hash]                       opt
+    # @param [Proc]                       block   Passed to #property.
     #
     # @return [void]
     #
@@ -192,6 +194,7 @@ module Api::Serializer::Associations
       elsif !name.include?('::')
         type = "Api::#{name}"
       end
+      # noinspection RubyYardReturnMatch
       type.is_a?(String) ? type.constantize : type
     end
 

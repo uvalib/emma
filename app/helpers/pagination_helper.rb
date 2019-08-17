@@ -13,8 +13,8 @@ module PaginationHelper
     __included(base, '[PaginationHelper]')
   end
 
-  include ParamsHelper
   include HtmlHelper
+  include ParamsHelper
 
   # ===========================================================================
   # :section:
@@ -264,6 +264,7 @@ module PaginationHelper
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
+    # noinspection RubyYardParamTypeMatch
     value.is_a?(Symbol) ? page_history(value, page) : value.to_s
   end
 
@@ -302,7 +303,7 @@ module PaginationHelper
     **opt
   )
     opt = prepend_css_classes(opt, 'pagination')
-    content_tag(:div, opt) do
+    content_tag(:nav, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
         pagination_control(FIRST_PAGE, fp, **link_opt),

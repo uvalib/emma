@@ -13,8 +13,9 @@ module MemberHelper
     __included(base, '[MemberHelper]')
   end
 
-  include ResourceHelper
+  include GenericHelper
   include PaginationHelper
+  include ResourceHelper
 
   # ===========================================================================
   # :section:
@@ -27,6 +28,7 @@ module MemberHelper
   # @return [Array<Api::UserAccount>]
   #
   def member_list
+    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -59,7 +61,7 @@ module MemberHelper
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
@@ -89,15 +91,15 @@ module MemberHelper
     Links:              :links, # TODO: subscriptions; pod
   }.freeze
 
-  # member_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_field_values(item, **opt)
-    field_values(item, MEMBER_SHOW_FIELDS.merge(opt))
+  def member_details(item, **opt)
+    item_details(item, :member, MEMBER_SHOW_FIELDS.merge(opt))
   end
 
   # Fields from ApiMyAccountPreferences.
@@ -114,7 +116,7 @@ module MemberHelper
     PreferredLanguage:       :language,
   }.freeze
 
-  # member_preference_values
+  # Render a listing of member preferences.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
@@ -122,7 +124,9 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_preference_values(item, **opt)
-    field_values(item, MEMBER_PREFERENCE_FIELDS.merge(opt))
+    render_field_values(item, model: :member) do
+      MEMBER_PREFERENCE_FIELDS.merge(opt)
+    end
   end
 
   # Fields from Api::TitleDownload.
@@ -139,19 +143,47 @@ module MemberHelper
     DownloadedFor:  :downloadedFor,
   }.freeze
 
-  # member_history
+  # Render of list of member activity entries.
   #
   # @param [Api::Record::Base, Array<Api::TitleDownload>] item
+  # @param [Hash] opt                 Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_history(item)
-    item = item.titleDownloads if item.respond_to?(:titleDownloads)
+  def member_history(item, **opt)
+    item  = item.titleDownloads if item.respond_to?(:titleDownloads)
+    pairs = MEMBER_HISTORY_FIELDS.merge(opt)
     Array.wrap(item).map { |entry|
       content_tag(:div, class: 'history-entry') do
-        field_values(entry, MEMBER_HISTORY_FIELDS)
+        render_field_values(entry, model: :member, pairs: pairs)
       end
     }.join("\n").html_safe
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from Api::UserAccount and ApiMyAccountSummary.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  MEMBER_INDEX_FIELDS = {
+    Name:  :member_link,
+    Roles: :roles
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def member_list_entry(item, **opt)
+    item_list_entry(item, :member, MEMBER_INDEX_FIELDS.merge(opt))
   end
 
 end

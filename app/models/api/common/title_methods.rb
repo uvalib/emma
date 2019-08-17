@@ -167,6 +167,7 @@ module Api::Common::TitleMethods
   #
   # @return [Array<String>]
   #
+  # noinspection RubyAssignmentExpressionInConditionalInspection
   def creator_list(*types, **opt)
     types = types.compact.presence || CREATOR_TYPES
     list =
@@ -291,7 +292,6 @@ module Api::Common::TitleMethods
   def contents
     %i[synopsis description].find do |method|
       next unless respond_to?(method) && (text = send(method)).present?
-      $stderr.puts "@@@ #{__method__} | text -> #{text.inspect}"
       text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]
       text.gsub!(/([[:space:]]*\n)+/,      '<br/><br/>')      # [2]
       text.gsub!(/[[:space:]]/,            ' ')               # [3]

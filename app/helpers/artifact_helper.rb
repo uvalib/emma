@@ -13,8 +13,9 @@ module ArtifactHelper
     __included(base, '[ArtifactHelper]')
   end
 
-  include ResourceHelper
+  include GenericHelper
   include PaginationHelper
+  include ResourceHelper
 
   # ===========================================================================
   # :section:
@@ -123,7 +124,7 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format = nil, **opt)
-    html_opt, opt = extract_options(opt, :fmt, :label)
+    opt, html_opt = partition_options(opt, :fmt, :label)
     fmt   = opt[:fmt]
     label = opt[:label]
     if format.is_a?(Api::Format)
@@ -168,6 +169,33 @@ module ArtifactHelper
     end
   end
 
+  # Create links to download each artifact of the given item.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Passed to #artifact_link except for:
+  #
+  # @option opt [String] :fmt         One of `Api::FormatType.values`
+  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def download_links(item, **opt)
+    opt, html_opt = partition_options(opt, :fmt, :separator)
+    format_id = opt[:fmt]
+    separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
+    permitted = can?(:download, Artifact)
+    append_css_classes!(html_opt, 'disabled') unless permitted
+    links =
+      item.formats.map { |fmt|
+        next if format_id && (format_id != fmt.formatId)
+        artifact_link(item, fmt, html_opt)
+      }.compact.sort
+    if permitted && links.present?
+      skip_nav_append('Download Formats' => '#field-Formats') # TODO: I18n
+    end
+    safe_join(links, separator)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -203,6 +231,7 @@ module ArtifactHelper
     opt[:alt]   ||= ARTIFACT_PROGRESS_ALT_TEXT
     opt[:role]  ||= 'button'
     image       ||= asset_path(ARTIFACT_PROGRESS_ASSET)
+    # noinspection RubyYardReturnMatch
     image_tag(image, opt)
   end
 
@@ -232,6 +261,7 @@ module ArtifactHelper
   def download_button(label = nil, **opt)
     opt   = prepend_css_classes(opt, ARTIFACT_BUTTON_CLASS)
     label = opt.delete(:label) || label || ARTIFACT_BUTTON_LABEL
+    # noinspection RubyYardParamTypeMatch
     fmt   = format_label(opt.delete(:fmt))
     opt[:title] ||= I18n.t('emma.artifact.show.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
@@ -239,7 +269,7 @@ module ArtifactHelper
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
@@ -266,15 +296,41 @@ module ArtifactHelper
     FundingSource:            :fundingSource,
   }.freeze
 
-  # artifact_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def artifact_field_values(item, **opt)
-    field_values(item, ARTIFACT_SHOW_FIELDS.merge(opt))
+  def artifact_details(item, **opt)
+    item_details(item, :artifact, ARTIFACT_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from Api::ArtifactMetadata.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  ARTIFACT_INDEX_FIELDS = {
+    Format:    :fmt,
+    DateAdded: :dateAdded,
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def artifact_list_entry(item, **opt)
+    item_list_entry(item, :artifact, ARTIFACT_INDEX_FIELDS.merge(opt))
   end
 
 end

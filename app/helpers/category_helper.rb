@@ -13,8 +13,8 @@ module CategoryHelper
     __included(base, '[CategoryHelper]')
   end
 
-  include ResourceHelper
   include PaginationHelper
+  include ResourceHelper
 
   # ===========================================================================
   # :section:
@@ -27,6 +27,7 @@ module CategoryHelper
   # @return [Array<Api::CategorySummary>]
   #
   def category_list
+    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -63,7 +64,7 @@ module CategoryHelper
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
@@ -73,15 +74,41 @@ module CategoryHelper
     # TODO: ???
   }.freeze
 
-  # category_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def category_field_values(item, **opt)
-    field_values(item, CATEGORY_SHOW_FIELDS.merge(opt))
+  def category_details(item, **opt)
+    item_details(item, :category, CATEGORY_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # @type [Hash{Symbol=>Symbol}]
+  CATEGORY_INDEX_FIELDS = {
+    # TODO: ???
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def category_list_entry(item, **opt)
+    item_list_entry(item, :category) do
+      CATEGORY_INDEX_FIELDS.merge(
+        category_link(item) => "(#{item.titleCount})"
+      ).merge(opt)
+    end
   end
 
 end

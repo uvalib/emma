@@ -114,6 +114,10 @@ module OAuth2
 
     # Makes a request relative to the specified site root.
     #
+    # @yield [req] Gives access to the request before it is transmitted.
+    # @yieldparam [Faraday::Request] req  The Faraday request.
+    # @yieldreturn [void]                 The block should access *req*.
+    #
     # @param [Symbol] verb            One of :get, :post, :put, :delete.
     # @param [String] url             URL path of request.
     # @param [Hash]   opts            The options to make the request with.
@@ -124,8 +128,6 @@ module OAuth2
     # @option opts [Boolean] :raise_errors  whether or not to raise an OAuth2::Error on 400+ status
     #   code response for this request.  Will default to client option
     # @option opts [Symbol]       :parse    @see Response#initialize
-    #
-    # @yieldparam [Faraday::Request] req    The Faraday request
     #
     # @return [OAuth2::Response]
     #

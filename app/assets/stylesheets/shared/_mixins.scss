@@ -111,3 +111,18 @@
     page-break-after:           $value;
     break-after:                $value;
 }
+
+// ============================================================================
+// Input
+// ============================================================================
+
+/// Prevent text from being selectable (when double-clicking for example).
+///
+/// @param {String} $value            Use "none" to turn off selection.
+///
+@mixin user-select($value) {
+    -webkit-user-select: $value;
+    -moz-user-select:    $value;
+    -ms-user-select:     $value;
+    user-select:         $value;
+}

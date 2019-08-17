@@ -64,6 +64,7 @@ en:
         - 'api'
 
     search_bar:
+      label:            'Search'
       input:
         enabled:        'title'
         field:          'keyword'
@@ -82,6 +83,9 @@ en:
       language:
         label:          'Language'
         placeholder:    '(Select)'
+
+    page_controls:
+      label:            'Actions'
 
     # =========================================================================
     # Controls
@@ -232,10 +236,13 @@ en:
       title:            '%{Items}'
       tooltip:          'Search for %{items}.'
 
+      search_bar:
+        label:          '%{Item} Search'
+
       page_controls:
         label:
           one:          'Manage this %{item}'
-          many:         '%{Item} operations'
+          many:         '%{Item} Actions'
 
       index:
         label:          '%{Items}'
@@ -280,6 +287,7 @@ en:
       tooltip:          'Search for catalog items by topic.'
 
       search_bar:
+        label:          'Catalog Search'
         controls:
           - 'size'
 
@@ -313,10 +321,13 @@ en:
       title:            'Catalog Titles'
       tooltip:          'Search for catalog items.'
 
+      search_bar:
+        label:          'Catalog Search'
+
       page_controls:
         label:
           one:          'Manage this catalog entry'
-          many:         'Catalog operations'
+          many:         'Catalog Actions'
 
       index:
         label:          'Titles'
@@ -325,7 +336,7 @@ en:
 
         thumbnail:
           image:
-            alt:        'Thumbnail image for %{item}'
+            alt:        '' # NOTE: not 'Thumbnail image for %{item}'
 
       show:
         label:          'Title'
@@ -334,7 +345,7 @@ en:
 
         cover:
           image:
-            alt:        'Cover image for %{item}'
+            alt:        '' # NOTE: not 'Cover image for %{item}'
           placeholder:
             image:
               <<:       *PLACEHOLDER_IMAGE
@@ -585,7 +596,7 @@ en:
 
       page_controls:
         label:
-          many:         'Reading List operations'
+          many:         'Reading List Actions'
 
       index:
         label:          'Lists'

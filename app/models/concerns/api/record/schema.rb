@@ -33,6 +33,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::JsonBase]
     #
     def json_serializer
+      # noinspection RubyYardReturnMatch
       serializers[:json]
     end
 
@@ -41,6 +42,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::XmlBase]
     #
     def xml_serializer
+      # noinspection RubyYardReturnMatch
       serializers[:xml]
     end
 
@@ -49,6 +51,7 @@ module Api::Record::Schema
     # @return [Api::Serializer::HashBase]
     #
     def hash_serializer
+      # noinspection RubyYardReturnMatch
       serializers[:hash]
     end
 

@@ -1,9 +1,10 @@
 <%# app/views/title/_list.html.erb -%>
 <%-
-  # A list of catalog Titles.
+  # A sequence of catalog Title entries.
   list   ||= []
   count  ||= list.size
   offset ||= page_offset
+  level  ||= 1
   skip   ||= nil
 
   skip = Array.wrap(skip)
@@ -13,16 +14,17 @@
       title  += " (#{count})" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?
-      content_tag(:h2, h(title), class: classes)
+      content_tag("h#{level}", h(title), class: classes)
     end
+  opt = { offset: offset, level: (level + 1), skip: skip }
 -%>
 
 <%= heading %>
 
-<%- if list.present? -%>
-  <%- list.each_with_index do |item, idx| -%>
-    <%= render 'title/entry', index: idx, item: item, offset: offset %>
-  <%- end -%>
+<%- if list.blank? -%>
+  <%= render 'title/entry', opt.merge(index: -1) %>
 <%- else -%>
-  <%= render 'title/entry', index: -1 %>
+  <%- list.each_with_index do |item, idx| -%>
+    <%= render 'title/entry', opt.merge(index: idx, item: item) %>
+  <%- end -%>
 <%- end -%>

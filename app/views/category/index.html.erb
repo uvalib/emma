@@ -6,22 +6,22 @@
   count ||= total_items
 
   if list.present?
-    all_count    = nil
     search_count = "#{count} categories found." # TODO: I18n
     search_count = content_tag(:div, search_count, class: 'search-count')
     controls     = pagination_controls
     terms        = search_terms.presence
   else
-    all_count    = " (#{count})"
     search_count = controls = terms = nil
   end
 
   set_page_title(t('emma.category.index.label', default: title))
   append_page_title('-', hash_string(terms)) if terms.present?
   set_page_description(title)
+
+  title += " (#{count})" if list.blank?
 -%>
 
-<h1 class="heading"><%= title -%><%= all_count -%></h1>
+<h1 class="heading"><%= title -%></h1>
 
 <div class="category-list">
 

@@ -61,7 +61,7 @@ module ImageHelper
   #
   def image_element(url, **opt)
     return if url.blank?
-    html_opt, opt = extract_options(opt, :alt, :link)
+    opt, html_opt = partition_options(opt, :alt, :link)
     alt  = opt[:alt] || 'Illustration' # TODO: I18n
     link = opt[:link].presence
     iopt = { alt: alt }
@@ -93,6 +93,7 @@ module ImageHelper
     opt[:data] = opt[:data]&.merge(data) || data
     opt[:alt]  = PLACEHOLDER_IMAGE_ALT
     image ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
+    # noinspection RubyYardReturnMatch
     image_tag(image, opt)
   end
 

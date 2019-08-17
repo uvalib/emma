@@ -51,6 +51,7 @@ module ParamsHelper
   def request_parameters(p = nil)
     p ||= respond_to?(:params) ? params : {}
     p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
+    # noinspection RubyYardReturnMatch
     p.symbolize_keys
   end
 

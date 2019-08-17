@@ -82,6 +82,7 @@ module PaginationConcern
     else
       opt[:offset] = page_offset
     end
+    # noinspection RubyYardReturnMatch
     opt
   end
 

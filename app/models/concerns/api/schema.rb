@@ -153,7 +153,8 @@ module Api
     # @param [Class, nil] type
     #
     def scalar_type?(type)
-      return true if type.parent == Object
+      return false unless type.is_a?(Class)
+      return true  if type.parent == Object
       base = type.to_s.demodulize.to_sym
       SCALAR_TYPES.include?(base) || ENUMERATION_TYPES.include?(base)
     end
@@ -166,6 +167,7 @@ module Api
     # @return [String]
     #
     def element_name(name, mode = nil)
+      # noinspection RubyYardReturnMatch
       case mode
         when :underscore     then name.to_s.underscore
         when :camelcase      then name.to_s.camelcase(:lower)

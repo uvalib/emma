@@ -88,17 +88,17 @@ module GenericHelper
   end
 
   # Strip off the hash elements identified by *keys* to return two hashes:
-  # - First, a copy of *original* without the local option keys and values.
-  # - Second, a hash containing only the local option keys and values.
+  # - First, a hash containing only the requested option keys and values.
+  # - Second, a copy of the original *hash* without the those keys/values.
   #
   # @param [Hash]          hash
   # @param [Array<Symbol>] keys
   #
-  # @return [Array<(Hash, Hash)>]
+  # @return [Array<(Hash, Hash)>]   Matching hash followed by remainder hash.
   #
-  def extract_options(hash, *keys)
+  def partition_options(hash, *keys)
     keys = keys.flatten.compact.map(&:to_sym).uniq
-    return hash.except(*keys), hash.slice(*keys)
+    return hash.slice(*keys), hash.except(*keys)
   end
 
   # ===========================================================================
@@ -169,7 +169,7 @@ module GenericHelper
   # Generate a rendering of a hash as a delimited list of key-value pairs.
   #
   # @param [Hash] hash
-  # @param [Hash] opt
+  # @param [Hash]  opt                Passed to #normalized_list; used locally:
   #
   # @option opt [String] :pair_separator   Default: #PAIR_SEPARATOR.
   #
@@ -183,7 +183,7 @@ module GenericHelper
   # Generate a rendering of an array as a delimited list of elements.
   #
   # @param [Array] array
-  # @param [Hash]  opt                Passed to #normalized_list except for:
+  # @param [Hash]  opt                Passed to #normalized_list; used locally:
   #
   # @option opt [String] :list_separator   Default: #LIST_SEPARATOR.
   #

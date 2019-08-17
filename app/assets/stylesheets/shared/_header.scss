@@ -7,12 +7,15 @@
 //=============================================================================
 
 // The <header> area of the page.
+// noinspection SassScssResolvedByNameOnly,CssReplaceWithShorthandSafely
 .layout-header {
     display:         flex;
     flex-direction:  column;
     justify-content: flex-start;
     margin:          0;
+    margin-bottom:   -$hcm-divider-width;
     padding:         0;
+    border-bottom:   $hcm-divider-width solid $hcm-color;
 }
 
 //=============================================================================
@@ -430,13 +433,13 @@
 
             @extend %header-control-interior;
 
-            &:focus-within {
-                @extend %focus;
-            }
-
             select {
                 @media #{$narrow-screen} {
                     width: 100%;
+                }
+
+                @media #{$browser-ie} {
+                    margin-right: $ie-gap-x;
                 }
             }
         }

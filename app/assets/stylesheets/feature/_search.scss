@@ -215,11 +215,11 @@ $results-entry-margin-y: 0.67rem;
 }
 
 //=============================================================================
-// Index page metadata
+// Item list (index page) support
 //=============================================================================
 
 // Metadata label/value pairs on index pages.
-.index-entry {
+.item-list-entry {
 
     @extend .label-value-pairs;
 
@@ -249,10 +249,10 @@ $results-entry-margin-y: 0.67rem;
     }
 }
 
-// Zero or more .index-entry elements.
+// Zero or more .item-list-entry elements.
 //
 // noinspection SassScssResolvedByNameOnly
-.index-list {
+.item-list {
 
     @extend .list-2-column;
 
@@ -279,11 +279,11 @@ $results-entry-margin-y: 0.67rem;
 }
 
 //=============================================================================
-// Show page metadata
+// Item details (show page) support
 //=============================================================================
 
 // Metadata label/value pairs on show pages.
-.details-entry {
+.item-details {
 
     @extend .label-value-pairs;
 
@@ -302,7 +302,7 @@ $results-entry-margin-y: 0.67rem;
 // the right of the details listing.
 //
 // noinspection SassScssResolvedByNameOnly
-.details-container {
+.item-container {
 
     display:        flex;
     flex-direction: column;

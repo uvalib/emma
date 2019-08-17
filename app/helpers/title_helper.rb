@@ -13,9 +13,10 @@ module TitleHelper
     __included(base, '[TitleHelper]')
   end
 
-  include ResourceHelper
   include PaginationHelper
+  include ResourceHelper
   include ArtifactHelper
+  include ImageHelper
 
   # ===========================================================================
   # :section:
@@ -69,6 +70,7 @@ module TitleHelper
   # @return [nil]                         If *item* has no thumbnail.
   #
   def thumbnail(item, **opt)
+    # @type [String]
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
     return if url.blank?
     id  = item.identifier
@@ -92,6 +94,7 @@ module TitleHelper
   # @return [nil]                         If *item* has no cover image.
   #
   def cover_image(item, **opt)
+    # @type [String]
     url = item.respond_to?(:cover_image) && item.cover_image
     return if url.blank?
     id  = item.identifier
@@ -99,27 +102,6 @@ module TitleHelper
     opt[:alt]  ||= I18n.t('emma.title.show.cover.image.alt', item: id)
     opt[:link] &&= title_path(id: id)
     image_element(url, opt)
-  end
-
-  # Create links to download each artifact of the given item.
-  #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #artifact_link except for:
-  #
-  # @option opt [String] :fmt         One of `Api::FormatType.values`
-  # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def download_links(item, **opt)
-    html_opt, opt = extract_options(opt, :fmt, :separator)
-    format_id = opt[:fmt]
-    separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
-    append_css_classes!(html_opt, 'disabled') if cannot?(:download, Artifact)
-    item.formats.map { |fmt|
-      next if format_id && (format_id != fmt.formatId)
-      artifact_link(item, fmt, html_opt)
-    }.compact.sort.join(separator).html_safe
   end
 
   # Item categories as search links.
@@ -293,6 +275,28 @@ module TitleHelper
 
   public
 
+  # Transform a field value for HTML rendering.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Object]            value
+  #
+  # @return [Object]
+  #
+  # @see ResourceHelper#render_value
+  #
+  def title_render_value(item, value)
+    case field_category(value)
+      when :title then title_link(item)
+      else             render_value(item, value)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item details (show page) support
+  # ===========================================================================
+
+  public
+
   # Fields from Api::AssignedTitleMetadataSummary, Api::TitleMetadataComplete,
   # Api::TitleMetadataSummary, ApiTitleMetadataDetail.
   #
@@ -387,27 +391,51 @@ module TitleHelper
     # === Item instances ===
     DtBookSize:           :dtbookSize,
     Artifacts:            :artifacts,
-    Formats:              :fmts,
+    Formats:              :download_links,
     Links:                :links,
 
   }.freeze
 
-  # title_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def title_field_values(item, **opt)
-    field_values(item) do
-      TITLE_SHOW_FIELDS.merge(opt).transform_values do |v|
-        case v
-          when :fmts then download_links(item)
-          else            v
-        end
-      end
-    end
+  def title_details(item, **opt)
+    item_details(item, :title, TITLE_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from Api::AssignedTitleMetadataSummary, Api::TitleMetadataComplete,
+  # Api::TitleMetadataSummary, ApiTitleMetadataDetail.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  # Compare with:
+  # @see PeriodicalHelper#PERIODICAL_INDEX_FIELDS
+  #
+  TITLE_INDEX_FIELDS = {
+    Title:   :title,
+    Authors: :authors,
+    Date:    :year
+  }.freeze
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def title_list_entry(item, **opt)
+    item_list_entry(item, :title, TITLE_INDEX_FIELDS.merge(opt))
   end
 
 end

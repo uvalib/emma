@@ -195,12 +195,12 @@ module BookshareHelper
 
     # If the path contains format references (e.g., "%{id}" or "%<id>") then
     # they should be satisfied by the options passed in to the method.
-    if (keys = named_format_references(path)).present?
-      path_opt, ref_opt = extract_options(path_opt, *keys)
-      ref_opt.delete_if { |_, v| v.blank? }
-      ref_opt.transform_values! { |v|
+    if (ref_keys = named_format_references(path)).present?
+      ref_opt, path_opt = partition_options(path_opt, *ref_keys)
+      ref_opt.reject! { |_, v| v.blank? }
+      ref_opt.transform_values! do |v|
         v.is_a?(String) ? CGI.escape(v).gsub(/\./, '%2E') : v
-      }
+      end
       ref_opt[:ids] = ref_opt[:id]
       path = format(path, ref_opt)
     end
@@ -255,12 +255,13 @@ module BookshareHelper
       return
     end
 
-    label ||= action_label(action, controller)
+    label ||= i18n_lookup(controller, action, 'label') || path
     html_opt = { class: 'control' }
     html_opt[:target]  = '_blank' if path.match?(/^https?:/)
     html_opt[:method]  = :delete  if %i[delete destroy].include?(action)
     merge_html_options!(html_opt, link_opt)
-    html_opt[:title] ||= action_tooltip(action, controller)
+    html_opt[:title] ||= i18n_lookup(controller, action, 'tooltip')
+    # noinspection RubyYardParamTypeMatch
     make_link(label, path, html_opt)
   end
 

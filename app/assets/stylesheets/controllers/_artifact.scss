@@ -9,12 +9,12 @@
 
 // Artifact metadata label/value pairs for index listings.
 .artifact-list-entry {
-    @extend .index-entry;
+    @extend .item-list-entry;
 }
 
 // Zero or more .artifact-list-entry elements.
 .artifact-list {
-    @extend .index-list;
+    @extend .item-list;
 }
 
 //=============================================================================
@@ -22,11 +22,11 @@
 //=============================================================================
 
 // Artifact metadata values.
-.artifact-metadata { // TODO: delete?
-    @extend .details-entry;
+.artifact-details { // TODO: delete?
+    @extend .item-details;
 }
 
-// Container for an .artifact-metadata.
+// Container for an .artifact-details.
 .artifact-container { // TODO: delete?
-    @extend .details-container;
+    @extend .item-container;
 }

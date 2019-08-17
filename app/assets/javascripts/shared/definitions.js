@@ -30,7 +30,7 @@ var Selector;
  *
  * @param {number} timestamp      Original `Date.now()` value.
  *
- * @return {number}
+ * @returns {number}
  */
 function secondsSince(timestamp) {
     return (Date.now() - timestamp) / SECOND;
@@ -45,7 +45,7 @@ function secondsSince(timestamp) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isDefined(item) {
     return typeof item !== 'undefined';
@@ -56,7 +56,7 @@ function isDefined(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function notDefined(item) {
     return !isDefined(item);
@@ -68,7 +68,7 @@ function notDefined(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isEmpty(item) {
     // noinspection NegatedIfStatementJS
@@ -87,12 +87,13 @@ function isEmpty(item) {
     return false;
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Indicate whether the item contains a value.
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function notEmpty(item) {
     return !isEmpty(item);
@@ -103,7 +104,7 @@ function notEmpty(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isMissing(item) {
     return isEmpty(item);
@@ -114,8 +115,106 @@ function isMissing(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isPresent(item) {
     return !isMissing(item);
+}
+
+/**
+ * Make a selector out of an array of attributes.
+ *
+ * @param {string[]} attributes
+ *
+ * @returns {string}
+ */
+function attributeSelector(attributes) {
+    return '[' + attributes.join('], [') + ']';
+}
+
+// ============================================================================
+// Function definitions - URL
+// ============================================================================
+
+/**
+ * Extract the URL present in *arg*.
+ *
+ * @param {Event|Location|object|string} arg
+ *
+ * @returns {string}
+ */
+function extractUrl(arg) {
+    var path;
+    if (arg instanceof Event) {
+        // If *arg* is a HashChangeEvent then newURL will be present.
+        // (Checking for "instanceof" is avoided because of MS IE.)
+        // noinspection JSUnresolvedVariable
+        path = arg.target ? arg.target.href : arg.newURL;
+
+    } else if (arg instanceof Location) {
+        // The full path including hash.
+        path = arg.href;
+
+    } else if (typeof arg === 'object') {
+        // Microsoft Edge seems to return location as a simple Object.
+        path = arg.href;
+
+    } else if (typeof arg === 'string') {
+        // Assumedly the caller is expecting a URL.
+        path = arg;
+    }
+    return path || '';
+}
+
+// ============================================================================
+// Function definitions - Accessibility
+// ============================================================================
+
+/**
+ * @constant {string[]}
+ */
+var FOCUS_ELEMENTS =
+    ['a', 'area', 'button', 'input', 'select', 'textarea'];
+
+/**
+ * @constant {string}
+ */
+var FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
+
+/**
+ * @constant {string[]}
+ */
+var FOCUS_ATTRIBUTES =
+    ['href', 'controls', 'data-path', 'draggable', 'tabindex'];
+
+/**
+ * @constant {string}
+ */
+var FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
+
+/**
+ * @constant {string}
+ */
+var FOCUS_SELECTOR =
+    FOCUS_ELEMENTS_SELECTOR + ', ' + FOCUS_ATTRIBUTES_SELECTOR;
+
+/**
+ * @constant {string[]}
+ */
+var NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
+
+/**
+ * @constant {string}
+ */
+var NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
+
+/**
+ * Indicate whether the element referenced by the selector can have tab focus.
+ *
+ * @param {Selector} element
+ *
+ * @returns {boolean}
+ */
+function focusable(element) {
+    return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
 }

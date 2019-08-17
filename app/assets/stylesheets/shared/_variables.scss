@@ -66,6 +66,13 @@ $font-normal:    "franklin-gothic-urw", "Arial", sans-serif;
 $font-condensed: "franklin-gothic-urw-cond", "Arial Narrow", sans-serif;
 
 //=============================================================================
+// High-contrast mode.
+//=============================================================================
+
+$hcm-divider-width: 2px;
+$hcm-color:         transparent;
+
+//=============================================================================
 // Screen dimension definitions.
 //=============================================================================
 
@@ -124,6 +131,8 @@ $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 //=============================================================================
 
 $browser-ie: "(-ms-high-contrast: none), (-ms-high-contrast: active)";
+$browser-not-ie:
+    "(not -ms-high-contrast: none) and (not -ms-high-contrast: active)";
 
 //=============================================================================
 // Generic - baseline definitions.

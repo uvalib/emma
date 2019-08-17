@@ -65,10 +65,10 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #
-  # @param [Hash]                 opt     The source options hash.
-  # @param [Array<String, Array>] args    CSS class names.
+  # @param [Hash]                opt    The source options hash.
+  # @param [Array<String,Array>] args   CSS class names.
   #
-  # @return [Hash]                        A new hash with :class set.
+  # @return [Hash]                      A new hash with :class set.
   #
   # @see #append_css_classes!
   #
@@ -80,10 +80,10 @@ module HtmlHelper
   # If CSS class name(s) are provided, append them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash]                 opt     The target options hash.
-  # @param [Array<String, Array>] args    CSS class names.
+  # @param [Hash]                opt    The target options hash.
+  # @param [Array<String,Array>] args   CSS class names.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                      The modified *opt* hash.
   #
   # @see #css_classes
   #
@@ -99,10 +99,10 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are prepended to the existing `opt[:class]` value.
   #
-  # @param [Hash]                 opt     The source options hash.
-  # @param [Array<String, Array>] args    CSS class names.
+  # @param [Hash]                opt    The source options hash.
+  # @param [Array<String,Array>] args   CSS class names.
   #
-  # @return [Hash]                        A new hash with :class set.
+  # @return [Hash]                      A new hash with :class set.
   #
   # @see #prepend_css_classes!
   #
@@ -114,10 +114,10 @@ module HtmlHelper
   # If CSS class name(s) are provided, prepend them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash]                 opt     The target options hash.
-  # @param [Array<String, Array>] args    CSS class names.
+  # @param [Hash]                opt    The target options hash.
+  # @param [Array<String,Array>] args   CSS class names.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                      The modified *opt* hash.
   #
   # @see #css_classes
   #
@@ -133,12 +133,11 @@ module HtmlHelper
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
   #
-  # @param [Array<String, Array>] args
+  # @yield [classes] Exposes *args* so the block may modify it.
+  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
+  # @yieldreturn [void]                   Return ignored.
   #
-  # @yield [Array<String>]
-  # @yieldparam [Array<String>] :classes  The initial set of CSS classes.
-  # @yieldreturn [nil]                    The block return is ignored because
-  #                                         the block should append to :classes
+  # @param [Array<String,Array>] args
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -195,11 +194,17 @@ module HtmlHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # == Usage Notes
+  # This method assumes that local paths are always relative.
+  #
   def make_link(label, path, **opt, &block)
+    opt = opt.dup
     if opt[:target] == '_blank'
-      opt[:rel] = 'noopener'
       opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
       opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
+    end
+    unless opt.key?(:rel)
+      opt[:rel] = 'noopener' if path.start_with?('http')
     end
     unless opt.key?(:tabindex)
       opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')

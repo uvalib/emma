@@ -13,8 +13,10 @@ module EditionHelper
     __included(base, '[EditionHelper]')
   end
 
-  include ResourceHelper
+  include GenericHelper
   include PaginationHelper
+  include ResourceHelper
+  include ArtifactHelper
 
   # ===========================================================================
   # :section:
@@ -27,6 +29,7 @@ module EditionHelper
   # @return [Array<Api::UserAccount>]
   #
   def edition_list
+    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -54,7 +57,7 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edition_link(item, label = nil, **opt)
-    html_opt, opt = extract_options(opt, :editionId, :edition)
+    opt, html_opt = partition_options(opt, :editionId, :edition)
     eid  = opt.values.first
     path = "#edition-#{eid}" # TODO: edition show page?
     html_opt[:tooltip] = EDITION_SHOW_TOOLTIP
@@ -62,7 +65,7 @@ module EditionHelper
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
@@ -76,26 +79,42 @@ module EditionHelper
     EditionName:     :editionName,
     PublicationDate: :publicationDate,
     ExpirationDate:  :expirationDate,
-    Formats:         :fmts,
+    Formats:         :download_links,
     Links:           :links,
   }.freeze
 
-  # edition_field_values
+  # Render an item metadata listing.
   #
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def edition_field_values(item, **opt)
-    field_values(item) do
-      EDITION_SHOW_FIELDS.merge(opt).transform_values do |v|
-        case v
-          when :fmts then download_links(item)
-          else            v
-        end
-      end
-    end
+  def edition_details(item, **opt)
+    item_details(item, :edition, EDITION_SHOW_FIELDS.merge(opt))
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Fields from Api::PeriodicalEdition.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  EDITION_INDEX_FIELDS = EDITION_SHOW_FIELDS
+
+  # Render a single entry for use within a list of items.
+  #
+  # @param [Api::Record::Base] item
+  # @param [Hash]              opt    Additional field mappings.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def edition_list_entry(item, **opt)
+    item_list_entry(item, :edition, EDITION_INDEX_FIELDS.merge(opt))
   end
 
 end

@@ -2,15 +2,16 @@
 <%-
   # An Artifact show page.
   title ||= t('emma.artifact.show.title')
+  error ||= @error
+
+  error &&= t('emma.artifact.show.error.server')
+  error ||= t('emma.artifact.show.error.javascript')
 
   set_page_title(title)
   set_page_description(title)
   set_page_robots(:noindex, :nofollow)
-
-  @error &&= t('emma.artifact.show.error.server')
-  @error ||= t('emma.artifact.show.error.javascript')
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p><%= @error -%></p>
+<p><%= error -%></p>

@@ -13,5 +13,12 @@
 
     @extend %banner;
 
-    margin-top: 1rem;
+    $footer-margin-top: 1rem;
+
+    margin-top: $footer-margin-top;
+    border-top: $hcm-divider-width solid $hcm-color;
+
+    @media #{$browser-not-ie} {
+        margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});
+    }
 }

@@ -12,7 +12,7 @@
 // noinspection SassScssResolvedByNameOnly
 .category-list-entry {
 
-    @extend .index-entry;
+    @extend .item-list-entry;
 
     display:        flex;
     flex-direction: row;
@@ -56,7 +56,7 @@
 // noinspection SassScssResolvedByNameOnly
 .category-list {
 
-    @extend .index-list;
+    @extend .item-list;
 
     //=========================================================================
     // Components
@@ -87,11 +87,11 @@
 //=============================================================================
 
 // Category metadata values.
-.category-metadata { // TODO: delete?
-    @extend .details-entry;
+.category-details { // TODO: delete?
+    @extend .item-details;
 }
 
-// Container for a .category-metadata.
+// Container for a .category-details.
 .category-container { // TODO: delete?
-    @extend .details-container;
+    @extend .item-container;
 }

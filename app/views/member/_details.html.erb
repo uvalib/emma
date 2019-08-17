@@ -4,18 +4,22 @@
   item ||= nil
   return if item.blank?
 
-  pref ||= nil
-  hist ||= nil
-  skip ||= nil
+  pref  ||= nil
+  hist  ||= nil
+  add   ||= {}
+  level ||= 1
+  skip  ||= nil
 
+  role = ('role="article"'.html_safe if level == 1)
   skip = Array.wrap(skip)
   pref = nil if skip.include?(:preferences)
   hist = nil if skip.include?(:history)
+  opt  = { level: (level + 1), skip: skip }
 -%>
 
-<div class="member-container">
-  <%= render 'member/metadata',    item: item %>
-  <%= render 'member/preferences', pref: pref %>
+<div <%= role -%> class="member-container">
+  <%= member_details(item, add) %>
+  <%= render('member/preferences', opt.merge(pref: pref)) if pref %>
 </div>
 
-<%= render 'member/history', hist: hist %>
+<%= render('member/history', opt.merge(hist: hist)) if hist %>

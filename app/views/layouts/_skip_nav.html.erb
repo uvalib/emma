@@ -1,0 +1,12 @@
+<%# app/views/layouts/_skip_nav.html.erb -%>
+<%-
+  # Hidden main "skip navigation" menu.
+  label    ||= 'Skip directly to:' # TODO: I18n
+  label_id   = 'skip-nav-heading'
+  menu       = render_skip_nav('aria-labelledby': label_id)
+  return if menu.blank?
+-%>
+<nav class="skip-nav main">
+  <h2 class="<%= label_id -%>" id="<%= label_id -%>"><%= label -%></h2>
+  <%= menu %>
+</nav>

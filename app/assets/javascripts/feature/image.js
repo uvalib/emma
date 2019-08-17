@@ -157,7 +157,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Create a placeholder image element.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function imagePlaceholder() {
         return $('<img>')

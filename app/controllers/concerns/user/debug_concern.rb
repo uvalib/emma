@@ -23,10 +23,15 @@ module User::DebugConcern
 
   # OmniAuth endpoint console debugging output.
   #
-  # @param [Array] args
-  #
   # If args[0] is a Symbol it is treated as the calling method; otherwise the
   # calling method is derived from `#caller`.
+  #
+  # @yield Supplies additional value(s) to output.
+  # @yieldreturn [String, Array<String>]
+  #
+  # @param [Array] args               Value(s) to output.
+  #
+  # @return [nil]
   #
   def auth_debug(*args)
     method = (args.shift if args.first.is_a?(Symbol))

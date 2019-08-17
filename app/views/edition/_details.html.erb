@@ -1,10 +1,15 @@
 <%# app/views/edition/_details.html.erb -%>
 <%-
   # A periodical Edition metadata listing.
-  item ||= nil
+  item  ||= nil
   return if item.blank?
+
+  add   ||= {}
+  level ||= 1
+
+  role = ('role="article"'.html_safe if level == 1)
 -%>
 
-<div class="edition-container">
-  <%= render 'edition/metadata', item: item %>
+<div <%= role -%> class="edition-container">
+  <%= edition_details(item, add) %>
 </div>

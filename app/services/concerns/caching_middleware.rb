@@ -339,6 +339,8 @@ module CachingMiddleware
             options.merge!(RAILS_CONFIG)
 =end
             options.merge!(namespace: @namespace)
+          else
+            abort "unexpected type #{type.inspect}"
         end
         params << options
         @store = ActiveSupport::Cache.lookup_store(type, *params)

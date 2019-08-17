@@ -37,10 +37,10 @@ class Api::Message < Api::Record::Base
   def initialize(data, **opt)
     __debug { "### #{self.class}.#{__method__}" }
     start_time = timestamp
-    opt = opt.dup
+    data = data.body.presence if data.is_a?(Faraday::Response)
+    opt  = opt.dup
     opt[:format] ||= self.format_of(data)
     opt[:error]  ||= true if opt[:format].blank?
-    data = data.body.presence    if data.is_a?(Faraday::Response)
     data = wrap_outer(data, opt) if (opt[:format] == :xml) && !opt[:error]
     super(data, opt)
 =begin # TODO: log exceptions?

@@ -88,6 +88,9 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 
 # Write indented line(s) to $stderr.
 #
+# @yield Supplies additional items to output.
+# @yieldreturn [String, Array<String>]
+#
 # @param [Array<String>] args
 #
 # @return [nil]

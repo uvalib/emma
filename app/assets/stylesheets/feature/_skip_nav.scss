@@ -1,0 +1,65 @@
+// app/assets/stylesheets/feature/_skip_nav.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// "Skip navigation" menu
+//=============================================================================
+
+// Make the "skip navigation" menu visible when one of its links gets focus.
+// noinspection SassScssResolvedByNameOnly
+.skip-nav {
+
+    $sn-padding:   0.25rem;
+    $sn-margin:    3 * $sn-padding;
+    $sn-entry-gap: 0.1rem;
+
+    @include user-select(none);
+
+    display:          block;
+    position:         absolute;
+    top:              $sn-margin;
+    left:             $sn-margin;
+    margin:           0;
+    padding:          $sn-padding;
+    background-color: white;
+    border:           1px solid black;
+    box-shadow:       0 0 0 1px white;
+
+    &         { z-index: -1 }
+    &.visible { z-index: 1000; }
+
+    .skip-nav-heading {
+
+        @extend .clear-default-styling;
+
+        margin-bottom:           2 * $sn-entry-gap;
+        font-style:              italic;
+        text-decoration:         solid underline;
+        text-underline-position: under;
+    }
+
+    .skip-nav-menu {
+
+        @extend .clear-default-styling;
+
+        padding-top: $sn-entry-gap;
+
+        a, a:visited {
+            color:           black;
+            text-decoration: none;
+        }
+        a:focus {
+            outline-offset: 0.5px;
+        }
+
+        li {
+
+            @extend .clear-default-styling;
+
+            margin:     $sn-entry-gap;
+            padding:    $sn-entry-gap $sn-entry-gap 0;
+            list-style: none;
+        }
+    }
+}

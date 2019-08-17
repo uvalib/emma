@@ -13,7 +13,7 @@
 // noinspection SassScssResolvedByNameOnly
 .title-list-entry {
 
-    @extend .index-entry;
+    @extend .item-list-entry;
 
     grid-auto-rows: min-content;
 
@@ -77,7 +77,7 @@
 // noinspection SassScssResolvedByNameOnly
 .title-list {
 
-    @extend .index-list;
+    @extend .item-list;
     @extend .list-3-column;
 
     justify-items: stretch;
@@ -120,9 +120,9 @@
 // Catalog Title metadata values.
 //
 // noinspection SassScssResolvedByNameOnly
-.title-metadata {
+.title-details {
 
-    @extend .details-entry;
+    @extend .item-details;
 
     //=========================================================================
     // Components
@@ -180,7 +180,7 @@
                 flex-wrap:      wrap;
 
                 > * {
-                    flex:   1 0 auto;
+                    flex:   0 0 auto;
                     margin: 0 $results-entry-margin-y $results-entry-margin-y 0;
                     &:last-child { margin-right: 0; }
                 }
@@ -244,25 +244,25 @@
     }
 }
 
-// Wrapper for .title-metadata which displays the full-size cover image to the
+// Wrapper for .title-details which displays the full-size cover image to the
 // right on large screens.
 //
 // noinspection SassScssResolvedByNameOnly
 .title-container {
 
-    @extend .details-container;
+    @extend .item-container;
 
     //=========================================================================
     // Sections
     //=========================================================================
 
-    .title-metadata {}
+    .title-details {}
 
     // @see TitleHelper#cover_image
     .cover-image {
 
         // Prevent flex from trying to equalize the width of this column with
-        // the .title-metadata column.
+        // the .title-details column.
         flex-basis:  0;
         margin-left: $page-padding-x;
 

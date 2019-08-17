@@ -24,10 +24,9 @@ module I18nHelper
   # The description of a model managed by a controller.
   #
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt
+  # @param [Hash]                opt          Passed to #i18n_interpolations
+  #                                             except for:
   #
-  # @option opt [Boolean] :brief      Default.
-  # @option opt [Boolean] :long
   # @option opt [Boolean] :plural
   # @option opt [Boolean] :capitalize
   #
@@ -35,116 +34,113 @@ module I18nHelper
   #
   def unit_of(controller = nil, **opt)
     controller ||= params[:controller]
-    if opt.present?
-      i18n_opt, opt = extract_options(opt, :long, :brief, :plural, :capitalize)
-      mode   = (true?(opt[:long]) || false?(opt[:brief])) ? 'long' : 'brief'
-      count  = i18n_opt[:count]&.to_i
-      plural = count && (count != 1) || opt[:plural]
-      store  = false
-    elsif (@unit_of ||= {})[controller].blank?
-      i18n_opt = {}
-      mode   = 'brief'
-      plural = false
-      store  = true
+    opt, i18n_opt = partition_options(opt, :plural, :capitalize)
+    plural  = opt[:plural] || (i18n_opt[:count].to_i > 1)
+    capital = opt[:capitalize]
+    result  = i18n_interpolations(controller.to_s, i18n_opt)
+    if capital && plural
+      result[:Items]
+    elsif capital
+      result[:Item]
+    elsif plural
+      result[:items]
     else
-      return @unit_of[controller]
+      result[:item]
     end
-    number  = plural ? 'many' : 'one'
-    default = i18n_opt[:default] || 'unit'
-    i18n_opt[:default] = nil
-    result   = I18n.t("emma.#{controller}.unit.#{mode}.#{number}", i18n_opt)
-    result ||= I18n.t("emma.generic.unit.#{mode}.#{number}", i18n_opt)
-    plural &&= result.blank?
-    result ||= I18n.t("emma.#{controller}.unit.#{mode}", i18n_opt)
-    result ||= I18n.t("emma.generic.unit.#{mode}", i18n_opt)
-    result ||= default
-    result   = result.pluralize  if plural
-    result   = result.capitalize if opt[:capitalize]
-    store ? (@unit_of[controller] = result) : result
   end
 
-  # page_controls_label
+  # Find the best match from config/locales/en.yml for the given partial path,
+  # first looking under "emma.#{controller}", then under "emma.generic".
   #
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt
+  # @param [Array]               partial_path I18n tree below *controller*.
+  # @param [Hash]                opt          Passed to #i18n_interpolations
+  #                                             except for:
   #
-  # @option opt [String, Symbol] :mode        Either 'one' or 'many'.
-  # @option opt [Boolean]        :one
-  # @option opt [Boolean]        :many
+  # @option opt [String, Symbol, Boolean] :mode
+  # @option opt [Boolean]                 :one
+  # @option opt [Boolean]                 :many
   #
   # @return [String]
+  # @return [nil]
   #
-  def page_controls_label(controller = nil, **opt)
+  def i18n_lookup(controller, *partial_path, **opt)
     controller ||= params[:controller]
-    mode = opt[:mode]&.to_sym
-    mode = :many if true?(opt[:many]) || false?(opt[:one])
-    mode = :one  if true?(opt[:one])  || false?(opt[:many])
-    mode ||= (params[:action] == 'index') ? :many : :one
-    I18n.t("emma.#{controller}.page_controls.label.#{mode}", default: nil) ||
-      I18n.t(
-        "emma.generic.page_controls.label.#{mode}",
-        item:    (unit = unit_of(controller)),
-        items:   unit.pluralize,
-        Item:    unit.capitalize,
-        Items:   unit.capitalize.pluralize,
-        default: [
-          :"emma.#{controller}.page_controls.label",
-          :'emma.generic.page_controls.label',
-          'Controls'
-        ]
-      )
+    partial_path = partial_path.join('.')
+    keys = [
+      :"emma.#{controller}.#{partial_path}",
+      :"emma.generic.#{partial_path}",
+      :"emma.#{partial_path}",
+    ]
+    opt, i18n_opt = partition_options(opt, :mode, :one, :many)
+    mode = opt[:mode]
+    unless false?(mode)
+      vals = %i[many one]
+      mode = nil if mode == :auto
+      mode = (mode.to_sym unless mode.nil? || true?(mode))
+      vals.find { |v| mode = v if true?(opt[v]) } unless vals.include?(mode)
+      mode ||=
+        if (count = i18n_opt[:count].to_i) > 1
+          :many
+        elsif count == 1
+          :one
+        else
+          (params[:action] == 'index') ? :many : :one
+        end
+      vals.find { |v| break mode = nil if (mode == v) && false?(opt[v]) }
+      keys = keys.flat_map { |k| [:"#{k}.#{mode}", k] } if mode
+    end
+    key = keys.shift
+    i18n_opt[:default] = [*keys, *i18n_opt[:default]].compact.uniq.push('')
+    i18n_opt.merge!(i18n_interpolations(controller.to_s, i18n_opt))
+    I18n.t(key, i18n_opt).presence
   end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  public
+  protected
 
-  # action_label
+  # The variations on the description of a model item managed by a controller.
   #
-  # @param [String, Symbol, nil] action       Default: `#params[:action]`.
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt          Passed to `I18n#t`.
+  # @param [String, Symbol] controller   Default: `#params[:controller]`.
+  # @param [Hash]           opt          Passed to #i18n_lookup_raw except for:
   #
-  # @return [String]
+  # @option opt [Boolean] :brief      Default.
+  # @option opt [Boolean] :long
   #
-  def action_label(action = nil, controller = nil, **opt)
-    action_lookup(:label, action, controller, opt).presence || 'Action'
-  end
-
-  # action_tooltip
+  # @return [Hash]
   #
-  # @param [String, Symbol, nil] action       Default: `#params[:action]`.
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt          Passed to `I18n#t`.
+  # == Implementation Notes
+  # This method does not have an embedded fallback value -- it assumes that
+  # some form of "emma.generic.unit" will be found if there is no definition
+  # for the given controller.
   #
-  # @return [String]
-  #
-  def action_tooltip(action = nil, controller = nil, **opt)
-    action_lookup(:tooltip, action, controller, opt)
-  end
-
-  # action_lookup
-  #
-  # @param [String, Symbol]      value        Value to lookup.
-  # @param [String, Symbol, nil] action       Default: `#params[:action]`.
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt          Passed to `I18n#t`.
-  #
-  # @return [String]
-  #
-  def action_lookup(value, action = nil, controller = nil, **opt)
-    controller ||= params[:controller]
-    action     ||= params[:action]
-    I18n.t(
-      "emma.#{controller}.#{action}.#{value}",
-      opt.reverse_merge(default: nil)
-    ) ||
-      I18n.t(
-        "emma.generic.#{action}.#{value}",
-        opt.reverse_merge(item: unit_of(controller), default: '')
-      )
+  def i18n_interpolations(controller, **opt)
+    opt, i18n_opt = partition_options(opt, :long, :brief)
+    mode = (true?(opt[:long]) || false?(opt[:brief])) ? :long : :brief
+    i18n_opt[:default] = single = plural = nil
+    [controller, 'generic'].each do |key|
+      unit = I18n.t("emma.#{key}.unit", **i18n_opt)
+      if unit.is_a?(String)
+        single = unit
+      elsif unit.is_a?(Hash)
+        if unit[mode].is_a?(String)
+          single = unit[mode]
+        elsif unit[mode].is_a?(Hash)
+          single = unit[mode][:one]
+          plural = unit[mode][:many] || unit[mode][:other]
+        end
+      end
+      break if single || plural
+    end
+    {
+      item:  (single ||= plural.singularize),
+      items: (plural ||= single.pluralize),
+      Item:  single.capitalize,
+      Items: plural.capitalize
+    }
   end
 
 end

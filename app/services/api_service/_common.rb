@@ -282,6 +282,7 @@ class ApiService
     #
     # @return [Faraday::Response]
     #
+    # noinspection RubyScope
     def api(verb, *args, **opt)
       result = @verb = @action = @response = @exception = nil
       headers = {}

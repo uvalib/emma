@@ -5,8 +5,11 @@
   return if item.blank?
 
   image ||= nil
+  add   ||= {}
+  level ||= 1
   skip  ||= nil
 
+  role = ('role="article"'.html_safe if level == 1)
   skip = Array.wrap(skip)
 
   append_page_description(
@@ -17,7 +20,7 @@
   )
 -%>
 
-<div class="title-container">
-  <%= render 'title/metadata', item: item %>
+<div <%= role -%> class="title-container">
+  <%= title_details(item, add) %>
   <%= image || cover_image(item) unless skip.include?(:cover_image) %>
 </div>
