@@ -59,14 +59,9 @@ ENV APP_HOME=/emma \
 # Define work directory.
 WORKDIR $APP_HOME
 
-# To avoid installing documentation for gems.
-COPY gemrc /home/$USER/.gemrc
-
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
-RUN bundle config \
-        build.sassc -- --prefix=/usr && \
-    bundle install \
+RUN bundle install \
         --no-cache \
         --without=['development' 'test'] \
         --retry=2 \
