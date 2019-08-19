@@ -64,11 +64,13 @@ COPY gemrc /home/$USER/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
-RUN bundle install \
-    --no-cache \
-    --without=['development' 'test'] \
-    --retry=2 \
-    --jobs=4
+RUN bundle config \
+        build.sassc -- --prefix=/usr && \
+    bundle install \
+        --no-cache \
+        --without=['development' 'test'] \
+        --retry=2 \
+        --jobs=4
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME
