@@ -3,25 +3,21 @@
 # The mix of packages to add are based on the needs of various gems:
 # @see https://github.com/exAspArk/docker-alpine-ruby/blob/master/Dockerfile
 #
-#   GEM             NEEDS PACKAGES
-#   -------         ---------------
-#   oj              make gcc libc-dev
-#   puma            make gcc libc-dev
-#   byebug          make gcc libc-dev
-#   nokogiri        make libxml2 libxslt-dev g++
-#   rb-readline     ncurses
-#   ffi             libffi-dev
-#   mysql2          mysql-dev
-#   unf_ext         g++
-#   tiny_tds        freetds-dev
-#   dependencies    ca-certificates git
+# For contents of a package:
+# @see https://pkgs.alpinelinux.org/contents?name=PACKAGE&arch=x86_64
+#
+# For build-base:
+# @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
 FROM ruby:2.5.3-alpine
-RUN apk --no-cache add \
-    ruby ruby-dev ruby-bundler ruby-json ruby-irb ruby-rake ruby-bigdecimal \
+RUN apk update && \
+    apk upgrade && \
+    apk add --update --no-cache \
     bash \
+    build-base \
     g++ \
     gcc \
+    gcompat \
     git \
     libc-dev \
     libffi-dev \
@@ -64,7 +60,7 @@ ENV APP_HOME=/emma \
 WORKDIR $APP_HOME
 
 # To avoid installing documentation for gems.
-COPY gemrc $HOME/.gemrc
+COPY gemrc /home/$USER/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
