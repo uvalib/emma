@@ -160,3 +160,4 @@ tags
 # === File uploaded in development
 /storage/*
 !/storage/.keep
+!/storage/gemrc

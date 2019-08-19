@@ -1,0 +1,7 @@
+# storage/gemrc
+#
+# The Dockerfile copies this to the /home/$USER/.gemrc in order to control how
+# bundler installs gems.
+
+gem:      --no-ri --no-rdoc
+:verbose: :loud

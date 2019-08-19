@@ -59,13 +59,21 @@ ENV APP_HOME=/emma \
 # Define work directory.
 WORKDIR $APP_HOME
 
+# To avoid installing documentation for gems.
+ADD storage/gemrc /home/$USER/.gemrc
+
+# TODO: testing - remove
+RUN echo '*** env ***'; env
+RUN echo '*** ls WORKDIR ***'; ls -lR $APP_HOME
+RUN echo '*** ls HOME ***'; ls -lR /home/$USER
+
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
 RUN bundle install \
-        --no-cache \
-        --without=['development' 'test'] \
-        --retry=2 \
-        --jobs=4
+    --no-cache \
+    --without=['development' 'test'] \
+    --retry=2 \
+    --jobs=4
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME
