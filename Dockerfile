@@ -63,11 +63,6 @@ WORKDIR $APP_HOME
 # To avoid installing documentation for gems.
 ADD storage/gemrc $HOME/.gemrc
 
-# TODO: testing - remove
-RUN echo '*** env ***'; env | sed 's/^/   /'; \
-    echo '*** ls HOME ***'; ls -alR $HOME | sed 's/^/   /'; \
-    echo '*** ls WORKDIR ***'; ls -alR $APP_HOME | sed 's/^/   /'
-
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
 RUN bundle install \
