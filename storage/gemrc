@@ -4,4 +4,4 @@
 # bundler installs gems.
 
 gem:      --no-ri --no-rdoc
-:verbose: :loud
+:verbose: true

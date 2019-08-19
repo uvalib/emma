@@ -5,28 +5,36 @@
 //=============================================================================
 
 //@import 'bootstrap';
+@warn 'BEFORE shared/functions';
 @import 'shared/functions';
+@warn 'BEFORE shared/variables';
 @import 'shared/variables';
 
 //=============================================================================
 // Local definitions
 //=============================================================================
 
+@warn 'BEFORE shared/mixins';
 @import 'shared/mixins';
 
 //=============================================================================
 // General styles
 //=============================================================================
 
+@warn 'BEFORE shared/common';
 @import 'shared/common';
+@warn 'BEFORE shared/layout';
 @import 'shared/layout';
+@warn 'BEFORE shared/footer';
 @import 'shared/footer';
+@warn 'BEFORE shared/header';
 @import 'shared/header';
 
 //=============================================================================
 // Feature styles
 //=============================================================================
 
+@warn 'BEFORE feature/*';
 @import 'feature/*';
 
 //=============================================================================
@@ -40,6 +48,7 @@
 // Controller-specific styles
 //=============================================================================
 
+@warn 'BEFORE controllers/*';
 @import 'controllers/*';
 
 //=============================================================================
@@ -47,4 +56,5 @@
 //=============================================================================
 
 //@import 'shared/print';
+@warn 'BEFORE shared/debug';
 @import 'shared/debug';

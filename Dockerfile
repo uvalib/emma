@@ -53,19 +53,20 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
 # :section: Platform setup
 # =============================================================================
 
-ENV APP_HOME=/emma \
+ENV HOME=/home/$USER \
+    APP_HOME=/emma \
     RAILS_ENV=production
 
 # Define work directory.
 WORKDIR $APP_HOME
 
 # To avoid installing documentation for gems.
-ADD storage/gemrc /home/$USER/.gemrc
+ADD storage/gemrc $HOME/.gemrc
 
 # TODO: testing - remove
-RUN echo '*** env ***'; env
-RUN echo '*** ls WORKDIR ***'; ls -lR $APP_HOME
-RUN echo '*** ls HOME ***'; ls -lR /home/$USER
+RUN echo '*** env ***'; env | sed 's/^/   /'; \
+    echo '*** ls HOME ***'; ls -alR $HOME | sed 's/^/   /'; \
+    echo '*** ls WORKDIR ***'; ls -alR $APP_HOME | sed 's/^/   /'
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
@@ -82,7 +83,7 @@ ADD . $APP_HOME
 RUN SECRET_KEY_BASE=x rake assets:precompile
 
 # Update permissions on the application and user home directory.
-RUN chown -R $USER:$GROUP $APP_HOME /home/$USER
+RUN chown -R $USER:$GROUP $HOME $APP_HOME
 
 # =============================================================================
 # :section: Launch the application
