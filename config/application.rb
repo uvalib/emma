@@ -27,7 +27,7 @@ module Emma
     # SASS
     # =========================================================================
 
-    config.sass.inline_source_maps = true # TODO: turn off in production?
+    #config.sass.inline_source_maps = true # TODO: turn off in production?
 
   end
 
