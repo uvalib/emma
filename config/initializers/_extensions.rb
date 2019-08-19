@@ -6,4 +6,5 @@
 # Extensions to classes that need to be established as soon as possible during
 # initialization.
 
+require 'pp'
 require Rails.root.join('lib/emma').to_path

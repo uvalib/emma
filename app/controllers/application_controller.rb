@@ -11,11 +11,6 @@ class ApplicationController < ActionController::Base
 
   include MetricsConcern
 
-  # Include the Emma constants in the compiled *.html.erb files.
-  [Emma, Emma::Constants].each do |mod|
-    ActionView::CompiledTemplates.send(:include, mod)
-  end
-
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================
