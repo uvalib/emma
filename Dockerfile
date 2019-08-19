@@ -2,11 +2,24 @@
 #
 # The mix of packages to add are based on the needs of various gems:
 # @see https://github.com/exAspArk/docker-alpine-ruby/blob/master/Dockerfile
+#
+#   GEM             NEEDS PACKAGES
+#   -------         ---------------
+#   oj              make gcc libc-dev
+#   puma            make gcc libc-dev
+#   byebug          make gcc libc-dev
+#   nokogiri        make libxml2 libxslt-dev g++
+#   rb-readline     ncurses
+#   ffi             libffi-dev
+#   mysql2          mysql-dev
+#   unf_ext         g++
+#   tiny_tds        freetds-dev
+#   dependencies    ca-certificates git
 
 FROM ruby:2.5.3-alpine
-RUN apk add --no-cache \
+RUN apk --no-cache add \
+    ruby ruby-dev ruby-bundler ruby-json ruby-irb ruby-rake ruby-bigdecimal \
     bash \
-    build-base \
     g++ \
     gcc \
     git \
@@ -14,10 +27,12 @@ RUN apk add --no-cache \
     libffi-dev \
     libxml2 \
     libxslt-dev \
+    make \
     mariadb-dev \
     nodejs \
     tzdata \
-    yarn
+    yarn && \
+    rm -rf /var/cache/apk/*
 
 # =============================================================================
 # :section: System setup
@@ -45,8 +60,11 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
 ENV APP_HOME=/emma \
     RAILS_ENV=production
 
-# define work directory
+# Define work directory.
 WORKDIR $APP_HOME
+
+# To avoid installing documentation for gems.
+COPY gemrc $HOME/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
