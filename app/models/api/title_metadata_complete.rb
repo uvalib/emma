@@ -57,6 +57,7 @@ require_relative 'usage_restriction'
 # @attr [String]                       seriesNumber
 # @attr [String]                       seriesSubtitle
 # @attr [String]                       seriesTitle
+# @attr [String]                       site
 # @attr [String]                       submitter
 # @attr [String]                       subtitle
 # @attr [String]                       synopsis
@@ -133,6 +134,7 @@ class Api::TitleMetadataComplete < Api::Record::Base
     attribute :seriesNumber,         String
     attribute :seriesSubtitle,       String
     attribute :seriesTitle,          String
+    attribute :site,                 String
     attribute :submitter,            String
     attribute :subtitle,             String
     attribute :synopsis,             String

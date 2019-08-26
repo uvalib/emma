@@ -376,9 +376,11 @@ module TitleHelper
     AssignedBy:           :assignedBy,
     DateAdded:            :dateAdded,
     DateDownloaded:       :dateDownloaded,
+    MarrakeshAvailable:   :marrakeshAvailable,
 
     # === Bookshare information ===
     BookshareId:          :bookshareId,
+    Site:                 :site,
     ReplacementId:        :replacementId,
     ContentWarnings:      :contentWarnings,
     Submitter:            :submitter,

@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'iso-639'
+
 module Api
 
   # Shared values and methods.
@@ -105,6 +107,16 @@ module Api
 
   end
 
+  # ISO 639-2 alpha-3 language code.
+  #
+  class IsoLanguage < ScalarType
+
+    def valid?(v = @value)
+      ISO_639.find_by_code(v).present?
+    end
+
+  end
+
   # ===========================================================================
   # :section: Enumeration Types
   # ===========================================================================
@@ -138,18 +150,13 @@ module Api
     },
 
     BrailleGrade: {
-      values:   %w(grade_1 grade_2),
-      default:  'grade_1'
-    },
-
-    BrailleGrade2: {
       values:   %w(contracted uncontracted),
       default:  'uncontracted'
     },
 
     BrailleMusicScoreLayout: {
-      values:   ['bar over bar', 'bar by bar'],
-      default:  'bar over bar'
+      values:   %w(barOverBar barByBar),
+      default:  'barOverBar'
     },
 
     BrailleType: {
@@ -162,6 +169,7 @@ module Api
       default:  'Bookshare'
     },
 
+    # @see https://apidocs.bookshare.org/reference/index.html#_content_warning_values
     ContentWarning: {
       values:   %w(contentWarning sex violence drugs language intolerance) +
                   %w(anyAdult unrated),
@@ -200,15 +208,14 @@ module Api
       default:  'DAISY'
     },
 
-    # NOTE: might be: %w(male female otherNonBinary)
     Gender: {
-      values:   %w(Male Female Other),
+      values:   %w(male female otherNonBinary),
       default:  'Other'
     },
 
     NarratorType: {
-      values:   %w(TTS Human),
-      default: 'Human'
+      values:   %w(tts human),
+      default: 'human'
     },
 
     ProofOfDisabilitySource: {
@@ -278,6 +285,13 @@ module Api
     AssignedSortOrder: {
       values:   %w(title author assignedBy assignedDate downloadDate),
       default:  'title'
+    },
+
+    # === Active Books / Active Periodicals ===
+
+    ActiveBookSortOrder: {
+      values:   %w(title dateAdded assigner),
+      default:  'dateAdded'
     },
 
     # === Periodicals ===
@@ -382,7 +396,6 @@ module Api
   class AllowsType              < EnumType; end
   class BrailleFormat           < EnumType; end
   class BrailleGrade            < EnumType; end
-  class BrailleGrade2           < EnumType; end
   class BrailleMusicScoreLayout < EnumType; end
   class BrailleType             < EnumType; end
   class CategoryType            < EnumType; end
@@ -407,6 +420,7 @@ module Api
   class MemberSortOrder         < EnumType; end
   class MyAssignedSortOrder     < EnumType; end
   class AssignedSortOrder       < EnumType; end
+  class ActiveBookSortOrder     < EnumType; end
   class PeriodicalSortOrder     < EnumType; end
   class EditionSortOrder        < EnumType; end
   class MyReadingListSortOrder  < EnumType; end

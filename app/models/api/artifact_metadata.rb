@@ -12,7 +12,7 @@ require_relative 'narrator'
 # Api::ArtifactMetadata
 #
 # @attr [String]                  brailleCode
-# @attr [BrailleGrade2]           brailleGrade
+# @attr [BrailleGrade]            brailleGrade
 # @attr [BrailleMusicScoreLayout] brailleMusicScoreLayout
 # @attr [BrailleType]             brailleType
 # @attr [IsoDate]                 dateAdded
@@ -35,7 +35,7 @@ class Api::ArtifactMetadata < Api::Record::Base
 
   schema do
     attribute :brailleCode,             String
-    attribute :brailleGrade,            BrailleGrade2
+    attribute :brailleGrade,            BrailleGrade
     attribute :brailleMusicScoreLayout, BrailleMusicScoreLayout
     attribute :brailleType,             BrailleType
     attribute :dateAdded,               IsoDate

@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 require_relative 'common/artifact_methods'
 require_relative 'common/link_methods'
 require_relative 'common/title_methods'
+require_relative 'category'
 
 # Api::TitleMetadataSummary
 #
@@ -15,6 +16,7 @@ require_relative 'common/title_methods'
 # @attr [Array<Api::Name>]        authors           *deprecated*
 # @attr [Boolean]                 available
 # @attr [String]                  bookshareId
+# @attr [Array<Api::Category>]    categories
 # @attr [Array<Api::Name>]        composers         *deprecated*
 # @attr [Array<ContentWarning>]   contentWarnings
 # @attr [Array<Api::Contributor>] contributors
@@ -26,8 +28,11 @@ require_relative 'common/title_methods'
 # @attr [Array<Api::Link>]        links
 # @attr [Array<Api::Name>]        lyricists         *deprecated*
 # @attr [String]                  publishDate
+# @attr [Integer]                 readingAgeMaximum
+# @attr [Integer]                 readingAgeMinimum
 # @attr [String]                  seriesNumber
 # @attr [String]                  seriesTitle
+# @attr [String]                  site
 # @attr [String]                  subtitle
 # @attr [String]                  synopsis
 # @attr [String]                  title
@@ -47,9 +52,13 @@ require_relative 'common/title_methods'
 #   :dateDownloaded
 # And adds these fields:
 #   :arrangers
+#   :categories
 #   :contentWarnings
 #   :contributors
 #   :lyricists
+#   :readingAgeMaximum
+#   :readingAgeMinimum
+#   :site
 #   :translators
 #
 # noinspection DuplicatedCode
@@ -60,29 +69,33 @@ class Api::TitleMetadataSummary < Api::Record::Base
   include Api::Common::TitleMethods
 
   schema do
-    has_many  :arrangers,        Api::Name                  # NOTE: deprecated
-    has_many  :authors,          Api::Name                  # NOTE: deprecated
-    attribute :available,        Boolean
-    attribute :bookshareId,      String
-    has_many  :composers,        Api::Name                  # NOTE: deprecated
-    has_many  :contentWarnings,  ContentWarning
-    has_many  :contributors,     Api::Contributor
-    attribute :copyrightDate,    String
-    has_many  :formats,          Api::Format
-    attribute :instruments,      String
-    attribute :isbn13,           String
-    has_many  :languages,        String
-    has_many  :links,            Api::Link
-    has_many  :lyricists,        Api::Name                  # NOTE: deprecated
-    attribute :publishDate,      String
-    attribute :seriesNumber,     String
-    attribute :seriesTitle,      String
-    attribute :subtitle,         String
-    attribute :synopsis,         String
-    attribute :title,            String
-    attribute :titleContentType, String
-    has_many  :translators,      Api::Name                  # NOTE: deprecated
-    attribute :vocalParts,       String
+    has_many  :arrangers,         Api::Name                 # NOTE: deprecated
+    has_many  :authors,           Api::Name                 # NOTE: deprecated
+    attribute :available,         Boolean
+    attribute :bookshareId,       String
+    has_many  :categories,        Api::Category
+    has_many  :composers,         Api::Name                 # NOTE: deprecated
+    has_many  :contentWarnings,   ContentWarning
+    has_many  :contributors,      Api::Contributor
+    attribute :copyrightDate,     String
+    has_many  :formats,           Api::Format
+    attribute :instruments,       String
+    attribute :isbn13,            String
+    has_many  :languages,         String
+    has_many  :links,             Api::Link
+    has_many  :lyricists,         Api::Name                 # NOTE: deprecated
+    attribute :publishDate,       String
+    attribute :readingAgeMaximum, Integer
+    attribute :readingAgeMinimum, Integer
+    attribute :seriesNumber,      String
+    attribute :seriesTitle,       String
+    attribute :site,              String
+    attribute :subtitle,          String
+    attribute :synopsis,          String
+    attribute :title,             String
+    attribute :titleContentType,  String
+    has_many  :translators,       Api::Name                 # NOTE: deprecated
+    attribute :vocalParts,        String
   end
 
 end

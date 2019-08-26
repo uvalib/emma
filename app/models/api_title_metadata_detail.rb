@@ -42,6 +42,7 @@ require_relative 'api/usage_restriction'
 # @attr [Array<String>]                languages
 # @attr [Array<Api::Link>]             links
 # @attr [Array<Api::Name>]             lyricists              *deprecated*
+# @attr [Boolean]                      marrakeshAvailable
 # @attr [String]                       movementNumber
 # @attr [String]                       movementTitle
 # @attr [String]                       musicLayout
@@ -58,6 +59,7 @@ require_relative 'api/usage_restriction'
 # @attr [String]                       seriesNumber
 # @attr [String]                       seriesSubtitle
 # @attr [String]                       seriesTitle
+# @attr [String]                       site
 # @attr [String]                       subtitle
 # @attr [String]                       synopsis
 # @attr [String]                       title
@@ -79,8 +81,10 @@ require_relative 'api/usage_restriction'
 #   :withdrawalDate
 # And adding fields:
 #   :edition
+#   :marrakeshAvailable
 #   :readingAgeMaximum
 #   :readingAgeMinimum
+#   :site
 #
 class ApiTitleMetadataDetail < Api::Message
 
@@ -114,6 +118,7 @@ class ApiTitleMetadataDetail < Api::Message
     has_many  :languages,            String
     has_many  :links,                Api::Link
     has_many  :lyricists,            Api::Name              # NOTE: deprecated
+    attribute :marrakeshAvailable,   Boolean
     attribute :movementNumber,       String
     attribute :movementTitle,        String
     attribute :musicLayout,          String
@@ -130,6 +135,7 @@ class ApiTitleMetadataDetail < Api::Message
     attribute :seriesNumber,         String
     attribute :seriesSubtitle,       String
     attribute :seriesTitle,          String
+    attribute :site,                 String
     attribute :subtitle,             String
     attribute :synopsis,             String
     attribute :title,                String

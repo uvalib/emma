@@ -61,7 +61,7 @@ class ApiService
     #
     # @option opt [String]              :title
     # @option opt [String]              :issn
-    # @option opt [String]              :language
+    # @option opt [IsoLanguage]         :language
     # @option opt [String]              :start
     # @option opt [Integer]             :limit        Default: 10
     # @option opt [PeriodicalSortOrder] :sortOrder    Default: 'title'
@@ -99,13 +99,13 @@ class ApiService
     # @param [String] seriesId
     # @param [Hash]   opt             API URL parameters
     #
-    # @option opt [String]                :title
-    # @option opt [String]                :issn
-    # @option opt [String]                :description
-    # @option opt [String]                :publisher
-    # @option opt [String]                :externalCategoryCode
-    # @option opt [String, Array<String>] :categories
-    # @option opt [String, Array<String>] :languages
+    # @option opt [String]                          :title
+    # @option opt [String]                          :issn
+    # @option opt [String]                          :description
+    # @option opt [String]                          :publisher
+    # @option opt [String]                          :externalCategoryCode
+    # @option opt [String, Array<String>]           :categories
+    # @option opt [IsoLanguage, Array<IsoLanguage>] :languages
     #
     # @return [ApiPeriodicalSeriesMetadataSummary]
     #

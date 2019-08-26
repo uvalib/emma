@@ -11,6 +11,7 @@ class ApiService
 
   # ApiService::Account
   #
+  # noinspection RubyParameterNamingConvention
   module Account
 
     include Common
@@ -99,7 +100,7 @@ class ApiService
     #
     # @option opt [Boolean]       :allowAdultContent
     # @option opt [Boolean]       :showAllBooks           Default: *false*
-    # @option opt [String]        :language
+    # @option opt [IsoLanguage]   :language
     # @option opt [FormatType]    :format
     # @option opt [FormatType]    :fmt                    Alias for :format
     # @option opt [BrailleGrade]  :brailleGrade
@@ -140,24 +141,24 @@ class ApiService
     # @param [User, String, nil] user       Default: @user
     # @param [Hash]              opt        API URL parameters
     #
-    # @option opt [String]   :firstName
-    # @option opt [String]   :lastName
-    # @option opt [String]   :phoneNumber
-    # @option opt [String]   :emailAddress
-    # @option opt [String]   :address1
-    # @option opt [String]   :address2
-    # @option opt [String]   :city
-    # @option opt [String]   :state
-    # @option opt [String]   :country
-    # @option opt [String]   :postalCode
-    # @option opt [String]   :guardianFirstName
-    # @option opt [String]   :guardianLastName
-    # @option opt [String]   :dateOfBirth
-    # @option opt [String]   :language
-    # @option opt [Boolean]  :allowAdultContent
-    # @option opt [SiteType] :site
-    # @option opt [RoleType] :role
-    # @option opt [String]   :password
+    # @option opt [String]      :firstName
+    # @option opt [String]      :lastName
+    # @option opt [String]      :phoneNumber
+    # @option opt [String]      :emailAddress
+    # @option opt [String]      :address1
+    # @option opt [String]      :address2
+    # @option opt [String]      :city
+    # @option opt [String]      :state
+    # @option opt [String]      :country
+    # @option opt [String]      :postalCode
+    # @option opt [String]      :guardianFirstName
+    # @option opt [String]      :guardianLastName
+    # @option opt [String]      :dateOfBirth
+    # @option opt [IsoLanguage] :language
+    # @option opt [Boolean]     :allowAdultContent
+    # @option opt [SiteType]    :site
+    # @option opt [RoleType]    :role
+    # @option opt [String]      :password
     #
     # @return [ApiUserAccount]
     #
@@ -173,24 +174,24 @@ class ApiService
     #
     # @param [Hash] opt               API URL parameters
     #
-    # @option opt [String]   :firstName          *REQUIRED*
-    # @option opt [String]   :lastName           *REQUIRED*
-    # @option opt [String]   :phoneNumber
-    # @option opt [String]   :emailAddress       *REQUIRED*
-    # @option opt [String]   :address1           *REQUIRED*
-    # @option opt [String]   :address2
-    # @option opt [String]   :city               *REQUIRED*
-    # @option opt [String]   :state
-    # @option opt [String]   :country            *REQUIRED*
-    # @option opt [String]   :postalCode         *REQUIRED*
-    # @option opt [String]   :guardianFirstName
-    # @option opt [String]   :guardianLastName
-    # @option opt [String]   :dateOfBirth
-    # @option opt [String]   :language
-    # @option opt [Boolean]  :allowAdultContent
-    # @option opt [SiteType] :site
-    # @option opt [RoleType] :role
-    # @option opt [String]   :password
+    # @option opt [String]      :firstName          *REQUIRED*
+    # @option opt [String]      :lastName           *REQUIRED*
+    # @option opt [String]      :phoneNumber
+    # @option opt [String]      :emailAddress       *REQUIRED*
+    # @option opt [String]      :address1           *REQUIRED*
+    # @option opt [String]      :address2
+    # @option opt [String]      :city               *REQUIRED*
+    # @option opt [String]      :state
+    # @option opt [String]      :country            *REQUIRED*
+    # @option opt [String]      :postalCode         *REQUIRED*
+    # @option opt [String]      :guardianFirstName
+    # @option opt [String]      :guardianLastName
+    # @option opt [String]      :dateOfBirth
+    # @option opt [IsoLanguage] :language
+    # @option opt [Boolean]     :allowAdultContent
+    # @option opt [SiteType]    :site
+    # @option opt [RoleType]    :role
+    # @option opt [String]      :password
     #
     # @return [ApiUserAccount]
     #
@@ -241,8 +242,8 @@ class ApiService
     # == GET /v2/assignedTitles/{userIdentifier}
     # Get a list of titles assigned to the specified organization member.
     #
-    # @param [User, String, nil] user   Default: @user
-    # @param [Hash]              opt    API URL parameters
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
     #
     # @option opt [String]            :start
     # @option opt [Integer]           :limit        Default: 10
@@ -261,10 +262,10 @@ class ApiService
     # == POST /v2/assignedTitles/{userIdentifier}
     # Assign a title to the specified organization member.
     #
-    # @param [User, String, nil] user   Default: @user
-    # @param [Hash]              opt    API URL parameters
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
     #
-    # @option opt [String]    :bookshareId
+    # @option opt [String]    :bookshareId          *REQUIRED*
     #
     # @return [ApiAssignedTitleMetadataSummaryList]
     #
@@ -278,18 +279,270 @@ class ApiService
     # == DELETE /v2/assignedTitles/{userIdentifier}/{bookshareId}
     # Assign a title to the specified organization member.
     #
-    # @param [User, String, nil] user   Default: @user
-    # @param [Hash]              opt    API URL parameters
-    #
-    # @option opt [String]    :bookshareId
+    # @param [User, String, nil] user               Default: @user
+    # @param [String]            bookshareId
     #
     # @return [ApiAssignedTitleMetadataSummaryList]
     #
-    def remove_assigned_title(user: @user, **opt)
+    def remove_assigned_title(user: @user, bookshareId:)
       validate_parameters(__method__, opt)
       username = name_of(user)
-      api(:delete, 'assignedTitles', username, **opt)
+      api(:delete, 'assignedTitles', username, bookshareId)
       ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # == GET /v2/myActiveBooks
+    # Get a list of my active books that are ready to read.
+    #
+    # @param [Hash] opt               API URL parameters
+    #
+    # @option opt [String]              :start
+    # @option opt [Integer]             :limit      Default: 10
+    # @option opt [ActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
+    # @option opt [Direction]           :direction  Default: 'asc'
+    #
+    # @return [ApiActiveBookList]
+    #
+    def get_my_active_books(**opt)
+      validate_parameters(__method__, opt)
+      api(:get, 'myActiveBooks', **opt)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # == POST /v2/myActiveBooks
+    # Add a book to my active books list.
+    #
+    # @param [Hash] opt               API URL parameters
+    #
+    # @option opt [String] :bookshareId             *REQUIRED*
+    # @option opt [String] :format                  *REQUIRED*
+    #
+    # @return [ApiActiveBookList]
+    #
+    def add_my_active_book(**opt)
+      validate_parameters(__method__, opt)
+      api(:post, 'myActiveBooks', **opt)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # == DELETE /v2/myActiveBooks/{activeTitleId}
+    # Remove one of the entries from my list of active books.
+    #
+    # @param [String] activeTitleId
+    #
+    # @return [ApiActiveBookList]
+    #
+    def remove_my_active_book(activeTitleId:)
+      validate_parameters(__method__, opt)
+      api(:delete, 'myActiveBooks', activeTitleId)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # == GET /v2/accounts/{userIdentifier}/activeBooks
+    # Get a list of active books for a specific user that are ready to read.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
+    #
+    # @option opt [String]            :start
+    # @option opt [Integer]           :limit        Default: 10
+    # @option opt [AssignedSortOrder] :sortOrder    Default: 'title'
+    # @option opt [Direction]         :direction    Default: 'asc'
+    #
+    # @return [ApiActiveBookList]
+    #
+    def get_active_books(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:get, 'accounts', username, 'activeBooks', **opt)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # == POST /v2/accounts/{userIdentifier}/activeBooks
+    # Add a book to a specific user’s active books list.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
+    #
+    # @option opt [String] :bookshareId             *REQUIRED*
+    # @option opt [String] :format                  *REQUIRED*
+    #
+    # @return [ApiActiveBookList]
+    #
+    def create_active_book(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:post, 'accounts', username, 'activeBooks', **opt)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # == DELETE /v2/accounts/{userIdentifier}/activeBooks/{activeTitleId}
+    # Remove one of the entries from a specific user’s list of active books.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [String]            activeTitleId
+    #
+    # @return [ApiActiveBookList]
+    #
+    def delete_active_book(user: @user, activeTitleId:)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:delete, 'accounts', username, 'activeBooks', activeTitleId)
+      ApiActiveBookList.new(response, error: exception)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # == GET /v2/myActivePeriodicals
+    # Get a list of my active periodicals that are ready to read.
+    #
+    # @param [Hash] opt               API URL parameters
+    #
+    # @option opt [String]              :start
+    # @option opt [Integer]             :limit      Default: 10
+    # @option opt [ActiveBookSortOrder] :sortOrder  Default: 'dateAdded'
+    # @option opt [Direction]           :direction  Default: 'asc'
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def get_my_active_periodicals(**opt)
+      validate_parameters(__method__, opt)
+      api(:get, 'myActivePeriodicals', **opt)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # == POST /v2/myActivePeriodicals
+    # Add a periodical to my active periodicals list.
+    #
+    # @param [Hash] opt               API URL parameters
+    #
+    # @option opt [String] :bookshareId             *REQUIRED*
+    # @option opt [String] :format                  *REQUIRED*
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def add_my_active_periodical(**opt)
+      validate_parameters(__method__, opt)
+      api(:post, 'myActivePeriodicals', **opt)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # == DELETE /v2/myActivePeriodicals/{activeTitleId}
+    # Remove one of the entries from my list of active periodicals.
+    #
+    # @param [String] activeTitleId
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def remove_my_active_periodical(activeTitleId:)
+      validate_parameters(__method__, opt)
+      api(:delete, 'myActivePeriodicals', activeTitleId)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # == GET /v2/accounts/{userIdentifier}/activePeriodicals
+    # Get a list of active periodicals for a specific user that are ready to read.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
+    #
+    # @option opt [String]            :start
+    # @option opt [Integer]           :limit        Default: 10
+    # @option opt [AssignedSortOrder] :sortOrder    Default: 'title'
+    # @option opt [Direction]         :direction    Default: 'asc'
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def get_active_periodicals(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:get, 'accounts', username, 'activePeriodicals', **opt)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # == POST /v2/accounts/{userIdentifier}/activePeriodicals
+    # Add a periodical to a specific user’s active periodicals list.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
+    #
+    # @option opt [String] :bookshareId             *REQUIRED*
+    # @option opt [String] :format                  *REQUIRED*
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def create_active_periodical(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:post, 'accounts', username, 'activePeriodicals', **opt)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # == DELETE /v2/accounts/{userIdentifier}/activePeriodicals/{activeTitleId}
+    # Remove one of the entries from a specific user’s list of active
+    # periodicals.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [String]            activeTitleId
+    #
+    # @return [ApiActivePeriodicalList]
+    #
+    def delete_active_periodical(user: @user, activeTitleId:)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:delete, 'accounts', username, 'activePeriodicals', activeTitleId)
+      ApiActivePeriodicalList.new(response, error: exception)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # == GET /v2/accounts/{userIdentifier}/activeBooksProfile
+    # Get a particular user’s choices of properties that guide how titles are
+    # added by the system to a user’s active books list.
+    #
+    # @param [User, String, nil] user               Default: @user
+    #
+    # @return [ApiActiveBookProfile]
+    #
+    def get_active_books_profile(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:get, 'accounts', username, 'activeBooksProfile', **opt)
+      ApiActiveBookProfile.new(response, error: exception)
+    end
+
+    # == PUT /v2/accounts/{userIdentifier}/activeBooksProfile
+    # Update a particular user’s choices of properties that guide how titles
+    # are added by the system to a user’s active books list.
+    #
+    # @param [User, String, nil] user               Default: @user
+    # @param [Hash]              opt                API URL parameters
+    #
+    # @option opt [Boolean] :useRecommendations
+    # @option opt [Boolean] :useRequestList
+    # @option opt [Integer] :maxContributions
+    #
+    # @return [ApiActiveBookProfile]
+    #
+    def update_active_books_profile(user: @user, **opt)
+      validate_parameters(__method__, opt)
+      username = name_of(user)
+      api(:put, 'accounts', username, 'activeBooksProfile', **opt)
+      ApiActiveBookProfile.new(response, error: exception)
     end
 
     # =========================================================================

@@ -45,8 +45,8 @@ class ApiService
     # directly (avoiding the OAuth2 flow).
     #
     TEST_USERS = {
-      'emmacollection@bookshare.org' => '834d6793-62e3-4c91-8766-689b5e521696',
-      'emmadso@bookshare.org'        => 'a39f446a-0837-4f21-b895-4cdacff16514'
+      'emmacollection@bookshare.org' => '13350912-e2f8-4111-ac7e-c04b608ff3c1',
+      'emmadso@bookshare.org'        => '00eb7f83-6917-479b-ae78-c819bec8770f'
     }.freeze
 
     # Maximum accepted value for a :limit parameter.
@@ -98,8 +98,22 @@ class ApiService
         postalCode
       ],
 
-      create_assigned_title: %i[bookshareId],
-      remove_assigned_title: %i[bookshareId],
+      create_assigned_title:    %i[bookshareId],
+
+      add_my_active_book:       %i[bookshareId format],
+      create_active_book:       %i[bookshareId format],
+
+      add_my_active_periodical: %i[bookshareId format],
+      create_active_periodical: %i[bookshareId format],
+
+      add_organization_member: %i[
+        firstName
+        lastName
+        dateOfBirth
+        grade
+        disabilityType
+        proofSource
+      ],
 
       create_organization: %i[
         organizationName

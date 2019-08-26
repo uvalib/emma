@@ -125,7 +125,7 @@ class ApiService
     # @option opt [String]                       :keyword
     # @option opt [String]                       :isbn
     # @option opt [String, Array<String>]        :categories
-    # @option opt [String]                       :language
+    # @option opt [IsoLanguage]                  :language
     # @option opt [String]                       :country
     # @option opt [FormatType]                   :format
     # @option opt [FormatType]                   :fmt       Alias for :format
@@ -158,6 +158,44 @@ class ApiService
       opt = opt.merge(transformed_opt) if transformed_opt.present?
       api(:get, 'titles', **opt)
       ApiTitleMetadataSummaryList.new(response, error: exception)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # == GET /v2/titles/{bookshareId}/{format}/resources
+    # Get a list of title file resources.
+    #
+    # @param [String]     bookshareId
+    # @param [FormatType] format
+    # @param [Hash]       opt         API URL parameters
+    #
+    # @option opt [String] :start
+    #
+    # @return [TitleFileResourceList]
+    #
+    def get_title_resource_files(bookshareId:, format:, **opt)
+      validate_parameters(__method__, opt)
+      api(:get, 'titles', bookshareId, format, 'resources', **opt)
+      TitleFileResourceList.new(response, error: exception)
+    end
+
+    # == GET /v2/titles/{bookshareId}/{format}/resources/{resourceId}
+    # Get a title file resource.
+    #
+    # @param [String]     bookshareId
+    # @param [FormatType] format
+    # @param [String]     resourceId
+    #
+    # @return [ApiStatusModel]
+    #
+    def get_title_resource_file(bookshareId:, format:, resourceId:)
+      validate_parameters(__method__, opt)
+      api(:get, 'titles', bookshareId, format, 'resources', resourceId)
+      ApiStatusModel.new(response, error: exception)
     end
 
     # =========================================================================

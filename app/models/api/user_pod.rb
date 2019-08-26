@@ -9,15 +9,15 @@ require 'api/record'
 
 # Api::UserPod
 #
-# @attr [String] disabilityType
-# @attr [String] proofSource
+# @attr [DisabilityType] disabilityType
+# @attr [String]         proofSource
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_pod
 #
 class Api::UserPod < Api::Record::Base
 
   schema do
-    attribute :disabilityType, String
+    attribute :disabilityType, DisabilityType
     attribute :proofSource,    String
   end
 

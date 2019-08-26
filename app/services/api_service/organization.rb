@@ -78,6 +78,30 @@ class ApiService
       ApiUserAccount.new(om)
     end
 
+    # == POST /v2/myOrganization/members
+    # Create a new user account for the current user's organization.
+    #
+    # @param [String] organization
+    # @param [Hash]   opt             API URL parameters
+    #
+    # @option opt [String]                  :firstName        *REQUIRED*
+    # @option opt [String]                  :lastName         *REQUIRED*
+    # @option opt [String]                  :dateOfBirth      *REQUIRED*
+    # @option opt [String]                  :grade            *REQUIRED*
+    # @option opt [String]                  :username
+    # @option opt [String]                  :password
+    # @option opt [DisabilityType]          :disabilityType   *REQUIRED*
+    # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
+    # @option opt [DisabilityPlan, Array<DisabilityPlan>] :disabilityPlan
+    #
+    # @return [ApiUserAccount]
+    #
+    def add_organization_member(organization:, **opt)
+      validate_parameters(__method__, opt)
+      api(:post, 'myOrganization', 'members', **opt)
+      ApiUserAccount.new(response, error: exception)
+    end
+
     # =========================================================================
     # :section:
     # =========================================================================
