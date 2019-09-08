@@ -9,20 +9,15 @@ __loading_begin(__FILE__)
 #
 module HeadHelper
 
+  # Include the submodules defined in "app/helpers/head_helper/*.rb".
+  #
+  # @param [Module] base
+  #
+  # @return [Array<Module>]           @see #include_submodules
+  #
   def self.included(base)
     __included(base, '[HeadHelper]')
-  end
-
-  # ===========================================================================
-  # :section: Include submodules
-  # ===========================================================================
-
-  begin
-    prev_constants = constants(false)
-    require_subdir(__FILE__)
-    (constants(false) - prev_constants).each do |name|
-      eval "include #{name} if #{name}.is_a?(Module)"
-    end
+    include_submodules(base)
   end
 
 end

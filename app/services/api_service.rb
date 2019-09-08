@@ -5,11 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require 'api/common'
-require 'api/error'
-require 'api/schema'
-
-require_subdir(__FILE__)
+require_relative 'concerns/middleware'
 
 # Send/receive messages through the Bookshare API.
 #
@@ -17,6 +13,7 @@ require_subdir(__FILE__)
 # Bookshare uses OAuth2, which is handled in this application by Devise and
 # OmniAuth.
 #
+# @see lib/emma/config.rb
 # @see config/initializers/devise.rb
 #
 class ApiService
@@ -24,6 +21,21 @@ class ApiService
   include Api
   include Api::Common
   include Api::Schema
+
+  # Include send and receive modules from "app/services/api_service/*.rb".
+  #
+  # This section is performed conditionally because `rake assets:precompile`
+  # will load this class a second time, causing a warning that SERVICE_METHODS
+  # is already defined.
+  #
+  SERVICE_METHODS ||=
+    begin
+      prev_methods = instance_methods
+      include_submodules(self)
+      (instance_methods - prev_methods).select { |m|
+        m =~ /^(get|create|update|remove|download)_/
+      }.sort.freeze
+    end
 
   # ===========================================================================
   # :section: Exceptions
@@ -103,35 +115,6 @@ class ApiService
     set_user(@options.delete(:user))
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # This section is performed conditionally because `rake assets:precompile`
-  # will load this class a second time, causing a warning that SERVICE_METHODS
-  # is already defined.
-  #
-  unless defined?(SERVICE_METHODS)
-
-    INITIAL_INSTANCE_METHODS = instance_methods
-
-    # Include send and receive modules from "app/services/api_service/*/*.rb".
-    constants(false).each do |name|
-      mod = "#{self}::#{name}".constantize
-      include mod if mod.is_a?(Module) && !mod.is_a?(Class)
-    end
-
-    SERVICE_METHODS =
-      (instance_methods - INITIAL_INSTANCE_METHODS).select { |m|
-        m if m =~ /^(get|create|update|remove|download)_/
-      }.compact.sort.freeze
-
-    remove_const(:INITIAL_INSTANCE_METHODS)
-
-  end
-
   # service_methods
   #
   # @param [Array<Symbol>]
@@ -140,44 +123,8 @@ class ApiService
     SERVICE_METHODS
   end
 
-  # GET # TODO: experimental
-  #
-  # @param [String] path
-  # @param [Hash]   opt
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def api_get(path, **opt)
-    api(:get, path, opt)&.body&.presence
-  end
-
-  # PUT # TODO: experimental
-  #
-  # @param [String] path
-  # @param [Hash]   opt
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def api_put(path, **opt)
-    api(:put, path, opt)&.body&.presence
-  end
-
-  # POST # TODO: experimental
-  #
-  # @param [String] path
-  # @param [Hash]   opt
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def api_post(path, **opt)
-    api(:post, path, opt)&.body&.presence
-  end
-
   # ===========================================================================
-  # :section:
+  # :section: Class methods
   # ===========================================================================
 
   public

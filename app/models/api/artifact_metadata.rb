@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/artifact_methods'
-require_relative 'name'
-require_relative 'narrator'
-
 # Api::ArtifactMetadata
 #
 # @attr [String]                  brailleCode

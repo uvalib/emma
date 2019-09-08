@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-
 # Api::Grade
 #
 # @attr [String]           gradeCode

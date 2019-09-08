@@ -123,6 +123,8 @@ module MemberHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see #render_field_values
+  #
   def member_preference_values(item, **opt)
     render_field_values(item, model: :member) do
       MEMBER_PREFERENCE_FIELDS.merge(opt)
@@ -150,12 +152,17 @@ module MemberHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see #render_field_values
+  #
   def member_history(item, **opt)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
     pairs = MEMBER_HISTORY_FIELDS.merge(opt)
+    index = 0
     Array.wrap(item).map { |entry|
+      index += 1
+      entry_pairs = pairs.merge(index: index)
       content_tag(:div, class: 'history-entry') do
-        render_field_values(entry, model: :member, pairs: pairs)
+        render_field_values(entry, model: :member, pairs: entry_pairs)
       end
     }.join("\n").html_safe
   end

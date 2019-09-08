@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'common/reading_list_methods'
-require_relative 'reading_list_subscription'
-
 # Api::ReadingListUserView
 #
 # @attr [Access]                       access

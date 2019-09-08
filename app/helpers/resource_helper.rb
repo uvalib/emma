@@ -325,9 +325,12 @@ module ResourceHelper
   #
   # @param [Api::Record::Base] item
   # @param [String, Symbol]    model
-  # @param [Hash]              pairs
+  # @param [Hash]              pairs      Except for #render_pair options.
   # @param [String]            separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Proc]              block      Passed to #field_values.
+  #
+  # @option pairs [Integer] :index    Offset for making unique element IDs)
+  #                                     passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -338,10 +341,12 @@ module ResourceHelper
     separator: DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
+    pairs = field_values(item, pairs, &block)
+    opt, pairs = partition_options(pairs, :index)
     # noinspection RubyNilAnalysis
-    field_values(item, pairs, &block).map { |label, value|
+    pairs.map { |label, value|
       value = render_value(item, value, model: model)
-      render_pair(label, value) if value
+      render_pair(label, value, **opt) if value
     }.compact.join(separator).html_safe
   end
 
@@ -349,7 +354,8 @@ module ResourceHelper
   #
   # @param [String, Symbol] label
   # @param [Object]         value
-  # @param [String, nil]    separator   Def.: #DEFAULT_LIST_SEPARATOR
+  # @param [String]         separator
+  # @param [Integer]        index       Offset for making unique element IDs.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                               If *value* is blank.
@@ -358,16 +364,18 @@ module ResourceHelper
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  def render_pair(label, value, separator: DEFAULT_LIST_SEPARATOR)
+  def render_pair(label, value, separator: DEFAULT_LIST_SEPARATOR, index: nil)
     return if value.blank?
-    value = safe_join(value, separator) + separator if value.is_a?(Array)
+    value = safe_join(value.dup.push(nil), separator) if value.is_a?(Array)
     l_opt = { class: 'label' }
     v_opt = { class: 'value' }
     unless label.is_a?(ActiveSupport::SafeBuffer)
       type  = "field-#{label || 'None'}"
+      id    = type
+      id    = "#{id}-#{index}" if index
       label = labelize(label)
       append_css_classes!(l_opt, type)
-      append_css_classes!(v_opt, type).merge!(id: type)
+      append_css_classes!(v_opt, type).merge!(id: id)
     end
     content_tag(:div, label, l_opt) << content_tag(:div, value, v_opt)
   end
@@ -486,7 +494,7 @@ module ResourceHelper
   def item_details(item, model, pairs = nil, &block)
     return if item.blank?
     content_tag(:div, class: "#{model}-details") do
-      render_field_values(item, pairs: pairs, model: model, &block)
+      render_field_values(item, model: model, pairs: pairs, &block)
     end
   end
 
@@ -512,11 +520,10 @@ module ResourceHelper
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
     pairs.map { |k, v|
-      plural = v.is_a?(Enumerable) && (v.size > 1)
-      field  = labelize(k)
-      field  = (plural ? field.pluralize : field.singularize).html_safe
-      value  = v.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2').inspect
-      [field, value]
+      count = v.is_a?(Enumerable) ? v.size : 1
+      field = labelize(k, count)
+      value = strip_quotes(v)
+      [field, %Q("#{value}")]
     }.to_h
   end
 

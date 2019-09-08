@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/periodical_series_metadata_summary'
-
 # ApiPeriodicalSeriesMetadataSummary
 #
 # @attr [Array<Api::Category>]          categories

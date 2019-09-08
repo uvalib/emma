@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/organization_type'
-
 # ApiOrganizationTypeList
 #
 # @attr [Array<Api::Link>]             links

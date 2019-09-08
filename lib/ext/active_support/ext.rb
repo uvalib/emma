@@ -8,6 +8,6 @@
 __loading_begin(__FILE__)
 
 require 'active_support/core_ext'
-require_subdir(__FILE__)
+require_subdirs(__FILE__)
 
 __loading_end(__FILE__)

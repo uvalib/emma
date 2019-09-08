@@ -1,4 +1,9 @@
+# app/controllers/user/confirmations_controller.rb
+#
 # frozen_string_literal: true
+# warn_indent:           true
+
+__loading_begin(__FILE__)
 
 class User::ConfirmationsController < Devise::ConfirmationsController
   # GET /resource/confirmation/new
@@ -28,3 +33,5 @@ class User::ConfirmationsController < Devise::ConfirmationsController
   #   super(resource_name, resource)
   # end
 end
+
+__loading_end(__FILE__)

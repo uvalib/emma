@@ -5,9 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::FavIcon
+# HeadHelper::Favicon
 #
-module HeadHelper::FavIcon
+module HeadHelper::Favicon
 
   include HeadHelper::Common
 

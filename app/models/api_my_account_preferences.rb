@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/artifact_methods'
-require_relative 'api/common/link_methods'
-
 # ApiMyAccountPreferences
 #
 # @attr [Boolean]          allowAdultContent

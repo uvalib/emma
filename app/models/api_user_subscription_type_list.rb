@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/user_subscription_type'
-
 # ApiUserSubscriptionTypeList
 #
 # @attr [Array<Api::Link>]                 links

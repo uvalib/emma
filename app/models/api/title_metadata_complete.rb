@@ -5,14 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/artifact_methods'
-require_relative 'common/link_methods'
-require_relative 'common/title_methods'
-require_relative 'artifact_metadata'
-require_relative 'category'
-require_relative 'grade'
-require_relative 'usage_restriction'
-
 # Api::TitleMetadataComplete
 #
 # @attr [Boolean]                      adultContent

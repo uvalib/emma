@@ -430,6 +430,6 @@ module Api
   class GrantType               < EnumType; end
   class TokenErrorType          < EnumType; end
 
-end unless defined?(Api) && defined?(Api::Common)
+end
 
 __loading_end(__FILE__)

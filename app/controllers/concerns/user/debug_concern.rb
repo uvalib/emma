@@ -45,8 +45,14 @@ module User::DebugConcern
     __debug(part.join(' | '))
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  # Neutralize debugging methods when not debugging.
   unless CONSOLE_DEBUGGING
-    def auth_debug(*)
+    instance_methods(false).each do |m|
+      module_eval "def #{m}(*); end"
     end
   end
 

@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/account_methods'
-require_relative 'common/link_methods'
-require_relative 'name'
-
 # Api::Sponsor
 #
 # @attr [Boolean]            allowAdultContent

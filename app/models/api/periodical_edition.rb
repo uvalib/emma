@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/artifact_methods'
-require_relative 'common/edition_methods'
-require_relative 'common/link_methods'
-
 # Api::PeriodicalEdition
 #
 # @attr [String]             editionId

@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/user_signed_agreement'
-
 # ApiUserSignedAgreement
 #
 # @attr [String]        agreementId

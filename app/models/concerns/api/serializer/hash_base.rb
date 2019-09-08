@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/serializer/base'
-require 'api/serializer/hash_associations'
-
 # Base class for object-specific serializers that process data passed in as a
 # Hash.
 #

@@ -5,12 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/active_periodical'
-require_relative 'api/status_model'
-
 # ApiActivePeriodicalList
 #
 # @attr [Array<Api::ActivePeriodical>] activeTitles

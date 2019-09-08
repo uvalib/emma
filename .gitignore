@@ -1,7 +1,7 @@
 # .gitignore
 
 # =============================================================================
-# :section: Project-specific files and directories
+# Project-specific files and directories
 # =============================================================================
 
 # Host-specific files.
@@ -27,7 +27,7 @@
 /public/Sitemap/*
 
 # =============================================================================
-# :section: Generic system files
+# Generic system files
 # =============================================================================
 
 # === Linux / Unix
@@ -49,7 +49,7 @@ desktop.ini
 Thumbs.db
 
 # =============================================================================
-# :section: Editor files
+# Editor files
 # =============================================================================
 
 # === Emacs
@@ -68,7 +68,7 @@ tmtags
 *.sw?
 
 # =============================================================================
-# :section: Development files
+# Development files
 # =============================================================================
 
 # === Ruby / Rails
@@ -92,7 +92,7 @@ tmtags
 /.bundle
 
 # === Yarn/NPM
-/node_modules
+/node_modules/
 /yarn-error.log
 /yarn.lock
 
@@ -134,14 +134,14 @@ tags
 /local.properties
 
 # =============================================================================
-# :section: Other applications
+# Other applications
 # =============================================================================
 
 # === Picasa
 .picasa.ini
 
 # =============================================================================
-# :section: Generic files
+# Generic files
 # =============================================================================
 
 # === Backup files
@@ -149,15 +149,15 @@ tags
 
 # === Log files
 *.log
-/log/*
+/log/
 !/log/.keep
 
 # === Temporary files
 *.tmp
-/tmp/*
+/tmp/
 !/tmp/.keep
 
 # === File uploaded in development
-/storage/*
+/storage/
 !/storage/.keep
 !/storage/gemrc

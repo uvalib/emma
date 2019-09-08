@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 # Methods mixed in to record elements related to user identities.
 #
 module Api::Common::AccountMethods

@@ -117,7 +117,7 @@ module ApiConcern
     # @return [Hash{Symbol=>Hash}]
     #
     def self.trial_methods(
-      user:         ApiService::DEFAULT_USERNAME,
+      user:         ApiService::DEFAULT_USER,
       book:         BOOK,
       series:       SERIES,
       edition:      EDITION,

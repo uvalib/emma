@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/artifact_methods'
-require_relative 'common/link_methods'
-require_relative 'common/title_methods'
-require_relative 'status_model'
-
 # Api::TitleDownload
 #
 # @attr [Array<Api::Name>] authors          *deprecated*

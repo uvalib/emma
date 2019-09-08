@@ -5,12 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/common/reading_list_methods'
-require_relative 'api/reading_list_title'
-
 # ApiReadingListTitlesList
 #
 # @attr [Array<AllowsType>]            allows

@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/serializer'
-
 # Definitions used within the #schema block when it is executed in the context
 # of a serializer class definition.
 #

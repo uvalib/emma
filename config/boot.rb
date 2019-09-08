@@ -28,35 +28,46 @@ BUILD_VERSION =
 # Initial console/log message before the normal boot sequence.
 # =============================================================================
 
+# Indicate whether this is a deployed instance.
+#
+def application_deployed?
+  # !!ENV['AWS_DEFAULT_REGION']
+  # !!ENV['AWS_EXECUTION_ENV']
+  !!ENV['AWS_REGION']
+end
+
 # For use within initialization code to branch between code that is intended
 # for the Rails application versus code that is run in other contexts (e.g.,
 # rake).
 #
-def running_rails_application?
+def rails_application?
   return false unless defined?(APP_PATH)
+  return false if $*.any? { |arg| %w(-h --help).include?(arg) }
   return true  if ENV['IN_PASSENGER']
   return true  if $0.start_with?('spring app')
-  return false unless $0.end_with?('rails') || $0.end_with?('spring')
+  return false unless $0.end_with?('rails', 'spring')
   $*.include?('server')
 end
 
-if running_rails_application?
+if rails_application?
   STDERR.puts "boot @ #{BOOT_TIME}"
   STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
-  STDERR.puts "$0       = #{$0.inspect}" # TODO: debugging - remove
-  STDERR.puts "$*       = #{$*.inspect}" # TODO: debugging - remove
-  STDERR.puts "$ARGV    = #{$ARGV.inspect}" # TODO: debugging - remove
-  STDERR.puts "APP_PATH = #{APP_PATH.inspect}" if defined?(APP_PATH) # TODO: debugging - remove
-  STDERR.puts "ENV:\n" + # TODO: debugging - remove
-    ENV.inspect
-      .sub(/\A\s*{\s*/, '')
-      .sub(/\s*}\s*\z/, '')
-      .split(/",\s+/)
-      .sort
-      .join(%Q(",\n))
-      .gsub(/"([^"]+)"=>/, '... \1 = ')
-elsif !$0.end_with?('rake')
-  STDERR.puts "Running #{$0.inspect}" unless $0.end_with?('rake')
+  if application_deployed? # TODO: debugging - remove section eventually
+    STDERR.puts "$0       = #{$0.inspect}"
+    STDERR.puts "$*       = #{$*.inspect}"
+    STDERR.puts "$ARGV    = #{$ARGV.inspect}"
+    STDERR.puts "APP_PATH = #{APP_PATH.inspect}" if defined?(APP_PATH)
+    STDERR.puts "ENV:\n" +
+      ENV.inspect
+        .sub(/\A\s*{\s*/, '')
+        .sub(/\s*}\s*\z/, '')
+        .split(/",\s+/)
+        .sort
+        .join(%Q(",\n))
+        .gsub(/"([^"]+)"=>/, '... \1 = ')
+  end
+elsif !$0.end_with?('rails', 'rake')
+  STDERR.puts "Running #{$0.inspect}"
 end
 
 # =============================================================================
@@ -68,4 +79,4 @@ ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../Gemfile', __dir__)
 require 'bundler/setup' # Set up gems listed in the Gemfile.
 require 'bootsnap/setup' # Speed up boot time by caching expensive operations.
 
-STDERR.puts 'Starting Rails...' if running_rails_application?
+STDERR.puts 'Starting Rails...' if rails_application?

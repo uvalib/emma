@@ -1,4 +1,9 @@
+# app/controllers/user/registrations_controller.rb
+#
 # frozen_string_literal: true
+# warn_indent:           true
+
+__loading_begin(__FILE__)
 
 class User::RegistrationsController < Devise::RegistrationsController
   # before_action :configure_sign_up_params, only: [:create]
@@ -60,3 +65,5 @@ class User::RegistrationsController < Devise::RegistrationsController
   #   super(resource)
   # end
 end
+
+__loading_end(__FILE__)

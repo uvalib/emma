@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'format'
-require_relative 'status_model'
-require_relative 'title_metadata_summary'
-
 # Api::ActiveBook
 #
 # @attr [String]                    activeTitleId

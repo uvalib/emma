@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'contributor_name'
-
 # Api::Contributor
 #
 # @attr [Array<Api::Link>]     links

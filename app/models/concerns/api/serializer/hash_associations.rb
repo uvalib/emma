@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/serializer/associations'
-
 # Overrides to the class methods defined in Api::Serializer::Associations for
 # Hash serializers.
 #

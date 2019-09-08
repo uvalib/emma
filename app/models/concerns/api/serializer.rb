@@ -5,17 +5,10 @@
 
 __loading_begin(__FILE__)
 
-module Api
-
-  # Namespace for the serialization/de-serialization mechanisms associated with
-  # objects derived from Api::Record::Base.
-  #
-  module Serializer
-  end
-
+# Namespace for the serialization/de-serialization mechanisms associated with
+# objects derived from Api::Record::Base.
+#
+module Api::Serializer
 end
-
-require 'api/schema'
-require_subdir(__FILE__)
 
 __loading_end(__FILE__)

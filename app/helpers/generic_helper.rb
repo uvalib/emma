@@ -227,6 +227,77 @@ module GenericHelper
     }.reject(&:blank?)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  INFLECT_SINGULAR = %i[single singular singularize].freeze
+  INFLECT_PLURAL   = %i[plural pluralize].freeze
+
+  # Pluralize or singularize *text*.  If neither *inflection* nor *count* is
+  # specified then a copy of the original string is returned.
+  #
+  # @param [ActiveSupport::Buffer, String] text
+  # @param [Symbol, Integer, nil]          inflection
+  # @param [Integer, nil]                  count
+  #
+  # @return [ActiveSupport::Buffer, String]
+  #
+  # @see #INFLECT_SINGULAR
+  # @see #INFLECT_PLURAL
+  #
+  def inflection(text, inflection = nil, count = nil)
+    count, inflection = [inflection, nil] if inflection.is_a?(Integer)
+    if (count == 1) || INFLECT_SINGULAR.include?(inflection)
+      text.singularize
+    elsif count.is_a?(Integer) || INFLECT_PLURAL.include?(inflection)
+      text.pluralize
+    else
+      text.to_s.dup
+    end
+  end
+
+  # Render a camel-case or snake-case string as in "title case" words separated
+  # by non-breakable spaces.
+  #
+  # @param [String, Symbol]       text
+  # @param [Integer, Symbol, nil] count
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def labelize(text, count = nil)
+    result =
+      Array.wrap(text)
+        .flat_map { |s| s.to_s.split(/[_\s]/) if s.present? }
+        .flat_map { |s|
+          next if s.blank?
+          s = "#{s[0].upcase}#{s[1..-1]}" if s[0] =~ /^[a-z]/
+          s.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip.split(' ').map do |word|
+            case word
+              when 'Id' then 'ID'
+              else           word
+            end
+          end
+        }.compact.join(' ')
+    result = ERB::Util.h(result) unless text.html_safe?
+    result = inflection(result, count) if count
+    result.gsub(/\s/, '&nbsp;').html_safe
+  end
+
+  # Remove surrounding quotation marks from a term.
+  #
+  # @param [ActiveSupport::SafeBuffer, String] term
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  def strip_quotes(term)
+    result = term.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2')
+    result = result.html_safe if term.html_safe?
+    result
+  end
+
 end
 
 __loading_end(__FILE__)

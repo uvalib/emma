@@ -3,7 +3,6 @@
   # Main top application header.
   skip ||= false
   return if skip
-  tagline      = LayoutHelper::LOGO_TAGLINE
   username     = current_user.to_s
   username_tip = t('emma.user.tooltip', user: username)
   session_link = current_user ? sign_out_link : sign_in_link
@@ -12,7 +11,7 @@
 <div class="layout-banner">
   <div class="logo-area">
     <%= logo_element %>
-    <div class="tagline"><%= tagline -%></div>
+    <div class="tagline"><%= logo_tagline -%></div>
   </div>
   <div class="control-area">
     <div class="user" title="<%= username_tip -%>"><%= username -%></div>

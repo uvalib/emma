@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/reading_list_user_view'
-
 # ApiReadingListUserView
 #
 # @attr [Access]                       access

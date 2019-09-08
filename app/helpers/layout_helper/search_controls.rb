@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'api/common'
+
 # LayoutHelper::SearchControls
 #
 module LayoutHelper::SearchControls

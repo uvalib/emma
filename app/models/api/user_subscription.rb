@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'download_timeframe'
-require_relative 'user_subscription_type'
-
 # Api::UserSubscription
 #
 # @attr [Api::DownloadTimeframe]    downloadTimeframe

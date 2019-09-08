@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby
-begin
-  load File.expand_path('../spring', __FILE__)
-rescue LoadError => e
-  raise unless e.message.include?('spring')
-end
+#
+# bin/rails
+
+# This is required by `rails console`.
+ENV['RAILS_LOG_TO_STDOUT'] ||= 'true' if %w(c console).include?($*.first)
+
+# Run Rails command.
 APP_PATH = File.expand_path('../config/application', __dir__)
 require_relative '../config/boot'
 require 'rails/commands'

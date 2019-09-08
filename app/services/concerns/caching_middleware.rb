@@ -14,12 +14,8 @@ module CachingMiddleware
   #
   module Defaults
 
-    # Base temporary directory.
-    TMP_ROOT_DIR =
-      ENV['TMPDIR']&.sub(/^([^\/])/, "#{Rails.root}/\\1")&.freeze || Dir.tmpdir
-
     # Directory for caching.
-    CACHE_ROOT_DIR = File.join(TMP_ROOT_DIR, 'cache').freeze
+    CACHE_ROOT_DIR = File.join(TMPDIR, 'cache').freeze
 
     # Faraday cache directory for :file_store.
     FARADAY_CACHE_DIR = File.join(CACHE_ROOT_DIR, 'faraday').freeze
@@ -42,7 +38,7 @@ module CachingMiddleware
       logger: Log.logger,
     }.freeze
 
-  end unless defined?(CachingMiddleware::Defaults)
+  end
 
   # A common implementation for locally-defined caching middleware.
   #
@@ -312,7 +308,7 @@ module CachingMiddleware
       log = @logger
       log = log.to_s if log.is_a?(Pathname)
       if log.is_a?(String)
-        log = File.join(TMP_ROOT_DIR, log) unless log.start_with?('/')
+        log = File.join(TMPDIR, log) unless log.start_with?('/')
         @logger =
           Logger.new(log).tap { |l| l.level = Logger.const_get(@log_level) }
       end

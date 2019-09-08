@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
 # ApiOauthTokenError
 #
 # @attr [TokenErrorType] error

@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-
 # The base class for inbound messages from the Bookshare API.
 #
 # Api::Message instances must be created with data; if it is nil, :error option

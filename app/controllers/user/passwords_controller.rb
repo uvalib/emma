@@ -1,4 +1,9 @@
+# app/controllers/user/passwords_controller.rb
+#
 # frozen_string_literal: true
+# warn_indent:           true
+
+__loading_begin(__FILE__)
 
 class User::PasswordsController < Devise::PasswordsController
   # GET /resource/password/new
@@ -32,3 +37,5 @@ class User::PasswordsController < Devise::PasswordsController
   #   super(resource_name)
   # end
 end
+
+__loading_end(__FILE__)

@@ -5,12 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/active_book_preferences'
-require_relative 'api/recommendation_profile'
-
 # ApiActiveBookProfile
 #
 # @attr [Array<AllowsType>]          allows

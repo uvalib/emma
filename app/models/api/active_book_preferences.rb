@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'format'
-
 # Api::ActiveBookPreferences
 #
 # @attr [Array<AllowsType>]  allows

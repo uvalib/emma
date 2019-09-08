@@ -53,20 +53,16 @@ module ApiHelper
   # @return [Hash]
   #
   def api_method(method, path, **opt)
-    method ||= :get
-    result = {
+    method = method ? method.downcase.to_sym : :get
+    @api ||= ApiService.instance
+    data   = @api.send(:api, method, path, opt)&.body&.presence
+    result = data ? { result: data } : { exception: @api.exception }
+    result.reverse_merge(
       method: method.to_s.upcase,
       path:   path,
       opt:    opt.presence,
       url:    external_url(path, opt)
-    }
-    method = "api_#{method}".downcase.to_sym
-    @api ||= ApiService.instance
-    if (data = @api.send(method, path, opt))
-      result.merge(result: data)
-    else
-      result.merge(exception: @api.exception)
-    end
+    )
   end
 
   # Generate HTML from the result of an API method invocation.

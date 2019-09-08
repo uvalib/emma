@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/category_methods'
-require_relative 'common/link_methods'
-
 # Api::Category
 #
 # @attr [CategoryType]     categoryType

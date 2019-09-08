@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/title_metadata_summary'
-
 # ApiTitleMetadataSummary
 #
 # @attr [Array<Api::Name>]        arrangers         *deprecated*

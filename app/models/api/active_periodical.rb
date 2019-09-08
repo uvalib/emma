@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'format'
-require_relative 'periodical_edition'
-require_relative 'status_model'
-
 # Api::ActivePeriodical
 #
 # @attr [String]                 activeTitleId

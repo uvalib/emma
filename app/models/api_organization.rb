@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/organization'
-
 # ApiOrganization
 #
 # @attr [Api::Address]     address

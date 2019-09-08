@@ -10,6 +10,4 @@ __loading_begin(__FILE__)
 module Api
 end
 
-require_subdir(__FILE__)
-
 __loading_end(__FILE__)

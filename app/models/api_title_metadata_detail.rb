@@ -5,16 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/artifact_methods'
-require_relative 'api/common/link_methods'
-require_relative 'api/common/title_methods'
-require_relative 'api/artifact_metadata'
-require_relative 'api/category'
-require_relative 'api/grade'
-require_relative 'api/usage_restriction'
-
 # ApiTitleMetadataDetail
 #
 # @attr [Boolean]                      adultContent

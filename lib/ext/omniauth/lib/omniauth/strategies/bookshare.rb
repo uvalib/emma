@@ -31,7 +31,7 @@ module OmniAuth
       # directly (avoiding the OAuth2 flow).
       #
       CONFIGURED_AUTH =
-        ApiService::TEST_USERS.transform_values { |token|
+        BOOKSHARE_TEST_USERS.transform_values { |token|
           { access_token: token, token_type: 'bearer', scope: 'basic' }
         }.deep_freeze
 
@@ -45,14 +45,14 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
-      option :client_id,     ApiService::API_KEY
+      option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {
-        site:            ApiService::AUTH_URL,
-        auth_scheme:     :basic_auth,
+        site:             BOOKSHARE_AUTH_URL,
+        auth_scheme:      :basic_auth,
         authorize_method: :post, # TODO: ???
         #max_redirects:   0,
-        #connection_opts: { headers: { Host: ApiService::AUTH_HOST } }
+        #connection_opts: { headers: { Host: URI(BOOKSHARE_AUTH_URL).host } }
       }
       option :authorize_options,      %i[scope]
       option :authorize_params,       { scope: 'basic' }
@@ -719,7 +719,7 @@ module OmniAuth
 =begin # NOTE: The following does *not* work:
         Rack::Response.new { |r|
           r.write("Redirecting to #{auth_url}...")
-          r.set_header('Host', ApiService::AUTH_HOST)
+          r.set_header('Host', URI(BOOKSHARE_AUTH_URL).host)
           r.redirect(auth_url)
         }.finish
 =end

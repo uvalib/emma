@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/title_metadata_complete'
-
 # ApiTitleMetadataCompleteList
 #
 # @attr [Array<AllowsType>]                 allows

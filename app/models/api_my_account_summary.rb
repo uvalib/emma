@@ -5,14 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/account_methods'
-require_relative 'api/common/link_methods'
-require_relative 'api/address'
-require_relative 'api/name'
-require_relative 'api/student_status'
-
 # ApiMyAccountSummary
 #
 # @attr [Api::Address]            address

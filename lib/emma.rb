@@ -45,14 +45,62 @@ end
 #
 # @return [void]
 #
-# @see Dir#glob
+# @see #require_files
 #
-def require_subdir(relative_to, *patterns)
+def require_subdirs(relative_to, *patterns)
   subdirs = patterns.flatten.reject(&:blank?).uniq
   subdirs << '' if subdirs.blank?
   # noinspection RubyNilAnalysis
   subdirs.map! { |subdir| "#{subdir}/**/*.rb" }
   require_files(relative_to, *subdirs)
+end
+
+# Require the submodules for a file which are stored in the subdirectory with
+# the same base name.
+#
+# @param [String] filename            Normally supplied as __FILE__
+#
+# @return [void]
+#
+# @see #require_files
+#
+def require_submodules(filename)
+  directory = File.basename(filename, '.*')
+  modules   = "#{directory}/*.rb"
+  require_files(filename, modules)
+end
+
+# Include submodules.
+#
+# @param [Module]      base         The class or module into which the
+#                                     submodules will be included.
+# @param [String, nil] filename     If provided, first #require each file
+#                                     from the subdirectory with the same
+#                                     base name as *filename*.
+#
+# @yield [name, mod] Access the module before including in *base*.
+#   Use 'next' within the block to skip inclusion of that module.
+# @yieldparam [Symbol] name
+# @yieldparam [Module] mod
+# @yieldreturn [void]
+#
+# @return [Array<Module>]           The modules included into *base*.
+#
+# @see #require_submodules
+#
+def include_submodules(base, filename = nil)
+  curr_constants = constants(false)
+  if filename
+    require_submodules(filename)
+    curr_constants = constants(false) - curr_constants
+  end
+  curr_constants.map { |name|
+    mod = "#{self}::#{name}".constantize
+    next unless mod.is_a?(Module) && !mod.is_a?(Class)
+    yield(name, mod) if block_given?
+    base.send(:include, mod)
+    mod
+  }.compact
 end
 
 # =============================================================================
@@ -67,7 +115,7 @@ end
 # =============================================================================
 
 require 'ext/active_support/ext'
-require_subdir(__FILE__, 'emma')
+require_submodules(__FILE__)
 require 'ext'
 
 __loading_end(__FILE__)

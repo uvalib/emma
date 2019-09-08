@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-require_relative '../link'
-
 # Methods mixed in to record elements with links.
 #
 module Api::Common::LinkMethods

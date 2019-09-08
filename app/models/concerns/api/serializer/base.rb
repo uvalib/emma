@@ -5,8 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require 'api/serializer/_internal'
-require 'api/serializer/associations'
+require_relative '_internal'
 
 # The base class for serialization/de-serialization of objects derived from
 # Api::Record::Base.

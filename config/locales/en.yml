@@ -23,6 +23,10 @@ en:
       api:
         unknown:        'Unknown Bookshare API error'
 
+    label:
+      back:             'Back'
+      confirm:          'Are you sure?'
+
     # =========================================================================
     # HTML page head.
     # =========================================================================
@@ -140,6 +144,8 @@ en:
 
     user:
       tooltip:          'Signed in as "%{user}"'
+      password:
+        length:         '%{min} characters minimum'
 
       sessions:
 
@@ -161,21 +167,44 @@ en:
 
         new:
           label:        'Forgot your password?'
+          submit:       'Send password reset instructions'
+
+        edit:
+          label:        'Change your password'
+          password:     'New password'
+          confirm:      'Confirm new password'
+          submit:       'Change my password'
 
       registrations:
 
         new:
           label:        'Sign up'
+          submit:       'Sign up'
+
+        edit:
+          label:        'Edit User'
+          awaiting:     'Currently awaiting confirmation for: %{email}'
+          password:     "leave blank if you don't want to change it"
+          current:      'we need your current password to confirm your changes'
+          submit:       'Update'
+
+        destroy:
+          label:        'Cancel my account'
+          link:         'Unhappy? %{button}'
 
       confirmations:
 
         new:
+          title:        'Resend confirmation instructions'
           label:        "Didn't receive confirmation instructions?"
+          submit:       'Resend confirmation instructions'
 
       unlocks:
 
         new:
+          title:        'Resend unlock instructions'
           label:        "Didn't receive unlock instructions?"
+          submit:       'Resend unlock instructions'
 
       omniauth_callbacks:
 

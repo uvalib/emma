@@ -19,6 +19,9 @@
 
 __loading_begin(__FILE__)
 
+# This stub exists to satisfy the Zeitwerk loader.
+module Api::Serializer::Internal; end
+
 require 'representable'
 require 'representable/json'
 require 'representable/xml'
@@ -320,6 +323,6 @@ module Representable
 
   end
 
-end unless defined?(Representable) && defined?(Representable::AppDebug)
+end
 
 __loading_end(__FILE__)

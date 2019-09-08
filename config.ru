@@ -3,7 +3,7 @@
 require_relative 'config/environment'
 
 # =============================================================================
-# :section: Prometheus metrics
+# Prometheus metrics
 # =============================================================================
 
 require 'prometheus/middleware/collector'
@@ -16,7 +16,7 @@ use Prometheus::Middleware::Exporter
 run ->(_) { [200, { 'Content-Type' => 'text/html' }, %w(OK)] }
 
 # =============================================================================
-# :section:
+# Start application
 # =============================================================================
 
 run Rails.application

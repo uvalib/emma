@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
 # ApiOauthToken
 #
 # @attr [String] access_token

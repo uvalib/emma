@@ -5,12 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/message'
-
-require_relative 'api/common/link_methods'
-require_relative 'api/active_book'
-require_relative 'api/status_model'
-
 # ApiActiveBookList
 #
 # @attr [Array<Api::ActiveBook>] activeTitles

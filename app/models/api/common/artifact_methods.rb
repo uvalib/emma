@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/record'
-require_relative '../format'
-
 # Methods mixed in to record elements related to artifacts.
 #
 module Api::Common::ArtifactMethods

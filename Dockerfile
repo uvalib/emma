@@ -31,7 +31,7 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 # =============================================================================
-# :section: System setup
+# System setup
 # =============================================================================
 
 ENV USER=docker \
@@ -50,7 +50,7 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
     echo "$TZ" > /etc/timezone
 
 # =============================================================================
-# :section: Platform setup
+# Platform setup
 # =============================================================================
 
 ENV HOME=/home/$USER \
@@ -81,7 +81,7 @@ RUN SECRET_KEY_BASE=x rake assets:precompile
 RUN chown -R $USER:$GROUP $HOME $APP_HOME
 
 # =============================================================================
-# :section: Launch the application
+# Launch the application
 # =============================================================================
 
 # Set the user for the process.

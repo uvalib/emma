@@ -1,4 +1,9 @@
+# app/controllers/user/unlocks_controller.rb
+#
 # frozen_string_literal: true
+# warn_indent:           true
+
+__loading_begin(__FILE__)
 
 class User::UnlocksController < Devise::UnlocksController
   # GET /resource/unlock/new
@@ -28,3 +33,5 @@ class User::UnlocksController < Devise::UnlocksController
   #   super(resource)
   # end
 end
+
+__loading_end(__FILE__)

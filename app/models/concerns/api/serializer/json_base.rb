@@ -5,9 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'api/serializer/base'
-require 'api/serializer/json_associations'
-
 # Base class for object-specific serializers that process JSON data.
 #
 # @see Api::Record::Schema::ClassMethods#schema

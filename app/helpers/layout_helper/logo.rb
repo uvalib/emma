@@ -48,6 +48,14 @@ module LayoutHelper::Logo
 
   public
 
+  # The application tagline.
+  #
+  # @return [String]
+  #
+  def logo_tagline
+    LOGO_TAGLINE
+  end
+
   # The application logo.
   #
   # @param [Symbol] mode              Either :text or :image; default: :image.
@@ -61,7 +69,7 @@ module LayoutHelper::Logo
     opt = prepend_css_classes(opt, 'logo')
     alt = opt.delete(:alt)
     content_tag(:div, opt) do
-      link_to(root_path, title: LOGO_TAGLINE) do
+      link_to(root_path, title: logo_tagline) do
         if mode == :text
           LOGO_TEXT
         else

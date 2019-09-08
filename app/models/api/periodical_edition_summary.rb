@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/edition_methods'
-
 # Api::PeriodicalEditionSummary
 #
 # @attr [String] editionId

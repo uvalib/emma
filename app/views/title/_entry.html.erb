@@ -10,6 +10,7 @@
   level  ||= 2
   skip   ||= nil
 
+  add  = add.reverse_merge(index: index)
   skip = Array.wrap(skip)
   opt  = { index: index, offset: offset, level: level, skip: skip }
 -%>

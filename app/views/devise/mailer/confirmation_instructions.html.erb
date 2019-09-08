@@ -1,4 +1,6 @@
+<%# app/views/devise/mailer/confirmation_instructions.html.erb -%>
 <%-
+  url = confirmation_path(@resource, confirmation_token: @token)
   set_page_robots(:noindex, :nofollow)
 -%>
 
@@ -6,7 +8,7 @@
 
 <p>You can confirm your account email through the link below:</p>
 
-<p><%= link_to 'Confirm my account', confirmation_url(@resource, confirmation_token: @token) %></p>
+<p><%= link_to 'Confirm my account', url %></p>
 
 <%-
   abort 'devise/mailer/confirmation_instructions - This is not expected to be used'

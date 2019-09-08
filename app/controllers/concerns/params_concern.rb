@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'emma/log'
-
 # Facilities for working with received URL parameters.
 #
 # @see ParamsHelper

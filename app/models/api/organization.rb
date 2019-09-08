@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'address'
-require_relative 'sponsor'
-
 # Api::Organization
 #
 # @attr [Api::Address]     address

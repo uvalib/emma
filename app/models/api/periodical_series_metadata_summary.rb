@@ -5,11 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'common/link_methods'
-require_relative 'common/periodical_methods'
-require_relative 'category'
-require_relative 'periodical_edition_summary'
-
 # Api::PeriodicalSeriesMetadataSummary
 #
 # @attr [Array<Api::Category>]          categories

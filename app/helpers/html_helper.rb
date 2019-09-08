@@ -154,38 +154,6 @@ module HtmlHelper
 
   public
 
-  # Render a camel-case or snake-case string as in "title case" words separated
-  # by non-breakable spaces.
-  #
-  # @param [String, Symbol] text
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def labelize(text)
-    words =
-      Array.wrap(text)
-        .flat_map { |s| s.to_s.split(/[_\s]/) if s.present? }
-        .flat_map { |s|
-          next if s.blank?
-          s = "#{s[0].upcase}#{s[1..-1]}" if s[0] =~ /^[a-z]/
-          s.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip.split(' ').map do |word|
-            case word
-              when 'Id' then 'ID'
-              else           word
-            end
-          end
-        }
-        .compact
-    text = words.join(' ')
-    ERB::Util.h(text).gsub(/\s/, '&nbsp;').html_safe
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Produce a link with appropriate accessibility settings.
   #
   # @param [String] label

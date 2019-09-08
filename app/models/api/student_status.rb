@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'grade'
-
 # Api::StudentStatus
 #
 # @attr [Api:Grade] grade
