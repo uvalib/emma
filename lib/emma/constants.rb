@@ -41,7 +41,7 @@ BOOKSHARE_TEST_USERS = {
 #
 # @type [String]
 #
-BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY').freeze
+BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
 
 # Current Bookshare API version.
 #
