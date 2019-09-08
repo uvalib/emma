@@ -94,6 +94,17 @@ class User < ApplicationRecord
   include Roles
 
   has_many :members
+  has_many :reading_lists
+
+  # ===========================================================================
+  # :section: Validations
+  # ===========================================================================
+
+  validate on: :create do
+    unless uid.match?(/^.+@.+$/)
+      errors.add(:base, 'User ID must be a valid email address')
+    end
+  end
 
   # ===========================================================================
   # :section: Authentication

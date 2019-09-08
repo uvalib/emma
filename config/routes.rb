@@ -5,47 +5,45 @@
 
 Rails.application.routes.draw do
 
-  root to: 'home#index'
+  ALL_METHODS ||= %i[get put post delete].freeze
 
   # ===========================================================================
-  # :section: Home page
+  # Home page
   # ===========================================================================
 
-  resources :home, only: %i[index] do
-    collection do
-      get :welcome
-      get :dashboard
-    end
+  root 'home#main'
+
+  resource :home, controller: 'home', as: '', only: [] do
+    get :main, as: 'home'
+    get :welcome
+    get :dashboard
   end
 
-  get '/welcome',   to: 'home#welcome',   as: 'welcome'
-  get '/dashboard', to: 'home#dashboard', as: 'dashboard'
-
   # ===========================================================================
-  # :section: Category operations
+  # Category operations
   # ===========================================================================
 
   resources :category, only: %i[index]
 
   # ===========================================================================
-  # :section: Catalog Title operations
+  # Catalog Title operations
   # ===========================================================================
 
   resources :title do
     member do
-      get 'history'
+      get :history
     end
   end
 
   # ===========================================================================
-  # :section: Periodical operations
+  # Periodical operations
   # ===========================================================================
 
   resources :periodical
   resources :edition
 
   # ===========================================================================
-  # :section: Artifact operations
+  # Artifact operations
   # ===========================================================================
 
   resources :artifact, except: %i[index]
@@ -53,51 +51,50 @@ Rails.application.routes.draw do
   get '/artifact/:bookshareId/:fmt', to: 'artifact#show', as: 'download'
 
   # ===========================================================================
-  # :section: Organization operations
+  # Organization operations
   # ===========================================================================
 
   resources :member
   resources :reading_list
 
   # ===========================================================================
-  # :section: Health check
+  # Health check
   # ===========================================================================
 
-  resources :health, only: [] do
-    collection do
-      get :version
-      get :check
-      get 'check/:subsystem', to: 'health#check', as: 'check_subsystem'
-    end
+  resource :health, controller: 'health', only: [] do
+    get :version
+    get :check
+    get 'check/:subsystem', to: 'health#check', as: 'check_subsystem'
   end
 
   get '/version',     to: 'health#version'
   get '/healthcheck', to: 'health#check'
 
   # ===========================================================================
-  # :section: Metrics
+  # Metrics
   # NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
   # ===========================================================================
 
   get '/metrics/test', to: 'metrics#test'
 
   # ===========================================================================
-  # :section: API test routes
+  # API test routes
   # ===========================================================================
 
   resources :api, only: %i[index] do
     collection do
-      get   'image',        to: 'api#image'
       # noinspection RailsParamDefResolve
-      match 'v2/*api_path', to: 'api#v2', via: %i[get put post delete]
+      match 'v2/*api_path', to: 'api#v2', via: ALL_METHODS
+      get   :image,         to: 'api#image'
     end
   end
 
   # noinspection RailsParamDefResolve
-  match 'v2/*api_path', to: 'api#v2', as: 'v2_api', via: %i[get put post delete]
+  match 'v2/*api_path', to: 'api#v2',    as: 'v2_api',    via: ALL_METHODS
+  get   'api/image',    to: 'api#image', as: 'image_api'
 
   # ===========================================================================
-  # :section: Authentication
+  # Authentication
   # ===========================================================================
 
   devise_for :users, controllers: {
@@ -114,22 +111,32 @@ end
 
 # RubyMine isn't good at using the routes to figure out the implied URL helper
 # function names.  This non-functional block gives them definitions so that
-# they are not flagged as unknown.
+# they are not flagged as unknown by RubyMine code inspection.
 #
 unless ONLY_FOR_DOCUMENTATION
-  def api_index_path;             api_index_path;             end
-  def confirmation_path;          confirmation_path;          end
-  def confirmation_url;           confirmation_url;           end
-  def dashboard_path;             dashboard_path;             end
-  def destroy_user_session_path;  destroy_user_session_path;  end
-  def edit_password_url;          edit_password_url;          end
-  def new_user_session_path;      new_user_session_path;      end
-  def password_path;              password_path;              end
-  def registration_path;          registration_path;          end
-  def root_url;                   root_url;                   end
-  def session_path;               session_path;               end
-  def title_index_path;           title_index_path;           end
-  def unlock_path;                unlock_path;                end
-  def unlock_url;                 unlock_url;                 end
-  def welcome_path;               welcome_path;               end
+  def api_index_path(*);                          end
+  def artifact_index_path(*);                     end
+  def category_index_path(*);                     end
+  def check_health_path(*);                       end
+  def check_subsystem_health_path(*);             end
+  def confirmation_path(*);                       end
+  def dashboard_path(*);                          end
+  def destroy_user_session_path(*);               end
+  def edit_password_path(*);                      end
+  def edition_index_path(*);                      end
+  def member_index_path(*);                       end
+  def metrics_test_path(*);                       end
+  def new_user_session_path(*);                   end
+  def password_path(*);                           end
+  def periodical_index_path(*);                   end
+  def reading_list_index_path(*);                 end
+  def registration_path(*);                       end
+  def root_path(*);                               end
+  def root_url(*);                                end
+  def session_path(*);                            end
+  def title_index_path(*);                        end
+  def unlock_path(*);                             end
+  def user_bookshare_omniauth_authorize_path(*);  end
+  def version_health_path(*);                     end
+  def welcome_path(*);                            end
 end

@@ -10,9 +10,8 @@ __loading_begin(__FILE__)
 #
 class Title < ApplicationRecord
 
-  belongs_to :reading_list, optional: true
-
-  has_many :artifacts
+  has_and_belongs_to_many :artifacts
+  has_and_belongs_to_many :reading_lists
 
   # ===========================================================================
   # :section: Authorization

@@ -10,8 +10,8 @@ __loading_begin(__FILE__)
 #
 class Artifact < ApplicationRecord
 
-  belongs_to :title,   optional: true
-  belongs_to :edition, optional: true
+  # noinspection RailsParamDefResolve
+  belongs_to :entry, polymorphic: true, optional: true
 
   # ===========================================================================
   # :section: Authorization

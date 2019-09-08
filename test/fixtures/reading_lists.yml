@@ -1,7 +1,78 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# test/fixtures/reading_lists.yml
+#
+# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# For existing reading lists:
+# @see https://www.bookshare.org/myReadingLists
+# @see https://www.bookshare.org/myReadingLists/:readingListId
 
-one:
-  readingListId: MyString
+# =============================================================================
+# Current existing reading lists - emmacollection@bookshare.org
+# =============================================================================
 
-two:
-  readingListId: MyString
+List_from_EMMA:
+  readingListId: 329571
+  titles:
+    - Emma
+
+My_Favorites:
+  readingListId: 325885
+  titles:        ~ # Currently empty
+
+New_List:
+  readingListId: 325886
+  titles:
+    - عنترة
+
+Test_EMMA_Category:
+  readingListId: 329793
+  titles:
+    - Rebecca_of_Sunnybrook_Farm
+    - The_Arts_of_the_Sailor
+    - Shakespeare_Lexicon
+    - Reading_Music
+    - Peter
+    - Investigación
+
+# =============================================================================
+# Current existing reading lists - emmadso@bookshare.org
+# =============================================================================
+
+A_Member_List:
+  readingListId: 325854
+  titles:
+    - The_Book_of_Mormon
+    - Wealth_of_Nations
+    - Rebecca_of_Sunnybrook_Farm
+
+An_Org_List:
+  readingListId: 325853
+  titles:
+    - Mother_Jones
+    - Franklins_Way_to_Wealth
+    - Introduction_to_Sociology
+    - Mansfield_Park
+    - Thomas_Jefferson
+
+A_Private_List:
+  readingListId: 325855
+  titles:
+    - Aurthurian_Romances
+
+New_EMMA_Org_List:
+  readingListId: 329573
+  titles:
+    - Emma
+    - Mansfield_Park
+    - Pride_and_Prejudice
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  readingListId: 9999999
+  titles:
+    - Shakespeare_Lexicon
+    - Pride_and_Prejudice
+    - Emma

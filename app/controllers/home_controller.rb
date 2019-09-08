@@ -49,10 +49,10 @@ class HomeController < ApplicationController
   # The main application page.
   #
   # == Implementation Notes
-  # There is no app/views/home/index.html.erb; this method renders the user
+  # There is no app/views/home/main.html.erb; this method renders the user
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
-  def index
+  def main
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     if current_user
       @item, @preferences, @history = get_account_details
@@ -75,6 +75,7 @@ class HomeController < ApplicationController
   def dashboard
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     @item, @preferences, @history = get_account_details
+    response.status = flash.now[:alert] ? :unauthorized : :success
   end
 
 end

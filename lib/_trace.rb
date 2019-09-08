@@ -47,7 +47,7 @@ public
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', true)
+CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', !Rails.env.test?)
 
 # Control tracking of file load order.
 #

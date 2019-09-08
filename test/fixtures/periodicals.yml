@@ -1,0 +1,48 @@
+# test/fixtures/periodicals.yml
+#
+# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# For existing periodicals:
+# @see https://emmadev.internal.lib.virginia.edu/periodical
+# @see https://emmadev.internal.lib.virginia.edu/periodical/:seriesId
+
+# =============================================================================
+# Current existing periodicals of interest
+# =============================================================================
+
+AARP_Magazine:
+  seriesId: 46424
+  editions:
+    - AARP_Magazine_1
+
+Albuquerque_Journal:
+  seriesId: 63401
+  editions:
+    - Albuquerque_Journal_1
+    - Albuquerque_Journal_2
+    - Albuquerque_Journal_3
+    - Albuquerque_Journal_4
+
+New_Yorker:
+  seriesId: 46422
+  editions:
+    - New_Yorker_1
+    - New_Yorker_2
+
+New_York_Times:
+  seriesId: 46252
+  editions:
+    - New_York_Times_1
+    - New_York_Times_2
+    - New_York_Times_3
+    - New_York_Times_4
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  seriesId: 9999999
+  editions:
+    - example1
+    - example2

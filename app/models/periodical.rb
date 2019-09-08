@@ -10,9 +10,9 @@ __loading_begin(__FILE__)
 #
 class Periodical < ApplicationRecord
 
-  belongs_to :reading_list, optional: true
+  has_and_belongs_to_many :editions
 
-  has_many :editions
+  # noinspection RailsParamDefResolve
   has_many :artifacts, through: :editions
 
   # ===========================================================================

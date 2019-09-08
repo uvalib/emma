@@ -10,10 +10,17 @@ __loading_begin(__FILE__)
 #
 class ReadingList < ApplicationRecord
 
-  has_many :titles
-  has_many :editions
-  has_many :artifacts, through: :titles
+  belongs_to :user, optional: true
+
+  has_and_belongs_to_many :members
+  has_and_belongs_to_many :editions
+  has_and_belongs_to_many :titles
+
+  # noinspection RailsParamDefResolve
   has_many :artifacts, through: :editions
+
+  # noinspection RailsParamDefResolve
+  has_many :artifacts, through: :titles
 
   # ===========================================================================
   # :section: Authorization

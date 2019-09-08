@@ -89,7 +89,7 @@ class HealthController < ApplicationController
   def check_action
     values   = get_health_status(*subsystems)
     response = HealthResponse.new(values)
-    status   = response.degraded? ? 500 : 200
+    status   = response.failed? ? 500 : 200
     render json: response, status: status
   end
 

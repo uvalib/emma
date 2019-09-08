@@ -1,7 +1,46 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# test/fixtures/members.yml
+#
+# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# For existing members:
+# @see https://www.bookshare.org/orgAccountMembers
+# @see https://www.bookshare.org/orgAccountMembers/:user_id
 
-one:
-  emailAddress: MyString
+# =============================================================================
+# Current existing members of interest
+# =============================================================================
 
-two:
-  emailAddress: MyString
+Rhoda_Book:
+  user_id:        'AP5xvS_lw6YJVyE6QjESBWxQzIIvV3rJeQ2EmSXyVV8OIm3Ff2SfZi_DoJyy5_oLL2tonBMoYJqi'
+
+Rita_Book:
+  user_id:        'AP5xvS-GqLMuj3RTNbOltYrZby9M36Bwzq8CU-RKnooAvi6gv9qQr5BmzH97OusjG_cDi3CAZPd3'
+
+Roll_Call:
+  user_id:        'AP5xvS_bMU-jvASQSGMwSWOu1_5qIs2yNqGdSJc_6m6OIwlJeTky3GzOXt-KDGRgBmKlT9do6xvz'
+
+Jane_Jones:
+  user_id:        'AP5xvS84snU6maTTvuNsdj02VcJwe9urlcSiScmWKRNe1H0qEhJVq2gsb1WJwqWgUNzi52orYNvS'
+  emailAddress:   jjones@bookshare.org
+
+# =============================================================================
+# Member types
+# =============================================================================
+
+# A person whose only contact with Bookshare is by representation as a member
+# of an organization.
+organization:                                              &ORGANIZATION_MEMBER
+  user_id:        12341234
+
+# A member who is also a Bookshare user.
+institutional:                                            &INSTITUTIONAL_MEMBER
+  user_id:        56785678
+  institutional:  true
+  emailAddress:   emmadso@bookshare.org
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  <<: *ORGANIZATION_MEMBER

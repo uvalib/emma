@@ -1,7 +1,78 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# test/fixtures/titles.yml
+#
+# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+#
+# For existing titles:
+# @see https://www.bookshare.org/browse/book/:bookshareId
 
-one:
-  bookshareId: MyString
+# =============================================================================
+# Current existing titles of interest
+# =============================================================================
 
-two:
-  bookshareId: MyString
+Emma:
+  bookshareId:  1602107
+
+Mansfield_Park:
+  bookshareId:  1568
+
+Rebecca_of_Sunnybrook_Farm:
+  bookshareId:  1293328
+
+# =============================================================================
+# Current existing titles of interest - emmacollection@bookshare.org
+# =============================================================================
+
+Investigación:
+  bookshareId:  27602
+  artifacts:    daisy_audio, epub
+
+Peter:
+  bookshareId:  8788
+
+Reading_Music:
+  bookshareId:  296641
+
+Shakespeare_Lexicon:
+  bookshareId:  2053561
+
+The_Arts_of_the_Sailor:
+  bookshareId:  1947522
+
+عنترة:
+  bookshareId:  453024
+
+# =============================================================================
+# Current existing titles of interest - emmadso@bookshare.org
+# =============================================================================
+
+Authurian_Romances:
+  bookshareId:  1929155
+
+Franklins_Way_to_Wealth:
+  bookshareId:  1948938
+
+Introduction_to_Sociology:
+  bookshareId:  1990481
+
+Mother_Jones:
+  bookshareId:  2364886
+
+Pride_and_Prejudice:
+  bookshareId:  1602248
+
+The_Book_of_Mormon:
+  bookshareId:  427023
+
+Thomas_Jefferson:
+  bookshareId:  3261
+
+Wealth_of_Nations:
+  bookshareId:  1315304
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+example:
+  bookshareId:  9999999
+  artifacts:    daisy_segmented

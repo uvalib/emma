@@ -40,7 +40,19 @@ __loading_begin(__FILE__)
 #
 class Member < ApplicationRecord
 
-  # TODO: ???
+  belongs_to :user, optional: true
+
+  has_and_belongs_to_many :reading_lists
+
+  # ===========================================================================
+  # :section: Validations
+  # ===========================================================================
+
+  validate on: :create do
+    if linked_account? && User.find_by(email: emailAddress).nil?
+      errors.add(:base, 'An institutional member must also be a User')
+    end
+  end
 
   # ===========================================================================
   # :section: Authorization

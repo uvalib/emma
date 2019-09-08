@@ -12,7 +12,8 @@ class Edition < ApplicationRecord
 
   belongs_to :periodical, optional: true
 
-  has_many :artifacts
+  has_and_belongs_to_many :artifacts
+  has_and_belongs_to_many :reading_lists
 
   # ===========================================================================
   # :section: Authorization

@@ -45,7 +45,7 @@ module UserConcern
   #
   # noinspection RubyNilAnalysis
   def get_account_details(id: nil)
-    pref = hist = error = nil
+    pref = hist = error = warn = nil
     if id
       item = @api.get_account(user: id)
       item = @api.get_organization_member(username: id) if item.error?
@@ -54,7 +54,7 @@ module UserConcern
       else
         pref  = nil # TODO: need API support
         hist  = nil # TODO: need API support
-        error = 'No API support for preferences or history'
+        warn  = 'No API support for preferences or history'
       end
     else
       if (item = @api.get_my_account).error?
@@ -66,9 +66,9 @@ module UserConcern
         error = hist.error_message if hist.error?
       end
     end
-    if error
+    if error || warn
       flash.clear
-      flash.now[:alert] = error
+      flash.now[error ? :alert : :notice] = error || warn
     end
     return item, pref, hist unless item.error?
   end
