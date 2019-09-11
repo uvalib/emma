@@ -5,67 +5,6 @@
 
 __loading_begin(__FILE__)
 
-# =============================================================================
-# Operational properties
-# =============================================================================
-
-# Temporary directory.
-#
-# If provided as a relative path it will be expanded to the full absolute path.
-#
-# @type [String]
-#
-TMPDIR = Dir.tmpdir.sub(%r{^([^/])}, Rails.root.join('\1').to_path).freeze
-
-# =============================================================================
-# Bookshare API properties
-# =============================================================================
-
-# Users with pre-generated OAuth tokens for development purposes.
-#
-# @type [Hash{String=>String}]
-#
-# == Usage Notes
-# These exist because Bookshare has a problem with its authentication
-# flow, so tokens were generated for two EMMA users which could be used
-# directly (avoiding the OAuth2 flow).
-#
-BOOKSHARE_TEST_USERS = {
-  'emmacollection@bookshare.org' => '13350912-e2f8-4111-ac7e-c04b608ff3c1',
-  'emmadso@bookshare.org'        => '00eb7f83-6917-479b-ae78-c819bec8770f'
-}.freeze
-
-# Bookshare API key.
-#
-# This does not have a default and *must* be provided through the environment.
-#
-# @type [String]
-#
-BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
-
-# Current Bookshare API version.
-#
-# @type [String]
-#
-BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
-
-# Base Bookshare authentication service path.
-#
-# @type [String]
-#
-BOOKSHARE_AUTH_URL =
-  ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org').freeze
-
-# Base Bookshare API request path.
-#
-# @type [String]
-#
-BOOKSHARE_BASE_URL =
-  ENV.fetch('BOOKSHARE_BASE_URL', 'https://api.bookshare.org')
-    .sub(%r{^(https?://)?}) { $1 || 'https://' }
-    .sub(%r{(/v\d+/?)?$})   { $1 || "/#{BOOKSHARE_API_VERSION}" }
-    .freeze
-
 # Emma::Constants
 #
 module Emma::Constants

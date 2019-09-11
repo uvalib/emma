@@ -31,7 +31,11 @@ class ApiService
   SERVICE_METHODS ||=
     begin
       prev_methods = instance_methods
-      include_submodules(self)
+      if in_debugger?
+        include_submodules(self, __FILE__)
+      else
+        include_submodules(self)
+      end
       (instance_methods - prev_methods).select { |m|
         m =~ /^(get|create|update|remove|download)_/
       }.sort.freeze

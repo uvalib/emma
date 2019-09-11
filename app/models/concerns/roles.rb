@@ -202,14 +202,19 @@ module Roles
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   DEFAULT_ROLES = {
-    collection: %i[
-      catalog_searcher
-      catalog_curator
-    ],
     dso: %i[
       catalog_searcher
       artifact_downloader
       artifact_submitter
+      membership_viewer
+      membership_manager
+    ],
+    collection: %i[
+      catalog_searcher
+      catalog_curator
+    ],
+    membership: %i[
+      catalog_searcher
       membership_viewer
       membership_manager
     ],

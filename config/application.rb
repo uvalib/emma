@@ -20,14 +20,15 @@ module Emma
 
   class Application < Rails::Application
 
-    # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    # Initialize configuration defaults.
+    if in_debugger?
+      config.load_defaults 5.2
+    else
+      config.load_defaults 6.0
+    end
 
     # This is not compatible with the current directory layout:
     # config.add_autoload_paths_to_load_path = false
-
-    # Don't colorize AWS logs.
-    config.colorize_logging = !application_deployed?
 
     # =========================================================================
     # Caching
@@ -131,6 +132,9 @@ module Emma
     # Use the lowest log level to ensure availability of diagnostic information
     # when problems arise.
     config.log_level = :debug
+
+    # Don't colorize AWS logs.
+    config.colorize_logging = !application_deployed?
 
     # =========================================================================
     # Assets

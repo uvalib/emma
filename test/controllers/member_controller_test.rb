@@ -10,7 +10,7 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
   CONTROLLER   = 'member'
   OPTIONS      = { controller: CONTROLLER }.freeze
 
-  TEST_USERS   = [ANONYMOUS, EMMA_DSO].freeze
+  TEST_USERS   = [ANONYMOUS, EMMA_DSO, EMMA_MEMBERSHIP].freeze
   TEST_READERS = TEST_USERS
   TEST_WRITERS = [ANONYMOUS].freeze # TODO: member write tests
 

@@ -10,6 +10,7 @@ module TestHelper::Samples
   ANONYMOUS       = nil
   EMMA_DSO        = 'emmadso@bookshare.org'
   EMMA_COLLECTION = 'emmacollection@bookshare.org'
+  EMMA_MEMBERSHIP = 'emmamembership@bookshare.org'
 
   # A table of models and the selected entry from test/fixtures/*.yml.
   #
