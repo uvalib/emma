@@ -15,6 +15,8 @@ module UserConcern
     __included(base, 'UserConcern')
   end
 
+  include ApiHelper
+
   unless ONLY_FOR_DOCUMENTATION
 
     # Defined by Devise.
@@ -47,8 +49,8 @@ module UserConcern
   def get_account_details(id: nil)
     pref = hist = error = warn = nil
     if id
-      item = @api.get_account(user: id)
-      item = @api.get_organization_member(username: id) if item.error?
+      item = api.get_account(user: id)
+      item = api.get_organization_member(username: id) if item.error?
       if item.error?
         error = item.error_message
       else
@@ -57,12 +59,12 @@ module UserConcern
         warn  = 'No API support for preferences or history'
       end
     else
-      if (item = @api.get_my_account).error?
+      if (item = api.get_my_account).error?
         error = item.error_message
       else
-        pref  = @api.get_my_preferences
+        pref  = api.get_my_preferences
         error = pref.error_message if pref.error?
-        hist  = @api.get_my_download_history
+        hist  = api.get_my_download_history
         error = hist.error_message if hist.error?
       end
     end

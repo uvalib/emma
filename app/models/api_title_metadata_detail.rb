@@ -135,6 +135,26 @@ class ApiTitleMetadataDetail < Api::Message
     attribute :vocalParts,           String
   end
 
+  # ===========================================================================
+  # :section: Api::Record::Base overrides
+  # ===========================================================================
+
+  public
+
+  # Initialize a new instance.
+  #
+  # NOTE: This is here only because the API is returning :artifacts as *nil*.
+  #
+  # @param [Hash, String, nil] data
+  # @param [Hash]              opt
+  #
+  # @see Api::Record::Base#initialize
+  #
+  def initialize(data = nil, **opt)
+    super
+    self.artifacts ||= []
+  end
+
 end
 
 __loading_end(__FILE__)

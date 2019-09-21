@@ -17,6 +17,7 @@ module ReadingListHelper
   include PaginationHelper
   include ResourceHelper
   include TitleHelper
+  include ApiHelper
 
   # ===========================================================================
   # :section: TitleHelper overrides
@@ -50,7 +51,7 @@ module ReadingListHelper
   #
   def thumbnail(item, **opt)
     return if item.blank?
-    super || super(@api.get_title(bookshareId: item.bookshareId), **opt)
+    super || super(api.get_title(bookshareId: item.bookshareId), **opt)
   end
 
   unless READING_LIST_THUMBNAIL

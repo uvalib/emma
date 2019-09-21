@@ -26,6 +26,29 @@ module ApiHelper
 
   public
 
+  # Initialize API service.
+  #
+  # @return [ApiService]
+  #
+  def api
+    @api ||= ApiService.update(user: current_user)
+  end
+
+  # Get the current API exception if the service has been started.
+  #
+  # @return [Exception]
+  # @return [nil]
+  #
+  def api_exception
+    @api&.exception
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Generate a URL to an external (Bookshare-related) site, but refactor API
   # URL's so that they are passed through the application's "API explorer".
   #
@@ -53,16 +76,16 @@ module ApiHelper
   # @return [Hash]
   #
   def api_method(method, path, **opt)
-    method = method ? method.downcase.to_sym : :get
-    @api ||= ApiService.instance
-    data   = @api.send(:api, method, path, opt)&.body&.presence
-    result = data ? { result: data } : { exception: @api.exception }
-    result.reverse_merge(
-      method: method.to_s.upcase,
-      path:   path,
-      opt:    opt.presence,
-      url:    external_url(path, opt)
-    )
+    method = method&.downcase&.to_sym || :get
+    data   = api.send(:api, method, path, opt)&.body&.presence
+    {
+      method:    method.to_s.upcase,
+      path:      path,
+      opt:       opt.presence || '',
+      url:       external_url(path, opt),
+      result:    data&.force_encoding('UTF-8'),
+      exception: api_exception,
+    }.reject { |_, v| v.nil? }
   end
 
   # Generate HTML from the result of an API method invocation.

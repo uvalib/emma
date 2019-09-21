@@ -14,13 +14,6 @@ module ApplicationHelper
   end
 
   include Emma::Constants
-  include GenericHelper
-  include HtmlHelper
-  include I18nHelper
-  include ParamsHelper
-  include HeadHelper
-  include LayoutHelper
-  include ImageHelper
 
   # ===========================================================================
   # :section:

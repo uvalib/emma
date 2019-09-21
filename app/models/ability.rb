@@ -40,7 +40,6 @@ class Ability
   # @type [Hash{Symbol, Array<Symbol>}]
   #
   LOCAL_ACTION_ALIAS = {
-    download: %i[show],     # NOTE: only used with Artifact
     history:  %i[manage],   # NOTE: only used for Title and Member
     delete:   %i[destroy],
     list:     %i[index],

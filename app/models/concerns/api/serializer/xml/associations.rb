@@ -1,4 +1,4 @@
-# app/models/concerns/api/serializer/xml_associations.rb
+# app/models/concerns/api/serializer/xml/associations.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -8,43 +8,13 @@ __loading_begin(__FILE__)
 # Overrides to the class methods defined in Api::Serializer::Associations for
 # XML serializers.
 #
-module Api::Serializer::XmlAssociations
+module Api::Serializer::Xml::Associations
 
   extend ActiveSupport::Concern
 
-  # Collections of elements can be handled in one of two ways:
-  #
-  # 1. WRAP_COLLECTIONS == *true*
-  #
-  # The collection is contained within a "wrapper" element whose tag is the
-  # plural of the element name; e.g., one or more "<copy>" elements wrapped
-  # inside a "<copies>" element:
-  #
-  #   <holding>
-  #     <copies>
-  #       <copy>...</copy>
-  #       <copy>...</copy>
-  #       <copy>...</copy>
-  #     </copies>
-  #   </holding>
-  #
-  # 2. WRAP_COLLECTIONS == *false*
-  #
-  # The collection of elements are repeated directly; e.g.:
-  #
-  #   <holding>
-  #     <copy>...</copy>
-  #     <copy>...</copy>
-  #     <copy>...</copy>
-  #   </holding>
-  #
-  # @type [TrueClass, FalseClass]
-  #
-  WRAP_COLLECTIONS = false unless defined?(WRAP_COLLECTIONS)
-
   module ClassMethods
 
-    include Api::Schema
+    include Api::Serializer::Xml::Schema
 
     # =========================================================================
     # :section: Record field schema DSL
@@ -54,7 +24,8 @@ module Api::Serializer::XmlAssociations
 
     # XML-specific operations for #attribute data elements.
     #
-    # @param [String, Symbol, Class] _element
+    # @param [String, Symbol]        name
+    # @param [String, Symbol, Class] element
     # @param [Hash]                  options
     #
     # @return [void]
@@ -62,12 +33,31 @@ module Api::Serializer::XmlAssociations
     # This method replaces:
     # @see Api::Serializer::Associations#prepare_attribute!
     #
-    def prepare_attribute!(_element, options)
+    def prepare_attribute!(name, element, options)
+      super
       if options[:attribute].is_a?(FalseClass)
-        options.except!(:attribute)
-      elsif !options.key?(:attribute)
+        options.delete(:attribute)
+      elsif IMPLICIT_ATTRIBUTES && !options.key?(:attribute)
         options[:attribute] = true
       end
+      options[:as] ||= attribute_render_name(name)
+    end
+
+    # XML-specific operations for #has_one data elements.
+    #
+    # @param [String, Symbol]        name
+    # @param [String, Symbol, Class] element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    # This method replaces:
+    # @see Api::Serializer::Associations#prepare_one!
+    #
+    def prepare_one!(name, element, options)
+      super
+      options.delete(:wrap) if boolean?(options[:wrap])
+      options[:as] ||= element_render_name(element)
     end
 
     # XML-specific operations for #has_many data elements.
@@ -88,15 +78,16 @@ module Api::Serializer::XmlAssociations
     # @see Api::Serializer::Associations#prepare_collection!
     #
     def prepare_collection!(wrapper, element, options)
-      # noinspection RubyCaseWithoutElseBlockInspection
+      super
       wrap =
         case options[:wrap]
           when false then options.delete(:wrap)
           when true  then true
           when nil   then WRAP_COLLECTIONS
+          else            false # The value will be used as supplied.
         end
-      options[:wrap] = wrapper.to_s.demodulize.downcase if wrap
-      options[:as] ||= element.to_s.demodulize.downcase
+      options[:wrap] = element_render_name(wrapper) if wrap
+      options[:as] ||= element_render_name(element)
     end
 
   end

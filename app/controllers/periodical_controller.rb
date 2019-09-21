@@ -16,6 +16,7 @@ class PeriodicalController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
+  include SerializationConcern
 
   include PeriodicalHelper
 
@@ -36,7 +37,6 @@ class PeriodicalController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
   before_action { @series_id = params[:seriesId] || params[:id] }
 
   # ===========================================================================
@@ -50,11 +50,16 @@ class PeriodicalController < ApplicationController
   #
   def index
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
-    opt  = pagination_setup
-    list = @api.get_periodicals(**opt)
-    self.page_items  = list.periodicals
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    opt   = pagination_setup
+    @list = api.get_periodicals(**opt)
+    self.page_items  = @list.periodicals
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 
   # == GET /periodical/:id
@@ -62,10 +67,15 @@ class PeriodicalController < ApplicationController
   #
   def show
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
-    @item = @api.get_periodical(seriesId: @series_id)
-    list  = @api.get_periodical_editions(seriesId: @series_id)
-    self.page_items  = list.periodicalEditions
-    self.total_items = list.totalResults
+    @item = api.get_periodical(seriesId: @series_id)
+    @list = api.get_periodical_editions(seriesId: @series_id)
+    self.page_items  = @list.periodicalEditions
+    self.total_items = @list.totalResults
+    respond_to do |format|
+      format.html
+      format.json { render_json show_values(as: :hash)  }
+      format.xml  { render_xml  show_values(as: :array) }
+    end
   end
 
   # == GET /periodical/new[?id=:id]
@@ -102,6 +112,40 @@ class PeriodicalController < ApplicationController
   #
   def destroy
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [ApiPeriodicalSeriesMetadataSummaryList, nil] list
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(list = @list)
+    { periodicals: super(list) }
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [ApiPeriodicalSeriesMetadataSummary, nil] item
+  # @param [ApiPeriodicalEditionList, nil]           list
+  # @param [Symbol]                                  as
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @item, list = @list, as: nil)
+    { periodical: super(details: item, editions: list, as: as) }
   end
 
 end

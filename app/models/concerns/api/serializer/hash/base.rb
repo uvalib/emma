@@ -1,4 +1,4 @@
-# app/models/concerns/api/serializer/hash_base.rb
+# app/models/concerns/api/serializer/hash/base.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -10,23 +10,32 @@ __loading_begin(__FILE__)
 #
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::HashBase < Api::Serializer::Base
+class Api::Serializer::Hash::Base < Api::Serializer::Base
 
   include Representable::Hash
   include Representable::Coercion
-  include Api::Serializer::HashAssociations
 
-  # Symbolize keys in the serialization result by default.
-  #
-  # @type [Boolean]
-  #
-  SYMBOLIZE_KEYS = true unless defined?(SYMBOLIZE_KEYS)
+  include Api::Serializer::Hash::Schema
+  include Api::Serializer::Hash::Associations
+
+  SERIALIZER_TYPE = :hash
 
   # ===========================================================================
   # :section: Api::Serializer::Base overrides
   # ===========================================================================
 
   public
+
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :hash.
+  #
+  # This method overrides:
+  # @see Api::Serializer::Base#serializer_type
+  #
+  def serializer_type
+    SERIALIZER_TYPE
+  end
 
   # Render data elements.
   #
@@ -35,6 +44,8 @@ class Api::Serializer::HashBase < Api::Serializer::Base
   # @param [Hash]              opt              Options argument for *method*.
   #
   # @return [String]
+  #
+  # @see Representable::Hash#to_hash
   #
   # This method overrides:
   # @see Api::Serializer::Base#serialize
@@ -51,23 +62,13 @@ class Api::Serializer::HashBase < Api::Serializer::Base
   # @return [Hash]
   # @return [nil]
   #
+  # @see Representable::Hash#from_hash
+  #
   # This method overrides:
   # @see Api::Serializer::Base#deserialize
   #
   def deserialize(data, method = :from_hash)
     super
-  end
-
-  # ===========================================================================
-  # :section: Record field schema DSL
-  # ===========================================================================
-
-  public
-
-  if defined?(HASH_ELEMENT_NAMING_MODE)
-    defaults do |name|
-      { as: element_name(name, HASH_ELEMENT_NAMING_MODE) }
-    end
   end
 
 end

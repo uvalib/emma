@@ -40,17 +40,46 @@ module ApiConcern
   end
 
   # ===========================================================================
-  # :section: Callbacks
+  # :section:
   # ===========================================================================
 
   protected
 
-  # Initialize API service.
+  # Attempt to interpret *arg* as JSON if it is a string.
   #
-  # @return [void]
+  # @param [String, Object] arg
+  # @param [*]              default   On parse failure, return this if provided
+  #                                     (or return *arg* otherwise).
   #
-  def initialize_service
-    @api = ApiService.update(user: current_user)
+  # @return [Hash, Object]
+  #
+  def try_json_parse(arg, default: :original)
+    arg.is_a?(String) &&
+      (MultiJson.load(arg) rescue nil) ||
+      ((default == :original) ? arg : default)
+  end
+
+  # Attempt to interpret *arg* as an exception or a record with an exception.
+  #
+  # @param [Api::Record::Base, Exception, Object] arg
+  # @param [*]              default   On parse failure, return this if provided
+  #                                     (or return *arg* otherwise).
+  #
+  # @return [Hash, String, Object]
+  #
+  def try_exception_parse(arg, default: :original)
+    case (ex = arg.respond_to?(:exception) && arg.exception)
+      when Faraday::ClientError
+        {
+          message:   ex.message,
+          response:  ex.response,
+          exception: ex.wrapped_exception
+        }.reject { |_, v| v.blank? }
+      when Exception
+        ex.message
+      else
+        (default == :original) ? arg : default
+    end
   end
 
   # ===========================================================================
@@ -74,7 +103,7 @@ module ApiConcern
     # Each method to be run in the trial along with a template of its arguments
     # to be updated via #trial_methods.
     #
-    # @return [Hash{Symbol=>Hash}]
+    # @type [Hash{Symbol=>Hash}]
     #
     METHODS = {
       get_user_identity:            nil,
@@ -114,6 +143,15 @@ module ApiConcern
 
     # trial_methods
     #
+    # @param [String]  user
+    # @param [String]  book
+    # @param [String]  series
+    # @param [String]  edition
+    # @param [String]  reading_list
+    # @param [String]  subscription
+    # @param [String]  format
+    # @param [Integer] limit
+    #
     # @return [Hash{Symbol=>Hash}]
     #
     def self.trial_methods(
@@ -146,24 +184,26 @@ module ApiConcern
 
     # run_trials
     #
-    # @param []
+    # @param [Hash{Symbol=>Hash}, nil] methods  Default: `#trial_methods`.
+    # @param [String]                  user
     #
     # @return [Hash{Symbol=>Hash}]
     #
     def self.run_trials(methods = nil, user: nil, service: nil)
       service ||= ApiService.instance
-      methods ||= trial_methods(user: user)
+      methods ||= user ? trial_methods(user: user) : trial_methods
       methods.map { |method, args|
         value = service.send(method, args)
-        error = value.is_a?(Api::Record::Base) && value.exception.present?
+        error = (value.exception if value.is_a?(Api::Record::Base))
         param = args && args.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
-        result = {
-          value:      value,
-          status:     (error ? 'error' : 'success'),
+        trial = {
           endpoint:   service.last_endpoint,
           parameters: ("(#{param})" if param.present?),
-        }
-        [method, result]
+          status:     (error ? 'error' : 'success'),
+          value:      value,
+          error:      error
+        }.reject { |_, v| v.nil? }
+        [method, trial]
       }.to_h
     end
 

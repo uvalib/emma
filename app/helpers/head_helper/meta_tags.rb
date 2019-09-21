@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module HeadHelper::MetaTags
 
-  include GenericHelper
+  include HeadHelper::Common
 
   # ===========================================================================
   # :section:

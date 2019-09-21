@@ -27,6 +27,7 @@ module SessionConcern
 
   end
 
+  include ApiHelper
   include ParamsHelper
 
   include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
@@ -200,9 +201,9 @@ module SessionConcern
   #
   def session_update
     yield.tap do
-      error = defined?(@api) && @api&.exception
-      error &&= error.message.presence || UNKNOWN_API_ERROR
-      flash.now[:alert] = error if error
+      if (exception = api_exception)
+        flash.now[:alert] = exception.message.presence || UNKNOWN_API_ERROR
+      end
       last_operation_update
     end
   end

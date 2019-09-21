@@ -5,15 +5,12 @@
 
 __loading_begin(__FILE__)
 
-require_relative '_internal'
-
 # The base class for serialization/de-serialization of objects derived from
 # Api::Record::Base.
 #
 class Api::Serializer::Base < Representable::Decorator
 
-  include Api
-  include Api::Schema
+  include Api::Serializer::Schema
   include Api::Serializer::Associations
 
   include TimeHelper
@@ -50,10 +47,9 @@ class Api::Serializer::Base < Representable::Decorator
   # @see Api::Schema#DEFAULT_SERIALIZER_TYPE
   #
   def serializer_type
-    @serializer_type ||=
-      SERIALIZER_TYPES.find { |type|
-        self.class.to_s =~ /::#{type.to_s.downcase}/i
-      } || DEFAULT_SERIALIZER_TYPE
+    SERIALIZER_TYPES.find { |type|
+      self.class.to_s =~ /::#{type}/i
+    } || DEFAULT_SERIALIZER_TYPE
   end
 
   # Render data elements in serialized format.
@@ -81,8 +77,8 @@ class Api::Serializer::Base < Representable::Decorator
   ensure
     if start_time
       elapsed_time = time_span(start_time)
-      __debug { "--- #{self.class} serialized in #{elapsed_time}" }
-      Log.info { "#{self.class} serialized in #{elapsed_time}" }
+      __debug  { "--- #{self.class} serialized in #{elapsed_time}" }
+      Log.info { "#{self.class} rendered in #{elapsed_time}" }
     end
   end
 
@@ -117,7 +113,7 @@ class Api::Serializer::Base < Representable::Decorator
   ensure
     if start_time
       elapsed_time = time_span(start_time)
-      __debug { "--- #{self.class} rendered in #{elapsed_time}" }
+      __debug  { "--- #{self.class} de-serialized in #{elapsed_time}" }
       Log.info { "#{self.class} parsed in #{elapsed_time}" }
     end
   end
@@ -144,16 +140,6 @@ class Api::Serializer::Base < Representable::Decorator
   #
   def set_source_data(data)
     @source_data ||= (data.dup if data.is_a?(String) || data.is_a?(Hash))
-  end
-
-  # ===========================================================================
-  # :section: Record field schema DSL
-  # ===========================================================================
-
-  public
-
-  defaults do |name|
-    { as: element_name(name, ELEMENT_NAMING_MODE) }
   end
 
 end

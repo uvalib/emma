@@ -13,9 +13,8 @@ class Api::Record::Base
 
   include Api
   include Api::Common
-  include Api::Schema
-  include Api::Record::Associations
   include Api::Record::Schema
+  include Api::Record::Associations
 
   # ===========================================================================
   # :section:
@@ -112,7 +111,7 @@ class Api::Record::Base
   #
   # @return [String]
   #
-  # @see Api::Serializer::JsonBase#serialize
+  # @see Api::Serializer::Json::Base#serialize
   #
   def to_json(**opt)
     serialize(:json, **opt)
@@ -124,7 +123,7 @@ class Api::Record::Base
   #
   # @return [String]
   #
-  # @see Api::Serializer::XmlBase#serialize
+  # @see Api::Serializer::Xml::Base#serialize
   #
   def to_xml(**opt)
     serialize(:xml, **opt)
@@ -135,10 +134,10 @@ class Api::Record::Base
   # @param [Boolean, nil] symbolize_keys
   # @param [Hash]         opt             Passed to #serialize.
   #
-  # @return [Hash]
+  # @return [String]
   #
-  # @see Api::Serializer::HashBase#serialize
-  # @see Api::Serializer::HashBase#SERIALIZE_SYMBOLIZE_KEYS
+  # @see Api::Serializer::Hash::Base#serialize
+  # @see Api::Serializer::Hash::Schema#SYMBOLIZE_KEYS
   #
   def to_hash(symbolize_keys: nil, **opt)
     opt = opt.merge(symbolize_keys: symbolize_keys) unless symbolize_keys.nil?

@@ -20,6 +20,8 @@ class EditionController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
+  include SerializationConcern
+  include DownloadConcern
 
   include EditionHelper
 
@@ -40,9 +42,8 @@ class EditionController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
-  before_action { @series_id  = params[:seriesId]  || params[:id] }
   before_action { @edition_id = params[:editionId] || params[:id] }
+  before_action { @series_id  = params[:seriesId] }
   before_action { @format     = params[:fmt] || Api::FormatType.new.default }
 
   # ===========================================================================
@@ -51,36 +52,40 @@ class EditionController < ApplicationController
 
   public
 
-  # == GET /edition?seriesId=:seriesId[&editionId=:editionId]
+  # == GET /edition?seriesId=:seriesId
   # List all editions for a periodical.
   #
   def index
     __debug { "EDITION #{__method__} | params = #{params.inspect}" }
-    opt  = pagination_setup
-    list = @api.get_periodical_editions(seriesId: @series_id, **opt)
-    self.page_items  = list.periodicalEditions
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    opt   = pagination_setup
+    @list = api.get_periodical_editions(seriesId: @series_id, **opt)
+    self.page_items  = @list.periodicalEditions
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 
-  # == GET /edition/:edition_id?seriesId=:seriesId
-  # Download a periodical edition.
+  # == GET /edition/:id?seriesId=:seriesId
+  # == GET /edition/:editionId?seriesId=:seriesId
+  # Display details of an existing edition.
   #
   def show
     __debug { "EDITION #{__method__} | params = #{params.inspect}" }
-    api_opt = {
-      seriesId:  @series_id,
-      editionId: @edition_id,
-      format:    @format
-    }
-    result   = @api.download_periodical_edition(api_opt)
-    complete = result.key.to_s.casecmp('COMPLETED').zero?
-    dl_link  = complete && result.messages.first
-    redirect_to dl_link if dl_link.present?
+    opt   = { seriesId: @series_id, editionId: @edition_id }
+    @item = api.get_periodical_edition(**opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json show_values }
+      format.xml  { render_xml  show_values }
+    end
   end
 
   # == GET /edition/new[?id=:id]
-  # == GET /edition/new[?bookshareId=:bookshareId]
+  # == GET /edition/new[?editionId=:editionId]
   # Add metadata for a new edition.
   #
   def new
@@ -88,7 +93,7 @@ class EditionController < ApplicationController
   end
 
   # == POST /edition/:id
-  # == POST /edition/:bookshareId
+  # == POST /edition/:editionId
   # Upload a new edition.
   #
   def create
@@ -96,7 +101,7 @@ class EditionController < ApplicationController
   end
 
   # == GET /edition/:id/edit
-  # == GET /edition/:bookshareId/edit
+  # == GET /edition/:editionId/edit
   # Modify metadata of an existing edition entry.
   #
   def edit
@@ -104,9 +109,9 @@ class EditionController < ApplicationController
   end
 
   # == PUT   /edition/:id
+  # == PUT   /edition/:editionId
   # == PATCH /edition/:id
-  # == PUT   /edition/:bookshareId
-  # == PATCH /edition/:bookshareId
+  # == PATCH /edition/:editionId
   # Upload a replacement for an existing edition.
   #
   def update
@@ -114,11 +119,54 @@ class EditionController < ApplicationController
   end
 
   # == DELETE /edition/:id
-  # == DELETE /edition/:bookshareId
+  # == DELETE /edition/:editionId
   # Remove an existing edition entry.
   #
   def destroy
     __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+  end
+
+  # == GET /edition/:id/:fmt?seriesId=:seriesId
+  # == GET /edition/:editionId/:fmt?seriesId=:seriesId
+  # Download a periodical edition.
+  #
+  def download
+    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
+    render_download api.download_periodical_edition(**opt)
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [ApiPeriodicalEditionList, nil] list
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(list = @list)
+    { editions: super(list) }
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Api::PeriodicalEdition, nil] item
+  # @param [Symbol]                      as     Unused.
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @item, as: nil)
+    { edition: item }
   end
 
 end

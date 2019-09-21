@@ -1,17 +1,13 @@
 <%# app/views/artifact/show.html.erb -%>
 <%-
-  # An Artifact show page.
-  title ||= t('emma.artifact.show.title')
-  error ||= @error
-
-  error &&= t('emma.artifact.show.error.server')
-  error ||= t('emma.artifact.show.error.javascript')
+  # An Artifact metadata show page.
+  item  ||= @item
+  title ||= item&.label&.presence || t('emma.artifact.show.title')
 
   set_page_title(title)
   set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<p><%= error -%></p>
+<%= render 'artifact/details', item: item %>

@@ -16,6 +16,7 @@ class ReadingListController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
+  include SerializationConcern
 
   include ReadingListHelper
 
@@ -36,7 +37,6 @@ class ReadingListController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
   before_action { @id = params[:readingListId] || params[:id] }
 
   # ===========================================================================
@@ -51,11 +51,16 @@ class ReadingListController < ApplicationController
   #
   def index
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
-    opt  = pagination_setup
-    list = @api.get_reading_lists(**opt)
-    self.page_items  = list.lists
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    opt   = pagination_setup
+    @list = api.get_reading_lists(**opt)
+    self.page_items  = @list.lists
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 
   # == GET /reading_list/:id
@@ -63,12 +68,17 @@ class ReadingListController < ApplicationController
   #
   def show
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
-    @item = @api.get_reading_list(readingListId: @id)
-    opt  = pagination_setup
-    list = @api.get_reading_list_titles(readingListId: @id)
-    self.page_items  = list.titles
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    @item = api.get_reading_list(readingListId: @id)
+    opt   = pagination_setup
+    @list = api.get_reading_list_titles(readingListId: @id)
+    self.page_items  = @list.titles
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json show_values(as: :hash)  }
+      format.xml  { render_xml  show_values(as: :array) }
+    end
   end
 
   # == GET /reading_list/new[?id=:id]
@@ -85,7 +95,7 @@ class ReadingListController < ApplicationController
   def create
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    @api.create_reading_list(name: opt[:name], **opt.except(:name))
+    api.create_reading_list(**opt)
   end
 
   # == GET /reading_list/:id/edit
@@ -103,13 +113,13 @@ class ReadingListController < ApplicationController
   def update
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     Array.wrap(params[:add_titles]).each do |bid|
-      @api.create_reading_list_title(readingListId: @id, bookshareId: bid)
+      api.create_reading_list_title(readingListId: @id, bookshareId: bid)
     end
     Array.wrap(params[:remove_titles]).each do |bid|
-      @api.remove_reading_list_title(readingListId: @id, bookshareId: bid)
+      api.remove_reading_list_title(readingListId: @id, bookshareId: bid)
     end
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    @api.update_reading_list(readingListId: @id, **opt) if opt.present?
+    api.update_reading_list(readingListId: @id, **opt) if opt.present?
   end
 
   # == DELETE /reading_list/:id
@@ -118,6 +128,40 @@ class ReadingListController < ApplicationController
   def destroy
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     # TODO: no API method; show Bookshare page
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [ApiReadingListList, nil] list
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(list = @list)
+    { reading_lists: super(list) }
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [ApiReadingListUserView, nil]   item
+  # @param [ApiReadingListTitlesList, nil] list
+  # @param [Symbol]                        as
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @item, list = @list, as: nil)
+    { reading_list: super(details: item, titles: list, as: as) }
   end
 
 end

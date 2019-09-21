@@ -75,19 +75,28 @@ module Api::Schema
   #
   # @type [Array<Symbol>]
   #
-  # @example For "attribute :the_attribute_name":
+  # @example For "has_one :the_element_name":
   #   :default =>
-  #       JSON: { "the_attribute_name": "value" }
-  #       XML:  '<the_attribute_name>value</the_attribute_name>'
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
   #   :underscore =>
-  #       JSON: { "the_attribute_name": "value" }
-  #       XML:  '<the_attribute_name>value</the_attribute_name>'
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
+  #   :underscore_uppercase =>
+  #       JSON: { "THE_ELEMENT_NAME": "value" }
+  #       XML:  '<THE_ELEMENT_NAME>value</THE_ELEMENT_NAME>'
   #   :camelcase =>
-  #       JSON: { "theAttributeName": "value" }
-  #       XML:  '<theAttributeName>value</theAttributeName>'
+  #       JSON: { "theElementName": "value" }
+  #       XML:  '<theElementName>value</theElementName>'
   #   :full_camelcase =>
-  #       JSON: { "TheAttributeName": "value" }
-  #       XML:  '<TheAttributeName>value</TheAttributeName>'
+  #       JSON: { "TheElementName": "value" }
+  #       XML:  '<TheElementName>value</TheElementName>'
+  #   :lowercase =>
+  #       JSON: { "the_element_name": "value" }
+  #       XML:  '<the_element_name>value</the_element_name>'
+  #   :uppercase =>
+  #       JSON: { "THE_ELEMENT_NAME": "value" }
+  #       XML:  '<THE_ELEMENT_NAME>value</THE_ELEMENT_NAME>'
   #
   # @example For "has_one :elementRecord":
   #   :default =>
@@ -96,21 +105,31 @@ module Api::Schema
   #   :underscore =>
   #       JSON: "element_record" : { ... }
   #       XML:  '<element_record>...</element_record>'
+  #   :underscore_uppercase =>
+  #       JSON: "ELEMENT_RECORD" : { ... }
+  #       XML:  '<ELEMENT_RECORD>...</ELEMENT_RECORD>'
   #   :camelcase  =>
   #       JSON: "elementRecord" : { ... }
   #       XML:  '<elementRecord>...</elementRecord>'
   #   :full_camelcase =>
   #       JSON: "ElementRecord" : { ... }
   #       XML:  '<ElementRecord>value</ElementRecord>'
+  #   :lowercase =>
+  #       JSON: { "elementrecord": "value" }
+  #       XML:  '<elementrecord>value</elementrecord>'
+  #   :uppercase =>
+  #       JSON: { "ELEMENTRECORD": "value" }
+  #       XML:  '<ELEMENTRECORD>value</ELEMENTRECORD>'
   #
-  ELEMENT_NAMING_MODES =
-    %i[default underscore camelcase full_camelcase].freeze
-
-  # The selected schema property naming mode.
-  #
-  # @type [Symbol]
-  #
-  ELEMENT_NAMING_MODE = :camelcase
+  ELEMENT_NAMING_MODES = %i[
+    default
+    underscore
+    underscore_uppercase
+    camelcase
+    full_camelcase
+    lowercase
+    uppercase
+  ].freeze
 
   # ===========================================================================
   # :section:
@@ -122,7 +141,7 @@ module Api::Schema
   #
   # @param [String, Hash] data
   #
-  # @return [Symbol]                  One of Api::Schema#SERIALIZER_TYPES
+  # @return [Symbol]                  One of #SERIALIZER_TYPES
   # @return [nil]                     Otherwise
   #
   def format_of(data)
@@ -148,7 +167,7 @@ module Api::Schema
 
   # Indicate whether the type is a scalar (not a representer) class.
   #
-  # @param [Class, nil] type
+  # @param [Class, String, Symbol, nil] type
   #
   def scalar_type?(type)
     return false unless type.is_a?(Class)
@@ -157,21 +176,17 @@ module Api::Schema
     SCALAR_TYPES.include?(base) || ENUMERATION_TYPES.include?(base)
   end
 
-  # Transform *name* into the form indicated by the given naming mode.
+  # Ensure that attributes get a type-appropriate default (otherwise they
+  # will just be *nil*).
   #
-  # @param [String, Symbol] name
-  # @param [Symbol, nil]    mode
+  # @param [Class, String, Symbol, nil] type
   #
-  # @return [String]
+  # @return [Object]
+  # @return [nil]
   #
-  def element_name(name, mode = nil)
-    # noinspection RubyYardReturnMatch
-    case mode
-      when :underscore     then name.to_s.underscore
-      when :camelcase      then name.to_s.camelcase(:lower)
-      when :full_camelcase then name.to_s.camelcase(:upper)
-      else                      name.to_s
-    end
+  def scalar_default(type)
+    type &&= type.to_s.demodulize.to_sym
+    SCALAR_DEFAULTS[type] || ENUMERATION_DEFAULTS[type]
   end
 
 end

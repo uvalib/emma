@@ -1,4 +1,4 @@
-# app/models/concerns/api/serializer/xml_base.rb
+# app/models/concerns/api/serializer/xml/base.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -9,11 +9,15 @@ __loading_begin(__FILE__)
 #
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::XmlBase < Api::Serializer::Base
+class Api::Serializer::Xml::Base < Api::Serializer::Base
 
   include Representable::XML
   include Representable::Coercion
-  include Api::Serializer::XmlAssociations
+
+  include Api::Serializer::Xml::Schema
+  include Api::Serializer::Xml::Associations
+
+  SERIALIZER_TYPE = :xml
 
   # ===========================================================================
   # :section: Api::Serializer::Base overrides
@@ -21,12 +25,25 @@ class Api::Serializer::XmlBase < Api::Serializer::Base
 
   public
 
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :xml.
+  #
+  # This method overrides:
+  # @see Api::Serializer::Base#serializer_type
+  #
+  def serializer_type
+    SERIALIZER_TYPE
+  end
+
   # Render data elements in XML format.
   #
   # @param [Symbol, Proc, nil] method   Default: :to_xml
   # @param [Hash]              opt      Options argument for *method*.
   #
   # @return [String]
+  #
+  # @see Representable::XML#to_xml
   #
   # This method overrides:
   # @see Api::Serializer::Base#serialize
@@ -42,6 +59,8 @@ class Api::Serializer::XmlBase < Api::Serializer::Base
   #
   # @return [Hash]
   # @return [nil]
+  #
+  # @see Representable::XML#from_xml
   #
   # This method overrides:
   # @see Api::Serializer::Base#deserialize
@@ -73,18 +92,6 @@ class Api::Serializer::XmlBase < Api::Serializer::Base
       elsif data
         data.to_xml
       end
-  end
-
-  # ===========================================================================
-  # :section: Record field schema DSL
-  # ===========================================================================
-
-  public
-
-  if defined?(XML_ELEMENT_NAMING_MODE)
-    defaults do |name|
-      { as: element_name(name, XML_ELEMENT_NAMING_MODE) }
-    end
   end
 
 end

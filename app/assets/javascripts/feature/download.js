@@ -224,7 +224,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var PROGRESS_SELECTOR = '.' + ARTIFACT_PROGRESS_CLASS;
+    var PROGRESS_SELECTOR = '.' + DOWNLOAD_PROGRESS_CLASS;
 
     /**
      * Display a "downloading" progress indicator.
@@ -257,7 +257,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var FAILURE_SELECTOR = '.' + ARTIFACT_FAILURE_CLASS;
+    var FAILURE_SELECTOR = '.' + DOWNLOAD_FAILURE_CLASS;
 
     /**
      * Display a download failure message after the download link.
@@ -293,7 +293,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var BUTTON_SELECTOR = '.' + ARTIFACT_BUTTON_CLASS;
+    var BUTTON_SELECTOR = '.' + DOWNLOAD_BUTTON_CLASS;
 
     /**
      * Show the button to download the artifact.

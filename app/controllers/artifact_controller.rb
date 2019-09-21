@@ -20,6 +20,8 @@ class ArtifactController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
+  include SerializationConcern
+  include DownloadConcern
 
   include ArtifactHelper
 
@@ -40,7 +42,6 @@ class ArtifactController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
   before_action { @format = params[:fmt] || Api::FormatType.new.default }
 
@@ -56,28 +57,31 @@ class ArtifactController < ApplicationController
   #
   def index
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
-    opt  = pagination_setup
-    list = @api.get_organization_members(**opt)
-    self.page_items  = list.userAccounts
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    opt   = pagination_setup
+    @list = api.get_organization_members(**opt)
+    self.page_items  = @list.userAccounts
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 =end
 
-  # == GET /artifact/:id
-  # == GET /artifact/:bookshareId/:fmt
-  # Download an artifact of the indicated Bookshare format type.
+  # == GET /artifact/:id?fmt=:fmt
+  # == GET /artifact/:bookshareId?fmt=:fmt
+  # Get metadata for an existing artifact.
   #
   def show
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
-    result  = @api.download_title(bookshareId: @bookshare_id, format: @format)
-    @error  = result.error_message
-    state   = result.key.to_s.upcase
-    dl_link = (result.messages.first.presence if state == 'COMPLETED')
-    @exception = result.exception
+    @item =
+      api.get_artifact_metadata(bookshareId: @bookshare_id, format: @format)
     respond_to do |format|
-      format.html { redirect_to dl_link if dl_link }
-      format.json { render json: { url: dl_link, state: state } }
+      format.html
+      format.json { render_json show_values }
+      format.xml  { render_xml  show_values }
     end
   end
 
@@ -106,8 +110,8 @@ class ArtifactController < ApplicationController
   end
 
   # == PUT   /artifact/:id
-  # == PATCH /artifact/:id
   # == PUT   /artifact/:bookshareId
+  # == PATCH /artifact/:id
   # == PATCH /artifact/:bookshareId
   # Upload a replacement for an existing artifact.
   #
@@ -121,6 +125,49 @@ class ArtifactController < ApplicationController
   #
   def destroy
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+  end
+
+  # == GET /artifact/:id/:fmt
+  # == GET /artifact/:bookshareId/:fmt
+  # Download an artifact of the indicated Bookshare format type.
+  #
+  def download
+    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    opt = { bookshareId: @bookshare_id, format: @format }
+    render_download api.download_title(**opt)
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [*, nil] list
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(list = @list)
+    { artifacts: super(list) }
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Api::ArtifactMetadata, nil] item
+  # @param [Symbol]                     as    Unused.
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @item, as: nil)
+    { artifact: item }
   end
 
 end

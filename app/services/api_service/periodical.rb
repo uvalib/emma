@@ -129,6 +129,22 @@ module ApiService::Periodical
     ApiPeriodicalEditionList.new(response, error: exception)
   end
 
+  # == GET /v2/periodicals/{seriesId}/editions/{editionId}
+  # Get the metadata of an existing periodical edition.
+  #
+  # NOTE: This is not a real Bookshare API call.
+  #
+  # @param [String] seriesId
+  # @param [String] editionId
+  #
+  # @return [Api::PeriodicalEdition]
+  # @return [nil]
+  #
+  def get_periodical_edition(seriesId:, editionId:)
+    periodical = get_periodical_editions(seriesId: seriesId, limit: :max)
+    periodical.periodicalEditions.find { |pe| editionId == pe.editionId }
+  end
+
   # == PUT /v2/periodicals/{seriesId}/editions/{editionId}
   # Update the metadata of an existing periodical edition.
   #

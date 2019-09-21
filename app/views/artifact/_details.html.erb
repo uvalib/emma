@@ -1,0 +1,15 @@
+<%# app/views/artifact/_details.html.erb -%>
+<%-
+  # An Artifact metadata listing.
+  item  ||= nil
+  return if item.blank?
+
+  add   ||= {}
+  level ||= 1
+
+  role = ('role="article"'.html_safe if level == 1)
+-%>
+
+<div <%= role -%> class="artifact-container">
+  <%= artifact_details(item, add) %>
+</div>

@@ -79,6 +79,8 @@ module ApiService::Title
   # == GET /v2/titles/{bookshareId}
   # Get metadata for the specified Bookshare title.
   #
+  # NOTE: The API currently returns :artifacts as *nil*.
+  #
   # @param [String] bookshareId
   #
   # @return [ApiTitleMetadataDetail]
@@ -155,6 +157,22 @@ module ApiService::Title
     ApiTitleMetadataSummaryList.new(response, error: exception)
   end
 
+  # == GET /v2/titles/{bookshareId}?format={format}
+  # Get the metadata of an existing artifact.
+  #
+  # NOTE: This is not a real Bookshare API call.
+  #
+  # @param [String]     bookshareId
+  # @param [FormatType] format
+  #
+  # @return [Api::ArtifactMetadata]
+  # @return [nil]                     If the requested format was not present.
+  #
+  def get_artifact_metadata(bookshareId:, format:)
+    title = get_title(bookshareId: bookshareId)
+    title.artifacts.find { |a| format == a.format }
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -170,12 +188,12 @@ module ApiService::Title
   #
   # @option opt [String] :start
   #
-  # @return [TitleFileResourceList]
+  # @return [ApiTitleFileResourceList]
   #
   def get_title_resource_files(bookshareId:, format:, **opt)
     validate_parameters(__method__, opt)
     api(:get, 'titles', bookshareId, format, 'resources', **opt)
-    TitleFileResourceList.new(response, error: exception)
+    ApiTitleFileResourceList.new(response, error: exception)
   end
 
   # == GET /v2/titles/{bookshareId}/{format}/resources/{resourceId}

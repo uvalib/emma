@@ -12,20 +12,9 @@ module Api::Serializer::Associations
 
   extend ActiveSupport::Concern
 
-  # The maximum number of elements within a collection.
-  #
-  # @type [Integer]
-  #
-  # == Usage Notes
-  # This is not currently an enforced maximum -- it's only used to distinguish
-  # between #has_one and #has_many.
-  #
-  MAX_HAS_MANY_COUNT = 9999 unless defined?(MAX_HAS_MANY_COUNT)
-
   module ClassMethods
 
-    include Api
-    include Api::Schema
+    include Api::Serializer::Schema
 
     # =========================================================================
     # :section: Record field schema DSL
@@ -57,19 +46,10 @@ module Api::Serializer::Associations
       # If the type is missing or explicitly "String" then *type* will be
       # returned as *nil*.
       type = extract_type_option!(opt) || type
-      type = get_type(nil, type)
-      opt[:type] = type if type
-
-      # Ensure that attributes get a type-appropriate default (otherwise they
-      # will just be *nil*).
-      opt[:default] ||=
-        if type
-          base = type.to_s.demodulize.to_sym
-          SCALAR_DEFAULTS[base] || ENUMERATION_DEFAULTS[base]
-        end
-
-      prepare_attribute!(type, opt)
-
+      type = get_type(name, type)
+      opt[:type] = type
+      opt[:default] ||= scalar_default(type)
+      prepare_attribute!(name, type, opt)
       property(name, opt)
     end
 
@@ -98,12 +78,15 @@ module Api::Serializer::Associations
       type = extract_type_option!(opt) || type
       type = get_type(name, type)
       if scalar_type?(type)
-        opt[:attribute] = false
-        attribute(name, type, opt)
+        opt[:type]      = type
+        opt[:default] ||= scalar_default(type)
         Log.warn("#{__method__}: block not processed") if block_given?
       else
-        has_many(name, type, 1, opt, &block)
+        opt[:class]     = type
+        opt[:decorator] = decorator_class(type)
       end
+      prepare_one!(name, type, opt)
+      property(name, opt, &block)
     end
 
     # Simulate ActiveRecord::Associations#has_many to define a schema property
@@ -111,7 +94,6 @@ module Api::Serializer::Associations
     #
     # @param [Symbol]                     name
     # @param [Class, String, Symbol, nil] type
-    # @param [Numeric, nil]               count
     # @param [Hash]                       opt
     # @param [Proc]                       block   Passed to #property.
     #
@@ -132,22 +114,16 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record::Base; schema { has_many :elem }; end  -->
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
     #
-    def has_many(name, type = nil, count = MAX_HAS_MANY_COUNT, **opt, &block)
+    def has_many(name, type = nil, **opt, &block)
       type = extract_type_option!(opt) || type
-      type = get_type(name, type) || Axiom::Types::String
-
+      type = get_type(name, type)
       if scalar_type?(type)
         opt[:type]      = type
       else
         opt[:class]     = type
         opt[:decorator] = decorator_class(type)
       end
-
-      unless count == 1
-        opt[:collection] = true
-        prepare_collection!(name, type, opt)
-      end
-
+      prepare_collection!(name, type, opt)
       property(name, opt, &block)
     end
 
@@ -177,7 +153,6 @@ module Api::Serializer::Associations
     # @param [Class, String, Symbol, nil] type
     #
     # @return [Class]
-    # @return [nil]                   If implicitly or explicitly String.
     #
     def get_type(property_name, type)
       type ||= property_name
@@ -185,8 +160,8 @@ module Api::Serializer::Associations
       name = type.to_s
       base = name.demodulize.to_sym
       base = :Boolean if %i[TrueClass FalseClass].include?(base)
-      if base.blank? || (base == :String) || ENUMERATION_TYPES.include?(base)
-        type = nil
+      if base.blank? || ENUMERATION_TYPES.include?(base)
+        type = Axiom::Types::String
       elsif SCALAR_TYPES.include?(base)
         type = "Axiom::Types::#{base}"
       elsif !name.include?('::')
@@ -198,38 +173,57 @@ module Api::Serializer::Associations
 
     # decorator_class
     #
-    # @param [Class, String] record_class
+    # @param [Class, String, Symbol] record_class
     #
     # @return [Proc]
     #
     # @see Api::Serializer::Base#serializer_type
     #
     def decorator_class(record_class)
-      ->(*) {
-        format = serializer_type.to_s.capitalize
+      ->(*args) {
+        current = args.first.dig(:options, :doc).class.to_s
+        format  = current.match?(/xml/i) ? :xml : serializer.serializer_type
+        format  = format.to_s.capitalize
         "#{record_class}::#{format}Serializer".constantize
       }
     end
 
     # Format-specific operations for #attribute data elements.
     #
+    # @param [String, Symbol]        name
     # @param [String, Symbol, Class] _element
-    # @param [Hash]                  _options
+    # @param [Hash]                  options
     #
     # @return [void]
     #
-    def prepare_attribute!(_element, _options)
+    def prepare_attribute!(name, _element, options)
+      options[:attribute]  = true if %i[href rel].include?(name)
+      options[:render_nil] = render_nil?
+    end
+
+    # Format-specific operations for #has_one data elements.
+    #
+    # @param [String, Symbol]        _name
+    # @param [String, Symbol, Class] _element
+    # @param [Hash]                  options
+    #
+    # @return [void]
+    #
+    def prepare_one!(_name, _element, options)
+      options.delete(:collection)
     end
 
     # Format-specific operations for #has_many data elements.
     #
     # @param [String, Symbol]        _wrapper
     # @param [String, Symbol, Class] _element
-    # @param [Hash]                  _options
+    # @param [Hash]                  options
     #
     # @return [void]
     #
-    def prepare_collection!(_wrapper, _element, _options)
+    def prepare_collection!(_wrapper, _element, options)
+      options[:collection]   = true
+      options[:render_empty] = render_empty?
     end
 
   end

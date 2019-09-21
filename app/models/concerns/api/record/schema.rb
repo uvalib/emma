@@ -15,9 +15,10 @@ module Api::Record::Schema
 
   extend ActiveSupport::Concern
 
+  include Api::Schema
+
   module ClassMethods
 
-    include Api
     include Api::Schema
 
     # The serializers for the including class.
@@ -28,7 +29,7 @@ module Api::Record::Schema
 
     # The JSON serializer for the including class.
     #
-    # @return [Api::Serializer::JsonBase]
+    # @return [Api::Serializer::Json::Base]
     #
     def json_serializer
       # noinspection RubyYardReturnMatch
@@ -37,7 +38,7 @@ module Api::Record::Schema
 
     # The XML serializer for the including class.
     #
-    # @return [Api::Serializer::XmlBase]
+    # @return [Api::Serializer::Xml::Base]
     #
     def xml_serializer
       # noinspection RubyYardReturnMatch
@@ -46,7 +47,7 @@ module Api::Record::Schema
 
     # The Hash serializer for the including class.
     #
-    # @return [Api::Serializer::HashBase]
+    # @return [Api::Serializer::Hash::Base]
     #
     def hash_serializer
       # noinspection RubyYardReturnMatch
@@ -64,6 +65,8 @@ module Api::Record::Schema
     #
     # @param [Array<Symbol>, nil] serializer_types
     #
+    # @return [Hash{Symbol=>Api::Serializer::Base}]
+    #
     # @see Api::Schema#SERIALIZER_TYPES
     # @see Api::Serializer::Associations::ClassMethods#attribute
     # @see Api::Serializer::Associations::ClassMethods#has_one
@@ -78,7 +81,7 @@ module Api::Record::Schema
           key   = key.downcase.to_sym if key.is_a?(String)
           type  = key.to_s.capitalize
           const = "#{type}Serializer"
-          base  = "Api::Serializer::#{type}Base".constantize
+          base  = "Api::Serializer::#{type}::Base".constantize
           serializer = Class.new(base, &block)
           remove_const(const) if const_defined?(const)
           [key, const_set(const, serializer)]

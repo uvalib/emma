@@ -14,7 +14,6 @@ module Api::Record::Associations
 
   module ClassMethods
 
-    include Api
     include Api::Schema
 
     # =========================================================================

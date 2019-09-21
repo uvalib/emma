@@ -133,6 +133,37 @@ en:
         alt:            'Retrieving...'
         asset:          'loading-balls.gif'
 
+    download:
+      label:          'Download'
+      tooltip:        'Get a copy of the item in this format.'
+
+      complete:
+        tooltip:      'Click on the button to retrieve the file.'
+
+      error:
+        server:       'This item could not be downloaded.'
+        javascript:   'You must have JavaScript enabled.'
+
+      link:
+        tooltip:      'Download this item in %{fmt} format.'
+        complete:
+          tooltip:    'Click on the "%{button}" button to retrieve the file.'
+
+      progress:
+        tooltip:      'Click here to cancel the download.'
+        image:
+          <<:         *PLACEHOLDER_IMAGE
+          alt:        'Downloading...'
+
+      failure:
+        prefix:       'Download failed: '
+        cancelled:    'Download cancelled'
+        unknown:      'unknown error'
+
+      button:
+        label:        'Download'
+        tooltip:      'Click here to retrieve %{fmt} file.'
+
     # =========================================================================
     # Devise controllers
     #
@@ -487,6 +518,10 @@ en:
         title:          'Periodical Edition History'
         tooltip:        'View modifications for this periodical edition.'
 
+      download:
+        label:          'Download'
+        title:          'Edition Download'
+
     # =========================================================================
     # Member pages
     # =========================================================================
@@ -559,33 +594,8 @@ en:
 
       show:
         label:          'Artifact'
-        title:          'Artifact'
-        tooltip:        'Get a copy of the item in this format.'
-        complete:
-          tooltip:      'Click on the button to retrieve the file.'
-        error:
-          server:       'This item could not be downloaded.'
-          javascript:   'You must have JavaScript enabled.'
-
-        link:
-          tooltip:      'Download this item in %{fmt} format.'
-          complete:
-            tooltip:    'Click on the "%{button}" button to retrieve the file.'
-
-        progress:
-          tooltip:      'Click here to cancel the download.'
-          image:
-            <<:         *PLACEHOLDER_IMAGE
-            alt:        'Downloading...'
-
-        failure:
-          prefix:       'Download failed: '
-          cancelled:    'Download cancelled'
-          unknown:      'unknown error'
-
-        button:
-          label:        'Download'
-          tooltip:      'Click here to retrieve %{fmt} file.'
+        title:          'Artifact Metadata'
+        tooltip:        'See details about this artifact.'
 
       new:
         label:          'Upload'
@@ -606,6 +616,10 @@ en:
         title:          'Artifact History'
         tooltip:        'View modifications for this artifact entry.'
 
+      download:
+        label:          'Download'
+        title:          'Artifact Download'
+
     # =========================================================================
     # Reading List pages
     # =========================================================================
@@ -625,6 +639,7 @@ en:
 
       page_controls:
         label:
+          one:          'Manage this reading list'
           many:         'Reading List Actions'
 
       index:

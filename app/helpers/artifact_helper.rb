@@ -27,36 +27,36 @@ module ArtifactHelper
   #
   # @type [String]
   #
-  ARTIFACT_SHOW_TOOLTIP =
-    I18n.t('emma.artifact.show.tooltip').freeze
+  DOWNLOAD_TOOLTIP =
+    I18n.t('emma.download.tooltip').freeze
 
   # Default completed link tooltip.
   #
   # @type [String]
   #
-  ARTIFACT_COMPLETE_TOOLTIP =
-    I18n.t('emma.artifact.show.complete.tooltip').freeze
+  DOWNLOAD_COMPLETE_TOOLTIP =
+    I18n.t('emma.download.complete.tooltip').freeze
 
   # Artifact download progress indicator element CSS class.
   #
   # @type [String]
   #
-  ARTIFACT_PROGRESS_CLASS = 'progress'
+  DOWNLOAD_PROGRESS_CLASS = 'progress'
 
   # Artifact download progress indicator tooltip.
   #
   # @type [String]
   #
-  ARTIFACT_PROGRESS_TOOLTIP =
-    I18n.t('emma.artifact.show.progress.tooltip').freeze
+  DOWNLOAD_PROGRESS_TOOLTIP =
+    I18n.t('emma.download.progress.tooltip').freeze
 
   # Artifact download progress indicator relative asset path.
   #
   # @type [String]
   #
-  ARTIFACT_PROGRESS_ASSET =
+  DOWNLOAD_PROGRESS_ASSET =
     I18n.t(
-      'emma.artifact.show.progress.image.asset',
+      'emma.download.progress.image.asset',
       default: ImageHelper::PLACEHOLDER_IMAGE_ASSET
     ).freeze
 
@@ -64,27 +64,27 @@ module ArtifactHelper
   #
   # @type [String]
   #
-  ARTIFACT_PROGRESS_ALT_TEXT =
-    I18n.t('emma.artifact.show.progress.image.alt').freeze
+  DOWNLOAD_PROGRESS_ALT_TEXT =
+    I18n.t('emma.download.progress.image.alt').freeze
 
   # Artifact download failure message element CSS class.
   #
   # @type [String]
   #
-  ARTIFACT_FAILURE_CLASS = 'failure'
+  DOWNLOAD_FAILURE_CLASS = 'failure'
 
   # Artifact download button element CSS class.
   #
   # @type [String]
   #
-  ARTIFACT_BUTTON_CLASS = 'button'
+  DOWNLOAD_BUTTON_CLASS = 'button'
 
   # Artifact download button tooltip.
   #
   # @type [String]
   #
-  ARTIFACT_BUTTON_LABEL =
-    I18n.t('emma.artifact.show.button.label').freeze
+  DOWNLOAD_BUTTON_LABEL =
+    I18n.t('emma.download.button.label').freeze
 
   # Generic reference to format type for label construction.
   #
@@ -135,15 +135,15 @@ module ArtifactHelper
       def_label = item.label
     end
     label ||= I18n.t("emma.format.#{fmt}", default: def_label)
-    path = artifact_path(id: item.identifier, fmt: fmt)
+    path = download_path(bookshareId: item.identifier, fmt: fmt)
     append_css_classes!(html_opt, 'link')
 
     # Set up the tooltip to be shown before the item has been requested.
     html_opt[:tooltip] =
       I18n.t(
-        'emma.artifact.show.link.tooltip',
+        'emma.download.link.tooltip',
         fmt:     format_label(label),
-        default: ARTIFACT_SHOW_TOOLTIP
+        default: DOWNLOAD_TOOLTIP
       )
     if has_class?(html_opt, 'disabled')
       sign_in = 'SIGN-IN REQUIRED' # TODO: I18n
@@ -155,9 +155,9 @@ module ArtifactHelper
     html_opt[:'data-turbolinks'] = false
     html_opt[:'data-complete_tooltip'] =
       I18n.t(
-        'emma.artifact.show.link.complete.tooltip',
-        button:  ARTIFACT_BUTTON_LABEL,
-        default: ARTIFACT_COMPLETE_TOOLTIP
+        'emma.download.link.complete.tooltip',
+        button:  DOWNLOAD_BUTTON_LABEL,
+        default: DOWNLOAD_COMPLETE_TOOLTIP
       )
 
     # Emit the link and hidden auxiliary elements.
@@ -185,11 +185,10 @@ module ArtifactHelper
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     permitted = can?(:download, Artifact)
     append_css_classes!(html_opt, 'disabled') unless permitted
+    formats = item&.formats || []
+    formats = formats.select { |fmt| fmt.formatId == format_id } if format_id
     links =
-      item.formats.map { |fmt|
-        next if format_id && (format_id != fmt.formatId)
-        artifact_link(item, fmt, html_opt)
-      }.compact.sort
+      formats.map { |fmt| artifact_link(item, fmt, html_opt) }.compact.sort
     if permitted && links.present?
       skip_nav_append('Download Formats' => '#field-Formats') # TODO: I18n
     end
@@ -226,11 +225,11 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_progress(image = nil, **opt)
-    opt = prepend_css_classes(opt, ARTIFACT_PROGRESS_CLASS)
-    opt[:title] ||= ARTIFACT_PROGRESS_TOOLTIP
-    opt[:alt]   ||= ARTIFACT_PROGRESS_ALT_TEXT
+    opt = prepend_css_classes(opt, DOWNLOAD_PROGRESS_CLASS)
+    opt[:title] ||= DOWNLOAD_PROGRESS_TOOLTIP
+    opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
     opt[:role]  ||= 'button'
-    image       ||= asset_path(ARTIFACT_PROGRESS_ASSET)
+    image       ||= asset_path(DOWNLOAD_PROGRESS_ASSET)
     # noinspection RubyYardReturnMatch
     image_tag(image, opt)
   end
@@ -244,7 +243,7 @@ module ArtifactHelper
   # @see appendFailureMessage() in app/assets/javascripts/feature/download.js
   #
   def download_failure(**opt)
-    opt = prepend_css_classes(opt, ARTIFACT_FAILURE_CLASS)
+    opt = prepend_css_classes(opt, DOWNLOAD_FAILURE_CLASS)
     content_tag(:span, '', **opt)
   end
 
@@ -259,11 +258,11 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_button(label = nil, **opt)
-    opt   = prepend_css_classes(opt, ARTIFACT_BUTTON_CLASS)
-    label = opt.delete(:label) || label || ARTIFACT_BUTTON_LABEL
+    opt   = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
+    label = opt.delete(:label) || label || DOWNLOAD_BUTTON_LABEL
     # noinspection RubyYardParamTypeMatch
     fmt   = format_label(opt.delete(:fmt))
-    opt[:title] ||= I18n.t('emma.artifact.show.button.tooltip', fmt: fmt)
+    opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
     make_link(label, '#', opt)
   end

@@ -2,7 +2,7 @@
 <%-
   # A periodical Edition show page.
   item  ||= @item
-  title ||= item&.label || t('emma.edition.show.title')
+  title ||= item&.label&.presence || t('emma.edition.show.title')
 
   set_page_title(title)
   set_page_description(title)

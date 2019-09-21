@@ -5,7 +5,7 @@
 
 Rails.application.routes.draw do
 
-  ALL_METHODS ||= %i[get put post delete].freeze
+  ALL_METHODS ||= %i[get put post patch delete].freeze
 
   # ===========================================================================
   # Home page
@@ -42,13 +42,16 @@ Rails.application.routes.draw do
   resources :periodical
   resources :edition
 
+  get '/edition/:editionId/:fmt?seriesId=:seriesId',
+      to: 'edition#download', as: 'edition_download'
+
   # ===========================================================================
   # Artifact operations
   # ===========================================================================
 
   resources :artifact, except: %i[index]
 
-  get '/artifact/:bookshareId/:fmt', to: 'artifact#show', as: 'download'
+  get '/artifact/:bookshareId/:fmt', to: 'artifact#download', as: 'download'
 
   # ===========================================================================
   # Organization operations
@@ -115,28 +118,51 @@ end
 #
 unless ONLY_FOR_DOCUMENTATION
   def api_index_path(*);                          end
+  def api_index_url(*);                           end
   def artifact_index_path(*);                     end
+  def artifact_index_url(*);                      end
   def category_index_path(*);                     end
+  def category_index_url(*);                      end
   def check_health_path(*);                       end
+  def check_health_url(*);                        end
   def check_subsystem_health_path(*);             end
+  def check_subsystem_health_url(*);              end
   def confirmation_path(*);                       end
+  def confirmation_url(*);                        end
   def dashboard_path(*);                          end
+  def dashboard_url(*);                           end
   def destroy_user_session_path(*);               end
+  def destroy_user_session_url(*);                end
   def edit_password_path(*);                      end
+  def edit_password_url(*);                       end
   def edition_index_path(*);                      end
+  def edition_index_url(*);                       end
   def member_index_path(*);                       end
+  def member_index_url(*);                        end
   def metrics_test_path(*);                       end
+  def metrics_test_url(*);                        end
   def new_user_session_path(*);                   end
+  def new_user_session_url(*);                    end
   def password_path(*);                           end
+  def password_url(*);                            end
   def periodical_index_path(*);                   end
+  def periodical_index_url(*);                    end
   def reading_list_index_path(*);                 end
+  def reading_list_index_url(*);                  end
   def registration_path(*);                       end
+  def registration_url(*);                        end
   def root_path(*);                               end
   def root_url(*);                                end
   def session_path(*);                            end
+  def session_url(*);                             end
   def title_index_path(*);                        end
+  def title_index_url(*);                         end
   def unlock_path(*);                             end
+  def unlock_url(*);                              end
   def user_bookshare_omniauth_authorize_path(*);  end
+  def user_bookshare_omniauth_authorize_url(*);   end
   def version_health_path(*);                     end
+  def version_health_url(*);                      end
   def welcome_path(*);                            end
+  def welcome_url(*);                             end
 end

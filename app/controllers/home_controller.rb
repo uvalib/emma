@@ -20,6 +20,7 @@ class HomeController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include SerializationConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -37,7 +38,7 @@ class HomeController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
+  # None
 
   # ===========================================================================
   # :section:
@@ -55,10 +56,9 @@ class HomeController < ApplicationController
   def main
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     if current_user
-      @item, @preferences, @history = get_account_details
-      render template: 'home/dashboard'
+      redirect_to dashboard_path
     else
-      render template: 'home/welcome'
+      redirect_to welcome_path
     end
   end
 
@@ -75,7 +75,39 @@ class HomeController < ApplicationController
   def dashboard
     __debug { "HOME #{__method__} | params = #{params.inspect}" }
     @item, @preferences, @history = get_account_details
-    response.status = flash.now[:alert] ? :unauthorized : :success
+    response.status =
+      case flash.now[:alert]
+        when '', nil             then 200 # OK
+        when /already signed in/ then 403 # Forbidden
+        else                          401 # Unauthorized
+      end
+    respond_to do |format|
+      format.html
+      format.json { render_json show_values(as: :hash)  }
+      format.xml  { render_xml  show_values(as: :array) }
+    end
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [ApiMyAccountSummary, nil]     item
+  # @param [ApiMyAccountPreferences, nil] pref
+  # @param [ApiTitleDownloadList, nil]    hist
+  # @param [Symbol]                       as
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @item, pref = @preferences, hist = @history, as: nil)
+    { account: super(details: item, preferences: pref, history: hist, as: as) }
   end
 
 end

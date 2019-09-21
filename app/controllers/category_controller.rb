@@ -18,6 +18,7 @@ class CategoryController < ApplicationController
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
+  include SerializationConcern
 
   include CategoryHelper
 
@@ -37,7 +38,7 @@ class CategoryController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service
+  # None
 
   # ===========================================================================
   # :section:
@@ -50,11 +51,35 @@ class CategoryController < ApplicationController
   #
   def index
     __debug { "CATEGORY #{__method__} | params = #{params.inspect}" }
-    opt  = pagination_setup
-    list = @api.get_categories(**opt)
-    self.page_items  = list.categories
-    self.total_items = list.totalResults
-    self.next_page   = next_page_path(list, opt)
+    opt   = pagination_setup
+    @list = api.get_categories(**opt)
+    self.page_items  = @list.categories
+    self.total_items = @list.totalResults
+    self.next_page   = next_page_path(@list, opt)
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [ApiCategoriesList, nil] list
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(list = @list)
+    { categories: super(list) }
   end
 
 end

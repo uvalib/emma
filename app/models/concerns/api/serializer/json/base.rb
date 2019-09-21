@@ -1,4 +1,4 @@
-# app/models/concerns/api/serializer/json_base.rb
+# app/models/concerns/api/serializer/json/base.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -9,11 +9,15 @@ __loading_begin(__FILE__)
 #
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::JsonBase < Api::Serializer::Base
+class Api::Serializer::Json::Base < Api::Serializer::Base
 
   include Representable::JSON
   include Representable::Coercion
-  include Api::Serializer::JsonAssociations
+
+  include Api::Serializer::Json::Schema
+  include Api::Serializer::Json::Associations
+
+  SERIALIZER_TYPE = :json
 
   # ===========================================================================
   # :section: Api::Serializer::Base overrides
@@ -21,12 +25,25 @@ class Api::Serializer::JsonBase < Api::Serializer::Base
 
   public
 
+  # Type of serializer.
+  #
+  # @return [Symbol]                  Always :json.
+  #
+  # This method overrides:
+  # @see Api::Serializer::Base#serializer_type
+  #
+  def serializer_type
+    SERIALIZER_TYPE
+  end
+
   # Render data elements in JSON format.
   #
   # @param [Symbol, Proc, nil] method   Default: :to_json
   # @param [Hash]              opt      Options argument for *method*.
   #
   # @return [String]
+  #
+  # @see Representable::JSON#to_json
   #
   # This method overrides:
   # @see Api::Serializer::Base#serialize
@@ -42,6 +59,8 @@ class Api::Serializer::JsonBase < Api::Serializer::Base
   #
   # @return [Hash]
   # @return [nil]
+  #
+  # @see Representable::JSON#from_json
   #
   # This method overrides:
   # @see Api::Serializer::Base#deserialize
@@ -73,18 +92,6 @@ class Api::Serializer::JsonBase < Api::Serializer::Base
       elsif data
         data.to_json
       end
-  end
-
-  # ===========================================================================
-  # :section: Record field schema DSL
-  # ===========================================================================
-
-  public
-
-  if defined?(JSON_ELEMENT_NAMING_MODE)
-    defaults do |name|
-      { as: element_name(name, JSON_ELEMENT_NAMING_MODE) }
-    end
   end
 
 end

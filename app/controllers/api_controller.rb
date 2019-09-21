@@ -16,6 +16,7 @@ class ApiController < ApplicationController
   include UserConcern
   include ParamsConcern
   include SessionConcern
+  include SerializationConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -36,7 +37,7 @@ class ApiController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :initialize_service, except: %i[image]
+  # None
 
   # ===========================================================================
   # :section:
@@ -48,10 +49,13 @@ class ApiController < ApplicationController
   # The main API test page.
   #
   def index
-    service      = ApiService.instance
-    @all_methods = service.service_methods
     @api_results = ApiTesting.run_trials(user: current_user.to_s.presence)
-    service.discard_exception
+    api.discard_exception
+    respond_to do |format|
+      format.html
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 
   # == GET /api/v2/API_PATH[?API_OPTIONS]
@@ -64,7 +68,7 @@ class ApiController < ApplicationController
   #
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
-  def v2 # TODO: testing - remove
+  def v2
     __debug { "API #{__method__} | params = #{params.inspect}" }
     opt  = url_parameters.except(:format)
     path = opt.delete(:api_path)
@@ -75,10 +79,12 @@ class ApiController < ApplicationController
       path << '?' << opt.to_param if opt.present?
       redirect_to sign_in_as_path(id: user, redirect: path)
     else
-      @result = api_method(request.method, path, opt)
+      # noinspection RubyYardParamTypeMatch
+      @api_result = api_method(request.method, path, opt)
       respond_to do |format|
         format.html
-        format.json { render json: @result }
+        format.json { render_json show_values }
+        format.xml  { render_xml  show_values }
       end
     end
   end
@@ -97,6 +103,62 @@ class ApiController < ApplicationController
     image_data = Base64.encode64(response.body)
     mime_type  = response.headers['content-type']
     render plain: image_data, format: mime_type, layout: false
+  end
+
+  # ===========================================================================
+  # :section: SerializationConcern overrides
+  # ===========================================================================
+
+  protected
+
+  # Response values for de-serializing the index page to JSON or XML.
+  #
+  # @param [Hash, nil] items
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#index_values
+  #
+  def index_values(items = @api_results)
+    result =
+      items.map { |action, response|
+        response = try_json_parse(response)
+        if response.is_a?(Hash)
+          response =
+            response.map { |k, v|
+              # noinspection RubyCaseWithoutElseBlockInspection
+              case k
+                when :parameters then v = v.to_s.sub(/^\((.*)\)$/, '\1')
+                when :status     then v = v.presence&.upcase || 'MISSING'
+                when :error      then v = try_exception_parse(v)
+              end
+              [k, v]
+            }.to_h
+          response.delete(:value) if response[:error].present?
+        end
+        [action, response]
+      }.to_h
+    { bookshare_api: result }
+  end
+
+  # Response values for de-serializing the show page to JSON or XML.
+  #
+  # @param [Hash, nil] item
+  # @param [Symbol]    as             Unused.
+  #
+  # @return [Hash]
+  #
+  # This method overrides:
+  # @see SerializationConcern#show_values
+  #
+  def show_values(item = @api_result, as: nil)
+    result =
+      item.map { |k, v|
+        v = try_json_parse(v) if %i[result exception].include?(k)
+        [k, v]
+      }.to_h
+    { bookshare_api: result }
   end
 
 end
