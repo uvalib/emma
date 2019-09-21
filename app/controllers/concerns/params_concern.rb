@@ -227,7 +227,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_sort_params(sort_value)
-    rev_ind = LayoutHelper::REVERSE_SORT
+    rev_ind = LayoutHelper::SearchControls::REVERSE_SORT
     reverse = sort_value.end_with?(rev_ind)
     params[:sortOrder] = sort_value.delete_suffix(rev_ind)
     params[:direction] = reverse ? 'desc' : 'asc'

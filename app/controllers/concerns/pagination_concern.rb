@@ -52,7 +52,7 @@ module PaginationConcern
 
     # Get first and current page paths; adjust values if currently on the first
     # page of results.
-    current    = request.original_fullpath
+    current    = make_path(request.original_fullpath)
     first_page = make_path(request.path, opt.except(:start, :offset))
     on_first   = (current == first_page)
     first_page = make_path(request.path, opt.except(:start, :offset, :limit))

@@ -39,7 +39,7 @@ module LayoutHelper::Common
     opt = opt.merge(method: :get) if opt[:method].blank?
     hidden_fields =
       if path == request.path
-        request_parameters.except(id, :offset, :start).map do |k, v|
+        url_parameters.except(id, :offset, :start).map do |k, v|
           hidden_field_tag(k, v, id: "#{id}-#{k}")
         end
       end

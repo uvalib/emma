@@ -41,7 +41,7 @@ class Api::Category < Api::Record::Base
   # @see Api::Common::CategoryMethods#bookshare_category
   #
   def bookshare_category
-    name.to_s unless categoryType.to_s.casecmp('Bookshare').nonzero?
+    name.to_s if categoryType.to_s.casecmp('Bookshare').zero?
   end
 
 end

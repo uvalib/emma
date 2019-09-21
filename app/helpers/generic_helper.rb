@@ -32,17 +32,21 @@ module GenericHelper
   #
   FALSE_VALUES = %w(0 no false).freeze
 
+  # Text values which represent a Boolean value.
+  #
+  # @type [Array<String>]
+  #
+  BOOLEAN_VALUES = (TRUE_VALUES + FALSE_VALUES).sort_by!(&:length).freeze
+
   # Indicate whether the item represents a true value.
   #
   # @param [Object] value
   #
   def true?(value)
     case value
-      when NilClass    then false
-      when TrueClass   then true
-      when FalseClass  then false
-      when Array, Hash then false
-      else                  TRUE_VALUES.include?(value.to_s.strip.downcase)
+      when TrueClass, FalseClass then value
+      when Array, Hash, nil      then false
+      else TRUE_VALUES.include?(value.to_s.strip.downcase)
     end
   end
 
@@ -52,11 +56,21 @@ module GenericHelper
   #
   def false?(value)
     case value
-      when NilClass    then false
-      when TrueClass   then false
-      when FalseClass  then true
-      when Array, Hash then false
-      else                  FALSE_VALUES.include?(value.to_s.strip.downcase)
+      when TrueClass, FalseClass then !value
+      when Array, Hash, nil      then false
+      else FALSE_VALUES.include?(value.to_s.strip.downcase)
+    end
+  end
+
+  # Indicate whether the item represents a true or false value.
+  #
+  # @param [Object] value
+  #
+  def boolean?(value)
+    case value
+      when TrueClass, FalseClass then true
+      when Array, Hash, nil      then false
+      else BOOLEAN_VALUES.include?(value.to_s.strip.downcase)
     end
   end
 
@@ -68,6 +82,11 @@ module GenericHelper
 
   # Generate a URL or partial path.
   #
+  # The result will have query parameters in sorted order.  Query parameters
+  # are assumed to have the form "key=value" with the exception of the first
+  # parameter after the '?' -- this is a concession to Bookshare URLs like
+  # "myReadingLists/%{id}?delete".
+  #
   # @param [Array] args               URL path components, except:
   #
   # @option args.last [Hash]          URL options to include in the result.
@@ -75,16 +94,24 @@ module GenericHelper
   # @return [String]
   #
   def make_path(*args)
-    opt = args.extract_options!
-    args.flatten.join('/').strip.tap do |result|
-      ready_for_options = result.end_with?('?', '&')
-      if opt.present?
-        result << (result.include?('?') ? '&' : '?') unless ready_for_options
-        result << opt.to_param
-      elsif ready_for_options
-        result.sub!(/.$/)
+    opt   = args.extract_options!
+    parts = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '').split('?')
+    url   = parts.shift
+    query = parts.join('?').split('&').reject(&:blank?)
+    if query.present?
+      url << '?' << query.shift unless query.first.include?('=')
+      query.map! do |kv|
+        k, v = kv.split('=')
+        [k.to_sym, CGI.unescape(Array.wrap(v).join('='))]
       end
+      opt = query.to_h.merge(opt.symbolize_keys)
     end
+    if opt.present?
+      url << (url.include?('?') ? '&' : '?') unless url.end_with?('?', '&')
+      url << opt.sort.to_h.to_param
+    end
+    # noinspection RubyYardReturnMatch
+    url
   end
 
   # Strip off the hash elements identified by *keys* to return two hashes:
