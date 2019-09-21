@@ -9,15 +9,27 @@ require_relative '../config/environment'
 require 'rails/test_help'
 require 'webdrivers'
 
+# The output format(s) to test.
+#
+# @type [Array<Symbol>]
+#
+# @see lib/tasks/test_serialization.rb
+#
+TEST_FORMATS ||= %i[html]
+
 # Support methods for tests.
 #
 module TestHelper
 
-  # The base path for relative requests.
+  TESTING_HTML = TEST_FORMATS.include?(:html)
+  TESTING_JSON = TEST_FORMATS.include?(:json)
+  TESTING_XML  = TEST_FORMATS.include?(:xml)
+
+  # The base URL for relative requests.
   #
   # @type [String]
   #
-  BASE_PATH = 'http://localhost'
+  BASE_URL = 'http://localhost'
 
   # If *true* then #show and #show_reflections will produce output on the
   # console.
@@ -61,17 +73,18 @@ end
 # Augment the base class for integration test cases.
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
+  include TestHelper::Debugging::Trace
 end
 
 # Make relative paths expand correctly.
 class ActionDispatch::Integration::Session
-  self.default_url_options = { host: URI(TestHelper::BASE_PATH).host }
+  self.default_url_options = { host: URI(TestHelper::BASE_URL).host }
 end
 
 # Set up system testing.
 Capybara.configure do |config|
-  config.app_host = TestHelper::BASE_PATH # TODO: needed?
-  config.default_max_wait_time = 10
+  config.app_host = TestHelper::BASE_URL  # TODO: needed?
+  config.default_max_wait_time = 15
   # config.allow_gumbo = true             # TODO: ??? (default is false)
   # config.enable_aria_label = true       # TODO: ??? (default is false)
   # config.ignore_hidden_elements = false # TODO: ??? (default is true)

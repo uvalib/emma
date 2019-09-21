@@ -15,67 +15,81 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
   TEST_WRITERS = [ANONYMOUS].freeze # TODO: reading list write tests
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'reading_list index - list all reading lists' do
-    endpoint = reading_list_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'index')
+    options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = reading_list_index_url(format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
   test 'reading_list show - details of an existing reading list' do
     reading_list = sample_reading_list.readingListId
-    endpoint     = reading_list_path(id: reading_list)
     options      = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = reading_list_url(id: reading_list, format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
-  test 'reading_list new - add metadata for a new reading list' do
-    endpoint = new_reading_list_path
-    options  = OPTIONS.merge(test: __method__, action: 'new')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
-    end
-  end
+  # ===========================================================================
+  # :section: Write tests
+  # ===========================================================================
 
-  test 'reading_list create - a new reading list' do
-    endpoint = reading_list_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'create')
-    TEST_WRITERS.each do |user|
-      post_as(user, endpoint, options)
-    end
-  end
+  if TESTING_HTML
 
-  test 'reading_list edit - metadata for an existing reading list' do
-    reading_list = sample_reading_list.readingListId
-    endpoint     = edit_reading_list_path(id: reading_list)
-    options      = OPTIONS.merge(test: __method__, action: 'edit')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
+    test 'reading_list new - add metadata for a new reading list' do
+      url     = new_reading_list_url
+      options = OPTIONS.merge(test: __method__, action: 'new')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, options)
+      end
     end
-  end
 
-  test 'reading_list update - modify an existing reading list' do
-    reading_list = sample_reading_list.readingListId
-    endpoint     = reading_list_path(id: reading_list)
-    options      = OPTIONS.merge(test: __method__, action: 'update')
-    TEST_WRITERS.each do |user|
-      put_as(user, endpoint, options)
+    test 'reading_list create - a new reading list' do
+      url     = reading_list_index_url
+      options = OPTIONS.merge(test: __method__, action: 'create')
+      TEST_WRITERS.each do |user|
+        post_as(user, url, options)
+      end
     end
-  end
 
-  test 'reading_list destroy - remove an existing reading list' do
-    reading_list = sample_reading_list.readingListId
-    endpoint     = reading_list_path(id: reading_list)
-    options      = OPTIONS.merge(test: __method__, action: 'destroy')
-    TEST_WRITERS.each do |user|
-      delete_as(user, endpoint, options)
+    test 'reading_list edit - metadata for an existing reading list' do
+      reading_list = sample_reading_list.readingListId
+      url          = edit_reading_list_url(id: reading_list)
+      options      = OPTIONS.merge(test: __method__, action: 'edit')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, options)
+      end
     end
+
+    test 'reading_list update - modify an existing reading list' do
+      reading_list = sample_reading_list.readingListId
+      url          = reading_list_url(id: reading_list)
+      options      = OPTIONS.merge(test: __method__, action: 'update')
+      TEST_WRITERS.each do |user|
+        put_as(user, url, options)
+      end
+    end
+
+    test 'reading_list destroy - remove an existing reading list' do
+      reading_list = sample_reading_list.readingListId
+      url          = reading_list_url(id: reading_list)
+      options      = OPTIONS.merge(test: __method__, action: 'destroy')
+      TEST_WRITERS.each do |user|
+        delete_as(user, url, options)
+      end
+    end
+
   end
 
 end

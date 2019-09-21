@@ -10,69 +10,69 @@
 # =============================================================================
 
 Emma:
-  bookshareId:  1602107
+  bookshareId:  '1602107'
 
 Mansfield_Park:
-  bookshareId:  1568
+  bookshareId:  '1568'
 
 Rebecca_of_Sunnybrook_Farm:
-  bookshareId:  1293328
+  bookshareId:  '1293328'
 
 # =============================================================================
 # Current existing titles of interest - emmacollection@bookshare.org
 # =============================================================================
 
 Investigación:
-  bookshareId:  27602
+  bookshareId:  '27602'
   artifacts:    daisy_audio, epub
 
 Peter:
-  bookshareId:  8788
+  bookshareId:  '8788'
 
 Reading_Music:
-  bookshareId:  296641
+  bookshareId:  '296641'
 
 Shakespeare_Lexicon:
-  bookshareId:  2053561
+  bookshareId:  '2053561'
 
 The_Arts_of_the_Sailor:
-  bookshareId:  1947522
+  bookshareId:  '1947522'
 
 عنترة:
-  bookshareId:  453024
+  bookshareId:  '453024'
 
 # =============================================================================
 # Current existing titles of interest - emmadso@bookshare.org
 # =============================================================================
 
 Authurian_Romances:
-  bookshareId:  1929155
+  bookshareId:  '1929155'
 
 Franklins_Way_to_Wealth:
-  bookshareId:  1948938
+  bookshareId:  '1948938'
 
 Introduction_to_Sociology:
-  bookshareId:  1990481
+  bookshareId:  '1990481'
 
 Mother_Jones:
-  bookshareId:  2364886
+  bookshareId:  '2364886'
 
 Pride_and_Prejudice:
-  bookshareId:  1602248
+  bookshareId:  '1602248'
 
 The_Book_of_Mormon:
-  bookshareId:  427023
+  bookshareId:  '427023'
 
 Thomas_Jefferson:
-  bookshareId:  3261
+  bookshareId:  '3261'
 
 Wealth_of_Nations:
-  bookshareId:  1315304
+  bookshareId:  '1315304'
 
 # =============================================================================
 # Examples
 # =============================================================================
 
 example:
-  bookshareId:  9999999
+  bookshareId:  '9999999'
   artifacts:    daisy_segmented

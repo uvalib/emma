@@ -15,69 +15,83 @@ class PeriodicalControllerTest < ActionDispatch::IntegrationTest
   TEST_WRITERS = [ANONYMOUS].freeze # TODO: periodical write tests
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'periodical index - list all periodicals' do
-    endpoint = periodical_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'index')
+    options = OPTIONS.merge(test: __method__, action: 'index')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = periodical_index_url(format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
   test 'periodical show - details of an existing periodical' do
     periodical = sample_periodical.seriesId
-    endpoint   = periodical_path(id: periodical)
     options    = OPTIONS.merge(test: __method__, action: 'show')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = periodical_url(id: periodical, format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
-  test 'periodical new - add metadata for a new periodical' do
-    endpoint = new_periodical_path
-    options  = OPTIONS.merge(test: __method__, action: 'new')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
-    end
-  end
+  # ===========================================================================
+  # :section: Write tests
+  # ===========================================================================
 
-  test 'periodical create - a new periodical' do
-    endpoint = periodical_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'create')
-    TEST_WRITERS.each do |user|
-      post_as(user, endpoint, options)
-    end
-  end
+  if TESTING_HTML
 
-  test 'periodical edit - metadata for an existing periodical' do
-    periodical = sample_periodical.seriesId
-    endpoint   = edit_periodical_path(id: periodical)
-    options    = OPTIONS.merge(test: __method__, action: 'edit')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
+    test 'periodical new - add metadata for a new periodical' do
+      url = new_periodical_url
+      opt = OPTIONS.merge(test: __method__, action: 'new')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, opt)
+      end
     end
-  end
 
-  test 'periodical update - modify an existing periodical' do
-    periodical = sample_periodical.seriesId
-    endpoint   = periodical_path(id: periodical)
-    options    = OPTIONS.merge(test: __method__, action: 'update')
-    TEST_WRITERS.each do |user|
-      put_as(user, endpoint, options)
+    test 'periodical create - a new periodical' do
+      url = periodical_index_url
+      opt = OPTIONS.merge(test: __method__, action: 'create')
+      TEST_WRITERS.each do |user|
+        post_as(user, url, opt)
+      end
     end
-  end
 
-  test 'periodical destroy - remove an existing periodical' do
-    periodical = sample_periodical.seriesId
-    endpoint   = periodical_path(id: periodical)
-    options    = OPTIONS.merge(test: __method__, action: 'destroy')
-    TEST_WRITERS.each do |user|
-      delete_as(user, endpoint, options)
+    test 'periodical edit - metadata for an existing periodical' do
+      periodical = sample_periodical.seriesId
+      url        = edit_periodical_url(id: periodical)
+      opt        = OPTIONS.merge(test: __method__, action: 'edit')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, opt)
+      end
     end
+
+    test 'periodical update - modify an existing periodical' do
+      periodical = sample_periodical.seriesId
+      url        = periodical_url(id: periodical)
+      opt        = OPTIONS.merge(test: __method__, action: 'update')
+      TEST_WRITERS.each do |user|
+        put_as(user, url, opt)
+      end
+    end
+
+    test 'periodical destroy - remove an existing periodical' do
+      periodical = sample_periodical.seriesId
+      url        = periodical_url(id: periodical)
+      opt        = OPTIONS.merge(test: __method__, action: 'destroy')
+      TEST_WRITERS.each do |user|
+        delete_as(user, url, opt)
+      end
+    end
+
   end
 
 end

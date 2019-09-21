@@ -17,77 +17,91 @@ class CategoryControllerTest < ActionDispatch::IntegrationTest
   TEST_CATEGORY = 'Animals'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'category index - list all categories' do
-    endpoint = category_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'index')
+    options = OPTIONS.merge(test: __method__, action: 'index')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = category_index_url(format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
-=begin
+=begin # TODO: show single category test
   test 'category show - details of an existing category' do
-    endpoint = category_path(id: TEST_CATEGORY)
-    options  = OPTIONS.merge(test: __method__, action: 'show')
+    options = OPTIONS.merge(test: __method__, action: 'show')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = category_url(id: TEST_CATEGORY, format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 =end
 
-=begin
-  test 'category new - add metadata for a new category' do
-    endpoint = new_category_path
-    options  = OPTIONS.merge(test: __method__, action: 'new')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
+  # ===========================================================================
+  # :section: Write tests
+  # ===========================================================================
+
+  if TESTING_HTML
+
+=begin # TODO: category new test ???
+    test 'category new - add metadata for a new category' do
+      url     = new_category_url
+      options = OPTIONS.merge(test: __method__, action: 'new')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, options)
+      end
     end
-  end
 =end
 
-=begin
-  test 'category create - a new category' do
-    endpoint = category_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'create')
-    TEST_WRITERS.each do |user|
-      post_as(user, endpoint, options)
+=begin # TODO: category create test ???
+    test 'category create - a new category' do
+      url     = category_index_url
+      options = OPTIONS.merge(test: __method__, action: 'create')
+      TEST_WRITERS.each do |user|
+        post_as(user, url, options)
+      end
     end
-  end
 =end
 
-=begin
-  test 'category edit - metadata for an existing category' do
-    endpoint = edit_category_path(id: TEST_CATEGORY)
-    options  = OPTIONS.merge(test: __method__, action: 'edit')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
+=begin # TODO: category edit test ???
+    test 'category edit - metadata for an existing category' do
+      url     = edit_category_url(id: TEST_CATEGORY)
+      options = OPTIONS.merge(test: __method__, action: 'edit')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, options)
+      end
     end
-  end
 =end
 
-=begin
-  test 'category update - modify an existing category' do
-    endpoint = category_path(id: TEST_CATEGORY)
-    options  = OPTIONS.merge(test: __method__, action: 'update')
-    TEST_WRITERS.each do |user|
-      put_as(user, endpoint, options)
+=begin # TODO: category update test ???
+    test 'category update - modify an existing category' do
+      url     = category_url(id: TEST_CATEGORY)
+      options = OPTIONS.merge(test: __method__, action: 'update')
+      TEST_WRITERS.each do |user|
+        put_as(user, url, options)
+      end
     end
-  end
 =end
 
-=begin
-  test 'category destroy - remove an existing category' do
-    endpoint = category_path(id: TEST_CATEGORY)
-    options  = OPTIONS.merge(test: __method__, action: 'destroy')
-    TEST_WRITERS.each do |user|
-      delete_as(user, endpoint, options)
+=begin # TODO: category destroy test ???
+    test 'category destroy - remove an existing category' do
+      url     = category_url(id: TEST_CATEGORY)
+      options = OPTIONS.merge(test: __method__, action: 'destroy')
+      TEST_WRITERS.each do |user|
+        delete_as(user, url, options)
+      end
     end
-  end
 =end
+
+  end
 
 end

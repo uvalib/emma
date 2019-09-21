@@ -7,35 +7,35 @@
 # =============================================================================
 
 daisy:
-  format: DAISY
+  format: 'DAISY'
 
 daisy_audio:
-  format: DAISY_AUDIO
+  format: 'DAISY_AUDIO'
 
 daisy_segmented:
-  format: DAISY_SEGMENTED
+  format: 'DAISY_SEGMENTED'
 
 brf:
-  format: BRF
+  format: 'BRF'
 
 epub:
-  format: EPUB3
+  format: 'EPUB3'
 
 pdf:
-  format: PDF
+  format: 'PDF'
 
 docx:
-  format: DOCX
+  format: 'DOCX'
 
 html:
-  format: HTML
+  format: 'HTML'
 
 text:
-  format: TEXT
+  format: 'TEXT'
 
 # =============================================================================
 # Examples
 # =============================================================================
 
 example:
-  format: BRF
+  format: 'BRF'

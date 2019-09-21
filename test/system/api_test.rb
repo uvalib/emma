@@ -11,7 +11,7 @@ class ApiTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the page.
-      visit api_index_path
+      visit api_index_url
       assert_title 'API Methods |'
       assert_selector 'h1', text: 'Bookshare API Methods'
 
@@ -30,7 +30,7 @@ class ApiTest < ApplicationSystemTestCase
 
   test 'api - results for GET /v2/titles' do
     run_test(__method__) do
-      visit v2_api_path(api_path: 'titles')
+      visit v2_api_url(api_path: 'titles')
       assert_title 'API Method Output "/v2/titles"'
       assert_selector 'h1', text: 'API Method Output'
       assert_selector '.trials .value *'

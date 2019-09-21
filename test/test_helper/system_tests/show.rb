@@ -3,8 +3,6 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#require_relative '_common'
-
 # Support for item details pages.
 #
 module TestHelper::SystemTests::Show

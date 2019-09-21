@@ -7,10 +7,10 @@ require 'application_system_test_case'
 
 class EditionsTest < ApplicationSystemTestCase
 
-=begin
+=begin # TODO: visit edition list test
   test 'editions - visit edition list' do
     run_test(__method__) do
-      visit edition_index_path
+      visit edition_index_url
       show_url
       assert_valid_index_page(:edition)
     end

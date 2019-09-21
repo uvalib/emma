@@ -17,7 +17,7 @@ class UserSessionsTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Start on the main page.
-      visit root_path
+      visit root_url
       click_link class: 'bookshare-login'
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
@@ -40,11 +40,11 @@ class UserSessionsTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Sign in.
-      visit root_path
+      visit root_url
       sign_in_as(TEST_USER)
 
       # Go to a new page.
-      visit title_index_path
+      visit title_index_url
       click_link class: 'bookshare-logout'
       assert_flash notice: 'Signed out'
 

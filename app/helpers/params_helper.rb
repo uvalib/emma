@@ -23,7 +23,7 @@ module ParamsHelper
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS = %i[controller action utf8 commit]
+  IGNORED_PARAMETERS = %i[controller action format utf8 commit]
 
   # The full request URL without request parameters.
   #

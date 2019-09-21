@@ -57,8 +57,8 @@ module CategoryHelper
   #
   def category_link(item, label = nil, **opt)
     opt = opt.merge(tooltip: CATEGORY_SHOW_TOOLTIP)
-    if !opt.key?(:no_link) && item.respond_to?(:categoryType)
-      opt[:no_link] = true if item.categoryType&.casecmp('bookshare')&.nonzero?
+    unless opt.key?(:no_link) || !item.respond_to?(:bookshare_category)
+      opt[:no_link] = true if item.bookshare_category.blank?
     end
     item_link(item, label, **opt) { |term| title_index_path(categories: term) }
   end

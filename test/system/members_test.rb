@@ -9,7 +9,7 @@ class MembersTest < ApplicationSystemTestCase
 
   test 'members - visit index' do
     run_test(__method__) do
-      visit member_index_path
+      visit member_index_url
       assert_flash alert: 'You need to sign in'
     end
   end

@@ -3,8 +3,6 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#require_relative '_common'
-
 # Support for checking flash messages.
 #
 module TestHelper::SystemTests::Flash

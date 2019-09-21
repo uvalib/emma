@@ -11,21 +11,21 @@
 # =============================================================================
 
 List_from_EMMA:
-  readingListId: 329571
+  readingListId: '329571'
   titles:
     - Emma
 
 My_Favorites:
-  readingListId: 325885
+  readingListId: '325885'
   titles:        ~ # Currently empty
 
 New_List:
-  readingListId: 325886
+  readingListId: '325886'
   titles:
     - عنترة
 
 Test_EMMA_Category:
-  readingListId: 329793
+  readingListId: '329793'
   titles:
     - Rebecca_of_Sunnybrook_Farm
     - The_Arts_of_the_Sailor
@@ -39,14 +39,14 @@ Test_EMMA_Category:
 # =============================================================================
 
 A_Member_List:
-  readingListId: 325854
+  readingListId: '325854'
   titles:
     - The_Book_of_Mormon
     - Wealth_of_Nations
     - Rebecca_of_Sunnybrook_Farm
 
 An_Org_List:
-  readingListId: 325853
+  readingListId: '325853'
   titles:
     - Mother_Jones
     - Franklins_Way_to_Wealth
@@ -55,12 +55,12 @@ An_Org_List:
     - Thomas_Jefferson
 
 A_Private_List:
-  readingListId: 325855
+  readingListId: '325855'
   titles:
     - Aurthurian_Romances
 
 New_EMMA_Org_List:
-  readingListId: 329573
+  readingListId: '329573'
   titles:
     - Emma
     - Mansfield_Park
@@ -71,7 +71,7 @@ New_EMMA_Org_List:
 # =============================================================================
 
 example:
-  readingListId: 9999999
+  readingListId: '9999999'
   titles:
     - Shakespeare_Lexicon
     - Pride_and_Prejudice

@@ -150,12 +150,12 @@ module BookshareHelper
   #   ActionDispatch with one that
   #
   ACTION_MAPPING.each do |controller, actions|
-    actions.keys.each do |action|
-      class_eval <<~EOS
-        def #{action}_#{controller}_path(**opt)
-          bookshare_url(controller: :#{controller}, action: :#{action}, **opt)
+    class_exec do
+      actions.keys.each do |action|
+        define_method(:"#{action}_#{controller}_path") do |**opt|
+          bookshare_url(controller: controller, action: action, **opt)
         end
-      EOS
+      end
     end
   end
 
@@ -201,7 +201,8 @@ module BookshareHelper
       ref_opt.transform_values! do |v|
         v.is_a?(String) ? CGI.escape(v).gsub(/\./, '%2E') : v
       end
-      ref_opt[:ids] = ref_opt[:id]
+      ref_opt[:ids] ||= ref_opt[:id]
+      ref_opt[:ids] = Array.wrap(ref_opt[:ids]).join(',')
       path = format(path, ref_opt)
     end
 
@@ -211,6 +212,7 @@ module BookshareHelper
     path_opt =
       path_opt.map { |k, v|
         k = param_map[k] if param_map.key?(k)
+        v = v.join(',')  if v.is_a?(Array)
         [k, v] unless k.blank? || v.blank?
       }.compact.to_h
     make_path(path, path_opt)

@@ -28,7 +28,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
       page = 0
 
       # Visit the first periodicals index page.
-      visit periodical_index_path
+      visit periodical_index_url
       show "PAGE #{page} = #{current_url}"
       assert_valid_index_page(:periodical)
       assert_first_page
@@ -60,7 +60,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first periodicals index page.
-      visit periodical_index_path
+      visit periodical_index_url
       show_url
       assert_valid_index_page(:periodical)
       assert_first_page
@@ -85,7 +85,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit periodical_index_path(**terms)
+      visit periodical_index_url(**terms)
       show_url
       assert_valid_search_results(:periodical, terms: terms)
       assert_first_page
@@ -120,7 +120,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit periodical_index_path(**terms)
+      visit periodical_index_url(**terms)
       show_url
       assert_valid_search_results(:periodical, terms: terms)
       assert_first_page

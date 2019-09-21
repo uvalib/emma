@@ -3,8 +3,6 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#require_relative '_common'
-
 # Support for sign-in.
 #
 module TestHelper::SystemTests::Authentication
@@ -24,7 +22,7 @@ module TestHelper::SystemTests::Authentication
   # @return [void]
   #
   def sign_in_as(user)
-    visit new_user_session_path
+    visit new_user_session_url
     click_link "Sign in as #{user}"
     assert_flash notice: 'Signed in'
   end

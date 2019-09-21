@@ -16,28 +16,58 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   TEST_USER    = TEST_USERS.last
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
-  test 'home main' do
-    run_test(__method__) do
-      get home_path
-      assert_result :success, OPTIONS.merge(action: 'main')
+  test 'home main as anonymous' do
+    options = OPTIONS.merge(action: 'main')
+    TEST_FORMATS.each do |fmt|
+      next unless html?(fmt) # NOTE: TESTING_HTML only
+      url = home_url(format: fmt)
+      run_test(__method__, format: fmt) do
+        get url
+        assert_redirected_to welcome_url
+      end
     end
-  end
+  end if TESTING_HTML
+
+  test 'home main as emmadso' do
+    options = OPTIONS.merge(action: 'main')
+    TEST_FORMATS.each do |fmt|
+      next unless html?(fmt) # NOTE: TESTING_HTML only
+      url = home_url(format: fmt)
+      run_test(__method__, format: fmt) do
+        get_sign_in_as(TEST_USER, follow_redirect: false)
+        get url
+        assert_redirected_to dashboard_url
+      end
+    end
+  end if TESTING_HTML
 
   test 'home welcome' do
-    run_test(__method__) do
-      get welcome_path
-      assert_result :success, OPTIONS.merge(action: 'welcome')
+    options = OPTIONS.merge(action: 'welcome')
+    TEST_FORMATS.each do |fmt|
+      next unless html?(fmt) # NOTE: TESTING_HTML only
+      url = welcome_url(format: fmt)
+      opt = options.merge(format: fmt)
+      run_test(__method__, format: fmt) do
+        get url
+        assert_result :success, opt
+      end
     end
-  end
+  end if TESTING_HTML
 
   test 'home dashboard' do
-    run_test(__method__) do
-      get sign_in_as_path(id: TEST_USER)
-      get dashboard_url
-      assert_result :unauthorized, OPTIONS.merge(action: 'dashboard')
+    options = OPTIONS.merge(test: __method__, action: 'dashboard')
+    TEST_READERS.each do |user|
+      able   = user.present?
+      expect = able ? :success : :unauthorized
+      opt    = options.merge(expect: expect)
+      TEST_FORMATS.each do |fmt|
+        url = dashboard_url(format: fmt)
+        opt[:format] = fmt
+        get_as(user, url, opt)
+      end
     end
   end
 

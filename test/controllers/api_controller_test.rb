@@ -17,34 +17,47 @@ class ApiControllerTest < ActionDispatch::IntegrationTest
   TEST_API_PATH = 'titles'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'api index - visit the API Explorer' do
-    endpoint = api_index_path
     options  = OPTIONS.merge(test: __method__, action: 'index')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = api_index_url(format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
   test 'api v2 - Bookshare API results for GET' do
-    endpoint = v2_api_path(api_path: TEST_API_PATH)
-    options  = OPTIONS.merge(test: __method__, action: 'v2')
+    options = OPTIONS.merge(test: __method__, action: 'v2')
     options[:expect] = :success
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = v2_api_url(api_path: TEST_API_PATH, format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
+  # ===========================================================================
+  # :section: Download tests
+  # ===========================================================================
+
   test 'api image - proxy request to CloudFront' do
     proxy_url = cdn_thumbnail(sample_title.bookshareId)
-    endpoint  = image_api_path(url: proxy_url)
-    options = OPTIONS.merge(test: __method__, action: 'image', media_type: nil)
+    options = OPTIONS.merge(test: __method__, action: 'image')
     options[:expect] = :success
+    options[:media_type] = :plain
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = image_api_url(url: proxy_url, format: fmt)
+        get_as(user, url, options)
+      end
     end
   end
 

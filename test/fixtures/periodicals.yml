@@ -11,12 +11,12 @@
 # =============================================================================
 
 AARP_Magazine:
-  seriesId: 46424
+  seriesId: '46424'
   editions:
     - AARP_Magazine_1
 
 Albuquerque_Journal:
-  seriesId: 63401
+  seriesId: '63401'
   editions:
     - Albuquerque_Journal_1
     - Albuquerque_Journal_2
@@ -24,13 +24,13 @@ Albuquerque_Journal:
     - Albuquerque_Journal_4
 
 New_Yorker:
-  seriesId: 46422
+  seriesId: '46422'
   editions:
     - New_Yorker_1
     - New_Yorker_2
 
 New_York_Times:
-  seriesId: 46252
+  seriesId: '46252'
   editions:
     - New_York_Times_1
     - New_York_Times_2
@@ -42,7 +42,7 @@ New_York_Times:
 # =============================================================================
 
 example:
-  seriesId: 9999999
+  seriesId: '9999999'
   editions:
     - example1
     - example2

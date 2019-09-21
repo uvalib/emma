@@ -136,4 +136,7 @@ group :test do
   # Automatic installation and updates for all supported webdrivers.
   gem 'webdrivers', '~> 4.0'
 
+  # For test coverage.
+  gem 'simplecov'
+
 end

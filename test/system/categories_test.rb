@@ -11,7 +11,7 @@ class CategoriesTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first category page.
-      visit category_index_path
+      visit category_index_url
       show_url
       assert_valid_index_page(:category)
       assert_first_page
@@ -47,7 +47,7 @@ class CategoriesTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first category page.
-      visit category_index_path
+      visit category_index_url
       show_url
       assert_valid_index_page(:category)
       assert_first_page

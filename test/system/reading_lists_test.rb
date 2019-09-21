@@ -9,7 +9,7 @@ class ReadingListsTest < ApplicationSystemTestCase
 
   test 'reading lists - visit index' do
     run_test(__method__) do
-      visit reading_list_index_path
+      visit reading_list_index_url
       assert_flash alert: 'You need to sign in'
     end
   end

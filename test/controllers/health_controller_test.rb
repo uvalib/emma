@@ -8,7 +8,7 @@ require 'test_helper'
 class HealthControllerTest < ActionDispatch::IntegrationTest
 
   CONTROLLER     = 'health'
-  OPTIONS        = { controller: CONTROLLER, media_type: :json }.freeze
+  OPTIONS        = { controller: CONTROLLER, format: :json }.freeze
 
   TEST_USERS     = [ANONYMOUS].freeze
   TEST_READERS   = TEST_USERS
@@ -16,42 +16,56 @@ class HealthControllerTest < ActionDispatch::IntegrationTest
   TEST_SUBSYSTEM = 'bookshare'
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
-  test 'version' do
-    run_test(__method__) do
-      get version_path
-      assert_result :success, OPTIONS.merge(action: 'version')
-    end
-  end
+  if TESTING_HTML
 
-  test 'health version' do
-    run_test(__method__) do
-      get version_health_path
-      assert_result :success, OPTIONS.merge(action: 'version')
+    test 'version' do
+      url     = version_url
+      options = OPTIONS.merge(action: 'version')
+      run_test(__method__) do
+        get url
+        assert_result :success, options
+      end
     end
-  end
 
-  test 'healthcheck' do
-    run_test(__method__) do
-      get healthcheck_path
-      assert_result :success, OPTIONS.merge(action: 'check')
+    test 'health version' do
+      url     = version_health_url
+      options = OPTIONS.merge(action: 'version')
+      run_test(__method__) do
+        get url
+        assert_result :success, options
+      end
     end
-  end
 
-  test 'health check - all subsystem statuses' do
-    run_test(__method__) do
-      get check_health_path
-      assert_result :success, OPTIONS.merge(action: 'check')
+    test 'healthcheck' do
+      url     = healthcheck_url
+      options = OPTIONS.merge(action: 'check')
+      run_test(__method__) do
+        get url
+        assert_result :success, options
+      end
     end
-  end
 
-  test 'health check - single subsystem status' do
-    run_test(__method__) do
-      get check_subsystem_health_path(subsystem: TEST_SUBSYSTEM)
-      assert_result :success, OPTIONS.merge(action: 'check')
+    test 'health check - all subsystem statuses' do
+      url     = check_health_url
+      options = OPTIONS.merge(action: 'check')
+      run_test(__method__) do
+        get url
+        assert_result :success, options
+      end
     end
+
+    test 'health check - single subsystem status' do
+      url     = check_subsystem_health_url(subsystem: TEST_SUBSYSTEM)
+      options = OPTIONS.merge(action: 'check')
+      run_test(__method__) do
+        get url
+        assert_result :success, options
+      end
+    end
+
   end
 
 end

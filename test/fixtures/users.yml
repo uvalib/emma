@@ -21,6 +21,13 @@ emmacollection:
     - catalog_searcher
     - catalog_curator
 
+emmamembership:
+  email: emmamembership@bookshare.org
+  roles:
+    - catalog_searcher
+    - membership_viewer
+    - membership_manager
+
 # =============================================================================
 # Examples
 # =============================================================================

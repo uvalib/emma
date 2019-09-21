@@ -7,8 +7,7 @@ require 'application_system_test_case'
 
 class MetricsTest < ApplicationSystemTestCase
 
-=begin
-  # NOTE: This doesn't work because '/metrics' is handled within Rack.
+=begin # NOTE: This doesn't work because '/metrics' is handled within Rack.
   test 'metrics - visit metrics' do
     run_test(__method__) do
       visit '/metrics'
@@ -17,11 +16,10 @@ class MetricsTest < ApplicationSystemTestCase
   end
 =end
 
-=begin
-  # NOTE: This doesn't work because Capybara can only deal with HTML results.
+=begin # NOTE: Doesn't work because Capybara can only deal with HTML results.
   test 'metrics - visit test metrics' do
     run_test(__method__) do
-      visit metrics_test_path
+      visit metrics_test_url
       assert_response :success
       assert_text '{"message":"Success"}'
     end

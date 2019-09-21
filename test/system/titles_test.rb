@@ -28,7 +28,7 @@ class TitlesTest < ApplicationSystemTestCase
       page = 0
 
       # Visit the first catalog titles index page.
-      visit title_index_path
+      visit title_index_url
       show "PAGE #{page} = #{current_url}"
       assert_valid_index_page(:title)
       assert_first_page
@@ -60,7 +60,7 @@ class TitlesTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first catalog titles index page.
-      visit title_index_path
+      visit title_index_url
       show_url
       assert_valid_index_page(:title)
       assert_first_page
@@ -85,7 +85,7 @@ class TitlesTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit title_index_path(**terms)
+      visit title_index_url(**terms)
       show_url
       assert_valid_search_results(:title, terms: terms)
       assert_first_page
@@ -119,7 +119,7 @@ class TitlesTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit title_index_path(**terms)
+      visit title_index_url(**terms)
       show_url
       assert_valid_search_results(:title, terms: terms)
       assert_first_page

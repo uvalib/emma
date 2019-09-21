@@ -21,7 +21,7 @@ Roll_Call:
 
 Jane_Jones:
   user_id:        'AP5xvS84snU6maTTvuNsdj02VcJwe9urlcSiScmWKRNe1H0qEhJVq2gsb1WJwqWgUNzi52orYNvS'
-  emailAddress:   jjones@bookshare.org
+  emailAddress:   'jjones@bookshare.org'
 
 # =============================================================================
 # Member types
@@ -30,13 +30,13 @@ Jane_Jones:
 # A person whose only contact with Bookshare is by representation as a member
 # of an organization.
 organization:                                              &ORGANIZATION_MEMBER
-  user_id:        12341234
+  user_id:        '12341234'
 
 # A member who is also a Bookshare user.
 institutional:                                            &INSTITUTIONAL_MEMBER
-  user_id:        56785678
+  user_id:        '56785678'
   institutional:  true
-  emailAddress:   emmadso@bookshare.org
+  emailAddress:   'emmadso@bookshare.org'
 
 # =============================================================================
 # Examples

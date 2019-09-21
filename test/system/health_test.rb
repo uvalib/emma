@@ -10,14 +10,14 @@ class HealthTest < ApplicationSystemTestCase
 
   test 'health - visit version' do
     run_test(__method__) do
-      visit version_path
+      visit version_url
       assert_text 'version'
     end
   end
 
   test 'health - visit health check' do
     run_test(__method__) do
-      visit healthcheck_path
+      visit healthcheck_url
       assert_text 'healthy'
     end
   end

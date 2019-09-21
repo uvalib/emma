@@ -15,67 +15,81 @@ class MemberControllerTest < ActionDispatch::IntegrationTest
   TEST_WRITERS = [ANONYMOUS].freeze # TODO: member write tests
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
   test 'member index - list all organization members' do
-    endpoint = member_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'index')
+    options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = member_index_url(format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
   test 'member show - details of an existing organization member' do
-    member   = members(:organization).user_id
-    endpoint = member_path(id: member)
-    options  = OPTIONS.merge(test: __method__, action: 'show')
+    member  = members(:organization).user_id
+    options = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
-      get_as(user, endpoint, options)
+      TEST_FORMATS.each do |fmt|
+        url = member_url(id: member, format: fmt)
+        opt = options.merge(format: fmt)
+        get_as(user, url, opt)
+      end
     end
   end
 
-  test 'member new - add metadata for a new organization member' do
-    endpoint = new_member_path
-    options  = OPTIONS.merge(test: __method__, action: 'new')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
-    end
-  end
+  # ===========================================================================
+  # :section: Write tests
+  # ===========================================================================
 
-  test 'member create - a new organization member' do
-    endpoint = member_index_path
-    options  = OPTIONS.merge(test: __method__, action: 'create')
-    TEST_WRITERS.each do |user|
-      post_as(user, endpoint, options)
-    end
-  end
+  if TESTING_HTML
 
-  test 'member edit - metadata for an existing organization member' do
-    member   = members(:organization).user_id
-    endpoint = edit_member_path(id: member)
-    options  = OPTIONS.merge(test: __method__, action: 'edit')
-    TEST_WRITERS.each do |user|
-      get_as(user, endpoint, options)
+    test 'member new - add metadata for a new organization member' do
+      url = new_member_url
+      opt = OPTIONS.merge(test: __method__, action: 'new')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, opt)
+      end
     end
-  end
 
-  test 'member update - modify an existing organization member' do
-    member   = members(:organization).user_id
-    endpoint = member_path(id: member)
-    options  = OPTIONS.merge(test: __method__, action: 'update')
-    TEST_WRITERS.each do |user|
-      put_as(user, endpoint, options)
+    test 'member create - a new organization member' do
+      url = member_index_url
+      opt = OPTIONS.merge(test: __method__, action: 'create')
+      TEST_WRITERS.each do |user|
+        post_as(user, url, opt)
+      end
     end
-  end
 
-  test 'member destroy - remove an existing organization member' do
-    member   = members(:organization).user_id
-    endpoint = member_path(id: member)
-    options  = OPTIONS.merge(test: __method__, action: 'destroy')
-    TEST_WRITERS.each do |user|
-      delete_as(user, endpoint, options)
+    test 'member edit - metadata for an existing organization member' do
+      member  = members(:organization).user_id
+      url     = edit_member_url(id: member)
+      opt     = OPTIONS.merge(test: __method__, action: 'edit')
+      TEST_WRITERS.each do |user|
+        get_as(user, url, opt)
+      end
     end
+
+    test 'member update - modify an existing organization member' do
+      member  = members(:organization).user_id
+      url     = member_url(id: member)
+      opt     = OPTIONS.merge(test: __method__, action: 'update')
+      TEST_WRITERS.each do |user|
+        put_as(user, url, opt)
+      end
+    end
+
+    test 'member destroy - remove an existing organization member' do
+      member  = members(:organization).user_id
+      url     = member_url(id: member)
+      opt     = OPTIONS.merge(test: __method__, action: 'destroy')
+      TEST_WRITERS.each do |user|
+        delete_as(user, url, opt)
+      end
+    end
+
   end
 
 end

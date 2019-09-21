@@ -14,23 +14,26 @@ class MetricsControllerTest < ActionDispatch::IntegrationTest
   TEST_READERS = TEST_USERS
 
   # ===========================================================================
-  # :section:
+  # :section: Read tests
   # ===========================================================================
 
-=begin
-  # NOTE: This doesn't work because '/metrics' is handled within Rack.
+=begin # NOTE: This doesn't work because '/metrics' is handled within Rack.
   test 'metrics' do
+    url = '/metrics'
+    opt = OPTIONS.merge(format: :text)
     run_test(__method__) do
-      get '/metrics', as: :text
-      assert_result :success, OPTIONS.merge(media_type: :text)
+      get url, as: :text
+      assert_result :success, opt
     end
   end
 =end
 
   test 'test metrics' do
+    url = metrics_test_url
+    opt = OPTIONS.merge(format: :json)
     run_test(__method__) do
-      get metrics_test_path, as: :json
-      assert_result :success, OPTIONS.merge(media_type: :json)
+      get url, as: :json
+      assert_result :success, opt
     end
   end
 

@@ -3,18 +3,16 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-#require_relative '_common'
-
 # Support for checking pagination.
 #
 module TestHelper::SystemTests::Pagination
 
   include TestHelper::SystemTests::Common
 
+  include Capybara::Minitest::Assertions unless ONLY_FOR_DOCUMENTATION
+
   NEXT_LABEL = 'NEXT'
   PREV_LABEL = 'PREV'
-
-  include Capybara::Minitest::Assertions unless ONLY_FOR_DOCUMENTATION
 
   # ===========================================================================
   # :section:

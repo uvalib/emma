@@ -7,44 +7,44 @@
 # =============================================================================
 
 AARP_Magazine_1:
-  editionId:  2720489
+  editionId:  '2720489'
 
 Albuquerque_Journal_1:
-  editionId:  2784976
+  editionId:  '2784976'
 
 Albuquerque_Journal_2:
-  editionId:  2787754
+  editionId:  '2787754'
 
 Albuquerque_Journal_3:
-  editionId:  2790674
+  editionId:  '2790674'
 
 Albuquerque_Journal_4:
-  editionId:  2779536
+  editionId:  '2779536'
 
 New_Yorker_1:
-  editionId:  2781254
+  editionId:  '2781254'
 
 New_Yorker_2:
-  editionId:  2780612
+  editionId:  '2780612'
 
 New_York_Times_1:
-  editionId:  2784480
+  editionId:  '2784480'
 
 New_York_Times_2:
-  editionId:  2787224
+  editionId:  '2787224'
 
 New_York_Times_3:
-  editionId:  2790295
+  editionId:  '2790295'
 
 New_York_Times_4:
-  editionId:  2779253
+  editionId:  '2779253'
 
 # =============================================================================
 # Examples
 # =============================================================================
 
 example:
-  editionId:  9999998
+  editionId:  '9999998'
 
 example2:
-  editionId:  9999999
+  editionId:  '9999999'

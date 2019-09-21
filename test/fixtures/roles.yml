@@ -7,25 +7,25 @@
 # =============================================================================
 
 catalog_searcher:
-  name: catalog_searcher
+  name: 'catalog_searcher'
 
 catalog_curator:
-  name: catalog_curator
+  name: 'catalog_curator'
 
 artifact_downloader:
-  name: artifact_downloader
+  name: 'artifact_downloader'
 
 artifact_submitter:
-  name: artifact_submitter
+  name: 'artifact_submitter'
 
 membership_viewer:
-  name: membership_viewer
+  name: 'membership_viewer'
 
 membership_manager:
-  name: membership_manager
+  name: 'membership_manager'
 
 administrator:
-  name: administrator
+  name: 'administrator'
 
 # =============================================================================
 # Examples
