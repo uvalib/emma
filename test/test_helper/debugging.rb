@@ -210,6 +210,8 @@ module TestHelper::Debugging
 
   public
 
+  TRACE_NL           = (' ' * 4).freeze
+  TRACE_BODY         = 4 * 1024
   TRACE_SEPARATOR    = { ('*' * 7) => ('*' * 65) }.deep_freeze
 
   SHOW_PRE_SEND_OPT  = %i[user format verb url].freeze
@@ -260,12 +262,13 @@ module TestHelper::Debugging
     redir  = resp&.redirection? && resp.redirect_url
     status = opt[:status] || resp&.response_code
     expect = opt[:expect]
+    body   = resp&.body&.gsub(/\n/, TRACE_NL)&.truncate(TRACE_BODY)
     show_trace(**show_opt) do
       {}.tap { |lines|
         lines[:redir]  = redir.inspect if redir
         lines[:status] = status.inspect
         lines[:expect] = expect&.inspect || '-'
-        lines[:body]   = resp&.body&.gsub(/\n/, '    ')&.truncate(1024)
+        lines[:body]   = body
       }.merge(TRACE_SEPARATOR)
     end
   end
