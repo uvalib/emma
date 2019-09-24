@@ -17,7 +17,10 @@ module ParamsConcern
 
     __included(base, 'ParamsConcern')
 
+    # Non-functional hints for RubyMine.
+    # :nocov:
     include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
     # :section: Callbacks

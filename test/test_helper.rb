@@ -84,7 +84,7 @@ end
 # Set up system testing.
 Capybara.configure do |config|
   config.app_host = TestHelper::BASE_URL  # TODO: needed?
-  config.default_max_wait_time = 15
+  config.default_max_wait_time = 60
   # config.allow_gumbo = true             # TODO: ??? (default is false)
   # config.enable_aria_label = true       # TODO: ??? (default is false)
   # config.ignore_hidden_elements = false # TODO: ??? (default is true)

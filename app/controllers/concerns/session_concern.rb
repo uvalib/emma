@@ -15,7 +15,10 @@ module SessionConcern
 
     __included(base, 'SessionConcern')
 
+    # Non-functional hints for RubyMine.
+    # :nocov:
     include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
     # :section: Session management
@@ -30,7 +33,10 @@ module SessionConcern
   include ApiHelper
   include ParamsHelper
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
   include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -117,20 +123,20 @@ module SessionConcern
   # @param [Hash, nil] hash
   # @param [Time]      time           Default: `Time.now`.
   # @param [String]    path           Default: `request.path`.
-  # @param [Hash]      url_params     Default: `#url_parameters`.
+  # @param [Hash]      req_params     Default: `#request_parameters`.
   #
   # @return [Hash]
   #
-  def last_operation_update(hash = nil, time: nil, path: nil, url_params: nil)
-    url_params ||= request_parameters
+  def last_operation_update(hash = nil, time: nil, path: nil, req_params: nil)
+    req_params ||= request_parameters
     # noinspection RubyCaseWithoutElseBlockInspection
-    case url_params[:controller]
-      when 'api' then return if url_params[:action] == 'image'
+    case req_params[:controller]
+      when 'api' then return if req_params[:action] == 'image'
     end
     values = {
       time:   (time || Time.now).to_i,
       path:   (path || request.path),
-      params: url_params.except(*IGNORED_PARAMETERS)
+      params: url_parameters(req_params)
     }
     values.merge!(hash) if hash.present?
     last_operation.merge!(values.stringify_keys)

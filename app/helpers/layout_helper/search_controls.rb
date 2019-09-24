@@ -235,7 +235,7 @@ module LayoutHelper::SearchControls
     return if menu.blank?
     id  = :limit
     opt = prepend_css_classes(opt, 'size-menu')
-    selected ||= params[id] || (page_size if defined?(page_size))
+    selected ||= params[id] || (page_size if respond_to?(:page_size))
     selected &&= selected.to_i
     opt[:label] ||= i18n_lookup(type, 'search_bar.size.label')
     menu_container(id, menu, selected, type, **opt)

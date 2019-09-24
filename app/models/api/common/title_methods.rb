@@ -171,7 +171,7 @@ module Api::Common::TitleMethods
       %i[authors composers lyricists arrangers].flat_map do |field|
         next unless respond_to?(field)
         next unless types.include?(type = field.to_s.singularize)
-        values = send(field)
+        values = send(field) || []
         opt[:role] ? values.map { |v| "#{v} (#{type})" } : values
       end
     list += contributor_list(*types, **opt)
@@ -188,11 +188,9 @@ module Api::Common::TitleMethods
   # @return [Array<String>]
   #
   def contributor_list(*types, **opt)
-    return [] unless respond_to?(:contributors)
-    types = types.compact.presence
-    contributors.map { |c|
-      c.label(opt[:role]) if types.nil? || types.include?(c.type)
-    }.compact
+    result = respond_to?(:contributors) && contributors || []
+    result = result.select { |c| types.include?(c.type) } if types.present?
+    result.map { |c| c.label(opt[:role]) }
   end
 
   # All contributors to this catalog title keyed by contributor type.
@@ -209,6 +207,28 @@ module Api::Common::TitleMethods
       v = contributors.map { |c| c.label if c.type == role }.compact
       [k, v]
     }.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # All artifacts associated with this catalog title.
+  #
+  # @param [Array<FormatType>] types  Default: `FormatType#values`
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Note
+  # Not all record types which include this module actually have an :artifacts
+  # property.
+  #
+  def artifact_list(*types)
+    result = respond_to?(:artifacts) && artifacts || []
+    result = result.select { |a| types.include?(a.fmt) } if types.present?
+    result
   end
 
   # ===========================================================================

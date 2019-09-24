@@ -167,7 +167,8 @@ module TestHelper::IntegrationTests::Authentication
     end
   end
 
-  # Non-operative hints for RubyMine.
+  # Non-functional hints for RubyMine.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
     # @param [String] user
@@ -201,5 +202,6 @@ module TestHelper::IntegrationTests::Authentication
     def delete_as(user, url, **opt, &block); end
 
   end
+  # :nocov:
 
 end

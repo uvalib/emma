@@ -7,9 +7,12 @@
 #
 module TestHelper::SystemTests::Pagination
 
-  include TestHelper::SystemTests::Common
+  include TestHelper::SystemTests::Index
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
   include Capybara::Minitest::Assertions unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   NEXT_LABEL = 'NEXT'
   PREV_LABEL = 'PREV'
@@ -52,14 +55,36 @@ module TestHelper::SystemTests::Pagination
 
   # Visit the next page of search results.
   #
-  def visit_next_page
+  # @param [Symbol, nil] model
+  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  #
+  # @return [void]
+  #
+  def visit_next_page(model = nil, **opt)
     click_link NEXT_LABEL, match: :first
+    if block_given?
+      yield
+    else
+      show_url
+    end
+    assert_valid_index_page(model, **opt)
   end
 
   # Visit the previous page of search results.
   #
-  def visit_prev_page
+  # @param [Symbol, nil] model
+  # @param [Hash]        opt          Passed to #assert_valid_index_page.
+  #
+  # @return [void]
+  #
+  def visit_prev_page(model = nil, **opt)
     click_link PREV_LABEL, match: :first
+    if block_given?
+      yield
+    else
+      show_url
+    end
+    assert_valid_index_page(model, **opt)
   end
 
 end

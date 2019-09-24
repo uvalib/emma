@@ -170,7 +170,7 @@ module ApiService::Title
   #
   def get_artifact_metadata(bookshareId:, format:)
     title = get_title(bookshareId: bookshareId)
-    title.artifacts.find { |a| format == a.format }
+    title.artifact_list.find { |a| format == a.format }
   end
 
   # ===========================================================================

@@ -351,13 +351,14 @@ en:
         controls:
           - 'size'
 
+      pagination:
+        page_size:      20
+
       index:
         label:          'Categories'
         title:          'Category Index'
         tooltip:        'Get a category listing.'
 
-        pagination:
-          page_size:    20
 
       show:
         label:          'Category'

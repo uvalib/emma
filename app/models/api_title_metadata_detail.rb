@@ -76,6 +76,7 @@ __loading_begin(__FILE__)
 #   :readingAgeMinimum
 #   :site
 #
+# noinspection DuplicatedCode
 class ApiTitleMetadataDetail < Api::Message
 
   include Api::Common::ArtifactMethods
@@ -133,26 +134,6 @@ class ApiTitleMetadataDetail < Api::Message
     has_many  :translators,          Api::Name              # NOTE: deprecated
     has_one   :usageRestriction,     Api::UsageRestriction
     attribute :vocalParts,           String
-  end
-
-  # ===========================================================================
-  # :section: Api::Record::Base overrides
-  # ===========================================================================
-
-  public
-
-  # Initialize a new instance.
-  #
-  # NOTE: This is here only because the API is returning :artifacts as *nil*.
-  #
-  # @param [Hash, String, nil] data
-  # @param [Hash]              opt
-  #
-  # @see Api::Record::Base#initialize
-  #
-  def initialize(data = nil, **opt)
-    super
-    self.artifacts ||= []
   end
 
 end

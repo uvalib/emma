@@ -392,7 +392,7 @@ module TitleHelper
 
     # === Item instances ===
     DtBookSize:           :dtbookSize,
-    Artifacts:            :artifacts,
+    Artifacts:            :artifact_list,
     Formats:              :download_links,
     Links:                :links,
 

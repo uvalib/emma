@@ -7,10 +7,10 @@ require 'application_system_test_case'
 
 class UserSessionsTest < ApplicationSystemTestCase
 
-  TEST_USER = :emmadso
+  TEST_USER = EMMA_DSO
 
   # ===========================================================================
-  # :section: Tests
+  # :section:
   # ===========================================================================
 
   test 'user session - sign in' do
@@ -44,7 +44,7 @@ class UserSessionsTest < ApplicationSystemTestCase
       sign_in_as(TEST_USER)
 
       # Go to a new page.
-      visit title_index_url
+      visit_index :title
       click_link class: 'bookshare-logout'
       assert_flash notice: 'Signed out'
 

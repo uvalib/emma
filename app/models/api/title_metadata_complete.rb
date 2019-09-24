@@ -77,6 +77,7 @@ __loading_begin(__FILE__)
 #   :titleSource
 #   :withdrawalDate
 #
+# noinspection DuplicatedCode
 class Api::TitleMetadataComplete < Api::Record::Base
 
   include Api::Common::ArtifactMethods

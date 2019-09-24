@@ -70,7 +70,7 @@ class ApiController < ApplicationController
   #
   def v2
     __debug { "API #{__method__} | params = #{params.inspect}" }
-    opt  = url_parameters.except(:format)
+    opt  = url_parameters
     path = opt.delete(:api_path)
     if (user = opt.delete(:user)).present?
       user = user.downcase

@@ -112,4 +112,34 @@ module TestHelper::SystemTests::Common
     get_subscription_types
   ].freeze
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # assert_current_url
+  #
+  # @param [String] url
+  #
+  def assert_current_url(url)
+    assert_equal url, URI(current_url).tap { |uri| uri.port = nil }.to_s
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Assert that the current page is valid.
+  #
+  # @param [String] title
+  # @param [String] heading
+  #
+  def assert_valid_page(title: nil, heading: nil, **)
+    assert_title title                  if title
+    assert_selector 'h1', text: heading if heading
+  end
+
 end

@@ -17,6 +17,8 @@ module UserConcern
 
   include ApiHelper
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
     # Defined by Devise.
@@ -28,6 +30,7 @@ module UserConcern
     def authenticate_user!; end
 
   end
+  # :nocov:
 
   # ===========================================================================
   # :section:

@@ -112,10 +112,8 @@ Rails.application.routes.draw do
 
 end
 
-# RubyMine isn't good at using the routes to figure out the implied URL helper
-# function names.  This non-functional block gives them definitions so that
-# they are not flagged as unknown by RubyMine code inspection.
-#
+# Non-functional hints for RubyMine.
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
   def api_index_path(*);                          end
   def api_index_url(*);                           end
@@ -166,3 +164,4 @@ unless ONLY_FOR_DOCUMENTATION
   def welcome_path(*);                            end
   def welcome_url(*);                             end
 end
+# :nocov:

@@ -21,10 +21,12 @@ module TestHelper::SystemTests::Show
 
   # Assert that the current page is a valid index page.
   #
-  # @param [Symbol,nil] model
-  # @param [String]     title
+  # @param [Symbol] model
+  # @param [String] title
   #
-  def assert_valid_show_page(model = nil, title: nil)
+  # @return [void]
+  #
+  def assert_valid_show_page(model, title: nil)
     body_class = PROPERTY.dig(model, :show, :body_class)
     assert_selector "body#{body_class}"
 
@@ -52,14 +54,14 @@ module TestHelper::SystemTests::Show
 
   # Visit an entry on an index page.
   #
-  # @param [Symbol, nil]                  model
+  # @param [Symbol]                       model
   # @param [Capybara::Node::Element, nil] entry
   # @param [Integer, Symbol]              index
   # @param [String]                       entry_class
   #
-  # @return [String] title            Title for the entry.
+  # @return [void]
   #
-  def visit_show_page(model = nil, entry: nil, index: nil, entry_class: nil)
+  def visit_show_page(model, entry: nil, index: nil, entry_class: nil)
     entry ||=
       if (entry_class ||= PROPERTY.dig(model, :index, :entry_class))
         case index
@@ -71,9 +73,12 @@ module TestHelper::SystemTests::Show
     link  = entry.find('.value.field-Title a')
     title = link.text
     link.click(wait: true)
-    #show_url
+    if block_given?
+      yield(title)
+    else
+      show_url
+    end
     assert_valid_show_page(model, title: title)
-    title
   end
 
 end

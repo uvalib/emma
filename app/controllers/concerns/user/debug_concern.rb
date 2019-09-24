@@ -38,8 +38,8 @@ module User::DebugConcern
     method ||= caller(1,1).to_s.sub(/^[^`]*`(.*)'[^']*$/, '\1')
     part = []
     part << "OMNIAUTH #{method}"
-    part << request&.method   if defined?(request)
-    part << params.inspect    if defined?(params)
+    part << request&.method   if respond_to?(:request)
+    part << params.inspect    if respond_to?(:params)
     part += args              if args.present?
     part += Array.wrap(yield) if block_given?
     __debug(part.join(' | '))

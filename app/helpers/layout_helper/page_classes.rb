@@ -90,14 +90,14 @@ module LayoutHelper::PageClasses
   # @return [Array<String>]
   #
   def default_page_classes(p = nil)
-    p ||= defined?(params) ? params : {}
+    p ||= request_parameters
     c = p[:controller].to_s.presence
     a = p[:action].to_s.presence
-    result = []
-    result << "#{c}-#{a}" if c && a
-    result << c           if c
-    result << a           if a
-    result
+    [].tap do |result|
+      result << "#{c}-#{a}" if c && a
+      result << c           if c
+      result << a           if a
+    end
   end
 
 end

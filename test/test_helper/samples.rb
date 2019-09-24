@@ -42,7 +42,8 @@ module TestHelper::Samples
     end
   end
 
-  # Non-operative hints for RubyMine.
+  # Non-functional hints for RubyMine.
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
     # Generate a sample instance from text/fixtures/artifacts.yml.
@@ -78,5 +79,6 @@ module TestHelper::Samples
     def sample_user; end
 
   end
+  # :nocov:
 
 end

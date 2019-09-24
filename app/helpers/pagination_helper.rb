@@ -72,29 +72,39 @@ module PaginationHelper
 
   public
 
-  # Default of results per page.
+  # Default results per page for the current controller/action.
   #
   # @return [Integer]
   #
   def default_page_size
-    @default_page_size ||=
-      begin
-        keys = []
-        if defined?(params)
-          if (controller = params[:controller]).present?
-            if (action = params[:action]).present?
-              keys << :"emma.#{controller}.#{action}.pagination.page_size"
-              keys << :"emma.#{controller}.#{action}.page_size"
-            end
-            keys << :"emma.#{controller}.pagination.page_size"
-            keys << :"emma.#{controller}.page_size"
-            keys << :'emma.generic.pagination.page_size'
-            keys << :'emma.generic.page_size'
-          end
-        end
-        keys << :'emma.pagination.page_size'
-        I18n.t(keys.shift, default: keys)
+    @default_page_size ||= get_page_size
+  end
+
+  # Default results per page for the given controller/action.
+  #
+  # @param [Hash] opt
+  #
+  # @options opt [Symbol] controller
+  # @options opt [Symbol] action
+  #
+  # @return [Integer]
+  #
+  def get_page_size(**opt)
+    opt  = request_parameters.slice(:controller, :action) if opt.blank?
+    keys = []
+    if (controller = opt[:controller]).present?
+      if (action = opt[:action]).present?
+        keys << :"emma.#{controller}.#{action}.pagination.page_size"
+        keys << :"emma.#{controller}.#{action}.page_size"
       end
+      keys << :"emma.#{controller}.pagination.page_size"
+      keys << :"emma.#{controller}.page_size"
+    end
+    keys << :'emma.generic.pagination.page_size'
+    keys << :'emma.generic.page_size'
+    keys << :'emma.pagination.page_size'
+    keys << :'emma.page_size'
+    I18n.t(keys.shift, default: keys)
   end
 
   # Get the number of results per page.

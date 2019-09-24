@@ -7,7 +7,6 @@ require 'application_system_test_case'
 
 class PeriodicalsTest < ApplicationSystemTestCase
 
-  PAGE_SIZE  = 10
   PAGE_COUNT = 2
 
   # There were 29 results for this search as the anonymous user as of
@@ -25,31 +24,26 @@ class PeriodicalsTest < ApplicationSystemTestCase
   test 'periodicals - visit index' do
     run_test(__method__) do
 
-      page = 0
-
       # Visit the first periodicals index page.
-      visit periodical_index_url
-      show "PAGE #{page} = #{current_url}"
-      assert_valid_index_page(:periodical)
-      assert_first_page
-      assert_selector 'h2.number', text: '1'
+      page = 0
+      visit_index(:periodical, page: page) do
+        show "PAGE #{page} = #{current_url}"
+      end
 
       # Forward sequence of periodicals index pages.
       while (page += 1) <= PAGE_COUNT
-        visit_next_page
-        show "PAGE #{page} = #{current_url}"
-        assert_valid_index_page(:periodical)
-        assert_selector 'h2.number', text: ((PAGE_SIZE * page) + 1).to_s
+        visit_next_page(:periodical, page: page) do
+          show "PAGE #{page} = #{current_url}"
+        end
       end
       assert_not_first_page
 
       # Reverse sequence of periodicals index pages.
       page = PAGE_COUNT
       while (page -= 1) >= 0
-        visit_prev_page
-        show "PAGE #{page} = #{current_url}"
-        assert_valid_index_page(:periodical)
-        assert_selector 'h2.number', text: ((PAGE_SIZE * page) + 1).to_s
+        visit_prev_page(:periodical, page: page) do
+          show "PAGE #{page} = #{current_url}"
+        end
       end
       assert_first_page
 
@@ -60,9 +54,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
     run_test(__method__) do
 
       # Visit the first periodicals index page.
-      visit periodical_index_url
-      show_url
-      assert_valid_index_page(:periodical)
+      visit_index :periodical
       assert_first_page
 
       # Visit each entry on the first periodicals index page.
@@ -85,28 +77,25 @@ class PeriodicalsTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit periodical_index_url(**terms)
-      show_url
-      assert_valid_search_results(:periodical, terms: terms)
+      visit_index :periodical, terms: terms
       assert_first_page
 
       # Go to next page of results.
-      visit_next_page
-      show_url
-      assert_valid_search_results(:periodical, terms: terms)
+      visit_next_page :periodical, terms: terms
       assert_not_first_page
 
       # Visit the first entry.
-      title = visit_show_page(:periodical)
-      parts = title.downcase
-      term  = terms.values.first.downcase
-      show "TERM = #{term}"
-      assert parts.include?(term)
+      visit_show_page(:periodical) do |title|
+        parts = title.downcase
+        term  = terms.values.first.downcase
+        show "TERM = #{term}"
+        assert parts.include?(term)
+      end
 
       # Go back to the index page.
       go_back
       show_url
-      assert_valid_search_results(:periodical, terms: terms)
+      assert_valid_index_page(:periodical, terms: terms)
       assert_not_first_page
 
     end
@@ -120,23 +109,20 @@ class PeriodicalsTest < ApplicationSystemTestCase
       show "Terms: #{terms.inspect}"
 
       # Search for term(s).
-      visit periodical_index_url(**terms)
-      show_url
-      assert_valid_search_results(:periodical, terms: terms)
+      visit_index :periodical, terms: terms
       assert_first_page
 
       # Go to next page of results.
-      visit_next_page
-      show_url
-      assert_valid_search_results(:periodical, terms: terms)
+      visit_next_page :periodical, terms: terms
       assert_not_first_page
 
       # Visit the first entry.
-      title = visit_show_page(:periodical)
-      parts = title.downcase.split(/[[:space:]]|[[:punct:]]/)
-      term  = strip_quotes(terms.values.first.downcase)
-      show "TERM = #{term}"
-      assert parts.any? { |part| part == term }
+      visit_show_page(:periodical) do |title|
+        parts = title.downcase.split(/[[:space:]]|[[:punct:]]/)
+        term  = strip_quotes(terms.values.first.downcase)
+        show "TERM = #{term}"
+        assert parts.any? { |part| part == term }
+      end
 
       # Go back to the index page.
       go_back
