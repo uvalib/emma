@@ -19,7 +19,7 @@ __loading_begin(__FILE__)
 # @attr [Array<ContentWarning>]        contentWarnings
 # @attr [Array<Api::Contributor>]      contributors
 # @attr [String]                       copyright
-# @attr [String]                       copyrightDate
+# @attr [IsoYear]                      copyrightDate
 # @attr [Array<String>]                countries
 # @attr [Integer]                      dtbookSize
 # @attr [String]                       externalCategoryCode
@@ -30,7 +30,7 @@ __loading_begin(__FILE__)
 # @attr [String]                       isbn13
 # @attr [String]                       key
 # @attr [Array<String>]                languages
-# @attr [String]                       lastUpdatedDate
+# @attr [IsoDate]                      lastUpdatedDate
 # @attr [Array<Api::Link>]             links
 # @attr [Array<Api::Name>]             lyricists            *deprecated*
 # @attr [String]                       movementNumber
@@ -42,7 +42,7 @@ __loading_begin(__FILE__)
 # @attr [Integer]                      numPages
 # @attr [String]                       opus
 # @attr [String]                       proofreader
-# @attr [String]                       publishDate
+# @attr [IsoDate]                      publishDate
 # @attr [String]                       publisher
 # @attr [Array<String>]                relatedIsbns
 # @attr [String]                       replacementId
@@ -59,7 +59,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Api::Name>]             translators          *deprecated*
 # @attr [Api::UsageRestriction]        usageRestriction
 # @attr [String]                       vocalParts
-# @attr [String]                       withdrawalDate
+# @attr [IsoDate]                      withdrawalDate
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_complete
 #
@@ -97,7 +97,7 @@ class Api::TitleMetadataComplete < Api::Record::Base
     has_many  :contentWarnings,      ContentWarning
     has_many  :contributors,         Api::Contributor
     attribute :copyright,            String
-    attribute :copyrightDate,        String
+    attribute :copyrightDate,        IsoYear
     has_many  :countries,            String
     attribute :dtbookSize,           Integer
     attribute :externalCategoryCode, String
@@ -108,7 +108,7 @@ class Api::TitleMetadataComplete < Api::Record::Base
     attribute :isbn13,               String
     attribute :key,                  String
     has_many  :languages,            String
-    attribute :lastUpdatedDate,      String
+    attribute :lastUpdatedDate,      IsoDate
     has_many  :links,                Api::Link
     has_many  :lyricists,            Api::Name              # NOTE: deprecated
     attribute :movementNumber,       String
@@ -120,7 +120,7 @@ class Api::TitleMetadataComplete < Api::Record::Base
     attribute :numPages,             Integer
     attribute :opus,                 String
     attribute :proofreader,          String
-    attribute :publishDate,          String
+    attribute :publishDate,          IsoDate
     attribute :publisher,            String
     has_many  :relatedIsbns,         String
     attribute :replacementId,        String
@@ -137,7 +137,7 @@ class Api::TitleMetadataComplete < Api::Record::Base
     has_many  :translators,          Api::Name              # NOTE: deprecated
     has_one   :usageRestriction,     Api::UsageRestriction
     attribute :vocalParts,           String
-    attribute :withdrawalDate,       String
+    attribute :withdrawalDate,       IsoDate
   end
 
 end

@@ -87,7 +87,7 @@ module Api::Record::Associations
     # @param [Hash]                       opt       Passed to #make_default.
     #
     def add_single_property(name, type, *_ignored, **opt)
-      value = make_default(name, type, **opt)
+      value = make_default(type, **opt)
       add_property(name, value)
     end
 
@@ -121,32 +121,36 @@ module Api::Record::Associations
 
     # Get a default for a schema property data element.
     #
-    # @param [Symbol]                     property_name
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash]                       opt
+    # @param [Hash, nil]                  opt   Passed to #extract_type_option
     #
     # @return [Object]  A literal value.
     # @return [Proc]    An anonymous method that generates the default value.
     #
-    def make_default(property_name, type = nil, **opt)
-      type = opt.slice(*TYPE_OPTION_KEYS).values.first || type || property_name
+    # Compare with:
+    # @see Api::Serializer::Associations#get_type_class
+    #
+    def make_default(type, opt = nil)
+      type = extract_type_option(opt) || type || 'String'
       type = type.to_s.classify if type.is_a?(Symbol)
-      name = type.to_s.presence || 'String'
+      name = type.to_s
       base = name.demodulize.to_sym
-      base = :FalseClass if %i[Boolean TrueClass].include?(base)
       if SCALAR_TYPES.include?(base)
         SCALAR_DEFAULTS[base]
       elsif ENUMERATION_TYPES.include?(base)
         ENUMERATION_DEFAULTS[base]
-      elsif name.start_with?('Api::')
-        type = type.constantize unless type.is_a?(Class)
-        ->(**opt) { type.new(nil, opt) }
+      elsif base.to_s.start_with?('Iso')
+        type = base.to_s.constantize
+        ->(*)  { type.new }
       elsif !name.include?('::')
         type = "Api::#{name}".constantize
-        ->(**opt) { type.new(nil, opt) }
+        ->(*a) { type.new(nil, *a) }
+      elsif name.start_with?('Api::')
+        type = name.constantize unless type.is_a?(Class)
+        ->(*a) { type.new(nil, *a) }
       else
-        type = type.constantize unless type.is_a?(Class)
-        ->(*) { type.new }
+        type = name.constantize unless type.is_a?(Class)
+        ->(*)  { type.new }
       end
     end
 

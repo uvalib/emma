@@ -11,9 +11,9 @@ __loading_begin(__FILE__)
 # @attr [Array<AllowsType>]         allows
 # @attr [String]                    assignedBy
 # @attr [Api::TitleMetadataSummary] book
-# @attr [String]                    dateAdded
+# @attr [IsoDate]                   dateAdded
 # @attr [Api::Format]               format
-# @attr [String]                    lastUpdated
+# @attr [IsoDate]                   lastUpdated
 # @attr [Array<Api::Link>]          links
 # @attr [Integer]                   size
 # @attr [Api::StatusModel]          status
@@ -29,9 +29,9 @@ class Api::ActiveBook < Api::Record::Base
     has_many  :allows,        AllowsType
     attribute :assignedBy,    String
     has_one   :book,          Api::TitleMetadataSummary
-    attribute :dateAdded,     String
+    attribute :dateAdded,     IsoDate
     has_one   :format,        Api::Format
-    attribute :lastUpdated,   String
+    attribute :lastUpdated,   IsoDate
     has_many  :links,         Api::Link
     attribute :size,          Integer
     has_one   :status,        Api::StatusModel

@@ -9,10 +9,10 @@ __loading_begin(__FILE__)
 #
 # @attr [String]             editionId
 # @attr [String]             editionName
-# @attr [String]             expirationDate
+# @attr [IsoDate]            expirationDate
 # @attr [Array<Api::Format>] formats
 # @attr [Array<Api::Link>]   links
-# @attr [String]             publicationDate
+# @attr [IsoDate]            publicationDate
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition
 #
@@ -28,10 +28,10 @@ class Api::PeriodicalEdition < Api::Record::Base
   schema do
     attribute :editionId,       String
     attribute :editionName,     String
-    attribute :expirationDate,  String
+    attribute :expirationDate,  IsoDate
     has_many  :formats,         Api::Format
     has_many  :links,           Api::Link
-    attribute :publicationDate, String
+    attribute :publicationDate, IsoDate
   end
 
 end

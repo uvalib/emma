@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 # @attr [Boolean]            available
 # @attr [String]             bookshareId
 # @attr [Array<Api::Name>]   composers          *deprecated*
-# @attr [String]             copyrightDate
+# @attr [IsoYear]            copyrightDate
 # @attr [String]             dateAdded
 # @attr [String]             dateDownloaded
 # @attr [Array<Api::Format>] formats
@@ -20,7 +20,7 @@ __loading_begin(__FILE__)
 # @attr [String]             isbn13
 # @attr [Array<String>]      languages
 # @attr [Array<Api::Link>]   links
-# @attr [String]             publishDate
+# @attr [IsoDate]            publishDate
 # @attr [String]             seriesNumber
 # @attr [String]             seriesTitle
 # @attr [String]             subtitle
@@ -55,7 +55,7 @@ class Api::AssignedTitleMetadataSummary < Api::Record::Base
     attribute :available,        Boolean
     attribute :bookshareId,      String
     has_many  :composers,        Api::Name                  # NOTE: deprecated
-    attribute :copyrightDate,    String
+    attribute :copyrightDate,    IsoYear
     attribute :dateAdded,        String
     attribute :dateDownloaded,   String
     has_many  :formats,          Api::Format
@@ -63,7 +63,7 @@ class Api::AssignedTitleMetadataSummary < Api::Record::Base
     attribute :isbn13,           String
     has_many  :languages,        String
     has_many  :links,            Api::Link
-    attribute :publishDate,      String
+    attribute :publishDate,      IsoDate
     attribute :seriesNumber,     String
     attribute :seriesTitle,      String
     attribute :subtitle,         String

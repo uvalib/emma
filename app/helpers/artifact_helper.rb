@@ -118,7 +118,7 @@ module ArtifactHelper
   # @param [Api::Format, String, nil] format
   # @param [Hash]                     opt     Passed to #item_link except for:
   #
-  # @option opt [Api::Format, String] :fmt    One of `Api::FormatType.values`
+  # @option opt [Api::Format, String] :fmt    One of `FormatType#values`
   # @option opt [Symbol, String]      :label
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -131,7 +131,7 @@ module ArtifactHelper
       fmt ||= format.identifier
       def_label = format.label
     else
-      fmt ||= Api::FormatType.new.default
+      fmt ||= FormatType.new.default
       def_label = item.label
     end
     label ||= I18n.t("emma.format.#{fmt}", default: def_label)
@@ -174,7 +174,7 @@ module ArtifactHelper
   # @param [Api::Record::Base] item
   # @param [Hash]              opt    Passed to #artifact_link except for:
   #
-  # @option opt [String] :fmt         One of `Api::FormatType.values`
+  # @option opt [String] :fmt         One of `FormatType#values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]

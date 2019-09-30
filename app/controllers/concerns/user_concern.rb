@@ -53,7 +53,7 @@ module UserConcern
     pref = hist = error = warn = nil
     if id
       item = api.get_account(user: id)
-      item = api.get_organization_member(username: id) if item.error?
+      item = api.get_my_organization_member(username: id) if item.error?
       if item.error?
         error = item.error_message
       else

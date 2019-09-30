@@ -49,6 +49,8 @@ module ApiService::Subscription
   #
   # @return [ApiUserSubscriptionList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-subscriptions
+  #
   def get_subscriptions(user: @user)
     username = name_of(user)
     api(:get, 'accounts', username, 'subscriptions')
@@ -70,6 +72,8 @@ module ApiService::Subscription
   #
   # @return [ApiUserSubscription]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-membership-subscription
+  #
   def create_subscription(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -84,6 +88,8 @@ module ApiService::Subscription
   # @param [String]            subscriptionId
   #
   # @return [ApiUserSubscription]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-single-membership-subscription
   #
   def get_subscription(user: @user, subscriptionId:)
     username = name_of(user)
@@ -107,6 +113,8 @@ module ApiService::Subscription
   #
   # @return [ApiUserSubscription]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-subscription
+  #
   def update_subscription(user: @user, subscriptionId:, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -125,6 +133,8 @@ module ApiService::Subscription
   # Assistant’s site.
   #
   # @return [ApiUserSubscriptionTypeList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-subscription-types
   #
   def get_subscription_types(*)
     api(:get, 'subscriptiontypes')

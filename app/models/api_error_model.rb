@@ -1,18 +1,18 @@
-# app/models/api/error_model.rb
+# app/models/api_error_model.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Api::ErrorModel
+# ApiErrorModel
 #
 # @attr [String]        key
 # @attr [Array<String>] messages
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_error_model
 #
-class Api::ErrorModel < Api::Record::Base
+class ApiErrorModel < Api::Message
 
   schema do
     attribute :key,      String

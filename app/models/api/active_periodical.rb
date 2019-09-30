@@ -10,9 +10,9 @@ __loading_begin(__FILE__)
 # @attr [String]                 activeTitleId
 # @attr [Array<AllowsType>]      allows
 # @attr [String]                 assignedBy
-# @attr [String]                 dateAdded
+# @attr [IsoDate]                dateAdded
 # @attr [Api::Format]            format
-# @attr [String]                 lastUpdated
+# @attr [IsoDate]                lastUpdated
 # @attr [Array<Api::Link>]       links
 # @attr [Api::PeriodicalEdition] periodical
 # @attr [Integer]                size
@@ -28,9 +28,9 @@ class Api::ActivePeriodical < Api::Record::Base
     attribute :activeTitleId, String
     has_many  :allows,        AllowsType
     attribute :assignedBy,    String
-    attribute :dateAdded,     String
+    attribute :dateAdded,     IsoDate
     has_one   :format,        Api::Format
-    attribute :lastUpdated,   String
+    attribute :lastUpdated,   IsoDate
     has_many  :links,         Api::Link
     has_one   :periodical,    Api::PeriodicalEdition
     attribute :size,          Integer

@@ -278,7 +278,7 @@ module TestHelper::Debugging
   # @param [Hash, nil] hash
   # @param [Hash]  opt                Passed to #show except for:
   #
-  # @options opt [String] :indent
+  # @options opt [String, Integer] :indent
   #
   # @yield The caller generates pairs to append to *hash*.
   # @yieldreturn [Hash]
@@ -287,13 +287,13 @@ module TestHelper::Debugging
   #
   def show_trace(hash = nil, **opt)
     opt, show_opt = partition_options(opt, *SHOW_TRACE_OPT)
-    indent = opt[:indent] || ''
     added  = (yield if block_given?)
-    hash   = hash.merge(added) if hash && added
-    hash ||= added || {}
+    hash   = hash && added && hash.merge(added) || hash || added || {}
+    indent = opt[:indent] || ''
+    indent = ' ' * indent if indent.is_a?(Integer)
     width  = hash.keys.map(&:to_s).sort_by(&:size).last.size
-    format = "*** %-#{width}s = %s"
-    lines  = hash.map { |k, v| sprintf(format, k, v).gsub(/^/, indent) }
+    format = "#{indent}*** %-#{width}s = %s"
+    lines  = hash.map { |k, v| sprintf(format, k, v) }
     show(**show_opt) do
       lines.join("\n") << "\n\n"
     end

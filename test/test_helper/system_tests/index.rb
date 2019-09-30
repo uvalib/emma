@@ -138,6 +138,7 @@ module TestHelper::SystemTests::Index
     else
       show_url
     end
+    # noinspection RubyYardParamTypeMatch
     assert_valid_index_page(model, **opt)
   end
 

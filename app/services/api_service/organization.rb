@@ -53,7 +53,9 @@ module ApiService::Organization
   #
   # @return [ApiUserAccountList]
   #
-  def get_organization_members(**opt)
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myorganization-members
+  #
+  def get_my_organization_members(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'myOrganization', 'members', **opt)
     ApiUserAccountList.new(response, error: exception)
@@ -62,14 +64,14 @@ module ApiService::Organization
   # == GET /v2/myOrganization/members/{userIdentifier}
   # Get a member of the current (sponsor) user's organization.
   #
-  # NOTE: This is not a real Bookshare API call.
-  #
   # @param [String] username
   #
   # @return [ApiUserAccount]
   #
-  def get_organization_member(username:)
-    all = get_organization_members(limit: :max)
+  # NOTE: This is not a real Bookshare API call.
+  #
+  def get_my_organization_member(username:)
+    all = get_my_organization_members(limit: :max)
     om  = all.userAccounts.find { |list| list.identifier == username }
     ApiUserAccount.new(om)
   end
@@ -91,6 +93,8 @@ module ApiService::Organization
   #
   # @return [ApiUserAccount]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-my-organizationmember
+  #
   def add_organization_member(**opt)
     validate_parameters(__method__, opt)
     api(:post, 'myOrganization', 'members', **opt)
@@ -109,6 +113,8 @@ module ApiService::Organization
   # @param [String] organization
   #
   # @return [ApiOrganization]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-organization
   #
   def get_organization(organization:)
     api(:get, 'organizations', organization)
@@ -138,6 +144,8 @@ module ApiService::Organization
   #
   # @return [ApiOrganization]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-organization
+  #
   def create_organization(**opt)
     validate_parameters(__method__, opt)
     api(:post, 'organizations', **opt)
@@ -162,6 +170,8 @@ module ApiService::Organization
   #
   # @return [ApiUserAccount]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-organization
+  #
   def create_organization_member(organization:, **opt)
     validate_parameters(__method__, opt)
     api(:post, 'organizations', organization, 'members', **opt)
@@ -178,6 +188,8 @@ module ApiService::Organization
   # Get the list of organization types relevant to the current user.
   #
   # @return [ApiOrganizationTypeList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-organization-types
   #
   def get_organization_types(*)
     api(:get, 'organizationTypes')

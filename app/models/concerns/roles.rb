@@ -154,7 +154,7 @@ module Roles
   # @type [Hash{Symbol=>String}]
   #
   # Compare with:
-  # @see ApiService::RoleType#values
+  # @see RoleType#values
   #
   # == Implementation Notes
   # With no role (due to lack of user information) an unauthenticated user

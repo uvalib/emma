@@ -71,7 +71,7 @@ module Api::Common::TitleMethods
   ARRANGER_TYPES = %w(arranger).freeze
 
   # @type [Array<String>]
-  TRANSLATOR_TYPES = %w(translator).freeze
+  TRANSLATOR_TYPES = %w(translator transcriber).freeze
 
   # @type [Array<String>]
   CREATOR_TYPES = %w(
@@ -221,7 +221,7 @@ module Api::Common::TitleMethods
   #
   # @return [Array<String>]
   #
-  # == Usage Note
+  # == Usage Notes
   # Not all record types which include this module actually have an :artifacts
   # property.
   #

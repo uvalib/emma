@@ -97,7 +97,7 @@ module ApiConcern
     EDITION      = '2531073'
     READING_LIST = '325853'
     SUBSCRIPTION = READING_LIST # TODO: probably isn't right...
-    FORMAT       = Api::FormatType.new.default
+    FORMAT       = FormatType.new.default
     LIMIT        = 5
 
     # Each method to be run in the trial along with a template of its arguments
@@ -120,7 +120,7 @@ module ApiConcern
       get_subscription:             { user: nil, subscriptionId: nil },
       get_user_agreements:          { user: nil },
       get_user_pod:                 { user: nil },
-      get_organization_members:     {},
+      get_my_organization_members:  {},
       get_title_count:              nil,
       get_titles:                   { limit: nil },
       get_title:                    { bookshareId: nil },

@@ -49,6 +49,8 @@ module ApiService::ProofOfDisability
   #
   # @return [ApiUserPodList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-pods
+  #
   def get_user_pod(user: @user)
     username = name_of(user)
     api(:post, 'accounts', username, 'pod')
@@ -65,6 +67,8 @@ module ApiService::ProofOfDisability
   # @option opt [ProofOfDisabilitySource] :proofSource      *REQUIRED*
   #
   # @return [ApiUserPodList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-membership-pod
   #
   def create_user_pod(user: @user, **opt)
     validate_parameters(__method__, opt)
@@ -84,6 +88,8 @@ module ApiService::ProofOfDisability
   #
   # @return [ApiUserPodList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-pod
+  #
   def update_user_pod(user: @user, disabilityType:, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -98,6 +104,8 @@ module ApiService::ProofOfDisability
   # @param [DisabilityType]    disabilityType
   #
   # @return [ApiUserPodList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_delete-membership-pod
   #
   def remove_user_pod(user: @user, disabilityType:)
     username = name_of(user)

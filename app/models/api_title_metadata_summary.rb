@@ -15,14 +15,14 @@ __loading_begin(__FILE__)
 # @attr [Array<Api::Name>]        composers         *deprecated*
 # @attr [Array<ContentWarning>]   contentWarnings
 # @attr [Array<Api::Contributor>] contributors
-# @attr [String]                  copyrightDate
+# @attr [IsoYear]                 copyrightDate
 # @attr [Array<Api::Format>]      formats
 # @attr [String]                  instruments
 # @attr [String]                  isbn13
 # @attr [Array<String>]           languages
 # @attr [Array<Api::Link>]        links
 # @attr [Array<Api::Name>]        lyricists         *deprecated*
-# @attr [String]                  publishDate
+# @attr [IsoDate]                 publishDate
 # @attr [Integer]                 readingAgeMaximum
 # @attr [Integer]                 readingAgeMinimum
 # @attr [String]                  seriesNumber
@@ -56,14 +56,14 @@ class ApiTitleMetadataSummary < Api::Message
     has_many  :composers,         Api::Name                 # NOTE: deprecated
     has_many  :contentWarnings,   ContentWarning
     has_many  :contributors,      Api::Contributor
-    attribute :copyrightDate,     String
+    attribute :copyrightDate,     IsoYear
     has_many  :formats,           Api::Format
     attribute :instruments,       String
     attribute :isbn13,            String
     has_many  :languages,         String
     has_many  :links,             Api::Link
     has_many  :lyricists,         Api::Name                 # NOTE: deprecated
-    attribute :publishDate,       String
+    attribute :publishDate,       IsoDate
     attribute :readingAgeMaximum, Integer
     attribute :readingAgeMinimum, Integer
     attribute :seriesNumber,      String

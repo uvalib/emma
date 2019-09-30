@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Api::TitleDownload
 #
 # @attr [Array<Api::Name>] authors          *deprecated*
-# @attr [String]           dateDownloaded
+# @attr [IsoDate]          dateDownloaded
 # @attr [String]           downloadedBy
 # @attr [String]           downloadedFor
 # @attr [Api::Format]      format
@@ -26,7 +26,7 @@ class Api::TitleDownload < Api::Record::Base
 
   schema do
     has_many  :authors,        Api::Name                    # NOTE: deprecated
-    attribute :dateDownloaded, String
+    attribute :dateDownloaded, IsoDate
     attribute :downloadedBy,   String
     attribute :downloadedFor,  String
     has_one   :format,         Api::Format

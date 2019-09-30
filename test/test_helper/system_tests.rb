@@ -14,7 +14,9 @@ module TestHelper::SystemTests
   # @return [Array<Module>]           @see #include_submodules
   #
   def self.included(base)
-    include_submodules(base, __FILE__)
+    include_submodules(base, __FILE__) do |name|
+      next if (name == :Bookshare) && !TESTING_BOOKSHARE_API
+    end
   end
 
 end

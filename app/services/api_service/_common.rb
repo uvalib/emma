@@ -112,6 +112,8 @@ module ApiService::Common
       proofSource
     ],
 
+    subscribe_reading_list: %i[enabled],
+
     create_subscription:   %i[startDate userSubscriptionType],
     update_subscription:   %i[startDate userSubscriptionType],
 
@@ -133,7 +135,7 @@ module ApiService::Common
   # @type [Array<Symbol>]
   #
   # == Usage Notes
-  # Compare with Api::AllowsType#values.
+  # Compare with AllowsType#values.
   #
   HTTP_METHODS =
     %w(GET PUT POST DELETE)
@@ -254,9 +256,9 @@ module ApiService::Common
 
   # Get data from the API and update @response.
   #
-  # @param [Symbol, String] verb      One of :get, :post, :put, :delete
-  # @param [Array<String>]  args      Path components to the Bookshare API.
-  # @param [Hash]           opt       API URL parameters
+  # @param [Symbol, String]           verb  One of :get, :post, :put, :delete
+  # @param [Array<String,ScalarType>] args  Path components of the API request.
+  # @param [Hash]                     opt   API request parameters.
   #
   # args[0]   [String]  Path component.
   # ...

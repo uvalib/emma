@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 # @attr [String]           organizationName
 # @attr [String]           organizationType
 # @attr [String]           phoneNumber
-# @attr [Api::Sponsor]     sponsor
+# @attr [Api::Sponsor]     primaryContact
 # @attr [SiteType]         site
 # @attr [String]           subscriptionType
 # @attr [String]           webSite
@@ -37,7 +37,7 @@ class ApiOrganization < Api::Message
     attribute :organizationName, String
     attribute :organizationType, String
     attribute :phoneNumber,      String
-    has_one   :sponsor,          Api::Sponsor
+    has_one   :primaryContact,   Api::Sponsor
     attribute :site,             SiteType
     attribute :subscriptionType, String
     attribute :webSite,          String

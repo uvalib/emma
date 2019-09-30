@@ -172,6 +172,12 @@ class Api::Record::Base
     !error?
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Default data used to initialize an error instance.
   #
   # @return [Hash{Symbol=>BasicObject}]
@@ -186,13 +192,37 @@ class Api::Record::Base
   #
   # @return [Array<Symbol>]
   #
-  def fields
-    serializer.representable_map.map { |v| v.name.to_sym }.sort
+  def field_names
+    field_definitions.map { |field| field[:name].to_sym }.sort
   end
+
+  # The field definitions in the schema for this record.
+  #
+  # @return [Array<Hash>]
+  #
+  def field_definitions
+    # noinspection RubyYardReturnMatch
+    serializer.representable_map.map do |field|
+      {
+        name:       field[:name],
+        collection: field[:collection],
+        type:       (field[:class] || field[:type]),
+      }
+    end
+  end
+
+  # ===========================================================================
+  # :section: Object overrides
+  # ===========================================================================
+
+  public
 
   # inspect
   #
   # @return [String]
+  #
+  # This method overrides
+  # @see Object#inspect
   #
   def inspect
     items =

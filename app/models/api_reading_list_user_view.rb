@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [Access]                       access
 # @attr [Array<AllowsType>]            allows
 # @attr [String]                       assignedBy
-# @attr [String]                       dateUpdated
+# @attr [IsoDate]                      dateUpdated
 # @attr [String]                       description
 # @attr [Array<Api::Link>]             links
 # @attr [Integer]                      memberCount
@@ -35,7 +35,7 @@ class ApiReadingListUserView < Api::Message
     attribute :access,        Access
     has_many  :allows,        AllowsType
     attribute :assignedBy,    String
-    attribute :dateUpdated,   String
+    attribute :dateUpdated,   IsoDate
     attribute :description,   String, default: DEF_READING_LIST_DESCRIPTION
     has_many  :links,         Api::Link
     attribute :memberCount,   Integer

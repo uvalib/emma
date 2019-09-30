@@ -299,8 +299,8 @@ module ResourceHelper
   # Field/value pairs.
   #
   # If *pairs* is not provided (as a parameter or through a block) then
-  # `item#fields` is used.  If no block is provided and *pairs* is present then
-  # this function simply returns *pairs* as-is.
+  # `item#field_names` is used.  If no block is provided and *pairs* is present
+  # then this function simply returns *pairs* as-is.
   #
   # @yield [item] Supplies additional field/value pairs based on *item*.
   # @yieldparam  [Api::Record::Base] item   The supplied *item* parameter.
@@ -317,7 +317,7 @@ module ResourceHelper
     elsif pairs.is_a?(Hash)
       pairs
     else
-      item.fields.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
+      item.field_names.map { |f| [f.to_s.titleize.to_sym, f] }.to_h
     end
   end
 
@@ -520,7 +520,7 @@ module ResourceHelper
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
     pairs.map { |k, v|
-      count = v.is_a?(Enumerable) ? v.size : 1
+      count = v.is_a?(Array) ? v.size : 1
       field = labelize(k, count)
       value = strip_quotes(v)
       [field, %Q("#{value}")]

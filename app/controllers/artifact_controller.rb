@@ -43,7 +43,7 @@ class ArtifactController < ApplicationController
   # ===========================================================================
 
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
-  before_action { @format = params[:fmt] || Api::FormatType.new.default }
+  before_action { @format = params[:fmt] || FormatType.new.default }
 
   # ===========================================================================
   # :section:

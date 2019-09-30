@@ -64,6 +64,8 @@ module ApiService::ReadingList
   #
   # @return [ApiReadingListList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-my-readinglists-list
+  #
   def get_my_reading_lists(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'mylists', **opt)
@@ -80,6 +82,8 @@ module ApiService::ReadingList
   # @option opt [Access] :access
   #
   # @return [ApiReadingList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
   #
   def create_reading_list(name:, **opt)
     validate_parameters(__method__, opt)
@@ -98,6 +102,8 @@ module ApiService::ReadingList
   #
   # @return [ApiReadingListUserView]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
+  #
   def subscribe_reading_list(readingListId:, **opt)
     validate_parameters(__method__, opt)
     opt = opt.reverse_merge(enabled: true)
@@ -115,6 +121,8 @@ module ApiService::ReadingList
   #
   # @return [ApiReadingListUserView]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
+  #
   def unsubscribe_reading_list(readingListId:, **opt)
     validate_parameters(__method__, opt)
     opt = opt.reverse_merge(enabled: false)
@@ -124,8 +132,6 @@ module ApiService::ReadingList
 
   # == GET /v2/lists
   # Get all reading lists.
-  #
-  # NOTE: This is an undocumented Bookshare API call.
   #
   # Whereas "/v2/mylists" only works for "emmadso@bookshare.org", this call
   # works for "emmacollection@bookshare.org" (and for "emmadso" it yields the
@@ -140,6 +146,8 @@ module ApiService::ReadingList
   #
   # @return [ApiReadingListList]
   #
+  # NOTE: This is an undocumented Bookshare API call.
+  #
   def get_reading_lists(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'lists', **opt)
@@ -149,11 +157,11 @@ module ApiService::ReadingList
   # == GET /v2/lists/{readingListId}
   # Get metadata for an existing reading list.
   #
-  # NOTE: This is not a real Bookshare API call.
-  #
   # @param [String] readingListId
   #
   # @return [ApiReadingListUserView]
+  #
+  # NOTE: This is not a real Bookshare API call.
   #
   def get_reading_list(readingListId:)
     all = get_reading_lists(limit: :max)
@@ -172,6 +180,8 @@ module ApiService::ReadingList
   # @option opt [Access] :access
   #
   # @return [ApiReadingList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-edit-metadata
   #
   def update_reading_list(readingListId:, **opt)
     validate_parameters(__method__, opt)
@@ -192,6 +202,8 @@ module ApiService::ReadingList
   #
   # @return [ApiReadingListTitlesList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-readinglist-titles
+  #
   def get_reading_list_titles(readingListId:, **opt)
     validate_parameters(__method__, opt)
     api(:get, 'lists', readingListId, 'titles', **opt)
@@ -206,6 +218,8 @@ module ApiService::ReadingList
   # @param [Hash]   opt               API URL parameters
   #
   # @return [ApiReadingListTitlesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-title
   #
   def create_reading_list_title(readingListId:, bookshareId:, **opt)
     validate_parameters(__method__, opt)
@@ -222,6 +236,8 @@ module ApiService::ReadingList
   # @param [Hash]   opt               API URL parameters
   #
   # @return [ApiReadingListTitlesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_delete-readinglist-title
   #
   def remove_reading_list_title(readingListId:, bookshareId:, **opt)
     validate_parameters(__method__, opt)

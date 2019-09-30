@@ -49,6 +49,8 @@ module ApiService::Agreement
   #
   # @return [ApiUserSignedAgreementList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-signed-agreements
+  #
   def get_user_agreements(user: @user)
     username = name_of(user)
     api(:post, 'accounts', username, 'agreements')
@@ -68,6 +70,8 @@ module ApiService::Agreement
   #
   # @return [ApiUserSignedAgreement]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-signed-agreement
+  #
   def create_user_agreement(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -82,6 +86,8 @@ module ApiService::Agreement
   # @param [String]            agreementId
   #
   # @return [ApiUserSignedAgreement]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_expire-signed-agreement
   #
   def remove_user_agreement(user: @user, agreementId:)
     username = name_of(user)

@@ -43,11 +43,8 @@ module Api::Serializer::Associations
     #     <XXX elem="value"></XXX>
     #
     def attribute(name, type = nil, **opt)
-      # If the type is missing or explicitly "String" then *type* will be
-      # returned as *nil*.
-      type = extract_type_option!(opt) || type
-      type = get_type(name, type)
-      opt[:type] = type
+      type = get_type_class(type, opt)
+      opt[:type]      = type
       opt[:default] ||= scalar_default(type)
       prepare_attribute!(name, type, opt)
       property(name, opt)
@@ -75,8 +72,7 @@ module Api::Serializer::Associations
     #     <XXX><elem>value</elem></XXX>
     #
     def has_one(name, type = nil, **opt, &block)
-      type = extract_type_option!(opt) || type
-      type = get_type(name, type)
+      type = get_type_class(type, opt)
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
@@ -115,8 +111,7 @@ module Api::Serializer::Associations
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
     #
     def has_many(name, type = nil, **opt, &block)
-      type = extract_type_option!(opt) || type
-      type = get_type(name, type)
+      type = get_type_class(type, opt)
       if scalar_type?(type)
         opt[:type]      = type
       else
@@ -133,42 +128,32 @@ module Api::Serializer::Associations
 
     protected
 
-    # Extract #TYPE_OPTION_KEYS.
-    #
-    # @param [Hash] opt               May be modified.
-    #
-    # @return [Object]
-    # @return [nil]
-    #
-    def extract_type_option!(opt)
-      type_options = opt&.slice(*TYPE_OPTION_KEYS) || {}
-      opt.replace(opt.except(*type_options.keys)) if type_options.present?
-      # noinspection RubyNilAnalysis
-      type_options.values.first
-    end
-
     # Determine the class to be associated with a data element.
     #
-    # @param [Symbol, nil]                property_name
     # @param [Class, String, Symbol, nil] type
+    # @param [Hash, nil]                  opt   Passed to #extract_type_option!
     #
     # @return [Class]
     #
-    def get_type(property_name, type)
-      type ||= property_name
+    # Compare with:
+    # @see Api::Record::Associations#make_default
+    #
+    def get_type_class(type, opt = nil)
+      type = extract_type_option!(opt) || type || 'String'
       type = type.to_s.classify if type.is_a?(Symbol)
       name = type.to_s
       base = name.demodulize.to_sym
       base = :Boolean if %i[TrueClass FalseClass].include?(base)
-      if base.blank? || ENUMERATION_TYPES.include?(base)
-        type = Axiom::Types::String
-      elsif SCALAR_TYPES.include?(base)
+      if SCALAR_TYPES.include?(base)
         type = "Axiom::Types::#{base}"
+      elsif ENUMERATION_TYPES.include?(base)
+        type = base.to_s
+      elsif base.to_s.start_with?('Iso')
+        type = base.to_s
       elsif !name.include?('::')
         type = "Api::#{name}"
       end
-      # noinspection RubyYardReturnMatch
-      type.is_a?(String) ? type.constantize : type
+      type.is_a?(Class) ? type : name.constantize
     end
 
     # decorator_class

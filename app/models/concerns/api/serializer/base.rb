@@ -26,9 +26,9 @@ class Api::Serializer::Base < Representable::Decorator
 
   # Initialize a new instance.
   #
-  # @param [Api::Record::Base] represented
+  # @param [Api::Record::Base, nil] represented
   #
-  def initialize(represented)
+  def initialize(represented = nil)
     super
   end
 

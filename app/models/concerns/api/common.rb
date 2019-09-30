@@ -24,100 +24,6 @@ module Api
   end
 
   # ===========================================================================
-  # :section: Types
-  # ===========================================================================
-
-  public
-
-  # noinspection RubyConstantNamingConvention
-  Boolean = TrueClass
-
-  # Base class for custom scalar types.
-  #
-  class ScalarType
-
-    attr_reader :value
-
-    def initializer(v = nil)
-      set(v)
-    end
-
-    def value=(v)
-      set(v)
-    end
-
-    def default
-      ''
-    end
-
-    def valid?(v = @value)
-      v.present?
-    end
-
-    def set(v)
-      # noinspection RubyAssignmentExpressionInConditionalInspection
-      unless v.nil? || valid?(v = v.to_s.strip)
-        Log.error("#{self.class}: #{v.inspect}")
-        v = nil
-      end
-      @value = v || default
-    end
-
-    delegate_missing_to :value
-
-  end
-
-  # ISO 8601 duration.
-  #
-  class IsoDuration < ScalarType
-
-    def valid?(v = @value)
-      v = v.to_s
-      v.match?(/^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/)
-    end
-
-  end
-
-  # ISO 8601 general date.
-  #
-  class IsoDate < ScalarType
-
-    def valid?(v = @value)
-      v = v.to_s
-      year?(v) || day?(v) || v.match?(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/)
-    end
-
-    def year?(v = @value)
-      v.to_s.match?(/^\d{4}$/)
-    end
-
-    def day?(v = @value)
-      v.to_s.match?(/^\d{4}-\d\d-\d\d$/)
-    end
-
-  end
-
-  # ISO 8601 day.
-  #
-  class IsoDay < IsoDate
-
-    def valid?(v = @value)
-      day?(v)
-    end
-
-  end
-
-  # ISO 639-2 alpha-3 language code.
-  #
-  class IsoLanguage < ScalarType
-
-    def valid?(v = @value)
-      ISO_639.find_by_code(v).present?
-    end
-
-  end
-
-  # ===========================================================================
   # :section: Enumeration Types
   # ===========================================================================
 
@@ -234,6 +140,10 @@ module Api
                 membershipAssistant)
     },
 
+    SeriesType: {
+      values: %w(newspaper magazine journal)
+    },
+
     # NOTE: The value 'emma' may not be honored by Bookshare yet.
     SiteType: {
       values:   %w(bookshare cela rnib emma),
@@ -346,90 +256,189 @@ module Api
     },
   }.deep_freeze
 
-  # Base class for enumeration scalar types.
-  #
-  class EnumType < ScalarType
+end
 
-    def initialize(v = nil, *)
-      set(v)
-    end
+# noinspection RubyConstantNamingConvention
+Boolean = Axiom::Types::Boolean
 
-    def default
-      @default ||= ENUMERATIONS.dig(type, :default) || values.first
-    end
+# Base class for custom scalar types.
+#
+class ScalarType
 
-    def valid?(v = @value)
-      values.include?(v.to_s)
-    end
+  attr_reader :value
 
-    def set(v)
-      # noinspection RubyAssignmentExpressionInConditionalInspection
-      unless v.nil? || valid?(v = v.to_s.strip)
-        Log.warn("#{type}: #{v.inspect}: not in #{values}")
-        v = nil
-      end
-      @value = v || default
-    end
-
-    def type
-      @type ||= self.class.to_s.demodulize.to_sym
-    end
-
-    def values
-      @values ||= ENUMERATIONS.dig(type, :values)
-    end
-
-    def to_s
-      @value.to_s
-    end
-
-    def inspect
-      "(#{to_s.inspect})"
-    end
-
+  def initializer(v = nil)
+    set(v)
   end
 
-  # ENUMERATIONS.each_key { |et| class_eval("class #{et} < EnumType; end") }
+  def value=(v)
+    set(v)
+  end
 
-  class Access                  < EnumType; end
-  class AgreementType           < EnumType; end
-  class AllowsType              < EnumType; end
-  class BrailleFormat           < EnumType; end
-  class BrailleGrade            < EnumType; end
-  class BrailleMusicScoreLayout < EnumType; end
-  class BrailleType             < EnumType; end
-  class CategoryType            < EnumType; end
-  class ContentWarning          < EnumType; end
-  class ContributorType         < EnumType; end
-  class Direction               < EnumType; end
-  class Direction2              < EnumType; end
-  class DisabilityPlan          < EnumType; end
-  class DisabilityType          < EnumType; end
-  class FormatType              < EnumType; end
-  class Gender                  < EnumType; end
-  class NarratorType            < EnumType; end
-  class ProofOfDisabilitySource < EnumType; end
-  class ProofOfDisabilityStatus < EnumType; end
-  class RoleType                < EnumType; end
-  class SiteType                < EnumType; end
-  class SubscriptionStatus      < EnumType; end
-  class Timeframe               < EnumType; end
-  class TitleContentType        < EnumType; end
-  class TitleSortOrder          < EnumType; end
-  class HistorySortOrder        < EnumType; end
-  class MemberSortOrder         < EnumType; end
-  class MyAssignedSortOrder     < EnumType; end
-  class AssignedSortOrder       < EnumType; end
-  class ActiveBookSortOrder     < EnumType; end
-  class PeriodicalSortOrder     < EnumType; end
-  class EditionSortOrder        < EnumType; end
-  class MyReadingListSortOrder  < EnumType; end
-  class ReadingListSortOrder    < EnumType; end
-  class CatalogSortOrder        < EnumType; end
-  class AuthType                < EnumType; end
-  class GrantType               < EnumType; end
-  class TokenErrorType          < EnumType; end
+  def default
+    ''
+  end
+
+  def valid?(v = @value)
+    v.present?
+  end
+
+  def set(v)
+    # noinspection RubyAssignmentExpressionInConditionalInspection
+    unless v.nil? || valid?(v = v.to_s.strip)
+      Log.error("#{self.class}: #{v.inspect}")
+      v = nil
+    end
+    @value = v || default
+  end
+
+  delegate_missing_to :value
 
 end
+
+# ISO 8601 duration.
+#
+class IsoDuration < ScalarType
+
+  def valid?(v = @value)
+    v = v.to_s
+    v.match?(/^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/)
+  end
+
+end
+
+# ISO 8601 general date.
+#
+class IsoDate < ScalarType
+
+  def valid?(v = @value)
+    v = v.to_s
+    year?(v) || day?(v) || v.match?(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/)
+  end
+
+  def year?(v = @value)
+    v.to_s.match?(/^\d{4}$/)
+  end
+
+  def day?(v = @value)
+    v.to_s.match?(/^\d{4}-\d\d-\d\d$/)
+  end
+
+end
+
+# ISO 8601 year.
+#
+class IsoYear < IsoDate
+
+  def valid?(v = @value)
+    year?(v)
+  end
+
+end
+
+# ISO 8601 day.
+#
+class IsoDay < IsoDate
+
+  def valid?(v = @value)
+    day?(v)
+  end
+
+end
+
+# ISO 639-2 alpha-3 language code.
+#
+class IsoLanguage < ScalarType
+
+  def valid?(v = @value)
+    ISO_639.find_by_code(v).present?
+  end
+
+end
+
+# Base class for enumeration scalar types.
+#
+class EnumType < ScalarType
+
+  def initialize(v = nil, *)
+    set(v)
+  end
+
+  def default
+    @default ||= Api::ENUMERATIONS.dig(type, :default) || values.first
+  end
+
+  def valid?(v = @value)
+    values.include?(v.to_s)
+  end
+
+  def set(v)
+    # noinspection RubyAssignmentExpressionInConditionalInspection
+    unless v.nil? || valid?(v = v.to_s.strip)
+      Log.warn("#{type}: #{v.inspect}: not in #{values}")
+      v = nil
+    end
+    @value = v || default
+  end
+
+  def type
+    @type ||= self.class.to_s.demodulize.to_sym
+  end
+
+  def values
+    @values ||= Api::ENUMERATIONS.dig(type, :values)
+  end
+
+  def to_s
+    @value.to_s
+  end
+
+  def inspect
+    "(#{to_s.inspect})"
+  end
+
+end
+
+# Api::ENUMERATIONS.each_key { |et| class_eval("class #{et} < EnumType; end") }
+
+class Access                  < EnumType; end
+class AgreementType           < EnumType; end
+class AllowsType              < EnumType; end
+class BrailleFormat           < EnumType; end
+class BrailleGrade            < EnumType; end
+class BrailleMusicScoreLayout < EnumType; end
+class BrailleType             < EnumType; end
+class CategoryType            < EnumType; end
+class ContentWarning          < EnumType; end
+class ContributorType         < EnumType; end
+class Direction               < EnumType; end
+class Direction2              < EnumType; end
+class DisabilityPlan          < EnumType; end
+class DisabilityType          < EnumType; end
+class FormatType              < EnumType; end
+class Gender                  < EnumType; end
+class NarratorType            < EnumType; end
+class ProofOfDisabilitySource < EnumType; end
+class ProofOfDisabilityStatus < EnumType; end
+class RoleType                < EnumType; end
+class SeriesType              < EnumType; end
+class SiteType                < EnumType; end
+class SubscriptionStatus      < EnumType; end
+class Timeframe               < EnumType; end
+class TitleContentType        < EnumType; end
+class TitleSortOrder          < EnumType; end
+class HistorySortOrder        < EnumType; end
+class MemberSortOrder         < EnumType; end
+class MyAssignedSortOrder     < EnumType; end
+class AssignedSortOrder       < EnumType; end
+class ActiveBookSortOrder     < EnumType; end
+class PeriodicalSortOrder     < EnumType; end
+class EditionSortOrder        < EnumType; end
+class MyReadingListSortOrder  < EnumType; end
+class ReadingListSortOrder    < EnumType; end
+class CatalogSortOrder        < EnumType; end
+class AuthType                < EnumType; end
+class GrantType               < EnumType; end
+class TokenErrorType          < EnumType; end
 
 __loading_end(__FILE__)

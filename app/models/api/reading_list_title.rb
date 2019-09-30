@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 # @attr [String]             bookshareId
 # @attr [String]             category
 # @attr [Array<Api::Name>]   composers          *deprecated*
-# @attr [String]             copyrightDate
+# @attr [IsoYear]            copyrightDate
 # @attr [String]             dateAdded
 # @attr [Array<Api::Format>] formats
 # @attr [String]             instruments
@@ -22,7 +22,7 @@ __loading_begin(__FILE__)
 # @attr [Array<String>]      languages
 # @attr [Array<Api::Link>]   links
 # @attr [Integer]            month
-# @attr [String]             publishDate
+# @attr [IsoDate]            publishDate
 # @attr [Integer]            ranking
 # @attr [String]             seriesNumber
 # @attr [String]             seriesTitle
@@ -49,15 +49,15 @@ class Api::ReadingListTitle < Api::Record::Base
     attribute :bookshareId,      String
     attribute :category,         String
     has_many  :composers,        Api::Name                  # NOTE: deprecated
-    attribute :copyrightDate,    String
-    attribute :dateAdded,        String
+    attribute :copyrightDate,    IsoYear
+    attribute :dateAdded,        IsoDate
     has_many  :formats,          Api::Format
     attribute :instruments,      String
     attribute :isbn13,           String
     has_many  :languages,        String
     has_many  :links,            Api::Link
     attribute :month,            Integer
-    attribute :publishDate,      String
+    attribute :publishDate,      IsoDate
     attribute :ranking,          Integer
     attribute :seriesNumber,     String
     attribute :seriesTitle,      String

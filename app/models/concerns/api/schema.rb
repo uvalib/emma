@@ -172,6 +172,7 @@ module Api::Schema
   def scalar_type?(type)
     return false unless type.is_a?(Class)
     return true  if type.module_parent == Object
+    return true  if type.ancestors.include?(ScalarType)
     base = type.to_s.demodulize.to_sym
     SCALAR_TYPES.include?(base) || ENUMERATION_TYPES.include?(base)
   end
@@ -187,6 +188,39 @@ module Api::Schema
   def scalar_default(type)
     type &&= type.to_s.demodulize.to_sym
     SCALAR_DEFAULTS[type] || ENUMERATION_DEFAULTS[type]
+  end
+
+  # Get options that specify type.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @return [Hash]
+  #
+  def type_options(opt)
+    opt&.slice(*TYPE_OPTION_KEYS) || {}
+  end
+
+  # Get type specification from options.
+  #
+  # @param [Hash, nil] opt
+  #
+  # @return [Object]
+  # @return [nil]
+  #
+  def extract_type_option(opt)
+    type_options(opt).values.first
+  end
+
+  # Extract #TYPE_OPTION_KEYS from *opt* and get the type specification.
+  #
+  # @param [Hash] opt                 Will have #TYPE_OPTION_KEYS removed.
+  #
+  # @return [Object]
+  # @return [nil]
+  #
+  def extract_type_option!(opt)
+    return unless opt.is_a?(Hash)
+    extract_type_option(opt).tap { opt.except!(*TYPE_OPTION_KEYS) }
   end
 
 end

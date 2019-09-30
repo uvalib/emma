@@ -19,7 +19,7 @@ __loading_begin(__FILE__)
 # @attr [Array<ContentWarning>]        contentWarnings
 # @attr [Array<Api::Contributor>]      contributors
 # @attr [String]                       copyright
-# @attr [String]                       copyrightDate
+# @attr [IsoYear]                      copyrightDate
 # @attr [Array<String>]                countries
 # @attr [String]                       edition
 # @attr [String]                       externalCategoryCode
@@ -40,7 +40,7 @@ __loading_begin(__FILE__)
 # @attr [String]                       notes
 # @attr [Integer]                      numPages
 # @attr [String]                       opus
-# @attr [String]                       publishDate
+# @attr [IsoDate]                      publishDate
 # @attr [String]                       publisher
 # @attr [Integer]                      readingAgeMaximum
 # @attr [Integer]                      readingAgeMinimum
@@ -96,7 +96,7 @@ class ApiTitleMetadataDetail < Api::Message
     has_many  :contentWarnings,      ContentWarning
     has_many  :contributors,         Api::Contributor
     attribute :copyright,            String
-    attribute :copyrightDate,        String
+    attribute :copyrightDate,        IsoYear
     has_many  :countries,            String
     attribute :edition,              String
     attribute :externalCategoryCode, String
@@ -117,7 +117,7 @@ class ApiTitleMetadataDetail < Api::Message
     attribute :notes,                String
     attribute :numPages,             Integer
     attribute :opus,                 String
-    attribute :publishDate,          String
+    attribute :publishDate,          IsoDate
     attribute :publisher,            String
     attribute :readingAgeMaximum,    Integer
     attribute :readingAgeMinimum,    Integer

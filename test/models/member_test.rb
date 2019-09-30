@@ -15,7 +15,7 @@ class MemberTest < ActiveSupport::TestCase
     end
   end
 
-=begin
+=begin # TODO: org member must have a user_id ???
   test 'org member must have a user_id' do
     run_test(__method__) do
       data = members(:organization).attributes.except('user_id')

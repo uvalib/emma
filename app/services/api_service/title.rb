@@ -67,6 +67,8 @@ module ApiService::Title
   #
   # @return [Integer]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-count
+  #
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
@@ -84,6 +86,8 @@ module ApiService::Title
   # @param [String] bookshareId
   #
   # @return [ApiTitleMetadataDetail]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-metadata
   #
   # == Usage Notes
   # This request can be made without an Authorization header.
@@ -103,6 +107,8 @@ module ApiService::Title
   # @option opt [String] :forUser
   #
   # @return [ApiStatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-download
   #
   def download_title(bookshareId:, format:, **opt)
     validate_parameters(__method__, opt)
@@ -141,6 +147,8 @@ module ApiService::Title
   #
   # @return [ApiTitleMetadataSummaryList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-search
+  #
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
@@ -160,13 +168,13 @@ module ApiService::Title
   # == GET /v2/titles/{bookshareId}?format={format}
   # Get the metadata of an existing artifact.
   #
-  # NOTE: This is not a real Bookshare API call.
-  #
   # @param [String]     bookshareId
   # @param [FormatType] format
   #
   # @return [Api::ArtifactMetadata]
   # @return [nil]                     If the requested format was not present.
+  #
+  # NOTE: This is not a real Bookshare API call.
   #
   def get_artifact_metadata(bookshareId:, format:)
     title = get_title(bookshareId: bookshareId)
@@ -190,6 +198,8 @@ module ApiService::Title
   #
   # @return [ApiTitleFileResourceList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource-list
+  #
   def get_title_resource_files(bookshareId:, format:, **opt)
     validate_parameters(__method__, opt)
     api(:get, 'titles', bookshareId, format, 'resources', **opt)
@@ -204,6 +214,8 @@ module ApiService::Title
   # @param [String]     resourceId
   #
   # @return [ApiStatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource
   #
   def get_title_resource_file(bookshareId:, format:, resourceId:)
     validate_parameters(__method__, opt)
@@ -226,6 +238,8 @@ module ApiService::Title
   # @option opt [Integer] :limit      Default: 100
   #
   # @return [ApiCategoriesList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_categories
   #
   # == Usage Notes
   # This request can be made without an Authorization header.
@@ -258,6 +272,8 @@ module ApiService::Title
   # @option opt [Direction]        :direction    Default: 'asc'
   #
   # @return [ApiTitleMetadataCompleteList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_catalog-search
   #
   # == Usage Notes
   #

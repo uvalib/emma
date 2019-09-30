@@ -47,6 +47,8 @@ module ApiService::Account
   #
   # @return [ApiUserIdentity]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_me
+  #
   def get_user_identity(*)
     api(:get, 'me')
     ApiUserIdentity.new(response, error: exception)
@@ -56,6 +58,8 @@ module ApiService::Account
   # Get an account summary of the current user.
   #
   # @return [ApiMyAccountSummary]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-summary
   #
   def get_my_account(*)
     api(:get, 'myaccount')
@@ -73,6 +77,8 @@ module ApiService::Account
   #
   # @return [ApiTitleDownloadList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-downloads
+  #
   def get_my_download_history(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'myaccount', 'history', **opt)
@@ -83,6 +89,8 @@ module ApiService::Account
   # Get the account preferences associated with the current user.
   #
   # @return [ApiMyAccountPreferences]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-preferences
   #
   def get_my_preferences(*)
     api(:get, 'myaccount', 'preferences')
@@ -106,6 +114,8 @@ module ApiService::Account
   #
   # @return [ApiMyAccountPreferences]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-myaccount-preferences
+  #
   def update_my_preferences(**opt)
     validate_parameters(__method__, opt)
     api(:put, 'myaccount', 'preferences', **opt)
@@ -124,6 +134,8 @@ module ApiService::Account
   # @param [User, String, nil] user   Default: @user
   #
   # @return [ApiUserAccount]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-useraccount-search
   #
   def get_account(user: @user)
     username = name_of(user)
@@ -158,6 +170,8 @@ module ApiService::Account
   #
   # @return [ApiUserAccount]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_update-useraccount
+  #
   def update_account(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -191,6 +205,8 @@ module ApiService::Account
   #
   # @return [ApiUserAccount]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_create-useraccount
+  #
   def create_account(**opt)
     validate_parameters(__method__, opt)
     api(:post, 'accounts', **opt)
@@ -204,6 +220,8 @@ module ApiService::Account
   # @param [String]            password
   #
   # @return [ApiStatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-password
   #
   def update_account_password(user: @user, password:)
     username = name_of(user)
@@ -229,6 +247,8 @@ module ApiService::Account
   #
   # @return [ApiTitleMetadataSummaryList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-assigned-titles
+  #
   def get_my_assigned_titles(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'myAssignedTitles', **opt)
@@ -248,6 +268,8 @@ module ApiService::Account
   #
   # @return [ApiAssignedTitleMetadataSummaryList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_titles-assigned-member
+  #
   def get_assigned_titles(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -265,6 +287,8 @@ module ApiService::Account
   #
   # @return [ApiAssignedTitleMetadataSummaryList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-assign
+  #
   def create_assigned_title(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -279,6 +303,8 @@ module ApiService::Account
   # @param [String]            bookshareId
   #
   # @return [ApiAssignedTitleMetadataSummaryList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_title-unassign
   #
   def remove_assigned_title(user: @user, bookshareId:)
     validate_parameters(__method__, opt)
@@ -305,6 +331,8 @@ module ApiService::Account
   #
   # @return [ApiActiveBookList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books
+  #
   def get_my_active_books(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'myActiveBooks', **opt)
@@ -321,6 +349,8 @@ module ApiService::Account
   #
   # @return [ApiActiveBookList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-add
+  #
   def add_my_active_book(**opt)
     validate_parameters(__method__, opt)
     api(:post, 'myActiveBooks', **opt)
@@ -333,6 +363,8 @@ module ApiService::Account
   # @param [String] activeTitleId
   #
   # @return [ApiActiveBookList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-remove
   #
   def remove_my_active_book(activeTitleId:)
     validate_parameters(__method__, opt)
@@ -353,6 +385,8 @@ module ApiService::Account
   #
   # @return [ApiActiveBookList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-books
+  #
   def get_active_books(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -371,6 +405,8 @@ module ApiService::Account
   #
   # @return [ApiActiveBookList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-books-add
+  #
   def create_active_book(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -385,6 +421,8 @@ module ApiService::Account
   # @param [String]            activeTitleId
   #
   # @return [ApiActiveBookList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-books-remove
   #
   def delete_active_book(user: @user, activeTitleId:)
     validate_parameters(__method__, opt)
@@ -411,6 +449,8 @@ module ApiService::Account
   #
   # @return [ApiActivePeriodicalList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals
+  #
   def get_my_active_periodicals(**opt)
     validate_parameters(__method__, opt)
     api(:get, 'myActivePeriodicals', **opt)
@@ -427,6 +467,8 @@ module ApiService::Account
   #
   # @return [ApiActivePeriodicalList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-add
+  #
   def add_my_active_periodical(**opt)
     validate_parameters(__method__, opt)
     api(:post, 'myActivePeriodicals', **opt)
@@ -439,6 +481,8 @@ module ApiService::Account
   # @param [String] activeTitleId
   #
   # @return [ApiActivePeriodicalList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-remove
   #
   def remove_my_active_periodical(activeTitleId:)
     validate_parameters(__method__, opt)
@@ -460,6 +504,8 @@ module ApiService::Account
   #
   # @return [ApiActivePeriodicalList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-periodicals
+  #
   def get_active_periodicals(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -478,6 +524,8 @@ module ApiService::Account
   #
   # @return [ApiActivePeriodicalList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-periodicals-add
+  #
   def create_active_periodical(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -493,6 +541,8 @@ module ApiService::Account
   # @param [String]            activeTitleId
   #
   # @return [ApiActivePeriodicalList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_user-active-periodicals-remove
   #
   def delete_active_periodical(user: @user, activeTitleId:)
     validate_parameters(__method__, opt)
@@ -515,6 +565,8 @@ module ApiService::Account
   #
   # @return [ApiActiveBookProfile]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-active-book-profile
+  #
   def get_active_books_profile(user: @user, **opt)
     validate_parameters(__method__, opt)
     username = name_of(user)
@@ -534,6 +586,8 @@ module ApiService::Account
   # @option opt [Integer] :maxContributions
   #
   # @return [ApiActiveBookProfile]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-active-book-profile
   #
   def update_active_books_profile(user: @user, **opt)
     validate_parameters(__method__, opt)

@@ -315,14 +315,22 @@ module GenericHelper
 
   # Remove surrounding quotation marks from a term.
   #
-  # @param [ActiveSupport::SafeBuffer, String] term
+  # @param [ActiveSupport::SafeBuffer, String, Array] term
   #
   # @return [ActiveSupport::SafeBuffer, String]
   #
   def strip_quotes(term)
-    result = term.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2')
-    result = result.html_safe if term.html_safe?
-    result
+    result =
+      if term.is_a?(Array)
+        html_safe = true
+        term.map { |t|
+          strip_quotes(t).tap { |s| html_safe &&= s.html_safe? }
+        }.join(', ')
+      else
+        html_safe = term.html_safe?
+        term.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2')
+      end
+    html_safe ? result.html_safe : result
   end
 
 end

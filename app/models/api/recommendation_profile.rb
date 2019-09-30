@@ -18,6 +18,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Api::Link>]      links
 # @attr [Gender]                narratorGender
 # @attr [NarratorType]          narratorType
+# @attr [Integer]               readingAge
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
 #
@@ -37,6 +38,7 @@ class Api::RecommendationProfile < Api::Record::Base
     has_many  :links,                   Api::Link
     attribute :narratorGender,          Gender
     attribute :narratorType,            NarratorType
+    attribute :readingAge,              Integer
   end
 
 end

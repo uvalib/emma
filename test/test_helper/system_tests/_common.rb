@@ -105,7 +105,7 @@ module TestHelper::SystemTests::Common
     get_subscription
     get_user_agreements
     get_user_pod
-    get_organization_members
+    get_my_organization_members
     download_title
     download_periodical_edition
     get_catalog

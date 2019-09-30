@@ -114,15 +114,24 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            debug(func, 'received data: |', data, '|');
             if (isMissing(data)) {
                 err = 'no data';
             } else if (typeof(data) !== 'object') {
                 err = 'unexpected data type ' + typeof(data);
             } else if ((delay = getRetryPeriod($link)) === NO_RETRY) {
                 err = REQUEST_CANCELLED;
-            } else if (!(target = data.url) && (data.state !== 'SUBMITTED')) {
-                err = 'unexpected data.state "' + data.state + '"';
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                var info = data.response || data;
+                target = info.url;
+                if (!target) {
+                    if (info.error) {
+                        err = 'reported error: "' + info.error + '"';
+                    } else if (info.state !== 'SUBMITTED') {
+                        err = 'unexpected state: "' + info.state + '"';
+                    }
+                }
             }
         }
 

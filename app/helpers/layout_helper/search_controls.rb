@@ -54,10 +54,10 @@ module LayoutHelper::SearchControls
   #
   # noinspection RubyYardParamTypeMatch
   SORT_MENU = {
-    member:       make_menu(Api::MemberSortOrder),
-    periodical:   make_menu(Api::PeriodicalSortOrder),
-    reading_list: make_menu(Api::MyReadingListSortOrder),
-    title:        make_menu(Api::TitleSortOrder),
+    member:       make_menu(MemberSortOrder),
+    periodical:   make_menu(PeriodicalSortOrder),
+    reading_list: make_menu(MyReadingListSortOrder),
+    title:        make_menu(TitleSortOrder),
   }.stringify_keys.deep_freeze
 
   # The generic page size menu.

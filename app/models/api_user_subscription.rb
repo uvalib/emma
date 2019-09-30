@@ -8,11 +8,11 @@ __loading_begin(__FILE__)
 # ApiUserSubscription
 #
 # @attr [Api::DownloadTimeframe]    downloadTimeframe
-# @attr [String]                    endDate
+# @attr [IsoDate]                   endDate
 # @attr [Array<Api::Link>]          links
 # @attr [String]                    notes
 # @attr [Integer]                   numBooksAllowed
-# @attr [String]                    startDate
+# @attr [IsoDate]                   startDate
 # @attr [String]                    subscriptionId
 # @attr [Api::UserSubscriptionType] userSubscriptionType
 #
@@ -28,11 +28,11 @@ class ApiUserSubscription < Api::Message
 
   schema do
     has_one   :downloadTimeframe,    Api::DownloadTimeframe
-    attribute :endDate,              String
+    attribute :endDate,              IsoDate
     has_many  :links,                Api::Link
     attribute :notes,                String
     attribute :numBooksAllowed,      Integer
-    attribute :startDate,            String
+    attribute :startDate,            IsoDate
     attribute :subscriptionId,       String
     has_one   :userSubscriptionType, Api::UserSubscriptionType
   end

@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Api::TitleFileResource
 #
 # @attr [Array<AllowsType>] allows
-# @attr [String]            lastModifiedDate
+# @attr [IsoDate]           lastModifiedDate
 # @attr [Array<Api::Link>]  links
 # @attr [String]            localURI
 # @attr [String]            mimeType
@@ -22,7 +22,7 @@ class Api::TitleFileResource < Api::Record::Base
 
   schema do
     has_many  :allows,            AllowsType
-    attribute :lastModifiedDate,  String
+    attribute :lastModifiedDate,  IsoDate
     has_many  :links,             Api::Link
     attribute :localURI,          String
     attribute :mimeType,          String

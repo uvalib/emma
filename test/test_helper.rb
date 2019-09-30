@@ -9,21 +9,41 @@ require_relative '../config/environment'
 require 'rails/test_help'
 require 'webdrivers'
 
+# =============================================================================
+# Test control values (@see lib/tasks/test_serialization.rb)
+# =============================================================================
+
+public
+
 # The output format(s) to test.
 #
 # @type [Array<Symbol>]
 #
-# @see lib/tasks/test_serialization.rb
-#
 TEST_FORMATS ||= %i[html]
+
+TESTING_HTML = TEST_FORMATS.include?(:html)
+TESTING_JSON = TEST_FORMATS.include?(:json)
+TESTING_XML  = TEST_FORMATS.include?(:xml)
+
+# Bookshare API aspects to test.
+#
+# @type [Array<Symbol>]
+#
+TEST_BOOKSHARE ||= []
+
+TESTING_BOOKSHARE_API = TEST_BOOKSHARE.present?
+TESTING_API_REQUESTS  = TEST_BOOKSHARE.include?(:requests)
+TESTING_API_RECORDS   = TEST_BOOKSHARE.include?(:records)
+
+# =============================================================================
+# Test helpers
+# =============================================================================
+
+public
 
 # Support methods for tests.
 #
 module TestHelper
-
-  TESTING_HTML = TEST_FORMATS.include?(:html)
-  TESTING_JSON = TEST_FORMATS.include?(:json)
-  TESTING_XML  = TEST_FORMATS.include?(:xml)
 
   # The base URL for relative requests.
   #
@@ -59,29 +79,36 @@ module TestHelper
 
 end
 
-# Augment the base class for test cases.
-class ActiveSupport::TestCase
+# =============================================================================
+# Setup system test support classes
+# =============================================================================
 
+public
+
+# Augment the base class for test cases.
+#
+class ActiveSupport::TestCase
   include GenericHelper
   include TestHelper
-
   # Create model instances for all fixtures in defined in test/fixtures/*.yml.
   fixtures :all
-
 end
 
 # Augment the base class for integration test cases.
+#
 class ActionDispatch::IntegrationTest
   include Devise::Test::IntegrationHelpers
   include TestHelper::Debugging::Trace
 end
 
 # Make relative paths expand correctly.
+#
 class ActionDispatch::Integration::Session
   self.default_url_options = { host: URI(TestHelper::BASE_URL).host }
 end
 
 # Set up system testing.
+#
 Capybara.configure do |config|
   config.app_host = TestHelper::BASE_URL  # TODO: needed?
   config.default_max_wait_time = 60

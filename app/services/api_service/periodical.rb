@@ -65,6 +65,8 @@ module ApiService::Periodical
   #
   # @return [ApiPeriodicalSeriesMetadataSummaryList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-search
+  #
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
@@ -80,6 +82,8 @@ module ApiService::Periodical
   # @param [String] seriesId
   #
   # @return [ApiPeriodicalSeriesMetadataSummary]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-series-metadata
   #
   # == Usage Notes
   # This request can be made without an Authorization header.
@@ -105,6 +109,8 @@ module ApiService::Periodical
   #
   # @return [ApiPeriodicalSeriesMetadataSummary]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-update
+  #
   def update_periodical(seriesId:, **opt)
     validate_parameters(__method__, opt)
     api(:put, 'periodicals', seriesId, **opt)
@@ -123,6 +129,8 @@ module ApiService::Periodical
   #
   # @return [ApiPeriodicalEditionList]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-editions
+  #
   def get_periodical_editions(seriesId:, **opt)
     validate_parameters(__method__, opt)
     api(:get, 'periodicals', seriesId, 'editions', **opt)
@@ -132,13 +140,13 @@ module ApiService::Periodical
   # == GET /v2/periodicals/{seriesId}/editions/{editionId}
   # Get the metadata of an existing periodical edition.
   #
-  # NOTE: This is not a real Bookshare API call.
-  #
   # @param [String] seriesId
   # @param [String] editionId
   #
   # @return [Api::PeriodicalEdition]
   # @return [nil]
+  #
+  # NOTE: This is not a real Bookshare API call.
   #
   def get_periodical_edition(seriesId:, editionId:)
     periodical = get_periodical_editions(seriesId: seriesId, limit: :max)
@@ -157,6 +165,8 @@ module ApiService::Periodical
   #
   # @return [ApiPeriodicalEdition]
   #
+  # @see https://apidocs.bookshare.org/reference/index.html#_put-periodical-edition-edit-metadata
+  #
   def update_periodical_edition(seriesId:, editionId:, **opt)
     validate_parameters(__method__, opt)
     api(:put, 'periodicals', seriesId, 'editions', editionId, **opt)
@@ -174,6 +184,8 @@ module ApiService::Periodical
   # @option opt [String] :forUser
   #
   # @return [ApiStatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-download
   #
   def download_periodical_edition(seriesId:, editionId:, format:, **opt)
     validate_parameters(__method__, opt)
