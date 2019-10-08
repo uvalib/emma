@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # ApiUserSignedAgreement
 #
 # @attr [String]        agreementId
-# @attr [AgreementType] agreementId
+# @attr [AgreementType] agreementType
 # @attr [String]        dateExpired
 # @attr [String]        dateSigned
 # @attr [String]        printName

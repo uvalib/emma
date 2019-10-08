@@ -7,12 +7,11 @@ __loading_begin(__FILE__)
 
 # Api::TitleFileResource
 #
-# @attr [Array<AllowsType>] allows
-# @attr [IsoDate]           lastModifiedDate
-# @attr [Array<Api::Link>]  links
-# @attr [String]            localURI
-# @attr [String]            mimeType
-# @attr [String]            size
+# @attr [IsoDate]          lastModifiedDate
+# @attr [Array<Api::Link>] links
+# @attr [String]           localURI
+# @attr [String]           mimeType
+# @attr [String]           size
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_file_resource
 #
@@ -21,12 +20,11 @@ class Api::TitleFileResource < Api::Record::Base
   include Api::Common::LinkMethods
 
   schema do
-    has_many  :allows,            AllowsType
-    attribute :lastModifiedDate,  IsoDate
-    has_many  :links,             Api::Link
-    attribute :localURI,          String
-    attribute :mimeType,          String
-    attribute :size,              String      # TODO: not Integer?
+    attribute :lastModifiedDate, IsoDate
+    has_many  :links,            Api::Link
+    attribute :localURI,         String
+    attribute :mimeType,         String
+    attribute :size,             String      # TODO: not Integer?
   end
 
 end

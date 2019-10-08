@@ -41,16 +41,6 @@ BOOKSHARE_API_KEY =
 BOOKSHARE_API_VERSION =
   ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
 
-# Base Bookshare authentication service path.
-#
-# @type [String]
-#
-BOOKSHARE_AUTH_URL =
-  ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org')
-    .sub(%r{^(http:)?//}, 'https://')
-    .sub(%r{/+$}, '')
-    .freeze
-
 # Base Bookshare API request path.
 #
 # @type [String]
@@ -60,6 +50,16 @@ BOOKSHARE_BASE_URL =
     .sub(%r{^(http:)?//}, 'https://')
     .sub(%r{/+$}, '')
     .sub(%r{(/v.+)?$}) { $1 || "/#{BOOKSHARE_API_VERSION}" }
+    .freeze
+
+# Base Bookshare authentication service path.
+#
+# @type [String]
+#
+BOOKSHARE_AUTH_URL =
+  ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org')
+    .sub(%r{^(http:)?//}, 'https://')
+    .sub(%r{/+$}, '')
     .freeze
 
 # =============================================================================

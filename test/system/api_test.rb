@@ -7,6 +7,15 @@ require 'application_system_test_case'
 
 class ApiTest < ApplicationSystemTestCase
 
+  TRIAL_METHODS = ApiConcern::ApiTesting::TRIAL_METHODS.freeze
+
+  ANONYMOUS_METHODS =
+    TRIAL_METHODS.select { |k|
+      ApiService.api_methods.dig(k, :role) == :anonymous
+    }.freeze
+
+  AUTHORIZED_METHODS = (TRIAL_METHODS - ANONYMOUS_METHODS).freeze
+
   TEST_PATH = '/v2/titles'
 
   # ===========================================================================

@@ -24,22 +24,90 @@ class ApiService
 
   # Include send and receive modules from "app/services/api_service/*.rb".
   #
-  # This section is performed conditionally because `rake assets:precompile`
-  # will load this class a second time, causing a warning that SERVICE_METHODS
-  # is already defined.
+  # noinspection RubyYardParamTypeMatch
+  if in_debugger?
+    include_submodules(self, __FILE__)
+  else
+    include_submodules(self)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @return [String]
+  attr_reader :base_url
+
+  # @return [Hash]
+  attr_reader :options
+
+  # Initialize a new instance
   #
-  SERVICE_METHODS ||=
-    begin
-      prev_methods = instance_methods
-      if in_debugger?
-        include_submodules(self, __FILE__)
-      else
-        include_submodules(self)
-      end
-      (instance_methods - prev_methods).select { |m|
-        m =~ /^(get|create|update|remove|download)_/
-      }.sort.freeze
+  # @param [Hash] opt
+  #
+  # @option opt [User]   :user          User instance which includes a
+  #                                       Bookshare user identity and a token.
+  #
+  # @option opt [String] :base_url      Base URL to the external service
+  #                                       (default: #BASE_URL).
+  #
+  def initialize(**opt)
+    @options  = opt.dup
+    @base_url = @options.delete(:base_url) || BASE_URL
+    set_user(@options.delete(:user))
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # The single instance of this class.
+  #
+  # @param [Hash] opt                 Passed to ApiService#initialize.
+  #
+  # @return [ApiService]
+  #
+  # == Implementation Notes
+  # The Singleton pattern is avoided so that the instance is unique
+  # per-request and not per-thread (potentially spanning multiple requests by
+  # different users).
+  #
+  # noinspection RubyClassVariableUsageInspection
+  def self.instance(**opt)
+    @@service_instance ||= new(opt)
+  end
+
+  # Update the service instance with new information.
+  #
+  # @param [Hash] opt                 Passed to ApiService#initialize.
+  #
+  # @return [ApiService]
+  #
+  # noinspection RubyClassVariableUsageInspection
+  def self.update(**opt)
+    @@service_instance ||= nil
+    new_user     = opt[:user]&.uid
+    current_user = @@service_instance&.user&.uid
+    if new_user && (new_user == current_user) && opt.except(:user).blank?
+      @@service_instance
+    else
+      @@service_instance = new(opt)
     end
+  end
+
+  # Remove the single instance of the class so that a fresh instance will be
+  # generated when #instance is accessed.
+  #
+  # @return [nil]
+  #
+  # noinspection RubyClassVariableUsageInspection
+  def self.clear
+    @@service_instance = nil
+  end
 
   # ===========================================================================
   # :section: Exceptions
@@ -89,89 +157,6 @@ class ApiService
       super(response, (message || 'Invalid (HTML) result body'))
     end
 
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # @return [String]
-  attr_reader :base_url
-
-  # @return [Hash]
-  attr_reader :options
-
-  # Initialize a new instance
-  #
-  # @param [Hash] opt
-  #
-  # @option opt [User]   :user          User instance which includes a
-  #                                       Bookshare user identity and a token.
-  #
-  # @option opt [String] :base_url      Base URL to the external service
-  #                                       (default: #BASE_URL).
-  #
-  def initialize(**opt)
-    @options  = opt.dup
-    @base_url = @options.delete(:base_url) || BASE_URL
-    set_user(@options.delete(:user))
-  end
-
-  # service_methods
-  #
-  # @param [Array<Symbol>]
-  #
-  def service_methods
-    SERVICE_METHODS
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # The single instance of this class.
-  #
-  # @param [Hash] opt                 Passed to ApiService#initialize.
-  #
-  # @return [ApiService]
-  #
-  # == Implementation Notes
-  # The Singleton pattern is avoided so that the instance is unique
-  # per-request and not per-thread (potentially spanning multiple requests by
-  # different users).
-  #
-  def self.instance(**opt)
-    @@service_instance ||= new(opt)
-  end
-
-  # Update the service instance with new information.
-  #
-  # @param [Hash] opt                 Passed to ApiService#initialize.
-  #
-  # @return [ApiService]
-  #
-  def self.update(**opt)
-    @@service_instance ||= nil
-    new_user     = opt[:user]&.uid
-    current_user = @@service_instance&.user&.uid
-    if new_user && (new_user == current_user) && opt.except(:user).blank?
-      @@service_instance
-    else
-      @@service_instance = new(opt)
-    end
-  end
-
-  # Remove the single instance of the class so that a fresh instance will be
-  # generated when #instance is accessed.
-  #
-  # @return [nil]
-  #
-  def self.clear
-    @@service_instance = nil
   end
 
 end

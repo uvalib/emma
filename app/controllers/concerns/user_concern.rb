@@ -53,13 +53,17 @@ module UserConcern
     pref = hist = error = warn = nil
     if id
       item = api.get_account(user: id)
-      item = api.get_my_organization_member(username: id) if item.error?
+      item = api.get_my_organization_member(user: id) if item.error?
       if item.error?
         error = item.error_message
       else
-        pref  = nil # TODO: need API support
-        hist  = nil # TODO: need API support
-        warn  = 'No API support for preferences or history'
+        pref = api.get_preferences(user: id)
+        if pref.error?
+          warn = pref.error_message
+          pref = nil
+        end
+        hist = nil # api.get_download_history(user: id) # TODO: ???
+        warn = 'No API support for preferences or history'
       end
     else
       if (item = api.get_my_account).error?

@@ -17,8 +17,8 @@ class ApiOrganizationTypeList < Api::Message
   include Api::Common::LinkMethods
 
   schema do
-    has_many  :links,             Api::Link
-    has_many  :organizationTypes, Api::OrganizationType
+    has_many :links,             Api::Link
+    has_many :organizationTypes, Api::OrganizationType
   end
 
 end

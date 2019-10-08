@@ -131,7 +131,7 @@ module ArtifactHelper
       fmt ||= format.identifier
       def_label = format.label
     else
-      fmt ||= FormatType.new.default
+      fmt ||= FormatType.default
       def_label = item.label
     end
     label ||= I18n.t("emma.format.#{fmt}", default: def_label)

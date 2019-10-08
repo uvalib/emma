@@ -39,7 +39,7 @@ class UserSessionsControllerTest < ActionDispatch::IntegrationTest
     end
 
     test 'user session destroy - sign-out as anonymous' do
-      options = OPTIONS # OPTIONS.merge(action: 'destroy')
+      # options = OPTIONS # OPTIONS.merge(action: 'destroy')
       run_test(__method__) do
         get_sign_out(follow_redirect: false)
         assert_redirected_to welcome_url

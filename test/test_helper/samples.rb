@@ -16,6 +16,7 @@ module TestHelper::Samples
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # noinspection NonAsciiCharacters
   SAMPLE_FIXTURE = {
     artifact:     :example,
     edition:      :New_Yorker_1,

@@ -32,6 +32,7 @@ class Api::Message < Api::Record::Base
   # This method overrides:
   # @see Api::Record::Base#initialize
   #
+  # noinspection RubyYardParamTypeMatch
   def initialize(data, **opt)
     __debug { "### #{self.class}.#{__method__}" }
     start_time = timestamp

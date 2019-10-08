@@ -44,7 +44,7 @@ class EditionController < ApplicationController
 
   before_action { @edition_id = params[:editionId] || params[:id] }
   before_action { @series_id  = params[:seriesId] }
-  before_action { @format     = params[:fmt] || FormatType.new.default }
+  before_action { @format     = params[:fmt] || FormatType.default }
 
   # ===========================================================================
   # :section:

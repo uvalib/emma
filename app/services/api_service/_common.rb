@@ -12,16 +12,18 @@ require 'faraday'
 #
 module ApiService::Common
 
-  API_VERSION  = BOOKSHARE_API_VERSION
   API_KEY      = BOOKSHARE_API_KEY
-  AUTH_URL     = BOOKSHARE_AUTH_URL
   BASE_URL     = BOOKSHARE_BASE_URL
+  API_VERSION  = BOOKSHARE_API_VERSION
+  AUTH_URL     = BOOKSHARE_AUTH_URL
   DEFAULT_USER = 'anonymous' # For examples # TODO: ???
 
+  # Validate the presence of these values required for the full interactive
+  # instance of the application.
   if rails_application?
+    Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
     Log.error('Missing BOOKSHARE_BASE_URL') unless BASE_URL
     Log.error('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
-    Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
   end
 
   # Maximum accepted value for a :limit parameter.
@@ -33,12 +35,34 @@ module ApiService::Common
   #
   MAX_LIMIT = 100
 
-  # Control whether information requests are ever cached.
+  # Control whether information requests are ever cached. # TODO: ???
   #
   # @type [Boolean]
   #
   CACHING = false
-  #CACHING = true
+
+  # Control whether validation errors cause a RuntimeError.
+  #
+  # @type [Boolean]
+  #
+  RAISE_ON_ERROR = Rails.env.test?
+
+  # Original request parameters which should not be passed on to the API.
+  #
+  # @type [Array<Symbol>]
+  #
+  IGNORED_PARAMETERS = (ParamsHelper::IGNORED_PARAMETERS + %i[offset]).freeze
+
+  # HTTP methods used by the API.
+  #
+  # @type [Array<Symbol>]
+  #
+  # == Usage Notes
+  # Compare with AllowsType#values.
+  #
+  HTTP_METHODS =
+    %w(GET PUT POST DELETE)
+      .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
 
   # @type [Hash{Symbol=>String}]
   API_RECV_MESSAGE = {
@@ -60,86 +84,159 @@ module ApiService::Common
     default: nil
   }.freeze
 
-  # @type [Hash{Symbol=>Array<Symbol>}]
-  REQUIRED_PARAMETERS = {
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
-    create_account: %i[
-      firstName
-      lastName
-      emailAddress
-      address1
-      city
-      country
-      postalCode
-    ],
+  public
 
-    create_assigned_title:    %i[bookshareId],
-
-    add_my_active_book:       %i[bookshareId format],
-    create_active_book:       %i[bookshareId format],
-
-    add_my_active_periodical: %i[bookshareId format],
-    create_active_periodical: %i[bookshareId format],
-
-    add_organization_member: %i[
-      firstName
-      lastName
-      dateOfBirth
-      grade
-      disabilityType
-      proofSource
-    ],
-
-    create_organization: %i[
-      organizationName
-      address1
-      city
-      country
-      postalCode
-      organizationType
-      contactFirstName
-      contactLastName
-      contactPhoneNumber
-      contactTitle
-      contactEmailAddress
-    ],
-    create_organization_member: %i[
-      firstName
-      lastName
-      dateOfBirth
-      grade
-      disabilityType
-      proofSource
-    ],
-
-    subscribe_reading_list: %i[enabled],
-
-    create_subscription:   %i[startDate userSubscriptionType],
-    update_subscription:   %i[startDate userSubscriptionType],
-
-    create_user_agreement: %i[agreementType dateSigned printName],
-
-    create_user_pod:       %i[disabilityType proofSource],
-    update_user_pod:       %i[proofSource],
-
-  }.deep_freeze
-
-  # Original request parameters which should not be passed on to the API.
+  # Interface to the shared data structure which holds the definition of the
+  # API requests and parameters.
   #
-  # @type [Array<Symbol>]
-  #
-  IGNORED_PARAMETERS = (ParamsHelper::IGNORED_PARAMETERS + %i[offset]).freeze
+  # noinspection RubyClassVariableUsageInspection
+  module ApiRequests
 
-  # HTTP methods used by the API.
+    # Add a method name and its properties to #api_methods.
+    #
+    # @param [Hash{Symbol=>Hash}] prop
+    #
+    # @return [void]
+    #
+    # == Usage Notes
+    # The definition of each API request method is followed by a block which
+    # invokes this method in order to register the properties of the method and
+    # its associated API endpoint.  The *prop* argument is expected to be a
+    # hash with a single entry whose key is the symbol for the method and whose
+    # value is a Hash containing the properties.
+    #
+    # All keys in the property hash are optional, however :reference_id must be
+    # included for methods that map on to documented API requests.
+    #
+    # :alias          One or more identifiers which associate a method named
+    #                 argument with the name of the API parameter it
+    #                 represents.  (This is not needed for arguments with names
+    #                 that are the same as the documented API parameter.)
+    #
+    # :required       One or more API parameters which are mandatory, which may
+    #                 include either Path or Query parameters.
+    #
+    # :optional       One or more API optional Query parameters.
+    #                 (Path parameters are never optional.)
+    #
+    # :multi          An array of one or more parameters that can be passed in
+    #                 as a single value or as an array.
+    #
+    # :role           If given as :anonymous this is a hint that the request
+    #                 should succeed even if the current user is not logged in.
+    #
+    # :reference_id   This is the HTML element ID of the request on the
+    #                 Bookshare API documentation page.  If this is not
+    #                 provided then the method is not treated as a true API
+    #                 method.
+    #
+    # :topic          The base of the module in which the method was defined
+    #                 added by this method as a hint for the API Explorer.
+    #
+    def add_api(prop)
+      # __output { ". API Request method #{prop.keys.join(', ')}" }
+      topic = self.to_s.demodulize
+      prop = prop.transform_values { |v| v.merge(topic: topic) }
+      (@@all_methods  ||= {}).merge!(prop)
+      (@@true_methods ||= {}).merge!(prop.select { |_, v| v[:reference_id] })
+    end
+
+    # Properties for each method which implements an API request.
+    #
+    # By default only true (documented) API methods are returned, unless:
+    # - If :synthetic is *true* then "fake" methods (which implement
+    # functionality not directly supported by the API) are also included.
+    # - If :synthetic is :only then only the "fake" methods are returned.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    # @overload api_methods(synthetic: false)
+    #   @param [Boolean] synthetic
+    #   @return [Hash{Symbol=>Hash}]
+    #
+    # @overload api_methods(method)
+    #   @param [Symbol, String] method
+    #   @return [Hash, nil]
+    #
+    def api_methods(method = nil, synthetic: false)
+      @@all_methods  ||= {}
+      @@true_methods ||= {}
+      if method
+        @@all_methods[method.to_sym]
+      elsif synthetic == :only
+        @@all_methods.except(*@@true_methods.keys)
+      elsif synthetic
+        @@all_methods
+      else
+        @@true_methods
+      end
+    end
+
+    # The optional API query parameters for the given method.
+    #
+    # @param [Symbol, String] method
+    #
+    # @return [Array<Symbol>]
+    #
+    def optional_parameters(method)
+      api_methods(method)&.dig(:optional)&.keys || []
+    end
+
+    # The required API query parameters for the given method.
+    #
+    # By default, these are only the Query or FormData parameters that would be
+    # the required parameters that are to be passed through the method's
+    # "**opt" options has.  If :all is *true*, the result will also include the
+    # method's named parameters (translated to the name used in the
+    # documentation [e.g., "userIdentifier" instead of "user"]).
+    #
+    # @param [Symbol, String] method
+    # @param [Boolean]        all
+    #
+    # @return [Array<Symbol>]
+    #
+    def required_parameters(method, all: false)
+      result = api_methods(method)&.dig(:required)&.keys || []
+      result -= named_parameters(method) unless all
+      result
+    end
+
+    # The subset of required API request parameters which are passed to the
+    # implementation method via named parameters.
+    #
+    # By default, the names are translated to the documented parameter names.
+    # If :no_alias is *true* then the actual parameter names are returned.
+    #
+    # @param [Symbol, String] method
+    # @param [Boolean]        no_alias
+    #
+    # @return [Array<Symbol>]
+    #
+    def named_parameters(method, no_alias: false)
+      alias_keys = !no_alias && api_methods(method)&.dig(:alias) || {}
+      method(method).parameters.map { |pair|
+        type, name = pair
+        alias_keys[name] || name if %i[key keyreq].include?(type)
+      }.compact
+    end
+
+  end
+
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
   #
-  # @type [Array<Symbol>]
+  # @param [Module] base
   #
-  # == Usage Notes
-  # Compare with AllowsType#values.
+  # @return [Array<Module>]           @see #include_submodules
   #
-  HTTP_METHODS =
-    %w(GET PUT POST DELETE)
-      .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
+  def self.included(base)
+    base.send(:include, ApiRequests)
+    base.send(:extend,  ApiRequests)
+  end
 
   # ===========================================================================
   # :section:
@@ -201,14 +298,14 @@ module ApiService::Common
     @exception = nil
   end
 
-  # Last HTTP request type.
+  # Most recently invoked HTTP request type.
   #
   # @param [Boolean, nil] api_key     If *true* include the :api_key parameter
   #                                     in the result.
   #
   # @return [String]
   #
-  def last_endpoint(api_key = false)
+  def latest_endpoint(api_key = false)
     params = (api_key ? @params : @params.except(:api_key)).presence
     params &&= params.to_param
     [@action, params].compact.join('?')
@@ -407,30 +504,83 @@ module ApiService::Common
   # @return [String]
   #
   def name_of(user)
-    name = user
-    name = user['uid'] if user.is_a?(Hash)
+    name = user.is_a?(Hash) ? user['uid'] : user
     name.to_s.presence || DEFAULT_USER
   end
 
-  # Validate presence of required API parameters.
+  # Extract API parameters from *options*.
   #
-  # @param [Symbol]             method
-  # @param [Hash]               parameters
-  # @param [Array<Symbol>, nil] required
+  # @param [Symbol]  method
+  # @param [Boolean] check_req        Check for missing required keys.
+  # @param [Boolean] check_opt        Check for extra optional keys.
+  # @param [Hash]    opt
   #
-  # @return [void]
+  # @return [Hash]                    Just the API parameters from *opt*.
+  # @return [nil]                     If *method* is not an API method.
   #
-  # @raise RuntimeError
-  #
-  def validate_parameters(method, parameters, required = nil)
-    required ||= REQUIRED_PARAMETERS[method]
-    missing_keys = Array.wrap(required).reject { |key| parameters[key] }
-    if missing_keys.present?
-      params = 'parameter'.pluralize(missing_keys.size)
-      keys   = missing_keys.join(', ')
-      raise RuntimeError, "#{method} missing #{params} #{keys}"
+  def get_parameters(method, check_req: true, check_opt: false, **opt)
+    properties     = api_methods(method)
+    return handle_errors(method, 'unregistered API method') if properties.nil?
+    multi_valued   = Array.wrap(properties[:multi]).presence
+    required_keys  = required_parameters(method)
+    optional_keys  = optional_parameters(method)
+    specified_keys = required_keys + optional_keys
+
+    # Validate the keys provided.
+    errors = []
+    if check_req && (missing_keys = required_keys - opt.keys).present?
+      error = +'missing API ' << 'parameter'.pluralize(missing_keys.size)
+      errors.push(error << ' ' << missing_keys.join(', '))
     end
+    if check_opt && (extra_keys = opt.keys - specified_keys).present?
+      error = +'invalid API ' << 'parameter'.pluralize(extra_keys.size)
+      errors.push(error << ' ' << extra_keys.join(', '))
+    end
+    handle_errors(method, *errors) if errors.present?
+
+    # Return with the options needed for the API request.
+    opt.slice(*specified_keys).map { |k, v|
+      if !v.is_a?(Array)
+        [k, v]
+      elsif multi_valued&.include?(k)
+        [k, v.map { |e| %Q("#{e}") }.join(' ')]
+      else
+        [k, v.join(', ')]
+      end
+    }.to_h
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Report on errors.
+  #
+  # @param [String, Symbol] method
+  # @param [Array<String>]  errors
+  # @param [Boolean]        raise_on_error
+  #
+  # @raise [RuntimeError]             Iff *raise_on_error*.
+  #
+  # @return [nil]
+  #
+  def handle_errors(method, *errors, raise_on_error: RAISE_ON_ERROR)
+    return if errors.blank?
+    if raise_on_error
+      raise RuntimeError, ("#{method}: " + errors.join("\nAND "))
+    else
+      errors.each { |problem| Log.warn("#{method}: #{problem}") }
+    end
+    nil
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # validate_response
   #

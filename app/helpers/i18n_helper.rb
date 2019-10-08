@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 # Methods supporting I18n lookup.
 #
+# noinspection RubyNilAnalysis
 module I18nHelper
 
   def self.included(base)
@@ -135,6 +136,7 @@ module I18nHelper
       end
       break if single || plural
     end
+    # noinspection RubyNilAnalysis
     {
       item:  (single ||= plural.singularize),
       items: (plural ||= single.pluralize),

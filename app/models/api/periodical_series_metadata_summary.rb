@@ -26,7 +26,7 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see ApiPeriodicalSeriesMetadataSummary
 #
-# noinspection RubyClassModuleNamingConvention,DuplicatedCode
+# noinspection RubyClassModuleNamingConvention, DuplicatedCode
 class Api::PeriodicalSeriesMetadataSummary < Api::Record::Base
 
   include Api::Common::LinkMethods

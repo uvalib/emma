@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 # @attr [Integer]                    maxContributions
 # @attr [Api::ActiveBookPreferences] preferences
 # @attr [Api::RecommendationProfile] recommendationProfile
+# @attr [Api::ReadingListUserView]   requestList
 # @attr [Boolean]                    useRecommendations
 # @attr [Boolean]                    useRequestList
 #
@@ -27,6 +28,7 @@ class ApiActiveBookProfile < Api::Message
     attribute :maxContributions,      Integer
     has_one   :preferences,           Api::ActiveBookPreferences
     has_one   :recommendationProfile, Api::RecommendationProfile
+    has_one   :requestList,           Api::ReadingListUserView
     attribute :useRecommendations,    Boolean
     attribute :useRequestList,        Boolean
   end

@@ -28,7 +28,7 @@ module ImageHelper
   #
   # @type [Boolean]
   #
-  ASYNCHRONOUS_IMAGES = true
+  ASYNCHRONOUS_IMAGES = !Rails.env.test?
 
   # Asynchronous image placeholder image relative asset path.
   #

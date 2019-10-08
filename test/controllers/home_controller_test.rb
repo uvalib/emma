@@ -20,7 +20,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   # ===========================================================================
 
   test 'home main as anonymous' do
-    options = OPTIONS.merge(action: 'main')
+    # options = OPTIONS.merge(action: 'main')
     TEST_FORMATS.each do |fmt|
       next unless html?(fmt) # NOTE: TESTING_HTML only
       url = home_url(format: fmt)
@@ -32,7 +32,7 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   end if TESTING_HTML
 
   test 'home main as emmadso' do
-    options = OPTIONS.merge(action: 'main')
+    # options = OPTIONS.merge(action: 'main')
     TEST_FORMATS.each do |fmt|
       next unless html?(fmt) # NOTE: TESTING_HTML only
       url = home_url(format: fmt)

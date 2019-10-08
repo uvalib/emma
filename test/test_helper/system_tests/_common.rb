@@ -75,43 +75,6 @@ module TestHelper::SystemTests::Common
     },
   }.deep_freeze
 
-  # These ApiService methods should succeed for any user.
-  #
-  # @type [Array<Symbol>]
-  #
-  ANONYMOUS_METHODS = %i[
-    get_title_count
-    get_titles
-    get_title
-    get_periodicals
-    get_periodical
-    get_periodical_editions
-    get_categories
-  ].freeze
-
-  # These ApiService methods should fail for an anonymous user.
-  #
-  # @type [Array<Symbol>]
-  #
-  AUTHORIZED_METHODS = %i[
-    get_my_preferences
-    get_my_assigned_titles
-    get_assigned_titles
-    get_my_reading_lists
-    get_reading_lists
-    get_reading_list_titles
-    get_my_download_history
-    get_subscriptions
-    get_subscription
-    get_user_agreements
-    get_user_pod
-    get_my_organization_members
-    download_title
-    download_periodical_edition
-    get_catalog
-    get_subscription_types
-  ].freeze
-
   # ===========================================================================
   # :section:
   # ===========================================================================

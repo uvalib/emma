@@ -76,7 +76,7 @@ gem 'representable', '~> 3.0'
 gem 'virtus', '~> 1.0'
 
 # == Metrics
-gem 'prometheus-client'
+gem 'prometheus-client', '< 0.10'
 
 # == Other
 gem 'iso-639'

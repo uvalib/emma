@@ -157,8 +157,8 @@ module Api::Common::TitleMethods
 
   # The author(s)/creator(s) of this catalog title.
   #
-  # @param [Array<ContributorType>] types   Default: `#CREATOR_TYPES`
-  # @param [Hash]                   opt
+  # @param [Array<String>] types      Default: `#CREATOR_TYPES`
+  # @param [Hash]          opt
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
@@ -180,8 +180,8 @@ module Api::Common::TitleMethods
 
   # All contributor(s) to this catalog title.
   #
-  # @param [Array<ContributorType>] types   Default: `ContributorType#values`
-  # @param [Hash]                   opt
+  # @param [Array<String>] types      Default: all
+  # @param [Hash]          opt
   #
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
@@ -195,7 +195,7 @@ module Api::Common::TitleMethods
 
   # All contributors to this catalog title keyed by contributor type.
   #
-  # @param [Array<ContributorType>] roles   Default: `ContributorType#values`
+  # @param [Array<String>] roles      Default: `ContributorType#values`
   #
   # @return [Hash{Symbol=>Array<String>}]
   #

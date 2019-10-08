@@ -1,15 +1,15 @@
-# app/services/api_service/title.rb
+# app/services/api_service/titles.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# ApiService::Title
+# ApiService::Titles
 #
 # == Usage Notes
 #
-# === According to API section 2.1 (Titles):
+# === From API section 2.1 (Titles):
 # A title represents a unique entry in the Bookshare collection. They are
 # available to users based on a combination of the characteristics of the user
 # (their subscription, their address, their age, etc) and the characteristics
@@ -21,7 +21,7 @@ __loading_begin(__FILE__)
 # resources that are available for each specific title.
 #
 # noinspection RubyParameterNamingConvention
-module ApiService::Title
+module ApiService::Titles
 
   include ApiService::Common
 
@@ -32,7 +32,7 @@ module ApiService::Title
   public
 
   # @type [Hash{Symbol=>String}]
-  TITLE_SEND_MESSAGE = {
+  TITLES_SEND_MESSAGE = {
 
     # TODO: e.g.:
     no_items:      'There were no items to request',
@@ -41,20 +41,13 @@ module ApiService::Title
   }.reverse_merge(API_SEND_MESSAGE).freeze
 
   # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  TITLE_SEND_RESPONSE = {
+  TITLES_SEND_RESPONSE = {
 
     # TODO: e.g.:
     no_items:       'no items',
     failed:         nil
 
   }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # URL parameter fields which, if passed in as an array, are transformed into
-  # a list of space-separated values.
-  #
-  # @type [Array<Symbol>]
-  #
-  MULTIVALUED_FIELDS = %i[author narrator composer].freeze
 
   # ===========================================================================
   # :section:
@@ -63,6 +56,8 @@ module ApiService::Title
   public
 
   # == GET /v2/titles/count
+  #
+  # == 2.1.6. Live title count
   # Get the current count of Bookshare titles.
   #
   # @return [Integer]
@@ -77,8 +72,16 @@ module ApiService::Title
     data = response&.body&.presence
     data.to_i
   end
+    .tap do |method|
+      add_api method => {
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_title-count'
+      }
+    end
 
   # == GET /v2/titles/{bookshareId}
+  #
+  # == 2.1.2. Get title metadata
   # Get metadata for the specified Bookshare title.
   #
   # NOTE: The API currently returns :artifacts as *nil*.
@@ -96,13 +99,24 @@ module ApiService::Title
     api(:get, 'titles', bookshareId)
     ApiTitleMetadataDetail.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+        },
+        role:          :anonymous, # Should succeed for any user.
+        reference_id:  '_title-metadata'
+      }
+    end
 
   # == GET /v2/titles/{bookshareId}/{format}
-  # Download a Bookshare title artifact.
+  #
+  # == 2.1.3. Download a title
+  # Request download of Bookshare artifact (a title in a specific format).
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
-  # @param [Hash]       opt           API URL parameters
+  # @param [Hash]       opt           Optional API URL parameters.
   #
   # @option opt [String] :forUser
   #
@@ -111,15 +125,29 @@ module ApiService::Title
   # @see https://apidocs.bookshare.org/reference/index.html#_title-download
   #
   def download_title(bookshareId:, format:, **opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, **opt)
     ApiStatusModel.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+          format:      FormatType,
+        },
+        optional: {
+          forUser:     String,
+        },
+        reference_id:  '_title-download'
+      }
+    end
 
   # == GET /v2/titles
+  #
+  # == 2.1.1. Search for titles
   # Search for Bookshare titles.
   #
-  # @param [Hash] opt                 API URL parameters
+  # @param [Hash] opt                 Optional API URL parameters.
   #
   # @option opt [String]                       :title
   # @option opt [String, Array<String>]        :author
@@ -131,12 +159,11 @@ module ApiService::Title
   # @option opt [IsoLanguage]                  :language
   # @option opt [String]                       :country
   # @option opt [FormatType]                   :format
-  # @option opt [FormatType]                   :fmt       Alias for :format
   # @option opt [NarratorType]                 :narratorType
   # @option opt [BrailleType]                  :brailleType
   # @option opt [Integer]                      :readingAge
-  # @option opt [ContentWarning, Array<String] :excludedContentWarnings
-  # @option opt [ContentWarning, Array<String] :includedContentWarnings
+  # @option opt [ContentWarning,Array<ContentWarning>] :excludedContentWarnings
+  # @option opt [ContentWarning,Array<ContentWarning>] :includedContentWarnings
   # @option opt [String]                       :externalIdentifierCode
   # @option opt [IsoDuration]                  :maxDuration
   # @option opt [TitleContentType]             :titleContentType
@@ -153,19 +180,47 @@ module ApiService::Title
   # This request can be made without an Authorization header.
   #
   def get_titles(**opt)
-    validate_parameters(__method__, opt)
-    transformed_opt =
-      MULTIVALUED_FIELDS.map { |field|
-        next unless opt[field].is_a?(Array)
-        terms = opt[field].map { |v| %Q("#{v}") }.join(' ')
-        [field, terms]
-      }.compact.to_h
-    opt = opt.merge(transformed_opt) if transformed_opt.present?
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', **opt)
     ApiTitleMetadataSummaryList.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        optional: {
+          title:                   String,
+          author:                  String,
+          narrator:                String,
+          composer:                String,
+          keyword:                 String,
+          isbn:                    String,
+          categories:              String,
+          language:                IsoLanguage,
+          country:                 String,
+          format:                  FormatType,
+          narratorType:            NarratorType,
+          brailleType:             BrailleType,
+          readingAge:              Integer,
+          excludedContentWarnings: ContentWarning,
+          includedContentWarnings: ContentWarning,
+          externalIdentifierCode:  String,
+          maxDuration:             IsoDuration,
+          titleContentType:        TitleContentType,
+          start:                   String,
+          limit:                   Integer,
+          sortOrder:               TitleSortOrder,
+          direction:               Direction,
+        },
+        multi: %i[
+          author narrator composer categories
+          excludedContentWarnings includedContentWarnings
+        ],
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_title-search'
+      }
+    end
 
   # == GET /v2/titles/{bookshareId}?format={format}
+  #
   # Get the metadata of an existing artifact.
   #
   # @param [String]     bookshareId
@@ -180,6 +235,15 @@ module ApiService::Title
     title = get_title(bookshareId: bookshareId)
     title.artifact_list.find { |a| format == a.format }
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+          format:      FormatType,
+        },
+        reference_id:  nil,
+      }
+    end
 
   # ===========================================================================
   # :section:
@@ -188,11 +252,12 @@ module ApiService::Title
   public
 
   # == GET /v2/titles/{bookshareId}/{format}/resources
-  # Get a list of title file resources.
+  #
+  # == 2.1.4. Get a list of title file resources
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
-  # @param [Hash]       opt           API URL parameters
+  # @param [Hash]       opt           Optional API URL parameters.
   #
   # @option opt [String] :start
   #
@@ -201,13 +266,26 @@ module ApiService::Title
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource-list
   #
   def get_title_resource_files(bookshareId:, format:, **opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', **opt)
     ApiTitleFileResourceList.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+          format:      FormatType,
+        },
+        optional: {
+          start:       String,
+        },
+        reference_id:  '_get-title-file-resource-list'
+      }
+    end
 
   # == GET /v2/titles/{bookshareId}/{format}/resources/{resourceId}
-  # Get a title file resource.
+  #
+  # == 2.1.5. Download a title file resource
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
@@ -218,10 +296,19 @@ module ApiService::Title
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource
   #
   def get_title_resource_file(bookshareId:, format:, resourceId:)
-    validate_parameters(__method__, opt)
     api(:get, 'titles', bookshareId, format, 'resources', resourceId)
     ApiStatusModel.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          bookshareId: String,
+          format:      FormatType,
+          resourceId:  String,
+        },
+        reference_id:  '_get-title-file-resource'
+      }
+    end
 
   # ===========================================================================
   # :section:
@@ -230,9 +317,11 @@ module ApiService::Title
   public
 
   # == GET /v2/categories
+  #
+  # == 2.1.7. Category listing
   # Search for Bookshare categories.
   #
-  # @param [Hash] opt                 API URL parameters
+  # @param [Hash] opt                 Optional API URL parameters.
   #
   # @option opt [String]  :start
   # @option opt [Integer] :limit      Default: 100
@@ -245,52 +334,20 @@ module ApiService::Title
   # This request can be made without an Authorization header.
   #
   def get_categories(**opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'categories', **opt)
     ApiCategoriesList.new(response, error: exception)
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # == GET /v2/catalog
-  # For allowed roles, you can ask for titles that might not be visible to
-  # regular users, such as those that were once in the collection, but have
-  # since been removed. This allows administrators to manage the wider
-  # collection of titles.
-  #
-  # @param [Hash] opt                 API URL parameters
-  #
-  # @option opt [String]           :country
-  # @option opt [String]           :isbn
-  # @option opt [String]           :start
-  # @option opt [Integer]          :limit        Default: 10
-  # @option opt [CatalogSortOrder] :sortOrder    Default: 'title'
-  # @option opt [Direction]        :direction    Default: 'asc'
-  #
-  # @return [ApiTitleMetadataCompleteList]
-  #
-  # @see https://apidocs.bookshare.org/reference/index.html#_catalog-search
-  #
-  # == Usage Notes
-  #
-  # === According to API section 2.8 (Collection Assistant - Titles):
-  # Administrative users can search and update the entire collection of titles,
-  # not just those that are live for the public to see. This could include
-  # withdrawing live titles, publishing pending titles, or reviewing proofread
-  # scans. Collection Assistants can perform these functions, only restricted
-  # to the titles that are associated with their site. These functions are
-  # available exclusively to these roles, also known as "catalog administrator"
-  # roles, through the catalog endpoint.
-  #
-  def get_catalog(**opt)
-    validate_parameters(__method__, opt)
-    api(:get, 'catalog', **opt)
-    ApiTitleMetadataCompleteList.new(response, error: exception)
-  end
+    .tap do |method|
+      add_api method => {
+        optional: {
+          start:      String,
+          limit:      Integer,
+        },
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_categories'
+      }
+    end
 
   # ===========================================================================
   # :section:
@@ -306,8 +363,8 @@ module ApiService::Title
   # @see ApiService::Common#raise_exception
   #
   def raise_exception(method)
-    response_table = TITLE_SEND_RESPONSE
-    message_table  = TITLE_SEND_MESSAGE
+    response_table = TITLES_SEND_RESPONSE
+    message_table  = TITLES_SEND_MESSAGE
     message = request_error_message(method, response_table, message_table)
     raise Api::TitleError, message
   end

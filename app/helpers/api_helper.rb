@@ -77,6 +77,7 @@ module ApiHelper
   #
   def api_method(method, path, **opt)
     method = method&.downcase&.to_sym || :get
+    path   = URI.escape(path.to_s)
     data   = api.send(:api, method, path, opt)&.body&.presence
     {
       method:    method.to_s.upcase,

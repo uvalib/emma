@@ -43,7 +43,7 @@ class ArtifactController < ApplicationController
   # ===========================================================================
 
   before_action { @bookshare_id = params[:bookshareId] || params[:id] }
-  before_action { @format = params[:fmt] || FormatType.new.default }
+  before_action { @format = params[:fmt] || FormatType.default }
 
   # ===========================================================================
   # :section:
@@ -58,8 +58,8 @@ class ArtifactController < ApplicationController
   def index
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
     opt   = pagination_setup
-    @list = api.get_organization_members(**opt)
-    self.page_items  = @list.userAccounts
+    @list = api.get_artifact_list(**opt)
+    self.page_items  = @list.artifacts
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|

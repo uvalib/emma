@@ -52,7 +52,7 @@ class ReadingListController < ApplicationController
   def index
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     opt   = pagination_setup
-    @list = api.get_reading_lists(**opt)
+    @list = api.get_all_reading_lists(**opt)
     self.page_items  = @list.lists
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)

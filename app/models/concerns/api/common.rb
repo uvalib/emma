@@ -114,6 +114,10 @@ module Api
       default:  'DAISY'
     },
 
+    PeriodicalFormatType: {
+      values:   %w(DAISY DAISY_2_AUDIO DAISY_AUDIO BRF)
+    },
+
     Gender: {
       values:   %w(male female otherNonBinary),
       default:  'Other'
@@ -267,7 +271,9 @@ class ScalarType
 
   attr_reader :value
 
-  def initializer(v = nil)
+  delegate_missing_to :value
+
+  def initializer(v = nil, *)
     set(v)
   end
 
@@ -275,24 +281,48 @@ class ScalarType
     set(v)
   end
 
+  def set(v)
+    v_normalized = normalize(v)
+    acceptable   = v_normalized.nil? || valid?(v_normalized)
+    Log.error("#{self.class}: #{v.inspect}") unless acceptable
+    @value = acceptable && v_normalized || default
+  end
+
+  def valid?(v = nil)
+    (v || @value).present?
+  end
+
+  def to_s
+    @value.to_s
+  end
+
+  def inspect
+    "(#{to_s.inspect})"
+  end
+
   def default
+    self.class.default
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  def normalize(v)
+    v&.to_s&.strip
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  def self.default
     ''
   end
-
-  def valid?(v = @value)
-    v.present?
-  end
-
-  def set(v)
-    # noinspection RubyAssignmentExpressionInConditionalInspection
-    unless v.nil? || valid?(v = v.to_s.strip)
-      Log.error("#{self.class}: #{v.inspect}")
-      v = nil
-    end
-    @value = v || default
-  end
-
-  delegate_missing_to :value
 
 end
 
@@ -300,8 +330,14 @@ end
 #
 class IsoDuration < ScalarType
 
-  def valid?(v = @value)
-    v = v.to_s
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  def valid?(v = nil)
+    v = v&.to_s&.strip || @value
     v.match?(/^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/)
   end
 
@@ -311,17 +347,31 @@ end
 #
 class IsoDate < ScalarType
 
-  def valid?(v = @value)
-    v = v.to_s
-    year?(v) || day?(v) || v.match?(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/)
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  def valid?(v = nil)
+    year?(v) || day?(v) ||
+      (v&.to_s&.strip || @value).match?(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/)
   end
 
-  def year?(v = @value)
-    v.to_s.match?(/^\d{4}$/)
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  def year?(v = nil)
+    v = v&.to_s&.strip || @value
+    v.match?(/^\d{4}$/)
   end
 
-  def day?(v = @value)
-    v.to_s.match?(/^\d{4}-\d\d-\d\d$/)
+  def day?(v = nil)
+    v = v&.to_s&.strip || @value
+    v.match?(/^\d{4}-\d\d-\d\d$/)
   end
 
 end
@@ -330,7 +380,13 @@ end
 #
 class IsoYear < IsoDate
 
-  def valid?(v = @value)
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  def valid?(v = nil)
     year?(v)
   end
 
@@ -340,7 +396,13 @@ end
 #
 class IsoDay < IsoDate
 
-  def valid?(v = @value)
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  def valid?(v = nil)
     day?(v)
   end
 
@@ -350,7 +412,14 @@ end
 #
 class IsoLanguage < ScalarType
 
-  def valid?(v = @value)
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  def valid?(v = nil)
+    v = normalize(v) || @value
     ISO_639.find_by_code(v).present?
   end
 
@@ -360,17 +429,11 @@ end
 #
 class EnumType < ScalarType
 
-  def initialize(v = nil, *)
-    set(v)
-  end
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
 
-  def default
-    @default ||= Api::ENUMERATIONS.dig(type, :default) || values.first
-  end
-
-  def valid?(v = @value)
-    values.include?(v.to_s)
-  end
+  public
 
   def set(v)
     # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -381,20 +444,46 @@ class EnumType < ScalarType
     @value = v || default
   end
 
+  def valid?(v = @value)
+    values.include?(v.to_s)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   def type
-    @type ||= self.class.to_s.demodulize.to_sym
+    self.class.type
   end
 
   def values
+    self.class.values
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  def self.type
+    @type ||= self.to_s.to_sym
+  end
+
+  def self.values
     @values ||= Api::ENUMERATIONS.dig(type, :values)
   end
 
-  def to_s
-    @value.to_s
-  end
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
 
-  def inspect
-    "(#{to_s.inspect})"
+  public
+
+  def self.default
+    @default ||= Api::ENUMERATIONS.dig(type, :default) || values.first
   end
 
 end
@@ -416,6 +505,7 @@ class Direction2              < EnumType; end
 class DisabilityPlan          < EnumType; end
 class DisabilityType          < EnumType; end
 class FormatType              < EnumType; end
+class PeriodicalFormatType    < EnumType; end
 class Gender                  < EnumType; end
 class NarratorType            < EnumType; end
 class ProofOfDisabilitySource < EnumType; end

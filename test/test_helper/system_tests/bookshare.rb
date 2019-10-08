@@ -23,107 +23,37 @@ module TestHelper::SystemTests::Bookshare
   #
   APIDOC_URL = 'https://apidocs.bookshare.org/reference/index.html'
 
-  # Translate a "normalized form" method name into the name of the actual
-  # ApiService method that implements the specified functionality.
-  #
-  # (The handful of method names that already match the "normalized form" are
-  # not listed here.)
+  # A mapping of documentation element ID to request method name.
   #
   # @type [Hash{String=>String}]
   #
-  # == Maintenance Notes
-  # As new ApiService methods are created they will need to be reflected in
-  # this table in order to keep tests up-to-date.
-  #
-  API_REQUEST_METHODS = {
-    title_search:                         'get_titles',
-    title_metadata:                       'get_title',
-    title_download:                       'download_title',
-    get_title_file_resource_list:         'get_title_resource_files',
-    get_title_file_resource:              'get_title_resource_file',
-    title_count:                          'get_title_count',
-    categories:                           'get_categories',
-    periodical_search:                    'get_periodicals',
-    periodical_editions:                  'get_periodical_editions',
-    periodical_series_metadata:           'get_periodical',
-    periodical_download:                  'download_periodical_edition',
-    get_my_readinglists_list:             'get_my_reading_lists',
-    post_readinglist_create:              'create_reading_list',
-    put_readinglist_edit_metadata:        'update_reading_list',
-    get_readinglist_titles:               'get_reading_list_titles',
-    post_readinglist_title:               'create_reading_list_title',
-    delete_readinglist_title:             'remove_reading_list_title',
-    put_readinglist_subscription:         'subscribe_reading_list',
-    my_assigned_titles:                   'get_my_assigned_titles',
-    titles_assigned_member:               'get_assigned_titles',
-    title_assign:                         'create_assigned_title',
-    title_unassign:                       'remove_assigned_title',
-    my_active_books:                      'get_my_active_books',
-    my_active_books_add:                  'add_my_active_book',
-    my_active_books_remove:               'remove_my_active_book',
-    my_active_periodicals:                'get_my_active_periodicals',
-    my_active_periodicals_add:            'add_my_active_periodical',
-    my_active_periodicals_remove:         'remove_my_active_periodical',
-    me:                                   'get_user_identity',
-    get_myaccount_summary:                'get_my_account',
-    get_myaccount_downloads:              'get_my_download_history',
-    get_myaccount_preferences:            'get_my_preferences',
-    put_myaccount_preferences:            'update_my_preferences',
-    get_myorganization_members:           'get_my_organization_members',
-    create_my_organizationmember:         'add_organization_member',
-    catalog_search:                       'get_catalog',
-    periodical_update:                    'update_periodical',
-    put_periodical_edition_edit_metadata: 'update_periodical_edition',
-    get_useraccount_search:               'get_account',
-    update_useraccount:                   'update_account',
-    create_useraccount:                   'create_account',
-    get_membership_subscriptions:         'get_subscriptions',
-    create_membership_subscription:       'create_subscription',
-    get_single_membership_subscription:   'get_subscription',
-    update_membership_subscription:       'update_subscription',
-    get_membership_subscription_types:    'get_subscription_types',
-    get_membership_pods:                  'get_user_pod',
-    create_membership_pod:                'create_user_pod',
-    update_membership_pod:                'update_user_pod',
-    delete_membership_pod:                'remove_user_pod',
-    get_signed_agreements:                'get_user_agreements',
-    create_signed_agreement:              'create_user_agreement',
-    expire_signed_agreement:              'remove_user_agreement',
-    update_membership_password:           'update_account_password',
-    create_organizationmember:            'create_organization_member',
-    user_active_books:                    'get_active_books',
-    user_active_books_add:                'create_active_book',
-    user_active_books_remove:             'delete_active_book',
-    user_active_periodicals:              'get_active_periodicals',
-    user_active_periodicals_add:          'create_active_periodical',
-    user_active_periodicals_remove:       'delete_active_periodical',
-    get_active_book_profile:              'get_active_books_profile',
-    put_active_book_profile:              'update_active_books_profile',
-  }.stringify_keys.freeze
+  API_REQUEST_METHODS =
+    ApiService.api_methods.map { |method, properties|
+      element_id = properties[:reference_id]
+      [element_id.to_s, method.to_s] if element_id.present?
+    }.compact.to_h.deep_freeze
 
-  # Translate a "normalized form" record name into a value that relates to the
-  # actual record class name (when "camelized").
-  #
-  # (Most record class names are already suitable are not listed here.)
+  # A partial mapping of documentation element ID to a base API record or type
+  # name.  (Most record class names are already suitable for automatic
+  # translation and are not listed here.)
   #
   # @type [Hash{String=>String}]
   #
   API_RECORD_TYPES = {
-    studentstatus:          'student_status',
-    content_warning_values: 'content_warning',
-    myaccount_preferences:  'my_account_preferences',
-    myaccount_summary:      'my_account_summary',
-  }.stringify_keys.freeze
+    studentstatus:          'StudentStatus',
+    content_warning_values: 'ContentWarning',
+    myaccount_preferences:  'MyAccountPreferences',
+    myaccount_summary:      'MyAccountSummary',
+  }.map { |k, v| [k.to_s, v.to_s] }.to_h.deep_freeze
 
   # A translation of Api#ENUMERATIONS.
   #
   # @type [Hash{String=>Array<String>}]
   #
   API_ENUMERATIONS =
-    Api::ENUMERATIONS
-      .transform_keys(&:to_s)
-      .transform_values { |properties| properties[:values]&.sort || [] }
-      .deep_freeze
+    Api::ENUMERATIONS.map { |name, properties|
+      [name.to_s, (properties[:values]&.sort || [])]
+    }.to_h.deep_freeze
 
   # Translate an implementation field type into a specification field type.
   #
@@ -133,22 +63,13 @@ module TestHelper::SystemTests::Bookshare
   # @type [Hash{String=>String}]
   #
   API_TYPE_MAPPING = {
-    AllowsType:     'String',
-    DisabilityType: 'String',
-    IsoDuration:    'String',
-    SiteType:       'String',
-  }.stringify_keys.freeze
-
-  # API_PARAM_MAPPING
-  #
-  # @type [Hash{String=>String}]
-  #
-  API_PARAM_MAPPING = {
-    agreementId:  'id',
-    opt:          '*',
-    organization: 'organizationId',
-    user:         'userIdentifier',
-  }.stringify_keys.freeze
+    AllowsType:           'String',
+    DisabilityType:       'String',
+    FormatType:           'String',
+    IsoDuration:          'String',
+    PeriodicalFormatType: 'String',
+    SiteType:             'String',
+  }.map { |k, v| [k.to_s, v.to_s] }.to_h.freeze
 
   # ===========================================================================
   # :section:
@@ -163,6 +84,7 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [Capybara::Session]
   #
+  # noinspection RubyClassVariableUsageInspection
   def bookshare_apidoc(url = nil)
     @@bookshare_apidoc ||=
       Capybara::Session.new(:selenium).tap do |session|
@@ -176,18 +98,27 @@ module TestHelper::SystemTests::Bookshare
 
   public
 
+  # Get a validated ApiService instance.
+  #
+  # @return [ApiService]
+  #
+  def api
+    # noinspection RubyYardReturnMatch
+    @api ||= validate_api_methods && ApiService.instance
+  end
+
   # Get the underscore form of the given request from the Bookshare API
   # documentation page.
   #
-  # @param [String, Symbol, Class, nil] element_id
+  # @param [String] element_id
   #
   # @return [String]
   # @return [nil]
   #
   def api_request_method(element_id)
-    method = element_id.to_s.delete_prefix('_').underscore
+    id = element_id.to_s
     # noinspection RubyYardReturnMatch
-    API_REQUEST_METHODS[method] || method
+    API_REQUEST_METHODS[id] || id.delete_prefix('_').underscore if id.present?
   end
 
   # record_fields
@@ -221,6 +152,38 @@ module TestHelper::SystemTests::Bookshare
         entry[:path]       = (kind == 'Path')
       end
     }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Verify that each documentation reference ID is associated with only one
+  # ApiService method.  If any duplicates are found, #assert will be raised.
+  #
+  # @return [TrueClass]
+  #
+  def validate_api_methods
+    reference = {}
+    duplicate = {}
+    ApiService.api_methods.each do |method, properties|
+      if (ref_id = properties[:reference_id].to_s).blank?
+        next
+      elsif (existing_method = reference[ref_id])
+        duplicate[ref_id] ||= [existing_method]
+        duplicate[ref_id] << method
+      else
+        reference[ref_id] = method
+      end
+    end
+    assert duplicate.blank?, ->() {
+      duplicate.map { |element_id, methods|
+        "#{element_id}: #{methods.join(', ')}"
+      }.unshift('Same :reference_id for two or more API methods:').join("\n")
+    }
+    true
   end
 
   # ===========================================================================
@@ -291,9 +254,8 @@ module TestHelper::SystemTests::Bookshare
   # @return [nil]
   #
   def record_type(element_id)
-    type = element_id.to_s.delete_prefix('_').underscore
-    # noinspection RubyYardReturnMatch
-    API_RECORD_TYPES[type] || type if type.present?
+    id = element_id.to_s.delete_prefix('_').underscore
+    API_RECORD_TYPES[id] || id.camelize if id.present?
   end
 
   # Get the documented type of the given field name translated to the Ruby
@@ -333,7 +295,7 @@ module TestHelper::SystemTests::Bookshare
         type  = record_field_type(parts, 'String')
         "Array #{type}"
       else
-        type = record_type(type).camelize
+        type = record_type(type)
         type = "Api::#{type}" unless API_ENUMERATIONS.key?(type)
         type
     end
@@ -377,7 +339,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [nil]
   #
   def model_class(name)
-    name = name.to_s.delete_prefix('_').camelize
+    name = name.to_s.delete_prefix('_').underscore.camelize
     return if name.blank?
     # noinspection RubyYardReturnMatch
     ("Api::#{name}".constantize rescue nil) ||

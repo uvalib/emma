@@ -16,8 +16,6 @@ class BookshareTest < ApplicationSystemTestCase
 
   test 'bookshare - API requests' do
 
-    api = ApiService.instance
-
     # Scan the API documentation page.
     missing  = {}
     problems = {}
@@ -29,7 +27,7 @@ class BookshareTest < ApplicationSystemTestCase
       next if method.blank?
 
       # Note whether the specified method is unimplemented.
-      next if !api.respond_to?(method) && (missing[method] = id)
+      next if !api.respond_to?(method) && (missing[method] = id).present?
 
       # Get the specified request parameters.
       parent_element   = element.first(:xpath, './parent::*', minimum: 0)
@@ -37,7 +35,9 @@ class BookshareTest < ApplicationSystemTestCase
       show_request_params(specified_params, method)
 
       # Get the parameters defined for the implemented method.
-      required_params    = ApiService::REQUIRED_PARAMETERS[method.to_sym] || []
+      specification      = api.api_methods(method) || {}
+      required_keys      = specification[:required]&.stringify_keys&.keys || []
+      alias_params       = specification[:alias]&.stringify_keys || {}
       implemented_params = method_params(method)
       show_method_params(implemented_params, method)
 
@@ -49,20 +49,20 @@ class BookshareTest < ApplicationSystemTestCase
           required    = specified[:required].present?
           implemented =
             implemented_params.find { |p|
-              param_name == (API_PARAM_MAPPING[p[:name]] || p[:name])
+              i_name = p[:name]
+              param_name == (alias_params[i_name]&.to_s || i_name)
             }
           issue =
             if implemented
               implemented[:checked] = true
-              i_name  = implemented[:name]
-              i_req   = implemented[:required].present?
-              i_req ||= required_params.include?(i_name.to_sym)
-              i_req ||= (i_name == 'user') # Special case.
+              i_name = implemented[:name]
+              i_name = alias_params[i_name]&.to_s || i_name
+              i_req  = implemented[:required] || required_keys.include?(i_name)
               if required != i_req
                 is_or_not = required ? '' : 'not '
                 "#{is_or_not}specified to be a required parameter"
               end
-            elsif required && !required_params.include?(param_name.to_sym)
+            elsif required && !required_keys.include?(param_name)
               'NOT IMPLEMENTED'
             end
           [param_name, issue] if issue.present?
@@ -73,8 +73,7 @@ class BookshareTest < ApplicationSystemTestCase
         implemented_params.map { |p|
           next if p[:checked]
           param_name = p[:name]
-          specified  = API_PARAM_MAPPING[param_name] || param_name
-          ignored    = (specified == '*')
+          ignored    = %w(* ** opt).include?(param_name)
           [param_name, 'INVALID (not in API specification)'] unless ignored
         }.compact.to_h
       )
@@ -102,27 +101,20 @@ class BookshareTest < ApplicationSystemTestCase
 
     # Collect API-related class names in a normalized form.
     types =
-      Object.constants.map do |c|
+      Object.constants.select do |c|
         # API message classes from app/models/*.rb.
         next unless c.to_s.start_with?('Api')
-        next unless "Object::#{c}".constantize.is_a?(Class)
-        c.to_s.delete_prefix('Api').underscore
+        next unless (c = "Object::#{c}".constantize).is_a?(Class)
+        c.ancestors.include?(Api::Message)
       end
     types +=
-      ObjectSpace.each_object(Class).map do |c|
-        # Scalar value classes from app/models/concerns/api/common.rb.
-        next unless c.ancestors.include?(ScalarType)
-        c.to_s.underscore
-      end
-    types +=
-      ObjectSpace.each_object(Class).map do |c|
+      ObjectSpace.each_object(Class).select do |c|
+        # Scalar value classes from app/models/concerns/api/common.rb or
         # API record classes from app/models/api/*.rb.
-        next unless c.ancestors.include?(Api::Record::Base)
-        c.to_s.delete_prefix('Api::').underscore
+        c.ancestors.include?(ScalarType) ||
+        c.ancestors[1..-1].include?(Api::Record::Base)
       end
-    types.compact!
-    types.sort!
-    types.uniq!
+    types.map! { |c| c.to_s.sub(/^Api(::)?/, '') }.sort!.uniq!
 
     # Scan the API documentation page.
     missing  = {}
@@ -140,7 +132,7 @@ class BookshareTest < ApplicationSystemTestCase
       # NOTE: This enum is incorrectly documented with the records.
       # This causes #records_fields to bog down (for some reason) due to the
       # fact that the table isn't there.
-      next if type == 'content_warning'
+      next if type == 'ContentWarning'
 
       # Get the specified record field definitions.
       parent_element   = element.first(:xpath, './parent::*', minimum: 0)

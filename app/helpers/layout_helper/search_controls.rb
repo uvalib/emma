@@ -33,12 +33,13 @@ module LayoutHelper::SearchControls
   # From the values of a subclass of Api::EnumType, generate an array of
   # label/value pairs to be used with #select_tag.
   #
-  # @param [Class, Array<String,Numeric>] type
+  # @param [Class, Array<String,Numeric>] entries
   #
   # @return [Array<Array<(String,String)>>]
   #
-  def self.make_menu(type)
-    (type.is_a?(Class) ? type.new.values : type).flat_map do |v|
+  def self.make_menu(entries)
+    entries = entries.values if entries.respond_to?(:values)
+    Array.wrap(entries).flat_map do |v|
       label = v.to_s.titleize.squish
       rev   = label.delete('0-9').present? && (label != 'Relevance')
       pairs = []

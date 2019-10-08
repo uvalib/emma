@@ -1,11 +1,11 @@
-# app/models/api/recommendation_profile.rb
+# app/models/api_recommendation_profile.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# Api::RecommendationProfile
+# ApiRecommendationProfile
 #
 # @attr [Array<AllowsType>]     allows
 # @attr [Array<String>]         excludedAuthors
@@ -23,10 +23,10 @@ __loading_begin(__FILE__)
 # @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
 #
 # NOTE: This duplicates:
-# @see ApiRecommendationProfile
+# @see Api::RecommendationProfile
 #
 # noinspection DuplicatedCode
-class Api::RecommendationProfile < Api::Record::Base
+class ApiRecommendationProfile < Api::Message
 
   include Api::Common::LinkMethods
 

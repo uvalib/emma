@@ -51,8 +51,8 @@ module OmniAuth
         site:             BOOKSHARE_AUTH_URL,
         auth_scheme:      :basic_auth,
         authorize_method: :post, # TODO: ???
-        #max_redirects:   0,
-        #connection_opts: { headers: { Host: URI(BOOKSHARE_AUTH_URL).host } }
+        # max_redirects:   0,
+        # connection_opts: { headers: { Host: URI(BOOKSHARE_AUTH_URL).host } }
       }
       option :authorize_options,      %i[scope]
       option :authorize_params,       { scope: 'basic' }
@@ -97,7 +97,7 @@ module OmniAuth
       #
       # == Implementation Notes
       # NOTE: Needs to relate to:
-      # @see ApiService::Account#get_user_identity
+      # @see ApiService::UserAccount#get_user_identity
       #
       # E.g.:
       #

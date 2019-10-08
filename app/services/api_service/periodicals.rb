@@ -1,22 +1,22 @@
-# app/services/api_service/periodical.rb
+# app/services/api_service/periodicals.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# ApiService::Periodical
+# ApiService::Periodicals
 #
 # == Usage Notes
 #
-# === According to API section 2.2 (Periodicals):
+# === From API section 2.2 (Periodicals):
 # A periodical represents a magazine or newspaper, each of which can have
 # multiple editions/issues. The editions/issues are available to users in the
 # same way as titles, based on characteristics of the user and the
 # periodical, and in formats that will be specified in the response.
 #
 # noinspection RubyParameterNamingConvention
-module ApiService::Periodical
+module ApiService::Periodicals
 
   include ApiService::Common
 
@@ -27,7 +27,7 @@ module ApiService::Periodical
   public
 
   # @type [Hash{Symbol=>String}]
-  PERIODICAL_SEND_MESSAGE = {
+  PERIODICALS_SEND_MESSAGE = {
 
     # TODO: e.g.:
     no_items:      'There were no items to request',
@@ -36,7 +36,7 @@ module ApiService::Periodical
   }.reverse_merge(API_SEND_MESSAGE).freeze
 
   # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  PERIODICAL_SEND_RESPONSE = {
+  PERIODICALS_SEND_RESPONSE = {
 
     # TODO: e.g.:
     no_items:       'no items',
@@ -51,9 +51,11 @@ module ApiService::Periodical
   public
 
   # == GET /v2/periodicals
+  #
+  # == 2.2.1. Search for periodicals
   # Search for Bookshare periodicals.
   #
-  # @param [Hash] opt                 API URL parameters
+  # @param [Hash] opt                 Optional API URL parameters.
   #
   # @option opt [String]              :title
   # @option opt [String]              :issn
@@ -71,12 +73,29 @@ module ApiService::Periodical
   # This request can be made without an Authorization header.
   #
   def get_periodicals(**opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', **opt)
     ApiPeriodicalSeriesMetadataSummaryList.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        optional: {
+          title:      String,
+          issn:       String,
+          language:   IsoLanguage,
+          start:      String,
+          limit:      Integer,
+          sortOrder:  PeriodicalSortOrder,
+          direction:  Direction,
+        },
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_periodical-search'
+      }
+    end
 
   # == GET /v2/periodicals/{seriesId}
+  #
+  # == 2.2.3. Get periodical series metadata
   # Get metadata for the specified Bookshare periodical.
   #
   # @param [String] seriesId
@@ -92,36 +111,23 @@ module ApiService::Periodical
     api(:get, 'periodicals', seriesId)
     ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
   end
-
-  # == PUT /v2/periodicals/{seriesId}
-  # Update the series metadata for an existing Bookshare periodical.
-  #
-  # @param [String] seriesId
-  # @param [Hash]   opt               API URL parameters
-  #
-  # @option opt [String]                          :title
-  # @option opt [String]                          :issn
-  # @option opt [String]                          :description
-  # @option opt [String]                          :publisher
-  # @option opt [String]                          :externalCategoryCode
-  # @option opt [String, Array<String>]           :categories
-  # @option opt [IsoLanguage, Array<IsoLanguage>] :languages
-  #
-  # @return [ApiPeriodicalSeriesMetadataSummary]
-  #
-  # @see https://apidocs.bookshare.org/reference/index.html#_periodical-update
-  #
-  def update_periodical(seriesId:, **opt)
-    validate_parameters(__method__, opt)
-    api(:put, 'periodicals', seriesId, **opt)
-    ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
-  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+        },
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_periodical-series-metadata'
+      }
+    end
 
   # == GET /v2/periodicals/{seriesId}/editions
+  #
+  # == 2.2.2. Get periodical editions
   # Get a list of editions for the specified Bookshare periodical.
   #
   # @param [String] seriesId
-  # @param [Hash]   opt               API URL parameters
+  # @param [Hash]   opt               Optional API URL parameters.
   #
   # @option opt [Integer]          :limit       Default: 10
   # @option opt [EditionSortOrder] :sortOrder   Default: 'editionName'
@@ -132,10 +138,24 @@ module ApiService::Periodical
   # @see https://apidocs.bookshare.org/reference/index.html#_periodical-editions
   #
   def get_periodical_editions(seriesId:, **opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', **opt)
     ApiPeriodicalEditionList.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+        },
+        optional: {
+          limit:      Integer,
+          sortOrder:  EditionSortOrder,
+          direction:  Direction,
+        },
+        role:         :anonymous, # Should succeed for any user.
+        reference_id: '_periodical-editions'
+      }
+    end
 
   # == GET /v2/periodicals/{seriesId}/editions/{editionId}
   # Get the metadata of an existing periodical edition.
@@ -152,34 +172,25 @@ module ApiService::Periodical
     periodical = get_periodical_editions(seriesId: seriesId, limit: :max)
     periodical.periodicalEditions.find { |pe| editionId == pe.editionId }
   end
-
-  # == PUT /v2/periodicals/{seriesId}/editions/{editionId}
-  # Update the metadata of an existing periodical edition.
-  #
-  # @param [String] seriesId
-  # @param [String] editionId
-  # @param [Hash]   opt               API URL parameters
-  #
-  # @option opt [String] :editionName
-  # @option opt [IsoDay] :publicationDate
-  #
-  # @return [ApiPeriodicalEdition]
-  #
-  # @see https://apidocs.bookshare.org/reference/index.html#_put-periodical-edition-edit-metadata
-  #
-  def update_periodical_edition(seriesId:, editionId:, **opt)
-    validate_parameters(__method__, opt)
-    api(:put, 'periodicals', seriesId, 'editions', editionId, **opt)
-    ApiPeriodicalEdition.new(response, error: exception)
-  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+          editionId:  String,
+        },
+        reference_id: nil,
+      }
+    end
 
   # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}
+  #
+  # == 2.2.4. Download a periodical edition
   # Download an artifact of the specified edition of a Bookshare periodical.
   #
   # @param [String]     seriesId
   # @param [String]     editionId
   # @param [FormatType] format
-  # @param [Hash]       opt           API URL parameters
+  # @param [Hash]       opt           Optional API URL parameters.
   #
   # @option opt [String] :forUser
   #
@@ -188,10 +199,99 @@ module ApiService::Periodical
   # @see https://apidocs.bookshare.org/reference/index.html#_periodical-download
   #
   def download_periodical_edition(seriesId:, editionId:, format:, **opt)
-    validate_parameters(__method__, opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, 'editions', editionId, format, **opt)
     ApiStatusModel.new(response, error: exception)
   end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+          editionId:  String,
+          format:     FormatType,
+        },
+        optional: {
+          forUser:    String,
+        },
+        reference_id: '_periodical-download'
+      }
+    end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == GET /v2/myPeriodicals
+  #
+  # == 2.2.5. Get my periodical subscriptions
+  # Get the list of periodical subscriptions for the authenticated user.
+  #
+  # @return [ApiPeriodicalSubscriptionList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-myperiodicals
+  #
+  def get_my_periodicals(*)
+    api(:get, 'myPeriodicals')
+    ApiPeriodicalSubscriptionList.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        reference_id: '_get-myperiodicals'
+      }
+    end
+
+  # == POST /v2/myPeriodicals
+  #
+  # == 2.2.6. Subscribe to a periodical series
+  # Create a periodical subscription for the authenticated user.
+  #
+  # @param [String]               seriesId
+  # @param [PeriodicalFormatType] format
+  #
+  # @return [ApiPeriodicalSubscriptionList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_subscribe-myperiodicals
+  #
+  def subscribe_my_periodical(seriesId:, format:)
+    opt = { seriesId: seriesId, format: format }
+    api(:post, 'myPeriodicals', **opt)
+    ApiPeriodicalSubscriptionList.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+          format:     PeriodicalFormatType,
+        },
+        reference_id: '_subscribe-myperiodicals'
+      }
+    end
+
+  # == DELETE /v2/myPeriodicals/{seriesId}
+  #
+  # == 2.2.7. Unsubscribe from a periodical series
+  # Remove a periodical subscription for the authenticated user.
+  #
+  # @param [String] seriesId
+  #
+  # @return [ApiPeriodicalSubscriptionList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_unsubscribe-myperiodicals
+  #
+  def unsubscribe_my_periodical(seriesId:)
+    api(:delete, 'myPeriodicals', seriesId)
+    ApiPeriodicalSubscriptionList.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+        },
+        reference_id: '_unsubscribe-myperiodicals'
+      }
+    end
 
   # ===========================================================================
   # :section:
@@ -207,8 +307,8 @@ module ApiService::Periodical
   # @see ApiService::Common#raise_exception
   #
   def raise_exception(method)
-    response_table = PERIODICAL_SEND_RESPONSE
-    message_table  = PERIODICAL_SEND_MESSAGE
+    response_table = PERIODICALS_SEND_RESPONSE
+    message_table  = PERIODICALS_SEND_MESSAGE
     message = request_error_message(method, response_table, message_table)
     raise Api::PeriodicalError, message
   end
