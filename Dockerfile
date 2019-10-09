@@ -9,7 +9,7 @@
 # For build-base:
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
-FROM ruby:2.5.3-alpine
+FROM ruby:2.6.3-alpine
 RUN apk update && \
     apk upgrade && \
     apk add --update --no-cache \
