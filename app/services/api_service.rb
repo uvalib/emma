@@ -22,6 +22,8 @@ class ApiService
   include Api::Common
   include Api::Schema
 
+  include GenericHelper
+
   # Include send and receive modules from "app/services/api_service/*.rb".
   #
   # noinspection RubyYardParamTypeMatch
@@ -37,10 +39,19 @@ class ApiService
 
   public
 
+  # The URL for the API connection (default: ApiService::Common#BASE_URL).
+  #
   # @return [String]
+  #
   attr_reader :base_url
 
+  # Internal service options along with connection options.
+  #
   # @return [Hash]
+  #
+  # @see ApiService::Common#SERVICE_OPTIONS
+  # @see ApiService::Common#make_connection
+  #
   attr_reader :options
 
   # Initialize a new instance
@@ -54,9 +65,10 @@ class ApiService
   #                                       (default: #BASE_URL).
   #
   def initialize(**opt)
-    @options  = opt.dup
-    @base_url = @options.delete(:base_url) || BASE_URL
-    set_user(@options.delete(:user))
+    opt, @options = partition_options(opt, :base_url, :user)
+    @options.reject! { |_, v| v.blank? }
+    @base_url = opt[:base_url] || BASE_URL
+    set_user(opt[:user])
   end
 
   # ===========================================================================
@@ -71,14 +83,25 @@ class ApiService
   #
   # @return [ApiService]
   #
+  # == Usage Notes
+  # For special purposes (like overriding :no_raise for all API requests within
+  # a single method), use `ApiService.new` rather than `ApiService.instance`.
+  # Providing modified options to this method creates a new single instance; if
+  # the options are the same as the current options then the existing instance
+  # is returned.
+  #
   # == Implementation Notes
   # The Singleton pattern is avoided so that the instance is unique
   # per-request and not per-thread (potentially spanning multiple requests by
   # different users).
   #
-  # noinspection RubyClassVariableUsageInspection
+  # noinspection RubyClassVariableUsageInspection, RubyNilAnalysis
   def self.instance(**opt)
-    @@service_instance ||= new(opt)
+    opt = opt.reject { |_, v| v.blank? }
+    use_existing   = (@@service_instance ||= nil).present?
+    use_existing &&= User.match?(opt[:user], @@service_instance.user)
+    use_existing &&= (opt.except(:user) == @@service_instance.options)
+    use_existing ? @@service_instance : (@@service_instance = new(opt))
   end
 
   # Update the service instance with new information.
@@ -87,76 +110,18 @@ class ApiService
   #
   # @return [ApiService]
   #
-  # noinspection RubyClassVariableUsageInspection
   def self.update(**opt)
-    @@service_instance ||= nil
-    new_user     = opt[:user]&.uid
-    current_user = @@service_instance&.user&.uid
-    if new_user && (new_user == current_user) && opt.except(:user).blank?
-      @@service_instance
-    else
-      @@service_instance = new(opt)
-    end
+    instance(**opt)
   end
 
   # Remove the single instance of the class so that a fresh instance will be
-  # generated when #instance is accessed.
+  # generated the next time #instance is accessed.
   #
   # @return [nil]
   #
   # noinspection RubyClassVariableUsageInspection
   def self.clear
     @@service_instance = nil
-  end
-
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  public
-
-  # ApiService::ResponseError exception.
-  #
-  class ResponseError < Faraday::ClientError
-
-    # Initialize a new instance.
-    #
-    # @param [Faraday::Response, nil] response
-    # @param [String, nil]            message
-    #
-    def initialize(response = nil, message = nil)
-      message ||= 'Bad API response'
-      super(message, response)
-    end
-
-  end
-
-  # ApiService::EmptyResult exception.
-  #
-  class EmptyResult < ResponseError
-
-    # Initialize a new instance.
-    #
-    # @param [Faraday::Response, nil] response
-    # @param [String, nil]            message
-    #
-    def initialize(response = nil, message = nil)
-      super(response, (message || 'Empty API result body'))
-    end
-
-  end
-
-  # ApiService::HtmlResult exception.
-  #
-  class HtmlResult < ResponseError
-
-    # @param [Faraday::Response, nil] response
-    # @param [String, nil]            message
-    #
-    def initialize(response = nil, message = nil)
-      super(response, (message || 'Invalid (HTML) result body'))
-    end
-
   end
 
 end

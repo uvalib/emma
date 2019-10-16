@@ -24,8 +24,8 @@ class ReadingListController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!
   before_action :update_user
+  before_action :authenticate_user!
 
   # ===========================================================================
   # :section: Authorization
@@ -70,7 +70,7 @@ class ReadingListController < ApplicationController
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     @item = api.get_reading_list(readingListId: @id)
     opt   = pagination_setup
-    @list = api.get_reading_list_titles(readingListId: @id)
+    @list = api.get_reading_list_titles(readingListId: @id, no_raise: true)
     self.page_items  = @list.titles
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)

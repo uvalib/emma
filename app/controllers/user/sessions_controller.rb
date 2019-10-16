@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
-  include User::DebugConcern
 
   # ===========================================================================
   # :section: Callbacks
@@ -46,7 +45,7 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#new
   #
   def new
-    auth_debug
+    __debug_auth
     super
   end
 
@@ -57,9 +56,9 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#create
   #
   def create
-    auth_debug
+    __debug_auth
     super do
-      ApiService.update(user: resource)
+      api_update(user: resource)
       set_flash_notice(__method__)
     end
   end
@@ -72,7 +71,7 @@ class User::SessionsController < Devise::SessionsController
   #
   def destroy
     auth_data = session.delete('omniauth.auth')
-    auth_debug { "session[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_auth { "session[omniauth.auth] = #{auth_data.inspect}" }
     super do
       ApiService.clear
       set_flash_notice(__method__, auth_data)
@@ -90,10 +89,10 @@ class User::SessionsController < Devise::SessionsController
     # noinspection RubyYardParamTypeMatch
     auth_data = session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
-    auth_debug { "session[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_auth { "session[omniauth.auth] = #{auth_data.inspect}" }
     self.resource = warden.set_user(User.from_omniauth(auth_data))
     sign_in(resource_name, resource)
-    ApiService.update(user: resource)
+    api_update(user: resource)
     set_flash_notice(:create)
     if params[:redirect]
       redirect_to params[:redirect]

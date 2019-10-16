@@ -39,9 +39,8 @@ module TestHelper::Debugging
     show_test_start(test_name, test_part, **opt)
     yield # Run test code provided in the block.
   rescue Exception => error
-    # Re-raise after 'ensure'.
+    show "[#{error.class}: #{error}]"
   ensure
-    show "[#{error.class}: #{error}]" if error
     show_test_end(test_name, test_part, **opt)
     raise error if error
   end
@@ -167,13 +166,14 @@ module TestHelper::Debugging
 
   # Display a user in output.
   #
-  # @param [User, String, nil] user   Default: `#current_user`.
-  # @param [Hash]              opt    Passed to #show.
+  # @param [String, Symbol, User] user  Default: `#current_user`.
+  # @param [Hash]                 opt   Passed to #show.
   #
   # @return [String]
   #
   def show_user(user = nil, **opt)
     user ||= current_user || 'anonymous'
+    user = find_user(user) if user.is_a?(Symbol)
     show(user.to_s, **opt)
   end
 

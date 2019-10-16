@@ -24,8 +24,8 @@ class MemberController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!
   before_action :update_user
+  before_action :authenticate_user!
 
   # ===========================================================================
   # :section: Authorization

@@ -21,9 +21,17 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
   test 'reading_list index - list all reading lists' do
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
+      able  = can?(user, :list, ReadingList)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.except(:controller, :action)
+        end
       TEST_FORMATS.each do |fmt|
         url = reading_list_index_url(format: fmt)
-        opt = options.merge(format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, opt)
       end
     end
@@ -33,9 +41,17 @@ class ReadingListControllerTest < ActionDispatch::IntegrationTest
     reading_list = sample_reading_list.readingListId
     options      = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
+      able  = can?(user, :read, ReadingList)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.except(:controller, :action)
+        end
       TEST_FORMATS.each do |fmt|
         url = reading_list_url(id: reading_list, format: fmt)
-        opt = options.merge(format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, opt)
       end
     end

@@ -50,36 +50,52 @@ module UserConcern
   #
   # noinspection RubyNilAnalysis
   def get_account_details(id: nil)
-    pref = hist = error = warn = nil
+    error = []
+    warn  = []
+    opt   = { no_raise: true }
+    opt[:user] = id if id
+
+    # Main account information.
     if id
-      item = api.get_account(user: id)
-      item = api.get_my_organization_member(user: id) if item.error?
-      if item.error?
-        error = item.error_message
-      else
-        pref = api.get_preferences(user: id)
-        if pref.error?
-          warn = pref.error_message
-          pref = nil
-        end
-        hist = nil # api.get_download_history(user: id) # TODO: ???
-        warn = 'No API support for preferences or history'
-      end
+      item = api.get_account(**opt)
+      item = api.get_my_organization_member(**opt) if item.error?
     else
-      if (item = api.get_my_account).error?
-        error = item.error_message
-      else
-        pref  = api.get_my_preferences
-        error = pref.error_message if pref.error?
-        hist  = api.get_my_download_history
-        error = hist.error_message if hist.error?
-      end
+      item = api.get_my_account(**opt)
+      api.discard_exception
     end
-    if error || warn
+
+    # Ancillary account information.
+    if item.error?
+      error << item.error_message
+      pref = hist = nil
+    elsif id
+      pref = api.get_preferences(**opt)
+      warn << pref.error_message if pref.error?
+      # hist = api.get_download_history(**opt) # TODO: ...
+      # warn << hist.error_message if hist.error? # TODO: ...
+      hist = nil
+      warn << 'No API support for preferences or history'
+    else
+      pref = api.get_my_preferences(**opt)
+      api.discard_exception
+      error << pref.error_message if pref.error?
+      hist = api.get_my_download_history(**opt)
+      api.discard_exception
+      error << hist.error_message if hist.error?
+    end
+
+    # Display error(s)/warning(s).
+    if (error = error.presence) || (warn = warn.presence)
       flash.clear
       flash.now[error ? :alert : :notice] = error || warn
     end
-    return item, pref, hist unless item.error?
+
+    # Return no data unless main account information is valid.
+    unless item.error?
+      pref = nil if pref&.error?
+      hist = nil if hist&.error?
+      return item, pref, hist
+    end
   end
 
   # ===========================================================================

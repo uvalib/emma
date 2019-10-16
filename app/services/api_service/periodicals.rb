@@ -26,36 +26,12 @@ module ApiService::Periodicals
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  PERIODICALS_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  PERIODICALS_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/periodicals
   #
   # == 2.2.1. Search for periodicals
   # Search for Bookshare periodicals.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]              :title
   # @option opt [String]              :issn
@@ -99,6 +75,7 @@ module ApiService::Periodicals
   # Get metadata for the specified Bookshare periodical.
   #
   # @param [String] seriesId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiPeriodicalSeriesMetadataSummary]
   #
@@ -107,8 +84,8 @@ module ApiService::Periodicals
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
-  def get_periodical(seriesId:)
-    api(:get, 'periodicals', seriesId)
+  def get_periodical(seriesId:, **opt)
+    api(:get, 'periodicals', seriesId, **opt)
     ApiPeriodicalSeriesMetadataSummary.new(response, error: exception)
   end
     .tap do |method|
@@ -127,7 +104,7 @@ module ApiService::Periodicals
   # Get a list of editions for the specified Bookshare periodical.
   #
   # @param [String] seriesId
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [Integer]          :limit       Default: 10
   # @option opt [EditionSortOrder] :sortOrder   Default: 'editionName'
@@ -162,14 +139,16 @@ module ApiService::Periodicals
   #
   # @param [String] seriesId
   # @param [String] editionId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [Api::PeriodicalEdition]
   # @return [nil]
   #
   # NOTE: This is not a real Bookshare API call.
   #
-  def get_periodical_edition(seriesId:, editionId:)
-    periodical = get_periodical_editions(seriesId: seriesId, limit: :max)
+  def get_periodical_edition(seriesId:, editionId:, **opt)
+    opt = opt.merge(seriesId: seriesId, limit: :max)
+    periodical = get_periodical_editions(**opt)
     periodical.periodicalEditions.find { |pe| editionId == pe.editionId }
   end
     .tap do |method|
@@ -190,7 +169,7 @@ module ApiService::Periodicals
   # @param [String]     seriesId
   # @param [String]     editionId
   # @param [FormatType] format
-  # @param [Hash]       opt           Optional API URL parameters.
+  # @param [Hash]       opt           Passed to #api.
   #
   # @option opt [String] :forUser
   #
@@ -228,12 +207,14 @@ module ApiService::Periodicals
   # == 2.2.5. Get my periodical subscriptions
   # Get the list of periodical subscriptions for the authenticated user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myperiodicals
   #
-  def get_my_periodicals(*)
-    api(:get, 'myPeriodicals')
+  def get_my_periodicals(**opt)
+    api(:get, 'myPeriodicals', **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -249,13 +230,14 @@ module ApiService::Periodicals
   #
   # @param [String]               seriesId
   # @param [PeriodicalFormatType] format
+  # @param [Hash]                 opt       Passed to #api.
   #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_subscribe-myperiodicals
   #
-  def subscribe_my_periodical(seriesId:, format:)
-    opt = { seriesId: seriesId, format: format }
+  def subscribe_my_periodical(seriesId:, format:, **opt)
+    opt = opt.merge(seriesId: seriesId, format: format)
     api(:post, 'myPeriodicals', **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
@@ -275,13 +257,14 @@ module ApiService::Periodicals
   # Remove a periodical subscription for the authenticated user.
   #
   # @param [String] seriesId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_unsubscribe-myperiodicals
   #
-  def unsubscribe_my_periodical(seriesId:)
-    api(:delete, 'myPeriodicals', seriesId)
+  def unsubscribe_my_periodical(seriesId:, **opt)
+    api(:delete, 'myPeriodicals', seriesId, **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -292,26 +275,6 @@ module ApiService::Periodicals
         reference_id: '_unsubscribe-myperiodicals'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = PERIODICALS_SEND_RESPONSE
-    message_table  = PERIODICALS_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::PeriodicalError, message
-  end
 
 end
 

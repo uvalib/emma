@@ -7,7 +7,14 @@
 #
 module TestHelper::IntegrationTests::Authentication
 
+  include TestHelper::Utility
   include TestHelper::Debugging
+
+  # Text indicating an authentication failure.
+  #
+  # @type [String]
+  #
+  AUTH_FAILURE = I18n.t('devise.failure.unauthenticated').freeze
 
   # ===========================================================================
   # :section:
@@ -17,8 +24,7 @@ module TestHelper::IntegrationTests::Authentication
 
   # Current user within a test.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [User, nil]
   #
   def current_user
     @current_user
@@ -26,12 +32,12 @@ module TestHelper::IntegrationTests::Authentication
 
   # Set the current test user.
   #
-  # @param [String] user
+  # @param [String, Symbol, User, nil] user
   #
-  # @return [String]
+  # @return [User, nil]
   #
   def set_current_user(user)
-    @current_user = user
+    @current_user = find_user(user)
   end
 
   # Clear the current test user.
@@ -64,14 +70,15 @@ module TestHelper::IntegrationTests::Authentication
   #
   # If the request was not successful then `#current_user` will be unchanged.
   #
-  # @param [String]  user
-  # @param [Boolean] follow_redirect
+  # @param [String, Symbol, User] user
+  # @param [Boolean]              follow_redirect
   #
   # @return [void]
   #
   def get_sign_in_as(user, follow_redirect: true)
+    user = find_user(user)
     return unless user.present?
-    get sign_in_as_url(id: user)
+    get sign_in_as_url(id: user.to_s)
     follow_redirect!       if follow_redirect  && response.redirection?
     set_current_user(user) if !follow_redirect || response.successful?
   end
@@ -92,8 +99,8 @@ module TestHelper::IntegrationTests::Authentication
 
   # Perform actions within the block signed-on as a test user.
   #
-  # @param [String] user
-  # @param [Hash]   opt               Passed to #run_test.
+  # @param [String, Symbol, User] user
+  # @param [Hash]                 opt   Passed to #run_test.
   #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]
@@ -101,6 +108,7 @@ module TestHelper::IntegrationTests::Authentication
   # @return [void]
   #
   def as_user(user, **opt)
+    user = find_user(user)
     unless opt.key?(:part)
       name = show_user(user, output: false)
       opt  = opt.merge(part: "USER #{name}")
@@ -120,11 +128,11 @@ module TestHelper::IntegrationTests::Authentication
 
   # Invoke an endpoint as the given user.
   #
-  # @param [Symbol] verb              HTTP verb (:get, :put, :post, :delete)
-  # @param [String] user              User identity to assume.
-  # @param [String] url               Target URL or relative path.
-  # @param [Hash]   opt               Passed to #assert_result except for the
-  #                                     options for #as_user and local option:
+  # @param [Symbol]               verb  HTTP verb (:get, :put, :post, :delete)
+  # @param [String, Symbol, User] user  User identity to assume.
+  # @param [String]               url   Target URL or relative path.
+  # @param [Hash]                 opt   Passed to #assert_result except for the
+  #                                       options for #as_user and local:
   #
   # @option opt [Symbol] :expect      Expected result regardless of the user.
   #
@@ -161,6 +169,13 @@ module TestHelper::IntegrationTests::Authentication
   end
 
   # Define HTTP method-specific shortcuts for #send_as.
+  #
+  # @!method get_as
+  # @!method put_as
+  # @!method post_as
+  # @!method patch_as
+  # @!method delete_as
+  #
   %i[get put post patch delete].each do |verb|
     define_method(:"#{verb}_as") do |user, url, **opt, &block|
       send_as(verb, user, url, **opt, &block)

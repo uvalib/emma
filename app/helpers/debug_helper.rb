@@ -1,19 +1,19 @@
-# app/controllers/concerns/user/debug_concern.rb
+# app/helpers/debug_helper.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# User::DebugConcern
+# DebugHelper
 #
-module User::DebugConcern
+module DebugHelper
 
-  extend ActiveSupport::Concern
-
-  included do |base|
-    __included(base, 'User::DebugConcern')
+  def self.included(base)
+    __included(base, '[DebugHelper]')
   end
+
+  include GenericHelper
 
   # ===========================================================================
   # :section:
@@ -33,16 +33,34 @@ module User::DebugConcern
   #
   # @return [nil]
   #
-  def auth_debug(*args)
-    method = (args.shift if args.first.is_a?(Symbol))
-    method ||= caller(1,1).to_s.sub(/^[^`]*`(.*)'[^']*$/, '\1')
+  def __debug_auth(*args)
+    method = args.first.is_a?(Symbol) ? args.shift : calling_method
     part = []
     part << "OMNIAUTH #{method}"
     part << request&.method   if respond_to?(:request)
     part << params.inspect    if respond_to?(:params)
     part += args              if args.present?
     part += Array.wrap(yield) if block_given?
-    __debug(part.join(' | '))
+    __debug(part.compact.join(' | '))
+  end
+
+  # Exception console debugging output.
+  #
+  # @param [String]    label
+  # @param [Exception] exception
+  #
+  # @return [nil]
+  #
+  def __debug_exception(label, exception, **opt)
+    opt = opt.reverse_merge(
+      api_error_message:   api_error_message,
+      'flash.now[:alert]': flash.now[:alert]
+    )
+    part = []
+    part << "!!! #{label} #{exception.class}"
+    part << "ERROR: #{exception.message}"
+    part << opt.map { |k, v| "#{k} = #{v.inspect}" }
+    __debug(part.compact.join(' | '))
   end
 
   # ===========================================================================

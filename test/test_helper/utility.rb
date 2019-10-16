@@ -25,4 +25,23 @@ module TestHelper::Utility
     "#{CDN_URL}/title_instance/13e/small/%s.jpg" % bookshare_id
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Return a User instance from the given identification.
+  #
+  # @param [String, Symbol, User, *] user
+  #
+  # @return [User]
+  # @return [nil]                     If *user* could not be converted.
+  #
+  def find_user(user)
+    user = user.sub(/@.*$/, '').to_sym if user.is_a?(String)
+    user = users(user) if user.is_a?(Symbol)
+    user if user.is_a?(User)
+  end
+
 end

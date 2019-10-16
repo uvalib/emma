@@ -15,7 +15,53 @@ module SerializationConcern
     __included(base, 'SerializationConcern')
   end
 
+  include ApiHelper
+  include ParamsHelper
   include PaginationHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the ultimate target format is HTML.
+  #
+  # @param [Hash, nil] p              Default: `#request_parameters`
+  #
+  def rendering_html?(p = nil)
+    p ||= request_parameters
+    fmt = p[:format].to_s.downcase
+    (fmt == 'html') || (respond_to?(:request) && request.format.html?)
+  end
+
+  # Indicate whether the ultimate target format is something other than HTML.
+  #
+  # @param [Hash, nil] p              Default: `#request_parameters`
+  #
+  def rendering_non_html?(p = nil)
+    !rendering_html?(p)
+  end
+
+  # Indicate whether the ultimate target format is JSON.
+  #
+  # @param [Hash, nil] p              Default: `#request_parameters`
+  #
+  def rendering_json?(p = nil)
+    p ||= request_parameters
+    fmt = p[:format].to_s.downcase
+    (fmt == 'json') || (respond_to?(:request) && request.format.json?)
+  end
+
+  # Indicate whether the ultimate target format is XML.
+  #
+  # @param [Hash, nil] p              Default: `#request_parameters`
+  #
+  def rendering_xml?(p = nil)
+    p ||= request_parameters
+    fmt = p[:format].to_s.downcase
+    (fmt == 'xml') || (respond_to?(:request) && request.format.xml?)
+  end
 
   # ===========================================================================
   # :section:
@@ -30,6 +76,7 @@ module SerializationConcern
   #
   def render_json(item, **opt)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
+    item = item.merge(error: api_error_message) if api_error?
     text = make_json(item)
     render json: text, **opt
   end
@@ -45,6 +92,7 @@ module SerializationConcern
   def render_xml(item, **opt)
     make_opt, render_opt = partition_options(opt, :separator, :name)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
+    item = item.merge(error: api_error_message) if api_error?
     text = make_xml(item, **make_opt)
     render xml: text, **render_opt
   end

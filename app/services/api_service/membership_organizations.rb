@@ -22,43 +22,20 @@ module ApiService::MembershipOrganizations
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  MEMBERSHIP_ORGANIZATIONS_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  MEMBERSHIP_ORGANIZATIONS_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/organizations/{organizationId}
   #
   # == 2.11.2. Get organization information
   # Get details about the specified organization.
   #
   # @param [String] organization
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiOrganization]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-organization
   #
-  def get_organization(organization:)
-    api(:get, 'organizations', organization)
+  def get_organization(organization:, **opt)
+    api(:get, 'organizations', organization, **opt)
     ApiOrganization.new(response, error: exception)
   end
     .tap do |method|
@@ -78,7 +55,7 @@ module ApiService::MembershipOrganizations
   # == 2.11.1. Create an organization
   # Create a new organization.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]   :organizationName    *REQUIRED*
   # @option opt [String]   :address1            *REQUIRED*
@@ -136,7 +113,7 @@ module ApiService::MembershipOrganizations
   # Get a list of members of the given organization.
   #
   # @param [String] organization
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String]          :start
   # @option opt [Integer]         :limit      Default: 10
@@ -176,7 +153,7 @@ module ApiService::MembershipOrganizations
   # Create a new organization user account.
   #
   # @param [String] organization
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String]                  :firstName        *REQUIRED*
   # @option opt [String]                  :lastName         *REQUIRED*
@@ -232,12 +209,14 @@ module ApiService::MembershipOrganizations
   # == 2.11.5. Get organization types
   # Get the list of organization types relevant to the current user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiOrganizationTypeList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-organization-types
   #
-  def get_organization_types(*)
-    api(:get, 'organizationTypes')
+  def get_organization_types(**opt)
+    api(:get, 'organizationTypes', **opt)
     ApiOrganizationTypeList.new(response, error: exception)
   end
     .tap do |method|
@@ -245,26 +224,6 @@ module ApiService::MembershipOrganizations
         reference_id: '_get-organization-types'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = MEMBERSHIP_ORGANIZATIONS_SEND_RESPONSE
-    message_table  = MEMBERSHIP_ORGANIZATIONS_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::OrganizationError, message
-  end
 
 end
 

@@ -7,6 +7,8 @@
 #
 module TestHelper::IntegrationTests::Role
 
+  include TestHelper::Utility
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -15,12 +17,12 @@ module TestHelper::IntegrationTests::Role
 
   # Indicate whether *user* should be able to perform *action* on *subject*.
   #
-  # @param [User, String, nil] user
-  # @param [Symbol, String]    action
-  # @param [Class]             subject
+  # @param [String, Symbol, User, nil] user
+  # @param [Symbol, String]            action
+  # @param [Class]                     subject
   #
   def can?(user, action, subject)
-    user = users(user.sub(/@.*/, '')) if user.is_a?(String)
+    user = find_user(user)
     Ability.new(user).can?(action, subject)
   end
 

@@ -29,8 +29,8 @@ class EditionController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!, except: %i[index show]
   before_action :update_user
+  before_action :authenticate_user!, except: %i[index show]
 
   # ===========================================================================
   # :section: Authorization
@@ -133,7 +133,7 @@ class EditionController < ApplicationController
   def download
     __debug { "EDITION #{__method__} | params = #{params.inspect}" }
     opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
-    render_download api.download_periodical_edition(**opt)
+    render_download(:download_periodical_edition, **opt)
   end
 
   # ===========================================================================

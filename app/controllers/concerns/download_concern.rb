@@ -26,20 +26,25 @@ module DownloadConcern
 
   # render_download
   #
+  # @overload render_download(method, **opt)
+  #   @param [Symbol] method  API request method.
+  #   @param [Hash]   opt     Passed to the request method.
+  #
   # @overload render_download(result)
   #   @param [ApiStatusModel] result
   #
-  # @overload render_download(result, **opt)
-  #   @param [Symbol] result
-  #   @param [Hash]   opt
-  #
   # @return [void]
   #
-  def render_download(result, **opt)
-    result = api.send(result, **opt) if result.is_a?(Symbol)
-    @error = result.error_message
-    @state = result.key.to_s.upcase
-    @link  = (result.messages.first.presence if @state == 'COMPLETED')
+  def render_download(method, **opt)
+    result =
+      if method.is_a?(Api::Message)
+        method
+      else
+        api.send(method, **opt.merge(no_raise: true, no_redirect: true))
+      end
+    @error     = result.error_message
+    @state     = result.key.to_s.upcase
+    @link      = (result.messages.first.presence if @state == 'COMPLETED')
     @exception = result.exception
     respond_to do |format|
       format.html { redirect_to @link if @link }

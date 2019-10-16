@@ -11,6 +11,30 @@ class BookshareTest < ApplicationSystemTestCase
   API_RECORD_ELEMENTS  = '#content > :last-child .sect2 h3'
 
   # ===========================================================================
+  # :section: Verify Bookshare API definitions.
+  # ===========================================================================
+  #
+  test 'bookshare - API methods' do
+    reference = {}
+    duplicate = {}
+    ApiService.api_methods.each_pair do |method, properties|
+      if (ref_id = properties[:reference_id].to_s).blank?
+        next
+      elsif (existing_method = reference[ref_id])
+        duplicate[ref_id] ||= [existing_method]
+        duplicate[ref_id] << method
+      else
+        reference[ref_id] = method
+      end
+    end
+    assert duplicate.blank?, ->() {
+      duplicate.map { |element_id, methods|
+        "#{element_id}: #{methods.join(', ')}"
+      }.unshift('Same :reference_id for two or more API methods:').join("\n")
+    }
+  end
+
+  # ===========================================================================
   # :section: Verify Bookshare API request implementation
   # ===========================================================================
 

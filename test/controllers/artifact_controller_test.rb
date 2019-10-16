@@ -22,9 +22,17 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
   test 'artifact index - list all artifacts' do
     options = OPTIONS.merge(test: __method__, action: 'index')
     TEST_READERS.each do |user|
+      able  = can?(user, :list, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.except(:controller, :action)
+        end
       TEST_FORMATS.each do |fmt|
         url = artifact_index_url(format: fmt)
-        opt = options.merge(format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, opt)
       end
     end
@@ -37,9 +45,17 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
     url_opt = { id: title, fmt: format }
     options = OPTIONS.merge(test: __method__, action: 'show')
     TEST_READERS.each do |user|
+      able  = can?(user, :read, Artifact)
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.except(:controller, :action)
+        end
       TEST_FORMATS.each do |fmt|
         url = artifact_url(url_opt.merge(format: fmt))
-        opt = options.merge(format: fmt)
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, opt)
       end
     end
@@ -170,7 +186,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
 
             when 401 # Unauthorized
               assert fmt != :html
-              assert response.body.match?('sign in')
+              assert response.body.match?(AUTH_FAILURE)
 
             when 302 # Redirect
               assert fmt == :html
@@ -179,9 +195,12 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
 
             when 200 # Success
               unless fmt == :html
-                assert \
-                  response.body.match?('SUBMITTED') ||  # Fresh request
-                  response.body.match?(DOWNLOAD_LINK)   # Already generated
+                valid = {
+                  submitted: 'SUBMITTED',   # Fresh request for artifact.
+                  download:  DOWNLOAD_LINK  # Artifact already generated.
+                }
+                ok = valid.values.any? { |v| response.body.match?(v) }
+                assert ok, "response is none of #{valid.keys}"
               end
 
             else

@@ -11,6 +11,8 @@ module TestHelper::SystemTests::Bookshare
 
   include TestHelper::SystemTests::Common
 
+  include ApiHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -71,6 +73,12 @@ module TestHelper::SystemTests::Bookshare
     SiteType:             'String',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.freeze
 
+  # @type [String, Integer]
+  DEFAULT_INDENT = 3
+
+  # @type [String]
+  DEFAULT_SEPARATOR = "\t"
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -97,15 +105,6 @@ module TestHelper::SystemTests::Bookshare
   # ===========================================================================
 
   public
-
-  # Get a validated ApiService instance.
-  #
-  # @return [ApiService]
-  #
-  def api
-    # noinspection RubyYardReturnMatch
-    @api ||= validate_api_methods && ApiService.instance
-  end
 
   # Get the underscore form of the given request from the Bookshare API
   # documentation page.
@@ -158,38 +157,6 @@ module TestHelper::SystemTests::Bookshare
   # :section:
   # ===========================================================================
 
-  protected
-
-  # Verify that each documentation reference ID is associated with only one
-  # ApiService method.  If any duplicates are found, #assert will be raised.
-  #
-  # @return [TrueClass]
-  #
-  def validate_api_methods
-    reference = {}
-    duplicate = {}
-    ApiService.api_methods.each do |method, properties|
-      if (ref_id = properties[:reference_id].to_s).blank?
-        next
-      elsif (existing_method = reference[ref_id])
-        duplicate[ref_id] ||= [existing_method]
-        duplicate[ref_id] << method
-      else
-        reference[ref_id] = method
-      end
-    end
-    assert duplicate.blank?, ->() {
-      duplicate.map { |element_id, methods|
-        "#{element_id}: #{methods.join(', ')}"
-      }.unshift('Same :reference_id for two or more API methods:').join("\n")
-    }
-    true
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
   public
 
   # Get the class which implements the named method.
@@ -200,7 +167,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [nil]
   #
   def method_class(m)
-    ApiService.instance.method(m.to_sym)
+    api.method(m.to_sym)
   end
 
   # method_params
@@ -271,10 +238,13 @@ module TestHelper::SystemTests::Bookshare
     case (type = type.to_s.strip)
       when ''
         default
+
       when 'string', 'integer', 'boolean'
         type.camelize
+
       when /^(integer|boolean).*/
         $1.camelize
+
       when /(^string)/
         parts = type.sub($1, '').tr('(),', ' ').squish
         case parts
@@ -283,6 +253,7 @@ module TestHelper::SystemTests::Bookshare
           when 'year' then 'IsoYear'
           else             type
         end
+
       when /(^enum)/
         parts = type.sub($1, '').tr('(),', ' ').squish
         found = parts = parts.presence&.split(' ')&.sort
@@ -290,10 +261,12 @@ module TestHelper::SystemTests::Bookshare
           %w(AllowsType).find { |k| (parts - API_ENUMERATIONS[k]).blank? } ||
           API_ENUMERATIONS.find { |k, values| break k if parts == values }
         found || type
+
       when /(array$)/, /(array\(multi\)$)/
         parts = type.sub($1, '').tr('<>,', ' ').squish
         type  = record_field_type(parts, 'String')
         "Array #{type}"
+
       else
         type = record_type(type)
         type = "Api::#{type}" unless API_ENUMERATIONS.key?(type)
@@ -413,15 +386,22 @@ module TestHelper::SystemTests::Bookshare
   # @param [String, nil]     header
   # @param [Integer, String] indent
   # @param [Integer]         width
+  # @param [String]          separator
   #
   # @return [String]
   #
-  def missing_list(missing, header = nil, indent: nil, width: nil)
+  def missing_list(
+    missing,
+    header =   nil,
+    indent:    DEFAULT_INDENT,
+    width:     nil,
+    separator: DEFAULT_SEPARATOR
+  )
     missing  = missing.to_h unless missing.is_a?(Hash)
-    header &&= "Missing #{header}:"
+    header &&= "*** Missing #{header} ***\n"
     indent   = ' ' * indent if indent.is_a?(Integer)
     width  ||= missing.keys.sort_by(&:size).last.size
-    format   = "#{indent}*** %-#{width}s\t#{APIDOC_URL}#%s"
+    format   = "#{indent}%-#{width}s#{separator}#{APIDOC_URL}#%s"
     show_section(header, output: false) {
       missing.map { |item, id| sprintf(format, item, id) }
     }.join("\n")
@@ -437,7 +417,7 @@ module TestHelper::SystemTests::Bookshare
   #
   def problem_list(problems, header = nil, **opt)
     problems = problems.to_h unless problems.is_a?(Hash)
-    header &&= "Problem #{header}:"
+    header &&= "*** Problem #{header} ***"
     ss_opt   = opt.merge(output: false)
     ss_opt[:width] ||=
       problems.values.flat_map(&:keys).sort_by(&:size).last.size
@@ -594,10 +574,10 @@ module TestHelper::SystemTests::Bookshare
   #
   def show_subsection(
     header,
-    parts = nil,
-    indent:    3,
+    parts =    nil,
+    indent:    DEFAULT_INDENT,
     width:     nil,
-    separator: "\t",
+    separator: DEFAULT_SEPARATOR,
     output:    true
   )
     parts  = parts.to_h if parts.is_a?(Array)

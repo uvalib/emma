@@ -24,37 +24,13 @@ module ApiService::MembershipActiveTitles
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  MEMBERSHIP_ACTIVE_TITLES_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  MEMBERSHIP_ACTIVE_TITLES_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/accounts/{userIdentifier}/activeBooks
   #
   # == 2.12.1. Get active books for a user
   # Get a list of active books for a specific user that are ready to read.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]            :start
   # @option opt [Integer]           :limit      Default: 10
@@ -97,14 +73,15 @@ module ApiService::MembershipActiveTitles
   # @param [User, String, nil] user         Default: @user
   # @param [String]            bookshareId
   # @param [String]            format
+  # @param [Hash]              opt          Passed to #api.
   #
   # @return [ApiActiveBookList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_user-active-books-add
   #
-  def create_active_book(user: @user, bookshareId:, format:)
+  def create_active_book(user: @user, bookshareId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = { bookshareId: bookshareId, format: format }
+    opt = opt.merge(bookshareId: bookshareId, format: format)
     api(:post, 'accounts', userIdentifier, 'activeBooks', **opt)
     ApiActiveBookList.new(response, error: exception)
   end
@@ -129,14 +106,15 @@ module ApiService::MembershipActiveTitles
   #
   # @param [User, String, nil] user           Default: @user
   # @param [String]            activeTitleId
+  # @param [Hash]              opt            Passed to #api.
   #
   # @return [ApiActiveBookList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_user-active-books-remove
   #
-  def delete_active_book(user: @user, activeTitleId:)
-    userIdentifier = name_of(user)
-    api(:delete, 'accounts', userIdentifier, 'activeBooks', activeTitleId)
+  def delete_active_book(user: @user, activeTitleId:, **opt)
+    userId = name_of(user)
+    api(:delete, 'accounts', userId, 'activeBooks', activeTitleId, **opt)
     ApiActiveBookList.new(response, error: exception)
   end
     .tap do |method|
@@ -165,7 +143,7 @@ module ApiService::MembershipActiveTitles
   # read.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]            :start
   # @option opt [Integer]           :limit      Default: 10
@@ -208,14 +186,15 @@ module ApiService::MembershipActiveTitles
   # @param [User, String, nil] user         Default: @user
   # @param [String]            bookshareId
   # @param [String]            format
+  # @param [Hash]              opt          Passed to #api.
   #
   # @return [ApiActivePeriodicalList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_user-active-periodicals-add
   #
-  def create_active_periodical(user: @user, bookshareId:, format:)
+  def create_active_periodical(user: @user, bookshareId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = { bookshareId: bookshareId, format: format }
+    opt = opt.merge(bookshareId: bookshareId, format: format)
     api(:post, 'accounts', userIdentifier, 'activePeriodicals', **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
@@ -241,14 +220,15 @@ module ApiService::MembershipActiveTitles
   #
   # @param [User, String, nil] user           Default: @user
   # @param [String]            activeTitleId
+  # @param [Hash]              opt            Passed to #api.
   #
   # @return [ApiActivePeriodicalList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_user-active-periodicals-remove
   #
-  def delete_active_periodical(user: @user, activeTitleId:)
-    user = name_of(user)
-    api(:delete, 'accounts', user, 'activePeriodicals', activeTitleId)
+  def delete_active_periodical(user: @user, activeTitleId:, **opt)
+    userId = name_of(user)
+    api(:delete, 'accounts', userId, 'activePeriodicals', activeTitleId, **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
     .tap do |method|
@@ -277,14 +257,15 @@ module ApiService::MembershipActiveTitles
   # added by the system to a user’s active books list.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiActiveBookProfile]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-active-book-profile
   #
-  def get_active_books_profile(user: @user)
+  def get_active_books_profile(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'activeBooksProfile')
+    api(:get, 'accounts', userIdentifier, 'activeBooksProfile', **opt)
     ApiActiveBookProfile.new(response, error: exception)
   end
     .tap do |method|
@@ -306,7 +287,7 @@ module ApiService::MembershipActiveTitles
   # added by the system to a user’s active books list.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [Boolean] :useRecommendations
   # @option opt [Boolean] :useRequestList
@@ -338,26 +319,6 @@ module ApiService::MembershipActiveTitles
         reference_id:         '_put-active-book-profile'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = MEMBERSHIP_ACTIVE_TITLES_SEND_RESPONSE
-    message_table  = MEMBERSHIP_ACTIVE_TITLES_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::AccountError, message
-  end
 
 end
 

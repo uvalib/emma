@@ -20,9 +20,9 @@
 # directly (avoiding the OAuth2 flow).
 #
 BOOKSHARE_TEST_USERS = {
-  'emmadso@bookshare.org'        => '72aa75f8-db4e-4806-a5da-70eadd3b71d3',
-  'emmacollection@bookshare.org' => '73978492-7661-482f-9eee-df9ccea05413',
-  'emmamembership@bookshare.org' => 'b1dc2b15-6898-4a58-812c-dcd70f29be34',
+  'emmadso@bookshare.org'        => 'fbafefb8-7305-48fe-b26e-fcc77648e61c',
+  'emmacollection@bookshare.org' => 'f3ccea3f-c019-481c-b455-70e39b6f162e',
+  'emmamembership@bookshare.org' => 'e10d5622-0618-42c9-b940-4ccc013ebed4',
 }.freeze
 
 # Bookshare API key.

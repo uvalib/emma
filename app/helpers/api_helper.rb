@@ -26,12 +26,48 @@ module ApiHelper
 
   public
 
-  # Initialize API service.
+  # Access the API service.
   #
   # @return [ApiService]
   #
   def api
-    @api ||= ApiService.update(user: current_user)
+    @api ||= api_update
+  end
+
+  # Update the API service.
+  #
+  # @param [Hash] opt
+  #
+  # @return [ApiService]
+  #
+  def api_update(**opt)
+    default_opt = {}
+    default_opt[:user]     = current_user if current_user.present?
+    default_opt[:no_raise] = true         if Rails.env.test?
+    @api = ApiService.update(**opt.reverse_merge(default_opt))
+  end
+
+  # Remove the API service.
+  #
+  # @return [nil]
+  #
+  def api_clear
+    @api = ApiService.clear
+  end
+
+  # Indicate whether the latest API request generated an exception.
+  #
+  def api_error?
+    defined?(@api) && @api.present? && @api.error?
+  end
+
+  # Get the current API exception message if the service has been started.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def api_error_message
+    @api.error_message if defined?(:@api) && @api.present?
   end
 
   # Get the current API exception if the service has been started.
@@ -40,7 +76,7 @@ module ApiHelper
   # @return [nil]
   #
   def api_exception
-    @api&.exception
+    @api.exception if defined?(:@api) && @api.present?
   end
 
   # ===========================================================================
@@ -78,7 +114,8 @@ module ApiHelper
   def api_method(method, path, **opt)
     method = method&.downcase&.to_sym || :get
     path   = URI.escape(path.to_s)
-    data   = api.send(:api, method, path, opt)&.body&.presence
+    data   = api.send(:api, method, path, **opt.merge(no_raise: true))
+    data &&= data.body.presence
     {
       method:    method.to_s.upcase,
       path:      path,
@@ -91,60 +128,59 @@ module ApiHelper
 
   # Generate HTML from the result of an API method invocation.
   #
-  # @param [Faraday::Response, Api::Record::Base, Exception, Integer, String] value
-  # @param [String, nil] separator    Default: "\n".
+  # @param [Api::Record::Base, Faraday::Response, Exception, Integer, String] value
+  # @param [Integer, String] indent     Space count or literal indent string.
+  # @param [String]          separator  Default: "\n".
+  # @param [Boolean]         html       If *false* then URLs will not be turned
+  #                                       into <a> links and no HTML formatting
+  #                                       will be applied.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [String]
   #
-  def api_format_result(value, separator: "\n")
+  def api_format_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record::Base)
     value  = value.body if value.is_a?(Faraday::Response)
-    elements =
+    space  = html ? '&nbsp;' : ' '
+    indent = indent.gsub(/[ \t]/, space) if indent.is_a?(String)
+    indent = space * indent              if indent.is_a?(Integer)
+    lines =
       if record && value.exception.present?
         # === Exception or error response value ===
-        mask_exception_value = false
-        value.pretty_inspect
-          .gsub(/(@exception=#<Faraday::ClientError)(.*?)(>,)/) { |substring|
-            substring = "#{$1} ... #{$3}" if mask_exception_value
-            mask_exception_value = true
-            substring
-          }
-          .split(/\n/)
-          .map { |line| content_tag(:div, line, class: 'exception') }
+        value = value.pretty_inspect
+        value = mask_later_exceptions(value)
+        value.split(/\n/).map do |line|
+          line = "#{indent}#{line}" if indent
+          line = content_tag(:div, line, class: 'exception') if html
+          line
+        end
 
       elsif record || value.is_a?(Exception) || value.is_a?(String)
         # === Valid JSON response value ===
-        link_opt = { rel: 'noreferrer' }
-        link_opt[:target] = '_blank' unless params[:action] == 'v2'
-        quot = '&quot;'
-        pretty_json(value)
-          .gsub(/"([^"]+)":/, '\1: ')
-          .yield_self { |s| ERB::Util.h(s) }
-          .gsub(/^( +)/) { |s| s.gsub(/ /, '&nbsp;&nbsp;') }
-          .gsub(/^([^:]+:) /, '\1&nbsp;')
-          .gsub(%r{&quot;https?://.+&quot;}) { |s|
-            # Transform URLs into links, translating Bookshare API hrefs into
-            # local paths.
-            url = href = s.split(quot)[1].html_safe
-            if href.start_with?(ApiService::BASE_URL)
-              uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
-              query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
-              href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
-            end
-            url = make_link(url, href, link_opt) if href.present?
-            "#{quot}#{url}#{quot}"
-          }
-          .split(/\n/)
-          .map { |line| content_tag(:div, line.html_safe, class: 'data') }
+        value = pretty_json(value)
+        value.gsub!(/\\"([^"\\]+?)\\":/, '\1: ')
+        value = ERB::Util.h(value) if html
+        value.gsub!(/,([^ ])/, (',' + space + '\1'))
+        value.gsub!(/^( +)/) { |s| s.gsub(/ /, (space * 2)) } if html
+        value.gsub!(/^([^:]+:) /, ('\1' + space))
+        value = make_links(value) if html
+        value.split(/\n/).map do |line|
+          line = "#{indent}#{line}" if indent
+          line = content_tag(:div, line.html_safe, class: 'data') if html
+          line
+        end
 
       else
         # === Scalar response value ===
-        value.pretty_inspect
-          .split(/\n/)
-          .map { |line| content_tag(:div, line, class: 'data') }
+        value = value.pretty_inspect
+        value.split(/\n/).map do |line|
+          line = "#{indent}#{line}" if indent
+          line = content_tag(:div, line, class: 'data') if html
+          line
+        end
 
       end
-    safe_join(elements, separator)
+    html ? safe_join(lines, separator) : lines.join(separator)
   end
 
   # ===========================================================================
@@ -166,9 +202,9 @@ module ApiHelper
   #
   def pretty_json(value)
     case value
-      when ApiService::HtmlResult
+      when ApiService::HtmlResultError
         value.response.body
-      when Faraday::ClientError
+      when Faraday::Error
         response =
           value.response.pretty_inspect
             .gsub(/\n/,    PJ_NEWLINE)
@@ -191,6 +227,53 @@ module ApiHelper
     end
   rescue
     value.pretty_inspect
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Abbreviate all but the first instance of the rendering of an exception.
+  #
+  # @param [String] html              An HTML-ready string.
+  #
+  # @return [String]                  The modified string.
+  #
+  def mask_later_exceptions(html)
+    mask = false
+    html.gsub(/(@exception=#<[A-Z0-9_:]+Error)(.*?)(>,)/i) do |substring|
+      if mask
+        "#{$1} ... #{$3}"
+      else
+        mask = true
+        substring
+      end
+    end
+  end
+
+  # Transform URLs into links by translating Bookshare API hrefs into local
+  # paths.
+  #
+  # @param [String] html              An HTML-ready string.
+  # @param [Hash]   opt               Passed to #make_link.
+  #
+  # @return [String]                  The modified string.
+  #
+  def make_links(html, **opt)
+    opt[:rel]    ||= 'noreferrer'
+    opt[:target] ||= '_blank' unless params[:action] == 'v2'
+    html.gsub(%r{&quot;https?://.+&quot;}) do |s|
+      url = href = s.split('&quot;')[1].html_safe
+      if href.start_with?(ApiService::BASE_URL)
+        uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
+        query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
+        href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
+      end
+      url = make_link(url, href, opt) if href.present?
+      "&quot;#{url}&quot;"
+    end
   end
 
 end

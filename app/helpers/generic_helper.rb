@@ -128,6 +128,25 @@ module GenericHelper
     return hash.slice(*keys), hash.except(*keys)
   end
 
+  # Return the name of the calling method.
+  #
+  # @param [Array<String>] call_stack   Default: `#caller(2)`.
+  #
+  # @return [String]
+  #
+  def calling_method(call_stack = nil)
+    call_stack ||= caller(2)
+    call_stack.find do |line|
+      _file_line, name = line.to_s.split(/:in\s+/)
+      name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1').presence
+      case name
+        when nil, 'each', 'map', '__output' then next
+        when /^(block|rescue)\s+in\s+(.*)$/ then return $2
+        else                                     return name
+      end
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

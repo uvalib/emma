@@ -12,6 +12,26 @@ require 'faraday'
 #
 module ApiService::Common
 
+  # Include the shared data structure which holds the definition of the API
+  # requests and parameters.
+  #
+  # @param [Module] base
+  #
+  # @return [Array<Module>]           @see #include_submodules
+  #
+  def self.included(base)
+    base.send(:include, ApiService::Definition)
+    base.send(:extend,  ApiService::Definition)
+  end
+
+  include GenericHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   API_KEY      = BOOKSHARE_API_KEY
   BASE_URL     = BOOKSHARE_BASE_URL
   API_VERSION  = BOOKSHARE_API_VERSION
@@ -41,11 +61,23 @@ module ApiService::Common
   #
   CACHING = false
 
-  # Control whether validation errors cause a RuntimeError.
+  # Control whether parameter validation errors cause a RuntimeError.
   #
   # @type [Boolean]
   #
-  RAISE_ON_ERROR = Rails.env.test?
+  RAISE_ON_INVALID_PARAMS = Rails.env.test?
+
+  # Maximum length of redirection chain.
+  #
+  # @type [Integer]
+  #
+  MAX_REDIRECTS = 2
+
+  # Options consumed by #api (and not passed on as URL query options).
+  #
+  # @type [Array<Symbol>]
+  #
+  SERVICE_OPTIONS = %i[no_raise no_exception no_redirect].freeze
 
   # Original request parameters which should not be passed on to the API.
   #
@@ -63,180 +95,6 @@ module ApiService::Common
   HTTP_METHODS =
     %w(GET PUT POST DELETE)
       .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
-
-  # @type [Hash{Symbol=>String}]
-  API_RECV_MESSAGE = {
-    default: 'Bad response from server',
-  }.freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  API_RECV_RESPONSE = {
-    default: nil
-  }.freeze
-
-  # @type [Hash{Symbol=>String}]
-  API_SEND_MESSAGE = {
-    default: 'Bad response from server',
-  }.freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  API_SEND_RESPONSE = {
-    default: nil
-  }.freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Interface to the shared data structure which holds the definition of the
-  # API requests and parameters.
-  #
-  # noinspection RubyClassVariableUsageInspection
-  module ApiRequests
-
-    # Add a method name and its properties to #api_methods.
-    #
-    # @param [Hash{Symbol=>Hash}] prop
-    #
-    # @return [void]
-    #
-    # == Usage Notes
-    # The definition of each API request method is followed by a block which
-    # invokes this method in order to register the properties of the method and
-    # its associated API endpoint.  The *prop* argument is expected to be a
-    # hash with a single entry whose key is the symbol for the method and whose
-    # value is a Hash containing the properties.
-    #
-    # All keys in the property hash are optional, however :reference_id must be
-    # included for methods that map on to documented API requests.
-    #
-    # :alias          One or more identifiers which associate a method named
-    #                 argument with the name of the API parameter it
-    #                 represents.  (This is not needed for arguments with names
-    #                 that are the same as the documented API parameter.)
-    #
-    # :required       One or more API parameters which are mandatory, which may
-    #                 include either Path or Query parameters.
-    #
-    # :optional       One or more API optional Query parameters.
-    #                 (Path parameters are never optional.)
-    #
-    # :multi          An array of one or more parameters that can be passed in
-    #                 as a single value or as an array.
-    #
-    # :role           If given as :anonymous this is a hint that the request
-    #                 should succeed even if the current user is not logged in.
-    #
-    # :reference_id   This is the HTML element ID of the request on the
-    #                 Bookshare API documentation page.  If this is not
-    #                 provided then the method is not treated as a true API
-    #                 method.
-    #
-    # :topic          The base of the module in which the method was defined
-    #                 added by this method as a hint for the API Explorer.
-    #
-    def add_api(prop)
-      # __output { ". API Request method #{prop.keys.join(', ')}" }
-      topic = self.to_s.demodulize
-      prop = prop.transform_values { |v| v.merge(topic: topic) }
-      (@@all_methods  ||= {}).merge!(prop)
-      (@@true_methods ||= {}).merge!(prop.select { |_, v| v[:reference_id] })
-    end
-
-    # Properties for each method which implements an API request.
-    #
-    # By default only true (documented) API methods are returned, unless:
-    # - If :synthetic is *true* then "fake" methods (which implement
-    # functionality not directly supported by the API) are also included.
-    # - If :synthetic is :only then only the "fake" methods are returned.
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    # @overload api_methods(synthetic: false)
-    #   @param [Boolean] synthetic
-    #   @return [Hash{Symbol=>Hash}]
-    #
-    # @overload api_methods(method)
-    #   @param [Symbol, String] method
-    #   @return [Hash, nil]
-    #
-    def api_methods(method = nil, synthetic: false)
-      @@all_methods  ||= {}
-      @@true_methods ||= {}
-      if method
-        @@all_methods[method.to_sym]
-      elsif synthetic == :only
-        @@all_methods.except(*@@true_methods.keys)
-      elsif synthetic
-        @@all_methods
-      else
-        @@true_methods
-      end
-    end
-
-    # The optional API query parameters for the given method.
-    #
-    # @param [Symbol, String] method
-    #
-    # @return [Array<Symbol>]
-    #
-    def optional_parameters(method)
-      api_methods(method)&.dig(:optional)&.keys || []
-    end
-
-    # The required API query parameters for the given method.
-    #
-    # By default, these are only the Query or FormData parameters that would be
-    # the required parameters that are to be passed through the method's
-    # "**opt" options has.  If :all is *true*, the result will also include the
-    # method's named parameters (translated to the name used in the
-    # documentation [e.g., "userIdentifier" instead of "user"]).
-    #
-    # @param [Symbol, String] method
-    # @param [Boolean]        all
-    #
-    # @return [Array<Symbol>]
-    #
-    def required_parameters(method, all: false)
-      result = api_methods(method)&.dig(:required)&.keys || []
-      result -= named_parameters(method) unless all
-      result
-    end
-
-    # The subset of required API request parameters which are passed to the
-    # implementation method via named parameters.
-    #
-    # By default, the names are translated to the documented parameter names.
-    # If :no_alias is *true* then the actual parameter names are returned.
-    #
-    # @param [Symbol, String] method
-    # @param [Boolean]        no_alias
-    #
-    # @return [Array<Symbol>]
-    #
-    def named_parameters(method, no_alias: false)
-      alias_keys = !no_alias && api_methods(method)&.dig(:alias) || {}
-      method(method).parameters.map { |pair|
-        type, name = pair
-        alias_keys[name] || name if %i[key keyreq].include?(type)
-      }.compact
-    end
-
-  end
-
-  # Include the shared data structure which holds the definition of the API
-  # requests and parameters.
-  #
-  # @param [Module] base
-  #
-  # @return [Array<Module>]           @see #include_submodules
-  #
-  def self.included(base)
-    base.send(:include, ApiRequests)
-    base.send(:extend,  ApiRequests)
-  end
 
   # ===========================================================================
   # :section:
@@ -268,34 +126,12 @@ module ApiService::Common
   #
   attr_reader :response
 
-  # An exception raised by the last #api access.
-  #
-  # @return [Exception, nil]
-  #
-  attr_reader :exception
-
-  # The user that invoked #api.
-  #
-  # @return [User, nil]
-  #
-  attr_reader :user
-
   # Last API request type.
   #
   # @return [String]
   #
   def request_type
     @verb.to_s.upcase
-  end
-
-  # Cause an exception to be ignored to avoid generation of a flash message.
-  #
-  # @return [void]
-  #
-  # @see SessionConcern#session_update
-  #
-  def discard_exception
-    @exception = nil
   end
 
   # Most recently invoked HTTP request type.
@@ -312,7 +148,67 @@ module ApiService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Exceptions
+  # ===========================================================================
+
+  public
+
+  # The exception raised by the last #api access.
+  #
+  # @return [Exception, nil]
+  #
+  attr_reader :exception
+
+  # Indicate whether the latest API request generated an exception.
+  #
+  def error?
+    @exception.present?
+  end
+
+  # The message associated with the latest API exception.
+  #
+  # @return [String]
+  # @return [nil]                     If there is no exception.
+  #
+  def error_message
+    @exception&.message
+  end
+
+  # Cause an exception to be ignored to avoid generation of a flash message.
+  #
+  # @return [void]
+  #
+  # @see SessionConcern#session_update
+  #
+  def discard_exception
+    @exception = nil
+  end
+
+  # ===========================================================================
+  # :section: Authentication
+  # ===========================================================================
+
+  public
+
+  # The user that invoked #api.
+  #
+  # @return [User, nil]
+  #
+  attr_reader :user
+
+  # Extract the user name to be used for API parameters.
+  #
+  # @param [User, String] user
+  #
+  # @return [String]
+  #
+  def name_of(user)
+    name = user.is_a?(Hash) ? user['uid'] : user
+    name.to_s.presence || DEFAULT_USER
+  end
+
+  # ===========================================================================
+  # :section: Authentication
   # ===========================================================================
 
   protected
@@ -324,7 +220,8 @@ module ApiService::Common
   # @return [void]
   #
   def set_user(u)
-    @user = (u if u.is_a?(User))
+    raise "argument must be a User not a #{u.class}" if u && !u.is_a?(User)
+    @user = u
   end
 
   # The current OAuth2 access bearer token.
@@ -372,17 +269,19 @@ module ApiService::Common
   #
   # noinspection RubyScope
   def api(verb, *args, **opt)
-    result = @verb = @action = @response = @exception = nil
-    headers = {}
+    error = @verb = @action = @response = @exception = nil
+
+    # Set local options from parameters or service options.
+    opt, @params = partition_options(opt, *SERVICE_OPTIONS)
+    no_exception = opt[:no_exception] || options[:no_exception]
+    no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
+    method       = opt[:method]       || calling_method
 
     # Build API call parameters (minus local options).
-    @params = opt.merge(api_key: API_KEY)
     @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
     @params.transform_keys! { |k| (k == :fmt) ? :format : k }
-    @params[:limit] = MAX_LIMIT if @params[:limit].to_s == 'max'
-    noexcp  = @params.delete(:no_exception)
-    noraise = @params.delete(:no_raise) || noexcp
-    params  = @params
+    @params[:limit]   = MAX_LIMIT if @params[:limit].to_s == 'max'
+    @params[:api_key] = API_KEY
 
     # Form the API path from the remaining arguments.
     args.unshift(API_VERSION) unless args.first == API_VERSION
@@ -390,57 +289,41 @@ module ApiService::Common
     @action = "/#{@action}" unless @action.start_with?('/')
 
     # Determine whether the HTTP method indicates a write rather than a read
-    # and prepare the HTTP headers accordingly.
-    @verb = verb.to_s.downcase.to_sym
-    if %i[put post patch].include?(@verb)
-      headers['Content-Type'] = 'application/json'
-      params = params.to_json
-    end
+    # and prepare the HTTP headers accordingly then send the API request.
+    @verb   = verb.to_s.downcase.to_sym
+    update  = %i[put post patch].include?(@verb)
+    params  = update ? @params.to_json : @params
+    headers = ({ 'Content-Type' => 'application/json' } if update)
+    __debug {
+      ">>> api | #{@action.inspect} | " +
+        { params: params, headers: headers }
+          .map { |k, v| "#{k} = #{v.inspect}" unless v.blank? }
+          .compact.join(' | ')
+    }
+    @response = transmit(@verb, @action, params, headers, **opt)
 
-    # Invoke the API.
-    __debug { ">>> #{__method__} | #{@action.inspect} | params = #{params.inspect} | headers = #{headers.inspect}" }
-    @response = connection.send(@verb, @action, params, headers)
-    body = @response&.body
-    raise ApiService::EmptyResult.new(@response) unless body.present?
-    raise ApiService::HtmlResult.new(@response)  if body.match?(/^\s*</)
-    result = @response
-
-  rescue SocketError, EOFError => error
-    __debug { "!!! #{__method__} | #{@action.inspect} | #{error.message}" }
-    @exception = error unless noexcp
-    raise error        unless noraise # Handled by ApplicationController
-
-  rescue ApiService::ResponseError => error
-    __debug { "!!! #{__method__} | #{@action.inspect} | #{error.message}" }
-    @exception = error unless noexcp
-
-  rescue Faraday::ClientError => error
-    __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }
-    unless noexcp
-      resp = error.response
-      json = MultiJson.load(resp[:body]) rescue nil
-      desc = json&.dig('error_description')&.presence
-      desc ||=
-        Array.wrap(json&.dig('messages')).find { |msg|
-          parts = msg.split(/=/)
-          tag   = parts.shift
-          next unless tag.include?('error_description')
-          break parts.join('=').gsub(/\\"/, '').presence
-        }
-      error = Faraday::ClientError.new(desc, resp) if desc.present?
-      @exception = error
-    end
+  rescue Api::Error => error
+    log_exception(method: method, error: error)
 
   rescue => error
-    __debug { "!!! #{__method__} | #{@action.inspect} | ERROR: #{error.message}" }
-    Log.error { "API #{__method__}: #{error.message}" }
-    @exception = error unless noexcp
+    log_exception(method: method, error: error)
+    error = ApiService::ResponseError.new(error)
 
   ensure
-    __debug { "<<< #{__method__} | #{@action.inspect} | status = #{@response&.status} | data = #{@response&.body.inspect.truncate(256)}" }
-    @response = result
-    return result
-
+    __debug {
+      # noinspection RubyNilAnalysis
+      resp   = error.respond_to?(:response) && error.response || @response
+      status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
+      data   = resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
+      "<<< api | #{@action.inspect} | " +
+        { status: status, data: data }
+          .map { |k, v| "#{k} = #{v.inspect.truncate(256)}" }
+          .compact.join(' | ')
+    }
+    @response  = nil   if error
+    @exception = error unless no_exception
+    raise @exception   if @exception unless no_raise
+    return @response
   end
 
   # ===========================================================================
@@ -491,22 +374,77 @@ module ApiService::Common
     end
   end
 
+  # Send an API request.
+  #
+  # @param [Symbol]            verb
+  # @param [String]            action
+  # @param [Hash, String, nil] params
+  # @param [Hash, nil]         headers
+  # @param [Hash]              opt
+  #
+  # @raise [ApiService::EmptyResultError]
+  # @raise [ApiService::HtmlResultError]
+  # @raise [ApiService::RedirectionError]
+  # @raise [ApiService::ResponseError]
+  #
+  # @return [Faraday::Response]
+  # @return [nil]
+  #
+  # === Bookshare API status codes
+  # 301 Moved Permanently
+  # 302 Found (typically, redirect to download location)
+  # 200 OK
+  # 201 Created
+  # 202 Accepted
+  # 400 Bad Request
+  # 401 Unauthorized
+  # 403 Forbidden
+  # 404 Not Found
+  # 405 Method Not Allowed
+  # 406 Not Acceptable
+  # 409 Conflict
+  # 415 Unsupported Media Type
+  # 500 Internal Server Error
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
+  #
+  def transmit(verb, action, params = nil, headers = nil, **opt)
+    response = connection.send(verb, action, params, headers)
+    raise ApiService::EmptyResultError.new(response) if response.nil?
+    redirection = no_redirect = nil
+    case response.status
+      when 200..299
+        result = response.body
+        raise ApiService::EmptyResultError.new(response) if result.blank?
+        raise ApiService::HtmlResultError.new(response)  if result =~ /^\s*</
+      when 301, 303, 308
+        redirection = opt[:redirection].to_i
+        no_redirect = (redirection >= MAX_REDIRECTS)
+      when 302, 307
+        redirection = opt[:redirection].to_i
+        no_redirect = (redirection >= MAX_REDIRECTS)
+        no_redirect ||=
+          opt.key?(:no_redirect) ? opt[:no_redirect] : options[:no_redirect]
+      else
+        raise ApiService::ResponseError.new(response)
+    end
+    if redirection
+      action = response.headers['Location']
+      raise ApiService::RedirectionError.new(response) if action.blank?
+      unless no_redirect
+        opt = opt.merge(redirection: (redirection += 1))
+        __debug { "!!! api | REDIRECT #{redirection} TO #{action.inspect}" }
+        response = transmit(:get, action, params, headers, **opt)
+      end
+    end
+    response
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   protected
-
-  # Extract the user name to be used for API parameters.
-  #
-  # @param [User, String] user
-  #
-  # @return [String]
-  #
-  def name_of(user)
-    name = user.is_a?(Hash) ? user['uid'] : user
-    name.to_s.presence || DEFAULT_USER
-  end
 
   # Extract API parameters from *options*.
   #
@@ -520,11 +458,11 @@ module ApiService::Common
   #
   def get_parameters(method, check_req: true, check_opt: false, **opt)
     properties     = api_methods(method)
-    return handle_errors(method, 'unregistered API method') if properties.nil?
+    return invalid_params(method, 'unregistered API method') if properties.nil?
     multi_valued   = Array.wrap(properties[:multi]).presence
     required_keys  = required_parameters(method)
     optional_keys  = optional_parameters(method)
-    specified_keys = required_keys + optional_keys
+    specified_keys = required_keys + optional_keys + SERVICE_OPTIONS
 
     # Validate the keys provided.
     errors = []
@@ -536,7 +474,7 @@ module ApiService::Common
       error = +'invalid API ' << 'parameter'.pluralize(extra_keys.size)
       errors.push(error << ' ' << extra_keys.join(', '))
     end
-    handle_errors(method, *errors) if errors.present?
+    invalid_params(method, *errors) if errors.present?
 
     # Return with the options needed for the API request.
     opt.slice(*specified_keys).map { |k, v|
@@ -556,19 +494,19 @@ module ApiService::Common
 
   private
 
-  # Report on errors.
+  # Report on errors in parameters supplied to an API method.
   #
   # @param [String, Symbol] method
   # @param [Array<String>]  errors
-  # @param [Boolean]        raise_on_error
+  # @param [Boolean]        raise_exception
   #
-  # @raise [RuntimeError]             Iff *raise_on_error*.
+  # @raise [RuntimeError]             Iff *raise_exception*.
   #
   # @return [nil]
   #
-  def handle_errors(method, *errors, raise_on_error: RAISE_ON_ERROR)
+  def invalid_params(method, *errors, raise_exception: RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
-    if raise_on_error
+    if raise_exception
       raise RuntimeError, ("#{method}: " + errors.join("\nAND "))
     else
       errors.each { |problem| Log.warn("#{method}: #{problem}") }
@@ -577,99 +515,33 @@ module ApiService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Exceptions
   # ===========================================================================
 
   protected
 
-  # validate_response
+  # log_exception
   #
-  # TODO: doesn't deal with all return codes
-  #
-  # @param [Faraday::Response, nil] response  Default: @response.
+  # @param [Exception]         error
+  # @param [Symbol]            action
+  # @param [Faraday::Response] response
+  # @param [Symbol, String]    method
   #
   # @return [void]
   #
-  def validate_response(response = @response)
-    case response&.status
-      when 200..299 then return if response&.body&.present?
-      else               raise_exception(__method__)
-    end
-  end
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method  For log messages.
-  #
-  def raise_exception(method)
-    response_table = API_SEND_RESPONSE
-    message_table  = API_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::Error, message
-  end
-
-  # Produce an error message from an HTTP response.
-  #
-  # @param [Symbol, String]         method          For log messages.
-  # @param [Hash, nil]              response_table
-  # @param [Hash, nil]              template_table
-  # @param [Net::HTTPResponse, nil] response        Default: @response.
-  #
-  # @return [String]
-  #
-  def request_error_message(
-    method          = nil,
-    response_table  = nil,
-    template_table  = nil,
-    response        = @response
-  )
-    # Extract information from the HTTP response.
-    body    = response&.body&.presence
-    error   = body && Api::Error.new(body)
-    code    = error&.code
-    message = error&.message&.presence
-    level   = message ? Logger::WARN : Logger::Error
-
-    # Generate a message if one was not provided in the received data.
-    message ||=
-      if response.blank?
-        'no HTTP result'
-      elsif body.blank?
-        'empty HTTP result body'
-      else
-        'unknown failure'
-      end
-
-    # Log the warning/error.
+  def log_exception(error:, action: @action, response: @response, method: nil)
+    method ||= 'request'
+    message = error.message.inspect
+    __debug { "!!! api | #{action.inspect} | #{message} | #{error.class}" }
+    level  = error.is_a?(Api::Error) ? Logger::WARN : Logger::ERROR
+    status = %i[http_status status].find { |m| error.respond_to?(m) }
+    status = status ? error.send(status).inspect : '???'
+    body   = response&.body
     Log.log(level) do
       log = ["API #{method}: #{message}"]
-      log << "code #{code.inspect}"
+      log << "status #{status}"
       log << "body #{body}" if body.present?
       log.join('; ')
-    end
-
-    # Get the message template which matches *message*.
-    template =
-      if template_table.present?
-        key =
-          response_table&.find { |_, pattern|
-            # noinspection RubyCaseWithoutElseBlockInspection
-            case pattern
-              when nil    then true
-              when String then message.include?(pattern)
-              when Regexp then message =~ pattern
-            end
-          }&.first
-        template_table[key] || template_table[:default]
-      end
-
-    # Include the message from received data.
-    if template.blank?
-      message
-    elsif template.include?('%')
-      template % message
-    else
-      "#{template}: #{message}"
     end
   end
 

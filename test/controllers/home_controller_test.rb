@@ -60,12 +60,17 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
   test 'home dashboard' do
     options = OPTIONS.merge(test: __method__, action: 'dashboard')
     TEST_READERS.each do |user|
-      able   = user.present?
-      expect = able ? :success : :unauthorized
-      opt    = options.merge(expect: expect)
+      able  = user.present?
+      u_opt =
+        if able
+          options.merge(expect: :success)
+        else
+          options.except(:controller, :action)
+        end
       TEST_FORMATS.each do |fmt|
         url = dashboard_url(format: fmt)
-        opt[:format] = fmt
+        opt = u_opt.merge(format: fmt)
+        opt[:expect] ||= (fmt == :html) ? :redirect : :unauthorized
         get_as(user, url, opt)
       end
     end

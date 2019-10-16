@@ -19,16 +19,41 @@ en:
       HTML:             'HTML' # NOTE: Exists but not in the API docs.
       TEXT:             'Text' # NOTE: Exists but not in the API docs.
 
-    error:
-      api:
-        unknown:        'Unknown Bookshare API error'
+    # =========================================================================
+    # Error messages
+    # =========================================================================
 
-    label:
-      back:             'Back'
-      confirm:          'Are you sure?'
+    error:
+
+      api:
+        default:        'Unknown Bookshare API error'
+        auth:           'Bookshare API authorization error'
+        comm:           'Bookshare API network error'
+        session:        'Bookshare API session error'
+        timeout:        'Bookshare API session token expired'
+        recv:           'Bookshare API receive error'
+        parse:          'Bad data from Bookshare API'
+        xmit:           'Bookshare API transmit error'
+        request:        'Bad request to Bookshare API'
+        account:        'Bookshare API account request error'
+        subscription:   'Bookshare API subscription request error'
+        title:          'Bookshare API catalog title request error'
+        periodical:     'Bookshare API periodical request error'
+        reading_list:   'Bookshare API reading list request error'
+        organization:   'Bookshare API organization request error'
+        empty_result:   'Empty API result body'
+        html_result:    'Invalid (HTML) result body'
+        redirection:    'Missing HTTP redirect location'
+        redirect_limit: 'Too many HTTP redirects'
+
+      request:
+        generic:
+          default:      'Bad response from server'
+          failed:       'Unable to request items right now'
+          no_items:     'There were no items to request'
 
     # =========================================================================
-    # HTML page head.
+    # HTML page head
     # =========================================================================
 
     head:
@@ -94,6 +119,10 @@ en:
     # =========================================================================
     # Controls
     # =========================================================================
+
+    label:
+      back:             'Back'
+      confirm:          'Are you sure?'
 
     pagination:
       page_size:        10
@@ -695,21 +724,34 @@ en:
 
     health:
 
+      default:          &HEALTH_DEFAULT
+        restart:        false
+        failed:         'Unknown error'
+
+      invalid:
+        <<:             *HEALTH_DEFAULT
+        method:         false
+        failed:         'NOT A VALID SUBSYSTEM'
+
       mysql:
+        <<:             *HEALTH_DEFAULT
         restart:        true
         failed:         'Database connection error'
 
       redis:
+        <<:             *HEALTH_DEFAULT
         restart:        true
         healthy:        'NOT IMPLEMENTED' # TODO: future
         failed:         'Redis unresponsive'
 
       bookshare:
+        <<:             *HEALTH_DEFAULT
         restart:        false
         degraded:       'Bookshare API degraded'
         failed:         'Bookshare API unresponsive'
 
       ingest:
+        <<:             *HEALTH_DEFAULT
         restart:        false
         healthy:        'NOT IMPLEMENTED' # TODO: future
         degraded:       'Content ingest degraded'

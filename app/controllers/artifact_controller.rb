@@ -29,8 +29,8 @@ class ArtifactController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!
   before_action :update_user
+  before_action :authenticate_user!
 
   # ===========================================================================
   # :section: Authorization
@@ -76,8 +76,8 @@ class ArtifactController < ApplicationController
   #
   def show
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
-    @item =
-      api.get_artifact_metadata(bookshareId: @bookshare_id, format: @format)
+    opt   = { bookshareId: @bookshare_id, format: @format }
+    @item = api.get_artifact_metadata(**opt)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -134,7 +134,7 @@ class ArtifactController < ApplicationController
   def download
     __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
     opt = { bookshareId: @bookshare_id, format: @format }
-    render_download api.download_title(**opt)
+    render_download(:download_title, **opt)
   end
 
   # ===========================================================================

@@ -12,7 +12,6 @@ __loading_begin(__FILE__)
 class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   include SessionConcern
-  include User::DebugConcern
 
   # ===========================================================================
   # :section:
@@ -37,7 +36,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Initiate authentication with the remote service.
   #
   def passthru
-    auth_debug
+    __debug_auth
     super
   end
 
@@ -47,16 +46,16 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def bookshare
     auth_data = request.env['omniauth.auth']
-    auth_debug { "env[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_auth { "env[omniauth.auth] = #{auth_data.inspect}" }
     user = User.from_omniauth(auth_data)
     if user.persisted?
-      auth_debug { 'user persisted' }
+      __debug_auth { 'user persisted' }
       last_operation_update
       #sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)
       set_flash_message(:notice, :success, kind: 'Bookshare')
     else
-      auth_debug { 'USER NOT PERSISTED' }
+      __debug_auth { 'USER NOT PERSISTED' }
       #session['devise.bookshare_data'] = auth_data
       #redirect_to new_user_registration_url
       failure
@@ -66,7 +65,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # ???
   #
   def failure
-    auth_debug
+    __debug_auth
     super
   end
 

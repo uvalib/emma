@@ -28,36 +28,12 @@ module ApiService::Organization
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  ORGANIZATION_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  ORGANIZATION_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/myOrganization/members
   #
   # == 2.7.1. Get a list of members of my organization
   # Get a list of members of the current (sponsor) user's organization.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String]          :start
   # @option opt [Integer]         :limit      Default: 10
@@ -89,14 +65,15 @@ module ApiService::Organization
   # Get a member of the current (sponsor) user's organization.
   #
   # @param [User, String, nil] user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserAccount]
   #
   # NOTE: This is not a real Bookshare API call.
   #
-  def get_my_organization_member(user:)
+  def get_my_organization_member(user:, **opt)
     username = name_of(user)
-    all = get_my_organization_members(limit: :max)
+    all = get_my_organization_members(limit: :max, **opt)
     om  = all.userAccounts.find { |list| list.identifier == username }
     ApiUserAccount.new(om)
   end
@@ -117,7 +94,7 @@ module ApiService::Organization
   # == 2.7.2. Create a user for my organization
   # Create a new user account for the current user's organization.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                  :firstName      *REQUIRED*
   # @option opt [String]                  :lastName       *REQUIRED*
@@ -157,26 +134,6 @@ module ApiService::Organization
         reference_id:     '_create-my-organizationmember'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = ORGANIZATION_SEND_RESPONSE
-    message_table  = ORGANIZATION_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::OrganizationError, message
-  end
 
 end
 

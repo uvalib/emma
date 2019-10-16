@@ -20,7 +20,7 @@ class MembersTest < ApplicationSystemTestCase
 
       # Not available anonymously.
       visit url
-      assert_flash alert: 'You need to sign in'
+      assert_flash alert: AUTH_FAILURE
 
       # Successful sign-in should redirect back.
       sign_in_as(TEST_USER)

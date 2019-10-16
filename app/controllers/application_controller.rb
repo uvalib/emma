@@ -41,22 +41,6 @@ class ApplicationController < ActionController::Base
 
   add_flash_types :error, :success
 
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  rescue_from CanCan::AccessDenied do |exception|
-    redirect_to dashboard_path, alert: exception.message
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # TODO: ???
-
 end
 
 __loading_end(__FILE__)

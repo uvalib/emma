@@ -29,7 +29,7 @@
       <span class="endpoint"><%= result[:endpoint] -%></span>
     </h2>
     <div class="value <%= result[:status] -%>">
-      <%= api_format_result(result[:value]) -%>
+      <%= api_format_result(result[:error] || result[:value]) -%>
     </div>
   <%- end -%>
 </div>

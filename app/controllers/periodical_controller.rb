@@ -24,8 +24,8 @@ class PeriodicalController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!, except: %i[index show]
   before_action :update_user
+  before_action :authenticate_user!, except: %i[index show]
 
   # ===========================================================================
   # :section: Authorization
@@ -68,7 +68,7 @@ class PeriodicalController < ApplicationController
   def show
     __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
     @item = api.get_periodical(seriesId: @series_id)
-    @list = api.get_periodical_editions(seriesId: @series_id)
+    @list = api.get_periodical_editions(seriesId: @series_id, no_raise: true)
     self.page_items  = @list.periodicalEditions
     self.total_items = @list.totalResults
     respond_to do |format|

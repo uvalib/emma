@@ -24,8 +24,7 @@ class HomeTest < ApplicationSystemTestCase
   test 'home - visit dashboard page' do
     run_test(__method__) do
       visit dashboard_url
-      assert_selector 'h1', text: 'Welcome to EMMA'
-      assert_flash alert: 'authentication is required'
+      assert_flash alert: AUTH_FAILURE
     end
   end
 

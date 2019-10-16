@@ -28,30 +28,6 @@ module ApiService::CollectionTitles
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  COLLECTION_TITLES_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  COLLECTION_TITLES_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/catalog
   #
   # == 2.8.1. Search for titles across the catalog
@@ -60,7 +36,7 @@ module ApiService::CollectionTitles
   # since been removed. This allows administrators to manage the wider
   # collection of titles.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]           :country
   # @option opt [String]           :isbn
@@ -91,26 +67,6 @@ module ApiService::CollectionTitles
         reference_id: '_catalog-search'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = COLLECTION_TITLES_SEND_RESPONSE
-    message_table  = COLLECTION_TITLES_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::TitleError, message
-  end
 
 end
 

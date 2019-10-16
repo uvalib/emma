@@ -28,9 +28,27 @@ module SessionConcern
     before_action         :cleanup_session
     append_around_action  :session_update, unless: :devise_controller?
 
+    # =========================================================================
+    # :section: Exceptions
+    # =========================================================================
+
+    rescue_from CanCan::AccessDenied do |exception|
+      __debug_exception('RESCUE_FROM', exception)
+      redirect_to dashboard_path, alert: exception.message
+    end
+
+    rescue_from Api::Error, Faraday::Error do |exception|
+      __debug_exception('RESCUE_FROM', exception)
+      if rendering_html?
+        flash.now[:alert] ||= exception.message
+        render
+      end
+    end
+
   end
 
   include ApiHelper
+  include DebugHelper
   include ParamsHelper
 
   # Non-functional hints for RubyMine.
@@ -56,12 +74,6 @@ module SessionConcern
     /\./,
     /_return_to$/,
   ].freeze
-
-  # Default API error message
-  #
-  # @type [String]
-  #
-  UNKNOWN_API_ERROR = I18n.t('emma.error.api.unknown').freeze
 
   # ===========================================================================
   # :section: Devise::Controllers::Helpers overrides
@@ -200,18 +212,27 @@ module SessionConcern
   end
 
   # Remember the last operation performed in this session and set the flash
-  # alert if there is an unprocessed ApiSession exception.
+  # alert if there was an unprocessed ApiSession exception.
   #
   # == Usage Notes
   # This must be invoked as an :around_action.
   #
+  # == Implementation Notes
+  # The "ensure" block is executed before the ApplicationController
+  # "rescue_from".  However, note that Rails is doing something with "$!" which
+  # causes Faraday::ClientError to be the exception that's acted upon in that
+  # block, whereas :api_error_message shows the ApiService::ResponseError that
+  # is created in ApiService::Common#api.
+  #
   def session_update
-    yield.tap do
-      if (exception = api_exception)
-        flash.now[:alert] = exception.message.presence || UNKNOWN_API_ERROR
-      end
-      last_operation_update
-    end
+    error = nil
+    yield
+  rescue => error
+    __debug_exception('UNHANDLED EXCEPTION', error)
+    flash.now[:alert] ||= api_error_message if api_error?
+  ensure
+    last_operation_update
+    raise error if error
   end
 
 end

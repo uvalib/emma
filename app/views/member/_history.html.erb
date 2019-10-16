@@ -7,7 +7,7 @@
   return if hist.blank?
 
   list  ||= hist.titleDownloads
-  count ||= hist.totalResults || list.size
+  count ||= hist.totalResults || list&.size || 0
   level ||= 2
   skip  ||= nil
 

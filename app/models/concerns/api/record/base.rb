@@ -40,7 +40,7 @@ class Api::Record::Base
     @exception =
       case opt[:error]
         when Exception then opt[:error]
-        when String    then Exception.new(opt[:error])
+        when String    then Api::Error.new(opt[:error])
       end
     if @exception
       @serializer_type = :hash

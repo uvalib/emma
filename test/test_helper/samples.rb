@@ -36,6 +36,16 @@ module TestHelper::Samples
 
   # Define methods which generate model instances from the appropriate
   # text/fixtures/*.yml data.
+  #
+  # @!method sample_artifact
+  # @!method sample_edition
+  # @!method sample_member
+  # @!method sample_periodical
+  # @!method sample_reading_list
+  # @!method sample_role
+  # @!method sample_title
+  # @!method sample_user
+  #
   SAMPLE_FIXTURE.each_pair do |model, fixture|
     define_method(:"sample_#{model}") do
       @sample ||= {}

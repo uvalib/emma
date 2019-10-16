@@ -23,6 +23,28 @@ module HealthConcern
 
   public
 
+  # Locale entries for this controller.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see en.emma.health in config/locales/en.yml
+  #
+  # noinspection RailsI18nInspection
+  HEALTH_18N_ENTRIES =
+    I18n.t('emma.health').select { |_, v| v.is_a?(Hash) }.deep_freeze
+
+  # Default health check subsystem failure message.
+  #
+  # @type [String]
+  #
+  DEFAULT_HEALTH_FAILED_MESSAGE = HEALTH_18N_ENTRIES.dig(:default, :failed)
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Subsystem health check properties.
   #
   class HealthEntry < Hash
@@ -31,45 +53,33 @@ module HealthConcern
 
     # Initialize a new instance.
     #
-    # @param [Hash, nil]                  hash      Another hash, if provided.
-    # @param [Symbol, Proc, String, nil]  method    Health check method:
-    #                                               - *nil*: the implied health
-    #                                                 check method is used.
-    #                                               - *true*: the subsystem is
-    #                                                 always reported healthy.
-    #                                               - *false*: the subsystem is
-    #                                                 always reported failed.
-    # @param [Boolean, nil] restart                 If *true*, a failed health
-    #                                                 check should result in a
-    #                                                 system restart in order
-    #                                                 to attempt to correct the
-    #                                                 underlying problem.
-    # @param [String, nil] healthy                  Message if healthy.
-    # @param [String, nil] degraded                 Message if degraded.
-    # @param [String, nil] failed                   Message if failed.
+    # @param [Symbol, Proc, String] method    Health check method (see below).
+    # @param [Boolean]              restart   See below.
+    # @param [String]               healthy   Message if healthy.
+    # @param [String]               degraded  Message if degraded.
+    # @param [String]               failed    Message if failed.
+    #
+    # == Health check methods
+    # *nil*     The implied health check method is used.
+    # *true*    The subsystem is always reported as healthy.
+    # *false*   The subsystem is always reported as failed.
+    #
+    # == Restart
+    # If :restart is *true* then a failed health check should result in a
+    # system restart in order to attempt to correct the underlying problem.
     #
     def initialize(
-      hash =    nil,
       method:   nil,
       restart:  nil,
       healthy:  nil,
       degraded: nil,
       failed:   nil
     )
-      if hash.is_a?(Hash)
-        method   ||= hash[:method]
-        restart  ||= hash[:restart]
-        healthy  ||= hash[:healthy]
-        degraded ||= hash[:degraded]
-        failed   ||= hash[:failed]
-      end
-      replace(
-        method:   method,
-        restart:  true?(restart),
-        healthy:  healthy,
-        degraded: degraded,
-        failed:   failed
-      )
+      self[:method]   = method
+      self[:restart]  = true?(restart)
+      self[:healthy]  = healthy
+      self[:degraded] = degraded
+      self[:failed]   = failed
     end
 
   end
@@ -90,7 +100,8 @@ module HealthConcern
     def initialize(status, degraded, message = nil)
       @healthy  = status.present?
       @degraded = degraded.present?
-      @message  = message || (@healthy ? '' : 'Unknown error')
+      @message  = message
+      @message  = DEFAULT_HEALTH_FAILED_MESSAGE unless message || @healthy
     end
 
     def healthy?
@@ -145,23 +156,20 @@ module HealthConcern
   #
   # @type [Hash{Symbol=>HealthEntry}]
   #
-  # @see en.emma.health in config/locales/en.yml
-  #
-  # noinspection RailsI18nInspection
   HEALTH_CHECK =
-    I18n.t('emma.health').map { |subsystem, items|
-      entry = HealthEntry.new(items)
-      entry[:method] ||= "#{subsystem}_status".to_sym
-      entry[:failed] ||= 'Unknown error'
-      [subsystem, entry.freeze]
-    }.to_h.freeze
+    HEALTH_18N_ENTRIES.map { |subsystem, items|
+      next if %i[default invalid].include?(subsystem)
+      entry = HealthEntry.new(**items)
+      entry[:method] = "#{subsystem}_status".to_sym if entry[:method].nil?
+      entry[:failed] ||= DEFAULT_HEALTH_FAILED_MESSAGE
+      [subsystem, entry]
+    }.compact.to_h.deep_freeze
 
   # Used for checks of subsystems that don't exist.
   #
   # @type [Hash{Symbol=>Object}]
   #
-  INVALID_HEALTH_CHECK =
-    HealthEntry.new(method: false, failed: 'NOT A VALID SUBSYSTEM').freeze
+  INVALID_HEALTH_CHECK = HealthEntry.new(**HEALTH_18N_ENTRIES[:invalid]).freeze
 
   # ===========================================================================
   # :section:
@@ -178,7 +186,7 @@ module HealthConcern
   # @see #HEALTH_CHECK
   #
   def get_health_status(*subsystem)
-    subsystem = subsystem.flatten.reject(&:blank?).map!(&:to_sym).presence
+    subsystem = subsystem.flatten.reject(&:blank?).map(&:to_sym).presence
     entries   = subsystem&.map { |ss| [ss, nil] }&.to_h || HEALTH_CHECK
     entries.map { |type, entry| [type, status_report(type, entry)] }.to_h
   end

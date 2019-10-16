@@ -45,13 +45,13 @@ class CategoriesTest < ApplicationSystemTestCase
       assert_first_page
 
       # Visit the rest of the category pages in order.
-      while has_link?('NEXT') do
+      while has_link?(NEXT_LABEL) do
         visit_next_page :category
       end
       assert_last_page
 
       # Visit all previous category pages in reverse order.
-      while has_link?('PREV') do
+      while has_link?(PREV_LABEL) do
         visit_prev_page :category
       end
       assert_first_page

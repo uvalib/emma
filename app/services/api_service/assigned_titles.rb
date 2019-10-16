@@ -24,36 +24,12 @@ module ApiService::AssignedTitles
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  ASSIGNED_TITLES_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  ASSIGNED_TITLES_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/myAssignedTitles
   #
   # == 2.4.1. Get my assigned titles
   # Get the titles assigned to the current user (organization member).
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]              :start
   # @option opt [Integer]             :limit        Default: 10
@@ -87,7 +63,7 @@ module ApiService::AssignedTitles
   # Get a list of titles assigned to the specified organization member.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]            :start
   # @option opt [Integer]           :limit        Default: 10
@@ -130,14 +106,15 @@ module ApiService::AssignedTitles
   #
   # @param [User, String, nil] user         Default: @user
   # @param [String]            bookshareId
+  # @param [Hash]              opt          Passed to #api.
   #
   # @return [ApiAssignedTitleMetadataSummaryList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_title-assign
   #
-  def create_assigned_title(user: @user, bookshareId:)
+  def create_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
-    opt = { bookshareId: bookshareId }
+    opt = opt.merge(bookshareId: bookshareId)
     api(:post, 'assignedTitles', userIdentifier, **opt)
     ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
   end
@@ -162,14 +139,15 @@ module ApiService::AssignedTitles
   #
   # @param [User, String, nil] user         Default: @user
   # @param [String]            bookshareId
+  # @param [Hash]              opt          Passed to #api.
   #
   # @return [ApiAssignedTitleMetadataSummaryList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_title-unassign
   #
-  def remove_assigned_title(user: @user, bookshareId:)
+  def remove_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
-    opt = { bookshareId: bookshareId }
+    opt = opt.merge(bookshareId: bookshareId)
     api(:delete, 'assignedTitles', userIdentifier, **opt)
     ApiAssignedTitleMetadataSummaryList.new(response, error: exception)
   end
@@ -185,26 +163,6 @@ module ApiService::AssignedTitles
         reference_id:     '_title-unassign'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = ASSIGNED_TITLES_SEND_RESPONSE
-    message_table  = ASSIGNED_TITLES_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::AccountError, message
-  end
 
 end
 

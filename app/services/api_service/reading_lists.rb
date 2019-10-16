@@ -28,37 +28,13 @@ module ApiService::ReadingLists
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  READING_LISTS_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  READING_LISTS_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/mylists
   #
   # == 2.3.1. Get my reading lists
   # Get the reading lists visible to the current user (private lists, shared
   # lists, or organization lists that the user is subscribed to).
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                 :start
   # @option opt [Integer]                :limit       Default: 10
@@ -93,7 +69,7 @@ module ApiService::ReadingLists
   #
   # @param [String] name
   # @param [Access] access
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String] :description
   #
@@ -102,7 +78,8 @@ module ApiService::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
   #
   def create_reading_list(name:, access:, **opt)
-    opt = get_parameters(__method__, **opt.merge(name: name, access: access))
+    opt = opt.merge(name: name, access: access)
+    opt = get_parameters(__method__, **opt)
     api(:post, 'mylists', **opt)
     ApiReadingList.new(response, error: exception)
   end
@@ -126,13 +103,14 @@ module ApiService::ReadingLists
   #
   # @param [String]  readingListId
   # @param [Boolean] enabled          Default: true
+  # @param [Hash]    opt              Passed to #api.
   #
   # @return [ApiReadingListUserView]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def subscribe_reading_list(readingListId:, enabled: true)
-    opt = { enabled: enabled }
+  def subscribe_reading_list(readingListId:, enabled: true, **opt)
+    opt = opt.merge(enabled: enabled)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     ApiReadingListUserView.new(response, error: exception)
   end
@@ -153,13 +131,14 @@ module ApiService::ReadingLists
   #
   # @param [String]  readingListId
   # @param [Boolean] enabled          Default: false
+  # @param [Hash]    opt              Passed to #api.
   #
   # @return [ApiReadingListUserView]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def unsubscribe_reading_list(readingListId:, enabled: false)
-    opt = { enabled: enabled }
+  def unsubscribe_reading_list(readingListId:, enabled: false, **opt)
+    opt = opt.merge(enabled: enabled)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     ApiReadingListUserView.new(response, error: exception)
   end
@@ -180,7 +159,7 @@ module ApiService::ReadingLists
   # works for "emmacollection@bookshare.org" (and for "emmadso" it yields the
   # same result as "/v2/mylists").
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                 :start
   # @option opt [Integer]                :limit       Default: 10
@@ -212,13 +191,14 @@ module ApiService::ReadingLists
   # Get metadata for an existing reading list.
   #
   # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiReadingListUserView]
   #
   # NOTE: This is not a real Bookshare API call.
   #
-  def get_reading_list(readingListId:)
-    all = get_all_reading_lists(limit: :max)
+  def get_reading_list(readingListId:, **opt)
+    all = get_all_reading_lists(limit: :max, **opt)
     rl  = all.lists.find { |list| list.identifier == readingListId }
     ApiReadingListUserView.new(rl)
   end
@@ -237,7 +217,7 @@ module ApiService::ReadingLists
   # Edit the metadata of an existing reading list.
   #
   # @param [String] readingListId
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String] :name
   # @option opt [String] :description
@@ -272,7 +252,7 @@ module ApiService::ReadingLists
   # Get a listing of the Bookshare titles in the specified reading list.
   #
   # @param [String] readingListId
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String]               :start
   # @option opt [Integer]              :limit       Default: 10
@@ -310,13 +290,14 @@ module ApiService::ReadingLists
   #
   # @param [String] readingListId
   # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiReadingListTitlesList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-title
   #
-  def create_reading_list_title(readingListId:, bookshareId:)
-    opt = { bookshareId: bookshareId }
+  def create_reading_list_title(readingListId:, bookshareId:, **opt)
+    opt = opt.merge(bookshareId: bookshareId)
     api(:post, 'lists', readingListId, 'titles', **opt)
     ApiReadingListTitlesList.new(response, error: exception)
   end
@@ -337,13 +318,14 @@ module ApiService::ReadingLists
   #
   # @param [String] readingListId
   # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiReadingListTitlesList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_delete-readinglist-title
   #
-  def remove_reading_list_title(readingListId:, bookshareId:)
-    api(:delete, 'lists', readingListId, 'titles', bookshareId)
+  def remove_reading_list_title(readingListId:, bookshareId:, **opt)
+    api(:delete, 'lists', readingListId, 'titles', bookshareId, **opt)
     ApiReadingListTitlesList.new(response, error: exception)
   end
     .tap do |method|
@@ -355,26 +337,6 @@ module ApiService::ReadingLists
         reference_id:    '_delete-readinglist-title'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = READING_LISTS_SEND_RESPONSE
-    message_table  = READING_LISTS_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::ReadingListError, message
-  end
 
 end
 

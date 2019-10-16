@@ -26,7 +26,8 @@ class HomeController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  # Not applicable.
+  before_action :update_user
+  before_action :authenticate_user!, only: %i[dashboard]
 
   # ===========================================================================
   # :section: Authorization

@@ -14,6 +14,7 @@ class Api::Serializer::Base < Representable::Decorator
   include Api::Serializer::Associations
 
   include TimeHelper
+  include DebugHelper
 
   # ===========================================================================
   # :section:
@@ -65,6 +66,7 @@ class Api::Serializer::Base < Representable::Decorator
   # noinspection RubyScope, RubyNilAnalysis
   def serialize(method = nil, **opt)
     __debug { ">>> #{self.class} serialize #{method}" }
+    error = nil
     start_time = timestamp
     case method
       when Symbol then send(method, **opt)
@@ -72,14 +74,14 @@ class Api::Serializer::Base < Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    __debug { "!!! #{self.class} #{__method__} ERROR #{error.message}" }
-    raise error
+    __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if start_time
       elapsed_time = time_span(start_time)
       __debug  { "--- #{self.class} serialized in #{elapsed_time}" }
       Log.info { "#{self.class} rendered in #{elapsed_time}" }
     end
+    raise error if error
   end
 
   # Load data elements from the supplied data.
@@ -101,6 +103,7 @@ class Api::Serializer::Base < Representable::Decorator
   def deserialize(data, method = nil)
     return unless set_source_data(data)
     __debug { ">>> #{self.class} deserialize #{method}" }
+    error = nil
     start_time = timestamp
     case method
       when Symbol then send(method, source_data)
@@ -108,14 +111,14 @@ class Api::Serializer::Base < Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
-    __debug { "!!! #{self.class} #{__method__} ERROR #{error.message}" }
-    raise error
+    __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if start_time
       elapsed_time = time_span(start_time)
       __debug  { "--- #{self.class} de-serialized in #{elapsed_time}" }
       Log.info { "#{self.class} parsed in #{elapsed_time}" }
     end
+    raise error if error
   end
 
   # ===========================================================================

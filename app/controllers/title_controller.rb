@@ -24,8 +24,8 @@ class TitleController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  before_action :authenticate_user!, except: %i[index show]
   before_action :update_user
+  before_action :authenticate_user!, except: %i[index show]
 
   # ===========================================================================
   # :section: Authorization

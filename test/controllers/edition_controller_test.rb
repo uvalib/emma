@@ -114,7 +114,7 @@ class EditionControllerTest < ActionDispatch::IntegrationTest
     url_opt    = { seriesId: periodical, editionId: edition, fmt: format }
     options    = { test: __method__ }
     TEST_READERS.each do |user|
-      able = can?(user, :download, Artifact)
+      able = can?(user, :download, Edition)
       TEST_FORMATS.each do |fmt|
         url = edition_download_url(url_opt.merge(format: fmt))
         opt = able ? options.dup : options.merge(format: fmt)

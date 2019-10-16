@@ -35,41 +35,19 @@ module ApiService::UserAccount
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  USER_ACCOUNT_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  USER_ACCOUNT_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/me
   #
   # == 2.6.1. Get user identity
   # Request basic information about the current user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiUserIdentity]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_me
   #
-  def get_user_identity(*)
-    api(:get, 'me')
+  def get_user_identity(**opt)
+    api(:get, 'me', **opt)
     ApiUserIdentity.new(response, error: exception)
   end
     .tap do |method|
@@ -83,12 +61,14 @@ module ApiService::UserAccount
   # == 2.6.2. Get my account summary
   # Get an account summary of the current user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiMyAccountSummary]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-summary
   #
-  def get_my_account(*)
-    api(:get, 'myaccount')
+  def get_my_account(**opt)
+    api(:get, 'myaccount', **opt)
     ApiMyAccountSummary.new(response, error: exception)
   end
     .tap do |method|
@@ -102,7 +82,7 @@ module ApiService::UserAccount
   # == 2.6.3. Get my account downloads
   # Get a listing of downloads made by the current user.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [Integer]          :limit
   # @option opt [HistorySortOrder] :sortOrder   Default: 'title'
@@ -139,12 +119,14 @@ module ApiService::UserAccount
   # == 2.6.4. Get my account preferences
   # Get the account preferences associated with the current user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiMyAccountPreferences]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-preferences
   #
-  def get_my_preferences(*)
-    api(:get, 'myaccount', 'preferences')
+  def get_my_preferences(**opt)
+    api(:get, 'myaccount', 'preferences', **opt)
     ApiMyAccountPreferences.new(response, error: exception)
   end
     .tap do |method|
@@ -158,7 +140,7 @@ module ApiService::UserAccount
   # == 2.6.5. Update my account preferences
   # Update the account preferences associated with the current user.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [Boolean]       :allowAdultContent
   # @option opt [Boolean]       :showAllBooks           Default: *false*
@@ -205,12 +187,14 @@ module ApiService::UserAccount
   # == 2.6.6. Get my recommendation profile
   # Get property choices that guide title recommendations for the current user.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiRecommendationProfile]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-recommendation-profile
   #
-  def get_my_recommendation_profile(*)
-    api(:get, 'myaccount', 'recommendationProfile')
+  def get_my_recommendation_profile(**opt)
+    api(:get, 'myaccount', 'recommendationProfile', **opt)
     ApiRecommendationProfile.new(response, error: exception)
   end
     .tap do |method|
@@ -225,7 +209,7 @@ module ApiService::UserAccount
   # Update property choices that guide title recommendations for the current
   # user.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [Boolean]      :includeGlobalCollection   Default: *false*
   # @option opt [NarratorType] :narratorType
@@ -269,26 +253,6 @@ module ApiService::UserAccount
         reference_id:              '_put-my-recommendation-profile'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = USER_ACCOUNT_SEND_RESPONSE
-    message_table  = USER_ACCOUNT_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::AccountError, message
-  end
 
 end
 

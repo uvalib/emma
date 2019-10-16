@@ -25,7 +25,7 @@ class UserSessionsTest < ApplicationSystemTestCase
       assert_title 'Sign in'
       assert_selector 'h1', text: 'Sign in'
       assert_link href: user_bookshare_omniauth_authorize_path
-      click_link "Sign in as #{TEST_USER}"
+      click_link "Sign in as #{find_user(TEST_USER)}"
 
       # On dashboard page '/dashboard' (#dashboard_path).
       show_url

@@ -22,10 +22,10 @@ class ApiController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
+  before_action :update_user, except: %i[image]
 =begin # TODO: authenticate_user ???
   before_action :authenticate_user!
 =end
-  before_action :update_user, except: %i[image]
 
   # ===========================================================================
   # :section: Authorization
@@ -49,8 +49,7 @@ class ApiController < ApplicationController
   # The main API test page.
   #
   def index
-    @api_results = ApiTesting.run_trials(user: current_user.to_s.presence)
-    api.discard_exception
+    @api_results = ApiTesting.run_trials(user: current_user)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

@@ -88,10 +88,13 @@ public
 # Augment the base class for test cases.
 #
 class ActiveSupport::TestCase
+
   include GenericHelper
   include TestHelper
+
   # Create model instances for all fixtures in defined in test/fixtures/*.yml.
   fixtures :all
+
 end
 
 # Augment the base class for integration test cases.
@@ -110,7 +113,8 @@ end
 # Set up system testing.
 #
 Capybara.configure do |config|
-  config.app_host = TestHelper::BASE_URL  # TODO: needed?
+  config.app_host              = TestHelper::BASE_URL
+  config.default_host          = TestHelper::BASE_URL
   config.default_max_wait_time = 60
   # config.allow_gumbo = true             # TODO: ??? (default is false)
   # config.enable_aria_label = true       # TODO: ??? (default is false)

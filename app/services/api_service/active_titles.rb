@@ -29,36 +29,12 @@ module ApiService::ActiveTitles
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  ACTIVE_TITLES_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  ACTIVE_TITLES_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/myActiveBooks
   #
   # == 2.5.1. Get my active books
   # Get a list of my active books that are ready to read.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]              :start
   # @option opt [Integer]             :limit      Default: 10
@@ -93,13 +69,14 @@ module ApiService::ActiveTitles
   #
   # @param [String] bookshareId
   # @param [String] format
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiActiveBookList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-add
   #
-  def add_my_active_book(bookshareId:, format:)
-    opt = { bookshareId: bookshareId, format: format }
+  def add_my_active_book(bookshareId:, format:, **opt)
+    opt = opt.merge(bookshareId: bookshareId, format: format)
     api(:post, 'myActiveBooks', **opt)
     ApiActiveBookList.new(response, error: exception)
   end
@@ -119,13 +96,14 @@ module ApiService::ActiveTitles
   # Remove one of the entries from my list of active books.
   #
   # @param [String] activeTitleId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiActiveBookList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-remove
   #
-  def remove_my_active_book(activeTitleId:)
-    api(:delete, 'myActiveBooks', activeTitleId)
+  def remove_my_active_book(activeTitleId:, **opt)
+    api(:delete, 'myActiveBooks', activeTitleId, **opt)
     ApiActiveBookList.new(response, error: exception)
   end
     .tap do |method|
@@ -148,7 +126,7 @@ module ApiService::ActiveTitles
   # == 2.5.4. Get my active periodicals
   # Get a list of my active periodicals that are ready to read.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]              :start
   # @option opt [Integer]             :limit      Default: 10
@@ -183,13 +161,14 @@ module ApiService::ActiveTitles
   #
   # @param [String] bookshareId
   # @param [String] format
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiActivePeriodicalList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-add
   #
-  def add_my_active_periodical(bookshareId:, format:)
-    opt = { bookshareId: bookshareId, format: format }
+  def add_my_active_periodical(bookshareId:, format:, **opt)
+    opt = opt.merge(bookshareId: bookshareId, format: format)
     api(:post, 'myActivePeriodicals', **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
@@ -209,13 +188,14 @@ module ApiService::ActiveTitles
   # Remove one of the entries from my list of active periodicals.
   #
   # @param [String] activeTitleId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiActivePeriodicalList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-remove
   #
-  def remove_my_active_periodical(activeTitleId:)
-    api(:delete, 'myActivePeriodicals', activeTitleId)
+  def remove_my_active_periodical(activeTitleId:, **opt)
+    api(:delete, 'myActivePeriodicals', activeTitleId, **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
     .tap do |method|
@@ -239,12 +219,14 @@ module ApiService::ActiveTitles
   # Get the current user’s choices of properties that guide how titles are
   # added by the system to a user’s active books list.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiActiveBookProfile]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-book-profile-get
   #
-  def get_my_active_books_profile(*)
-    api(:get, 'myActiveBooksProfile')
+  def get_my_active_books_profile(**opt)
+    api(:get, 'myActiveBooksProfile', **opt)
     ApiActiveBookProfile.new(response, error: exception)
   end
     .tap do |method|
@@ -259,7 +241,7 @@ module ApiService::ActiveTitles
   # Update the current user’s choices of properties that guide how titles are
   # added by the system to a user’s active books list.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [Boolean] :useRecommendations
   # @option opt [Boolean] :useRequestList
@@ -284,26 +266,6 @@ module ApiService::ActiveTitles
         reference_id:         '_my-active-book-profile-put'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = ACTIVE_TITLES_SEND_RESPONSE
-    message_table  = ACTIVE_TITLES_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::AccountError, message
-  end
 
 end
 

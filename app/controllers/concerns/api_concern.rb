@@ -69,7 +69,7 @@ module ApiConcern
   #
   def try_exception_parse(arg, default: :original)
     case (ex = arg.respond_to?(:exception) && arg.exception)
-      when Faraday::ClientError
+      when Faraday::Error
         {
           message:   ex.message,
           response:  ex.response,
@@ -94,6 +94,8 @@ module ApiConcern
 
     include Api
     include Api::Common
+
+    include GenericHelper
 
     # Fixed parameter values to use when generating results for the Bookshare
     # API Explorer.
@@ -156,22 +158,27 @@ module ApiConcern
     #
     # @param [Hash] opt
     #
-    # @option opt [String]  bookshareId
-    # @option opt [String]  editionId
-    # @option opt [String]  format
-    # @option opt [Integer] limit
-    # @option opt [String]  organization
-    # @option opt [String]  readingListId
-    # @option opt [String]  resourceId
-    # @option opt [String]  seriesId
-    # @option opt [String]  subscription
-    # @option opt [String]  user
+    # @option opt [String]     bookshareId
+    # @option opt [String]     editionId
+    # @option opt [String]     format
+    # @option opt [Integer]    limit
+    # @option opt [String]     organization
+    # @option opt [String]     readingListId
+    # @option opt [String]     resourceId
+    # @option opt [String]     seriesId
+    # @option opt [String]     subscription
+    # @option opt [User]       user
+    # @option opt [ApiService] service
     #
     # @return [Hash{Symbol=>Hash}]
     #
     def self.trial_methods(**opt)
-      service     = ApiService.instance
-      param_value = TRIAL_VALUES.merge(**opt)
+      opt, param_value = partition_options(opt, :user, :service)
+      service = opt[:service]
+      user    = opt[:user]&.to_s || service&.user&.to_s
+      service ||= ApiService.new(user: opt[:user], no_raise: true)
+      param_value.reverse_merge!(TRIAL_VALUES)
+      param_value[:user] = user if user.present?
       TRIAL_METHODS.map do |method|
         np = service.named_parameters(method, no_alias: true)
         rp = service.required_parameters(method)
@@ -188,17 +195,17 @@ module ApiConcern
     # run_trials
     #
     # @param [Hash{Symbol=>Hash}, nil] methods  Default: `#trial_methods`.
-    # @param [String, nil]             user
+    # @param [User, nil]               user
     #
     # @return [Hash{Symbol=>Hash}]
     #
     def self.run_trials(methods = nil, user: nil)
-      service = ApiService.instance
-      methods ||= user ? trial_methods(user: user) : trial_methods
-      methods.map { |method, args|
-        value = service.send(method, args)
+      service = ApiService.new(user: user, no_raise: true)
+      methods ||= trial_methods(user: user, service: service)
+      methods.map { |method, opts|
+        param = opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
+        value = service.send(method, **opts)
         error = (value.exception if value.is_a?(Api::Record::Base))
-        param = args.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
         trial = {
           endpoint:   service.latest_endpoint,
           parameters: ("(#{param})" if param.present?),

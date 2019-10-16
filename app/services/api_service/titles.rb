@@ -31,34 +31,12 @@ module ApiService::Titles
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  TITLES_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  TITLES_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/titles/count
   #
   # == 2.1.6. Live title count
   # Get the current count of Bookshare titles.
+  #
+  # @param [Hash] opt                 Passed to #api.
   #
   # @return [Integer]
   #
@@ -67,8 +45,8 @@ module ApiService::Titles
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
-  def get_title_count(*)
-    api(:get, 'titles', 'count')
+  def get_title_count(**opt)
+    api(:get, 'titles', 'count', **opt)
     data = response&.body&.presence
     data.to_i
   end
@@ -87,6 +65,7 @@ module ApiService::Titles
   # NOTE: The API currently returns :artifacts as *nil*.
   #
   # @param [String] bookshareId
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [ApiTitleMetadataDetail]
   #
@@ -95,8 +74,8 @@ module ApiService::Titles
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
-  def get_title(bookshareId:)
-    api(:get, 'titles', bookshareId)
+  def get_title(bookshareId:, **opt)
+    api(:get, 'titles', bookshareId, **opt)
     ApiTitleMetadataDetail.new(response, error: exception)
   end
     .tap do |method|
@@ -116,7 +95,7 @@ module ApiService::Titles
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
-  # @param [Hash]       opt           Optional API URL parameters.
+  # @param [Hash]       opt           Passed to #api.
   #
   # @option opt [String] :forUser
   #
@@ -147,7 +126,7 @@ module ApiService::Titles
   # == 2.1.1. Search for titles
   # Search for Bookshare titles.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                       :title
   # @option opt [String, Array<String>]        :author
@@ -225,14 +204,15 @@ module ApiService::Titles
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
+  # @param [Hash]       opt           Passed to #api.
   #
   # @return [Api::ArtifactMetadata]
   # @return [nil]                     If the requested format was not present.
   #
   # NOTE: This is not a real Bookshare API call.
   #
-  def get_artifact_metadata(bookshareId:, format:)
-    title = get_title(bookshareId: bookshareId)
+  def get_artifact_metadata(bookshareId:, format:, **opt)
+    title = get_title(bookshareId: bookshareId, **opt)
     title.artifact_list.find { |a| format == a.format }
   end
     .tap do |method|
@@ -257,7 +237,7 @@ module ApiService::Titles
   #
   # @param [String]     bookshareId
   # @param [FormatType] format
-  # @param [Hash]       opt           Optional API URL parameters.
+  # @param [Hash]       opt           Passed to #api.
   #
   # @option opt [String] :start
   #
@@ -290,13 +270,14 @@ module ApiService::Titles
   # @param [String]     bookshareId
   # @param [FormatType] format
   # @param [String]     resourceId
+  # @param [Hash]       opt           Passed to #api.
   #
   # @return [ApiStatusModel]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource
   #
-  def get_title_resource_file(bookshareId:, format:, resourceId:)
-    api(:get, 'titles', bookshareId, format, 'resources', resourceId)
+  def get_title_resource_file(bookshareId:, format:, resourceId:, **opt)
+    api(:get, 'titles', bookshareId, format, 'resources', resourceId, **opt)
     ApiStatusModel.new(response, error: exception)
   end
     .tap do |method|
@@ -321,7 +302,7 @@ module ApiService::Titles
   # == 2.1.7. Category listing
   # Search for Bookshare categories.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]  :start
   # @option opt [Integer] :limit      Default: 100
@@ -348,26 +329,6 @@ module ApiService::Titles
         reference_id: '_categories'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = TITLES_SEND_RESPONSE
-    message_table  = TITLES_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::TitleError, message
-  end
 
 end
 

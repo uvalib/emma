@@ -25,37 +25,13 @@ module ApiService::CollectionPeriodicals
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  COLLECTION_PERIODICALS_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  COLLECTION_PERIODICALS_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == PUT /v2/periodicals/{seriesId}
   #
   # == 2.9.1. Update periodical series metadata
   # Update the series metadata for an existing Bookshare periodical.
   #
   # @param [String] seriesId
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String]                          :title
   # @option opt [String]                          :issn
@@ -100,7 +76,7 @@ module ApiService::CollectionPeriodicals
   #
   # @param [String] seriesId
   # @param [String] editionId
-  # @param [Hash]   opt               Optional API URL parameters.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @option opt [String] :editionName
   # @option opt [IsoDay] :publicationDate
@@ -127,26 +103,6 @@ module ApiService::CollectionPeriodicals
         reference_id:      '_put-periodical-edition-edit-metadata'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = COLLECTION_PERIODICALS_SEND_RESPONSE
-    message_table  = COLLECTION_PERIODICALS_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::PeriodicalError, message
-  end
 
 end
 

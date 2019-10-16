@@ -24,30 +24,6 @@ module ApiService::MembershipUserAccounts
 
   public
 
-  # @type [Hash{Symbol=>String}]
-  MEMBERSHIP_USER_ACCOUNTS_SEND_MESSAGE = {
-
-    # TODO: e.g.:
-    no_items:      'There were no items to request',
-    failed:        'Unable to request items right now',
-
-  }.reverse_merge(API_SEND_MESSAGE).freeze
-
-  # @type [Hash{Symbol=>(String,Regexp,nil)}]
-  MEMBERSHIP_USER_ACCOUNTS_SEND_RESPONSE = {
-
-    # TODO: e.g.:
-    no_items:       'no items',
-    failed:         nil
-
-  }.reverse_merge(API_SEND_RESPONSE).freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /v2/accounts/{userIdentifier}
   #
   # == 2.10.1. Look up user account
@@ -55,14 +31,15 @@ module ApiService::MembershipUserAccounts
   # only allowed to search for users associated with the same Site as them.)
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserAccount]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-useraccount-search
   #
-  def get_account(user: @user)
+  def get_account(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier)
+    api(:get, 'accounts', userIdentifier, **opt)
     ApiUserAccount.new(response, error: exception)
   end
     .tap do |method|
@@ -83,7 +60,7 @@ module ApiService::MembershipUserAccounts
   # Update an existing user account.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]      :firstName
   # @option opt [String]      :lastName
@@ -151,7 +128,7 @@ module ApiService::MembershipUserAccounts
   # == 2.10.3. Create a user account
   # Create a new user account.
   #
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]      :firstName          *REQUIRED*
   # @option opt [String]      :lastName           *REQUIRED*
@@ -216,14 +193,15 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user       Default: @user
   # @param [String]            password
+  # @param [Hash]              opt        Passed to #api.
   #
   # @return [ApiStatusModel]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-password
   #
-  def update_account_password(user: @user, password:)
+  def update_account_password(user: @user, password:, **opt)
     userIdentifier = name_of(user)
-    opt = { password: password }
+    opt = opt.merge(password: password)
     api(:put, 'accounts', userIdentifier, 'password', **opt)
     ApiStatusModel.new(response, error: exception)
   end
@@ -252,14 +230,15 @@ module ApiService::MembershipUserAccounts
   # Get the list of membership subscriptions for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-subscriptions
   #
-  def get_subscriptions(user: @user)
+  def get_subscriptions(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'subscriptions')
+    api(:get, 'accounts', userIdentifier, 'subscriptions', **opt)
     ApiUserSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -280,7 +259,7 @@ module ApiService::MembershipUserAccounts
   # Create a new membership subscription for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [IsoDay]    :startDate              *REQUIRED*
   # @option opt [IsoDay]    :endDate
@@ -326,14 +305,15 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user             Default: @user
   # @param [String]            subscriptionId
+  # @param [Hash]              opt              Passed to #api.
   #
   # @return [ApiUserSubscription]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-single-membership-subscription
   #
-  def get_subscription(user: @user, subscriptionId:)
-    userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'subscriptions', subscriptionId)
+  def get_subscription(user: @user, subscriptionId:, **opt)
+    userId = name_of(user)
+    api(:get, 'accounts', userId, 'subscriptions', subscriptionId, **opt)
     ApiUserSubscription.new(response, error: exception)
   end
     .tap do |method|
@@ -356,7 +336,7 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user             Default: @user
   # @param [String]            subscriptionId
-  # @param [Hash]              opt              Optional API URL parameters.
+  # @param [Hash]              opt              Passed to #api.
   #
   # @option opt [IsoDay]    :startDate              *REQUIRED*
   # @option opt [IsoDay]    :endDate
@@ -402,12 +382,14 @@ module ApiService::MembershipUserAccounts
   # Get the list of subscription types available to users of the Membership
   # Assistant’s site.
   #
+  # @param [Hash] opt                 Passed to #api.
+  #
   # @return [ApiUserSubscriptionTypeList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-subscription-types
   #
-  def get_subscription_types(*)
-    api(:get, 'subscriptiontypes')
+  def get_subscription_types(**opt)
+    api(:get, 'subscriptiontypes', **opt)
     ApiUserSubscriptionTypeList.new(response, error: exception)
   end
     .tap do |method|
@@ -428,14 +410,15 @@ module ApiService::MembershipUserAccounts
   # Get the list of disabilities for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserPodList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-membership-pods
   #
-  def get_user_pod(user: @user)
+  def get_user_pod(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:post, 'accounts', userIdentifier, 'pod')
+    api(:post, 'accounts', userIdentifier, 'pod', **opt)
     ApiUserPodList.new(response, error: exception)
   end
     .tap do |method|
@@ -458,14 +441,15 @@ module ApiService::MembershipUserAccounts
   # @param [User, String, nil]       user             Default: @user
   # @param [DisabilityType]          disabilityType
   # @param [ProofOfDisabilitySource] proofSource
+  # @param [Hash]                    opt              Passed to #api.
   #
   # @return [ApiUserPodList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_create-membership-pod
   #
-  def create_user_pod(user: @user, disabilityType:, proofSource:)
+  def create_user_pod(user: @user, disabilityType:, proofSource:, **opt)
     userIdentifier = name_of(user)
-    opt = { disabilityType: disabilityType, proofSource: proofSource }
+    opt = opt.merge(disabilityType: disabilityType, proofSource: proofSource)
     api(:post, 'accounts', userIdentifier, 'pod', **opt)
     ApiUserPodList.new(response, error: exception)
   end
@@ -491,14 +475,15 @@ module ApiService::MembershipUserAccounts
   # @param [User, String, nil]       user             Default: @user
   # @param [DisabilityType]          disabilityType
   # @param [ProofOfDisabilitySource] proofSource
+  # @param [Hash]                    opt              Passed to #api.
   #
   # @return [ApiUserPodList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-pod
   #
-  def update_user_pod(user: @user, disabilityType:, proofSource:)
+  def update_user_pod(user: @user, disabilityType:, proofSource:, **opt)
     userIdentifier = name_of(user)
-    opt = { proofSource: proofSource }
+    opt = opt.merge(proofSource: proofSource)
     api(:put, 'accounts', userIdentifier, 'pod', disabilityType, **opt)
     ApiUserPodList.new(response, error: exception)
   end
@@ -523,14 +508,15 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user             Default: @user
   # @param [DisabilityType]    disabilityType
+  # @param [Hash]              opt              Passed to #api.
   #
   # @return [ApiUserPodList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_delete-membership-pod
   #
-  def remove_user_pod(user: @user, disabilityType:)
+  def remove_user_pod(user: @user, disabilityType:, **opt)
     userIdentifier = name_of(user)
-    api(:delete, 'accounts', userIdentifier, 'pod', disabilityType)
+    api(:delete, 'accounts', userIdentifier, 'pod', disabilityType, **opt)
     ApiUserPodList.new(response, error: exception)
   end
     .tap do |method|
@@ -558,14 +544,15 @@ module ApiService::MembershipUserAccounts
   # Get the list of signed agreements for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserSignedAgreementList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-signed-agreements
   #
-  def get_user_agreements(user: @user)
+  def get_user_agreements(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:post, 'accounts', userIdentifier, 'agreements')
+    api(:post, 'accounts', userIdentifier, 'agreements', **opt)
     ApiUserSignedAgreementList.new(response, error: exception)
   end
     .tap do |method|
@@ -589,7 +576,7 @@ module ApiService::MembershipUserAccounts
   # @param [AgreementType]     agreementType
   # @param [String]            dateSigned
   # @param [String]            printName
-  # @param [Hash]              opt            Optional API URL parameters.
+  # @param [Hash]              opt            Passed to #api.
   #
   # @option opt [String] :signedByLegalGuardian
   #
@@ -635,14 +622,15 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user   Default: @user
   # @param [String]            id     Agreement ID
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiUserSignedAgreement]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_expire-signed-agreement
   #
-  def remove_user_agreement(user: @user, id:)
+  def remove_user_agreement(user: @user, id:, **opt)
     userIdentifier = name_of(user)
-    api(:post, 'accounts', userIdentifier, 'agreements', id, 'expired')
+    api(:post, 'accounts', userIdentifier, 'agreements', id, 'expired', **opt)
     ApiUserSignedAgreement.new(response, error: exception)
   end
     .tap do |method|
@@ -670,14 +658,15 @@ module ApiService::MembershipUserAccounts
   # Get property choices that guide title recommendations for the given user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiRecommendationProfile]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-recommendation-profile
   #
-  def get_recommendation_profile(user: @user)
+  def get_recommendation_profile(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'recommendationProfile')
+    api(:get, 'accounts', userIdentifier, 'recommendationProfile', **opt)
     ApiRecommendationProfile.new(response, error: exception)
   end
     .tap do |method|
@@ -699,7 +688,7 @@ module ApiService::MembershipUserAccounts
   # user.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [Boolean]      :includeGlobalCollection   Default: *false*
   # @option opt [NarratorType] :narratorType
@@ -763,14 +752,15 @@ module ApiService::MembershipUserAccounts
   # Get the account preferences associated with the given user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiMyAccountPreferences]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-user-account-preferences
   #
-  def get_preferences(user: @user)
+  def get_preferences(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'preferences')
+    api(:get, 'accounts', userIdentifier, 'preferences', **opt)
     ApiMyAccountPreferences.new(response, error: exception)
   end
     .tap do |method|
@@ -791,7 +781,7 @@ module ApiService::MembershipUserAccounts
   # Update the account preferences associated with the given user.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash]              opt    Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [Boolean]       :allowAdultContent
   # @option opt [Boolean]       :showAllBooks           Default: *false*
@@ -846,14 +836,15 @@ module ApiService::MembershipUserAccounts
   # Get the list of periodical subscriptions for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
+  # @param [Hash]              opt    Passed to #api.
   #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodicals-user
   #
-  def get_periodical_subscriptions(user: @user)
+  def get_periodical_subscriptions(user: @user, **opt)
     userIdentifier = name_of(user)
-    api(:get, 'accounts', userIdentifier, 'periodicals')
+    api(:get, 'accounts', userIdentifier, 'periodicals', **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -876,14 +867,15 @@ module ApiService::MembershipUserAccounts
   # @param [User, String, nil]    user      Default: @user
   # @param [String]               seriesId
   # @param [PeriodicalFormatType] format
+  # @param [Hash]                 opt       Passed to #api.
   #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_subscribe-periodical-series
   #
-  def subscribe_periodical(user: @user, seriesId:, format:)
+  def subscribe_periodical(user: @user, seriesId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = { seriesId: seriesId, format: format }
+    opt = opt.merge(seriesId: seriesId, format: format)
     api(:post, 'accounts', userIdentifier, 'periodicals', **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
@@ -908,14 +900,15 @@ module ApiService::MembershipUserAccounts
   #
   # @param [User, String, nil] user       Default: @user
   # @param [String]            seriesId
+  # @param [Hash]              opt        Passed to #api.
   #
   # @return [ApiPeriodicalSubscriptionList]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_unsubscribe-periodical-series
   #
-  def unsubscribe_periodical(user: @user, seriesId:)
+  def unsubscribe_periodical(user: @user, seriesId:, **opt)
     userIdentifier = name_of(user)
-    api(:delete, 'accounts', userIdentifier, 'periodicals', seriesId)
+    api(:delete, 'accounts', userIdentifier, 'periodicals', seriesId, **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -943,7 +936,7 @@ module ApiService::MembershipUserAccounts
   # Get the list of periodical subscriptions for an existing user.
   #
   # @param [User, String, nil] user   Default: @user
-  # @param [Hash] opt                 Optional API URL parameters.
+  # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]                 :start
   # @option opt [Integer]                :limit       Default: 10
@@ -977,26 +970,6 @@ module ApiService::MembershipUserAccounts
         reference_id:     '_get-member-readinglists-list'
       }
     end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # raise_exception
-  #
-  # @param [Symbol, String] method    For log messages.
-  #
-  # This method overrides:
-  # @see ApiService::Common#raise_exception
-  #
-  def raise_exception(method)
-    response_table = MEMBERSHIP_USER_ACCOUNTS_SEND_RESPONSE
-    message_table  = MEMBERSHIP_USER_ACCOUNTS_SEND_MESSAGE
-    message = request_error_message(method, response_table, message_table)
-    raise Api::AccountError, message
-  end
 
 end
 
