@@ -95,7 +95,7 @@ class ReadingListController < ApplicationController
   def create
     __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    api.create_reading_list(**opt)
+    api.create_my_reading_list(**opt)
   end
 
   # == GET /reading_list/:id/edit

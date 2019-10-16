@@ -202,9 +202,76 @@ module ApiService::Periodicals
 
   public
 
+  # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}/resources
+  #
+  # == 2.2.5. Get a list of title file resources for a periodical
+  #
+  # @param [String]     seriesId
+  # @param [String]     editionId
+  # @param [FormatType] format
+  # @param [Hash]       opt           Passed to #api.
+  #
+  # @return [ApiTitleFileResourceList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource-list
+  #
+  def get_periodical_resource_files(seriesId:, editionId:, format:, **opt)
+    api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', **opt)
+    ApiTitleFileResourceList.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:   String,
+          editionId:  String,
+          format:     FormatType,
+        },
+        optional: {
+          start:      String,
+        },
+        reference_id: '_get-periodical-title-file-resource-list'
+      }
+    end
+
+  # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}/resources/{resourceId}
+  #
+  # == 2.2.6. Download a title file resource for a periodical
+  #
+  # @param [String]     seriesId
+  # @param [String]     editionId
+  # @param [FormatType] format
+  # @param [String]     resourceId
+  # @param [Hash]       opt           Passed to #api.
+  #
+  # @return [ApiStatusModel]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource
+  #
+  def get_periodical_resource_file(seriesId:, editionId:, format:, resourceId:, **opt)
+    api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', resourceId, **opt)
+    ApiStatusModel.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        required: {
+          seriesId:    String,
+          editionId:   String,
+          format:      FormatType,
+          resourceId:  String,
+        },
+        reference_id:  '_get-periodical-title-file-resource'
+      }
+    end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == GET /v2/myPeriodicals
   #
-  # == 2.2.5. Get my periodical subscriptions
+  # == 2.2.7. Get my periodical subscriptions
   # Get the list of periodical subscriptions for the authenticated user.
   #
   # @param [Hash] opt                 Passed to #api.
@@ -225,7 +292,7 @@ module ApiService::Periodicals
 
   # == POST /v2/myPeriodicals
   #
-  # == 2.2.6. Subscribe to a periodical series
+  # == 2.2.8. Subscribe to a periodical series
   # Create a periodical subscription for the authenticated user.
   #
   # @param [String]               seriesId
@@ -253,7 +320,7 @@ module ApiService::Periodicals
 
   # == DELETE /v2/myPeriodicals/{seriesId}
   #
-  # == 2.2.7. Unsubscribe from a periodical series
+  # == 2.2.9. Unsubscribe from a periodical series
   # Remove a periodical subscription for the authenticated user.
   #
   # @param [String] seriesId

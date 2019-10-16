@@ -77,9 +77,8 @@ module ApiService::ReadingLists
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
   #
-  def create_reading_list(name:, access:, **opt)
-    opt = opt.merge(name: name, access: access)
-    opt = get_parameters(__method__, **opt)
+  def create_my_reading_list(name:, access:, **opt)
+    opt = get_parameters(__method__, **opt).merge!(name: name, access: access)
     api(:post, 'mylists', **opt)
     ApiReadingList.new(response, error: exception)
   end
@@ -109,7 +108,7 @@ module ApiService::ReadingLists
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def subscribe_reading_list(readingListId:, enabled: true, **opt)
+  def subscribe_my_reading_list(readingListId:, enabled: true, **opt)
     opt = opt.merge(enabled: enabled)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     ApiReadingListUserView.new(response, error: exception)
@@ -137,7 +136,7 @@ module ApiService::ReadingLists
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def unsubscribe_reading_list(readingListId:, enabled: false, **opt)
+  def unsubscribe_my_reading_list(readingListId:, enabled: false, **opt)
     opt = opt.merge(enabled: enabled)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     ApiReadingListUserView.new(response, error: exception)

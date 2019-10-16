@@ -588,12 +588,11 @@ module ApiService::MembershipUserAccounts
     user: @user, agreementType:, dateSigned:, printName:, **opt
   )
     userIdentifier = name_of(user)
-    opt = opt.merge(
+    opt = get_parameters(__method__, **opt).merge!(
       agreementType: agreementType,
       dateSigned:    dateSigned,
       printName:     printName
     )
-    opt = get_parameters(__method__, **opt)
     api(:post, 'accounts', userIdentifier, 'agreements', **opt)
     ApiUserSignedAgreement.new(response, error: exception)
   end
@@ -968,6 +967,46 @@ module ApiService::MembershipUserAccounts
           direction:      Direction,
         },
         reference_id:     '_get-member-readinglists-list'
+      }
+    end
+
+  # == POST /v2/accounts/{userIdentifier}/lists
+  #
+  # == 2.10.25. Create a reading list for a given user
+  # Create an empty reading list that will be owned by the given user, with the
+  # properties provided.
+  #
+  # @param [User, String, nil] user           Default: @user
+  # @param [String]            name
+  # @param [Access]            access
+  # @param [Hash]              opt            Passed to #api.
+  #
+  # @option opt [String] :description
+  #
+  # @return [ApiReadingList]
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_post-member-readinglist-create
+  #
+  def create_reading_list(user: @user, name:, access:, **opt)
+    userIdentifier = name_of(user)
+    opt = get_parameters(__method__, **opt).merge!(name: name, access: access)
+    api(:post, 'accounts', userIdentifier, 'lists', **opt)
+    ApiReadingList.new(response, error: exception)
+  end
+    .tap do |method|
+      add_api method => {
+        alias: {
+          user:           :userIdentifier,
+        },
+        required: {
+          userIdentifier: String,
+          name:           String,
+          access:         Access,
+        },
+        optional: {
+          description:    String,
+        },
+        reference_id:     '_post-member-readinglist-create'
       }
     end
 

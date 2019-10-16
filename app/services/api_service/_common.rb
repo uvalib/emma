@@ -446,7 +446,7 @@ module ApiService::Common
 
   protected
 
-  # Extract API parameters from *options*.
+  # Extract API parameters from *opt*.
   #
   # @param [Symbol]  method
   # @param [Boolean] check_req        Check for missing required keys.
