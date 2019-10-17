@@ -56,9 +56,10 @@ body.api-v2 {
 
         @extend %api-panel;
 
-        padding:      1rem;
-        column-count: auto;
-        column-width: 27.5vw;
+        padding:          1rem;
+        column-count:     auto;
+        column-width:     27.5vw;
+        background-color: $uva-light-gray;
 
         @media #{$browser-ie} {
             margin-left:  inherit;
@@ -78,13 +79,19 @@ body.api-v2 {
         // Classes
         //=====================================================================
 
+        $item-padding: 0.375rem;
+
         > * {
-            display:       block;
-            margin-bottom: 0.75rem;
+            @include width-fit-content;
+
+            display: block;
+            margin:  0 (-$item-padding) $item-padding;
+            padding: 0   $item-padding  $item-padding;
         }
 
         .success {
-            color: blue;
+            color:            blue;
+            background-color: white;
         }
 
         .error {

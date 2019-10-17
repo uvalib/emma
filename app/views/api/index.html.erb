@@ -11,7 +11,7 @@
 <h1 class="heading"><%= title -%></h1>
 
 <div id="methods" class="methods">
-  <%- ApiService.api_methods.each do |method, _| -%>
+  <%- ApiService.api_methods.keys.sort.each do |method| -%>
     <%- if (css = @api_results.dig(method, :status)).present? -%>
       <%- href = '#__' + method.to_s -%>
       <%= make_link(method, href, class: css, 'data-turbolinks': false) -%>

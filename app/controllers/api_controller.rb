@@ -23,9 +23,6 @@ class ApiController < ApplicationController
   # ===========================================================================
 
   before_action :update_user, except: %i[image]
-=begin # TODO: authenticate_user ???
-  before_action :authenticate_user!
-=end
 
   # ===========================================================================
   # :section: Authorization
