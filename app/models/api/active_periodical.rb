@@ -15,8 +15,10 @@ __loading_begin(__FILE__)
 # @attr [IsoDate]                lastUpdated
 # @attr [Array<Api::Link>]       links
 # @attr [Api::PeriodicalEdition] periodical
+# @attr [String]                 seriesId
 # @attr [Integer]                size
 # @attr [Api::StatusModel]       status
+# @attr [String]                 title
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_active_periodical
 #
@@ -33,8 +35,10 @@ class Api::ActivePeriodical < Api::Record::Base
     attribute :lastUpdated,   IsoDate
     has_many  :links,         Api::Link
     has_one   :periodical,    Api::PeriodicalEdition
+    attribute :seriesId,      String
     attribute :size,          Integer
     has_one   :status,        Api::StatusModel
+    attribute :title,         String
   end
 
 end
