@@ -165,6 +165,9 @@ module ApiService::Titles
   end
     .tap do |method|
       add_api method => {
+        alias: {
+          fmt:                     :format,
+        },
         optional: {
           title:                   String,
           author:                  String,

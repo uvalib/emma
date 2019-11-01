@@ -27,17 +27,17 @@ module SerializationConcern
 
   # Indicate whether the ultimate target format is HTML.
   #
-  # @param [Hash, nil] p              Default: `#request_parameters`
+  # @param [Hash, nil] p              Default: `#params`.
   #
   def rendering_html?(p = nil)
-    p ||= request_parameters
+    p ||= params
     fmt = p[:format].to_s.downcase
     (fmt == 'html') || (respond_to?(:request) && request.format.html?)
   end
 
   # Indicate whether the ultimate target format is something other than HTML.
   #
-  # @param [Hash, nil] p              Default: `#request_parameters`
+  # @param [Hash, nil] p              Default: `#params`.
   #
   def rendering_non_html?(p = nil)
     !rendering_html?(p)
@@ -45,20 +45,20 @@ module SerializationConcern
 
   # Indicate whether the ultimate target format is JSON.
   #
-  # @param [Hash, nil] p              Default: `#request_parameters`
+  # @param [Hash, nil] p              Default: `#params`.
   #
   def rendering_json?(p = nil)
-    p ||= request_parameters
+    p ||= params
     fmt = p[:format].to_s.downcase
     (fmt == 'json') || (respond_to?(:request) && request.format.json?)
   end
 
   # Indicate whether the ultimate target format is XML.
   #
-  # @param [Hash, nil] p              Default: `#request_parameters`
+  # @param [Hash, nil] p              Default: `#params`.
   #
   def rendering_xml?(p = nil)
-    p ||= request_parameters
+    p ||= params
     fmt = p[:format].to_s.downcase
     (fmt == 'xml') || (respond_to?(:request) && request.format.xml?)
   end

@@ -180,8 +180,7 @@ module TestHelper::SystemTests::Bookshare
   def method_params(m)
     return unless (m = method_class(m))
     # noinspection RubyYardReturnMatch
-    m.parameters.map do |pair|
-      status, name = pair
+    m.parameters.map do |status, name|
       name ||=
         case status
           when :rest    then '*'

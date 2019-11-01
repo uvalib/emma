@@ -132,8 +132,7 @@ module ApiService::Definition
   #
   def named_parameters(method, no_alias: false)
     alias_keys = !no_alias && api_methods(method)&.dig(:alias) || {}
-    method(method).parameters.map { |pair|
-      type, name = pair
+    method(method).parameters.map { |type, name|
       alias_keys[name] || name if %i[key keyreq].include?(type)
     }.compact
   end

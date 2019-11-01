@@ -295,6 +295,23 @@ module PaginationHelper
 
   public
 
+  # Page count display.
+  #
+  # @param [Integer] count            Default: `#total_items`.
+  # @param [Hash]    opt              Options to .search-count wrapper element.
+  #
+  # @options opt [Symbol] controller
+  # @options opt [Symbol] action
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def pagination_count(count = total_items, **opt)
+    opt   = prepend_css_classes(opt, 'search-count')
+    found = get_page_count_label(count: count)
+    count = number_with_delimiter(count)
+    content_tag(:div, "#{count} #{found}", **opt)
+  end
+
   # Placeholder for an item that would have been a link if it had a path.
   #
   # @param [String, nil] fp           Default: `#first_page`.
@@ -329,6 +346,20 @@ module PaginationHelper
   # ===========================================================================
 
   protected
+
+  # Page count label for the given controller/action.
+  #
+  # @param [Hash] opt
+  #
+  # @options opt [Symbol]  controller
+  # @options opt [Integer] count
+  #
+  # @return [Integer]
+  #
+  def get_page_count_label(**opt)
+    controller = opt[:controller] || request_parameters[:controller]
+    i18n_lookup(controller, 'pagination.count')
+  end
 
   # A pagination control link or a non-actionable placeholder if *path* is not
   # valid.

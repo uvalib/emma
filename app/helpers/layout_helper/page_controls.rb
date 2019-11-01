@@ -21,24 +21,24 @@ module LayoutHelper::PageControls
 
   # Indicate whether it is appropriate to show page controls.
   #
-  # @param [Hash, nil] p              Default: `#params`.
+  # @param [Hash, nil] p              Default: `#request_parameters`.
   #
   def show_page_controls?(p = nil)
-    p ||= params
+    p ||= request_parameters
     !p[:controller].to_s.include?('devise')
   end
 
   # Render the appropriate partial to insert page controls if they are defined
   # for the current controller/action.
   #
-  # @param [Hash, nil] p              Default: `#params`.
+  # @param [Hash, nil] p              Default: `#request_parameters`.
   # @param [Hash]      locals         Passed to `#render`.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   def render_page_controls(p = nil, locals: {})
-    p ||= params
+    p ||= request_parameters
     partial = p[:action].to_s
     act_al  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s
     partial = act_al if act_al
@@ -90,6 +90,7 @@ module LayoutHelper::PageControls
   # @return [nil]
   #
   def page_controls_label(controller = nil, **opt)
+    controller ||= request_parameters[:controller]
     i18n_lookup(controller, 'page_controls.label', **opt)
   end
 

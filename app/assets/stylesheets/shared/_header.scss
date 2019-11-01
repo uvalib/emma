@@ -309,6 +309,79 @@
 // Search input bar and search controls (sort, per-page, language).
 .layout-section.search {
 
+    // noinspection SassScssResolvedByNameOnly
+    &.input {
+
+        display:         grid;
+        justify-content: start;
+
+        @media #{$wide-screen} {
+            grid-template-columns: [input-bar] 0.50fr [adv-toggle] max-content;
+        }
+
+        @media #{$medium-width} {
+            grid-template-columns: [input-bar] 0.75fr [adv-toggle] max-content;
+        }
+
+        @media #{$narrow-screen} {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    // @see LayoutHelper#search_input
+    .search-input {
+    }
+
+    // @see LayoutHelper#search_button
+    // noinspection SassScssResolvedByNameOnly
+    .search-button {
+        @extend %button;
+    }
+
+    // @see LayoutHelper#advanced_search_button
+    // noinspection SassScssResolvedByNameOnly
+    .advanced-search-toggle {
+
+        @extend %button;
+
+        display:          block;
+        padding:          2px 6px;
+        line-height:      1.125;
+        text-decoration:  none;
+        font-size:        large;
+        border-radius:    6px;
+        border:           1.5px solid;
+        background-color: $panel-accent;
+    }
+
+    // @see LayoutHelper#menu_container
+    .menu-label {
+        font-size: large;
+    }
+
+    // @see LayoutHelper#menu_control
+    .menu-control {
+        @extend %header-control-interior;
+    }
+
+    //=========================================================================
+    // Modifiers
+    //=========================================================================
+
+    .no-label,
+    .no-menu {
+
+        @extend .sr-only;
+
+        position:         initial;
+        color:            transparent;
+        background-color: transparent;
+    }
+
     //=========================================================================
     // Sections
     //=========================================================================
@@ -328,6 +401,10 @@
         }
 
         @media #{$narrow-screen} {
+
+            justify-content: flex-end;
+            grid-column:     1 / -1;
+
             * { font-size: larger; }
         }
 
@@ -336,7 +413,7 @@
 
             max-width:    100%;
             margin-right: $gap-x;
-            flex:         0 1 50%;
+            flex:         1 1;
 
             @media #{$browser-ie} {
                 margin-right: $ie-gap-x;
@@ -344,17 +421,13 @@
 
             @media #{$narrow-screen} {
                 margin-right: 0;
-                flex:         0 1 100%;
             }
         }
 
         // @see LayoutHelper#search_button
         .search-button {
 
-            @extend %button;
-
-            height: auto;
-            flex:   0 0 auto;
+            flex: 0 0;
 
             @media #{$narrow-screen} {
                 margin-top: $gap-y;
@@ -363,23 +436,47 @@
     }
 
     // noinspection SassScssResolvedByNameOnly
+    .advanced-search-toggle {
+
+        margin: auto 0;
+
+        @media #{$wide-screen} {
+            margin-left: calc(2 * #{$gap-x});
+        }
+
+        @media #{$medium-width} {
+            margin-left: calc(3 * #{$gap-x});
+        }
+
+        @media #{$narrow-screen} {
+            margin-top:  $gap-y;
+            margin-left: 0;
+            grid-row:    2;
+        }
+    }
+
+    // noinspection SassScssResolvedByNameOnly
     .search-controls {
 
         @extend %header-search-section;
 
-        display:               grid;
-        grid-template-columns: auto;
-        grid-template-rows:    [sort] auto [limit] auto [language] auto;
-        width:                 100%;
+        display:   grid;
+        width:     max-content;
+        max-width: 100%;
 
         @media #{$wide-screen} {
-
-            grid-template-columns: [sort] 1fr [limit] 1fr [language] 1fr;
-            grid-template-rows:    auto;
-            width:                 auto;
-
             @media #{$browser-ie} {
                 width: 50%;
+            }
+        }
+
+        grid-gap:    $gap-y $gap-x;
+        align-items: baseline;
+
+        @for $n from 1 through 6 {
+            &.columns-#{$n} {
+                grid-template-columns:
+                    repeat(#{$n}, [label] max-content [menu] 1fr);
             }
         }
 
@@ -387,12 +484,17 @@
         // Sections
         //=====================================================================
 
+        // TODO: Currently unused -- probably remove.
         // @see LayoutHelper#menu_container
         .menu-container {
 
             display:               grid;
-            grid-template-columns: [label] 0.33fr [control] 1fr;
+            grid-template-columns: [label] 0.2fr [control] 1fr;
             margin:                $gap-y 0;
+
+            @media #{$narrow-screen} {
+                grid-template-columns: [label] 0.5fr [control] 1fr;
+            }
 
             @media #{$wide-screen} {
 
@@ -416,22 +518,19 @@
         // @see LayoutHelper#menu_container
         .menu-label {
 
-            margin:    0;
-            font-size: large;
-
-            @media #{$wide-screen} {
-                margin-right: $gap-x;
-            }
-
             @media #{$browser-ie} {
                 margin-right: $ie-gap-x;
+            }
+
+            &.col1 {
+                grid-column: 1;
             }
         }
 
         // @see LayoutHelper#menu_control
         .menu-control {
 
-            @extend %header-control-interior;
+            margin-right: calc(3 * #{$gap-x});
 
             select {
                 @media #{$narrow-screen} {
@@ -441,6 +540,23 @@
                 @media #{$browser-ie} {
                     margin-right: $ie-gap-x;
                 }
+            }
+        }
+
+        //=====================================================================
+        // Conditions
+        //=====================================================================
+
+        &:not(.open) {
+            > *:not(.row1) {
+                display: none;
+            }
+        }
+
+        // Add this class to display the full ("advanced search") view.
+        &.open {
+            > * {
+                display: initial;
             }
         }
     }

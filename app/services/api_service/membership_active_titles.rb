@@ -81,8 +81,8 @@ module ApiService::MembershipActiveTitles
   #
   def create_active_book(user: @user, bookshareId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(bookshareId: bookshareId, format: format)
-    api(:post, 'accounts', userIdentifier, 'activeBooks', **opt)
+    prm = encode_parameters(bookshareId: bookshareId, format: format)
+    api(:post, 'accounts', userIdentifier, 'activeBooks', **prm, **opt)
     ApiActiveBookList.new(response, error: exception)
   end
     .tap do |method|
@@ -194,8 +194,8 @@ module ApiService::MembershipActiveTitles
   #
   def create_active_periodical(user: @user, bookshareId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(bookshareId: bookshareId, format: format)
-    api(:post, 'accounts', userIdentifier, 'activePeriodicals', **opt)
+    prm = encode_parameters(bookshareId: bookshareId, format: format)
+    api(:post, 'accounts', userIdentifier, 'activePeriodicals', **prm, **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
     .tap do |method|

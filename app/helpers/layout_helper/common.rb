@@ -17,12 +17,29 @@ module LayoutHelper::Common
 
   protected
 
+  # The current type of search (as indicated by the current controller).
+  #
+  # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
+  #
+  # @return [Symbol]                    The controller used for searching.
+  # @return [nil]                       If searching should not be enabled.
+  #
+  def search_type(type = nil)
+    (type || request_parameters[:controller])&.to_sym
+  end
+
   # A form used to create/modify a search.
   #
   # If currently searching for the indicated *type*, then the current URL
   # parameters are included as hidden fields so that the current search is
   # repeated but augmented with the added parameter.  Otherwise a new search is
   # assumed.
+  #
+  # Hidden fields are sorted by name with those before *id* included before the
+  # content provided via the block, and with those whose names sort later than
+  # *id* included after the content provided by the block.  This ensures that
+  # the resulting search URL will be generated with parameters in a consistent
+  # order.
   #
   # @param [Symbol, String] id
   # @param [Symbol, String] type
@@ -37,14 +54,15 @@ module LayoutHelper::Common
   def search_form(id, type, **opt)
     return if (path = search_target(type)).blank?
     opt = opt.merge(method: :get) if opt[:method].blank?
-    hidden_fields =
+    before, after =
       if path == request.path
-        url_parameters.except(id, :offset, :start).map do |k, v|
-          hidden_field_tag(k, v, id: "#{id}-#{k}")
+        hidden_fields = url_parameters.except(id, :offset, :start).sort
+        hidden_fields.partition { |k, _| k.to_s <= id.to_s }.each do |hidden|
+          hidden.map! { |k, v| hidden_field_tag(k, v, id: "#{id}-#{k}") }
         end
       end
     form_tag(path, opt) do
-      [*hidden_fields, *yield].join("\n").html_safe
+      [*before, *yield, *after].join("\n").html_safe
     end
   end
 
@@ -56,11 +74,9 @@ module LayoutHelper::Common
   # @return [String]
   #
   def search_target(type, **opt)
-    opt = opt.merge(controller: "/#{type}", action: :index, only_path: true)
-    # noinspection RubyYardReturnMatch
-    url_for(opt)
+    url_for(opt.merge(controller: "/#{type}", action: :index, only_path: true))
   rescue ActionController::UrlGenerationError
-    search_target(:title)
+    search_target(:title, **opt)
   end
 
 end

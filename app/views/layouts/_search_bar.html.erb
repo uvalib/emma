@@ -2,9 +2,10 @@
 <%-
   # Search input.
   skip ||= !show_search_bar?
-  return if skip || (controls = search_bar).blank?
+  return if skip
 -%>
 
-<div class="layout-section search" role="search">
-  <%= controls %>
+<div class="layout-section search input" role="search">
+  <%= search_bar %>
+  <%= advanced_search_button %>
 </div>

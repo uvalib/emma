@@ -62,13 +62,17 @@ module ImageHelper
   def image_element(url, **opt)
     return if url.blank?
     opt, html_opt = partition_options(opt, :alt, :link)
-    alt  = opt[:alt] || 'Illustration' # TODO: I18n
-    link = opt[:link].presence
-    iopt = { alt: alt }
+    alt   = opt[:alt] || 'Illustration' # TODO: I18n
+    link  = opt[:link].presence
     image =
-      ASYNCHRONOUS_IMAGES ? placeholder(url, **iopt) : image_tag(url, **iopt)
+      if ASYNCHRONOUS_IMAGES
+        image_placeholder(url, alt: alt)
+      else
+        image_tag(url, alt: alt)
+      end
     if link
-      content_tag(:div, link, class: html_opt[:class], 'aria-hidden': true) do
+      content_tag(:div, class: html_opt[:class], 'aria-hidden': true) do
+        # noinspection RubyYardParamTypeMatch
         make_link(image, link, **html_opt.merge(tabindex: -1))
       end
     else
@@ -86,7 +90,7 @@ module ImageHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def placeholder(url, image = nil, **opt)
+  def image_placeholder(url, image = nil, **opt)
     opt  = prepend_css_classes(opt, 'placeholder')
     data = { path: url, 'turbolinks-track': false }
     data[:alt] = opt[:alt] if opt[:alt]

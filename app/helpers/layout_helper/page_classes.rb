@@ -85,7 +85,7 @@ module LayoutHelper::PageClasses
 
   # default_page_classes
   #
-  # @param [Hash] p                   Default: `#params`.
+  # @param [Hash, nil] p              Default: `#request_parameters`.
   #
   # @return [Array<String>]
   #

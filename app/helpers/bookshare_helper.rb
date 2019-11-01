@@ -257,12 +257,12 @@ module BookshareHelper
       return
     end
 
-    label ||= i18n_lookup(controller, action, 'label') || path
+    label ||= i18n_lookup(controller, "#{action}.label") || path
     html_opt = { class: 'control' }
     html_opt[:target]  = '_blank' if path.match?(/^https?:/)
     html_opt[:method]  = :delete  if %i[delete destroy].include?(action)
     merge_html_options!(html_opt, link_opt)
-    html_opt[:title] ||= i18n_lookup(controller, action, 'tooltip')
+    html_opt[:title] ||= i18n_lookup(controller, "#{action}.tooltip")
     # noinspection RubyYardParamTypeMatch
     make_link(label, path, html_opt)
   end

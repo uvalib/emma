@@ -95,23 +95,101 @@ en:
     search_bar:
       label:            'Search'
       input:
-        enabled:        'title'
-        field:          'keyword'
-        label:          'Catalog search terms:'
-        placeholder:    'Enter catalog search terms...'
+        enabled:        false
+        field:          'q'
+        label:          'Search terms:'
+        placeholder:    'Enter search terms...'
       button:
         label:          'Search'
-      controls:
-        - 'sort'
-        - 'size'
-        - 'language'
-      sort:
-        label:          'Sort By'
-      size:
-        label:          'Page Size'
+      advanced:
+        label:          'ADVANCED'
+        close_label:    'Close ADVANCED'
+
+    search_controls:
+
+      braille:
+        label:          'Braille'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'titleize'
+        url_parameter:  'brailleType'
+
+      category:
+        label:          'Category'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'titleize'
+        url_parameter:  'categories'
+
+      content_type:
+        label:          'Content Type'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'titleize'
+        url_parameter:  'titleContentType'
+
+      country:
+        label:          'Country'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'upcase'
+        url_parameter:  'country'
+
+      format:
+        label:          'Format'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'upcase'
+        url_parameter:  'fmt' # NOTE: not :format
+
       language:
         label:          'Language'
-        placeholder:    '(Select)'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'titleize'
+        url_parameter:  'language'
+
+      narrator:
+        label:          'Narrator'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'upcase'
+        url_parameter:  'narratorType'
+
+      periodical_format:
+        label:          'Format'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'upcase'
+        url_parameter:  'fmt' # NOTE: not :format
+
+      size:
+        label:          'Page Size'
+        label_visible:  true
+        placeholder:    ~
+        menu_format:    'none'
+        url_parameter:  'limit'
+        values:
+          - 10
+          - 25
+          - 50
+          - 100
+        default:        10
+
+      sort:
+        label:          'Sort By'
+        label_visible:  true
+        placeholder:    ~
+        menu_format:    'titleize'
+        url_parameter:  'sort'
+        default:        'relevance'
+
+      warnings:
+        label:          'Warnings'
+        label_visible:  true
+        placeholder:    '(any)'
+        menu_format:    'titleize'
+        url_parameter:  'includedContentWarnings'
 
     page_controls:
       label:            'Actions'
@@ -127,6 +205,7 @@ en:
     pagination:
       page_size:        10
       separator:        '&nbsp;|&nbsp;'
+      count:            'items found'
 
       start_over:
         label:          'START'
@@ -333,6 +412,9 @@ en:
           one:          'Manage this %{item}'
           many:         '%{Item} Actions'
 
+      pagination:
+        count:          '%{items} found'
+
       index:
         label:          '%{Items}'
         title:          '%{Item} Index'
@@ -377,8 +459,12 @@ en:
 
       search_bar:
         label:          'Catalog Search'
-        controls:
-          - 'size'
+        input:
+          enabled:      false
+
+      search_controls:
+        layout:
+          - [size]
 
       pagination:
         page_size:      20
@@ -413,6 +499,18 @@ en:
 
       search_bar:
         label:          'Catalog Search'
+        input:
+          enabled:      true
+          field:        'keyword'
+          label:        'Catalog search terms:'
+          placeholder:  'Enter catalog search terms...'
+
+      search_controls:
+        layout:
+          - [sort,         size                  ]
+          - [language,     category              ]
+          - [content_type, warnings,     country ]
+          - [format,       braille,      narrator]
 
       page_controls:
         label:
@@ -479,6 +577,12 @@ en:
           field:        'title'
           label:        'Periodical search terms:'
           placeholder:  'Search periodical titles...'
+
+      search_controls:
+        layout:
+          - [sort,     size              ]
+          - [language, category          ]
+          - [format,   braille,  narrator]
 
       index:
         label:          'Periodicals'
@@ -564,10 +668,9 @@ en:
       title:            'Organization Members'
       tooltip:          'Show organization members.'
 
-      search_bar:
-        controls:
-          - 'sort'
-          - 'size'
+      search_controls:
+        layout:
+          - [sort, size]
 
       index:
         label:          'Members'
@@ -662,10 +765,9 @@ en:
       title:            'Reading Lists'
       tooltip:          'Show subscribed reading lists.'
 
-      search_bar:
-        controls:
-          - 'sort'
-          - 'size'
+      search_controls:
+        layout:
+          - [sort, size]
 
       page_controls:
         label:

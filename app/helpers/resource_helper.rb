@@ -93,7 +93,7 @@ module ResourceHelper
       path = path.call(item, label) if path.is_a?(Proc)
       unless (html_opt[:title] ||= opt[:tooltip])
         scope = opt[:scope] || opt[:controller]
-        scope ||= (params[:controller] if respond_to?(:params))
+        scope ||= request_parameters[:controller]
         scope &&= "emma.#{scope}.show.tooltip"
         html_opt[:title] = I18n.t(scope, default: '')
       end
@@ -207,8 +207,7 @@ module ResourceHelper
 
     # Otherwise, wrap the terms phrase in quotes unless directed to handled
     # each word of the phrase separately.
-    ctrl   = opt[:scope] || opt[:controller]
-    ctrl ||= (params[:controller] if respond_to?(:params))
+    ctrl   = opt[:scope] || opt[:controller] || request_parameters[:controller]
     phrase = !opt[:all_words]
     terms  = %Q("#{terms}") if phrase
 
@@ -419,8 +418,8 @@ module ResourceHelper
         when :language    then language_links(item)
         when :link        then record_links(item)
         when :narrator    then narrator_links(item)
-        when :numImage    then item.image_count
-        when :numPage     then item.page_count
+        when :numImage    then number_with_delimiter(item.image_count)
+        when :numPage     then number_with_delimiter(item.page_count)
         when :thumbnail   then thumbnail(item)
         else                   execute(item, value)
       end

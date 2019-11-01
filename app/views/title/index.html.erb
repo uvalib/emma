@@ -6,8 +6,7 @@
   count ||= total_items
 
   if list.present?
-    search_count = "#{count} titles found." # TODO: I18n
-    search_count = content_tag(:div, search_count, class: 'search-count')
+    search_count = pagination_count(count)
     controls     = pagination_controls
     terms        = search_terms.presence
   else

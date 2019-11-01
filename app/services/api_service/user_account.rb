@@ -162,6 +162,9 @@ module ApiService::UserAccount
   end
     .tap do |method|
       add_api method => {
+        alias: {
+          fmt:                  :format,
+        },
         optional: {
           allowAdultContent:    Boolean,
           showAllBooks:         Boolean,

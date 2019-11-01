@@ -135,12 +135,12 @@ module SessionConcern
   # @param [Hash, nil] hash
   # @param [Time]      time           Default: `Time.now`.
   # @param [String]    path           Default: `request.path`.
-  # @param [Hash]      req_params     Default: `#request_parameters`.
+  # @param [Hash]      req_params     Default: `#params`.
   #
   # @return [Hash]
   #
   def last_operation_update(hash = nil, time: nil, path: nil, req_params: nil)
-    req_params ||= request_parameters
+    req_params ||= params
     # noinspection RubyCaseWithoutElseBlockInspection
     case req_params[:controller]
       when 'api' then return if req_params[:action] == 'image'

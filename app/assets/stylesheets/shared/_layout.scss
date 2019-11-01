@@ -47,4 +47,8 @@ body {
     @media #{$wide-screen} {
         margin-bottom: calc(#{$page-padding} / 2);
     }
+
+    @media #{$narrow-screen} {
+        margin-top: calc(#{$page-padding} * 2);
+    }
 }

@@ -17,6 +17,11 @@
 
     grid-auto-rows: min-content;
 
+    @media #{$narrow-screen} {
+        padding-top: 0.25rem;
+        border-top:  2px solid lightgray;
+    }
+
     //=========================================================================
     // Components
     //=========================================================================

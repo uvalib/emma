@@ -76,8 +76,8 @@ module ApiService::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-add
   #
   def add_my_active_book(bookshareId:, format:, **opt)
-    opt = opt.merge(bookshareId: bookshareId, format: format)
-    api(:post, 'myActiveBooks', **opt)
+    prm = encode_parameters(bookshareId: bookshareId, format: format)
+    api(:post, 'myActiveBooks', **prm, **opt)
     ApiActiveBookList.new(response, error: exception)
   end
     .tap do |method|
@@ -168,8 +168,8 @@ module ApiService::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-add
   #
   def add_my_active_periodical(bookshareId:, format:, **opt)
-    opt = opt.merge(bookshareId: bookshareId, format: format)
-    api(:post, 'myActivePeriodicals', **opt)
+    prm = encode_parameters(bookshareId: bookshareId, format: format)
+    api(:post, 'myActivePeriodicals', **prm, **opt)
     ApiActivePeriodicalList.new(response, error: exception)
   end
     .tap do |method|

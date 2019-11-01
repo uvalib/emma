@@ -304,8 +304,8 @@ module ApiService::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_subscribe-myperiodicals
   #
   def subscribe_my_periodical(seriesId:, format:, **opt)
-    opt = opt.merge(seriesId: seriesId, format: format)
-    api(:post, 'myPeriodicals', **opt)
+    prm = encode_parameters(seriesId: seriesId, format: format)
+    api(:post, 'myPeriodicals', **prm, **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|

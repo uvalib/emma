@@ -279,7 +279,7 @@ module ApiService::Common
 
     # Build API call parameters (minus local options).
     @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
-    @params.transform_keys! { |k| (k == :fmt) ? :format : k }
+    decode_parameters!(@params)
     @params[:limit]   = MAX_LIMIT if @params[:limit].to_s == 'max'
     @params[:api_key] = API_KEY
 
@@ -462,7 +462,9 @@ module ApiService::Common
     multi_valued   = Array.wrap(properties[:multi]).presence
     required_keys  = required_parameters(method)
     optional_keys  = optional_parameters(method)
-    specified_keys = required_keys + optional_keys + SERVICE_OPTIONS
+    key_alias      = properties[:alias] || {}
+    specified_keys = required_keys + optional_keys + key_alias.keys
+    specified_keys += SERVICE_OPTIONS
 
     # Validate the keys provided.
     errors = []
@@ -478,14 +480,74 @@ module ApiService::Common
 
     # Return with the options needed for the API request.
     opt.slice(*specified_keys).map { |k, v|
-      if !v.is_a?(Array)
-        [k, v]
-      elsif multi_valued&.include?(k)
-        [k, v.map { |e| %Q("#{e}") }.join(' ')]
-      else
-        [k, v.join(', ')]
+      k = key_alias[k] || k
+      if v.is_a?(Array)
+        v = v.map { |e| %Q("#{e}") } if multi_valued&.include?(k)
+        v = v.join(' ')
       end
+      k = encode_parameter(k)
+      [k, v]
     }.to_h
+  end
+
+  # Preserve a key that would be mistaken for an ignored system parameter.
+  #
+  # @param [Symbol] key
+  #
+  # @return [Symbol]
+  #
+  def encode_parameter(key)
+    IGNORED_PARAMETERS.include?(key) ? "_#{key}".to_sym : key
+  end
+
+  # Preserve keys that would be mistaken for an ignored system parameter.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    A modified copy of *opt*.
+  #
+  def encode_parameters(**opt)
+    encode_parameters!(**opt)
+  end
+
+  # Preserve keys that would be mistaken for an ignored system parameter.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The original *opt* now modified.
+  #
+  def encode_parameters!(opt)
+    opt.transform_keys! { |k| encode_parameter(k) }
+  end
+
+  # Reverse the transform of #encode_parameter.
+  #
+  # @param [Symbol] key
+  #
+  # @return [Symbol]
+  #
+  def decode_parameter(key)
+    key.to_s.sub(/^_/, '').to_sym
+  end
+
+  # Restore preserved keys.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    A modified copy of *opt*.
+  #
+  def decode_parameters(**opt)
+    decode_parameters!(**opt)
+  end
+
+  # Restore preserved keys.
+  #
+  # @param [Hash] opt
+  #
+  # @return [Hash]                    The original *opt* now modified.
+  #
+  def decode_parameters!(opt)
+    opt.transform_keys! { |k| decode_parameter(k) }
   end
 
   # ===========================================================================

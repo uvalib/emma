@@ -588,6 +588,7 @@ module ApiService::MembershipUserAccounts
     user: @user, agreementType:, dateSigned:, printName:, **opt
   )
     userIdentifier = name_of(user)
+    # noinspection RubyNilAnalysis
     opt = get_parameters(__method__, **opt).merge!(
       agreementType: agreementType,
       dateSigned:    dateSigned,
@@ -804,6 +805,7 @@ module ApiService::MembershipUserAccounts
     .tap do |method|
       add_api method => {
         alias: {
+          fmt:                  :format,
           user:                 :userIdentifier,
         },
         required: {
@@ -829,7 +831,7 @@ module ApiService::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/subscriptions
+  # == GET /v2/accounts/{userIdentifier}/periodicals
   #
   # == 2.10.21. Get periodical subscriptions of a user
   # Get the list of periodical subscriptions for an existing user.
@@ -874,8 +876,8 @@ module ApiService::MembershipUserAccounts
   #
   def subscribe_periodical(user: @user, seriesId:, format:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(seriesId: seriesId, format: format)
-    api(:post, 'accounts', userIdentifier, 'periodicals', **opt)
+    prm = encode_parameters(seriesId: seriesId, format: format)
+    api(:post, 'accounts', userIdentifier, 'periodicals', **prm, **opt)
     ApiPeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -989,6 +991,7 @@ module ApiService::MembershipUserAccounts
   #
   def create_reading_list(user: @user, name:, access:, **opt)
     userIdentifier = name_of(user)
+    # noinspection RubyNilAnalysis
     opt = get_parameters(__method__, **opt).merge!(name: name, access: access)
     api(:post, 'accounts', userIdentifier, 'lists', **opt)
     ApiReadingList.new(response, error: exception)

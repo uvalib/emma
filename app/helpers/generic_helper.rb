@@ -147,6 +147,27 @@ module GenericHelper
     end
   end
 
+  # get_params
+  #
+  # @param [Symbol, Method, Array] m_params
+  # @param [Binding]               m_binding
+  # @param [Array<Symbol>]         ignore
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def get_params(m_params, m_binding, *ignore)
+    m_params = m_binding.receiver.method(m_params) if m_params.is_a?(Symbol)
+    m_params = m_params.parameters                 if m_params.is_a?(Method)
+    m_params.flat_map { |type, name|
+      next if name.blank? || (type == :block) || ignore.include?(name)
+      if type == :keyrest
+        m_binding.local_variable_get(name).map(&:itself)
+      else
+        [[name, m_binding.local_variable_get(name)]]
+      end
+    }.compact.to_h
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
