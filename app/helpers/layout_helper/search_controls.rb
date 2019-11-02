@@ -26,8 +26,22 @@ module LayoutHelper::SearchControls
 
   module ClassMethods
 
-    # @type [Symbol]
-    DEF_MENU_LABEL_FMT = :titleize
+    # The names and properties of all of the search control menus and default
+    # values.
+    #
+    # @type [Hash]
+    #
+    # noinspection RailsI18nInspection
+    SEARCH_MENU_RAW = I18n.t('emma.search_controls')
+
+    # The value 'emma.search_controls._default' contains each of the properties
+    # that can be expressed for a menu.  If a property there has a non-nil
+    # value, then that value is used as the default for that property.
+    #
+    # @type [Hash]
+    #
+    SEARCH_MENU_DEFAULT =
+      SEARCH_MENU_RAW[:_default].reject { |_, v| v.nil? }.deep_freeze
 
     # The names and properties of all of the search control menus.
     #
@@ -35,15 +49,19 @@ module LayoutHelper::SearchControls
     #
     # noinspection RailsI18nInspection
     SEARCH_MENU =
-      I18n.t('emma.search_controls').map { |type, values|
-        sr_only = values[:label_visible].blank?
-        label   = values[:label]
-        label   = label.gsub(/ /, '&nbsp;').html_safe unless sr_only
-        format  = values[:menu_format]&.to_sym   || DEF_MENU_LABEL_FMT
-        param   = values[:url_parameter]&.to_sym || type
-        values.merge!(label: label, menu_format: format, url_parameter: param)
+      SEARCH_MENU_RAW.map { |type, values|
+        next if type.to_s.start_with?('_')
+        values =
+          values.reverse_merge(SEARCH_MENU_DEFAULT).tap do |v|
+            v[:label_visible] = true if v[:label_visible].nil?
+            vis               = v[:label_visible]
+            v[:label]         = v[:label].gsub(/ /, '&nbsp;').html_safe if vis
+            v[:menu_format]   = v[:menu_format]&.to_sym
+            v[:url_parameter] = v[:url_parameter]&.to_sym || type
+            v[:values].map!(&:to_s) if v[:values]
+          end
         [type, values]
-      }.to_h.deep_freeze
+      }.compact.to_h.deep_freeze
 
     # If a :sort parameter value ends with this, it indicates that the sort
     # should be performed in reverse order.
@@ -66,7 +84,7 @@ module LayoutHelper::SearchControls
     #   :upcase     Format as all uppercase.
     #   :downcase   Format as all lowercase.
     #   Symbol      Other String method.
-    #   (missing)   Default label format `#SEARCH_MENU_LABEL_FMT[id]`.
+    #   (missing)   Default `#SEARCH_MENU[menu_name][:menu_format]`.
     #
     # @return [String]
     #
@@ -333,10 +351,10 @@ module LayoutHelper::SearchControls
         menus.map { |name|
           col += 1
           method = name.to_s.end_with?('_menu') ? name : "#{name}_menu".to_sym
-          if respond_to?(method)
+          if respond_to?(method, true)
             send(method, type: type, row: row, col: col)
           else
-            name = name.to_s.delete_prefix('_menu').to_sym
+            name = name.to_s.delete_suffix('_menu').to_sym
             menu_container(name, type: type, row: row, col: col)
           end
         }.compact
@@ -396,8 +414,8 @@ module LayoutHelper::SearchControls
   def sort_menu(selected = nil, **opt)
     menu_name = :sort
     p = request_parameters
-    selected ||= p[SEARCH_MENU.dig(menu_name, :url_parameter)]
-    selected ||= p[:sortOrder]
+    selected ||= (rp = request_parameters)[:sortOrder]
+    selected ||= rp[SEARCH_MENU.dig(menu_name, :url_parameter)]
     selected &&= reverse_sort(selected) if p[:direction] == 'desc'
     menu_container(menu_name, selected, **opt)
   end
@@ -465,7 +483,7 @@ module LayoutHelper::SearchControls
 
   # A dropdown menu element.
   #
-  # If *selected* is not specified `#SEARCH_MENU_URL_PARAMETER[menu_name]` is
+  # If *selected* is not specified `#SEARCH_MENU[menu_name][:url_parameter]` is
   # used to extract a value from `#request_parameters`.
   #
   # If no option is currently selected, an initial "null" selection is
@@ -493,7 +511,7 @@ module LayoutHelper::SearchControls
     any_value = ''
 
     selected ||= request_parameters[url_param] || default || any_value
-    if selected.blank?
+    if (selected = selected.to_s).blank?
       selected = any_value
     elsif menu.none? { |_, value| value == selected }
       # Insert a new entry if the selection value is not already in the menu.

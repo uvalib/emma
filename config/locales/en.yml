@@ -107,68 +107,56 @@ en:
 
     search_controls:
 
-      braille:
-        label:          'Braille'
+      _default:
+        label:          ~
         label_visible:  true
+        url_parameter:  ~
         placeholder:    '(any)'
         menu_format:    'titleize'
+        values:         ~
+        default:        ~
+
+      braille:
+        label:          'Braille'
         url_parameter:  'brailleType'
 
       category:
         label:          'Category'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'titleize'
         url_parameter:  'categories'
 
       content_type:
         label:          'Content Type'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'titleize'
         url_parameter:  'titleContentType'
 
       country:
         label:          'Country'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'upcase'
         url_parameter:  'country'
+        menu_format:    'upcase'
 
       format:
         label:          'Format'
-        label_visible:  true
-        placeholder:    '(any)'
+        url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         menu_format:    'upcase'
-        url_parameter:  'fmt' # NOTE: not :format
 
       language:
         label:          'Language'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'titleize'
         url_parameter:  'language'
 
       narrator:
         label:          'Narrator'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'upcase'
         url_parameter:  'narratorType'
+        menu_format:    'upcase'
 
       periodical_format:
         label:          'Format'
-        label_visible:  true
-        placeholder:    '(any)'
+        url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         menu_format:    'upcase'
-        url_parameter:  'fmt' # NOTE: not :format
 
       size:
         label:          'Page Size'
-        label_visible:  true
+        url_parameter:  'limit'
         placeholder:    ~
         menu_format:    'none'
-        url_parameter:  'limit'
         values:
           - 10
           - 25
@@ -178,17 +166,12 @@ en:
 
       sort:
         label:          'Sort By'
-        label_visible:  true
-        placeholder:    ~
-        menu_format:    'titleize'
         url_parameter:  'sort'
+        placeholder:    ~
         default:        'relevance'
 
       warnings:
         label:          'Warnings'
-        label_visible:  true
-        placeholder:    '(any)'
-        menu_format:    'titleize'
         url_parameter:  'includedContentWarnings'
 
     page_controls:

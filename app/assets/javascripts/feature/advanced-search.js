@@ -27,7 +27,7 @@ $(document).on('turbolinks:load', function() {
     var DEBUGGING = true;
 
     /**
-     * CSS class for the search controls container.
+     * The search controls container.
      *
      * @constant {jQuery}
      */
