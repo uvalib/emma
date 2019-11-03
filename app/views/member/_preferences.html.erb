@@ -1,9 +1,7 @@
 <%# app/views/member/_preferences.html.erb -%>
 <%-
   # Organization Member preferences listing.
-  pref ||= @preferences
-  return if pref.blank?
-
+  pref  ||= @preferences or return
   level ||= 2
   skip  ||= nil
 

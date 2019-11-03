@@ -9,15 +9,21 @@ en:
       tagline:          'Educational Materials Made Accessible'
 
     format:
-      BRF:              'BRF'
       DAISY:            'DAISY with Images'
       DAISY_AUDIO:      'DAISY Audio'
       DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
-      DOCX:             'MS Word'
-      EPUB3:            'EPUB 3'
+      BRF:              'BRF'
+      EPUB3:            'EPUB'
       PDF:              'PDF'
+      DOCX:             'Microsoft Word'
       HTML:             'HTML' # NOTE: Exists but not in the API docs.
       TEXT:             'Text' # NOTE: Exists but not in the API docs.
+
+    periodical_format:
+      DAISY:            'DAISY with Images'
+      DAISY_AUDIO:      'DAISY Audio'
+      DAISY_2_AUDIO:    'DAISY 2 Audio'
+      BRF:              'BRF'
 
     # =========================================================================
     # Error messages
@@ -102,8 +108,8 @@ en:
       button:
         label:          'Search'
       advanced:
-        label:          'ADVANCED'
-        close_label:    'Close ADVANCED'
+        label:          'More ▼'
+        close_label:    'Less ▲'
 
     search_controls:
 

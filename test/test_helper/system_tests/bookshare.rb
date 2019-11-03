@@ -311,8 +311,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [nil]
   #
   def model_class(name)
-    name = name.to_s.delete_prefix('_').underscore.camelize
-    return if name.blank?
+    name = name.to_s.delete_prefix('_').underscore.camelize.presence or return
     # noinspection RubyYardReturnMatch
     ("Api::#{name}".constantize rescue nil) ||
       ("Api#{name}".constantize rescue nil)

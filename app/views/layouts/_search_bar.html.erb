@@ -1,8 +1,7 @@
 <%# app/views/layouts/_search_bar.html.erb -%>
 <%-
   # Search input.
-  skip ||= !show_search_bar?
-  return if skip
+  skip ||= !show_search_bar? and return
 -%>
 
 <div class="layout-section search input" role="search">

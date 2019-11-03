@@ -369,20 +369,6 @@
     }
 
     //=========================================================================
-    // Modifiers
-    //=========================================================================
-
-    .no-label,
-    .no-menu {
-
-        @extend .sr-only;
-
-        position:         initial;
-        color:            transparent;
-        background-color: transparent;
-    }
-
-    //=========================================================================
     // Sections
     //=========================================================================
 
@@ -426,12 +412,7 @@
 
         // @see LayoutHelper#search_button
         .search-button {
-
             flex: 0 0;
-
-            @media #{$narrow-screen} {
-                margin-top: $gap-y;
-            }
         }
     }
 
@@ -470,13 +451,35 @@
             }
         }
 
+        @media #{$narrow-screen} {
+            padding-top: $gap-y;
+        }
+
+        //=====================================================================
+        // Grid definition
+        //=====================================================================
+
         grid-gap:    $gap-y $gap-x;
         align-items: baseline;
 
+        $menu-template: "[label] max-content [menu] 1fr";
+
         @for $n from 1 through 6 {
             &.columns-#{$n} {
-                grid-template-columns:
-                    repeat(#{$n}, [label] max-content [menu] 1fr);
+
+                grid-template-columns: repeat(#{$n}, #{$menu-template});
+
+                @media #{$medium-width} {
+                    @if $n >= 2 {
+                        grid-template-columns: repeat(2, #{$menu-template});
+                    }
+                }
+
+                @media #{$narrow-screen} {
+                    @if $n >= 1 {
+                        grid-template-columns: #{$menu-template};
+                    }
+                }
             }
         }
 
@@ -523,7 +526,9 @@
             }
 
             &.col1 {
-                grid-column: 1;
+                @media #{$wide-screen} {
+                    grid-column: 1;
+                }
             }
         }
 
@@ -533,9 +538,8 @@
             margin-right: calc(3 * #{$gap-x});
 
             select {
-                @media #{$narrow-screen} {
-                    width: 100%;
-                }
+
+                width: 100%;
 
                 @media #{$browser-ie} {
                     margin-right: $ie-gap-x;

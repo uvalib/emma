@@ -1,9 +1,7 @@
 <%# app/views/reading_list/_details.html.erb -%>
 <%-
   # A Reading List metadata listing with associated titles.
-  item  ||= nil
-  return if item.blank?
-
+  item  ||= nil or return
   list  ||= nil
   count ||= nil
   add   ||= {}

@@ -192,10 +192,9 @@ module ResourceHelper
   # @return [nil]                             If no *terms* were provided.
   #
   def search_link(terms, field = nil, **opt)
+    terms = terms.to_s.strip.presence or return
     opt, html_opt = partition_options(opt, *SEARCH_LINK_OPTIONS)
     field = opt[:field] || field || :title
-    terms = terms.to_s.strip
-    return if terms.blank?
 
     # Generate the link label.
     ftype = field_category(field)

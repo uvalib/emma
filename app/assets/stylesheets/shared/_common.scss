@@ -113,6 +113,10 @@
         text-decoration: underline;
         box-shadow:      0 0 0.5rem 0.25rem $uva-accent-orange;
     }
+
+    &:focus:hover {
+        outline-color:   transparent;
+    }
 }
 
 //=============================================================================
@@ -122,8 +126,14 @@
 // Make focus outline more easily seen.
 a:focus,
 input:focus,
+button:focus,
 select:focus {
     @extend %focus;
+}
+
+// Avoid the additional interior dotted outline in Firefox.
+::-moz-focus-inner {
+    border: 0;
 }
 
 // Include to remove an element from the display.

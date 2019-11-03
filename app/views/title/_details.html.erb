@@ -1,9 +1,7 @@
 <%# app/views/title/_details.html.erb -%>
 <%-
   # A catalog Title metadata listing with cover image.
-  item  ||= nil
-  return if item.blank?
-
+  item  ||= nil or return
   image ||= nil
   add   ||= {}
   level ||= 1

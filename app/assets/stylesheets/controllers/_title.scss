@@ -17,7 +17,12 @@
 
     grid-auto-rows: min-content;
 
+    @media #{$medium-width} {
+        margin-top: $results-entry-gap-y;
+    }
+
     @media #{$narrow-screen} {
+        margin-top:  $results-entry-gap-y;
         padding-top: 0.25rem;
         border-top:  2px solid lightgray;
     }
@@ -92,8 +97,14 @@
     //=========================================================================
 
     .number {
+
+        @media #{$medium-width} {
+            margin-top: $results-entry-gap-y;
+        }
+
         // Push item number to the right and hide.
         @media #{$narrow-screen} {
+            margin-top:  $results-entry-gap-y;
             grid-column: 3 / -1;
             visibility:  hidden;
         }
@@ -110,8 +121,13 @@
             margin-bottom: $ie-results-entry-gap-y;
         }
 
+        @media #{$medium-width} {
+            margin-top: $results-entry-gap-y;
+        }
+
         // Push thumbnail to the right and occupy the right side of the entry.
         @media #{$narrow-screen} {
+            margin-top:  $results-entry-gap-y;
             grid-column: 3 / -1;
             grid-row:    span 2;
         }

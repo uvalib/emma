@@ -1,9 +1,7 @@
 <%# app/views/periodical/_details.html.erb -%>
 <%-
   # A Periodical metadata listing with associated editions.
-  item  ||= nil
-  return if item.blank?
-
+  item  ||= nil or return
   list  ||= nil
   count ||= nil
   add   ||= {}

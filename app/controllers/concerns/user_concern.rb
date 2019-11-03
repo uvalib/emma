@@ -47,6 +47,7 @@ module UserConcern
   #   ApiMyAccountPreferences,
   #   ApiTitleDownloadList
   # )>]
+  # @return [nil]
   #
   # noinspection RubyNilAnalysis
   def get_account_details(id: nil)

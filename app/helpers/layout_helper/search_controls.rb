@@ -139,9 +139,9 @@ module LayoutHelper::SearchControls
     periodical:   PeriodicalSortOrder,
     reading_list: MyReadingListSortOrder,
     title:        TitleSortOrder,
-  }.map { |type, enumeration|
-    [type, make_menu(:sort, enumeration.values, reversible: true).deep_freeze]
-  }.to_h.freeze
+  }.transform_values { |enumeration|
+    make_menu(:sort, enumeration, reversible: true)
+  }.deep_freeze
 
   # ===========================================================================
 
@@ -236,21 +236,21 @@ module LayoutHelper::SearchControls
 
   # noinspection RubyYardParamTypeMatch
   FORMAT_MENU =
-    make_menu(:format, FormatType).deep_freeze
-
-  # @type [Hash{Symbol=>Array}]
-  FORMAT_MENU_MAP =
-    %i[title].map { |type| [type, FORMAT_MENU] }.to_h.freeze
-
-  # ===========================================================================
+    I18n.t('emma.format').map { |value, label|
+      [label.to_s, value.to_s]
+    }.deep_freeze
 
   # noinspection RubyYardParamTypeMatch
   PERIODICAL_FORMAT_MENU =
-    make_menu(:format, PeriodicalFormatType).deep_freeze
+    I18n.t('emma.periodical_format').map { |value, label|
+      [label.to_s, value.to_s]
+    }.deep_freeze
 
   # @type [Hash{Symbol=>Array}]
-  PERIODICAL_FORMAT_MENU_MAP =
-    %i[periodical].map { |type| [type, PERIODICAL_FORMAT_MENU] }.to_h.freeze
+  FORMAT_MENU_MAP = {
+    title:      FORMAT_MENU,
+    periodical: PERIODICAL_FORMAT_MENU,
+  }.freeze
 
   # ===========================================================================
 
@@ -299,17 +299,16 @@ module LayoutHelper::SearchControls
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_MENU_MAP = {
-    braille:            BRAILLE_MENU_MAP,
-    category:           CATEGORY_MENU_MAP,
-    content_type:       CONTENT_TYPE_MENU_MAP,
-    country:            COUNTRY_MENU_MAP,
-    format:             FORMAT_MENU_MAP,
-    language:           LANGUAGE_MENU_MAP,
-    narrator:           NARRATOR_MENU_MAP,
-    periodical_format:  PERIODICAL_FORMAT_MENU_MAP,
-    size:               SIZE_MENU_MAP,
-    sort:               SORT_MENU_MAP,
-    warnings:           WARNINGS_MENU_MAP,
+    braille:      BRAILLE_MENU_MAP,
+    category:     CATEGORY_MENU_MAP,
+    content_type: CONTENT_TYPE_MENU_MAP,
+    country:      COUNTRY_MENU_MAP,
+    format:       FORMAT_MENU_MAP,
+    language:     LANGUAGE_MENU_MAP,
+    narrator:     NARRATOR_MENU_MAP,
+    size:         SIZE_MENU_MAP,
+    sort:         SORT_MENU_MAP,
+    warnings:     WARNINGS_MENU_MAP,
   }.freeze
 
   # ===========================================================================
@@ -347,26 +346,18 @@ module LayoutHelper::SearchControls
     rows.map! do |menus|
       row += 1
       col  = 0
-      row_columns =
-        menus.map { |name|
-          col += 1
-          method = name.to_s.end_with?('_menu') ? name : "#{name}_menu".to_sym
-          if respond_to?(method, true)
-            send(method, type: type, row: row, col: col)
-          else
-            name = name.to_s.delete_suffix('_menu').to_sym
-            menu_container(name, type: type, row: row, col: col)
-          end
-        }.compact
-      if row_columns.blank?
-        row -= 1
-        next
-      end
-      filler_columns =
-        (max_column - row_columns.size).times.map {
-          blank_menu(row: row, col: (col += 1))
-        }
-      row_columns + filler_columns
+      menus.map { |name|
+        col += 1
+        method = name.to_s.end_with?('_menu') ? name : "#{name}_menu".to_sym
+        if respond_to?(method, true)
+          send(method, type: type, row: row, col: col)
+        else
+          name = name.to_s.delete_suffix('_menu').to_sym
+          menu_container(name, type: type, row: row, col: col)
+        end
+      }.compact.tap { |columns|
+        row -= 1 if columns.blank?
+      }.presence
     end
     rows.compact!
     return if rows.blank?
@@ -444,26 +435,6 @@ module LayoutHelper::SearchControls
 
   private
 
-  # A placeholder for a grid position that is expected to contain a label/menu.
-  #
-  # @param [Hash] opt                 Passed to #content_tag except for:
-  #
-  # @option opt [Integer] :row
-  # @option opt [Integer] :col
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def blank_menu(**opt)
-    r = opt[:row].to_i
-    c = opt[:col].to_i
-    opt = opt.except(:row, :col)
-    opt[:'aria-hidden'] = true
-    append_css_classes!(opt, "row#{r}", "col#{c}")
-    %w(label menu).map { |v|
-      content_tag(:div, '', **prepend_css_classes(opt, "no-#{v}"))
-    }.join.html_safe
-  end
-
   # A menu control preceded by a menu label (if provided).
   #
   # @param [Symbol]      menu_name
@@ -502,13 +473,13 @@ module LayoutHelper::SearchControls
   #
   def menu_control(menu_name, selected = nil, **opt)
     local, opt = partition_options(opt, :type, :row, :col)
-    type = search_type(local[:type])
-    menu = SEARCH_MENU_MAP.dig(menu_name, type)
-    return if menu.blank?
-
+    type      = search_type(local[:type])
+    menu      = SEARCH_MENU_MAP.dig(menu_name, type) or return
     url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
     default   = SEARCH_MENU.dig(menu_name, :default)
     any_value = ''
+    row       = local[:row].to_i
+    col       = local[:col].to_i
 
     selected ||= request_parameters[url_param] || default || any_value
     if (selected = selected.to_s).blank?
@@ -517,11 +488,7 @@ module LayoutHelper::SearchControls
       # Insert a new entry if the selection value is not already in the menu.
       label = make_menu_label(menu_name, selected)
       menu += [[label, selected]]
-      if selected.is_a?(String)
-        menu.sort!
-      else
-        menu.sort_by!(&:last)
-      end
+      menu.sort_by! { |label, value| value.to_i.zero? ? label : value.to_i }
     end
 
     # Prepend a placeholder if not present.
@@ -530,8 +497,6 @@ module LayoutHelper::SearchControls
       menu = [[any_label, any_value]] + menu
     end
 
-    row = local[:row].to_i
-    col = local[:col].to_i
     prepend_css_classes!(opt, 'menu-control', "row#{row}", "col#{col}")
     search_form(url_param, type, **opt) do
       option_tags = options_for_select(menu, selected)

@@ -1,8 +1,8 @@
 <%# app/views/layouts/_nav_bar.html.erb -%>
 <%-
   # Navigation bar.
-  skip ||= !show_nav_bar?
-  return if skip || (controls = nav_bar_links).blank?
+  skip ||= !show_nav_bar? and return
+  controls = nav_bar_links.presence or return
 -%>
 
 <nav class="layout-navbar">

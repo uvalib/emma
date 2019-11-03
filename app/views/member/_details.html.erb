@@ -1,9 +1,7 @@
 <%# app/views/member/_details.html.erb -%>
 <%-
   # A Member metadata listing with preferences and history.
-  item ||= nil
-  return if item.blank?
-
+  item  ||= nil or return
   pref  ||= nil
   hist  ||= nil
   add   ||= {}

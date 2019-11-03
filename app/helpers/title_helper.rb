@@ -71,8 +71,7 @@ module TitleHelper
   #
   def thumbnail(item, **opt)
     # @type [String]
-    url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
-    return if url.blank?
+    url = item.respond_to?(:thumbnail_image) && item.thumbnail_image or return
     id  = item.identifier
     opt = prepend_css_classes(opt, 'thumbnail')
     opt[:alt]  ||= I18n.t('emma.title.index.thumbnail.image.alt', item: id)

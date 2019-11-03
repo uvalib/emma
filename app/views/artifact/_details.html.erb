@@ -1,9 +1,7 @@
 <%# app/views/artifact/_details.html.erb -%>
 <%-
   # An Artifact metadata listing.
-  item  ||= nil
-  return if item.blank?
-
+  item  ||= nil or return
   add   ||= {}
   level ||= 1
 

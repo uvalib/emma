@@ -1,9 +1,7 @@
 <%# app/views/reading_list/page_controls/_index.html.erb -%>
 <%-
   # Page controls on a Reading List index page for an authorized user.
-  actions = page_control_actions(ReadingList, :new)
-  return if actions.blank?
-
+  actions   = page_control_actions(ReadingList, :new).presence or return
   anchor_id = 'index-page-controls'
   skip_nav_prepend(reading_list: anchor_id)
 

@@ -3,8 +3,7 @@
   # Hidden main "skip navigation" menu.
   label    ||= 'Skip directly to:' # TODO: I18n
   label_id   = 'skip-nav-heading'
-  menu       = render_skip_nav('aria-labelledby': label_id)
-  return if menu.blank?
+  menu       = render_skip_nav('aria-labelledby': label_id).presence or return
 -%>
 <nav class="skip-nav main">
   <h2 class="<%= label_id -%>" id="<%= label_id -%>"><%= label -%></h2>
