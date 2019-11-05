@@ -92,6 +92,10 @@
 
     justify-items: stretch;
 
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr [label] max-content [value] min-content;
+    }
+
     //=========================================================================
     // Components
     //=========================================================================

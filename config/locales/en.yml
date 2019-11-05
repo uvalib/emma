@@ -25,6 +25,177 @@ en:
       DAISY_2_AUDIO:    'DAISY 2 Audio'
       BRF:              'BRF'
 
+    braille_type:
+      automated:        'Automated'
+      transcribed:      'Transcribed'
+
+    braille_code:
+      ebae:                     'English Braille American Edition'
+      ueb:                      'Unified English Braille'
+      french:                   'French Braille Code'
+      french_quebec:            'French Quebec Braille Code'
+      french_unified:           'French Unified Braille Code'
+      standard_enlish_braille:  'Standard English Braille'
+      music_braille_code:       'Music Braille Code'
+
+    braille_grade:
+      grade_2:          'Grade 2 (contracted)'
+      grade_1:          'Grade 1 (uncontracted)'
+
+    categories:
+
+      # Each key here relates to the ID associated checkbox ID in the book
+      # submission forms on catalog.bookshare.org.  For example, the checkbox
+      # for the 'Animals' category has 'id="metadataBean.categories_15"'.
+      #
+      # For search, these category numbers are not used -- the value itself is
+      # passed as the URL query option value.
+
+      15:               'Animals'
+      19:               'Art and Architecture'
+      4867:             'Australiana'
+      20:               'Biographies and Memoirs'
+      33:               'Business and Finance'
+      2:                "Children's Books"
+      4145:             'Communication'
+      21:               'Computers and Internet'
+      22:               'Cooking, Food and Wine'
+      17:               'Disability-Related'
+      4138:             'Drama, Plays and Theater'
+      4140:             'Earth Sciences'
+      4136:             'Education'
+      3:                'Entertainment'
+      4146:             'Foreign Language Study'
+      32:               'Gay, Lesbian, Bisexual and Transgender'
+      23:               'Health, Mind and Body'
+      4:                'History'
+      24:               'Home and Garden'
+      5:                'Horror'
+      4141:             'Humor'
+      4139:             'Language Arts'
+      4142:             'Law, Legal Issues and Ethics'
+      25:               'Literature and Fiction'
+      4143:             'Mathematics and Statistics'
+      4144:             'Medicine'
+      6:                'Military'
+      4147:             'Music'
+      26:               'Mystery and Thrillers'
+      7:                'Nonfiction'
+      27:               'Outdoors and Nature'
+      28:               'Parenting and Family'
+      4148:             'Philosophy'
+      16:               'Poetry'
+      4149:             'Politics and Government'
+      4135:             'Psychology'
+      8:                'Reference'
+      30:               'Religion and Spirituality'
+      9:                'Romance'
+      10:               'Science'
+      31:               'Science Fiction and Fantasy'
+      18:               'Self-Help'
+      4137:             'Social Studies'
+      4150:             'Sociology'
+      11:               'Sports'
+      4778:             'Study Guides'
+      4779:             'Technology'
+      12:               'Teens'
+      86:               'Textbooks'
+      13:               'Travel'
+      14:               'Westerns'
+
+    language:
+
+      # These are the language choices presented in the book submission forms
+      # on catalog.bookshare.org.  Note that some of these are actually only
+      # defined in ISO 639-3; the rest can also be found in ISO 639-2, although
+      # Bookshare only accepts the "alternate" codes in some cases (as noted
+      # below).
+      #
+      # The 'primary' array lists the codes of the languages that should be at
+      # the head of a list of language selection choices.
+
+      primary:
+        - eng
+        - spa
+
+      list:
+        afr:            'Afrikaans'
+        amh:            'Amharic'
+        anp:            'Angika'
+        ara:            'Arabic'
+        arm:            'Armenian'
+        asm:            'Assamese'
+        aus:            'Australian Languages'
+        baq:            'Basque'
+        ben:            'Bengali'
+        tkb:            'Buksa Tharu'             # NOTE: ISO 639-3
+        bul:            'Bulgarian'
+        yue:            'Cantonese'               # NOTE: ISO 639-3
+        cat:            'Catalan'
+        ccp:            'Chakma'                  # NOTE: ISO 639-3
+        chi:            'Chinese'
+        ctg:            'Chittagonian'            # NOTE: ISO 639-3
+        the:            'Chitwania Tharu'         # NOTE: ISO 639-3
+        hrv:            'Croatian'
+        ces:            'Czech'                   # NOTE: not 'cze'
+        thl:            'Dangaura Tharu'          # NOTE: ISO 639-3
+        dan:            'Danish'
+        dut:            'Dutch'
+        eng:            'English'
+        fil:            'Filipino'
+        fin:            'Finnish'
+        fre:            'French'
+        ger:            'German'
+        ell:            'Greek'                   # NOTE: not 'gre'
+        guj:            'Gujarati'
+        heb:            'Hebrew'
+        hin:            'Hindi'
+        hun:            'Hungarian'
+        ind:            'Indonesian'
+        ita:            'Italian'
+        jpn:            'Japanese'
+        jav:            'Javanese'
+        kan:            'Kannada'
+        tkt:            'Kathoriya Tharu'         # NOTE: ISO 639-3
+        thq:            'Kochila Tharu'           # NOTE: ISO 639-3
+        kok:            'Konkani'
+        kor:            'Korean'
+        lat:            'Latin'
+        mal:            'Malayalam'
+        cmn:            'Mandarin'                # NOTE: ISO 639-3
+        mri:            'Maori'                   # NOTE: not 'mao'
+        mar:            'Marathi'
+        new:            'Nepal Bhasa'
+        nep:            'Nepali'
+        nor:            'Norwegian'
+        orm:            'Oromo'
+        pol:            'Polish'
+        por:            'Portuguese'
+        pan:            'Punjabi, Eastern'
+        pnb:            'Punjabi, Western'
+        thr:            'Rana Tharu'              # NOTE: ISO 639-3
+        rkt:            'Rangpuri'                # NOTE: ISO 639-3
+        ron:            'Romanian'
+        rus:            'Russian'
+        skr:            'Saraiki'                 # NOTE: ISO 639-3
+        srp:            'Serbian'
+        sin:            'Sinhala'
+        slv:            'Slovenian'
+        soi:            'Sonha'                   # NOTE: ISO 639-3
+        spa:            'Spanish'
+        swa:            'Swahili'
+        swe:            'Swedish'
+        syl:            'Sylheti'                 # NOTE: ISO 639-3
+        tgl:            'Tagalog'
+        tam:            'Tamil'
+        tel:            'Telugu'
+        tur:            'Turkish'
+        urd:            'Urdu'
+        vie:            'Vietnamese'
+        wel:            'Welsh'
+        yid:            'Yiddish'
+        zul:            'Zulu'
+
     # =========================================================================
     # Error messages
     # =========================================================================
@@ -192,6 +363,7 @@ en:
       confirm:          'Are you sure?'
 
     pagination:
+
       page_size:        10
       separator:        '&nbsp;|&nbsp;'
       count:            'items found'
@@ -231,6 +403,12 @@ en:
         asset:          'loading-balls.gif'
 
     download:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{fmt}        Name of an artifact export format.
+      # %{button}     Label of a button.
+
       label:          'Download'
       tooltip:        'Get a copy of the item in this format.'
 
@@ -263,14 +441,15 @@ en:
 
     # =========================================================================
     # Devise controllers
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{user}           Name of a user.
-    # %{provider}       Name of an authentication provider.
     # =========================================================================
 
     user:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{user}         Name of a user.
+      # %{provider}     Name of an authentication provider.
+
       tooltip:          'Signed in as "%{user}"'
       password:
         length:         '%{min} characters minimum'
@@ -347,13 +526,14 @@ en:
 
     # =========================================================================
     # Home page
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{sign_in}        HTML <a> link to the sign-in path.
     # =========================================================================
 
     home:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{sign_in}      HTML <a> link to the sign-in path.
+
       label:            'Home'
       title:            'EMMA Test Application'
 
@@ -376,16 +556,17 @@ en:
 
     # =========================================================================
     # Generic (parameterized) page definitions
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{item}           Singular form of the entity.
-    # %{items}          Plural form of the entity.
-    # %{Item}           Capitalized singular form of the entity.
-    # %{Items}          Capitalized plural form of the entity.
     # =========================================================================
 
     generic:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{item}         Singular form of the entity.
+      # %{items}        Plural form of the entity.
+      # %{Item}         Capitalized singular form of the entity.
+      # %{Items}        Capitalized plural form of the entity.
+
       unit:
         brief:          'item'
         long:           'item'
@@ -439,6 +620,7 @@ en:
     # =========================================================================
 
     category:
+
       unit:
         brief:          'category'
         long:           'catalog category'
@@ -463,7 +645,6 @@ en:
         title:          'Category Index'
         tooltip:        'Get a category listing.'
 
-
       show:
         label:          'Category'
         title:          'Category'
@@ -471,14 +652,14 @@ en:
 
     # =========================================================================
     # Catalog Title pages
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{item}           Name of the current catalog title.
-    # %{terms}          Current list of search terms.
     # =========================================================================
 
     title:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
       unit:
         brief:          'title'
         long:           'catalog title'
@@ -546,13 +727,14 @@ en:
 
     # =========================================================================
     # Periodical pages
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{terms}          Current list of search terms.
     # =========================================================================
 
     periodical:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
       unit:
         brief:          'periodical'
         long:           'periodical'
@@ -601,13 +783,14 @@ en:
 
     # =========================================================================
     # Periodical edition pages
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{terms}          Current list of search terms.
     # =========================================================================
 
     edition:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
       unit:
         brief:          'edition'
         long:           'periodical edition'
@@ -650,6 +833,7 @@ en:
     # =========================================================================
 
     member:
+
       unit:
         brief:          'member'
         long:           'organizational member'
@@ -694,14 +878,10 @@ en:
 
     # =========================================================================
     # Artifact pages
-    #
-    # NOTE: Some of these definitions require parameters to be supplied:
-    #
-    # %{fmt}            Name of an artifact export format.
-    # %{button}         Label of a button.
     # =========================================================================
 
     artifact:
+
       unit:
         brief:          'artifact'
         long:           'artifact'
@@ -747,6 +927,7 @@ en:
     # =========================================================================
 
     reading_list:
+
       unit:
         brief:          'list'
         long:           'reading list'
@@ -795,6 +976,7 @@ en:
     # =========================================================================
 
     api:
+
       label:            'API Methods'
       title:            'Bookshare API Methods'
       tooltip:          'Results for API methods run as the current user.'

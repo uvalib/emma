@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'iso-639'
-
 module Api
 
   # Shared values and methods.
@@ -240,6 +238,21 @@ module Api
     CatalogSortOrder: {
       values:   %w(relevance title author updatedDate copyrightDate),
       default:  'title'
+    },
+
+    # === From catalog.bookshare.org (not in the API) ===
+
+    ScanQuality: {
+      values:   %w(EXCELLENT GOOD)
+    },
+
+    BrailleCode: {
+      values:   %w(EBAE UEB FRENCH FRENCH_QUEBEC FRENCH_UNIFIED
+                  STANDARD_ENGLISH_BRAILLE MUSIC_BRAILLE_CODE)
+    },
+
+    BrailleGrade2: {
+      values:   %w(GRADE_2 GRADE_1) # contracted, uncontracted
     },
 
     # === Authorization ===
@@ -527,6 +540,9 @@ class EditionSortOrder        < EnumType; end
 class MyReadingListSortOrder  < EnumType; end
 class ReadingListSortOrder    < EnumType; end
 class CatalogSortOrder        < EnumType; end
+class ScanQuality             < EnumType; end
+class BrailleCode             < EnumType; end
+class BrailleGrade2           < EnumType; end
 class AuthType                < EnumType; end
 class GrantType               < EnumType; end
 class TokenErrorType          < EnumType; end

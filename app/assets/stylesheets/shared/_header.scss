@@ -412,7 +412,12 @@
 
         // @see LayoutHelper#search_button
         .search-button {
+
             flex: 0 0;
+
+            @media #{$narrow-screen} {
+                margin-top: $gap-y;
+            }
         }
     }
 
@@ -462,7 +467,7 @@
         grid-gap:    $gap-y $gap-x;
         align-items: baseline;
 
-        $menu-template: "[label] max-content [menu] 1fr";
+        $menu-template: "[label] max-content [menu] minmax(25%,100%)";
 
         @for $n from 1 through 6 {
             &.columns-#{$n} {
