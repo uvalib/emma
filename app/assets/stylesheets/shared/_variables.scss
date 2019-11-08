@@ -87,36 +87,48 @@ $lg-height: 900px;      // 1440x900 laptop.
 //=============================================================================
 
 $narrow-upper-bound: "(max-width: #{$sm-width})";
-$med-wd-lower-bound: "(min-width: #{$sm-width})";
-$med-wd-upper-bound: "(max-width: #{$lg-width})";
+$med-wd-lower-bnd:   "(min-width: #{$sm-width})";
+$med-wd-upper-bnd:   "(max-width: #{$lg-width})";
 $wide-lower-bound:   "(min-width: #{$lg-width})";
 
 // * Small-screen portrait mode.
-$narrow-screen: "screen and #{$narrow-upper-bound}";
+$narrow-screen:     "screen and #{$narrow-upper-bound}";
 
 // * In-between screen width.
-$medium-width:  "screen and #{$med-wd-lower-bound} and #{$med-wd-upper-bound}";
+$medium-width:      "screen and #{$med-wd-lower-bnd} and #{$med-wd-upper-bnd}";
 
 // * Large-screen landscape mode.
-$wide-screen:   "screen and #{$wide-lower-bound}";
+$wide-screen:       "screen and #{$wide-lower-bound}";
+
+// * Medium width OR large-screen landscape mode.
+$not-narrow-screen: "screen and #{$med-wd-lower-bnd}";
+
+// * Medium width OR small-screen portrait mode.
+$not-wide-screen:   "screen and #{$med-wd-upper-bnd}";
 
 //=============================================================================
 // Vertical dimension @media query interpolation strings.
 //=============================================================================
 
-$short-upper-bound:  "(max-height: #{$sm-height})";
-$med-ht-lower-bound: "(min-height: #{$sm-height})";
-$med-ht-upper-bound: "(max-height: #{$lg-height})";
-$tall-lower-bound:   "(min-height: #{$lg-height})";
+$short-upper-bound: "(max-height: #{$sm-height})";
+$med-ht-lower-bnd:  "(min-height: #{$sm-height})";
+$med-ht-upper-bnd:  "(max-height: #{$lg-height})";
+$tall-lower-bound:  "(min-height: #{$lg-height})";
 
 // * Small-screen landscape mode.
-$short-screen:  "screen and #{$short-upper-bound}";
+$short-screen:      "screen and #{$short-upper-bound}";
 
 // * In-between screen height.
-$medium-height: "screen and #{$med-ht-lower-bound} and #{$med-ht-upper-bound}";
+$medium-height:     "screen and #{$med-ht-lower-bnd} and #{$med-ht-upper-bnd}";
 
 // * Large-screen portrait mode.
-$tall-screen:   "screen and #{$tall-lower-bound}";
+$tall-screen:       "screen and #{$tall-lower-bound}";
+
+// * Medium height OR large-screen portrait mode.
+$not-short-screen:  "screen and #{$med-ht-lower-bnd}";
+
+// * Medium height OR small-screen landscape mode.
+$not-tall-screen:   "screen and #{$med-ht-upper-bnd}";
 
 //=============================================================================
 // Screen size @media query interpolation strings.

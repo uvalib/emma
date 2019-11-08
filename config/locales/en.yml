@@ -677,7 +677,7 @@ en:
 
       search_controls:
         layout:
-          - [sort,         size                  ]
+          - [sort,         size,         reset   ]
           - [language,     category              ]
           - [content_type, warnings,     country ]
           - [format,       braille,      narrator]
@@ -751,7 +751,7 @@ en:
 
       search_controls:
         layout:
-          - [sort,     size              ]
+          - [sort,     size,     reset   ]
           - [language, category          ]
           - [format,   braille,  narrator]
 

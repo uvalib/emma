@@ -326,6 +326,22 @@ module GenericHelper
     end
   end
 
+  # Render text that will not break on word boundaries.
+  #
+  # @param [String]  text
+  # @param [Boolean] force            If *true* then the translation will
+  #                                     happen even if text.html_safe?.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def non_breaking(text, force: false)
+    text ||= ''
+    text = ERB::Util.h(text) unless (safe = text.html_safe?)
+    text = text.gsub(/[ \t]/, '&nbsp;').html_safe if force || !safe
+    # noinspection RubyYardReturnMatch
+    text
+  end
+
   # Render a camel-case or snake-case string as in "title case" words separated
   # by non-breakable spaces.
   #
@@ -350,7 +366,7 @@ module GenericHelper
         }.compact.join(' ')
     result = ERB::Util.h(result) unless text.html_safe?
     result = inflection(result, count) if count
-    result.gsub(/\s/, '&nbsp;').html_safe
+    non_breaking(result, force: true)
   end
 
   # Remove surrounding quotation marks from a term.

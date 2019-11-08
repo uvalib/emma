@@ -17,12 +17,11 @@
 
     grid-auto-rows: min-content;
 
-    @media #{$medium-width} {
+    @media #{$not-wide-screen} {
         margin-top: $results-entry-gap-y;
     }
 
     @media #{$narrow-screen} {
-        margin-top:  $results-entry-gap-y;
         padding-top: 0.25rem;
         border-top:  2px solid lightgray;
     }
@@ -102,13 +101,12 @@
 
     .number {
 
-        @media #{$medium-width} {
+        @media #{$not-wide-screen} {
             margin-top: $results-entry-gap-y;
         }
 
         // Push item number to the right and hide.
         @media #{$narrow-screen} {
-            margin-top:  $results-entry-gap-y;
             grid-column: 3 / -1;
             visibility:  hidden;
         }
@@ -125,13 +123,12 @@
             margin-bottom: $ie-results-entry-gap-y;
         }
 
-        @media #{$medium-width} {
+        @media #{$not-wide-screen} {
             margin-top: $results-entry-gap-y;
         }
 
         // Push thumbnail to the right and occupy the right side of the entry.
         @media #{$narrow-screen} {
-            margin-top:  $results-entry-gap-y;
             grid-column: 3 / -1;
             grid-row:    span 2;
         }
@@ -199,7 +196,7 @@
         }
 
         &.field-Authors {
-            @media #{$wide-screen}, #{$medium-width} {
+            @media #{$not-narrow-screen} {
 
                 flex-direction: row;
                 flex-wrap:      wrap;
@@ -298,7 +295,7 @@
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.
         @media #{$wide-screen} {
-            min-width:   $nominal-cover-x;
+            min-width: $nominal-cover-x;
         }
 
         @media #{$medium-width} {

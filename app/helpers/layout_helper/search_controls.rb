@@ -26,6 +26,8 @@ module LayoutHelper::SearchControls
 
   module ClassMethods
 
+    include GenericHelper
+
     # The names and properties of all of the search control menus and default
     # values.
     #
@@ -54,8 +56,7 @@ module LayoutHelper::SearchControls
         values =
           values.reverse_merge(SEARCH_MENU_DEFAULT).tap do |v|
             v[:label_visible] = true if v[:label_visible].nil?
-            vis               = v[:label_visible]
-            v[:label]         = v[:label].gsub(/ /, '&nbsp;').html_safe if vis
+            v[:label]         = non_breaking(v[:label]) if v[:label_visible]
             v[:menu_format]   = v[:menu_format]&.to_sym
             v[:url_parameter] = v[:url_parameter]&.to_sym || type
             v[:values].map!(&:to_s) if v[:values]
@@ -372,30 +373,31 @@ module LayoutHelper::SearchControls
   #
   def search_controls(type = nil, **opt)
     opt, html_opt = partition_options(opt, :type)
-    type = search_type(type || opt[:type])
-    rows = i18n_lookup(type, 'search_controls.layout') || [[]]
-    max_column = rows.map(&:size).max
-    row = 0
-    rows.map! do |menus|
-      row += 1
-      col  = 0
+    opt[:type]    = search_type(type || opt[:type])
+    grid_rows     = i18n_lookup(opt[:type], 'search_controls.layout') || [[]]
+    opt[:row_max] = grid_rows.size
+    opt[:col_max] = max_columns = grid_rows.map(&:size).max
+    opt[:row]     = 0
+    grid_rows.map! do |menus|
+      opt[:row] += 1
+      opt[:col]  = 0
       menus.map { |name|
-        col += 1
-        method = name.to_s.end_with?('_menu') ? name : "#{name}_menu".to_sym
+        opt[:col] += 1
+        name   = name.to_s.delete_suffix('_menu')
+        method = "#{name}_menu".to_sym
         if respond_to?(method, true)
-          send(method, type: type, row: row, col: col)
+          send(method, **opt)
         else
-          name = name.to_s.delete_suffix('_menu').to_sym
-          menu_container(name, type: type, row: row, col: col)
+          menu_container(name, **opt)
         end
       }.compact.tap { |columns|
-        row -= 1 if columns.blank?
+        opt[:row] -= 1 if columns.blank?
       }.presence
     end
-    rows.compact!
-    return if rows.blank?
-    prepend_css_classes!(html_opt, 'search-controls', "columns-#{max_column}")
-    content_tag(:div, safe_join(rows, "\n"), html_opt)
+    grid_rows.compact!
+    return if grid_rows.blank?
+    prepend_css_classes!(html_opt, 'search-controls', "columns-#{max_columns}")
+    content_tag(:div, safe_join(grid_rows, "\n"), html_opt)
   end
 
   # A control for toggling the visibility of advanced search controls.
@@ -419,6 +421,69 @@ module LayoutHelper::SearchControls
   # ===========================================================================
 
   protected
+
+  # Options consumed by internal methods which should not be passed on along to
+  # the methods which generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  MENU_OPTS = %i[type label row col row_max col_max].freeze
+
+  # URL parameters for all search control menus.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_PARAMETERS =
+    SEARCH_CONTROLS.map { |k, v| (v[:url_parameter] || k).to_sym }.uniq.freeze
+
+  # URL parameters for #reset_menu.
+  #
+  # @type [Array<Symbol>]
+  #
+  RESET_PARAMETERS = (SEARCH_PARAMETERS - %i[sort limit]).freeze
+
+  # A button to reset all filter menu selections to their default state.
+  #
+  # @param [Hash] opt                 Passed to #button_tag except for:
+  #
+  # @option opt [String]  :class      CSS classes for both spacer and button.
+  # @option opt [String]  :label      Button label.
+  # @option opt [Integer] :row        Grid row (wide screen).
+  # @option opt [Integer] :col        Grid column (wide screen).
+  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
+  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                     If menu is not available for *type*.
+  #
+  def reset_menu(**opt)
+    local, html_opt = partition_options(opt, :class, *MENU_OPTS)
+    label   = local[:label] || 'Reset Filters' # TODO: I18n
+    label   = non_breaking(label)
+    row     = local[:row].to_i
+    col     = local[:col].to_i
+    classes = Array.wrap(local[:class])
+    classes << "row-#{row}" unless row.zero?
+    classes << "col-#{col}" unless col.zero?
+    classes << 'bottom'     if row == local[:row_max]
+
+    sp_opt = prepend_css_classes!({}, 'menu-spacer', *classes)
+    spacer = content_tag(:div, '&nbsp;'.html_safe, **sp_opt)
+
+    classes << 'rightmost' if col == local[:col_max]
+    prepend_css_classes!(html_opt, 'menu-button', *classes)
+=begin
+    button =
+      button_tag(**html_opt.merge!(type: 'button')) do
+        url = url_for(request_parameters.except(*RESET_PARAMETERS))
+        link_to(label, url)
+      end
+=end
+    url = url_for(request_parameters.except(*RESET_PARAMETERS))
+    button = link_to(label, url, **html_opt)
+
+    spacer + button
+  end
 
   # Perform a search specifying a collation order for the results.
   #
@@ -470,19 +535,20 @@ module LayoutHelper::SearchControls
 
   # A menu control preceded by a menu label (if provided).
   #
-  # @param [Symbol]      menu_name
-  # @param [String, nil] selected     Passed to #menu_control.
-  # @param [Hash]        opt          Passed to #menu_control except for:
+  # @param [String, Symbol] menu_name
+  # @param [String, nil]    selected    Passed to #menu_control.
+  # @param [Hash]           opt         Passed to #menu_control except for:
   #
-  # @option opt [String]  :label      If missing, no label is included.
+  # @option opt [String] :label         If missing, no label is included.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If menu is not available for *type*.
   #
   def menu_container(menu_name, selected = nil, **opt)
-    label_opt, opt = partition_options(opt, :label)
-    menu = menu_control(menu_name, selected, **opt)
-    menu_label(menu_name, **opt.merge(label_opt)) + menu if menu
+    label_opt, html_opt = partition_options(opt, :label)
+    menu  = menu_control(menu_name, selected, **html_opt) or return
+    label = menu_label(menu_name, **html_opt.merge(label_opt))
+    label + menu
   end
 
   # A dropdown menu element.
@@ -493,26 +559,28 @@ module LayoutHelper::SearchControls
   # If no option is currently selected, an initial "null" selection is
   # prepended.
   #
-  # @param [Symbol]      menu_name
-  # @param [String, nil] selected
-  # @param [Hash]        opt          Passed to #search_form except for:
+  # @param [String, Symbol] menu_name
+  # @param [String, nil]    selected
+  # @param [Hash]           opt           Passed to #search_form except for:
   #
-  # @option opt [String, Symbol] :type
-  # @option opt [Integer]        :row
-  # @option opt [Integer]        :col
+  # @option opt [String, Symbol] :type    Validated and passed to #search_form.
+  # @option opt [String]         :label   (unused)
+  # @option opt [Integer]        :row     Grid row (wide screen).
+  # @option opt [Integer]        :col     Grid column (wide screen).
+  # @option opt [Integer]        :row_max Bottom grid row (wide screen).
+  # @option opt [Integer]        :col_max Rightmost grid column (wide screen).
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                     If menu is not available for *type*.
+  # @return [nil]                         If menu is not available for *type*.
   #
   def menu_control(menu_name, selected = nil, **opt)
-    local, opt = partition_options(opt, :type, :row, :col)
+    local, html_opt = partition_options(opt, *MENU_OPTS)
+    menu_name = menu_name.to_sym
     type      = search_type(local[:type])
     menu      = SEARCH_MENU_MAP.dig(menu_name, type) or return
     url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
     default   = SEARCH_MENU.dig(menu_name, :default)
     any_value = ''
-    row       = local[:row].to_i
-    col       = local[:col].to_i
 
     selected ||= request_parameters[url_param] || default || any_value
     if (selected = selected.to_s).blank?
@@ -530,8 +598,16 @@ module LayoutHelper::SearchControls
       menu = [[any_label, any_value]] + menu
     end
 
-    prepend_css_classes!(opt, 'menu-control', "row#{row}", "col#{col}")
-    search_form(url_param, type, **opt) do
+    # Add CSS classes which indicate the position of the control.
+    prepend_css_classes!(html_opt, 'menu-control') do |classes|
+      row = local[:row].to_i
+      col = local[:col].to_i
+      classes << "row-#{row}" unless row.zero?
+      classes << "col-#{col}" unless col.zero?
+      classes << 'bottom'     if row == local[:row_max]
+      classes << 'rightmost'  if col == local[:col_max]
+    end
+    search_form(url_param, type, **html_opt) do
       option_tags = options_for_select(menu, selected)
       select_tag(url_param, option_tags, onchange: 'this.form.submit();')
     end
@@ -539,37 +615,40 @@ module LayoutHelper::SearchControls
 
   # A label associated with a dropdown menu element.
   #
-  # @param [Symbol]      menu_name
-  # @param [String, nil] label
-  # @param [Hash]        opt          Passed to #label_tag except for:
+  # @param [String, Symbol] menu_name
+  # @param [String, nil]    label
+  # @param [Hash]           opt           Passed to #label_tag except for:
   #
-  # @option opt [String, Symbol] :type
-  # @option opt [String]         :label
-  # @option opt [Integer]        :row
-  # @option opt [Integer]        :col
+  # @option opt [String, Symbol] :type    (unused)
+  # @option opt [String]         :label   Label text if *label* is not given.
+  # @option opt [Integer]        :row     Grid row (wide screen).
+  # @option opt [Integer]        :col     Grid column (wide screen).
+  # @option opt [Integer]        :row_max Bottom grid row (wide screen).
+  # @option opt [Integer]        :col_max Rightmost grid column (wide screen).
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
   def menu_label(menu_name, label = nil, **opt)
-    local, html_opt = partition_options(opt, :type, :label, :row, :col)
-    label ||= local[:label] || SEARCH_MENU.dig(menu_name, :label)
+    local, html_opt = partition_options(opt, *MENU_OPTS)
+    menu_name = menu_name.to_sym
+    label   ||= local[:label] || SEARCH_MENU.dig(menu_name, :label)
     return ''.html_safe if label.blank?
     url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
-    row = local[:row].to_i
-    col = local[:col].to_i
-    classes = %W(menu-label row#{row} col#{col})
-    if !SEARCH_MENU.dig(menu_name, :label_visible)
-      classes << 'sr-only'
-    elsif !label.html_safe?
-      label = ERB::Util.h(label).gsub(/ /, '&nbsp;').html_safe
+    visible   = SEARCH_MENU.dig(menu_name, :label_visible)
+    label     = non_breaking(label) if visible
+    prepend_css_classes!(html_opt, 'menu-label') do |classes|
+      row = local[:row].to_i
+      col = local[:col].to_i
+      classes << "row-#{row}" unless row.zero?
+      classes << "col-#{col}" unless col.zero?
+      classes << 'sr-only'    unless visible
     end
-    prepend_css_classes!(html_opt, classes)
     label_tag(url_param, label, **html_opt)
   end
 
   # Change :sort value to indicate a reverse sort.
   #
-  # @param [String] value
+  # @param [String] value             Base :sort key.
   #
   # @return [String]
   # @return [nil]                     If *value* is blank.

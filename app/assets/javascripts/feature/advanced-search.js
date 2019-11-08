@@ -8,10 +8,10 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $toggle = $('.advanced-search-toggle');
+    var $advanced_toggle = $('.advanced-search-toggle');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($toggle)) {
+    if (isMissing($advanced_toggle)) {
         return;
     }
 
@@ -27,11 +27,46 @@ $(document).on('turbolinks:load', function() {
     var DEBUGGING = true;
 
     /**
+     * State value indicating that advanced search is open.
+     *
+     * @constant {string}
+     */
+    var OPEN = 'open';
+
+    /**
+     * State value indicating that advanced search is open.
+     *
+     * @constant {string}
+     */
+    var CLOSED = 'closed';
+
+    /**
+     * Marker class indicating that advanced search is open.
+     *
+     * @constant {string}
+     */
+    var OPEN_MARKER = 'open';
+
+    /**
+     * All search sections.
+     *
+     * @constant {jQuery}
+     */
+    var $search_sections = $('.layout-section.search');
+
+    /**
      * The search controls container.
      *
      * @constant {jQuery}
      */
-    var $controls = $('.search-controls');
+    var $control_panel = $search_sections.find('.search-controls');
+
+    /**
+     * All instances of the search filter reset button.
+     *
+     * @constant {jQuery}
+     */
+    var $reset_button = $search_sections.find('.menu-button');
 
     // ========================================================================
     // Function definitions
@@ -39,47 +74,25 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Toggle visibility of advanced search controls.
-     *
-     * @returns {boolean}             Menu visibility.
      */
     function toggleAdvancedSearch() {
+        var opening = !$control_panel.hasClass(OPEN_MARKER);
         if (DEBUGGING) {
-            var change = $controls.hasClass('open') ? 'HIDE' : 'SHOW';
-            debug(change + ' advanced search controls');
+            debug((opening ? 'SHOW' : 'HIDE') + ' advanced search controls');
         }
-        $controls.toggleClass('open');
-        var now_open = $controls.hasClass('open');
-        setState(now_open);
-        updateButton(now_open);
-        return now_open;
-    }
-
-    /**
-     * Update the advanced search button label.
-     *
-     * @param {boolean} now_open
-     */
-    function updateButton(now_open) {
-        var label;
-        if (now_open) {
-            label = ADVANCED_SEARCH_CLOSER_LABEL;
-        } else {
-            label = ADVANCED_SEARCH_OPENER_LABEL;
-        }
-        $toggle.html(label);
+        setState(opening);
+        updateSearchDisplay(opening);
     }
 
     /**
      * Save the state of advanced search controls in the session.
      *
-     * @param {string|boolean} is_open
+     * @param {boolean|string} opening
      */
-    function setState(is_open) {
-        var state;
-        if (typeof is_open === 'boolean') {
-            state = is_open ? 'open' : 'closed';
-        } else {
-            state = is_open;
+    function setState(opening) {
+        var state = opening;
+        if (typeof state !== 'string') {
+            state = state ? OPEN : CLOSED;
         }
         sessionStorage.setItem('search-controls', state);
     }
@@ -97,31 +110,86 @@ $(document).on('turbolinks:load', function() {
      * Set the current state of advanced search controls.
      */
     function initializeState() {
-        if (isPresent($controls)) {
+        if (isMissing($control_panel)) {
+            $advanced_toggle.hide();
+        } else {
             var was_open = getState();
-            var is_open  = $controls.hasClass('open') ? 'open' : 'closed';
+            var is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
             if (was_open !== is_open) {
-                if (was_open === 'open') {
-                    $controls.addClass('open');
-                    updateButton(true);
-                } else if (was_open === 'closed') {
-                    $controls.removeClass('open');
-                    updateButton(false);
+                if (was_open === OPEN) {
+                    updateSearchDisplay(true);
+                } else if (was_open === CLOSED) {
+                    updateSearchDisplay(false);
                 } else {
                     setState(is_open);
                 }
             }
-            $toggle.show();
-        } else {
-            $toggle.hide();
         }
+    }
+
+    /**
+     * Update the advanced search display.
+     *
+     * @param {boolean} opening
+     */
+    function updateSearchDisplay(opening) {
+        updateAdvancedButton(opening);
+        updateResetButton(opening);
+        $control_panel.toggleClass(OPEN_MARKER, opening);
+    }
+
+    /**
+     * Update the advanced search button label.
+     *
+     * @param {boolean} opening
+     */
+    function updateAdvancedButton(opening) {
+        var text = opening ? ADV_SEARCH_CLOSER_LABEL : ADV_SEARCH_OPENER_LABEL;
+        $advanced_toggle.html(text);
+    }
+
+    /**
+     * Update the search reset button display.
+     *
+     * Each specific .menu-button element may have custom CSS properties set
+     * according to the layout determined by the width of the medium:
+     *
+     * If '--disabled' is 'true', then this function should not modify the
+     *   display or visibility of the element.
+     *
+     * If '--invisible-when-closed' is set to 'true', then this function should
+     *   modify the visibility of the element (toggling between 'visible' and
+     *   'hidden').  Otherwise this function modifies the display, toggling
+     *   between 'block' and 'none'.
+     *
+     * @param {boolean} opening
+     *
+     * @see .layout-section.search.input.menu-button in shared/_header.scss.
+     */
+    function updateResetButton(opening) {
+        $reset_button.each(function() {
+            var $button  = $(this);
+            var disabled = $button.css('--disabled');
+            if (notDefined(disabled) || (disabled.trim() !== 'true')) {
+                var css_property, css_value;
+                var visibility = $button.css('--invisible-when-closed');
+                if (isDefined(visibility) && (visibility.trim() === 'true')) {
+                    css_property = 'visibility';
+                    css_value    = opening ? 'visible' : 'hidden';
+                } else {
+                    css_property = 'display';
+                    css_value    = opening ? 'block' : 'none';
+                }
+                $button.css(css_property, css_value);
+            }
+        });
     }
 
     // ========================================================================
     // Event handlers
     // ========================================================================
 
-    $toggle
+    $advanced_toggle
         .off('click', toggleAdvancedSearch)
         .on('click', toggleAdvancedSearch);
 
