@@ -270,6 +270,22 @@ module Api::Common::TitleMethods
     isbn13 if respond_to?(:isbn13)
   end
 
+  # Related ISBNs omitting the main ISBN if part of the data array.
+  #
+  # @return [Array<String>]
+  #
+  def related_isbns
+    Array.wrap(relatedIsbns).reject(&:blank?).uniq - Array.wrap(isbn)
+  end
+
+  # The main and related ISBNs.
+  #
+  # @return [Array<String>]
+  #
+  def all_isbns
+    [isbn, *related_isbns]
+  end
+
   # The year of publication (:publishDate or :copyrightDate, whichever is
   # earlier).
   #

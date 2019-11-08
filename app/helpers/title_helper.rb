@@ -345,7 +345,7 @@ module TitleHelper
 
     # === Identifiers ===
     ISBN:                 :isbn,
-    RelatedISBNs:         :relatedIsbns,
+    RelatedISBNs:         :related_isbns,
     ExternalCategoryCode: :externalCategoryCode,
 
     # === Text information ===

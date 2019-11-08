@@ -19,6 +19,7 @@ class TitleController < ApplicationController
   include SerializationConcern
 
   include TitleHelper
+  include IsbnHelper
 
   # ===========================================================================
   # :section: Authentication
@@ -50,11 +51,31 @@ class TitleController < ApplicationController
   #
   def index
     __debug { "TITLE #{__method__} | params = #{params.inspect}" }
-    opt   = pagination_setup
-    @list = api.get_titles(**opt)
-    self.page_items  = @list.titles
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    opt = request_parameters
+    if contains_isbn?(opt[:keyword])
+      # The search looks like an ISBN so interpret this as an ISBN search.
+      isbn = opt.delete(:keyword)
+      opt[:isbn] = to_isbn(isbn) || isbn
+      return redirect_to opt
+    elsif (isbn = opt[:isbn]) && opt[:keyword]
+      # Since the same input box is used for both ISBN and keyword searches,
+      # if there's a non-ISBN keyword search then it must be replacing a
+      # previous ISBN search (if there was one).
+      opt.delete(:isbn)
+      return redirect_to opt
+    elsif isbn && !isbn?(isbn)
+      # The supplied ISBN is not valid.
+      flash.now[:notice] = "#{isbn.inspect} is not a valid ISBN"
+      opt.delete(:isbn)
+      @list = []
+    else
+      # Search for keyword(s) or a valid ISBN.
+      opt   = pagination_setup(opt)
+      @list = api.get_titles(**opt)
+      self.page_items  = @list.titles
+      self.total_items = @list.totalResults
+      self.next_page   = next_page_path(@list, opt)
+    end
     respond_to do |format|
       format.html
       format.json { render_json index_values }
