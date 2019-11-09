@@ -74,7 +74,7 @@ module TitleHelper
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image or return
     id  = item.identifier
     opt = prepend_css_classes(opt, 'thumbnail')
-    opt[:alt]  ||= I18n.t('emma.title.index.thumbnail.image.alt', item: id)
+    opt[:alt] ||= i18n_lookup(nil, 'thumbnail.image.alt', item: id)
     opt[:link] &&= title_path(id: id)
     opt[:id] = "container-img-#{id}"
     opt[:'data-turbolinks-permanent'] = true
@@ -98,7 +98,7 @@ module TitleHelper
     return if url.blank?
     id  = item.identifier
     opt = prepend_css_classes(opt, 'cover-image')
-    opt[:alt]  ||= I18n.t('emma.title.show.cover.image.alt', item: id)
+    opt[:alt] ||= i18n_lookup(nil, 'cover.image.alt', item: id)
     opt[:link] &&= title_path(id: id)
     image_element(url, opt)
   end

@@ -280,54 +280,70 @@ en:
         label:          'Search'
       advanced:
         label:          'More ▼'
-        close_label:    'Less ▲'
+        tooltip:        'Show additional search filters'
+        open:
+          label:        'Less ▲'
+          tooltip:      'Hide additional search filters'
 
     search_controls:
 
       _default:
         label:          ~
         label_visible:  true
-        url_parameter:  ~
         placeholder:    '(any)'
+        url_parameter:  ~
         menu_format:    'titleize'
         values:         ~
         default:        ~
+        tooltip:        ~
+
+      _reset:
+        label:          'Clear Filters'
+        tooltip:        'Re-run the current search without any filtering'
 
       braille:
         label:          'Braille'
         url_parameter:  'brailleType'
+        tooltip:        'Limit by Braille type'
 
       category:
         label:          'Category'
         url_parameter:  'categories'
+        tooltip:        'Limit by Bookshare category'
 
       content_type:
         label:          'Content Type'
         url_parameter:  'titleContentType'
+        tooltip:        'Limit by type of source material'
 
       country:
         label:          'Country'
         url_parameter:  'country'
         menu_format:    'upcase'
+        tooltip:        'Limit by regional permissions'
 
       format:
         label:          'Format'
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         menu_format:    'upcase'
+        tooltip:        'Limit by remediated content type'
 
       language:
         label:          'Language'
         url_parameter:  'language'
+        tooltip:        'Limit by language of source material'
 
       narrator:
         label:          'Narrator'
         url_parameter:  'narratorType'
         menu_format:    'upcase'
+        tooltip:        'Limit by audio narrator type'
 
       periodical_format:
         label:          'Format'
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         menu_format:    'upcase'
+        tooltip:        'Limit by remediated content type'
 
       size:
         label:          'Page Size'
@@ -340,16 +356,28 @@ en:
           - 50
           - 100
         default:        10
+        tooltip:        'Specify number of search results per page'
 
       sort:
         label:          'Sort By'
         url_parameter:  'sort'
         placeholder:    ~
         default:        'relevance'
+        tooltip:        'Specify the order in which results are presented'
+        reverse:
+          label:        '%{sort} (rev)'
+          suffix:       'rev'
+          except:       [relevance]
 
-      warnings:
+      warnings_excluded:
+        label:          'Without'
+        url_parameter:  'excludedContentWarnings'
+        tooltip:        'Limit by excluded content warnings'
+
+      warnings_included:
         label:          'Warnings'
         url_parameter:  'includedContentWarnings'
+        tooltip:        'Limit by included content warnings'
 
     page_controls:
       label:            'Actions'
@@ -401,6 +429,17 @@ en:
       image:            &PLACEHOLDER_IMAGE
         alt:            'Retrieving...'
         asset:          'loading-balls.gif'
+
+    thumbnail:
+      image:
+        alt:            '' # NOTE: not 'Thumbnail image for %{item}'
+
+    cover:
+      image:
+        alt:            '' # NOTE: not 'Cover image for %{item}'
+      placeholder:
+        image:
+          <<:           *PLACEHOLDER_IMAGE
 
     download:
 
@@ -677,10 +716,10 @@ en:
 
       search_controls:
         layout:
-          - [sort,         size,         reset   ]
-          - [language,     category              ]
-          - [content_type, warnings,     country ]
-          - [format,       braille,      narrator]
+          - [sort,         size,         reset       ]
+          - [language,     category,     country     ]
+          - [content_type, warnings_exc, warnings_inc]
+          - [format,       braille,      narrator    ]
 
       page_controls:
         label:
@@ -692,21 +731,10 @@ en:
         title:          'Catalog Titles Index'
         tooltip:        'Find more catalog items with %{terms}.'
 
-        thumbnail:
-          image:
-            alt:        '' # NOTE: not 'Thumbnail image for %{item}'
-
       show:
         label:          'Title'
         title:          'Catalog Title'
         tooltip:        'See details about this catalog title.'
-
-        cover:
-          image:
-            alt:        '' # NOTE: not 'Cover image for %{item}'
-          placeholder:
-            image:
-              <<:       *PLACEHOLDER_IMAGE
 
       new:
         label:          'Add'

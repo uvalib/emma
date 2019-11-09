@@ -76,7 +76,7 @@ module Api
     # @see https://apidocs.bookshare.org/reference/index.html#_content_warning_values
     ContentWarning: {
       values:   %w(contentWarning sex violence drugs language intolerance) +
-                  %w(anyAdult unrated),
+                  %w(adult unrated),
       default:  'unrated'
     },
 

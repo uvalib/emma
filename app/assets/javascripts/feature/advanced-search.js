@@ -145,7 +145,8 @@ $(document).on('turbolinks:load', function() {
      */
     function updateAdvancedButton(opening) {
         var text = opening ? ADV_SEARCH_CLOSER_LABEL : ADV_SEARCH_OPENER_LABEL;
-        $advanced_toggle.html(text);
+        var tip  = opening ? ADV_SEARCH_CLOSER_TIP   : ADV_SEARCH_OPENER_TIP;
+        $advanced_toggle.html(text).attr('title', tip);
     }
 
     /**

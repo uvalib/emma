@@ -28,6 +28,12 @@ module LayoutHelper::SearchControls
 
     include GenericHelper
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # The names and properties of all of the search control menus and default
     # values.
     #
@@ -45,6 +51,15 @@ module LayoutHelper::SearchControls
     SEARCH_MENU_DEFAULT =
       SEARCH_CONTROLS[:_default].reject { |_, v| v.nil? }.deep_freeze
 
+    # Properties for the "filter reset" button.
+    #
+    # @type [Hash]
+    #
+    # @see #reset_menu
+    #
+    SEARCH_RESET =
+      SEARCH_CONTROLS[:_reset].reverse_merge(SEARCH_MENU_DEFAULT).deep_freeze
+
     # The names and properties of all of the search control menus.
     #
     # @type [Hash]
@@ -60,6 +75,10 @@ module LayoutHelper::SearchControls
             v[:menu_format]   = v[:menu_format]&.to_sym
             v[:url_parameter] = v[:url_parameter]&.to_sym || type
             v[:values].map!(&:to_s) if v[:values]
+            if (reverse = v[:reverse])
+              reverse[:suffix] &&= reverse[:suffix].sub(/^([^_])/, '_\1')
+              reverse[:except] &&= Array.wrap(reverse[:except]).map(&:to_sym)
+            end
           end
         [type, values]
       }.compact.to_h.deep_freeze
@@ -69,7 +88,41 @@ module LayoutHelper::SearchControls
     #
     # @type [String]
     #
-    REVERSE_SORT = '_rev'
+    REVERSE_SORT_SUFFIX = SEARCH_MENU.dig(:sort, :reverse, :suffix).freeze
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Generate an array of label/value pairs to be used with #select_tag.
+    #
+    # @param [Symbol]                            menu_name
+    # @param [Array<Class,String,Numeric,Array>] entries
+    # @param [Hash]                              opt
+    #
+    # @option opt [Symbol]  :fmt          @see #make_menu_label
+    #
+    # @return [Array<Array<(String,String)>>]
+    #
+    def make_menu(menu_name, *entries, **opt)
+      reverse = SEARCH_MENU.dig(menu_name, :reverse)
+      entries = entries.flat_map { |v| v.respond_to?(:values) ? v.values : v }
+      entries.compact!
+      entries.uniq!
+      entries.flat_map do |value|
+        [].tap do |pairs|
+          label = make_menu_label(menu_name, value, **opt)
+          pairs << [label, value]
+          if reverse && !reverse[:except].include?(value)
+            label = sprintf(reverse[:label], sort: label)
+            value = descending_sort(value, reverse[:suffix])
+            pairs << [label, value]
+          end
+        end
+      end
+    end
 
     # Format a menu label.
     #
@@ -104,30 +157,48 @@ module LayoutHelper::SearchControls
       format ? label.send(format) : label
     end
 
-    # Generate an array of label/value pairs to be used with #select_tag.
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Indicate whether the :sort is a reversed (descending) sort.
     #
-    # @param [Symbol]                            menu_name
-    # @param [Array<Class,String,Numeric,Array>] entries
-    # @param [Hash]                              opt
+    # @param [String] value           A :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
     #
-    # @option opt [Symbol]  :fmt          @see #make_menu_label
-    # @option opt [Boolean] :reversible   If *true*, include reverse entries.
+    def is_reverse?(value, suffix = nil)
+      suffix ||= REVERSE_SORT_SUFFIX
+      value.to_s.end_with?(suffix)
+    end
+
+    # Change :sort value to indicate a normal (ascending) sort.
     #
-    # @return [Array<Array<(String,String)>>]
+    # @param [String] value           Base :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
     #
-    def make_menu(menu_name, *entries, **opt)
-      reverse = opt[:reversible].present?
-      entries = entries.flat_map { |v| v.respond_to?(:values) ? v.values : v }
-      entries.compact!
-      entries.uniq!
-      entries.flat_map do |v|
-        label = make_menu_label(menu_name, v, **opt)
-        rev   = reverse && (label != 'Relevance')
-        pairs = []
-        pairs << [label, v]
-        pairs << ["#{label} (rev)", "#{v}#{REVERSE_SORT}"] if rev
-        pairs
-      end
+    # @return [String]
+    # @return [nil]                   If *value* is blank.
+    #
+    def ascending_sort(value, suffix = nil)
+      return if (value = value.to_s).blank?
+      suffix ||= REVERSE_SORT_SUFFIX
+      value.delete_suffix(suffix)
+    end
+
+    # Change :sort value to indicate a reversed (descending) sort.
+    #
+    # @param [String] value           Base :sort key.
+    # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
+    #
+    # @return [String]
+    # @return [nil]                   If *value* is blank.
+    #
+    def descending_sort(value, suffix = nil)
+      return if (value = value.to_s).blank?
+      suffix ||= REVERSE_SORT_SUFFIX
+      value.end_with?(suffix) ? value : "#{value}#{suffix}"
     end
 
   end
@@ -141,13 +212,12 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>Array}]
   #
+  # noinspection RubyYardParamTypeMatch
   SORT_MENU_MAP = {
-    member:       MemberSortOrder,
-    periodical:   PeriodicalSortOrder,
-    reading_list: MyReadingListSortOrder,
-    title:        TitleSortOrder,
-  }.transform_values { |enumeration|
-    make_menu(:sort, enumeration, reversible: true)
+    member:       make_menu(:sort, MemberSortOrder),
+    periodical:   make_menu(:sort, PeriodicalSortOrder),
+    reading_list: make_menu(:sort, MyReadingListSortOrder),
+    title:        make_menu(:sort, TitleSortOrder),
   }.deep_freeze
 
   # ===========================================================================
@@ -171,7 +241,6 @@ module LayoutHelper::SearchControls
   }.freeze
 
   # ===========================================================================
-
 
   # The generic language menu.
   #
@@ -232,7 +301,7 @@ module LayoutHelper::SearchControls
   #
   # @type [Array<Array<(String,String)>>]
   #
-  # noinspection RubyYardParamTypeMatch
+  # noinspection RailsI18nInspection
   FORMAT_MENU =
     I18n.t('emma.format').map { |value, label|
       [label.to_s, value.to_s]
@@ -242,7 +311,7 @@ module LayoutHelper::SearchControls
   #
   # @type [Array<Array<(String,String)>>]
   #
-  # noinspection RubyYardParamTypeMatch
+  # noinspection RailsI18nInspection
   PERIODICAL_FORMAT_MENU =
     I18n.t('emma.periodical_format').map { |value, label|
       [label.to_s, value.to_s]
@@ -293,21 +362,39 @@ module LayoutHelper::SearchControls
 
   # ===========================================================================
 
+  # The generic excluded-content-warnings menu.
+  #
+  # @type [Array<Array<(String,String)>>]
+  #
+  # noinspection RubyYardParamTypeMatch
+  WARNINGS_EXC_MENU =
+    make_menu(:warnings_excluded, ContentWarning).deep_freeze
+
+  # Excluded-content-warnings limiter menus for each controller type that
+  # should have one.
+  #
+  # @type [Hash{Symbol=>Array}]
+  #
+  WARNINGS_EXC_MENU_MAP =
+    %i[periodical title].map { |type| [type, WARNINGS_EXC_MENU] }.to_h.freeze
+
+  # ===========================================================================
+
   # The generic included-content-warnings menu.
   #
   # @type [Array<Array<(String,String)>>]
   #
   # noinspection RubyYardParamTypeMatch
-  WARNINGS_MENU =
-    make_menu(:warnings, ContentWarning).deep_freeze
+  WARNINGS_INC_MENU =
+    make_menu(:warnings_included, ContentWarning).deep_freeze
 
-  # Included content warnings limiter menus for each controller type that
+  # Included-content-warnings limiter menus for each controller type that
   # should have one.
   #
   # @type [Hash{Symbol=>Array}]
   #
-  WARNINGS_MENU_MAP =
-    %i[periodical title].map { |type| [type, WARNINGS_MENU] }.to_h.freeze
+  WARNINGS_INC_MENU_MAP =
+    %i[periodical title].map { |type| [type, WARNINGS_INC_MENU] }.to_h.freeze
 
   # ===========================================================================
 
@@ -333,16 +420,17 @@ module LayoutHelper::SearchControls
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_MENU_MAP = {
-    braille:      BRAILLE_MENU_MAP,
-    category:     CATEGORY_MENU_MAP,
-    content_type: CONTENT_TYPE_MENU_MAP,
-    country:      COUNTRY_MENU_MAP,
-    format:       FORMAT_MENU_MAP,
-    language:     LANGUAGE_MENU_MAP,
-    narrator:     NARRATOR_MENU_MAP,
-    size:         SIZE_MENU_MAP,
-    sort:         SORT_MENU_MAP,
-    warnings:     WARNINGS_MENU_MAP,
+    braille:           BRAILLE_MENU_MAP,
+    category:          CATEGORY_MENU_MAP,
+    content_type:      CONTENT_TYPE_MENU_MAP,
+    country:           COUNTRY_MENU_MAP,
+    format:            FORMAT_MENU_MAP,
+    language:          LANGUAGE_MENU_MAP,
+    narrator:          NARRATOR_MENU_MAP,
+    size:              SIZE_MENU_MAP,
+    sort:              SORT_MENU_MAP,
+    warnings_excluded: WARNINGS_EXC_MENU_MAP,
+    warnings_included: WARNINGS_INC_MENU_MAP,
   }.freeze
 
   # ===========================================================================
@@ -412,7 +500,8 @@ module LayoutHelper::SearchControls
     type  ||= search_type
     label ||= i18n_lookup(type, 'search_bar.advanced.label')
     opt = prepend_css_classes(opt, 'advanced-search-toggle')
-    opt[:type] ||= 'button'
+    opt[:type]  ||= 'button'
+    opt[:title] ||= i18n_lookup(type, 'search_bar.advanced.tooltip')
     button_tag(label, **opt)
   end
 
@@ -456,9 +545,11 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                     If menu is not available for *type*.
   #
+  # @see #SEARCH_RESET
+  #
   def reset_menu(**opt)
     local, html_opt = partition_options(opt, :class, *MENU_OPTS)
-    label   = local[:label] || 'Reset Filters' # TODO: I18n
+    label   = local[:label] || SEARCH_RESET[:label]
     label   = non_breaking(label)
     row     = local[:row].to_i
     col     = local[:col].to_i
@@ -472,14 +563,8 @@ module LayoutHelper::SearchControls
 
     classes << 'rightmost' if col == local[:col_max]
     prepend_css_classes!(html_opt, 'menu-button', *classes)
-=begin
-    button =
-      button_tag(**html_opt.merge!(type: 'button')) do
-        url = url_for(request_parameters.except(*RESET_PARAMETERS))
-        link_to(label, url)
-      end
-=end
-    url = url_for(request_parameters.except(*RESET_PARAMETERS))
+    html_opt[:title] ||= SEARCH_RESET[:tooltip]
+    url    = url_for(request_parameters.except(*RESET_PARAMETERS))
     button = link_to(label, url, **html_opt)
 
     spacer + button
@@ -501,11 +586,11 @@ module LayoutHelper::SearchControls
   # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #
   def sort_menu(selected = nil, **opt)
-    menu_name = :sort
-    p = request_parameters
-    selected ||= (rp = request_parameters)[:sortOrder]
-    selected ||= rp[SEARCH_MENU.dig(menu_name, :url_parameter)]
-    selected &&= reverse_sort(selected) if p[:direction] == 'desc'
+    menu_name  = :sort
+    params     = request_parameters
+    selected ||= params[:sortOrder]
+    selected ||= params[SEARCH_MENU.dig(menu_name, :url_parameter)]
+    selected &&= descending_sort(selected) if params[:direction] == 'desc'
     menu_container(menu_name, selected, **opt)
   end
 
@@ -520,7 +605,7 @@ module LayoutHelper::SearchControls
   # @see #SIZE_MENU_MAP
   #
   def size_menu(selected = nil, **opt)
-    menu_name = :size
+    menu_name  = :size
     selected ||= request_parameters[SEARCH_MENU.dig(menu_name, :url_parameter)]
     selected ||= (page_size if respond_to?(:page_size))
     selected &&= selected.to_i
@@ -546,6 +631,8 @@ module LayoutHelper::SearchControls
   #
   def menu_container(menu_name, selected = nil, **opt)
     label_opt, html_opt = partition_options(opt, :label)
+    menu_name = menu_name.to_sym
+    html_opt[:title] ||= SEARCH_MENU.dig(menu_name, :tooltip)
     menu  = menu_control(menu_name, selected, **html_opt) or return
     label = menu_label(menu_name, **html_opt.merge(label_opt))
     label + menu
@@ -587,9 +674,10 @@ module LayoutHelper::SearchControls
       selected = any_value
     elsif menu.none? { |_, value| value == selected }
       # Insert a new entry if the selection value is not already in the menu.
+      sort  = entries_sorted?(menu)
       label = make_menu_label(menu_name, selected)
       menu += [[label, selected]]
-      menu.sort_by! { |label, value| value.to_i.zero? ? label : value.to_i }
+      sort_entries!(menu) if sort
     end
 
     # Prepend a placeholder if not present.
@@ -646,16 +734,38 @@ module LayoutHelper::SearchControls
     label_tag(url_param, label, **html_opt)
   end
 
-  # Change :sort value to indicate a reverse sort.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Indicate whether the menu is already sorted.
   #
-  # @param [String] value             Base :sort key.
+  # @param [Array<Array<(String,*)>>] menu
   #
-  # @return [String]
-  # @return [nil]                     If *value* is blank.
+  def entries_sorted?(menu)
+    sort_entries(menu) == menu
+  end
+
+  # Return a sorted copy of the menu.
   #
-  def reverse_sort(value)
-    return if value.blank?
-    value.end_with?(REVERSE_SORT) ? value : "#{value}#{REVERSE_SORT}"
+  # @param [Array<Array<(String,*)>>] menu
+  #
+  # @return [Array<Array<(String,*)>>]
+  #
+  def sort_entries(menu)
+    sort_entries!(menu.dup)
+  end
+
+  # Sort the menu by value if the value is a number or by the label otherwise.
+  #
+  # @param [Array<Array<(String,*)>>] menu
+  #
+  # @return [Array<Array<(String,*)>>]  The possibly-modified *menu*.
+  #
+  def sort_entries!(menu)
+    menu.sort_by! { |label, value| value.to_i.zero? ? label : value.to_i }
   end
 
 end

@@ -17,6 +17,9 @@ module ParamsConcern
 
     __included(base, 'ParamsConcern')
 
+    # Needed for #set_sort_params.
+    include LayoutHelper::SearchControls
+
     # Non-functional hints for RubyMine.
     # :nocov:
     include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
@@ -230,9 +233,8 @@ module ParamsConcern
   # @return [void]
   #
   def set_sort_params(sort_value)
-    rev_ind = LayoutHelper::SearchControls::REVERSE_SORT
-    reverse = sort_value.end_with?(rev_ind)
-    params[:sortOrder] = sort_value.delete_suffix(rev_ind)
+    reverse = is_reverse?(sort_value)
+    params[:sortOrder] = ascending_sort(sort_value)
     params[:direction] = reverse ? 'desc' : 'asc'
   end
 

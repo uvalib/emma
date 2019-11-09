@@ -47,6 +47,12 @@ module ImageHelper
   #
   PLACEHOLDER_IMAGE_ALT = ''
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Create an HTML image element.
   #
   # @param [String] url
