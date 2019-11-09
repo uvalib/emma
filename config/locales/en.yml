@@ -369,12 +369,12 @@ en:
           suffix:       'rev'
           except:       [relevance]
 
-      warnings_excluded:
+      warnings_exc:
         label:          'Without'
         url_parameter:  'excludedContentWarnings'
         tooltip:        'Limit by excluded content warnings'
 
-      warnings_included:
+      warnings_inc:
         label:          'Warnings'
         url_parameter:  'includedContentWarnings'
         tooltip:        'Limit by included content warnings'

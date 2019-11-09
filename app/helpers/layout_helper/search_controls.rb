@@ -368,7 +368,7 @@ module LayoutHelper::SearchControls
   #
   # noinspection RubyYardParamTypeMatch
   WARNINGS_EXC_MENU =
-    make_menu(:warnings_excluded, ContentWarning).deep_freeze
+    make_menu(:warnings_exc, ContentWarning).deep_freeze
 
   # Excluded-content-warnings limiter menus for each controller type that
   # should have one.
@@ -386,7 +386,7 @@ module LayoutHelper::SearchControls
   #
   # noinspection RubyYardParamTypeMatch
   WARNINGS_INC_MENU =
-    make_menu(:warnings_included, ContentWarning).deep_freeze
+    make_menu(:warnings_inc, ContentWarning).deep_freeze
 
   # Included-content-warnings limiter menus for each controller type that
   # should have one.
@@ -420,17 +420,17 @@ module LayoutHelper::SearchControls
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_MENU_MAP = {
-    braille:           BRAILLE_MENU_MAP,
-    category:          CATEGORY_MENU_MAP,
-    content_type:      CONTENT_TYPE_MENU_MAP,
-    country:           COUNTRY_MENU_MAP,
-    format:            FORMAT_MENU_MAP,
-    language:          LANGUAGE_MENU_MAP,
-    narrator:          NARRATOR_MENU_MAP,
-    size:              SIZE_MENU_MAP,
-    sort:              SORT_MENU_MAP,
-    warnings_excluded: WARNINGS_EXC_MENU_MAP,
-    warnings_included: WARNINGS_INC_MENU_MAP,
+    braille:      BRAILLE_MENU_MAP,
+    category:     CATEGORY_MENU_MAP,
+    content_type: CONTENT_TYPE_MENU_MAP,
+    country:      COUNTRY_MENU_MAP,
+    format:       FORMAT_MENU_MAP,
+    language:     LANGUAGE_MENU_MAP,
+    narrator:     NARRATOR_MENU_MAP,
+    size:         SIZE_MENU_MAP,
+    sort:         SORT_MENU_MAP,
+    warnings_exc: WARNINGS_EXC_MENU_MAP,
+    warnings_inc: WARNINGS_INC_MENU_MAP,
   }.freeze
 
   # ===========================================================================
