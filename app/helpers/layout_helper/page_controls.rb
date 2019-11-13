@@ -39,11 +39,11 @@ module LayoutHelper::PageControls
   #
   def render_page_controls(p = nil, locals: {})
     p ||= request_parameters
-    partial = p[:action].to_s
-    act_al  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s
-    partial = act_al if act_al
-    partial = "#{p[:controller]}/page_controls/#{partial}"
-    render(partial, locals) if partial_exists?(partial)
+    partial  = p[:action].to_s
+    partial  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s || partial
+    partial  = "#{p[:controller]}/page_controls/#{partial}"
+    controls = partial_exists?(partial) && render(partial, locals)
+    content_tag(:div, controls, class: 'page-controls') if controls.present?
   end
 
   # Generate a list of controller/action pairs that the current user is able to
@@ -77,8 +77,9 @@ module LayoutHelper::PageControls
   # @return [nil]
   #
   def page_controls(*pairs, **path_opt)
+    html_opt = { class: 'control' }
     pairs.map { |pair|
-      link_to_action(*pair, **path_opt) if pair.present?
+      link_to_action(*pair, link_opt: html_opt, **path_opt) if pair.present?
     }.compact.join("\n").html_safe.presence
   end
 

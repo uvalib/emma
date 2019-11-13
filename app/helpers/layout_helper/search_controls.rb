@@ -115,6 +115,7 @@ module LayoutHelper::SearchControls
     #
     def make_menu(menu_name, *entries, **opt)
       reverse = SEARCH_MENU.dig(menu_name, :reverse)
+      except  = reverse && Array.wrap(reverse[:except]).map(&:to_s)
       entries = entries.flat_map { |v| v.respond_to?(:values) ? v.values : v }
       entries.compact!
       entries.uniq!
@@ -122,7 +123,7 @@ module LayoutHelper::SearchControls
         [].tap do |pairs|
           label = make_menu_label(menu_name, value, **opt)
           pairs << [label, value]
-          if reverse && !reverse[:except].include?(value)
+          if reverse && !except.include?(value)
             label = sprintf(reverse[:label], sort: label)
             value = descending_sort(value, reverse[:suffix])
             pairs << [label, value]
@@ -730,6 +731,7 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   #
   def reset_menu(url = nil, **opt)
+    opt = append_css_classes(opt, 'reset')
     menu_spacer(**opt) + reset_button(url, **opt)
   end
 
@@ -756,7 +758,7 @@ module LayoutHelper::SearchControls
     label = non_breaking(label)
     url ||= request_parameters.except(*RESET_PARAMETERS)
     url   = url_for(url) if url.is_a?(Hash)
-    prepend_grid_cell_classes!(html_opt, 'menu-button', **opt)
+    prepend_grid_cell_classes!(html_opt, 'reset', 'menu-button', **opt)
     html_opt[:title] ||= SEARCH_RESET[:tooltip]
     link_to(label, url, **html_opt)
   end

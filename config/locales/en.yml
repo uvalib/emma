@@ -298,8 +298,8 @@ en:
         tooltip:        ~
 
       _reset:
-        label:          'Clear Filters'
-        tooltip:        'Re-run the current search without any filtering'
+        label:          'Reset'
+        tooltip:        'Clear all search filters'
 
       braille:
         label:          'Braille'
@@ -716,10 +716,10 @@ en:
 
       search_controls:
         layout:
-          - [sort,         size,         reset       ]
+          - [sort,         size,         format      ]
           - [language,     category,     country     ]
           - [content_type, warnings_exc, warnings_inc]
-          - [format,       braille,      narrator    ]
+          - [braille,      narrator                  ]
 
       page_controls:
         label:
@@ -779,9 +779,9 @@ en:
 
       search_controls:
         layout:
-          - [sort,     size,     reset   ]
-          - [language, category          ]
-          - [format,   braille,  narrator]
+          - [sort,     size,     format]
+          - [language, category        ]
+          - [braille,  narrator        ]
 
       index:
         label:          'Periodicals'

@@ -251,18 +251,14 @@ module BookshareHelper
         when :show  then "#{controller}_path"
         else             "#{action}_#{controller}_path"
       end
-    path = respond_to?(path_helper) && send(path_helper, path_opt)
-    if path.blank?
-      Log.warn("#{__method__}: invalid path #{path_helper.inspect}")
-      return
-    end
-
+    path = respond_to?(path_helper) && send(path_helper, path_opt).presence
+    Log.warn("#{__method__}: invalid path #{path_helper.inspect}") unless path
+    return unless path
     label ||= i18n_lookup(controller, "#{action}.label") || path
-    html_opt = { class: 'control' }
-    html_opt[:target]  = '_blank' if path.match?(/^https?:/)
-    html_opt[:method]  = :delete  if %i[delete destroy].include?(action)
-    merge_html_options!(html_opt, link_opt)
-    html_opt[:title] ||= i18n_lookup(controller, "#{action}.tooltip")
+    html_opt = prepend_css_classes(link_opt, 'control')
+    html_opt[:target] ||= '_blank' if path.match?(/^https?:/)
+    html_opt[:method] ||= :delete  if %i[delete destroy].include?(action)
+    html_opt[:title]  ||= i18n_lookup(controller, "#{action}.tooltip")
     # noinspection RubyYardParamTypeMatch
     make_link(label, path, html_opt)
   end

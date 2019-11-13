@@ -8,7 +8,8 @@
 //=============================================================================
 
 // Preferred button dimensions.
-$search-button-width: 6em;
+$advanced-toggle-width:  5rem;
+$search-button-width:    6rem;
 
 //=============================================================================
 // Page header.
@@ -56,11 +57,39 @@ $search-button-width: 6em;
     }
 }
 
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+%header-control-panel {
+
+    padding:        0.5rem;
+    padding-bottom: 0.25rem;
+    padding-right:  0;
+    border:         0.125rem dotted white;
+    border-radius:  0.75rem;
+
+    @media #{$browser-ie} {
+        padding-bottom: 0;
+    }
+}
+
+// For controls with a white background within the header.
 %header-control-interior {
     * {
         color:     black;
         font-size: large;
     }
+}
+
+// noinspection SassScssResolvedByNameOnly
+%search-controls-button {
+
+    @extend %button;
+
+    display:         block;
+    padding:         2px 6px;
+    line-height:     1.125;
+    text-decoration: none;
+    font-size:       large;
+    border-radius:   6px;
 }
 
 //=============================================================================
@@ -123,6 +152,7 @@ $search-button-width: 6em;
 
         flex-wrap:       wrap-reverse;
         justify-content: flex-end;
+        max-width:       50%;
         margin-top:      auto;
         margin-left:     $page-padding-x;
         flex:            1 1 auto;
@@ -172,7 +202,8 @@ $search-button-width: 6em;
     .logo {
 
         margin-top: 0;
-        max-height: 3rem;
+        min-height: 3rem;
+        max-height: 4rem;
         font-size:  xx-large;
         flex:       0 0 auto;
 
@@ -227,7 +258,6 @@ $search-button-width: 6em;
     //
     .user {
 
-        width:         min-content;
         max-width:     100%;
         font-size:     smaller;
         overflow:      hidden;
@@ -344,37 +374,25 @@ $search-button-width: 6em;
 //
 .layout-section.search {
 
-    // noinspection SassScssResolvedByNameOnly
-    %search-controls-button {
-
-        @extend %button;
-
-        display:         block;
-        padding:         2px 6px;
-        line-height:     1.125;
-        text-decoration: none;
-        font-size:       large;
-        border-radius:   6px;
-    }
-
     //=========================================================================
     // Elements
     //=========================================================================
 
     // @see LayoutHelper#search_input_bar
     .search-input-bar {
+
         @extend %header-control-interior;
-    }
 
-    // @see LayoutHelper#search_input
-    .search-input {
-        max-width: 100%;
-    }
+        // @see LayoutHelper#search_input
+        .search-input {
+            max-width: 100%;
+        }
 
-    // @see LayoutHelper#search_button
-    // noinspection SassScssResolvedByNameOnly
-    .search-button {
-        @extend %button;
+        // @see LayoutHelper#search_button
+        // noinspection SassScssResolvedByNameOnly
+        .search-button {
+            @extend %button;
+        }
     }
 
     // @see LayoutHelper#advanced_search_button
@@ -407,7 +425,8 @@ $search-button-width: 6em;
 
     // @see LayoutHelper#menu_label
     .menu-label {
-        font-size: large;
+        font-size:  large;
+        text-align: right;
     }
 
     // @see LayoutHelper#menu_control
@@ -418,6 +437,7 @@ $search-button-width: 6em;
 }
 
 // Header row containing the search input bar.
+//
 .layout-section.search.bar {
 
     // @see LayoutHelper#search_input_bar
@@ -489,11 +509,9 @@ $search-button-width: 6em;
                 @media #{$narrow-screen} {
 
                     margin: $gap-y 0;
-                    //margin-left: $gap-x;
 
                     @media #{$browser-ie} {
                         margin: $ie-gap-y 0;
-                        //margin-left: $ie-gap-x;
                     }
                 }
             }
@@ -502,6 +520,7 @@ $search-button-width: 6em;
         // noinspection CssReplaceWithShorthandSafely
         .advanced-search-toggle {
 
+            width:  $advanced-toggle-width;
             margin: auto 0;
             flex:   0 0 auto;
 
@@ -511,13 +530,8 @@ $search-button-width: 6em;
             }
 
             @media #{$browser-ie} {
-
-                height: 2rem;
-
-                @media #{$not-wide-screen} {
-                    margin:       $ie-gap-y 0;
-                    margin-right: 3 * $ie-gap-x;
-                }
+                margin:       $ie-gap-y 0;
+                margin-right: 3 * $ie-gap-x;
             }
         }
 
@@ -525,30 +539,31 @@ $search-button-width: 6em;
             display: none;
         }
 
-        // @see updateResetButton() in advanced-search.js
         // noinspection CssReplaceWithShorthandSafely
         .menu-button {
 
-            margin: auto 0;
-            flex:   0 0 auto;
-
-            @media #{$wide-screen} {
-                display: none;
-            }
+            margin:       auto 0;
+            margin-right: calc(3 * #{$gap-x});
+            flex:         0 0 auto;
 
             @media #{$not-wide-screen} {
+                margin: $gap-y 0;
+            }
 
-                --manage-visibility: true;
-                visibility:          hidden;
-                margin-top:          $gap-y;
-                margin-bottom:       $gap-y;
-                margin-right:        calc(3 * #{$gap-x});
+            @media #{$browser-ie} {
+                margin:       $ie-gap-y 0;
+                margin-right: 3 * $ie-gap-x;
+            }
+        }
 
-                @media #{$browser-ie} {
-                    margin-top:    $ie-gap-y;
-                    margin-bottom: $ie-gap-y;
-                    margin-right:  3 * $ie-gap-x;
-                }
+        // @see updateResetButton() in advanced-search.js
+        .menu-button.reset {
+            @media #{$wide-screen} {
+                //display: none;
+            }
+            @media #{$not-wide-screen} {
+                //--manage-visibility: true;
+                //visibility:          hidden;
             }
         }
     }
@@ -556,36 +571,24 @@ $search-button-width: 6em;
 
 // Header row(s) containing the search controls (sort, per-page, language,
 // format, and  other search filters).
+//
 .layout-section.search.controls {
 
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$browser-ie} {
-        padding-bottom: 0;
-    }
-
     // @see LayoutHelper#search_controls
-    // noinspection SassScssResolvedByNameOnly
+    // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
     .search-controls {
 
         @extend %header-search-section;
-
-        @include grid;
+        @extend %header-control-panel;
 
         width:     max-content;
         max-width: 100%;
 
-        @media #{$narrow-screen} {
-
-            padding-top: $gap-y;
-
-            @media #{$browser-ie} {
-                padding-top: $ie-gap-y;
-            }
-        }
-
         //=====================================================================
         // Grid layout
         //=====================================================================
+
+        @include grid;
 
         grid-gap: 0 $gap-x; // @see %grid-cell
 
@@ -600,13 +603,13 @@ $search-button-width: 6em;
 
         // Layout of each logical column.
 
-        $column: [label] max-content [menu] minmax(25%,100%);
+        $column: [label] max-content [menu] minmax(min-content,100%);
 
         @include grid-column-classes($max-columns, $column, $columns-map);
 
         @media #{$browser-ie} {
 
-            $column: max-content minmax(min-content,max-content);
+            $column: max-content minmax(min-content,100%);
 
             @include grid-column-classes($max-columns, $column, $columns-map);
 
@@ -632,18 +635,6 @@ $search-button-width: 6em;
 
             @media #{$browser-ie} {
                 margin-bottom: $ie-gap-y;
-            }
-
-            &.row-last {
-                @media #{$wide-screen} {
-                    margin-bottom: 0;
-                }
-            }
-
-            &.col-last {
-                @media #{$wide-screen} {
-                    margin-right: 0;
-                }
             }
         }
 
@@ -708,6 +699,8 @@ $search-button-width: 6em;
 
             @extend %grid-cell;
 
+            margin-right: $gap-x;
+
             @media #{$browser-ie} {
                 margin-right: $ie-gap-x;
             }
@@ -750,7 +743,7 @@ $search-button-width: 6em;
         // button).
         &:not(.open) {
             > * {
-                &:not(.row-first), &.menu-spacer, &.menu-button {
+                &:not(.row-first), &.reset {
                     @extend %hidden-grid-cell;
                 }
             }
@@ -758,60 +751,111 @@ $search-button-width: 6em;
     }
 }
 
-// Controller- and action-specific page controls.
+// Controller- and action-specific sections.
 //
 // noinspection SassScssResolvedByNameOnly
 .layout-section.page {
-
-    flex-wrap:       wrap;
-    justify-content: flex-start;
-    align-items:     baseline;
-
-    //=========================================================================
-    // Sections
-    //=========================================================================
-
-    $page-control-gap-x: 0.5rem;
-    $page-control-gap-y: $page-control-gap-x / 2;
-
-    .label {
-        display: block;
-        margin:  $page-control-gap-y $page-control-gap-x $page-control-gap-y 0;
-        font-size: larger;
-    }
-
-    .controls {
-
-        display:        flex;
-        flex-direction: row;
-        flex-wrap:      wrap;
-        margin:         0;
-
-        > * {
-
-            margin: 0 $page-control-gap-x 0 0;
-
-            @media #{$narrow-screen} {
-                margin-top:    $page-control-gap-y;
-                margin-bottom: $page-control-gap-y;
-            }
-        }
-    }
 
     //=========================================================================
     // Elements
     //=========================================================================
 
+    // @see app/views/*/page_controls/*.html.erb
+    .label {
+        display:   block;
+        margin:    0;
+        font-size: larger;
+    }
+
+    // @see app/views/*/page_controls/*.html.erb
+    .controls {
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        margin:         0;
+    }
+
+    // @see LayoutHelper::PageControls#page_controls
     .control {
 
-        @extend %button;
+        @extend %search-controls-button;
 
-        display:         block;
-        padding:         2px 6px;
-        line-height:     1;
-        text-decoration: none;
-        font-size:       larger;
-        border-radius:   6px;
-        border:          1.5px solid;
+        font-size: larger;
+        border:    1.5px solid;
+    }
+}
+
+// Controller- and action-specific page controls.
+//
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+.layout-section.page.controls {
+
+    // @see LayoutHelper::PageControls#render_page_controls
+    .page-controls {
+
+        @extend %header-search-section;
+        @extend %header-control-panel;
+
+        $page-control-gap-x: $gap-x;
+        $page-control-gap-y: calc(#{$gap-y} / 2);
+
+        width:           auto;
+        max-width:       calc(100% - (2 * #{$page-control-gap-x}));
+        flex-wrap:       wrap;
+        justify-content: flex-start;
+        align-items:     baseline;
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        .label {
+            margin:      $page-control-gap-y $page-control-gap-x;
+            margin-left: 0;
+        }
+
+        .controls {
+
+            margin-bottom: $page-control-gap-y;
+
+            .control {
+
+                margin:       0;
+                margin-right: $page-control-gap-x;
+
+                @media #{$narrow-screen} {
+                    margin-top:    $page-control-gap-y;
+                    margin-bottom: $page-control-gap-y;
+                }
+            }
+        }
+
+        @media #{$browser-ie} {
+
+            $page-control-gap-x: $ie-gap-x;
+            $page-control-gap-y: $ie-gap-y / 2;
+
+            max-width: calc(100% - (2 * #{$page-control-gap-x}));
+
+            .label {
+                margin:      $page-control-gap-y $page-control-gap-x;
+                margin-left: 0;
+            }
+
+            .controls {
+
+                margin-bottom: $page-control-gap-y;
+
+                .control {
+
+                    margin-right: $page-control-gap-x;
+
+                    @media #{$narrow-screen} {
+                        margin-top:    $page-control-gap-y;
+                        margin-bottom: $page-control-gap-y;
+                    }
+                }
+            }
+        }
     }
 }

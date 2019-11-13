@@ -70,6 +70,10 @@
             &.columns-#{$n} { }
         }
 
+    } @else if not $template {
+
+        @error "A $template must be provided when $template-map is used.";
+
     } @else {
 
         $wide-map:        map-get($template-map, 'wide');

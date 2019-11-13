@@ -66,7 +66,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {jQuery}
      */
-    var $reset_button = $search_sections.find('.menu-button');
+    var $reset_button = $search_sections.find('.menu-button.reset');
 
     // ========================================================================
     // Function definitions
@@ -112,6 +112,7 @@ $(document).on('turbolinks:load', function() {
     function initializeState() {
         if (isMissing($control_panel)) {
             $advanced_toggle.hide();
+            $reset_button.hide();
         } else {
             var was_open = getState();
             var is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
@@ -161,7 +162,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {boolean} opening
      *
-     * @see .layout-section.search.bar.menu-button in shared/_header.scss.
+     * @see .search-bar-container.menu-button.reset in shared/_header.scss.
      */
     function updateResetButton(opening) {
         $reset_button.each(function() {
