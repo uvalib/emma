@@ -4,15 +4,14 @@
   title ||= t('emma.periodical.index.title')
   list  ||= periodical_list
   count ||= total_items
+  row   ||= 1
 
-  if list.present?
-    search_count = "#{count} periodicals found." # TODO: I18n
-    search_count = content_tag(:div, search_count, class: 'search-count')
-    controls     = pagination_controls
-    terms        = search_terms.presence
-  else
-    search_count = controls = terms = nil
-  end
+  terms = search_terms
+  applied_terms, top_controls, bottom_controls =
+    if list.present?
+      index_controls(terms, count: count, row: row)
+    end
+  row += [applied_terms, top_controls].compact.size
 
   set_page_title(t('emma.periodical.index.label', default: title))
   append_page_title('-', hash_string(terms)) if terms.present?
@@ -20,26 +19,15 @@
   set_page_robots(:noindex)
 
   title += " (#{count})" if list.blank?
+
+  template_opt = { list: list, count: count, row: row, skip: :title }
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
 <div class="periodical-list">
-
-  <%# === Applied search terms (when applicable) === -%>
-  <%= applied_search_terms(terms) if terms.present? %>
-
-  <%# === Top pagination controls === -%>
-  <%- if controls -%>
-    <div class="pagination-top"><%= controls -%><%= search_count -%></div>
-  <%- end -%>
-
-  <%# === Items === -%>
-  <%= render 'periodical/list', list: list, count: count, skip: :title %>
-
-  <%# === Bottom pagination controls === -%>
-  <%- if controls -%>
-    <div class="pagination-bottom"><%= controls -%></div>
-  <%- end -%>
-
+  <%= applied_terms %>
+  <%= top_controls %>
+  <%= render 'periodical/list', template_opt %>
+  <%= bottom_controls %>
 </div>

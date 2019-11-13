@@ -28,12 +28,12 @@
     width:      50%;
     margin-top: calc(2 * #{$page-padding});
 
-    @media #{$browser-ie} {
-        margin-top: (2 * $ie-page-padding);
-    }
-
     @media #{$narrow-screen} {
         width: 100%;
+    }
+
+    @media #{$browser-ie} {
+        margin-top: 2 * $ie-page-padding;
     }
 
     table {
@@ -61,7 +61,7 @@
         .action,
         .status {
             padding-left: 0.25rem;
-            text-align:   start;
+            text-align:   left;
         }
 
         .can {

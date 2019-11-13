@@ -1,0 +1,36 @@
+// app/assets/stylesheets/shared/controls/_buttons.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+// ============================================================================
+// Controls
+// ============================================================================
+
+/// Make a link look and act like a browser button.
+///
+/// @param {Color}  $light            The color of the top/left borders.
+/// @param {Color}  $dark             The color of the bottom/right borders.
+/// @param {String} $width            Width of the border.
+///
+// noinspection SassScssResolvedByNameOnly
+@mixin link-button($light: white, $dark: darkgray, $width: 2px) {
+
+    @extend %button;
+
+    display: block;
+    border:  $width solid transparent;
+
+    & {
+        border-top-color:    $light;
+        border-left-color:   $light;
+        border-bottom-color: $dark;
+        border-right-color:  $dark;
+    }
+
+    &:active {
+        border-top-color:    $dark;
+        border-left-color:   $dark;
+        border-bottom-color: $light;
+        border-right-color:  $light;
+    }
+}

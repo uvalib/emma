@@ -1,6 +1,8 @@
 <%# app/views/layouts/_page_controls.html.erb -%>
 <%-
   # Controller- and action-specific page controls.
+
+  # noinspection RubyUnusedLocalVariable
   skip     ||= !show_page_controls? and return
   label_id ||= 'page-controls'
   controls   = render_page_controls(locals: { label_id: label_id }) or return

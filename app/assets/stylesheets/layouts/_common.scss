@@ -1,4 +1,4 @@
-// app/assets/stylesheets/shared/_layout.scss
+// app/assets/stylesheets/layouts/_common.scss
 
 // @use 'shared/common'; // TODO: SASS 4.0
 
@@ -50,5 +50,18 @@ body {
 
     @media #{$narrow-screen} {
         margin-top: calc(#{$page-padding} * 2);
+    }
+
+    @media #{$browser-ie} {
+
+        margin: $ie-page-padding inherit;
+
+        @media #{$wide-screen} {
+            margin-bottom: $ie-page-padding / 2;
+        }
+
+        @media #{$narrow-screen} {
+            margin-top: $ie-page-padding * 2;
+        }
     }
 }

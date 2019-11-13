@@ -1,8 +1,12 @@
 // app/assets/stylesheets/controllers/_title.scss
 
-// @use 'shared/common';  // TODO: SASS 4.0
-// @use 'shared/mixins';  // TODO: SASS 4.0
-// @use 'feature/search'; // TODO: SASS 4.0
+// @use 'shared/mixins';         // TODO: SASS 4.0
+// @use 'shared/common';         // TODO: SASS 4.0
+// @use 'shared/controls/grids'; // TODO: SASS 4.0
+// @use 'shared/controls/lists'; // TODO: SASS 4.0
+// @use 'feature/download';      // TODO: SASS 4.0
+// @use 'feature/images';        // TODO: SASS 4.0
+// @use 'feature/search';        // TODO: SASS 4.0
 
 //=============================================================================
 // Catalog Title index page
@@ -24,6 +28,10 @@
     @media #{$narrow-screen} {
         padding-top: 0.25rem;
         border-top:  2px solid lightgray;
+    }
+
+    @media #{$browser-ie} {
+        -ms-grid-column: 3;
     }
 
     //=========================================================================
@@ -92,7 +100,7 @@
     justify-items: stretch;
 
     @media #{$narrow-screen} {
-        grid-template-columns: 1fr [label] max-content [value] min-content;
+        @include grid-columns(1fr max-content min-content);
     }
 
     //=========================================================================
@@ -107,8 +115,18 @@
 
         // Push item number to the right and hide.
         @media #{$narrow-screen} {
-            grid-column: 3 / -1;
             visibility:  hidden;
+            grid-column: 3 / -1;
+        }
+
+        @media #{$browser-ie} {
+
+            margin-right:    $ie-flex-gap-x;
+            -ms-grid-column: 1;
+
+            @media #{$narrow-screen} {
+                -ms-grid-column: 3;
+            }
         }
     }
 
@@ -119,10 +137,6 @@
 
         margin-bottom: $results-entry-gap-y;
 
-        @media #{$browser-ie} {
-            margin-bottom: $ie-results-entry-gap-y;
-        }
-
         @media #{$not-wide-screen} {
             margin-top: $results-entry-gap-y;
         }
@@ -131,6 +145,13 @@
         @media #{$narrow-screen} {
             grid-column: 3 / -1;
             grid-row:    span 2;
+        }
+
+        @media #{$browser-ie} {
+
+            margin-right:    $ie-flex-gap-x;
+            margin-bottom:   $ie-results-entry-gap-y;
+            -ms-grid-column: 2;
         }
     }
 }
@@ -152,7 +173,7 @@
 
     $break-height:           2 * $results-entry-margin-y / 3;
 
-    $synopsis-padding:       $results-entry-margin-y;
+    $synopsis-pad:           $results-entry-margin-y;
     $synopsis-border-width:  2px;
     $synopsis-border-color:  $image-border-color;
     $synopsis-border-radius: 4 * $synopsis-border-width;
@@ -160,10 +181,10 @@
     .label {
         &.field-Synopsis {
 
-            padding-top: calc(#{$synopsis-padding} + #{$synopsis-border-width});
+            padding-top: calc(#{$synopsis-pad} + #{$synopsis-border-width});
 
             @media #{$browser-ie} {
-                padding-top: $synopsis-padding;
+                padding-top: $synopsis-pad;
             }
         }
     }
@@ -201,9 +222,14 @@
                 flex-direction: row;
                 flex-wrap:      wrap;
 
+                // noinspection CssReplaceWithShorthandSafely
                 > * {
-                    flex:   0 0 auto;
-                    margin: 0 $results-entry-margin-y $results-entry-margin-y 0;
+
+                    flex:          0 0 auto;
+                    margin:        0;
+                    margin-right:  $results-entry-margin-y;
+                    margin-bottom: $results-entry-margin-y;
+
                     &:last-child { margin-right: 0; }
                 }
             }
@@ -212,20 +238,20 @@
         &.field-Synopsis {
 
             margin-bottom: calc(#{$results-entry-gap-y} / 2);
-            padding:       $synopsis-padding;
+            padding:       $synopsis-pad;
             line-height:   1.375;
             border:        $synopsis-border-width solid $synopsis-border-color;
             border-radius: $synopsis-border-radius;
 
-            @media #{$browser-ie} {
-                margin-bottom: ($ie-results-entry-gap-y / 2);
+            @media #{$medium-width} {
+                margin-right: #{$results-entry-gap-y};
             }
 
-            @media #{$medium-width} {
+            @media #{$browser-ie} {
 
-                margin-right: #{$results-entry-gap-y};
+                margin-bottom: ($ie-results-entry-gap-y / 2);
 
-                @media #{$browser-ie} {
+                @media #{$medium-width} {
                     margin-right: $ie-results-entry-gap-y;
                 }
             }
@@ -288,10 +314,6 @@
         flex-basis:  0;
         margin-left: $page-padding-x;
 
-        @media #{$browser-ie} {
-            margin-left: $ie-page-padding-x;
-        }
-
         // Reserve width to avoid watching the page re-layout if a cover image
         // is acquired asynchronously.
         @media #{$wide-screen} {
@@ -306,6 +328,10 @@
         @media #{$narrow-screen} {
             min-width: unset;
             max-width: 100%;
+        }
+
+        @media #{$browser-ie} {
+            margin-left: $ie-page-padding-x;
         }
 
         img:not(.placeholder) {

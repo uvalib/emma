@@ -104,7 +104,7 @@ module CategoryHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def category_list_entry(item, **opt)
-    item_list_entry(item, :category) do
+    item_list_entry(item, :category, row: opt[:row]) do
       CATEGORY_INDEX_FIELDS.merge(
         category_link(item) => "(#{item.titleCount})"
       ).merge(opt)

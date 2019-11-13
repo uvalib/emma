@@ -155,33 +155,20 @@ $(document).on('turbolinks:load', function() {
      * Each specific .menu-button element may have custom CSS properties set
      * according to the layout determined by the width of the medium:
      *
-     * If '--disabled' is 'true', then this function should not modify the
-     *   display or visibility of the element.
-     *
-     * If '--invisible-when-closed' is set to 'true', then this function should
+     * If '--manage-visibility' is set to 'true', then this function should
      *   modify the visibility of the element (toggling between 'visible' and
-     *   'hidden').  Otherwise this function modifies the display, toggling
-     *   between 'block' and 'none'.
+     *   'hidden').
      *
      * @param {boolean} opening
      *
-     * @see .layout-section.search.input.menu-button in shared/_header.scss.
+     * @see .layout-section.search.bar.menu-button in shared/_header.scss.
      */
     function updateResetButton(opening) {
         $reset_button.each(function() {
-            var $button  = $(this);
-            var disabled = $button.css('--disabled');
-            if (notDefined(disabled) || (disabled.trim() !== 'true')) {
-                var css_property, css_value;
-                var visibility = $button.css('--invisible-when-closed');
-                if (isDefined(visibility) && (visibility.trim() === 'true')) {
-                    css_property = 'visibility';
-                    css_value    = opening ? 'visible' : 'hidden';
-                } else {
-                    css_property = 'display';
-                    css_value    = opening ? 'block' : 'none';
-                }
-                $button.css(css_property, css_value);
+            var $button = $(this);
+            var manage  = $button.css('--manage-visibility');
+            if (isDefined(manage) && (manage.trim() === 'true')) {
+                $button.css('visibility', (opening ? 'visible' : 'hidden'));
             }
         });
     }

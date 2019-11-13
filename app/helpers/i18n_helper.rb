@@ -63,12 +63,15 @@ module I18nHelper
 
   # i18n_lookup_order
   #
-  # @param [String, Symbol, nil] controller
-  # @param [String, Symbol, nil] action
+  # @param [Array<String,Symbol>] args
+  #
+  # args[0] controller
+  # args[1] action
   #
   # @return [Array<Symbol>]
   #
-  def i18n_lookup_order(controller, action = nil)
+  def i18n_lookup_order(*args)
+    controller, action = args
     result = []
     result << "emma.#{controller}.#{action}" if controller && action
     result << "emma.#{controller}"           if controller

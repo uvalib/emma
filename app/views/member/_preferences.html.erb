@@ -3,6 +3,7 @@
   # Organization Member preferences listing.
   pref  ||= @preferences or return
   level ||= 2
+  row   ||= 1
   skip  ||= nil
 
   skip = Array.wrap(skip)
@@ -15,5 +16,5 @@
 
 <div class="member-preferences">
   <%= heading %>
-  <%= member_preference_values(pref) %>
+  <%= member_preference_values(pref, row: row) %>
 </div>

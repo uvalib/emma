@@ -56,13 +56,13 @@ class ApiService
 
   # Initialize a new instance
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Stored in @options except for:
   #
-  # @option opt [User]   :user          User instance which includes a
-  #                                       Bookshare user identity and a token.
+  # @option opt [User]   :user        User instance which includes a
+  #                                     Bookshare user identity and a token.
   #
-  # @option opt [String] :base_url      Base URL to the external service
-  #                                       (default: #BASE_URL).
+  # @option opt [String] :base_url    Base URL to the external service
+  #                                     (default: #BASE_URL).
   #
   def initialize(**opt)
     opt, @options = partition_options(opt, :base_url, :user)

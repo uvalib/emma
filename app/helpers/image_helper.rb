@@ -67,23 +67,25 @@ module ImageHelper
   #
   def image_element(url, **opt)
     return if url.blank?
-    opt, html_opt = partition_options(opt, :alt, :link)
-    alt   = opt[:alt] || 'Illustration' # TODO: I18n
-    link  = opt[:link].presence
+    opt, html_opt = partition_options(opt, :alt, :link, :row)
+    alt  = opt[:alt] || 'Illustration' # TODO: I18n
+    link = opt[:link]
+    row  = positive(opt[:row])
+    append_css_classes!(html_opt, "row-#{row}") if row
     image =
       if ASYNCHRONOUS_IMAGES
         image_placeholder(url, alt: alt)
       else
         image_tag(url, alt: alt)
       end
-    if link
-      content_tag(:div, class: html_opt[:class], 'aria-hidden': true) do
-        # noinspection RubyYardParamTypeMatch
-        make_link(image, link, **html_opt.merge(tabindex: -1))
-      end
-    else
-      content_tag(:div, image, html_opt)
+    if link.present?
+      html_opt, link_opt = partition_options(html_opt, :class, :style)
+      html_opt[:'aria-hidden'] ||= true
+      link_opt[:tabindex]      ||= -1
+      # noinspection RubyYardParamTypeMatch
+      image = make_link(image, link, **link_opt)
     end
+    content_tag(:div, image, **html_opt)
   end
 
   # Placeholder image.

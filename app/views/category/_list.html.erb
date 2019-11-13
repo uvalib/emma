@@ -5,6 +5,7 @@
   count  ||= list.size
   offset ||= page_offset
   level  ||= 1
+  row    ||= level
   skip   ||= nil
 
   skip = Array.wrap(skip)
@@ -22,9 +23,10 @@
 <%= heading %>
 
 <%- if list.blank? -%>
-  <%= render 'category/entry', opt.merge(index: -1) %>
+  <%= render 'category/entry', opt.merge!(index: -1, row: row) %>
 <%- else -%>
   <%- list.each_with_index do |item, idx| -%>
-    <%= render 'category/entry', opt.merge(index: idx, item: item) %>
+    <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
+    <%= render 'category/entry', opt %>
   <%- end -%>
 <%- end -%>

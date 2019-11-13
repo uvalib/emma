@@ -8,13 +8,14 @@
   offset ||= page_offset
   add    ||= {}
   level  ||= 2
+  row    ||= 1
   skip   ||= nil
 
-  add  = add.reverse_merge(index: index)
   skip = Array.wrap(skip) << :thumbnail
-  opt  = { index: index, offset: offset, level: level, skip: skip }
+  add  = add.merge(index: index, row: row)
+  opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
 -%>
 
-<%= list_entry_number(item, opt) unless skip.include?(:number) %>
-<%= thumbnail(item, link: true)  unless skip.include?(:thumbnail) %>
+<%= list_entry_number(item, opt)           unless skip.include?(:number) %>
+<%= thumbnail(item, opt.merge(link: true)) unless skip.include?(:thumbnail) %>
 <%= reading_list_list_entry(item, add) %>

@@ -61,11 +61,6 @@ body.api-v2 {
         column-width:     27.5vw;
         background-color: $uva-light-gray;
 
-        @media #{$browser-ie} {
-            margin-left:  inherit;
-            margin-right: inherit;
-        }
-
         @media #{$wide-screen} {
             column-width: 15vw;
         }
@@ -73,6 +68,11 @@ body.api-v2 {
         @media #{$narrow-screen} {
             padding-top:  0;
             column-width: unset;
+        }
+
+        @media #{$browser-ie} {
+            margin-left:  inherit;
+            margin-right: inherit;
         }
 
         //=====================================================================

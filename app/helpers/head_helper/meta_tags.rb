@@ -180,9 +180,9 @@ module HeadHelper::MetaTags
   # @return [nil]                             If the tag would be a "no-op".
   #
   def emit_meta_tag(key, value, **opt)
-    list_opt, html_opt = partition_options(opt, *EMIT_META_TAG_OPTIONS)
+    opt, html_opt = partition_options(opt, *EMIT_META_TAG_OPTIONS)
     list_separator =
-      list_opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
+      opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR
 
     # The tag name comes from the provided *key*.
     html_opt[:name] = key.to_s
@@ -199,7 +199,7 @@ module HeadHelper::MetaTags
 
     # The tag content is formed from the value(s) accumulated for this item.
     html_opt[:content] =
-      normalized_list(value, **list_opt).join(list_separator).tap do |content|
+      normalized_list(value, **opt).join(list_separator).tap do |content|
         if (prefix = META_TAG_PREFIX[key]) && !content.start_with?(prefix)
           prefix = "#{prefix} - " unless prefix.end_with?(' ')
           content.prepend(prefix)

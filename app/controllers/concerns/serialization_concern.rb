@@ -90,10 +90,10 @@ module SerializationConcern
   # @option opt [String] :name        Passed to #make_xml.
   #
   def render_xml(item, **opt)
-    make_opt, render_opt = partition_options(opt, :separator, :name)
+    opt, render_opt = partition_options(opt, :separator, :name)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
     item = item.merge(error: api_error_message) if api_error?
-    text = make_xml(item, **make_opt)
+    text = make_xml(item, **opt)
     render xml: text, **render_opt
   end
 

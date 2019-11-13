@@ -1,7 +1,6 @@
 // app/assets/stylesheets/shared/_common.scss
 
 // @use 'shared/variables'; // TODO: SASS 4.0
-// @use 'shared/lists';     // TODO: SASS 4.0
 
 //=============================================================================
 // Placeholder classes
@@ -135,6 +134,10 @@ select:focus {
 ::-moz-focus-inner {
     border: 0;
 }
+
+//=============================================================================
+// Classes for composition
+//=============================================================================
 
 // Include to remove an element from the display.
 .hidden {

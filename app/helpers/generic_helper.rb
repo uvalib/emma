@@ -80,6 +80,37 @@ module GenericHelper
 
   public
 
+  # Interpret *value* as a positive integer.
+  #
+  # @param [String, Numeric] value
+  #
+  # @return [Integer]
+  # @return [nil]
+  #
+  def positive(value)
+    result = value.to_i
+    result if result > 0
+  end
+
+  # Interpret *value* as zero or a positive integer.
+  #
+  # @param [String, Numeric] value
+  #
+  # @return [Integer]
+  # @return [nil]
+  #
+  def non_negative(value)
+    return unless value
+    result = value.to_i
+    result unless result < 0
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Generate a URL or partial path.
   #
   # The result will have query parameters in sorted order.  Query parameters

@@ -65,7 +65,7 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #
-  # @param [Hash]                opt    The source options hash.
+  # @param [Hash, *]             opt    The source options hash (if present).
   # @param [Array<String,Array>] args   CSS class names.
   #
   # @return [Hash]                      A new hash with :class set.
@@ -73,7 +73,13 @@ module HtmlHelper
   # @see #append_css_classes!
   #
   def append_css_classes(opt, *args, &block)
-    opt = opt&.dup || {}
+    if opt.is_a?(Hash)
+      opt = opt.dup
+    elsif opt
+      args.unshift(opt)
+      opt = nil
+    end
+    opt ||= {}
     append_css_classes!(opt, *args, &block)
   end
 
@@ -99,7 +105,7 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are prepended to the existing `opt[:class]` value.
   #
-  # @param [Hash]                opt    The source options hash.
+  # @param [Hash, *]             opt    The source options hash (if present).
   # @param [Array<String,Array>] args   CSS class names.
   #
   # @return [Hash]                      A new hash with :class set.
@@ -107,7 +113,13 @@ module HtmlHelper
   # @see #prepend_css_classes!
   #
   def prepend_css_classes(opt, *args, &block)
-    opt = opt&.dup || {}
+    if opt.is_a?(Hash)
+      opt = opt.dup
+    elsif opt
+      args.unshift(opt)
+      opt = nil
+    end
+    opt ||= {}
     prepend_css_classes!(opt, *args, &block)
   end
 

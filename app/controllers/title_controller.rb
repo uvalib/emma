@@ -55,6 +55,7 @@ class TitleController < ApplicationController
     if contains_isbn?(opt[:keyword])
       # The search looks like an ISBN so interpret this as an ISBN search.
       isbn = opt.delete(:keyword)
+      # noinspection RubyYardParamTypeMatch
       opt[:isbn] = to_isbn(isbn) || isbn
       return redirect_to opt
     elsif (isbn = opt[:isbn]) && opt[:keyword]

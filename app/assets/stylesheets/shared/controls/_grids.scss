@@ -1,0 +1,134 @@
+// app/assets/stylesheets/shared/controls/_grids.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// CSS function analogues.
+//=============================================================================
+
+/// Simulate CSS "repeat()" for MS Internet Explorer.
+///
+/// @param {Numeric} $columns
+/// @param {String}  $template
+///
+@function ie-repeat($columns, $template) {
+    $column: $template;
+    @for $n from 2 through $columns {
+        $template: $template $column;
+    }
+    @return $template;
+}
+
+//=============================================================================
+// Grid definitions.
+//=============================================================================
+
+/// Set up grid display and optionally specify column widths.
+///
+/// @param {String}  $template
+/// @param {Numeric} $columns
+///
+@mixin grid($template: false, $columns: 1) {
+
+    display: -ms-grid;
+    display: grid;
+
+    @if $template { @include grid-columns($template, $columns); }
+}
+
+/// Set grid columns.
+///
+/// @param {String}  $template
+/// @param {Numeric} $columns
+///
+// noinspection SassScssResolvedByNameOnly
+@mixin grid-columns($template, $columns: 1) {
+    @if $template {
+        @if $columns <= 1 {
+            -ms-grid-columns:      $template;
+            grid-template-columns: $template;
+        } @else {
+            -ms-grid-columns:      ie-repeat($columns, $template);
+            grid-template-columns: repeat($columns, $template);
+        }
+    }
+}
+
+/// Specific grid column widths.
+///
+/// @param {Numeric} $columns
+/// @param {String}  $template
+/// @param {Map}     $template-map
+///
+// noinspection SassScssResolvedByNameOnly, CssInvalidFunction
+@mixin grid-column-classes($columns, $template: false, $template-map: false) {
+    @if type-of($template-map) != 'map' {
+
+        @include grid-columns($template, $columns);
+
+        @for $n from 1 through $columns {
+            &.columns-#{$n} { }
+        }
+
+    } @else {
+
+        $wide-map:        map-get($template-map, 'wide');
+        $medium-map:      map-get($template-map, 'medium');
+        $narrow-map:      map-get($template-map, 'narrow');
+
+        $wide-max:        map-get($wide-map,   'columns')  or $columns;
+        $wide-template:   map-get($wide-map,   'template') or $template;
+
+        $medium-max:      map-get($medium-map, 'columns')  or $wide-max;
+        $medium-template: map-get($medium-map, 'template') or $wide-template;
+
+        $narrow-max:      map-get($narrow-map, 'columns')  or $medium-max;
+        $narrow-template: map-get($narrow-map, 'template') or $medium-template;
+
+        @for $n from 1 through $columns {
+            &.columns-#{$n} {
+                @media #{$wide-screen} {
+                    $count: min($n, $wide-max);
+                    grid-template-columns: repeat($count, $wide-template);
+                }
+                @media #{$medium-width} {
+                    $count: min($n, $medium-max);
+                    grid-template-columns: repeat($count, $medium-template);
+                }
+                @media #{$narrow-screen} {
+                    $count: min($n, $narrow-max);
+                    grid-template-columns: repeat($count, $narrow-template);
+                }
+            }
+        }
+
+        @media #{$browser-ie} {
+            @for $n from 1 through $columns {
+                &.columns-#{$n} {
+                    @media #{$wide-screen} {
+                        $count: min($n, $wide-max);
+                        -ms-grid-columns: ie-repeat($count, $wide-template);
+                    }
+                    @media #{$medium-width} {
+                        $count: min($n, $medium-max);
+                        -ms-grid-columns: ie-repeat($count, $medium-template);
+                    }
+                    @media #{$narrow-screen} {
+                        $count: min($n, $narrow-max);
+                        -ms-grid-columns: ie-repeat($count, $narrow-template);
+                    }
+                }
+            }
+        }
+    }
+}
+
+//=============================================================================
+// Internet Explorer grid support classes
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+@media #{$browser-ie} {
+    @for $n from 1 through 10  { .col-#{$n} { -ms-grid-column: $n; } }
+    @for $n from 1 through 100 { .row-#{$n} { -ms-grid-row:    $n; } }
+}

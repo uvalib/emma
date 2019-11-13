@@ -1,6 +1,6 @@
-// app/assets/stylesheets/feature/_lists.scss
+// app/assets/stylesheets/shared/controls/_lists.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+// @use 'shared/controls/grids';  // TODO: SASS 4.0
 
 //=============================================================================
 // List definitions.
@@ -11,7 +11,7 @@
 /// @param {Numeric} $columns
 /// @param {Numeric} $y-gap
 /// @param {Numeric} $x-gap
-/// @param {String}  $ruleset
+/// @param {String}  $template
 ///
 /// NOTE: A row separation ($y-gap) other than zero can be problematic because
 /// browsers seem not to be able to properly calculate the true height of the
@@ -19,19 +19,11 @@
 /// to have this problem.
 ///
 // noinspection SassScssResolvedByNameOnly
-@mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $ruleset: false) {
+@mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
-    display:  grid;
+    @include grid($template, $columns);
+
     grid-gap: $y-gap $x-gap;
-
-    @if $ruleset {
-        grid-template-columns: repeat($columns, $ruleset);
-    }
-
-    @media #{$browser-ie} {
-        display:        flex;
-        flex-direction: column;
-    }
 
     //=========================================================================
     // Components
@@ -44,7 +36,9 @@
         margin:      $page-padding-y 0;
 
         @media #{$browser-ie} {
-            margin: $ie-page-padding-y 0;
+            margin:               $ie-page-padding-y 0;
+            -ms-grid-column:      1;
+            -ms-grid-column-span: $columns;
         }
 
         &:first-child {
@@ -69,12 +63,27 @@
 
 // A two-column list where each row is a label followed by a value.
 .list-2-column {
+
     @include tabular-list(2);
+
     grid-template-columns: [label] auto [value] 1fr;
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$browser-ie} {
+        -ms-grid-columns: minmax(2%, max-content) 1fr;
+    }
 }
 
 // A three-column list where each row is a number, a label, and a value.
 .list-3-column {
+
     @include tabular-list(3);
-    grid-template-columns: [number] minmax(2%, auto) [label] auto [value] 1fr;
+
+    grid-template-columns:
+        [number] minmax(1%, max-content) [label] auto [value] 1fr;
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$browser-ie} {
+        -ms-grid-columns: minmax(1%, max-content) auto 1fr;
+    }
 }

@@ -324,25 +324,29 @@ module ResourceHelper
   # @param [Api::Record::Base] item
   # @param [String, Symbol]    model
   # @param [Hash]              pairs      Except for #render_pair options.
+  # @param [Integer]           row_offset Default: 0.
   # @param [String]            separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
   # @param [Proc]              block      Passed to #field_values.
   #
-  # @option pairs [Integer] :index    Offset for making unique element IDs)
-  #                                     passed to #render_pair.
+  # @option pairs [Integer] :index        Offset for making unique element IDs)
+  #                                         passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_values(
     item,
-    model:     nil,
-    pairs:     nil,
-    separator: DEFAULT_ELEMENT_SEPARATOR,
+    model:      nil,
+    pairs:      nil,
+    row_offset: nil,
+    separator:  DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
     pairs = field_values(item, pairs, &block)
-    opt, pairs = partition_options(pairs, :index)
+    opt, pairs = partition_options(pairs, :index, :row) # Discard :row
+    opt[:row] = row_offset || 0
     # noinspection RubyNilAnalysis
     pairs.map { |label, value|
+      opt[:row] += 1
       value = render_value(item, value, model: model)
       render_pair(label, value, **opt) if value
     }.compact.join(separator).html_safe
@@ -352,8 +356,10 @@ module ResourceHelper
   #
   # @param [String, Symbol] label
   # @param [Object]         value
-  # @param [String]         separator
   # @param [Integer]        index       Offset for making unique element IDs.
+  # @param [Integer]        row         Display row.
+  # @param [String]         separator   If *value* is an array; default:
+  #                                       `#DEFAULT_LIST_SEPARATOR`.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                               If *value* is blank.
@@ -362,19 +368,21 @@ module ResourceHelper
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  def render_pair(label, value, separator: DEFAULT_LIST_SEPARATOR, index: nil)
+  def render_pair(label, value, index: nil, row: 1, separator: nil)
     return if value.blank?
-    value = safe_join(value.dup.push(nil), separator) if value.is_a?(Array)
-    l_opt = { class: 'label' }
-    v_opt = { class: 'value' }
+    if value.is_a?(Array)
+      separator ||= DEFAULT_LIST_SEPARATOR
+      value = safe_join(value.dup.push(nil), separator)
+    end
+    type = id = nil
     unless label.is_a?(ActiveSupport::SafeBuffer)
       type  = "field-#{label || 'None'}"
-      id    = type
-      id    = "#{id}-#{index}" if index
+      id    = index ? "#{type}-#{index}" : type
       label = labelize(label)
-      append_css_classes!(l_opt, type)
-      append_css_classes!(v_opt, type).merge!(id: id)
     end
+    l_opt = append_css_classes('label', type, "row-#{row}")
+    v_opt = append_css_classes('value', type, "row-#{row}")
+    v_opt[:id] = id if id
     content_tag(:div, label, l_opt) << content_tag(:div, value, v_opt)
   end
 
@@ -502,6 +510,8 @@ module ResourceHelper
 
   public
 
+  ITEM_ENTRY_OPT = %i[index offset level row skip].freeze
+
   # Active search terms.
   #
   # @param [Hash, nil]                  pairs   Default: `#url_parameters`.
@@ -531,25 +541,51 @@ module ResourceHelper
   # @param [Hash, nil] term_list      Default: `#search_terms`.
   # @param [Hash]      opt            Passed to the innermost :content_tag.
   #
+  # @option opt [Integer] :row        Display row (default: 1)
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def applied_search_terms(term_list = nil, **opt)
-    opt = prepend_css_classes(opt, 'term')
-    leader = 'Search terms:' # TODO: I18n
-    leader &&= content_tag(:div, leader, class: 'label')
-    separator = content_tag(:span, ';', class: 'term-separator')
-    terms =
-      (term_list || search_terms).map do |field, value|
-        label = content_tag(:span, field, class: 'field')
-        sep   = content_tag(:span, ':',   class: 'separator')
-        value = content_tag(:span, value, class: 'value')
-        content_tag(:div, (label + sep + value), opt)
-      end
-    content_tag(:div, class: 'applied-search-terms') do
-      content_tag(:div, class: 'search-terms') do
-        leader + safe_join(terms, separator)
+    term_list ||= search_terms
+    opt, term_opt = partition_options(opt, :row)
+    row = positive(opt[:row]) || 1
+    html_opt = { class: "applied-search-terms row-#{row}" }
+    append_css_classes!(html_opt, 'invisible') if term_list.blank?
+    content_tag(:div, html_opt) do
+      if term_list.present?
+        prepend_css_classes!(term_opt, 'term')
+        leader = 'Search terms:' # TODO: I18n
+        leader = content_tag(:div, leader, class: 'label')
+        tm_sep = content_tag(:span, ';', class: 'term-separator')
+        terms  =
+          term_list.map { |field, value|
+            label = content_tag(:span, field, class: 'field')
+            sep   = content_tag(:span, ':',   class: 'separator')
+            value = content_tag(:span, value, class: 'value')
+            content_tag(:div, (label + sep + value), term_opt)
+          }.join(tm_sep).html_safe
+        content_tag(:div, class: 'search-terms') { leader + terms }
       end
     end
+  end
+
+  # Generate applied search terms and top/bottom pagination controls.
+  #
+  # @param [Hash, nil] terms          Default: `#search_terms`.
+  # @param [Integer]   count          Default: `#total_items`.
+  # @param [Integer]   row
+  #
+  # @return [Array<ActiveSupport::SafeBuffer>]
+  #
+  def index_controls(terms = nil, count: nil, row: 1)
+    page_controls = pagination_controls
+    result = []
+    result << applied_search_terms(terms, row: row)
+    result <<
+      content_tag(:div, class: "pagination-top row-#{row += 1}") do
+        page_controls + pagination_count(count)
+      end
+    result << content_tag(:div, class: 'pagination-bottom') { page_controls }
   end
 
   # Render an element containing the ordinal position of an entry within a list
@@ -567,18 +603,19 @@ module ResourceHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def list_entry_number(item, **opt)
+    opt, html_opt = partition_options(opt, *ITEM_ENTRY_OPT)
     return unless item && opt[:index]
-    opt = opt.except(:skip)
-    index  = opt.delete(:index).to_i
-    offset = opt.delete(:offset) || page_offset
-    level  = opt.delete(:level).to_i
-    level  = nil if level.zero?
-    tag    = level ? "h#{level}" : 'div'
-    prepend_css_classes!(opt, 'number')
-    prepend_css_classes!(opt, 'clear-default-styling') if level
-    content_tag(tag, opt) do
-      label = (index < 0) ? 'Empty results' : ('Entry' + ' ') # TODO: I18n
-      value = (index < 0) ? '' : "#{offset + index + 1}"
+    prepend_css_classes!(html_opt, 'number')
+    row   = positive(opt[:row])
+    level = positive(opt[:level])
+    tag   = level ? "h#{level}" : 'div'
+    append_css_classes!(html_opt, 'clear-default-styling') if level
+    append_css_classes!(html_opt, "row-#{row}")            if row
+    content_tag(tag, html_opt) do
+      index  = non_negative(opt[:index])
+      offset = opt[:offset]&.to_i || page_offset
+      label  = index ? 'Entry ' : 'Empty results' # TODO: I18n
+      value  = index ? "#{offset + index + 1}" : ''
       content_tag(:span, label, class: 'sr-only') << value
     end
   end
@@ -593,13 +630,16 @@ module ResourceHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def item_list_entry(item, model, pairs = nil, &block)
-    opt = { class: "#{model}-list-entry" }
+    html_opt = { class: "#{model}-list-entry" }
+    # noinspection RubyYardParamTypeMatch
+    row = positive(pairs && pairs[:row])
+    append_css_classes!(html_opt, "row-#{row}") if row
     if item.nil?
-      append_css_classes!(opt, 'empty')
+      append_css_classes!(html_opt, 'empty')
     elsif item.respond_to?(:identifier)
-      opt[:id] = "#{model}-#{item.identifier}"
+      html_opt[:id] = "#{model}-#{item.identifier}"
     end
-    content_tag(:div, opt) do
+    content_tag(:div, html_opt) do
       if item
         render_field_values(item, model: model, pairs: pairs, &block)
       else

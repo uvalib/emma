@@ -1,11 +1,15 @@
 <%# app/views/layouts/_search_bar.html.erb -%>
 <%-
-  # Search input.
+  # Search input and related controls.
+
+  # noinspection RubyUnusedLocalVariable
   skip ||= !show_search_bar? and return
 -%>
 
-<div class="layout-section search input" role="search">
-  <%= search_bar %>
-  <%= advanced_search_button %>
-  <%= reset_menu %>
+<div class="layout-section search bar" role="search">
+  <div class="search-bar-container">
+    <%= search_input_bar %>
+    <%= advanced_search_button %>
+    <%= reset_menu %>
+  </div>
 </div>

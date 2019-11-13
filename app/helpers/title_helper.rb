@@ -70,15 +70,18 @@ module TitleHelper
   # @return [nil]                         If *item* has no thumbnail.
   #
   def thumbnail(item, **opt)
-    # @type [String]
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image or return
+    opt, html_opt = partition_options(opt, *ITEM_ENTRY_OPT)
+    row = positive(opt[:row])
     id  = item.identifier
-    opt = prepend_css_classes(opt, 'thumbnail')
-    opt[:alt] ||= i18n_lookup(nil, 'thumbnail.image.alt', item: id)
-    opt[:link] &&= title_path(id: id)
-    opt[:id] = "container-img-#{id}"
-    opt[:'data-turbolinks-permanent'] = true
-    image_element(url, opt)
+    prepend_css_classes!(html_opt, 'thumbnail')
+    html_opt[:alt]  ||= i18n_lookup(nil, 'thumbnail.image.alt', item: id)
+    html_opt[:link] &&= title_path(id: id)
+    html_opt[:id]     = "container-img-#{id}"
+    html_opt[:row]    = row if row
+    html_opt[:'data-turbolinks-permanent'] = true
+    # noinspection RubyYardParamTypeMatch
+    image_element(url, **html_opt)
   end
 
   # Cover image element for the given catalog title.

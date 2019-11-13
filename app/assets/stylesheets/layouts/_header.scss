@@ -1,13 +1,22 @@
-// app/assets/stylesheets/shared/_header.scss
+// app/assets/stylesheets/layouts/_header.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+// @use 'shared/controls/buttons'; // TODO: SASS 4.0
+// @use 'shared/controls/grids';   // TODO: SASS 4.0
+
+//=============================================================================
+// Constants
+//=============================================================================
+
+// Preferred button dimensions.
+$search-button-width: 6em;
 
 //=============================================================================
 // Page header.
 //=============================================================================
 
 // The <header> area of the page.
-// noinspection SassScssResolvedByNameOnly,CssReplaceWithShorthandSafely
+//
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 .layout-header {
     display:         flex;
     flex-direction:  column;
@@ -92,12 +101,17 @@
 
             margin: auto $flex-gap-x auto 0;
 
-            @media #{$browser-ie} {
-                margin: auto $ie-flex-gap-x auto 0;
-            }
-
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
+            }
+
+            @media #{$browser-ie} {
+
+                margin-right: $ie-flex-gap-x;
+
+                @media #{$narrow-screen} {
+                    margin-top: $ie-flex-gap-y;
+                }
             }
         }
     }
@@ -113,26 +127,36 @@
         margin-left:     $page-padding-x;
         flex:            1 1 auto;
 
-        @media #{$browser-ie} {
-            margin-left: $ie-page-padding-x;
-        }
-
         @media #{$narrow-screen} {
             flex-direction: column-reverse;
             margin-top:     0;
             margin-bottom:  $flex-gap-y;
         }
 
+        @media #{$browser-ie} {
+
+            margin-left: $ie-page-padding-x;
+
+            @media #{$narrow-screen} {
+                margin-bottom: $ie-flex-gap-y;
+            }
+        }
+
         > * {
 
             margin: auto 0 auto $flex-gap-x;
 
-            @media #{$browser-ie} {
-                margin: auto 0 auto $ie-flex-gap-x;
-            }
-
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
+            }
+
+            @media #{$browser-ie} {
+
+                margin-left: $ie-flex-gap-x;
+
+                @media #{$narrow-screen} {
+                    margin-top: $ie-flex-gap-y;
+                }
             }
         }
     }
@@ -183,16 +207,16 @@
         font-variant: small-caps;
         flex:         0 1 auto;
 
-        @media #{$browser-ie} {
-            margin-top: 0.75rem;
-        }
-
         @media #{$medium-width} {
             font-size: small;
         }
 
         @media #{$narrow-screen} {
             display: none;
+        }
+
+        @media #{$browser-ie} {
+            line-height: 2.5;
         }
     }
 
@@ -202,12 +226,17 @@
     // sufficient to show the whole name.
     //
     .user {
+
         width:         min-content;
         max-width:     100%;
         font-size:     smaller;
         overflow:      hidden;
         text-overflow: ellipsis;
         flex:          0 1 auto;
+
+        @media #{$browser-ie} {
+            line-height: 2.5;
+        }
     }
 
     // The "Sign in"/"Sign out" button.
@@ -234,12 +263,17 @@
         border-radius: 0.5rem;
         flex:          0 0 auto;
 
-        @media #{$browser-ie} {
-            padding: 0.5rem;
-        }
-
         @media #{$narrow-screen} {
             margin-top: $flex-gap-y;
+        }
+
+        @media #{$browser-ie} {
+
+            padding: 0.5rem;
+
+            @media #{$narrow-screen} {
+                margin-top: $ie-flex-gap-y;
+            }
         }
 
         //=====================================================================
@@ -307,10 +341,11 @@
 }
 
 // Search input bar and search controls (sort, per-page, language).
+//
 .layout-section.search {
 
     // noinspection SassScssResolvedByNameOnly
-    %search-button {
+    %search-controls-button {
 
         @extend %button;
 
@@ -326,8 +361,14 @@
     // Elements
     //=========================================================================
 
+    // @see LayoutHelper#search_input_bar
+    .search-input-bar {
+        @extend %header-control-interior;
+    }
+
     // @see LayoutHelper#search_input
     .search-input {
+        max-width: 100%;
     }
 
     // @see LayoutHelper#search_button
@@ -340,47 +381,31 @@
     // noinspection SassScssResolvedByNameOnly
     .advanced-search-toggle {
 
-        @extend %search-button;
+        @extend %search-controls-button;
 
         background-color: $panel-accent;
     }
 
-    // @see LayoutHelper#reset_menu
+    // @see LayoutHelper#menu_spacer
     .menu-spacer {
         @extend .invisible;
     }
 
-    // @see LayoutHelper#reset_menu
+    // @see LayoutHelper#reset_button
     // noinspection SassScssResolvedByNameOnly
     .menu-button {
 
-        @extend %search-button;
+        @include link-button;
 
-        $light-side: white;
-        $dark-side:  darkgray;
+        @extend %search-controls-button;
 
-        padding-left:        8px;
-        padding-right:       8px;
-        color:               $uva-accent-blue;
-        background-color:    $panel-bg;
-        border:              2px solid transparent;
-
-        & {
-            border-left-color:   $light-side;
-            border-top-color:    $light-side;
-            border-right-color:  $dark-side;
-            border-bottom-color: $dark-side;
-        }
-
-        &:active {
-            border-left-color:   $dark-side;
-            border-top-color:    $dark-side;
-            border-right-color:  $light-side;
-            border-bottom-color: $light-side;
-        }
+        padding-left:     8px;
+        padding-right:    8px;
+        color:            $uva-accent-blue;
+        background-color: $panel-bg;
     }
 
-    // @see LayoutHelper#menu_container
+    // @see LayoutHelper#menu_label
     .menu-label {
         font-size: large;
     }
@@ -390,232 +415,248 @@
         @extend %header-control-interior;
     }
 
-    //=========================================================================
-    // Sections
-    //=========================================================================
-
-    // @see LayoutHelper#search_bar
-    // noinspection SassScssResolvedByNameOnly
-    .search-bar {
-        @extend %header-search-section;
-        @extend %header-control-interior;
-    }
-
-    // @see LayoutHelper#search_controls
-    // noinspection SassScssResolvedByNameOnly
-    .search-controls {
-        @extend %header-search-section;
-    }
 }
 
 // Header row containing the search input bar.
-.layout-section.search.input {
+.layout-section.search.bar {
 
-    display:               grid;
-    justify-content:       start;
-    grid-template-columns: [input] 0.50fr [adv-toggle] max-content;
-
+    // @see LayoutHelper#search_input_bar
     // noinspection SassScssResolvedByNameOnly
-    @media #{$medium-width} {
-        grid-template-columns:
-            [input] 1fr [adv-toggle] max-content [reset] max-content;
-    }
-
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$narrow-screen} {
-        grid-template-columns: [input] 1fr [adv-toggle] 1fr [reset] 1fr;
-    }
-
-    //=========================================================================
-    // Sections
-    //=========================================================================
-
-    // noinspection SassScssResolvedByNameOnly
-    .search-bar {
-
-        flex-wrap: wrap;
-        margin:    $gap-y 0;
-
-        @media #{$browser-ie} {
-            margin: $ie-gap-y 0;
-        }
-
-        @media #{$narrow-screen} {
-
-            justify-content: flex-end;
-            grid-column:     1 / -1;
-
-            * { font-size: larger; }
-        }
-
-        //=====================================================================
-        // Elements
-        //=====================================================================
-
-        .search-input {
-
-            max-width:    100%;
-            margin-right: $gap-x;
-            flex:         1 1;
-
-            @media #{$browser-ie} {
-                margin-right: $ie-gap-x;
-            }
-
-            @media #{$narrow-screen} {
-                margin-right: 0;
-            }
-        }
-
-        .search-button {
-
-            flex: 0 0;
-
-            @media #{$narrow-screen} {
-                margin-top:    $gap-y;
-                margin-bottom: $gap-y;
-                margin-left:   $gap-x;
-            }
-        }
-    }
-
-    // noinspection SassScssResolvedByNameOnly
-    .advanced-search-toggle {
-
-        margin: auto 0;
-
-        @media #{$wide-screen} {
-            margin-left:   calc(2 * #{$gap-x});
-        }
-        @media #{$medium-width} {
-            margin-left:   calc(3 * #{$gap-x});
-        }
-        @media #{$narrow-screen} {
-            margin-top:    $gap-y;
-            margin-bottom: $gap-y;
-            margin-left:   0;
-            grid-row:      2;
-        }
-    }
-
-    // noinspection SassScssResolvedByNameOnly
-    .menu-spacer {
-        display: none;
-    }
-
-    // @see updateResetButton() in advanced-search.js
-    // noinspection SassScssResolvedByNameOnly
-    .menu-button {
-        @media #{$wide-screen} {
-            display:       none;
-            --disabled:    true;
-        }
-        @media #{$not-wide-screen} {
-            margin-left:   calc(3 * #{$gap-x});
-            --invisible-when-closed: true;
-        }
-        @media #{$narrow-screen} {
-            margin-top:    $gap-y;
-            margin-bottom: $gap-y;
-        }
-    }
-}
-
-// Header row(s) containing the search controls (sort, per-page, language,
-// format, and  other search filters).
-// noinspection SassScssResolvedByNameOnly
-.layout-section.search.controls {
-
-    //=========================================================================
-    // Sections
-    //=========================================================================
-
-    // noinspection SassScssResolvedByNameOnly
-    .search-controls {
+    .search-bar-container {
 
         @extend %header-search-section;
 
-        display:   grid;
-        width:     max-content;
-        max-width: 100%;
+        flex-wrap:       nowrap;
+        justify-content: flex-start;
 
-        @media #{$wide-screen} {
-            @media #{$browser-ie} {
-                width: 50%;
-            }
-        }
-
-        @media #{$narrow-screen} {
-            padding-top: $gap-y;
-        }
-
-        //=====================================================================
-        // Grid definition
-        //=====================================================================
-
-        grid-gap:    $gap-y $gap-x;
-        align-items: baseline;
-
-        $closed-columns: "[label] max-content [menu] 1fr";
-        $opened-columns: "[label] max-content [menu] minmax(25%,100%)";
-
-        $medium-max: 2;
-        $narrow-max: 1;
-
-        @mixin menu-columns($n, $columns) {
-
-            grid-template-columns: repeat(#{$n}, #{$columns});
-
-            @media #{$medium-width} {
-                @if $n >= $medium-max {
-                    grid-template-columns: repeat(#{$medium-max}, #{$columns});
-                }
-            }
-
-            @media #{$narrow-screen} {
-                @if $n >= $narrow-max {
-                    grid-template-columns: repeat(#{$narrow-max}, #{$columns});
-                }
-            }
-        }
-
-        @for $n from 1 through 6 {
-            &.columns-#{$n} {
-                @include menu-columns($n, $closed-columns);
-            }
-            &.columns-#{$n}.open {
-                @include menu-columns($n, $opened-columns);
-            }
+        @media #{$not-wide-screen} {
+            flex-wrap:       wrap;
+            justify-content: space-between;
         }
 
         //=====================================================================
         // Sections
         //=====================================================================
 
-        // TODO: Currently unused -- probably remove.
-        // @see LayoutHelper#menu_container
-        .menu-container {
+        // noinspection CssReplaceWithShorthandSafely
+        .search-input-bar {
 
-            display:               grid;
-            grid-template-columns: [label] 0.2fr [control] 1fr;
-            margin:                $gap-y 0;
+            display:      flex;
+            flex-wrap:    nowrap;
+            margin:       $gap-y 0;
+            margin-right: calc(3 * #{$gap-x});
+            flex:         1 1 auto;
 
             @media #{$narrow-screen} {
-                grid-template-columns: [label] 0.5fr [control] 1fr;
-            }
 
-            @media #{$wide-screen} {
+                flex-wrap:       wrap;
+                justify-content: flex-end;
 
-                grid-template-columns: [label] auto [control] 1fr;
-                margin:                auto;
-
-                &:first-of-type { margin-left: 0; }
+                * {
+                    font-size: larger;
+                }
             }
 
             @media #{$browser-ie} {
-                display:        flex;
-                flex-direction: row;
-                margin:         $ie-gap-y 0 $ie-gap-y $ie-flex-gap-y;
+                margin:       $ie-gap-y 0;
+                margin-right: 3 * $ie-gap-x;
+            }
+
+            //=================================================================
+            // Elements
+            //=================================================================
+
+            .search-input {
+
+                margin:       auto 0;
+                margin-right: $gap-x;
+                flex:         1 1 auto;
+
+                @media #{$browser-ie} {
+                    margin-right: $ie-gap-x;
+                }
+
+                @media #{$narrow-screen} {
+                    margin-right: 0;
+                }
+            }
+
+            .search-button {
+
+                margin: auto 0;
+                flex:   0 0 auto;
+
+                @media #{$narrow-screen} {
+
+                    margin: $gap-y 0;
+                    //margin-left: $gap-x;
+
+                    @media #{$browser-ie} {
+                        margin: $ie-gap-y 0;
+                        //margin-left: $ie-gap-x;
+                    }
+                }
+            }
+        }
+
+        // noinspection CssReplaceWithShorthandSafely
+        .advanced-search-toggle {
+
+            margin: auto 0;
+            flex:   0 0 auto;
+
+            @media #{$not-wide-screen} {
+                margin:       $gap-y 0;
+                margin-right: calc(3 * #{$gap-x});
+            }
+
+            @media #{$browser-ie} {
+
+                height: 2rem;
+
+                @media #{$not-wide-screen} {
+                    margin:       $ie-gap-y 0;
+                    margin-right: 3 * $ie-gap-x;
+                }
+            }
+        }
+
+        .menu-spacer {
+            display: none;
+        }
+
+        // @see updateResetButton() in advanced-search.js
+        // noinspection CssReplaceWithShorthandSafely
+        .menu-button {
+
+            margin: auto 0;
+            flex:   0 0 auto;
+
+            @media #{$wide-screen} {
+                display: none;
+            }
+
+            @media #{$not-wide-screen} {
+
+                --manage-visibility: true;
+                visibility:          hidden;
+                margin-top:          $gap-y;
+                margin-bottom:       $gap-y;
+                margin-right:        calc(3 * #{$gap-x});
+
+                @media #{$browser-ie} {
+                    margin-top:    $ie-gap-y;
+                    margin-bottom: $ie-gap-y;
+                    margin-right:  3 * $ie-gap-x;
+                }
+            }
+        }
+    }
+}
+
+// Header row(s) containing the search controls (sort, per-page, language,
+// format, and  other search filters).
+.layout-section.search.controls {
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$browser-ie} {
+        padding-bottom: 0;
+    }
+
+    // @see LayoutHelper#search_controls
+    // noinspection SassScssResolvedByNameOnly
+    .search-controls {
+
+        @extend %header-search-section;
+
+        @include grid;
+
+        width:     max-content;
+        max-width: 100%;
+
+        @media #{$narrow-screen} {
+
+            padding-top: $gap-y;
+
+            @media #{$browser-ie} {
+                padding-top: $ie-gap-y;
+            }
+        }
+
+        //=====================================================================
+        // Grid layout
+        //=====================================================================
+
+        grid-gap: 0 $gap-x; // @see %grid-cell
+
+        // Maximum number of physical columns per width breakpoint.
+
+        $max-columns: 6;
+        $columns-map: (
+            'wide':   ('columns': $max-columns),
+            'medium': ('columns': 2),
+            'narrow': ('columns': 1)
+        );
+
+        // Layout of each logical column.
+
+        $column: [label] max-content [menu] minmax(25%,100%);
+
+        @include grid-column-classes($max-columns, $column, $columns-map);
+
+        @media #{$browser-ie} {
+
+            $column: max-content minmax(min-content,max-content);
+
+            @include grid-column-classes($max-columns, $column, $columns-map);
+
+            // Each logical column is translated into two physical columns.
+            @for $n from 1 through $max-columns {
+                $col: (2 * $n) - 1;
+                .col-#{$n}              { -ms-grid-column: #{$col}; }
+                .col-#{$n} + .col-#{$n} { -ms-grid-column: #{$col + 1}; }
+            }
+        }
+
+        //=====================================================================
+        // Grid cell placeholder classes
+        //=====================================================================
+
+        // In order for %hidden-grid-cell to work, vertical grid gap must be
+        // managed "manually" here rather than via grid-gap.
+        %grid-cell {
+
+            display:     block;
+            margin:      0 0 $gap-y;
+            line-height: 1.5;
+
+            @media #{$browser-ie} {
+                margin-bottom: $ie-gap-y;
+            }
+
+            &.row-last {
+                @media #{$wide-screen} {
+                    margin-bottom: 0;
+                }
+            }
+
+            &.col-last {
+                @media #{$wide-screen} {
+                    margin-right: 0;
+                }
+            }
+        }
+
+        // When the advanced search grid is closed, each affected grid cell is
+        // flattened to an invisible element which continues to contribute to
+        // the layout of grid columns but takes up no vertical space.
+        %hidden-grid-cell {
+            &, & * {
+                height:        0;
+                margin-top:    0;
+                margin-bottom: 0;
+                line-height:   2; // NOTE: I *really* don't know why this works
+                visibility:    hidden;
             }
         }
 
@@ -623,57 +664,70 @@
         // Elements
         //=====================================================================
 
+        // This takes up space to the left of .menu-button so that a pair of
+        // .menu-spacer/.menu-button can be treated by the grid the same way as
+        // a pair of .menu-label/.menu-control.
         .menu-spacer {
+
+            @extend %grid-cell;
+
             @media #{$not-wide-screen} {
                 display: none;
             }
         }
 
-        //noinspection CssReplaceWithShorthandSafely
+        // A button embedded within the grid (paired with a .menu-spacer to the
+        // left).
+        //
+        // noinspection CssReplaceWithShorthandSafely
         .menu-button {
 
-            $padding-x:   20px;
-
-            margin:       auto 0;
-            margin-left:  2 * $padding-x; // Needed to keep grid from growing.
-            padding:      2px $padding-x;
-            line-height:  1;
-            justify-self: end;
+            @extend %grid-cell;
 
             @media #{$not-wide-screen} {
-                display:    none;
-                --disabled: true;
+                display: none;
+            }
+
+            $padding-x:    20px;
+
+            margin-bottom: auto;
+            margin-left:   2 * $padding-x; // Needed to keep grid from growing.
+            padding:       2px $padding-x;
+            line-height:   1;
+            justify-self:  flex-end;
+
+            @media #{$browser-ie} {
+                width:         $search-button-width;
+                margin-left:   auto;
+                margin-bottom: 0.5rem;
             }
         }
 
+        // The label to the left of a .menu-control.
         .menu-label {
+
+            @extend %grid-cell;
 
             @media #{$browser-ie} {
                 margin-right: $ie-gap-x;
             }
 
-            &.col-1 {
+            &.col-first {
                 @media #{$wide-screen} {
                     grid-column: 1;
                 }
             }
         }
 
+        // A dropdown menu (paired with a .menu-label to the left).
         .menu-control {
+
+            @extend %grid-cell;
 
             margin-right: calc(3 * #{$gap-x});
 
-            &.rightmost {
-
-                @media #{$wide-screen} {
-                    margin-right: 0;
-                }
-
-                &.bottom {
-                    @media #{$not-wide-screen} {
-                        margin-bottom: $gap-y;
-                    }
-                }
+            @media #{$browser-ie} {
+                margin-right: 3 * $ie-gap-x;
             }
 
             select {
@@ -690,27 +744,14 @@
         // Conditions
         //=====================================================================
 
+        // In the "opened" state, the advanced search control grid element
+        // includes the '.open' class.  In the "not-opened" state, the grid is
+        // limited to the top row of controls (without a visible "reset"
+        // button).
         &:not(.open) {
             > * {
-                &:not(.row-1) {
-                    display: none;
-                }
-                &.menu-spacer, &.menu-button {
-                    display: none;
-                }
-            }
-        }
-
-        // Add this class to display the full ("advanced search") view.
-        &.open {
-            > * {
-
-                display: block;
-
-                @media #{$not-wide-screen} {
-                    &.menu-spacer, &.menu-button {
-                        display: none;
-                    }
+                &:not(.row-first), &.menu-spacer, &.menu-button {
+                    @extend %hidden-grid-cell;
                 }
             }
         }

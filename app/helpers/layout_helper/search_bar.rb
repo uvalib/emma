@@ -38,11 +38,11 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If search is not available for *type*.
   #
-  def search_bar(id: nil, type: nil, **opt)
+  def search_input_bar(id: nil, type: nil, **opt)
     type ||= search_input_type or return
     id   ||= search_field_key(type)
     skip_nav_append(search_bar_label(type) => id)
-    opt = prepend_css_classes(opt, 'search-bar')
+    opt = prepend_css_classes(opt, 'search-input-bar')
     search_form(id, type, **opt) do
       search_input(id, type) + search_button(type)
     end

@@ -33,19 +33,19 @@
 
         margin-left: $gap-x;
 
-        @media #{$browser-ie} {
-            margin-left: $ie-gap-x;
-        }
-
         @media #{$narrow-screen} {
-
             margin-left:  calc(2 * #{$gap-x});
             margin-right: calc(2 * #{$gap-x});
             flex:         0 0 auto;
+        }
 
-            @media #{$browser-ie} {
-                margin-left:  (2 * $ie-gap-x);
-                margin-right: (2 * $ie-gap-x);
+        @media #{$browser-ie} {
+
+            margin-left: $ie-gap-x;
+
+            @media #{$narrow-screen} {
+                margin-left:  2 * $ie-gap-x;
+                margin-right: 2 * $ie-gap-x;
             }
         }
     }
@@ -57,16 +57,6 @@
 .category-list {
 
     @extend .item-list;
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    .number {
-        @media #{$browser-ie} {
-            margin-top: $ie-gap-y;
-        }
-    }
 
     //=========================================================================
     // Sections

@@ -126,7 +126,7 @@ module MemberHelper
   # @see #render_field_values
   #
   def member_preference_values(item, **opt)
-    render_field_values(item, model: :member) do
+    render_field_values(item, model: :member, row_offset: opt[:row]) do
       MEMBER_PREFERENCE_FIELDS.merge(opt)
     end
   end
@@ -161,7 +161,7 @@ module MemberHelper
     Array.wrap(item).map { |entry|
       index += 1
       entry_pairs = pairs.merge(index: index)
-      content_tag(:div, class: 'history-entry') do
+      content_tag(:div, class: "history-entry row-#{index}") do
         render_field_values(entry, model: :member, pairs: entry_pairs)
       end
     }.join("\n").html_safe

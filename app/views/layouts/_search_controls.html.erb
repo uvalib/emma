@@ -1,6 +1,8 @@
 <%# app/views/layouts/_search_controls.html.erb -%>
 <%-
   # Search controls (sort, per-page).
+
+  # noinspection RubyUnusedLocalVariable
   skip ||= !show_search_controls? and return
   controls = search_controls.presence or return
 -%>
