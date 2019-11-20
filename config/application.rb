@@ -147,9 +147,6 @@ module Emma
     # `config.assets.precompile` and `config.assets.version` have moved to
     # config/initializers/assets.rb
 
-    # NOTE: As of Rails 6, this causes a segfault in "rake assets:precompile".
-    # config.sass.inline_source_maps = true
-
   end
 
 end

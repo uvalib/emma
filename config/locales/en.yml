@@ -269,6 +269,14 @@ en:
         - 'reading_list'
         - 'api'
 
+    panel:
+      control:          &PANEL_TOGGLE
+        label:          'More ▼'
+        tooltip:        'See more'
+        open:           &PANEL_OPEN_TOGGLE
+          label:        'Less ▲'
+          tooltip:      'See less'
+
     search_bar:
       label:            'Search'
       input:
@@ -279,10 +287,10 @@ en:
       button:
         label:          'Search'
       advanced:
-        label:          'More ▼'
+        <<:             *PANEL_TOGGLE
         tooltip:        'Show additional search filters'
         open:
-          label:        'Less ▲'
+          <<:           *PANEL_OPEN_TOGGLE
           tooltip:      'Hide additional search filters'
 
     search_controls:

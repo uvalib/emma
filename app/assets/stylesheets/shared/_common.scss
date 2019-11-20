@@ -118,6 +118,22 @@
     }
 }
 
+// Style like a button.
+//
+// noinspection SassScssResolvedByNameOnly
+%control-button {
+
+    @extend %button;
+
+    display:          block;
+    margin:           auto 0;
+    padding:          2px 6px;
+    line-height:      1.125;
+    text-decoration:  none;
+    font-size:        large;
+    border-radius:    6px;
+}
+
 //=============================================================================
 // Common settings.
 //=============================================================================
@@ -190,4 +206,40 @@ select:focus {
     padding-inline: 0;
     font-size:      inherit;
     font-weight:    inherit;
+}
+
+//=============================================================================
+// Generic elements
+//=============================================================================
+
+// @see LayoutHelper#toggle_button
+// noinspection SassScssResolvedByNameOnly
+.toggle {
+
+    @extend %control-button;
+
+    background-color: $panel-bg;
+}
+
+// Controlled by a .toggle button.
+.toggle-panel {
+    &:not(.open) {
+        display: none;
+    }
+}
+
+// Holds title text and a .toggle button.
+.toggle-panel-title {
+
+    display:        inline-flex;
+    flex-direction: row;
+
+    .toggle {
+
+        margin-left: $gap-x;
+
+        @media #{$browser-ie} {
+            margin-left: $ie-gap-x;
+        }
+    }
 }

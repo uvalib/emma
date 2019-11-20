@@ -43,9 +43,19 @@
 }
 
 // Member download history.
+// noinspection SassScssResolvedByNameOnly
 .member-history {
 
     display: block;
+    margin:  $page-padding 0;
+
+    @media #{$browser-ie} {
+        margin: $ie-page-padding 0;
+    }
+
+    .history-list {
+        @extend .toggle-panel;
+    }
 
     .history-entry {
 
@@ -80,15 +90,6 @@
         // the baseline of the text on the left-hand side.
         @media #{$wide-screen} {
             margin-top: -0.5rem;
-        }
-    }
-
-    .member-history {
-
-        margin-top: $page-padding;
-
-        @media #{$browser-ie} {
-            margin-top: $ie-page-padding;
         }
     }
 }

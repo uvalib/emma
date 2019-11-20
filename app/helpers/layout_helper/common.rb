@@ -9,7 +9,70 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::Common
 
+  include GenericHelper
   include ParamsHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Label for button to open a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_OPENER_LABEL =
+    non_breaking(I18n.t('emma.panel.control.label')).html_safe.freeze
+
+  # Tooltip for button to open a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_OPENER_TIP = I18n.t('emma.panel.control.tooltip').freeze
+
+  # Label for button to close a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_CLOSER_LABEL =
+    non_breaking(I18n.t('emma.panel.control.open.label')).html_safe.freeze
+
+  # Tooltip for button to close a collapsible panel.
+  #
+  # @type [ActiveSupport::SafeBuffer]
+  #
+  PANEL_CLOSER_TIP = I18n.t('emma.panel.control.open.tooltip').freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # toggle_button
+  #
+  # @param [String, nil] label
+  # @param [Hash]        opt          Passed to #content_tag except for:
+  #
+  # @option opt [String] :selector    Selector of the element(s) controlled by
+  #                                     this button.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def toggle_button(label = nil, **opt)
+    opt, html_opt = partition_options(opt, :selector)
+    prepend_css_classes!(html_opt, 'toggle')
+    if (selector = opt[:selector])
+      html_opt.deep_merge!(data: { selector: selector })
+    elsif !html_opt[:'data-selector'] && !html_opt.dig(:data, :selector)
+      raise 'no target selector given'
+    end
+    html_opt[:type]  ||= 'button'
+    html_opt[:title] ||= PANEL_OPENER_TIP
+    label = label ? non_breaking(label) : PANEL_OPENER_LABEL
+    button_tag(label, **html_opt)
+  end
 
   # ===========================================================================
   # :section:

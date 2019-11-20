@@ -8,33 +8,38 @@
 -%>
 
 <div class="ability-debug">
-  <h2 class="ability-header">Authorization for user "<%= user -%>"</h2>
-  <table>
-    <thead>
-      <tr>
-        <th class="model">Model</th>
-        <th class="action">Action</th>
-        <th class="status">Can perform?</th>
-      </tr>
-    </thead>
-    <tbody>
-      <%- models.each do |model| -%>
-        <%- actions.each do |action| -%>
-          <%- next if (action == :download) && (model != Artifact) -%>
-          <%- status = can?(action, model) -%>
-          <%- can    = status ? 'can' : 'cannot' -%>
-          <tr class="<%= can -%> <%= action %>-<%= model -%>">
-            <td class="model <%= can -%>"><%= model -%></td>
-            <td class="action <%= can -%>"><%= action -%></td>
-            <td class="status <%= can -%>"><%= status -%></td>
+  <div class="toggle-panel-title">
+    <h2 class="ability-header">Authorization for user "<%= user -%>"</h2>
+    <%= toggle_button(selector: '.ability-list') %>
+  </div>
+  <div class="ability-list">
+    <table>
+      <thead>
+        <tr>
+          <th class="model">Model</th>
+          <th class="action">Action</th>
+          <th class="status">Can perform?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%- models.each do |model| -%>
+          <%- actions.each do |action| -%>
+            <%- next if (action == :download) && (model != Artifact) -%>
+            <%- status = can?(action, model) -%>
+            <%- can    = status ? 'can' : 'cannot' -%>
+            <tr class="<%= can -%> <%= action %>-<%= model -%>">
+              <td class="model <%= can -%>"><%= model -%></td>
+              <td class="action <%= can -%>"><%= action -%></td>
+              <td class="status <%= can -%>"><%= status -%></td>
+            </tr>
+          <%- end -%>
+          <tr class="blank-row">
+            <td class="model"></td>
+            <td class="action"></td>
+            <td class="status"></td>
           </tr>
         <%- end -%>
-        <tr class="blank-row">
-          <td class="model"></td>
-          <td class="action"></td>
-          <td class="status"></td>
-        </tr>
-      <%- end -%>
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </div>
 </div>

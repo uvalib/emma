@@ -16,6 +16,7 @@ module MemberHelper
   include GenericHelper
   include PaginationHelper
   include ResourceHelper
+  include LayoutHelper::Common
 
   # ===========================================================================
   # :section:
@@ -131,6 +132,18 @@ module MemberHelper
     end
   end
 
+  # ===========================================================================
+  # :section: Item details (show page) support
+  # ===========================================================================
+
+  public
+
+  # CSS class for the container of the history lis.
+  #
+  # @type [String]
+  #
+  MEMBER_HISTORY_CSS_CLASS = 'history-list'
+
   # Fields from Api::TitleDownload.
   #
   # @type [Hash{Symbol=>Symbol}]
@@ -145,6 +158,35 @@ module MemberHelper
     DownloadedFor:  :downloadedFor,
   }.freeze
 
+  # member_history_title
+  #
+  # @param [String, nil] label
+  # @param [Hash]        opt          Passed to #content_tag except for:
+  #
+  # @option opt [Integer] :label
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def member_history_title(label = nil, **opt)
+    opt, html_opt = partition_options(opt, :level)
+    level = opt[:level].to_i
+    label ||= t('emma.member.history.title')
+    prepend_css_classes!(html_opt, 'list-heading')
+    tag = level.zero? ? 'div' : "h#{level}"
+    content_tag(tag, h(label), **html_opt)
+  end
+
+  # member_history_title
+  #
+  # @param [String, nil] label
+  # @param [Hash]        opt          Passed to #content_tag
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def member_history_control(label = nil, **opt)
+    toggle_button(label, **opt.merge(selector: ".#{MEMBER_HISTORY_CSS_CLASS}"))
+  end
+
   # Render of list of member activity entries.
   #
   # @param [Api::Record::Base, Array<Api::TitleDownload>] item
@@ -158,13 +200,15 @@ module MemberHelper
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
     pairs = MEMBER_HISTORY_FIELDS.merge(opt)
     index = 0
-    Array.wrap(item).map { |entry|
-      index += 1
-      entry_pairs = pairs.merge(index: index)
-      content_tag(:div, class: "history-entry row-#{index}") do
-        render_field_values(entry, model: :member, pairs: entry_pairs)
-      end
-    }.join("\n").html_safe
+    content_tag(:div, class: MEMBER_HISTORY_CSS_CLASS) do
+      Array.wrap(item).map { |entry|
+        index += 1
+        entry_pairs = pairs.merge(index: index)
+        content_tag(:div, class: "history-entry row-#{index}") do
+          render_field_values(entry, model: :member, pairs: entry_pairs)
+        end
+      }.join("\n").html_safe
+    end
   end
 
   # ===========================================================================

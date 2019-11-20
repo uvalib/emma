@@ -15,9 +15,11 @@
     unless skip.include?(:title)
       title ||= t('emma.member.history.title')
       title  += " (#{count} events)" unless skip.include?(:count)
-      classes = 'list-heading'
-      classes = css_classes(classes, 'empty') if list.blank?
-      content_tag("h#{level}", h(title), class: classes)
+      css     = ('empty' if list.blank?)
+      content_tag(:div, class: 'toggle-panel-title') {
+        member_history_title(title, class: css, level: level) +
+          member_history_control
+      }
     end
 -%>
 

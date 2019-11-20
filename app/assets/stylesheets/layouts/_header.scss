@@ -79,19 +79,6 @@ $search-button-width:    6rem;
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
-%search-controls-button {
-
-    @extend %button;
-
-    display:         block;
-    padding:         2px 6px;
-    line-height:     1.125;
-    text-decoration: none;
-    font-size:       large;
-    border-radius:   6px;
-}
-
 //=============================================================================
 // Sections
 //=============================================================================
@@ -399,7 +386,7 @@ $search-button-width:    6rem;
     // noinspection SassScssResolvedByNameOnly
     .advanced-search-toggle {
 
-        @extend %search-controls-button;
+        @extend %control-button;
 
         background-color: $panel-accent;
     }
@@ -415,7 +402,7 @@ $search-button-width:    6rem;
 
         @include link-button;
 
-        @extend %search-controls-button;
+        @extend %control-button;
 
         padding-left:     8px;
         padding-right:    8px;
@@ -778,7 +765,7 @@ $search-button-width:    6rem;
     // @see LayoutHelper::PageControls#page_controls
     .control {
 
-        @extend %search-controls-button;
+        @extend %control-button;
 
         font-size: larger;
         border:    1.5px solid;
