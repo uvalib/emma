@@ -133,6 +133,20 @@
 
 // noinspection SassScssResolvedByNameOnly
 @media #{$browser-ie} {
-    @for $n from 1 through 10  { .col-#{$n} { -ms-grid-column: $n; } }
-    @for $n from 1 through 100 { .row-#{$n} { -ms-grid-row:    $n; } }
+
+    // Internet Explorer's -ms-grid does not auto-position grid elements, hence
+    // each must be given classes to define its row/column position.
+    @for $n from 1 through 100  {
+        .col-#{$n}  { -ms-grid-column: $n; }
+        .row-#{$n}  { -ms-grid-row:    $n; }
+    }
+
+    // Horizontal item lists which must be vertical when the screen is narrow.
+    // (Note: Separate @for loops for each media query results in cleaner CSS.)
+    @media #{$not-narrow-screen} {
+        @for $n from 1 through 100  { .item-#{$n} { -ms-grid-column: $n; } }
+    }
+    @media #{$narrow-screen} {
+        @for $n from 1 through 100  { .item-#{$n} { -ms-grid-row:    $n; } }
+    }
 }

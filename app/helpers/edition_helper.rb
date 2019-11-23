@@ -26,7 +26,7 @@ module EditionHelper
 
   # Current page of edition results.
   #
-  # @return [Array<Api::UserAccount>]
+  # @return [Array<Bs::Record::UserAccount>]
   #
   def edition_list
     # noinspection RubyYardReturnMatch
@@ -47,7 +47,7 @@ module EditionHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]    item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link except for:
   #
@@ -70,7 +70,7 @@ module EditionHelper
 
   public
 
-  # Fields from Api::PeriodicalEdition.
+  # Fields from Bs::Record::PeriodicalEdition.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -85,8 +85,8 @@ module EditionHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -100,7 +100,7 @@ module EditionHelper
 
   public
 
-  # Fields from Api::PeriodicalEdition.
+  # Fields from Bs::Record::PeriodicalEdition.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -108,8 +108,8 @@ module EditionHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

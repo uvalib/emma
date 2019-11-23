@@ -24,10 +24,10 @@ module IsbnHelper
   # @param [String] text
   #
   def contains_isbn?(text)
-    text = text.to_s.strip
-    return false unless text =~ /^(\d+[^\d]?)+X?$/i
+    text = remove_prefix(text)
+    return false unless text =~ /^(\d+[^\d]?)+X?$/
     digits = text.delete('^0-9').size
-    digits += 1 if text.end_with?('X', 'x')
+    digits += 1 if text.end_with?('X')
     digits >= 10
   end
 
@@ -36,7 +36,7 @@ module IsbnHelper
   # @param [String] isbn
   #
   def isbn?(isbn)
-    isbn = isbn.to_s.strip
+    isbn = remove_prefix(isbn)
     [10, 13].include?(isbn.size) && isbn_checksum(isbn).present? rescue false
   end
 
@@ -45,7 +45,7 @@ module IsbnHelper
   # @param [String] isbn
   #
   def isbn13?(isbn)
-    isbn   = isbn.to_s.strip
+    isbn   = remove_prefix(isbn)
     check  = isbn.last.to_i
     digits = isbn.delete('^0-9')
     (digits.size == 13) && (isbn_13_checksum(digits[0..-2]) == check)
@@ -53,11 +53,11 @@ module IsbnHelper
 
   # Indicate whether the string is a valid ISBN-10.
   #
-  # @param [String] text
+  # @param [String] isbn
   #
-  def isbn10?(text)
-    isbn   = text.to_s.strip
-    check  = isbn.last.upcase
+  def isbn10?(isbn)
+    isbn   = remove_prefix(isbn)
+    check  = isbn.last
     digits = isbn.delete('^0-9')
     length = digits.size
     if check == 'X'
@@ -88,7 +88,7 @@ module IsbnHelper
   # @return [nil]
   #
   def to_isbn13(isbn)
-    isbn = isbn.to_s.strip.upcase.delete('^0-9X')
+    isbn = remove_prefix(isbn).delete('^0-9X')
     return isbn if isbn13?(isbn)
     return unless isbn.size == 10
     isbn = '978' + isbn[0..-2]
@@ -104,7 +104,7 @@ module IsbnHelper
   # @return [nil]
   #
   def to_isbn10(isbn)
-    isbn = isbn.to_s.strip.upcase.delete('^0-9X')
+    isbn = remove_prefix(isbn).delete('^0-9X')
     return isbn if isbn10?(isbn)
     return unless isbn.size == 13
     return unless isbn.delete_prefix!('978')
@@ -134,8 +134,8 @@ module IsbnHelper
   # @return [String]                  Result of #isbn_10_checksum.
   #
   def isbn_checksum(isbn, validate: true)
-    isbn   = isbn.to_s.strip
-    check  = isbn.last.upcase
+    isbn   = remove_prefix(isbn)
+    check  = isbn.last
     digits = isbn.delete('^0-9')
     case digits.size
       when 13
@@ -197,6 +197,22 @@ module IsbnHelper
     end
     remainder = total % 11
     (remainder == 10) ? 'X' : remainder.to_s
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Remove an optional "isbn:" prefix and return the base identifier.
+  #
+  # @param [String] isbn
+  #
+  # @return [String]
+  #
+  def remove_prefix(isbn)
+    isbn.to_s.strip.upcase.sub(/^ISBN:?\s*/, '')
   end
 
 end

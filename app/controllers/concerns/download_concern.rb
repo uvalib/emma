@@ -16,7 +16,6 @@ module DownloadConcern
   end
 
   include SerializationConcern
-  include ApiHelper
 
   # ===========================================================================
   # :section:
@@ -31,7 +30,7 @@ module DownloadConcern
   #   @param [Hash]   opt     Passed to the request method.
   #
   # @overload render_download(result)
-  #   @param [ApiStatusModel] result
+  #   @param [Bs::Message::StatusModel] result
   #
   # @return [void]
   #

@@ -7,16 +7,16 @@ __loading_begin(__FILE__)
 
 # ApiController
 #
-# @see ApiHelper
+# @see ApiExplorerConcern
 # @see app/views/api
 #
 class ApiController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
   include SerializationConcern
+  include ApiExplorerConcern
 
   # ===========================================================================
   # :section: Authentication
@@ -76,7 +76,7 @@ class ApiController < ApplicationController
       redirect_to sign_in_as_path(id: user, redirect: path)
     else
       # noinspection RubyYardParamTypeMatch
-      @api_result = api_method(request.method, path, opt)
+      @api_result = api_explorer(request.method, path, opt)
       respond_to do |format|
         format.html
         format.json { render_json show_values }

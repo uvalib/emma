@@ -47,7 +47,7 @@ module SessionConcern
 
   end
 
-  include ApiHelper
+  include BookshareHelper
   include DebugHelper
   include ParamsHelper
 
@@ -221,8 +221,8 @@ module SessionConcern
   # The "ensure" block is executed before the ApplicationController
   # "rescue_from".  However, note that Rails is doing something with "$!" which
   # causes Faraday::ClientError to be the exception that's acted upon in that
-  # block, whereas :api_error_message shows the ApiService::ResponseError that
-  # is created in ApiService::Common#api.
+  # block, whereas :api_error_message shows the BookshareService::ResponseError
+  # that is created in BookshareService::Common#api.
   #
   def session_update
     error = nil

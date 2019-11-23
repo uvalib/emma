@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 #
 class PeriodicalController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
@@ -122,7 +121,7 @@ class PeriodicalController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiPeriodicalSeriesMetadataSummaryList, nil] list
+  # @param [Bs::Message::PeriodicalSeriesMetadataSummaryList, nil] list
   #
   # @return [Hash]
   #
@@ -135,9 +134,9 @@ class PeriodicalController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [ApiPeriodicalSeriesMetadataSummary, nil] item
-  # @param [ApiPeriodicalEditionList, nil]           list
-  # @param [Symbol]                                  as
+  # @param [Bs::Message::PeriodicalSeriesMetadataSummary, nil] item
+  # @param [Bs::Message::PeriodicalEditionList, nil]           list
+  # @param [Symbol]                                            as
   #
   # @return [Hash]
   #

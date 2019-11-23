@@ -262,6 +262,7 @@ en:
 
     nav_bar:
       controllers:
+        - 'search'
         - 'category'
         - 'title'
         - 'periodical'
@@ -386,6 +387,16 @@ en:
         label:          'Warnings'
         url_parameter:  'includedContentWarnings'
         tooltip:        'Limit by included content warnings'
+
+      repository:
+        label:          'Repository'
+        url_parameter:  'repository'
+        tooltip:        'Limit by record originator.'
+
+      a11y_feature:
+        label:          'Feature'
+        url_parameter:  'accessibilityFeature'
+        tooltip:        'Limit by accessibility feature.'
 
     page_controls:
       label:            'Actions'
@@ -663,6 +674,63 @@ en:
         tooltip:        'View modifications for this %{item}.'
 
     # =========================================================================
+    # EMMA Federated Search pages
+    # =========================================================================
+
+    search:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'record'
+        long:           'metadata record'
+      label:            'Search'
+      title:            'Federated Search'
+      tooltip:          'Search for metadata records.'
+
+      format:
+        brf:              'BRF'
+        daisy:            'DAISY'
+        daisyAudio:       'DAISY Audio'
+        epub:             'EPUB'
+        braille:          'Braille'
+        pdf:              'PDF'
+        word:             'Microsoft Word'
+        tactile:          'Tactile'
+        kurzweil:         'Kurzweil'
+        rtf:              'RTF'
+
+      search_bar:
+        label:          'Search'
+        input:
+          enabled:      true
+          field:        'q'
+          label:        'Search terms:'
+          placeholder:  'Enter search terms...'
+
+      search_controls:
+        layout:
+          - [sort,         size,         format]
+          - [repository,   a11y_feature,       ]
+
+      page_controls:
+        label:
+          one:          'Manage this metadata record'
+          many:         'Record Actions'
+
+      index:
+        label:          'Records'
+        title:          'Federated Search Index'
+        tooltip:        'Find more metadata records with %{terms}.'
+
+      show:
+        label:          'Record'
+        title:          'Index Record'
+        tooltip:        'See details about this metadata record.'
+
+    # =========================================================================
     # Category pages
     # =========================================================================
 
@@ -725,9 +793,9 @@ en:
       search_controls:
         layout:
           - [sort,         size,         format      ]
-          - [language,     category,     country     ]
-          - [content_type, warnings_exc, warnings_inc]
+          - [language,     category,     content_type]
           - [braille,      narrator                  ]
+          - [warnings_exc, warnings_inc              ]
 
       page_controls:
         label:

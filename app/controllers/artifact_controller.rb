@@ -15,7 +15,6 @@ __loading_begin(__FILE__)
 #
 class ArtifactController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
@@ -158,8 +157,8 @@ class ArtifactController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Api::ArtifactMetadata, nil] item
-  # @param [Symbol]                     as    Unused.
+  # @param [Bs::Record::ArtifactMetadata, nil] item
+  # @param [Symbol]                            as    Unused.
   #
   # @return [Hash]
   #

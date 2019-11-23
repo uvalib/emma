@@ -16,7 +16,6 @@ __loading_begin(__FILE__)
 #
 class HomeController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
@@ -97,10 +96,10 @@ class HomeController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [ApiMyAccountSummary, nil]     item
-  # @param [ApiMyAccountPreferences, nil] pref
-  # @param [ApiTitleDownloadList, nil]    hist
-  # @param [Symbol]                       as
+  # @param [Bs::Message::MyAccountSummary, nil]     item
+  # @param [Bs::Message::MyAccountPreferences, nil] pref
+  # @param [Bs::Message::TitleDownloadList, nil]    hist
+  # @param [Symbol]                                 as
   #
   # @return [Hash]
   #

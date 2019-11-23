@@ -1,0 +1,32 @@
+<%# app/views/search/_list.html.erb -%>
+<%-
+  # A sequence of EMMA Federated Search metadata records.
+  list   ||= []
+  count  ||= list.size
+  offset ||= page_offset
+  level  ||= 1
+  row    ||= level
+  skip   ||= nil
+
+  skip = Array.wrap(skip)
+  heading =
+    unless skip.include?(:title)
+      title ||= t('emma.search.index.title')
+      title  += " (#{count})" unless skip.include?(:count)
+      classes = 'list-heading'
+      classes = css_classes(classes, 'empty') if list.blank?
+      content_tag("h#{level}", h(title), class: classes)
+    end
+  opt = { offset: offset, level: (level + 1), skip: skip }
+-%>
+
+<%= heading %>
+
+<%- if list.blank? -%>
+  <%= render 'search/entry', opt.merge!(index: -1, row: row) %>
+<%- else -%>
+  <%- list.each_with_index do |item, idx| -%>
+    <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
+    <%= render 'search/entry', opt %>
+  <%- end -%>
+<%- end -%>

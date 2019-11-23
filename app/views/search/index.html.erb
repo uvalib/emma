@@ -1,0 +1,33 @@
+<%# app/views/search/index.html.erb -%>
+<%-
+  # EMMA Federated Search results page.
+  title ||= t('emma.search.index.title')
+  list  ||= search_list
+  count ||= total_items
+  row   ||= 1
+
+  terms = search_terms
+  applied_terms, top_controls, bottom_controls =
+    if list.present?
+      index_controls(terms, count: count, row: row)
+    end
+  row += [applied_terms, top_controls].compact.size
+
+  set_page_title(t('emma.search.index.label', default: title))
+  append_page_title('-', hash_string(terms)) if terms.present?
+  set_page_description(title)
+  set_page_robots(:noindex)
+
+  title += " (#{count})" if list.blank?
+
+  template_opt = { list: list, count: count, row: row, skip: :title }
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<div class="search-list">
+  <%= applied_terms %>
+  <%= top_controls %>
+  <%= render 'search/list', template_opt %>
+  <%= bottom_controls %>
+</div>

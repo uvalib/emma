@@ -9,8 +9,7 @@ __loading_begin(__FILE__)
 module Middleware; end
 
 require 'faraday'
-
-require_relative 'api_caching_middleware'
+require 'api_caching_middleware'
 
 Faraday::Middleware.register_middleware(
   instrumentation:        Faraday::Request::Instrumentation,

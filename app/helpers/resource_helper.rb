@@ -16,7 +16,6 @@ module ResourceHelper
   include GenericHelper
   include ParamsHelper
   include PaginationHelper
-  include ApiHelper
   include BookshareHelper
 
   # ===========================================================================
@@ -31,12 +30,6 @@ module ResourceHelper
   #
   DEFAULT_ELEMENT_SEPARATOR = "\n".html_safe.freeze
 
-  # Separator for a list formed by text phrases.
-  #
-  # @type [ActiveSupport::SafeBuffer]
-  #
-  DEFAULT_LIST_SEPARATOR = "<br/>\n".html_safe.freeze
-
   # Displayed in place of a results list.
   #
   # @type [String]
@@ -48,7 +41,7 @@ module ResourceHelper
   # @type [Array<Symbol>]
   #
   CREATOR_FIELDS =
-    Api::Common::TitleMethods::CREATOR_TYPES.map(&:to_sym).freeze
+    Bs::Shared::TitleMethods::CREATOR_TYPES.map(&:to_sym).freeze
 
   # ===========================================================================
   # :section:
@@ -66,7 +59,7 @@ module ResourceHelper
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  # @param [Api::Record::Base]   item
+  # @param [Api::Record]         item
   # @param [Symbol, String, nil] label    Default: `item.label`.
   # @param [Proc, String, nil]   path     From block if not provided here.
   # @param [Hash]                opt      Passed to #make_link except for:
@@ -111,9 +104,9 @@ module ResourceHelper
   # Items in returned in two separately sorted groups: actionable links (<a>
   # elements) followed by items which are not linkable (<span> elements).
   #
-  # @param [Api::Record::Base] item
-  # @param [Symbol, nil]       field  Default: :title
-  # @param [Hash]              opt    Passed to :link_method except for:
+  # @param [Api::Record] item
+  # @param [Symbol, nil] field          Default: :title
+  # @param [Hash]        opt            Passed to :link_method except for:
   #
   # @option opt [Symbol] :field
   # @option opt [Symbol] :method
@@ -178,9 +171,9 @@ module ResourceHelper
 
   # Create a link to the search results index page for the given term(s).
   #
-  # @param [Api::Record::Base, String] terms
-  # @param [Symbol, nil]               field  Default: :title
-  # @param [Hash]                      opt    Passed to #make_link except for:
+  # @param [Api::Record, String] terms
+  # @param [Symbol, nil]         field        Default: :title
+  # @param [Hash]                opt          Passed to #make_link except for:
   #
   # @option opt [Symbol]         :field
   # @option opt [Boolean]        :all_words
@@ -238,7 +231,7 @@ module ResourceHelper
   # Create record links to an external target or via the internal API interface
   # endpoint.
   #
-  # @param [Api::Record::Base, Array<String>, String] links
+  # @param [Api::Record, Array<String>, String] links
   # @param [Hash] opt                 Passed to #make_link except for:
   #
   # @option opt [Boolean] :no_link
@@ -251,41 +244,16 @@ module ResourceHelper
     prepend_css_classes!(html_opt, 'external-link')
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     no_link   = opt[:no_link]
-    links = links.record_links if links.is_a?(Api::Record::Base)
+    links = links.record_links if links.respond_to?(:record_links)
     Array.wrap(links).map { |link|
       next if link.blank?
-      path = (external_url(link) unless no_link)
+      path = (api_explorer_url(link) unless no_link)
       if path.present? && !path.match?(/[{}]/)
         make_link(link, path, html_opt)
       else
         content_tag(:div, link, class: 'non-link')
       end
     }.compact.join(separator).html_safe
-  end
-
-  # A direct link to a Bookshare page to open in a new browser tab.
-  #
-  # @overload bookshare_link(item)
-  #   @param [Api::Record::Base] item
-  #
-  # @overload bookshare_link(item, path, **path_opt)
-  #   @param [String] item
-  #   @param [String] path
-  #   @param [Hash]   path_opt
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def bookshare_link(item, path = nil, **path_opt)
-    if item.is_a?(Api::Record::Base)
-      label = item.identifier
-      path  = bookshare_url("browse/book/#{label}", **path_opt)
-      tip   = 'View this item on the Bookshare website.' # TODO: I18n
-    else
-      label = item.to_s
-      path  = bookshare_url(path, **path_opt)
-      tip   = 'View on the Bookshare website.' # TODO: I18n
-    end
-    make_link(label, path, target: '_blank', title: tip)
   end
 
   # ===========================================================================
@@ -301,11 +269,11 @@ module ResourceHelper
   # then this function simply returns *pairs* as-is.
   #
   # @yield [item] Supplies additional field/value pairs based on *item*.
-  # @yieldparam  [Api::Record::Base] item   The supplied *item* parameter.
-  # @yieldreturn [Hash]                     Result will be merged into *pairs*.
+  # @yieldparam  [Api::Record] item   The supplied *item* parameter.
+  # @yieldreturn [Hash]               Result will be merged into *pairs*.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash, nil]         pairs
+  # @param [Api::Record] item
+  # @param [Hash, nil]   pairs
   #
   # @return [Hash]
   #
@@ -321,15 +289,15 @@ module ResourceHelper
 
   # Render field/value pairs.
   #
-  # @param [Api::Record::Base] item
-  # @param [String, Symbol]    model
-  # @param [Hash]              pairs      Except for #render_pair options.
-  # @param [Integer]           row_offset Default: 0.
-  # @param [String]            separator  Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Proc]              block      Passed to #field_values.
+  # @param [Api::Record]    item
+  # @param [String, Symbol] model
+  # @param [Hash]           pairs       Except for #render_pair options.
+  # @param [Integer]        row_offset  Default: 0.
+  # @param [String]         separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Proc]           block       Passed to #field_values.
   #
-  # @option pairs [Integer] :index        Offset for making unique element IDs)
-  #                                         passed to #render_pair.
+  # @option pairs [Integer] :index      Offset for making unique element IDs)
+  #                                       passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -349,7 +317,7 @@ module ResourceHelper
       opt[:row] += 1
       value = render_value(item, value, model: model)
       render_pair(label, value, **opt) if value
-    }.compact.join(separator).html_safe
+    }.compact.unshift(nil).join(separator).html_safe
   end
 
   # Render a single label/value pair.
@@ -358,11 +326,11 @@ module ResourceHelper
   # @param [Object]         value
   # @param [Integer]        index       Offset for making unique element IDs.
   # @param [Integer]        row         Display row.
-  # @param [String]         separator   If *value* is an array; default:
-  #                                       `#DEFAULT_LIST_SEPARATOR`.
+  # @param [String]         separator   Inserted between elements if *value* is
+  #                                       an array.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                               If *value* is blank.
+  # @return [nil]                       If *value* is blank.
   #
   # == Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
@@ -370,20 +338,32 @@ module ResourceHelper
   #
   def render_pair(label, value, index: nil, row: 1, separator: nil)
     return if value.blank?
-    if value.is_a?(Array)
-      separator ||= DEFAULT_LIST_SEPARATOR
-      value = safe_join(value.dup.push(nil), separator)
-    end
-    type = id = nil
+    css = %W(row-#{row})
+    id  = nil
+
+    # Label and label HTML options.
     unless label.is_a?(ActiveSupport::SafeBuffer)
-      type  = "field-#{label || 'None'}"
+      type  = label ? "field-#{label}"   : 'field-None'
       id    = index ? "#{type}-#{index}" : type
       label = labelize(label)
+      css << type
     end
-    l_opt = append_css_classes('label', type, "row-#{row}")
-    v_opt = append_css_classes('value', type, "row-#{row}")
+    l_opt = append_css_classes('label', *css)
+    label = content_tag(:div, label, l_opt)
+
+    # Value and value HTML options.
+    if value.is_a?(Array)
+      i = 0
+      value = value.map { |v| content_tag(:div, v, class: "item-#{i += 1}") }
+      value = safe_join(value, separator)
+      css << 'array'
+    end
+    v_opt = append_css_classes('value', *css)
     v_opt[:id] = id if id
-    content_tag(:div, label, l_opt) << content_tag(:div, value, v_opt)
+    value = content_tag(:div, value, v_opt)
+
+    # noinspection RubyYardReturnMatch
+    label << value
   end
 
   # An indicator that can be used to stand for an empty list.
@@ -398,10 +378,10 @@ module ResourceHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Api::Record::Base] item
-  # @param [Object]            value
-  # @param [String, Symbol]    model    If provided, a model-specific method
-  #                                       will be invoked instead.
+  # @param [Api::Record]    item
+  # @param [Object]         value
+  # @param [String, Symbol] model     If provided, a model-specific method will
+  #                                     be invoked instead.
   #
   # @return [Object]
   #
@@ -457,7 +437,7 @@ module ResourceHelper
   # Attempt to interpret *method* as an *item* method or as a method defined
   # in the current context.
   #
-  # @param [Api::Record::Base] item
+  # @param [Api::Record]       item
   # @param [String, Symbol, *] m
   # @param [Hash]              opt    Options (used only if appropriate).
   #
@@ -489,10 +469,10 @@ module ResourceHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [String, Symbol]    model
-  # @param [Hash, nil]         pairs  Label/value pairs.
-  # @param [Proc]              block  Passed to #render_field_values.
+  # @param [Api::Record]    item
+  # @param [String, Symbol] model
+  # @param [Hash, nil]      pairs     Label/value pairs.
+  # @param [Proc]           block     Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -591,8 +571,8 @@ module ResourceHelper
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #content_tag except for:
+  # @param [Api::Record] item
+  # @param [Hash]        opt          Passed to #content_tag except for:
   #
   # @option [Integer] :index          Required index number.
   # @option [Integer] :offset         Default: `#page_offset`.
@@ -622,10 +602,10 @@ module ResourceHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [String, Symbol]    model
-  # @param [Hash, nil]         pairs  Label/value pairs.
-  # @param [Proc]              block  Passed to #render_field_values.
+  # @param [Api::Record]    item
+  # @param [String, Symbol] model
+  # @param [Hash, nil]      pairs     Label/value pairs.
+  # @param [Proc]           block     Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

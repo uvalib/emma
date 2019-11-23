@@ -15,7 +15,7 @@ module UserConcern
     __included(base, 'UserConcern')
   end
 
-  include ApiHelper
+  include BookshareHelper
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -43,9 +43,9 @@ module UserConcern
   # @param [String] id                If *nil*, assumes the current user.
   #
   # @return [Array<(
-  #   ApiMyAccountSummary,
-  #   ApiMyAccountPreferences,
-  #   ApiTitleDownloadList
+  #   Bs::Message::MyAccountSummary,
+  #   Bs::Message::MyAccountPreferences,
+  #   Bs::Message::TitleDownloadList
   # )>]
   # @return [nil]
   #

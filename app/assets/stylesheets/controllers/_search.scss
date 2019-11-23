@@ -1,0 +1,147 @@
+// app/assets/stylesheets/controllers/_search.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Metadata record search index page
+//=============================================================================
+
+// Metadata record label/value pairs for index listings.
+//
+// noinspection SassScssResolvedByNameOnly
+.search-list-entry {
+
+    @extend .item-list-entry;
+
+    $row-separation: 0.75rem;
+
+    row-gap: $row-separation;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .label,
+    .value {
+        margin-bottom: 0;
+    }
+
+    .label {
+        &.field-Title {
+            @media #{$narrow-screen} {
+                display: none;
+            }
+        }
+    }
+
+    .value {
+
+        &.field-Title {
+
+            font-size:   larger;
+            font-weight: bold;
+
+            @media #{$narrow-screen} {
+                grid-column: 1 / -1;
+            }
+
+            a:not(:hover) {
+                text-decoration: none;
+            }
+        }
+
+        &.array {
+
+            @include grid(minmax(25%, max-content), 4);
+
+            row-gap: $row-separation;
+
+            @media #{$wide-screen} {
+                max-width: 75%;
+            }
+
+            @media #{$medium-width} {
+                @include grid(minmax(50%, max-content), 2);
+            }
+
+            @media #{$narrow-screen} {
+                @include grid(1fr);
+            }
+
+            > * {
+                $border:    1px;
+                $x-padding: 5px;
+                $y-padding: 1px;
+
+                display:      block;
+                margin:       (-$y-padding - $border) (-$x-padding - $border);
+                margin-right: 1rem;
+                padding:      $y-padding $x-padding;
+                background:   ghostwhite;
+                border:       $border solid gray;
+                border-right-color:  black;
+                border-bottom-color: black;
+
+                @media #{$wide-screen} {
+                    word-break: keep-all;
+                }
+            }
+        }
+    }
+
+    @media #{$browser-ie} {
+
+        .label,
+        .value {
+            margin-bottom: $row-separation;
+        }
+
+        .value {
+            &.array {
+                @media #{$medium-width} {
+                    @include grid(1fr, 2);
+                }
+            }
+        }
+    }
+}
+
+// Zero or more .search-list-entry elements.
+.search-list {
+
+    @extend .item-list;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .number {
+        margin-top: -0.2rem;
+        font-size:  large;
+    }
+}
+
+//=============================================================================
+// Periodical show page
+//=============================================================================
+
+// Periodical metadata values.
+.search-details {
+    @extend .item-details;
+}
+
+// Container for a .search-details and .edition-list in a two-column format
+// for wide screens.
+//
+// noinspection SassScssResolvedByNameOnly
+.search-container {
+
+    @extend .item-container;
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    .search-details {}
+}

@@ -13,11 +13,13 @@ module LayoutHelper
   #
   # @param [Module] base
   #
-  # @return [Array<Module>]
-  #
   def self.included(base)
     __included(base, '[LayoutHelper]')
-    include_submodules(base)
+    if in_debugger?
+      include_submodules(base, __FILE__)
+    else
+      include_submodules(base)
+    end
   end
 
 end

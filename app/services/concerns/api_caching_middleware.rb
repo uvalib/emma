@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-require_relative 'caching_middleware'
+require 'caching_middleware'
 
 # Caching for items from the Bookshare API.
 #

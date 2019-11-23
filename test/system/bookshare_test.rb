@@ -17,7 +17,7 @@ class BookshareTest < ApplicationSystemTestCase
   test 'bookshare - API methods' do
     reference = {}
     duplicate = {}
-    ApiService.api_methods.each_pair do |method, properties|
+    BookshareService.api_methods.each_pair do |method, properties|
       if (ref_id = properties[:reference_id].to_s).blank?
         next
       elsif (existing_method = reference[ref_id])
@@ -112,7 +112,7 @@ class BookshareTest < ApplicationSystemTestCase
     end
 
     # Report all documented requests without a corresponding implementation.
-    failures = failure_list('ApiService methods', missing, problems)
+    failures = failure_list('BookshareService methods', missing, problems)
     assert failures.blank?, failures
 
   end if TESTING_API_REQUESTS
@@ -123,22 +123,12 @@ class BookshareTest < ApplicationSystemTestCase
 
   test 'bookshare - API records' do
 
-    # Collect API-related class names in a normalized form.
+    # Collect API-related class names.
     types =
-      Object.constants.select do |c|
-        # API message classes from app/models/*.rb.
-        next unless c.to_s.start_with?('Api')
-        next unless (c = "Object::#{c}".constantize).is_a?(Class)
-        c.ancestors.include?(Api::Message)
-      end
-    types +=
-      ObjectSpace.each_object(Class).select do |c|
-        # Scalar value classes from app/models/concerns/api/common.rb or
-        # API record classes from app/models/api/*.rb.
-        c.ancestors.include?(ScalarType) ||
-        c.ancestors[1..-1].include?(Api::Record::Base)
-      end
-    types.map! { |c| c.to_s.sub(/^Api(::)?/, '') }.sort!.uniq!
+      API_NAMESPACES.flat_map { |base|
+        names = base.constants.map(&:to_s)
+        names.select { |name| "#{base}::#{name}".constantize.is_a?(Class) }
+      }.sort.uniq
 
     # Scan the API documentation page.
     missing  = {}
@@ -198,7 +188,7 @@ class BookshareTest < ApplicationSystemTestCase
       problem_fields.merge!(
         implemented_fields.map { |f|
           next if f[:checked]
-          [f[:name], 'INVALID (not in API specification)']
+          [f[:name], 'INVALID (not in Bookshare API specification)']
         }.compact.to_h
       )
 
@@ -213,7 +203,7 @@ class BookshareTest < ApplicationSystemTestCase
 
     # Report all documented record definitions without a corresponding
     # implementation.
-    failures = failure_list('API record types', missing, problems)
+    failures = failure_list('Bookshare API record types', missing, problems)
     assert failures.blank?, failures
 
   end if TESTING_API_RECORDS

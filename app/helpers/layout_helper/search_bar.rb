@@ -9,10 +9,6 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::SearchBar
 
-  include GenericHelper
-  include HtmlHelper
-  include I18nHelper
-  include LayoutHelper::Common
   include LayoutHelper::SearchControls
 
   # ===========================================================================
@@ -84,7 +80,7 @@ module LayoutHelper::SearchBar
 
   # @type [Hash{Symbol=>Boolean}]
   SEARCH_INPUT_ENABLED =
-    SEARCH_MENU_MAP.values.flat_map(&:keys).sort.uniq.map { |type|
+    SEARCH_MENU_CONTROLLERS.map { |type|
       enabled = i18n_lookup(type, 'search_bar.input.enabled', mode: false)
       [type, enabled.present?]
     }.to_h

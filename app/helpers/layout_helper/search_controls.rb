@@ -5,7 +5,8 @@
 
 __loading_begin(__FILE__)
 
-require 'api/common'
+require 'bs'
+require 'search'
 
 # LayoutHelper::SearchControls
 #
@@ -105,28 +106,77 @@ module LayoutHelper::SearchControls
 
     # Generate an array of label/value pairs to be used with #select_tag.
     #
-    # @param [Symbol]                            menu_name
-    # @param [Array<Class,String,Numeric,Array>] entries
-    # @param [Hash]                              opt
+    # @overload make_menu(menu_name, *entries, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Array<String>] entries
+    #   @param [Hash]          opt          Passed to #make_menu_label.
     #
-    # @option opt [Symbol]  :fmt          @see #make_menu_label
+    # @overload make_menu(menu_name, *entries, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Array<Symbol>] entries      Traversal of #SEARCH_MENU
+    #   @param [Hash]          opt          Passed to #make_menu_label.
+    #
+    # @overload make_menu(menu_name, i18n_scope, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [String]        i18n_scope
+    #   @param [Hash]          opt          Passed to #make_menu_label.
+    #
+    # @overload make_menu(menu_name, enum_class, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Class]         enum_class
+    #   @param [Hash]          opt
+    #
+    # @overload make_menu(menu_name, menu_pairs, **opt)
+    #   @param [Symbol]        menu_name
+    #   @param [Array<Array>]  menu_pairs
+    #   @param [Hash]          opt          Passed to #make_menu_label.
+    #
+    # @option opt [Symbol] :fmt       @see #make_menu_label
     #
     # @return [Array<Array<(String,String)>>]
     #
     def make_menu(menu_name, *entries, **opt)
-      reverse = SEARCH_MENU.dig(menu_name, :reverse)
-      except  = reverse && Array.wrap(reverse[:except]).map(&:to_s)
-      entries = entries.flat_map { |v| v.respond_to?(:values) ? v.values : v }
+      first = entries.first
+      if menu_name == :language
+        hash    = I18n.t(first)
+        entries = hash[:list].map { |code, label| [label, code.to_s] }
+        if (p = hash[:primary]&.map(&:to_s)).present?
+          entries = entries.partition { |_, code| p.include?(code) }.flatten(1)
+        end
+      elsif menu_name == :category
+        entries = I18n.t(first).map { |_, label| [label, label] }
+      elsif first.is_a?(Symbol)
+        entries = SEARCH_MENU.dig(*entries).dup
+      elsif entries.size > 1
+        entries = entries.flatten(1)
+      elsif first.is_a?(String)
+        entries = I18n.t(first).map { |value, label| [label, value.to_s] }
+      elsif first.respond_to?(:values)
+        entries = first.values.dup
+      end
       entries.compact!
       entries.uniq!
-      entries.flat_map do |value|
-        [].tap do |pairs|
+      entries.map! do |entry|
+        if entry.is_a?(Array)
+          entry
+        else
+          value = entry
           label = make_menu_label(menu_name, value, **opt)
-          pairs << [label, value]
-          if reverse && !except.include?(value)
+          [label, value]
+        end
+      end
+      if (reverse = SEARCH_MENU.dig(menu_name, :reverse)).blank?
+        entries
+      else
+        except = Array.wrap(reverse[:except]).map(&:to_s)
+        entries.flat_map do |entry|
+          label, value = entry
+          if except.include?(value)
+            entry
+          else
             label = sprintf(reverse[:label], sort: label)
             value = descending_sort(value, reverse[:suffix])
-            pairs << [label, value]
+            [entry, [label, value]]
           end
         end
       end
@@ -216,231 +266,78 @@ module LayoutHelper::SearchControls
   extend  ClassMethods
 
   # ===========================================================================
-
-  # Sort menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  # noinspection RubyYardParamTypeMatch
-  SORT_MENU_MAP = {
-    member:       make_menu(:sort, MemberSortOrder),
-    periodical:   make_menu(:sort, PeriodicalSortOrder),
-    reading_list: make_menu(:sort, MyReadingListSortOrder),
-    title:        make_menu(:sort, TitleSortOrder),
-  }.deep_freeze
-
+  # :section:
   # ===========================================================================
 
-  # The generic page size menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  SIZE_MENU = make_menu(:size, SEARCH_MENU.dig(:size, :values)).deep_freeze
+  public
 
-  # Page size menus for each controller type that should have one.
+  # Controllers configured to display search control menu(s).
   #
-  # @type [Hash{Symbol=>Array}]
-  #
-  SIZE_MENU_MAP = {
-    category:     SIZE_MENU,
-    member:       SIZE_MENU,
-    periodical:   SIZE_MENU,
-    reading_list: SIZE_MENU,
-    title:        SIZE_MENU,
-  }.freeze
-
-  # ===========================================================================
-
-  # The generic language menu.
-  #
-  # @type [Array<Array<(String,String)>>]
+  # @type [Array<Symbol>]
   #
   # noinspection RailsI18nInspection
-  LANGUAGE_MENU = (
-    primary = I18n.t('emma.language.primary', default: []).map(&:to_s)
-    entries = I18n.t('emma.language.list').map { |code, lbl| [lbl, code.to_s] }
-    entries.partition { |_, code| primary.include?(code) }
-  ).flatten(1).deep_freeze
+  SEARCH_MENU_CONTROLLERS =
+    I18n.t('emma').map { |type, section|
+      type if section.dig(:search_controls, :layout).present?
+    }.compact.freeze
 
-  # Language limiter menus for each controller type that should have one.
+  # Generate menu content for items that are the same regardless of the context
+  # in which they are presented.
   #
   # @type [Hash{Symbol=>Array}]
   #
-  LANGUAGE_MENU_MAP =
-    %i[periodical title].map { |type| [type, LANGUAGE_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic country menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  COUNTRY_MENU =
-    make_menu(:country, 'US', 'et al.').deep_freeze
-
-  # Country limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  COUNTRY_MENU_MAP =
-    %i[periodical title].map { |type| [type, COUNTRY_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # @type [Hash]
-  # noinspection RailsI18nInspection
-  CATEGORY_ENTRIES = I18n.t('emma.categories').deep_freeze
-
-  # The generic category menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  CATEGORY_MENU = CATEGORY_ENTRIES.map { |_, v| [v, v] }.deep_freeze
-
-  # Category limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  CATEGORY_MENU_MAP =
-    %i[periodical title].map { |type| [type, CATEGORY_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic catalog artifact format menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RailsI18nInspection
-  FORMAT_MENU =
-    I18n.t('emma.format').map { |value, label|
-      [label.to_s, value.to_s]
-    }.deep_freeze
-
-  # The generic periodical edition artifact format menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RailsI18nInspection
-  PERIODICAL_FORMAT_MENU =
-    I18n.t('emma.periodical_format').map { |value, label|
-      [label.to_s, value.to_s]
-    }.deep_freeze
-
-  # Format limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  FORMAT_MENU_MAP = {
-    title:      FORMAT_MENU,
-    periodical: PERIODICAL_FORMAT_MENU,
-  }.freeze
-
-  # ===========================================================================
-
-  # The generic narrator menu.
-  #
-  # @type [Array<Array<(String,String)>>]
+  # @see #make_menu
   #
   # noinspection RubyYardParamTypeMatch
-  NARRATOR_MENU =
-    make_menu(:narrator, NarratorType).deep_freeze
+  GENERIC_MENU = {
+    a11y_feature: A11yFeature,
+    braille:      BrailleType,
+    category:     'emma.categories',  # @see config/locales/en.yml
+    content_type: TitleContentType,
+    format:       nil,                # @see SEARCH_MENU_MAP
+    language:     'emma.language',    # @see config/locales/en.yml
+    narrator:     NarratorType,
+    repository:   Repository,
+    size:         %i[size values],    # @see #SEARCH_MENU
+    sort:         nil,                # @see SEARCH_MENU_MAP
+    warnings_exc: ContentWarning,
+    warnings_inc: ContentWarning,
+  }.map { |name, entries|
+    entries &&= make_menu(name, *entries)
+    [name, entries]
+  }.to_h.deep_freeze
 
-  # Narrator limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  NARRATOR_MENU_MAP =
-    %i[periodical title].map { |type| [type, NARRATOR_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic braille type menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RubyYardParamTypeMatch
-  BRAILLE_MENU =
-    make_menu(:braille, BrailleType).deep_freeze
-
-  # Braille type limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  BRAILLE_MENU_MAP =
-    %i[periodical title].map { |type| [type, BRAILLE_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic excluded-content-warnings menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RubyYardParamTypeMatch
-  WARNINGS_EXC_MENU =
-    make_menu(:warnings_exc, ContentWarning).deep_freeze
-
-  # Excluded-content-warnings limiter menus for each controller type that
-  # should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  WARNINGS_EXC_MENU_MAP =
-    %i[periodical title].map { |type| [type, WARNINGS_EXC_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic included-content-warnings menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RubyYardParamTypeMatch
-  WARNINGS_INC_MENU =
-    make_menu(:warnings_inc, ContentWarning).deep_freeze
-
-  # Included-content-warnings limiter menus for each controller type that
-  # should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  WARNINGS_INC_MENU_MAP =
-    %i[periodical title].map { |type| [type, WARNINGS_INC_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # The generic content type menu.
-  #
-  # @type [Array<Array<(String,String)>>]
-  #
-  # noinspection RubyYardParamTypeMatch
-  CONTENT_TYPE_MENU =
-    make_menu(:content_type, TitleContentType).deep_freeze
-
-  # Content type limiter menus for each controller type that should have one.
-  #
-  # @type [Hash{Symbol=>Array}]
-  #
-  CONTENT_TYPE_MENU_MAP =
-    %i[periodical title].map { |type| [type, CONTENT_TYPE_MENU] }.to_h.freeze
-
-  # ===========================================================================
-
-  # SEARCH_MENU_MAP
+  # Menus for each controller.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_MENU_MAP = {
-    braille:      BRAILLE_MENU_MAP,
-    category:     CATEGORY_MENU_MAP,
-    content_type: CONTENT_TYPE_MENU_MAP,
-    country:      COUNTRY_MENU_MAP,
-    format:       FORMAT_MENU_MAP,
-    language:     LANGUAGE_MENU_MAP,
-    narrator:     NARRATOR_MENU_MAP,
-    size:         SIZE_MENU_MAP,
-    sort:         SORT_MENU_MAP,
-    warnings_exc: WARNINGS_EXC_MENU_MAP,
-    warnings_inc: WARNINGS_INC_MENU_MAP,
-  }.freeze
+  # noinspection RubyYardParamTypeMatch
+  SEARCH_MENU_MAP =
+    SEARCH_MENU_CONTROLLERS.map { |controller|
+      menus =
+        GENERIC_MENU.map { |menu_name, menu|
+          entries =
+            case menu_name
+              when :sort
+                case controller
+                  when :member       then MemberSortOrder
+                  when :periodical   then PeriodicalSortOrder
+                  when :reading_list then MyReadingListSortOrder
+                  when :search       then SearchSort
+                  when :title        then TitleSortOrder
+                end
+              when :format
+                case controller
+                  when :periodical   then 'emma.periodical_format'
+                  when :search       then 'emma.search.format'
+                  when :title        then 'emma.format'
+                end
+            end
+          menu = make_menu(menu_name, *entries) if entries
+          [menu_name, menu] if menu
+        }.compact.to_h
+      [controller, menus]
+    }.to_h.deep_freeze
 
   # ===========================================================================
 
@@ -448,10 +345,9 @@ module LayoutHelper::SearchControls
   #
   # @type [ActiveSupport::SafeBuffer]
   #
+  # noinspection RailsI18nInspection
   ADV_SEARCH_OPENER_LABEL =
-    non_breaking(
-      I18n.t('emma.search_bar.advanced.label')
-    ).html_safe.freeze
+    non_breaking(I18n.t('emma.search_bar.advanced.label')).html_safe.freeze
 
   # Tooltip for button to open advanced search controls.
   #
@@ -464,10 +360,9 @@ module LayoutHelper::SearchControls
   #
   # @type [ActiveSupport::SafeBuffer]
   #
+  # noinspection RailsI18nInspection
   ADV_SEARCH_CLOSER_LABEL =
-    non_breaking(
-      I18n.t('emma.search_bar.advanced.open.label')
-    ).html_safe.freeze
+    non_breaking(I18n.t('emma.search_bar.advanced.open.label')).html_safe.freeze
 
   # Tooltip for button to close advanced search controls.
   #
@@ -651,7 +546,7 @@ module LayoutHelper::SearchControls
     opt, html_opt = partition_options(opt, *MENU_OPTS)
     menu_name = menu_name.to_sym
     type      = search_type(opt[:type])
-    menu      = SEARCH_MENU_MAP.dig(menu_name, type) or return
+    menu      = SEARCH_MENU_MAP.dig(type, menu_name) or return
     url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
     default   = SEARCH_MENU.dig(menu_name, :default)
     any_value = ''

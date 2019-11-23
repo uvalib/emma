@@ -24,7 +24,7 @@ module CategoryHelper
 
   # Current page of category results.
   #
-  # @return [Array<Api::CategorySummary>]
+  # @return [Array<Bs::Record::CategorySummary>]
   #
   def category_list
     # noinspection RubyYardReturnMatch
@@ -45,7 +45,7 @@ module CategoryHelper
 
   # Create a link to the catalog title search for the given category.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]    item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link.
   #
@@ -76,8 +76,8 @@ module CategoryHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -98,8 +98,8 @@ module CategoryHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

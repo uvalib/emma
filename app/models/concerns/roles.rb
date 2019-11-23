@@ -146,7 +146,7 @@ module Roles
   # Bookshare roles as documented in API section 2.10.3 (Create a user account)
   #
   # It's not clear how these map on to #BOOKSHARE_USER_TYPES but they have been
-  # included as :RoleType in Api#ENUMERATIONS
+  # included as :RoleType in Bs::ENUMERATIONS.
   #
   # NOTE: This is only for documentation at this time.
   # TODO: Harmonize with EMMA_ROLES.

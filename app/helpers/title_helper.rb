@@ -26,9 +26,10 @@ module TitleHelper
 
   # Current page of title results.
   #
-  # @return [Array<TitleMetadataSummary>]
+  # @return [Array<Bs::Record::TitleMetadataSummary>]
   #
   def title_list
+    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -46,7 +47,7 @@ module TitleHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]     item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link.
   #
@@ -60,8 +61,8 @@ module TitleHelper
 
   # Thumbnail element for the given catalog title.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #image_element except for:
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt          Passed to #image_element except for:
   #
   # @option opt [Boolean] :link           If *true* make the image a link to
   #                                         the show page for the item.
@@ -86,8 +87,8 @@ module TitleHelper
 
   # Cover image element for the given catalog title.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #image_element except for:
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt          Passed to #image_element except for:
   #
   # @option opt [Boolean] :link           If *true* make the image a link to
   #                                         the show page for the item.
@@ -108,8 +109,8 @@ module TitleHelper
 
   # Item categories as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -124,8 +125,8 @@ module TitleHelper
 
   # Item author(s) as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -136,8 +137,8 @@ module TitleHelper
 
   # Item editor(s) as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -149,8 +150,8 @@ module TitleHelper
 
   # Item composer(s) as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -162,8 +163,8 @@ module TitleHelper
 
   # Item narrator(s) as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -175,8 +176,8 @@ module TitleHelper
 
   # Item creator(s) as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -188,8 +189,8 @@ module TitleHelper
 
   # Item formats as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -204,8 +205,8 @@ module TitleHelper
 
   # Item languages as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -224,8 +225,8 @@ module TitleHelper
   # Although an invalid country code will result in no results, all valid
   # country codes result in the same results.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #title_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #title_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -243,9 +244,9 @@ module TitleHelper
   # Items in returned in two separately sorted groups: actionable links (<a>
   # elements) followed by items which are not linkable (<span> elements).
   #
-  # @param [Api::Record::Base] item
-  # @param [Symbol, nil]       field  Default: :keyword
-  # @param [Hash]              opt    Passed to #search_links
+  # @param [Bs::Api::Record] item
+  # @param [Symbol, nil]     field    Default: :keyword
+  # @param [Hash]            opt      Passed to #search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -279,8 +280,8 @@ module TitleHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Api::Record::Base] item
-  # @param [Object]            value
+  # @param [Bs::Api::Record] item
+  # @param [Object]          value
   #
   # @return [Object]
   #
@@ -299,8 +300,9 @@ module TitleHelper
 
   public
 
-  # Fields from Api::AssignedTitleMetadataSummary, Api::TitleMetadataComplete,
-  # Api::TitleMetadataSummary, ApiTitleMetadataDetail.
+  # Fields from Bs::Record::AssignedTitleMetadataSummary,
+  # Bs::Record::TitleMetadataComplete, Bs::Record::TitleMetadataSummary,
+  # Bs::Message::TitleMetadataDetail.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -402,8 +404,8 @@ module TitleHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -417,8 +419,9 @@ module TitleHelper
 
   public
 
-  # Fields from Api::AssignedTitleMetadataSummary, Api::TitleMetadataComplete,
-  # Api::TitleMetadataSummary, ApiTitleMetadataDetail.
+  # Fields from Bs::Record::AssignedTitleMetadataSummary,
+  # Bs::Record::TitleMetadataComplete, Bs::Record::TitleMetadataSummary,
+  # Bs::Message::TitleMetadataDetail.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -433,8 +436,8 @@ module TitleHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -1,0 +1,169 @@
+# config/locales/examples.en.yml
+
+en:
+
+  emma:
+
+    examples:
+
+      search:
+
+        generic:
+
+          template:                         &TEMPLATE
+            emma_recordId:                  '[Record ID] (file)'
+            emma_titleId:                   '[Title ID] (work)'
+            emma_repository:                '[REPOSITORY] (work)'
+            emma_collection:                '[COLLECTION] (work)'
+            emma_repositoryRecordId:        '[REPOSITORY RECORD ID] (work)'
+            emma_retrievalLink:             '[RETRIEVAL LINK] (file)'
+            emma_lastRemediationDate:       '[LAST REMEDIATION DATE] (file)'
+            emma_lastRemediationNote:       '[LAST REMEDIATION NOTE] (file)'
+            emma_formatVersion:             '[FORMAT VERSION] (file)'
+            emma_formatFeature:
+              - '[FORMAT FEATURE 1] (file)'
+              - '[FORMAT FEATURE 2] (file)'
+              - '[FORMAT FEATURE 3] (file)'
+            dc_title:                       'AN EXAMPLE SHOWING ALL FIELDS'
+            dc_creator:
+              - '[AUTHOR 1] (work)'
+              - '[AUTHOR 2] (work)'
+              - '[AUTHOR 3] (work)'
+            dc_identifier:
+              - 'isbn:9781234567804'
+              - 'oclc:12345678'
+            dc_publisher:                   '[PUBLISHER] (work)'
+            dc_relation:
+              - 'isbn:9781234567811'
+              - 'isbn:9781234567828'
+              - 'isbn:9781234567835'
+            dc_language:                    '[LANGUAGE] (work)'
+            dc_rights:                      '[RIGHTS] (work)'
+            dc_provenance:                  '[PROVENANCE] (file)'
+            dc_description:                 '[DESCRIPTION] (work)'
+            dc_format:                      '[FORMAT] (file)'
+            dc_type:                        '[TYPE] (work)'
+            dc_subject:
+              - '[SUBJECT 1] (work)'
+              - '[SUBJECT 2] (work)'
+              - '[SUBJECT 3] (work)'
+            dcterms_dateAccepted:           '2019-11-01'
+            dcterms_dateCopyright:          '2019'
+            s_accessibilityFeature:
+              - '[FEATURE 1] (file)'
+              - '[FEATURE 2] (file)'
+              - '[FEATURE 3] (file)'
+            s_accessibilityControl:
+              - '[CONTROL 1] (file)'
+              - '[CONTROL 2] (file)'
+              - '[CONTROL 3] (file)'
+            s_accessibilityHazard:
+              - '[HAZARD 1] (file)'
+              - '[HAZARD 2] (file)'
+              - '[HAZARD 3] (file)'
+            s_accessibilityAPI:
+              - 'ARIA'
+            s_accessibilitySummary:         '[ACCESSIBILITY SUMMARY] (file)'
+            s_accessMode:
+              - '[MODE 1] (file)'
+              - '[MODE 2] (file)'
+              - '[MODE 3] (file)'
+            s_accessModeSufficient:
+              - '[SUFFICIENT 1] (file)'
+              - '[SUFFICIENT 2] (file)'
+              - '[SUFFICIENT 3] (file)'
+
+        internetArchive:
+
+          001: &IA_001
+            # @see https://archive.org/details/edgarallanpoe00leve
+            emma_repository:          'internetArchive'
+            emma_collection:          'printdisabled'
+            emma_repositoryRecordId:  'edgarallanpoe00leve'
+            emma_lastRemediationDate: '2019-11-01'
+            dc_title:                 'Edgar Allan Poe'
+            dc_creator:               ['LeVert, Suzanne']
+            dc_identifier:
+              - 'isbn:0791016404'
+              - 'oclc:1033592792'
+            dc_publisher:             'New York : Chelsea House'
+            dc_relation:
+              - 'isbn:0791016447'
+            dc_language:              'en'
+            dc_description:           'A biography of the imaginative, tempestuous author and poet, focusing on his struggles to establish himself in the literary world'
+            dc_format:                'daisy'
+            dc_type:                  'text'
+            dc_subject:
+              - 'Poe, Edgar Allan, 1809-1849'
+              - 'Poe, Edgar Allan, 1809-1849'
+              - 'Authors, American'
+              - 'Authors, American'
+            dcterms_dateAccepted:     '2019-11-01'
+            dcterms_dateCopyright:    '1992'
+
+        hathiTrust:
+
+          001: &HT_001
+            # @see https://catalog.hathitrust.org/Record/009430397
+            # @see https://hdl.handle.net/2027/uva.x000177969
+            emma_repository:          'hathiTrust'
+            emma_repositoryRecordId:  '009430397'
+            emma_lastRemediationDate: '2017-05-23T16:19+00'
+            dc_title:                 'The works of Edgar Allan Poe. v.1.'
+            dc_creator:               ['Poe, Edgar Allan, 1809-1849']
+            dc_identifier:            []
+            dc_publisher:             'New York : Harper, [1900?]'
+            dc_relation:              []
+            dc_language:              'en'
+            dc_rights:                'publicDomain'
+            dc_format:                'pdf'
+            dc_type:                  'text'
+            dcterms_dateAccepted:     '2019-11-01'
+            dcterms_dateCopyright:    '1900'
+
+        bookshare:
+
+          001: &BS_001
+            # @see https://www.bookshare.org/browse/book/2173
+            # @see https://www.bookshare.org/downloadSponsor/book/2173
+            emma_repository:          'bookshare'
+            emma_collection:          'emma'
+            emma_repositoryRecordId:  '2173'
+            emma_lastRemediationDate: '2002-01-08'
+            dc_title:                 'The works of Edgar Allan Poe, Volume 1'
+            dc_creator:               ['Edgar Allan Poe']
+            dc_identifier:            []
+            dc_publisher:             'N/A'
+            dc_relation:              []
+            dc_language:              'en'
+            dc_rights:                'publicDomain'
+            dc_provenance:            'volunteer'
+            dc_format:                'brf'
+            dc_type:                  'text'
+            dc_subject:
+              - 'Horror'
+              - 'Poetry'
+              - 'Literature and Fiction'
+              - 'Mystery and Thrillers'
+            dcterms_dateAccepted:     '2002-01-08'
+            dcterms_dateCopyright:    '2012'
+
+          002:
+            <<:         *BS_001
+            dc_format:  'daisy'
+
+          003:
+            <<:         *BS_001
+            dc_format:  'daisyAudio'
+
+          004:
+            <<:         *BS_001
+            dc_format:  'epub'
+
+          005:
+            <<:         *BS_001
+            dc_format:  'pdf'
+
+          006:
+            <<:         *BS_001
+            dc_format:  'word'

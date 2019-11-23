@@ -13,11 +13,13 @@ module HeadHelper
   #
   # @param [Module] base
   #
-  # @return [Array<Module>]           @see #include_submodules
-  #
   def self.included(base)
     __included(base, '[HeadHelper]')
-    include_submodules(base)
+    if in_debugger?
+      include_submodules(base, __FILE__)
+    else
+      include_submodules(base)
+    end
   end
 
 end

@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting linkages to Bookshare.
+require 'bs'
+
+# Methods supporting access and linkages to the Bookshare API.
 #
 module BookshareHelper
 
@@ -16,6 +18,66 @@ module BookshareHelper
   include GenericHelper
   include HtmlHelper
   include I18nHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Access the Bookshare API service.
+  #
+  # @return [BookshareService]
+  #
+  def api
+    @bs_api ||= api_update
+  end
+
+  # Update the Bookshare API service.
+  #
+  # @param [Hash] opt
+  #
+  # @return [BookshareService]
+  #
+  def api_update(**opt)
+    default_opt = {}
+    default_opt[:user]     = current_user if current_user.present?
+    default_opt[:no_raise] = true         if Rails.env.test?
+    # noinspection RubyYardReturnMatch
+    @bs_api = BookshareService.update(**opt.reverse_merge(default_opt))
+  end
+
+  # Remove the Bookshare API service.
+  #
+  # @return [nil]
+  #
+  def api_clear
+    @bs_api = BookshareService.clear
+  end
+
+  # Indicate whether the latest API request generated an exception.
+  #
+  def api_error?
+    defined?(@bs_api) && @bs_api.present? && @bs_api.error?
+  end
+
+  # Get the current API exception message if the service has been started.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def api_error_message
+    @bs_api.error_message if defined?(:@bs_api) && @bs_api.present?
+  end
+
+  # Get the current API exception if the service has been started.
+  #
+  # @return [Exception]
+  # @return [nil]
+  #
+  def api_exception
+    @bs_api.exception if defined?(:@bs_api) && @bs_api.present?
+  end
 
   # ===========================================================================
   # :section:
@@ -261,6 +323,31 @@ module BookshareHelper
     html_opt[:title]  ||= i18n_lookup(controller, "#{action}.tooltip")
     # noinspection RubyYardParamTypeMatch
     make_link(label, path, html_opt)
+  end
+
+  # A direct link to a Bookshare page to open in a new browser tab.
+  #
+  # @overload bookshare_link(item)
+  #   @param [Bs::Api::Record] item
+  #
+  # @overload bookshare_link(item, path, **path_opt)
+  #   @param [String] item
+  #   @param [String] path
+  #   @param [Hash]   path_opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bookshare_link(item, path = nil, **path_opt)
+    if item.is_a?(Bs::Api::Record)
+      label = item.identifier
+      path  = bookshare_url("browse/book/#{label}", **path_opt)
+      tip   = 'View this item on the Bookshare website.' # TODO: I18n
+    else
+      label = item.to_s
+      path  = bookshare_url(path, **path_opt)
+      tip   = 'View on the Bookshare website.' # TODO: I18n
+    end
+    make_link(label, path, target: '_blank', title: tip)
   end
 
 end

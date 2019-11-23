@@ -45,7 +45,7 @@ module PeriodicalHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]     item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link.
   #
@@ -59,8 +59,8 @@ module PeriodicalHelper
 
   # Item categories as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #periodical_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -75,8 +75,8 @@ module PeriodicalHelper
 
   # Item formats as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #periodical_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -91,8 +91,8 @@ module PeriodicalHelper
 
   # Item languages as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #periodical_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -111,8 +111,8 @@ module PeriodicalHelper
   # Although an invalid country code will result in no results, all valid
   # country codes result in the same results.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #periodical_search_links
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #periodical_search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -127,9 +127,9 @@ module PeriodicalHelper
 
   # Item terms as search links.
   #
-  # @param [Api::Record::Base] item
-  # @param [Symbol, nil]       field  Default: :title
-  # @param [Hash]              opt    Passed to #search_links
+  # @param [Bs::Api::Record] item
+  # @param [Symbol, nil]     field    Default: :title
+  # @param [Hash]            opt      Passed to #search_links
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -161,7 +161,7 @@ module PeriodicalHelper
 
   # Create a link to latest periodical edition.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]     item
   # @param [Symbol, String, nil] label  Default: `latestEdition.identifier`.
   # @param [Hash]                opt    Passed to #edition_link.
   #
@@ -181,8 +181,8 @@ module PeriodicalHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Api::Record::Base] item
-  # @param [Object]            value
+  # @param [Bs::Api::Record] item
+  # @param [Object]          value
   #
   # @return [Object]
   #
@@ -205,7 +205,7 @@ module PeriodicalHelper
 
   public
 
-  # Fields from  Api::PeriodicalSeriesMetadataSummary.
+  # Fields from Bs::Record::PeriodicalSeriesMetadataSummary.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -240,8 +240,8 @@ module PeriodicalHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -255,7 +255,7 @@ module PeriodicalHelper
 
   public
 
-  # Fields from  Api::PeriodicalSeriesMetadataSummary.
+  # Fields from Bs::Record::PeriodicalSeriesMetadataSummary.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -270,8 +270,8 @@ module PeriodicalHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

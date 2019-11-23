@@ -1,0 +1,14 @@
+<%# app/views/search/show.html.erb -%>
+<%-
+  # A EMMA Federated Search metadata record show page.
+  item  ||= @item
+  image ||= nil
+  title ||= item&.label || t('emma.search.show.title')
+
+  set_page_title(title)
+  set_page_description(Search: title)
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= render 'search/details', item: item, image: image %>

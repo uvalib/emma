@@ -11,15 +11,14 @@ __loading_begin(__FILE__)
 #
 class TitleController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
 
-  include TitleHelper
   include IsbnHelper
+  include IssnHelper
 
   # ===========================================================================
   # :section: Authentication
@@ -148,7 +147,7 @@ class TitleController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiTitleMetadataSummaryList, nil] list
+  # @param [Bs::Message::TitleMetadataSummaryList, nil] list
   #
   # @return [Hash]
   #
@@ -161,8 +160,8 @@ class TitleController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [ApiTitleMetadataDetail, nil] item
-  # @param [Symbol]                      as     Unused.
+  # @param [Bs::Message::TitleMetadataDetail, nil] item
+  # @param [Symbol]                                as     Unused.
   #
   # @return [Hash]
   #

@@ -1,0 +1,22 @@
+<%# app/views/search/_entry.html.erb -%>
+<%-
+  # A single EMMA Federated Search metadata record.
+  item   ||= nil
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+  add    ||= {}
+  level  ||= 2
+  row    ||= 1
+  skip   ||= nil
+
+  #skip = Array.wrap(skip)
+  skip = Array.wrap(skip) << :thumbnail
+  add  = add.merge(index: index, row: row)
+  opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
+-%>
+
+<%= list_entry_number(item, opt)           unless skip.include?(:number) %>
+<%= thumbnail(item, opt.merge(link: true)) unless skip.include?(:thumbnail) %>
+<%= search_list_entry(item, add) %>

@@ -114,11 +114,11 @@ module ArtifactHelper
 
   # Create an element containing a link to download the given item.
   #
-  # @param [Api::Record::Base]        item
-  # @param [Api::Format, String, nil] format
-  # @param [Hash]                     opt     Passed to #item_link except for:
+  # @param [Bs::Api::Record]           item
+  # @param [Bs::Record::Format, String] format
+  # @param [Hash]                       opt   Passed to #item_link except for:
   #
-  # @option opt [Api::Format, String] :fmt    One of `FormatType#values`
+  # @option opt [Bs::Record::Format, String] :fmt    One of `FormatType#values`
   # @option opt [Symbol, String]      :label
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -127,7 +127,7 @@ module ArtifactHelper
     opt, html_opt = partition_options(opt, :fmt, :label)
     fmt   = opt[:fmt]
     label = opt[:label]
-    if format.is_a?(Api::Format)
+    if format.is_a?(Bs::Record::Format)
       fmt ||= format.identifier
       def_label = format.label
     else
@@ -171,8 +171,8 @@ module ArtifactHelper
 
   # Create links to download each artifact of the given item.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #artifact_link except for:
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Passed to #artifact_link except for:
   #
   # @option opt [String] :fmt         One of `FormatType#values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
@@ -273,7 +273,7 @@ module ArtifactHelper
 
   public
 
-  # Fields from Api::ArtifactMetadata.
+  # Fields from Bs::Record::ArtifactMetadata.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -297,8 +297,8 @@ module ArtifactHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -312,7 +312,7 @@ module ArtifactHelper
 
   public
 
-  # Fields from Api::ArtifactMetadata.
+  # Fields from Bs::Record::ArtifactMetadata.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -323,8 +323,8 @@ module ArtifactHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]             opt     Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

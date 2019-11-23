@@ -3,15 +3,13 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
-require 'api/common'
-
 # Support for testing Bookshare API compliance.
 #
 module TestHelper::SystemTests::Bookshare
 
   include TestHelper::SystemTests::Common
 
-  include ApiHelper
+  include BookshareHelper
 
   # ===========================================================================
   # :section:
@@ -25,12 +23,18 @@ module TestHelper::SystemTests::Bookshare
   #
   APIDOC_URL = 'https://apidocs.bookshare.org/reference/index.html'
 
+  # Namespaces of API classes.
+  #
+  # @type [Array<Class>]
+  #
+  API_NAMESPACES = [Bs::Record, Bs::Message].freeze
+
   # A mapping of documentation element ID to request method name.
   #
   # @type [Hash{String=>String}]
   #
   API_REQUEST_METHODS =
-    ApiService.api_methods.map { |method, properties|
+    BookshareService.api_methods.map { |method, properties|
       element_id = properties[:reference_id]
       [element_id.to_s, method.to_s] if element_id.present?
     }.compact.to_h.deep_freeze
@@ -48,12 +52,12 @@ module TestHelper::SystemTests::Bookshare
     myaccount_summary:      'MyAccountSummary',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.deep_freeze
 
-  # A translation of Api#ENUMERATIONS.
+  # A translation of Bs#ENUMERATIONS.
   #
   # @type [Hash{String=>Array<String>}]
   #
   API_ENUMERATIONS =
-    Api::ENUMERATIONS.map { |name, properties|
+    Bs::ENUMERATIONS.map { |name, properties|
       [name.to_s, (properties[:values]&.sort || [])]
     }.to_h.deep_freeze
 
@@ -268,7 +272,7 @@ module TestHelper::SystemTests::Bookshare
 
       else
         type = record_type(type)
-        type = "Api::#{type}" unless API_ENUMERATIONS.key?(type)
+        type = "Bs::Record::#{type}" unless API_ENUMERATIONS.key?(type)
         type
     end
   end
@@ -312,9 +316,9 @@ module TestHelper::SystemTests::Bookshare
   #
   def model_class(name)
     name = name.to_s.delete_prefix('_').underscore.camelize.presence or return
-    # noinspection RubyYardReturnMatch
-    ("Api::#{name}".constantize rescue nil) ||
-      ("Api#{name}".constantize rescue nil)
+    API_NAMESPACES.find do |base|
+      const = ("#{base}::#{name}".constantize rescue nil) and return const
+    end
   end
 
   # Get the comparable name of the given Ruby type.
@@ -329,9 +333,7 @@ module TestHelper::SystemTests::Bookshare
     if name.blank?
       '-'
     elsif type.ancestors.include?(Axiom::Types::Type)
-      name.delete_prefix('Axiom::Types::')
-    elsif type.ancestors.include?(ScalarType)
-      name.delete_prefix('Api::')
+      name.demodulize
     else
       name
     end

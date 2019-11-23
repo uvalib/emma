@@ -1,0 +1,24 @@
+<%# app/views/search/_details.html.erb -%>
+<%-
+  # A EMMA Federated Search metadata record listing.
+  item  ||= nil or return
+  image ||= nil
+  add   ||= {}
+  level ||= 1
+  skip  ||= nil
+
+  role = ('role="article"'.html_safe if level == 1)
+  skip = Array.wrap(skip)
+  skip << :cover_image
+
+  append_page_description(
+    ISBN:     item.isbn,
+    Language: item.dc_language,
+    Author:   item.dc_creator&.first(3),
+  )
+-%>
+
+<div <%= role -%> class="search-container">
+  <%= search_item_details(item, add) %>
+  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
+</div>

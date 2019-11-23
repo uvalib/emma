@@ -26,7 +26,7 @@ module MemberHelper
 
   # Current page of member results.
   #
-  # @return [Array<Api::UserAccount>]
+  # @return [Array<Bs::Record::UserAccount>]
   #
   def member_list
     # noinspection RubyYardReturnMatch
@@ -49,7 +49,7 @@ module MemberHelper
   #
   # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]     item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link.
   #
@@ -67,7 +67,7 @@ module MemberHelper
 
   public
 
-  # Fields from Api::UserAccount and ApiMyAccountSummary.
+  # Fields from Bs::Record::UserAccount and Bs::Message::MyAccountSummary.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -94,8 +94,8 @@ module MemberHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -103,7 +103,7 @@ module MemberHelper
     item_details(item, :member, MEMBER_SHOW_FIELDS.merge(opt))
   end
 
-  # Fields from ApiMyAccountPreferences.
+  # Fields from Bs::Message::MyAccountPreferences.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -119,8 +119,8 @@ module MemberHelper
 
   # Render a listing of member preferences.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -144,7 +144,7 @@ module MemberHelper
   #
   MEMBER_HISTORY_CSS_CLASS = 'history-list'
 
-  # Fields from Api::TitleDownload.
+  # Fields from Bs::Record::TitleDownload.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -189,7 +189,7 @@ module MemberHelper
 
   # Render of list of member activity entries.
   #
-  # @param [Api::Record::Base, Array<Api::TitleDownload>] item
+  # @param [Bs::Api::Record, Array<Bs::Record::TitleDownload>] item
   # @param [Hash] opt                 Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -217,7 +217,7 @@ module MemberHelper
 
   public
 
-  # Fields from Api::UserAccount and ApiMyAccountSummary.
+  # Fields from Bs::Record::UserAccount and Bs::Message::MyAccountSummary.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -228,8 +228,8 @@ module MemberHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -97,7 +97,7 @@ module OmniAuth
       #
       # == Implementation Notes
       # NOTE: Needs to relate to:
-      # @see ApiService::UserAccount#get_user_identity
+      # @see BookshareService::UserAccount#get_user_identity
       #
       # E.g.:
       #
@@ -116,7 +116,7 @@ module OmniAuth
       #
       def raw_info
         @raw_info ||=
-          access_token.get("#{ApiService::BASE_URL}/me").parsed
+          access_token.get("#{BOOKSHARE_BASE_URL}/me").parsed
             .deep_symbolize_keys
       end
 

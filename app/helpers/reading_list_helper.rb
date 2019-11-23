@@ -17,7 +17,7 @@ module ReadingListHelper
   include PaginationHelper
   include ResourceHelper
   include TitleHelper
-  include ApiHelper
+  include BookshareHelper
 
   # ===========================================================================
   # :section: TitleHelper overrides
@@ -33,15 +33,15 @@ module ReadingListHelper
 
   # Thumbnail element for the given reading list entry.
   #
-  # NOTE: Api::ReadingListTitle does not (currently) include a thumbnail link.
+  # NOTE: ReadingListTitle does not (currently) include a thumbnail link.
   #
   # While this is still the case, this method will discover the link by
   # explicitly by fetching the catalog item.
   #
   # If #READING_LIST_THUMBNAIL is *false*, this method always returns *nil*.
   #
-  # @param [Api::ReadingListTitle] item
-  # @param [Hash]                  opt    Passed to TitleHelper#thumbnail.
+  # @param [Bs::Record::ReadingListTitle] item
+  # @param [Hash]                         opt  Passed to TitleHelper#thumbnail.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no thumbnail.
@@ -71,7 +71,7 @@ module ReadingListHelper
 
   # Current page of reading list results.
   #
-  # @return [Array<Api::ReadingListUserView>]
+  # @return [Array<Bs::Record::ReadingListUserView>]
   #
   def reading_list_list
     # noinspection RubyYardReturnMatch
@@ -92,7 +92,7 @@ module ReadingListHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Api::Record::Base]   item
+  # @param [Bs::Api::Record]     item
   # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link except for:
   #
@@ -118,8 +118,8 @@ module ReadingListHelper
   #
   # TODO: The API doesn't yet seem to provide useful information here.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Passed to #record_links.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #record_links.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -137,8 +137,8 @@ module ReadingListHelper
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Api::Record::Base] item
-  # @param [Object]            value
+  # @param [Bs::Api::Record] item
+  # @param [Object]          value
   #
   # @return [Object]
   #
@@ -158,7 +158,7 @@ module ReadingListHelper
 
   public
 
-  # Fields from Api::ReadingListUserView.
+  # Fields from Bs::Record::ReadingListUserView.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -178,8 +178,8 @@ module ReadingListHelper
 
   # Render an item metadata listing.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -193,7 +193,7 @@ module ReadingListHelper
 
   public
 
-  # Fields from Api::ReadingListUserView.
+  # Fields from Bs::Record::ReadingListUserView.
   #
   # @type [Hash{Symbol=>Symbol}]
   #
@@ -205,8 +205,8 @@ module ReadingListHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Api::Record::Base] item
-  # @param [Hash]              opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

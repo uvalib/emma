@@ -15,7 +15,6 @@ __loading_begin(__FILE__)
 #
 class EditionController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
@@ -157,8 +156,8 @@ class EditionController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Api::PeriodicalEdition, nil] item
-  # @param [Symbol]                      as     Unused.
+  # @param [Bs::Record::PeriodicalEdition, nil] item
+  # @param [Symbol]                             as     Unused.
   #
   # @return [Hash]
   #

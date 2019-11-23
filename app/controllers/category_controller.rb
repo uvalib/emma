@@ -14,7 +14,6 @@ __loading_begin(__FILE__)
 #
 class CategoryController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern

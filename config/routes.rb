@@ -20,6 +20,12 @@ Rails.application.routes.draw do
   end
 
   # ===========================================================================
+  # EMMA Federated Search operations
+  # ===========================================================================
+
+  resources :search, only: %i[index show]
+
+  # ===========================================================================
   # Category operations
   # ===========================================================================
 
@@ -151,6 +157,8 @@ unless ONLY_FOR_DOCUMENTATION
   def registration_url(*);                        end
   def root_path(*);                               end
   def root_url(*);                                end
+  def search_index_path(*);                       end
+  def search_index_url(*);                        end
   def session_path(*);                            end
   def session_url(*);                             end
   def title_index_path(*);                        end

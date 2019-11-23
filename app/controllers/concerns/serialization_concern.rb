@@ -15,7 +15,7 @@ module SerializationConcern
     __included(base, 'SerializationConcern')
   end
 
-  include ApiHelper
+  include BookshareHelper
   include ParamsHelper
   include PaginationHelper
 
@@ -116,17 +116,17 @@ module SerializationConcern
 
   # Serialize an item to XML format.
   #
-  # @param [*]      item
-  # @param [String] separator
-  # @param [String] name              Node name if item.respond_to?(:to_xml).
-  # @param [Api::Serializer::Base] serializer
+  # @param [*]               item
+  # @param [String]          separator
+  # @param [String]          name       Node name if item.respond_to?(:to_xml).
+  # @param [Api::Serializer] serializer
   #
   # @return [String]
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)
     if item.is_a?(Hash)
       return if item.blank?
-      serializer ||= Api::Serializer::Xml::Base.new
+      serializer ||= Bs::Api::Serializer::Xml.new
       make_opt = { separator: separator, serializer: serializer }
       item.map { |k, v|
         value = make_xml(v, **make_opt)
@@ -160,7 +160,7 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [Api::Message, nil] list
+  # @param [Api::Record, nil] list
   #
   # @return [Hash]
   #

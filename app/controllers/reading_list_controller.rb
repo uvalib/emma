@@ -11,7 +11,6 @@ __loading_begin(__FILE__)
 #
 class ReadingListController < ApplicationController
 
-  include ApiConcern
   include UserConcern
   include ParamsConcern
   include SessionConcern
@@ -138,7 +137,7 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiReadingListList, nil] list
+  # @param [Bs::Message::ReadingListList, nil] list
   #
   # @return [Hash]
   #
@@ -151,9 +150,9 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [ApiReadingListUserView, nil]   item
-  # @param [ApiReadingListTitlesList, nil] list
-  # @param [Symbol]                        as
+  # @param [Bs::Message::ReadingListUserView, nil]   item
+  # @param [Bs::Message::ReadingListTitlesList, nil] list
+  # @param [Symbol]                                  as
   #
   # @return [Hash]
   #
