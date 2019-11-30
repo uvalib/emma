@@ -9,6 +9,7 @@ require 'search'
 
 # Methods supporting access and linkages to the "EMMA Federated Search" API.
 #
+# noinspection DuplicatedCode
 module SearchHelper
 
   def self.included(base)
@@ -166,9 +167,60 @@ module SearchHelper
   #
   def search_render_value(item, value)
     case field_category(value)
-      when :emma_repositoryRecordId then record_link(item)
-      when :emma_retrievalLink      then retrieval_link(item)
+      when :dc_title                then title_and_source_logo(item)
+      when :emma_repositoryRecordId then source_record_link(item)
+      when :emma_retrievalLink      then source_retrieval_link(item)
       else                               render_value(item, value)
+    end
+  end
+
+  # Repository logo image assets.
+  #
+  # @type [Hash{String=>String}]
+  #
+  REPOSITORY_LOGO =
+    REPOSITORY.transform_values { |entry| entry[:logo] }
+      .stringify_keys
+      .deep_freeze
+
+  # Display title of the associated work along with the logo of the source
+  # repository.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def title_and_source_logo(item)
+    title  = item.full_title
+    source = item.emma_repository
+    logo   = REPOSITORY_LOGO[source]
+    if logo.present?
+      t_opt = { class: "title logo #{source}" }
+      r_opt = { class: "repository logo #{source}" }
+      r_opt[:title] = "From #{source.titleize}" # TODO: I18n
+      content_tag(:div, title, t_opt) << image_tag(asset_path(logo), r_opt)
+    else
+      title_and_source(item)
+    end
+  end
+
+  # Display title of the associated work along with the source repository.
+  #
+  # @param [Search::Api::Record] item
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def title_and_source(item)
+    title  = item.full_title
+    source = item.emma_repository
+    logo   = (source.titleize if Repository.values.include?(source))
+    if logo.present?
+      t_opt = { class: "title name #{source}" }
+      r_opt = { class: "repository name #{source}" }
+      r_opt[:title] = "From #{source.titleize}" # TODO: I18n
+      content_tag(:div, title, t_opt) << content_tag(:div, logo, r_opt)
+    else
+      ERB::Util.h(title)
     end
   end
 
@@ -180,21 +232,19 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def record_link(item, **opt)
-    src = item.emma_repository
+  def source_record_link(item, **opt)
     id  = CGI.unescape(item.emma_repositoryRecordId)
-    url =
-      case src
-        when 'bookshare'       then bookshare_title_url(item)
-        when 'hathiTrust'      then ht_title_url(item)
-        when 'internetArchive' then ia_title_url(item)
-      end
-    return ERB::Util.h(id) unless url.present?
-    html_opt = {
-      target: '_blank',
-      title:  "View this item on the #{src.titleize} website." # TODO: I18n
-    }.merge(opt)
-    make_link(id, url, **html_opt)
+    url = record_title_url(item)
+    if url.present?
+      origin   = item.emma_repository.titleize
+      html_opt = {
+        target: '_blank',
+        title:  "View this item on the #{origin} website." # TODO: I18n
+      }.merge(opt)
+      make_link(id, url, **html_opt)
+    else
+      ERB::Util.h(id)
+    end
   end
 
   # Make a clickable link to retrieve a remediated file.
@@ -205,20 +255,14 @@ module SearchHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def retrieval_link(item, **opt)
-    src = item.emma_repository
-    fmt = item.dc_format.upcase
-    url = item.emma_retrievalLink.presence
-    url ||=
-      case src
-        when 'bookshare'       then bookshare_download_url(item)
-        when 'hathiTrust'      then ht_download_url(item)
-        when 'internetArchive' then ia_download_url(item)
-      end
+  def source_retrieval_link(item, **opt)
+    url = record_download_url(item)
     return unless url.present?
+    format   = item.dc_format.upcase
+    origin   = item.emma_repository.titleize
     html_opt = {
       target: '_blank',
-      title:  "Retrieve the #{fmt} source from #{src.titleize}." # TODO: I18n
+      title:  "Retrieve the #{format} source from #{origin}." # TODO: I18n
     }.merge(opt)
     make_link(CGI.unescape(url), url, **html_opt)
   end

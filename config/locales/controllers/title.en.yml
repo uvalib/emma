@@ -1,0 +1,78 @@
+# config/locales/en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Catalog Title pages
+    # =========================================================================
+
+    title:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'title'
+        long:           'catalog title'
+      label:            'Titles'
+      title:            'Catalog Titles'
+      tooltip:          'Search for catalog items.'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_bar:
+        label:          'Catalog Search'
+        input:
+          enabled:      true
+          field:        'keyword'
+          label:        'Catalog search terms:'
+          placeholder:  'Enter catalog search terms...'
+
+      search_controls:
+        layout:
+          - [sort,         size,         format      ]
+          - [language,     category,     content_type]
+          - [braille,      narrator                  ]
+          - [warnings_exc, warnings_inc              ]
+
+      page_controls:
+        label:
+          one:          'Manage this catalog entry'
+          many:         'Catalog Actions'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Titles'
+        title:          'Catalog Titles Index'
+        tooltip:        'Find more catalog items with %{terms}.'
+
+      show:
+        label:          'Title'
+        title:          'Catalog Title'
+        tooltip:        'See details about this catalog title.'
+
+      new:
+        label:          'Add'
+        title:          'Add Catalog Title'
+        tooltip:        'Create an entry for a new catalog title.'
+
+      edit:
+        title:          'Modify Catalog Title'
+        tooltip:        'Make changes to this catalog title.'
+
+      delete:
+        title:          'Remove Catalog Title'
+        tooltip:        'Remove this title from the catalog.'
+
+      history:
+        title:          'Catalog Title History'
+        tooltip:        'View modifications for this catalog title.'
+

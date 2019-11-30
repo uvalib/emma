@@ -19,6 +19,7 @@ class TitleController < ApplicationController
 
   include IsbnHelper
   include IssnHelper
+  include OclcHelper
 
   # ===========================================================================
   # :section: Authentication

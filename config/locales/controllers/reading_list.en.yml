@@ -1,0 +1,62 @@
+# config/locales/controllers/reading_list.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Reading List pages
+    # =========================================================================
+
+    reading_list:
+
+      unit:
+        brief:          'list'
+        long:           'reading list'
+      label:            'Lists'
+      title:            'Reading Lists'
+      tooltip:          'Show subscribed reading lists.'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_controls:
+        layout:
+          - [sort, size]
+
+      page_controls:
+        label:
+          one:          'Manage this reading list'
+          many:         'Reading List Actions'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Lists'
+        title:          'Reading Lists'
+        tooltip:        'Reading lists to which you have access.'
+
+      show:
+        label:          'List'
+        title:          'Reading List'
+        tooltip:        'See details about this reading list.'
+
+      new:
+        title:          'Add Reading List'
+        tooltip:        'Create a new reading list.'
+
+      edit:
+        title:          'Modify Reading List'
+        tooltip:        'Make changes to this reading list.'
+
+      delete:
+        label:          'Delete'
+        title:          'Delete Reading List'
+        tooltip:        'Delete this reading list.'
+
+      history:
+        title:          'Reading List History'
+        tooltip:        'View modifications for this reading list.'

@@ -33,8 +33,9 @@ $results-entry-margin-y: 0.67rem;
 .pagination-top,
 .pagination-bottom {
 
-    margin:      $results-entry-gap-y 0;
+    //noinspection CssBrowserCompatibilityForProperties
     grid-column: 1 / -1;
+    margin:      $results-entry-gap-y 0;
 
     // noinspection SassScssResolvedByNameOnly
     @media #{$narrow-screen} {
@@ -269,7 +270,7 @@ $results-entry-margin-y: 0.67rem;
 
         &.empty {
             margin-top:      $ie-results-entry-gap-y;
-            -ms-grid-column:  1;
+            -ms-grid-column: 1;
         }
     }
 

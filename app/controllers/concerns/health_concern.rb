@@ -27,7 +27,7 @@ module HealthConcern
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see en.emma.health in config/locales/en.yml
+  # @see config/locales/controllers/health.en.yml
   #
   # noinspection RailsI18nInspection
   HEALTH_18N_ENTRIES =

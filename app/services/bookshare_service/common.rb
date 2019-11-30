@@ -226,6 +226,10 @@ module BookshareService::Common
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
+  # Compare with:
+  # @see ApiService::Common#transmit
+  #
+  # noinspection DuplicatedCode
   def transmit(verb, action, params = nil, headers = nil, **opt)
     resp = connection.send(verb, action, params, headers)
     raise BookshareService::EmptyResultError.new(resp) if resp.nil?

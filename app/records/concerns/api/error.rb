@@ -5,17 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Base exception for Bookshare API errors.
+# Base exception for API errors.
 #
 class Api::Error < RuntimeError
 
   include ExplorerHelper
-
-  # Default API error message
-  #
-  # @type [String]
-  #
-  DEFAULT_ERROR = I18n.t('emma.error.api.default').freeze
 
   # ===========================================================================
   # :section:
@@ -145,6 +139,7 @@ class Api::Error < RuntimeError
   # class.
   #
   # @param [Boolean] allow_nil
+  # @param [Symbol]  source           Source repository
   #
   # @return [String]
   # @return [nil]                     If *allow_nil* is set to *true* and no
@@ -152,10 +147,18 @@ class Api::Error < RuntimeError
   #
   # @see en.emma.error.api in config/locales/en.yml
   #
-  def self.default_message(allow_nil: false)
-    type = self.class.to_s.demodulize.underscore.sub(/_?error$/, '').presence
-    fallback = ((type ? "#{type} error" : DEFAULT_ERROR) unless allow_nil)
-    type && I18n.t("emma.error.api.#{type}", default: nil) || fallback
+  def self.default_message(allow_nil: false, source: nil)
+    type = self.class.to_s
+    source ||= type.sub(/::.*$/, '').underscore.presence
+    type = type.demodulize.underscore.sub(/_?error$/, '').presence
+    keys = []
+    keys << :"emma.error.#{source}.#{type}"       if source && type
+    keys << :"emma.error.api.#{type}"             if type
+    keys << :"emma.error.#{source}.default"       if source
+    keys << :'emma.error.api.default'
+    keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
+    keys.uniq!
+    I18n.t(keys.shift, default: keys)
   end
 
 end
@@ -209,29 +212,5 @@ class Api::XmitError < Api::CommError; end
 # Base exception for Bookshare API requests.
 #
 class Api::RequestError < Api::XmitError; end
-
-# Exception raised to indicate a problem with an account operation.
-#
-class Api::AccountError < Api::RequestError; end
-
-# Exception raised to indicate a problem with a subscription operation.
-#
-class Api::SubscriptionError < Api::RequestError; end
-
-# Exception raised to indicate a problem with a title/catalog operation.
-#
-class Api::TitleError < Api::RequestError; end
-
-# Exception raised to indicate a problem with a periodicals operation.
-#
-class Api::PeriodicalError < Api::RequestError; end
-
-# Exception raised to indicate a problem with a reading list operation.
-#
-class Api::ReadingListError < Api::RequestError; end
-
-# Exception raised to indicate a problem with an organization operation.
-#
-class Api::OrganizationError < Api::RequestError; end
 
 __loading_end(__FILE__)

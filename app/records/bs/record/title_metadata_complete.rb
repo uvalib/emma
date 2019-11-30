@@ -64,7 +64,7 @@ __loading_begin(__FILE__)
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_complete
 #
 # == Implementation Notes
-# Similar to Bs::Message::TitleMetadataDetail, but without the following fields:
+# Similar to Bs::Message::TitleMetadataDetail, but without these fields:
 #   :edition
 #   :readingAgeMaximum
 #   :readingAgeMinimum

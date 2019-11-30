@@ -8,6 +8,10 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+    # =========================================================================
+    # Enumerations
+    # =========================================================================
+
     format:
       DAISY:            'DAISY with Images'
       DAISY_AUDIO:      'DAISY Audio'
@@ -203,6 +207,31 @@ en:
     error:
 
       api:
+
+        # @see Api::Error
+
+        default:        'Unknown API error'
+        auth:           'API authorization error'
+        comm:           'API network error'
+        session:        'API session error'
+        timeout:        'API session token expired'
+        recv:           'API receive error'
+        parse:          'API sent bad data'
+        xmit:           'API transmit error'
+        request:        'Bad API request'
+
+        # @see ApiService::Error
+
+        response:       'Bad API response'
+        empty_result:   'Empty API result body'
+        html_result:    'Invalid (HTML) result body'
+        redirection:    'Missing HTTP redirect location'
+        redirect_limit: 'Too many HTTP redirects'
+
+      bookshare:
+
+        # @see Bs::Error
+
         default:        'Unknown Bookshare API error'
         auth:           'Bookshare API authorization error'
         comm:           'Bookshare API network error'
@@ -218,16 +247,99 @@ en:
         periodical:     'Bookshare API periodical request error'
         reading_list:   'Bookshare API reading list request error'
         organization:   'Bookshare API organization request error'
-        empty_result:   'Empty API result body'
-        html_result:    'Invalid (HTML) result body'
-        redirection:    'Missing HTTP redirect location'
-        redirect_limit: 'Too many HTTP redirects'
+
+        # @see BookshareService::Error
+
+        response:       'Bad Bookshare API response'
+
+      search:
+
+        # @see Search::Error
+
+        default:        'Unknown Federated Search API error'
+        auth:           'Federated Search API authorization error'
+        comm:           'Federated Search API network error'
+        session:        'Federated Search API session error'
+        timeout:        'Federated Search API session token expired'
+        recv:           'Federated Search API receive error'
+        parse:          'Bad data from Federated Search API'
+        xmit:           'Federated Search API transmit error'
+        request:        'Bad request to Federated Search API'
+
+        # @see SearchService::Error
+
+        response:       'Bad Federated Search API response'
 
       request:
         generic:
           default:      'Bad response from server'
           failed:       'Unable to request items right now'
           no_items:     'There were no items to request'
+
+    # =========================================================================
+    # Source repositories
+    # =========================================================================
+
+    source:
+
+      _template:
+        logo:           '' # Asset file name.
+        title_path:     '' # Base URL to source pages for title-level entries.
+        download_path:  '' # Base URL for artifact downloads.
+        download_fmt:   [] # Translation of Search API format parameter.
+        download_url:   '' # URL template for artifact downloads.
+
+      bookshare:
+        logo:           'wide-Bookshare_logo.png'
+        title_path:     'https://www.bookshare.org/browse/book'
+        download_path:  'https://www.bookshare.org/bookHistory/download/book'
+        download_fmt:
+          brf:          'BRF'
+          daisy:        'DAISY'
+          daisyAudio:   'DAISY_AUDIO'
+          epub:         'EPUB3'
+          braille:      'BRF'                 # TODO: Bookshare braille
+          pdf:          'PDF'
+          word:         'DOCX'
+          tactile:      'BRF'                 # TODO: Bookshare tactile
+          kurzweil:     'BRF'                 # TODO: Bookshare kurzweil
+          rtf:          'TEXT'                # TODO: Bookshare rtf
+          '???':        'HTML'                # NOTE: not in schema
+        download_url:   '%{download_path}?titleInstanceId=%{id}&downloadFormat=%{fmt}&tag=%{tag}'
+
+      hathiTrust:
+        logo:           'wide-HathiTrust_logo.png'
+        title_path:     'https://catalog.hathitrust.org/Record'
+        download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
+        download_fmt:                         # TODO: HT download formats
+          brf:          'brf'
+          daisy:        'daisy'
+          daisyAudio:   'daisyAudio'
+          epub:         'epub'
+          braille:      'braille'
+          pdf:          'pdf'
+          word:         'word'
+          tactile:      'tactile'
+          kurzweil:     'kurzweil'
+          rtf:          'rtf'
+        download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
+
+      internetArchive:
+        logo:           'wide-Internet_Archive_logo.png'
+        title_path:     'https://archive.org/details'
+        download_path:  'https://archive.org/download'
+        download_fmt:                         # TODO: IA download formats
+          brf:          'brf'
+          daisy:        'daisy'
+          daisyAudio:   'daisyAudio'
+          epub:         'epub'
+          braille:      'braille'
+          pdf:          'pdf'
+          word:         'word'
+          tactile:      'tactile'
+          kurzweil:     'kurzweil'
+          rtf:          'rtf'
+        download_url:   '%{download_path}/%{id}/%{id}_%{fmt}.zip'
 
     # =========================================================================
     # HTML page head
@@ -297,14 +409,14 @@ en:
     search_controls:
 
       _default:
-        label:          ~
-        label_visible:  true
-        placeholder:    '(any)'
-        url_parameter:  ~
-        menu_format:    'titleize'
-        values:         ~
-        default:        ~
-        tooltip:        ~
+        label:          ~           # Displayed before the control.
+        label_visible:  true        # If *false* label is 'sr-only'.
+        placeholder:    '(any)'     # Displayed if the control value is unset.
+        url_parameter:  ~           # URL parameter for the control value.
+        menu_format:    'titleize'  # Transform for values into menu labels.
+        values:         ~           # Hard-wired menu values.
+        default:        ~           # Hard-wired default menu value selection.
+        tooltip:        ~           # Displayed hovering over control or label.
 
       _reset:
         label:          'Reset'
@@ -498,121 +610,6 @@ en:
         tooltip:      'Click here to retrieve %{fmt} file.'
 
     # =========================================================================
-    # Devise controllers
-    # =========================================================================
-
-    user:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{user}         Name of a user.
-      # %{provider}     Name of an authentication provider.
-
-      tooltip:          'Signed in as "%{user}"'
-      password:
-        length:         '%{min} characters minimum'
-
-      sessions:
-
-        new:
-          label:        'Sign in'
-          title:        'Sign in with your Bookshare account'
-          tooltip:      'Authentication is required for full access.'
-          submit:       'Sign in'
-
-        create:
-          success:      'Signed in as %{user}.'
-
-        destroy:
-          label:        'Sign out'
-          tooltip:      'End your session.'
-          success:      'Signed out (%{user}).'
-
-      passwords:
-
-        new:
-          label:        'Forgot your password?'
-          submit:       'Send password reset instructions'
-
-        edit:
-          label:        'Change your password'
-          password:     'New password'
-          confirm:      'Confirm new password'
-          submit:       'Change my password'
-
-      registrations:
-
-        new:
-          label:        'Sign up'
-          submit:       'Sign up'
-
-        edit:
-          label:        'Edit User'
-          awaiting:     'Currently awaiting confirmation for: %{email}'
-          password:     "leave blank if you don't want to change it"
-          current:      'we need your current password to confirm your changes'
-          submit:       'Update'
-
-        destroy:
-          label:        'Cancel my account'
-          link:         'Unhappy? %{button}'
-
-      confirmations:
-
-        new:
-          title:        'Resend confirmation instructions'
-          label:        "Didn't receive confirmation instructions?"
-          submit:       'Resend confirmation instructions'
-
-      unlocks:
-
-        new:
-          title:        'Resend unlock instructions'
-          label:        "Didn't receive unlock instructions?"
-          submit:       'Resend unlock instructions'
-
-      omniauth_callbacks:
-
-        new:
-          label:        'Sign in with %{provider}'
-
-        destroy:
-          label:        'Sign out of %{provider}'
-
-        sign_in_as:
-          label:        'Sign in as %{user}'
-
-    # =========================================================================
-    # Home page
-    # =========================================================================
-
-    home:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{sign_in}      HTML <a> link to the sign-in path.
-
-      label:            'Home'
-      title:            'EMMA Test Application'
-
-      welcome:
-        label:          'Welcome'
-        title:          'Welcome to EMMA'
-        tooltip:        'Return to the home page.'
-        notice_html:    'You must %{sign_in} to access your account.'
-        text_html:      |
-          <h2>Introductory text</h2>
-          <p>First paragraph.</p>
-          <p>Second paragraph.</p>
-          <p><a href="https://mellon.org/resources/news/articles/grants-university-libraries-develop-accessibility-infrastructure-and-best-practices/">
-            Read more</a> about the project.</p>
-
-      dashboard:
-        label:          'Dashboard'
-        title:          'EMMA Dashboard'
-        tooltip:        'Return to your account dashboard.'
-
-    # =========================================================================
     # Generic (parameterized) page definitions
     # =========================================================================
 
@@ -632,6 +629,10 @@ en:
       title:            '%{Items}'
       tooltip:          'Search for %{items}.'
 
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
       search_bar:
         label:          '%{Item} Search'
 
@@ -642,6 +643,10 @@ en:
 
       pagination:
         count:          '%{items} found'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
 
       index:
         label:          '%{Items}'
@@ -672,464 +677,3 @@ en:
         label:          'History'
         title:          '%{Item} History'
         tooltip:        'View modifications for this %{item}.'
-
-    # =========================================================================
-    # EMMA Federated Search pages
-    # =========================================================================
-
-    search:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{terms}        Current list of search terms.
-
-      unit:
-        brief:          'record'
-        long:           'metadata record'
-      label:            'Search'
-      title:            'Federated Search'
-      tooltip:          'Search for metadata records.'
-
-      format:
-        brf:              'BRF'
-        daisy:            'DAISY'
-        daisyAudio:       'DAISY Audio'
-        epub:             'EPUB'
-        braille:          'Braille'
-        pdf:              'PDF'
-        word:             'Microsoft Word'
-        tactile:          'Tactile'
-        kurzweil:         'Kurzweil'
-        rtf:              'RTF'
-
-      search_bar:
-        label:          'Search'
-        input:
-          enabled:      true
-          field:        'q'
-          label:        'Search terms:'
-          placeholder:  'Enter search terms...'
-
-      search_controls:
-        layout:
-          - [sort,         size,         format]
-          - [repository,   a11y_feature,       ]
-
-      page_controls:
-        label:
-          one:          'Manage this metadata record'
-          many:         'Record Actions'
-
-      index:
-        label:          'Records'
-        title:          'Federated Search Index'
-        tooltip:        'Find more metadata records with %{terms}.'
-
-      show:
-        label:          'Record'
-        title:          'Index Record'
-        tooltip:        'See details about this metadata record.'
-
-    # =========================================================================
-    # Category pages
-    # =========================================================================
-
-    category:
-
-      unit:
-        brief:          'category'
-        long:           'catalog category'
-      label:            'Categories'
-      title:            'Categories'
-      tooltip:          'Search for catalog items by topic.'
-
-      search_bar:
-        label:          'Catalog Search'
-        input:
-          enabled:      false
-
-      search_controls:
-        layout:
-          - [size]
-
-      pagination:
-        page_size:      20
-
-      index:
-        label:          'Categories'
-        title:          'Category Index'
-        tooltip:        'Get a category listing.'
-
-      show:
-        label:          'Category'
-        title:          'Category'
-        tooltip:        'See items in this category.'
-
-    # =========================================================================
-    # Catalog Title pages
-    # =========================================================================
-
-    title:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{terms}        Current list of search terms.
-
-      unit:
-        brief:          'title'
-        long:           'catalog title'
-      label:            'Titles'
-      title:            'Catalog Titles'
-      tooltip:          'Search for catalog items.'
-
-      search_bar:
-        label:          'Catalog Search'
-        input:
-          enabled:      true
-          field:        'keyword'
-          label:        'Catalog search terms:'
-          placeholder:  'Enter catalog search terms...'
-
-      search_controls:
-        layout:
-          - [sort,         size,         format      ]
-          - [language,     category,     content_type]
-          - [braille,      narrator                  ]
-          - [warnings_exc, warnings_inc              ]
-
-      page_controls:
-        label:
-          one:          'Manage this catalog entry'
-          many:         'Catalog Actions'
-
-      index:
-        label:          'Titles'
-        title:          'Catalog Titles Index'
-        tooltip:        'Find more catalog items with %{terms}.'
-
-      show:
-        label:          'Title'
-        title:          'Catalog Title'
-        tooltip:        'See details about this catalog title.'
-
-      new:
-        label:          'Add'
-        title:          'Add Catalog Title'
-        tooltip:        'Create an entry for a new catalog title.'
-
-      edit:
-        title:          'Modify Catalog Title'
-        tooltip:        'Make changes to this catalog title.'
-
-      delete:
-        title:          'Remove Catalog Title'
-        tooltip:        'Remove this title from the catalog.'
-
-      history:
-        title:          'Catalog Title History'
-        tooltip:        'View modifications for this catalog title.'
-
-    # =========================================================================
-    # Periodical pages
-    # =========================================================================
-
-    periodical:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{terms}        Current list of search terms.
-
-      unit:
-        brief:          'periodical'
-        long:           'periodical'
-      label:            'Periodicals'
-      title:            'Periodicals'
-      tooltip:          'Search for periodicals.'
-
-      search_bar:
-        input:
-          enabled:      true
-          field:        'title'
-          label:        'Periodical search terms:'
-          placeholder:  'Search periodical titles...'
-
-      search_controls:
-        layout:
-          - [sort,     size,     format]
-          - [language, category        ]
-          - [braille,  narrator        ]
-
-      index:
-        label:          'Periodicals'
-        title:          'Periodicals Index'
-        tooltip:        'Find more periodicals with %{terms}.'
-
-      show:
-        label:          'Periodical'
-        title:          'Periodical'
-        tooltip:        'See details about this periodical.'
-
-      new:
-        title:          'Add Periodical'
-        tooltip:        'Create an entry for a new periodical.'
-
-      edit:
-        title:          'Modify Periodical'
-        tooltip:        'Make changes to this periodical.'
-
-      delete:
-        title:          'Remove Periodical'
-        tooltip:        'Remove this periodical.'
-
-      history:
-        title:          'Periodical History'
-        tooltip:        'View modifications for this periodical.'
-
-    # =========================================================================
-    # Periodical edition pages
-    # =========================================================================
-
-    edition:
-
-      # NOTE: Some of these definitions require parameters to be supplied:
-      #
-      # %{terms}        Current list of search terms.
-
-      unit:
-        brief:          'edition'
-        long:           'periodical edition'
-      label:            'Editions'
-      title:            'Periodical Editions'
-      tooltip:          'List editions of this periodical.'
-
-      index:
-        label:          'Editions'
-        title:          'Editions'
-        tooltip:        'Find more periodical editions with %{terms}.'
-
-      show:
-        label:          'Edition'
-        title:          'Periodical Edition'
-        tooltip:        'See details about this periodical edition.'
-
-      new:
-        title:          'Add Periodical Edition'
-        tooltip:        'Create an entry for a new periodical edition.'
-
-      edit:
-        title:          'Modify Periodical Edition'
-        tooltip:        'Make changes to this periodical edition.'
-
-      delete:
-        title:          'Remove Periodical Edition'
-        tooltip:        'Remove this edition from the periodical.'
-
-      history:
-        title:          'Periodical Edition History'
-        tooltip:        'View modifications for this periodical edition.'
-
-      download:
-        label:          'Download'
-        title:          'Edition Download'
-
-    # =========================================================================
-    # Member pages
-    # =========================================================================
-
-    member:
-
-      unit:
-        brief:          'member'
-        long:           'organizational member'
-      label:            'Members'
-      title:            'Organization Members'
-      tooltip:          'Show organization members.'
-
-      search_controls:
-        layout:
-          - [sort, size]
-
-      index:
-        label:          'Members'
-        title:          'Members Index'
-        tooltip:        'Show organization members.'
-
-      show:
-        label:          'Member'
-        title:          'Member'
-        tooltip:        'See details about this member.'
-
-      new:
-        title:          'Add Member'
-        tooltip:        'Create an entry for a new organization member.'
-
-      edit:
-        title:          'Modify Member'
-        tooltip:        'Make changes to this organization member.'
-
-      delete:
-        title:          'Remove Member'
-        tooltip:        'Remove this member from the organization.'
-
-      history:
-        title:          'Member History'
-        tooltip:        'View modifications for this organization member.'
-
-      preferences:
-        label:          'Preferences'
-        title:          'Preferences'
-        tooltip:        'View preference settings for this member.'
-
-    # =========================================================================
-    # Artifact pages
-    # =========================================================================
-
-    artifact:
-
-      unit:
-        brief:          'artifact'
-        long:           'artifact'
-      label:            'Artifacts'
-      title:            'Artifacts (Remediated Content)'
-      tooltip:          'List artifacts uploaded for this item.'
-
-      index:
-        label:          'Artifacts'
-        title:          'Artifacts Index'
-        tooltip:        'List artifacts.'
-
-      show:
-        label:          'Artifact'
-        title:          'Artifact Metadata'
-        tooltip:        'See details about this artifact.'
-
-      new:
-        label:          'Upload'
-        title:          'Add Artifact'
-        tooltip:        'Upload a new artifact.'
-
-      edit:
-        label:          'Replace'
-        title:          'Modify Artifact'
-        tooltip:        'Make changes to this artifact entry.'
-
-      delete:
-        label:          'Delete'
-        title:          'Delete Artifact'
-        tooltip:        'Delete an artifact.'
-
-      history:
-        title:          'Artifact History'
-        tooltip:        'View modifications for this artifact entry.'
-
-      download:
-        label:          'Download'
-        title:          'Artifact Download'
-
-    # =========================================================================
-    # Reading List pages
-    # =========================================================================
-
-    reading_list:
-
-      unit:
-        brief:          'list'
-        long:           'reading list'
-      label:            'Lists'
-      title:            'Reading Lists'
-      tooltip:          'Show subscribed reading lists.'
-
-      search_controls:
-        layout:
-          - [sort, size]
-
-      page_controls:
-        label:
-          one:          'Manage this reading list'
-          many:         'Reading List Actions'
-
-      index:
-        label:          'Lists'
-        title:          'Reading Lists'
-        tooltip:        'Reading lists to which you have access.'
-
-      show:
-        label:          'List'
-        title:          'Reading List'
-        tooltip:        'See details about this reading list.'
-
-      new:
-        title:          'Add Reading List'
-        tooltip:        'Create a new reading list.'
-
-      edit:
-        title:          'Modify Reading List'
-        tooltip:        'Make changes to this reading list.'
-
-      delete:
-        label:          'Delete'
-        title:          'Delete Reading List'
-        tooltip:        'Delete this reading list.'
-
-      history:
-        title:          'Reading List History'
-        tooltip:        'View modifications for this reading list.'
-
-    # =========================================================================
-    # API page
-    # =========================================================================
-
-    api:
-
-      label:            'API Methods'
-      title:            'Bookshare API Methods'
-      tooltip:          'Results for API methods run as the current user.'
-
-      index:
-        label:          'API Methods'
-        title:          'Bookshare API Methods'
-        tooltip:        'Results for API methods run as the current user.'
-
-      v2:
-        label:          'API Method'
-        title:          'Bookshare API Method Output'
-        tooltip:        'Result for an API method run as the current user.'
-
-    # =========================================================================
-    # Health status
-    # =========================================================================
-
-    health:
-
-      default:          &HEALTH_DEFAULT
-        restart:        false
-        failed:         'Unknown error'
-
-      invalid:
-        <<:             *HEALTH_DEFAULT
-        method:         false
-        failed:         'NOT A VALID SUBSYSTEM'
-
-      mysql:
-        <<:             *HEALTH_DEFAULT
-        restart:        true
-        failed:         'Database connection error'
-
-      redis:
-        <<:             *HEALTH_DEFAULT
-        restart:        true
-        healthy:        'NOT IMPLEMENTED' # TODO: future
-        failed:         'Redis unresponsive'
-
-      bookshare:
-        <<:             *HEALTH_DEFAULT
-        restart:        false
-        degraded:       'Bookshare API degraded'
-        failed:         'Bookshare API unresponsive'
-
-      ingest:
-        <<:             *HEALTH_DEFAULT
-        restart:        false
-        healthy:        'NOT IMPLEMENTED' # TODO: future
-        degraded:       'Content ingest degraded'
-        failed:         'Content ingest failing'

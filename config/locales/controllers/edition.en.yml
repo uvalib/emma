@@ -1,0 +1,57 @@
+# config/locales/controllers/edition.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Periodical edition pages
+    # =========================================================================
+
+    edition:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'edition'
+        long:           'periodical edition'
+      label:            'Editions'
+      title:            'Periodical Editions'
+      tooltip:          'List editions of this periodical.'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Editions'
+        title:          'Editions'
+        tooltip:        'Find more periodical editions with %{terms}.'
+
+      show:
+        label:          'Edition'
+        title:          'Periodical Edition'
+        tooltip:        'See details about this periodical edition.'
+
+      new:
+        title:          'Add Periodical Edition'
+        tooltip:        'Create an entry for a new periodical edition.'
+
+      edit:
+        title:          'Modify Periodical Edition'
+        tooltip:        'Make changes to this periodical edition.'
+
+      delete:
+        title:          'Remove Periodical Edition'
+        tooltip:        'Remove this edition from the periodical.'
+
+      history:
+        title:          'Periodical Edition History'
+        tooltip:        'View modifications for this periodical edition.'
+
+      download:
+        label:          'Download'
+        title:          'Edition Download'
+

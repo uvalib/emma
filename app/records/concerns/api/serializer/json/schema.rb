@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Hash-specific definition overrides for serialization.
+# JSON-specific definition overrides for serialization.
 #
 module Api::Serializer::Json::Schema
 

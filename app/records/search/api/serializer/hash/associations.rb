@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Overrides toSearch::Api::Serializer::Associations for Hash serializers.
+# Overrides to Search::Api::Serializer::Associations for Hash serializers.
 #
 # @see Api::Serializer::Hash::Associations
 #

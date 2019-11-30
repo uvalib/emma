@@ -288,6 +288,7 @@ class EnumType < ScalarType
   # set of values.
   #
   def self.enumerations
+    # noinspection RubyClassVariableUsageInspection
     @@enumerations ||= {}
   end
 

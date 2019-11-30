@@ -24,7 +24,12 @@
 
     .label,
     .value {
+
         margin-bottom: 0;
+
+        @media #{$browser-ie} {
+            margin-bottom: $row-separation;
+        }
     }
 
     .label {
@@ -39,8 +44,16 @@
 
         &.field-Title {
 
+            display:     flex;
+            flex-flow:   wrap;
             font-size:   larger;
             font-weight: bold;
+            column-gap:  $flex-gap-x;
+
+            @media #{$wide-screen} {
+                max-width:       50%;
+                justify-content: space-between;
+            }
 
             @media #{$narrow-screen} {
                 grid-column: 1 / -1;
@@ -48,6 +61,64 @@
 
             a:not(:hover) {
                 text-decoration: none;
+            }
+
+            > * {
+
+                display: block;
+                margin:  0;
+
+                &.title {
+                    flex: 0.33 1 auto;
+                }
+
+                &.repository {
+
+                    flex: 0 0 auto;
+
+                    @media #{$browser-ie} {
+
+                        margin-left: $ie-flex-gap-x;
+
+                        @media #{$narrow-screen} {
+                            margin-left: 0;
+                        }
+                    }
+
+                    // @see SearchHelper#title_and_source
+                    &.name {
+                        padding:        1px 0.5rem;
+                        vertical-align: top;
+                        font-size:      medium;
+                        font-weight:    normal;
+                        color:          white;
+                        border:         1px solid transparent;
+                        border-radius:  0.5rem;
+                        background:     $panel-accent;
+                    }
+
+                    // @see SearchHelper#title_and_source_logo
+                    &.logo {
+
+                        position:   relative;
+                        max-height: 2rem;
+                        max-width:  100%;
+
+                        @media #{$wide-screen} {
+                            max-height:    2.5rem;
+                            margin-bottom: -1.25rem;
+                        }
+
+                        @media #{$narrow-screen} {
+
+                            margin-top: $flex-gap-y;
+
+                            @media #{$browser-ie} {
+                                margin-top: $ie-flex-gap-y;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -62,26 +133,36 @@
             }
 
             @media #{$medium-width} {
+
                 @include grid(minmax(50%, max-content), 2);
+
+                @media #{$browser-ie} {
+                    @include grid(1fr, 2);
+                }
             }
 
             @media #{$narrow-screen} {
                 @include grid(1fr);
             }
 
+            // noinspection CssReplaceWithShorthandSafely
             > * {
+
                 $border:    1px;
                 $x-padding: 5px;
                 $y-padding: 1px;
+                $x-margin:  -$x-padding - $border;
+                $y-margin:  -$y-padding - $border;
 
-                display:      block;
-                margin:       (-$y-padding - $border) (-$x-padding - $border);
-                margin-right: 1rem;
-                padding:      $y-padding $x-padding;
-                background:   ghostwhite;
-                border:       $border solid gray;
+                display:             block;
+                margin:              $y-margin $x-margin;
+                margin-right:        1rem;
+                padding:             $y-padding $x-padding;
+                background:          ghostwhite;
+                border:              $border solid gray;
                 border-right-color:  black;
                 border-bottom-color: black;
+                border-radius:       2px;
 
                 @media #{$wide-screen} {
                     word-break: keep-all;
@@ -89,25 +170,11 @@
             }
         }
     }
-
-    @media #{$browser-ie} {
-
-        .label,
-        .value {
-            margin-bottom: $row-separation;
-        }
-
-        .value {
-            &.array {
-                @media #{$medium-width} {
-                    @include grid(1fr, 2);
-                }
-            }
-        }
-    }
 }
 
 // Zero or more .search-list-entry elements.
+//
+// noinspection SassScssResolvedByNameOnly
 .search-list {
 
     @extend .item-list;
@@ -117,8 +184,32 @@
     //=========================================================================
 
     .number {
-        margin-top: -0.2rem;
-        font-size:  large;
+
+        margin-top:  calc(#{$page-padding} - 0.2rem);
+        font-size:   large;
+        font-weight: bold;
+
+        @media #{$browser-ie} {
+            margin-top: calc(#{$ie-page-padding} - 0.2rem);
+        }
+
+        @media #{$narrow-screen} {
+
+            margin-top: $page-padding;
+
+            @media #{$browser-ie} {
+                margin-top: $ie-page-padding;
+            }
+        }
+    }
+
+    .search-list-entry {
+
+        margin-top: $page-padding;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-page-padding;
+        }
     }
 }
 

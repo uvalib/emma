@@ -109,8 +109,8 @@ class ApiService
         instance(**opt)
       end
 
-      # Remove the single instance of the class so that a fresh instance will be
-      # generated the next time #instance is accessed.
+      # Remove the single instance of the class so that a fresh instance will
+      # be generated the next time #instance is accessed.
       #
       # @return [nil]
       #

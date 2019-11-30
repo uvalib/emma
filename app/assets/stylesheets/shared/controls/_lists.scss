@@ -32,6 +32,7 @@
     // A heading within the grid that spans all columns.
     .list-heading {
 
+        // noinspection CssBrowserCompatibilityForProperties
         grid-column: 1 / -1;
         margin:      $page-padding-y 0;
 
@@ -66,6 +67,7 @@
 
     @include tabular-list(2);
 
+    // noinspection CssBrowserCompatibilityForProperties
     grid-template-columns: [label] auto [value] 1fr;
 
     // noinspection SassScssResolvedByNameOnly
@@ -79,6 +81,7 @@
 
     @include tabular-list(3);
 
+    // noinspection CssBrowserCompatibilityForProperties
     grid-template-columns:
         [number] minmax(1%, max-content) [label] auto [value] 1fr;
 

@@ -1,0 +1,55 @@
+# config/locales/controllers/artifact.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Artifact pages
+    # =========================================================================
+
+    artifact:
+
+      unit:
+        brief:          'artifact'
+        long:           'artifact'
+      label:            'Artifacts'
+      title:            'Artifacts (Remediated Content)'
+      tooltip:          'List artifacts uploaded for this item.'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Artifacts'
+        title:          'Artifacts Index'
+        tooltip:        'List artifacts.'
+
+      show:
+        label:          'Artifact'
+        title:          'Artifact Metadata'
+        tooltip:        'See details about this artifact.'
+
+      new:
+        label:          'Upload'
+        title:          'Add Artifact'
+        tooltip:        'Upload a new artifact.'
+
+      edit:
+        label:          'Replace'
+        title:          'Modify Artifact'
+        tooltip:        'Make changes to this artifact entry.'
+
+      delete:
+        label:          'Delete'
+        title:          'Delete Artifact'
+        tooltip:        'Delete an artifact.'
+
+      history:
+        title:          'Artifact History'
+        tooltip:        'View modifications for this artifact entry.'
+
+      download:
+        label:          'Download'
+        title:          'Artifact Download'

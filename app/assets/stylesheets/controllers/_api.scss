@@ -108,40 +108,31 @@ body.api-v2 {
             @extend %api-section;
 
             display:     inline-flex;
+            flex-flow:   wrap;
             align-items: baseline;
-
-            @media #{$narrow-screen} {
-                flex-direction: column;
-            }
 
             //=================================================================
             // Sections
             //=================================================================
 
-            .method {
-                display: block;
+            .method,
+            .args,
+            .endpoint {
+                display:     block;
+                word-break:  break-word;
             }
 
             .args {
-                display:        block;
-                margin-left:    0.1rem;
-                font-weight:    normal;
-                letter-spacing: -0.25px;
-                color:          #333;
+                margin-left: 0.1rem;
+                font-weight: normal;
+                font-size:   smaller;
+                color:       #333;
             }
 
-            // noinspection CssInvalidPropertyValue
             .endpoint {
-
-                display:     block;
                 margin-left: auto;
-                word-break:  keep-all;
-                word-wrap:   anywhere; // NOTE: valid but flagged by RubyMine
+                text-align:  end;
                 font-family: monospace;
-
-                @media #{$narrow-screen} {
-                    word-break: break-word;
-                }
             }
         }
 

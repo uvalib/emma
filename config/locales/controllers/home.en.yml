@@ -1,0 +1,39 @@
+# config/locales/controllers/home.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Home page
+    # =========================================================================
+
+    home:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{sign_in}      HTML <a> link to the sign-in path.
+
+      label:            'Home'
+      title:            'EMMA Test Application'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      welcome:
+        label:          'Welcome'
+        title:          'Welcome to EMMA'
+        tooltip:        'Return to the home page.'
+        notice_html:    'You must %{sign_in} to access your account.'
+        text_html:      |
+          <h2>Introductory text</h2>
+          <p>First paragraph.</p>
+          <p>Second paragraph.</p>
+          <p><a href="https://mellon.org/resources/news/articles/grants-university-libraries-develop-accessibility-infrastructure-and-best-practices/">
+            Read more</a> about the project.</p>
+
+      dashboard:
+        label:          'Dashboard'
+        title:          'EMMA Dashboard'
+        tooltip:        'Return to your account dashboard.'

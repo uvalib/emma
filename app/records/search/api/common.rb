@@ -21,6 +21,13 @@ module Search::Api::Common
 
   public
 
+  # Values associated with each source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  REPOSITORY =
+    I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
+
   # Enumeration scalar type names and properties.
   #
   # @type [Hash{Symbol=>Hash}]

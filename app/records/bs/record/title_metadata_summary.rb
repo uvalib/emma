@@ -41,7 +41,7 @@ __loading_begin(__FILE__)
 # @see Bs::Message::TitleMetadataSummary
 #
 # == Implementation Notes
-# Similar to Bs::Record::AssignedTitleMetadataSummary, but without these fields:
+# Similar to Bs::Record::AssignedTitleMetadataSummary, but without fields:
 #   :assignedBy
 #   :dateAdded
 #   :dateDownloaded

@@ -9,12 +9,6 @@ __loading_begin(__FILE__)
 #
 class Search::Error < ::Api::Error
 
-  # Default API error message
-  #
-  # @type [String]
-  #
-  DEFAULT_ERROR = I18n.t('emma.error.search.default').freeze
-
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -30,14 +24,13 @@ class Search::Error < ::Api::Error
   # @return [nil]                     If *allow_nil* is set to *true* and no
   #                                     default message is defined.
   #
-  # @see en.emma.error.api in config/locales/en.yml
+  # @see en.emma.error.search in config/locales/en.yml
+  #
   # This method overrides:
   # @see Api::Error#default_message
   #
   def self.default_message(allow_nil: false)
-    type = self.class.to_s.demodulize.underscore.sub(/_?error$/, '').presence
-    fallback = ((type ? "#{type} error" : DEFAULT_ERROR) unless allow_nil)
-    type && I18n.t("emma.error.search.#{type}", default: nil) || fallback
+    super(allow_nil: allow_nil, source: :search)
   end
 
 end

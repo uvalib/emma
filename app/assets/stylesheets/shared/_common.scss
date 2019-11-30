@@ -234,6 +234,7 @@ select:focus {
     display:        inline-flex;
     flex-direction: row;
 
+    // noinspection SassScssResolvedByNameOnly
     .toggle {
 
         margin-left: $gap-x;

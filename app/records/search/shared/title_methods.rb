@@ -28,38 +28,6 @@ module Search::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section: Search::Shared::LinkMethods overrides
-  # ===========================================================================
-
-  public
-
-  # title_url
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  # This method overrides:
-  # @see Search::Shared::LinkMethods#title_url
-  #
-  def title_url
-    # noinspection RubyYardParamTypeMatch
-    super(self)
-  end
-
-  # download_url
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  # This method overrides:
-  # @see Search::Shared::LinkMethods#download_url
-  #
-  def download_url
-    # noinspection RubyYardParamTypeMatch
-    super(self)
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 

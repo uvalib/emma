@@ -1,0 +1,70 @@
+# config/locales/controllers/search.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # EMMA Federated Search pages
+    # =========================================================================
+
+    search:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'record'
+        long:           'metadata record'
+      label:            'Search'
+      title:            'Federated Search'
+      tooltip:          'Search for metadata records.'
+
+      format:
+        brf:              'BRF'
+        daisy:            'DAISY'
+        daisyAudio:       'DAISY Audio'
+        epub:             'EPUB'
+        braille:          'Braille'
+        pdf:              'PDF'
+        word:             'Microsoft Word'
+        tactile:          'Tactile'
+        kurzweil:         'Kurzweil'
+        rtf:              'RTF'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_bar:
+        label:          'Search'
+        input:
+          enabled:      true
+          field:        'q'
+          label:        'Search terms:'
+          placeholder:  'Enter search terms...'
+
+      search_controls:
+        layout:
+          - [sort,         size,         format]
+          - [repository,   a11y_feature,       ]
+
+      page_controls:
+        label:
+          one:          'Manage this metadata record'
+          many:         'Record Actions'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Records'
+        title:          'Federated Search Index'
+        tooltip:        'Find more metadata records with %{terms}.'
+
+      show:
+        label:          'Record'
+        title:          'Index Record'
+        tooltip:        'See details about this metadata record.'

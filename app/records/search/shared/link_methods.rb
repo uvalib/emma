@@ -11,23 +11,8 @@ require 'sanitize'
 #
 module Search::Shared::LinkMethods
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  BS_ROOT          = 'https://www.bookshare.org'
-  BS_TITLE_PATH    = "#{BS_ROOT}/browse/book"
-  BS_DOWNLOAD_PATH = "#{BS_ROOT}/bookHistory/download/book"
-
-  HT_ROOT          = 'https://catalog.hathitrust.org'
-  HT_TITLE_PATH    = "#{HT_ROOT}/Record"
-  HT_DOWNLOAD_PATH = 'https://babel.hathitrust.org/cgi/imgsrv/download'
-
-  IA_ROOT          = 'https://archive.org'
-  IA_TITLE_PATH    = "#{IA_ROOT}/details"
-  IA_DOWNLOAD_PATH = "#{IA_ROOT}/download"
+  include Search
+  include GenericHelper
 
   # ===========================================================================
   # :section:
@@ -35,66 +20,22 @@ module Search::Shared::LinkMethods
 
   public
 
-  # title_url
+  # URL of the associated work on the web site of the original repository.
   #
   # @param [Search::Api::Record] item
   #
   # @return [String]
   # @return [nil]
   #
-  def title_url(item)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    case item.emma_repository
-      when 'bookshare'       then bookshare_title_url(item)
-      when 'hathiTrust'      then ht_title_url(item)
-      when 'internetArchive' then ia_title_url(item)
-    end
-  end
-
-  # bookshare_title_url
-  #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
-  #
-  # @option opt [String] :id          Title ID.
-  # @option opt [String] :fmt         Download format.
-  #
-  # @return [String]
-  #
-  def bookshare_title_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence || item&.emma_repositoryRecordId
-    "#{BS_TITLE_PATH}/#{id}"
-  end
-
-  # ht_title_url
-  #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
-  #
-  # @option opt [String] :id          Title ID.
-  #
-  # @return [String]
-  #
-  def ht_title_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence || item&.emma_repositoryRecordId
-    "#{HT_TITLE_PATH}/#{id}"
-  end
-
-  # ia_title_url
-  #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
-  #
-  # @option opt [String] :id          Title ID.
-  #
-  # @return [String]
-  #
-  def ia_title_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence || item&.emma_repositoryRecordId
-    "#{IA_TITLE_PATH}/#{id}"
+  def record_title_url(item = nil)
+    item, opt = link_properties(item)
+    src   = item&.emma_repository&.to_sym
+    entry = REPOSITORY[src].presence or raise 'invalid source'
+    path  = entry[:title_path]       or raise 'no title_path'
+    make_path(path, opt[:id]) if opt[:id].present?
+  rescue RuntimeError => e
+    # noinspection RubyScope
+    Log.warn { "#{__method__}: #{src}: #{e.message}" }
   end
 
   # ===========================================================================
@@ -103,111 +44,52 @@ module Search::Shared::LinkMethods
 
   public
 
-  # download_url
+  # Original repository artifact download URL.
   #
   # @param [Search::Api::Record] item
   #
   # @return [String]
   # @return [nil]
   #
-  def download_url(item = nil)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    item.emma_retrievalLink.presence ||
-      case item.emma_repository
-        when 'bookshare'       then bookshare_download_url(item)
-        when 'hathiTrust'      then ht_download_url(item)
-        when 'internetArchive' then ia_download_url(item)
-      end
+  def record_download_url(item = nil)
+    item, opt = link_properties(item)
+    src    = item&.emma_repository&.to_sym
+    link   = item&.emma_retrievalLink
+    return link if link.present?
+    fmt    = opt[:fmt]&.to_sym
+    entry  = REPOSITORY[src].presence      or raise 'invalid source'
+    path   = entry[:download_path]         or raise 'no download_path'
+    url    = entry[:download_url]          or raise 'no download_url'
+    format = entry.dig(:download_fmt, fmt) or raise "#{fmt}: invalid format"
+    url % opt.reverse_merge(download_path: path, fmt: format, tag: '')
+  rescue RuntimeError => e
+    # noinspection RubyScope
+    Log.warn { "#{__method__}: #{src}: #{e.message}" }
   end
 
-  # bookshare_download_url
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # link_properties
   #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
+  # @param [Search::Api::Record, nil] item
+  # @param [Hash]                     opt
   #
   # @option opt [String] :id          Title ID.
   # @option opt [String] :fmt         Download format.
   #
-  # @return [String]
+  # @return [Array<(Search::Api::Record,Hash)>]
+  # @return [Array<(nil,Hash)>]
   #
-  def bookshare_download_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence  || item&.emma_repositoryRecordId
-    fmt  = opt[:fmt].presence || item&.dc_format
-    tag  = opt[:tag].presence || '18034728' # TODO: ???
-    case fmt
-      when 'brf'        then fmt = 'BRF'
-      when 'daisy'      then fmt = 'DAISY'
-      when 'daisyAudio' then fmt = 'DAISY_AUDIO'
-      when 'epub'       then fmt = 'EPUB3'
-      when 'braille'    then fmt = 'BRF?'
-      when 'pdf'        then fmt = 'PDF'
-      when 'word'       then fmt = 'DOCX'
-      when 'tactile'    then fmt = 'BRF?'
-      when 'kurzweil'   then fmt = 'BRF?'
-      when 'rtf'        then fmt = 'TEXT?'
-      when '???'        then fmt = 'HTML' # NOTE: not in schema
-    end
-    "#{BS_DOWNLOAD_PATH}?" \
-      "titleInstanceId=#{id}&downloadFormat=#{fmt}&tag=#{tag}"
-  end
-
-  # ht_download_url
-  #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
-  #
-  # @option opt [String] :id          Title ID.
-  # @option opt [String] :fmt         Download format.
-  #
-  # @return [String]
-  #
-  def ht_download_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence  || item&.emma_repositoryRecordId
-    fmt  = opt[:fmt].presence || item&.dc_format
-    case fmt # TODO: HT download formats
-      when 'brf'        then fmt = 'brf'
-      when 'daisy'      then fmt = 'daisy'
-      when 'daisyAudio' then fmt = 'daisyAudio'
-      when 'epub'       then fmt = 'epub'
-      when 'braille'    then fmt = 'braille'
-      when 'pdf'        then fmt = 'pdf'
-      when 'word'       then fmt = 'word'
-      when 'tactile'    then fmt = 'tactile'
-      when 'kurzweil'   then fmt = 'kurzweil'
-      when 'rtf'        then fmt = 'rtf'
-    end
-    "#{HT_DOWNLOAD_PATH}/#{fmt}?id=#{id}"
-  end
-
-  # ia_download_url
-  #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt
-  #
-  # @option opt [String] :id          Title ID.
-  # @option opt [String] :fmt         Download format.
-  #
-  # @return [String]
-  #
-  def ia_download_url(item, **opt)
-    item = self if item.nil? && self.is_a?(Search::Api::Record)
-    id   = opt[:id].presence  || item&.emma_repositoryRecordId
-    fmt  = opt[:fmt].presence || item&.dc_format
-    case fmt # TODO: IA download formats
-      when 'brf'        then fmt = 'brf'
-      when 'daisy'      then fmt = 'daisy'
-      when 'daisyAudio' then fmt = 'daisyAudio'
-      when 'epub'       then fmt = 'epub'
-      when 'braille'    then fmt = 'braille'
-      when 'pdf'        then fmt = 'pdf'
-      when 'word'       then fmt = 'word'
-      when 'tactile'    then fmt = 'tactile'
-      when 'kurzweil'   then fmt = 'kurzweil'
-      when 'rtf'        then fmt = 'rtf'
-    end
-    "#{IA_DOWNLOAD_PATH}/#{id}/#{id}_#{fmt}.zip"
+  def link_properties(item, **opt)
+    item ||= (self if self.respond_to?(:emma_repositoryRecordId))
+    opt = opt.reject { |_, v| v.blank? }
+    opt[:id]  ||= item.emma_repositoryRecordId if item
+    opt[:fmt] ||= item.dc_format               if item
+    return item, opt
   end
 
 end

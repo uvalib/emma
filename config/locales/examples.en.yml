@@ -10,7 +10,7 @@ en:
 
         generic:
 
-          template:                         &TEMPLATE
+          template:
             emma_recordId:                  '[Record ID] (file)'
             emma_titleId:                   '[Title ID] (work)'
             emma_repository:                '[REPOSITORY] (work)'
@@ -75,95 +75,118 @@ en:
 
         internetArchive:
 
-          001: &IA_001
+          001:
+
             # @see https://archive.org/details/edgarallanpoe00leve
-            emma_repository:          'internetArchive'
-            emma_collection:          'printdisabled'
-            emma_repositoryRecordId:  'edgarallanpoe00leve'
-            emma_lastRemediationDate: '2019-11-01'
-            dc_title:                 'Edgar Allan Poe'
-            dc_creator:               ['LeVert, Suzanne']
-            dc_identifier:
-              - 'isbn:0791016404'
-              - 'oclc:1033592792'
-            dc_publisher:             'New York : Chelsea House'
-            dc_relation:
-              - 'isbn:0791016447'
-            dc_language:              'en'
-            dc_description:           'A biography of the imaginative, tempestuous author and poet, focusing on his struggles to establish himself in the literary world'
-            dc_format:                'daisy'
-            dc_type:                  'text'
-            dc_subject:
-              - 'Poe, Edgar Allan, 1809-1849'
-              - 'Poe, Edgar Allan, 1809-1849'
-              - 'Authors, American'
-              - 'Authors, American'
-            dcterms_dateAccepted:     '2019-11-01'
-            dcterms_dateCopyright:    '1992'
+
+            - &IA_001
+              emma_repository:          'internetArchive'
+              emma_collection:          'printdisabled'
+              emma_repositoryRecordId:  'edgarallanpoe00leve'
+              emma_lastRemediationDate: '2019-11-01'
+              dc_title:                 'Edgar Allan Poe'
+              dc_creator:               ['LeVert, Suzanne']
+              dc_identifier:
+                - 'isbn:0791016404'
+                - 'oclc:1033592792'
+              dc_publisher:             'New York : Chelsea House'
+              dc_relation:
+                - 'isbn:0791016447'
+              dc_language:              'en'
+              dc_description:           'A biography of the imaginative, tempestuous author and poet, focusing on his struggles to establish himself in the literary world'
+              dc_format:                'daisy'
+              dc_type:                  'text'
+              dc_subject:
+                - 'Poe, Edgar Allan, 1809-1849'
+                - 'Poe, Edgar Allan, 1809-1849'
+                - 'Authors, American'
+                - 'Authors, American'
+              dcterms_dateAccepted:     '2019-11-01'
+              dcterms_dateCopyright:    '1992'
 
         hathiTrust:
 
-          001: &HT_001
+          001:
+
             # @see https://catalog.hathitrust.org/Record/009430397
-            # @see https://hdl.handle.net/2027/uva.x000177969
-            emma_repository:          'hathiTrust'
-            emma_repositoryRecordId:  '009430397'
-            emma_lastRemediationDate: '2017-05-23T16:19+00'
-            dc_title:                 'The works of Edgar Allan Poe. v.1.'
-            dc_creator:               ['Poe, Edgar Allan, 1809-1849']
-            dc_identifier:            []
-            dc_publisher:             'New York : Harper, [1900?]'
-            dc_relation:              []
-            dc_language:              'en'
-            dc_rights:                'publicDomain'
-            dc_format:                'pdf'
-            dc_type:                  'text'
-            dcterms_dateAccepted:     '2019-11-01'
-            dcterms_dateCopyright:    '1900'
+
+            - &HT_001
+              # @see https://hdl.handle.net/2027/uva.x000177969
+              emma_repository:          'hathiTrust'
+              emma_repositoryRecordId:  '009430397'
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uva.x000177969;orient=0;size=100'
+              emma_lastRemediationDate: '2017-05-23T16:19+00'
+              dc_title:                 'The works of Edgar Allan Poe. v.1.'
+              dc_creator:               ['Poe, Edgar Allan, 1809-1849']
+              dc_identifier:            []
+              dc_publisher:             'New York : Harper, [1900?]'
+              dc_relation:              []
+              dc_language:              'en'
+              dc_rights:                'publicDomain'
+              dc_format:                'pdf'
+              dc_type:                  'text'
+              dcterms_dateAccepted:     '2019-11-01'
+              dcterms_dateCopyright:    '1900'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uc1.31822032467722;orient=0;size=100'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uc1.31822019557644;orient=0;size=100'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uc1.31822008447518;orient=0;size=100'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uc1.31822007326523;orient=0;size=100'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=uc1.31822026626614;orient=0;size=100'
+
+            - <<: *HT_001
+              emma_retrievalLink:       'https://babel.hathitrust.org/cgi/imgsrv/download/pdf?id=pst.000006204792;orient=0;size=100'
 
         bookshare:
 
-          001: &BS_001
+          001:
+
             # @see https://www.bookshare.org/browse/book/2173
             # @see https://www.bookshare.org/downloadSponsor/book/2173
-            emma_repository:          'bookshare'
-            emma_collection:          'emma'
-            emma_repositoryRecordId:  '2173'
-            emma_lastRemediationDate: '2002-01-08'
-            dc_title:                 'The works of Edgar Allan Poe, Volume 1'
-            dc_creator:               ['Edgar Allan Poe']
-            dc_identifier:            []
-            dc_publisher:             'N/A'
-            dc_relation:              []
-            dc_language:              'en'
-            dc_rights:                'publicDomain'
-            dc_provenance:            'volunteer'
-            dc_format:                'brf'
-            dc_type:                  'text'
-            dc_subject:
-              - 'Horror'
-              - 'Poetry'
-              - 'Literature and Fiction'
-              - 'Mystery and Thrillers'
-            dcterms_dateAccepted:     '2002-01-08'
-            dcterms_dateCopyright:    '2012'
 
-          002:
-            <<:         *BS_001
-            dc_format:  'daisy'
+            - &BS_001
+              emma_repository:          'bookshare'
+              emma_collection:          'emma'
+              emma_repositoryRecordId:  '2173'
+              emma_lastRemediationDate: '2002-01-08'
+              dc_title:                 'The works of Edgar Allan Poe, Volume 1'
+              dc_creator:               ['Edgar Allan Poe']
+              dc_identifier:            []
+              dc_publisher:             'N/A'
+              dc_relation:              []
+              dc_language:              'en'
+              dc_rights:                'publicDomain'
+              dc_provenance:            'volunteer'
+              dc_format:                'brf'
+              dc_type:                  'text'
+              dc_subject:
+                - 'Horror'
+                - 'Poetry'
+                - 'Literature and Fiction'
+                - 'Mystery and Thrillers'
+              dcterms_dateAccepted:     '2002-01-08'
+              dcterms_dateCopyright:    '2012'
 
-          003:
-            <<:         *BS_001
-            dc_format:  'daisyAudio'
+            - <<: *BS_001
+              dc_format:                'daisy'
 
-          004:
-            <<:         *BS_001
-            dc_format:  'epub'
+            - <<: *BS_001
+              dc_format:                'daisyAudio'
 
-          005:
-            <<:         *BS_001
-            dc_format:  'pdf'
+            - <<: *BS_001
+              dc_format:                'epub'
 
-          006:
-            <<:         *BS_001
-            dc_format:  'word'
+            - <<: *BS_001
+              dc_format:                'pdf'
+
+            - <<: *BS_001
+              dc_format:                'word'

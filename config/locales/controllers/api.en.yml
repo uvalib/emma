@@ -1,0 +1,29 @@
+# config/locales/controllers/api.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # API page
+    # =========================================================================
+
+    api:
+
+      label:            'API Methods'
+      title:            'Bookshare API Methods'
+      tooltip:          'Results for API methods run as the current user.'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'API Methods'
+        title:          'Bookshare API Methods'
+        tooltip:        'Results for API methods run as the current user.'
+
+      v2:
+        label:          'API Method'
+        title:          'Bookshare API Method Output'
+        tooltip:        'Result for an API method run as the current user.'

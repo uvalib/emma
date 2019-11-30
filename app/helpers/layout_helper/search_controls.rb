@@ -319,6 +319,7 @@ module LayoutHelper::SearchControls
           entries =
             case menu_name
               when :sort
+                # noinspection RubyCaseWithoutElseBlockInspection
                 case controller
                   when :member       then MemberSortOrder
                   when :periodical   then PeriodicalSortOrder
@@ -327,6 +328,7 @@ module LayoutHelper::SearchControls
                   when :title        then TitleSortOrder
                 end
               when :format
+                # noinspection RubyCaseWithoutElseBlockInspection
                 case controller
                   when :periodical   then 'emma.periodical_format'
                   when :search       then 'emma.search.format'

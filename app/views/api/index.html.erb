@@ -24,9 +24,9 @@
 <div id="trials" class="trials">
   <%- @api_results.each_pair do |method, result| -%>
     <h2 id="__<%= method -%>" class="label">
-      <span class="method"><%= method -%></span>
-      <span class="args"><%= result[:parameters] -%></span>
-      <span class="endpoint"><%= result[:endpoint] -%></span>
+      <div class="method"><%= method -%></div>
+      <div class="args"><%= result[:parameters] -%></div>
+      <div class="endpoint"><%= result[:endpoint] -%></div>
     </h2>
     <div class="value <%= result[:status] -%>">
       <%= api_format_result(result[:error] || result[:value]) -%>

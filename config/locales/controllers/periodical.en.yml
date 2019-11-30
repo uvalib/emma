@@ -1,0 +1,69 @@
+# config/locales/controllers/periodical.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Periodical pages
+    # =========================================================================
+
+    periodical:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'periodical'
+        long:           'periodical'
+      label:            'Periodicals'
+      title:            'Periodicals'
+      tooltip:          'Search for periodicals.'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_bar:
+        input:
+          enabled:      true
+          field:        'title'
+          label:        'Periodical search terms:'
+          placeholder:  'Search periodical titles...'
+
+      search_controls:
+        layout:
+          - [sort,     size,     format]
+          - [language, category        ]
+          - [braille,  narrator        ]
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Periodicals'
+        title:          'Periodicals Index'
+        tooltip:        'Find more periodicals with %{terms}.'
+
+      show:
+        label:          'Periodical'
+        title:          'Periodical'
+        tooltip:        'See details about this periodical.'
+
+      new:
+        title:          'Add Periodical'
+        tooltip:        'Create an entry for a new periodical.'
+
+      edit:
+        title:          'Modify Periodical'
+        tooltip:        'Make changes to this periodical.'
+
+      delete:
+        title:          'Remove Periodical'
+        tooltip:        'Remove this periodical.'
+
+      history:
+        title:          'Periodical History'
+        tooltip:        'View modifications for this periodical.'

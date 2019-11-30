@@ -1,0 +1,61 @@
+# config/locales/controllers/member.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Member pages
+    # =========================================================================
+
+    member:
+
+      unit:
+        brief:          'member'
+        long:           'organizational member'
+      label:            'Members'
+      title:            'Organization Members'
+      tooltip:          'Show organization members.'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_controls:
+        layout:
+          - [sort, size]
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Members'
+        title:          'Members Index'
+        tooltip:        'Show organization members.'
+
+      show:
+        label:          'Member'
+        title:          'Member'
+        tooltip:        'See details about this member.'
+
+      new:
+        title:          'Add Member'
+        tooltip:        'Create an entry for a new organization member.'
+
+      edit:
+        title:          'Modify Member'
+        tooltip:        'Make changes to this organization member.'
+
+      delete:
+        title:          'Remove Member'
+        tooltip:        'Remove this member from the organization.'
+
+      history:
+        title:          'Member History'
+        tooltip:        'View modifications for this organization member.'
+
+      preferences:
+        label:          'Preferences'
+        title:          'Preferences'
+        tooltip:        'View preference settings for this member.'

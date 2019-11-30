@@ -1,0 +1,48 @@
+# config/locales/controllers/category.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Category pages
+    # =========================================================================
+
+    category:
+
+      unit:
+        brief:          'category'
+        long:           'catalog category'
+      label:            'Categories'
+      title:            'Categories'
+      tooltip:          'Search for catalog items by topic.'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_bar:
+        label:          'Catalog Search'
+        input:
+          enabled:      false
+
+      search_controls:
+        layout:
+          - [size]
+
+      pagination:
+        page_size:      20
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Categories'
+        title:          'Category Index'
+        tooltip:        'Get a category listing.'
+
+      show:
+        label:          'Category'
+        title:          'Category'
+        tooltip:        'See items in this category.'

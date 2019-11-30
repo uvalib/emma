@@ -19,6 +19,7 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::PeriodicalEdition
 #
+# noinspection DuplicatedCode
 class Bs::Record::PeriodicalEdition < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods

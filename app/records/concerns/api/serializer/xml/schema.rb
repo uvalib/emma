@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Hash-specific definition overrides for serialization.
+# XML-specific definition overrides for serialization.
 #
 module Api::Serializer::Xml::Schema
 

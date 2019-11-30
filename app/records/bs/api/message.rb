@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # The base class for inbound messages from the Bookshare API.
 #
-# Bs::Api::Message instances must be created with data; if it is nil, :error option
-# will be set and the derived class should modify its initialization
+# Bs::Api::Message instances must be created with data; if it is nil, :error
+# option will be set and the derived class should modify its initialization
 # accordingly.
 #
 class Bs::Api::Message < Bs::Api::Record

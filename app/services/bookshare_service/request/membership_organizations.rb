@@ -10,7 +10,8 @@ __loading_begin(__FILE__)
 # == Usage Notes
 #
 # === From API section 2.11 (Membership Assistant - Organizations):
-# Membership Assistant users are able to view, create and update organization accounts.
+# Membership Assistant users are able to view, create and update organization
+# accounts.
 #
 module BookshareService::Request::MembershipOrganizations
 

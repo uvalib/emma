@@ -9,6 +9,7 @@ require 'bs'
 
 # Methods supporting access and linkages to the Bookshare API.
 #
+# noinspection DuplicatedCode
 module BookshareHelper
 
   def self.included(base)

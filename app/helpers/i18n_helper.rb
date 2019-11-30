@@ -81,8 +81,8 @@ module I18nHelper
     result.map(&:to_sym)
   end
 
-  # Find the best match from config/locales/en.yml for the given partial path,
-  # first looking under "emma.#{controller}", then under "emma.generic".
+  # Find the best match from config/locales for the given partial path, first
+  # looking under "emma.#{controller}", then under "emma.generic".
   #
   # @param [String, Symbol, nil] controller
   # @param [String]              partial_path I18n tree below *controller*.

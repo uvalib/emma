@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 class Search::Message::SearchRecordList < Search::Api::Message
 
   include TimeHelper
-  include Search::Shared::TitleMethods  # TODO: remove - testing
 
   attr_reader :records
 
@@ -67,16 +66,18 @@ class Search::Message::SearchRecordList < Search::Api::Message
   end
 
   # ===========================================================================
-  # :section: TODO: remove - testing
+  # :section: TODO: remove - testing federated search with fake records
   # ===========================================================================
 
   protected
 
-  include HtmlHelper                    # TODO: remove - testing
-  extend  IsbnHelper                    # TODO: remove - testing
+  include Search::Shared::TitleMethods
 
-  EXAMPLE_DATA    = I18n.t('emma.examples.search').deep_freeze        # TODO: remove - testing
-  RECORD_TEMPLATE = EXAMPLE_DATA.dig(:generic, :template).deep_freeze # TODO: remove - testing
+  # @type [Hash]
+  EXAMPLE_DATA = I18n.t('emma.examples.search').deep_freeze
+
+  # @type [Hash]
+  RECORD_TEMPLATE = EXAMPLE_DATA.dig(:generic, :template).deep_freeze
 
   # Generate example records from config/locales/examples.en.yml data.
   #
@@ -87,9 +88,10 @@ class Search::Message::SearchRecordList < Search::Api::Message
   def make_examples(repositories = nil) # TODO: remove - testing
     repositories ||= Repository.values
     repositories = Array.wrap(repositories).map(&:to_sym)
-    EXAMPLE_DATA.flat_map { |section, sample_entries|
-      next unless repositories.include?(section) && sample_entries.present?
-      sample_entries.values.map { |fields| make_example(fields) }
+    EXAMPLE_DATA.flat_map { |section, entries|
+      next unless repositories.include?(section)
+      entries = entries.values.flatten(1) if entries.is_a?(Hash)
+      Array.wrap(entries).map { |fields| make_example(fields) }
     }.compact << make_example # Finish with an entry with all fields displayed.
   end
 

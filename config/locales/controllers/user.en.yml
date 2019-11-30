@@ -1,0 +1,90 @@
+# config/locales/controllers/user.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # Devise controllers
+    # =========================================================================
+
+    user:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{user}         Name of a user.
+      # %{provider}     Name of an authentication provider.
+
+      tooltip:          'Signed in as "%{user}"'
+      password:
+        length:         '%{min} characters minimum'
+
+      sessions:
+
+        new:
+          label:        'Sign in'
+          title:        'Sign in with your Bookshare account'
+          tooltip:      'Authentication is required for full access.'
+          submit:       'Sign in'
+
+        create:
+          success:      'Signed in as %{user}.'
+
+        destroy:
+          label:        'Sign out'
+          tooltip:      'End your session.'
+          success:      'Signed out (%{user}).'
+
+      passwords:
+
+        new:
+          label:        'Forgot your password?'
+          submit:       'Send password reset instructions'
+
+        edit:
+          label:        'Change your password'
+          password:     'New password'
+          confirm:      'Confirm new password'
+          submit:       'Change my password'
+
+      registrations:
+
+        new:
+          label:        'Sign up'
+          submit:       'Sign up'
+
+        edit:
+          label:        'Edit User'
+          awaiting:     'Currently awaiting confirmation for: %{email}'
+          password:     "leave blank if you don't want to change it"
+          current:      'we need your current password to confirm your changes'
+          submit:       'Update'
+
+        destroy:
+          label:        'Cancel my account'
+          link:         'Unhappy? %{button}'
+
+      confirmations:
+
+        new:
+          title:        'Resend confirmation instructions'
+          label:        "Didn't receive confirmation instructions?"
+          submit:       'Resend confirmation instructions'
+
+      unlocks:
+
+        new:
+          title:        'Resend unlock instructions'
+          label:        "Didn't receive unlock instructions?"
+          submit:       'Resend unlock instructions'
+
+      omniauth_callbacks:
+
+        new:
+          label:        'Sign in with %{provider}'
+
+        destroy:
+          label:        'Sign out of %{provider}'
+
+        sign_in_as:
+          label:        'Sign in as %{user}'

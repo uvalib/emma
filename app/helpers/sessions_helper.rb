@@ -84,7 +84,7 @@ module SessionsHelper
 
   protected
 
-  # Get link label from the config/locales/en.yml.
+  # Get link label from the config/locales/controllers/user.en.yml.
   #
   # @param [String, Symbol]      action
   # @param [String, Symbol, nil] provider
