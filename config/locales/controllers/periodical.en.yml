@@ -19,7 +19,7 @@ en:
         long:           'periodical'
       label:            'Periodicals'
       title:            'Periodicals'
-      tooltip:          'Search for periodicals.'
+      tooltip:          'Search for Bookshare periodicals.'
 
       # =======================================================================
       # Controls
@@ -45,25 +45,25 @@ en:
       index:
         label:          'Periodicals'
         title:          'Periodicals Index'
-        tooltip:        'Find more periodicals with %{terms}.'
+        tooltip:        'Find more Bookshare periodicals with %{terms}.'
 
       show:
         label:          'Periodical'
         title:          'Periodical'
-        tooltip:        'See details about this periodical.'
+        tooltip:        'See details about this Bookshare periodical.'
 
       new:
         title:          'Add Periodical'
-        tooltip:        'Create an entry for a new periodical.'
+        tooltip:        'Create an entry for a new Bookshare periodical.'
 
       edit:
         title:          'Modify Periodical'
-        tooltip:        'Make changes to this periodical.'
+        tooltip:        'Make changes to this Bookshare periodical.'
 
       delete:
         title:          'Remove Periodical'
-        tooltip:        'Remove this periodical.'
+        tooltip:        'Remove this Bookshare periodical.'
 
       history:
         title:          'Periodical History'
-        tooltip:        'View modifications for this periodical.'
+        tooltip:        'View modifications for this Bookshare periodical.'

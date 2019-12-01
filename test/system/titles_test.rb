@@ -15,7 +15,7 @@ class TitlesTest < ApplicationSystemTestCase
 
   # There were 952 results for this search as the anonymous user as of
   # 2019-09-02.
-  EXACT_TITLE_SEARCH_TERM = '"cat"'
+  EXACT_TITLE_SEARCH_TERM = quote(TITLE_SEARCH_TERM)
 
   # ===========================================================================
   # :section:

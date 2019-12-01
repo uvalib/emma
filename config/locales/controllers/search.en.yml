@@ -19,7 +19,7 @@ en:
         long:           'metadata record'
       label:            'Search'
       title:            'Federated Search'
-      tooltip:          'Search for metadata records.'
+      tooltip:          'Federated search for metadata records.'
 
       format:
         brf:              'BRF'

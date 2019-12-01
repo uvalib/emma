@@ -78,8 +78,8 @@ module TestHelper::SystemTests::Index
     terms.map { |k, v|
       n = v.is_a?(Enumerable) ? v.size : 1
       k = inflection(k.to_s.capitalize, n)
-      v = %Q("#{strip_quotes(v)}")
-      "#{k}: #{v}"
+      v = strip_quotes(v)
+      "#{k}: #{quote(v)}"
     }.join('; ')
   end
 

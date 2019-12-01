@@ -400,6 +400,32 @@ module GenericHelper
     non_breaking(result, force: true)
   end
 
+  # Add surrounding quotation marks to a term.
+  #
+  # @param [ActiveSupport::SafeBuffer, String, Array] term
+  # @param [String]                                   quote
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  def quote(term, quote: '"')
+    result =
+      if term.is_a?(Array)
+        html_safe = true
+        term.map { |t|
+          quote(t).tap { |s| html_safe &&= s.html_safe? }
+        }.join(', ')
+      else
+        html_safe = term.html_safe?
+        term = term.to_s.strip
+        if %w( ' " ).include?(term[0]) && (term[0] == term[-1])
+          term
+        else
+          "#{quote}#{term}#{quote}"
+        end
+      end
+    html_safe ? result.html_safe : result
+  end
+
   # Remove surrounding quotation marks from a term.
   #
   # @param [ActiveSupport::SafeBuffer, String, Array] term
@@ -415,7 +441,7 @@ module GenericHelper
         }.join(', ')
       else
         html_safe = term.html_safe?
-        term.to_s.sub(/^\s*(["'])(.*)\1\s*$/, '\2')
+        term.to_s.strip.sub(/^(["'])(.*)\1\s*$/, '\2')
       end
     html_safe ? result.html_safe : result
   end

@@ -19,7 +19,7 @@ en:
         long:           'periodical edition'
       label:            'Editions'
       title:            'Periodical Editions'
-      tooltip:          'List editions of this periodical.'
+      tooltip:          'List editions of this Bookshare periodical.'
 
       # =======================================================================
       # Pages
@@ -28,28 +28,28 @@ en:
       index:
         label:          'Editions'
         title:          'Editions'
-        tooltip:        'Find more periodical editions with %{terms}.'
+        tooltip:        'Find more Bookshare periodical editions with %{terms}.'
 
       show:
         label:          'Edition'
         title:          'Periodical Edition'
-        tooltip:        'See details about this periodical edition.'
+        tooltip:        'See details about this Bookshare periodical edition.'
 
       new:
         title:          'Add Periodical Edition'
-        tooltip:        'Create an entry for a new periodical edition.'
+        tooltip:        'Create an entry for a new Bookshare periodical edition.'
 
       edit:
         title:          'Modify Periodical Edition'
-        tooltip:        'Make changes to this periodical edition.'
+        tooltip:        'Make changes to this Bookshare periodical edition.'
 
       delete:
         title:          'Remove Periodical Edition'
-        tooltip:        'Remove this edition from the periodical.'
+        tooltip:        'Remove this edition from the Bookshare periodical.'
 
       history:
         title:          'Periodical Edition History'
-        tooltip:        'View modifications for this periodical edition.'
+        tooltip:        'View modifications for this Bookshare periodical edition.'
 
       download:
         label:          'Download'

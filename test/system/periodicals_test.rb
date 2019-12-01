@@ -15,7 +15,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
 
   # There were 0 results for this search as the anonymous user as of
   # 2019-09-02 (but there should have been 2).
-  PERIODICAL_EXACT_TITLE_SEARCH_TERM = '"west"'
+  PERIODICAL_EXACT_TITLE_SEARCH_TERM = quote('west')
 
   # ===========================================================================
   # :section:

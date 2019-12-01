@@ -119,7 +119,6 @@ module TitleHelper
   # PeriodicalHelper#periodical_category_links
   #
   def category_links(item, **opt)
-    opt = opt.merge(all_words: true)
     title_search_links(item, :categories, **opt)
   end
 

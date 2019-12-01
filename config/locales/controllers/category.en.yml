@@ -15,7 +15,7 @@ en:
         long:           'catalog category'
       label:            'Categories'
       title:            'Categories'
-      tooltip:          'Search for catalog items by topic.'
+      tooltip:          'Search for Bookshare catalog items by topic.'
 
       # =======================================================================
       # Controls
@@ -40,9 +40,9 @@ en:
       index:
         label:          'Categories'
         title:          'Category Index'
-        tooltip:        'Get a category listing.'
+        tooltip:        'Get a Bookshare category listing.'
 
       show:
         label:          'Category'
         title:          'Category'
-        tooltip:        'See items in this category.'
+        tooltip:        'See Bookshare items in this category.'

@@ -119,6 +119,7 @@ module ResourceHelper
   #
   def search_links(item, field = nil, **opt)
 
+    opt, html_opt = partition_options(opt, *SEARCH_LINKS_OPTIONS)
     method = opt[:method]
     field  = (opt[:field] || field || :title).to_s
     case field
@@ -132,10 +133,11 @@ module ResourceHelper
         method ||= field.pluralize.to_sym
         field    = field.to_sym
     end
-    __debug { "#{__method__}: item.#{method} invalid" } unless item.respond_to?(method)
-    return unless item.respond_to?(method)
+    unless item.respond_to?(method)
+      __debug { "#{__method__}: item.#{method} invalid" }
+      return
+    end
 
-    opt, html_opt = partition_options(opt, *SEARCH_LINKS_OPTIONS)
     separator   = opt[:separator]   || DEFAULT_ELEMENT_SEPARATOR
     link_method = opt[:link_method] || :search_link
     check_link  = !opt.key?(:no_link)
@@ -191,7 +193,8 @@ module ResourceHelper
 
     # Generate the link label.
     ftype = field_category(field)
-    label = (ftype == :language) && ISO_639.find(terms)&.english_name || terms
+    lang  = (ftype == :language)
+    label = lang && ISO_639.find(terms)&.english_name || terms
     terms = terms.sub(/\s+\([^)]+\)$/, '') if CREATOR_FIELDS.include?(ftype)
 
     # If this instance should not be rendered as a link, return now.
@@ -201,18 +204,21 @@ module ResourceHelper
     # each word of the phrase separately.
     ctrl   = opt[:scope] || opt[:controller] || request_parameters[:controller]
     phrase = !opt[:all_words]
-    terms  = %Q("#{terms}") if phrase
+    terms  = quote(terms) if phrase
 
     # Create a tooltip unless one was provided.
     unless (html_opt[:title] ||= opt[:tooltip])
       scope = ctrl && "emma.#{ctrl}.index.tooltip"
-      tip_terms = +"#{field} "
-      tip_terms <<
-        if phrase
-          terms
+      words = phrase ? [terms] : terms.split(/\s/).compact
+      words.map! { |word| ISO_639.find(word)&.english_name || word } if lang
+      words.map! { |word| quote(word) }
+      final = words.pop
+      tip_terms =
+        if words.present?
+          words = words.join(', ')
+          field.to_s.pluralize   << ' ' << "containing #{words} or #{final}" # TODO: I18n
         else
-          words = terms.split(/\s/).compact.map { |t| %Q("#{t}") }
-          (words.size > 1) ? ('containing ' + words.join(', ')) : words.first
+          field.to_s.singularize << ' ' << final
         end
       html_opt[:title] = I18n.t(scope, terms: tip_terms, default: '')
     end
@@ -511,7 +517,7 @@ module ResourceHelper
       count = v.is_a?(Array) ? v.size : 1
       field = labelize(k, count)
       value = strip_quotes(v)
-      [field, %Q("#{value}")]
+      [field, quote(value)]
     }.to_h
   end
 

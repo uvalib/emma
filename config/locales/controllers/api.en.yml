@@ -12,7 +12,7 @@ en:
 
       label:            'API Methods'
       title:            'Bookshare API Methods'
-      tooltip:          'Results for API methods run as the current user.'
+      tooltip:          'Bookshare API methods accessed as the current user.'
 
       # =======================================================================
       # Pages
@@ -21,9 +21,9 @@ en:
       index:
         label:          'API Methods'
         title:          'Bookshare API Methods'
-        tooltip:        'Results for API methods run as the current user.'
+        tooltip:        'Bookshare API methods accessed as the current user.'
 
       v2:
         label:          'API Method'
         title:          'Bookshare API Method Output'
-        tooltip:        'Result for an API method run as the current user.'
+        tooltip:        'The response from a Bookshare API method accessed as the current user.'

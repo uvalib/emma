@@ -15,7 +15,7 @@ en:
         long:           'artifact'
       label:            'Artifacts'
       title:            'Artifacts (Remediated Content)'
-      tooltip:          'List artifacts uploaded for this item.'
+      tooltip:          'List Bookshare artifacts uploaded for this item.'
 
       # =======================================================================
       # Pages
@@ -24,22 +24,22 @@ en:
       index:
         label:          'Artifacts'
         title:          'Artifacts Index'
-        tooltip:        'List artifacts.'
+        tooltip:        'List Bookshare artifacts.'
 
       show:
         label:          'Artifact'
         title:          'Artifact Metadata'
-        tooltip:        'See details about this artifact.'
+        tooltip:        'See details about this Bookshare artifact.'
 
       new:
         label:          'Upload'
         title:          'Add Artifact'
-        tooltip:        'Upload a new artifact.'
+        tooltip:        'Upload a new Bookshare artifact.'
 
       edit:
         label:          'Replace'
         title:          'Modify Artifact'
-        tooltip:        'Make changes to this artifact entry.'
+        tooltip:        'Make changes to this Bookshare artifact entry.'
 
       delete:
         label:          'Delete'
@@ -48,7 +48,7 @@ en:
 
       history:
         title:          'Artifact History'
-        tooltip:        'View modifications for this artifact entry.'
+        tooltip:        'View modifications for this Bookshare artifact entry.'
 
       download:
         label:          'Download'

@@ -208,7 +208,7 @@ module ArtifactHelper
   #
   # @return [String]
   #
-  def format_label(fmt, quote = '"')
+  def format_label(fmt, quote: '"')
     fmt ||= THIS_FORMAT
     case fmt
       when /^".*"$/, /^'.*'$/ then fmt

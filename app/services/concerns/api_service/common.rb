@@ -442,7 +442,7 @@ module ApiService::Common
     opt.slice(*specified_keys).map { |k, v|
       k = key_alias[k] || k
       if v.is_a?(Array)
-        v = v.map { |e| %Q("#{e}") } if multi_valued&.include?(k)
+        v = v.map { |e| quote(e) } if multi_valued&.include?(k)
         v = v.join(' ')
       end
       k = encode_parameter(k)

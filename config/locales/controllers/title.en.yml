@@ -19,7 +19,7 @@ en:
         long:           'catalog title'
       label:            'Titles'
       title:            'Catalog Titles'
-      tooltip:          'Search for catalog items.'
+      tooltip:          'Search for Bookshare catalog items.'
 
       # =======================================================================
       # Controls
@@ -52,27 +52,27 @@ en:
       index:
         label:          'Titles'
         title:          'Catalog Titles Index'
-        tooltip:        'Find more catalog items with %{terms}.'
+        tooltip:        'Find more Bookshare catalog items with %{terms}.'
 
       show:
         label:          'Title'
         title:          'Catalog Title'
-        tooltip:        'See details about this catalog title.'
+        tooltip:        'See details about this Bookshare catalog title.'
 
       new:
         label:          'Add'
         title:          'Add Catalog Title'
-        tooltip:        'Create an entry for a new catalog title.'
+        tooltip:        'Create an entry for a new Bookshare catalog title.'
 
       edit:
         title:          'Modify Catalog Title'
-        tooltip:        'Make changes to this catalog title.'
+        tooltip:        'Make changes to this Bookshare catalog title.'
 
       delete:
         title:          'Remove Catalog Title'
-        tooltip:        'Remove this title from the catalog.'
+        tooltip:        'Remove this title from the Bookshare catalog.'
 
       history:
         title:          'Catalog Title History'
-        tooltip:        'View modifications for this catalog title.'
+        tooltip:        'View modifications for this Bookshare catalog title.'
 
