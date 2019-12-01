@@ -21,12 +21,18 @@ module Search::Api::Common
 
   public
 
+  # Source repository configuration section.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  REPOSITORY_RAW = I18n.t('emma.source').deep_freeze
+
   # Values associated with each source repository.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   REPOSITORY =
-    I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
+    REPOSITORY_RAW.reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
 
   # Enumeration scalar type names and properties.
   #

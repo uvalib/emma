@@ -56,12 +56,15 @@ module Search::Shared::LinkMethods
     src    = item&.emma_repository&.to_sym
     link   = item&.emma_retrievalLink
     return link if link.present?
-    fmt    = opt[:fmt]&.to_sym
-    entry  = REPOSITORY[src].presence      or raise 'invalid source'
-    path   = entry[:download_path]         or raise 'no download_path'
-    url    = entry[:download_url]          or raise 'no download_url'
-    format = entry.dig(:download_fmt, fmt) or raise "#{fmt}: invalid format"
-    url % opt.reverse_merge(download_path: path, fmt: format, tag: '')
+    f     = opt[:fmt]&.to_sym
+    entry  = REPOSITORY[src].presence    or raise 'invalid source'
+    path   = entry[:download_path]       or raise 'no download_path'
+    fmt    = entry.dig(:download_fmt, f) or raise "#{f}: invalid format"
+    tag    = '???' # TODO: Bookshare tag
+    url    = entry[:download_url]
+    url    = url[fmt.to_sym] if url.is_a?(Hash)
+    raise 'no download_url' unless url.present?
+    url % opt.reverse_merge(download_path: path, fmt: fmt, tag: tag)
   rescue RuntimeError => e
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{e.message}" }

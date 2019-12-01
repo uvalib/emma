@@ -179,7 +179,7 @@ module SearchHelper
   # @type [Hash{String=>String}]
   #
   REPOSITORY_LOGO =
-    REPOSITORY.transform_values { |entry| entry[:logo] }
+    REPOSITORY_RAW.transform_values { |entry| entry[:logo] }
       .stringify_keys
       .deep_freeze
 
@@ -213,11 +213,12 @@ module SearchHelper
   def title_and_source(item)
     title  = item.full_title
     source = item.emma_repository
-    logo   = (source.titleize if Repository.values.include?(source))
+    source = nil unless Repository.values.include?(source)
+    logo   = source&.titleize || 'LOGO'
     if logo.present?
       t_opt = { class: "title name #{source}" }
       r_opt = { class: "repository name #{source}" }
-      r_opt[:title] = "From #{source.titleize}" # TODO: I18n
+      r_opt[:title] = "From #{logo}" # TODO: I18n
       content_tag(:div, title, t_opt) << content_tag(:div, logo, r_opt)
     else
       ERB::Util.h(title)

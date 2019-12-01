@@ -34,6 +34,18 @@
 
     .label {
         &.field-Title {
+
+            margin: auto 0;
+
+            @media #{$medium-width} {
+
+                margin-top: $gap-y;
+
+                @media #{$browser-ie} {
+                    margin-top: $ie-gap-y;
+                }
+            }
+
             @media #{$narrow-screen} {
                 display: none;
             }
@@ -46,6 +58,7 @@
 
             display:     flex;
             flex-flow:   wrap;
+            margin:      auto 0;
             font-size:   larger;
             font-weight: bold;
             column-gap:  $flex-gap-x;
@@ -66,7 +79,7 @@
             > * {
 
                 display: block;
-                margin:  0;
+                margin:  auto 0;
 
                 &.title {
                     flex: 0.33 1 auto;
@@ -101,12 +114,13 @@
                     &.logo {
 
                         position:   relative;
+                        height:     2rem;
                         max-height: 2rem;
                         max-width:  100%;
 
                         @media #{$wide-screen} {
-                            max-height:    2.5rem;
-                            margin-bottom: -1.25rem;
+                            height:     2.5rem;
+                            max-height: 2.5rem;
                         }
 
                         @media #{$narrow-screen} {
@@ -120,6 +134,17 @@
                     }
                 }
             }
+        }
+
+        // NOTE: Temporary adjustment to make the template record more readable
+        &.field-FormatFeature,
+        &.field-AccessibilityFeature,
+        &.field-AccessibilityControl,
+        &.field-AccessibilityHazard,
+        &.field-AccessMode,
+        &.field-AccessModeSufficient,
+        &.field-AccessibilityAPI {
+            margin-bottom: 1.5rem;
         }
 
         &.array {
@@ -183,32 +208,50 @@
     // Components
     //=========================================================================
 
-    .number {
-
-        margin-top:  calc(#{$page-padding} - 0.2rem);
-        font-size:   large;
-        font-weight: bold;
-
-        @media #{$browser-ie} {
-            margin-top: calc(#{$ie-page-padding} - 0.2rem);
-        }
-
-        @media #{$narrow-screen} {
-
-            margin-top: $page-padding;
-
-            @media #{$browser-ie} {
-                margin-top: $ie-page-padding;
-            }
-        }
-    }
-
+    .number,
     .search-list-entry {
 
         margin-top: $page-padding;
 
+        @media #{$not-wide-screen} {
+            margin-top: calc(2 * #{$page-padding});
+        }
+
         @media #{$browser-ie} {
+
             margin-top: $ie-page-padding;
+
+            @media #{$wide-screen} {
+                margin-top: 2 * $ie-page-padding;
+            }
+        }
+    }
+
+    .number {
+
+        font-size:   large;
+        font-weight: bold;
+
+        > * {
+
+            margin-top: $gap-y;
+
+            @media #{$browser-ie} {
+                margin-top: $ie-gap-y;
+            }
+
+            @media #{$medium-width} {
+
+                margin-top: calc(#{$gap-y} / 2);
+
+                @media #{$browser-ie} {
+                    margin-top: $ie-gap-y / 2;
+                }
+            }
+
+            @media #{$narrow-screen} {
+                margin-top: 0;
+            }
         }
     }
 }

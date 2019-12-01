@@ -602,7 +602,7 @@ module ResourceHelper
       offset = opt[:offset]&.to_i || page_offset
       label  = index ? 'Entry ' : 'Empty results' # TODO: I18n
       value  = index ? "#{offset + index + 1}" : ''
-      content_tag(:span, label, class: 'sr-only') << value
+      content_tag(:div, label, class: 'sr-only') << content_tag(:div, value)
     end
   end
 

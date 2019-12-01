@@ -339,7 +339,10 @@ en:
           tactile:      'tactile'
           kurzweil:     'kurzweil'
           rtf:          'rtf'
-        download_url:   '%{download_path}/%{id}/%{id}_%{fmt}.zip'
+        download_url:
+          daisy:        '%{download_path}/%{id}/%{id}_daisy.zip'
+          epub:         '%{download_path}/%{id}/%{id}.epub'
+          pdf:          '%{download_path}/%{id}/%{id}.pdf'
 
     # =========================================================================
     # HTML page head
