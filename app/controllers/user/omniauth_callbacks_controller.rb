@@ -51,13 +51,13 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     if user.persisted?
       __debug_auth { 'user persisted' }
       last_operation_update
-      #sign_in_and_redirect(user, event: :authentication)
+      # sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)
       set_flash_message(:notice, :success, kind: 'Bookshare')
     else
       __debug_auth { 'USER NOT PERSISTED' }
-      #session['devise.bookshare_data'] = auth_data
-      #redirect_to new_user_registration_url
+      # session['devise.bookshare_data'] = auth_data
+      # redirect_to new_user_registration_url
       failure
     end
   end

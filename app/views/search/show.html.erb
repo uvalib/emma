@@ -4,11 +4,15 @@
   item  ||= @item
   image ||= nil
   title ||= item&.label || t('emma.search.show.title')
+  logo  ||= repository_source_logo(item)
 
   set_page_title(title)
   set_page_description(Search: title)
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+  <%= logo %>
+</div>
 
 <%= render 'search/details', item: item, image: image %>

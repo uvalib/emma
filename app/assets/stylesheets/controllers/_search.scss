@@ -4,6 +4,47 @@
 // @use 'feature/search'; // TODO: SASS 4.0
 
 //=============================================================================
+// Federate Search pages
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+%text-logo {
+    padding:       1px 0.5rem;
+    font-size:     medium;
+    font-weight:   normal;
+    color:         white;
+    border:        1px solid transparent;
+    border-radius: 0.5rem;
+    background:    $panel-accent;
+}
+
+// @see SearchHelper#repository_source_logo
+//
+// noinspection SassScssResolvedByNameOnly
+.repository {
+
+    height:     3rem;
+    max-height: 3rem;
+    max-width:  100%;
+
+    @media #{$wide-screen} {
+        height:     4.5rem;
+        max-height: 4.5rem;
+    }
+
+    &.name {
+
+        display:         flex;
+        flex-direction:  column;
+        justify-content: center;
+
+        div {
+            @extend %text-logo;
+        }
+    }
+}
+
+//=============================================================================
 // Metadata record search index page
 //=============================================================================
 
@@ -16,6 +57,7 @@
 
     $row-separation: 0.75rem;
 
+    // noinspection CssBrowserCompatibilityForProperties
     row-gap: $row-separation;
 
     //=========================================================================
@@ -28,7 +70,7 @@
         margin-bottom: 0;
 
         @media #{$browser-ie} {
-            margin-bottom: $row-separation;
+            margin-bottom: $row-separation; // Simulates row-gap.
         }
     }
 
@@ -54,6 +96,7 @@
 
     .value {
 
+        // noinspection CssBrowserCompatibilityForProperties
         &.field-Title {
 
             display:     flex;
@@ -61,7 +104,7 @@
             margin:      auto 0;
             font-size:   larger;
             font-weight: bold;
-            column-gap:  $flex-gap-x;
+            gap:         $flex-gap-y $flex-gap-x;
 
             @media #{$wide-screen} {
                 max-width:       50%;
@@ -72,66 +115,32 @@
                 grid-column: 1 / -1;
             }
 
+            @media #{$browser-ie} {
+                margin-bottom: $row-separation;
+                column-gap:    $ie-flex-gap-x;
+            }
+
             a:not(:hover) {
                 text-decoration: none;
             }
 
-            > * {
-
-                display: block;
+            // @see SearchHelper#title_and_source
+            .title {
+                flex:    0.33 1 auto;
                 margin:  auto 0;
+            }
 
-                &.title {
-                    flex: 0.33 1 auto;
-                }
+            // @see SearchHelper#title_and_source_logo
+            .repository {
 
-                &.repository {
+                flex:       0 0 auto;
+                margin:     auto 0;
+                height:     2rem;
+                max-height: 2rem;
 
-                    flex: 0 0 auto;
-
-                    @media #{$browser-ie} {
-
-                        margin-left: $ie-flex-gap-x;
-
-                        @media #{$narrow-screen} {
-                            margin-left: 0;
-                        }
-                    }
-
-                    // @see SearchHelper#title_and_source
-                    &.name {
-                        padding:        1px 0.5rem;
-                        vertical-align: top;
-                        font-size:      medium;
-                        font-weight:    normal;
-                        color:          white;
-                        border:         1px solid transparent;
-                        border-radius:  0.5rem;
-                        background:     $panel-accent;
-                    }
-
-                    // @see SearchHelper#title_and_source_logo
-                    &.logo {
-
-                        position:   relative;
-                        height:     2rem;
-                        max-height: 2rem;
-                        max-width:  100%;
-
-                        @media #{$wide-screen} {
-                            height:     2.5rem;
-                            max-height: 2.5rem;
-                        }
-
-                        @media #{$narrow-screen} {
-
-                            margin-top: $flex-gap-y;
-
-                            @media #{$browser-ie} {
-                                margin-top: $ie-flex-gap-y;
-                            }
-                        }
-                    }
+                @media #{$wide-screen} {
+                    height:     2.5rem;
+                    max-height: 2.5rem;
                 }
             }
         }
@@ -191,6 +200,7 @@
 
                 @media #{$wide-screen} {
                     word-break: keep-all;
+                    word-wrap:  break-word;
                 }
             }
         }
@@ -210,18 +220,11 @@
 
     .number,
     .search-list-entry {
-
-        margin-top: $page-padding;
-
         @media #{$not-wide-screen} {
+
             margin-top: calc(2 * #{$page-padding});
-        }
 
-        @media #{$browser-ie} {
-
-            margin-top: $ie-page-padding;
-
-            @media #{$wide-screen} {
+            @media #{$browser-ie} {
                 margin-top: 2 * $ie-page-padding;
             }
         }
@@ -237,7 +240,7 @@
             margin-top: $gap-y;
 
             @media #{$browser-ie} {
-                margin-top: $ie-gap-y;
+                margin-top: -($ie-gap-y / 4);
             }
 
             @media #{$medium-width} {
@@ -257,18 +260,15 @@
 }
 
 //=============================================================================
-// Periodical show page
+// Metadata record show page
 //=============================================================================
 
-// Periodical metadata values.
+// Metadata record values.
 .search-details {
     @extend .item-details;
 }
 
-// Container for a .search-details and .edition-list in a two-column format
-// for wide screens.
-//
-// noinspection SassScssResolvedByNameOnly
+// Container for a .search-details.
 .search-container {
 
     @extend .item-container;

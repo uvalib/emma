@@ -47,8 +47,8 @@ en:
 
       search_controls:
         layout:
-          - [sort,         size,         format]
-          - [repository,   a11y_feature,       ]
+          - [sort,         size,         format      ]
+          - [repository,   language,     a11y_feature]
 
       page_controls:
         label:

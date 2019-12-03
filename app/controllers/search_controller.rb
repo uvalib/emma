@@ -25,7 +25,7 @@ class SearchController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  #before_action :update_user
+  # before_action :update_user
 
   # ===========================================================================
   # :section: Authorization
@@ -51,11 +51,27 @@ class SearchController < ApplicationController
   def index
     __debug { "SEARCH #{__method__} | params = #{params.inspect}" }
     opt = pagination_setup
-    opt[:q] ||= '*' # A "null search" by default.
-    @list = api.get_records(**opt)
-    self.page_items  = @list.records
-    #self.total_items = @list.totalResults
-    #self.next_page   = next_page_path(@list, opt)
+    if true # TODO: remove - testing
+      development_notice(
+        'This page currently shows simulated results of a federated search ' \
+          'for "<strong>The Works of Edgar Allan Poe</strong>".',
+        '(This is actually only a partial list using hand-crafted, embedded ' \
+          'data; the actual search result would include several hundred ' \
+          'more entries for this title).',
+        '<a href="/search/example" style="font-weight:bold">Click here</a> ' \
+          'to see a single template record which shows all of the fields ' \
+          'currently defined by the API.'
+      )
+      @list = api.get_example_records(**opt)
+      self.page_items  = @list.records
+      self.total_items = @list.records.size
+    else # TODO: restore
+      opt[:q] ||= '*' # A "null search" by default.
+      @list = api.get_records(**opt)
+      self.page_items  = @list.records
+    # self.total_items = @list.totalResults       # TODO: Federated Search API
+    # self.next_page = next_page_path(@list, opt) # TODO: Federated Search API
+    end
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -68,7 +84,17 @@ class SearchController < ApplicationController
   #
   def show
     __debug { "SEARCH #{__method__} | params = #{params.inspect}" }
-    @item = api.get_record(titleId: @title_id)
+    if @title_id == 'example' # TODO: remove - testing
+      development_notice(
+        'This page displays all of the possible fields defined for each' \
+          'federated search results record.',
+        'Click on "Search" above to see a simulated example of federated ' \
+          ' search results.'
+      )
+      @item = api.get_example_records(example: :template).records.first
+    else # TODO: restore
+      @item = api.get_record(titleId: @title_id)
+    end
     respond_to do |format|
       format.html
       format.json { render_json show_values }
@@ -107,6 +133,24 @@ class SearchController < ApplicationController
   #
   def show_values(item = @item, as: nil)
     { records: item }
+  end
+
+  # ===========================================================================
+  # :section: TODO: remove - testing
+  # ===========================================================================
+
+  protected
+
+  # Display a flash message during development.
+  #
+  # @param [Array] lines
+  #
+  # @return [void]
+  #
+  def development_notice(*lines) # TODO: remove - testing
+    lead  = '<strong>The Federated Search API is not yet implemented.</strong>'
+    lines = lines.unshift(lead).flatten.compact.join("<br/>" * 2).html_safe
+    flash.now[:notice] = %Q(<span class="box">#{lines}</span>).html_safe
   end
 
 end

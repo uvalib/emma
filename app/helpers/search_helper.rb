@@ -20,11 +20,8 @@ module SearchHelper
   # are defined in this module.
   include BookshareHelper
 
-  # NOTE: From TitleHelper:
   include PaginationHelper
   include ResourceHelper
-  #include ArtifactHelper
-  #include ImageHelper
 
   include Search::Shared::LinkMethods
 
@@ -174,12 +171,18 @@ module SearchHelper
     end
   end
 
+  # Generic source repository values.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  REPOSITORY_TEMPLATE = I18n.t('emma.source._template').deep_freeze
+
   # Repository logo image assets.
   #
   # @type [Hash{String=>String}]
   #
   REPOSITORY_LOGO =
-    REPOSITORY_RAW.transform_values { |entry| entry[:logo] }
+    REPOSITORY.transform_values { |entry| entry[:logo] }
       .stringify_keys
       .deep_freeze
 
@@ -193,12 +196,11 @@ module SearchHelper
   def title_and_source_logo(item)
     title  = item.full_title
     source = item.emma_repository
-    logo   = REPOSITORY_LOGO[source]
+    source = nil unless Repository.values.include?(source)
+    logo   = REPOSITORY_LOGO[source] || REPOSITORY_TEMPLATE[:logo]
     if logo.present?
-      t_opt = { class: "title logo #{source}" }
-      r_opt = { class: "repository logo #{source}" }
-      r_opt[:title] = "From #{source.titleize}" # TODO: I18n
-      content_tag(:div, title, t_opt) << image_tag(asset_path(logo), r_opt)
+      content_tag(:div, title, class: "title #{source}".strip) <<
+        repository_source_logo(item, logo: logo)
     else
       title_and_source(item)
     end
@@ -214,14 +216,63 @@ module SearchHelper
     title  = item.full_title
     source = item.emma_repository
     source = nil unless Repository.values.include?(source)
-    logo   = source&.titleize || 'LOGO'
-    if logo.present?
-      t_opt = { class: "title name #{source}" }
-      r_opt = { class: "repository name #{source}" }
-      r_opt[:title] = "From #{logo}" # TODO: I18n
-      content_tag(:div, title, t_opt) << content_tag(:div, logo, r_opt)
+    name   = source&.titleize || 'LOGO'
+    if name.present?
+      content_tag(:div, title, class: "title #{source}".strip) <<
+        repository_source(item, name: name)
     else
       ERB::Util.h(title)
+    end
+  end
+
+  # Make a logo for a repository source.
+  #
+  # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #content_tag except for:
+  #
+  # @option opt [String] :source
+  # @option opt [String] :logo          Logo asset name.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def repository_source_logo(item, **opt)
+    opt, html_opt = partition_options(opt, :source, :logo)
+    source = opt[:source] || item.emma_repository
+    source = nil unless Repository.values.include?(source)
+    logo   = opt[:logo] || REPOSITORY_LOGO[source]
+    if logo.present?
+      name = source&.titleize
+      html_opt[:title] ||= "From #{name}" if name.present? # TODO: I18n
+      prepend_css_classes!(html_opt, 'repository', 'logo', source)
+      # noinspection RubyYardReturnMatch
+      image_tag(asset_path(logo), html_opt)
+    else
+      html_opt.merge!(source: source) if opt[:source]
+      repository_source(item, **html_opt)
+    end
+  end
+
+  # Make a textual logo for a repository source.
+  #
+  # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #content_tag except for:
+  #
+  # @option opt [String] :source
+  # @option opt [String] :name          To be displayed instead of the source.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def repository_source(item, **opt)
+    opt, html_opt = partition_options(opt, :source, :name)
+    source = opt[:source] || item.emma_repository
+    source = nil unless Repository.values.include?(source)
+    name   = opt[:name] || source&.titleize || 'LOGO'
+    if name.present?
+      html_opt[:title] ||= "From #{name}" # TODO: I18n
+      prepend_css_classes!(html_opt, 'repository', 'name', source)
+      content_tag(:div, content_tag(:div, name), html_opt)
+    else
+      ''.html_safe
     end
   end
 
@@ -282,7 +333,6 @@ module SearchHelper
   # @see TitleHelper#TITLE_SHOW_FIELDS
   #
   SEARCH_SHOW_FIELDS = {
-    Title:                :dc_title,
     Creator:              :dc_creator,
     Language:             :dc_language,
     Type:                 :dc_type,
@@ -336,7 +386,7 @@ module SearchHelper
   #
   # @type [Hash{Symbol=>Symbol}]
   #
-  SEARCH_INDEX_FIELDS = SEARCH_SHOW_FIELDS
+  SEARCH_INDEX_FIELDS = { Title: :dc_title }.merge(SEARCH_SHOW_FIELDS).freeze
 
   # Render a single entry for use within a list of items.
   #

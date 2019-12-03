@@ -517,6 +517,7 @@ module ResourceHelper
       count = v.is_a?(Array) ? v.size : 1
       field = labelize(k, count)
       value = strip_quotes(v)
+      value = ISO_639.find(value)&.english_name || value if k == :language
       [field, quote(value)]
     }.to_h
   end

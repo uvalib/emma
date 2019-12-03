@@ -20,7 +20,7 @@ module SearchService::Request::Records
 
   # == GET /records
   #
-  # @param [Hash] opt                 Passed to #search.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                            :q
   # @option opt [SearchFormat, Array<SearchFormat>] :fmt
@@ -38,7 +38,6 @@ module SearchService::Request::Records
   #
   def get_records(**opt)
     opt = get_parameters(__method__, **opt)
-    opt[:no_raise] = true # TODO: testing - remove
     api(:get, 'records', **opt)
     Search::Message::SearchRecordList.new(response, error: exception)
   end
@@ -70,7 +69,7 @@ module SearchService::Request::Records
   # == GET /record/:title_id
   #
   # @param [String] titleId           Query.
-  # @param [Hash]   opt               Passed to #search.
+  # @param [Hash]   opt               Passed to #api.
   #
   # @return [Search::Message::SearchRecord]
   #
@@ -90,6 +89,23 @@ module SearchService::Request::Records
         }
       }
     end
+
+  # ===========================================================================
+  # :section: TODO: remove - testing
+  # ===========================================================================
+
+  public
+
+  # Return fake records.
+  #
+  # @param [Hash] opt                 Passed to SearchRecordList#initialize.
+  #
+  # @return [Search::Message::SearchRecordList]
+  #
+  def get_example_records(**opt) # TODO: remove - testing
+    opt = opt.reverse_merge(example: :search)
+    Search::Message::SearchRecordList.new(nil, **opt)
+  end
 
 end
 

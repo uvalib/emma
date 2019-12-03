@@ -115,7 +115,7 @@ module Api::Record::Associations
     # @see #add_property_default
     #
     def add_property(name, default = nil)
-      self.add_property_default(name, default)
+      add_property_default(name, default)
       attr_accessor(name)
     end
 

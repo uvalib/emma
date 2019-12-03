@@ -144,7 +144,7 @@ en:
               emma_retrievalLink:       'https://archive.org/download/in.ernet.dli.2015.501054/2015.501054.theworksofedgarallanpoe_daisy.zip'
               emma_lastRemediationDate: '2015-09-26T02:04:41Z'
               dc_title:                 'The Works of Edgar Allan Poe'
-              # dc_language:            'xx' # NOTE: no ISO-639-2 for "unknown"
+              dc_language:              'und' # undetermined
               dc_format:                'daisy'
               dc_type:                  'text'
               dcterms_dateAccepted:     '2015-09-26'
@@ -169,7 +169,7 @@ en:
               dc_title:                 'The Works of Edgar Allan Poe; v 1'
               dc_creator:
                 - 'Poe, Edgar Allan, 1809-1849'
-              dc_language:              'en'
+              dc_language:              'eng'
               dc_format:                'daisy'
               dc_type:                  'text'
               dcterms_dateAccepted:     '2008-03-07'
@@ -281,7 +281,7 @@ en:
                 - 'Poe, Edgar Allan, 1809-1849'
                 - 'Lowell, James Russell, 1819-1891 [Contributor]'
                 - 'Willis, Nathaniel Parker, 1806-1867 [Contributor]'
-              dc_language:              'en'
+              dc_language:              'eng'
               dc_rights:                'publicDomain'
               dc_description:           'Edgar Allan Poe, An Appreciation -- Life of Poe, by James Russell Lowell -- Death of Poe, by N. P. Willis -- The Unparalleled Adventures of One Hans Pfall -- The Gold Bug -- Four Beasts in One -- The Murders in the Rue Morgue -- The Mystery of Marie Rogêt -- The Balloon Hoax -- MS. Found in a Bottle -- The Oval Portrait'
               dc_format:                'epub'
@@ -378,7 +378,7 @@ en:
 #             dc_publisher:             'New York : Chelsea House'
 #             dc_relation:
 #               - 'isbn:0791016447'
-#             dc_language:              'en'
+#             dc_language:              'eng'
 #             dc_description:           'A biography of the imaginative, tempestuous author and poet, focusing on his struggles to establish himself in the literary world'
 #             dc_format:                'daisy'
 #             dc_type:                  'text'
@@ -415,7 +415,7 @@ en:
               dc_identifier:            []
               dc_publisher:             'New York : Harper, [1900?]'
               dc_relation:              []
-              dc_language:              'en'
+              dc_language:              'eng'
               dc_rights:                'publicDomain'
               dc_format:                'pdf'
               dc_type:                  'text'
@@ -487,7 +487,7 @@ en:
               dc_identifier:            []
               dc_publisher:             'N/A'
               dc_relation:              []
-              dc_language:              'en'
+              dc_language:              'eng'
               dc_rights:                'publicDomain'
               dc_provenance:            'volunteer'
               dc_format:                'brf'

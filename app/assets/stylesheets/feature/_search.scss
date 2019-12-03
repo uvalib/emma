@@ -284,12 +284,10 @@ $results-entry-margin-y: 0.67rem;
         &.field-None {
 
             width:         max-content;
-            margin-top:    $results-entry-gap-y;
             margin-bottom: $results-entry-gap-y;
 
             // noinspection SassScssResolvedByNameOnly
             @media #{$browser-ie} {
-                margin-top:    $ie-results-entry-gap-y;
                 margin-bottom: $ie-results-entry-gap-y;
             }
         }

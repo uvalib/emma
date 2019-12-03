@@ -11,7 +11,7 @@
   row    ||= 1
   skip   ||= nil
 
-  #skip = Array.wrap(skip)
+  # skip = Array.wrap(skip)
   skip = Array.wrap(skip) << :thumbnail
   add  = add.merge(index: index, row: row)
   opt  = { index: index, offset: offset, level: level, row: row, skip: skip }

@@ -8,9 +8,7 @@
 
   terms = search_terms
   applied_terms, top_controls, bottom_controls =
-    if list.present?
-      index_controls(terms, count: count, row: row)
-    end
+    index_controls(terms, count: count, row: row)
   row += [applied_terms, top_controls].compact.size
 
   set_page_title(t('emma.category.index.label', default: title))
@@ -28,5 +26,5 @@
   <%= applied_terms %>
   <%= top_controls %>
   <%= render 'category/list', template_opt %>
-  <%= bottom_controls %>
+  <%= bottom_controls if list.present? %>
 </div>
