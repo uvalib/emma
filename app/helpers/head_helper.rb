@@ -15,11 +15,7 @@ module HeadHelper
   #
   def self.included(base)
     __included(base, '[HeadHelper]')
-    if in_debugger?
-      include_submodules(base, __FILE__)
-    else
-      include_submodules(base)
-    end
+    include_submodules(base)
   end
 
 end

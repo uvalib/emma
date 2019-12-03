@@ -21,11 +21,7 @@ module Emma
   class Application < Rails::Application
 
     # Initialize configuration defaults.
-    if in_debugger?
-      config.load_defaults 5.2
-    else
-      config.load_defaults 6.0
-    end
+    config.load_defaults 6.0
 
     # This is not compatible with the current directory layout:
     # config.add_autoload_paths_to_load_path = false

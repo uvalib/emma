@@ -18,14 +18,8 @@ class SearchService < ApiService
 
   include Search
 
-  # Include send and receive modules from "app/services/search_service/*.rb".
-  #
-  # noinspection RubyYardParamTypeMatch
-  if in_debugger?
-    include_submodules(self, __FILE__)
-  else
-    include_submodules(self)
-  end
+  # Include send/receive modules from "app/services/search_service/**.rb".
+  include_submodules(self)
 
   # ===========================================================================
   # :section:

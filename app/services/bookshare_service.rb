@@ -18,14 +18,8 @@ class BookshareService < ApiService
 
   include Bs
 
-  # Include send/receive modules from "app/services/bookshare_service/*.rb".
-  #
-  # noinspection RubyYardParamTypeMatch
-  if in_debugger?
-    include_submodules(self, __FILE__)
-  else
-    include_submodules(self)
-  end
+  # Include send/receive modules from "app/services/bookshare_service/**.rb".
+  include_submodules(self)
 
   # ===========================================================================
   # :section:

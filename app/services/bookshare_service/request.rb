@@ -8,12 +8,7 @@ __loading_begin(__FILE__)
 # Definition of the API requests and parameters.
 #
 module BookshareService::Request
-  # noinspection RubyYardParamTypeMatch
-  if in_debugger?
-    include_submodules(self, __FILE__)
-  else
-    include_submodules(self)
-  end
+  include_submodules(self)
 end
 
 __loading_end(__FILE__)

@@ -39,9 +39,7 @@ end
 # Indicate whether this instance is being run from the interactive debugger.
 #
 # == Usage Notes
-# For interactive debugging RubyMine uses 'ruby-debug-ide', which is not
-# currently compatible with the Zeitwerk loader.  For that reason, there are a
-# few places in the code which require special handling based on this value.
+# For interactive debugging RubyMine uses 'ruby-debug-ide'.
 #
 def in_debugger?
   !!ENV['DEBUGGER_STORED_RUBYLIB']

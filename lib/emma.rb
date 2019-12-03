@@ -72,11 +72,11 @@ end
 
 # Include submodules.
 #
-# @param [Module]      base         The class or module into which the
-#                                     submodules will be included.
-# @param [String, nil] filename     If provided, first #require each file
-#                                     from the subdirectory with the same
-#                                     base name as *filename*.
+# @param [Class, Module] base         The class or module into which the
+#                                       submodules will be included.
+# @param [String, nil]   filename     If provided, first #require each file
+#                                       from the subdirectory with the same
+#                                       base name as *filename*.
 #
 # @yield [name, mod] Access the module before including in *base*.
 #   Use 'next' within the block to skip inclusion of that module.
