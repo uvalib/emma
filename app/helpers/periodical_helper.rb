@@ -45,64 +45,66 @@ module PeriodicalHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Bs::Api::Record]     item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def periodical_link(item, label = nil, **opt)
-    path = periodical_path(id: item.identifier)
-    opt  = opt.merge(tooltip: PERIODICAL_SHOW_TOOLTIP)
-    item_link(item, label, path, **opt)
+  def periodical_link(item, **opt)
+    opt[:path]    = periodical_path(id: item.identifier)
+    opt[:tooltip] = PERIODICAL_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # Item categories as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #periodical_search_links
+  # @param [Hash]            opt        Passed to #periodical_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # TitleHelper#category_links
   #
   def periodical_category_links(item, **opt)
-    opt = opt.merge(all_words: true)
-    periodical_search_links(item, :categories, **opt)
+    opt[:field]     = :categories
+    opt[:all_words] = true
+    periodical_search_links(item, **opt)
   end
 
   # Item formats as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #periodical_search_links
+  # @param [Hash]            opt        Passed to #periodical_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # TitleHelper#format_links
   #
   def periodical_format_links(item, **opt)
-    opt = opt.merge(all_words: true)
-    periodical_search_links(item, :fmt, **opt)
+    opt[:field]     = :fmt
+    opt[:all_words] = true
+    periodical_search_links(item, **opt)
   end
 
   # Item languages as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #periodical_search_links
+  # @param [Hash]            opt        Passed to #periodical_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # TitleHelper#language_links
   #
   def periodical_language_links(item, **opt)
-    opt = opt.merge(all_words: true)
-    periodical_search_links(item, :language, **opt)
+    opt[:field]     = :language
+    opt[:all_words] = true
+    periodical_search_links(item, **opt)
   end
 
   # Item countries as search links.
@@ -112,65 +114,64 @@ module PeriodicalHelper
   # country codes result in the same results.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #periodical_search_links
+  # @param [Hash]            opt        Passed to #periodical_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # TitleHelper#country_links
   #
   def periodical_country_links(item, **opt)
-    opt = opt.merge(all_words: true, no_link: true)
-    periodical_search_links(item, :country, **opt)
+    opt[:field]     = :country
+    opt[:all_words] = true
+    opt[:no_link]   = true
+    periodical_search_links(item, **opt)
   end
 
   # Item terms as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Symbol, nil]     field    Default: :title
-  # @param [Hash]            opt      Passed to #search_links
+  # @param [Hash]            opt        Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
-  def periodical_search_links(item, field = nil, **opt)
-    field ||= opt[:field] || :title
-    opt = opt.merge(link_method: :periodical_search_link)
-    search_links(item, field, **opt)
+  def periodical_search_links(item, **opt)
+    opt[:link_method] = :periodical_search_link
+    opt[:field]     ||= :title
+    search_links(item, **opt)
   end
 
   # Create a link to the search results index page for the given term(s).
   #
-  # @param [String]      terms
-  # @param [Symbol, nil] field        Default: :title
-  # @param [Hash]        opt          Passed to #search_link.
+  # @param [String] terms
+  # @param [Hash]   opt                 Passed to #search_link.
   #
   # @option opt [Symbol]  :field
   # @option opt [Boolean] :all_words
   # @option opt [Boolean] :no_link
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If no *terms* were provided.
   #
-  def periodical_search_link(terms, field = nil, **opt)
-    field ||= opt[:field] || :title
-    opt = opt.merge(scope: :periodical)
-    search_link(terms, field, **opt)
+  def periodical_search_link(terms, **opt)
+    opt[:scope]   = :periodical
+    opt[:field] ||= :title
+    search_link(terms, **opt)
   end
 
   # Create a link to latest periodical edition.
   #
-  # @param [Bs::Api::Record]     item
-  # @param [Symbol, String, nil] label  Default: `latestEdition.identifier`.
-  # @param [Hash]                opt    Passed to #edition_link.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #edition_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def latest_edition_link(item, label = nil, **opt)
-    eid = item.latestEdition.identifier
-    label ||= eid
-    edition_link(item, label, **opt.merge(edition: eid))
+  def latest_edition_link(item, **opt)
+    opt[:edition] = item.latestEdition.identifier
+    opt[:label] ||= opt[:edition]
+    edition_link(item, **opt)
   end
 
   # ===========================================================================

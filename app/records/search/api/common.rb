@@ -34,8 +34,9 @@ module Search::Api::Common
   #
   ENUMERATIONS = {
 
-    Repository: {
+    EmmaRepository: {
       values: %w(
+        emma
         bookshare
         hathiTrust
         internetArchive
@@ -72,7 +73,7 @@ module Search::Api::Common
       )
     },
 
-    SearchFormat: {
+    DublinCoreFormat: {
       values: %w(
         brf
         daisy
@@ -243,18 +244,18 @@ end
 # they can be referenced without prepending a namespace.
 # =============================================================================
 
-class Repository      < EnumType; end
-class FormatFeature   < EnumType; end
-class Rights          < EnumType; end
-class Provenance      < EnumType; end
-class SearchFormat    < EnumType; end
-class DcmiType        < EnumType; end
-class A11yFeature     < EnumType; end
-class A11yControl     < EnumType; end
-class A11yHazard      < EnumType; end
-class A11yAPI         < EnumType; end
-class A11yAccessMode  < EnumType; end
-class A11ySufficient  < EnumType; end
-class SearchSort      < EnumType; end
+class EmmaRepository   < EnumType; end
+class FormatFeature    < EnumType; end
+class Rights           < EnumType; end
+class Provenance       < EnumType; end
+class DublinCoreFormat < EnumType; end
+class DcmiType         < EnumType; end
+class A11yFeature      < EnumType; end
+class A11yControl      < EnumType; end
+class A11yHazard       < EnumType; end
+class A11yAPI          < EnumType; end
+class A11yAccessMode   < EnumType; end
+class A11ySufficient   < EnumType; end
+class SearchSort       < EnumType; end
 
 __loading_end(__FILE__)

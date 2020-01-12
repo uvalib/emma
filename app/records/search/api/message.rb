@@ -26,7 +26,7 @@ class Search::Api::Message < Search::Api::Record
   def initialize(data, **opt)
     __debug { "### #{self.class}.#{__method__}" }
     initialize_attributes
-    super
+    super(data, **opt)
   end
 
 end

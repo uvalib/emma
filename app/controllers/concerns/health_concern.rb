@@ -181,7 +181,7 @@ module HealthConcern
   #
   # @param [Array<String|Symbol>] subsystem   Default: `HEALTH_CHECK.keys`
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>HealthStatus}]
   #
   # @see #HEALTH_CHECK
   #

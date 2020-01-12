@@ -35,7 +35,7 @@ module TestHelper::SystemTests::Index
   # @return [void]
   #
   def assert_valid_index_page(
-    model  = nil,
+    model,
     title:   nil,
     heading: nil,
     index:   nil,

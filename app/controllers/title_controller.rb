@@ -50,7 +50,7 @@ class TitleController < ApplicationController
   # List all catalog titles.
   #
   def index
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
     opt = request_parameters
     if contains_isbn?(opt[:keyword])
       # The search looks like an ISBN so interpret this as an ISBN search.
@@ -88,7 +88,7 @@ class TitleController < ApplicationController
   # Display details of an existing catalog title.
   #
   def show
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
     @item = api.get_title(bookshareId: @bookshare_id)
     respond_to do |format|
       format.html
@@ -101,21 +101,21 @@ class TitleController < ApplicationController
   # Add metadata for a new catalog title.
   #
   def new
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # == POST /title/:id
   # Create an entry for a new catalog title.
   #
   def create
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # == GET /title/:id/edit
   # Modify metadata of an existing catalog title entry.
   #
   def edit
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # == PUT   /title/:id
@@ -123,21 +123,21 @@ class TitleController < ApplicationController
   # Update the entry for an existing catalog title.
   #
   def update
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # == DELETE /title/:id
   # Remove an existing catalog title entry.
   #
   def destroy
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # == GET /title/:id/history
   # Show processing history for this catalog title.
   #
   def history
-    __debug { "TITLE #{__method__} | params = #{params.inspect}" }
+    __debug_route('TITLE')
   end
 
   # ===========================================================================
@@ -150,7 +150,7 @@ class TitleController < ApplicationController
   #
   # @param [Bs::Message::TitleMetadataSummaryList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Bs::Message::TitleMetadataSummaryList,Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -161,15 +161,14 @@ class TitleController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Message::TitleMetadataDetail, nil] item
-  # @param [Symbol]                                as     Unused.
+  # @param [Bs::Message::TitleMetadataDetail, Hash] item
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Bs::Message::TitleMetadataDetail,Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, as: nil)
+  def show_values(item = @item)
     { catalog_title: item }
   end
 

@@ -31,7 +31,7 @@ module Search::Api::Schema
   # A table of schema property enumeration types mapped to literals which are
   # their default values.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
     @enumeration_defaults ||=

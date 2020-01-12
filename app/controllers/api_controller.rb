@@ -46,6 +46,7 @@ class ApiController < ApplicationController
   # The main API test page.
   #
   def index
+    __debug_route('API')
     @api_results = ApiTesting.run_trials(user: current_user)
     respond_to do |format|
       format.html
@@ -65,15 +66,13 @@ class ApiController < ApplicationController
   # NOTE: Intended to translate URLs within data directly into actionable links
   #
   def v2
-    __debug { "API #{__method__} | params = #{params.inspect}" }
+    __debug_route('API')
     opt  = url_parameters
     path = opt.delete(:api_path)
     if (user = opt.delete(:user)).present?
-      user = user.downcase
-      user = "#{user}@bookshare.org" unless user.include?('@')
       path = request.fullpath.sub(/\?.*/, '')
       path << '?' << opt.to_param if opt.present?
-      redirect_to sign_in_as_path(id: user, redirect: path)
+      redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
       # noinspection RubyYardParamTypeMatch
       @api_result = api_explorer(request.method, path, opt)
@@ -95,6 +94,7 @@ class ApiController < ApplicationController
   # without having to contend with CSRF.
   #
   def image
+    # __debug_route('API')
     response   = Faraday.get(params[:url]) # TODO: caching
     image_data = Base64.encode64(response.body)
     mime_type  = response.headers['content-type']
@@ -111,7 +111,7 @@ class ApiController < ApplicationController
   #
   # @param [Hash, nil] items
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -140,15 +140,14 @@ class ApiController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Hash, nil] item
-  # @param [Symbol]    as             Unused.
+  # @param [Hash] item
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @api_result, as: nil)
+  def show_values(item = @api_result)
     result =
       item.map { |k, v|
         v = try_json_parse(v) if %i[result exception].include?(k)

@@ -78,11 +78,13 @@ module Representable
       # @overload __debug_show(mode, *args)
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [Array]            args
+      #   @return [nil]
       #
       # @overload __debug_show(*args)
       #   @param [Array]            args
+      #   @return [nil]
       #
-      # @return [void]
+      # @see #__output
       #
       def __debug_show(mode, *args)
         mode =
@@ -131,11 +133,13 @@ module Representable
       # @overload __debug_lambda(mode, *constants)
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [Array<Symbol>]    constants
+      #   @return [nil]
       #
       # @overload __debug_lambda(*constants)
       #   @param [Array<Symbol>]    constants
+      #   @return [nil]
       #
-      # @return [void]
+      # @see #__debug_show
       #
       def __debug_lambda(mode, *constants)
         if mode == :input
@@ -164,6 +168,7 @@ module Representable
             end
           end
         end
+        nil
       end
 
       # Override one or more methods in order to "inject" a debug statement
@@ -176,12 +181,14 @@ module Representable
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [String]           label
       #   @param [Array<Symbol>]    constants
+      #   @return [nil]
       #
       # @overload __debug_method(label, *methods)
       #   @param [String]           label
       #   @param [Array<Symbol>]    constants
+      #   @return [nil]
       #
-      # @return [void]
+      # @see #__debug_show
       #
       def __debug_method(mode, label, *methods)
         if mode == :input
@@ -209,6 +216,7 @@ module Representable
             end
           end
         end
+        nil
       end
 
     end

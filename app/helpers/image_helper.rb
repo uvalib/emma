@@ -55,37 +55,39 @@ module ImageHelper
 
   # Create an HTML image element.
   #
-  # @param [String] url
-  # @param [Hash]   opt               Passed to #content_tag except for:
+  # @param [String]  url
+  # @param [String]  link             If present, the URL to which the image
+  #                                     is a link.
+  # @param [String]  alt              Passed to #image_tag.
+  # @param [Integer] row              Grid row of the element.
+  # @param [Hash]    opt              Passed to #content_tag except for:
   #
-  # @option opt [String] :link            If *true* make the image a link to
-  #                                         the given path.
-  # @option opt [String] :alt             Passed to #image_tag.
+  # @option opt [String] :link        If *true* make the image a link to
+  #                                     the given path.
+  # @option opt [String] :alt         Passed to #image_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *url* is invalid.
   #
-  def image_element(url, **opt)
+  def image_element(url, link: nil, alt: nil, row: nil, **opt)
     return if url.blank?
-    opt, html_opt = partition_options(opt, :alt, :link, :row)
-    alt  = opt[:alt] || 'Illustration' # TODO: I18n
-    link = opt[:link]
-    row  = positive(opt[:row])
-    append_css_classes!(html_opt, "row-#{row}") if row
+    alt ||= 'Illustration' # TODO: I18n
     image =
       if ASYNCHRONOUS_IMAGES
         image_placeholder(url, alt: alt)
       else
         image_tag(url, alt: alt)
       end
+    row = positive(row)
+    opt = append_css_classes(opt, "row-#{row}") if row
     if link.present?
-      html_opt, link_opt = partition_options(html_opt, :class, :style)
-      html_opt[:'aria-hidden'] ||= true
-      link_opt[:tabindex]      ||= -1
+      opt, link_opt = partition_options(opt, :class, :style)
+      opt[:'aria-hidden'] ||= true
+      link_opt[:tabindex] ||= -1
       # noinspection RubyYardParamTypeMatch
       image = make_link(image, link, **link_opt)
     end
-    content_tag(:div, image, **html_opt)
+    content_tag(:div, image, opt)
   end
 
   # Placeholder image.
@@ -98,7 +100,7 @@ module ImageHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def image_placeholder(url, image = nil, **opt)
+  def image_placeholder(url, image: nil, **opt)
     opt  = prepend_css_classes(opt, 'placeholder')
     data = { path: url, 'turbolinks-track': false }
     data[:alt] = opt[:alt] if opt[:alt]

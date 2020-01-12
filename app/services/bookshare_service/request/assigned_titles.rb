@@ -114,7 +114,7 @@ module BookshareService::Request::AssignedTitles
   #
   def create_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(bookshareId: bookshareId)
+    opt[:bookshareId] = bookshareId
     api(:post, 'assignedTitles', userIdentifier, **opt)
     Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
   end
@@ -147,7 +147,7 @@ module BookshareService::Request::AssignedTitles
   #
   def remove_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(bookshareId: bookshareId)
+    opt[:bookshareId] = bookshareId
     api(:delete, 'assignedTitles', userIdentifier, **opt)
     Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
   end

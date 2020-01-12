@@ -59,30 +59,27 @@ module ResourceHelper
   # @yieldparam  [String] terms
   # @yieldreturn [String]
   #
-  # @param [Api::Record]         item
-  # @param [Symbol, String, nil] label    Default: `item.label`.
-  # @param [Proc, String, nil]   path     From block if not provided here.
-  # @param [Hash]                opt      Passed to #make_link except for:
+  # @param [Api::Record] item
+  # @param [Hash]        opt          Passed to #make_link except for:
   #
   # @option opt [Boolean]        :no_link
   # @option opt [String]         :tooltip
-  # @option opt [String]         :label
-  # @option opt [String]         :path
+  # @option opt [String, Symbol] :label         Default: `item.label`.
+  # @option opt [String, Proc]   :path          Default: from block.
   # @option opt [Symbol]         :path_method
-  # @option opt [Symbol, String] :scope
-  # @option opt [Symbol, String] :controller
+  # @option opt [String, Symbol] :scope
+  # @option opt [String, Symbol] :controller
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def item_link(item, label = nil, path = nil, **opt)
+  def item_link(item, **opt)
     opt, html_opt = partition_options(opt, *ITEM_LINK_OPTIONS)
-    label = opt[:label] || label || :label
+    label = opt[:label] || :label
     label = item.send(label) if label.is_a?(Symbol)
     if opt[:no_link]
       content_tag(:span, label, html_opt)
     else
-      path = yield(label) if block_given?
-      path = opt[:path] || opt[:path_method] || path
+      path = opt[:path] || opt[:path_method] || yield(label)
       path = path.call(item, label) if path.is_a?(Proc)
       unless (html_opt[:title] ||= opt[:tooltip])
         scope = opt[:scope] || opt[:controller]
@@ -105,7 +102,6 @@ module ResourceHelper
   # elements) followed by items which are not linkable (<span> elements).
   #
   # @param [Api::Record] item
-  # @param [Symbol, nil] field          Default: :title
   # @param [Hash]        opt            Passed to :link_method except for:
   #
   # @option opt [Symbol] :field
@@ -115,13 +111,13 @@ module ResourceHelper
   # @option opt [Symbol] :link_method   Default: :search_link
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                       If item method cannot be determined.
+  # @return [nil]                       If access method unsupported by *item*.
   #
-  def search_links(item, field = nil, **opt)
+  def search_links(item, **opt)
 
     opt, html_opt = partition_options(opt, *SEARCH_LINKS_OPTIONS)
     method = opt[:method]
-    field  = (opt[:field] || field || :title).to_s
+    field  = (opt[:field] || :title).to_s
     case field
       when 'creator_list'
         method ||= field.to_sym
@@ -137,6 +133,7 @@ module ResourceHelper
       __debug { "#{__method__}: item.#{method} invalid" }
       return
     end
+    html_opt[:field] = field
 
     separator   = opt[:separator]   || DEFAULT_ELEMENT_SEPARATOR
     link_method = opt[:link_method] || :search_link
@@ -155,7 +152,7 @@ module ResourceHelper
             end
           link_opt = link_opt.merge(no_link: no_link) if no_link
         end
-        send(link_method, record, field, **link_opt)
+        send(link_method, record, **link_opt)
       }
       .compact
       .sort_by { |html_element|
@@ -174,10 +171,9 @@ module ResourceHelper
   # Create a link to the search results index page for the given term(s).
   #
   # @param [Api::Record, String] terms
-  # @param [Symbol, nil]         field        Default: :title
   # @param [Hash]                opt          Passed to #make_link except for:
   #
-  # @option opt [Symbol]         :field
+  # @option opt [Symbol]         :field       Default: :title.
   # @option opt [Boolean]        :all_words
   # @option opt [Boolean]        :no_link
   # @option opt [Symbol, String] :scope
@@ -186,10 +182,10 @@ module ResourceHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                             If no *terms* were provided.
   #
-  def search_link(terms, field = nil, **opt)
+  def search_link(terms, **opt)
     terms = terms.to_s.strip.presence or return
     opt, html_opt = partition_options(opt, *SEARCH_LINK_OPTIONS)
-    field = opt[:field] || field || :title
+    field = opt[:field] || :title
 
     # Generate the link label.
     ftype = field_category(field)
@@ -198,7 +194,7 @@ module ResourceHelper
     terms = terms.sub(/\s+\([^)]+\)$/, '') if CREATOR_FIELDS.include?(ftype)
 
     # If this instance should not be rendered as a link, return now.
-    return content_tag(:span, label, **html_opt) if opt[:no_link]
+    return content_tag(:span, label, html_opt) if opt[:no_link]
 
     # Otherwise, wrap the terms phrase in quotes unless directed to handled
     # each word of the phrase separately.
@@ -281,7 +277,7 @@ module ResourceHelper
   # @param [Api::Record] item
   # @param [Hash, nil]   pairs
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>String}]
   #
   def field_values(item, pairs = nil)
     if block_given?
@@ -319,6 +315,8 @@ module ResourceHelper
     opt, pairs = partition_options(pairs, :index, :row) # Discard :row
     opt[:row] = row_offset || 0
     # noinspection RubyNilAnalysis
+    # @type [Symbol] label
+    # @type [String] value
     pairs.map { |label, value|
       opt[:row] += 1
       value = render_value(item, value, model: model)
@@ -477,11 +475,11 @@ module ResourceHelper
   #
   # @param [Api::Record]    item
   # @param [String, Symbol] model
-  # @param [Hash, nil]      pairs     Label/value pairs.
-  # @param [Proc]           block     Passed to #render_field_values.
+  # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Proc]           block         Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                         If *item* is blank.
   #
   def item_details(item, model, pairs = nil, &block)
     return if item.blank?
@@ -500,19 +498,21 @@ module ResourceHelper
 
   # Active search terms.
   #
-  # @param [Hash, nil]                  pairs   Default: `#url_parameters`.
-  # @param [Symbol, Array<Symbol>, nil] only
-  # @param [Symbol, Array<Symbol>, nil] except
+  # @param [Hash{Symbol=>String}]  pairs    Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol>] only
+  # @param [Symbol, Array<Symbol>] except
   #
   # @return [Hash{String=>String}]
   #
-  def search_terms(pairs = nil, only: nil, except: nil)
+  def search_terms(pairs: nil, only: nil, except: nil)
     only    = Array.wrap(only).presence
     except  = Array.wrap(except) + %i[offset start limit api_key]
     pairs &&= pairs.dup if only || except
     pairs ||= url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
+    # @type [Symbol]        k
+    # @type [String, Array] v
     pairs.map { |k, v|
       count = v.is_a?(Array) ? v.size : 1
       field = labelize(k, count)
@@ -532,7 +532,7 @@ module ResourceHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def applied_search_terms(term_list = nil, **opt)
+  def applied_search_terms(term_list, **opt)
     term_list ||= search_terms
     opt, term_opt = partition_options(opt, :row)
     row = positive(opt[:row]) || 1
@@ -564,12 +564,12 @@ module ResourceHelper
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def index_controls(terms = nil, count: nil, row: 1)
+  def index_controls(terms, count: nil, row: 1)
     page_controls = pagination_controls
     result = []
     result << applied_search_terms(terms, row: row)
     result <<
-      content_tag(:div, class: "pagination-top row-#{row += 1}") do
+      content_tag(:div, class: "pagination-top row-#{row + 1}") do
         page_controls + pagination_count(count)
       end
     result << content_tag(:div, class: 'pagination-bottom') { page_controls }

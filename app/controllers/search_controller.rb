@@ -49,7 +49,7 @@ class SearchController < ApplicationController
   # Perform a search through the EMMA Federated Search API.
   #
   def index
-    __debug { "SEARCH #{__method__} | params = #{params.inspect}" }
+    __debug_route('SEARCH')
     opt = pagination_setup
     if true # TODO: remove - testing
       development_notice(
@@ -83,7 +83,7 @@ class SearchController < ApplicationController
   # Display details of an existing catalog title.
   #
   def show
-    __debug { "SEARCH #{__method__} | params = #{params.inspect}" }
+    __debug_route('SEARCH')
     if @title_id == 'example' # TODO: remove - testing
       development_notice(
         'This page displays all of the possible fields defined for each' \
@@ -112,7 +112,7 @@ class SearchController < ApplicationController
   #
   # @param [Search::SearchRecordList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values

@@ -193,7 +193,7 @@ class EnumType < ScalarType
   def set(v)
     # noinspection RubyAssignmentExpressionInConditionalInspection
     unless v.nil? || valid?(v = v.to_s.strip)
-      Log.warn("#{type}: #{v.inspect}: not in #{values}")
+      Log.warn { "#{type}: #{v.inspect}: not in #{values}" }
       v = nil
     end
     @value = v || default
@@ -211,7 +211,7 @@ class EnumType < ScalarType
 
   # The name of the represented enumeration type.
   #
-  # @return [Array<String>]
+  # @return [Symbol]
   #
   def type
     self.class.type

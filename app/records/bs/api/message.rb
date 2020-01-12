@@ -37,11 +37,10 @@ class Bs::Api::Message < Bs::Api::Record
     __debug { "### #{self.class}.#{__method__}" }
     start_time = timestamp
     data = data.body.presence if data.is_a?(Faraday::Response)
-    opt  = opt.dup
     opt[:format] ||= self.format_of(data)
     opt[:error]  ||= true if opt[:format].blank?
-    data = wrap_outer(data, opt) if (opt[:format] == :xml) && !opt[:error]
-    super(data, opt)
+    data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
+    super(data, **opt)
 =begin # TODO: log exceptions?
   rescue Bs::RecvError => e
     Log.error { "#{self.class.name}: #{e}" }

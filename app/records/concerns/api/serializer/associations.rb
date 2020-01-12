@@ -25,9 +25,9 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Attributes#attribute to define a schema property
     # that is handled as an attribute.
     #
-    # @param [Symbol]                     name
-    # @param [Class, String, Symbol, nil] type
-    # @param [Hash]                       opt
+    # @param [Symbol]                name
+    # @param [Class, String, Symbol] type
+    # @param [Hash]                  opt
     #
     # @return [void]
     #
@@ -42,7 +42,7 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
     #     <XXX elem="value"></XXX>
     #
-    def attribute(name, type = nil, **opt)
+    def attribute(name, type, **opt)
       type = get_type_class(type, opt)
       opt[:type]      = type
       opt[:default] ||= scalar_default(type)
@@ -53,10 +53,10 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Associations#has_one to define a schema property
     # that is handled as a single element.
     #
-    # @param [Symbol]                     name
-    # @param [Class, String, Symbol, nil] type
-    # @param [Hash]                       opt
-    # @param [Proc]                       block   Passed to #has_many.
+    # @param [Symbol]                name
+    # @param [Class, String, Symbol] type
+    # @param [Hash]                  opt
+    # @param [Proc]                  block   Passed to #property.
     #
     # @return [void]
     #
@@ -71,12 +71,12 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
     #     <XXX><elem>value</elem></XXX>
     #
-    def has_one(name, type = nil, **opt, &block)
+    def has_one(name, type, **opt, &block)
       type = get_type_class(type, opt)
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
-        Log.warn("#{__method__}: block not processed") if block_given?
+        Log.warn { "#{__method__}: block not processed" } if block_given?
       else
         opt[:class]     = type
         opt[:decorator] = decorator_class(type)
@@ -88,10 +88,10 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Associations#has_many to define a schema property
     # that is handled as a collection.
     #
-    # @param [Symbol]                     name
-    # @param [Class, String, Symbol, nil] type
-    # @param [Hash]                       opt
-    # @param [Proc]                       block   Passed to #property.
+    # @param [Symbol]                name
+    # @param [Class, String, Symbol] type
+    # @param [Hash]                  opt
+    # @param [Proc]                  block   Passed to #property.
     #
     # @return [void]
     #
@@ -110,7 +110,7 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { has_many :elem }; end  -->
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
     #
-    def has_many(name, type = nil, **opt, &block)
+    def has_many(name, type, **opt, &block)
       type = get_type_class(type, opt)
       if scalar_type?(type)
         opt[:type]      = type
@@ -153,6 +153,7 @@ module Api::Serializer::Associations
       elsif !name.include?('::')
         type = "#{service_name}::Record::#{name}"
       end
+      # noinspection RubyYardReturnMatch
       type.is_a?(Class) ? type : name.constantize
     end
 

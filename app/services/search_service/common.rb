@@ -82,11 +82,11 @@ module SearchService::Common
     update  = %i[put post patch].include?(@verb)
     params  = update ? @params.to_json : @params
     headers = ({ 'Content-Type' => 'application/json' } if update)
-    __debug {
-      ">>> search | #{@action.inspect} | " +
-        { params: params, headers: headers }
-          .map { |k, v| "#{k} = #{v.inspect}" unless v.blank? }
-          .compact.join(' | ')
+    __debug_line(leader: '>>>') {
+      %w(search) << @action.inspect <<
+        { params: params, headers: headers }.transform_values { |v|
+          v.inspect if v.present?
+        }.compact
     }
     @response = transmit(@verb, @action, params, headers, **opt)
 
@@ -98,15 +98,15 @@ module SearchService::Common
     error = SearchService::ResponseError.new(error)
 
   ensure
-    __debug {
+    __debug_line(leader: '<<<') {
       # noinspection RubyNilAnalysis
       resp   = error.respond_to?(:response) && error.response || @response
       status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
-      data   = resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
-      "<<< search | #{@action.inspect} | " +
-        { status: status, data: data }
-          .map { |k, v| "#{k} = #{v.inspect.truncate(256)}" }
-          .compact.join(' | ')
+      data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
+      %w(search) << @action.inspect <<
+        { status: status, data: data }.transform_values { |v|
+          v.inspect.truncate(256)
+        }
     }
     @response  = nil   if error
     @exception = error unless no_exception
@@ -132,8 +132,8 @@ module SearchService::Common
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'
     message = error.message.inspect
-    __debug {
-      "!!! search | #{action.inspect} | #{message} | #{error.class}"
+    __debug_line(leader: '!!!') {
+      %w(search) << action.inspect << message << error.class
     }
     level  = error.is_a?(Search::Error) ? Logger::WARN : Logger::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }

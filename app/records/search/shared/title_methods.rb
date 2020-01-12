@@ -245,6 +245,7 @@ module Search::Shared::TitleMethods
   # [15] Remove trailing breaks.
   #
   def contents
+    # noinspection RubyYardReturnMatch
     %i[dc_description].find do |method|
       next unless respond_to?(method) && (text = send(method)).present?
       text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]
@@ -279,7 +280,7 @@ module Search::Shared::TitleMethods
   # @return [nil]                     If the link was not present.
   #
   def thumbnail_image
-=begin
+=begin # TODO: search thumbnail?
     get_link(:thumbnail)
 =end
   end
@@ -290,7 +291,7 @@ module Search::Shared::TitleMethods
   # @return [nil]                     If the link was not present.
   #
   def cover_image
-=begin
+=begin # TODO: search cover image?
     get_link(:coverimage)
 =end
   end

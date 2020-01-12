@@ -54,7 +54,7 @@ class HomeController < ApplicationController
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
   def main
-    __debug { "HOME #{__method__} | params = #{params.inspect}" }
+    __debug_route('HOME')
     if current_user
       redirect_to dashboard_path
     else
@@ -66,14 +66,14 @@ class HomeController < ApplicationController
   # The main application page for anonymous users.
   #
   def welcome
-    __debug { "HOME #{__method__} | params = #{params.inspect}" }
+    __debug_route('HOME')
   end
 
   # == GET /home/dashboard
   # The main application page for authenticated users.
   #
   def dashboard
-    __debug { "HOME #{__method__} | params = #{params.inspect}" }
+    __debug_route('HOME')
     @item, @preferences, @history = get_account_details
     response.status =
       case flash.now[:alert]
@@ -96,18 +96,21 @@ class HomeController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Message::MyAccountSummary, nil]     item
-  # @param [Bs::Message::MyAccountPreferences, nil] pref
-  # @param [Bs::Message::TitleDownloadList, nil]    hist
-  # @param [Symbol]                                 as
+  # @overload show_values(as: :array)
+  #   @return [Array]
   #
-  # @return [Hash]
+  # @overload show_values(as: :hash)
+  #   @return [Hash{Symbol=>Hash}]
+  #
+  # @overload show_values
+  #   @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, pref = @preferences, hist = @history, as: nil)
-    { account: super(details: item, preferences: pref, history: hist, as: as) }
+  def show_values(as: nil)
+    result = { details: @item, preferences: @preferences, history: @history }
+    { account: super(**result, as: as) }
   end
 
 end

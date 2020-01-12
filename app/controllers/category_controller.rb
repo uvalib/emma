@@ -50,7 +50,7 @@ class CategoryController < ApplicationController
   # List all categories.
   #
   def index
-    __debug { "CATEGORY #{__method__} | params = #{params.inspect}" }
+    __debug_route('CATEGORY')
     opt   = pagination_setup
     @list = api.get_categories(**opt)
     self.page_items  = @list.categories
@@ -73,7 +73,7 @@ class CategoryController < ApplicationController
   #
   # @param [ApiCategoriesList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values

@@ -7,7 +7,7 @@ require 'application_system_test_case'
 
 class ApiTest < ApplicationSystemTestCase
 
-  TRIAL_METHODS = ApiExplorerConcern::ApiTesting::TRIAL_METHODS
+  TRIAL_METHODS = ApiExplorerConcern::ApiTesting::METHODS
 
   ANONYMOUS_METHODS =
     TRIAL_METHODS.select { |k|

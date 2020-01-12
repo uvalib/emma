@@ -110,10 +110,10 @@ module TestHelper::IntegrationTests::Authentication
   def as_user(user, **opt)
     user = find_user(user)
     unless opt.key?(:part)
-      name = show_user(user, output: false)
-      opt  = opt.merge(part: "USER #{name}")
+      name = show_user(user: user, output: false)
+      opt[:part] = "USER #{name}"
     end
-    run_test(**opt) do
+    run_test(opt[:test], **opt) do
       get_sign_in_as(user)
       yield # Run provided test code.
       get_sign_out
@@ -184,6 +184,7 @@ module TestHelper::IntegrationTests::Authentication
 
   # Non-functional hints for RubyMine.
   # :nocov:
+  # noinspection RubyUnusedLocalVariable
   unless ONLY_FOR_DOCUMENTATION
 
     # @param [String] user

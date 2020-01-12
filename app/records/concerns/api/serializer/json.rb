@@ -38,8 +38,8 @@ class Api::Serializer::Json < ::Api::Serializer
 
   # Render data elements in JSON format.
   #
-  # @param [Symbol, Proc, nil] method   Default: :to_json
-  # @param [Hash]              opt      Options argument for *method*.
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt         Options argument for *method*.
   #
   # @return [String]
   #
@@ -48,14 +48,14 @@ class Api::Serializer::Json < ::Api::Serializer
   # This method overrides:
   # @see Api::Serializer#serialize
   #
-  def serialize(method = :to_json, **opt)
+  def serialize(method: :to_json, **opt)
     super
   end
 
   # Load data elements from the supplied data in JSON format.
   #
-  # @param [String, Hash]      data
-  # @param [Symbol, Proc, nil] method
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
   #
   # @return [Hash]
   # @return [nil]
@@ -65,7 +65,7 @@ class Api::Serializer::Json < ::Api::Serializer
   # This method overrides:
   # @see Api::Serializer#deserialize
   #
-  def deserialize(data, method = :from_json)
+  def deserialize(data, method: :from_json)
     super
   end
 

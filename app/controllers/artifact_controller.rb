@@ -55,7 +55,7 @@ class ArtifactController < ApplicationController
   # List all artifacts.
   #
   def index
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
     opt   = pagination_setup
     @list = api.get_artifact_list(**opt)
     self.page_items  = @list.artifacts
@@ -74,7 +74,7 @@ class ArtifactController < ApplicationController
   # Get metadata for an existing artifact.
   #
   def show
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
     opt   = { bookshareId: @bookshare_id, format: @format }
     @item = api.get_artifact_metadata(**opt)
     respond_to do |format|
@@ -89,7 +89,7 @@ class ArtifactController < ApplicationController
   # Add metadata for a new artifact.
   #
   def new
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
   end
 
   # == POST /artifact/:id
@@ -97,7 +97,7 @@ class ArtifactController < ApplicationController
   # Upload a new artifact.
   #
   def create
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
   end
 
   # == GET /artifact/:id/edit
@@ -105,7 +105,7 @@ class ArtifactController < ApplicationController
   # Modify metadata of an existing artifact entry.
   #
   def edit
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
   end
 
   # == PUT   /artifact/:id
@@ -115,7 +115,7 @@ class ArtifactController < ApplicationController
   # Upload a replacement for an existing artifact.
   #
   def update
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
   end
 
   # == DELETE /artifact/:id
@@ -123,7 +123,7 @@ class ArtifactController < ApplicationController
   # Remove an existing artifact entry.
   #
   def destroy
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
   end
 
   # == GET /artifact/:id/:fmt
@@ -131,7 +131,7 @@ class ArtifactController < ApplicationController
   # Download an artifact of the indicated Bookshare format type.
   #
   def download
-    __debug { "ARTIFACT #{__method__} | params = #{params.inspect}" }
+    __debug_route('ARTIFACT')
     opt = { bookshareId: @bookshare_id, format: @format }
     render_download(:download_title, **opt)
   end
@@ -146,7 +146,7 @@ class ArtifactController < ApplicationController
   #
   # @param [*, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -157,15 +157,14 @@ class ArtifactController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Record::ArtifactMetadata, nil] item
-  # @param [Symbol]                            as    Unused.
+  # @param [Bs::Record::ArtifactMetadata, Hash] item
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Bs::Record::ArtifactMetadata,Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, as: nil)
+  def show_values(item = @item)
     { artifact: item }
   end
 

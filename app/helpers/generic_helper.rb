@@ -85,7 +85,7 @@ module GenericHelper
   # @param [String, Numeric] value
   #
   # @return [Integer]
-  # @return [nil]
+  # @return [nil]                     If *value* <= 0 or not a number.
   #
   def positive(value)
     result = value.to_i
@@ -97,12 +97,11 @@ module GenericHelper
   # @param [String, Numeric] value
   #
   # @return [Integer]
-  # @return [nil]
+  # @return [nil]                     If *value* < 0 or not a number.
   #
   def non_negative(value)
-    return unless value
     result = value.to_i
-    result unless result < 0
+    result unless value.blank? || (result < 0)
   end
 
   # ===========================================================================
@@ -125,39 +124,63 @@ module GenericHelper
   # @return [String]
   #
   def make_path(*args)
-    opt   = args.extract_options!
-    parts = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '').split('?')
-    url   = parts.shift
-    query = parts.join('?').split('&').reject(&:blank?)
-    if query.present?
-      url << '?' << query.shift unless query.first.include?('=')
-      query.map! do |kv|
-        k, v = kv.split('=')
-        [k.to_sym, CGI.unescape(Array.wrap(v).join('='))]
-      end
-      opt = query.to_h.merge(opt.symbolize_keys)
-    end
-    if opt.present?
-      url << (url.include?('?') ? '&' : '?') unless url.end_with?('?', '&')
-      url << opt.sort.to_h.to_param
-    end
-    # noinspection RubyYardReturnMatch
+    opt = args.extract_options!.symbolize_keys
+    url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')
+    url, _, query = url.partition('?')
+    parts = query.split('&').reject(&:blank?)
+    first = (parts.shift unless parts.blank? || parts.first.include?('='))
+    query = extract_query_options(parts).merge(opt).to_param.presence
+    url << '?'   if first || query
+    url << first if first
+    url << '&'   if first && query
+    url << query if query
     url
   end
+
+  # Transform URL query parameters into a hash.
+  #
+  # @param [URI, String, Array] pairs   Query string or array of k=v pairs.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def extract_query_options(pairs)
+    pairs = pairs.query if pairs.is_a?(URI)
+    pairs = pairs.to_s.split('&') unless pairs.is_a?(Array)
+    pairs.map { |k_v|
+      k, _, v = k_v.to_s.partition('=')
+      [k.to_sym, CGI.unescape(v)] if k.present?
+    }.compact.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Strip off the hash elements identified by *keys* to return two hashes:
   # - First, a hash containing only the requested option keys and values.
   # - Second, a copy of the original *hash* without the those keys/values.
   #
-  # @param [Hash]          hash
-  # @param [Array<Symbol>] keys
+  # @param [ActionController::Parameters, Hash] hash
+  # @param [Array<Symbol>]                      keys
   #
   # @return [Array<(Hash, Hash)>]   Matching hash followed by remainder hash.
   #
   def partition_options(hash, *keys)
+    hash ||= {}
+    hash = request_parameters(hash) if hash.is_a?(ActionController::Parameters)
     keys = keys.flatten.compact.map(&:to_sym).uniq
-    return hash.slice(*keys), hash.except(*keys)
+    opt  = hash.slice(*keys)
+    rem  = hash.except(*opt.keys)
+    return opt, rem
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Return the name of the calling method.
   #
@@ -178,23 +201,39 @@ module GenericHelper
     end
   end
 
-  # get_params
+  # Return a table of a method's parameters and their values given a Binding
+  # from that method invocation.
   #
-  # @param [Symbol, Method, Array] m_params
-  # @param [Binding]               m_binding
-  # @param [Array<Symbol>]         ignore
+  # @overload get_params(bind, **opt)
+  #   @param [Binding]        bind
+  #   @param [Hash]           opt
+  #
+  # @overload get_params(meth, bind, **opt)
+  #   @param [Symbol, Method] meth
+  #   @param [Binding]        bind
+  #   @param [Hash]           opt
+  #
+  # @option opt [Symbol, Array<Symbol>] :only
+  # @option opt [Symbol, Array<Symbol>] :except
   #
   # @return [Hash{Symbol=>*}]
   #
-  def get_params(m_params, m_binding, *ignore)
-    m_params = m_binding.receiver.method(m_params) if m_params.is_a?(Symbol)
-    m_params = m_params.parameters                 if m_params.is_a?(Method)
-    m_params.flat_map { |type, name|
-      next if name.blank? || (type == :block) || ignore.include?(name)
+  def get_params(*args)
+    opt    = args.extract_options!
+    only   = Array.wrap(opt[:only]).presence
+    except = Array.wrap(opt[:except]).presence
+    meth   = (args.shift unless args.first.is_a?(Binding))
+    bind   = (args.shift if args.first.is_a?(Binding))
+    meth ||= bind&.eval('__method__')
+    meth   = bind.receiver.method(meth) if meth.is_a?(Symbol)
+    prms   = meth.is_a?(Method) ? meth.parameters : {}
+    prms.flat_map { |type, name|
+      next if (type == :block) || name.blank? || except&.include?(name)
+      next unless only.nil? || only.include?(name)
       if type == :keyrest
-        m_binding.local_variable_get(name).map(&:itself)
+        bind.local_variable_get(name).map(&:itself)
       else
-        [[name, m_binding.local_variable_get(name)]]
+        [[name, bind.local_variable_get(name)]]
       end
     }.compact.to_h
   end
@@ -267,7 +306,7 @@ module GenericHelper
   # Generate a rendering of a hash as a delimited list of key-value pairs.
   #
   # @param [Hash] hash
-  # @param [Hash]  opt                Passed to #normalized_list; used locally:
+  # @param [Hash] opt                 Passed to #normalized_list; used locally:
   #
   # @option opt [String] :pair_separator   Default: #PAIR_SEPARATOR.
   #
@@ -305,7 +344,7 @@ module GenericHelper
   # @return [Array<String>]
   #
   def normalized_list(values, **opt)
-    opt = opt.merge(sanitize: true) unless opt.key?(:sanitize)
+    opt[:sanitize] = true unless opt.key?(:sanitize)
     Array.wrap(values).flat_map { |value|
       case value
         when Hash
@@ -337,11 +376,17 @@ module GenericHelper
   # Pluralize or singularize *text*.  If neither *inflection* nor *count* is
   # specified then a copy of the original string is returned.
   #
-  # @param [ActiveSupport::Buffer, String] text
-  # @param [Symbol, Integer, nil]          inflection
-  # @param [Integer, nil]                  count
+  # @overload infection(text, inflection = nil, count = nil)
+  #   @param [ActiveSupport::Buffer] text
+  #   @param [Symbol, Integer, nil]  inflection
+  #   @param [Integer, nil]          count
+  #   @return [ActiveSupport::Buffer]
   #
-  # @return [ActiveSupport::Buffer, String]
+  # @overload infection(text, inflection = nil, count = nil)
+  #   @param [String]                text
+  #   @param [Symbol, Integer, nil]  inflection
+  #   @param [Integer, nil]          count
+  #   @return [String]
   #
   # @see #INFLECT_SINGULAR
   # @see #INFLECT_PLURAL
@@ -387,13 +432,8 @@ module GenericHelper
         .flat_map { |s| s.to_s.split(/[_\s]/) if s.present? }
         .flat_map { |s|
           next if s.blank?
-          s = "#{s[0].upcase}#{s[1..-1]}" if s[0] =~ /^[a-z]/
-          s.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip.split(' ').map do |word|
-            case word
-              when 'Id' then 'ID'
-              else           word
-            end
-          end
+          s = s.upcase_first.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip
+          s.split(' ').map { |word| (word == 'Id') ? word.upcase : word }
         }.compact.join(' ')
     result = ERB::Util.h(result) unless text.html_safe?
     result = inflection(result, count) if count
@@ -402,10 +442,15 @@ module GenericHelper
 
   # Add surrounding quotation marks to a term.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
-  # @param [String]                                   quote
+  # @overload quote(term, quote: '"')
+  #   @param [ActiveSupport::Buffer, Array<String>] term
+  #   @param [String]                               quote
+  #   @return [ActiveSupport::Buffer]
   #
-  # @return [ActiveSupport::SafeBuffer, String]
+  # @overload quote(term, quote: '"')
+  #   @param [String] term
+  #   @param [String] quote
+  #   @return [String]
   #
   def quote(term, quote: '"')
     result =
@@ -428,9 +473,13 @@ module GenericHelper
 
   # Remove surrounding quotation marks from a term.
   #
-  # @param [ActiveSupport::SafeBuffer, String, Array] term
+  # @overload strip_quotes(term)
+  #   @param [ActiveSupport::Buffer, Array<String>] term
+  #   @return [ActiveSupport::Buffer]
   #
-  # @return [ActiveSupport::SafeBuffer, String]
+  # @overload strip_quotes(term)
+  #   @param [String] term
+  #   @return [String]
   #
   def strip_quotes(term)
     result =

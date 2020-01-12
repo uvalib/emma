@@ -32,7 +32,7 @@ module MetricsConcern
   # Set up one or more metrics of the same type.
   #
   # @param [Symbol]                     type
-  # @param [Hash{Symbol=>String|Array}] hash
+  # @param [Hash{Symbol=>String,Array}] hash
   #
   # @return [Hash{Symbol=>Prometheus::Client::Metric}]
   #

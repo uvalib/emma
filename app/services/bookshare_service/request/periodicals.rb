@@ -141,14 +141,16 @@ module BookshareService::Request::Periodicals
   # @param [String] editionId
   # @param [Hash]   opt               Passed to #api.
   #
-  # @return [Bs::Message::PeriodicalEdition]
+  # @return [Bs::Record::PeriodicalEdition]
   # @return [nil]
   #
   # NOTE: This is not a real Bookshare API call.
   #
   def get_periodical_edition(seriesId:, editionId:, **opt)
-    opt = opt.merge(seriesId: seriesId, limit: :max)
+    opt[:seriesId] = seriesId
+    opt[:limit]    = :max
     periodical = get_periodical_editions(**opt)
+    # noinspection RubyYardReturnMatch
     periodical.periodicalEditions.find { |pe| editionId == pe.editionId }
   end
     .tap do |method|

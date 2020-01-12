@@ -49,8 +49,7 @@ module LayoutHelper::SearchControls
     #
     # @type [Hash]
     #
-    SEARCH_MENU_DEFAULT =
-      SEARCH_CONTROLS[:_default].reject { |_, v| v.nil? }.deep_freeze
+    SEARCH_MENU_DEFAULT = SEARCH_CONTROLS[:_default].compact.deep_freeze
 
     # Properties for the "filter reset" button.
     #
@@ -297,7 +296,7 @@ module LayoutHelper::SearchControls
     format:       nil,                # @see SEARCH_MENU_MAP
     language:     'emma.language',    # @see config/locales/en.yml
     narrator:     NarratorType,
-    repository:   Repository,
+    repository:   EmmaRepository,
     size:         %i[size values],    # @see #SEARCH_MENU
     sort:         nil,                # @see SEARCH_MENU_MAP
     warnings_exc: ContentWarning,
@@ -316,6 +315,7 @@ module LayoutHelper::SearchControls
     SEARCH_MENU_CONTROLLERS.map { |controller|
       menus =
         GENERIC_MENU.map { |menu_name, menu|
+          # noinspection RubyCaseWithoutElseBlockInspection
           entries =
             case menu_name
               when :sort
@@ -389,56 +389,54 @@ module LayoutHelper::SearchControls
 
   # One or more rows of controls.
   #
-  # @param [String, Symbol, nil]  type
-  # @param [Hash]                 opt     Passed to #content_tag except for:
-  #
-  # @option opt [String, Symbol] :type    Default: `#search_type`.
+  # @param [String, Symbol] type      Default: `#search_type`.
+  # @param [Hash]           opt       Passed to #content_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   # @see en.emma.search_controls
   #
-  def search_controls(type = nil, **opt)
-    opt, html_opt = partition_options(opt, :type)
-    opt[:type]    = search_type(type || opt[:type])
-    grid_rows     = i18n_lookup(opt[:type], 'search_controls.layout') || [[]]
-    opt[:row_max] = grid_rows.size
-    opt[:col_max] = max_columns = grid_rows.map(&:size).max
-    opt[:row]     = 0
+  def search_controls(type: nil, **opt)
+    type = search_type(type)
+    grid_rows = i18n_lookup(type, 'search_controls.layout') || [[]]
+    grid_opt  = { type: type, row: 0 }
+    grid_opt[:row_max] = grid_rows.size
+    grid_opt[:col_max] = max_columns = grid_rows.map(&:size).max
     grid_rows.map! do |menus|
-      opt[:row] += 1
-      opt[:col]  = 0
+      grid_opt[:row] += 1
+      grid_opt[:col]  = 0
       menus.map { |name|
-        opt[:col] += 1
+        grid_opt[:col] += 1
         name   = name.to_s.delete_suffix('_menu')
         method = "#{name}_menu".to_sym
         if respond_to?(method, true)
-          send(method, **opt)
+          send(method, **grid_opt)
         else
-          menu_container(name, **opt)
+          menu_container(name, **grid_opt)
         end
       }.compact.tap { |columns|
-        opt[:row] -= 1 if columns.blank?
+        grid_opt[:row] -= 1 if columns.blank?
       }.presence
     end
     grid_rows.compact!
     return if grid_rows.blank?
-    prepend_css_classes!(html_opt, 'search-controls', "columns-#{max_columns}")
-    content_tag(:div, safe_join(grid_rows, "\n"), html_opt)
+    opt = prepend_css_classes(opt, 'search-controls', "columns-#{max_columns}")
+    content_tag(:div, safe_join(grid_rows, "\n"), opt)
   end
 
   # A control for toggling the visibility of advanced search controls.
   #
-  # @param [String, nil]         label
-  # @param [Hash]                opt    Passed to #button_tag.
+  # @param [String, nil] label        Default: #ADV_SEARCH_OPENER_LABEL.
+  # @param [Hash]        opt          Passed to #button_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def advanced_search_button(label = nil, **opt)
-    opt = opt.reverse_merge(type: 'button', title: ADV_SEARCH_OPENER_TIP)
-    prepend_css_classes!(opt, 'advanced-search-toggle')
-    button_tag(**opt) { label ? non_breaking(label) : ADV_SEARCH_OPENER_LABEL }
+  def advanced_search_button(label: nil, **opt)
+    opt = prepend_css_classes(opt, 'advanced-search-toggle')
+    opt[:title] ||= ADV_SEARCH_OPENER_TIP
+    opt[:type]  ||= 'button'
+    button_tag(opt) { label ? non_breaking(label) : ADV_SEARCH_OPENER_LABEL }
   end
 
   # ===========================================================================
@@ -455,45 +453,49 @@ module LayoutHelper::SearchControls
   MENU_OPTS = %i[type label row col row_max col_max].freeze
 
   # Perform a search specifying a collation order for the results.
+  # (Default: `#params[:sortOrder]`.)
   #
-  # @param [String, nil] selected     Default: `#params[id]`.
-  # @param [Hash]        opt          Passed to #menu_container.
+  # @param [Hash] opt                 Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                     If menu is not available in this context.
   #
   # @see #SORT_MENU_MAP
+  # @see #search_controls
   # @see ParamsConcern#resolve_sort
   #
   # == Implementation Notes
   # This method produces a URL parameter (:sort) which is translated into the
   # appropriate pair of :sortOrder and :direction parameters by #resolve_sort.
   #
-  def sort_menu(selected = nil, **opt)
-    menu_name  = :sort
-    params     = request_parameters
-    selected ||= params[:sortOrder]
-    selected ||= params[SEARCH_MENU.dig(menu_name, :url_parameter)]
-    selected &&= descending_sort(selected) if params[:direction] == 'desc'
-    menu_container(menu_name, selected, **opt)
+  def sort_menu(**opt)
+    menu_name = :sort
+    params    = request_parameters
+    direction = params[:direction]
+    opt[:selected] ||= params[:sortOrder]
+    opt[:selected] ||= params[SEARCH_MENU.dig(menu_name, :url_parameter)]
+    opt[:selected] &&= descending_sort(opt[:selected]) if direction == 'desc'
+    menu_container(menu_name, **opt)
   end
 
-  # Perform a search specifying a results page size.
+  # Perform a search specifying a results page size.  (Default: `#page_size`.)
   #
-  # @param [String, nil] selected     Default: `#params[id]`.
-  # @param [Hash]        opt          Passed to #menu_container.
+  # @param [Hash] opt                 Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                     If menu is not available in this context.
   #
   # @see #SIZE_MENU_MAP
+  # @see #search_controls
+  # @see PaginationHelper#page_size
   #
-  def size_menu(selected = nil, **opt)
-    menu_name  = :size
-    selected ||= request_parameters[SEARCH_MENU.dig(menu_name, :url_parameter)]
-    selected ||= (page_size if respond_to?(:page_size))
-    selected &&= selected.to_i
-    menu_container(menu_name, selected, **opt)
+  def size_menu(**opt)
+    menu_name = :size
+    params    = request_parameters
+    opt[:selected] ||= params[SEARCH_MENU.dig(menu_name, :url_parameter)]
+    opt[:selected] ||= (page_size if respond_to?(:page_size))
+    opt[:selected] &&= opt[:selected].to_i
+    menu_container(menu_name, **opt)
   end
 
   # ===========================================================================
@@ -505,20 +507,21 @@ module LayoutHelper::SearchControls
   # A menu control preceded by a menu label (if provided).
   #
   # @param [String, Symbol] menu_name
-  # @param [String, nil]    selected    Passed to #menu_control.
   # @param [Hash]           opt         Passed to #menu_control except for:
   #
   # @option opt [String] :label         If missing, no label is included.
+  # @option opt [String] :selected      Passed to #menu_control.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If menu is not available for *type*.
   #
-  def menu_container(menu_name, selected = nil, **opt)
-    label_opt, control_opt = partition_options(opt, :label)
-    menu_name = menu_name.to_sym
-    control_opt[:title] ||= SEARCH_MENU.dig(menu_name, :tooltip)
-    menu  = menu_control(menu_name, selected, **control_opt) or return
-    label = menu_label(menu_name, **control_opt.merge(label_opt))
+  def menu_container(menu_name, **opt)
+    local, opt = partition_options(opt, :label, :selected)
+    menu_name  = menu_name.to_sym
+    opt[:title] ||= SEARCH_MENU.dig(menu_name, :tooltip)
+    m_opt = opt.merge(selected: local[:selected])
+    menu  = menu_control(menu_name, **m_opt) or return
+    label = menu_label(menu_name, **opt.merge(label: local[:label]))
     label + menu
   end
 

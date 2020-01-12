@@ -48,7 +48,7 @@ class PeriodicalController < ApplicationController
   # List all periodicals.
   #
   def index
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
     opt   = pagination_setup
     @list = api.get_periodicals(**opt)
     self.page_items  = @list.periodicals
@@ -65,7 +65,7 @@ class PeriodicalController < ApplicationController
   # Display details of an existing periodical.
   #
   def show
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
     @item = api.get_periodical(seriesId: @series_id)
     @list = api.get_periodical_editions(seriesId: @series_id, no_raise: true)
     self.page_items  = @list.periodicalEditions
@@ -81,21 +81,21 @@ class PeriodicalController < ApplicationController
   # Add metadata for a new periodical.
   #
   def new
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
   end
 
   # == POST /periodical/:id
   # Create an entry for a new periodical.
   #
   def create
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
   end
 
   # == GET /periodical/:id/edit
   # Modify metadata of an existing periodical entry.
   #
   def edit
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
   end
 
   # == PUT   /periodical/:id
@@ -103,14 +103,14 @@ class PeriodicalController < ApplicationController
   # Update the entry for an existing periodical.
   #
   def update
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
   end
 
   # == DELETE /periodical/:id
   # Remove an existing periodical entry.
   #
   def destroy
-    __debug { "PERIODICAL #{__method__} | params = #{params.inspect}" }
+    __debug_route('PERIODICAL')
   end
 
   # ===========================================================================
@@ -123,7 +123,7 @@ class PeriodicalController < ApplicationController
   #
   # @param [Bs::Message::PeriodicalSeriesMetadataSummaryList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -134,17 +134,21 @@ class PeriodicalController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Message::PeriodicalSeriesMetadataSummary, nil] item
-  # @param [Bs::Message::PeriodicalEditionList, nil]           list
-  # @param [Symbol]                                            as
+  # @overload show_values(as: :array)
+  #   @return [Array]
   #
-  # @return [Hash]
+  # @overload show_values(as: :hash)
+  #   @return [Hash{Symbol=>Hash}]
+  #
+  # @overload show_values
+  #   @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, list = @list, as: nil)
-    { periodical: super(details: item, editions: list, as: as) }
+  def show_values(as: nil)
+    result = { details: @item, editions: @list }
+    { periodical: super(**result, as: as) }
   end
 
 end

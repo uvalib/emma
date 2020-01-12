@@ -23,6 +23,7 @@ module ApiService::Common
   end
 
   include GenericHelper
+  include DebugHelper
 
   # ===========================================================================
   # :section:
@@ -272,11 +273,11 @@ module ApiService::Common
     update  = %i[put post patch].include?(@verb)
     params  = update ? @params.to_json : @params
     headers = ({ 'Content-Type' => 'application/json' } if update)
-    __debug {
-      ">>> api | #{@action.inspect} | " +
-        { params: params, headers: headers }
-          .map { |k, v| "#{k} = #{v.inspect}" unless v.blank? }
-          .compact.join(' | ')
+    __debug_line(leader: '>>>') {
+      %w(api) << @action.inspect <<
+        { params: params, headers: headers }.transform_values { |v|
+          v.inspect if v.present?
+        }.compact
     }
     @response = transmit(@verb, @action, params, headers, **opt)
 
@@ -288,15 +289,15 @@ module ApiService::Common
     error = ApiService::ResponseError.new(error)
 
   ensure
-    __debug {
+    __debug_line(leader: '<<<') {
       # noinspection RubyNilAnalysis
       resp   = error.respond_to?(:response) && error.response || @response
       status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
-      data   = resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
-      "<<< api | #{@action.inspect} | " +
-        { status: status, data: data }
-          .map { |k, v| "#{k} = #{v.inspect.truncate(256)}" }
-          .compact.join(' | ')
+      data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
+      %w(api) << @action.inspect <<
+        { status: status, data: data }.transform_values { |v|
+          v.inspect.truncate(256)
+        }
     }
     @response  = nil   if error
     @exception = error unless no_exception
@@ -368,7 +369,7 @@ module ApiService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
-  def transmit(verb, action, params = nil, headers = nil, **opt)
+  def transmit(verb, action, params, headers, **opt)
     response = connection.send(verb, action, params, headers)
     raise ApiService::EmptyResultError.new(response) if response.nil?
     redirection = no_redirect = nil
@@ -392,8 +393,10 @@ module ApiService::Common
       action = response.headers['Location']
       raise ApiService::RedirectionError.new(response) if action.blank?
       unless no_redirect
-        opt = opt.merge(redirection: (redirection += 1))
-        __debug { "!!! api | REDIRECT #{redirection} TO #{action.inspect}" }
+        opt[:redirection] = (redirection += 1)
+        __debug_line(leader: '!!!') {
+          %w(api) << "REDIRECT #{redirection} TO #{action.inspect}"
+        }
         response = transmit(:get, action, params, headers, **opt)
       end
     end
@@ -439,6 +442,8 @@ module ApiService::Common
     invalid_params(method, *errors) if errors.present?
 
     # Return with the options needed for the API request.
+    # @type [Symbol] k
+    # @type [*]      v
     opt.slice(*specified_keys).map { |k, v|
       k = key_alias[k] || k
       if v.is_a?(Array)
@@ -554,7 +559,9 @@ module ApiService::Common
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'
     message = error.message.inspect
-    __debug { "!!! api | #{action.inspect} | #{message} | #{error.class}" }
+    __debug_line(leader: '!!!') {
+      %w(api) << action.inspect << message << error.class
+    }
     level  = error.is_a?(Api::Error) ? Logger::WARN : Logger::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }
     status = status ? error.send(status).inspect : '???'

@@ -64,7 +64,7 @@ class Api::Serializer < ::Representable::Decorator
   # This method must be overridden by the derived class to pass in :method.
   #
   # noinspection RubyScope, RubyNilAnalysis
-  def serialize(method = nil, **opt)
+  def serialize(method: nil, **opt)
     __debug { ">>> #{self.class} serialize #{method}" }
     error = nil
     start_time = timestamp
@@ -100,7 +100,7 @@ class Api::Serializer < ::Representable::Decorator
   # to `super`.
   #
   # noinspection RubyScope, RubyNilAnalysis
-  def deserialize(data, method = nil)
+  def deserialize(data, method: nil)
     return unless set_source_data(data)
     __debug { ">>> #{self.class} deserialize #{method}" }
     error = nil

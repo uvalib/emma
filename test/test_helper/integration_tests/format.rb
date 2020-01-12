@@ -72,7 +72,7 @@ module TestHelper::IntegrationTests::Format
   # @see #assert_result
   #
   def assert_html_result(status, **opt)
-    opt = opt.merge(format: :html) unless opt.key?(:format)
+    opt[:format] = :html unless opt.key?(:format)
     assert_result(status, **opt)
   end
 
@@ -84,7 +84,7 @@ module TestHelper::IntegrationTests::Format
   # @see #assert_result
   #
   def assert_json_result(status, **opt)
-    opt = opt.merge(format: :json) unless opt.key?(:format)
+    opt[:format] = :json unless opt.key?(:format)
     assert_result(status, **opt)
   end
 
@@ -96,7 +96,7 @@ module TestHelper::IntegrationTests::Format
   # @see #assert_result
   #
   def assert_xml_result(status, **opt)
-    opt = opt.merge(format: :xml) unless opt.key?(:format)
+    opt[:format] = :xml unless opt.key?(:format)
     assert_result(status, **opt)
   end
 
@@ -108,7 +108,7 @@ module TestHelper::IntegrationTests::Format
   # @see #assert_result
   #
   def assert_text_result(status, **opt)
-    opt = opt.merge(format: :text) unless opt.key?(:format)
+    opt[:format] = :text unless opt.key?(:format)
     assert_result(status, **opt)
   end
 
@@ -117,11 +117,11 @@ module TestHelper::IntegrationTests::Format
   # @param [Symbol, nil] status       Status :any is treated the same as *nil*.
   # @param [Hash]        opt
   #
-  # @options opt [String]        :from
-  # @options opt [String,Symbol] :controller
-  # @options opt [String,Symbol] :action
-  # @options opt [String,Symbol] :format
-  # @options opt [String,Symbol] :media_type  If present, trumps :format.
+  # @option opt [String]        :from
+  # @option opt [String,Symbol] :controller
+  # @option opt [String,Symbol] :action
+  # @option opt [String,Symbol] :format
+  # @option opt [String,Symbol] :media_type   If present, trumps :format.
   #
   # @raise [Minitest::Assertion]      If one or more criteria don't match.
   #

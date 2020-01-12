@@ -228,6 +228,7 @@ module Bs::Shared::TitleMethods
   def artifact_list(*types)
     result = respond_to?(:artifacts) && artifacts || []
     result = result.select { |a| types.include?(a.fmt) } if types.present?
+    # noinspection RubyYardReturnMatch
     result
   end
 
@@ -323,6 +324,7 @@ module Bs::Shared::TitleMethods
   # [15] Remove trailing breaks.
   #
   def contents
+    # noinspection RubyYardReturnMatch
     %i[synopsis description].find do |method|
       next unless respond_to?(method) && (text = send(method)).present?
       text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]

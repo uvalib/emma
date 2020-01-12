@@ -93,7 +93,7 @@ module SerializationConcern
     opt, render_opt = partition_options(opt, :separator, :name)
     item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
     item = item.merge(error: api_error_message) if api_error?
-    text = make_xml(item, **opt)
+    text = make_xml(item, **opt) || ''
     render xml: text, **render_opt
   end
 
@@ -122,12 +122,15 @@ module SerializationConcern
   # @param [Api::Serializer] serializer
   #
   # @return [String]
+  # @return [nil]                     If *item* is *nil* or an empty collection
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)
     if item.is_a?(Hash)
       return if item.blank?
       serializer ||= Bs::Api::Serializer::Xml.new
       make_opt = { separator: separator, serializer: serializer }
+      # @type [Symbol] k
+      # @type [*]      v
       item.map { |k, v|
         value = make_xml(v, **make_opt)
         next if value.nil? && !serializer.render_nil?
@@ -162,7 +165,7 @@ module SerializationConcern
   #
   # @param [Api::Record, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Array,Hash}]
   #
   # noinspection RubyNilAnalysis
   def index_values(list = nil)
@@ -178,18 +181,20 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Hash]   items
+  # @overload show_values(items, as: :array)
+  #   @param [Hash] items
+  #   @return [Array]
   #
-  # @option items [Symbol] :as        Either :hash or :array is required.
+  # @overload show_values(items, as: :hash)
+  #   @param [Hash] items
+  #   @return [Hash]
   #
-  # @return [Hash, Array]
+  # @overload show_values(items)
+  #   @param [Hash] items
+  #   @return [Hash]
   #
-  def show_values(**items)
-    if items.delete(:as) == :array
-      items.values
-    else
-      items
-    end
+  def show_values(items, as: :hash)
+    (as == :array) ? items.values : items
   end
 
 end

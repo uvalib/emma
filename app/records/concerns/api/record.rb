@@ -30,12 +30,12 @@ class Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Hash, String, nil] data
-  # @param [Hash]              opt
+  # @param [Faraday::Response, Hash, String, nil] data
+  # @param [Hash]                                 opt
   #
   # @option opt [Symbol] :format      One of Api::Schema#SERIALIZER_TYPES.
   #
-  def initialize(data = nil, **opt)
+  def initialize(data, **opt)
     # noinspection RubyCaseWithoutElseBlockInspection
     @exception =
       case opt[:error]
@@ -48,6 +48,7 @@ class Api::Record
     else
       @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
       assert_serializer_type(@serializer_type)
+      # noinspection RubyYardParamTypeMatch
       deserialize(data)
     end
   end
@@ -101,7 +102,7 @@ class Api::Record
   #
   # @see Api::Serializer#serialize
   #
-  def serialize(type = nil, **opt)
+  def serialize(type, **opt)
     serializer(type).serialize(**opt)
   end
 
@@ -140,7 +141,7 @@ class Api::Record
   # @see Api::Serializer::Hash::Schema#SYMBOLIZE_KEYS
   #
   def to_hash(symbolize_keys: nil, **opt)
-    opt = opt.merge(symbolize_keys: symbolize_keys) unless symbolize_keys.nil?
+    opt[:symbolize_keys] = symbolize_keys unless symbolize_keys.nil?
     serialize(:hash, **opt)
   end
 

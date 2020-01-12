@@ -47,175 +47,179 @@ module TitleHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Bs::Api::Record]     item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def title_link(item, label = nil, **opt)
-    path = title_path(id: item.identifier)
-    opt  = opt.merge(tooltip: TITLE_SHOW_TOOLTIP)
-    item_link(item, label, path, **opt)
+  def title_link(item, **opt)
+    opt[:path]    = title_path(id: item.identifier)
+    opt[:tooltip] = TITLE_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # Thumbnail element for the given catalog title.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt          Passed to #image_element except for:
-  #
-  # @option opt [Boolean] :link           If *true* make the image a link to
+  # @param [Boolean]         link         If *true* make the image a link to
   #                                         the show page for the item.
+  # @param [Hash]            opt          Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no thumbnail.
   #
-  def thumbnail(item, **opt)
+  def thumbnail(item, link: false, **opt)
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image or return
-    opt, html_opt = partition_options(opt, *ITEM_ENTRY_OPT)
-    row = positive(opt[:row])
-    id  = item.identifier
+    opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
+    id   = item.identifier
+    link = title_path(id: id) if link
+    alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
+    row  = positive(opt[:row])
     prepend_css_classes!(html_opt, 'thumbnail')
-    html_opt[:alt]  ||= i18n_lookup(nil, 'thumbnail.image.alt', item: id)
-    html_opt[:link] &&= title_path(id: id)
-    html_opt[:id]     = "container-img-#{id}"
-    html_opt[:row]    = row if row
+    html_opt[:id] = "container-img-#{id}"
     html_opt[:'data-turbolinks-permanent'] = true
     # noinspection RubyYardParamTypeMatch
-    image_element(url, **html_opt)
+    image_element(url, link: link, alt: alt, row: row, **html_opt)
   end
 
   # Cover image element for the given catalog title.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt          Passed to #image_element except for:
-  #
-  # @option opt [Boolean] :link           If *true* make the image a link to
+  # @param [Boolean]         link         If *true* make the image a link to
   #                                         the show page for the item.
+  # @param [Hash]            opt          Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no cover image.
   #
-  def cover_image(item, **opt)
-    # @type [String]
-    url = item.respond_to?(:cover_image) && item.cover_image
-    return if url.blank?
-    id  = item.identifier
-    opt = prepend_css_classes(opt, 'cover-image')
-    opt[:alt] ||= i18n_lookup(nil, 'cover.image.alt', item: id)
-    opt[:link] &&= title_path(id: id)
-    image_element(url, opt)
+  def cover_image(item, link: false, **opt)
+    url = item.respond_to?(:cover_image) && item.cover_image or return
+    opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
+    id   = item.identifier
+    link = title_path(id: id) if link
+    alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
+    prepend_css_classes!(html_opt, 'cover-image')
+    # noinspection RubyYardParamTypeMatch
+    image_element(url, link: link, alt: alt, **opt)
   end
 
   # Item categories as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # PeriodicalHelper#periodical_category_links
   #
   def category_links(item, **opt)
-    title_search_links(item, :categories, **opt)
+    opt[:field] = :categories
+    title_search_links(item, **opt)
   end
 
   # Item author(s) as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   def author_links(item, **opt)
-    title_search_links(item, :author_list, **opt)
+    opt[:field] = :author_list
+    title_search_links(item, **opt)
   end
 
   # Item editor(s) as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   def editor_links(item, **opt)
-    opt = opt.merge(method_opt: { role: true })
-    title_search_links(item, :editor_list, **opt)
+    opt[:field]      = :editor_list
+    opt[:method_opt] = { role: true }
+    title_search_links(item, **opt)
   end
 
   # Item composer(s) as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   def composer_links(item, **opt)
-    opt = opt.merge(method_opt: { role: true })
-    title_search_links(item, :composer_list, **opt)
+    opt[:field]      = :composer_list
+    opt[:method_opt] = { role: true }
+    title_search_links(item, **opt)
   end
 
   # Item narrator(s) as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   def narrator_links(item, **opt)
-    opt = opt.merge(method_opt: { role: true })
-    title_search_links(item, :narrator_list, **opt)
+    opt[:field]      = :narrator_list
+    opt[:method_opt] = { role: true }
+    title_search_links(item, **opt)
   end
 
   # Item creator(s) as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   def creator_links(item, **opt)
-    opt = opt.merge(method_opt: { role: true })
-    title_search_links(item, :creator_list, **opt)
+    opt[:field]      = :creator_list
+    opt[:method_opt] = { role: true }
+    title_search_links(item, **opt)
   end
 
   # Item formats as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # PeriodicalHelper#periodical_format_links
   #
   def format_links(item, **opt)
-    opt = opt.merge(all_words: true)
-    title_search_links(item, :fmt, **opt)
+    opt[:field]     = :fmt
+    opt[:all_words] = true
+    title_search_links(item, **opt)
   end
 
   # Item languages as search links.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # PeriodicalHelper#periodical_language_links
   #
   def language_links(item, **opt)
-    opt = opt.merge(all_words: true)
-    title_search_links(item, :language, **opt)
+    opt[:field]     = :language
+    opt[:all_words] = true
+    title_search_links(item, **opt)
   end
 
   # Item countries as search links.
@@ -225,17 +229,19 @@ module TitleHelper
   # country codes result in the same results.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #title_search_links
+  # @param [Hash]            opt        Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
   # PeriodicalHelper#periodical_country_links
   #
   def country_links(item, **opt)
-    opt = opt.merge(all_words: true, no_link: true)
-    title_search_links(item, :country, **opt)
+    opt[:field]     = :country
+    opt[:all_words] = true
+    opt[:no_link]   = true
+    title_search_links(item, **opt)
   end
 
   # Catalog item search links.
@@ -244,31 +250,29 @@ module TitleHelper
   # elements) followed by items which are not linkable (<span> elements).
   #
   # @param [Bs::Api::Record] item
-  # @param [Symbol, nil]     field    Default: :keyword
-  # @param [Hash]            opt      Passed to #search_links
+  # @param [Hash]            opt        Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If access method unsupported by *item*.
   #
-  def title_search_links(item, field = nil, **opt)
-    field ||= opt[:field] || :keyword
-    opt = opt.merge(link_method: :title_search_link)
-    search_links(item, field, **opt)
+  def title_search_links(item, **opt)
+    opt[:link_method] = :title_search_link
+    opt[:field]     ||= :keyword
+    search_links(item, **opt)
   end
 
   # A link to the catalog item search results index page for the given term(s).
   #
-  # @param [String]      terms
-  # @param [Symbol, nil] field        Default: :keyword
-  # @param [Hash]        opt          Passed to #search_link
+  # @param [String] terms
+  # @param [Hash]   opt                 Passed to #search_link.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [nil]                       If no *terms* were provided.
   #
-  def title_search_link(terms, field = nil, **opt)
-    field ||= opt[:field] || :keyword
-    opt = opt.merge(scope: :title)
-    search_link(terms, field, **opt)
+  def title_search_link(terms, **opt)
+    opt[:scope]   = :title
+    opt[:field] ||= :keyword
+    search_link(terms, **opt)
   end
 
   # ===========================================================================

@@ -84,8 +84,8 @@ module PaginationHelper
   #
   # @param [Hash] opt
   #
-  # @options opt [Symbol] controller
-  # @options opt [Symbol] action
+  # @option opt [Symbol] :controller
+  # @option opt [Symbol] :action
   #
   # @return [Integer]
   #
@@ -225,7 +225,7 @@ module PaginationHelper
 
   # Get the current page of results.
   #
-  # @return [Array<Object>]
+  # @return [Array]
   #
   def page_items
     @page_items ||= []
@@ -233,9 +233,9 @@ module PaginationHelper
 
   # Set the current page of results.
   #
-  # @param [Array<Object>] values
+  # @param [Array] values
   #
-  # @return [Array<Object>]
+  # @return [Array]
   #
   def page_items=(values)
     @page_items = Array.wrap(values)
@@ -297,19 +297,19 @@ module PaginationHelper
 
   # Page count display.
   #
-  # @param [Integer] count            Default: `#total_items`.
+  # @param [Integer] count
   # @param [Hash]    opt              Options to .search-count wrapper element.
   #
-  # @options opt [Symbol] controller
-  # @options opt [Symbol] action
+  # @option opt [Symbol] :controller
+  # @option opt [Symbol] :action
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_count(count = total_items, **opt)
+  def pagination_count(count, **opt)
     opt   = prepend_css_classes(opt, 'search-count')
     found = get_page_count_label(count: count)
     count = number_with_delimiter(count)
-    content_tag(:div, "#{count} #{found}", **opt)
+    content_tag(:div, "#{count} #{found}", opt)
   end
 
   # Placeholder for an item that would have been a link if it had a path.
@@ -351,10 +351,11 @@ module PaginationHelper
   #
   # @param [Hash] opt
   #
-  # @options opt [Symbol]  controller
-  # @options opt [Integer] count
+  # @option opt [Symbol]  :controller
+  # @option opt [Integer] :count
   #
-  # @return [Integer]
+  # @return [String]
+  # @return [nil]
   #
   def get_page_count_label(**opt)
     controller = opt[:controller] || request_parameters[:controller]
@@ -370,13 +371,13 @@ module PaginationHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_control(label, path = nil, **opt)
+  def pagination_control(label, path, **opt)
     link = path.present?
     if label.is_a?(Hash)
       prop  = label
       label = prop[:label]
       tip   = link ? prop[:tooltip] : prop.dig(:no_link, :tooltip)
-      opt   = opt.merge(title: tip) if tip.present?
+      opt[:title] = tip if tip.present?
     end
     if link
       link_to(label, path, opt)

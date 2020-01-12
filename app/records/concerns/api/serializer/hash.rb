@@ -39,9 +39,9 @@ class Api::Serializer::Hash < ::Api::Serializer
 
   # Render data elements.
   #
-  # @param [Symbol, Proc, nil] method           Default: :to_hash
-  # @param [Boolean, nil]      symbolize_keys
-  # @param [Hash]              opt              Options argument for *method*.
+  # @param [Symbol, Proc] method
+  # @param [Boolean]      symbolize_keys
+  # @param [Hash]         opt             Options argument for *method*.
   #
   # @return [String]
   #
@@ -50,14 +50,16 @@ class Api::Serializer::Hash < ::Api::Serializer
   # This method overrides:
   # @see Api::Serializer#serialize
   #
-  def serialize(method = :to_hash, symbolize_keys: SYMBOLIZE_KEYS, **opt)
-    symbolize_keys ? super.deep_symbolize_keys : super
+  def serialize(method: :to_hash, symbolize_keys: SYMBOLIZE_KEYS, **opt)
+    result = super(method: method, **opt)
+    result = result.deep_symbolize_keys if symbolize_keys
+    result
   end
 
   # Load data elements.
   #
-  # @param [String, Hash]      data
-  # @param [Symbol, Proc, nil] method
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
   #
   # @return [Hash]
   # @return [nil]
@@ -67,7 +69,7 @@ class Api::Serializer::Hash < ::Api::Serializer
   # This method overrides:
   # @see Api::Serializer#deserialize
   #
-  def deserialize(data, method = :from_hash)
+  def deserialize(data, method: :from_hash)
     super
   end
 

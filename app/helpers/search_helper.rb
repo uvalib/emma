@@ -136,15 +136,14 @@ module SearchHelper
   # Create a link to the details show page for the given item.
   #
   # @param [Search::Api::Record] item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
   # @param [Hash]                opt    Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_item_link(item, label = nil, **opt)
-    path = search_path(id: item.identifier)
-    opt  = opt.merge(tooltip: SEARCH_SHOW_TOOLTIP)
-    item_link(item, label, path, **opt)
+  def search_item_link(item, **opt)
+    opt[:path]    = search_path(id: item.identifier)
+    opt[:tooltip] = SEARCH_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # ===========================================================================

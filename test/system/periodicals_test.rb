@@ -118,7 +118,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
 
       # Visit the first entry.
       visit_show_page(:periodical) do |title|
-        parts = title.downcase.split(/[[:space:]]|[[:punct:]]/)
+        parts = title.downcase.split(/[[:space:][:punct:]]+/)
         term  = strip_quotes(terms.values.first.downcase)
         show "TERM = #{term}"
         assert parts.any? { |part| part == term }

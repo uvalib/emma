@@ -29,9 +29,9 @@ module I18nHelper
   #
   # @return [Hash]
   #
-  def units_of(controller = nil, **opt)
+  def units_of(controller, **opt)
     controller ||= request_parameters[:controller]
-    i18n_interpolations(controller, **opt)
+    i18n_interpolations(controller: controller, **opt)
   end
 
   # The applicable description of a model managed by a controller.
@@ -45,7 +45,7 @@ module I18nHelper
   #
   # @return [String]
   #
-  def unit_of(controller = nil, **opt)
+  def unit_of(controller, **opt)
     opt, i18n_opt = partition_options(opt, :plural, :capitalize)
     plural  = opt.key?(:plural) ? opt[:plural] : (i18n_opt[:count].to_i > 1)
     capital = opt[:capitalize]
@@ -108,7 +108,7 @@ module I18nHelper
           i18n_lookup_order(controller).map { |base| :"#{base}.#{key}" }
         end
       }.compact
-    units = i18n_interpolations(controller, **i18n_opt)
+    units = i18n_interpolations(controller: controller, **i18n_opt)
     mode  = opt.delete(:mode)
     unless false?(mode)
       vals = %i[many one]
@@ -152,14 +152,14 @@ module I18nHelper
   # @option opt [Boolean] :plural     If *true*, only plural; if *false*, only
   #                                     single; default: *nil*.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>String}]
   #
   # == Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
   # some form of "emma.generic.unit" will be found if there is no definition
   # for the given controller.
   #
-  def i18n_interpolations(controller, action = nil, **opt)
+  def i18n_interpolations(controller: nil, action: nil, **opt)
     opt, i18n_opt = partition_options(opt, :long, :brief, :count, :plural)
     i18n_opt[:default] = single = plural = no_single = no_plural = nil
     if opt.key?(:plural)

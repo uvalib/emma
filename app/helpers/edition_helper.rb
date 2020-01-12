@@ -47,21 +47,20 @@ module EditionHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Bs::Api::Record]    item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link except for:
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link except for:
   #
   # @option opt [String] :editionId
   # @option opt [String] :edition       Alias for :editionId
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def edition_link(item, label = nil, **opt)
-    opt, html_opt = partition_options(opt, :editionId, :edition)
-    eid  = opt.values.first
-    path = "#edition-#{eid}" # TODO: edition show page?
-    html_opt[:tooltip] = EDITION_SHOW_TOOLTIP
-    item_link(item, label, path, **html_opt)
+  def edition_link(item, **opt)
+    local, opt = partition_options(opt, :editionId, :edition)
+    eid = local.values.first
+    opt[:path]    = "#edition-#{eid}" # TODO: edition show page?
+    opt[:tooltip] = EDITION_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # ===========================================================================
@@ -86,7 +85,7 @@ module EditionHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -109,7 +108,7 @@ module EditionHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

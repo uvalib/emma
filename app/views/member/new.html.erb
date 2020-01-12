@@ -10,7 +10,7 @@
 
   click_to =
     if can?(:new, Member)
-      'Click %s to' % link_to_action(label: 'here')
+      'Click %s to' % link_to_action('here')
     else
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe

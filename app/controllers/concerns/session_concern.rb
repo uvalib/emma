@@ -132,26 +132,23 @@ module SessionConcern
 
   # Persist information about the last operation performed in this session.
   #
-  # @param [Hash, nil] hash
-  # @param [Time]      time           Default: `Time.now`.
-  # @param [String]    path           Default: `request.path`.
-  # @param [Hash]      req_params     Default: `#params`.
+  # @param [Time]   time              Default: `Time.now`.
+  # @param [String] path              Default: `request.path`.
+  # @param [Hash]   req_params        Default: `#params`.
   #
-  # @return [Hash]
+  # @return [Hash{String=>*}]
   #
-  def last_operation_update(hash = nil, time: nil, path: nil, req_params: nil)
+  def last_operation_update(time: nil, path: nil, req_params: nil)
     req_params ||= params
     # noinspection RubyCaseWithoutElseBlockInspection
     case req_params[:controller]
       when 'api' then return if req_params[:action] == 'image'
     end
-    values = {
-      time:   (time || Time.now).to_i,
-      path:   (path || request.path),
-      params: url_parameters(req_params)
-    }
-    values.merge!(hash) if hash.present?
-    last_operation.merge!(values.stringify_keys)
+    last_operation.merge!(
+      'time'   => (time || Time.now).to_i,
+      'path'   => (path || request_path),
+      'params' => url_parameters(req_params)
+    )
       .tap {
         __debug { "session_update 'time' = #{last_operation_time.inspect}" }
       }

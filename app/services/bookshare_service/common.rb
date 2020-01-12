@@ -154,11 +154,11 @@ module BookshareService::Common
     update  = %i[put post patch].include?(@verb)
     params  = update ? @params.to_json : @params
     headers = ({ 'Content-Type' => 'application/json' } if update)
-    __debug {
-      ">>> bookshare | #{@action.inspect} | " +
-        { params: params, headers: headers }
-          .map { |k, v| "#{k} = #{v.inspect}" unless v.blank? }
-          .compact.join(' | ')
+    __debug_line(leader: '>>>') {
+      %w(bookshare) << @action.inspect <<
+        { params: params, headers: headers }.transform_values { |v|
+          v.inspect if v.present?
+        }.compact
     }
     @response = transmit(@verb, @action, params, headers, **opt)
 
@@ -170,15 +170,15 @@ module BookshareService::Common
     error = BookshareService::ResponseError.new(error)
 
   ensure
-    __debug {
+    __debug_line(leader: '<<<') {
       # noinspection RubyNilAnalysis
       resp   = error.respond_to?(:response) && error.response || @response
       status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
-      data   = resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
-      "<<< bookshare | #{@action.inspect} | " +
-        { status: status, data: data }
-          .map { |k, v| "#{k} = #{v.inspect.truncate(256)}" }
-          .compact.join(' | ')
+      data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
+      %w(bookshare) << @action.inspect <<
+        { status: status, data: data }.transform_values { |v|
+          v.inspect.truncate(256)
+        }
     }
     @response  = nil   if error
     @exception = error unless no_exception
@@ -230,7 +230,7 @@ module BookshareService::Common
   # @see ApiService::Common#transmit
   #
   # noinspection DuplicatedCode
-  def transmit(verb, action, params = nil, headers = nil, **opt)
+  def transmit(verb, action, params, headers, **opt)
     resp = connection.send(verb, action, params, headers)
     raise BookshareService::EmptyResultError.new(resp) if resp.nil?
     redirection = no_redirect = nil
@@ -254,9 +254,9 @@ module BookshareService::Common
       action = resp.headers['Location']
       raise BookshareService::RedirectionError.new(resp) if action.blank?
       unless no_redirect
-        opt = opt.merge(redirection: (redirection += 1))
-        __debug {
-          "!!! bookshare | REDIRECT #{redirection} TO #{action.inspect}"
+        opt[:redirection] = (redirection += 1)
+        __debug_line(leader: '!!!') {
+          %w(bookshare) << "REDIRECT #{redirection} TO #{action.inspect}"
         }
         resp = transmit(:get, action, params, headers, **opt)
       end
@@ -282,8 +282,8 @@ module BookshareService::Common
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'
     message = error.message.inspect
-    __debug {
-      "!!! bookshare | #{action.inspect} | #{message} | #{error.class}"
+    __debug_line(leader: '!!!') {
+      %w(bookshare) << action.inspect << message << error.class
     }
     level  = error.is_a?(Bs::Error) ? Logger::WARN : Logger::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }

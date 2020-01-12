@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 #
 # === Fields also defined in Search::Record::MetadataCommonRecord
 #
-# @attr [Repository]                    emma_repository
+# @attr [EmmaRepository]                emma_repository
 # @attr [String]                        emma_collection
 # @attr [String]                        emma_repositoryRecordId
 # @attr [String]                        emma_retrievalLink # NOTE: URI
@@ -29,7 +29,7 @@ __loading_begin(__FILE__)
 # @attr [Rights]                        dc_rights
 # @attr [Provenance]                    dc_provenance
 # @attr [String]                        dc_description
-# @attr [SearchFormat]                  dc_format
+# @attr [DublinCoreFormat]              dc_format
 # @attr [DcmiType]                      dc_type
 # @attr [Array<String>]                 dc_subject
 # @attr [IsoDate]                       dcterms_dateAccepted
@@ -53,7 +53,7 @@ class Search::Record::MetadataRecord < Search::Api::Record
   schema do
     attribute :emma_recordId,             String
     attribute :emma_titleId,              String
-    attribute :emma_repository,           Repository
+    attribute :emma_repository,           EmmaRepository
     attribute :emma_collection,           String
     attribute :emma_repositoryRecordId,   String
     attribute :emma_retrievalLink,        String
@@ -70,7 +70,7 @@ class Search::Record::MetadataRecord < Search::Api::Record
     attribute :dc_rights,                 Rights
     attribute :dc_provenance,             Provenance
     attribute :dc_description,            String
-    attribute :dc_format,                 SearchFormat
+    attribute :dc_format,                 DublinCoreFormat
     attribute :dc_type,                   DcmiType
     has_many  :dc_subject,                String
     attribute :dcterms_dateAccepted,      IsoDate

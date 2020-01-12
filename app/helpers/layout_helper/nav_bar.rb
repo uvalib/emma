@@ -83,11 +83,11 @@ module LayoutHelper::NavBar
     opt   = { title: DASHBOARD_TOOLTIP }
     links <<
       if path == current_path
-        content_tag(:span, label, opt.merge(class: 'active disabled'))
+        content_tag(:span, label, opt.merge!(class: 'active disabled'))
       elsif !current_user
-        content_tag(:span, label, opt.merge(class: 'disabled'))
+        content_tag(:span, label, opt.merge!(class: 'disabled'))
       elsif path == current_base_path
-        link_to(label, path, opt.merge(class: 'active'))
+        link_to(label, path, opt.merge!(class: 'active'))
       else
         link_to(label, path, opt)
       end
@@ -99,9 +99,9 @@ module LayoutHelper::NavBar
         path  = send("#{controller}_index_path")
         opt   = { title: CONTROLLER_TOOLTIP[controller] }
         if path == current_path
-          content_tag(:span, label, opt.merge(class: 'active disabled'))
+          content_tag(:span, label, opt.merge!(class: 'active disabled'))
         elsif path == current_base_path
-          link_to(label, path, opt.merge(class: 'active'))
+          link_to(label, path, opt.merge!(class: 'active'))
         else
           link_to(label, path, opt)
         end
@@ -110,7 +110,7 @@ module LayoutHelper::NavBar
     # Element containing links.
     content_tag(:div, class: 'links') do
       separator = content_tag(:span, '|', class: 'separator')
-      safe_join(links, separator).html_safe
+      safe_join(links, separator)
     end
 
   end

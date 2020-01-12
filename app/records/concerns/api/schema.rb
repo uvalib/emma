@@ -133,7 +133,7 @@ module Api::Schema
   # A table of schema property enumeration types mapped to literals which are
   # their default values.
   #
-  # @return [Hash{Symbol=>Object}]
+  # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
     raise "#{__method__} should be overridden"
@@ -178,10 +178,20 @@ module Api::Schema
     "#{service_name}::Api::Serializer::#{type}"
   end
 
+  # A table of schema property scalar types mapped to literals which are their
+  # default values.
+  #
+  # @return [Hash{Symbol=>Object}]
+  #
   def scalar_defaults
     SCALAR_DEFAULTS
   end
 
+  # The basic types that may be given as the second argument to #attribute,
+  # #has_one, or #has_many definitions.
+  #
+  # @type [Array<Symbol>]
+  #
   def scalar_types
     SCALAR_TYPES
   end

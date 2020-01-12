@@ -32,8 +32,6 @@ module DownloadConcern
   # @overload render_download(result)
   #   @param [Bs::Message::StatusModel] result
   #
-  # @return [void]
-  #
   def render_download(method, **opt)
     result =
       if method.is_a?(Api::Message)
@@ -64,7 +62,7 @@ module DownloadConcern
   # @param [String] state
   # @param [String] error
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>String}]
   #
   def download_values(url = @link, state = @state, error = @error)
     { url: url, state: state }.tap do |result|

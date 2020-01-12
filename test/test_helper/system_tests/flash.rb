@@ -18,13 +18,13 @@ module TestHelper::SystemTests::Flash
   # Assert that a flash message is present.  If neither :alert nor :notice is
   # specified then any element with *text* under '.flash-messages' will match.
   #
-  # @param [String, nil] text
-  # @param [Hash]        opt
+  # @param [Hash] opt
   #
   # @option opt [String] :alert       Flash alert text
   # @option opt [String] :notice      Flash notice text.
+  # @option opt [String] :text        Generic flash text.
   #
-  def assert_flash(text = nil, **opt)
+  def assert_flash(**opt)
     selector = %w(.flash-messages)
     if opt[:notice]
       selector << '.notice'
@@ -34,6 +34,7 @@ module TestHelper::SystemTests::Flash
       text = opt[:alert]
     else
       selector << '*'
+      text = opt[:text]
     end
     assert_selector selector.join(' '), text: text
   end

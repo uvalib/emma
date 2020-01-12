@@ -285,6 +285,7 @@ module TestHelper::SystemTests::Bookshare
   #
   def record_fields(node)
     rows = node.find_all('tbody tr') rescue []
+    # noinspection RubyYardReturnMatch
     rows.map { |row|
       parts = row.find_all('p') rescue []
       name, desc, type = parts.map { |p| p.text.to_s.sub(/\s+/, ' ').strip }
@@ -415,14 +416,13 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [String]
   #
-  def problem_list(problems, header = nil, **opt)
+  def problem_list(problems, header, **opt)
     problems = problems.to_h unless problems.is_a?(Hash)
     header &&= "*** Problem #{header} ***"
-    ss_opt   = opt.merge(output: false)
-    ss_opt[:width] ||=
-      problems.values.flat_map(&:keys).sort_by(&:size).last.size
+    opt[:output]  = false
+    opt[:width] ||= problems.values.flat_map(&:keys).sort_by(&:size).last.size
     show_section(header, output: false) {
-      problems.map { |item, problem| show_subsection(item, problem, **ss_opt) }
+      problems.map { |item, problem| show_subsection(item, problem, **opt) }
     }.join("\n")
   end
 
@@ -440,12 +440,13 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [void]
   #
-  def show_request_params(fields, method = nil, **opt)
+  def show_request_params(fields, method, **opt)
+    opt[:output]    = false
+    opt[:separator] = ' ' unless opt.key?(:separator)
     header = method && "\n\nREQUEST: #{method}"
     show_section(header) do
-      ss_opt = opt.reverse_merge(separator: ' ').merge(output: false)
       fields.map do |field|
-        show_subsection(field[:name], **ss_opt) do
+        show_subsection(field[:name], **opt) do
           type = field[:type]
           type = "Array[#{type}]" if field[:collection]
           {
@@ -468,12 +469,13 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [void]
   #
-  def show_method_params(fields, method = nil, **opt)
+  def show_method_params(fields, method, **opt)
+    opt[:output]    = false
+    opt[:separator] = ' ' unless opt.key?(:separator)
     header = method && "\n\nMETHOD: #{method}"
     show_section(header) do
-      ss_opt = opt.reverse_merge(separator: ' ').merge(output: false)
       fields.map do |field|
-        show_subsection('PARAM', field, **ss_opt)
+        show_subsection('PARAM', field, **opt)
       end
     end
   end
@@ -486,14 +488,15 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [void]
   #
-  def show_record_fields(fields, record_type = nil, **opt)
+  def show_record_fields(fields, record_type, **opt)
+    opt[:output]    = false
+    opt[:separator] = ' ' unless opt.key?(:separator)
     header = record_type && "\n\nRECORD: #{record_type}"
     show_section(header) do
-      ss_opt = opt.reverse_merge(separator: ' ').merge(output: false)
       fields.map do |field|
         header = field[:name]
         header += " (#{field[:required]})" if field[:required]
-        show_subsection(header, **ss_opt) do
+        show_subsection(header, **opt) do
           type = field[:type]
           type = "Array[#{type}]" if field[:collection]
           {
@@ -513,7 +516,7 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [void]
   #
-  def show_model_fields(fields, record_type = nil, **opt)
+  def show_model_fields(fields, record_type, **opt)
     header = record_type && "MODEL: #{model_class(record_type)}"
     show_subsection(header, **opt) do
       fields.map do |field|

@@ -52,7 +52,7 @@ class MemberController < ApplicationController
   # List all organization members.
   #
   def index
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
     opt   = pagination_setup
     @list = api.get_my_organization_members(**opt)
     self.page_items  = @list.userAccounts
@@ -69,7 +69,7 @@ class MemberController < ApplicationController
   # Display details of an existing organization member.
   #
   def show
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
     @item, @preferences, @history = get_account_details(id: @user_id)
     respond_to do |format|
       format.html
@@ -82,21 +82,21 @@ class MemberController < ApplicationController
   # Add metadata for a new organization member.
   #
   def new
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
   end
 
   # == POST /member/:id
   # Create an entry for a new organization member.
   #
   def create
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
   end
 
   # == GET /member/:id/edit
   # Modify metadata of an existing organization member entry.
   #
   def edit
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
   end
 
   # == PUT   /member/:id
@@ -104,14 +104,14 @@ class MemberController < ApplicationController
   # Update the entry for an existing organization member.
   #
   def update
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
   end
 
   # == DELETE /member/:id
   # Remove an existing organization member entry.
   #
   def destroy
-    __debug { "MEMBER #{__method__} | params = #{params.inspect}" }
+    __debug_route('MEMBER')
   end
 
   # ===========================================================================
@@ -124,7 +124,7 @@ class MemberController < ApplicationController
   #
   # @param [ApiUserAccountList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -135,18 +135,21 @@ class MemberController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Message::MyAccountSummary, nil]     item
-  # @param [Bs::Message::MyAccountPreferences, nil] pref
-  # @param [Bs::Message::TitleDownloadList, nil]    hist
-  # @param [Symbol]                                 as
+  # @overload show_values(as: :array)
+  #   @return [Array]
   #
-  # @return [Hash]
+  # @overload show_values(as: :hash)
+  #   @return [Hash{Symbol=>Hash}]
+  #
+  # @overload show_values
+  #   @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, pref = @preferences, hist = @history, as: nil)
-    { member: super(details: item, preferences: pref, history: hist, as: as) }
+  def show_values(as: nil)
+    result = { details: @item, preferences: @preferences, history: @history }
+    { member: super(**result, as: as) }
   end
 
 end

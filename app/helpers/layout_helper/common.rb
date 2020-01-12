@@ -52,16 +52,17 @@ module LayoutHelper::Common
 
   # toggle_button
   #
-  # @param [String, nil] label
-  # @param [Hash]        opt          Passed to #content_tag except for:
+  # @param [Hash] opt                 Passed to #button_tag except for:
   #
+  # @option opt [String] :label       Default: #PANEL_OPENER_LABEL.
   # @option opt [String] :selector    Selector of the element(s) controlled by
   #                                     this button.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def toggle_button(label = nil, **opt)
-    opt, html_opt = partition_options(opt, :selector)
+  def toggle_button(**opt)
+    opt, html_opt = partition_options(opt, :label, :selector)
+    label = opt[:label] ? non_breaking( opt[:label]) : PANEL_OPENER_LABEL
     prepend_css_classes!(html_opt, 'toggle')
     if (selector = opt[:selector])
       html_opt.deep_merge!(data: { selector: selector })
@@ -70,8 +71,7 @@ module LayoutHelper::Common
     end
     html_opt[:type]  ||= 'button'
     html_opt[:title] ||= PANEL_OPENER_TIP
-    label = label ? non_breaking(label) : PANEL_OPENER_LABEL
-    button_tag(label, **html_opt)
+    button_tag(label, html_opt)
   end
 
   # ===========================================================================
@@ -116,7 +116,7 @@ module LayoutHelper::Common
   #
   def search_form(id, type, **opt)
     return if (path = search_target(type)).blank?
-    opt = opt.merge(method: :get) if opt[:method].blank?
+    opt[:method] ||= :get
     before, after =
       if path == request.path
         hidden_fields = url_parameters.except(id, :offset, :start).sort

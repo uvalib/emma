@@ -12,7 +12,7 @@
 
   click_to =
     if can?(:new, Artifact)
-      'Click %s to' % link_to_action(label: 'here', bookshareId: id, fmt: fmt)
+      'Click %s to' % link_to_action('here', bookshareId: id, fmt: fmt)
     else
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe

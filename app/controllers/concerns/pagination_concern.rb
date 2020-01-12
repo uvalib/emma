@@ -41,9 +41,9 @@ module PaginationConcern
   #
   # @param [ActionController::Parameters, Hash, nil] opt  Default: `#params`.
   #
-  # @options opt [Symbol] :controller
+  # @option opt [Symbol] :controller
   #
-  # @return [Hash]                    URL parameters.
+  # @return [Hash{Symbol=>String}]    URL parameters.
   #
   def pagination_setup(opt = nil)
 

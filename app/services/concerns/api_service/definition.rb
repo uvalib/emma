@@ -60,13 +60,14 @@ module ApiService::Definition
 
   # Properties for each method which implements an API request.
   #
-  # @overload api_methods(synthetic: false)
-  #   @param [Boolean] synthetic
-  #   @return [Hash{Symbol=>Hash}]
+  # @overload api_methods(arg)
+  #   @param [Hash] arg
+  #   @option arg [Boolean] :synthetic  Default: false.
+  #   @return [Hash{Symbol=>Hash}]      Properties of all methods.
   #
-  # @overload api_methods(method)
-  #   @param [Symbol, String] method
-  #   @return [Hash, nil]
+  # @overload api_methods(arg)
+  #   @param [Symbol, String] arg       Method name.
+  #   @return [Hash, nil]               Properties of the named method.
   #
   # == Usage Notes
   # By default only true (documented) API methods are returned, unless:
@@ -74,17 +75,15 @@ module ApiService::Definition
   #     functionality not directly supported by the API) are also included.
   # - If :synthetic is :only then only the "fake" methods are returned.
   #
-  def api_methods(method = nil, synthetic: false)
+  def api_methods(arg = nil)
     @@all_methods  ||= {}
     @@true_methods ||= {}
-    if method
-      @@all_methods[method.to_sym]
-    elsif synthetic == :only
+    if arg.is_a?(String) || arg.is_a?(Symbol)
+      @@all_methods[arg.to_sym]
+    elsif (synthetic = (arg.is_a?(Hash) && arg[:synthetic])) == :only
       @@all_methods.except(*@@true_methods.keys)
-    elsif synthetic
-      @@all_methods
     else
-      @@true_methods
+      synthetic ? @@all_methods : @@true_methods
     end
   end
 

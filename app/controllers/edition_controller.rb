@@ -55,7 +55,7 @@ class EditionController < ApplicationController
   # List all editions for a periodical.
   #
   def index
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
     opt   = pagination_setup
     @list = api.get_periodical_editions(seriesId: @series_id, **opt)
     self.page_items  = @list.periodicalEditions
@@ -73,7 +73,7 @@ class EditionController < ApplicationController
   # Display details of an existing edition.
   #
   def show
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
     opt   = { seriesId: @series_id, editionId: @edition_id }
     @item = api.get_periodical_edition(**opt)
     respond_to do |format|
@@ -88,7 +88,7 @@ class EditionController < ApplicationController
   # Add metadata for a new edition.
   #
   def new
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
   end
 
   # == POST /edition/:id
@@ -96,7 +96,7 @@ class EditionController < ApplicationController
   # Upload a new edition.
   #
   def create
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
   end
 
   # == GET /edition/:id/edit
@@ -104,7 +104,7 @@ class EditionController < ApplicationController
   # Modify metadata of an existing edition entry.
   #
   def edit
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
   end
 
   # == PUT   /edition/:id
@@ -114,7 +114,7 @@ class EditionController < ApplicationController
   # Upload a replacement for an existing edition.
   #
   def update
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
   end
 
   # == DELETE /edition/:id
@@ -122,7 +122,7 @@ class EditionController < ApplicationController
   # Remove an existing edition entry.
   #
   def destroy
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
   end
 
   # == GET /edition/:id/:fmt?seriesId=:seriesId
@@ -130,7 +130,7 @@ class EditionController < ApplicationController
   # Download a periodical edition.
   #
   def download
-    __debug { "EDITION #{__method__} | params = #{params.inspect}" }
+    __debug_route('EDITION')
     opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
     render_download(:download_periodical_edition, **opt)
   end
@@ -145,7 +145,7 @@ class EditionController < ApplicationController
   #
   # @param [ApiPeriodicalEditionList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -156,15 +156,14 @@ class EditionController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Record::PeriodicalEdition, nil] item
-  # @param [Symbol]                             as     Unused.
+  # @param [Bs::Record::PeriodicalEdition, Hash] item
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Bs::Record::PeriodicalEdition,Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, as: nil)
+  def show_values(item = @item)
     { edition: item }
   end
 

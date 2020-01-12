@@ -16,6 +16,6 @@
   opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
 -%>
 
-<%= list_entry_number(item, opt)           unless skip.include?(:number) %>
-<%= thumbnail(item, opt.merge(link: true)) unless skip.include?(:thumbnail) %>
+<%= list_entry_number(item, **opt)     unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
 <%= edition_list_entry(item, add) %>

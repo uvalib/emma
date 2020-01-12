@@ -12,7 +12,7 @@
 
   click_to =
     if can?(:edit, Edition)
-      'Click %s to' % link_to_action(label: 'here', id: id, seriesId: series)
+      'Click %s to' % link_to_action('here', id: id, seriesId: series)
     else
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe

@@ -47,7 +47,7 @@ module ExplorerHelper
   # @param [String] path
   # @param [Hash]   opt               Passed to #api_get, etc.
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>*}]
   #
   def api_explorer(method, path, **opt)
     method = method&.downcase&.to_sym || :get
@@ -58,10 +58,10 @@ module ExplorerHelper
       method:    method.to_s.upcase,
       path:      path,
       opt:       opt.presence || '',
-      url:       api_explorer_url(path, opt),
+      url:       api_explorer_url(path, **opt),
       result:    data&.force_encoding('UTF-8'),
       exception: api_exception,
-    }.reject { |_, v| v.nil? }
+    }.compact
   end
 
   # Generate HTML from the result of an API method invocation.
@@ -73,8 +73,8 @@ module ExplorerHelper
   #                                       into <a> links and no HTML formatting
   #                                       will be applied.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [String]
+  # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
+  # @return [String]                    If *html* is *false*.
   #
   def api_format_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record)

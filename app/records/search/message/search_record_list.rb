@@ -24,7 +24,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @param [Faraday::Response, Hash, String] data
   # @param [Hash]                            opt
   #
-  # @option opt [Symbol] :format      If not provided, this will be determined
+  # @option opt [Symbol]  :format     If not provided, this will be determined
   #                                     heuristically from *data*.
   #
   # @option opt [Boolean] :example    If this list should be generated from
@@ -37,6 +37,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   def initialize(data, **opt)
     __debug { "### #{self.class}.#{__method__}" }
     start_time = timestamp
+    # noinspection RubyCaseWithoutElseBlockInspection
     @exception =
       case opt[:error]
         when Exception then opt[:error]
@@ -53,10 +54,9 @@ class Search::Message::SearchRecordList < Search::Api::Message
       @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
       assert_serializer_type(@serializer_type)
       data = data.body.presence if data.is_a?(Faraday::Response)
-      opt  = opt.dup
       opt[:format] ||= self.format_of(data)
       opt[:error]  ||= true if opt[:format].blank?
-      data = wrap_outer(data, opt) if (opt[:format] == :xml) && !opt[:error]
+      data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
       @records = deserialize(data)
     end
   ensure
@@ -81,26 +81,24 @@ class Search::Message::SearchRecordList < Search::Api::Message
 
   # Generate example records from config/locales/examples.en.yml data.
   #
-  # @param [Array<Symbol>] repositories   Default: Repository#values.
-  # @param [Hash]          opt
+  # @param [Hash] opt
   #
-  # @options opt [Symbol]        :example     Either :template or :search.
-  # @options opt [String]        :repository  Limit by :emma_repository.
-  # @options opt [String]        :fmt         Limit by :dc_format.
-  # @options opt [String]        :language    Limit by :dc_language.
-  # @options opt [String, Array] :feature     Limit by :emma_formatFeature.
+  # @option opt [Symbol]        :example      Either :template or :search.
+  # @option opt [String]        :repository   Limit by :emma_repository.
+  # @option opt [String]        :fmt          Limit by :dc_format.
+  # @option opt [String]        :language     Limit by :dc_language.
+  # @option opt [String, Array] :feature      Limit by :emma_formatFeature.
   #
   # @return [Array<Search::Message::SearchRecord>]
   #
-  def make_examples(repositories = nil, **opt) # TODO: remove - testing
+  def make_examples(**opt) # TODO: remove - testing
     example  = opt[:example] || :search
     feature  = Array.wrap(opt[:accessibilityFeature]).map(&:to_s).presence
     source   = opt[:repository]&.to_s
     language = opt[:language]&.to_s
     format   = opt[:fmt]&.to_s
     if example == :search
-      repositories ||= Repository.values
-      repositories = Array.wrap(repositories).map(&:to_sym)
+      repositories = EmmaRepository.values.map(&:to_sym)
       EXAMPLE_DATA.flat_map { |section, entries|
         next unless repositories.include?(section)
         entries = entries.values.flatten(1) if entries.is_a?(Hash)

@@ -92,20 +92,19 @@ module ReadingListHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Bs::Api::Record]     item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link except for:
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link except for:
   #
   # @option opt [String] :readingListId
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def reading_list_link(item, label = nil, **opt)
-    opt, html_opt = partition_options(opt, :readingListId)
-    id   = opt[:readingListId] || item.identifier
-    path = reading_list_path(id: id)
-    html_opt[:tooltip] = READING_LIST_SHOW_TOOLTIP
-    item_link(item, label, path, **html_opt)
+  def reading_list_link(item, **opt)
+    local, opt = partition_options(opt, :readingListId)
+    id = local[:readingListId] || item.identifier
+    opt[:path]    = reading_list_path(id: id)
+    opt[:tooltip] = READING_LIST_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # ===========================================================================

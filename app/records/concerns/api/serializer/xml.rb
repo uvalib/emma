@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @see Api::Record::Schema::ClassMethods#schema
 #
-class Api::Serializer::Xml < Api::Serializer
+class Api::Serializer::Xml < ::Api::Serializer
 
   include ::Representable::XML
   include ::Representable::Coercion
@@ -38,8 +38,8 @@ class Api::Serializer::Xml < Api::Serializer
 
   # Render data elements in XML format.
   #
-  # @param [Symbol, Proc, nil] method   Default: :to_xml
-  # @param [Hash]              opt      Options argument for *method*.
+  # @param [Symbol, Proc] method
+  # @param [Hash]         opt         Options argument for *method*.
   #
   # @return [String]
   #
@@ -48,14 +48,14 @@ class Api::Serializer::Xml < Api::Serializer
   # This method overrides:
   # @see Api::Serializer#serialize
   #
-  def serialize(method = :to_xml, **opt)
+  def serialize(method: :to_xml, **opt)
     super
   end
 
   # Load data elements from the supplied data in XML format.
   #
-  # @param [String, Hash]      data
-  # @param [Symbol, Proc, nil] method
+  # @param [String, Hash] data
+  # @param [Symbol, Proc] method
   #
   # @return [Hash]
   # @return [nil]
@@ -65,7 +65,7 @@ class Api::Serializer::Xml < Api::Serializer
   # This method overrides:
   # @see Api::Serializer#deserialize
   #
-  def deserialize(data, method = :from_xml)
+  def deserialize(data, method: :from_xml)
     super
   end
 

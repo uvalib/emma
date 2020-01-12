@@ -18,19 +18,19 @@ module SearchService::Request::Records
 
   public
 
-  # == GET /records
+  # == GET /search
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                            :q
-  # @option opt [SearchFormat, Array<SearchFormat>] :fmt
-  # @option opt [FormatFeature]                     :formatFeature
-  # @option opt [String]                            :formatVersion
-  # @option opt [A11yFeature]                       :accessibilityFeature
-  # @option opt [Repository]                        :repository
-  # @option opt [String]                            :collection
-  # @option opt [IsoDate]                           :lastRemediationDate
-  # @option opt [SearchSort]                        :sort
+  # @option opt [String]              :q
+  # @option opt [DublinCoreFormat, Array<DublinCoreFormat>] :fmt
+  # @option opt [FormatFeature]       :formatFeature
+  # @option opt [String]              :formatVersion
+  # @option opt [A11yFeature]         :accessibilityFeature
+  # @option opt [EmmaRepository]      :repository
+  # @option opt [String]              :collection
+  # @option opt [IsoDate]             :lastRemediationDate
+  # @option opt [SearchSort]          :sort
   #
   # @return [Search::Message::SearchRecordList]
   #
@@ -38,7 +38,7 @@ module SearchService::Request::Records
   #
   def get_records(**opt)
     opt = get_parameters(__method__, **opt)
-    api(:get, 'records', **opt)
+    api(:get, 'search', **opt)
     Search::Message::SearchRecordList.new(response, error: exception)
   end
     .tap do |method|
@@ -47,15 +47,13 @@ module SearchService::Request::Records
           fmt:                  :format,
           query:                :q,
         },
-        required: {
-          q:                    String,
-        },
         optional: {
-          format:               SearchFormat,
+          q:                    String,
+          format:               DublinCoreFormat,
           formatFeature:        FormatFeature,
           formatVersion:        String,
           accessibilityFeature: A11yFeature,
-          repository:           Repository,
+          repository:           EmmaRepository,
           collection:           String,
           lastRemediationDate:  IsoDate,
           sort:                 SearchSort,
@@ -79,7 +77,7 @@ module SearchService::Request::Records
   #
   def get_record(titleId:, **opt)
     prm = encode_parameters(titleId: titleId)
-    api(:get, 'records', **prm, **opt)
+    api(:get, 'search', **prm, **opt)
     Search::Message::SearchRecord.new(response, error: exception)
   end
     .tap do |method|
@@ -103,7 +101,7 @@ module SearchService::Request::Records
   # @return [Search::Message::SearchRecordList]
   #
   def get_example_records(**opt) # TODO: remove - testing
-    opt = opt.reverse_merge(example: :search)
+    opt[:example] ||= :search
     Search::Message::SearchRecordList.new(nil, **opt)
   end
 

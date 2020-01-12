@@ -49,7 +49,7 @@ class ReadingListController < ApplicationController
   # or organization list to which the user is subscribed).
   #
   def index
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     opt   = pagination_setup
     @list = api.get_all_reading_lists(**opt)
     self.page_items  = @list.lists
@@ -66,7 +66,7 @@ class ReadingListController < ApplicationController
   # Display details of a reading list.
   #
   def show
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     @item = api.get_reading_list(readingListId: @id)
     opt   = pagination_setup
     @list = api.get_reading_list_titles(readingListId: @id, no_raise: true)
@@ -84,7 +84,7 @@ class ReadingListController < ApplicationController
   # Add details for a new reading list.
   #
   def new
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     # TODO: get fields :name, :description, :access
   end
 
@@ -92,7 +92,7 @@ class ReadingListController < ApplicationController
   # Create a new reading list.
   #
   def create
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     opt = params.slice(:name, :description, :access).to_unsafe_h
     api.create_my_reading_list(**opt)
   end
@@ -101,7 +101,7 @@ class ReadingListController < ApplicationController
   # Modify metadata of an existing reading list.
   #
   def edit
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     # TODO: modify fields :name, :description, :access, :titles
   end
 
@@ -110,7 +110,7 @@ class ReadingListController < ApplicationController
   # Update the entry for an existing reading list.
   #
   def update
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     Array.wrap(params[:add_titles]).each do |bid|
       api.create_reading_list_title(readingListId: @id, bookshareId: bid)
     end
@@ -125,7 +125,7 @@ class ReadingListController < ApplicationController
   # Remove an existing reading list.
   #
   def destroy
-    __debug { "READING LIST #{__method__} | params = #{params.inspect}" }
+    __debug_route('READING LIST')
     # TODO: no API method; show Bookshare page
   end
 
@@ -139,7 +139,7 @@ class ReadingListController < ApplicationController
   #
   # @param [Bs::Message::ReadingListList, nil] list
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#index_values
@@ -150,17 +150,21 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Bs::Message::ReadingListUserView, nil]   item
-  # @param [Bs::Message::ReadingListTitlesList, nil] list
-  # @param [Symbol]                                  as
+  # @overload show_values(as: :array)
+  #   @return [Array]
   #
-  # @return [Hash]
+  # @overload show_values(as: :hash)
+  #   @return [Hash{Symbol=>Hash}]
+  #
+  # @overload show_values
+  #   @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, list = @list, as: nil)
-    { reading_list: super(details: item, titles: list, as: as) }
+  def show_values(as: nil)
+    result = { details: @item, titles: @list }
+    { reading_list: super(**result, as: as) }
   end
 
 end

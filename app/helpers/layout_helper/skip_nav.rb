@@ -96,6 +96,7 @@ module LayoutHelper::SkipNav
     content_tag(:ul, opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
+          # noinspection RubyYardParamTypeMatch
           entry.map { |label, link| render_skip_nav_link(label, link) }
         else
           entry.presence
@@ -138,7 +139,7 @@ module LayoutHelper::SkipNav
       elsif label.to_s.start_with?('emma.')
         label = I18n.t(label)
       else
-        label = page_controls_label(label.to_s, many: true)
+        label = page_controls_label(controller: label.to_s, many: true)
       end
     end
     link_to(label, link, opt)

@@ -52,7 +52,7 @@ module LayoutHelper::SearchBar
   # @return [String]
   # @return [nil]
   #
-  def search_bar_label(type = nil, **opt)
+  def search_bar_label(type, **opt)
     type ||= search_input_type
     i18n_lookup(type, 'search_bar.label', **opt)
   end
@@ -65,7 +65,7 @@ module LayoutHelper::SearchBar
   # @return [String]
   # @return [nil]
   #
-  def search_field_key(type = nil, **opt)
+  def search_field_key(type, **opt)
     type ||= search_input_type
     i18n_lookup(type, 'search_bar.input.field', **opt)
   end
@@ -107,7 +107,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_input(id = nil, type = nil, value = nil, **opt)
+  def search_input(id, type, value: nil, **opt)
     type ||= search_input_type
     id   ||= search_field_key(type)
     label_id = "#{id}-label"
@@ -136,7 +136,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_button(type = nil, label = nil, **opt)
+  def search_button(type, label: nil, **opt)
     type  ||= search_input_type
     label ||= search_button_label(type)
     opt = prepend_css_classes(opt, 'search-button')
@@ -152,7 +152,7 @@ module LayoutHelper::SearchBar
   # @return [String]
   # @return [nil]
   #
-  def search_button_label(type = nil, **opt)
+  def search_button_label(type, **opt)
     type ||= search_input_type
     i18n_lookup(type, 'search_bar.button.label', **opt)
   end

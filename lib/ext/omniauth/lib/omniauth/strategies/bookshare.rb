@@ -66,7 +66,7 @@ module OmniAuth
           expires:       (expires = access_token.expires?),
           expires_at:    (access_token.expires_at    if expires),
           refresh_token: (access_token.refresh_token if expires)
-        }.reject { |_, v| v.nil? }.stringify_keys
+        }.compact.stringify_keys
       end
 
       # The following are called only after authentication has succeeded.
@@ -906,7 +906,7 @@ module OmniAuth
             expires:       (expires = atoken.expires?),
             expires_at:    (atoken.expires_at    if expires),
             refresh_token: (atoken.refresh_token if expires)
-          }.reject { |_, v| v.nil? }.stringify_keys
+          }.compact.stringify_keys
         end
       end
 

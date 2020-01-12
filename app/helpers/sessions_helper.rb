@@ -39,13 +39,13 @@ module SessionsHelper
 
   # Sign in (via Bookshare) link.
   #
-  # @param [String, nil]         label
-  # @param [Symbol, String, nil] provider   Default: :bookshare
-  # @param [Hash]                opt        Passed to #link_to.
+  # @param [String]         label     Default: `#get_label(:new)`
+  # @param [Symbol, String] provider  Default: :bookshare
+  # @param [Hash]           opt       Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def sign_in_link(label = nil, provider: nil, **opt)
+  def sign_in_link(label: nil, provider: nil, **opt)
     label    ||= get_label(:new, provider)
     provider ||= :bookshare
     html_opt = {
@@ -59,13 +59,13 @@ module SessionsHelper
 
   # Sign out link.
   #
-  # @param [String, nil]         label
-  # @param [Symbol, String, nil] provider   Default: :bookshare
-  # @param [Hash]                opt        Passed to #link_to.
+  # @param [String]         label     Default: `#get_label(:destroy)`
+  # @param [Symbol, String] provider  Default: :bookshare
+  # @param [Hash]           opt       Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def sign_out_link(label = nil, provider: nil, **opt)
+  def sign_out_link(label: nil, provider: nil, **opt)
     label    ||= get_label(:destroy, provider)
     provider ||= :bookshare
     html_opt = {

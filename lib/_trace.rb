@@ -47,7 +47,7 @@ public
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', !Rails.env.test?)
+CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', false)
 
 # Control tracking of file load order.
 #
@@ -91,25 +91,65 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # @yield Supplies additional items to output.
 # @yieldreturn [String, Array<String>]
 #
-# @param [Array<String>] args
+# @param [Array<Hash,Array,String,*>] args
+#
+# @option args.last [String]          :leader     At the start of each line.
+# @option args.last [String, Integer] :indent     Default: #CONS_INDENT.
+# @option args.last [String]          :separator  Default: "\n"
+#
+# @yield Supply additional items to output.
+# @yieldreturn [Array<String>]
 #
 # @return [nil]
 #
 def __output(*args)
   return if defined?(Log) && Log.silenced?
+  opt    = args.extract_options!
+  sep    = opt[:separator] || "\n"
+  indent = opt[:indent]    || (sep.include?("\n") ? CONS_INDENT : '')
+  indent = (' ' * indent if indent.is_a?(Integer) && (indent > 0))
+  leader = "#{indent}#{opt[:leader]}"
+  leader += ' ' unless (leader == indent.to_s) || leader.end_with?(' ')
   args += Array.wrap(yield) if block_given?
-  lines = CONS_INDENT + args.join("\n").gsub(/\n/, "\n#{CONS_INDENT}").strip
-  $stderr.puts(lines)
+  lines = args.join(sep).gsub(/\n/, "\n#{leader}").strip
+  $stderr.puts(leader + lines)
   $stderr.flush
   nil
 end
 
-if CONSOLE_DEBUGGING
-  alias __debug __output
-else
-  def __debug(*)
+# Debugging statements are neutralized unless CONSOLE_DEBUGGING is *true*.
+def __debug(*); end
+
+# Write indented debug line(s) to $stderr.
+#
+# @yield Supply additional items to output.
+# @yieldreturn [Hash, Array, String]
+#
+# @param [Array<Hash,Array,String,*>] args
+#
+# args[-1] [Hash]                     Options passed to #__output.
+#
+# @yield Supply additional items to output.
+# @yieldreturn [Hash,Array,String,*]
+#
+# @return [nil]
+#
+# @see #__output
+#
+def __debug(*args)
+  opt = args.extract_options!
+  args += Array.wrap(yield) if block_given?
+  __output(opt) do
+    args.flat_map do |arg|
+      case arg
+        when Hash   then arg.map { |k, v| "#{k} = #{v}" }
+        when Array  then arg
+        when String then arg
+        else             arg.inspect
+      end
+    end
   end
-end
+end if CONSOLE_DEBUGGING
 
 # =============================================================================
 # Debugging - file load/require

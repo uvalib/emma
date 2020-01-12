@@ -21,6 +21,7 @@ class BookshareService < ApiService
   # Include send/receive modules from "app/services/bookshare_service/**.rb".
   include_submodules(self)
 
+=begin
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -37,6 +38,7 @@ class BookshareService < ApiService
   def base_url
     @base_url ||= BASE_URL
   end
+=end
 
 end
 

@@ -49,16 +49,15 @@ module MemberHelper
   #
   # NOTE: Over-encoded to allow ID's with '.' to be passed to Rails.
   #
-  # @param [Bs::Api::Record]     item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_link(item, label = nil, **opt)
-    path = member_path(id: url_escape(item.identifier))
-    opt  = opt.merge(tooltip: MEMBER_SHOW_TOOLTIP)
-    item_link(item, label, path, **opt)
+  def member_link(item, **opt)
+    opt[:path]    = member_path(id: url_escape(item.identifier))
+    opt[:tooltip] = MEMBER_SHOW_TOOLTIP
+    item_link(item, **opt)
   end
 
   # ===========================================================================
@@ -163,28 +162,28 @@ module MemberHelper
   # @param [String, nil] label
   # @param [Hash]        opt          Passed to #content_tag except for:
   #
-  # @option opt [Integer] :label
+  # @option opt [Integer] :level
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_history_title(label = nil, **opt)
+  def member_history_title(label, **opt)
     opt, html_opt = partition_options(opt, :level)
     level = opt[:level].to_i
     label ||= t('emma.member.history.title')
     prepend_css_classes!(html_opt, 'list-heading')
     tag = level.zero? ? 'div' : "h#{level}"
-    content_tag(tag, h(label), **html_opt)
+    content_tag(tag, h(label), html_opt)
   end
 
   # member_history_title
   #
-  # @param [String, nil] label
-  # @param [Hash]        opt          Passed to #content_tag
+  # @param [Hash] opt                 Passed to #toggle_button
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_history_control(label = nil, **opt)
-    toggle_button(label, **opt.merge(selector: ".#{MEMBER_HISTORY_CSS_CLASS}"))
+  def member_history_control(**opt)
+    opt[:selector] = ".#{MEMBER_HISTORY_CSS_CLASS}"
+    toggle_button(**opt)
   end
 
   # Render of list of member activity entries.
@@ -199,13 +198,12 @@ module MemberHelper
   def member_history(item, **opt)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
     pairs = MEMBER_HISTORY_FIELDS.merge(opt)
-    index = 0
     content_tag(:div, class: MEMBER_HISTORY_CSS_CLASS) do
+      pairs[:index] = 0
       Array.wrap(item).map { |entry|
-        index += 1
-        entry_pairs = pairs.merge(index: index)
-        content_tag(:div, class: "history-entry row-#{index}") do
-          render_field_values(entry, model: :member, pairs: entry_pairs)
+        pairs[:index] += 1
+        content_tag(:div, class: "history-entry row-#{pairs[:index]}") do
+          render_field_values(entry, model: :member, pairs: pairs)
         end
       }.join("\n").html_safe
     end

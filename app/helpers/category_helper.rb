@@ -45,9 +45,8 @@ module CategoryHelper
 
   # Create a link to the catalog title search for the given category.
   #
-  # @param [Bs::Api::Record]    item
-  # @param [Symbol, String, nil] label  Default: `item.label`.
-  # @param [Hash]                opt    Passed to #item_link.
+  # @param [Bs::Api::Record] item
+  # @param [Hash]            opt      Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -55,12 +54,12 @@ module CategoryHelper
   # BISAC categories can't be used for searching Bookshare so they are not
   # transformed into links.
   #
-  def category_link(item, label = nil, **opt)
-    opt = opt.merge(tooltip: CATEGORY_SHOW_TOOLTIP)
+  def category_link(item, **opt)
+    opt[:tooltip] = CATEGORY_SHOW_TOOLTIP
     unless opt.key?(:no_link) || !item.respond_to?(:bookshare_category)
       opt[:no_link] = true if item.bookshare_category.blank?
     end
-    item_link(item, label, **opt) { |term| title_index_path(categories: term) }
+    item_link(item, **opt) { |term| title_index_path(categories: term) }
   end
 
   # ===========================================================================
@@ -77,7 +76,7 @@ module CategoryHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -99,7 +98,7 @@ module CategoryHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

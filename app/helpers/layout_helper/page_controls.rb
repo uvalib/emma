@@ -31,17 +31,17 @@ module LayoutHelper::PageControls
   # Render the appropriate partial to insert page controls if they are defined
   # for the current controller/action.
   #
-  # @param [Hash, nil] p              Default: `#request_parameters`.
-  # @param [Hash]      locals         Passed to `#render`.
+  # @param [Hash] prm                 Default: `#request_parameters`.
+  # @param [Hash] locals              Passed to `#render`.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  def render_page_controls(p = nil, locals: {})
-    p ||= request_parameters
-    partial  = p[:action].to_s
+  def render_page_controls(prm: nil, **locals)
+    prm    ||= request_parameters
+    partial  = prm[:action].to_s
     partial  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s || partial
-    partial  = "#{p[:controller]}/page_controls/#{partial}"
+    partial  = "#{prm[:controller]}/page_controls/#{partial}"
     controls = partial_exists?(partial) && render(partial, locals)
     content_tag(:div, controls, class: 'page-controls') if controls.present?
   end
@@ -78,8 +78,8 @@ module LayoutHelper::PageControls
   #
   def page_controls(*pairs, **path_opt)
     html_opt = { class: 'control' }
-    pairs.map { |pair|
-      link_to_action(*pair, link_opt: html_opt, **path_opt) if pair.present?
+    pairs.map { |path|
+      link_to_action(nil, link_opt: html_opt, path: path, **path_opt)
     }.compact.join("\n").html_safe.presence
   end
 
@@ -91,7 +91,7 @@ module LayoutHelper::PageControls
   # @return [String]
   # @return [nil]
   #
-  def page_controls_label(controller = nil, **opt)
+  def page_controls_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]
     i18n_lookup(controller, 'page_controls.label', **opt)
   end

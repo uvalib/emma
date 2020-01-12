@@ -100,7 +100,7 @@ module ArtifactHelper
 
   # Current page of artifact results.
   #
-  # @return [Array<???>]
+  # @return [Array]
   #
   def artifact_list
     page_items
@@ -114,46 +114,43 @@ module ArtifactHelper
 
   # Create an element containing a link to download the given item.
   #
-  # @param [Bs::Api::Record]           item
+  # @param [Bs::Api::Record]            item
   # @param [Bs::Record::Format, String] format
-  # @param [Hash]                       opt   Passed to #item_link except for:
+  # @param [String, nil]                label
+  # @param [Hash]                       opt     Passed to #item_link.
   #
-  # @option opt [Bs::Record::Format, String] :fmt    One of `FormatType#values`
-  # @option opt [Symbol, String]      :label
+  # @option opt [String] :label
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def artifact_link(item, format = nil, **opt)
-    opt, html_opt = partition_options(opt, :fmt, :label)
-    fmt   = opt[:fmt]
-    label = opt[:label]
+  def artifact_link(item, format, label: nil, **opt)
     if format.is_a?(Bs::Record::Format)
-      fmt ||= format.identifier
       def_label = format.label
+      format    = format.identifier
     else
-      fmt ||= FormatType.default
       def_label = item.label
+      format    = format&.to_s || FormatType.default
     end
-    label ||= I18n.t("emma.format.#{fmt}", default: def_label)
-    path = download_path(bookshareId: item.identifier, fmt: fmt)
-    append_css_classes!(html_opt, 'link')
+    opt = append_css_classes(opt, 'link')
+    opt[:label] = label ||= I18n.t("emma.format.#{format}", default: def_label)
+    opt[:path]  = download_path(bookshareId: item.identifier, fmt: format)
 
     # Set up the tooltip to be shown before the item has been requested.
-    html_opt[:tooltip] =
+    opt[:tooltip] =
       I18n.t(
         'emma.download.link.tooltip',
         fmt:     format_label(label),
         default: DOWNLOAD_TOOLTIP
       )
-    if has_class?(html_opt, 'disabled')
+    if has_class?(opt, 'disabled')
       sign_in = 'SIGN-IN REQUIRED' # TODO: I18n
-      html_opt[:tooltip].sub!(/\.?$/, " (#{sign_in})")
+      opt[:tooltip].sub!(/\.?$/, " (#{sign_in})")
     end
 
     # Set up the tooltip to be shown after the item is actually available for
     # download.
-    html_opt[:'data-turbolinks'] = false
-    html_opt[:'data-complete_tooltip'] =
+    opt[:'data-turbolinks'] = false
+    opt[:'data-complete_tooltip'] =
       I18n.t(
         'emma.download.link.complete.tooltip',
         button:  DOWNLOAD_BUTTON_LABEL,
@@ -162,7 +159,7 @@ module ArtifactHelper
 
     # Emit the link and hidden auxiliary elements.
     content_tag(:div, class: 'artifact') do
-      item_link(item, label, path, **html_opt) +
+      item_link(item, **opt) +
         download_progress(class: 'hidden') +
         download_button(class: 'hidden', fmt: label) +
         download_failure(class: 'hidden')
@@ -172,7 +169,7 @@ module ArtifactHelper
   # Create links to download each artifact of the given item.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Passed to #artifact_link except for:
+  # @param [Hash]            opt      Passed to #artifact_link except for:
   #
   # @option opt [String] :fmt         One of `FormatType#values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
@@ -224,7 +221,7 @@ module ArtifactHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_progress(image = nil, **opt)
+  def download_progress(image: nil, **opt)
     opt = prepend_css_classes(opt, DOWNLOAD_PROGRESS_CLASS)
     opt[:title] ||= DOWNLOAD_PROGRESS_TOOLTIP
     opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
@@ -244,24 +241,21 @@ module ArtifactHelper
   #
   def download_failure(**opt)
     opt = prepend_css_classes(opt, DOWNLOAD_FAILURE_CLASS)
-    content_tag(:span, '', **opt)
+    content_tag(:span, '', opt)
   end
 
   # An element for direct download of an artifact.
   #
   # @param [String, nil] label
-  # @param [Hash]   opt               Passed to #make_link except for:
-  #
-  # @option opt [String] :label
-  # @option opt [String] :fmt         Format label.
+  # @param [String, nil] fmt
+  # @param [Hash]        opt          Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def download_button(label = nil, **opt)
-    opt   = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
-    label = opt.delete(:label) || label || DOWNLOAD_BUTTON_LABEL
-    # noinspection RubyYardParamTypeMatch
-    fmt   = format_label(opt.delete(:fmt))
+  def download_button(label: nil, fmt: nil, **opt)
+    label ||= DOWNLOAD_BUTTON_LABEL
+    fmt = format_label(fmt)
+    opt = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
     make_link(label, '#', opt)
@@ -298,7 +292,7 @@ module ArtifactHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -324,7 +318,7 @@ module ArtifactHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]             opt     Additional field mappings.
+  # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

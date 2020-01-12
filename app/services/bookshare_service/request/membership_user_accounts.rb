@@ -201,7 +201,7 @@ module BookshareService::Request::MembershipUserAccounts
   #
   def update_account_password(user: @user, password:, **opt)
     userIdentifier = name_of(user)
-    opt = opt.merge(password: password)
+    opt[:password] = password
     api(:put, 'accounts', userIdentifier, 'password', **opt)
     Bs::Message::StatusModel.new(response, error: exception)
   end
@@ -448,8 +448,9 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/reference/index.html#_create-membership-pod
   #
   def create_user_pod(user: @user, disabilityType:, proofSource:, **opt)
-    userIdentifier = name_of(user)
-    opt = opt.merge(disabilityType: disabilityType, proofSource: proofSource)
+    userIdentifier       = name_of(user)
+    opt[:disabilityType] = disabilityType
+    opt[:proofSource]    = proofSource
     api(:post, 'accounts', userIdentifier, 'pod', **opt)
     Bs::Message::UserPodList.new(response, error: exception)
   end
@@ -482,8 +483,8 @@ module BookshareService::Request::MembershipUserAccounts
   # @see https://apidocs.bookshare.org/reference/index.html#_update-membership-pod
   #
   def update_user_pod(user: @user, disabilityType:, proofSource:, **opt)
-    userIdentifier = name_of(user)
-    opt = opt.merge(proofSource: proofSource)
+    userIdentifier    = name_of(user)
+    opt[:proofSource] = proofSource
     api(:put, 'accounts', userIdentifier, 'pod', disabilityType, **opt)
     Bs::Message::UserPodList.new(response, error: exception)
   end
@@ -701,7 +702,7 @@ module BookshareService::Request::MembershipUserAccounts
   # @option opt [String, Array<String>]                :excludedAuthors
   # @option opt [String, Array<String>]                :includedAuthors
   #
-  # @return [Bs::Message::MyAccountPreferences]
+  # @return [Bs::Message::RecommendationProfile]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-recommendation-profile
   #

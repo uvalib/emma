@@ -96,12 +96,18 @@ module ApiExplorerConcern
     include Bs
     include GenericHelper
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
     # Fixed parameter values to use when generating results for the Bookshare
     # API Explorer.
     #
-    # @type [Hash{Symbol=>*}]
+    # @type [Hash{Symbol=>String,Integer}]
     #
-    TRIAL_VALUES = {
+    VALUES = {
       bookshareId:    '1933741',
       seriesId:       '46424',
       editionId:      '2531073',
@@ -113,11 +119,11 @@ module ApiExplorerConcern
       limit:          5,
     }.deep_freeze
 
-    # Group #TRIAL_METHODS by topic in this order.
+    # Group #METHODS by topic in this order.
     #
     # @type [Array<String,Regexp>]
     #
-    TRIAL_TOPICS = (
+    TOPICS = (
       %w(
         UserAccount
         MembershipUserAccounts
@@ -134,16 +140,18 @@ module ApiExplorerConcern
     #
     # @type [Array<Symbol>]
     #
-    TRIAL_METHODS =
+    METHODS =
       BookshareService.api_methods
         .select  { |method, _| method.to_s.start_with?('get_', 'download_') }
         .sort_by { |method, properties|
-          topic = properties[:topic]
-          topic = 'ReadingLists' if method.match?('reading_list')
-          order =
-            TRIAL_TOPICS.index { |t| topic.match?(t) } || TRIAL_TOPICS.size
           name  = method.to_s
           name  = "z#{name}" if name.include?('download')
+          topic = properties[:topic]
+          topic = 'ReadingLists' if name.match?('reading_list')
+          order =
+            TOPICS.index { |t|
+              t.is_a?(Regexp) ? (topic =~ t) : (topic == t)
+            } || TOPICS.size
           [order, name]
         }.to_h.keys
 
@@ -153,32 +161,27 @@ module ApiExplorerConcern
 
     public
 
-    # Supply parameters for #TRIAL_METHODS from #TRIAL_VALUES.
+    # Supply parameters for #METHODS from #VALUES.
     #
-    # @param [Hash] opt
+    # @param [BookshareService] service
+    # @param [Hash]             opt
     #
-    # @option opt [String]           bookshareId
-    # @option opt [String]           editionId
-    # @option opt [String]           format
-    # @option opt [Integer]          limit
-    # @option opt [String]           organization
-    # @option opt [String]           readingListId
-    # @option opt [String]           resourceId
-    # @option opt [String]           seriesId
-    # @option opt [String]           subscription
-    # @option opt [User]             user
-    # @option opt [BookshareService] service
+    # @option opt [String]  :bookshareId
+    # @option opt [String]  :editionId
+    # @option opt [String]  :format
+    # @option opt [Integer] :limit
+    # @option opt [String]  :organization
+    # @option opt [String]  :readingListId
+    # @option opt [String]  :resourceId
+    # @option opt [String]  :seriesId
+    # @option opt [String]  :subscription
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def self.trial_methods(**opt)
-      opt, param_value = partition_options(opt, :user, :service)
-      service = opt[:service]
-      user    = opt[:user]&.to_s || service&.user&.to_s
-      service ||= BookshareService.new(user: opt[:user], no_raise: true)
-      param_value.reverse_merge!(TRIAL_VALUES)
-      param_value[:user] = user if user.present?
-      TRIAL_METHODS.map do |method|
+    def self.trial_methods(service:, **opt)
+      param_value = VALUES.merge(opt)
+      param_value[:user] = service.user.to_s if service.user.present?
+      METHODS.map { |method|
         np = service.named_parameters(method, no_alias: true)
         rp = service.required_parameters(method)
         op = service.optional_parameters(method)
@@ -188,7 +191,7 @@ module ApiExplorerConcern
             [k, v] unless v.nil?
           }.compact.to_h
         [method, parameters]
-      end
+      }.to_h
     end
 
     # run_trials
@@ -200,18 +203,18 @@ module ApiExplorerConcern
     #
     def self.run_trials(methods = nil, user: nil)
       service = BookshareService.new(user: user, no_raise: true)
-      methods ||= trial_methods(user: user, service: service)
+      methods ||= trial_methods(service: service)
       methods.map { |method, opts|
         param = opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
         value = service.send(method, **opts)
-        error = (value.exception if value.is_a?(Bs::Api::Record))
+        error = (value.exception if value.respond_to?(:exception))
         trial = {
           endpoint:   service.latest_endpoint,
           parameters: ("(#{param})" if param.present?),
           status:     (error ? 'error' : 'success'),
           value:      value,
           error:      error
-        }.reject { |_, v| v.nil? }
+        }.compact
         [method, trial]
       }.to_h
     end
