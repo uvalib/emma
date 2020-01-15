@@ -19,6 +19,11 @@ class MemberController < ApplicationController
 
   include MemberHelper
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
+  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
+
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================

@@ -1,0 +1,18 @@
+<%# app/views/search/file_detail.html.erb -%>
+<%-
+  # Details about a file format from a repository (@see #get_file_details).
+  id    ||= @id
+  fmt   ||= @fmt
+  repo  ||= @repo
+  info  ||= @info
+  title ||= "#{fmt&.upcase} INFO for #{repo}-#{id}" # TODO: I18n
+
+  set_page_title(title)
+  set_page_description(title)
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+</div>
+
+<%= file_info_list(info) %>

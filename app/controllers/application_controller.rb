@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   # :section: Helpers
   # ===========================================================================
 
-  add_flash_types :error, :success
+  add_flash_types :error, :success # TODO: keep?
 
 end
 

@@ -20,19 +20,34 @@ module Search::Shared::LinkMethods
 
   public
 
-  # URL of the associated work on the web site of the original repository.
+  # Values that are applicable to FileProperties.
   #
-  # @param [Search::Api::Record] item
+  # @return [Hash]
+  #
+  def file_properties
+    {
+      repository:   emma_repository,
+      repositoryId: emma_repositoryRecordId,
+      fmt:          dc_format
+    }.compact
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # URL of the associated work on the web site of the original repository.
   #
   # @return [String]
   # @return [nil]
   #
-  def record_title_url(item = nil)
-    item, opt = link_properties(item)
-    src   = item&.emma_repository&.to_sym
+  def record_title_url
+    src   = emma_repository&.to_sym
     entry = REPOSITORY[src].presence or raise 'invalid source'
     path  = entry[:title_path]       or raise 'no title_path'
-    make_path(path, opt[:id]) if opt[:id].present?
+    make_path(path, emma_repositoryRecordId)
   rescue RuntimeError => e
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{e.message}" }
@@ -46,53 +61,25 @@ module Search::Shared::LinkMethods
 
   # Original repository artifact download URL.
   #
-  # @param [Search::Api::Record] item
-  #
   # @return [String]
   # @return [nil]
   #
-  def record_download_url(item = nil)
-    item, opt = link_properties(item)
-    src    = item&.emma_repository&.to_sym
-    link   = item&.emma_retrievalLink
-    return link if link.present?
-    f     = opt[:fmt]&.to_sym
-    entry  = REPOSITORY[src].presence    or raise 'invalid source'
-    path   = entry[:download_path]       or raise 'no download_path'
-    fmt    = entry.dig(:download_fmt, f) or raise "#{f}: invalid format"
-    tag    = '???' # TODO: Bookshare tag
-    url    = entry[:download_url]
-    url    = url[fmt.to_sym] if url.is_a?(Hash)
+  def record_download_url
+    return emma_retrievalLink if emma_retrievalLink.present?
+    id    = emma_repositoryRecordId
+    fmt   = dc_format&.to_sym
+    src   = emma_repository&.to_sym
+    entry = REPOSITORY[src].presence      or raise 'invalid source'
+    path  = entry[:download_path]         or raise 'no download_path'
+    fmt   = entry.dig(:download_fmt, fmt) or raise "#{fmt}: invalid format"
+    tag   = 'TAG' # TODO: Bookshare tag
+    url   = entry[:download_url]
+    url   = url[fmt.to_sym] if url.is_a?(Hash)
     raise 'no download_url' unless url.present?
-    url % opt.reverse_merge(download_path: path, fmt: fmt, tag: tag)
+    url % { id: id, fmt: fmt, tag: tag, download_path: path }
   rescue RuntimeError => e
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{e.message}" }
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # link_properties
-  #
-  # @param [Search::Api::Record, nil] item
-  # @param [Hash]                     opt
-  #
-  # @option opt [String] :id          Title ID.
-  # @option opt [String] :fmt         Download format.
-  #
-  # @return [Array<(Search::Api::Record,Hash)>]
-  # @return [Array<(nil,Hash)>]
-  #
-  def link_properties(item, **opt)
-    item ||= (self if self.respond_to?(:emma_repositoryRecordId))
-    opt = opt.reject { |_, v| v.blank? }
-    opt[:id]  ||= item.emma_repositoryRecordId if item
-    opt[:fmt] ||= item.dc_format               if item
-    return item, opt
   end
 
 end

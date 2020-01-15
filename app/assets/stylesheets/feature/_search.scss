@@ -33,7 +33,7 @@ $results-entry-margin-y: 0.67rem;
 .pagination-top,
 .pagination-bottom {
 
-    //noinspection CssBrowserCompatibilityForProperties
+    // noinspection CssBrowserCompatibilityForProperties
     grid-column: 1 / -1;
     margin:      $results-entry-gap-y 0;
 

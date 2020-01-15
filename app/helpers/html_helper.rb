@@ -187,6 +187,99 @@ module HtmlHelper
     link_to(label, path, opt, &block)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Options consumed by internal methods which should not be passed on along to
+  # the methods which generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see #grid_cell_classes
+  #
+  GRID_OPTS = %i[row col row_max col_max].freeze
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash, nil]     html_opt
+  # @param [Array<String>] classes
+  # @param [Hash]          opt        Passed to #append_grid_cell_classes!.
+  #
+  # @return [Hash]                    A new hash.
+  #
+  def append_grid_cell_classes(html_opt, *classes, **opt)
+    append_grid_cell_classes!(html_opt&.dup, *classes, **opt)
+  end
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash, nil]     html_opt
+  # @param [Array<String>] classes
+  # @param [Hash]          opt        Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def append_grid_cell_classes!(html_opt, *classes, **opt)
+    classes = grid_cell_classes(*classes, **opt)
+    append_css_classes!(html_opt, *classes)
+  end
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash, nil]     html_opt
+  # @param [Array<String>] classes
+  # @param [Hash]          opt        Passed to #prepend_grid_cell_classes!.
+  #
+  # @return [Hash]                    A new hash.
+  #
+  def prepend_grid_cell_classes(html_opt, *classes, **opt)
+    prepend_grid_cell_classes!(html_opt&.dup, *classes, **opt)
+  end
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Hash, nil]     html_opt
+  # @param [Array<String>] classes
+  # @param [Hash]          opt        Passed to #grid_cell_classes.
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def prepend_grid_cell_classes!(html_opt, *classes, **opt)
+    classes = grid_cell_classes(*classes, **opt)
+    prepend_css_classes!(html_opt, *classes)
+  end
+
+  # Add CSS classes which indicate the position of the control within the grid.
+  #
+  # @param [Array<String>] classes
+  # @param [Hash]          opt
+  #
+  # @option opt [String]  :class
+  # @option opt [Integer] :row        Grid row (wide screen).
+  # @option opt [Integer] :col        Grid column (wide screen).
+  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
+  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
+  # @option opt [Boolean] :sr_only    If *true*, include 'sr-only' CSS class.
+  #
+  # @return [Array<String>]
+  #
+  def grid_cell_classes(*classes, **opt)
+    row = positive(opt[:row])
+    col = positive(opt[:col])
+    classes += Array.wrap(opt[:class])
+    classes << "row-#{row}" if row
+    classes << "col-#{col}" if col
+    classes << 'row-first'  if row == 1
+    classes << 'col-first'  if col == 1
+    classes << 'row-last'   if row == opt[:row_max].to_i
+    classes << 'col-last'   if col == opt[:col_max].to_i
+    classes << 'sr-only'    if opt[:sr_only]
+    classes.compact.uniq
+  end
+
 end
 
 __loading_end(__FILE__)

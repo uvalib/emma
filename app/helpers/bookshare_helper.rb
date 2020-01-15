@@ -309,7 +309,7 @@ module BookshareHelper
   #
   def link_to_action(label, link_opt: nil, path: nil, **path_opt)
     path ||= {}
-    path = path.slice(:action, :controller).reverse unless path.is_a?(Array)
+    path = [path[:controller], path[:action]] unless path.is_a?(Array)
     controller, action = path
     controller = (controller || params[:controller])&.to_s
     action     = (action     || params[:action])&.to_sym

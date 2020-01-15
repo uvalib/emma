@@ -1,0 +1,95 @@
+# config/locales/controllers/upload.en.yml
+
+en:
+
+  emma:
+
+    # =========================================================================
+    # File upload pages
+    # =========================================================================
+
+    upload:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'file'
+        long:           'remediated file'
+      label:            'Upload'
+      title:            'Upload a Remediated File'
+      tooltip:          'Upload a remediated file to EMMA.'
+
+      error:
+        default:        'unknown error'
+        failure:        'FAILURE: %{error}'
+        success:        'SUCCESS: %{file}'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      search_bar:
+        label:          'Search'
+        input:
+          enabled:      true
+          field:        'q'
+          label:        'Search terms:'
+          placeholder:  'Enter search terms...'
+
+      search_controls:
+        layout:
+          - [sort,         size,         format      ]
+          - [repository,   language,     a11y_feature]
+
+      #page_controls:
+      #  label:
+      #    one:          'Manage this metadata record'
+      #    many:         'Record Actions'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Upload'
+        title:          'Add, Modify, or Remove Remediated Files'
+        tooltip:        'Add, modify, or remove remediated files.'
+
+      new:
+        label:          'Upload'
+        title:          'Upload a Remediated File'
+        tooltip:        'Upload a file to create a new EMMA entry.'
+        submit:         'Upload'
+
+      create:
+        label:          'Create'
+        title:          'File Uploaded'
+        failure:        'Upload failure: %{error}'
+        success:        'Uploaded %{file}'
+
+      edit:
+        label:          'Modify'
+        title:          'Replace a Remediated File'
+        tooltip:        'Upload a replacement file for an existing EMMA entry.'
+        submit:         'Update'
+        failure:        'Retrieval failure: %{error}'
+
+      update:
+        label:          'Update'
+        title:          'File Modified'
+        failure:        'Update failure: %{error}'
+        success:        'Updated %{file}'
+
+      delete:
+        label:          'Remove'
+        title:          'Remove a Remediated File'
+        tooltip:        'Delete an EMMA entry by removing a remediated file.'
+        submit:         'Delete'
+
+      destroy:
+        label:          'Remove'
+        title:          'Entry removed'
+        failure:        'Delete failure: %{error}'
+        success:        'Removed %{file}'

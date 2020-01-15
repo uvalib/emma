@@ -324,15 +324,15 @@ module LayoutHelper::SearchControls
                   when :member       then MemberSortOrder
                   when :periodical   then PeriodicalSortOrder
                   when :reading_list then MyReadingListSortOrder
-                  when :search       then SearchSort
                   when :title        then TitleSortOrder
+                  when :search       then SearchSort
                 end
               when :format
                 # noinspection RubyCaseWithoutElseBlockInspection
                 case controller
-                  when :periodical   then 'emma.periodical_format'
-                  when :search       then 'emma.search.format'
-                  when :title        then 'emma.format'
+                  when :periodical      then 'emma.periodical_format'
+                  when :title           then 'emma.book_format'
+                  when :search, :upload then 'emma.format'
                 end
             end
           menu = make_menu(menu_name, *entries) if entries
@@ -450,7 +450,9 @@ module LayoutHelper::SearchControls
   #
   # @type [Array<Symbol>]
   #
-  MENU_OPTS = %i[type label row col row_max col_max].freeze
+  # @see HtmlHelper#GRID_OPTS
+  #
+  MENU_OPTS = [:type, :label, :selected, *GRID_OPTS].freeze
 
   # Perform a search specifying a collation order for the results.
   # (Default: `#params[:sortOrder]`.)
@@ -506,7 +508,7 @@ module LayoutHelper::SearchControls
 
   # A menu control preceded by a menu label (if provided).
   #
-  # @param [String, Symbol] menu_name
+  # @param [String, Symbol] name        Menu name.
   # @param [Hash]           opt         Passed to #menu_control except for:
   #
   # @option opt [String] :label         If missing, no label is included.
@@ -515,14 +517,15 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If menu is not available for *type*.
   #
-  def menu_container(menu_name, **opt)
+  def menu_container(name, **opt)
     local, opt = partition_options(opt, :label, :selected)
-    menu_name  = menu_name.to_sym
-    opt[:title] ||= SEARCH_MENU.dig(menu_name, :tooltip)
-    m_opt = opt.merge(selected: local[:selected])
-    menu  = menu_control(menu_name, **m_opt) or return
-    label = menu_label(menu_name, **opt.merge(label: local[:label]))
-    label + menu
+    name     = name.to_sym
+    label    = local[:label]
+    selected = local[:selected]
+    opt[:title] ||= SEARCH_MENU.dig(name, :tooltip)
+    menu  = menu_control(name, **opt.merge(selected: selected)) or return
+    label = menu_label(name, **opt.merge(label: label))
+    label << menu
   end
 
   # A dropdown menu element.
@@ -533,29 +536,27 @@ module LayoutHelper::SearchControls
   # If no option is currently selected, an initial "null" selection is
   # prepended.
   #
-  # @param [String, Symbol] menu_name
-  # @param [String, nil]    selected
-  # @param [Hash]           opt           Passed to #search_form except for:
+  # @param [String, Symbol] name    Menu name.
+  # @param [Hash]           opt     Passed to #label_tag except for #MENU_OPTS:
   #
-  # @option opt [String, Symbol] :type    Validated and passed to #search_form.
-  # @option opt [String]         :label   (unused)
-  # @option opt [Integer]        :row     Grid row (wide screen).
-  # @option opt [Integer]        :col     Grid column (wide screen).
-  # @option opt [Integer]        :row_max Bottom grid row (wide screen).
-  # @option opt [Integer]        :col_max Rightmost grid column (wide screen).
+  # @option opt [String, Symbol] :type      Passed to #search_form.
+  # @option opt [String]         :selected  Selected menu item.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If menu is not available for *type*.
   #
-  def menu_control(menu_name, selected = nil, **opt)
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def menu_control(name, **opt)
     opt, html_opt = partition_options(opt, *MENU_OPTS)
-    menu_name = menu_name.to_sym
+    name      = name.to_sym
     type      = search_type(opt[:type])
-    menu      = SEARCH_MENU_MAP.dig(type, menu_name) or return
-    url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
-    default   = SEARCH_MENU.dig(menu_name, :default)
+    menu      = SEARCH_MENU_MAP.dig(type, name) or return
+    url_param = SEARCH_MENU.dig(name, :url_parameter)
+    default   = SEARCH_MENU.dig(name, :default)
     any_value = ''
 
+    selected   = opt[:selected]
     selected ||= request_parameters[url_param] || default || any_value
     if (selected = selected.to_s).blank?
       selected = any_value
@@ -563,14 +564,14 @@ module LayoutHelper::SearchControls
       # Insert a new entry if the selection value is not already in the menu.
       sort  = entries_sorted?(menu)
       # noinspection RubyYardParamTypeMatch
-      label = make_menu_label(menu_name, selected)
+      label = make_menu_label(name, selected)
       menu += [[label, selected]]
       sort_entries!(menu) if sort
     end
 
     # Prepend a placeholder if not present.
     if default.blank? && menu.none? { |_, value| value == any_value }
-      any_label = SEARCH_MENU.dig(menu_name, :placeholder) || '(select)'
+      any_label = SEARCH_MENU.dig(name, :placeholder) || '(select)'
       menu = [[any_label, any_value]] + menu
     end
 
@@ -584,31 +585,34 @@ module LayoutHelper::SearchControls
 
   # A label associated with a dropdown menu element.
   #
-  # @param [String, Symbol] menu_name
-  # @param [String, nil]    label
-  # @param [Hash]           opt           Passed to #label_tag except for:
+  # @param [String, Symbol] name    Menu name.
+  # @param [Hash]           opt     Passed to #label_tag except for #MENU_OPTS:
   #
-  # @option opt [String, Symbol] :type    (unused)
-  # @option opt [String]         :label   Label text if *label* is not given.
-  # @option opt [Integer]        :row     Grid row (wide screen).
-  # @option opt [Integer]        :col     Grid column (wide screen).
-  # @option opt [Integer]        :row_max Bottom grid row (wide screen).
-  # @option opt [Integer]        :col_max Rightmost grid column (wide screen).
+  # @option opt [String] :label     Label text override.
   #
   # @return [ActiveSupport::SafeBuffer]   Empty if no label was present.
   #
-  def menu_label(menu_name, label = nil, **opt)
+  # @see HtmlHelper#prepend_grid_cell_classes!
+  #
+  def menu_label(name, **opt)
     opt, html_opt = partition_options(opt, *MENU_OPTS)
-    menu_name = menu_name.to_sym
-    label   ||= opt[:label] || SEARCH_MENU.dig(menu_name, :label)
-    return ''.html_safe if label.blank?
-    url_param = SEARCH_MENU.dig(menu_name, :url_parameter)
-    visible   = SEARCH_MENU.dig(menu_name, :label_visible)
-    label     = non_breaking(label) if visible
-    opt[:sr_only] = !visible
-    opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
-    prepend_grid_cell_classes!(html_opt, 'menu-label', **opt)
-    label_tag(url_param, label, **html_opt)
+    name  = name.to_sym
+    label = opt[:label] || SEARCH_MENU.dig(name, :label)
+    if label.blank?
+      ''.html_safe
+    else
+      url_param = SEARCH_MENU.dig(name, :url_parameter)
+      visible   = !html_opt.delete(:sr_only)
+      visible &&= SEARCH_MENU.dig(name, :label_visible)
+      if visible
+        label = non_breaking(label)
+      else
+        opt[:sr_only] = true
+      end
+      opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
+      prepend_grid_cell_classes!(html_opt, 'menu-label', **opt)
+      label_tag(url_param, label, html_opt)
+    end
   end
 
   # ===========================================================================
@@ -625,38 +629,34 @@ module LayoutHelper::SearchControls
 
   # The controls for resetting filter menu selections to their default state.
   #
-  # @param [String, Hash, nil] url    Default from #request_parameters.
-  # @param [Hash]              opt    Passed to #menu_spacer and #reset_button.
+  # @param [Hash] opt                 Passed to #menu_spacer and #reset_button.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def reset_menu(url = nil, **opt)
+  def reset_menu(**opt)
     opt = append_css_classes(opt, 'reset')
-    menu_spacer(**opt) + reset_button(url, **opt)
+    menu_spacer(**opt) << reset_button(**opt)
   end
 
   # A button to reset all filter menu selections to their default state.
   #
-  # @param [String, Hash, nil] url    Default from #request_parameters.
-  # @param [Hash]              opt    Passed to #link_to except for:
+  # @param [Hash] opt             Passed to #link_to except for #GRID_OPTS and:
   #
-  # @option opt [String]  :class      CSS classes for both spacer and button.
-  # @option opt [String]  :label      Button label.
-  # @option opt [Integer] :row        Grid row (wide screen).
-  # @option opt [Integer] :col        Grid column (wide screen).
-  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
-  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
+  # @option opt [String] :url     Default from #request_parameters.
+  # @option opt [String] :class   CSS classes for both spacer and button.
+  # @option opt [String] :label   Button label.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #SEARCH_RESET
   # @see #RESET_PARAMETERS
+  # @see HtmlHelper#grid_cell_classes
   #
-  def reset_button(url = nil, **opt)
+  def reset_button(**opt)
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
     label = opt[:label] || SEARCH_RESET[:label]
     label = non_breaking(label)
-    url ||= request_parameters.except(*RESET_PARAMETERS)
+    url   = opt[:url] || request_parameters.except(*RESET_PARAMETERS)
     url   = url_for(url) if url.is_a?(Hash)
     prepend_grid_cell_classes!(html_opt, 'reset', 'menu-button', **opt)
     html_opt[:title] ||= SEARCH_RESET[:tooltip]
@@ -665,67 +665,19 @@ module LayoutHelper::SearchControls
 
   # A button to reset all filter menu selections to their default state.
   #
-  # @param [Hash] opt                 Passed to #content_tag except for:
+  # @param [Hash] opt         Passed to #content_tag except for #GRID_OPTS and:
   #
-  # @option opt [String]  :class      CSS classes for both spacer and button.
-  # @option opt [Integer] :row        Grid row (wide screen).
-  # @option opt [Integer] :col        Grid column (wide screen).
-  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
+  # @option opt [String] :class       CSS classes for both spacer and button.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see HtmlHelper#prepend_grid_cell_classes!
   #
   def menu_spacer(**opt)
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
     prepend_grid_cell_classes!(html_opt, 'menu-spacer', **opt)
-    content_tag(:div, '&nbsp;'.html_safe, **html_opt)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Hash]  html_opt
-  # @param [Array] classes
-  # @param [Hash]  opt                Passed to #grid_cell_classes.
-  #
-  # @return [Hash]                    The modified *html_opt* hash.
-  #
-  def prepend_grid_cell_classes!(html_opt, *classes, **opt)
-    classes = grid_cell_classes(*classes, **opt)
-    prepend_css_classes!(html_opt, *classes)
-  end
-
-  # Add CSS classes which indicate the position of the control within the grid.
-  #
-  # @param [Array] classes
-  # @param [Hash]  opt
-  #
-  # @option opt [String]  :class
-  # @option opt [Integer] :row        Grid row (wide screen).
-  # @option opt [Integer] :col        Grid column (wide screen).
-  # @option opt [Integer] :row_max    Bottom grid row (wide screen).
-  # @option opt [Integer] :col_max    Rightmost grid column (wide screen).
-  # @option opt [Boolean] :sr_only    If *true*, include 'sr-only' CSS class.
-  #
-  # @return [Array<String>]
-  #
-  def grid_cell_classes(*classes, **opt)
-    row = positive(opt[:row])
-    col = positive(opt[:col])
-    classes += Array.wrap(opt[:class])
-    classes << "row-#{row}" if row
-    classes << "col-#{col}" if col
-    classes << 'row-first'  if row == 1
-    classes << 'col-first'  if col == 1
-    classes << 'row-last'   if row == opt[:row_max].to_i
-    classes << 'col-last'   if col == opt[:col_max].to_i
-    classes << 'sr-only'    if opt[:sr_only]
-    classes
+    content_tag(:div, '&nbsp;'.html_safe, html_opt)
   end
 
   # ===========================================================================

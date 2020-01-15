@@ -15,6 +15,7 @@ module Faraday
   #
   module Response::LoggerExt
 
+=begin
     def call(env)
       info('request')    { log_out(env, env.url.to_s) }
       if log_headers?(:request)
@@ -35,6 +36,7 @@ module Faraday
     def log_out(env, output)
       env.method.to_s.upcase << ' ' << apply_filters(output)
     end
+=end
 
   end
 

@@ -23,6 +23,13 @@ Rails.application.routes.draw do
   # EMMA Federated Search operations
   # ===========================================================================
 
+  get 'search/detail', to: 'search#file_detail', as: 'file_detail'
+
+  FileFormat::FILE_FORMATS.each do |fmt|
+    opt = { defaults: { fmt: fmt.to_s } }
+    get "search/#{fmt}", to: 'search#file_detail', as: "#{fmt}_detail", **opt
+  end
+
   resources :search, only: %i[index show]
 
   # ===========================================================================

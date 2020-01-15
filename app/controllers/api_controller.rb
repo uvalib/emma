@@ -18,6 +18,11 @@ class ApiController < ApplicationController
   include SerializationConcern
   include ApiExplorerConcern
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
+  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
+
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================

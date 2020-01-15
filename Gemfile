@@ -79,8 +79,10 @@ gem 'virtus', '~> 1.0'
 gem 'prometheus-client', '< 0.10'
 
 # == Other
+gem 'archive-zip'
 gem 'iso-639'
 gem 'jquery-rails'
+gem 'pdf-reader'
 gem 'sanitize'
 
 # =============================================================================

@@ -124,15 +124,18 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format, label: nil, **opt)
-    if format.is_a?(Bs::Record::Format)
-      def_label = format.label
-      format    = format.identifier
-    else
-      def_label = item.label
-      format    = format&.to_s || FormatType.default
-    end
+    periodical = item.is_a?(Bs::Message::PeriodicalSubscription)
+    rec_fmt    = (format if format.is_a?(Bs::Record::Format))
+    format     = (rec_fmt&.identifier || format)&.to_s
+    format   ||= periodical ? PeriodicalFormatType.default : FormatType.default
+    label ||=
+      begin
+        scope   = periodical ? 'periodical_format' : 'book_format'
+        default = rec_fmt&.label || item.label
+        I18n.t("emma.#{scope}.#{fmt}", default: default)
+      end
     opt = append_css_classes(opt, 'link')
-    opt[:label] = label ||= I18n.t("emma.format.#{format}", default: def_label)
+    opt[:label] = label
     opt[:path]  = download_path(bookshareId: item.identifier, fmt: format)
 
     # Set up the tooltip to be shown before the item has been requested.

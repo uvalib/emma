@@ -7,6 +7,8 @@
 // Federate Search pages
 //=============================================================================
 
+// Use to display text as a substitute for a logo.
+//
 // noinspection SassScssResolvedByNameOnly
 %text-logo {
     padding:       1px 0.5rem;
@@ -44,16 +46,12 @@
     }
 }
 
-//=============================================================================
-// Metadata record search index page
-//=============================================================================
-
-// Metadata record label/value pairs for index listings.
+// Label/value pairs appropriate for either .search-list-entry or .file-info.
 //
 // noinspection SassScssResolvedByNameOnly
-.search-list-entry {
+.search-label-value-pairs {
 
-    @extend .item-list-entry;
+    @extend .label-value-pairs;
 
     $row-separation: 0.75rem;
 
@@ -86,10 +84,6 @@
                 @media #{$browser-ie} {
                     margin-top: $ie-gap-y;
                 }
-            }
-
-            @media #{$narrow-screen} {
-                display: none;
             }
         }
     }
@@ -202,8 +196,147 @@
                     word-break: keep-all;
                     word-wrap:  break-word;
                 }
+
+                @media #{$narrow-screen} {
+                    margin-left:  0;
+                    margin-right: 0;
+                }
             }
         }
+    }
+}
+
+// File format information section.
+//
+// noinspection SassScssResolvedByNameOnly
+.file-info {
+
+    @extend .item-list-entry;
+    @extend .search-label-value-pairs;
+
+    @include grid(max-content 1fr);
+
+    @media #{$not-wide-screen} {
+        @include grid(1fr);
+    }
+
+    margin-top: 1rem;
+    grid-gap:   1rem;
+
+    .label {
+
+        grid-column-start: 1;
+
+        &.logo {
+
+            @extend %invisible;
+
+            @media #{$not-wide-screen} {
+                display: none;
+            }
+        }
+
+        &.field-Title {
+            max-width: unset;
+            font-size: unset;
+        }
+    }
+
+    .value {
+
+        &.logo {
+            img {
+                max-height: 7rem;
+                border:     1px solid lightgray;
+            }
+        }
+
+        &.array {
+
+            max-width: unset;
+
+            @media #{$medium-width} {
+                grid-template-columns: minmax(max-content, 50%);
+            }
+
+            @media #{$browser-ie} {
+                display:   flex;
+                flex-wrap: wrap;
+            }
+
+            > * {
+
+                word-break: normal;
+
+                @media #{$medium-width} {
+                    margin-left:  0;
+                }
+            }
+        }
+
+        ul {
+
+            margin:     0;
+            padding:    0;
+            list-style: square;
+            list-style: disclosure-closed; // NOTE: Firefox only
+
+            @media #{$not-wide-screen} {
+                list-style-position: inside;
+            }
+        }
+    }
+}
+
+//=============================================================================
+// Metadata record search index page
+//=============================================================================
+
+// Metadata record label/value pairs for index listings.
+//
+// noinspection SassScssResolvedByNameOnly
+.search-list-entry {
+
+    @extend .item-list-entry;
+    @extend .search-label-value-pairs;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    > .label {
+        &.field-Title {
+            @media #{$narrow-screen} {
+                display: none;
+            }
+        }
+    }
+
+    > .value {
+        &.field-Format {
+            font-weight: bold;
+        }
+    }
+
+    //=========================================================================
+    // Other
+    //=========================================================================
+
+    // File format information section label.
+    .file-info-label {
+        display:       block;
+        margin-top:    1.5rem;
+        margin-left:   0.75rem;
+        margin-bottom: -0.5rem;
+        font-weight:   bold;
+    }
+
+    // File format information section.
+    .file-info {
+        padding:       0.75rem;
+        border:        2px solid gray;
+        border-radius: 1rem;
+        box-shadow:    inset 0 0 0.75rem -0.25rem gray;
     }
 }
 

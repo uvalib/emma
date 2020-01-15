@@ -184,12 +184,21 @@ module GenericHelper
 
   # Return the name of the calling method.
   #
-  # @param [Array<String>] call_stack   Default: `#caller(2)`.
+  # @overload calling_method(call_stack = nil)
+  #   @param [Array<String>] call_stack   Default: `#caller(2)`.
+  #   @return [String]
   #
-  # @return [String]
+  # @overload calling_method(depth)
+  #   @param [Integer] depth              Call stack depth (default: 2)
+  #   @return [String]
   #
   def calling_method(call_stack = nil)
-    call_stack ||= caller(2)
+    depth = 2
+    if call_stack.is_a?(Integer)
+      depth = call_stack if call_stack > depth
+      call_stack = nil
+    end
+    call_stack ||= caller(depth)
     call_stack.find do |line|
       _file_line, name = line.to_s.split(/:in\s+/)
       name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1').presence

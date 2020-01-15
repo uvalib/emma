@@ -86,6 +86,47 @@ module DebugHelper
     __debug_line(route, "params = #{params.inspect}", opt, &block)
   end
 
+  # Output request values and contents.
+  #
+  # @param [Array] args
+  # @param [Proc]  block              Passed to #__debug_line for each section.
+  #
+  # args[0]  [Symbol]                 Calling method (def: `#calling_method`).
+  # args[-1] [Hash]                   Options passed to #__debug.
+  #
+  # @return [nil]
+  #
+  def __debug_request(*args, &block)
+    opt  = args.extract_options!
+    meth = args.first.is_a?(Symbol) ? args.shift : calling_method
+    opt[:leader] ||= "--- #{meth}"
+    {
+      session:           ['/ SESSION', session],
+      'request.env':     ['- ENV',     request.env],
+      'request.headers': ['\ HEADER',  request.headers],
+      'request.cookies': ['| COOKIE]', request.cookies],
+      'rack.input':      request.headers['rack.input'],
+      'request.body':    request.body
+    }.each_pair do |item, entry|
+      prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
+      lines =
+        if value.is_a?(Array)
+          value.map { |v| __debug_inspect(v) }
+        elsif value.is_a?(StringIO)
+          __debug_inspect(value.string)
+        elsif value.is_a?(Hash) || value&.respond_to?(:to_h)
+          value.to_h.map { |k, v| "#{k} = #{__debug_inspect(v)}" }
+        else
+          __debug_inspect(value)
+        end
+      if prefix.present? && lines.is_a?(Array)
+        lines.map! { |line| "#{prefix} #{line}" }
+      end
+      __debug("#{item} =", *lines, *args, opt, &block)
+    end
+    nil
+  end
+
   # OmniAuth endpoint console debugging output.
   #
   # If the endpoint method is not passed as a Symbol in *args* then

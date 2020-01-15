@@ -276,7 +276,7 @@ en:
               emma_repositoryRecordId:  'theworksofedgara02147gut'
               emma_retrievalLink:       'https://archive.org/download/theworksofedgara02147gut/pg2147.epub'
               emma_lastRemediationDate: '2011-06-03'
-              dc_title:                 'The Works of Edgar Allan Poe - Volume 1'
+              dc_title:                 'The Works of Edgar Allan Poe — Volume 1'
               dc_creator:
                 - 'Poe, Edgar Allan, 1809-1849'
                 - 'Lowell, James Russell, 1819-1891 [Contributor]'
@@ -302,7 +302,7 @@ en:
               emma_repositoryRecordId:  'theworksofedgara02148gut'
               emma_retrievalLink:       'https://archive.org/compress/theworksofedgara02148gut/formats=EPUB&file=/theworksofedgara02148gut.zip'
               emma_lastRemediationDate: '2011-07-16'
-              dc_title:                 'The Works of Edgar Allan Poe - Volume 2'
+              dc_title:                 'The Works of Edgar Allan Poe — Volume 2'
               dc_creator:
                 - 'Poe, Edgar Allan, 1809-1849'
               dc_description:           "The Purloined Letter -- The Thousand-and-Second Tale of Scheherezade -- A Descent into the Maelström -- Von Kempelen and his Discovery -- Mesmeric Revelation -- The Facts in the Case of M. Valdemar -- The Black Cat -- The Fall of the House of Usher -- Silence: a Fable -- The Masque of the Red Death -- The Cask of Amontillado -- The Imp of the Perverse -- The Island of the Fay -- The Assignation -- The Pit and the Pendulum -- The Premature Burial -- The Domain of Arnheim -- Landor's Cottage -- William Wilson -- The Tell-Tale Heart -- Berenice -- Eleonora'"
@@ -321,7 +321,7 @@ en:
               <<: *IA_008
               emma_repositoryRecordId:  'theworksofedgara02149gut'
               emma_retrievalLink:       'https://archive.org/download/theworksofedgara02149gut/pg2149.epub'
-              dc_title:                 'The Works of Edgar Allan Poe - Volume 3'
+              dc_title:                 'The Works of Edgar Allan Poe — Volume 3'
               dc_creator:
                 - 'Poe, Edgar Allan, 1809-1849'
               dc_description:           'Narrative of A. Gordon Pym -- Ligeia -- Morella -- A Tale of the Ragged Mountains -- The Spectacles -- King Pest -- Three Sundays in a Week'
@@ -339,7 +339,7 @@ en:
               emma_repositoryRecordId:  'theworksofedgara02150gut'
               emma_retrievalLink:       'https://archive.org/download/theworksofedgara02150gut/pg2150.epub'
               emma_lastRemediationDate: '2011-06-18'
-              dc_title:                 'The Works of Edgar Allan Poe - Volume 4'
+              dc_title:                 'The Works of Edgar Allan Poe — Volume 4'
               dc_description:           "The Devil in the Belfry -- Lionizing -- X-ing a Paragrab -- Metzengerstein -- The System of Doctor Tarr and Professor Fether -- The Literary Life of Thingum Bob, Esq. -- How to Write a Blackwood article -- A Predicament -- Mystification -- Diddling -- The Angel of the Odd -- Mellonia Tauta -- The Duc de l'Omlette -- The Oblong Box -- Loss of Breath -- The Man That Was Used Up -- The Business Man -- The Landscape Garden -- Maelzel's Chess-Player -- The Power of Words -- The Colloquy of Monas and Una -- The Conversation of Eiros and Charmion -- Shadow.--A Parable"
               dcterms_dateAccepted:     '2011-06-18'
 
@@ -351,7 +351,7 @@ en:
               <<: *IA_008
               emma_repositoryRecordId:  'theworksofedgara02151gut'
               emma_retrievalLink:       'https://archive.org/download/theworksofedgara02151gut/pg2151.epub'
-              dc_title:                 'The Works of Edgar Allan Poe - Volume 5'
+              dc_title:                 'The Works of Edgar Allan Poe — Volume 5'
               dc_creator:
                 - 'Poe, Edgar Allan, 1809-1849'
               dc_description:           "The Devil in the Belfry -- Lionizing -- X-ing a Paragrab -- Metzengerstein -- The System of Doctor Tarr and Professor Fether -- The Literary Life of Thingum Bob, Esq. -- How to Write a Blackwood article -- A Predicament -- Mystification -- Diddling -- The Angel of the Odd -- Mellonia Tauta -- The Duc de l'Omlette -- The Oblong Box -- Loss of Breath -- The Man That Was Used Up -- The Business Man -- The Landscape Garden -- Maelzel's Chess-Player -- The Power of Words -- The Colloquy of Monas and Una -- The Conversation of Eiros and Charmion -- Shadow.--A Parable"
@@ -510,9 +510,6 @@ en:
               dc_format:                'epub'
 
             - <<: *BS_001
-              dc_format:                'pdf'
-
-            - <<: *BS_001
               dc_format:                'word'
 
           002:
@@ -533,9 +530,6 @@ en:
 
             - <<: *BS_002
               dc_format:                'epub'
-
-            - <<: *BS_002
-              dc_format:                'pdf'
 
             - <<: *BS_002
               dc_format:                'word'
@@ -560,9 +554,6 @@ en:
               dc_format:                'epub'
 
             - <<: *BS_003
-              dc_format:                'pdf'
-
-            - <<: *BS_003
               dc_format:                'word'
 
           004:
@@ -585,9 +576,6 @@ en:
               dc_format:                'epub'
 
             - <<: *BS_004
-              dc_format:                'pdf'
-
-            - <<: *BS_004
               dc_format:                'word'
 
           005:
@@ -608,9 +596,6 @@ en:
 
             - <<: *BS_005
               dc_format:                'epub'
-
-            - <<: *BS_005
-              dc_format:                'pdf'
 
             - <<: *BS_005
               dc_format:                'word'

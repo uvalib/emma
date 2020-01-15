@@ -21,6 +21,11 @@ class HomeController < ApplicationController
   include SessionConcern
   include SerializationConcern
 
+  # Non-functional hints for RubyMine.
+  # :nocov:
+  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
+
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================

@@ -7,8 +7,6 @@ __loading_begin(__FILE__)
 
 # SearchController
 #
-# @see SearchHelper
-#
 class SearchController < ApplicationController
 
   include ParamsConcern
@@ -20,6 +18,11 @@ class SearchController < ApplicationController
   include IsbnHelper
   include IssnHelper
   include OclcHelper
+
+  # Non-functional hints for RubyMine.
+  # :nocov:
+  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # ===========================================================================
   # :section: Authentication
@@ -102,6 +105,20 @@ class SearchController < ApplicationController
     end
   end
 
+  # == GET /search/detail?repositoryId=xxx[&repository=xxx]&fmt={brf|daisy|...}
+  # == GET /search/:fmt?repositoryId=xxx[&repository=xxx]
+  # Display details of a file from a repository.
+  #
+  def file_detail
+    __debug_route('SEARCH')
+    locals = get_file_details(params)
+    respond_to do |format|
+      format.html { render locals: locals }
+      format.json { render_json show_values(locals) }
+      format.xml  { render_xml  show_values(locals) }
+    end
+  end
+
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================
@@ -123,16 +140,15 @@ class SearchController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @param [Search::Record::MetadataRecord, nil] item
-  # @param [Symbol]                      as     Unused.
+  # @param [Search::Record::MetadataRecord, Hash] item
   #
-  # @return [Hash]
+  # @return [Hash{Symbol=>Hash}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item, as: nil)
-    { records: item }
+  def show_values(item = @item)
+    { records: normalize_keys(item) }
   end
 
   # ===========================================================================

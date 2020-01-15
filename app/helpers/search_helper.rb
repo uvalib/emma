@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'search'
+=end
 
 # Methods supporting access and linkages to the "EMMA Federated Search" API.
 #
@@ -22,8 +24,8 @@ module SearchHelper
 
   include PaginationHelper
   include ResourceHelper
-
-  include Search::Shared::LinkMethods
+  include FileFormatHelper
+  include LogoHelper
 
   # ===========================================================================
   # :section:
@@ -170,6 +172,7 @@ module SearchHelper
     end
   end
 
+=begin
   # Generic source repository values.
   #
   # @type [Hash{Symbol=>Hash}]
@@ -181,9 +184,10 @@ module SearchHelper
   # @type [Hash{String=>String}]
   #
   REPOSITORY_LOGO =
-    REPOSITORY.transform_values { |entry| entry[:logo] }
+    Search::REPOSITORY.transform_values { |entry| entry[:logo] }
       .stringify_keys
       .deep_freeze
+=end
 
   # Display title of the associated work along with the logo of the source
   # repository.
@@ -195,11 +199,20 @@ module SearchHelper
   def title_and_source_logo(item)
     title  = item.full_title
     source = item.emma_repository
-    source = nil unless Repository.values.include?(source)
+=begin
+    source = nil unless repository_prefix?(source)
     logo   = REPOSITORY_LOGO[source] || REPOSITORY_TEMPLATE[:logo]
     if logo.present?
       content_tag(:div, title, class: "title #{source}".strip) <<
         repository_source_logo(item, logo: logo)
+    else
+      title_and_source(item)
+    end
+=end
+    source = '' unless EmmaRepository.values.include?(source)
+    logo   = repository_source_logo(source)
+    if logo.present?
+      content_tag(:div, title, class: "title #{source}".strip) << logo
     else
       title_and_source(item)
     end
@@ -214,11 +227,11 @@ module SearchHelper
   def title_and_source(item)
     title  = item.full_title
     source = item.emma_repository
-    source = nil unless Repository.values.include?(source)
+    source = nil unless EmmaRepository.values.include?(source)
     name   = source&.titleize || 'LOGO'
-    if name.present?
-      content_tag(:div, title, class: "title #{source}".strip) <<
-        repository_source(item, name: name)
+    logo   = name && repository_source(item, source: source, name: name)
+    if logo.present?
+      content_tag(:div, title, class: "title #{source}".strip) << logo
     else
       ERB::Util.h(title)
     end
@@ -226,18 +239,23 @@ module SearchHelper
 
   # Make a logo for a repository source.
   #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #content_tag except for:
-  #
-  # @option opt [String] :source
-  # @option opt [String] :logo          Logo asset name.
+  # @param [Search::Api::Record, String] item
+  # @param [Hash]                        opt    Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # This method overrides:
+  # @see LogoHelper#repository_source_logo
+  #
   def repository_source_logo(item, **opt)
+    source = opt[:source] || item
+    source = source.emma_repository if source.respond_to?(:emma_repository)
+    # noinspection RubyYardParamTypeMatch
+    super(source, **opt)
+=begin
     opt, html_opt = partition_options(opt, :source, :logo)
     source = opt[:source] || item.emma_repository
-    source = nil unless Repository.values.include?(source)
+    source = nil unless repository_prefix?(source)
     logo   = opt[:logo] || REPOSITORY_LOGO[source]
     if logo.present?
       name = source&.titleize
@@ -249,22 +267,26 @@ module SearchHelper
       html_opt.merge!(source: source) if opt[:source]
       repository_source(item, **html_opt)
     end
+=end
   end
 
   # Make a textual logo for a repository source.
   #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #content_tag except for:
-  #
-  # @option opt [String] :source
-  # @option opt [String] :name          To be displayed instead of the source.
+  # @param [Search::Api::Record, String] item
+  # @param [Hash]                        opt    Passed to super.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # This method overrides:
+  # @see LogoHelper#repository_source
+  #
   def repository_source(item, **opt)
-    opt, html_opt = partition_options(opt, :source, :name)
-    source = opt[:source] || item.emma_repository
-    source = nil unless Repository.values.include?(source)
+    source = opt[:source] || item
+    source = source.emma_repository if source.respond_to?(:emma_repository)
+    # noinspection RubyYardParamTypeMatch
+    super(source, **opt)
+=begin
+    source = nil unless repository_prefix?(source)
     name   = opt[:name] || source&.titleize || 'LOGO'
     if name.present?
       html_opt[:title] ||= "From #{name}" # TODO: I18n
@@ -273,6 +295,7 @@ module SearchHelper
     else
       ''.html_safe
     end
+=end
   end
 
   # Make a clickable link to the display page for the title on the originating
@@ -285,37 +308,45 @@ module SearchHelper
   #
   def source_record_link(item, **opt)
     id  = CGI.unescape(item.emma_repositoryRecordId)
-    url = record_title_url(item)
-    if url.present?
-      origin   = item.emma_repository.titleize
-      html_opt = {
-        target: '_blank',
-        title:  "View this item on the #{origin} website." # TODO: I18n
-      }.merge(opt)
-      make_link(id, url, **html_opt)
-    else
-      ERB::Util.h(id)
-    end
+    url = item.record_title_url
+    return ERB::Util.h(id) if url.blank?
+
+    origin = item.emma_repository.titleize
+    opt[:title]  ||= "View this item on the #{origin} website." # TODO: I18n
+    opt[:target] ||= '_blank'
+    make_link(id, url, **opt)
   end
 
   # Make a clickable link to retrieve a remediated file.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #make_link.
+  # @param [Hash]                opt    Passed to #make_link except for:
+  #
+  # @option opt [String] :label         Link text (default: the URL).
+  # @option opt [String] :url           Overrides `item.record_download_url`.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
   def source_retrieval_link(item, **opt)
-    url = record_download_url(item)
-    return unless url.present?
-    format   = item.dc_format.upcase
-    origin   = item.emma_repository.titleize
-    html_opt = {
-      target: '_blank',
-      title:  "Retrieve the #{format} source from #{origin}." # TODO: I18n
-    }.merge(opt)
-    make_link(CGI.unescape(url), url, **html_opt)
+    local, opt = partition_options(opt, :label)
+    url = local[:url] || item.record_download_url
+    return if url.blank?
+
+    label = local[:label] || CGI.unescape(url)
+    opt[:target] ||= '_blank'
+    opt[:title]  ||=
+      begin
+        repo = item.emma_repository.titleize
+        fmt  = item.dc_format.upcase
+        "Retrieve the #{fmt} source from #{repo}." # TODO: I18n
+      end
+    make_link(label, url, **opt)
+      .tap do |result|
+        __debug { "#{__method__} => #{result.inspect}" }
+        info = file_info(item, path: url)
+        result << info if info.present?
+      end
   end
 
   # ===========================================================================
@@ -349,8 +380,6 @@ module SearchHelper
     TitleId:              :emma_titleId,
     Repository:           :emma_repository,
     Collection:           :emma_collection,
-    RepositoryRecordId:   :emma_repositoryRecordId,
-    RetrievalLink:        :emma_retrievalLink,
     LastUpdate:           :emma_lastRemediationDate,
     UpdateNote:           :emma_lastRemediationNote,
     FormatVersion:        :emma_formatVersion,
@@ -362,6 +391,8 @@ module SearchHelper
     AccessModeSufficient: :s_accessModeSufficient,
     AccessibilityAPI:     :s_accessibilityAPI,
     AccessibilitySummary: :s_accessibilitySummary,
+    RepositoryRecordId:   :emma_repositoryRecordId,
+    RetrievalLink:        :emma_retrievalLink,
   }.freeze
 
   # Render an item metadata listing.

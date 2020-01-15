@@ -6,6 +6,17 @@
 // Placeholder classes
 //=============================================================================
 
+// Remove the element from display.
+%hidden {
+    display: none !important;
+}
+
+// Hide the contents of the element while maintaining the space it occupies on
+// the display.
+%invisible {
+    visibility: hidden !important;
+}
+
 // Make focus outline more easily seen.
 //
 // noinspection SassScssResolvedByNameOnly
@@ -157,13 +168,13 @@ select:focus {
 
 // Include to remove an element from the display.
 .hidden {
-    display: none !important;
+    @extend %hidden;
 }
 
 // Include to hide the contents of an element while maintaining the space it
 // occupies on the display.
 .invisible {
-    visibility: hidden !important;
+    @extend %invisible;
 }
 
 // Include to "de-activate" an active element like a button or link.

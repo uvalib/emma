@@ -21,18 +21,6 @@ en:
       title:            'Federated Search'
       tooltip:          'Federated search for metadata records.'
 
-      format:
-        brf:              'BRF'
-        daisy:            'DAISY'
-        daisyAudio:       'DAISY Audio'
-        epub:             'EPUB'
-        braille:          'Braille'
-        pdf:              'PDF'
-        word:             'Microsoft Word'
-        tactile:          'Tactile'
-        kurzweil:         'Kurzweil'
-        rtf:              'RTF'
-
       # =======================================================================
       # Controls
       # =======================================================================

@@ -13,6 +13,18 @@ en:
     # =========================================================================
 
     format:
+      brf:              'BRF'
+      daisy:            'DAISY'
+      daisyAudio:       'DAISY Audio'
+      epub:             'EPUB'
+      braille:          'Braille'
+      pdf:              'PDF'
+      word:             'Microsoft Word'
+      tactile:          'Tactile'
+      kurzweil:         'Kurzweil'
+      rtf:              'RTF'
+
+    book_format:
       DAISY:            'DAISY with Images'
       DAISY_AUDIO:      'DAISY Audio'
       DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
@@ -282,14 +294,32 @@ en:
 
     source:
 
-      _template:
+      _template:         &REPOSITORY_TEMPLATE
         logo:           '' # Asset file name.
         title_path:     '' # Base URL to source pages for title-level entries.
         download_path:  '' # Base URL for artifact downloads.
-        download_fmt:   [] # Translation of Search API format parameter.
         download_url:   '' # URL template for artifact downloads.
+        download_fmt:    &EMMA_FORMATS
+          brf:          'brf'
+          daisy:        'daisy'
+          daisyAudio:   'daisyAudio'
+          epub:         'epub'
+          braille:      'braille'
+          pdf:          'pdf'
+          word:         'word'
+          tactile:      'tactile'
+          kurzweil:     'kurzweil'
+          rtf:          'rtf'
+
+      emma:
+        <<:             *REPOSITORY_TEMPLATE
+        logo:           'EMMA-logo-UVAbg.png'
+        title_path:     'https://emma.lib.virginia.edu/title'
+        download_path:  'https://emma.lib.virginia.edu/artifact'
+        download_url:   '%{download_path}/%{id}/%{fmt}'
 
       bookshare:
+        <<:             *REPOSITORY_TEMPLATE
         logo:           'wide-Bookshare_logo.png'
         title_path:     'https://www.bookshare.org/browse/book'
         download_path:  'https://www.bookshare.org/bookHistory/download/book'
@@ -308,37 +338,17 @@ en:
         download_url:   '%{download_path}?titleInstanceId=%{id}&downloadFormat=%{fmt}&tag=%{tag}'
 
       hathiTrust:
+        <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
         logo:           'wide-HathiTrust_logo.png'
         title_path:     'https://catalog.hathitrust.org/Record'
         download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
-        download_fmt:                         # TODO: HT download formats
-          brf:          'brf'
-          daisy:        'daisy'
-          daisyAudio:   'daisyAudio'
-          epub:         'epub'
-          braille:      'braille'
-          pdf:          'pdf'
-          word:         'word'
-          tactile:      'tactile'
-          kurzweil:     'kurzweil'
-          rtf:          'rtf'
         download_url:   '%{download_path}/%{fmt}?id=%{id};orient=0;size=100'
 
       internetArchive:
+        <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats
         logo:           'wide-Internet_Archive_logo.png'
         title_path:     'https://archive.org/details'
         download_path:  'https://archive.org/download'
-        download_fmt:                         # TODO: IA download formats
-          brf:          'brf'
-          daisy:        'daisy'
-          daisyAudio:   'daisyAudio'
-          epub:         'epub'
-          braille:      'braille'
-          pdf:          'pdf'
-          word:         'word'
-          tactile:      'tactile'
-          kurzweil:     'kurzweil'
-          rtf:          'rtf'
         download_url:
           daisy:        '%{download_path}/%{id}/%{id}_daisy.zip'
           epub:         '%{download_path}/%{id}/%{id}.epub'
@@ -378,6 +388,7 @@ en:
     nav_bar:
       controllers:
         - 'search'
+#       - 'upload'
         - 'category'
         - 'title'
         - 'periodical'

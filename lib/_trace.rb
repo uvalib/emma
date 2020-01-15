@@ -117,8 +117,8 @@ def __output(*args)
   nil
 end
 
-# Debugging statements are neutralized unless CONSOLE_DEBUGGING is *true*.
-def __debug(*); end
+# Debugging statements are neutralized unless #CONSOLE_DEBUGGING is *true*.
+def __debug(*); end unless CONSOLE_DEBUGGING
 
 # Write indented debug line(s) to $stderr.
 #

@@ -392,8 +392,9 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#menu_spacer
+    // noinspection SassScssResolvedByNameOnly
     .menu-spacer {
-        @extend .invisible;
+        @extend %invisible;
     }
 
     // @see LayoutHelper#reset_button
