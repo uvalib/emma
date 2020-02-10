@@ -27,6 +27,7 @@ phases:
       - cd $CODEBUILD_SRC_DIR/terraform-infrastructure/emma.lib.virginia.edu/staging
       - terraform init
       - terraform apply -auto-approve -var container_tag=$latest_build
+      - sh $CODEBUILD_SRC_DIR/pipeline/wait_for_version.sh $TC_ENDPOINT $latest_build 300
 
 #  post_build:
 #    commands:
