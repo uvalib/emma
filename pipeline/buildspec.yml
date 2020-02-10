@@ -12,6 +12,7 @@ phases:
   install:
     runtime-versions:
       docker: 18
+      ruby: 2.6
 #    commands:
 
   pre_build:
