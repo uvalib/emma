@@ -24,7 +24,7 @@ phases:
 
   build:
     commands:
-      - cd $CODEBUILD_SRC_DIR/terraform-infrastructure/emma.lib.virginia.edu/staging/emma
+      - cd $CODEBUILD_SRC_DIR/terraform-infrastructure/emma.lib.virginia.edu/staging
       - terraform init
       - terraform apply -auto-approve -var container_tag=$latest_build
 
