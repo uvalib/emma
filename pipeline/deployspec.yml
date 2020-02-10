@@ -1,0 +1,36 @@
+#
+# deployspec.yml
+#
+
+version: 0.2
+
+#env:
+#  variables:
+#    name: value
+
+phases:
+  install:
+    runtime-versions:
+      golang: 1.13
+    commands:
+      - wget https://releases.hashicorp.com/terraform/0.11.14/terraform_0.11.14_linux_amd64.zip
+      - unzip terraform_0.11.14_linux_amd64.zip
+      - mv terraform /usr/local/bin
+
+  pre_build:
+    commands:
+      - latest_build=$(aws --region=$AWS_REGION ssm get-parameter --name /containers/$CONTAINER_IMAGE/latest | grep "Value" | awk -F\" '{print $4}')
+      - git clone https://$GITLAB_USER:$GITLAB_TOKEN@gitlab.com/uvalib/terraform-infrastructure.git
+
+  build:
+    commands:
+      - cd $CODEBUILD_SRC_DIR/terraform-infrastructure/emma.lib.virginia.edu/staging/emma
+      - terraform init
+      - terraform apply -auto-approve -var container_tag=$latest_build
+
+#  post_build:
+#    commands:
+
+#
+# end of file
+#
