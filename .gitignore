@@ -162,9 +162,5 @@ tags
 !/storage/.keep
 !/storage/gemrc
 
-# === local helpers
-package/scripts
-
 # === local environment configuration files
 env.*
-package/scripts
