@@ -83,6 +83,9 @@ gem 'iso-639'
 gem 'jquery-rails'
 gem 'sanitize'
 
+# == Addresses bug when building on AWS (see https://github.com/sass/sassc-ruby/issues/146)
+gem 'sassc', '2.1.0'
+
 # =============================================================================
 # Production
 # =============================================================================
