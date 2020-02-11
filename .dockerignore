@@ -1,2 +1,4 @@
 package/scripts/build.ksh
 package/scripts/shell.ksh
+test
+tmp
