@@ -63,6 +63,7 @@ module Search::Api::Common
         publicDomain
         creativeCommons
         copyright
+        other
       )
     },
 
@@ -81,6 +82,7 @@ module Search::Api::Common
         epub
         braille
         pdf
+        grayscalePdf
         word
         tactile
         kurzweil
@@ -137,6 +139,7 @@ module Search::Api::Common
         stillImage
         structuralNavigation
         synchronizedAudioText
+        tableOfContents
         tactileGraphic
         tactileObject
         taggedPDF
@@ -201,6 +204,7 @@ module Search::Api::Common
 
     SearchSort: {
       values: %w(
+        relevance
         title
         lastRemediationDate
       )

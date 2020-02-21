@@ -23,6 +23,12 @@ module LayoutHelper::NavBar
   #
   NAV_BAR_CONTROLLERS = I18n.t('emma.nav_bar.controllers').map(&:to_sym).freeze
 
+  # The important nav bar entries
+  #
+  # @type [Array<Symbol>]
+  #
+  PRIMARY_CONTROLLERS = I18n.t('emma.nav_bar.primary').map(&:to_sym).freeze
+
   # Default dashboard link label.
   #
   # @type [String]
@@ -94,15 +100,18 @@ module LayoutHelper::NavBar
 
     # Entries for the main page of each controller.
     links +=
-      NAV_BAR_CONTROLLERS.map do |controller|
-        label = CONTROLLER_LABEL[controller]
-        path  = send("#{controller}_index_path")
-        opt   = { title: CONTROLLER_TOOLTIP[controller] }
+      NAV_BAR_CONTROLLERS.map do |c|
+        label = CONTROLLER_LABEL[c]
+        path  = send("#{c}_index_path")
+        opt   = { title: CONTROLLER_TOOLTIP[c] }
         if path == current_path
-          content_tag(:span, label, opt.merge!(class: 'active disabled'))
+          opt[:class] = 'active disabled'
+          content_tag(:span, label, opt)
         elsif path == current_base_path
-          link_to(label, path, opt.merge!(class: 'active'))
+          opt[:class] = 'active'
+          link_to(label, path, opt)
         else
+          opt[:class] = 'secondary' unless PRIMARY_CONTROLLERS.include?(c)
           link_to(label, path, opt)
         end
       end

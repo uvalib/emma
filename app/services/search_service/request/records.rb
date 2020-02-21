@@ -22,15 +22,15 @@ module SearchService::Request::Records
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]              :q
+  # @option opt [String]                                  :q
   # @option opt [DublinCoreFormat, Array<DublinCoreFormat>] :fmt
-  # @option opt [FormatFeature]       :formatFeature
-  # @option opt [String]              :formatVersion
-  # @option opt [A11yFeature]         :accessibilityFeature
-  # @option opt [EmmaRepository]      :repository
-  # @option opt [String]              :collection
-  # @option opt [IsoDate]             :lastRemediationDate
-  # @option opt [SearchSort]          :sort
+  # @option opt [FormatFeature, Array<FormatFeature>]     :formatFeature
+  # @option opt [String]                                  :formatVersion
+  # @option opt [A11yFeature, Array<A11yFeature>]         :accessibilityFeature
+  # @option opt [EmmaRepository]                          :repository
+  # @option opt [String, Array<String>]                   :collection
+  # @option opt [IsoDate]                                 :lastRemediationDate
+  # @option opt [SearchSort]                              :sort
   #
   # @return [Search::Message::SearchRecordList]
   #
@@ -58,7 +58,12 @@ module SearchService::Request::Records
           lastRemediationDate:  IsoDate,
           sort:                 SearchSort,
         },
-        multi: %i[format],
+        multi: %i[
+          format
+          formatFeature
+          accessibilityFeature
+          collection
+        ],
         role:  :anonymous, # Should succeed for any user.
       }
     end

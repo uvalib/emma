@@ -34,6 +34,8 @@ Rails.application.routes.draw do
 
   end
 
+  get 'search/example', to: 'search#example'
+
   resources :search, only: %i[index show]
 
   # ===========================================================================

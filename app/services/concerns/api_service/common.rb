@@ -31,7 +31,7 @@ module ApiService::Common
 
   public
 
-  BASE_URL = nil # To be overridden.
+  BASE_URL = 'MISSING' # To be overridden.
 
   # Control whether information requests are ever cached. # TODO: ???
   #

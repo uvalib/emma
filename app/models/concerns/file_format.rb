@@ -27,11 +27,11 @@ module FileFormat
 
   public
 
-  # TYPES # TODO: should be in configuration
+  # Known format types.
   #
   # @type [Array<Symbol>]
   #
-  TYPES = %i[brf daisy daisyAudio epub pdf word].freeze
+  TYPES = I18n.t('emma.format').keys.map(&:to_sym).freeze
 
   # Placeholder for an unknown format.
   #

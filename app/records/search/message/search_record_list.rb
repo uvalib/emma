@@ -9,9 +9,9 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchRecordList < Search::Api::Message
 
-  include Emma::Time
-
-  attr_reader :records
+  schema do
+    has_many :records, Search::Record::MetadataRecord
+  end
 
   # ===========================================================================
   # :section:
@@ -35,34 +35,44 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #
   # noinspection RubyYardParamTypeMatch
   def initialize(data, **opt)
-    __debug { "### #{self.class}.#{__method__}" }
-    start_time = timestamp
-    # noinspection RubyCaseWithoutElseBlockInspection
-    @exception =
-      case opt[:error]
-        when Exception then opt[:error]
-        when String    then Api::Error.new(opt[:error])
+    create_message do
+      # noinspection RubyCaseWithoutElseBlockInspection
+      @exception =
+        case opt[:error]
+          when Exception then opt[:error]
+          when String    then Api::Error.new(opt[:error])
+        end
+      if @exception
+        @serializer_type = :hash
+        initialize_attributes
+      elsif opt[:example] # TODO: remove - testing
+        @serializer_type = :hash
+        initialize_attributes
+        @records = make_examples(**opt)
+      else
+        @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
+        assert_serializer_type(@serializer_type)
+        data = data.body.presence if data.is_a?(Faraday::Response)
+        opt[:format] ||= self.format_of(data)
+        opt[:error]  ||= true if opt[:format].blank?
+        unless opt[:error]
+          case opt[:format]
+            when :xml  then data = wrap_outer(data, **opt)
+            when :json then data = %Q({"records":#{data}})
+          end
+        end
+        deserialize(data)
       end
-    if @exception
-      @serializer_type = :hash
-      initialize_attributes
-    elsif opt[:example] # TODO: remove - testing
-      @serializer_type = :hash
-      initialize_attributes
-      @records = make_examples(**opt)
-    else
-      @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
-      assert_serializer_type(@serializer_type)
-      data = data.body.presence if data.is_a?(Faraday::Response)
-      opt[:format] ||= self.format_of(data)
-      opt[:error]  ||= true if opt[:format].blank?
-      data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
-      @records = deserialize(data)
     end
-  ensure
-    elapsed_time = time_span(start_time)
-    __debug { "<<< #{self.class} processed in #{elapsed_time}" }
-    Log.info { "#{self.class} processed in #{elapsed_time}"}
+  end
+
+  # Simulates the :totalResults field of similar Bookshare API records.
+  #
+  # @return [Integer]
+  #
+  # noinspection RubyInstanceMethodNamingConvention
+  def totalResults
+    records&.size || 0
   end
 
   # ===========================================================================

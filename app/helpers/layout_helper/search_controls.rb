@@ -129,7 +129,8 @@ module LayoutHelper::SearchControls
     # @return [Array<Array<(String,String)>>]
     #
     def make_menu(menu_name, *entries, **opt)
-      first = entries.first
+      first   = entries.first
+      reverse = SEARCH_MENU.dig(menu_name, :reverse).presence
       if menu_name == :language
         hash    = I18n.t(first)
         entries = hash[:list].map { |code, label| [label, code.to_s] }
@@ -144,6 +145,9 @@ module LayoutHelper::SearchControls
         entries = entries.flatten(1)
       elsif first.is_a?(String)
         entries = I18n.t(first).map { |value, label| [label, value.to_s] }
+      elsif first == SearchSort
+        reverse = false
+        entries = first.values.dup
       elsif first.respond_to?(:values)
         entries = first.values.dup
       end
@@ -158,21 +162,21 @@ module LayoutHelper::SearchControls
           [label, value]
         end
       end
-      if (reverse = SEARCH_MENU.dig(menu_name, :reverse)).blank?
-        entries
-      else
+      if reverse
         except = Array.wrap(reverse[:except]).map(&:to_s)
-        entries.flat_map do |entry|
-          label, value = entry
-          if except.include?(value)
-            entry
-          else
-            label = sprintf(reverse[:label], sort: label)
-            value = descending_sort(value, reverse[:suffix])
-            [entry, [label, value]]
+        entries =
+          entries.flat_map do |entry|
+            label, value = entry
+            if except.include?(value)
+              entry
+            else
+              label = sprintf(reverse[:label], sort: label)
+              value = descending_sort(value, reverse[:suffix])
+              [entry, [label, value]]
+            end
           end
-        end
       end
+      entries
     end
 
     # Format a menu label.
@@ -282,18 +286,19 @@ module LayoutHelper::SearchControls
   # @see #make_menu
   #
   GENERIC_MENU = {
-    a11y_feature: A11yFeature,
-    braille:      BrailleType,
-    category:     'emma.categories',  # @see config/locales/en.yml
-    content_type: TitleContentType,
-    format:       nil,                # @see SEARCH_MENU_MAP
-    language:     'emma.language',    # @see config/locales/en.yml
-    narrator:     NarratorType,
-    repository:   EmmaRepository,
-    size:         %i[size values],    # @see #SEARCH_MENU
-    sort:         nil,                # @see SEARCH_MENU_MAP
-    warnings_exc: ContentWarning,
-    warnings_inc: ContentWarning,
+    a11y_feature:   A11yFeature,
+    braille:        BrailleType,
+    category:       'emma.categories',  # @see config/locales/en.yml
+    content_type:   TitleContentType,
+    format:         nil,                # @see SEARCH_MENU_MAP
+    format_feature: FormatFeature,
+    language:       'emma.language',    # @see config/locales/en.yml
+    narrator:       NarratorType,
+    repository:     EmmaRepository,
+    size:           %i[size values],    # @see #SEARCH_MENU
+    sort:           nil,                # @see SEARCH_MENU_MAP
+    warnings_exc:   ContentWarning,
+    warnings_inc:   ContentWarning,
   }.map { |name, entries|
     entries &&= make_menu(name, *entries)
     [name, entries]

@@ -13,6 +13,7 @@ en:
       epub:             'EPUB'
       braille:          'Braille'
       pdf:              'PDF'
+      grayscalePdf:     'Grayscale PDF'
       word:             'Microsoft Word'
       tactile:          'Tactile'
       kurzweil:         'Kurzweil'

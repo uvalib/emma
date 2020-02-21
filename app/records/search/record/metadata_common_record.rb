@@ -8,9 +8,10 @@ __loading_begin(__FILE__)
 # Search::Record::MetadataCommonRecord
 #
 # @attr [EmmaRepository]                emma_repository
-# @attr [String]                        emma_collection
+# @attr [Array<String>]                 emma_collection
 # @attr [String]                        emma_repositoryRecordId
 # @attr [String]                        emma_retrievalLink # NOTE: URI
+# @attr [String]                        emma_webPageLink   # NOTE: URI
 # @attr [IsoDate]                       emma_lastRemediationDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
@@ -20,7 +21,7 @@ __loading_begin(__FILE__)
 # @attr [Array<PublicationIdentifier>]  dc_identifier
 # @attr [String]                        dc_publisher
 # @attr [Array<PublicationIdentifier>]  dc_relation
-# @attr [String]                        dc_language # NOTE: not array
+# @attr [Array<String>]                 dc_language
 # @attr [Rights]                        dc_rights
 # @attr [Provenance]                    dc_provenance
 # @attr [String]                        dc_description
@@ -47,9 +48,10 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
 
   schema do
     attribute :emma_repository,           EmmaRepository
-    attribute :emma_collection,           String
+    has_many  :emma_collection,           String
     attribute :emma_repositoryRecordId,   String
     attribute :emma_retrievalLink,        String
+    attribute :emma_webPageLink,          String
     attribute :emma_lastRemediationDate,  IsoDate
     attribute :emma_lastRemediationNote,  String
     attribute :emma_formatVersion,        String
@@ -59,7 +61,7 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
     has_many  :dc_identifier,             PublicationIdentifier
     attribute :dc_publisher,              String
     has_many  :dc_relation,               PublicationIdentifier
-    attribute :dc_language,               String
+    has_many  :dc_language,               String
     attribute :dc_rights,                 Rights
     attribute :dc_provenance,             Provenance
     attribute :dc_description,            String

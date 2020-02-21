@@ -27,8 +27,11 @@ module SearchService::Common
 
   public
 
+=begin
   BASE_URL    = 'https://virtserver.swaggerhub.com/kden/emma-federated-search-api' # TODO: SEARCH_BASE_URL
-  API_VERSION = '0.0.1' # TODO: SEARCH_API_VERSION
+=end
+  BASE_URL    = 'https://api.staging.bookshareunifiedsearch.org'
+  API_VERSION = '0.0.2' # TODO: SEARCH_API_VERSION
 
   # ===========================================================================
   # :section:
@@ -70,7 +73,9 @@ module SearchService::Common
     decode_parameters!(@params)
 
     # Form the API path from the remaining arguments.
+=begin
     args.unshift(API_VERSION) unless args.first == API_VERSION
+=end
     @action = args.join('/').strip
     @action = "/#{@action}" unless @action.start_with?('/')
 

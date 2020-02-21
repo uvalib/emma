@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [Boolean]                 allowAdultContent
 # @attr [Integer]                 brailleCellLineWidth
-# @attr [BrailleFormat]           brailleFormat
+# @attr [BrailleFmt]              brailleFormat
 # @attr [BrailleGrade]            brailleGrade
 # @attr [Bs::Record::Format]      format
 # @attr [String]                  language
@@ -27,7 +27,7 @@ class Bs::Message::MyAccountPreferences < Bs::Api::Message
   schema do
     attribute :allowAdultContent,    Boolean
     attribute :brailleCellLineWidth, Integer
-    attribute :brailleFormat,        BrailleFormat
+    attribute :brailleFormat,        BrailleFmt
     attribute :brailleGrade,         BrailleGrade
     has_one   :format,               Bs::Record::Format
     attribute :language,             String

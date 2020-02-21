@@ -56,6 +56,10 @@
     @extend .label-value-pairs;
     @include grid-row-gap($row-separation);
 
+    @media #{$narrow-screen} {
+        @include grid-row-gap(1rem);
+    }
+
     //=========================================================================
     // Components
     //=========================================================================
@@ -71,9 +75,14 @@
     }
 
     .label {
+
+        @media #{$narrow-screen} {
+            margin-bottom: -0.75rem;
+        }
+
         &.field-Title {
 
-            margin: auto 0;
+            margin: 0 0 auto;
 
             @media #{$medium-width} {
 
@@ -93,13 +102,13 @@
 
             display:     flex;
             flex-flow:   wrap;
-            margin:      auto 0;
+            margin:      0 0 auto;
             font-size:   larger;
             font-weight: bold;
             gap:         $flex-gap-y $flex-gap-x;
 
             @media #{$wide-screen} {
-                max-width:       50%;
+                max-width:       75%;
                 justify-content: space-between;
             }
 
@@ -350,24 +359,49 @@
 
     @extend .item-list;
 
+    @media #{$narrow-screen} {
+        @include grid-columns(1fr);
+    }
+
     //=========================================================================
     // Components
     //=========================================================================
 
     .number {
 
-        margin-top:    0.5rem;
+        margin-top:    0;
         margin-bottom: $results-entry-gap-y;
+        padding-left:  0.25rem;
         padding-right: 0.5rem;
+        text-align:    right;
         font-size:     large;
         font-weight:   bold;
-        border-right:  1px solid darkgray;
+
+        @media #{$not-narrow-screen} {
+            border-right:     1px solid $uva-accent-blue;
+            background-color: lighter($uva-accent-blue, 97.5%);
+        }
+
+        @media #{$narrow-screen} {
+            position:         sticky;
+            top:              0;
+            padding:          0 0 0.25rem;
+            text-align:       center;
+            font-size:        x-large;
+            background-color: white;
+        }
 
         > * {
+
             position: sticky;
             top:      3%;
-            margin:   0;
+            margin:   0.5rem 0 0;
             padding:  0;
+
+            @media #{$narrow-screen} {
+                border-bottom:    1px solid $uva-accent-blue;
+                background-color: lighter($uva-accent-blue, 97.5%);
+            }
         }
 
         .value {
@@ -393,9 +427,37 @@
         }
     }
 
+    .search-list-entry {
+
+        @media #{$wide-screen} {
+
+            border-right: 1px solid $uva-accent-blue;
+
+            &.empty {
+                border-right: none;
+            }
+        }
+
+        // NOTE: This is tuned to account for the varying types of fields
+        // across the records displayed in search.  Without some adjustment,
+        // the grid of each record aligns only to the widest label that it
+        // happens to be displaying.
+        @media #{$wide-screen} {
+            @include grid-columns([label] minmax(auto, 0.1375fr) [value] 1fr);
+        }
+        @media #{$medium-width} {
+            @include grid-columns([label] minmax(auto, 0.33fr) [value] 1fr);
+        }
+    }
+
     .number,
     .search-list-entry {
-        @media #{$not-wide-screen} {
+
+        @media #{$not-narrow-screen} {
+            margin-bottom: calc(2 * #{$results-entry-gap-y});
+        }
+
+        @media #{$medium-width} {
 
             margin-top: calc(2 * #{$page-padding});
 

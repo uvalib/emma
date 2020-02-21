@@ -143,23 +143,36 @@ module ParamsConcern
   def resolve_sort
     changed = false
 
-    # Remember current search parameters.
-    ss   = session_section
-    keys = SEARCH_KEYS
-    keys += SEARCH_SORT_KEYS if params[:sort].blank?
-    keys.each do |key|
-      ss_key = key.to_s
-      if params[key].present?
-        ss[ss_key] = params[key]
-      else
-        ss.delete(ss_key)
-      end
-    end
+    if self.class == SearchController
 
-    # Process the menu-generated :sort parameter.
-    if (sort = params.delete(:sort))
-      set_sort_params(sort)
-      changed = true
+      # Relevance is the default sort but the Unified Search API doesn't
+      # actually accept it as a sort type.
+      if params[:sort].to_s.casecmp('relevance').zero?
+        params.delete(:sort)
+        changed = true
+      end
+
+    else
+
+      # Remember current search parameters.
+      ss   = session_section
+      keys = SEARCH_KEYS
+      keys += SEARCH_SORT_KEYS if params[:sort].blank?
+      keys.each do |key|
+        ss_key = key.to_s
+        if params[key].present?
+          ss[ss_key] = params[key]
+        else
+          ss.delete(ss_key)
+        end
+      end
+
+      # Process the menu-generated :sort parameter.
+      if (sort = params.delete(:sort))
+        set_sort_params(sort)
+        changed = true
+      end
+
     end
 
     will_redirect if changed

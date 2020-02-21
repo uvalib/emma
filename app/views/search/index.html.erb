@@ -20,7 +20,7 @@
 
   template_opt = { list: list, count: count, row: row, skip: :title }
 -%>
-
+<%- if count >= 0 -%>
 <h1 class="heading"><%= title -%></h1>
 
 <div class="search-list">
@@ -29,3 +29,6 @@
   <%= render 'search/list', template_opt %>
   <%= bottom_controls if list.present? %>
 </div>
+<%- else -%>
+  <%= render 'search/form' %>
+<%- end -%>

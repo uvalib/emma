@@ -53,6 +53,9 @@ en:
         - 'member'
         - 'reading_list'
         - 'api'
+      primary:
+        - 'search'
+        - 'upload'
 
     panel:
       control:          &PANEL_TOGGLE
@@ -178,9 +181,14 @@ en:
         tooltip:        'Limit by record originator.'
 
       a11y_feature:
-        label:          'Feature'
+        label:          'A11y'
         url_parameter:  'accessibilityFeature'
         tooltip:        'Limit by accessibility feature.'
+
+      format_feature:
+        label:          'Feature'
+        url_parameter:  'formatFeature'
+        tooltip:        'Limit by format feature.'
 
     page_controls:
       label:            'Actions'

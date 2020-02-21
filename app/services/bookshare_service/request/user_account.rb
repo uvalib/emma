@@ -147,7 +147,7 @@ module BookshareService::Request::UserAccount
   # @option opt [IsoLanguage]   :language
   # @option opt [FormatType]    :format
   # @option opt [BrailleGrade]  :brailleGrade
-  # @option opt [BrailleFormat] :brailleFormat
+  # @option opt [BrailleFmt]    :brailleFormat
   # @option opt [Integer]       :brailleCellLineWidth
   # @option opt [Boolean]       :useUeb                 Default: *false*
   #
@@ -171,7 +171,7 @@ module BookshareService::Request::UserAccount
           language:             IsoLanguage,
           format:               FormatType,
           brailleGrade:         BrailleGrade,
-          brailleFormat:        BrailleFormat,
+          brailleFormat:        BrailleFmt,
           brailleCellLineWidth: Integer,
           useUeb:               Boolean,
         },

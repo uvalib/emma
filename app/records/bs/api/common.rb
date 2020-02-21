@@ -42,7 +42,7 @@ module Bs::Api::Common
       values:   %w(PUT POST DELETE)
     },
 
-    BrailleFormat: {
+    BrailleFmt: {
       values:   %w(refreshable embossable),
       default:  'embossable'
     },
@@ -277,7 +277,7 @@ end
 class Access                  < EnumType; end
 class AgreementType           < EnumType; end
 class AllowsType              < EnumType; end
-class BrailleFormat           < EnumType; end
+class BrailleFmt              < EnumType; end
 class BrailleGrade            < EnumType; end
 class BrailleMusicScoreLayout < EnumType; end
 class BrailleType             < EnumType; end
