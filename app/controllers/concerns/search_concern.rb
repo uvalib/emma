@@ -12,7 +12,72 @@ module SearchConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'SearchConcern')
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Access the EMMA Unified Search service.
+    #
+    # @return [SearchService]
+    #
+    def api
+      @search_api ||= api_update
+    end
+
+    # Update the EMMA Unified Search service.
+    #
+    # @param [Hash] opt
+    #
+    # @return [SearchService]
+    #
+    def api_update(**opt)
+      default_opt = {}
+      default_opt[:user]     = current_user if current_user.present?
+      default_opt[:no_raise] = true         if Rails.env.test?
+      # noinspection RubyYardReturnMatch
+      @search_api = SearchService.update(**opt.reverse_merge(default_opt))
+    end
+
+    # Remove the EMMA Unified Search service.
+    #
+    # @return [nil]
+    #
+    def api_clear
+      @search_api = SearchService.clear
+    end
+
+    # Indicate whether the latest EMMA Unified Search request generated an
+    # exception.
+    #
+    def api_error?
+      defined?(@search_api) && @search_api.present? && @search_api.error?
+    end
+
+    # Get the current EMMA Unified Search exception message if the service has
+    # been started.
+    #
+    # @return [String]
+    # @return [nil]
+    #
+    def api_error_message
+      @search_api.error_message if defined?(:@search_api) && @search_api.present?
+    end
+
+    # Get the current EMMA Unified Search exception if the service has been
+    # started.
+    #
+    # @return [Exception]
+    # @return [nil]
+    #
+    def api_exception
+      @search_api.exception if defined?(:@search_api) && @search_api.present?
+    end
+
   end
 
   include FilesConcern
@@ -22,9 +87,9 @@ module SearchConcern
   # :section: Initialization
   # ===========================================================================
 
-=begin
+=begin # TODO: Search notifications
   if Log.info?
-    extend TimeHelper
+    extend Emma::Time
     # Log API request times.
     ActiveSupport::Notifications.subscribe('request.faraday') do |*args|
       _name    = args.shift # 'request.faraday'
@@ -48,6 +113,7 @@ module SearchConcern
 
   public
 
+if FileNaming::LOCAL_DOWNLOADS
   # Retrieve embedded metadata information from the indicated file (which is
   # downloaded if it is not already present in the download cache).
   #
@@ -80,6 +146,7 @@ module SearchConcern
       info: file_info_values(path, **prop)
     }
   end
+end
 
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.

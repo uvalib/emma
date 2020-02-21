@@ -1,4 +1,4 @@
-# app/helpers/time_helper.rb
+# lib/emma/time.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,11 +7,7 @@ __loading_begin(__FILE__)
 
 # Time and time span methods.
 #
-module TimeHelper
-
-  def self.included(base)
-    __included(base, '[TimeHelper]')
-  end
+module Emma::Time
 
   # ===========================================================================
   # :section:

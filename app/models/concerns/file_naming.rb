@@ -1,118 +1,131 @@
-# app/helpers/file_name_helper.rb
+# app/models/concerns/file_naming.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# FileNameHelper
+# FileNaming
 #
-module FileNameHelper
+module FileNaming
 
   def self.included(base)
-    __included(base, '[FileNameHelper]')
+    __included(base, '[FileNaming]')
   end
 
-  include MimeHelper
-  include DebugHelper
+  include Emma::Mime
+  include Emma::Debug
 
-  extend self
+  # Sections that support the notion of locally-downloaded copies of files from
+  # repositories are made conditional on this setting.  This is an intermediate
+  # step to removing/reworking those sections to use Shrine-based cached copies
+  # of files (where feasible).
+  #
+  # @type [Boolean]
+  #
+  LOCAL_DOWNLOADS = false # TODO: Remove/rework sections marked with this.
 
   # ===========================================================================
-  # :section:
+  # :section: Module methods
   # ===========================================================================
 
   public
 
-  # Directory which holds cached copies of files.  In the absence of a
-  # 'DOWNLOAD_DIR' environment variable, '/storage' is used.
-  #
-  # @type [String]
-  #
-  DOWNLOAD_DIR = ENV['DOWNLOAD_DIR'] || 'storage'
+  class << self
 
-  NAME_PART_SEPARATOR = FileAttributes::NAME_PART_SEPARATOR
-  FILE_ID_SEPARATOR   = FileAttributes::FILE_ID_SEPARATOR
-  EXT_SEPARATOR       = FileAttributes::EXT_SEPARATOR
+    include ZipArchive
 
-  # A mapping of file type to properties of the class which processes it.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  FF_PROPERTIES =
-    FileFormat::FILE_FORMATS.map { |type|
+    # Create an instance of the appropriate FileObject subclass based on the
+    # indicated type and, if provided, the file contents
+    #
+    # @param [Symbol, String] type
+    # @param [IO]             io
+    #
+    # @return [Class, nil]
+    #
+    def format_class_instance(type, io = nil)
+      if io.is_a?(IO)
+        type = type.to_sym
+        case type
+          when :daisy, :daisyAudio
+            # This heuristic assumes that only distinction between "Daisy" and
+            # "Daisy Audio" is the presence of sound files.
+            type = get_archive_entry('.mp3', io) ? :daisyAudio : :daisy
+        end
+      end
+      format_class(type)&.dup
+    end
+
+    # format_class
+    #
+    # @param [Symbol, String] type
+    #
+    # @return [Class, nil]
+    #
+    def format_class(type)
       fmt = type.to_s.upcase_first
-      fmt = "#{fmt}File".constantize rescue nil
-      next unless fmt
-      [type, { class: fmt, mimes: fmt.mime_types, exts: fmt.file_extensions }]
-    }.compact.to_h.deep_freeze
+      "#{fmt}File".constantize rescue nil
+    end
 
-  # A mapping of file type to the class which processes it.
-  #
-  # @type [Hash{Symbol=>Class}] with:
-  #
-  #   daisy:      DaisyFile
-  #   daisyAudio: DaisyAudioFile
-  #   epub:       EpubFile
-  #   pdf:        PdfFile
-  #   word:       WordFile
-  #
-  # @see DaisyAudioFile#initialize
-  # @see DaisyFile#initialize
-  # @see EpubFile#initialize
-  # @see PdfFile#initialize
-  # @see WordFile#initialize
-  #
-  FF_CLASS = FF_PROPERTIES.transform_values { |v| v[:class] }.freeze
+    # format_classes
+    #
+    # @return [Hash{Symbol=>Class}]
+    #
+    def format_classes
+      @format_classes ||=
+        FileFormat::TYPES.map { |type|
+          fmt = format_class(type)
+          [type, fmt] if fmt
+        }.compact.to_h
+    end
 
-  # A mapping of file type to related MIME types.
-  #
-  # @type [Hash{Symbol=>Array<String>}]
-  #
-  # @see DaisyAudioFile#MIME_TYPES
-  # @see DaisyFile#MIME_TYPES
-  # @see EpubFile#MIME_TYPES
-  # @see PdfFile#MIME_TYPES
-  # @see WordFile#MIME_TYPES
-  #
-  FF_MIMES = FF_PROPERTIES.transform_values { |v| v[:mimes] }.freeze
+    # mime_types
+    #
+    # @return [Hash{Symbol=>Array<String>}]
+    #
+    def mime_types
+      @mime_types ||= format_classes.transform_values(&:mime_types)
+    end
 
-  # A mapping of file type to related file extensions.
-  #
-  # @type [Hash{Symbol=>Array<String>}]
-  #
-  # @see DaisyAudioFile#FILE_EXTENSIONS
-  # @see DaisyFile#FILE_EXTENSIONS
-  # @see EpubFile#FILE_EXTENSIONS
-  # @see PdfFile#FILE_EXTENSIONS
-  # @see WordFile#FILE_EXTENSIONS
-  #
-  FF_EXTS = FF_PROPERTIES.transform_values { |v| v[:exts] }.freeze
+    # file_extensions
+    #
+    # @return [Hash{Symbol=>Array<String>}]
+    #
+    def file_extensions
+      @file_extensions ||= format_classes.transform_values(&:file_extensions)
+    end
 
-  # A mapping of MIME type to related format(s).
-  #
-  # @type [Hash{String=>Array<Symbol>}]
-  #
-  FF_MIME_TO_FMT =
-    Hash.new.tap { |hash|
-      FF_MIMES.each_pair do |type, mimes|
-        mimes.each { |mime| (hash[mime] ||= []) << type }
-      end
-    }.deep_freeze
+    # mime_to_fmt
+    #
+    # @return [Hash{String=>Array<Symbol>}]
+    #
+    def mime_to_fmt
+      @mime_to_fmt ||=
+        Hash.new.tap { |hash|
+          mime_types.each_pair do |type, mimes|
+            mimes.each { |mime| (hash[mime] ||= []) << type }
+          end
+        }.transform_values! { |types|
+          Array.wrap(types).compact.sort.uniq
+        }
+    end
 
-  # A mapping of file extension to related format(s).
-  #
-  # @type [Hash{String=>Array<Symbol>}]
-  #
-  FF_EXT_TO_FMT =
-    Hash.new.tap { |hash|
-      FF_EXTS.each_pair do |type, exts|
-        exts.each { |ext| (hash[ext] ||= []) << type }
-      end
-    }.deep_freeze
+    # ext_to_fmt
+    #
+    # @return [Hash{String=>Array<Symbol>}]
+    #
+    def ext_to_fmt
+      @ext_to_fmt ||=
+        Hash.new.tap { |hash|
+          file_extensions.each_pair do |type, exts|
+            exts.each { |ext| (hash[ext] ||= []) << type }
+          end
+        }.transform_values! { |types|
+          Array.wrap(types).compact.sort.uniq
+        }
+    end
 
-  FORMAT_SUFFIXES   = FileFormat::FILE_FORMATS.map(&:to_s).deep_freeze
-  FORMAT_EXTENSIONS = FF_EXT_TO_FMT.keys.freeze
+  end
 
   # ===========================================================================
   # :section:
@@ -128,7 +141,7 @@ module FileNameHelper
   # @return [nil]
   #
   def ext_to_fmt(ext)
-    FF_EXT_TO_FMT[ext]&.first if ext &&= ext.to_s
+    FileNaming.ext_to_fmt[ext]&.first if ext &&= ext.to_s
   end
 
   # Map file format to (preferred) file extension.
@@ -139,7 +152,7 @@ module FileNameHelper
   # @return [nil]
   #
   def fmt_to_ext(fmt)
-    FF_EXTS[fmt]&.first if fmt &&= fmt.to_sym
+    FileNaming.file_extensions[fmt]&.first if fmt &&= fmt.to_sym
   end
 
   # Given a MIME type, return the associated upload format.
@@ -151,7 +164,18 @@ module FileNameHelper
   #
   def mime_to_fmt(item)
     mime = item.respond_to?(:content_type) ? item.content_type : item
-    FF_MIME_TO_FMT[mime]&.first
+    FileNaming.mime_to_fmt[mime]&.first
+  end
+
+  # Map file format to (preferred) MIME type.
+  #
+  # @param [Symbol, String] fmt
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def fmt_to_mime(fmt)
+    FileNaming.mime_types[fmt]&.first if fmt &&= fmt.to_sym
   end
 
   # ===========================================================================
@@ -160,20 +184,12 @@ module FileNameHelper
 
   public
 
-  # Indicate whether the value is a repository filename prefix.
+  # Indicate whether the value is a format type.
   #
   # @param [String, Symbol] value
   #
-  def repository_prefix?(value)
-    EmmaRepository.values.include?(value.to_s)
-  end
-
-  # Indicate whether the value is a format filename suffix.
-  #
-  # @param [String, Symbol] value
-  #
-  def format_suffix?(value)
-    FORMAT_SUFFIXES.include?(value.to_s)
+  def format_type?(value)
+    FileFormat::TYPES.include?(value&.to_sym)
   end
 
   # Indicate whether the value is a filename format extension.
@@ -181,8 +197,28 @@ module FileNameHelper
   # @param [String, Symbol] value
   #
   def format_extension?(value)
-    FORMAT_EXTENSIONS.include?(value.to_s)
+    FileNaming.ext_to_fmt.key?(value.to_s)
   end
+
+if LOCAL_DOWNLOADS
+  # Indicate whether the value is a repository filename prefix.
+  #
+  # @param [String, Symbol] value
+  #
+  def repository_prefix?(value)
+    EmmaRepository.values.include?(value.to_s)
+  end
+end
+
+if LOCAL_DOWNLOADS
+  # Indicate whether the value is a format filename suffix.
+  #
+  # @param [String, Symbol] value
+  #
+  def format_suffix?(value)
+    format_type?(value)
+  end
+end
 
   # ===========================================================================
   # :section:
@@ -201,39 +237,43 @@ module FileNameHelper
   #
   # @return [FileProperties]
   #
-  # == Usage Notes
-  # If :repositoryId has the form of RemoteFile#download_path then neither
-  # :repository nor :fmt need to be given -- they will be extracted from the
-  # identifier value.  (However if :fmt *is* given, it will be used instead of
-  # the extracted value.)
-  #
   def extract_file_properties(src, opt = nil)
     __debug_args(binding)
     src, opt = [nil, src] if src.is_a?(Hash)
     opt = FileProperties.new(opt)
 
-    # Parse URL or file path if provided.
-    if src&.start_with?('http')
-      opt.update!(parse_repository_path(src))
-      src = nil
-    elsif src.present?
-      src = File.basename(src).presence
+    if LOCAL_DOWNLOADS
+      # Parse URL or file path if provided.
+      if src&.start_with?('http')
+        opt.update!(parse_repository_path(src))
+        src = nil
+      elsif src.present?
+        src = File.basename(src).presence
+      end
+
+      # Parse the filename or ID to extract additional information.
+      #
+      # If :repositoryId has the form of RemoteFile#download_path then neither
+      # :repository nor :fmt need to be given -- they will be extracted from
+      # the identifier value.  (However if :fmt *is* given, it will be used
+      # instead of the extracted value.)
+      #
+      src ||= opt[:repositoryId]
+      prop  = parse_file_name(src)
+      opt[:repositoryId] = prop[:repositoryId]
+
+      # Return with values derived from the filename unless overridden by the
+      # values provided via options.
+      opt.update!(prop)
     end
 
-    # Parse the filename or ID to extract additional information.
-    src ||= opt[:repositoryId]
-    prop  = parse_file_name(src)
-    opt[:repositoryId] = prop[:repositoryId]
-
-    # Return with values derived from the filename unless overridden by the
-    # values provided via options.
-    opt.update!(prop)
     opt[:fmt] ||= ext_to_fmt(opt[:ext])
     opt[:ext] ||= fmt_to_ext(opt[:fmt])
     FileProperties.new(opt, complete: true)
       .tap { |result| __debug_args(binding) { result } }
   end
 
+if LOCAL_DOWNLOADS
   # parse_repository_path
   #
   # @param [String, URI] path
@@ -293,7 +333,15 @@ module FileNameHelper
     FileProperties[repo, id, fid, fmt, ext]
       .tap { |result| __debug_args(binding) { result } }
   end
+end
 
+if LOCAL_DOWNLOADS
+  NAME_PART_SEPARATOR = FileAttributes::NAME_PART_SEPARATOR
+  FILE_ID_SEPARATOR   = FileAttributes::FILE_ID_SEPARATOR
+  EXT_SEPARATOR       = FileAttributes::EXT_SEPARATOR
+end
+
+if LOCAL_DOWNLOADS
   # parse_file_name
   #
   # @param [String] name
@@ -339,6 +387,7 @@ module FileNameHelper
     FileProperties[repo, id, fid, fmt, ext]
       .tap { |result| __debug_args(binding) { result } }
   end
+end
 
   # ===========================================================================
   # :section:
@@ -346,6 +395,16 @@ module FileNameHelper
 
   public
 
+if LOCAL_DOWNLOADS
+  # Directory which holds cached copies of files.  In the absence of a
+  # 'DOWNLOAD_DIR' environment variable, '/storage' is used.
+  #
+  # @type [String]
+  #
+  DOWNLOAD_DIR = ENV['DOWNLOAD_DIR'] || 'storage'
+end
+
+if LOCAL_DOWNLOADS
   # prepare_transfer_location
   #
   # @param [String, nil] dir          Original path of transfer location.
@@ -358,6 +417,7 @@ module FileNameHelper
     FileUtils.mkpath(dir) unless File.directory?(dir)
     dir
   end
+end
 
 end
 

@@ -1,4 +1,7 @@
 // app/assets/stylesheets/shared/controls/_grids.scss
+//
+// References:
+// @see https://css-tricks.com/css-grid-in-ie-debunking-common-ie-grid-misconceptions/
 
 // @use 'shared/common'; // TODO: SASS 4.0
 
@@ -34,6 +37,77 @@
     display: grid;
 
     @if $template { @include grid-columns($template, $columns); }
+}
+
+/// Place on the specified row of the grid.
+///
+/// @param {Numeric} $row
+///
+@mixin grid-row($row) {
+    -ms-grid-row:   $row;
+    grid-row-start: $row;
+    grid-row-end:   $row;
+}
+
+/// Place in the specified column of the grid.
+///
+/// @param {Numeric} $column
+///
+@mixin grid-column($column) {
+    @if $column <= 0 {
+        -ms-grid-column: 100;
+    } @else {
+        -ms-grid-column: $column;
+    }
+    grid-column-start: $column;
+    grid-column-end:   $column;
+}
+
+/// Span all grid columns.
+///
+/// @param {Numeric} $end             Ending column (for IE only).
+/// @param {Numeric} $start           Starting column.
+///
+@mixin grid-column-span($end: -1, $start: 1) {
+    @if $end <= 0 {
+        -ms-grid-column-span: 100;
+    } @else {
+        -ms-grid-column-span: $end;
+    }
+    -ms-grid-column:   $start;
+    grid-column-start: $start;
+    grid-column-end:   -1;
+}
+
+/// Set up grid gap(s).
+///
+/// @param {Numeric} $gap-y           Row gap
+/// @param {Numeric} $gap-x           Column gap
+///
+@mixin grid-gap($gap-y: 0, $gap-x: false) {
+
+    @if not $gap-x { $gap-x: $gap-y; }
+
+    grid-gap: $gap-y $gap-x;
+    gap:      $gap-y $gap-x;
+}
+
+/// Set up grid row gap.
+///
+/// @param {Numeric} $gap-y
+///
+@mixin grid-row-gap($gap-y: 0) {
+    grid-row-gap: $gap-y;
+    row-gap:      $gap-y;
+}
+
+/// Set up grid column gap.
+///
+/// @param {Numeric} $gap-x
+///
+@mixin grid-column-gap($gap-x: 0) {
+    grid-column-gap: $gap-x;
+    column-gap:      $gap-x;
 }
 
 /// Set grid columns.

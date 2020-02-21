@@ -22,8 +22,6 @@ class EditionController < ApplicationController
   include SerializationConcern
   include DownloadConcern
 
-  include EditionHelper
-
   # Non-functional hints for RubyMine.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
@@ -148,7 +146,7 @@ class EditionController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiPeriodicalEditionList, nil] list
+  # @param [ApiPeriodicalEditionList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

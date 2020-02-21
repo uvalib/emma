@@ -1,0 +1,140 @@
+// app/assets/stylesheets/vendor/_uppy.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+// @import '../../../node_modules/uppy/dist/uppy.css';
+
+//=============================================================================
+// Overrides of Uppy styles (node_modules/uppy/dist/uppy.css)
+//=============================================================================
+
+// Associated with the first element appended by Uppy within a given element.
+.uppy-Root {}
+
+// Associated with subsequently-appended elements related to Uppy plugins
+// within a given element.
+.uppy {}
+
+// Upload action button.
+.uppy-FileInput-btn {
+
+    white-space: pre;
+
+    &:hover {
+        background-color: inherit;
+        border-color:     inherit;
+        color:            inherit;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    &:not(.disabled):not(.forbidden):hover {
+        background-color: $uva-accent-orange;
+        border-color:     $uva-accent-orange;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    &.disabled,
+    &.forbidden {
+        background-color: $input-disabled-bg;
+        border-color:     $input-disabled-fg;
+    }
+}
+
+// The container for the file select button which is displayed instead of the
+// original input[type="file"].
+.uppy-FileInput-container {
+
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    margin:          0;
+
+    // Imperceptible element.
+    .uppy-FileInput-input {}
+
+    // The file select button.
+    .uppy-FileInput-btn {
+        flex: 0 1 auto;
+    }
+}
+
+// The container for the information message that is displayed briefly for
+// various events.
+.uppy-Informer {
+
+    flex: 0 0 0;
+
+    // The actual message popup.
+    // noinspection SassScssResolvedByNameOnly
+    p[role="alert"] {
+        background-color: $uva-accent-orange;
+    }
+}
+
+// The container for the upload status bar (a heavy-weight alternative to
+// .uppy-ProgressBar).
+.uppy-StatusBar {
+
+    grid-column: 2 / -1;
+    flex:        1 0 auto;
+
+    // Classes indicating state.
+    &.is-waiting {}
+    &.is-preprocessing {}
+    &.is-postprocessing {}
+    &.is-complete {}
+    &.is-error {}
+
+    // The progress bar which extends as upload progresses.
+    .uppy-StatusBar-progress {
+        align-self: flex-end;
+    }
+
+    // Textual status information.
+    .uppy-StatusBar-content {}
+
+    // Actions (visible as needed).
+    .uppy-StatusBar-actions {}
+
+}
+
+// The container for the upload progress bar (a minimalistic alternative to
+// .uppy-StatusBar.
+.uppy-ProgressBar {
+
+    flex: 1 0 auto;
+
+    // The bar itself which extends as the upload progresses.
+    // noinspection SassScssResolvedByNameOnly
+    .uppy-ProgressBar-inner {
+        display:          block;
+        height:           10%;
+        margin-top:       2.5%;
+        background-color: $uva-accent-orange;
+    }
+
+    // The percentage counter, which has been moved to the center of the space
+    // occupied by the progress bar.
+    .uppy-ProgressBar-percentage {
+        display:          inline-block;
+        position:         relative;
+        top:              -50%;
+        padding:          0.25rem;
+        font-weight:      bold;
+        color:            black;
+        background-color: white;
+        border-radius:    0.75rem;
+    }
+
+    &[aria-hidden="false"] {
+        .uppy-ProgressBar-percentage {
+            visibility: visible;
+        }
+    }
+
+    &:not([aria-hidden="false"]) {
+        .uppy-ProgressBar-percentage {
+            visibility: hidden;
+        }
+    }
+
+}

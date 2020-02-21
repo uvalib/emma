@@ -311,4 +311,19 @@ class EnumType < ScalarType
 
 end
 
+# =============================================================================
+# Special
+# =============================================================================
+
+::EnumType.add_enumerations(
+  LanguageType: {
+    values: (
+      I18n.t('emma.language.primary', default: []) +
+      I18n.t('emma.language.list', default: {}).keys
+    ).compact.map(&:to_s).uniq
+  }
+)
+
+class LanguageType < EnumType; end
+
 __loading_end(__FILE__)

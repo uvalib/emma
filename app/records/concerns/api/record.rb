@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 #
 class Api::Record
 
+  include Model
   include ::Api::Common
   include ::Api::Schema
   include ::Api::Record::Schema
@@ -189,20 +190,11 @@ class Api::Record
     self.class.property_defaults.deep_dup
   end
 
-  # The fields defined in the schema for this record.
-  #
-  # @return [Array<Symbol>]
-  #
-  def field_names
-    field_definitions.map { |field| field[:name].to_sym }.sort
-  end
-
   # The field definitions in the schema for this record.
   #
   # @return [Array<Hash>]
   #
   def field_definitions
-    # noinspection RubyYardReturnMatch
     serializer.representable_map.map do |field|
       {
         name:       field[:name],
@@ -210,6 +202,40 @@ class Api::Record
         type:       (field[:class] || field[:type]),
       }
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Update record fields from a hash of values.
+  #
+  # @param [Hash] hash
+  #
+  # @return [self]
+  #
+  def update(hash)
+    (hash || {}).each_pair { |k, v| send("#{k}=", v) if respond_to?("#{k}=") }
+    self
+  end
+
+  # ===========================================================================
+  # :section: Model overrides
+  # ===========================================================================
+
+  public
+
+  # The fields defined in the schema for this record.
+  #
+  # @return [Array<Symbol>]
+  #
+  # This method overrides:
+  # @see Model#field_names
+  #
+  def field_names
+    field_definitions.map { |field| field[:name].to_sym }.sort
   end
 
   # ===========================================================================

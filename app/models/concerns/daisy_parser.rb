@@ -12,6 +12,9 @@ __loading_begin(__FILE__)
 # @see http://www.daisy.org/z3986/2005/Z3986-2005.html
 #
 class DaisyParser < OcfParser
+
+  include DaisyFormat
+
 end
 
 __loading_end(__FILE__)

@@ -14,7 +14,8 @@ module I18nHelper
     __included(base, '[I18nHelper]')
   end
 
-  include GenericHelper
+  include Emma::Common
+  include ParamsHelper
 
   # ===========================================================================
   # :section:
@@ -74,6 +75,7 @@ module I18nHelper
     controller, action = args
     result = []
     result << "emma.#{controller}.#{action}" if controller && action
+    result << "emma.#{controller}.generic"   if controller
     result << "emma.#{controller}"           if controller
     result << "emma.generic.#{action}"       if action
     result << 'emma.generic'
@@ -131,6 +133,54 @@ module I18nHelper
     keys.uniq!
     keys.push('') unless keys.last.blank?
     I18n.t(keys.shift, **i18n_opt.merge(units, default: keys)).presence
+  end
+
+  # Generate a hash of the most relevant button information with the form:
+  #
+  #   {
+  #     submit: {
+  #       enabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #       disabled: {
+  #         label:   String,
+  #         tooltip: String,
+  #       },
+  #     },
+  #     ...
+  #   }
+  #
+  # The result will have all of the items for the given controller/action
+  # that contain and label and/or tooltip under them.
+  #
+  # @param [String, Symbol] action
+  # @param [String, Symbol] controller
+  #
+  # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
+  #
+  def i18n_button_values(controller, action)
+    item_keys    = %i[label tooltip]
+    state_keys   = %i[enabled disabled]
+    lookup_order = i18n_lookup_order(controller, action)
+    I18n.t("emma.#{controller}.#{action}", default: {}).map { |button, values|
+      next unless values.is_a?(Hash)
+      entry = {}
+      item_keys.each do |item|
+        state_keys.each do |state|
+          variants = %W(#{state}.#{item} #{item})
+          keys =
+            lookup_order.flat_map { |base_path|
+              variants.map { |variant| "#{base_path}.#{button}.#{variant}" }
+            }.uniq.map(&:to_sym) << ''
+          next if (item_value = I18n.t(keys.shift, default: keys)).blank?
+          entry[state] ||= {}
+          entry[state][item] = item_value
+          entry[item]  ||= item_value
+        end
+      end
+      [button, entry]
+    }.compact.to_h
   end
 
   # ===========================================================================

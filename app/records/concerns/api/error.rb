@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 class Api::Error < RuntimeError
 
+  include Emma::Json
   include ExplorerHelper
 
   # ===========================================================================

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects de-serialized from the EMMA Federated Search API.
+# Namespace for objects de-serialized from the EMMA Unified Search API.
 module Search
   module Api;     end
   module Message; end

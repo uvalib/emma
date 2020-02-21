@@ -15,7 +15,7 @@ module LogConcern
     __included(base, 'LogConcern')
   end
 
-  include GenericHelper
+  include Emma::Common
 
   # ===========================================================================
   # :section: Callbacks

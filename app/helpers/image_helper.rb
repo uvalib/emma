@@ -13,7 +13,7 @@ module ImageHelper
     __included(base, '[ImageHelper]')
   end
 
-  include GenericHelper
+  include Emma::Common
   include HtmlHelper
 
   # ===========================================================================

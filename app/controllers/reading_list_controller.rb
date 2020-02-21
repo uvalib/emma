@@ -16,8 +16,7 @@ class ReadingListController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-
-  include ReadingListHelper
+  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -142,7 +141,7 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Bs::Message::ReadingListList, nil] list
+  # @param [Bs::Message::ReadingListList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

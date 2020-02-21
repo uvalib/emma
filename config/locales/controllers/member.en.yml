@@ -1,12 +1,10 @@
 # config/locales/controllers/member.en.yml
+#
+# MemberController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Member pages
-    # =========================================================================
 
     member:
 
@@ -16,6 +14,30 @@ en:
       label:            'Members'
       title:            'Organization Members'
       tooltip:          'Show Bookshare organization members.'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:                     &MEMBER_FIELDS
+        name:                     'Name'
+        username:                 'Username'
+        emailAddress:             'Email Address'
+        phoneNumber:              'Phone Number'
+        address:                  'Address'
+        dateOfBirth:              'Date of Birth'
+        language:                 'Language'
+        subscriptionStatus:       'Subscription Status'
+        hasAgreement:             'Has Agreement'
+        proofOfDisabilityStatus:  'Proof of Disability'
+        canDownload:              'Can Download'
+        allowAdultContent:        'Allow Adult Content'
+        deleted:                  'Deleted'
+        locked:                   'Locked'
+        guardian:                 'Guardian'
+        site:                     'Site'
+        roles:                    'Roles'
+        links:                    'Links'
 
       # =======================================================================
       # Controls
@@ -33,11 +55,16 @@ en:
         label:          'Members'
         title:          'Members Index'
         tooltip:        'Show Bookshare organization members.'
+        fields:
+          member_link:  'Name'
+          roles:        'Roles'
 
       show:
         label:          'Member'
         title:          'Member'
         tooltip:        'See details about this Bookshare member.'
+        fields:
+          <<:           *MEMBER_FIELDS
 
       new:
         title:          'Add Member'
@@ -54,8 +81,24 @@ en:
       history:
         title:          'Member History'
         tooltip:        'View modifications for this Bookshare organization member.'
+        fields:
+          dateDownloaded: 'Date Downloaded'
+          title:          'Title'
+          authors:        'Authors'
+          fmt:            'Format'
+          status:         'Status'
+          downloadedBy:   'Downloaded By'
+          downloadedFor:  'Downloaded For'
 
       preferences:
         label:          'Preferences'
         title:          'Preferences'
         tooltip:        'View preference settings for this Bookshare member.'
+        fields:
+          allowAdultContent:    'Allow Adult Content'
+          showAllBooks:         'Show All Books'
+          useUeb:               'Use UEB'
+          brailleFormat:        'Preferred Braille Format'
+          brailleCellLineWidth: 'Braille Cell Line Width'
+          fmt:                  'Preferred Download Format'
+          language:             'Preferred Language'

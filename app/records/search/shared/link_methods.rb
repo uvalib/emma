@@ -11,8 +11,8 @@ require 'sanitize'
 #
 module Search::Shared::LinkMethods
 
+  include Emma::Common
   include Search
-  include GenericHelper
 
   # ===========================================================================
   # :section:
@@ -48,6 +48,7 @@ module Search::Shared::LinkMethods
     entry = REPOSITORY[src].presence or raise 'invalid source'
     path  = entry[:title_path]       or raise 'no title_path'
     make_path(path, emma_repositoryRecordId)
+
   rescue RuntimeError => e
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{e.message}" }
@@ -77,6 +78,7 @@ module Search::Shared::LinkMethods
     url   = url[fmt.to_sym] if url.is_a?(Hash)
     raise 'no download_url' unless url.present?
     url % { id: id, fmt: fmt, tag: tag, download_path: path }
+
   rescue RuntimeError => e
     # noinspection RubyScope
     Log.warn { "#{__method__}: #{src}: #{e.message}" }

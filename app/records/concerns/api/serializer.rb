@@ -13,8 +13,8 @@ class Api::Serializer < ::Representable::Decorator
   include ::Api::Serializer::Schema
   include ::Api::Serializer::Associations
 
-  include TimeHelper
-  include DebugHelper
+  include Emma::Time
+  include Emma::Debug
 
   # ===========================================================================
   # :section:
@@ -24,6 +24,9 @@ class Api::Serializer < ::Representable::Decorator
 
   # @type [String, Hash]
   attr_reader :source_data
+
+  # @type [TrueClass, FalseClass]
+  attr_accessor :log_timing
 
   # Initialize a new instance.
   #
@@ -73,10 +76,12 @@ class Api::Serializer < ::Representable::Decorator
       when Proc   then method.call(**opt)
       else             abort "#{__method__}: subclass must supply method"
     end
+
   rescue => error
     __debug_exception("#{self.class} #{__method__}", error)
+
   ensure
-    if start_time
+    if log_timing
       elapsed_time = time_span(start_time)
       __debug  { "--- #{self.class} serialized in #{elapsed_time}" }
       Log.info { "#{self.class} rendered in #{elapsed_time}" }
@@ -110,10 +115,12 @@ class Api::Serializer < ::Representable::Decorator
       when Proc   then method.call(source_data)
       else             abort "#{__method__}: subclass must supply method"
     end
+
   rescue => error
     __debug_exception("#{self.class} #{__method__}", error)
+
   ensure
-    if start_time
+    if log_timing
       elapsed_time = time_span(start_time)
       __debug  { "--- #{self.class} de-serialized in #{elapsed_time}" }
       Log.info { "#{self.class} parsed in #{elapsed_time}" }

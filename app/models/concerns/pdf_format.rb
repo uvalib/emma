@@ -27,15 +27,19 @@ module PdfFormat
   #
   FILE_TYPE = :pdf
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  PDF_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = %w(
-    application/pdf
-  ).freeze
+  MIME_TYPES = PDF_FORMAT[:mimes]
 
   # File extension(s) associated with instances of this format.
   #
@@ -43,9 +47,7 @@ module PdfFormat
   #
   # @see FileObject#file_extensions
   #
-  FILE_EXTENSIONS = %w(
-    pdf
-  ).freeze
+  FILE_EXTENSIONS = PDF_FORMAT[:exts]
 
   # FORMAT_FIELDS
   #
@@ -53,24 +55,31 @@ module PdfFormat
   #
   # @see FileFormat#format_fields
   #
-  FORMAT_FIELDS = {
-    Title:        :Title,
-    Author:       :Author,
-    Keywords:     :Keywords,
-    Creator:      :Creator,
-    CreationDate: :CreationDate,
-    ModifiedDate: :ModDate,
-    Subject:      :Subject,
-    PdfProducer:  :Producer,
-    PdfVersion:   :pdf_version,
-    PageCount:    :page_count,
-  }.freeze
+  FORMAT_FIELDS = PDF_FORMAT[:fields]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = PDF_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
 
   public
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see FileFormat#configuration
+  #
+  def configuration
+    PDF_FORMAT
+  end
 
   # parser
   #

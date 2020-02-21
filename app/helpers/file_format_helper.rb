@@ -15,9 +15,9 @@ module FileFormatHelper
     __included(base, '[FileFormatHelper]')
   end
 
+  include Emma::Debug
+  include FileNaming
   include HtmlHelper
-  include FileNameHelper
-  include DebugHelper
 
   # ===========================================================================
   # :section:
@@ -31,11 +31,13 @@ module FileFormatHelper
   #
   FF_SEPARATOR = FileFormat::FILE_FORMAT_SEP
 
+if FileNaming::LOCAL_DOWNLOADS
   # Match format extensions at the end of a path name.
   #
   # @type [Regexp]
   #
-  FORMAT_EXTENSION_RE = /\.(#{FORMAT_EXTENSIONS.join('|')})$/
+  FORMAT_EXTENSION_RE = /\.(#{FileNaming.ext_to_fmt.keys.join('|')})$/
+end
 
   # ===========================================================================
   # :section:
@@ -43,6 +45,7 @@ module FileFormatHelper
 
   public
 
+if LOCAL_DOWNLOADS
   # Display file metadata.
   #
   # @param [Search::Api::Record, Hash] info
@@ -78,16 +81,16 @@ module FileFormatHelper
     values = file_info_list(values, **opt)
     label << values
   end
+end
 
+if LOCAL_DOWNLOADS
   # Get metadata values.
   #
-  # @param [String] path              URL or directory path to the file.
-  # @param [Hash]   opt               Passed to RemoteFile#initialize.
+  # @param [String, StringIO, IO] path  URL or directory path to the file.
+  # @param [Hash]                 opt   Passed to file object initializer.
   #
   # @return [Hash]
   # @return [nil]
-  #
-  # @see FileNameHelper#FF_CLASS
   #
   def file_info_values(path, **opt)
     __debug_args(binding)
@@ -95,7 +98,9 @@ module FileFormatHelper
       &.metadata
       &.transform_values { |v| v.is_a?(Array) ? v.map(&:to_s) : v.to_s }
   end
+end
 
+if LOCAL_DOWNLOADS
   # file_info_label
   #
   # @param [String] label             Override default label value.
@@ -113,7 +118,9 @@ module FileFormatHelper
     opt[:id] = id if id.present?
     content_tag(:div, label, opt)
   end
+end
 
+if LOCAL_DOWNLOADS
   # file_info_list
   #
   # @param [Hash]   info
@@ -132,6 +139,7 @@ module FileFormatHelper
     opt, html_opt = partition_options(opt, *GRID_OPTS)
     prepend_css_classes!(html_opt, *fmt_css_classes('file-info', fmt))
     html_opt[:'aria-labelledby'] ||= id if id.present?
+    html_opt[:role] = 'listbox'
     content_tag(:div, html_opt) do
       opt[:row] = 0
       info.map { |label, value|
@@ -141,6 +149,7 @@ module FileFormatHelper
       }.join("\n").html_safe
     end
   end
+end
 
   # ===========================================================================
   # :section:
@@ -159,40 +168,42 @@ module FileFormatHelper
   # @see HtmlHelper#grid_cell_classes
   #
   def file_info_list_entry(label, value, **opt)
-    field = label.to_s.gsub(/\s+|s$/, '').to_sym
-    l_opt = { class: "label field-#{field}" }
-    v_opt = { class: "value field-#{field}" }
-    append_grid_cell_classes!(l_opt, **opt.merge!(col: 1))
-    append_grid_cell_classes!(v_opt, **opt.merge!(col: 2))
+    field = label.to_s.delete_suffix('s')
+    field = html_id(field).to_sym
 
+    # Label element.
+    opt[:col] = 1
+    l_opt = {
+      id:    "label-#{field}",
+      class: "label field-#{field}",
+    }
+    append_grid_cell_classes!(l_opt, **opt)
+    append_css_classes!(l_opt, 'logo') if field == :CoverImage
+    label = content_tag(:div, label, l_opt)
+
+    # Value element.
+    opt[:col] = 2
+    v_opt = {
+      role:              'listitem',
+      class:             "value field-#{field}",
+      'aria-labelledby': l_opt[:id]
+    }
+    append_grid_cell_classes!(v_opt, **opt)
     if field == :CoverImage
-      append_css_classes!(l_opt, 'logo')
       append_css_classes!(v_opt, 'logo')
       value = Array.wrap(value).map { |v| image_tag(v) }
-
     elsif value.is_a?(Array)
       append_css_classes!(v_opt, 'array')
       value = value.map { |v| content_tag(:div, v) }
-
     elsif (value = value.to_s).include?(FF_SEPARATOR)
       value = value.split(FF_SEPARATOR).map { |v| content_tag(:li, v) }
       value = content_tag(:ul, safe_join(value))
-
     end
     value = safe_join(value) if value.is_a?(Array)
-    content_tag(:div, label, l_opt) << content_tag(:div, value, v_opt)
-  end
+    value = content_tag(:div, value, v_opt)
 
-  # Create an HTML identifier from a search record.
-  #
-  # @param [Search::Api::Record, FileProperties, Hash] item
-  #
-  # @return [String]
-  #
-  def file_identifier(item)
-    __debug_args(binding)
-    prop = item.is_a?(Search::Api::Record) ? item.file_properties : item
-    FileObject.make_file_name(prop).sub(FORMAT_EXTENSION_RE, '')
+    # noinspection RubyYardReturnMatch
+    label << value
   end
 
   # Break symbol format names into CSS class names.  (E.g. :daisy -> 'daisy')
@@ -214,27 +225,43 @@ module FileFormatHelper
     }.reject(&:blank?).uniq
   end
 
+if LOCAL_DOWNLOADS
+  # Create an HTML identifier from a search record.
+  #
+  # @param [Search::Api::Record, FileProperties, Hash] item
+  #
+  # @return [String]
+  #
+  def file_identifier(item)
+    __debug_args(binding)
+    prop = item.is_a?(Search::Api::Record) ? item.file_properties : item
+    FileObject.make_file_name(prop).sub(FORMAT_EXTENSION_RE, '')
+  end
+end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   protected
 
+if LOCAL_DOWNLOADS
   # Create an instance of the indicated file format type.
   #
-  # @param [Symbol, String, nil] fmt
-  # @param [String]              path
-  # @param [Boolean]             fetch  Require the contents of the file.
-  # @param [Hash]                opt    Passed to class initializer.
+  # @param [Symbol, String, nil]  fmt
+  # @param [String, StringIO, IO] path
+  # @param [Boolean]              fetch   Require the contents of the file.
+  # @param [Hash]                 opt     Passed to file object initializer.
   #
-  # @return [RemoteFile]
+  # @return [FileObject]
   # @return [nil]
   #
   def get_file(fmt, path, fetch: true, **opt)
     fmt ||= opt[:fmt]
     fmt &&= fmt.to_sym
-    FileNameHelper::FF_CLASS[fmt]&.new(path, fetch: fetch, **opt)
+    FileNaming.format_class(fmt)&.new(path, fetch: fetch, **opt)
   end
+end
 
 end
 

@@ -78,14 +78,18 @@ gem 'virtus', '~> 1.0'
 # == Metrics
 gem 'prometheus-client', '< 0.10'
 
-# == Other
+# == Upload/download
 gem 'archive-zip'
+gem 'pdf-reader'
+gem 'shrine', '~> 3.0'
+
+# == Other
 gem 'iso-639'
 gem 'jquery-rails'
-gem 'pdf-reader'
 gem 'sanitize'
 
-# == Addresses bug when building on AWS (see https://github.com/sass/sassc-ruby/issues/146)
+# == Addresses bug when building on AWS
+# (see https://github.com/sass/sassc-ruby/issues/146)
 gem 'sassc', '2.1.0'
 
 # =============================================================================

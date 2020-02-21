@@ -43,20 +43,28 @@ $uva-text-gray:      #666666;
 $uva-emergency-red:  #df1e43;
 
 // Status backgrounds.
-$failure-bg:    lighter($uva-accent-magenta, 50%);
-$success-bg:    lighter($uva-accent-green,   50%);
+$failure-bg: lighter($uva-accent-magenta, 50%);
+$success-bg: lighter($uva-accent-green,   50%);
+
+// Input field backgrounds.
+$input-error-bg:    lighter($uva-emergency-red,  90%);
+$input-readonly-bg: $uva-medium-gray;
+$input-disabled-bg: $input-readonly-bg;
+$input-readonly-fg: $uva-text-gray;
+$input-disabled-fg: $input-readonly-fg;
 
 // Flash backgrounds.
-$alert-bg:      $failure-bg;
-$notice-bg:     $success-bg;
-$failure-bg:    $alert-bg;
-$success-bg:    $notice-bg;
+$alert-bg:   $failure-bg;
+$notice-bg:  $success-bg;
+$failure-bg: $alert-bg;
+$success-bg: $notice-bg;
 
 // Other colors.
 $header-bg:     $uva-blue;
 $panel-bg:      lighter($uva-accent-orange, 75%);
 $panel-accent:  $uva-accent-orange;
-$focus-accent:  $uva-accent-teal;
+$button-accent: lighter($uva-accent-teal,   50%);
+$focus-accent:  lighter($uva-accent-teal,   75%);
 
 //=============================================================================
 // Fonts.

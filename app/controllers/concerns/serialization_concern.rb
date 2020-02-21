@@ -15,7 +15,6 @@ module SerializationConcern
     __included(base, 'SerializationConcern')
   end
 
-  include BookshareHelper
   include ParamsHelper
   include PaginationHelper
 
@@ -163,17 +162,23 @@ module SerializationConcern
 
   # Response values for serializing the index page to JSON or XML.
   #
-  # @param [Api::Record, nil] list
+  # @param [*, nil] list
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #
   # noinspection RubyNilAnalysis
   def index_values(list = nil)
+    limit =
+      if list.is_a?(Api::Record) && list.respond_to?(:limit)
+        list.limit
+      elsif list.is_a?(Array)
+        list.size
+      end
     {
-      list: page_items,
+      list: page_items.map { |item| show_values(item)[:entry] },
       properties: {
         total: total_items,
-        limit: (list.limit if list.respond_to?(:limit)),
+        limit: limit,
         links: (list.links if list.respond_to?(:links)),
       }
     }

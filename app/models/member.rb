@@ -2,7 +2,6 @@
 #
 # frozen_string_literal: true
 # warn_indent:           true
-#
 
 __loading_begin(__FILE__)
 
@@ -45,6 +44,12 @@ class Member < ApplicationRecord
   has_and_belongs_to_many :reading_lists
 
   # ===========================================================================
+  # :section: Authorization
+  # ===========================================================================
+
+  resourcify
+
+  # ===========================================================================
   # :section: Validations
   # ===========================================================================
 
@@ -53,12 +58,6 @@ class Member < ApplicationRecord
       errors.add(:base, 'An institutional member must also be a User')
     end
   end
-
-  # ===========================================================================
-  # :section: Authorization
-  # ===========================================================================
-
-  resourcify
 
   # ===========================================================================
   # :section:

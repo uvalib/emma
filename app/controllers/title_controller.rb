@@ -16,10 +16,7 @@ class TitleController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-
-  include IsbnHelper
-  include IssnHelper
-  include OclcHelper
+  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -57,10 +54,9 @@ class TitleController < ApplicationController
   def index
     __debug_route('TITLE')
     opt = request_parameters
-    if contains_isbn?(opt[:keyword])
+    if helpers.contains_isbn?(opt[:keyword])
       # The search looks like an ISBN so interpret this as an ISBN search.
       isbn = opt.delete(:keyword)
-      # noinspection RubyYardParamTypeMatch
       opt[:isbn] = to_isbn(isbn) || isbn
       return redirect_to opt
     elsif (isbn = opt[:isbn]) && opt[:keyword]
@@ -69,7 +65,7 @@ class TitleController < ApplicationController
       # previous ISBN search (if there was one).
       opt.delete(:isbn)
       return redirect_to opt
-    elsif isbn && !isbn?(isbn)
+    elsif isbn && !helpers.isbn?(isbn)
       # The supplied ISBN is not valid.
       flash.now[:notice] = "#{isbn.inspect} is not a valid ISBN"
       opt.delete(:isbn)
@@ -153,7 +149,7 @@ class TitleController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Bs::Message::TitleMetadataSummaryList, nil] list
+  # @param [Bs::Message::TitleMetadataSummaryList] list
   #
   # @return [Hash{Symbol=>Bs::Message::TitleMetadataSummaryList,Hash}]
   #

@@ -9,6 +9,7 @@ module TestHelper::SystemTests::Bookshare
 
   include TestHelper::SystemTests::Common
 
+  include BookshareConcern
   include BookshareHelper
 
   # ===========================================================================
@@ -183,7 +184,6 @@ module TestHelper::SystemTests::Bookshare
   #
   def method_params(m)
     return unless (m = method_class(m))
-    # noinspection RubyYardReturnMatch
     m.parameters.map do |status, name|
       name ||=
         case status

@@ -44,8 +44,8 @@
             margin-left: $ie-gap-x;
 
             @media #{$narrow-screen} {
-                margin-left:  2 * $ie-gap-x;
-                margin-right: 2 * $ie-gap-x;
+                margin-left:  (2 * $ie-gap-x);
+                margin-right: (2 * $ie-gap-x);
             }
         }
     }

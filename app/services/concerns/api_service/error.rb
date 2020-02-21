@@ -53,7 +53,7 @@ class ApiService::ResponseError < ApiService::Error
   # @return [nil]
   #
   def extract_message(error)
-    json = MultiJson.load(error.response[:body]) rescue nil
+    json = json_parse(error.response[:body], symbolize_keys: false)
     return if json.blank?
     desc = json['error_description']
     return desc if desc.present?

@@ -1,4 +1,4 @@
-// app/assets/javascripts/feature/image.js
+// app/assets/javascripts/feature/images.js
 
 //= require shared/assets
 //= require shared/definitions
@@ -136,7 +136,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string} url
      *
-     * @returns {string}
+     * @return {string}
      */
     function urlProxyPath(url) {
         return '/api/image?url=' + encodeURIComponent(url);
@@ -147,7 +147,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string} url
      *
-     * @returns {string}
+     * @return {string}
      */
     function imageId(url) {
         var file_name = url.replace(/^.*\//, '');
@@ -157,12 +157,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Create a placeholder image element.
      *
-     * @returns {jQuery}
+     * @return {jQuery}
      */
     function imagePlaceholder() {
         return $('<img>')
-            .attr('src', PLACEHOLDER_IMAGE_ASSET)
-            .attr('alt', PLACEHOLDER_IMAGE_ALT)
+            .attr('src', Emma.placeholder.image.asset)
+            .attr('alt', Emma.placeholder.image.alt)
             .data('turbolinks-track', false)
             .addClass('placeholder');
     }

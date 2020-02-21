@@ -9,7 +9,8 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::Common
 
-  include GenericHelper
+  include Emma::Common
+  include HtmlHelper
   include ParamsHelper
 
   # ===========================================================================

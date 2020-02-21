@@ -23,7 +23,15 @@ module ParamsHelper
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_PARAMETERS = %i[controller action format utf8 commit]
+  IGNORED_PARAMETERS = %i[
+    controller
+    action
+    format
+    utf8
+    commit
+    _method
+    authenticity_token
+  ].sort.freeze
 
   # The full request URL without request parameters.
   #
@@ -66,7 +74,7 @@ module ParamsHelper
   # @see #IGNORED_PARAMETERS
   #
   def url_parameters(p = nil)
-    request_parameters(p).except(*IGNORED_PARAMETERS)
+    request_parameters(p).except!(*IGNORED_PARAMETERS)
   end
 
   # ===========================================================================

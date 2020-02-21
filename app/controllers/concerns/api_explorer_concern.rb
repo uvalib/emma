@@ -12,18 +12,21 @@ module ApiExplorerConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'ApiExplorerConcern')
+
+    include BookshareConcern
+
   end
 
-  include BookshareHelper
-  include ExplorerHelper
+  include Emma::Json
 
   # ===========================================================================
   # :section: Initialization
   # ===========================================================================
 
   if Log.info?
-    extend TimeHelper
+    extend Emma::Time
     # Log API request times.
     ActiveSupport::Notifications.subscribe('request.faraday') do |*args|
       _name    = args.shift # 'request.faraday'
@@ -46,20 +49,6 @@ module ApiExplorerConcern
 
   protected
 
-  # Attempt to interpret *arg* as JSON if it is a string.
-  #
-  # @param [String, Object] arg
-  # @param [*]              default   On parse failure, return this if provided
-  #                                     (or return *arg* otherwise).
-  #
-  # @return [Hash, Object]
-  #
-  def try_json_parse(arg, default: :original)
-    arg.is_a?(String) &&
-      (MultiJson.load(arg) rescue nil) ||
-      ((default == :original) ? arg : default)
-  end
-
   # Attempt to interpret *arg* as an exception or a record with an exception.
   #
   # @param [Bs::Api::Record, Exception, Object] arg
@@ -68,7 +57,7 @@ module ApiExplorerConcern
   #
   # @return [Hash, String, Object]
   #
-  def try_exception_parse(arg, default: :original)
+  def safe_exception_parse(arg, default: :original)
     case (ex = arg.respond_to?(:exception) && arg.exception)
       when Faraday::Error
         {
@@ -93,8 +82,8 @@ module ApiExplorerConcern
   #
   class ApiTesting
 
+    include Emma::Common
     include Bs
-    include GenericHelper
 
     # =========================================================================
     # :section:

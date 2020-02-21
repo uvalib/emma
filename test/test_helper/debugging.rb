@@ -37,8 +37,10 @@ module TestHelper::Debugging
     opt[:part] = ["[#{format.to_s.upcase}]", opt[:part]].join(' - ') if format
     show_test_start(test_name, **opt)
     yield # Run test code provided in the block.
+
   rescue Exception => error
     show "[#{error.class}: #{error}]"
+
   ensure
     show_test_end(test_name, **opt)
     raise error if error

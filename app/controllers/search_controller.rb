@@ -15,10 +15,6 @@ class SearchController < ApplicationController
   include SerializationConcern
   include SearchConcern
 
-  include IsbnHelper
-  include IssnHelper
-  include OclcHelper
-
   # Non-functional hints for RubyMine.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
@@ -49,14 +45,14 @@ class SearchController < ApplicationController
   public
 
   # == GET /search
-  # Perform a search through the EMMA Federated Search API.
+  # Perform a search through the EMMA Unified Search API.
   #
   def index
     __debug_route('SEARCH')
     opt = pagination_setup
     if true # TODO: remove - testing
       development_notice(
-        'This page currently shows simulated results of a federated search ' \
+        'This page currently shows simulated results of a unified search ' \
           'for "<strong>The Works of Edgar Allan Poe</strong>".',
         '(This is actually only a partial list using hand-crafted, embedded ' \
           'data; the actual search result would include several hundred ' \
@@ -72,8 +68,8 @@ class SearchController < ApplicationController
       opt[:q] ||= '*' # A "null search" by default.
       @list = api.get_records(**opt)
       self.page_items  = @list.records
-    # self.total_items = @list.totalResults       # TODO: Federated Search API
-    # self.next_page = next_page_path(@list, opt) # TODO: Federated Search API
+    # self.total_items = @list.totalResults       # TODO: Unified Search API
+    # self.next_page = next_page_path(@list, opt) # TODO: Unified Search API
     end
     respond_to do |format|
       format.html
@@ -90,9 +86,9 @@ class SearchController < ApplicationController
     if @title_id == 'example' # TODO: remove - testing
       development_notice(
         'This page displays all of the possible fields defined for each' \
-          'federated search results record.',
-        'Click on "Search" above to see a simulated example of federated ' \
-          ' search results.'
+          'unified search results record.',
+        'Click on "Search" above to see a simulated example of unified ' \
+          'search results.'
       )
       @item = api.get_example_records(example: :template).records.first
     else # TODO: restore
@@ -105,6 +101,7 @@ class SearchController < ApplicationController
     end
   end
 
+if FileNaming::LOCAL_DOWNLOADS
   # == GET /search/detail?repositoryId=xxx[&repository=xxx]&fmt={brf|daisy|...}
   # == GET /search/:fmt?repositoryId=xxx[&repository=xxx]
   # Display details of a file from a repository.
@@ -118,6 +115,7 @@ class SearchController < ApplicationController
       format.xml  { render_xml  show_values(locals) }
     end
   end
+end
 
   # ===========================================================================
   # :section: SerializationConcern overrides
@@ -127,7 +125,7 @@ class SearchController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Search::SearchRecordList, nil] list
+  # @param [Search::SearchRecordList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -164,7 +162,7 @@ class SearchController < ApplicationController
   # @return [void]
   #
   def development_notice(*lines) # TODO: remove - testing
-    lead  = '<strong>The Federated Search API is not yet implemented.</strong>'
+    lead  = '<strong>The Unified Search API is not yet implemented.</strong>'
     lines = lines.unshift(lead).flatten.compact.join("<br/>" * 2).html_safe
     flash.now[:notice] = %Q(<span class="box">#{lines}</span>).html_safe
   end

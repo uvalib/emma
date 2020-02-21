@@ -28,7 +28,7 @@ module SessionConcern
 
     prepend_before_action :session_check,  unless: :devise_controller?
     before_action         :cleanup_session
-    append_around_action  :session_update, unless: :devise_controller?
+    append_around_action  :session_update, if: :session_updatable?
 
     # =========================================================================
     # :section: Exceptions
@@ -49,8 +49,7 @@ module SessionConcern
 
   end
 
-  include BookshareHelper
-  include DebugHelper
+  include Emma::Debug
   include ParamsHelper
 
   # Non-functional hints for RubyMine.
@@ -168,6 +167,19 @@ module SessionConcern
     end
   end
 
+  # Indicate whether the current request is from client-side scripting.
+  #
+  def request_xhr?
+    request.xhr?
+  end
+
+  # Indicate whether handling of the current request should be wrapped by
+  # #session_update.
+  #
+  def session_updatable?
+    !devise_controller? && !request_xhr?
+  end
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
@@ -226,9 +238,11 @@ module SessionConcern
   def session_update
     error = nil
     yield
+
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error)
     flash.now[:alert] ||= api_error_message if api_error?
+
   ensure
     last_operation_update
     raise error if error

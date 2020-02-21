@@ -12,11 +12,6 @@ require 'search'
 #
 module LayoutHelper::SearchControls
 
-  include GenericHelper
-  include HtmlHelper
-  include I18nHelper
-  include ParamsHelper
-  include PaginationHelper
   include LayoutHelper::Common
 
   # ===========================================================================
@@ -27,7 +22,7 @@ module LayoutHelper::SearchControls
 
   module ClassMethods
 
-    include GenericHelper
+    include Emma::Common
 
     # =========================================================================
     # :section:
@@ -64,7 +59,6 @@ module LayoutHelper::SearchControls
     #
     # @type [Hash]
     #
-    # noinspection RailsI18nInspection
     SEARCH_MENU =
       SEARCH_CONTROLS.map { |type, values|
         next if type.to_s.start_with?('_')
@@ -95,7 +89,7 @@ module LayoutHelper::SearchControls
     #
     # @type [String]
     #
-    REVERSE_SORT_SUFFIX = SEARCH_MENU.dig(:sort, :reverse, :suffix).freeze
+    REVERSE_SORT_SUFFIX = SEARCH_MENU.dig(:sort, :reverse, :suffix)
 
     # =========================================================================
     # :section:
@@ -287,7 +281,6 @@ module LayoutHelper::SearchControls
   #
   # @see #make_menu
   #
-  # noinspection RubyYardParamTypeMatch
   GENERIC_MENU = {
     a11y_feature: A11yFeature,
     braille:      BrailleType,
@@ -310,7 +303,6 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # noinspection RubyYardParamTypeMatch
   SEARCH_MENU_MAP =
     SEARCH_MENU_CONTROLLERS.map { |controller|
       menus =

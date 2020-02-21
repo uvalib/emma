@@ -5,11 +5,7 @@
 
 __loading_begin(__FILE__)
 
-=begin
-require 'search'
-=end
-
-# Methods supporting access and linkages to the "EMMA Federated Search" API.
+# Methods supporting access and linkages to the "EMMA Unified Search" API.
 #
 # noinspection DuplicatedCode
 module SearchHelper
@@ -18,14 +14,9 @@ module SearchHelper
     __included(base, '[SearchHelper]')
   end
 
-  # Include now so that future includes will not override the overrides which
-  # are defined in this module.
-  include BookshareHelper
-
   include PaginationHelper
-  include ResourceHelper
-  include FileFormatHelper
   include LogoHelper
+  include ModelHelper
 
   # ===========================================================================
   # :section:
@@ -33,80 +24,13 @@ module SearchHelper
 
   public
 
-  # Access the EMMA Federated Search service.
+  # Configuration values for this model.
   #
-  # @return [SearchService]
+  # @type {Hash{Symbol=>Hash}}
   #
-  # This method overrides:
-  # @see BookshareHelper#api
-  #
-  def api
-    @search_api ||= api_update
-  end
-
-  # Update the EMMA Federated Search service.
-  #
-  # @param [Hash] opt
-  #
-  # @return [SearchService]
-  #
-  # This method overrides:
-  # @see BookshareHelper#api_update
-  #
-  def api_update(**opt)
-    default_opt = {}
-    default_opt[:user]     = current_user if current_user.present?
-    default_opt[:no_raise] = true         if Rails.env.test?
-    # noinspection RubyYardReturnMatch
-    @search_api = SearchService.update(**opt.reverse_merge(default_opt))
-  end
-
-  # Remove the EMMA Federated Search service.
-  #
-  # @return [nil]
-  #
-  # This method overrides:
-  # @see BookshareHelper#api_clear
-  #
-  def api_clear
-    @search_api = SearchService.clear
-  end
-
-  # Indicate whether the latest EMMA Federated Search request generated an
-  # exception.
-  #
-  # This method overrides:
-  # @see BookshareHelper#api_error?
-  #
-  def api_error?
-    defined?(@search_api) && @search_api.present? && @search_api.error?
-  end
-
-  # Get the current EMMA Federated Search exception message if the service has
-  # been started.
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  # This method overrides:
-  # @see BookshareHelper#api_error_message
-  #
-  def api_error_message
-    @search_api.error_message if defined?(:@search_api) && @search_api.present?
-  end
-
-  # Get the current EMMA Federated Search exception if the service has been
-  # started.
-  #
-  # @return [Exception]
-  # @return [nil]
-  #
-  # This method overrides:
-  # @see BookshareHelper#api_exception
-  #
-  def api_exception
-    @search_api.exception if defined?(:@search_api) && @search_api.present?
-  end
+  SEARCH_CONFIGURATION = model_configuration('emma.search').deep_freeze
+  SEARCH_INDEX_FIELDS  = SEARCH_CONFIGURATION.dig(:index, :fields)
+  SEARCH_SHOW_FIELDS   = SEARCH_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -119,7 +43,6 @@ module SearchHelper
   # @return [Array<Search::Record::MetadataRecord>]
   #
   def search_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -161,7 +84,7 @@ module SearchHelper
   #
   # @return [Object]
   #
-  # @see ResourceHelper#render_value
+  # @see ModelHelper#render_value
   #
   def search_render_value(item, value)
     case field_category(value)
@@ -171,23 +94,6 @@ module SearchHelper
       else                               render_value(item, value)
     end
   end
-
-=begin
-  # Generic source repository values.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  REPOSITORY_TEMPLATE = I18n.t('emma.source._template').deep_freeze
-
-  # Repository logo image assets.
-  #
-  # @type [Hash{String=>String}]
-  #
-  REPOSITORY_LOGO =
-    Search::REPOSITORY.transform_values { |entry| entry[:logo] }
-      .stringify_keys
-      .deep_freeze
-=end
 
   # Display title of the associated work along with the logo of the source
   # repository.
@@ -199,16 +105,6 @@ module SearchHelper
   def title_and_source_logo(item)
     title  = item.full_title
     source = item.emma_repository
-=begin
-    source = nil unless repository_prefix?(source)
-    logo   = REPOSITORY_LOGO[source] || REPOSITORY_TEMPLATE[:logo]
-    if logo.present?
-      content_tag(:div, title, class: "title #{source}".strip) <<
-        repository_source_logo(item, logo: logo)
-    else
-      title_and_source(item)
-    end
-=end
     source = '' unless EmmaRepository.values.include?(source)
     logo   = repository_source_logo(source)
     if logo.present?
@@ -235,67 +131,6 @@ module SearchHelper
     else
       ERB::Util.h(title)
     end
-  end
-
-  # Make a logo for a repository source.
-  #
-  # @param [Search::Api::Record, String] item
-  # @param [Hash]                        opt    Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # This method overrides:
-  # @see LogoHelper#repository_source_logo
-  #
-  def repository_source_logo(item, **opt)
-    source = opt[:source] || item
-    source = source.emma_repository if source.respond_to?(:emma_repository)
-    # noinspection RubyYardParamTypeMatch
-    super(source, **opt)
-=begin
-    opt, html_opt = partition_options(opt, :source, :logo)
-    source = opt[:source] || item.emma_repository
-    source = nil unless repository_prefix?(source)
-    logo   = opt[:logo] || REPOSITORY_LOGO[source]
-    if logo.present?
-      name = source&.titleize
-      html_opt[:title] ||= "From #{name}" if name.present? # TODO: I18n
-      prepend_css_classes!(html_opt, 'repository', 'logo', source)
-      # noinspection RubyYardReturnMatch
-      image_tag(asset_path(logo), html_opt)
-    else
-      html_opt.merge!(source: source) if opt[:source]
-      repository_source(item, **html_opt)
-    end
-=end
-  end
-
-  # Make a textual logo for a repository source.
-  #
-  # @param [Search::Api::Record, String] item
-  # @param [Hash]                        opt    Passed to super.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # This method overrides:
-  # @see LogoHelper#repository_source
-  #
-  def repository_source(item, **opt)
-    source = opt[:source] || item
-    source = source.emma_repository if source.respond_to?(:emma_repository)
-    # noinspection RubyYardParamTypeMatch
-    super(source, **opt)
-=begin
-    source = nil unless repository_prefix?(source)
-    name   = opt[:name] || source&.titleize || 'LOGO'
-    if name.present?
-      html_opt[:title] ||= "From #{name}" # TODO: I18n
-      prepend_css_classes!(html_opt, 'repository', 'name', source)
-      content_tag(:div, content_tag(:div, name), html_opt)
-    else
-      ''.html_safe
-    end
-=end
   end
 
   # Make a clickable link to the display page for the title on the originating
@@ -343,9 +178,11 @@ module SearchHelper
       end
     make_link(label, url, **opt)
       .tap do |result|
-        __debug { "#{__method__} => #{result.inspect}" }
-        info = file_info(item, path: url)
-        result << info if info.present?
+        if FileNaming::LOCAL_DOWNLOADS
+          __debug { "#{__method__} => #{result.inspect}" }
+          info = file_info(item, path: url)
+          result << info if info.present?
+        end
       end
   end
 
@@ -355,52 +192,13 @@ module SearchHelper
 
   public
 
-  # Fields from Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  # Compare with:
-  # @see TitleHelper#TITLE_SHOW_FIELDS
-  #
-  SEARCH_SHOW_FIELDS = {
-    Creator:              :dc_creator,
-    Language:             :dc_language,
-    Type:                 :dc_type,
-    Format:               :dc_format,
-    Description:          :dc_description,
-    Publisher:            :dc_publisher,
-    Subject:              :dc_subject,
-    Rights:               :dc_rights,
-    Provenance:           :dc_provenance,
-    Identifier:           :dc_identifier,
-    Related:              :dc_relation,
-    DateReceived:         :dcterms_dateAccepted,
-    CopyrightDate:        :dcterms_dateCopyright,
-    RecordId:             :emma_recordId,
-    TitleId:              :emma_titleId,
-    Repository:           :emma_repository,
-    Collection:           :emma_collection,
-    LastUpdate:           :emma_lastRemediationDate,
-    UpdateNote:           :emma_lastRemediationNote,
-    FormatVersion:        :emma_formatVersion,
-    FormatFeature:        :emma_formatFeature,
-    AccessibilityFeature: :s_accessibilityFeature,
-    AccessibilityControl: :s_accessibilityControl,
-    AccessibilityHazard:  :s_accessibilityHazard,
-    AccessMode:           :s_accessMode,
-    AccessModeSufficient: :s_accessModeSufficient,
-    AccessibilityAPI:     :s_accessibilityAPI,
-    AccessibilitySummary: :s_accessibilitySummary,
-    RepositoryRecordId:   :emma_repositoryRecordId,
-    RetrievalLink:        :emma_retrievalLink,
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Search::Api::Record] item
   # @param [Hash]                opt    Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def search_item_details(item, **opt)
     item_details(item, :search, SEARCH_SHOW_FIELDS.merge(opt))
@@ -412,12 +210,6 @@ module SearchHelper
 
   public
 
-  # Fields from Search::Record::MetadataRecord.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  SEARCH_INDEX_FIELDS = { Title: :dc_title }.merge(SEARCH_SHOW_FIELDS).freeze
-
   # Render a single entry for use within a list of items.
   #
   # @param [Search::Api::Record] item
@@ -427,6 +219,23 @@ module SearchHelper
   #
   def search_list_entry(item, **opt)
     item_list_entry(item, :search, SEARCH_INDEX_FIELDS.merge(opt))
+  end
+
+  # Include edit and delete controls below the entry number.
+  #
+  # @param [Model] item
+  # @param [Hash]  opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see ModelHelper#list_entry_number
+  # @see UploadHelper#edit_entry_icon
+  # @see UploadHelper#delete_entry_icon
+  #
+  def search_list_entry_number(item, **opt)
+    list_entry_number(item, **opt) do
+      [edit_entry_icon(item), delete_entry_icon(item) ]
+    end
   end
 
 end

@@ -11,8 +11,8 @@ en:
         generic:
 
           template:
-            emma_recordId:                  'Federated Search ID of the file'
-            emma_titleId:                   'Federated Search ID of the WORK represented by the file'
+            emma_recordId:                  'Unified Search ID of the file'
+            emma_titleId:                   'Unified Search ID of the WORK represented by the file'
             emma_repository:                'Source repository of the WORK (and the file)'
             emma_collection:                'Source repository collection of the WORK'
             emma_repositoryRecordId:        'Source repository ID of the WORK'

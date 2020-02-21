@@ -10,8 +10,7 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::PageControls
 
-  include I18nHelper
-  include BookshareHelper
+  include LayoutHelper::Common
 
   # ===========================================================================
   # :section:
@@ -78,6 +77,7 @@ module LayoutHelper::PageControls
   #
   def page_controls(*pairs, **path_opt)
     html_opt = { class: 'control' }
+    html_opt[:method] = path_opt.delete(:method) if path_opt.key?(:method)
     pairs.map { |path|
       link_to_action(nil, link_opt: html_opt, path: path, **path_opt)
     }.compact.join("\n").html_safe.presence

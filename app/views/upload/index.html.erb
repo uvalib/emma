@@ -1,0 +1,43 @@
+<%# app/views/upload/index.html.erb -%>
+<%-
+  # A list of uploads by the current user.
+  title ||= t('emma.upload.index.title')
+  list  ||= upload_list
+  count ||= total_items
+  row   ||= 1
+  modal ||= true?(params[:modal])
+
+  terms = search_terms
+  applied_terms, top_controls, bottom_controls =
+    index_controls(terms, count: count, row: row)
+  row += [applied_terms, top_controls].compact.size
+
+  unless modal
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  title += " (#{count})" if list.blank?
+
+  template_opt = {
+    list:  list,
+    count: count,
+    row:   row,
+    skip:  :title,
+    modal: modal
+  }
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+<%= upload_description %>
+
+<div class="upload-list">
+  <%= applied_terms %>
+  <%= top_controls %>
+  <%= render 'upload/list', template_opt %>
+  <%= bottom_controls if list.present? %>
+</div>
+
+<%= upload_notes %>
+<%= upload_action_list unless modal %>

@@ -140,7 +140,6 @@ module LayoutHelper::SearchBar
     type  ||= search_input_type
     label ||= search_button_label(type)
     opt = prepend_css_classes(opt, 'search-button')
-    # noinspection RubyYardReturnMatch
     submit_tag(label, opt)
   end
 

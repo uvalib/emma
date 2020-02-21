@@ -13,8 +13,21 @@ module CategoryHelper
     __included(base, '[CategoryHelper]')
   end
 
-  include PaginationHelper
-  include ResourceHelper
+  include ModelHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  CATEGORY_CONFIGURATION = model_configuration('emma.category').deep_freeze
+  CATEGORY_INDEX_FIELDS  = CATEGORY_CONFIGURATION.dig(:index, :fields)
+  CATEGORY_SHOW_FIELDS   = CATEGORY_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -27,7 +40,6 @@ module CategoryHelper
   # @return [Array<Bs::Record::CategorySummary>]
   #
   def category_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -68,17 +80,13 @@ module CategoryHelper
 
   public
 
-  # @type [Hash{Symbol=>Symbol}]
-  CATEGORY_SHOW_FIELDS = {
-    # TODO: ???
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def category_details(item, **opt)
     item_details(item, :category, CATEGORY_SHOW_FIELDS.merge(opt))
@@ -89,11 +97,6 @@ module CategoryHelper
   # ===========================================================================
 
   public
-
-  # @type [Hash{Symbol=>Symbol}]
-  CATEGORY_INDEX_FIELDS = {
-    # TODO: ???
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

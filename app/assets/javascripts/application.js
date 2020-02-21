@@ -15,8 +15,7 @@
 // for details about supported directives.
 //
 //= require jquery3
-//= require jquery_ujs
-//= require activestorage
+//= require rails-ujs
 //= require turbolinks
 //
 //  Local sources

@@ -18,8 +18,8 @@ require 'middleware'
 #
 class ApiService
 
+  include Emma::Common
   include Api
-  include GenericHelper
 
   # ===========================================================================
   # :section:
@@ -27,13 +27,11 @@ class ApiService
 
   public
 
-=begin
-  # The URL for the API connection (default: ApiService::Common#BASE_URL).
+  # The URL for the API connection.
   #
   # @return [String]
   #
   attr_reader :base_url
-=end
 
   # Internal service options along with connection options.
   #
@@ -57,22 +55,8 @@ class ApiService
   def initialize(**opt)
     opt, @options = partition_options(opt, :base_url, :user)
     @options.reject! { |_, v| v.blank? }
-    @base_url = opt[:base_url]
+    @base_url = opt[:base_url] || self.class.safe_const_get(:BASE_URL)
     set_user(opt[:user])
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  def base_url
-    @base_url ||= self.class.safe_const_get(:BASE_URL)
   end
 
   # ===========================================================================

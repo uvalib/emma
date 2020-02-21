@@ -17,8 +17,8 @@ class LocalFile < FileObject
 
   # Create a new instance.
   #
-  # @param [String] file
-  # @param [Hash]   opt
+  # @param [String, StringIO, IO] file
+  # @param [Hash]                 opt
   #
   # This method overrides:
   # @see FileObject#initialize
@@ -30,7 +30,11 @@ class LocalFile < FileObject
       __debug_args(binding, leader: "... NEW #{class_name}")
     end
     super(file, **opt)
-    @filename = file
+    if file.is_a?(IO)
+      @filename = file.path
+    elsif !file.is_a?(StringIO)
+      @filename = file
+    end
   end
 
   # ===========================================================================
@@ -41,7 +45,7 @@ class LocalFile < FileObject
 
   # local_path
   #
-  # @return [String]
+  # @return [String, StringIO, IO, nil]
   #
   # This method overrides:
   # @see FileAttributes#local_path

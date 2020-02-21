@@ -5,9 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# The base class for inbound messages from the EMMA Federated Search API.
+# The base class for inbound messages from the EMMA Unified Search API.
 #
 class Search::Api::Message < Search::Api::Record
+
+  include ::Api::Message
 
   # ===========================================================================
   # :section:
@@ -24,9 +26,10 @@ class Search::Api::Message < Search::Api::Record
   # @see Search::Api::Record#initialize
   #
   def initialize(data, **opt)
-    __debug { "### #{self.class}.#{__method__}" }
-    initialize_attributes
-    super(data, **opt)
+    create_message do
+      initialize_attributes
+      super(data, **opt)
+    end
   end
 
 end

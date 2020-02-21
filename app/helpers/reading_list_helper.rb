@@ -13,14 +13,26 @@ module ReadingListHelper
     __included(base, '[ReadingListHelper]')
   end
 
-  include GenericHelper
-  include PaginationHelper
-  include ResourceHelper
+  include ModelHelper
   include TitleHelper
-  include BookshareHelper
 
   # ===========================================================================
-  # :section: TitleHelper overrides
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  READING_LIST_CONFIGURATION =
+    model_configuration('emma.reading_list').deep_freeze
+  READING_LIST_INDEX_FIELDS  = READING_LIST_CONFIGURATION.dig(:index, :fields)
+  READING_LIST_SHOW_FIELDS   = READING_LIST_CONFIGURATION.dig(:show,  :fields)
+
+  # ===========================================================================
+  # :section:
   # ===========================================================================
 
   public
@@ -46,20 +58,18 @@ module ReadingListHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* has no thumbnail.
   #
-  # This method overrides:
   # @see TitleHelper#thumbnail
   #
-  def thumbnail(item, **opt)
+  def rl_thumbnail(item, **opt)
     return if item.blank?
-    super ||
-      super(
-        api.get_title(bookshareId: item.bookshareId, no_raise: true),
-        **opt
-      )
+    result = thumbnail(item, **opt)
+    return result if result.present?
+    item = api.get_title(bookshareId: item.bookshareId, no_raise: true)
+    thumbnail(item, **opt)
   end
 
   unless READING_LIST_THUMBNAIL
-    def thumbnail(*)
+    def rl_thumbnail(*)
     end
   end
 
@@ -74,7 +84,6 @@ module ReadingListHelper
   # @return [Array<Bs::Record::ReadingListUserView>]
   #
   def reading_list_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -141,7 +150,7 @@ module ReadingListHelper
   #
   # @return [Object]
   #
-  # @see ResourceHelper#render_value
+  # @see ModelHelper#render_value
   #
   def reading_list_render_value(item, value)
     case field_category(value)
@@ -157,30 +166,13 @@ module ReadingListHelper
 
   public
 
-  # Fields from Bs::Record::ReadingListUserView.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  READING_LIST_SHOW_FIELDS = {
-    Description:    :description,
-    Access:         :access,
-    Owner:          :owner,
-    AssignedBy:     :assignedBy,
-    Subscription:   :subscription,
-    DateUpdated:    :dateUpdated,
-    ReadingListId:  :readingListId,
-    MemberCount:    :memberCount,
-    TitleCount:     :titleCount,
-    Allows:         :allows,
-    Links:          :links,
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def reading_list_details(item, **opt)
     item_details(item, :reading_list, READING_LIST_SHOW_FIELDS.merge(opt))
@@ -191,16 +183,6 @@ module ReadingListHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::ReadingListUserView.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  READING_LIST_INDEX_FIELDS = {
-    Name:        :name,
-    Description: :description,
-    DateUpdated: :dateUpdated
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

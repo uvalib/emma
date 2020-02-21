@@ -74,10 +74,10 @@ module HeadHelper::MetaTags
 
   # Set the meta tags for this page, eliminating any previous value.
   #
+  # @param [Hash] pairs
+  #
   # @yield Supplies additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
-  #
-  # @param [Hash] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
@@ -90,10 +90,10 @@ module HeadHelper::MetaTags
 
   # Add to the meta tags for this page.
   #
+  # @param [Hash] pairs
+  #
   # @yield Supplies additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
-  #
-  # @param [Hash] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
@@ -106,10 +106,10 @@ module HeadHelper::MetaTags
 
   # Replace existing (or add new) meta tags for this page.
   #
+  # @param [Hash] pairs
+  #
   # @yield Supplies additional tag/value pairs for @page_meta_tags.
   # @yieldreturn [Hash]
-  #
-  # @param [Hash] pairs
   #
   # @return [Hash]                    The updated @page_meta_tags contents.
   #
@@ -211,7 +211,6 @@ module HeadHelper::MetaTags
       end
 
     # Return with the <meta> tag element.
-    # noinspection RubyYardReturnMatch
     tag(:meta, html_opt)
   end
 

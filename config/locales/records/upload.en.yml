@@ -1,0 +1,404 @@
+# config/locales/records/upload.en.yml
+#
+# Upload record fields
+#
+# MIN MAX INTERPRETATION
+# --- --- ---------------------------------------------------------------------
+# 0   0   Unprocessed field.
+# 0   1   Optional single-valued field.
+# 0   ~   Optional multi-valued field.
+# 1   0   UNUSED
+# 1   1   Required single-valued field.
+# 1   ~   Required multi-valued field.
+# N   M   Multivalued field requiring between N and M values, inclusive.
+#
+# NOTE: Labels in 'emma.upload.fields' take precedence over labels found here.
+
+en:
+
+  emma:
+
+    upload:
+
+      record:
+
+        # =====================================================================
+        # Database record fields
+        # =====================================================================
+
+        id:
+          min:          1
+          max:          1
+          label:        'Database ID'
+          tooltip:      'Upload table record identifier'
+          origin:       system
+
+        user_id:
+          min:          1
+          max:          1
+          label:        'User ID'
+          tooltip:      'The EMMA user who uploaded the file'
+          origin:       system
+
+        repository:
+          min:          1
+          max:          1
+          label:        'Repository'
+          tooltip:      'Source repository of the uploaded file'
+          origin:       system
+
+        repository_id:
+          min:          1
+          max:          1
+          label:        'Repository ID'
+          tooltip:      'Repository identifier associated with the uploaded file'
+          origin:       system
+
+        file_id:
+          min:          0
+          max:          1
+          label:        'File ID'
+          tooltip:      'Additional repository identifier associated with the uploaded file'
+          origin:       system
+
+        fmt:
+          min:          1
+          max:          1
+          label:        'Format'
+          tooltip:      'EMMA file format associated with the uploaded file'
+          origin:       file_data
+
+        ext:
+          min:          1
+          max:          1
+          label:        'Extension'
+          tooltip:      'File extension of the uploaded file'
+          origin:       file_data
+
+        created_at:
+          min:          1
+          max:          1
+          type:         time
+          label:        'First Upload'
+          tooltip:      'Date of first upload'
+          origin:       system
+
+        updated_at:
+          min:          1
+          max:          1
+          type:         time
+          label:        'Current Upload'
+          tooltip:      'Date of current upload'
+          origin:       system
+
+        # =====================================================================
+        # Upload data
+        # =====================================================================
+
+        file_data:
+          min:          0
+          max:          1
+          type:         json
+          label:        'File data'
+          tooltip:      'Uploaded file metadata'
+          origin:       system
+
+          # ===================================================================
+          # Shrine file upload data
+          # ===================================================================
+
+          id:
+            min:          1
+            max:          1
+            label:        'Stored File'
+            tooltip:      'Filename of the stored copy of the file'
+            origin:       system
+
+          storage:
+            min:          1
+            max:          1
+            label:        'Storage'
+            tooltip:      'Storage "bucket" - either "cache" or "storage"'
+            origin:       system
+
+          metadata:
+            min:          1
+            max:          1
+            label:        'File Metadata'
+            tooltip:      'Information about the file that was stored'
+            origin:       system
+
+            filename:
+              min:          1
+              max:          1
+              label:        'Filename'
+              tooltip:      'The name of the original file'
+              origin:       system
+
+            size:
+              min:          1
+              max:          1
+              type:         number
+              label:        'Size'
+              tooltip:      'The size of the original file in bytes'
+              origin:       system
+
+            mime_type:
+              min:          1
+              max:          1
+              label:        'MIME Type'
+              tooltip:      'The nature of the original file'
+              origin:       system
+
+        # =====================================================================
+        # Unified index data
+        # =====================================================================
+
+        emma_data:
+          min:          0
+          max:          1
+          type:         json
+          label:        'EMMA data'
+          tooltip:      'Retrieved EMMA metadata'
+          origin:       system
+
+          # ===================================================================
+          # Unified index information
+          # ===================================================================
+
+          emma_recordId:
+            min:          0
+            max:          1
+            label:        'EMMA Record ID'
+            tooltip:      'EMMA Record ID'
+            origin:       system
+
+          emma_titleId:
+            min:          0
+            max:          1
+            label:        'EMMA Title ID'
+            tooltip:      'EMMA Title ID'
+            origin:       system
+
+          # ===================================================================
+          # Repository information
+          # ===================================================================
+
+          emma_repository:
+            min:          1
+            max:          1
+            type:         !ruby/symbol EmmaRepository
+            label:        'EMMA Repository'
+            tooltip:      'The source repository entry associated with the remediated content file'
+            origin:       system
+
+          emma_collection:
+            min:          0
+            max:          1
+            label:        'EMMA Collection'
+            tooltip:      'The source repository collection of the entry associated with the remediated content file'
+            origin:       system
+
+          emma_repositoryRecordId:
+            min:          1
+            max:          1
+            label:        'Repository Record'
+            tooltip:      'The source repository identifier for the entry associated with the remediated content file'
+            origin:       system
+
+          emma_retrievalLink:
+            min:          0
+            max:          1
+            type:         url
+            label:        'Download Link'
+            tooltip:      'Source repository URL to retrieve a copy of the remediated content file'
+            origin:       system
+
+          emma_lastRemediationDate:
+            min:          1
+            max:          1
+            type:         date
+            label:        'Last Update'
+            tooltip:      'Date of the most recent change to the remediated content file'
+            origin:       system
+
+          emma_lastRemediationNote:
+            min:          0
+            max:          1
+            type:         textarea
+            label:        'Update Note'
+            tooltip:      'Description of remediation for this file'
+            placeholder:  'Enter description'
+
+          emma_formatVersion:
+            min:          0
+            max:          1
+            label:        'Format Version'
+            tooltip:      'Format version of remediated content file'
+            placeholder:  'Enter format version'
+
+          emma_formatFeature:
+            min:          0
+            max:          ~
+            type:         !ruby/symbol FormatFeature
+            label:        'Format Feature'
+            tooltip:      'Format features of remediated content file'
+
+          # ===================================================================
+          # Bibliographic information
+          # ===================================================================
+
+          dc_title:
+            min:          1
+            max:          1
+            label:        'Title'
+            tooltip:      'Title of the creative work represented by the remediated content file'
+            placeholder:  'Enter title of work'
+
+          dc_creator:
+            min:          1
+            max:          ~
+            label:        'Creator'
+            tooltip:      'Author/creator of the creative work represented by the remediated content file'
+            placeholder:  'Enter author(s) of the work'
+
+          dc_identifier:
+            min:          0
+            max:          ~
+            label:        'Identifier'
+            tooltip:      'Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the creative work represented by the remediated content file'
+            placeholder:  'Enter ISBN/etc for the work'
+
+          dc_publisher:
+            min:          0
+            max:          1
+            label:        'Publisher'
+            tooltip:      'Publisher/producer of the creative work represented by the remediated content file'
+            placeholder:  'Enter publisher of the work'
+
+          dc_relation:
+            min:          0
+            max:          ~
+            label:        'Relation'
+            tooltip:      'Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a related edition of the creative work represented by the remediated content file'
+            placeholder:  'ISBN/etc for a related edition of the work'
+
+          dc_language:
+            min:          1
+            max:          1
+            type:         !ruby/symbol LanguageType
+            label:        'Language'
+            tooltip:      'Language of the creative work represented by the remediated content file'
+            placeholder:  'Language of the work'
+
+          dc_rights:
+            min:          1
+            max:          1
+            type:         !ruby/symbol Rights
+            label:        'Rights'
+            tooltip:      'Reproduction rights for the creative work represented by the remediated content file'
+
+          dc_provenance:
+            min:          0
+            max:          1
+            type:         !ruby/symbol Provenance
+            label:        'Provenance'
+            tooltip:      'Originator of the remediated content file'
+
+          dc_description:
+            min:          0
+            max:          1
+            type:         textarea
+            label:        'Description'
+            tooltip:      'Description/synopsis/abstract of the creative work represented by the remediated content file'
+            placeholder:  'Description/synopsis/abstract of the work'
+
+          dc_format:
+            min:          1
+            max:          1
+            type:         !ruby/symbol DublinCoreFormat
+            label:        'Format'
+            tooltip:      'Original format of the creative work represented by the remediated content file'
+
+          dc_type:
+            min:          1
+            max:          1
+            type:         !ruby/symbol DcmiType
+            label:        'Type'
+            tooltip:      'Original type of creative work represented by the remediated content file'
+
+          dc_subject:
+            min:          0
+            max:          ~
+            label:        'Subject'
+            tooltip:      'Subject/keyword characterizing the creative work represented by the remediated content file'
+            placeholder:  'Enter keyword/subject term'
+
+          dcterms_dateAccepted:
+            min:          0
+            max:          1
+            type:         date
+            label:        'Date Accepted'
+            tooltip:      'Date in which the remediated content file was added to its repository'
+            placeholder:  'Enter date file added to repository'
+
+          dcterms_dateCopyright:
+            min:          0
+            max:          1
+            type:         date
+            label:        'Copyright Date'
+            tooltip:      'Copyright (or publication) date of the creative work represented by the remediated content file'
+            placeholder:  'Enter date of the creative work'
+
+          # ===================================================================
+          # Remediation information
+          # ===================================================================
+
+          s_accessibilityFeature:
+            min:          0
+            max:          1
+            type:         !ruby/symbol A11yFeature
+            label:        'Accessibility Features'
+            tooltip:      'Accessibility features of the remediated content'
+
+          s_accessibilityControl:
+            min:          0
+            max:          1
+            type:         !ruby/symbol A11yControl
+            label:        'Accessibility Controls'
+            tooltip:      'Accessibility controls of the remediated content'
+
+          s_accessibilityHazard:
+            min:          0
+            max:          1
+            type:         !ruby/symbol A11yHazard
+            label:        'Accessibility Hazards'
+            tooltip:      'Accessibility hazards of the remediated content'
+
+          s_accessMode:
+            min:          0
+            max:          1
+            type:         !ruby/symbol A11yAccessMode
+            label:        'Access Mode'
+            tooltip:      'Access mode for the remediated content'
+
+          s_accessModeSufficient:
+            min:          0
+            max:          1
+            type:         !ruby/symbol A11ySufficient
+            label:        'Access Mode Sufficient'
+            tooltip:      'Access mode sufficient for the remediated content'
+
+          s_accessibilitySummary:
+            min:          0
+            max:          1
+            type:         textarea
+            label:        'Accessibility Summary'
+            tooltip:      'Accessibility summary for the remediated content'
+            placeholder:  'Enter accessibility details'
+
+          s_accessibilityAPI:
+            min:          0
+            max:          0
+            type:         !ruby/symbol A11yAPI
+            label:        'Accessibility API'

@@ -1,0 +1,155 @@
+# config/locales/formats/word.en.yml
+#
+# Microsoft Word format
+
+en:
+
+  emma:
+
+    word:
+
+      type: 'word'
+
+      mimes:
+        - 'application/msword'
+        - 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        # Also (maybe):
+        # - 'application/vnd.ms-word.document.macroEnabled.12'
+        # - 'application/vnd.ms-word.template.macroEnabled.12'
+        # Related:
+        # - 'application/vnd.ms-excel'
+        # - 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+
+      exts:
+        - 'docx'
+        - 'doc'
+        # Also (maybe):
+        # - 'word'
+        # - 'dot'
+        # - 'wiz'
+        # - 'rtf'
+        # Related:
+        # - 'xls'
+        # - 'xlsx'
+
+      # =======================================================================
+      # FORMAT_FIELDS
+      # =======================================================================
+
+      fields:
+
+        # Dublin Core (except as noted)
+
+        Title:            'title'
+        Author:           'author'                # coreProperties
+        Creator:          'creator'
+        Contributor:      'contributor'
+        Language:         'language'
+        Date:
+          - 'date_copyrighted'
+          - 'modified'
+          - 'date_submitted'
+          - 'created'
+        Publisher:        'publisher'
+        Subject:          'subject'
+        Type:             'type'
+        Rights:           'rights'
+        Format:           'formats'
+        Source:           'source'
+        Coverage:         'coverage'
+        Relation:         'relation'
+        Description:      'description'
+        Identifier:       'identifier'
+
+        # (Partial) Qualified Dublin Core (except as noted)
+
+        Abstract:         'abstract'
+        Contents:         'table_of_contents'
+        Audience:         'audience'
+        EducationLevel:   'education_level'
+        Extent:           'extent'
+        Medium:           'medium'
+        Spatial:          'spatial'
+        Requires:         'requires'
+        License:          'license'
+        Issued:           'issued'
+        IsPartOf:         'is_part_of'
+        IsVersionOf:      'is_version_of'
+        CreationDate:     'created'
+        Accepted:         'date_accepted'
+        CopyrightDate:    'date_copyrighted'
+        SubmissionDate:   'date_submitted'
+        ModifiedDate:     'modified'
+        LastModifiedBy:   'last_modified_by'      # coreProperties
+        RightsHolder:     'rights_holder'
+        Provenance:       'provenance'
+
+        # Core properties (coreProperties)
+
+        # Author:         'author'
+        Category:         'category'
+        ContentStatus:    'content_status'
+        Version:          'version'
+        Revision:         'revision'
+        # ModifiedDate:   'modified'
+        # LastModifiedBy: 'last_modified_by'
+        Keywords:         'keywords'
+        Comments:         'comments'
+
+      # =======================================================================
+      # A mapping of format field to the equivalent
+      # Search::Record::MetadataRecord field.
+      # =======================================================================
+
+      map:
+
+        # Dublin Core
+
+        title:                  'dc_title'
+        author:                 'dc_creator'
+        creator:                'dc_creator'
+        # contributor:          'dc_contributor'
+        language:               'dc_language'
+        created:                'dc_date'
+        publisher:              'dc_publisher'
+        subject:                'dc_subject'
+        type:                   'dc_type'
+        # rights:               'dc_rights'
+        # formats:              'dc_format'
+        # source:               'dc_source'
+        # coverage:             'dc_coverage'
+        relation:               'dc_relation'
+        description:            'dc_description'
+        identifier:             'dc_identifier'
+
+        # (Partial) Qualified Dublin Core
+
+        abstract:               'dc_description'
+        table_of_contents:      'dc_description'
+        # audience:             'audience'
+        # education_level:      'education_level'
+        # extent:               'extent'
+        # medium:               'medium'
+        # spatial:              'spatial'
+        # requires:             'requires'
+        # license:              'license'
+        # issued:               'issued'
+        # is_part_of:           'is_part_of'
+        # is_version_of:        'is_version_of'
+        # created:              'created'
+        date_accepted:          'dcterms_dateAccepted'
+        date_copyrighted:       'dcterms_dateCopyright'
+        # date_submitted:       'date_submitted'
+        modified:               'emma_lastRemediationDate'
+        # last_modified_by:     'last_modified_by'
+        # rights_holder:        'rights_holder'
+        provenance:             'provenance'
+
+        # Core properties (coreProperties)
+
+        # category:             'category'
+        # content_status:       'content_status'
+        # version:              'version'
+        # revision:             'revision'
+        # keywords:             'keywords'
+        # comments:             'comments'

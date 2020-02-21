@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A Microsoft Word (.docx) file object.
 #
-class WordFile < RemoteFile
+class WordFile < CachedFile
 
   include WordFormat
 

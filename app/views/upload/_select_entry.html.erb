@@ -1,0 +1,14 @@
+<%# app/views/layouts/_select_entry.html.erb -%>
+<%-
+  # Select existing entries which contain files to operate on.
+  action ||= params[:action]
+  user   ||= @user_id
+  prompt =
+    if user
+      'Select an EMMA entry you created' # TODO: I18n
+    else
+      'Select an existing EMMA entry' # TODO: I18n
+    end
+-%>
+
+<%= upload_items_menu(action: action, user: user, prompt: prompt) %>

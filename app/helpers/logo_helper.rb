@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'search'
-
 # Repository logos.
 #
 module LogoHelper
@@ -47,23 +45,23 @@ module LogoHelper
 
   # Make a logo for a repository source.
   #
-  # @param [String, Symbol, nil] src
-  # @param [Hash]                opt    Passed to #content_tag except for:
+  # @param [Search::Api::Record, String, Symbol] item
+  # @param [Hash] opt                 Passed to #content_tag except for:
   #
-  # @option opt [String] :source
-  # @option opt [String] :name          To be displayed instead of the source.
-  # @option opt [String] :logo          Logo asset name.
+  # @option opt [String] :source      Overrides :src if present.
+  # @option opt [String] :name        To be displayed instead of the source.
+  # @option opt [String] :logo        Logo asset name.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo(src, **opt)
+  def repository_source_logo(item, **opt)
     opt, html_opt = partition_options(opt, :source, :name, :logo)
-    src  = normalize_repository(opt[:source] || src || DEFAULT_REPO)
+    src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
     name = opt[:name] || repository_name(src)
     logo = REPOSITORY_LOGO[src]
     if logo.present?
       prepend_css_classes!(html_opt, 'repository', 'logo', src)
-      html_opt[:title] ||= "From #{name}" # TODO: I18n
+      html_opt[:title] ||= repository_tooltip(item, name)
       # noinspection RubyYardReturnMatch
       image_tag(asset_path(logo), html_opt)
     else
@@ -73,21 +71,21 @@ module LogoHelper
 
   # Make a textual logo for a repository source.
   #
-  # @param [String, Symbol, nil] src
-  # @param [Hash]                opt    Passed to #content_tag except for:
+  # @param [Search::Api::Record, String, Symbol] item
+  # @param [Hash] opt                 Passed to #content_tag except for:
   #
-  # @option opt [String] :source
-  # @option opt [String] :name          To be displayed instead of the source.
+  # @option opt [String] :source      Overrides :src if present.
+  # @option opt [String] :name        To be displayed instead of the source.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source(src, **opt)
+  def repository_source(item, **opt)
     opt, html_opt = partition_options(opt, :source, :name)
-    src  = normalize_repository(opt[:source] || src || DEFAULT_REPO)
+    src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
     name = opt[:name] || repository_name(src)
     if name.present?
       prepend_css_classes!(html_opt, 'repository', 'name', src)
-      html_opt[:title] ||= "From #{name}" # TODO: I18n
+      html_opt[:title] ||= repository_tooltip(item, name)
       content_tag(:div, content_tag(:div, name), html_opt)
     else
       ''.html_safe
@@ -102,12 +100,13 @@ module LogoHelper
 
   # normalize_repository
   #
-  # @param [String, Symbol, nil] src
+  # @param [Search::Api::Record, String, Symbol, nil] src
   #
   # @return [String]
   # @return [nil]
   #
   def normalize_repository(src)
+    src = src.emma_repository if src.respond_to?(:emma_repository)
     src = src.to_s
     # noinspection RubyYardReturnMatch
     src if EmmaRepository.values.include?(src)
@@ -115,15 +114,33 @@ module LogoHelper
 
   # repository_name
   #
-  # @param [String, Symbol, nil] src
+  # @param [Search::Api::Record, String, Symbol, nil] src
   #
   # @return [String]
   # @return [nil]
   #
   def repository_name(src)
+    src = src.emma_repository if src.respond_to?(:emma_repository)
     src = src.to_s
     # noinspection RubyYardReturnMatch
     (src == DEFAULT_REPO.to_s) ? src.upcase : src.titleize if src.present?
+  end
+
+  # repository_tooltip
+  #
+  # @param [Search::Api::Record, String, Symbol, nil] item
+  # @param [String]                                   name
+  #
+  # @return [String]
+  #
+  def repository_tooltip(item, name = nil)
+    name ||= repository_name(item)
+    if item.is_a?(Model)
+      a = name.start_with?(/[aeiou]/i) ? 'an' : 'a'
+      "This is #{a} #{name} repository item" # TODO: I18n
+    else
+      "From #{name}" # TODO: I18n
+    end
   end
 
 end

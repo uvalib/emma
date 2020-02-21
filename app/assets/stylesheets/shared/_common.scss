@@ -145,6 +145,13 @@
     border-radius:    6px;
 }
 
+// Embolden characters while maintaining the width of the text by reducing the
+// distance between the individual letters.
+%hover-bold {
+    font-weight:    bold;
+    letter-spacing: -0.045rem;
+}
+
 //=============================================================================
 // Common settings.
 //=============================================================================
@@ -248,10 +255,12 @@ select:focus {
     // noinspection SassScssResolvedByNameOnly
     .toggle {
 
-        margin-left: $gap-x;
+        margin-left:  $gap-x;
+        margin-right: $gap-x;
 
         @media #{$browser-ie} {
-            margin-left: $ie-gap-x;
+            margin-left:  $ie-gap-x;
+            margin-right: $ie-gap-x;
         }
     }
 }

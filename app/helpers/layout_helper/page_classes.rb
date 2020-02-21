@@ -37,10 +37,10 @@ module LayoutHelper::PageClasses
 
   # Set the classes for the "<body>" element, eliminating any previous value.
   #
+  # @param [Array] values
+  #
   # @yield Supplies additional CSS classes to @page_classes.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] values
   #
   # @return [Array<String>]           The current @page_classes contents.
   #
@@ -53,10 +53,10 @@ module LayoutHelper::PageClasses
 
   # Add to the classes for the "<body>" element.
   #
+  # @param [Array] values
+  #
   # @yield Supplies additional CSS classes to @page_classes.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] values
   #
   # @return [Array<String>]           The current @page_classes contents.
   #

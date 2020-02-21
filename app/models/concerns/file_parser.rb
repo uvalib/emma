@@ -18,9 +18,17 @@ class FileParser < LocalFile
 
   # metadata
   #
-  # @return [*]                       Type is specific to the subclass.
+  # @return [OpenStruct]
   #
   def metadata
+    raise "#{self.class}: #{__method__} not defined"
+  end
+
+  # Extracted metadata mapped to common metadata fields.
+  #
+  # @return [Hash]
+  #
+  def common_metadata
     raise "#{self.class}: #{__method__} not defined"
   end
 

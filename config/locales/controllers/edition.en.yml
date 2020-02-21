@@ -1,12 +1,10 @@
 # config/locales/controllers/edition.en.yml
+#
+# EditionController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Periodical edition pages
-    # =========================================================================
 
     edition:
 
@@ -22,6 +20,18 @@ en:
       tooltip:          'List editions of this Bookshare periodical.'
 
       # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:             &EDITION_FIELDS
+        editionId:        'Edition ID'
+        editionName:      'Edition Name'
+        publicationDate:  'Publication Date'
+        expirationDate:   'Expiration Date'
+        download_links:   'Formats'
+        links:            'Links'
+
+      # =======================================================================
       # Pages
       # =======================================================================
 
@@ -29,11 +39,15 @@ en:
         label:          'Editions'
         title:          'Editions'
         tooltip:        'Find more Bookshare periodical editions with %{terms}.'
+        fields:
+          <<:           *EDITION_FIELDS
 
       show:
         label:          'Edition'
         title:          'Periodical Edition'
         tooltip:        'See details about this Bookshare periodical edition.'
+        fields:
+          <<:           *EDITION_FIELDS
 
       new:
         title:          'Add Periodical Edition'

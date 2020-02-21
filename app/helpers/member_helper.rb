@@ -13,10 +13,23 @@ module MemberHelper
     __included(base, '[MemberHelper]')
   end
 
-  include GenericHelper
-  include PaginationHelper
-  include ResourceHelper
-  include LayoutHelper::Common
+  include ModelHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  MEMBER_CONFIGURATION      = model_configuration('emma.member').deep_freeze
+  MEMBER_INDEX_FIELDS       = MEMBER_CONFIGURATION.dig(:index,       :fields)
+  MEMBER_SHOW_FIELDS        = MEMBER_CONFIGURATION.dig(:show,        :fields)
+  MEMBER_HISTORY_FIELDS     = MEMBER_CONFIGURATION.dig(:history,     :fields)
+  MEMBER_PREFERENCES_FIELDS = MEMBER_CONFIGURATION.dig(:preferences, :fields)
 
   # ===========================================================================
   # :section:
@@ -29,7 +42,6 @@ module MemberHelper
   # @return [Array<Bs::Record::UserAccount>]
   #
   def member_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -66,55 +78,17 @@ module MemberHelper
 
   public
 
-  # Fields from Bs::Record::UserAccount and Bs::Message::MyAccountSummary.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  MEMBER_SHOW_FIELDS = {
-    Name:               :name,
-    Username:           :username,
-    EmailAddress:       :emailAddress,
-    PhoneNumber:        :phoneNumber,
-    Address:            :address,
-    DateOfBirth:        :dateOfBirth,
-    Language:           :language,
-    SubscriptionStatus: :subscriptionStatus,
-    HasAgreement:       :hasAgreement,
-    ProofOfDisability:  :proofOfDisabilityStatus,
-    CanDownload:        :canDownload,
-    AllowAdultContent:  :allowAdultContent,
-    Deleted:            :deleted,
-    Locked:             :locked,
-    Guardian:           :guardian,
-    Site:               :site,
-    Roles:              :roles,
-    Links:              :links, # TODO: subscriptions; pod
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def member_details(item, **opt)
     item_details(item, :member, MEMBER_SHOW_FIELDS.merge(opt))
   end
-
-  # Fields from Bs::Message::MyAccountPreferences.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  MEMBER_PREFERENCE_FIELDS = {
-    AllowAdultContent:       :allowAdultContent,
-    ShowAllBooks:            :showAllBooks,
-    UseUEB:                  :useUeb,
-    PreferredBrailleFormat:  :brailleFormat,
-    BrailleCellLineWidth:    :brailleCellLineWidth,
-    PreferredDownloadFormat: :fmt,
-    PreferredLanguage:       :language,
-  }.freeze
 
   # Render a listing of member preferences.
   #
@@ -125,9 +99,9 @@ module MemberHelper
   #
   # @see #render_field_values
   #
-  def member_preference_values(item, **opt)
+  def member_preferences_values(item, **opt)
     render_field_values(item, model: :member, row_offset: opt[:row]) do
-      MEMBER_PREFERENCE_FIELDS.merge(opt)
+      MEMBER_PREFERENCES_FIELDS.merge(opt)
     end
   end
 
@@ -142,20 +116,6 @@ module MemberHelper
   # @type [String]
   #
   MEMBER_HISTORY_CSS_CLASS = 'history-list'
-
-  # Fields from Bs::Record::TitleDownload.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  MEMBER_HISTORY_FIELDS = {
-    DateDownloaded: :dateDownloaded,
-    Title:          :title,
-    Authors:        :authors,
-    Format:         :fmt,
-    Status:         :status,
-    DownloadedBy:   :downloadedBy,
-    DownloadedFor:  :downloadedFor,
-  }.freeze
 
   # member_history_title
   #
@@ -214,15 +174,6 @@ module MemberHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::UserAccount and Bs::Message::MyAccountSummary.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  MEMBER_INDEX_FIELDS = {
-    Name:  :member_link,
-    Roles: :roles
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

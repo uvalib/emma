@@ -48,10 +48,10 @@ module HeadHelper::Stylesheets
 
   # Set the stylesheet(s) for this page, eliminating any previous value(s).
   #
+  # @param [Array] sources
+  #
   # @yield Supplies additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] sources
   #
   # @return [Array<String>]           The updated @page_stylesheets contents.
   #
@@ -64,10 +64,10 @@ module HeadHelper::Stylesheets
 
   # Add to the stylesheet(s) for this page.
   #
+  # @param [Array] sources
+  #
   # @yield Supplies additional source(s) to @page_stylesheets.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] sources
   #
   # @return [Array<String>]           The updated @page_stylesheets contents.
   #

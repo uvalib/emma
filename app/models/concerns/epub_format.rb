@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 #
 module EpubFormat
 
+  include FileFormat
   include OcfFormat
 
   # ===========================================================================
@@ -27,33 +28,59 @@ module EpubFormat
   #
   FILE_TYPE = :epub
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  EPUB_FORMAT = format_configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = %w(
-    application/epub+zip
-    application/epub-file
-  ).freeze
+  MIME_TYPES = EPUB_FORMAT[:mimes]
 
-  # File extension(s) associated with instances of this format.
+  # File extension(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#file_extensions
   #
-  FILE_EXTENSIONS = %w(
-    epub
-    epub3
-  ).freeze
+  FILE_EXTENSIONS = EPUB_FORMAT[:exts]
+
+  # FORMAT_FIELDS
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  # @see FileFormat#format_fields
+  #
+  FORMAT_FIELDS = EPUB_FORMAT[:fields]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = EPUB_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
 
   public
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see OcfFormat#configuration
+  #
+  def configuration
+    EPUB_FORMAT
+  end
 
   # parser
   #

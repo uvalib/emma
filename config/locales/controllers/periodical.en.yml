@@ -1,12 +1,10 @@
 # config/locales/controllers/periodical.en.yml
+#
+# PeriodicalController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Periodical pages
-    # =========================================================================
 
     periodical:
 
@@ -20,6 +18,34 @@ en:
       label:            'Periodicals'
       title:            'Periodicals'
       tooltip:          'Search for Bookshare periodicals.'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:                 &PERIODICAL_FIELDS
+
+        # === Description ===
+        year:                 'Year'
+        languages:            'Languages'
+        description:          'Description'
+        categories:           'Categories'
+        countries:            'Countries'
+
+        # === Identifiers ===
+        issn:                 'ISSN'
+        externalCategoryCode: 'External Category Code'
+
+        # === Publisher/provider information ===
+        publisher:            'Publisher'
+
+        # === Item instances ===
+        latestEdition:        'Latest Edition'
+        editionCount:         'Editions'
+
+        # === Bookshare information ===
+        seriesId:             'Series ID'
+        links:                'Links'
 
       # =======================================================================
       # Controls
@@ -46,11 +72,17 @@ en:
         label:          'Periodicals'
         title:          'Periodicals Index'
         tooltip:        'Find more Bookshare periodicals with %{terms}.'
+        fields:
+          title:        'Title'
+          categories:   'Categories'
+          languages:    'Languages'
 
       show:
         label:          'Periodical'
         title:          'Periodical'
         tooltip:        'See details about this Bookshare periodical.'
+        fields:
+          <<:           *PERIODICAL_FIELDS
 
       new:
         title:          'Add Periodical'

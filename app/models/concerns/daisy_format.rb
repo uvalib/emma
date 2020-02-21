@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 module DaisyFormat
 
+  include FileFormat
   include OcfFormat
 
   # ===========================================================================
@@ -28,32 +29,59 @@ module DaisyFormat
   #
   FILE_TYPE = :daisy
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  DAISY_FORMAT = format_configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = [
-    'application/x-daisy',            # NOTE: fake MIME type
-    # 'application/x-dtbook-xml',     # TODO: DaisyFormat MIME type(s)?
-  ].freeze
+  MIME_TYPES = DAISY_FORMAT[:mimes]
 
-  # File extension(s) associated with instances of this format.
+  # File extension(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#file_extensions
   #
-  FILE_EXTENSIONS = %w(
-    daisy
-  ).freeze
+  FILE_EXTENSIONS = DAISY_FORMAT[:exts]
+
+  # FORMAT_FIELDS
+  #
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  # @see FileFormat#format_fields
+  #
+  FORMAT_FIELDS = DAISY_FORMAT[:fields]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = DAISY_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
 
   public
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see OcfFormat#configuration
+  #
+  def configuration
+    DAISY_FORMAT
+  end
 
   # parser
   #

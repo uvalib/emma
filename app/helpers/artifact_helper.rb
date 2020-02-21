@@ -13,9 +13,7 @@ module ArtifactHelper
     __included(base, '[ArtifactHelper]')
   end
 
-  include GenericHelper
-  include PaginationHelper
-  include ResourceHelper
+  include ModelHelper
 
   # ===========================================================================
   # :section:
@@ -91,6 +89,14 @@ module ArtifactHelper
   # @type [String]
   #
   THIS_FORMAT = I18n.t('emma.placeholder.format').freeze
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  ARTIFACT_CONFIGURATION = model_configuration('emma.artifact').deep_freeze
+  ARTIFACT_INDEX_FIELDS  = ARTIFACT_CONFIGURATION.dig(:index, :fields)
+  ARTIFACT_SHOW_FIELDS   = ARTIFACT_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -270,34 +276,13 @@ module ArtifactHelper
 
   public
 
-  # Fields from Bs::Record::ArtifactMetadata.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  ARTIFACT_SHOW_FIELDS = {
-    Format:                   :fmt,
-    BrailleType:              :brailleType,
-    BrailleCode:              :brailleCode,
-    BrailleGrade:             :brailleGrade,
-    BrailleMusicScoreLayout:  :brailleMusicScoreLayout,
-    Duration:                 :duration,
-    NumberOfVolumes:          :numberOfVolumes,
-    DateAdded:                :dateAdded,
-    Narrator:                 :narrator,
-    Transcriber:              :transcriber,
-    Producer:                 :producer,
-    Supplier:                 :supplier,
-    ExternalIdentifierCode:   :externalIdentifierCode,
-    GlobalBookServiceId:      :globalBookServiceId,
-    FundingSource:            :fundingSource,
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def artifact_details(item, **opt)
     item_details(item, :artifact, ARTIFACT_SHOW_FIELDS.merge(opt))
@@ -308,15 +293,6 @@ module ArtifactHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::ArtifactMetadata.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  ARTIFACT_INDEX_FIELDS = {
-    Format:    :fmt,
-    DateAdded: :dateAdded,
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

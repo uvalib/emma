@@ -16,8 +16,6 @@ __loading_begin(__FILE__)
 #
 module FileAttributes
 
-  extend ActiveSupport::Concern
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -56,7 +54,7 @@ module FileAttributes
 
   # Format type of the file.
   #
-  # @return [Symbol, nil]             One of FileFormat#FILE_FORMATS.
+  # @return [Symbol, nil]             One of FileFormat#TYPES.
   #
   attr_reader :fmt
 
@@ -65,6 +63,12 @@ module FileAttributes
   # @return [String, nil]
   #
   attr_reader :ext
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Core portion of the name associated with the file.
   #
@@ -96,7 +100,7 @@ module FileAttributes
 
   # File system path to a local copy of the file object.
   #
-  # @return [String, nil]
+  # @return [String, StringIO, IO, nil]
   #
   attr_reader :local_path
 

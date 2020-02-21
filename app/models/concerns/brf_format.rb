@@ -25,25 +25,27 @@ module BrfFormat
   #
   FILE_TYPE = :brf
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  BRF_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = [
-    'application/x-brf',              # NOTE: fake MIME type
-  ].freeze
+  MIME_TYPES = BRF_FORMAT[:mimes]
 
-  # File extension(s) associated with instances of this format.
+  # File extension(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#file_extensions
   #
-  FILE_EXTENSIONS = %w(
-    brf
-  ).freeze
+  FILE_EXTENSIONS = BRF_FORMAT[:exts]
 
   # FORMAT_FIELDS
   #
@@ -51,15 +53,31 @@ module BrfFormat
   #
   # @see FileFormat#format_fields
   #
-  FORMAT_FIELDS = {
-    # TODO: BRF fields?
-  }.freeze
+  FORMAT_FIELDS = BRF_FORMAT[:fields]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = BRF_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
 
   public
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see FileFormat#configuration
+  #
+  def configuration
+    BRF_FORMAT
+  end
 
   # parser
   #

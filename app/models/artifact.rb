@@ -2,7 +2,6 @@
 #
 # frozen_string_literal: true
 # warn_indent:           true
-#
 
 __loading_begin(__FILE__)
 

@@ -31,7 +31,7 @@ module ParamsConcern
     # :section: Callbacks
     # =========================================================================
 
-    before_action :set_current_path
+    before_action :set_current_path,     unless: :request_xhr?
     before_action :set_origin,           only:   [:index]
     before_action :resolve_sort,         only:   [:index]
     before_action :initialize_menus,     except: [:index] # TODO: keep?
@@ -41,7 +41,7 @@ module ParamsConcern
 
   end
 
-  include GenericHelper
+  include Emma::Common
   include ParamsHelper
 
   # ===========================================================================

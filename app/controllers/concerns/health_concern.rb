@@ -15,7 +15,7 @@ module HealthConcern
     __included(base, 'HealthConcern')
   end
 
-  include TimeHelper
+  include Emma::Time
 
   # ===========================================================================
   # :section:
@@ -49,7 +49,7 @@ module HealthConcern
   #
   class HealthEntry < Hash
 
-    include GenericHelper
+    include Emma::Common
 
     # Initialize a new instance.
     #
@@ -220,10 +220,12 @@ module HealthConcern
         when FalseClass then false
         else                 true
       end
+
   rescue => e
     healthy = false
     message = "#{e.class}: #{e.message}"
     Log.warn { "#{subsystem}: #{message}" }
+
   ensure
     warn_only = !entry[:restart]
     degraded  = !healthy && warn_only

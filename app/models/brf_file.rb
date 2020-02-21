@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A BRF file object.
 #
-class BrfFile < RemoteFile
+class BrfFile < CachedFile
 
   include BrfFormat
 

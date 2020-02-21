@@ -1,0 +1,33 @@
+# config/locales/formats/daisy_audio.en.yml
+#
+# DAISY Audio format
+
+en:
+
+  emma:
+
+    daisyAudio:
+
+      type: 'daisyAudio'
+
+      mimes:
+        - 'application/x-dtbook-xml'        # TODO: DaisyFormat MIME type(s)?
+        - 'application/x-daisy'             # NOTE: fake MIME type
+
+      exts:
+        - 'dtbook'                          # TODO: Unsure about "dtbook"
+        - 'daisyAudio'
+        - 'daisy'
+
+      # =======================================================================
+      # FORMAT_FIELDS
+      # =======================================================================
+
+      # NOTE: @see ocf.en.yml
+
+      # =======================================================================
+      # A mapping of format field to the equivalent
+      # Search::Record::MetadataRecord field.
+      # =======================================================================
+
+      # NOTE: @see ocf.en.yml

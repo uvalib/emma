@@ -22,8 +22,8 @@ module ApiService::Common
     base.send(:extend,  ApiService::Definition)
   end
 
-  include GenericHelper
-  include DebugHelper
+  include Emma::Common
+  include Emma::Debug
 
   # ===========================================================================
   # :section:
@@ -341,7 +341,6 @@ module ApiService::Common
       backoff_factor:      2,
     }
 
-    # noinspection RubyYardReturnMatch
     Faraday.new(conn_opts) do |bld|
       bld.use           :instrumentation
       bld.use           :api_caching_middleware if CACHING
@@ -562,7 +561,7 @@ module ApiService::Common
     __debug_line(leader: '!!!') {
       %w(api) << action.inspect << message << error.class
     }
-    level  = error.is_a?(Api::Error) ? Logger::WARN : Logger::ERROR
+    level  = error.is_a?(Api::Error) ? Log::WARN : Log::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }
     status = status ? error.send(status).inspect : '???'
     body   = response&.body

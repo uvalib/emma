@@ -42,7 +42,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} target
      * @param {boolean}  [new_state]  Default: toggle state.
      *
-     * @returns {boolean}             Menu visibility.
+     * @return {boolean}              Menu visibility.
      */
     function toggleSkipMenu(target, new_state) {
         var $this = $(target);

@@ -37,6 +37,9 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
+# NOTE: These fields are a subset of:
+# @see Search::Record::MetadataRecord
+#
 # noinspection DuplicatedCode
 class Search::Record::MetadataCommonRecord < Search::Api::Record
 

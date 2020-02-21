@@ -12,7 +12,11 @@ module DownloadConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'DownloadConcern')
+
+    include BookshareConcern
+
   end
 
   include SerializationConcern

@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::NavBar
 
-  include ParamsHelper
+  include LayoutHelper::Common
 
   # ===========================================================================
   # :section:

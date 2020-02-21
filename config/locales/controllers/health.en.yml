@@ -1,12 +1,10 @@
 # config/locales/controllers/health.en.yml
+#
+# HealthController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Health status
-    # =========================================================================
 
     health:
 

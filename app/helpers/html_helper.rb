@@ -137,11 +137,11 @@ module HtmlHelper
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
   #
+  # @param [Array<String,Array>] args
+  #
   # @yield [classes] Exposes *args* so the block may modify it.
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
-  #
-  # @param [Array<String,Array>] args
   #
   # @return [ActiveSupport::SafeBuffer]
   #

@@ -1,12 +1,10 @@
 # config/locales/controllers/search.en.yml
+#
+# SearchController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # EMMA Federated Search pages
-    # =========================================================================
 
     search:
 
@@ -18,8 +16,44 @@ en:
         brief:          'record'
         long:           'metadata record'
       label:            'Search'
-      title:            'Federated Search'
-      tooltip:          'Federated search for metadata records.'
+      title:            'Unified Search'
+      tooltip:          'Unified search for metadata records.'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:                     &SEARCH_FIELDS
+        dc_creator:               'Creator'
+        dc_language:              'Language'
+        dc_type:                  'Type'
+        dc_format:                'Format'
+        dc_description:           'Description'
+        dc_publisher:             'Publisher'
+        dc_subject:               'Subject'
+        dc_rights:                'Rights'
+        dc_provenance:            'Provenance'
+        dc_identifier:            'Identifier'
+        dc_relation:              'Related'
+        dcterms_dateAccepted:     'Date Received'
+        dcterms_dateCopyright:    'Copyright Date'
+        emma_recordId:            'Record ID'
+        emma_titleId:             'Title ID'
+        emma_repository:          'Repository'
+        emma_collection:          'Collection'
+        emma_lastRemediationDate: 'Last Update'
+        emma_lastRemediationNote: 'Update Note'
+        emma_formatVersion:       'Format Version'
+        emma_formatFeature:       'Format Feature'
+        s_accessibilityFeature:   'Accessibility Feature'
+        s_accessibilityControl:   'Accessibility Control'
+        s_accessibilityHazard:    'Accessibility Hazard'
+        s_accessMode:             'Access Mode'
+        s_accessModeSufficient:   'Access Mode Sufficient'
+        s_accessibilityAPI:       'Accessibility API'
+        s_accessibilitySummary:   'Accessibility Summary'
+        emma_repositoryRecordId:  'Repository Record ID'
+        emma_retrievalLink:       'Retrieval Link'
 
       # =======================================================================
       # Controls
@@ -49,10 +83,15 @@ en:
 
       index:
         label:          'Records'
-        title:          'Federated Search Index'
+        title:          'Unified Search Index'
         tooltip:        'Find more metadata records with %{terms}.'
+        fields:
+          dc_title:     'Title'
+          <<:           *SEARCH_FIELDS
 
       show:
         label:          'Record'
         title:          'Index Record'
         tooltip:        'See details about this metadata record.'
+        fields:
+          <<:           *SEARCH_FIELDS

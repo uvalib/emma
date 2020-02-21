@@ -21,7 +21,8 @@ module FilesConcern
   # :section: Initialization
   # ===========================================================================
 
-  MIME_REGISTRATION = FF_CLASS.values.each(&:register_mime_types)
+  MIME_REGISTRATION =
+    FileNaming.format_classes.values.each(&:register_mime_types)
 
 end
 

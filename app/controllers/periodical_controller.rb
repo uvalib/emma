@@ -16,8 +16,7 @@ class PeriodicalController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-
-  include PeriodicalHelper
+  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -126,7 +125,7 @@ class PeriodicalController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Bs::Message::PeriodicalSeriesMetadataSummaryList, nil] list
+  # @param [Bs::Message::PeriodicalSeriesMetadataSummaryList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

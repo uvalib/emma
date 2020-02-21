@@ -285,7 +285,7 @@ module BookshareService::Common
     __debug_line(leader: '!!!') {
       %w(bookshare) << action.inspect << message << error.class
     }
-    level  = error.is_a?(Bs::Error) ? Logger::WARN : Logger::ERROR
+    level  = error.is_a?(Bs::Error) ? Log::WARN : Log::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }
     status = status ? error.send(status).inspect : '???'
     body   = response&.body

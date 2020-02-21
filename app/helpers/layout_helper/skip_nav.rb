@@ -9,7 +9,6 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::SkipNav
 
-  include HtmlHelper
   include LayoutHelper::PageControls
 
   # ===========================================================================
@@ -36,10 +35,10 @@ module LayoutHelper::SkipNav
 
   # Set "skip navigation" menu entries (replacing any existing ones).
   #
+  # @param [Array] entries
+  #
   # @yield Supplies additional entries to @skip_nav.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] entries
   #
   # @return [Array]
   #
@@ -51,10 +50,10 @@ module LayoutHelper::SkipNav
 
   # Add entries to the end of the "skip navigation" menu.
   #
+  # @param [Array] entries
+  #
   # @yield Supplies additional entries to @skip_nav.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] entries
   #
   # @return [Array]
   #
@@ -66,10 +65,10 @@ module LayoutHelper::SkipNav
 
   # Add entries to the beginning of the "skip navigation" menu.
   #
+  # @param [Array] entries
+  #
   # @yield Supplies additional entries to prepend to @skip_nav.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] entries
   #
   # @return [Array]
   #

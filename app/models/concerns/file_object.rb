@@ -11,8 +11,9 @@ __loading_begin(__FILE__)
 #
 class FileObject
 
+  include Emma::Debug
   include FileAttributes
-  include DebugHelper
+  include FileNaming
 
   # ===========================================================================
   # :section:
@@ -22,29 +23,17 @@ class FileObject
 
   # Create a new instance.
   #
-  # @param [String]               path
+  # @param [String, StringIO, IO] path
   # @param [FileProperties, Hash] opt
   #
   def initialize(path, **opt)
     set_file_attributes(opt)
-    @path = path
-    @local_path = nil
-  end
-
-  # ===========================================================================
-  # :section: FileAttributes overrides
-  # ===========================================================================
-
-  public
-
-  # ext
-  #
-  # @return [String, nil]
-  #
-  # This method overrides:
-  # @see FileAttributes#ext
-  #
-  def ext
+    case path
+      when StringIO then @local_path = path
+      when IO       then @path = path.path; @local_path = path
+      else               @path = path
+    end
+    @fmt ||= self.class.fmt
     @ext ||= self.class.file_extension
   end
 
@@ -56,8 +45,9 @@ class FileObject
 
   module ClassMethods
 
-    include FileNameHelper
+    include FileNaming
 
+  if LOCAL_DOWNLOADS
     # Based on the provided data, generate a file name of the form:
     #
     #   "repo-rootname-fmt.ext"
@@ -71,7 +61,7 @@ class FileObject
     #   @param [FileProperties, Hash] opt
     #   @return [String]
     #
-    # @see FileNameHelper#extract_file_properties
+    # @see FileNaming#extract_file_properties
     #
     def make_file_name(src, opt = nil)
       __debug_args(binding)
@@ -83,13 +73,20 @@ class FileObject
       opt[:ext]          ||= exemplar.ext
       extract_file_properties(src, opt)[:filename]
     end
+  end
+
+    # File format defined for the subclass.
+    #
+    # @return [Symbol]
+    #
+    def fmt
+      const_get(:FILE_TYPE)
+    end
 
     # file_extension
     #
     # @return [String]
     # @return [nil]
-    #
-    # @see FileNameHelper#FF_EXTS
     #
     def file_extension
       safe_const_get(:PREFERRED_FILE_EXTENSION) || file_extensions.first
@@ -99,26 +96,19 @@ class FileObject
     #
     # @return [Array<String>]
     #
-    # @see FileNameHelper#FF_EXTS
-    #
     def file_extensions
-      Array.wrap(safe_const_get(:FILE_EXTENSIONS))
-        .map { |s| s.to_s.strip.downcase.presence }
-        .compact
+      safe_const_get(:FILE_EXTENSIONS) || []
     end
 
     # MIME types defined for the subclass.
     #
     # @return [Array<String>]
     #
-    # @see FileNameHelper#FF_MIMES
-    #
     def mime_types
-      Array.wrap(safe_const_get(:MIME_TYPES))
-        .map { |s| s.to_s.strip.downcase.presence }
-        .compact
+      safe_const_get(:MIME_TYPES) || []
     end
 
+  if LOCAL_DOWNLOADS
     # An instance of the current subclass.
     #
     # @return [FileObject]
@@ -126,20 +116,21 @@ class FileObject
     def exemplar
       @exemplar ||= new(nil)
     end
+  end
 
     # To be run once per type...
     #
     # @return [void]
     #
     def register_mime_types
-      types = mime_types
-      exts  = file_extensions.map!(&:to_sym)
+      types = mime_types.map(&:to_s)
+      exts  = file_extensions.map(&:to_sym)
       type  = types.shift
       ext   = exts.shift
-      __debug_args(binding) { { type: type, ext: ext } }
+      __debug_args(binding) { { type: type, ext: ext, types: types, exts: exts } }
       return unless type && ext
       Mime::Type.register(type, ext, types, exts) # TODO: needed?
-      Marcel::MimeType.extend(type, extensions: file_extensions)
+      Marcel::MimeType.extend(type, extensions: file_extensions.map(&:to_s))
     end
 
   end

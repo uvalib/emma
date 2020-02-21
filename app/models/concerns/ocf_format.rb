@@ -21,75 +21,59 @@ module OcfFormat
 
   public
 
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  OCF_FORMAT = format_configuration('emma.ocf').deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
+  #
+  # @type [Array<String>]
+  #
+  # @see FileObject#mime_types
+  #
+  MIME_TYPES = OCF_FORMAT[:mimes]
+
+  # File extension(s) associated with instances of this file format.
+  #
+  # @type [Array<String>]
+  #
+  # @see FileObject#file_extensions
+  #
+  FILE_EXTENSIONS = OCF_FORMAT[:exts]
+
   # FORMAT_FIELDS
   #
   # @type [Hash{Symbol=>Proc,Symbol}]
   #
   # @see FileFormat#format_fields
   #
-  FORMAT_FIELDS = {
+  FORMAT_FIELDS = OCF_FORMAT[:fields]
 
-    CoverImage:           :cover_image,
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = OCF_FORMAT[:map]
 
-    # Dublin Core
+  # ===========================================================================
+  # :section: FileFormat overrides
+  # ===========================================================================
 
-    Title:                :title,
-    Author:               :author,                # Not Dublin Core
-    Editor:               :editor,                # Not Dublin Core
-    Creator:              :creator,
-    Contributor:          :contributor,
-    Language:             :language,
-    Date:                 :date,
-    Publisher:            :publisher,
-    PublicationDate:      :publication_date,      # <date event="publication">
-    Subject:              :subject,
-    Type:                 :type,
-    Rights:               :rights,
-    Format:               :formats,
-    Source:               :source,
-    Coverage:             :coverage,
-    Relation:             :relation,
-    Description:          :description,
-    Identifier:           :identifier,
+  public
 
-    # Schema.org
-
-    AccessibilityFeature: :accessibility_feature,
-    AccessibilityHazard:  :accessibility_hazard,
-    AccessibilityControl: :accessibility_control,
-    AccessMode:           :access_mode,
-    AccessModeSufficient: :access_mode_sufficient,
-    AccessibilitySummary: :accessibility_summary,
-
-    # DTBook x-metadata
-
-    Synopsis:             :synopsis,              # not in DTBook
-    RunningTime:          :total_time,            # 0 for type == 'textNCX'
-    AudioFormat:          :audio_format,
-    Narrator:             :narrator,
-    MultimediaType:       :multimedia_type,
-    MultimediaContent:    :multimedia_content,
-    SourceTitle:          :source_title,
-    SourceRights:         :source_rights,
-    SourceEdition:        :source_edition,
-    SourceDate:           :source_date,
-    SourcePublisher:      :source_publisher,
-    Producer:             :producer,
-    ProductionDate:       :produced_date,
-    Revision:             :revision,
-    RevisionDate:         :revision_date,
-    RevisionDescription:  :revision_description,
-    ModifiedDate:         :modified,              # not in DTBook
-
-    # From *.ncx file
-
-    Uid:                  :uid,
-    Depth:                :depth,
-    Generator:            :generator,
-    Pages:                :total_page_count,      # 0 => no navigable pages
-    MaxPageNumber:        :max_page_number,       # 0 => no navigable pages
-
-  }.freeze
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see FileFormat#configuration
+  #
+  def configuration
+    OCF_FORMAT
+  end
 
 end
 

@@ -1,4 +1,4 @@
-# app/helpers/generic_helper.rb
+# lib/emma/common.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,10 +7,9 @@ __loading_begin(__FILE__)
 
 # General support methods.
 #
-module GenericHelper
+module Emma::Common
 
   def self.included(base)
-    __included(base, '[GenericHelper]')
     base.send(:extend, self)
   end
 
@@ -174,6 +173,56 @@ module GenericHelper
     opt  = hash.slice(*keys)
     rem  = hash.except(*opt.keys)
     return opt, rem
+  end
+
+  # Recursive remove blank items from a hash.
+  #
+  # @param [Hash] item
+  #
+  # @return [Hash]
+  #
+  # @see #remove_blanks
+  #
+  def reject_blanks(item)
+    remove_blanks(item) || {}
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # Recursively remove blank items from an object.
+  #
+  # @overload remove_blanks(item)
+  #   @param [Hash] item
+  #   @return [Hash, nil]
+  #
+  # @overload remove_blanks(item)
+  #   @param [Array] item
+  #   @return [Array, nil]
+  #
+  # == Usage Notes
+  # Empty strings and nils are considered blank, however an item or element
+  # with the explicit value of *false* is not considered blank.
+  #
+  def remove_blanks(item)
+    case item
+      when Hash
+        item.map { |k, v|
+          v = remove_blanks(v)
+          [k, v] unless v.nil?
+        }.compact.to_h.presence
+      when Array
+        item.map { |v|
+          remove_blanks(v)
+        }.compact.presence
+      when Boolean, TrueClass, FalseClass
+        item
+      else
+        item.presence
+    end
   end
 
   # ===========================================================================
@@ -430,12 +479,16 @@ module GenericHelper
   # Render a camel-case or snake-case string as in "title case" words separated
   # by non-breakable spaces.
   #
+  # If *text* is already HTML-ready it is returned directly.
+  #
   # @param [String, Symbol]       text
   # @param [Integer, Symbol, nil] count
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def labelize(text, count = nil)
+    # noinspection RubyYardReturnMatch
+    return text if text.is_a?(ActiveSupport::SafeBuffer)
     result =
       Array.wrap(text)
         .flat_map { |s| s.to_s.split(/[_\s]/) if s.present? }
@@ -444,9 +497,21 @@ module GenericHelper
           s = s.upcase_first.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip
           s.split(' ').map { |word| (word == 'Id') ? word.upcase : word }
         }.compact.join(' ')
-    result = ERB::Util.h(result) unless text.html_safe?
+    result = ERB::Util.h(result)
     result = inflection(result, count) if count
     non_breaking(result, force: true)
+  end
+
+  # Transform a string into a value safe for use as an HTML ID (or class name).
+  #
+  # @param [String, Symbol] text
+  #
+  # @return [String]
+  #
+  def html_id(text)
+    # noinspection RubyYardParamTypeMatch
+    text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
+    text.to_s.tr(' ', '_').underscore.camelize
   end
 
   # Add surrounding quotation marks to a term.

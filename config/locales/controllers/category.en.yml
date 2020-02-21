@@ -1,12 +1,10 @@
 # config/locales/controllers/category.en.yml
+#
+# CategoryController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Category pages
-    # =========================================================================
 
     category:
 
@@ -16,6 +14,12 @@ en:
       label:            'Categories'
       title:            'Categories'
       tooltip:          'Search for Bookshare catalog items by topic.'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:           &CATEGORY_FIELDS {}
 
       # =======================================================================
       # Controls
@@ -41,8 +45,12 @@ en:
         label:          'Categories'
         title:          'Category Index'
         tooltip:        'Get a Bookshare category listing.'
+        fields:
+          <<:           *CATEGORY_FIELDS
 
       show:
         label:          'Category'
         title:          'Category'
         tooltip:        'See Bookshare items in this category.'
+        fields:
+          <<:           *CATEGORY_FIELDS

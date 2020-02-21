@@ -1,0 +1,38 @@
+<%# app/views/upload/delete.html.erb -%>
+<%-
+  # Prompt to remote an existing file entry.
+  title ||= t('emma.upload.delete.title')
+  item  ||= @item
+  repo  ||= @repo || item&.repository
+  logo  ||= repository_source_logo(repo)
+  modal ||= true?(params[:modal])
+
+  unless modal
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+  <%= logo %>
+</div>
+<%= upload_description %>
+
+<%- if item.blank? -%>
+
+  <%= render 'upload/select_entry' %>
+  <%= upload_notes %>
+
+<%- else -%>
+
+  <%= render 'upload/selected', item: item %>
+
+  <%= upload_directions %>
+  <%= upload_delete_form(item) %>
+  <%= upload_preview %>
+
+<%- end -%>
+
+<%= upload_action_list unless modal %>

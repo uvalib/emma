@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 class Search::Message::SearchRecordList < Search::Api::Message
 
-  include TimeHelper
+  include Emma::Time
 
   attr_reader :records
 
@@ -66,7 +66,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   end
 
   # ===========================================================================
-  # :section: TODO: remove - testing federated search with fake records
+  # :section: TODO: remove - testing unified search with fake records
   # ===========================================================================
 
   protected
@@ -77,7 +77,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   EXAMPLE_DATA = I18n.t('emma.examples.search').deep_freeze
 
   # @type [Hash]
-  RECORD_TEMPLATE = EXAMPLE_DATA.dig(:generic, :template).deep_freeze
+  RECORD_TEMPLATE = EXAMPLE_DATA.dig(:generic, :template)
 
   # Generate example records from config/locales/examples.en.yml data.
   #

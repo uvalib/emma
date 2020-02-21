@@ -152,9 +152,8 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean} opening
      */
     function updateToggleButton($button, opening) {
-        var text = opening ? PANEL_CLOSER_LABEL : PANEL_OPENER_LABEL;
-        var tip  = opening ? PANEL_CLOSER_TIP   : PANEL_OPENER_TIP;
-        $button.html(text).attr('title', tip);
+        var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
+        $button.html(value.label).attr('title', value.tooltip);
     }
 
     // ========================================================================
@@ -163,7 +162,8 @@ $(document).on('turbolinks:load', function() {
 
     $toggle_buttons
         .off('click', togglePanel)
-        .on('click', togglePanel);
+        .on('click', togglePanel)
+        .each(handleKeypressAsClick);
 
     // ========================================================================
     // Actions

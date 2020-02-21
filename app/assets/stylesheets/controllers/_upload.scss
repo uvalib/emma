@@ -1,0 +1,564 @@
+// app/assets/stylesheets/controllers/_upload.scss
+
+// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/search'; // TODO: SASS 4.0
+
+//=============================================================================
+// Upload index page
+//=============================================================================
+
+$upload-padding:   0.5rem;
+$upload-entry-gap: 2rem;
+
+// Upload entry fields for index listings.
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+.upload-list-entry {
+
+    $data-list-border-color: none;
+
+    @extend .item-list-entry;
+
+    @include grid-gap(0, 2rem);
+
+    padding:        $upload-padding;
+    padding-bottom: 2 * $upload-padding;
+    border:         2px solid black;
+    border-radius:  0.5rem;
+    background:     lighter($uva-accent-yellow, 90%);
+
+    // Special-case listing when no records are found.
+    &.empty {
+        margin-top:  0;
+        padding-top: 0;
+        border:      none;
+        background:  inherit;
+    }
+
+    // List data items in horizontal columns when there is enough room,
+    // followed by a hierarchical rendering of :file_data, followed by a
+    // hierarchical rendering of :emma_data.
+    //
+    // noinspection CssBrowserCompatibilityForProperties
+    @media #{$wide-screen} {
+
+        grid-template-columns: repeat(9, auto);
+
+        > .label                { grid-row-start: 1; }
+        > .value                { grid-row-start: 2; }
+        > .label.field-FileData { grid-row-start: 3; }
+        > .value.field-FileData { grid-row-start: 4; }
+        > .label.field-EmmaData { grid-row-start: 5; }
+        > .value.field-EmmaData { grid-row-start: 6; }
+    }
+
+    // Revert to one data item label/value per line with less room.
+    @media #{$medium-width} {
+        grid-template-columns: [label] minmax(10%,auto) [value] 1fr;
+    }
+
+    // Each label and value on a separate line on narrow screens.
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+    }
+
+    // One data item label/value per line for the minimalist IE grid.
+    @media #{$browser-ie} {
+
+        -ms-grid-columns: auto 1fr;
+
+        .label { -ms-grid-column: 1; }
+        .value { -ms-grid-column: 2; }
+    }
+
+    // Ensure that the label and value both span the grid in all screen widths
+    // for the hierarchical data values.
+    .field-FileData,
+    .field-EmmaData {
+
+        @include grid-column-span;
+
+        margin: (3 * $upload-padding) 0;
+
+        &.label {
+            margin-top:  2 * $upload-padding;
+            padding-top: 2 * $upload-padding;
+            border-top:  1px solid black;
+        }
+
+        &.value {
+            margin-top: 0;
+        }
+
+        @media #{$browser-ie} {
+            &.label {
+                padding-top: 0;
+                border-top:  none;
+            }
+            &.value {
+                padding-top: $upload-padding / 2;
+                word-wrap:   break-word;
+            }
+        }
+    }
+
+    // If hierarchical areas don't have a border then they look better if
+    // they're tightened up.
+    @if $data-list-border-color == none {
+
+        .value.field-FileData {
+            margin-bottom: -1.5rem;
+        }
+
+        .value.field-EmmaData {
+            margin-bottom: 0;
+        }
+    }
+
+    // Display multi-line fields inside a box.
+    // @see ModelHelper#render_pair
+    .value.textbox {
+
+        @include width-fit-content;
+
+        padding:       0 0.25rem;
+        white-space:   pre-wrap;
+        border:        1px solid darkgray;
+        border-radius: 0.125rem;
+    }
+
+    // Display fields with multiple values horizontally.
+    // @see ModelHelper#render_pair
+    .value.array {
+
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        margin-bottom:  0;
+
+        @media #{$narrow-screen} {
+            flex-direction: column;
+        }
+
+        > * {
+
+            margin-right:  0.5rem;
+            margin-bottom: 0.5rem;
+            padding:       0 0.25rem;
+            padding-top:   0.0625rem;
+            border:        1px solid blue;
+            border-radius: 0.125rem;
+
+            @media #{$not-narrow-screen} {
+                flex: 0 1 15vw;
+            }
+        }
+    }
+
+    // Hierarchical display for data items containing JSON.
+    .data-list {
+
+        @extend .item-list;
+
+        @media #{$narrow-screen} {
+            grid-template-columns: 1fr;
+        }
+
+        $wide-margin:   2rem;
+        $medium-margin: 1rem;
+        $narrow-margin: 0.5rem;
+
+        margin:  0 $wide-margin;
+        padding: $upload-padding;
+
+        @if not $data-list-border-color == none {
+            border:         2px solid $data-list-border-color;
+            border-radius:  0.5rem;
+        }
+
+        // Adjustment for a hierarchical element which is itself a hierarchy.
+        .data-list {
+            margin-top:   1.75rem;
+            margin-left:  -4rem;
+            margin-right: $wide-margin;
+        }
+
+        @media #{$medium-width} {
+
+            margin-left:  $medium-margin;
+            margin-right: $medium-margin;
+
+            .data-list {
+                margin-right: $medium-margin * 1.25;
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            margin-left:  $narrow-margin;
+            margin-right: $narrow-margin;
+
+            .data-list {
+                margin-top:   $narrow-margin / 2;
+                margin-left:  $narrow-margin;
+                margin-right: $narrow-margin;
+            }
+        }
+
+        @media #{$browser-ie} {
+            margin-left: 0;
+        }
+    }
+}
+
+// Zero or more .upload-list-entry elements.
+// noinspection SassScssResolvedByNameOnly
+.upload-list {
+
+    @extend .item-list;
+
+    grid-row-gap: $upload-entry-gap;
+
+    .applied-search-terms,
+    .pagination-top {
+        margin-bottom: $upload-entry-gap / 2;
+    }
+
+    .number {
+
+        padding-top: $upload-padding * 0.75;
+
+        // Sticky container which keeps the item number and icon tray in view
+        // as the item is scrolled off the top of the screen.
+        .container {
+
+            display:        flex;
+            flex-direction: column;
+            align-items:    center;
+            position:       sticky;
+            top:            3%;
+            margin:         0;
+            padding:        0;
+
+            //=================================================================
+            // Components
+            //=================================================================
+
+            // Item number value.
+            .value {
+                margin-bottom: 1rem;
+                font-size:     large;
+                font-weight:   bold;
+            }
+
+            $icon-pad:      4px;
+            $tray-pad:      1.5 * $icon-pad;
+
+            // Vertical tray of action button icons.
+            .icon-tray {
+                display:        flex;
+                flex-direction: column;
+                align-items:    center;
+                padding:        $tray-pad;
+                margin-left:    -$tray-pad;
+                margin-right:   -$tray-pad;
+                background:     whitesmoke;
+                border:         1px solid lightgray;
+                border-radius:  0.25rem;
+            }
+
+            // Action button icon to perform an operation to the current item.
+            .icon {
+
+                @extend %button;
+
+                padding:         0 $icon-pad;
+                margin-left:     -$icon-pad;
+                margin-right:    -$icon-pad;
+                text-decoration: none;
+                font-size:       large;
+                border-radius:   50%;
+
+                &:hover {
+                    text-decoration:  none;
+                    background-color: white;
+                }
+            }
+        }
+
+    }
+}
+
+//=============================================================================
+// Upload show page
+//=============================================================================
+
+// Upload entry fields.
+.upload-details {
+    @extend .upload-list-entry; // INSTEAD OF @extend .item-details;
+}
+
+// Container for an .upload-details.
+.upload-container {
+    @extend .item-container;
+}
+
+//=============================================================================
+// Upload new/edit/delete pages
+//=============================================================================
+
+form.select-entry {
+
+    margin: 3rem 0;
+
+    // noinspection SassScssResolvedByNameOnly
+    select {
+
+        max-width:     100%;
+        padding:       2px;
+        font-size:     large;
+        background:    lighter($focus-accent, 90%);
+        border:        1px solid #14457f;
+        border-radius: 0.125rem;
+
+        &:focus:hover {
+            outline-color: transparent;
+        }
+    }
+}
+
+.selected-upload {
+
+    // noinspection SassScssResolvedByNameOnly
+    .selected-header {
+        margin:    $page-padding 0;
+        font-size: large;
+    }
+
+    .selected-details {
+
+        @extend .toggle-panel;
+
+        // noinspection SassScssResolvedByNameOnly
+        @media #{$not-narrow-screen} {
+            margin-left:  2rem;
+            margin-right: 2rem;
+        }
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+.upload-fields {
+
+    @include grid(auto 1fr);
+    @include grid-gap(1.5rem);
+
+    width:       inherit;
+    line-height: 1.375;
+    font-size:   large;
+
+    // A large minimum height is set to avoid the page bouncing vertically when
+    // switching between field filter settings which display a varying number
+    // of rows.
+    min-height:     75vh;
+    grid-auto-rows: max-content;
+
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+        grid-row-gap:          0.25rem;
+    }
+
+    //=========================================================================
+    // Basic components
+    //=========================================================================
+
+    %scrollable {
+        max-height: 25vh;
+        overflow-y: auto;
+    }
+
+    // Single-line text input.
+    .input.single {
+        padding:       0.25rem;
+        border-radius: 0.25rem;
+    }
+
+    // Single textarea input.
+    textarea.input.single {
+
+        @extend %scrollable;
+
+        min-height: 8rem;
+    }
+
+    // Scrollable container for multiple single-line text input entries.
+    .input.multi {
+        > .multi {
+
+            @include grid(1fr);
+            @include grid-gap(0.5rem);
+
+            @extend %scrollable;
+
+            .input.single {
+                margin:      0.25rem;
+                line-height: 1.25;
+                font-size:   inherit;
+            }
+        }
+    }
+
+    // Container for a checkbox and label pair.
+    .checkbox.single {
+
+        label {
+            margin: 0 0.675rem;
+        }
+
+        &:hover {
+
+            background: whitesmoke;
+
+            label {
+                @extend %hover-bold;
+            }
+        }
+    }
+
+    // Single-select dropdown menu.
+    .menu.single {
+
+        @include width-fit-content;
+
+        height:        2rem;
+        background:    $focus-accent;
+        border-radius: 0.25rem;
+
+        option {
+            background: white;
+        }
+
+        // This assumes that the first option is a blank value with the same
+        // name as the data item.
+        option:first-of-type {
+            display: none;
+        }
+    }
+
+    // Scrollable container for multi-select checkboxes.
+    .menu.multi {
+
+        border-radius: 0.25rem;
+
+        > .multi {
+
+            @extend %scrollable;
+
+            &:focus {
+                outline-color: transparent;
+            }
+        }
+    }
+
+    //=========================================================================
+    // Top-level components
+    //=========================================================================
+
+    // <label> elements.
+    > .label {
+
+        display:         flex;
+        flex-direction:  row;
+        justify-content: space-between;
+
+        line-height:     2;
+        font-weight:     bold;
+
+        @media #{$narrow-screen} {
+            margin-top: 0.75rem;
+        }
+
+        // noinspection CssReplaceWithShorthandSafely
+        .status-marker {
+
+            @include user-select(none);
+
+            margin-top:    0;
+            margin-bottom: auto;
+            margin-left:   1rem;
+            margin-right:  0;
+            line-height:   1.5;
+            font-size:     larger;
+            visibility:    hidden;
+
+            @media #{$narrow-screen} {
+                margin-right: 0.5rem;
+            }
+
+            &.optional {
+            }
+
+            &.valid {
+                visibility: visible;
+                color:      green;
+            }
+
+            &.invalid {
+                visibility: visible;
+                color:      red;
+            }
+
+            &.required {
+                visibility: visible;
+            }
+        }
+    }
+
+    // <input> elements.
+    > .value {
+
+        font-family: inherit;
+        font-size:   large;
+        color:       black;
+
+        &.optional {
+        }
+
+        &.valid {
+        }
+
+        &.invalid {
+            background: $input-error-bg;
+        }
+
+        &.required {
+        }
+
+        &.disabled {
+            background: $input-disabled-bg;
+        }
+
+        &.menu {
+            &.single {
+                @media #{$wide-screen}   { min-width: 12.5vw; }
+                @media #{$medium-width}  { min-width: 25vw; }
+                @media #{$narrow-screen} { min-width: 100%; }
+            }
+        }
+    }
+
+    // Unhidden by file-upload.js if field filtering results in no fields being
+    // displayed.  A large minimum height is set to avoid the page bouncing
+    // vertically when switching between field filter settings.
+    > .no-fields {
+
+        @include grid-column-span;
+
+        font-style:  italic;
+        font-weight: bold;
+        min-height:  75vh;
+
+        &.inactive {
+            display: none;
+        }
+    }
+}

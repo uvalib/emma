@@ -467,7 +467,7 @@ $search-button-width:    6rem;
 
             @media #{$browser-ie} {
                 margin:       $ie-gap-y 0;
-                margin-right: 3 * $ie-gap-x;
+                margin-right: (3 * $ie-gap-x);
             }
 
             //=================================================================
@@ -524,7 +524,7 @@ $search-button-width:    6rem;
                 margin-top:    $ie-gap-y;
                 margin-bottom: $ie-gap-y;
                 margin-left:   $ie-gap-x;
-                margin-right:  3 * $ie-gap-x;
+                margin-right:  (3 * $ie-gap-x);
             }
 
             @media #{$narrow-screen} {
@@ -550,7 +550,7 @@ $search-button-width:    6rem;
             @media #{$browser-ie} {
 
                 margin:       $ie-gap-y 0;
-                margin-right: 2 * $ie-gap-x;
+                margin-right: (2 * $ie-gap-x);
 
                 @media #{$narrow-screen} {
                     margin-right: 0;
@@ -591,8 +591,7 @@ $search-button-width:    6rem;
         //=====================================================================
 
         @include grid;
-
-        grid-gap: 0 $gap-x; // @see %grid-cell
+        @include grid-gap(0, $gap-x); // @see %grid-cell
 
         // Maximum number of physical columns per width breakpoint.
 
@@ -709,7 +708,7 @@ $search-button-width:    6rem;
 
             &.col-first {
                 @media #{$wide-screen} {
-                    grid-column: 1;
+                    @include grid-column(1);
                 }
             }
         }
@@ -722,7 +721,7 @@ $search-button-width:    6rem;
             margin-right: calc(3 * #{$gap-x});
 
             @media #{$browser-ie} {
-                margin-right: 3 * $ie-gap-x;
+                margin-right: (3 * $ie-gap-x);
             }
 
             select {
@@ -777,7 +776,7 @@ $search-button-width:    6rem;
         margin:         0;
     }
 
-    // @see LayoutHelper::PageControls#page_controls
+    // @see LayoutHelper#page_controls
     .control {
 
         @extend %control-button;
@@ -792,7 +791,7 @@ $search-button-width:    6rem;
 // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 .layout-section.page.controls {
 
-    // @see LayoutHelper::PageControls#render_page_controls
+    // @see LayoutHelper#render_page_controls
     .page-controls {
 
         @extend %header-search-section;

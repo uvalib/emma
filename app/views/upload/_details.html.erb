@@ -1,0 +1,17 @@
+<%# app/views/upload/_details.html.erb -%>
+<%-
+  # A listing of an upload entry details.
+  item  ||= nil or return
+  image ||= nil
+  add   ||= {}
+  level ||= 1
+  skip  ||= nil
+
+  role = ('role="article"'.html_safe if level == 1)
+  skip = Array.wrap(skip)
+-%>
+
+<div <%= role -%> class="upload-container">
+  <%= upload_details(item, add) %>
+  <%= image || cover_image(item) unless skip.include?(:cover_image) %>
+</div>

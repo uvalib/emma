@@ -115,7 +115,6 @@ module Search::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  # noinspection RubyAssignmentExpressionInConditionalInspection
   def creator_list
     contributor_list
   end

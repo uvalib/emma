@@ -10,8 +10,8 @@ __loading_begin(__FILE__)
 #
 class FileProperties < Hash
 
+  include Emma::Debug
   include FileAttributes
-  include DebugHelper
 
   # ===========================================================================
   # :section:

@@ -15,7 +15,7 @@ class String
   # @return [String]
   #
   def delete_prefix(prefix)
-    start_with?(prefix) ? self[prefix.size..-1] : self
+    start_with?(prefix) ? self[prefix.size..-1] : self.dup
   end if RUBY_VERSION < '2.7' # TODO: Determine if this is needed for >= 2.7.
 
   # By-passes the built-in definition to avoid problems encountered during

@@ -47,10 +47,10 @@ module HeadHelper::Favicon
 
   # Set the favicon for this page, eliminating any previous value.
   #
+  # @param [String] src
+  #
   # @yield Supplies a value to @page_favicon.
   # @yieldreturn [String]
-  #
-  # @param [String] src
   #
   # @return [String]                  The updated @page_favicon.
   #
@@ -68,7 +68,6 @@ module HeadHelper::Favicon
   def emit_page_favicon(**opt)
     @page_favicon ||= DEFAULT_PAGE_FAVICON
     opt = meta_options(opt)
-    # noinspection RubyYardReturnMatch
     favicon_link_tag(@page_favicon, opt)
   end
 

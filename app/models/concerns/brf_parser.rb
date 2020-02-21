@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class BrfParser < FileParser
 
+  include BrfFormat
+
   # ===========================================================================
   # :section: FileParser overrides
   # ===========================================================================

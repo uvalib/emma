@@ -1,0 +1,83 @@
+# config/locales/error.en.yml
+#
+# Error messages
+
+en:
+
+  emma:
+
+    error:
+
+      default:          'unknown error'
+      failure:          'FAILURE: %{error}'
+      success:          'SUCCESS: %{file}'
+
+      api:
+
+        # @see Api::Error
+
+        default:        'Unknown API error'
+        auth:           'API authorization error'
+        comm:           'API network error'
+        session:        'API session error'
+        timeout:        'API session token expired'
+        recv:           'API receive error'
+        parse:          'API sent bad data'
+        xmit:           'API transmit error'
+        request:        'Bad API request'
+
+        # @see ApiService::Error
+
+        response:       'Bad API response'
+        empty_result:   'Empty API result body'
+        html_result:    'Invalid (HTML) result body'
+        redirection:    'Missing HTTP redirect location'
+        redirect_limit: 'Too many HTTP redirects'
+
+      bookshare:
+
+        # @see Bs::Error
+
+        default:        'Unknown Bookshare API error'
+        auth:           'Bookshare API authorization error'
+        comm:           'Bookshare API network error'
+        session:        'Bookshare API session error'
+        timeout:        'Bookshare API session token expired'
+        recv:           'Bookshare API receive error'
+        parse:          'Bad data from Bookshare API'
+        xmit:           'Bookshare API transmit error'
+        request:        'Bad request to Bookshare API'
+        account:        'Bookshare API account request error'
+        subscription:   'Bookshare API subscription request error'
+        title:          'Bookshare API catalog title request error'
+        periodical:     'Bookshare API periodical request error'
+        reading_list:   'Bookshare API reading list request error'
+        organization:   'Bookshare API organization request error'
+
+        # @see BookshareService::Error
+
+        response:       'Bad Bookshare API response'
+
+      search:
+
+        # @see Search::Error
+
+        default:        'Unknown Unified Search API error'
+        auth:           'Unified Search API authorization error'
+        comm:           'Unified Search API network error'
+        session:        'Unified Search API session error'
+        timeout:        'Unified Search API session token expired'
+        recv:           'Unified Search API receive error'
+        parse:          'Bad data from Unified Search API'
+        xmit:           'Unified Search API transmit error'
+        request:        'Bad request to Unified Search API'
+
+        # @see SearchService::Error
+
+        response:       'Bad Unified Search API response'
+
+      request:
+        generic:
+          default:      'Bad response from server'
+          failed:       'Unable to request items right now'
+          no_items:     'There were no items to request'

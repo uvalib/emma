@@ -29,25 +29,22 @@ $results-entry-margin-y: 0.67rem;
 // Search controls
 //=============================================================================
 
+// noinspection SassScssResolvedByNameOnly
 .applied-search-terms,
 .pagination-top,
 .pagination-bottom {
 
-    // noinspection CssBrowserCompatibilityForProperties
-    grid-column: 1 / -1;
-    margin:      $results-entry-gap-y 0;
+    @include grid-column-span(3);
 
-    // noinspection SassScssResolvedByNameOnly
+    margin: $results-entry-gap-y 0;
+
     @media #{$narrow-screen} {
         margin: calc(2 * #{$results-entry-gap-y}) 0;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$browser-ie} {
 
-        margin:               $ie-results-entry-gap-y 0;
-        -ms-grid-column:      1;
-        -ms-grid-column-span: 3;
+        margin: $ie-results-entry-gap-y 0;
 
         @media #{$narrow-screen} {
             margin: (2 * $ie-results-entry-gap-y) 0;
@@ -205,16 +202,25 @@ $results-entry-margin-y: 0.67rem;
 
         font-weight: bold;
 
+        @media #{$narrow-screen} {
+            margin-bottom: $flex-gap-y;
+        }
+
         @media #{$browser-ie} {
+
             margin-right:    $ie-flex-gap-x;
             -ms-grid-column: 1;
+
+            @media #{$narrow-screen} {
+                margin-bottom: $ie-flex-gap-y;
+            }
         }
     }
 
     .value {
 
         @media #{$narrow-screen} {
-            margin-bottom: $results-entry-gap-y;
+            margin-bottom: calc(3 * #{$results-entry-gap-y} / 2);
         }
 
         @media #{$browser-ie} {
@@ -222,7 +228,7 @@ $results-entry-margin-y: 0.67rem;
             -ms-grid-column: 2;
 
             @media #{$narrow-screen} {
-                margin-bottom: $ie-results-entry-gap-y;
+                margin-bottom: (3 * $ie-results-entry-gap-y / 2);
             }
         }
 
@@ -386,7 +392,7 @@ $results-entry-margin-y: 0.67rem;
             margin-top: calc(2 * #{$page-padding});
 
             @media #{$browser-ie} {
-                margin-top: 2 * $ie-page-padding;
+                margin-top: (2 * $ie-page-padding);
             }
 
             &:first-child {

@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module LayoutHelper::Logo
 
-  include HtmlHelper
+  include LayoutHelper::Common
 
   # ===========================================================================
   # :section:

@@ -8,6 +8,9 @@ __loading_begin(__FILE__)
 # EPUB document information.
 #
 class EpubParser < OcfParser
+
+  include EpubFormat
+
 end
 
 __loading_end(__FILE__)

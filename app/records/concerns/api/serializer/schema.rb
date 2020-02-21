@@ -11,7 +11,7 @@ module Api::Serializer::Schema
 
   include ::Api::Schema
 
-  include GenericHelper
+  include Emma::Common
 
   # ===========================================================================
   # :section:

@@ -18,10 +18,8 @@ __loading_begin(__FILE__)
 #
 module FileFormat
 
-  extend ActiveSupport::Concern
-
+  include Emma::Unicode
   include FileAttributes
-  include UnicodeHelper
 
   # ===========================================================================
   # :section:
@@ -29,11 +27,11 @@ module FileFormat
 
   public
 
-  # FILE_FORMATS
+  # TYPES # TODO: should be in configuration
   #
   # @type [Array<Symbol>]
   #
-  FILE_FORMATS = %i[brf daisy daisyAudio epub pdf word].freeze
+  TYPES = %i[brf daisy daisyAudio epub pdf word].freeze
 
   # Placeholder for an unknown format.
   #
@@ -101,6 +99,14 @@ module FileFormat
 
   public
 
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  def configuration
+    raise "#{self.class}: #{__method__} not defined"
+  end
+
   # parser
   #
   # @return [FileParser]
@@ -119,19 +125,25 @@ module FileFormat
 
   # Metadata extracted from the file format instance.
   #
-  # @param [*] info                   Information supplied by the subclass.
-  #
   # @return [Hash]
   #
-  def metadata(info = nil)
-    @metadata ||= format_metadata(info || parser_metadata)
+  def metadata
+    @metadata ||= format_metadata(parser_metadata)
+  end
+
+  # Extracted metadata mapped to common metadata fields.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def common_metadata
+    @common_metadata ||= mapped_metadata(parser_metadata)
   end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Metadata extracted from the file format instance.
   #
@@ -144,7 +156,7 @@ module FileFormat
   # @yieldparam [Array<String>]       values
   # @yieldreturn [Array<(String,Array)>]  label, values
   #
-  # @return [Hash]
+  # @return [Hash{String=>*}]
   #
   def format_metadata(info)
     return {} if info.blank?
@@ -164,6 +176,32 @@ module FileFormat
       [label, value]
     }.compact.to_h
   end
+
+  # Map metadata extracted from the file format instance into common metadata
+  # fields.
+  #
+  # @param [*] info                   Information supplied by the subclass.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def mapped_metadata(info)
+    return {} if info.blank?
+    # @type [Symbol] format_field
+    # @type [Symbol] mapped_field
+    mapped_metadata_fields.map { |format_field, mapped_field|
+      value = apply_field_accessor(info, format_field)
+      next if value.blank?
+      key   = mapped_field
+      value = apply_field_transform(:accessor, format_field, value)
+      [key, value]
+    }.compact.to_h
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # apply_field_accessor
   #
@@ -226,7 +264,7 @@ module FileFormat
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # format_fields
   #
@@ -251,6 +289,14 @@ module FileFormat
   #
   def field_value_array
     FIELD_ALWAYS_ARRAY
+  end
+
+  # mapped_metadata_fields
+  #
+  # @return [Hash{Symbol=>Symbol}]
+  #
+  def mapped_metadata_fields
+    @mapped_metadata_fields ||= self.class_eval { const_get(:FIELD_MAP) }
   end
 
   # ===========================================================================
@@ -327,6 +373,74 @@ module FileFormat
     else
       send(method, value)
     end
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  module ModuleMethods
+
+    # Get configured properties for a file format.  If multiple sections are
+    # given each successive section is recursively merged into the previous.
+    #
+    # @param [Array<String, Symbol, Hash>] section
+    #
+    # @return [Hash{Symbol=>String,Array,Hash}]
+    #
+    def format_configuration(*section)
+      type = section.last
+      if type.is_a?(String)
+        type = type.sub(/^emma\./, '') if type.start_with?('emma.')
+        type = type.to_sym
+      end
+      return {} unless type.is_a?(Symbol)
+      @@format_configuration ||= {}
+      @@format_configuration[type] ||=
+        {}.tap do |result|
+          section.each do |sec|
+            # noinspection RubyYardParamTypeMatch
+            hash = sec.is_a?(Hash) ? sec : format_configuration_section(sec)
+            result.deep_merge!(hash) if hash.present?
+          end
+        end
+    end
+
+    # Get properties from a configuration section.
+    #
+    # @param [String, Symbol] section
+    #
+    # @return [Hash{Symbol=>String,Array,Hash}]
+    #
+    def format_configuration_section(section)
+      path = section.to_s
+      path = path.start_with?('emma.') ? path : "emma.#{path}"
+      hash = I18n.t(path).deep_dup
+      %i[mimes exts].each do |key|
+        hash[key] ||= []
+        hash[key].map! { |s| s.to_s.strip.downcase.presence }
+        hash[key].compact!
+      end
+      %i[fields map].each do |key|
+        hash[key] ||= {}
+        hash[key].transform_values! do |value|
+          if value.is_a?(Array)
+            value.map { |s| s.to_s.strip.to_sym.presence }.compact.presence
+          else
+            value.to_s.strip.to_sym.presence
+          end
+        end
+        hash[key].compact!
+      end
+      hash
+    end
+
+  end
+
+  def self.included(base)
+    base.send(:extend, ModuleMethods)
   end
 
 end

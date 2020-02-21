@@ -2,7 +2,6 @@
 #
 # frozen_string_literal: true
 # warn_indent:           true
-#
 
 __loading_begin(__FILE__)
 
@@ -186,6 +185,7 @@ class Ability
     can :manage, Artifact
     can :manage, Member
     can :manage, ReadingList
+    can :manage, Upload
   end
 
   # Indicate that the user can perform as an assistant to a DSO Staff member.
@@ -200,6 +200,8 @@ class Ability
     act_as_guest
     can :create, Artifact
     can :update, Artifact
+    can :create, Upload
+    can :update, Upload
   end
 
   # Indicate that the user can perform as a library member.
@@ -286,6 +288,7 @@ class Ability
     can :read, Title
     can :read, Periodical
     can :read, Edition
+    can :manage, Upload # TODO: testing - remove
   end
 
 end

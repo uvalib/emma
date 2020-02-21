@@ -1,22 +1,16 @@
 # config/locales/controllers/api.en.yml
+#
+# ApiController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # API page
-    # =========================================================================
 
     api:
 
       label:            'API Methods'
       title:            'Bookshare API Methods'
       tooltip:          'Bookshare API methods accessed as the current user.'
-
-      # =======================================================================
-      # Pages
-      # =======================================================================
 
       index:
         label:          'API Methods'

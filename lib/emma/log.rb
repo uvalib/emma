@@ -9,13 +9,15 @@ __loading_begin(__FILE__)
 #
 module Emma::Log
 
+  include Logger::Severity
+
   LOG_LEVEL = {
-    debug:   Logger::DEBUG,
-    info:    Logger::INFO,
-    warn:    Logger::WARN,
-    error:   Logger::ERROR,
-    fatal:   Logger::FATAL,
-    unknown: Logger::UNKNOWN,
+    debug:   DEBUG,
+    info:    INFO,
+    warn:    WARN,
+    error:   ERROR,
+    fatal:   FATAL,
+    unknown: UNKNOWN,
   }.freeze
 
   # ===========================================================================
@@ -48,11 +50,11 @@ module Emma::Log
   # method.  If the next element of *args* is an Exception, a message is
   # constructed from its contents.
   #
-  # @yield Supplies additional parts to the log entry.
-  # @yieldreturn [String, Array<String>]
-  #
   # @param [Numeric, Symbol, nil]           severity
   # @param [Array<String,Symbol,Exception>] args
+  #
+  # @yield Supplies additional parts to the log entry.
+  # @yieldreturn [String, Array<String>]
   #
   # @return [nil]
   #
@@ -95,7 +97,7 @@ module Emma::Log
   # @return [nil]
   #
   def self.debug(*args, &block)
-    add(Logger::DEBUG, *args, &block)
+    add(DEBUG, *args, &block)
   end
 
   # Add an INFO-level log message.
@@ -105,7 +107,7 @@ module Emma::Log
   # @return [nil]
   #
   def self.info(*args, &block)
-    add(Logger::INFO, *args, &block)
+    add(INFO, *args, &block)
   end
 
   # Add a WARN-level log message.
@@ -115,7 +117,7 @@ module Emma::Log
   # @return [nil]
   #
   def self.warn(*args, &block)
-    add(Logger::WARN, *args, &block)
+    add(WARN, *args, &block)
   end
 
   # Add an ERROR-level log message.
@@ -125,7 +127,7 @@ module Emma::Log
   # @return [nil]
   #
   def self.error(*args, &block)
-    add(Logger::ERROR, *args, &block)
+    add(ERROR, *args, &block)
   end
 
   # Add a FATAL-level log message.
@@ -135,7 +137,7 @@ module Emma::Log
   # @return [nil]
   #
   def self.fatal(*args, &block)
-    add(Logger::FATAL, *args, &block)
+    add(FATAL, *args, &block)
   end
 
   # ===========================================================================
@@ -255,7 +257,7 @@ module Emma::Log
       self.silenced = false
     elsif !silenced?
       saved_log_level[local_log_id] = logger.local_level
-      logger.local_level = Logger::ERROR
+      logger.local_level = ERROR
       self.silenced = true
     end
   end
@@ -266,7 +268,7 @@ module Emma::Log
   #
   # @see LoggerSilence#silence
   #
-  def self.silence(temporary_level = Logger::ERROR, &block)
+  def self.silence(temporary_level = ERROR, &block)
     if silenced?
       block.call
     else

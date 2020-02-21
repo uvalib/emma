@@ -30,7 +30,8 @@ module PaginationConcern
 
   end
 
-  include GenericHelper
+  include Emma::Common
+  include ParamsHelper
   include PaginationHelper
 
   # ===========================================================================

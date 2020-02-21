@@ -32,7 +32,7 @@
             font-weight: bold;
 
             @media #{$narrow-screen} {
-                grid-column: 1 / -1;
+                @include grid-column-span;
             }
 
             a:not(:hover) {

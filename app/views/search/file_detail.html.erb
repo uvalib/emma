@@ -1,6 +1,7 @@
 <%# app/views/search/file_detail.html.erb -%>
 <%-
   # Details about a file format from a repository (@see #get_file_details).
+  return unless FileNaming::LOCAL_DOWNLOADS
   id    ||= @id
   fmt   ||= @fmt
   repo  ||= @repo

@@ -11,6 +11,8 @@ require 'pdf-reader'
 #
 class PdfParser < FileParser
 
+  include PdfFormat
+
   # ===========================================================================
   # :section: FileParser overrides
   # ===========================================================================
@@ -19,10 +21,10 @@ class PdfParser < FileParser
 
   # metadata
   #
-  # @return [*]                       Type is specific to the subclass.
+  # @return [OpenStruct]
   #
   def metadata
-    pdf_reader.metadata
+    OpenStruct.new(format_metadata(self))
   end
 
   # ===========================================================================

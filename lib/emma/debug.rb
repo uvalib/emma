@@ -1,19 +1,15 @@
-# app/helpers/debug_helper.rb
+# lib/emma/debug.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 
 __loading_begin(__FILE__)
 
-# DebugHelper
+# Debugging support methods.
 #
-module DebugHelper
+module Emma::Debug
 
-  def self.included(base)
-    __included(base, '[DebugHelper]')
-  end
-
-  include GenericHelper
+  include Emma::Common
 
   # ===========================================================================
   # :section:
@@ -89,7 +85,7 @@ module DebugHelper
   # Output request values and contents.
   #
   # @param [Array] args
-  # @param [Proc]  block              Passed to #__debug_line for each section.
+  # @param [Proc]  block              Passed to #__debug_items.
   #
   # args[0]  [Symbol]                 Calling method (def: `#calling_method`).
   # args[-1] [Hash]                   Options passed to #__debug.
@@ -108,23 +104,22 @@ module DebugHelper
       'rack.input':      request.headers['rack.input'],
       'request.body':    request.body
     }.each_pair do |item, entry|
-      prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
+      prefix, val = entry.is_a?(Array) ? entry : [nil, entry]
       lines =
-        if value.is_a?(Array)
-          value.map { |v| __debug_inspect(v) }
-        elsif value.is_a?(StringIO)
-          __debug_inspect(value.string)
-        elsif value.is_a?(Hash) || value&.respond_to?(:to_h)
-          value.to_h.map { |k, v| "#{k} = #{__debug_inspect(v)}" }
-        else
-          __debug_inspect(value)
+        case val
+          when Hash     then val.map { |k, v| "#{k} = #{__debug_inspect(v)}" }
+          when Array    then val.map { |v| __debug_inspect(v) }
+          when Tempfile then __debug_inspect(val.path)
+          when StringIO then __debug_inspect(val.string)
+          when IO       then __debug_inspect(val.path)
+          else               __debug_inspect(val)
         end
       if prefix.present? && lines.is_a?(Array)
         lines.map! { |line| "#{prefix} #{line}" }
       end
-      __debug("#{item} =", *lines, *args, opt, &block)
+      __debug("#{item} =", *lines, opt)
     end
-    nil
+    __debug_items(*args, opt, &block) if block || args.present?
   end
 
   # OmniAuth endpoint console debugging output.
@@ -166,6 +161,31 @@ module DebugHelper
     args << "api_error_message = #{api_error_message.inspect}"
     args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
     __debug_line(*args, opt, &block)
+  end
+
+  # Output each data item on its own line.
+  #
+  # @param [Array] args
+  #
+  # args[-1] [Hash]                   Options passed to #__debug.
+  #
+  # @return [nil]
+  #
+  def __debug_items(*args)
+    opt = args.extract_options!
+    args += Array.wrap(yield) if block_given?
+    __debug(opt) do
+      args.flat_map do |arg|
+        case arg
+          when Hash     then arg.map { |k, v| "#{k} = #{__debug_inspect(v)}" }
+          when Array    then arg.map { |v| __debug_inspect(v) }
+          when Tempfile then __debug_inspect(arg.path)
+          when StringIO then __debug_inspect(arg.string)
+          when IO       then __debug_inspect(arg.path)
+          else               __debug_inspect(arg)
+        end
+      end
+    end
   end
 
   # ===========================================================================

@@ -4,7 +4,7 @@
 // @use 'feature/search'; // TODO: SASS 4.0
 
 //=============================================================================
-// Federate Search pages
+// Unified Search pages
 //=============================================================================
 
 // Use to display text as a substitute for a logo.
@@ -20,7 +20,7 @@
     background:    $panel-accent;
 }
 
-// @see SearchHelper#repository_source_logo
+// @see LogoHelper#repository_source_logo
 //
 // noinspection SassScssResolvedByNameOnly
 .repository {
@@ -51,12 +51,10 @@
 // noinspection SassScssResolvedByNameOnly
 .search-label-value-pairs {
 
-    @extend .label-value-pairs;
-
     $row-separation: 0.75rem;
 
-    // noinspection CssBrowserCompatibilityForProperties
-    row-gap: $row-separation;
+    @extend .label-value-pairs;
+    @include grid-row-gap($row-separation);
 
     //=========================================================================
     // Components
@@ -106,7 +104,7 @@
             }
 
             @media #{$narrow-screen} {
-                grid-column: 1 / -1;
+                @include grid-column-span;
             }
 
             @media #{$browser-ie} {
@@ -140,21 +138,20 @@
         }
 
         // NOTE: Temporary adjustment to make the template record more readable
-        &.field-FormatFeature,
-        &.field-AccessibilityFeature,
-        &.field-AccessibilityControl,
-        &.field-AccessibilityHazard,
+        &.field-EmmaFormatFeature,
+        &.field-AccessibilityFeatures,
+        &.field-AccessibilityControls,
+        &.field-AccessibilityHazards,
         &.field-AccessMode,
         &.field-AccessModeSufficient,
-        &.field-AccessibilityAPI {
+        &.field-AccessibilityApi {
             margin-bottom: 1.5rem;
         }
 
         &.array {
 
             @include grid(minmax(25%, max-content), 4);
-
-            row-gap: $row-separation;
+            @include grid-row-gap($row-separation);
 
             @media #{$wide-screen} {
                 max-width: 75%;
@@ -215,17 +212,23 @@
     @extend .search-label-value-pairs;
 
     @include grid(max-content 1fr);
+    @include grid-gap(1rem);
 
     @media #{$not-wide-screen} {
         @include grid(1fr);
     }
 
     margin-top: 1rem;
-    grid-gap:   1rem;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     .label {
 
+        // noinspection CssBrowserCompatibilityForProperties
         grid-column-start: 1;
+        -ms-grid-column:   1;
 
         &.logo {
 
@@ -351,24 +354,23 @@
     // Components
     //=========================================================================
 
-    .number,
-    .search-list-entry {
-        @media #{$not-wide-screen} {
-
-            margin-top: calc(2 * #{$page-padding});
-
-            @media #{$browser-ie} {
-                margin-top: 2 * $ie-page-padding;
-            }
-        }
-    }
-
     .number {
 
-        font-size:   large;
-        font-weight: bold;
+        margin-top:    0.5rem;
+        margin-bottom: $results-entry-gap-y;
+        padding-right: 0.5rem;
+        font-size:     large;
+        font-weight:   bold;
+        border-right:  1px solid darkgray;
 
         > * {
+            position: sticky;
+            top:      3%;
+            margin:   0;
+            padding:  0;
+        }
+
+        .value {
 
             margin-top: $gap-y;
 
@@ -381,12 +383,24 @@
                 margin-top: calc(#{$gap-y} / 2);
 
                 @media #{$browser-ie} {
-                    margin-top: $ie-gap-y / 2;
+                    margin-top: ($ie-gap-y / 2);
                 }
             }
 
             @media #{$narrow-screen} {
                 margin-top: 0;
+            }
+        }
+    }
+
+    .number,
+    .search-list-entry {
+        @media #{$not-wide-screen} {
+
+            margin-top: calc(2 * #{$page-padding});
+
+            @media #{$browser-ie} {
+                margin-top: (2 * $ie-page-padding);
             }
         }
     }

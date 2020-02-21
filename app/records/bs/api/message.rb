@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 class Bs::Api::Message < Bs::Api::Record
 
-  include TimeHelper
+  include ::Api::Message
 
   # ===========================================================================
   # :section:
@@ -34,50 +34,12 @@ class Bs::Api::Message < Bs::Api::Record
   #
   # noinspection RubyYardParamTypeMatch
   def initialize(data, **opt)
-    __debug { "### #{self.class}.#{__method__}" }
-    start_time = timestamp
-    data = data.body.presence if data.is_a?(Faraday::Response)
-    opt[:format] ||= self.format_of(data)
-    opt[:error]  ||= true if opt[:format].blank?
-    data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
-    super(data, **opt)
-=begin # TODO: log exceptions?
-  rescue Bs::RecvError => e
-    Log.error { "#{self.class.name}: #{e}" }
-    raise e
-  rescue => e
-    Log.error { "#{self.class.name}: invalid input: #{e}" }
-    raise Bs::ParseError, e
-=end
-  ensure
-    elapsed_time = time_span(start_time)
-    __debug { "<<< #{self.class} processed in #{elapsed_time}" }
-    Log.info { "#{self.class} processed in #{elapsed_time}"}
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # wrap_outer
-  #
-  # @param [String, Hash] data
-  # @param [Hash]         opt
-  #
-  # @return [String, Hash]            Returned as the same type as *data*.
-  #
-  def wrap_outer(data, **opt)
-    name = self.class.name.demodulize.camelcase(:lower)
-    if data.is_a?(Hash)
-      { name => data }
-    elsif opt[:format] == :json
-      %Q("#{name}":{#{data}})
-    elsif data.start_with?('<?')
-      data.sub(/^<\?.*?\?>/, '\0' + "<#{name}>") + "</#{name}>"
-    else # opt[:format] == :xml
-      "<#{name}>#{data}</#{name}>"
+    create_message do
+      data = data.body.presence if data.is_a?(Faraday::Response)
+      opt[:format] ||= self.format_of(data)
+      opt[:error]  ||= true if opt[:format].blank?
+      data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
+      super(data, **opt)
     end
   end
 

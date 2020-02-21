@@ -16,9 +16,6 @@ class Role < ApplicationRecord
   # noinspection RailsParamDefResolve
   belongs_to :resource, polymorphic: true, optional: true
 
-  validates :resource_type, allow_nil: true,
-            inclusion: { in: Rolify.resource_types }
-
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================
@@ -30,6 +27,13 @@ class Role < ApplicationRecord
   # ===========================================================================
 
   scopify
+
+  # ===========================================================================
+  # :section: Validations
+  # ===========================================================================
+
+  validates :resource_type, allow_nil: true,
+            inclusion: { in: Rolify.resource_types }
 
   # ===========================================================================
   # :section: Object overrides

@@ -24,6 +24,7 @@ $(document).on('turbolinks:load', function() {
      */
     var DEBUGGING = true;
 
+    //noinspection PointlessArithmeticExpressionJS
     /**
      * Frequency for re-requesting a download link.
      *
@@ -75,7 +76,7 @@ $(document).on('turbolinks:load', function() {
             requestArtifact($link);
         }
         return false;
-    });
+    }).each(handleKeypressAsClick);
 
     // ========================================================================
     // Internal functions
@@ -120,7 +121,7 @@ $(document).on('turbolinks:load', function() {
             } else if (typeof(data) !== 'object') {
                 err = 'unexpected data type ' + typeof(data);
             } else if ((delay = getRetryPeriod($link)) === NO_RETRY) {
-                err = REQUEST_CANCELLED;
+                err = Emma.Download.failure.cancelled;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
                 var info = data.response || data;
@@ -220,7 +221,7 @@ $(document).on('turbolinks:load', function() {
             }
             $link = $e.first();
         }
-        endRequesting($link, REQUEST_CANCELLED);
+        endRequesting($link, Emma.Download.failure.cancelled);
         setRetryPeriod($link, NO_RETRY);
     }
 
@@ -233,7 +234,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var PROGRESS_SELECTOR = '.' + DOWNLOAD_PROGRESS_CLASS;
+    var PROGRESS_SELECTOR = '.' + Emma.Download.progress.class;
 
     /**
      * Display a "downloading" progress indicator.
@@ -266,7 +267,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var FAILURE_SELECTOR = '.' + DOWNLOAD_FAILURE_CLASS;
+    var FAILURE_SELECTOR = '.' + Emma.Download.failure.class;
 
     /**
      * Display a download failure message after the download link.
@@ -277,7 +278,8 @@ $(document).on('turbolinks:load', function() {
     function showFailureMessage($link, error) {
         var content = error || '';
         if (!content.match(/cancelled/)) {
-            content = FAILURE_PREFIX + (error || UNKNOWN_ERROR);
+            var error_message = error || Emma.Download.failure.unknown;
+            content = '' + Emma.Download.failure.prefix + error_message;
         }
         var $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.attr('title', content).text(content).removeClass('hidden');
@@ -302,7 +304,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var BUTTON_SELECTOR = '.' + DOWNLOAD_BUTTON_CLASS;
+    var BUTTON_SELECTOR = '.' + Emma.Download.button.class;
 
     /**
      * Show the button to download the artifact.
@@ -392,7 +394,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery} $link
      *
-     * @returns {number|undefined}
+     * @return {number|undefined}
      */
     function getRetryPeriod($link) {
         return $link.data(RETRY_ATTRIBUTE);
@@ -423,7 +425,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery} $link
      *
-     * @returns {number}
+     * @return {number}
      */
     function defaultRetryPeriod($link) {
         var href = $link.attr('href') || '';

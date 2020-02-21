@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module HeadHelper::Common
 
-  include GenericHelper
+  include Emma::Common
 
   # ===========================================================================
   # :section:

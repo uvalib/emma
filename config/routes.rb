@@ -20,17 +20,44 @@ Rails.application.routes.draw do
   end
 
   # ===========================================================================
-  # EMMA Federated Search operations
+  # EMMA Unified Search operations
   # ===========================================================================
 
-  get 'search/detail', to: 'search#file_detail', as: 'file_detail'
+  if FileNaming::LOCAL_DOWNLOADS
 
-  FileFormat::FILE_FORMATS.each do |fmt|
-    opt = { defaults: { fmt: fmt.to_s } }
-    get "search/#{fmt}", to: 'search#file_detail', as: "#{fmt}_detail", **opt
+    get 'search/detail', to: 'search#file_detail', as: 'file_detail'
+
+    FileFormat::TYPES.each do |fmt|
+      opt = { defaults: { fmt: fmt.to_s } }
+      get "search/#{fmt}", to: 'search#file_detail', as: "#{fmt}_detail", **opt
+    end
+
   end
 
   resources :search, only: %i[index show]
+
+  # ===========================================================================
+  # File upload operations
+  # ===========================================================================
+
+  # Invoked from app/javascripts/feature/file-upload.js
+  post 'upload/endpoint', to: 'upload#endpoint', as: 'uploads'
+
+  # Variants which include selection of entries to operate on.  :new_select is
+  # only defined for consistency.
+  %w(edit delete).each do |action|
+    path = "upload/#{action}_select"
+    opt  = { defaults: { id: 'SELECT' } }
+    get path, to: "upload##{action}", as: "#{action}_select_upload", **opt
+  end
+
+  get  'upload/new_select', to: redirect('upload/new'), as: 'new_select_upload'
+  get  'upload/delete/:id', to: 'upload#delete',        as: 'delete_upload'
+
+  post 'upload/create',     to: 'upload#create',        as: 'create_upload'
+  put  'upload/update',     to: 'upload#update',        as: 'update_upload'
+
+  resources :upload
 
   # ===========================================================================
   # Category operations
@@ -99,13 +126,11 @@ Rails.application.routes.draw do
 
   resources :api, only: %i[index] do
     collection do
-      # noinspection RailsParamDefResolve
       match 'v2/*api_path', to: 'api#v2', via: ALL_METHODS
       get   :image,         to: 'api#image'
     end
   end
 
-  # noinspection RailsParamDefResolve
   match 'v2/*api_path', to: 'api#v2',    as: 'v2_api',    via: ALL_METHODS
   get   'api/image',    to: 'api#image', as: 'image_api'
 
@@ -127,6 +152,7 @@ end
 
 # Non-functional hints for RubyMine.
 # :nocov:
+# noinspection RubyInstanceMethodNamingConvention
 unless ONLY_FOR_DOCUMENTATION
   def api_index_path(*);                          end
   def api_index_url(*);                           end

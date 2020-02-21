@@ -79,7 +79,6 @@ class ApiController < ApplicationController
       path << '?' << opt.to_param if opt.present?
       redirect_to sign_in_as_path(id: bookshare_user(user), redirect: path)
     else
-      # noinspection RubyYardParamTypeMatch
       @api_result = api_explorer(request.method, path, opt)
       respond_to do |format|
         format.html
@@ -92,7 +91,7 @@ class ApiController < ApplicationController
   # == GET /api/image[?url=...]
   # Get an image.
   #
-  # @see app/assets/javascripts/feature/image.js
+  # @see app/assets/javascripts/feature/images.js
   #
   # == Usage Notes
   # This provides JavaScript with a way of asynchronously getting images
@@ -114,7 +113,7 @@ class ApiController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [Hash, nil] items
+  # @param [Hash] items
   #
   # @return [Hash{Symbol=>Hash}]
   #
@@ -124,7 +123,7 @@ class ApiController < ApplicationController
   def index_values(items = @api_results)
     result =
       items.map { |action, response|
-        response = try_json_parse(response)
+        response = safe_json_parse(response)
         if response.is_a?(Hash)
           response =
             response.map { |k, v|
@@ -132,7 +131,7 @@ class ApiController < ApplicationController
               case k
                 when :parameters then v = v.to_s.sub(/^\((.*)\)$/, '\1')
                 when :status     then v = v.presence&.upcase || 'MISSING'
-                when :error      then v = try_exception_parse(v)
+                when :error      then v = safe_exception_parse(v)
               end
               [k, v]
             }.to_h
@@ -155,7 +154,7 @@ class ApiController < ApplicationController
   def show_values(item = @api_result)
     result =
       item.map { |k, v|
-        v = try_json_parse(v) if %i[result exception].include?(k)
+        v = safe_json_parse(v) if %i[result exception].include?(k)
         [k, v]
       }.to_h
     { bookshare_api: result }

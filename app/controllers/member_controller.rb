@@ -16,8 +16,7 @@ class MemberController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-
-  include MemberHelper
+  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -127,7 +126,7 @@ class MemberController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiUserAccountList, nil] list
+  # @param [ApiUserAccountList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

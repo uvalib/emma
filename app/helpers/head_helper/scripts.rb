@@ -48,10 +48,10 @@ module HeadHelper::Scripts
 
   # Set the script(s) for this page, eliminating any previous value(s).
   #
+  # @param [Array] sources
+  #
   # @yield Supplies additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] sources
   #
   # @return [Array<String>]           The updated @page_javascript contents.
   #
@@ -64,10 +64,10 @@ module HeadHelper::Scripts
 
   # Add to the script(s) for this page.
   #
+  # @param [Array] sources
+  #
   # @yield Supplies additional source(s) to @page_javascript.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] sources
   #
   # @return [Array<String>]           The updated @page_javascript contents.
   #

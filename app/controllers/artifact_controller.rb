@@ -22,8 +22,6 @@ class ArtifactController < ApplicationController
   include SerializationConcern
   include DownloadConcern
 
-  include ArtifactHelper
-
   # Non-functional hints for RubyMine.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
@@ -149,7 +147,7 @@ class ArtifactController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [*, nil] list
+  # @param [*] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

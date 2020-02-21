@@ -16,6 +16,7 @@ __loading_begin(__FILE__)
 #
 class OcfParser < FileParser
 
+  include OcfFormat
   include XmlBased
   include ZipArchive
 

@@ -1,0 +1,16 @@
+<%# app/views/layouts/_selected.html.erb -%>
+<%-
+  # Display the selected item in an expandable panel.
+  item ||= nil or return
+  heading = "Selected item #{item.id} record details:" # TODO: I18n
+-%>
+
+<div class="selected-upload">
+  <div class="toggle-panel-title">
+    <h2 class="selected-header"><%= heading -%></h2>
+    <%= toggle_button(selector: '.selected-details') %>
+  </div>
+  <div class="selected-details">
+    <%= render 'upload/entry', item: item, skip: :number %>
+  </div>
+</div>

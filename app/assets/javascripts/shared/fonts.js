@@ -29,7 +29,7 @@
             Typekit.load();
         }
         catch(error) {
-            console.warn('Could not load Typekit: ' + error.message);
+            console.warn('Could not load Typekit:', error.message);
         }
     }
 

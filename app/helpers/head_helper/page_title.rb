@@ -69,10 +69,10 @@ module HeadHelper::PageTitle
 
   # Set the page title, eliminating any previous value.
   #
+  # @param [Array] values
+  #
   # @yield Supplies additional values to @page_title.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] values
   #
   # @return [Array<String>]           The updated @page_title contents.
   #
@@ -85,10 +85,10 @@ module HeadHelper::PageTitle
 
   # Add to the page title.
   #
+  # @param [Array] values
+  #
   # @yield Supplies additional values to @page_title.
   # @yieldreturn [String, Array<String>]
-  #
-  # @param [Array] values
   #
   # @return [Array<String>]           The updated @page_title contents.
   #

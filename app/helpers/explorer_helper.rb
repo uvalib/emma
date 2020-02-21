@@ -13,9 +13,14 @@ module ExplorerHelper
     __included(base, '[ExplorerHelper]')
   end
 
-  include GenericHelper
+  include Emma::Common
+  include Emma::Json
   include HtmlHelper
-  include ParamsHelper
+
+  # Non-functional hints for RubyMine.
+  # :nocov:
+  include BookshareConcern unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # ===========================================================================
   # :section:
@@ -95,7 +100,7 @@ module ExplorerHelper
 
       elsif record || value.is_a?(Exception) || value.is_a?(String)
         # === Valid JSON response value ===
-        value = pretty_json(value)
+        value = pretty_format(value)
         value.gsub!(/\\"([^"\\]+?)\\":/, '\1: ')
         value = ERB::Util.h(value) if html
         value.gsub!(/,([^ ])/, (',' + space + '\1'))
@@ -127,44 +132,42 @@ module ExplorerHelper
 
   public
 
-  PJ_INDENT      = ' '
-  PJ_NEWLINE     = "\n#{PJ_INDENT}"
-  PJ_OPEN_BRACE  = "{\n#{PJ_INDENT}#{PJ_INDENT}"
-  PJ_CLOSE_BRACE = "\n#{PJ_INDENT}}"
+  PF_INDENT      = ' '
+  PF_NEWLINE     = "\n#{PF_INDENT}"
+  PF_OPEN_BRACE  = "{\n#{PF_INDENT}#{PF_INDENT}"
+  PF_CLOSE_BRACE = "\n#{PF_INDENT}}"
 
-  # pretty_json
+  # Format data objects for Explorer display.
   #
   # @param [Api::Record, Exception, Numeric, String] value
   #
   # @return [String]
   #
-  def pretty_json(value)
+  def pretty_format(value)
     case value
       when ApiService::HtmlResultError
         value.response.body
       when Faraday::Error
         response =
           value.response.pretty_inspect
-            .gsub(/\n/,    PJ_NEWLINE)
-            .sub(/\A{/,    PJ_OPEN_BRACE)
-            .sub(/}\s*\z/, PJ_CLOSE_BRACE)
+            .gsub(/\n/,    PF_NEWLINE)
+            .sub(/\A{/,    PF_OPEN_BRACE)
+            .sub(/}\s*\z/, PF_CLOSE_BRACE)
         [
           "#<#{value.class}",
-          "#{PJ_INDENT}message  = #{value.message.inspect}",
-          "#{PJ_INDENT}response = #{response}",
+          "#{PF_INDENT}message  = #{value.message.inspect}",
+          "#{PF_INDENT}response = #{response}",
           '>'
         ].join("\n")
       when Exception
-        value.pretty_inspect.gsub(/@[^=]+=/, (PJ_NEWLINE + '\0'))
+        value.pretty_inspect.gsub(/@[^=]+=/, (PF_NEWLINE + '\0'))
       when Api::Record
         value.to_json(pretty: true)
       when Numeric
         value.inspect
       else
-        MultiJson.dump(MultiJson.load(value), pretty: true)
+        pretty_json(value)
     end
-  rescue
-    value.pretty_inspect
   end
 
   # ===========================================================================

@@ -1,12 +1,10 @@
 # config/locales/en.yml
+#
+# TitleController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Catalog Title pages
-    # =========================================================================
 
     title:
 
@@ -20,6 +18,101 @@ en:
       label:            'Titles'
       title:            'Catalog Titles'
       tooltip:          'Search for Bookshare catalog items.'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:                 &TITLE_FIELDS
+
+        # === Series title information ===
+        edition:              'Edition'
+        seriesTitle:          'Series Title'
+        seriesSubtitle:       'Series Subtitle'
+        seriesNumber:         'Series Number'
+
+        # === Music title information ===
+        opus:                 'Opus'
+        movementTitle:        'Movement Title'
+        movementNumber:       'Movement Number'
+        musicScoreType:       'Music Score Type'
+
+        # === Additional title information ===
+        titleContentType:     'Title Content Type'
+        titleSource:          'Title Source'
+
+        # === Contributors ===
+        authors:              'Authors'
+        editors:              'Editors'
+        composers:            'Composers'
+        lyricists:            'Lyricists'
+        arrangers:            'Arrangers'
+        translators:          'Translators'
+
+        # === Description ===
+        year:                 'Year'
+        contents:             'Synopsis'
+        languages:            'Languages'
+        categories:           'Categories'
+        countries:            'Countries'
+
+        # === Audience ===
+        adultContent:         'AdultContent'
+        grades:               'GradeLevel'
+        readingAgeMinimum:    'Min Reading Age'
+        readingAgeMaximum:    'Max Reading Age'
+
+        # === Identifiers ===
+        isbn:                 'ISBN'
+        related_isbns:        'Related ISBNs'
+        externalCategoryCode: 'External Category Code'
+
+        # === Text information ===
+        numImages:            'Images'
+        numPages:             'Pages'
+
+        # === Music information ===
+        musicLayout:          'Music Layout'
+        key:                  'Key'
+        instruments:          'Instruments'
+        vocalParts:           'Vocal Parts'
+        hasChordSymbols:      'Has Chord Symbols'
+
+        # === Publisher/provider information ===
+        publisher:            'Publisher'
+        publishDate:          'PublishDate'
+
+        # === Rights ===
+        usageRestriction:     'Usage Restriction'
+        copyright:            'Copyright'
+        copyrightDate:        'Copyright Date'
+
+        # === Other ===
+        notes:                'Notes'
+
+        # === Assignment information ===
+        assignedBy:           'Assigned By'
+        dateAdded:            'Date Added'
+        dateDownloaded:       'Date Downloaded'
+        marrakeshAvailable:   'Marrakesh Available'
+
+        # === Bookshare information ===
+        bookshareId:          'Bookshare ID'
+        site:                 'Site'
+        replacementId:        'Replacement ID'
+        contentWarnings:      'Content Warnings'
+        submitter:            'Submitter'
+        proofreader:          'Proofreader'
+        lastUpdatedDate:      'Last Updated Date'
+        withdrawalDate:       'Withdrawal Date'
+        allowRecommend:       'Allow Recommend'
+        available:            'Available'
+
+        # === Item instances ===
+        dtbookSize:           'DtBook Size'
+        artifact_list:        'Artifacts'
+        download_links:       'Formats'
+        links:                'Links'
 
       # =======================================================================
       # Controls
@@ -53,11 +146,17 @@ en:
         label:          'Titles'
         title:          'Catalog Titles Index'
         tooltip:        'Find more Bookshare catalog items with %{terms}.'
+        fields:
+          title:        'Title'
+          authors:      'Authors'
+          year:         'Date'
 
       show:
         label:          'Title'
         title:          'Catalog Title'
         tooltip:        'See details about this Bookshare catalog title.'
+        fields:
+          <<:           *TITLE_FIELDS
 
       new:
         label:          'Add'

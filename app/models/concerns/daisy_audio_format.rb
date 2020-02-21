@@ -11,6 +11,8 @@ __loading_begin(__FILE__)
 #
 module DaisyAudioFormat
 
+  include FileFormat
+  include OcfFormat
   include DaisyFormat
 
   # ===========================================================================
@@ -27,30 +29,43 @@ module DaisyAudioFormat
   #
   FILE_TYPE = :daisyAudio
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  DAISY_AUDIO_FORMAT =
+    format_configuration(DAISY_FORMAT, FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = [
-    'application/x-daisy',            # NOTE: fake MIME type
-    # 'application/x-dtbook-xml',     # TODO: DaisyAudioFormat MIME type(s)?
-  ].freeze
+  MIME_TYPES = DAISY_AUDIO_FORMAT[:mimes]
 
-  # File extension(s) associated with instances of this format.
+  # File extension(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
   # @see FileObject#file_extensions
   #
-  # TODO: Unsure about "dtbook".
+  FILE_EXTENSIONS = DAISY_AUDIO_FORMAT[:exts]
+
+  # FORMAT_FIELDS
   #
-  FILE_EXTENSIONS = %w(
-    daisy
-    daisyAudio
-    dtbook
-  ).freeze
+  # @type [Hash{Symbol=>Proc,Symbol}]
+  #
+  # @see FileFormat#format_fields
+  #
+  FORMAT_FIELDS = DAISY_AUDIO_FORMAT[:fields]
+
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = DAISY_AUDIO_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
@@ -58,15 +73,26 @@ module DaisyAudioFormat
 
   public
 
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see DaisyFormat#configuration
+  #
+  def configuration
+    DAISY_AUDIO_FORMAT
+  end
+
   # parser
   #
-  # @return [DaisyParser]
+  # @return [DaisyAudioParser]
   #
   # This method overrides:
   # @see DaisyFormat#parser
   #
   def parser
-    @parser ||= DaisyParser.new(local_path)
+    @parser ||= DaisyAudioParser.new(local_path)
   end
 
 end

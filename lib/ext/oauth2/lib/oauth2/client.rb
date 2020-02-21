@@ -15,7 +15,7 @@ module OAuth2
   #
   module ClientExt
 
-    include GenericHelper
+    include Emma::Common
 
     OAUTH_DEBUG = true?(ENV['OAUTH_DEBUG'])
 
@@ -81,7 +81,6 @@ module OAuth2
     # by setting it once here.
     #
     def connection
-      # noinspection RubyYardReturnMatch
       @connection ||=
         Faraday.new(site, options[:connection_opts]) do |bld|
           bld.response :logger, Log.logger if OAUTH_DEBUG

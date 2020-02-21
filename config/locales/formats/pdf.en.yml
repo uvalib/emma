@@ -1,0 +1,52 @@
+# config/locales/formats/pdf.en.yml
+#
+# PDF format
+
+en:
+
+  emma:
+
+    pdf:
+
+      type: 'pdf'
+
+      mimes:
+        - 'application/pdf'
+
+      exts:
+        - 'pdf'
+
+      # =======================================================================
+      # FORMAT_FIELDS
+      # =======================================================================
+
+      fields:
+
+        Title:        'Title'
+        Author:       'Author'
+        Keywords:     'Keywords'
+        Creator:      'Creator'
+        CreationDate: 'CreationDate'
+        ModifiedDate: 'ModDate'
+        Subject:      'Subject'
+        PdfProducer:  'Producer'
+        PdfVersion:   'pdf_version'
+        PageCount:    'page_count'
+
+      # =======================================================================
+      # A mapping of format field to the equivalent
+      # Search::Record::MetadataRecord field.
+      # =======================================================================
+
+      map:
+
+        Title:          'dc_title'
+        Author:         'dc_creator'
+        # Keywords:     'Keywords'
+        Creator:        'dc_creator'
+        CreationDate:   'dc_date'
+        ModDate:        'emma_lastRemediationDate'
+        Subject:        'dc_subject'
+        # Producer:     'Producer'
+        # pdf_version:  'pdf_version'
+        # page_count:   'page_count'

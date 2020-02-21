@@ -145,9 +145,8 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean} opening
      */
     function updateAdvancedButton(opening) {
-        var text = opening ? ADV_SEARCH_CLOSER_LABEL : ADV_SEARCH_OPENER_LABEL;
-        var tip  = opening ? ADV_SEARCH_CLOSER_TIP   : ADV_SEARCH_OPENER_TIP;
-        $advanced_toggle.html(text).attr('title', tip);
+        var value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
+        $advanced_toggle.html(value.label).attr('title', value.tooltip);
     }
 
     /**
@@ -162,7 +161,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {boolean} opening
      *
-     * @see .search-bar-container.menu-button.reset in shared/_header.scss.
+     * @see ".search-bar-container.menu-button.reset in shared/_header.scss"
      */
     function updateResetButton(opening) {
         $reset_button.each(function() {
@@ -180,7 +179,8 @@ $(document).on('turbolinks:load', function() {
 
     $advanced_toggle
         .off('click', toggleAdvancedSearch)
-        .on('click', toggleAdvancedSearch);
+        .on('click', toggleAdvancedSearch)
+        .each(handleKeypressAsClick);
 
     // ========================================================================
     // Actions

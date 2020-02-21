@@ -13,10 +13,21 @@ module EditionHelper
     __included(base, '[EditionHelper]')
   end
 
-  include GenericHelper
-  include PaginationHelper
-  include ResourceHelper
-  include ArtifactHelper
+  include ModelHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  EDITION_CONFIGURATION = model_configuration('emma.edition').deep_freeze
+  EDITION_INDEX_FIELDS  = EDITION_CONFIGURATION.dig(:index, :fields)
+  EDITION_SHOW_FIELDS   = EDITION_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -29,7 +40,6 @@ module EditionHelper
   # @return [Array<Bs::Record::UserAccount>]
   #
   def edition_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -69,25 +79,13 @@ module EditionHelper
 
   public
 
-  # Fields from Bs::Record::PeriodicalEdition.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  EDITION_SHOW_FIELDS = {
-    EditionId:       :editionId,
-    EditionName:     :editionName,
-    PublicationDate: :publicationDate,
-    ExpirationDate:  :expirationDate,
-    Formats:         :download_links,
-    Links:           :links,
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def edition_details(item, **opt)
     item_details(item, :edition, EDITION_SHOW_FIELDS.merge(opt))
@@ -98,12 +96,6 @@ module EditionHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::PeriodicalEdition.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  EDITION_INDEX_FIELDS = EDITION_SHOW_FIELDS
 
   # Render a single entry for use within a list of items.
   #

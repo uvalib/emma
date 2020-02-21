@@ -50,7 +50,6 @@ end
 def require_subdirs(relative_to, *patterns)
   subdirs = patterns.flatten.reject(&:blank?).uniq
   subdirs << '' if subdirs.blank?
-  # noinspection RubyNilAnalysis
   subdirs.map! { |subdir| "#{subdir}/**/*.rb" }
   require_files(relative_to, *subdirs)
 end

@@ -1,0 +1,13 @@
+<%# app/views/upload/page_controls/_index.html.erb -%>
+<%-
+  # Page controls on the Upload index page for an authorized user.
+  actions   = %i[new edit_select delete_select]
+  actions   = page_control_actions(Upload, *actions) or return
+  anchor_id = 'index-page-controls'
+  skip_nav_prepend(title: anchor_id)
+
+  path_opt = {}
+-%>
+
+<div class="label" id="<%= anchor_id -%>"><%= page_controls_label -%>:</div>
+<div class="controls"><%= page_controls(*actions, **path_opt) %></div>

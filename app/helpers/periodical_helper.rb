@@ -13,9 +13,22 @@ module PeriodicalHelper
     __included(base, '[PeriodicalHelper]')
   end
 
-  include PaginationHelper
-  include ResourceHelper
+  include ModelHelper
   include EditionHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  PERIODICAL_CONFIGURATION = model_configuration('emma.periodical').deep_freeze
+  PERIODICAL_INDEX_FIELDS  = PERIODICAL_CONFIGURATION.dig(:index, :fields)
+  PERIODICAL_SHOW_FIELDS   = PERIODICAL_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -187,7 +200,7 @@ module PeriodicalHelper
   #
   # @return [Object]
   #
-  # @see ResourceHelper#render_value
+  # @see ModelHelper#render_value
   #
   def periodical_render_value(item, value)
     case field_category(value)
@@ -206,45 +219,13 @@ module PeriodicalHelper
 
   public
 
-  # Fields from Bs::Record::PeriodicalSeriesMetadataSummary.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  # Compare with:
-  # @see TitleHelper#TITLE_SHOW_FIELDS
-  #
-  PERIODICAL_SHOW_FIELDS = {
-
-    # === Description ===
-    Year:                 :year,
-    Languages:            :languages,
-    Description:          :description,
-    Categories:           :categories,
-    Countries:            :countries,
-
-    # === Identifiers ===
-    ISSN:                 :issn,
-    ExternalCategoryCode: :externalCategoryCode,
-
-    # === Publisher/provider information ===
-    Publisher:            :publisher,
-
-    # === Item instances ===
-    LatestEdition:        :latestEdition,
-    Editions:             :editionCount,
-
-    # === Bookshare information ===
-    SeriesId:             :seriesId,
-    Links:                :links,
-
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def periodical_details(item, **opt)
     item_details(item, :periodical, PERIODICAL_SHOW_FIELDS.merge(opt))
@@ -255,19 +236,6 @@ module PeriodicalHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::PeriodicalSeriesMetadataSummary.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  # Compare with:
-  # @see TitleHelper#TITLE_INDEX_FIELDS
-  #
-  PERIODICAL_INDEX_FIELDS = {
-    Title:      :title,
-    Categories: :categories,
-    Languages:  :languages,
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

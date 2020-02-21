@@ -19,8 +19,7 @@ class CategoryController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-
-  include CategoryHelper
+  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -76,7 +75,7 @@ class CategoryController < ApplicationController
 
   # Response values for de-serializing the index page to JSON or XML.
   #
-  # @param [ApiCategoriesList, nil] list
+  # @param [ApiCategoriesList] list
   #
   # @return [Hash{Symbol=>Hash}]
   #

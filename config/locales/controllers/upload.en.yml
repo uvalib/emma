@@ -1,12 +1,10 @@
 # config/locales/controllers/upload.en.yml
+#
+# UploadController pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # File upload pages
-    # =========================================================================
 
     upload:
 
@@ -15,16 +13,72 @@ en:
       # %{terms}        Current list of search terms.
 
       unit:
-        brief:          'file'
-        long:           'remediated file'
-      label:            'Upload'
-      title:            'Upload a Remediated File'
-      tooltip:          'Upload a remediated file to EMMA.'
+        brief:          'upload'
+        long:           'uploaded file entry'
+      label:            'Uploads'
+      title:            'Your Uploads'
+      tooltip:          'Search through past uploads'
 
-      error:
-        default:        'unknown error'
-        failure:        'FAILURE: %{error}'
-        success:        'SUCCESS: %{file}'
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:
+
+        database:                   &UPLOAD_DATABASE_FIELDS
+
+          id:                       'Database ID'
+          user_id:                  'User ID'
+          repository:               'Repository'
+          repository_id:            'Repository ID'
+          file_id:                  'File ID'
+          fmt:                      'Fmt'
+          ext:                      'Ext'
+          created_at:               'First Upload'
+          updated_at:               'Current Upload'
+          file_data:                'File Data'
+          emma_data:                'EMMA Data'
+
+        form:                       &UPLOAD_FORM_FIELDS
+
+          # === Unified Index information (from :emma_data) ===
+          emma_recordId:            'EMMA Record Id'
+          emma_titleId:             'EMMA Title Id'
+
+          # === Repository information ===
+          emma_repository:          'EMMA Repository'
+          emma_collection:          'EMMA Collection'
+          emma_repositoryRecordId:  'EMMA RepositoryRecordId'
+          emma_retrievalLink:       'EMMA RetrievalLink'
+          emma_lastRemediationDate: 'EMMA LastRemediationDate'
+          emma_lastRemediationNote: 'EMMA LastRemediationNote'
+          emma_formatVersion:       'EMMA FormatVersion'
+          emma_formatFeature:       'EMMA FormatFeature'
+
+          # === Bibliographic information (from :emma_data) ===
+          dc_title:                 'Title'
+          dc_creator:               'Creator'
+          dc_identifier:            'Identifier'
+          dc_publisher:             'Publisher'
+          dc_relation:              'Relation'
+          dc_language:              'Language'
+          dc_rights:                'Rights'
+          dc_provenance:            'Provenance'
+          dc_description:           'Description'
+          dc_format:                'Format'
+          dc_type:                  'Type'
+          dc_subject:               'Subject'
+          dcterms_dateAccepted:     'DateAccepted'
+          dcterms_dateCopyright:    'CopyrightDate'
+
+          # === Remediation information (from :emma_data) ===
+          s_accessibilityFeature:   'AccessibilityFeatures'
+          s_accessibilityControl:   'AccessibilityControls'
+          s_accessibilityHazard:    'AccessibilityHazards'
+          # s_accessibilityAPI:     'AccessibilityAPI' # NOTE: pointless
+          s_accessibilitySummary:   'AccessibilitySummary'
+          s_accessMode:             'AccessMode'
+          s_accessModeSufficient:   'AccessModeSufficient'
 
       # =======================================================================
       # Controls
@@ -38,58 +92,177 @@ en:
           label:        'Search terms:'
           placeholder:  'Enter search terms...'
 
+      page_controls:
+        label:          'Upload Actions'
+
+      pagination:
+        count:          'uploads found'
+
       search_controls:
         layout:
-          - [sort,         size,         format      ]
-          - [repository,   language,     a11y_feature]
+          - []
 
-      #page_controls:
-      #  label:
-      #    one:          'Manage this metadata record'
-      #    many:         'Record Actions'
+      field_control:
+        filled:
+          label:        'Fields with data'
+          tooltip:      'Show fields that have data or require attention.'
+        invalid:
+          label:        'Invalid fields'
+          tooltip:      'Show fields that require attention.'
+        available:
+          label:        'All fields'
+          tooltip:      'Reveal all data fields.'
+        all:
+          label:        'All plus internal-use fields'
+          tooltip:      'This is only for development purposes.'
+
+      status_marker:
+        required:
+          label:        "\u26A0" # WARNING SIGN
+          tooltip:      '%{This} is a required field.'
+        invalid:
+          label:        "\u26A0" # WARNING SIGN
+          tooltip:      'The provided value is invalid.'
+        valid:
+          label:        "\u2714" # HEAVY CHECK MARK
+        nominal:
+          label:        "\u2714" # HEAVY CHECK MARK
 
       # =======================================================================
       # Pages
       # =======================================================================
 
+      generic:
+        label:          'Upload'
+        title:          'Upload'
+        submit:
+          label:        'Submit'
+          enabled:
+            tooltip:    'Proceed with this action'
+          disabled:
+            tooltip:    'Conditions have not yet been met to proceed'
+        cancel:
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Do not proceed with this action'
+          disabled:
+            tooltip:    'Not able to cancel at this point'
+        select:
+          label:        'Select file'
+          enabled:
+            tooltip:    'Choose a file from your workstation.'
+          disabled:
+            tooltip:    'Cancel this upload before selecting a different file'
+
       index:
-        label:          'Upload'
-        title:          'Add, Modify, or Remove Remediated Files'
-        tooltip:        'Add, modify, or remove remediated files.'
+        label:          'Uploads'
+        title:          'Your EMMA Uploads'
+        tooltip:        'Review uploads of remediated content to EMMA.'
+        description:    |
+          This is a listing of all EMMA entries you have created by
+          uploading remediated files.
+        fields:
+          <<:           *UPLOAD_DATABASE_FIELDS
 
-      new:
+      show:
         label:          'Upload'
-        title:          'Upload a Remediated File'
-        tooltip:        'Upload a file to create a new EMMA entry.'
-        submit:         'Upload'
+        title:          'Uploaded file "%{name}"'
+        tooltip:        'See details about this upload.'
+        fields:
+          <<:           *UPLOAD_DATABASE_FIELDS
 
-      create:
+      new:              &UPLOAD_NEW
         label:          'Create'
-        title:          'File Uploaded'
-        failure:        'Upload failure: %{error}'
-        success:        'Uploaded %{file}'
+        title:          'Upload Remediated Content'
+        tooltip:        'Upload a file to create a new EMMA entry.'
+        description:    |
+          Uploading a file to EMMA creates a new EMMA repository entry,
+          which assumes that the remediated file is the rendering of a creative
+          work which does not derive from any other member repository
+          (Bookshare, Internet Archive, or HathiTrust).
+        directions:     |
+          Choose a file to upload and provide any information about the entry
+          that could not be determine from the contents of the file:
+        submit:
+          label:        'Upload'
+          enabled:
+            tooltip:    'Create the new EMMA entry'
+          disabled:
+            tooltip:    'Required information is still needed'
+        cancel:
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Do not create this entry (or start over)'
+        select:
+          label:        'Select file'
+          enabled:
+            tooltip:    'As many fields as possible will be filled-in by information extracted from your file.'
+        failure:        'Could create entry: %{error}'
+        success:        'Created EMMA entry for: %{file}'
 
-      edit:
-        label:          'Modify'
-        title:          'Replace a Remediated File'
+      new_select:
+        <<: *UPLOAD_NEW
+
+      edit:             &UPLOAD_EDIT
+        label:          'Change'
+        title:          'Modify Your Upload'
         tooltip:        'Upload a replacement file for an existing EMMA entry.'
-        submit:         'Update'
-        failure:        'Retrieval failure: %{error}'
+        description:    |
+          An EMMA repository entry can be modified by the user who created the
+          entry or by an administrative user.  Modification may include either
+          changes to metadata (bibliographic information, etc.) and/or
+          replacement of the remediated file associated with the entry.
+        directions:     |
+          Provide an update version of your file, or modify fields that need to
+          be corrected:
+        submit:
+          label:        'Update'
+          enabled:
+            tooltip:    'Modify this EMMA entry'
+          disabled:
+            tooltip:    'No valid changes have been made yet'
+        cancel:
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Discard these changes.'
+        select:
+          label:        'Replacement file'
+          enabled:
+            tooltip:    'Provide an updated version of this file.'
+        failure:        'Could not update EMMA entry: %{error}'
+        success:        'Updated EMMA entry for %{file}'
 
-      update:
-        label:          'Update'
-        title:          'File Modified'
-        failure:        'Update failure: %{error}'
-        success:        'Updated %{file}'
+      edit_select:
+        <<: *UPLOAD_EDIT
 
-      delete:
+      delete:           &UPLOAD_DELETE
         label:          'Remove'
-        title:          'Remove a Remediated File'
+        title:          'Remove Your Uploaded Entry'
         tooltip:        'Delete an EMMA entry by removing a remediated file.'
-        submit:         'Delete'
+        description:    |
+          An EMMA repository entry can be removed by the user who created the
+          entry or by an administrative user.  Removal of an entry causes the
+          deletion of the associated remediated file from EMMA storage as well
+          as removal of the entry from the EMMA search index.
+        directions:     |
+          Click to remove the selected entry from the EMMA repository:
+        notes:          |
+          Content which resides outside of EMMA is under the purview of the
+          originating member repository and cannot be deleted here.  If there
+          is a compelling reason to omit an item from the EMMA search index,
+          please contact an EMMA administrator.
+        submit:
+          label:        'Delete'
+          enabled:
+            tooltip:    'Remove this entry from EMMA.'
+          disabled:
+            tooltip:    'Required information is still needed'
+        cancel:
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Keep this EMMA entry.'
+        failure:        'Could not remove EMMA entry: %{error}'
+        success:        'Removed EMMA entry for %{file}'
 
-      destroy:
-        label:          'Remove'
-        title:          'Entry removed'
-        failure:        'Delete failure: %{error}'
-        success:        'Removed %{file}'
+      delete_select:
+        <<: *UPLOAD_DELETE

@@ -246,7 +246,7 @@ module XmlBased
 
   else
 
-    include DebugHelper
+    include Emma::Debug
 
     # Non-functional hints for RubyMine.
     # :nocov:
@@ -285,29 +285,30 @@ module XmlBased
       element = args.shift
       inner   = args.shift
       __debug_line(*args) do
-        [method, File.basename(local_path)].tap do |parts|
-          if element
-            name =
-              if element.respond_to?(:name)
-                element.name.inspect
-              else
-                element.class.name.demodulize
-              end
-            parts << "element #{name}"
-          end
-          if inner
-            attrs = get_attributes(inner)
-            if inner.respond_to?(:name) && (inner.name == 'meta')
-              name  = attrs[:property] || attrs[:name]
-              value = attrs[:content]  || attrs[:value] || inner.content
+        parts = [method]
+        parts << File.basename(local_path) if local_path.is_a?(String)
+        if element
+          name =
+            if element.respond_to?(:name)
+              element.name.inspect
             else
-              name, value = get_properties(inner)
+              element.class.name.demodulize
             end
-            parts << "name #{name.inspect}"
-            parts << "value #{value.inspect}"
-            parts << "attrs #{attrs.inspect}"
-          end
+          parts << "element #{name}"
         end
+        if inner
+          attrs = get_attributes(inner)
+          if inner.respond_to?(:name) && (inner.name == 'meta')
+            name  = attrs[:property] || attrs[:name]
+            value = attrs[:content]  || attrs[:value] || inner.content
+          else
+            name, value = get_properties(inner)
+          end
+          parts << "name #{name.inspect}"
+          parts << "value #{value.inspect}"
+          parts << "attrs #{attrs.inspect}"
+        end
+        parts
       end
     end
 

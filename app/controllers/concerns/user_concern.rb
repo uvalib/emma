@@ -12,10 +12,12 @@ module UserConcern
   extend ActiveSupport::Concern
 
   included do |base|
-    __included(base, 'UserConcern')
-  end
 
-  include BookshareHelper
+    __included(base, 'UserConcern')
+
+    include BookshareConcern
+
+  end
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -49,7 +51,6 @@ module UserConcern
   # )>]
   # @return [nil]
   #
-  # noinspection RubyNilAnalysis
   def get_account_details(id: nil)
     error = []
     warn  = []

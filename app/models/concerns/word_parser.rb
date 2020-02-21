@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 #
 class WordParser < FileParser
 
+  include WordFormat
   include XmlBased
   include ZipArchive
 

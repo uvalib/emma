@@ -1,12 +1,10 @@
 # config/locales/controllers/user.en.yml
+#
+# Devise controller pages
 
 en:
 
   emma:
-
-    # =========================================================================
-    # Devise controllers
-    # =========================================================================
 
     user:
 

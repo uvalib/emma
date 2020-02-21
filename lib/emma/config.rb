@@ -34,8 +34,10 @@ module Emma::Config
     result = YAML.load(text, original_path)
     result.deep_symbolize_keys! if result.is_a?(Hash)
     result
+
   rescue YAML::SyntaxError => e
     Log.error(e)
+
   rescue => e # Probable file read error.
     # noinspection RubyYardParamTypeMatch
     Log.error(e, path)

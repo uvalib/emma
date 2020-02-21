@@ -27,45 +27,27 @@ module WordFormat
   #
   FILE_TYPE = :word
 
-  # MIME type(s) associated with instances of this format.
+  # Configured properties for this file format.
+  #
+  # @type [Hash{Symbol=>String,Array,Hash}]
+  #
+  WORD_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+
+  # MIME type(s) associated with instances of this file format.
   #
   # @type [Array<String>]
-  #
-  # Also (maybe):
-  #   application/vnd.ms-word.document.macroEnabled.12
-  #   application/vnd.ms-word.template.macroEnabled.12
-  #
-  # Related:
-  #   application/vnd.ms-excel
-  #   application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
   #
   # @see FileObject#mime_types
   #
-  MIME_TYPES = %w(
-    application/msword
-    application/vnd.openxmlformats-officedocument.wordprocessingml.document
-  ).freeze
+  MIME_TYPES = WORD_FORMAT[:mimes]
 
-  # File extension(s) associated with instances of this format.
+  # File extension(s) associated with instances of this file format.
   #
   # @type [Array<String>]
   #
-  # Also (maybe):
-  #   word
-  #   dot
-  #   wiz
-  #   rtf
-  #
-  # Related:
-  #   xls
-  #   xlsx
-  #
   # @see FileObject#file_extensions
   #
-  FILE_EXTENSIONS = %w(
-    docx
-    doc
-  ).freeze
+  FILE_EXTENSIONS = WORD_FORMAT[:exts]
 
   # FORMAT_FIELDS
   #
@@ -73,69 +55,31 @@ module WordFormat
   #
   # @see FileFormat#format_fields
   #
-  FORMAT_FIELDS = {
+  FORMAT_FIELDS = WORD_FORMAT[:fields]
 
-    # Dublin Core (except as noted)
-
-    Title:            :title,
-    Author:           :author,              # coreProperties
-    Creator:          :creator,
-    Contributor:      :contributor,
-    Language:         :language,
-    Date:             %i[date_copyrighted modified date_submitted created],
-    Publisher:        :publisher,
-    Subject:          :subject,
-    Type:             :type,
-    Rights:           :rights,
-    Format:           :formats,
-    Source:           :source,
-    Coverage:         :coverage,
-    Relation:         :relation,
-    Description:      :description,
-    Identifier:       :identifier,
-
-    # (Partial) Qualified Dublin Core (except as noted)
-
-    Abstract:         :abstract,
-    Contents:         :table_of_contents,
-    Audience:         :audience,
-    EducationLevel:   :education_level,
-    Extent:           :extent,
-    Medium:           :medium,
-    Spatial:          :spatial,
-    Requires:         :requires,
-    License:          :license,
-    Issued:           :issued,
-    IsPartOf:         :is_part_of,
-    IsVersionOf:      :is_version_of,
-    CreationDate:     :created,
-    Accepted:         :date_accepted,
-    CopyrightDate:    :date_copyrighted,
-    SubmissionDate:   :date_submitted,
-    ModifiedDate:     :modified,
-    LastModifiedBy:   :last_modified_by,    # coreProperties
-    RightsHolder:     :rights_holder,
-    Provenance:       :provenance,
-
-    # Core properties (coreProperties)
-
-    # Author:         :author,
-    Category:         :category,
-    ContentStatus:    :content_status,
-    Version:          :version,
-    Revision:         :revision,
-    # ModifiedDate:   :modified,
-    # LastModifiedBy: :last_modified_by,
-    Keywords:         :keywords,
-    Comments:         :comments,
-
-  }.freeze
+  # A mapping of format field to the equivalent Search::Record::MetadataRecord
+  # field.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  FIELD_MAP = WORD_FORMAT[:map]
 
   # ===========================================================================
   # :section: FileFormat overrides
   # ===========================================================================
 
   public
+
+  # configuration
+  #
+  # @return [Hash{Symbol=>String,Array,Hash}]
+  #
+  # This method overrides:
+  # @see FileFormat#configuration
+  #
+  def configuration
+    WORD_FORMAT
+  end
 
   # parser
   #

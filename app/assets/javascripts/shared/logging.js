@@ -35,7 +35,7 @@ function consoleError() {
  *
  * @param {*} arguments
  *
- * @returns {string}
+ * @return {string}
  */
 function logJoin() {
     var args  = Array.prototype.slice.call(arguments);
@@ -48,7 +48,7 @@ function logJoin() {
  *
  * @param {Array|*} arg
  *
- * @returns {Array}
+ * @return {Array}
  */
 function logFlatArray(arg) {
     var result = [];

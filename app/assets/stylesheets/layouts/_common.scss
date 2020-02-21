@@ -23,7 +23,9 @@ body {
 // noinspection SassScssResolvedByNameOnly
 .layout-content {
 
-    margin: 0 $page-padding-x;
+    margin:     0 $page-padding-x;
+    min-height: 50vh;
+    position:   relative;
 
     @media #{$browser-ie} {
 
@@ -41,8 +43,9 @@ body {
 // noinspection SassScssResolvedByNameOnly
 .heading {
 
-    font-size: xx-large;
-    margin:    $page-padding auto;
+    margin:     $page-padding auto;
+    word-break: break-all;
+    font-size:  xx-large;
 
     @media #{$wide-screen} {
         margin-bottom: calc(#{$page-padding} / 2);
@@ -57,11 +60,11 @@ body {
         margin: $ie-page-padding inherit;
 
         @media #{$wide-screen} {
-            margin-bottom: $ie-page-padding / 2;
+            margin-bottom: ($ie-page-padding / 2);
         }
 
         @media #{$narrow-screen} {
-            margin-top: $ie-page-padding * 2;
+            margin-top: ($ie-page-padding * 2);
         }
     }
 }
@@ -85,6 +88,7 @@ body {
     }
 
     .heading {
-        flex: 1 1 auto;
+        word-break: break-word;
+        flex:       1 1 auto;
     }
 }

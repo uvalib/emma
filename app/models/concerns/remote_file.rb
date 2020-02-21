@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# RemoteFile
+# Base class for downloadable files.
+#
+# NOTE: This may be of limited use and might be removed at some point.
 #
 class RemoteFile < FileObject
 
@@ -46,9 +48,9 @@ class RemoteFile < FileObject
 
   # Create a new instance.
   #
-  # @param [String]  path
-  # @param [Boolean] fetch            Acquire file content immediately.
-  # @param [Hash]    opt
+  # @param [String, StringIO, IO] path
+  # @param [Boolean]              fetch   Acquire file content immediately.
+  # @param [Hash]                 opt
   #
   # This method overrides:
   # @see FileObject#initialize
@@ -61,7 +63,7 @@ class RemoteFile < FileObject
     end
     super(path, **opt)
     @url = @error = nil
-    finalize if fetch
+    finalize if fetch && !path.is_a?(IO) && !path.is_a?(StringIO)
   end
 
   # ===========================================================================
@@ -98,6 +100,8 @@ class RemoteFile < FileObject
   # @param [Boolean] force            If *true*, always get a fresh copy.
   #
   # @return [String]                  Name of local copy of file content.
+  # @return [IO]
+  # @return [StringIO]
   # @return [nil]                     If file content could not be acquired.
   #
   # This method overrides:
@@ -122,6 +126,8 @@ class RemoteFile < FileObject
   # @param [Boolean] force            If *true*, always get a fresh copy.
   #
   # @return [String]                  File name for downloaded content.
+  # @return [IO]
+  # @return [StringIO]
   # @return [nil]                     If the file could not be acquired.
   #
   # == Usage Notes
@@ -135,8 +141,9 @@ class RemoteFile < FileObject
   def download(force: false)
     __debug { "... DOWNLOAD | @path = #{@path.inspect} | @local_path = #{@local_path.inspect}" }
     file = @local_path || make_download_path(@path)
-    file = download_file(to: file) if force || !File.exists?(file)
-    file
+    here = file.is_a?(IO) || file.is_a?(StringIO)
+    here ||= File.exists?(file) unless force
+    here ? file : download_file(to: file)
   end
 
   # Get a file from a remote site.
@@ -261,6 +268,7 @@ class RemoteFile < FileObject
       when :lines then File.readlines(path, chomp: true)
       else             File.read(path)
     end
+
   rescue => e
     Log.warn { "#{__method__}: #{path}: #{e.message}" }
     if retries > 0
@@ -345,7 +353,6 @@ class RemoteFile < FileObject
       backoff_factor:      2,
     }
 
-    # noinspection RubyYardReturnMatch
     Faraday.new(conn_opts) do |bld|
       bld.use      :instrumentation
       bld.request  :retry,  retry_opt
@@ -374,13 +381,24 @@ class RemoteFile < FileObject
     #   @param [FileProperties, Hash] opt
     #   @return [String]
     #
+    # @overload make_download_path(path)
+    #   @param [IO]                   path  Open file instance.
+    #   @param [FileProperties, Hash] opt
+    #   @return [String]
+    #
+    # @overload make_download_path(path)
+    #   @param [StringIO]             path
+    #   @param [FileProperties, Hash] opt
+    #   @return [String]
+    #
     # @see FileObject#make_file_name
     #
     def make_download_path(path, opt = nil)
       __debug_args(binding)
       path, opt = [nil, path] if path.is_a?(Hash)
+      return path.path if path.is_a?(IO) && path.path.present?
       prop = FileProperties.new(opt)
-      if path.blank?
+      if path.blank? || path.is_a?(StringIO)
         file = make_file_name(**prop)
         dir  = nil
       elsif path.start_with?('http')

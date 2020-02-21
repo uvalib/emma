@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Receive messages through the EMMA Federated Search API.
+# Receive messages through the EMMA Unified Search API.
 #
 # == Authentication and authorization
 # Bookshare uses OAuth2, which is handled in this application by Devise and
@@ -20,25 +20,6 @@ class SearchService < ApiService
 
   # Include send/receive modules from "app/services/search_service/**.rb".
   include_submodules(self)
-
-=begin
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see ApiService#base_url
-  #
-  def base_url
-    @base_url ||= BASE_URL
-  end
-=end
 
 end
 

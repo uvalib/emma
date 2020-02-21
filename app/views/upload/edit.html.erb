@@ -1,0 +1,36 @@
+<%# app/views/upload/edit.html.erb -%>
+<%-
+  # Prompt to modify an existing file entry.
+  title ||= t('emma.upload.edit.title')
+  item  ||= @item
+  repo  ||= @repo || item&.repository
+  logo  ||= repository_source_logo(repo)
+  modal ||= true?(params[:modal])
+
+  unless modal
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+  <%= logo %>
+</div>
+<%= upload_description %>
+
+<%- if item.blank? -%>
+
+  <%= render 'upload/select_entry' %>
+  <%= upload_notes %>
+
+<%- else -%>
+
+  <%= upload_directions %>
+  <%= upload_form(item, action: :edit) %>
+  <%= upload_preview %>
+
+<%- end -%>
+
+<%= upload_action_list unless modal %>

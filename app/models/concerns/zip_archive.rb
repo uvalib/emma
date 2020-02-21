@@ -19,17 +19,17 @@ module ZipArchive
 
   # get_archive_entry
   #
-  # @param [String]  zip_path
-  # @param [String]  file_path        Directory location of the archive file.
-  # @param [Boolean] recurse
+  # @param [String]               zip_path
+  # @param [String, StringIO, IO] file      Physical archive file.
+  # @param [Boolean]              recurse
   #
-  # @return [String]                  File contents
+  # @return [String]                        File contents
   # @return [nil]
   #
-  def get_archive_entry(zip_path, file_path, recurse: false)
-    return if zip_path.blank? || file_path.blank?
-    zip_path = find_zip_path(zip_path, file_path) if zip_path.start_with?('.')
-    Archive::Zip.open(file_path) do |archive|
+  def get_archive_entry(zip_path, file, recurse: false)
+    return if zip_path.blank? || file.blank?
+    zip_path = find_zip_path(zip_path, file) if zip_path.start_with?('.')
+    Archive::Zip.open(file) do |archive|
       archive.each do |entry|
         found = (entry.zip_path == zip_path)
         found ||= recurse && entry.zip_path.end_with?("/#{zip_path}")
@@ -37,30 +37,32 @@ module ZipArchive
       end
     end
     nil
+
   rescue => e
     Log.warn { "#{__method__}(#{zip_path}): #{e.message}" }
   end
 
   # Locate the indicated file in the given archive.
   #
-  # @param [String] extension
-  # @param [String] file_path         Directory location of the archive file.
+  # @param [String]               ext   Target filename extension.
+  # @param [String, StringIO, IO] file  Physical archive file.
   #
-  # @return [String]                  Path to metadata archive entry.
+  # @return [String]                    Path to metadata archive entry.
   # @return [nil]
   #
-  def find_zip_path(extension, file_path)
-    return if extension.blank? || file_path.blank?
-    extension = ".#{extension}" unless extension.start_with?('.')
-    Archive::Zip.open(file_path) do |archive|
+  def find_zip_path(ext, file)
+    return if ext.blank? || file.blank?
+    ext = ".#{ext}" unless ext.start_with?('.')
+    Archive::Zip.open(file) do |archive|
       archive.each do |entry|
         name = entry.zip_path.to_s
-        return name if entry.file? && name.end_with?(extension)
+        return name if entry.file? && name.end_with?(ext)
       end
     end
     nil
+
   rescue => e
-    Log.warn { "#{__method__}(#{file_path}): #{e.message}" }
+    Log.warn { "#{__method__}(#{file}): #{e.message}" }
   end
 
 end

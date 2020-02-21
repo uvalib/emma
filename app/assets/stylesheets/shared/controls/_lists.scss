@@ -22,8 +22,7 @@
 @mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
     @include grid($template, $columns);
-
-    grid-gap: $y-gap $x-gap;
+    @include grid-gap($y-gap, $x-gap);
 
     //=========================================================================
     // Components
@@ -32,14 +31,12 @@
     // A heading within the grid that spans all columns.
     .list-heading {
 
-        // noinspection CssBrowserCompatibilityForProperties
-        grid-column: 1 / -1;
-        margin:      $page-padding-y 0;
+        @include grid-column-span($columns);
+
+        margin: $page-padding-y 0;
 
         @media #{$browser-ie} {
-            margin:               $ie-page-padding-y 0;
-            -ms-grid-column:      1;
-            -ms-grid-column-span: $columns;
+            margin: $ie-page-padding-y 0;
         }
 
         &:first-child {

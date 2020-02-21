@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Base exception for EMMA Federated Search API errors.
+# Base exception for EMMA Unified Search API errors.
 #
 class Search::Error < ::Api::Error
 
@@ -41,15 +41,15 @@ end
 
 public
 
-# Base exception for EMMA Federated Search API authorization errors.
+# Base exception for EMMA Unified Search API authorization errors.
 #
 class Search::AuthError < ::Api::AuthError; end
 
-# Base exception for EMMA Federated Search API communication errors.
+# Base exception for EMMA Unified Search API communication errors.
 #
 class Search::CommError < ::Api::CommError; end
 
-# Base exception for EMMA Federated Search API session errors.
+# Base exception for EMMA Unified Search API session errors.
 #
 class Search::SessionError < ::Api::SessionError; end
 
@@ -63,7 +63,7 @@ class Search::TimeoutError < ::Api::TimeoutError; end
 
 public
 
-# Base exception for EMMA Federated Search API receive errors.
+# Base exception for EMMA Unified Search API receive errors.
 #
 class Search::RecvError < Search::CommError; end
 
@@ -77,11 +77,11 @@ class Search::ParseError < Search::RecvError; end
 
 public
 
-# Base exception for EMMA Federated Search API transmit errors.
+# Base exception for EMMA Unified Search API transmit errors.
 #
 class Search::XmitError < Search::CommError; end
 
-# Base exception for EMMA Federated Search API requests.
+# Base exception for EMMA Unified Search API requests.
 #
 class Search::RequestError < Search::XmitError; end
 

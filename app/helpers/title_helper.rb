@@ -13,10 +13,22 @@ module TitleHelper
     __included(base, '[TitleHelper]')
   end
 
-  include PaginationHelper
-  include ResourceHelper
-  include ArtifactHelper
   include ImageHelper
+  include ModelHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Configuration values for this model.
+  #
+  # @type {Hash{Symbol=>Hash}}
+  #
+  TITLE_CONFIGURATION = model_configuration('emma.title').deep_freeze
+  TITLE_INDEX_FIELDS  = TITLE_CONFIGURATION.dig(:index, :fields)
+  TITLE_SHOW_FIELDS   = TITLE_CONFIGURATION.dig(:show,  :fields)
 
   # ===========================================================================
   # :section:
@@ -29,7 +41,6 @@ module TitleHelper
   # @return [Array<Bs::Record::TitleMetadataSummary>]
   #
   def title_list
-    # noinspection RubyYardReturnMatch
     page_items
   end
 
@@ -288,7 +299,7 @@ module TitleHelper
   #
   # @return [Object]
   #
-  # @see ResourceHelper#render_value
+  # @see ModelHelper#render_value
   #
   def title_render_value(item, value)
     case field_category(value)
@@ -303,114 +314,13 @@ module TitleHelper
 
   public
 
-  # Fields from Bs::Record::AssignedTitleMetadataSummary,
-  # Bs::Record::TitleMetadataComplete, Bs::Record::TitleMetadataSummary,
-  # Bs::Message::TitleMetadataDetail.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  # Compare with:
-  # @see PeriodicalHelper#PERIODICAL_SHOW_FIELDS
-  #
-  TITLE_SHOW_FIELDS = {
-
-    # === Series title information ===
-    Edition:              :edition,
-    SeriesTitle:          :seriesTitle,
-    SeriesSubtitle:       :seriesSubtitle,
-    SeriesNumber:         :seriesNumber,
-
-    # === Music title information ===
-    Opus:                 :opus,
-    MovementTitle:        :movementTitle,
-    MovementNumber:       :movementNumber,
-    MusicScoreType:       :musicScoreType,
-
-    # === Additional title information ===
-    TitleContentType:     :titleContentType,
-    TitleSource:          :titleSource,
-
-    # === Contributors ===
-    Authors:              :authors,
-    Editors:              :editors,
-    Composers:            :composers,
-    Lyricists:            :lyricists,
-    Arrangers:            :arrangers,
-    Translators:          :translators,
-
-    # === Description ===
-    Year:                 :year,
-    Synopsis:             :contents,
-    Languages:            :languages,
-    Categories:           :categories,
-    Countries:            :countries,
-
-    # === Audience ===
-    AdultContent:         :adultContent,
-    GradeLevel:           :grades,
-    MinReadingAge:        :readingAgeMinimum,
-    MaxReadingAge:        :readingAgeMaximum,
-
-    # === Identifiers ===
-    ISBN:                 :isbn,
-    RelatedISBNs:         :related_isbns,
-    ExternalCategoryCode: :externalCategoryCode,
-
-    # === Text information ===
-    Images:               :numImages,
-    Pages:                :numPages,
-
-    # === Music information ===
-    MusicLayout:          :musicLayout,
-    Key:                  :key,
-    Instruments:          :instruments,
-    VocalParts:           :vocalParts,
-    HasChordSymbols:      :hasChordSymbols,
-
-    # === Publisher/provider information ===
-    Publisher:            :publisher,
-    PublishDate:          :publishDate,
-
-    # === Rights ===
-    UsageRestriction:     :usageRestriction,
-    Copyright:            :copyright,
-    CopyrightDate:        :copyrightDate,
-
-    # === Other ===
-    Notes:                :notes,
-
-    # === Assignment information ===
-    AssignedBy:           :assignedBy,
-    DateAdded:            :dateAdded,
-    DateDownloaded:       :dateDownloaded,
-    MarrakeshAvailable:   :marrakeshAvailable,
-
-    # === Bookshare information ===
-    BookshareId:          :bookshareId,
-    Site:                 :site,
-    ReplacementId:        :replacementId,
-    ContentWarnings:      :contentWarnings,
-    Submitter:            :submitter,
-    Proofreader:          :proofreader,
-    LastUpdatedDate:      :lastUpdatedDate,
-    WithdrawalDate:       :withdrawalDate,
-    AllowRecommend:       :allowRecommend,
-    Available:            :available,
-
-    # === Item instances ===
-    DtBookSize:           :dtbookSize,
-    Artifacts:            :artifact_list,
-    Formats:              :download_links,
-    Links:                :links,
-
-  }.freeze
-
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
   #
   def title_details(item, **opt)
     item_details(item, :title, TITLE_SHOW_FIELDS.merge(opt))
@@ -421,21 +331,6 @@ module TitleHelper
   # ===========================================================================
 
   public
-
-  # Fields from Bs::Record::AssignedTitleMetadataSummary,
-  # Bs::Record::TitleMetadataComplete, Bs::Record::TitleMetadataSummary,
-  # Bs::Message::TitleMetadataDetail.
-  #
-  # @type [Hash{Symbol=>Symbol}]
-  #
-  # Compare with:
-  # @see PeriodicalHelper#PERIODICAL_INDEX_FIELDS
-  #
-  TITLE_INDEX_FIELDS = {
-    Title:   :title,
-    Authors: :authors,
-    Date:    :year
-  }.freeze
 
   # Render a single entry for use within a list of items.
   #

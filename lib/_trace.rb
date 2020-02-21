@@ -88,9 +88,6 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 
 # Write indented line(s) to $stderr.
 #
-# @yield Supplies additional items to output.
-# @yieldreturn [String, Array<String>]
-#
 # @param [Array<Hash,Array,String,*>] args
 #
 # @option args.last [String]          :leader     At the start of each line.
@@ -121,9 +118,6 @@ end
 def __debug(*); end unless CONSOLE_DEBUGGING
 
 # Write indented debug line(s) to $stderr.
-#
-# @yield Supply additional items to output.
-# @yieldreturn [Hash, Array, String]
 #
 # @param [Array<Hash,Array,String,*>] args
 #
