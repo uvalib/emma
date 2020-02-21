@@ -161,3 +161,6 @@ tags
 /storage/
 !/storage/.keep
 !/storage/gemrc
+
+# === local environment configuration files
+env.*

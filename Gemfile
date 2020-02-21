@@ -85,6 +85,9 @@ gem 'jquery-rails'
 gem 'pdf-reader'
 gem 'sanitize'
 
+# == Addresses bug when building on AWS (see https://github.com/sass/sassc-ruby/issues/146)
+gem 'sassc', '2.1.0'
+
 # =============================================================================
 # Production
 # =============================================================================
