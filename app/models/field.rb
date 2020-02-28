@@ -115,7 +115,9 @@ module Field
           @field = values&.to_sym
           values = src.send(@field)
       end
-      @base = @field && Upload.get_field_configuration(@field)[:type] || String
+      @base = src
+      @base = Upload.get_field_configuration(@field)[:type] if @field
+      @base = String if @base.nil? || @base.is_a?(String)
       @base = @base.to_s.constantize if @base.is_a?(Symbol)
       @mode = mode&.to_sym || self.mode || :multiple
       @values = Array.wrap(values).reject(&:blank?)
