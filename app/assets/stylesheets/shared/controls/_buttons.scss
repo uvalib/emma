@@ -34,3 +34,30 @@
         border-right-color:  $light;
     }
 }
+
+/// A circular "X" button for removal of an input value.
+///
+// noinspection SassScssResolvedByNameOnly
+@mixin clear-selection-button {
+
+    @extend %button;
+
+    margin:          auto -0.125rem auto 0.5rem;
+    padding:         0 0.125rem;
+    text-decoration: none;
+    color:           $uva-accent-blue;
+    background:      whitesmoke;
+    border:          2px solid gray;
+    border-radius:   50%;
+    flex:            0 0 auto;
+
+    &:focus {
+        text-decoration: none;
+        outline-color:   black;
+        outline-offset:  -0.5px;
+    }
+
+    &:hover {
+        text-decoration: none;
+    }
+}

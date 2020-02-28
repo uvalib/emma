@@ -398,6 +398,8 @@ module Emma::Common
   # @option opt [String]  :list_separator   Passed to #array_string.
   # @option opt [Boolean] :sanitize         Strip HTML from value strings
   #                                           (default: *true*).
+  # @option opt [Boolean] :quote            Quote string values
+  #                                           (default: *false*)
   #
   # @return [Array<String>]
   #
@@ -408,16 +410,19 @@ module Emma::Common
         when Hash
           value.map do |k, v|
             case v
-              when Hash  then v = hash_string(v, opt)
-              when Array then v = array_string(v, opt)
-              else            v = v.to_s
+              when Hash  then v = hash_string(v, **opt)
+              when Array then v = array_string(v, **opt)
+              else            v = normalized_list(v, **opt).first
             end
             "#{k}: #{v}" if v.present?
           end
         when Array
-          array_string(value, opt)
+          array_string(value, **opt)
         else
-          opt[:sanitize] ? sanitized_string(value) : value.to_s
+          value = value.to_s
+          value = sanitized_string(value) if opt[:sanitize]
+          value = quote(value)            if opt[:quote]
+          value
       end
     }.reject(&:blank?)
   end
@@ -452,9 +457,9 @@ module Emma::Common
   def inflection(text, inflection = nil, count = nil)
     count, inflection = [inflection, nil] if inflection.is_a?(Integer)
     if (count == 1) || INFLECT_SINGULAR.include?(inflection)
-      text.singularize
+      text.to_s.singularize
     elsif count.is_a?(Integer) || INFLECT_PLURAL.include?(inflection)
-      text.pluralize
+      text.to_s.pluralize
     else
       text.to_s.dup
     end
@@ -483,10 +488,13 @@ module Emma::Common
   #
   # @param [String, Symbol]       text
   # @param [Integer, Symbol, nil] count
+  # @param [Boolean]              breakable   If *false* replace spaces with
+  #                                             '&nbsp;' so that the result is
+  #                                             not word-breakable.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def labelize(text, count = nil)
+  def labelize(text, count = nil, breakable: true)
     # noinspection RubyYardReturnMatch
     return text if text.is_a?(ActiveSupport::SafeBuffer)
     result =
@@ -497,9 +505,9 @@ module Emma::Common
           s = s.upcase_first.gsub(/[A-Z]+[^A-Z]+/, '\0 ').rstrip
           s.split(' ').map { |word| (word == 'Id') ? word.upcase : word }
         }.compact.join(' ')
-    result = ERB::Util.h(result)
     result = inflection(result, count) if count
-    non_breaking(result, force: true)
+    result = non_breaking(result)      unless breakable
+    ERB::Util.h(result)
   end
 
   # Transform a string into a value safe for use as an HTML ID (or class name).

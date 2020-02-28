@@ -14,6 +14,7 @@ module UploadHelper
   end
 
   include Emma::Json
+  include Emma::Unicode
   include ModelHelper
   include I18nHelper
 
@@ -361,7 +362,7 @@ module UploadHelper
   def upload_render_value(item, value)
     if !value.is_a?(Symbol)
       render_value(item, value)
-    elsif item.field_names.include?(value)
+    elsif item.is_a?(Upload) && item.field_names.include?(value)
       case value
         when :file_data then render_file_data(item) || '{}'
         when :emma_data then render_emma_data(item) || '{}'
@@ -369,21 +370,21 @@ module UploadHelper
       end
     else
       case value
-        when :emma_repository        then FieldSelect.new(item, value)
-        when :emma_formatFeature     then FieldMulti.new(item, value)
-        when :dc_language            then FieldSelect.new(item, value)
-        when :dc_rights              then FieldSelect.new(item, value)
-        when :dc_provenance          then FieldSelect.new(item, value)
-        when :dc_format              then FieldSelect.new(item, value)
-        when :dc_type                then FieldSelect.new(item, value)
-        when :dc_subject             then FieldCollection.new(item, value)
-        when :dcterms_dateAccepted   then FieldSingle.new(item, value)
-        when :dcterms_dateCopyright  then FieldSingle.new(item, value)
-        when :s_accessibilityFeature then FieldMulti.new(item, value)
-        when :s_accessibilityControl then FieldMulti.new(item, value)
-        when :s_accessibilityHazard  then FieldMulti.new(item, value)
-        when :s_accessMode           then FieldMulti.new(item, value)
-        when :s_accessModeSufficient then FieldMulti.new(item, value)
+        when :emma_repository        then Field::Select.new(item, value)
+        when :emma_formatFeature     then Field::Multi.new(item, value)
+        when :dc_language            then Field::Select.new(item, value)
+        when :dc_rights              then Field::Select.new(item, value)
+        when :dc_provenance          then Field::Select.new(item, value)
+        when :dc_format              then Field::Select.new(item, value)
+        when :dc_type                then Field::Select.new(item, value)
+        when :dc_subject             then Field::Collection.new(item, value)
+        when :dcterms_dateAccepted   then Field::Single.new(item, value)
+        when :dcterms_dateCopyright  then Field::Single.new(item, value)
+        when :s_accessibilityFeature then Field::Multi.new(item, value)
+        when :s_accessibilityControl then Field::Multi.new(item, value)
+        when :s_accessibilityHazard  then Field::Multi.new(item, value)
+        when :s_accessMode           then Field::Multi.new(item, value)
+        when :s_accessModeSufficient then Field::Multi.new(item, value)
         else                              render_value(item, value)
       end
     end
@@ -466,7 +467,7 @@ module UploadHelper
   #
   def upload_edit_icon(item, **opt)
     url  = edit_upload_path(id: item.id)
-    icon = "\u0394" # "GREEK CAPITAL LETTER DELTA"
+    icon = DELTA
     opt  = prepend_css_classes(opt, 'edit', 'icon')
     opt[:title] ||= 'Modify this EMMA entry' # TODO: I18n
     make_link(icon, url, **opt)
@@ -481,7 +482,7 @@ module UploadHelper
   #
   def upload_delete_icon(item, **opt)
     url  = delete_upload_path(id: item.id)
-    icon = "\u2612" # "BALLOT BOX WITH X"
+    icon = HEAVY_X
     opt  = prepend_css_classes(opt, 'delete', 'icon')
     opt[:title] ||= 'Delete this EMMA entry' # TODO: I18n
     make_link(icon, url, **opt)
@@ -711,7 +712,7 @@ module UploadHelper
   def upload_filename_display(leader: nil, **opt)
     opt = prepend_css_classes(opt, 'uploaded-filename')
     leader ||= 'Selected file:' # TODO: I18n
-    content_tag(:div, **opt) do
+    content_tag(:div, opt) do
       content_tag(:span, leader, class: 'leader') <<
         content_tag(:span, '', class: 'filename')
     end
@@ -749,7 +750,7 @@ module UploadHelper
     name = UPLOAD_FIELD_CONTROL_NAME
     opt  = prepend_css_classes(opt, 'upload-field-control')
     opt[:role] = 'radiogroup'
-    content_tag(:div, **opt) do
+    content_tag(:div, opt) do
       UPLOAD_FIELD_CONTROL_VALUES.map { |v, properties|
         input_id = "#{name}_#{v}"
         label_id = "label-#{input_id}"

@@ -117,7 +117,8 @@ module LayoutHelper::SkipNav
   #
   def render_skip_nav_link(label, link, **opt)
     return if label.blank? || link.blank?
-    opt = prepend_css_classes(opt, 'skip-nav-link')
+    opt  = prepend_css_classes(opt, 'skip-nav-link')
+    link = link.to_s
     unless link.start_with?('#', 'http') || link.include?('/')
       link = '#' + link
     end

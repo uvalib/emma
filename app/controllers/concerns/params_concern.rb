@@ -24,6 +24,7 @@ module ParamsConcern
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods
+      include SessionConcern
     end
     # :nocov:
 

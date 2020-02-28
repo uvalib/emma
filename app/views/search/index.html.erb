@@ -12,7 +12,7 @@
   row += [applied_terms, top_controls].compact.size
 
   set_page_title(t('emma.search.index.label', default: title))
-  append_page_title('-', hash_string(terms)) if terms.present?
+  append_page_title('-', list_search_terms(terms)) if terms.present?
   set_page_description(title)
   set_page_robots(:noindex)
 
@@ -20,7 +20,7 @@
 
   template_opt = { list: list, count: count, row: row, skip: :title }
 -%>
-<%- if count >= 0 -%>
+
 <h1 class="heading"><%= title -%></h1>
 
 <div class="search-list">
@@ -29,6 +29,3 @@
   <%= render 'search/list', template_opt %>
   <%= bottom_controls if list.present? %>
 </div>
-<%- else -%>
-  <%= render 'search/form' %>
-<%- end -%>

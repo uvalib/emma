@@ -175,7 +175,7 @@ module SerializationConcern
         list.size
       end
     {
-      list: page_items.map { |item| show_values(item)[:entry] },
+      list: page_items.map { |item| show_values(item) },
       properties: {
         total: total_items,
         limit: limit,

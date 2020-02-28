@@ -21,13 +21,6 @@ module LogoHelper
 
   DEFAULT_REPO = :emma
 
-  # Generic source repository values.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  REPOSITORY_TEMPLATE =
-    I18n.t('emma.source._template', default: {}).deep_freeze
-
   # Repository logo image assets.
   #
   # @type [Hash{String=>String}]

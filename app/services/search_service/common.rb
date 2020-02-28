@@ -27,10 +27,7 @@ module SearchService::Common
 
   public
 
-=begin
-  BASE_URL    = 'https://virtserver.swaggerhub.com/kden/emma-federated-search-api' # TODO: SEARCH_BASE_URL
-=end
-  BASE_URL    = 'https://api.staging.bookshareunifiedsearch.org'
+  BASE_URL    = 'https://api.staging.bookshareunifiedsearch.org' # TODO: SEARCH_BASE_URL
   API_VERSION = '0.0.2' # TODO: SEARCH_API_VERSION
 
   # ===========================================================================

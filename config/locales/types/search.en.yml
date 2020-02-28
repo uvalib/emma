@@ -1,0 +1,143 @@
+# config/locales/types/search.en.yml
+#
+# Data type enumerations for the Unified Search API.
+
+en:
+
+  emma:
+
+    search:
+
+      type:
+
+        FormatFeature:
+          tts:                      'TTS'
+          human:                    'Human'
+          grade1:                   'Grade 1'
+          grade2:                   'Grade 2'
+          technical:                'Technical'
+          ueb:                      'UEB'
+          ebae:                     'EBAE'
+          literary:                 'Literary'
+          music:                    'Music'
+
+        Rights:
+          publicDomain:             'Public Domain'
+          creativeCommons:          'Creative Commons'
+          copyright:                'Copyright'
+          other:                    'Other'
+
+        Provenance:
+          publisher:                'Publisher'
+          volunteer:                'Volunteer'
+
+        DublinCoreFormat: # NOTE: identical to 'emma.format'
+          brf:                      'BRF'
+          daisy:                    'DAISY'
+          daisyAudio:               'DAISY Audio'
+          epub:                     'EPUB'
+          braille:                  'Braille'
+          pdf:                      'PDF'
+          grayscalePdf:             'Grayscale PDF'
+          word:                     'Microsoft Word'
+          tactile:                  'Tactile'
+          kurzweil:                 'Kurzweil'
+          rtf:                      'RTF'
+
+        DcmiType:
+          text:                     'Text'
+          sound:                    'Sound'
+          collection:               'Collection'
+          dataset:                  'Dataset'
+          event:                    'Event'
+          image:                    'Image'
+          interactiveResource:      'Interactive Resource'
+          service:                  'Service'
+          physicalObject:           'Physical Object'
+          stillImage:               'Still Image'
+          movingImage:              'Moving Image'
+
+        A11yFeature:
+          alternativeText:          'Alternative Text'
+          annotations:              'Annotations'
+          audioDescription:         'Audio Description'
+          bookmarks:                'Bookmarks'
+          braille:                  'Braille'
+          captions:                 'Captions'
+          ChemML:                   'ChemML'
+          describedMath:            'Described Math'
+          displayTransformability:                  'Display Transformability'
+          displayTransformability/background-color: 'Display Transformability - background-color'
+          displayTransformability/color:            'Display Transformability - color'
+          displayTransformability/font-height:      'Display Transformability - font-height'
+          displayTransformability/font-size:        'Display Transformability - font-size'
+          displayTransformability/line-height:      'Display Transformability - line-height'
+          displayTransformability/word-spacing:     'Display Transformability - word-spacing'
+          highContrastAudio:        'High-contrast Audio'
+          highContrastDisplay:      'High-contrast Display'
+          index:                    'Index'
+          largePrint:               'Large Print'
+          latex:                    'LaTeX'
+          longDescription:          'Long Description'
+          MathML:                   'MathML'
+          physicalObject:           'Physical Object'
+          printPageNumbers:         'Print Page Numbers'
+          readingOrder:             'Reading Order'
+          rubyAnnotations:          'Ruby Annotations'
+          signLanguage:             'Sign Language'
+          sound:                    'Sound'
+          stillImage:               'Still Image'
+          structuralNavigation:     'Structural Navigation'
+          synchronizedAudioText:    'Synchronized Audio Text'
+          tableOfContents:          'Table of Contents'
+          tactileGraphic:           'Tactile Graphic'
+          tactileObject:            'Tactile Object'
+          taggedPDF:                'Tagged PDF'
+          timingControl:            'Timing Control'
+          transcript:               'Transcript'
+          ttsMarkup:                'TTS Markup'
+          unlocked:                 'Unlocked'
+
+        A11yControl:
+          fullAudioControl:         'Full Audio Control'
+          fullKeyboardControl:      'Full Keyboard Control'
+          fullMouseControl:         'Full Mouse Control'
+          fullTouchControl:         'Full Touch Control'
+          fullVideoControl:         'Full Video Control'
+          fullSwitchControl:        'Full Switch Control'
+          fullVoiceControl:         'Full Voice Control'
+
+        A11yHazard:
+          flashing:                 'Flashing Hazard'
+          noFlashingHazard:         'No Flashing Hazard'
+          motionSimulation:         'Motion Simulation Hazard'
+          noMotionSimulationHazard: 'No Motion Simulation Hazard'
+          sound:                    'Sound Hazard'
+          noSoundHazard:            'No Sound Hazard'
+
+        A11yAPI:
+          ARIA:                     'WS-ARIA'
+
+        A11yAccessMode:
+          auditory:                 'Auditory'
+          chartOnVisual:            'Chart On Visual'
+          chemOnVisual:             'Chem On Visual'
+          colorDependent:           'Color Dependent'
+          diagramOnVisual:          'Diagram On Visual'
+          mathOnVisual:             'Math On Visual'
+          musicOnVisual:            'Music On Visual'
+          tactile:                  'Tactile'
+          textOnVisual:             'Text On Visual'
+          textual:                  'Textual'
+          visual:                   'Visual'
+
+        A11ySufficient:
+          auditory:                 'Auditory'
+          tactile:                  'Tactile'
+          textual:                  'Textual'
+          visual:                   'Visual'
+
+        SearchSort:
+          relevance:                'Relevance'
+          title:                    'Title'
+          lastRemediationDate:      'Last Remediation Date'

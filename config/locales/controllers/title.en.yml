@@ -127,6 +127,10 @@ en:
           placeholder:  'Enter catalog search terms...'
 
       search_controls:
+        format:
+          values:          !ruby/symbol FormatType
+        sort:
+          values:          !ruby/symbol TitleSortOrder
         layout:
           - [sort,         size,         format      ]
           - [language,     category,     content_type]
@@ -144,7 +148,7 @@ en:
 
       index:
         label:          'Titles'
-        title:          'Catalog Titles Index'
+        title:          'Bookshare Catalog Titles'
         tooltip:        'Find more Bookshare catalog items with %{terms}.'
         fields:
           title:        'Title'
@@ -153,7 +157,7 @@ en:
 
       show:
         label:          'Title'
-        title:          'Catalog Title'
+        title:          'Bookshare Catalog Title'
         tooltip:        'See details about this Bookshare catalog title.'
         fields:
           <<:           *TITLE_FIELDS

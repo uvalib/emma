@@ -58,9 +58,7 @@ module TestHelper::SystemTests::Bookshare
   # @type [Hash{String=>Array<String>}]
   #
   API_ENUMERATIONS =
-    Bs::ENUMERATIONS.map { |name, properties|
-      [name.to_s, (properties[:values]&.sort || [])]
-    }.to_h.deep_freeze
+    Bs::ENUMERATIONS.stringify_keys.transform_values(&:sort).deep_freeze
 
   # Translate an implementation field type into a specification field type.
   #

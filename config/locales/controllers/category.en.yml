@@ -43,14 +43,14 @@ en:
 
       index:
         label:          'Categories'
-        title:          'Category Index'
+        title:          'Bookshare Category Index'
         tooltip:        'Get a Bookshare category listing.'
         fields:
           <<:           *CATEGORY_FIELDS
 
       show:
         label:          'Category'
-        title:          'Category'
+        title:          'Bookshare Category'
         tooltip:        'See Bookshare items in this category.'
         fields:
           <<:           *CATEGORY_FIELDS

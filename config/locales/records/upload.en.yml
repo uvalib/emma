@@ -386,7 +386,7 @@ en:
             min:          0
             max:          1
             type:         !ruby/symbol A11ySufficient
-            label:        'Access Mode Sufficient'
+            label:        'Sufficient Mode'
             tooltip:      'Access mode sufficient for the remediated content'
 
           s_accessibilitySummary:

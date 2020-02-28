@@ -1,6 +1,6 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-// @use 'shared/common';  // TODO: SASS 4.0
+// @use 'feature/model';  // TODO: SASS 4.0
 // @use 'feature/search'; // TODO: SASS 4.0
 
 //=============================================================================
@@ -140,17 +140,12 @@ $upload-entry-gap: 2rem;
         }
 
         > * {
-
             margin-right:  0.5rem;
             margin-bottom: 0.5rem;
             padding:       0 0.25rem;
             padding-top:   0.0625rem;
             border:        1px solid blue;
             border-radius: 0.125rem;
-
-            @media #{$not-narrow-screen} {
-                flex: 0 1 15vw;
-            }
         }
     }
 
@@ -285,6 +280,25 @@ $upload-entry-gap: 2rem;
             }
         }
 
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        @media #{$narrow-screen} {
+
+            margin-left:  -0.25rem;
+            margin-right: 0.25rem;
+
+            .container {
+                .value {
+                    font-size: larger;
+                }
+                .icon-tray {
+                    padding-left:  4px;
+                    padding-right: 4px;
+                }
+            }
+        }
     }
 }
 
@@ -437,10 +451,10 @@ form.select-entry {
             background: white;
         }
 
-        // This assumes that the first option is a blank value with the same
-        // name as the data item.
+        // This assumes that the first option is a blank value used to clear
+        // the menu selection.
         option:first-of-type {
-            display: none;
+            color: gray;
         }
     }
 

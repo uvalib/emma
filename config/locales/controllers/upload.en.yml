@@ -99,6 +99,9 @@ en:
         count:          'uploads found'
 
       search_controls:
+        sort:
+          values:       !ruby/symbol SearchSort
+          reverse:      false
         layout:
           - []
 

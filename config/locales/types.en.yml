@@ -19,40 +19,6 @@ en:
       kurzweil:         'Kurzweil'
       rtf:              'RTF'
 
-    book_format:
-      DAISY:            'DAISY with Images'
-      DAISY_AUDIO:      'DAISY Audio'
-      DAISY_SEGMENTED:  'DAISY Multiple DTBooks'
-      BRF:              'BRF'
-      EPUB3:            'EPUB'
-      PDF:              'PDF'
-      DOCX:             'Microsoft Word'
-      HTML:             'HTML' # NOTE: Exists but not in the API docs.
-      TEXT:             'Text' # NOTE: Exists but not in the API docs.
-
-    periodical_format:
-      DAISY:            'DAISY with Images'
-      DAISY_AUDIO:      'DAISY Audio'
-      DAISY_2_AUDIO:    'DAISY 2 Audio'
-      BRF:              'BRF'
-
-    braille_type:
-      automated:        'Automated'
-      transcribed:      'Transcribed'
-
-    braille_code:
-      ebae:                     'English Braille American Edition'
-      ueb:                      'Unified English Braille'
-      french:                   'French Braille Code'
-      french_quebec:            'French Quebec Braille Code'
-      french_unified:           'French Unified Braille Code'
-      standard_enlish_braille:  'Standard English Braille'
-      music_braille_code:       'Music Braille Code'
-
-    braille_grade:
-      grade_2:          'Grade 2 (contracted)'
-      grade_1:          'Grade 1 (uncontracted)'
-
     categories:
 
       # Each key here relates to the ID associated checkbox ID in the book

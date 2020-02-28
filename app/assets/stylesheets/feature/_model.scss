@@ -1,0 +1,289 @@
+// app/assets/stylesheets/feature/_model.scss
+
+// @use 'shared/mixins';         // TODO: SASS 4.0
+// @use 'shared/common';         // TODO: SASS 4.0
+// @use 'shared/controls/grids'; // TODO: SASS 4.0
+// @use 'shared/controls/lists'; // TODO: SASS 4.0
+
+//=============================================================================
+// Definitions
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+$results-entry-gap-x:    $page-padding-x;
+
+// noinspection SassScssResolvedByNameOnly
+$ie-results-entry-gap-x: $ie-page-padding-x;
+
+// noinspection SassScssResolvedByNameOnly
+$results-entry-gap-y:    $page-padding;
+
+// noinspection SassScssResolvedByNameOnly
+$ie-results-entry-gap-y: $ie-page-padding;
+
+// This fixed value will maintain an acceptable separation between links
+// without being scaled to display dimensions.
+$results-entry-margin-y: 0.67rem;
+
+//=============================================================================
+// Item metadata
+//=============================================================================
+
+// A collection of one or more label/value pairs.
+//
+// noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
+.label-value-pairs {
+
+    @extend .list-2-column;
+
+    margin-bottom: $results-entry-gap-y;
+    break-inside:  avoid;
+    break-inside:  avoid-column;
+    break-after:   left;
+    align-content: flex-start;
+
+    @media #{$narrow-screen} {
+        @include grid-columns(100%);
+    }
+
+    @media #{$browser-ie} {
+        margin-bottom: $ie-results-entry-gap-y;
+    }
+
+    //=========================================================================
+    // Classes
+    //=========================================================================
+
+    // Make focus outline follow the perimeter of the area of clickable text
+    // rather than the individual lines.
+    a {
+        display:   inline-block;
+        min-width: 48px; // Accessibility best practice. // TODO: reference
+        max-width: max-content;
+
+        @media #{$browser-ie} {
+            display: inline;
+        }
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // noinspection CssOverwrittenProperties
+    .label,
+    .value {
+
+        margin-bottom: $results-entry-margin-y;
+        word-break:    break-word;
+        break-inside:  avoid;
+        break-inside:  avoid-column;
+
+        @media #{$browser-ie} {
+            break-inside: auto;
+        }
+    }
+
+    .label {
+
+        font-weight: bold;
+
+        @media #{$narrow-screen} {
+            margin-bottom: $flex-gap-y;
+        }
+
+        @media #{$browser-ie} {
+
+            margin-right:    $ie-flex-gap-x;
+            -ms-grid-column: 1;
+
+            @media #{$narrow-screen} {
+                margin-bottom: $ie-flex-gap-y;
+            }
+        }
+    }
+
+    .value {
+
+        @media #{$narrow-screen} {
+            margin-bottom: calc(3 * #{$results-entry-gap-y} / 2);
+        }
+
+        @media #{$browser-ie} {
+
+            -ms-grid-column: 2;
+
+            @media #{$narrow-screen} {
+                margin-bottom: (3 * $ie-results-entry-gap-y / 2);
+            }
+        }
+
+        // noinspection CssOverwrittenProperties
+        &.field-Links {
+
+            word-break: break-all;
+            word-break: break-word;
+
+            > * {
+
+                display:    block;
+                margin-top: $results-entry-margin-y;
+
+                &:first-child {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}
+
+//=============================================================================
+// Item list (index page) support
+//=============================================================================
+
+// Metadata label/value pairs on index pages.
+.item-list-entry {
+
+    @extend .label-value-pairs;
+
+    // noinspection SassScssResolvedByNameOnly
+    &.empty {
+
+        @include grid-columns(0 max-content);
+
+        margin-top:    $results-entry-gap-y;
+        margin-bottom: 0;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$browser-ie} {
+
+        -ms-grid-column: 2;
+
+        &.empty {
+            margin-top:      $ie-results-entry-gap-y;
+            -ms-grid-column: 1;
+        }
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .label {}
+
+    .value {
+        &.field-None {
+
+            width:         max-content;
+            margin-bottom: $results-entry-gap-y;
+
+            // noinspection SassScssResolvedByNameOnly
+            @media #{$browser-ie} {
+                margin-bottom: $ie-results-entry-gap-y;
+            }
+        }
+    }
+}
+
+// Zero or more .item-list-entry elements.
+//
+// noinspection SassScssResolvedByNameOnly
+.item-list {
+
+    @extend .list-2-column;
+
+    margin-top:    -1rem;
+    margin-bottom: 1rem;
+    align-content: flex-start;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .number {
+
+        font-family: $font-condensed;
+
+        @media #{$browser-ie} {
+            margin-bottom: $results-entry-margin-y;
+            font-family:   $font-normal;
+        }
+    }
+}
+
+//=============================================================================
+// Item details (show page) support
+//=============================================================================
+
+// Metadata label/value pairs on show pages.
+.item-details {
+
+    @extend .label-value-pairs;
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // Add a top margin except to the first label/value pair.
+    .value + .label,
+    .value + .label + .value {
+        margin-top: $results-entry-margin-y;
+    }
+}
+
+// Wrapper for item details which supports a second column of information to
+// the right of the details listing.
+//
+// noinspection SassScssResolvedByNameOnly
+.item-container {
+
+    display:        flex;
+    flex-direction: column;
+
+    @media #{$wide-screen} {
+
+        margin-top:     $page-padding;
+        flex-direction: row;
+
+        @media #{$browser-ie} {
+            margin-top: $ie-page-padding;
+        }
+    }
+
+    //=========================================================================
+    // Sections
+    //=========================================================================
+
+    > * {
+
+        margin: 0 0 $page-padding-y 0;
+
+        @media #{$wide-screen} {
+
+            flex:         1 1 50%;
+            margin-right: $page-padding-x;
+
+            @media #{$browser-ie} {
+                margin-right: $ie-page-padding-x;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            margin-top: calc(2 * #{$page-padding});
+
+            @media #{$browser-ie} {
+                margin-top: (2 * $ie-page-padding);
+            }
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+}

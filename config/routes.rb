@@ -34,7 +34,8 @@ Rails.application.routes.draw do
 
   end
 
-  get 'search/example', to: 'search#example'
+  get 'search/advanced', to: 'search#advanced', as: 'advanced_search'
+  get 'search/example',  to: 'search#example'
 
   resources :search, only: %i[index show]
 

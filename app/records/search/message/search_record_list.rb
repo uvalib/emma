@@ -56,6 +56,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
         opt[:format] ||= self.format_of(data)
         opt[:error]  ||= true if opt[:format].blank?
         unless opt[:error]
+          # noinspection RubyCaseWithoutElseBlockInspection
           case opt[:format]
             when :xml  then data = wrap_outer(data, **opt)
             when :json then data = %Q({"records":#{data}})
@@ -84,6 +85,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   include Search::Shared::TitleMethods
 
   # @type [Hash]
+  # noinspection RailsI18nInspection
   EXAMPLE_DATA = I18n.t('emma.examples.search').deep_freeze
 
   # @type [Hash]

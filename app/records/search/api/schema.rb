@@ -34,8 +34,7 @@ module Search::Api::Schema
   # @return [Hash{Symbol=>String}]
   #
   def enumeration_defaults
-    @enumeration_defaults ||=
-      Search::ENUMERATIONS.transform_values { |prop| prop[:default] || '' }
+    @enumeration_defaults ||= Search::ENUMERATION_DEFAULTS
   end
 
   # The enumeration types that may be given as the second argument to
@@ -44,7 +43,7 @@ module Search::Api::Schema
   # @return [Array<Symbol>]
   #
   def enumeration_types
-    @enumeration_types ||= enumeration_defaults.keys
+    @enumeration_types ||= Search::ENUMERATION_TYPES
   end
 
 end

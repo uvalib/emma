@@ -21,6 +21,7 @@ module ModelHelper
   include Emma::Json
   include Emma::Unicode
   include PaginationHelper
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -347,7 +348,6 @@ module ModelHelper
     # @type [Symbol]                 label
     # @type [Symbol, String, Number] value
     pairs.map { |label, value|
-      v = value
       field =
         if value.is_a?(Symbol)
           value
@@ -392,11 +392,18 @@ module ModelHelper
     id    = index ? "#{type}-#{index}" : type
     css << type
     l_opt = append_css_classes('label', *css)
-    label = prop[:label] || label
-    label = content_tag(:div, labelize(label), l_opt)
+    label = prop[:label] || label || labelize(field)
+    label = content_tag(:div, label, l_opt)
 
     # Value and value HTML options.
-    if prop[:type].is_a?(Class) || value.is_a?(Array)
+    if value.is_a?(Field::Range)
+      range = value.base
+      mode  = value.mode
+      value = value.values
+      value = value.map { |v| range.pairs[v] || v } if range.respond_to?(:pairs)
+      value = value.first unless mode == :multiple
+    end
+    if value.is_a?(Array) || prop[:type].is_a?(Class)
       i = 0
       value = value.map { |v| content_tag(:div, v, class: "item-#{i += 1}") }
       value = safe_join(value, separator)
@@ -508,39 +515,10 @@ module ModelHelper
   end
 
   # ===========================================================================
-  # :section: Item details (show page) support
-  # ===========================================================================
-
-  public
-
-  # Render an item metadata listing.
-  #
-  # @param [Model]          item
-  # @param [String, Symbol] model
-  # @param [Hash, nil]      pairs         Label/value pairs.
-  # @param [Proc]           block         Passed to #render_field_values.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *item* is blank.
-  #
-  def item_details(item, model, pairs = nil, &block)
-    return if item.blank?
-    content_tag(:div, class: "#{model}-details") do
-      render_field_values(item, model: model, pairs: pairs, &block)
-    end
-  end
-
-  # ===========================================================================
   # :section: Item list (index page) support
   # ===========================================================================
 
   public
-
-  # URL parameters that are definitely not search parameters.
-  #
-  # @type [Array<Symbol>]
-  #
-  NON_SEARCH_KEYS = %i[offset start limit api_key].freeze
 
   # Method options which are processed internally and not passed on as HTML
   # options.
@@ -549,69 +527,9 @@ module ModelHelper
   #
   ITEM_ENTRY_OPT = %i[index offset level row skip].freeze
 
-  # Active search terms.
-  #
-  # @param [Hash{Symbol=>String}]  pairs    Default: `#url_parameters`.
-  # @param [Symbol, Array<Symbol>] only
-  # @param [Symbol, Array<Symbol>] except
-  #
-  # @return [Hash{String=>String}]
-  #
-  def search_terms(pairs: nil, only: nil, except: nil)
-    only    = Array.wrap(only).presence
-    except  = Array.wrap(except) + NON_SEARCH_KEYS
-    pairs &&= pairs.dup if only || except
-    pairs ||= url_parameters
-    pairs.slice!(*only)    if only
-    pairs.except!(*except) if except
-    # @type [Symbol]        k
-    # @type [String, Array] v
-    pairs.map { |k, v|
-      count = v.is_a?(Array) ? v.size : 1
-      field = labelize(k, count)
-      value = strip_quotes(v)
-      value = ISO_639.find(value)&.english_name || value if k == :language
-      [field, quote(value)]
-    }.to_h
-  end
-
-  # A control displaying the currently-applied search terms in the current
-  # scope (by default).
-  #
-  # @param [Hash, nil] term_list      Default: `#search_terms`.
-  # @param [Hash]      opt            Passed to the innermost :content_tag.
-  #
-  # @option opt [Integer] :row        Display row (default: 1)
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def applied_search_terms(term_list, **opt)
-    term_list ||= search_terms
-    opt, term_opt = partition_options(opt, :row)
-    row = positive(opt[:row]) || 1
-    html_opt = { class: "applied-search-terms row-#{row}" }
-    append_css_classes!(html_opt, 'invisible') if term_list.blank?
-    content_tag(:div, html_opt) do
-      if term_list.present?
-        prepend_css_classes!(term_opt, 'term')
-        leader = 'Search terms:' # TODO: I18n
-        leader = content_tag(:div, leader, class: 'label')
-        tm_sep = content_tag(:span, ';', class: 'term-separator')
-        terms  =
-          term_list.map { |field, value|
-            label = content_tag(:span, field, class: 'field')
-            sep   = content_tag(:span, ':',   class: 'separator')
-            value = content_tag(:span, value, class: 'value')
-            content_tag(:div, (label + sep + value), term_opt)
-          }.join(tm_sep).html_safe
-        content_tag(:div, class: 'search-terms') { leader + terms }
-      end
-    end
-  end
-
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Hash, nil] terms          Default: `#search_terms`.
+  # @param [Hash, nil] terms          Passed to `#applied_search_terms`.
   # @param [Integer]   count          Default: `#total_items`.
   # @param [Integer]   row
   #
@@ -708,84 +626,26 @@ module ModelHelper
   end
 
   # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
+  # :section: Item details (show page) support
   # ===========================================================================
 
   public
 
-  class FieldRange
-
-    # @return [Class]
-    attr_reader :base_class
-
-    # @return [Symbol, nil]
-    attr_reader :mode
-
-    # @return [Array]
-    attr_reader :values
-
-    # @return [Symbol]
-    attr_reader :field
-
-    def initialize(base, mode = nil, values = nil)
-      @base_class =
-        if base.is_a?(Upload)
-          item   = base
-          @field = values&.to_sym
-          cfg    = Upload.get_field_configuration(@field)
-          values = item.emma_record&.send(@field)
-          cfg[:type]
-        else
-          base
-        end
-      @base_class = String if @base_class.nil? || @base_class.is_a?(String)
-      @base_class = @base_class.to_s.constantize if @base_class.is_a?(Symbol)
-      @mode   = mode&.to_sym || :multiple
-      @values = Array.wrap(values).reject(&:blank?)
+  # Render an item metadata listing.
+  #
+  # @param [Model]          item
+  # @param [String, Symbol] model
+  # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Proc]           block         Passed to #render_field_values.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* is blank.
+  #
+  def item_details(item, model, pairs = nil, &block)
+    return if item.blank?
+    content_tag(:div, class: "#{model}-details") do
+      render_field_values(item, model: model, pairs: pairs, &block)
     end
-
-  end
-
-  class FieldMulti < FieldRange
-
-    def initialize(base, values = nil)
-      super(base, :multiple, values)
-    end
-
-  end
-
-  class FieldCollection < FieldRange
-
-    def initialize(base, values = nil)
-      super(base, :multiple, values)
-    end
-
-  end
-
-  class FieldSingle < FieldRange
-
-    def initialize(base, value = nil)
-      super(base, :single, value)
-    end
-
-    # @return [String, nil]
-    def value
-      values&.first
-    end
-
-  end
-
-  class FieldSelect < FieldRange
-
-    def initialize(base, value = nil)
-      super(base, :single, value)
-    end
-
-    # @return [String, nil]
-    def value
-      values&.first
-    end
-
   end
 
   # ===========================================================================
@@ -900,7 +760,6 @@ module ModelHelper
     opt[:row] = row_offset || 0
     # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
     pairs.map { |label, value|
-      v = value
       field =
         if value.is_a?(Symbol)
           value
@@ -960,8 +819,8 @@ module ModelHelper
     if value == EN_DASH
       placeholder = value
       value = nil
-    elsif value.is_a?(FieldRange)
-      range = value.base_class
+    elsif value.is_a?(Field::Range)
+      range = value.base
       mode  = value.mode
       value = value.values
       render_method =
@@ -992,7 +851,8 @@ module ModelHelper
     l_opt[:for]     = name
     l_opt[:title] ||= prop[:tooltip] if prop[:tooltip]
     label = prop[:label] || label
-    label = label_tag(name, l_opt) { labelize(label) << marker }
+    label = label ? ERB::Util.h(label) : labelize(name)
+    label = label_tag(name, l_opt) { label << marker }
 
     # Input element pre-populated with value.
     v_opt = append_css_classes(opt, 'value')
@@ -1030,19 +890,24 @@ module ModelHelper
     unless range.is_a?(Class) && (range < EnumType)
       raise "range: #{range.inspect}: not a subclass of EnumType"
     end
-    opt = append_css_classes(opt, 'menu', 'single')
     normalize_attributes!(opt)
-    readonly = opt.delete(:readonly)
-    base     = opt.delete(:base)
-    name     = opt.delete(:name) || name
-    name   ||= base || opt[:'data-field']
+    opt, html_opt = partition_options(opt, :readonly, :base, :name)
+    append_css_classes!(html_opt, 'menu', 'single')
+    field = html_opt[:'data-field']
+    name  = opt[:name] || name || opt[:base] || field
 
     selected = value.compact.presence
 
-    menu = range.values.map { |v| [v.titleize, v] }.unshift([base, ''])
+    menu =
+      range.pairs.map do |item_value, item_label|
+        item_value = item_value.to_s
+        item_label ||= item_value.titleize
+        [item_label, item_value]
+      end
+    menu.unshift(['(unset)', '']) # TODO: I18n
     menu = options_for_select(menu, selected)
-    opt[:disabled] = true if readonly
-    select_tag(name, menu, **opt)
+    html_opt[:disabled] = true if opt[:readonly]
+    select_tag(name, menu, html_opt)
   end
 
   # Multi-select menu - scrollable list of checkboxes.
@@ -1065,34 +930,31 @@ module ModelHelper
     unless range.is_a?(Class) && (range < EnumType)
       raise "range: #{range.inspect}: not a subclass of EnumType"
     end
-    opt = append_css_classes(opt, 'menu', 'multi')
     normalize_attributes!(opt)
-    id       = opt.delete(:id)
-    readonly = opt.delete(:readonly)
-    field    = opt[:'data-field']
-    base     = opt.delete(:base)
-    name     = opt.delete(:name) || name
-    name   ||= base || field
+    opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
+    append_css_classes!(html_opt, 'menu', 'multi')
+    field = html_opt[:'data-field']
+    name  = opt[:name] || name || opt[:base] || field
 
     selected = value.compact.presence
 
-    field_opt = opt.merge(role: 'listbox', multiple: true)
-    field_opt[:name] = name
-    field_opt[:disabled] = true if readonly
+    field_opt = html_opt.merge(role: 'listbox', name: name, multiple: true)
+    field_opt[:disabled] = true if opt[:readonly]
     # noinspection RubyYardReturnMatch
-    field_set_tag(field, **field_opt) do
+    field_set_tag(nil, field_opt) do
 
-      div_opt = opt.except(:'data-field', :'data-required')
-      div_opt[:id]       = id
+      div_opt = html_opt.except(:'data-field', :'data-required')
+      div_opt[:id]       = opt[:id]
       div_opt[:tabindex] = -1
-      content_tag(:div, **div_opt) do
+      content_tag(:div, div_opt) do
 
         cb_opt = { role: 'option' }
-        range.values.map { |v|
+        range.pairs.map { |item_value, item_label|
           cb_name          = "[#{field}][]"
-          cb_value         = v
-          cb_opt[:id]      = "#{field}_#{v}"
-          cb_opt[:checked] = selected&.include?(v)
+          cb_value         = item_value
+          cb_opt[:id]      = "#{field}_#{item_value}"
+          cb_opt[:checked] = selected&.include?(item_value)
+          cb_opt[:label]   = item_label
           render_check_box(cb_name, cb_value, **cb_opt)
         }.join("\n").html_safe
 
@@ -1115,27 +977,24 @@ module ModelHelper
   # @see updateFieldsetInputs() in file-upload.js
   #
   def render_form_input_multi(name, value, **opt)
-    opt       = append_css_classes(opt, 'input', 'multi')
     normalize_attributes!(opt)
-    readonly  = opt.delete(:readonly)
-    field     = opt[:'data-field']
-    base      = opt.delete(:base)
-    name      = opt.delete(:name) || name
-    name    ||= base || field
+    opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
+    append_css_classes!(html_opt, 'input', 'multi')
+    field = html_opt[:'data-field']
+    name  = opt[:name] || name || opt[:base] || field
 
-    selected  = value.compact.presence || ['']
+    selected = value.compact.presence || ['']
 
-    field_opt = opt.merge(role: 'listbox')
-    field_opt[:name] = name
+    field_opt = html_opt.merge(role: 'listbox', name: name, id: opt[:id])
     # noinspection RubyYardReturnMatch
-    field_set_tag(field, **field_opt) do
-      content_tag(:div, **opt.except(:id)) do
+    field_set_tag(nil, field_opt) do
+      content_tag(:div, html_opt) do
 
-        count     = opt.delete(:count) || (2 + selected.size)
+        count     = html_opt.delete(:count) || (2 + selected.size)
         label_id  = name.to_s.delete_prefix('field-').prepend('label-')
         input_opt = {
           role:              'textbox',
-          readonly:          readonly,
+          readonly:          opt[:readonly],
           'aria-labelledby': label_id
         }
         count.times.map { |n|
@@ -1185,14 +1044,14 @@ module ModelHelper
   #
   # noinspection RubyYardReturnMatch
   def render_form_input(name, value, **opt)
-    opt = append_css_classes(opt, 'input', 'single')
     normalize_attributes!(opt)
-    field  = opt[:'data-field']&.to_sym
-    base   = opt.delete(:base)
-    name   = opt.delete(:name) || name || base || field
-    type   = Upload.get_field_configuration(field)[:type]
-    type   = type.to_sym if type.is_a?(String)
-    type   = RENDER_FIELD_TYPE[value.class] || :text unless type.is_a?(Symbol)
+    local, opt = partition_options(opt, :base, :name)
+    append_css_classes!(opt, 'input', 'single')
+    field = opt[:'data-field']
+    name  = local[:name] || name || local[:base] || field
+    type  = Upload.get_field_configuration(field)[:type]
+    type  = type.to_sym if type.is_a?(String)
+    type  = RENDER_FIELD_TYPE[value.class] || :text unless type.is_a?(Symbol)
     # noinspection RubyCaseWithoutElseBlockInspection
     case type
       when :date, :year then value = value.to_s.sub(/\s.*$/, '')
@@ -1213,7 +1072,7 @@ module ModelHelper
   # @type [Array<Symbol>]
   #
   CHECK_OPTIONS =
-    %i[id checked disabled readonly required data-required].freeze
+    %i[id checked disabled readonly required data-required label].freeze
 
   # render_check_box
   #
@@ -1227,18 +1086,20 @@ module ModelHelper
 
     opt, html_opt = partition_options(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
+    checked = opt.delete(:checked)
+    label   = opt.delete(:label) || value
 
     # Checkbox control.
-    checked  = opt.delete(:checked)
+    checked  = opt.delete(:checked) || checked
     checkbox = check_box_tag(name, value, checked, opt)
 
     # Label for checkbox.
     label_opt = { for: opt[:id] }.compact
-    label = label_tag(name, value, label_opt)
+    label = label_tag(name, label, label_opt)
 
     # Checkbox/label combination.
     append_css_classes!(html_opt, 'checkbox', 'single')
-    content_tag(:div, **html_opt) do
+    content_tag(:div, html_opt) do
       checkbox << label
     end
   end

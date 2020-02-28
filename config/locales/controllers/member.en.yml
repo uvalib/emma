@@ -44,6 +44,8 @@ en:
       # =======================================================================
 
       search_controls:
+        sort:
+          values:       !ruby/symbol MemberSortOrder
         layout:
           - [sort, size]
 
@@ -53,7 +55,7 @@ en:
 
       index:
         label:          'Members'
-        title:          'Members Index'
+        title:          'Bookshare Members'
         tooltip:        'Show Bookshare organization members.'
         fields:
           member_link:  'Name'
@@ -61,7 +63,7 @@ en:
 
       show:
         label:          'Member'
-        title:          'Member'
+        title:          'Bookshare Member'
         tooltip:        'See details about this Bookshare member.'
         fields:
           <<:           *MEMBER_FIELDS

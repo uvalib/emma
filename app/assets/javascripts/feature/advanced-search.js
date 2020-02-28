@@ -68,6 +68,20 @@ $(document).on('turbolinks:load', function() {
      */
     var $reset_button = $search_sections.find('.menu-button.reset');
 
+    /**
+     * The input box associated with the advanced search toggle.
+     *
+     * @constant {jQuery}
+     */
+    var $search_input = $('#q');
+
+    /**
+     * The input clear button.
+     *
+     * @constant {jQuery}
+     */
+    var $search_clear = $search_input.siblings('.search-clear');
+
     // ========================================================================
     // Function definitions
     // ========================================================================
@@ -126,6 +140,7 @@ $(document).on('turbolinks:load', function() {
                 }
             }
         }
+        updateSearchClearButton();
     }
 
     /**
@@ -173,14 +188,29 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
+    /**
+     * Do not show the search clear control if this search box is empty.
+     */
+    function updateSearchClearButton() {
+        if ($search_input.val()) {
+            $search_clear.css('visibility', 'visible');
+        } else {
+            $search_clear.css('visibility', 'hidden');
+        }
+    }
+
     // ========================================================================
     // Event handlers
     // ========================================================================
 
     $advanced_toggle
         .off('click', toggleAdvancedSearch)
-        .on('click', toggleAdvancedSearch)
+        .on('click',  toggleAdvancedSearch)
         .each(handleKeypressAsClick);
+
+    $search_input
+        .off('keyup', updateSearchClearButton)
+        .on('keyup',  updateSearchClearButton);
 
     // ========================================================================
     // Actions

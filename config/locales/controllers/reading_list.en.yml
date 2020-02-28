@@ -37,6 +37,8 @@ en:
       # =======================================================================
 
       search_controls:
+        sort:
+          values:       !ruby/symbol MyReadingListSortOrder
         layout:
           - [sort, size]
 
@@ -51,7 +53,7 @@ en:
 
       index:
         label:          'Lists'
-        title:          'Reading Lists'
+        title:          'Bookshare Reading Lists'
         tooltip:        'Bookshare reading lists to which you have access.'
         fields:
           name:         'Name'
@@ -60,7 +62,7 @@ en:
 
       show:
         label:          'List'
-        title:          'Reading List'
+        title:          'Bookshare Reading List'
         tooltip:        'See details about this Bookshare reading list.'
         fields:
           <<:           *READING_LIST_FIELDS

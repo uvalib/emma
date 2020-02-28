@@ -228,7 +228,7 @@ module HeadHelper::MetaTags
   #
   def set_page_description(*values)
     opt = { sanitize: false } # Sanitization occurs in #emit_meta_tag.
-    replace_page_meta_tags(description: normalized_list(values, opt))
+    replace_page_meta_tags(description: normalized_list(values, **opt))
   end
 
   # Add to <meta name="description">.
@@ -239,7 +239,7 @@ module HeadHelper::MetaTags
   #
   def append_page_description(*values)
     opt = { sanitize: false } # Sanitization occurs in #emit_meta_tag.
-    append_page_meta_tags(description: normalized_list(values, opt))
+    append_page_meta_tags(description: normalized_list(values, **opt))
   end
 
   # ===========================================================================

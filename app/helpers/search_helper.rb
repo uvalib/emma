@@ -87,11 +87,11 @@ module SearchHelper
   # @see ModelHelper#render_value
   #
   def search_render_value(item, value)
-    case field_category(value)
+    case value
       when :dc_title                then title_and_source_logo(item)
       when :emma_repositoryRecordId then source_record_link(item)
       when :emma_retrievalLink      then source_retrieval_link(item)
-      else                               render_value(item, value)
+      else                               upload_render_value(item, value)
     end
   end
 

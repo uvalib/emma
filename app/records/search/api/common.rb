@@ -25,192 +25,50 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # noinspection RailsI18nInspection
   REPOSITORY =
     I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
+
+  # Type configurations.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # noinspection RailsI18nInspection
+  CONFIGURATION =
+    I18n.t('emma.search.type').merge(
+      EmmaRepository:
+        REPOSITORY
+          .transform_values { |cfg| cfg[:name] }
+          .merge(_default: I18n.t('emma.source._default'))
+    ).deep_freeze
 
   # Enumeration scalar type names and properties.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  ENUMERATIONS = {
+  ENUMERATIONS =
+    CONFIGURATION
+      .transform_values { |cfg| cfg.except(:_default).keys.map(&:to_s) }
+      .deep_freeze
 
-    EmmaRepository: {
-      values: %w(
-        emma
-        bookshare
-        hathiTrust
-        internetArchive
-      )
-    },
+  # Enumeration type names.
+  #
+  # @type [Array<Symbol>]
+  #
+  ENUMERATION_TYPES = CONFIGURATION.keys.freeze
 
-    FormatFeature: {
-      values: %w(
-        tts
-        human
-        grade1
-        grade2
-        nemeth
-        technical
-        ueb
-        ebae
-        literary
-        music
-      )
-    },
+  # Enumeration default values.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  ENUMERATION_DEFAULTS =
+    CONFIGURATION.transform_values { |cfg| cfg[:_default] || '' }.deep_freeze
 
-    Rights: {
-      values: %w(
-        publicDomain
-        creativeCommons
-        copyright
-        other
-      )
-    },
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
-    Provenance: {
-      values: %w(
-        publisher
-        volunteer
-      )
-    },
-
-    DublinCoreFormat: {
-      values: %w(
-        brf
-        daisy
-        daisyAudio
-        epub
-        braille
-        pdf
-        grayscalePdf
-        word
-        tactile
-        kurzweil
-        rtf
-      )
-    },
-
-    DcmiType: {
-      values: %w(
-        text
-        sound
-        collection
-        dataset
-        event
-        image
-        interactiveResource
-        service
-        physicalObject
-        stillImage
-        movingImage
-      )
-    },
-
-    A11yFeature: {
-      values: %w(
-        alternativeText
-        annotations
-        audioDescription
-        bookmarks
-        braille
-        captions
-        ChemML
-        describedMath
-        displayTransformability
-        displayTransformability/background-color
-        displayTransformability/color
-        displayTransformability/font-height
-        displayTransformability/font-size
-        displayTransformability/line-height
-        displayTransformability/word-spacing
-        highContrastAudio
-        highContrastDisplay
-        index
-        largePrint
-        latex
-        longDescription
-        MathML
-        physicalObject
-        printPageNumbers
-        readingOrder
-        rubyAnnotations
-        signLanguage
-        sound
-        stillImage
-        structuralNavigation
-        synchronizedAudioText
-        tableOfContents
-        tactileGraphic
-        tactileObject
-        taggedPDF
-        timingControl
-        transcript
-        ttsMarkup
-        unlocked
-      )
-    },
-
-    A11yControl: {
-      values: %w(
-        fullAudioControl
-        fullKeyboardControl
-        fullMouseControl
-        fullTouchControl
-        fullVideoControl
-        fullSwitchControl
-        fullVoiceControl
-      )
-    },
-
-    A11yHazard: {
-      values: %w(
-        flashing
-        noFlashingHazard
-        motionSimulation
-        noMotionSimulationHazard
-        sound
-        noSoundHazard
-      )
-    },
-
-    A11yAPI: {
-      values: %w(ARIA),
-    },
-
-    A11yAccessMode: {
-      values: %w(
-        auditory
-        chartOnVisual
-        chemOnVisual
-        colorDependent
-        diagramOnVisual
-        mathOnVisual
-        musicOnVisual
-        tactile
-        textOnVisual
-        textual
-        visual
-      )
-    },
-
-    A11ySufficient: {
-      values: %w(
-        auditory
-        tactile
-        textual
-        visual
-      )
-    },
-
-    SearchSort: {
-      values: %w(
-        relevance
-        title
-        lastRemediationDate
-      )
-    }
-
-  }.deep_freeze.tap { |entries| ::EnumType.add_enumerations(entries) }
+  EnumType.add_enumerations(CONFIGURATION)
 
 end
 

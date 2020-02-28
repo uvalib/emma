@@ -5,12 +5,6 @@
 
 __loading_begin(__FILE__)
 
-# Shared values and methods.
-#
-module Api::Common
-  # TODO: ???
-end
-
 # =============================================================================
 # Definitions of new fundamental "types"
 # =============================================================================
@@ -225,6 +219,14 @@ class EnumType < ScalarType
     self.class.values
   end
 
+  # The value/label pairs associated with the instance.
+  #
+  # @return [Hash]
+  #
+  def pairs
+    self.class.pairs
+  end
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -247,15 +249,12 @@ class EnumType < ScalarType
     @values ||= enumeration_lookup(:values)
   end
 
-  # Called from API record definitions to provide this base class with the
-  # values that will be accessed implicitly from subclasses.
+  # The value/label pairs associated with the subclass.
   #
-  # @param [Hash{Symbol=>Hash}] new_entries
+  # @return [Hash]
   #
-  # @return [Hash{Symbol=>Hash}]
-  #
-  def self.add_enumerations(new_entries)
-    enumerations.merge!(new_entries || {})
+  def self.pairs
+    @pairs ||= enumeration_lookup(:pairs)
   end
 
   # ===========================================================================
@@ -277,7 +276,32 @@ class EnumType < ScalarType
   # :section:
   # ===========================================================================
 
-  protected
+  public
+
+  # Called from API record definitions to provide this base class with the
+  # values that will be accessed implicitly from subclasses.
+  #
+  # @param [Hash{Symbol=>Hash}] new_entries
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.add_enumerations(new_entries)
+    new_entries ||= {}
+    new_entries =
+      new_entries.transform_values do |cfg|
+        if cfg.is_a?(Hash)
+          default = cfg[:_default].presence
+          pairs   = cfg.except(:_default).stringify_keys
+          values  = pairs.keys
+        else
+          default = nil
+          values  = Array.wrap(cfg).map(&:to_s)
+          pairs   = values.map { |v| [v, v] }.to_h
+        end
+        { values: values, pairs: pairs, default: default }.compact
+      end
+    enumerations.merge!(new_entries)
+  end
 
   # Enumeration definitions accumulated from API records.
   #
@@ -290,6 +314,26 @@ class EnumType < ScalarType
   def self.enumerations
     # noinspection RubyClassVariableUsageInspection
     @@enumerations ||= {}
+  end
+
+  # The values for an enumeration.
+  #
+  # @param [Symbol, String] entry
+  #
+  # @return [Array<String>]
+  #
+  def self.values_for(entry)
+    enumeration_lookup(:values, entry.to_sym)
+  end
+
+  # The value/label pairs for an enumeration.
+  #
+  # @param [Symbol, String] entry
+  #
+  # @return [Hash]
+  #
+  def self.pairs_for(entry)
+    enumeration_lookup(:pairs, entry.to_sym)
   end
 
   # Lookup a property associated with an enumeration.
@@ -312,18 +356,76 @@ class EnumType < ScalarType
 end
 
 # =============================================================================
-# Special
+# Generate top-level classes associated with each enumeration entry so that
+# they can be referenced without prepending a namespace.
 # =============================================================================
 
-::EnumType.add_enumerations(
-  LanguageType: {
-    values: (
-      I18n.t('emma.language.primary', default: []) +
-      I18n.t('emma.language.list', default: {}).keys
-    ).compact.map(&:to_s).uniq
-  }
-)
+class CategoriesType < EnumType; end
+class LanguageType   < EnumType; end
 
-class LanguageType < EnumType; end
+# =============================================================================
+# Module definition
+# =============================================================================
+
+public
+
+# Shared values and methods.
+#
+module Api::Common
+
+  # ===========================================================================
+  # Common configuration values
+  # ===========================================================================
+
+  public
+
+  # Bookshare category codes and names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see config/locale/types.en.yml
+  #
+  # noinspection RailsI18nInspection
+  CATEGORIES = I18n.t('emma.categories', default: {}).deep_freeze
+
+  # All language codes and labels.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see config/locale/types.en.yml
+  #
+  # noinspection RailsI18nInspection
+  LANGUAGE_LIST = I18n.t('emma.language.list', default: {}).deep_freeze
+
+  # Languages that appear first in the list.
+  #
+  # @type [Array<Symbol>]
+  #
+  # @see config/locale/types.en.yml
+  #
+  PRIMARY_LANGUAGES =
+    I18n.t('emma.language.primary', default: []).map(&:to_sym).freeze
+
+  # Language codes and labels in preferred order.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see config/locale/types.en.yml
+  #
+  # noinspection RailsI18nInspection
+  LANGUAGES =
+    PRIMARY_LANGUAGES
+      .map { |k| [k, LANGUAGE_LIST[k]] }.to_h
+      .reverse_merge(LANGUAGE_LIST)
+      .deep_freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  EnumType.add_enumerations(LanguageType:   LANGUAGES)
+  EnumType.add_enumerations(CategoriesType: CATEGORIES.values)
+
+end
 
 __loading_end(__FILE__)

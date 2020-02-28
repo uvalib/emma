@@ -62,12 +62,12 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_type`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [String]
+  # @return [Symbol]
   # @return [nil]
   #
   def search_field_key(type, **opt)
     type ||= search_input_type
-    i18n_lookup(type, 'search_bar.input.field', **opt)
+    i18n_lookup(type, 'search_bar.input.field', **opt)&.to_sym
   end
 
   # ===========================================================================
@@ -80,7 +80,7 @@ module LayoutHelper::SearchBar
 
   # @type [Hash{Symbol=>Boolean}]
   SEARCH_INPUT_ENABLED =
-    SEARCH_MENU_CONTROLLERS.map { |type|
+    SEARCH_MENU_MAP.keys.map { |type|
       enabled = i18n_lookup(type, 'search_bar.input.enabled', mode: false)
       [type, enabled.present?]
     }.to_h
@@ -110,6 +110,7 @@ module LayoutHelper::SearchBar
   def search_input(id, type, value: nil, **opt)
     type ||= search_input_type
     id   ||= search_field_key(type)
+    id   &&= id.to_sym
     label_id = "#{id}-label"
 
     # Screen-reader-only label element.
@@ -119,13 +120,17 @@ module LayoutHelper::SearchBar
 
     # Input field element.
     value ||= request_parameters[id]
+    value = '' if value == NULL_SEARCH
     opt = prepend_css_classes(opt, 'search-input')
     opt[:'aria-labelledby'] = label_id
     opt[:placeholder] ||= i18n_lookup(type, 'search_bar.input.placeholder')
     input = search_field_tag(id, value, opt)
 
+    # Control for clearing search terms.
+    clear = clear_search_button(id: id)
+
     # Result.
-    label + input
+    label << input << clear
   end
 
   # Generate a form submit control.
@@ -154,6 +159,25 @@ module LayoutHelper::SearchBar
   def search_button_label(type, **opt)
     type ||= search_input_type
     i18n_lookup(type, 'search_bar.button.label', **opt)
+  end
+
+  # clear_search_button
+  #
+  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
+  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Hash]                opt    Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def clear_search_button(id: nil, type: nil, **opt)
+    id ||= search_field_key(type || search_input_type)
+    query_params = Array.wrap(id&.to_sym).presence || TEXT_SEARCH_PARAMETERS
+    old_params   = url_parameters
+    new_params   = old_params.except(*query_params)
+    opt = prepend_css_classes(opt, 'search-clear')
+    opt[:'aria-role'] ||= 'button'
+    opt[:title]       ||= 'Clear search terms' # TODO: I18n
+    link_to(HEAVY_X, url_for(new_params), opt)
   end
 
 end

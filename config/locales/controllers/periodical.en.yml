@@ -59,6 +59,10 @@ en:
           placeholder:  'Search periodical titles...'
 
       search_controls:
+        format:
+          values:       !ruby/symbol PeriodicalFormatType
+        sort:
+          values:       !ruby/symbol PeriodicalSortOrder
         layout:
           - [sort,     size,     format]
           - [language, category        ]
@@ -70,7 +74,7 @@ en:
 
       index:
         label:          'Periodicals'
-        title:          'Periodicals Index'
+        title:          'Bookshare Periodicals'
         tooltip:        'Find more Bookshare periodicals with %{terms}.'
         fields:
           title:        'Title'
@@ -79,7 +83,7 @@ en:
 
       show:
         label:          'Periodical'
-        title:          'Periodical'
+        title:          'Bookshare Periodical'
         tooltip:        'See details about this Bookshare periodical.'
         fields:
           <<:           *PERIODICAL_FIELDS

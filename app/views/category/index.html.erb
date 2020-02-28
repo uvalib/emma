@@ -12,7 +12,7 @@
   row += [applied_terms, top_controls].compact.size
 
   set_page_title(t('emma.category.index.label', default: title))
-  append_page_title('-', hash_string(terms)) if terms.present?
+  append_page_title('-', list_search_terms(terms)) if terms.present?
   set_page_description(title)
 
   title += " (#{count})" if list.blank?

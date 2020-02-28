@@ -1,7 +1,6 @@
 // app/assets/stylesheets/controllers/_search.scss
 
-// @use 'shared/common';  // TODO: SASS 4.0
-// @use 'feature/search'; // TODO: SASS 4.0
+// @use 'feature/model'; // TODO: SASS 4.0
 
 //=============================================================================
 // Unified Search pages
@@ -81,17 +80,7 @@
         }
 
         &.field-Title {
-
-            margin: 0 0 auto;
-
-            @media #{$medium-width} {
-
-                margin-top: $gap-y;
-
-                @media #{$browser-ie} {
-                    margin-top: $ie-gap-y;
-                }
-            }
+            margin: 0.67rem 0 auto;
         }
     }
 
@@ -128,7 +117,7 @@
             // @see SearchHelper#title_and_source
             .title {
                 flex:    0.33 1 auto;
-                margin:  auto 0;
+                margin:  0.5rem 0 auto;
             }
 
             // @see SearchHelper#title_and_source_logo
@@ -159,8 +148,18 @@
 
         &.array {
 
-            @include grid(minmax(25%, max-content), 4);
+            @include grid(minmax(25%, 1fr), 4);
             @include grid-row-gap($row-separation);
+
+            // Array element properties
+            $element-border:    1px;
+            $element-x-padding: 5px;
+            $element-y-padding: 1px;
+            $element-x-margin:  -$element-x-padding - $element-border;
+            $element-y-margin:  -$element-y-padding - $element-border;
+
+            // Make elements flush with the left edge of the array container.
+            margin-left: $element-x-padding;
 
             @media #{$wide-screen} {
                 max-width: 75%;
@@ -168,35 +167,31 @@
 
             @media #{$medium-width} {
 
-                @include grid(minmax(50%, max-content), 2);
+                @include grid(minmax(33%, 1fr), 3);
 
                 @media #{$browser-ie} {
-                    @include grid(1fr, 2);
+                    @include grid(1fr, 3);
                 }
             }
 
             @media #{$narrow-screen} {
+
                 @include grid(1fr);
+
+                margin-left: 0;
             }
 
             // noinspection CssReplaceWithShorthandSafely
             > * {
-
-                $border:    1px;
-                $x-padding: 5px;
-                $y-padding: 1px;
-                $x-margin:  -$x-padding - $border;
-                $y-margin:  -$y-padding - $border;
-
                 display:             block;
-                margin:              $y-margin $x-margin;
+                margin:              $element-y-margin $element-x-margin;
                 margin-right:        1rem;
-                padding:             $y-padding $x-padding;
+                padding:             $element-y-padding $element-x-padding;
                 background:          ghostwhite;
-                border:              $border solid gray;
+                border:              $element-border solid gray;
                 border-right-color:  black;
                 border-bottom-color: black;
-                border-radius:       2px;
+                border-radius:       $element-x-padding / 2;
 
                 @media #{$wide-screen} {
                     word-break: keep-all;
@@ -446,7 +441,7 @@
             @include grid-columns([label] minmax(auto, 0.1375fr) [value] 1fr);
         }
         @media #{$medium-width} {
-            @include grid-columns([label] minmax(auto, 0.33fr) [value] 1fr);
+            @include grid-columns([label] minmax(auto, 0.25fr) [value] 1fr);
         }
     }
 
@@ -464,6 +459,10 @@
             @media #{$browser-ie} {
                 margin-top: (2 * $ie-page-padding);
             }
+        }
+
+        @media #{$narrow-screen} {
+            @include grid-column-span;
         }
     }
 }

@@ -49,20 +49,24 @@ class SearchController < ApplicationController
   #
   def index
     __debug_route('SEARCH')
+    search_params = url_parameters.except(*NON_SEARCH_KEYS)
+    query = search_params.delete(:q).presence
+    query = false if search_params.blank? && (query == NULL_SEARCH)
     opt = pagination_setup
-    if opt[:q].present?
+    if query
       @list = api.get_records(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
       self.next_page   = next_page_path(@list, opt) # TODO: ???
+      respond_to do |format|
+        format.html
+        format.json { render_json index_values }
+        format.xml  { render_xml  index_values }
+      end
+    elsif search_params.present?
+      redirect_to opt.merge!(q: NULL_SEARCH)
     else
-      @list = []
-      self.total_items = -1
-    end
-    respond_to do |format|
-      format.html
-      format.json { render_json index_values }
-      format.xml  { render_xml  index_values }
+      render 'search/advanced'
     end
   end
 
@@ -77,6 +81,13 @@ class SearchController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  end
+
+  # == GET /search/advanced
+  # Present the advanced search form.
+  #
+  def advanced
+    __debug_route('ADVANCED')
   end
 
   # == GET /search/example

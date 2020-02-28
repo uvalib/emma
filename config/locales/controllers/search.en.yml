@@ -49,7 +49,7 @@ en:
         s_accessibilityControl:   'Accessibility Control'
         s_accessibilityHazard:    'Accessibility Hazard'
         s_accessMode:             'Access Mode'
-        s_accessModeSufficient:   'Access Mode Sufficient'
+        s_accessModeSufficient:   'Sufficient Mode'
         s_accessibilityAPI:       'Accessibility API'
         s_accessibilitySummary:   'Accessibility Summary'
         emma_repositoryRecordId:  'Repository Record ID'
@@ -68,6 +68,9 @@ en:
           placeholder:  'Enter search terms...'
 
       search_controls:
+        sort:
+          values:       !ruby/symbol SearchSort
+          reverse:      false
         layout:
           - [sort,   size,           repository  ]
           - [format, format_feature, a11y_feature]
@@ -83,7 +86,7 @@ en:
 
       index:
         label:          'Records'
-        title:          'Unified Search Index'
+        title:          'EMMA Unified Search'
         tooltip:        'Find more metadata records with %{terms}.'
         fields:
           dc_title:     'Title'
@@ -91,7 +94,14 @@ en:
 
       show:
         label:          'Record'
-        title:          'Index Record'
+        title:          'EMMA Index Record'
         tooltip:        'See details about this metadata record.'
+        fields:
+          <<:           *SEARCH_FIELDS
+
+      advanced:
+        label:          'Advanced'
+        title:          'EMMA Unified Search'
+        tooltip:        'Combine multiple search terms and search limiters.'
         fields:
           <<:           *SEARCH_FIELDS

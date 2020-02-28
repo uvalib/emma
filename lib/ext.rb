@@ -98,7 +98,7 @@ def override(mod, mod2 = nil, &block)
     end
   if errors.present?
     message = errors.join('; ')
-    if Emma.deployed_production?
+    if application_deployed?
       Rails.logger.error(message)
     else
       raise message

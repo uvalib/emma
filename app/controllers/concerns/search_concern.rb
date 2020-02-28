@@ -83,6 +83,12 @@ module SearchConcern
   include FilesConcern
   include SearchHelper
 
+  # Separator between values of a multi-valued field.
+  #
+  # @type [String]
+  #
+  FF_SEPARATOR = FileFormat::FILE_FORMAT_SEP
+
   # ===========================================================================
   # :section: Initialization
   # ===========================================================================

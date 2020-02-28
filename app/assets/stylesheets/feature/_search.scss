@@ -1,38 +1,15 @@
 // app/assets/stylesheets/feature/_search.scss
 
-// @use 'shared/mixins';         // TODO: SASS 4.0
-// @use 'shared/common';         // TODO: SASS 4.0
-// @use 'shared/controls/grids'; // TODO: SASS 4.0
-// @use 'shared/controls/lists'; // TODO: SASS 4.0
-
-//=============================================================================
-// Definitions
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-$results-entry-gap-x:    $page-padding-x;
-
-// noinspection SassScssResolvedByNameOnly
-$ie-results-entry-gap-x: $ie-page-padding-x;
-
-// noinspection SassScssResolvedByNameOnly
-$results-entry-gap-y:    $page-padding;
-
-// noinspection SassScssResolvedByNameOnly
-$ie-results-entry-gap-y: $ie-page-padding;
-
-// This fixed value will maintain an acceptable separation between links
-// without being scaled to display dimensions.
-$results-entry-margin-y: 0.67rem;
+// @use 'feature/model'; // TODO: SASS 4.0
 
 //=============================================================================
 // Search controls
 //=============================================================================
 
 // noinspection SassScssResolvedByNameOnly
-.applied-search-terms,
 .pagination-top,
-.pagination-bottom {
+.pagination-bottom,
+.applied-search-terms {
 
     @include grid-column-span(3);
 
@@ -52,14 +29,6 @@ $results-entry-margin-y: 0.67rem;
     }
 }
 
-.applied-search-terms.invisible {
-    margin-top: 0;
-}
-
-.applied-search-terms + .pagination-top {
-    margin-top: 0;
-}
-
 .pagination-bottom {
 
     margin-top: 0;
@@ -68,6 +37,14 @@ $results-entry-margin-y: 0.67rem;
     @media #{$browser-ie} {
         -ms-grid-row: 999;
     }
+}
+
+.applied-search-terms.invisible {
+    margin-top: 0;
+}
+
+.applied-search-terms + .pagination-top {
+    margin-top: 0;
 }
 
 // A total count of the number of search results.
@@ -88,30 +65,42 @@ $results-entry-margin-y: 0.67rem;
     @extend %control-group;
 
     flex-wrap:        wrap;
+    padding-bottom:   0;
     background-color: inherit;
-
-    @media #{$narrow-screen} {
-        flex-direction: column;
-    }
 
     //=========================================================================
     // Components
     //=========================================================================
 
-    $term-gap-x: 0.5rem;
+    $term-gap-x: 1rem;
+    $term-gap-y: $term-gap-x / 2;
 
+    > * {
+        margin-bottom: $term-gap-y;
+        align-items:   center;
+    }
+
+    // Displayed before the list of search terms and facet selections.
     .label {
 
+        margin-top:   $term-gap-y / 2;
         margin-right: $term-gap-x;
         font-size:    large;
         font-weight:  bold;
 
-        @media #{$narrow-screen} {
+        // Don't add extra space if there are only search terms with no
+        // facet selections.
+        &.query {
             margin-right: 0;
         }
     }
 
+    // A search term or a facet selection label/value pair.
     .term {
+
+        //=====================================================================
+        // Components
+        //=====================================================================
 
         .field {
             font-size:    large;
@@ -119,284 +108,116 @@ $results-entry-margin-y: 0.67rem;
         }
 
         .separator {
-            margin-right: $term-gap-x / 2;
+            font-weight:  bold;
         }
 
         .value {
-            @media #{$narrow-screen} {
-                margin-right: 0;
+            margin-left:  $term-gap-x / 2;
+        }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        // A term containing one or more text values.
+        &.query {
+            .value {
+                font-size: larger;
             }
         }
-    }
 
-    .term-separator {
-
-        margin-right: $term-gap-x;
-
-        @media #{$narrow-screen} {
-            display: none;
+        // A facet selection label/value pair.
+        &.facet {
+            // TODO: ???
         }
     }
-}
 
-//=============================================================================
-// Search item metadata
-//=============================================================================
+    // A visible break between terms/facet selections.
+    .term-separator {
+        margin-top:   auto;
+        margin-right: $term-gap-x / 2;
+        margin-left:  $term-gap-x / 2;
+        font-size:    larger;
+        color:        $panel-accent;
+    }
 
-// A collection of one or more label/value pairs.
-//
-// noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
-.label-value-pairs {
+    // Add extra space between the last textual search term and the first
+    // facet value selection.
+    .term.query + .term,
+    .term.query + .term-separator {
+        margin-left: 3 * $term-gap-x / 2;
+    }
 
-    @extend .list-2-column;
+    //=========================================================================
+    // Elements
+    //=========================================================================
 
-    margin-bottom: $results-entry-gap-y;
-    break-inside:  avoid;
-    break-inside:  avoid-column;
-    break-after:   left;
-    align-content: flex-start;
+    // Text formatted as a "badge" inside a .value.
+    .badge {
+
+        display:         flex;
+        flex-direction:  row;
+        justify-content: space-between;
+        align-items:     center;
+        padding:         2px 6px;
+        line-height:     1;
+        background:      whitesmoke;
+        border:          1px solid $uva-accent-blue;
+        border-radius:   0.25rem;
+        background:      $focus-accent;
+
+        // Facet selection value.
+        .text {
+            flex: 1 1 auto;
+        }
+
+        // Control for eliminating the facet value selection from the search.
+        .control {
+            @include clear-selection-button;
+        }
+    }
+
+    //=========================================================================
+    // Variations
+    //=========================================================================
 
     @media #{$narrow-screen} {
-        @include grid-columns(100%);
-    }
 
-    @media #{$browser-ie} {
-        margin-bottom: $ie-results-entry-gap-y;
-    }
+        flex-direction: column;
+        width:          92.5%;
 
-    //=========================================================================
-    // Classes
-    //=========================================================================
-
-    // Make focus outline follow the perimeter of the area of clickable text
-    // rather than the individual lines.
-    a {
-        display:   inline-block;
-        min-width: 48px; // Accessibility best practice. // TODO: reference
-        max-width: max-content;
-
-        @media #{$browser-ie} {
-            display: inline;
-        }
-    }
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    // noinspection CssOverwrittenProperties
-    .label,
-    .value {
-
-        margin-bottom: $results-entry-margin-y;
-        word-break:    break-word;
-        break-inside:  avoid;
-        break-inside:  avoid-column;
-
-        @media #{$browser-ie} {
-            break-inside: auto;
-        }
-    }
-
-    .label {
-
-        font-weight: bold;
-
-        @media #{$narrow-screen} {
-            margin-bottom: $flex-gap-y;
+        .label {
+            margin-right: 0;
         }
 
-        @media #{$browser-ie} {
+        .term {
 
-            margin-right:    $ie-flex-gap-x;
-            -ms-grid-column: 1;
+            flex-wrap: wrap;
 
-            @media #{$narrow-screen} {
-                margin-bottom: $ie-flex-gap-y;
+            .field {
+                flex: 1 0 100%;
             }
-        }
-    }
 
-    .value {
+            .separator {
+                display: none;
+            }
 
-        @media #{$narrow-screen} {
-            margin-bottom: calc(3 * #{$results-entry-gap-y} / 2);
-        }
-
-        @media #{$browser-ie} {
-
-            -ms-grid-column: 2;
-
-            @media #{$narrow-screen} {
-                margin-bottom: (3 * $ie-results-entry-gap-y / 2);
+            .value {
+                margin-left: 0;
             }
         }
 
-        // noinspection CssOverwrittenProperties
-        &.field-Links {
+        .term-separator {
+            display: none;
+        }
 
-            word-break: break-all;
-            word-break: break-word;
-
-            > * {
-
-                display:    block;
-                margin-top: $results-entry-margin-y;
-
-                &:first-child {
-                    margin-top: 0;
-                }
+        .badge {
+            .text {
+                min-width:   70vw;
+                word-break:  break-all;
             }
-        }
-    }
-}
-
-//=============================================================================
-// Item list (index page) support
-//=============================================================================
-
-// Metadata label/value pairs on index pages.
-.item-list-entry {
-
-    @extend .label-value-pairs;
-
-    // noinspection SassScssResolvedByNameOnly
-    &.empty {
-
-        @include grid-columns(0 max-content);
-
-        margin-top:    $results-entry-gap-y;
-        margin-bottom: 0;
-    }
-
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$browser-ie} {
-
-        -ms-grid-column: 2;
-
-        &.empty {
-            margin-top:      $ie-results-entry-gap-y;
-            -ms-grid-column: 1;
-        }
-    }
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    .label {}
-
-    .value {
-        &.field-None {
-
-            width:         max-content;
-            margin-bottom: $results-entry-gap-y;
-
-            // noinspection SassScssResolvedByNameOnly
-            @media #{$browser-ie} {
-                margin-bottom: $ie-results-entry-gap-y;
-            }
-        }
-    }
-}
-
-// Zero or more .item-list-entry elements.
-//
-// noinspection SassScssResolvedByNameOnly
-.item-list {
-
-    @extend .list-2-column;
-
-    margin-top:    -1rem;
-    margin-bottom: 1rem;
-    align-content: flex-start;
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    .number {
-
-        font-family: $font-condensed;
-
-        @media #{$browser-ie} {
-            margin-bottom: $results-entry-margin-y;
-            font-family:   $font-normal;
-        }
-    }
-}
-
-//=============================================================================
-// Item details (show page) support
-//=============================================================================
-
-// Metadata label/value pairs on show pages.
-.item-details {
-
-    @extend .label-value-pairs;
-
-    //=========================================================================
-    // Components
-    //=========================================================================
-
-    // Add a top margin except to the first label/value pair.
-    .value + .label,
-    .value + .label + .value {
-        margin-top: $results-entry-margin-y;
-    }
-}
-
-// Wrapper for item details which supports a second column of information to
-// the right of the details listing.
-//
-// noinspection SassScssResolvedByNameOnly
-.item-container {
-
-    display:        flex;
-    flex-direction: column;
-
-    @media #{$wide-screen} {
-
-        margin-top:     $page-padding;
-        flex-direction: row;
-
-        @media #{$browser-ie} {
-            margin-top: $ie-page-padding;
-        }
-    }
-
-    //=========================================================================
-    // Sections
-    //=========================================================================
-
-    > * {
-
-        margin: 0 0 $page-padding-y 0;
-
-        @media #{$wide-screen} {
-
-            flex:         1 1 50%;
-            margin-right: $page-padding-x;
-
-            @media #{$browser-ie} {
-                margin-right: $ie-page-padding-x;
-            }
-
-            &:last-child {
-                margin-right: 0;
-            }
-        }
-
-        @media #{$narrow-screen} {
-
-            margin-top: calc(2 * #{$page-padding});
-
-            @media #{$browser-ie} {
-                margin-top: (2 * $ie-page-padding);
-            }
-
-            &:first-child {
-                margin-top: 0;
+            .control {
+                margin-left: auto;
             }
         }
     }

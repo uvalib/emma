@@ -1,0 +1,323 @@
+# config/locales/types/bookshare.en.yml
+#
+# Data type enumerations for the Bookshare API
+#
+# @see Bs::Api::Common#CONFIGURATION
+
+en:
+
+  emma:
+
+    bookshare:
+
+      type:
+
+        Access:
+          private:                  'Private'
+          shared:                   'Shared'
+          org:                      'Organization'
+          _default:                 shared
+
+        AgreementType:
+          individual:               'Individual'
+          volunteer:                'Volunteer'
+          sponsor:                  'Sponsor'
+          _default:                 individual
+
+        AllowsType: # NOTE: Compare with ApiService#HTTP_METHODS.
+          PUT:                      'PUT'
+          POST:                     'POST'
+          DELETE:                   'DELETE'
+
+        BrailleFmt:
+          refreshable:              'Refreshable'
+          embossable:               'Embossable'
+          _default:                 embossable
+
+        BrailleGrade:
+          contracted:               'Contracted'
+          uncontracted:             'Uncontracted'
+          _default:                 uncontracted
+
+        BrailleMusicScoreLayout:
+          barOverBar:               'Bar Over Bar'
+          barByBar:                 'Bar By Bar'
+          _default:                 barOverBar
+
+        BrailleType:
+          automated:                'Automated'
+          transcribed:              'Transcribed'
+          _default:                 automated
+
+        CategoryType:
+          Bookshare:                'Bookshare'
+          BISAC:                    'BISAC'
+          _default:                 Bookshare
+
+        ContentWarning: # @see https://apidocs.bookshare.org/reference/index.html#_content_warning_values
+          contentWarning:           'Content Warning'
+          sex:                      'Sex'
+          violence:                 'Violence'
+          drugs:                    'Drugs'
+          language:                 'Language'
+          intolerance:              'Intolerance'
+          adult:                    'Adult'
+          unrated:                  'Unrated'
+          _default:                 unrated
+
+        ContributorType:
+          author:                   'Author'
+          coWriter:                 'Co-writer'
+          epilogueBy:               'Epilogue By'
+          forwardBy:                'Forward By'
+          introductionBy:           'Introduction By'
+          editor:                   'Editor'
+          composer:                 'Composer'
+          arranger:                 'Arranger'
+          lyricist:                 'Lyricist'
+          translator:               'Translator'
+          transcriber:              'Transcriber'
+          abridger:                 'Abridger'
+          adapter:                  'Adapter'
+
+        Direction:                  &DIRECTION
+          asc:                      'asc'
+          desc:                     'desc'
+          _default:                 asc
+
+        Direction2:
+          <<:                       *DIRECTION
+          _default:                 desc
+
+        DisabilityType:
+          visual:                   'Visual'
+          learning:                 'Learning'
+          physical:                 'Physical'
+          nonspecific:              'Non-specific'
+          _default:                 nonspecific
+
+        FormatType: # NOTE: The API does not mention 'HTML' or 'TEXT' but they have been observed.
+          DAISY:                    'DAISY with Images'
+          DAISY_AUDIO:              'DAISY Audio'
+          DAISY_SEGMENTED:          'DAISY Multiple DTBooks'
+          BRF:                      'BRF'
+          EPUB3:                    'EPUB'
+          PDF:                      'PDF'
+          DOCX:                     'Microsoft Word'
+          HTML:                     'HTML'
+          TEXT:                     'Text'
+
+        PeriodicalFormatType:
+          DAISY:                    'DAISY with Images'
+          DAISY_AUDIO:              'DAISY Audio'
+          DAISY_2_AUDIO:            'DAISY 2 Audio'
+          BRF:                      'BRF'
+
+        Gender:
+          male:                     'Male'
+          female:                   'Female'
+          otherNonBinary:           'Other/Non-binary'
+          _default:                 otherNonBinary
+
+        NarratorType:
+          tts:                      'TTS'
+          human:                    'Human'
+          _default:                 tts
+
+        ProofOfDisabilitySource:
+          schoolVerified:           'School-verified'
+          faxed:                    'Faxed'
+          nls:                      'NLS'
+          learningAlly:             'Learning A11y'
+          partner:                  'Partner'
+          hadley:                   'Hadley'
+
+        ProofOfDisabilityStatus:
+          active:                   'Active'
+          missing:                  'Missing'
+          _default:                 active
+
+        RoleType: # NOTE: Compare with Roles#BOOKSHARE_ROLES
+          individual:               'Individual'
+          volunteer:                'Volunteer'
+          trustedVolunteer:         'Trusted Volunteer'
+          collectionAssistant:      'Collection Assistant'
+          membershipAssistant:      'Membership Assistant'
+
+        SeriesType:
+          newpaper:                 'Newspaper'
+          magazine:                 'Magazine'
+          journal:                  'Journal'
+
+        SiteType:
+          bookshare:                'Bookshare'
+          cela:                     'CELA'
+          rnib:                     'RNIB'
+          emma:                     'EMMA'
+          _default:                 bookshare
+
+        SubscriptionStatus:
+          active:                   'Active'
+          expired:                  'Expired'
+          missing:                  'Missing'
+          _default:                 active
+
+        Timeframe:
+          monthly:                  'Monthly'
+          entireSubscription:       'Entire Subscription'
+          _default:                 monthly
+
+        TitleContentType:
+          text:                     'Text'
+          musicScore:               'Music Score'
+          _default:                 text
+
+        TitleSortOrder:
+          relevance:                'Relevance'
+          title:                    'Title'
+          author:                   'Author'
+          dateAdded:                'Date Added'
+          copyrightDate:            'Copyright Date'
+          _default:                 title
+
+        # =====================================================================
+        # Account
+        # =====================================================================
+
+        HistorySortOrder:
+          title:                    'Title'
+          author:                   'Author'
+          dateDownloaded:           'Date Downloaded'
+          _default:                 title
+
+        # =====================================================================
+        # Members
+        # =====================================================================
+
+        MemberSortOrder:
+          dateAdded:                'Date Added'
+          lastName:                 'Last Name'
+          firstName:                'First Name'
+          email:                    'Email'
+          userId:                   'User ID'
+          district:                 'District'
+          school:                   'School'
+          grade:                    'Grade'
+          birthDate:                'Birth Date'
+          status:                   'Status'
+          _default:                 lastName
+
+        # =====================================================================
+        # Assigned Titles
+        # =====================================================================
+
+        MyAssignedSortOrder:
+          title:                    'Title'
+          author:                   'Author'
+          _default:                 title
+
+        AssignedSortOrder:
+          title:                    'Title'
+          author:                   'Author'
+          assignedBy:               'Assigned By'
+          assignedDate:             'Date Assigned'
+          dateDownloaded:           'Date Downloaded'
+          _default:                 title
+
+        # =====================================================================
+        # Active Books / Active Periodicals
+        # =====================================================================
+
+        ActiveBookSortOrder:
+          title:                    'Title'
+          dateAdded:                'Date Assigned'
+          assigner:                 'Assigned By'
+          _default:                 dateAdded
+
+        # =====================================================================
+        # Periodicals
+        # =====================================================================
+
+        PeriodicalSortOrder:
+          title:                    'Title'
+          _default:                 title
+
+        # =====================================================================
+        # Periodical Editions
+        # =====================================================================
+
+        EditionSortOrder:
+          editionName:              'Edition Name'
+          _default:                 editionName
+
+        # =====================================================================
+        # Reading Lists
+        # =====================================================================
+
+        MyReadingListSortOrder:
+          name:                     'Name'
+          owner:                    'Owner'
+          dateUpdated:              'Date Updated'
+          count:                    'Title Count' # NOTE: undocumented
+          _default:                 name
+
+        ReadingListSortOrder:
+          title:                    'Title'
+          author:                   'Author'
+          dateAddedToReadingList:   'Date Added'
+          _default:                 title
+
+        # =====================================================================
+        # Catalog
+        # =====================================================================
+
+        CatalogSortOrder:
+          relevance:                'Relevance'
+          title:                    'Title'
+          author:                   'Author'
+          updatedDate:              'Date Updated'
+          copyrightDate:            'Copyright Date'
+          _default:                 title
+
+        # =====================================================================
+        # From catalog.bookshare.org (not in the API)
+        # =====================================================================
+
+        ScanQuality:
+          excellent:                'Excellent'
+          good:                     'Good'
+
+        BrailleCode:
+          ebae:                     'English Braille American Edition'
+          ueb:                      'Unified English Braille'
+          french:                   'French Braille Code'
+          french_quebec:            'French Quebec Braille Code'
+          french_unified:           'French Unified Braille Code'
+          standard_enlish_braille:  'Standard English Braille'
+          music_braille_code:       'Music Braille Code'
+
+        BrailleGrade2:
+          grade_2:                  'Grade 2 (contracted)'
+          grade_1:                  'Grade 1 (uncontracted)'
+
+        # =====================================================================
+        # Authorization
+        # =====================================================================
+
+        AuthType:
+          code:                     'Code'
+          token:                    'Token'
+
+        GrantType:
+          authorization_code:       'Authorization Code'
+          refresh_token:            'Refresh Token'
+          password:                 'Password'
+
+        TokenErrorType:
+          invalid_request:            'Invalid request'
+          unauthorized:               'Unauthorized'
+          access_denied:              'Access Denied'
+          unsupported_response_type:  'Unsupported Response Type'
+          invalid_scope:              'Invalid Scope'
+          server_error:               'Server Error'
+          temporarily_unavailable:    'Temporarily Unavailable'
