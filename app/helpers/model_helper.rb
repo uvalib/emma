@@ -383,24 +383,18 @@ module ModelHelper
   #
   def render_pair(label, value, field: nil, index: nil, row: 1, separator: nil)
     return if value.blank?
-    css   = %W(row-#{row})
-    prop  = Upload.get_field_configuration(field)
+    prop = Upload.get_field_configuration(field)
+    rng = html_id(label || 'None')
+    type = "field-#{rng}"
+    id   = index ? "#{type}-#{index}" : type
 
-    # Label and label HTML options.
-    base  = html_id(label || 'None')
-    type  = "field-#{base}"
-    id    = index ? "#{type}-#{index}" : type
-    css << type
-    l_opt = append_css_classes('label', *css)
-    label = prop[:label] || label || labelize(field)
-    label = content_tag(:div, label, l_opt)
-
-    # Value and value HTML options.
+    # Pre-process value and accumulate CSS classes.
+    css  = %W(row-#{row} #{type})
     if value.is_a?(Field::Range)
-      range = value.base
+      rng   = value.base
       mode  = value.mode
       value = value.values
-      value = value.map { |v| range.pairs[v] || v } if range.respond_to?(:pairs)
+      value = value.map { |v| rng.pairs[v] || v } if rng.respond_to?(:pairs)
       value = value.first unless mode == :multiple
     end
     if value.is_a?(Array) || prop[:type].is_a?(Class)
@@ -411,7 +405,15 @@ module ModelHelper
     elsif prop[:type] == 'textarea'
       css << 'textbox'
     end
-    v_opt = append_css_classes('value', *css)
+    opt = { class: css }
+
+    # Label and label HTML options.
+    l_opt = prepend_css_classes(opt, 'label')
+    label = prop[:label] || label || labelize(field)
+    label = content_tag(:div, label, l_opt)
+
+    # Value and value HTML options.
+    v_opt = prepend_css_classes(opt, 'value')
     v_opt[:id] = id if id
     value = content_tag(:div, value, v_opt)
 
@@ -1056,6 +1058,7 @@ module ModelHelper
     case type
       when :date, :year then value = value.to_s.sub(/\s.*$/, '')
       when :time        then value = value.to_s.sub(/^([^ ]+).*$/, '\1')
+      when :textarea    then value = Array.wrap(value).join("\n")
     end
     case type
       when :check    then render_check_box(name, value, **opt)

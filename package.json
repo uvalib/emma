@@ -1,5 +1,7 @@
 {
   "name": "emma",
   "private": true,
-  "dependencies": {}
+  "dependencies": {
+    "uppy": "^1.9.3"
+  }
 }

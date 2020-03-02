@@ -82,6 +82,12 @@
         &.field-Title {
             margin: 0.67rem 0 auto;
         }
+
+        &.array {
+            @media #{$not-narrow-screen} {
+                margin-top: 0.25rem;
+            }
+        }
     }
 
     .value {
@@ -89,20 +95,24 @@
         // noinspection CssBrowserCompatibilityForProperties
         &.field-Title {
 
-            display:     flex;
-            flex-flow:   wrap;
-            margin:      0 0 auto;
-            font-size:   larger;
-            font-weight: bold;
-            gap:         $flex-gap-y $flex-gap-x;
+            display:         flex;
+            flex-direction:  row;
+            flex-wrap:       wrap;
+            justify-content: space-between;
+            margin:          0 0 auto;
+            font-size:       larger;
+            font-weight:     bold;
+            gap:             $flex-gap-y $flex-gap-x;
 
             @media #{$wide-screen} {
-                max-width:       75%;
-                justify-content: space-between;
+                max-width: 75%;
             }
 
             @media #{$narrow-screen} {
+
                 @include grid-column-span;
+
+                flex-wrap: wrap-reverse;
             }
 
             @media #{$browser-ie} {
@@ -125,25 +135,13 @@
 
                 flex:       0 0 auto;
                 margin:     auto 0;
-                height:     2rem;
-                max-height: 2rem;
+                height:     2.5rem;
+                max-height: 2.5rem;
 
-                @media #{$wide-screen} {
-                    height:     2.5rem;
-                    max-height: 2.5rem;
+                @media #{$not-wide-screen} {
+                    margin-top: 0.25rem;
                 }
             }
-        }
-
-        // NOTE: Temporary adjustment to make the template record more readable
-        &.field-EmmaFormatFeature,
-        &.field-AccessibilityFeatures,
-        &.field-AccessibilityControls,
-        &.field-AccessibilityHazards,
-        &.field-AccessMode,
-        &.field-AccessModeSufficient,
-        &.field-AccessibilityApi {
-            margin-bottom: 1.5rem;
         }
 
         &.array {
@@ -159,7 +157,9 @@
             $element-y-margin:  -$element-y-padding - $element-border;
 
             // Make elements flush with the left edge of the array container.
-            margin-left: $element-x-padding;
+            margin-left:   $element-x-padding;
+            margin-top:    0.25rem;
+            margin-bottom: 0.25rem;
 
             @media #{$wide-screen} {
                 max-width: 75%;

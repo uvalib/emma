@@ -111,9 +111,9 @@ ActiveRecord::Schema.define(version: 2020_01_15_122500) do
     t.bigint "user_id"
     t.string "repository"
     t.string "repository_id"
-    t.string "file_id"
     t.string "fmt"
     t.string "ext"
+    t.string "state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_uploads_on_user_id"

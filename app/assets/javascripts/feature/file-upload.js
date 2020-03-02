@@ -140,7 +140,7 @@ $(document).on('turbolinks:load', function() {
     });
 
     // ========================================================================
-    // Functions
+    // Functions - Initialization
     // ========================================================================
 
     /**
@@ -185,31 +185,7 @@ $(document).on('turbolinks:load', function() {
 
         // === Display cleanup ===
 
-        if (feature.replace_input) {
-
-            var $cancel_button = cancelButton($form);
-
-            // Uppy will replace <input type="file"> with its own mechanisms so
-            // the original should not be displayed.
-            $form.find('input#upload_file').css('display', 'none');
-
-            // Move the Uppy-inserted file select container directly after the
-            // cancel button so that it is in the right tab order.
-            var $fubc = fileSelectButtonContainer($form);
-            $fubc.insertAfter($cancel_button);
-
-            // This hidden element is inappropriately part of the tab order.
-            $fubc.find('.uppy-FileInput-input').attr('tabindex', -1);
-
-            // Set the tooltip for the file select button.
-            $fubc.find('button').attr('title', fileSelectTooltip($form));
-
-            // Reposition the (initially-hidden) filename display so that it
-            // becomes a sibling of the button.  This avoid inconsistencies
-            // with CSS grid when trying to visually position it relative to
-            // the button as a grid element.
-            $form.children('.uploaded-filename').insertAfter($fubc);
-        }
+        if (feature.replace_input) { initializeFileSelectContainer($form); }
     }
 
     /**
@@ -241,18 +217,196 @@ $(document).on('turbolinks:load', function() {
         });
 
         // Ensure that required fields are indicated.
-        formFields($form).each(function() { updateInputField(this); });
-        validateForm($form);
+        initializeFormFields($form);
         monitorInputFields($form);
 
         // Set initial field filtering and setup field display filter controls.
-        normalizeLabelColumnWidth($form);
-        filterFieldDisplay($form);
         monitorFieldDisplayFilterButtons($form);
+        var field_filter = isUpdateForm($form) ? 'available' : 'filled';
+        fieldDisplayFilterSelect(field_filter, $form);
 
         // Intercept form submission so that it can be handled via AJAX in
         // order to retrieve information sent back from the server via headers.
         monitorRequestResponse($form);
+    }
+
+    /**
+     * Initialize the Uppy-provided file select button container.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function initializeFileSelectContainer(form) {
+        var $form    = formElement(form);
+        var $element = fileSelectContainer($form);
+
+        // Uppy will replace <input type="file"> with its own mechanisms so
+        // the original should not be displayed.
+        $form.find('input#upload_file').css('display', 'none');
+
+        // Reposition it so that it comes before the display of the uploaded
+        // filename.
+        $element.insertBefore(uploadedFilenameDisplay($form));
+
+        // This hidden element is inappropriately part of the tab order.
+        $element.find('.uppy-FileInput-input').attr('tabindex', -1);
+
+        // Set the tooltip for the file select button.
+        $element.find('button').attr('title', fileSelectTooltip($form));
+    }
+
+    /**
+     * Initialize the state of the submit button.
+     *
+     * @param {Selector} [form]       Passed to {@link formElement}.
+     */
+    function setupSubmitButton(form) {
+        var $form = formElement(form);
+        submitButton($form)
+            .attr('title', submitTooltip($form))
+            .text(submitLabel($form));
+    }
+
+    /**
+     * Initialize the state of the cancel button, and set it up to clear the
+     * form when it is activated.
+     *
+     * @param {Selector} [form]       Passed to {@link formElement}.
+     *
+     * == Implementation Notes
+     * Although the button is created with 'type="reset"' HTML reset behavior
+     * is not relied upon because it only clears form fields but not file data.
+     */
+    function setupCancelButton(form) {
+        var $form = formElement(form);
+        cancelButton($form)
+            .attr('title', cancelTooltip($form))
+            .text(cancelLabel($form))
+            .off('click', cancelForm)
+            .on('click', cancelForm)
+            .each(handleKeypressAsClick);
+    }
+
+    /**
+     * Initialize the state of the file select button.
+     *
+     * @param {Selector} [form]       Passed to {@link formElement}.
+     */
+    function setupFileSelectButton(form) {
+        var $form   = formElement(form);
+        var $button = fileSelectButton($form);
+        if (isCreateForm($form)) {
+            $button.addClass('best-choice');
+        }
+        $button.attr('title', fileSelectTooltip($form));
+        $button.text(fileSelectLabel($form));
+    }
+
+    /**
+     * Adjust an input element to prevent password managers from interpreting
+     * certain fields like "Title" as ones that they should offer to
+     * autocomplete.
+     *
+     * @param {Selector} element      Default: *this*.
+     */
+    function turnOffAutocomplete(element) {
+        $(element || this).attr({
+            'autocomplete':  'off',
+            'data-lpignore': 'true' // LastPass requires this.
+        });
+    }
+
+    /**
+     * Allow a click anywhere within the element holding a label/button pair
+     * to be delegated to the enclosed input.  This broadens the "click target"
+     * and allows clicks in the "void" between the input and the label to be
+     * accredited to the input that the user was trying to click.
+     *
+     * @param {Selector} element      Default: *this*.
+     */
+    function delegateClick(element) {
+
+        var $element = $(element || this);
+        $element
+            .off('click', clickChildInput)
+            .on('click', clickChildInput);
+
+        /**
+         * If the container receives a click event in an area not covering
+         * either the input or label element then it will be handled here and
+         * "converted" into a click on the input element.
+         *
+         * Events that would have gone to the input or label will not be
+         * impeded here (nor will the event bubbling up from the input).
+         *
+         * @param {Event} event
+         */
+        function clickChildInput(event) {
+            if (event.target === event.currentTarget) {
+                event.stopPropagation();
+                $element.find('[type="radio"],[type="checkbox"]').click();
+            }
+        }
+    }
+
+    /**
+     * Initialize each form field then update any fields associated with
+     * server-provided metadata.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function initializeFormFields(form) {
+        var $form = formElement(form);
+        var data  = emmaDataElement($form).val();
+        if (data) {
+            try {
+                data = JSON.parse(data);
+            }
+            catch (err) {
+                console.warn('initializeFormFields:', err, '- data:', data);
+                data = undefined;
+            }
+        }
+        data = data || {};
+        formFields($form).each(function() {
+            var $field = $(this);
+            var key    = $field.attr('data-field');
+            var value  = data[key];
+            updateInputField(this, value, true);
+        });
+        disableSubmit($form);
+    }
+
+    /**
+     * The container element for all input fields and their labels.
+     *
+     * @param {Selector} [form]       Passed to {@link fieldContainer}.
+     */
+    function normalizeLabelColumnWidth(form) {
+
+        var $container = fieldContainer(form);
+
+        // Find the widest label.
+        var max_width = 0;
+        $container.children('label').each(function() {
+            max_width = Math.max(max_width, $(this).width());
+        });
+        var column_width = '' + max_width + 'px';
+
+        // Replace the first column definition.
+        var old_columns = $container.css('grid-template-columns') || '';
+        var parts = old_columns.trim().split(/\s+/);
+        var first = parts.shift();
+        if (first.indexOf('repeat') === 0) {
+            var count = first.replace(/(repeat\()(\d+)(,.*)/, '$2') || 1;
+            if (count > 1) {
+                column_width += ' ' + RegExp.$1 + (count - 1) + RegExp.$3;
+            }
+        }
+        var new_columns = column_width;
+        if (isPresent(parts)) {
+            new_columns += ' ' + parts.join(' ');
+        }
+        $container.css('grid-template-columns', new_columns);
     }
 
     // ========================================================================
@@ -292,7 +446,7 @@ $(document).on('turbolinks:load', function() {
         } else {
             if (ftrs.replace_input) {
                 uppy.use(Uppy.FileInput, {
-                    target: form, // NOTE: form instead of container.
+                    target: buttonTray(form)[0], // NOTE: not container
                     locale: { strings: { chooseFiles: fileSelectLabel(form) } }
                 });
             }
@@ -389,7 +543,7 @@ $(document).on('turbolinks:load', function() {
             var emma_data = body.emma_data || {};
             if (isPresent(emma_data)) {
                 emma_data = compact(emma_data);
-                var $emma_data = $form.find('#upload_emma_data');
+                var $emma_data = emmaDataElement($form);
                 if (isPresent($emma_data)) {
                     $emma_data.val(JSON.stringify(emma_data));
                 }
@@ -400,7 +554,7 @@ $(document).on('turbolinks:load', function() {
             // submitted with the form as the attachment.
             var file_data = body;
             if (file_data) {
-                var $file_data = $form.find('#upload_file_data');
+                var $file_data = fileDataElement($form);
                 if (isPresent($file_data)) {
                     $file_data.val(JSON.stringify(file_data));
                 }
@@ -692,24 +846,25 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [target]     Default: *this*.
      * @param {*}        [new_value]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function updateInputField(target, new_value) {
+    function updateInputField(target, new_value, init) {
         var $input = $(target || this);
 
         if ($input.is('fieldset.input.multi')) {
-            updateFieldsetInputs($input, new_value);
+            updateFieldsetInputs($input, new_value, init);
 
         } else if ($input.is('fieldset.menu.multi')) {
-            updateFieldsetCheckboxes($input, new_value);
+            updateFieldsetCheckboxes($input, new_value, init);
 
         } else if ($input.is('[type="checkbox"]')) {
-            updateCheckboxInputField($input, new_value);
+            updateCheckboxInputField($input, new_value, init);
 
         } else if ($input.is('textarea')) {
-            updateTextAreaField($input, new_value);
+            updateTextAreaField($input, new_value, init);
 
         } else {
-            updateTextInputField($input, new_value);
+            updateTextInputField($input, new_value, init);
         }
     }
 
@@ -719,41 +874,56 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [target]     Default: *this*.
      * @param {Array}    [new_value]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input_multi"
      */
-    function updateFieldsetInputs(target, new_value) {
+    function updateFieldsetInputs(target, new_value, init) {
 
         var $fieldset = $(target || this);
         var $inputs   = $fieldset.find('input');
 
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
-        var values;
+        var value, values;
         if (new_value instanceof Array) {
             values = compact(new_value);
             $inputs.each(function(i) {
-                setValue(this, values[i]);
-            });
-        } else if (new_value) {
-            var value = new_value.trim();
-            var index = -1;
-            $inputs.each(function(i) {
-                if (this.value === value) {
-                    // Value is already present; nothing to do.
-                    index = -1;
-                    return false;
-                } else if (index >= 0) {
-                    // An empty slot has already been identified; keep checking
-                    // to see whether the value is already present.
-                } else if (!this.value) {
-                    // The value will be placed in this empty slot unless it is
-                    // found further along.
-                    index = i;
+                value = values[i];
+                if (init && !value) {
+                    value = '';
+                }
+                if (isDefined(value)) {
+                    setValue(this, value, init);
                 }
             });
-            if (index >= 0) {
-                setValue($inputs[index], value);
+        } else {
+            // Initialize original values for all elements.
+            $inputs.each(function() {
+                setOriginalValue(this);
+            });
+            if (new_value) {
+                value = new_value.trim();
+                var index = -1;
+                // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
+                $inputs.each(function(i) {
+                    var old_value = this.value || '';
+                    if (old_value === value) {
+                        // The value is present in this slot.
+                        index = -1;
+                        return false;
+                    } else if (index >= 0) {
+                        // An empty slot has already been reserved; continue
+                        // looking for the value in later slots.
+                    } else if (!old_value) {
+                        // The value will be placed in this empty slot unless
+                        // it is found in a later slot.
+                        index = i;
+                    }
+                });
+                if (index >= 0) {
+                    setValue($inputs[index], value, init);
+                }
             }
         }
 
@@ -771,10 +941,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [target]     Default: *this*.
      * @param {Array}    [setting]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_menu_multi"
      */
-    function updateFieldsetCheckboxes(target, setting) {
+    function updateFieldsetCheckboxes(target, setting, init) {
 
         var $fieldset   = $(target || this);
         var $checkboxes = $fieldset.find('input[type="checkbox"]');
@@ -785,11 +956,20 @@ $(document).on('turbolinks:load', function() {
         if (setting instanceof Array) {
             var values = compact(setting);
             $checkboxes.each(function() {
-                setChecked(this, (values.indexOf(this.value) >= 0));
+                var checked = (values.indexOf(this.value) >= 0);
+                setChecked(this, checked, init);
             });
-        } else if (setting) {
+        } else if (typeof setting === 'string') {
             $checkboxes.each(function() {
-                if (this.value === setting) { setChecked(this, true); }
+                if (this.value === setting) {
+                    setChecked(this, true, init);
+                } else if (init) {
+                    setOriginalValue(this);
+                }
+            });
+        } else if (init) {
+            $checkboxes.each(function() {
+                setOriginalValue(this);
             });
         }
 
@@ -810,30 +990,35 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector}       [target]     Default: *this*.
      * @param {string|boolean} [setting]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function updateCheckboxInputField(target, setting) {
+    function updateCheckboxInputField(target, setting, init) {
 
         var $input    = $(target || this);
         var $fieldset = $input.parents('fieldset').first();
         var checkbox  = $input[0];
 
-        switch (typeof setting) {
-            case 'boolean':
-                setChecked(checkbox, setting);
-                break;
-            case 'string':
-                if (setting === checkbox.value) { setChecked(checkbox, true); }
-                break;
-            case 'undefined':
-                setChecked(checkbox);
-                break;
-            default:
-                console.warn('updateCheckboxInputField unexpected:', setting);
-                break;
+        var checked;
+        if (notDefined(setting)) {
+            checked = checkbox.checked;
+        } else if (typeof setting === 'boolean') {
+            checked = setting;
+        } else if (setting === checkbox.value) {
+            checked = true;
+        } else if (setting === 'true') {
+            checked = true;
+        } else if (setting === 'false') {
+            checked = false;
+        }
+
+        if (isDefined(checked)) {
+            setChecked($input, checked, init);
+        } else {
+            console.warn('updateCheckboxInputField unexpected:', setting);
         }
 
         // Update the enclosing fieldset.
-        updateFieldsetCheckboxes($fieldset);
+        updateFieldsetCheckboxes($fieldset, undefined, init);
     }
 
     /**
@@ -843,13 +1028,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [target]     Default: *this*.
      * @param {*}        [new_value]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input"
      */
-    function updateTextAreaField(target, new_value) {
+    function updateTextAreaField(target, new_value, init) {
         var $input = $(target || this);
         var value  = textAreaValue(new_value || $input.val());
-        setTextAreaValue($input, value);
+        setTextAreaValue($input, value, init);
         updateFieldAndLabel($input, value);
     }
 
@@ -860,10 +1046,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [target]     Default: *this*.
      * @param {*}        [new_value]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input"
      */
-    function updateTextInputField(target, new_value) {
+    function updateTextInputField(target, new_value, init) {
 
         var $input = $(target || this);
         var value  = new_value || $input.val();
@@ -871,19 +1058,19 @@ $(document).on('turbolinks:load', function() {
         // Clean up stray leading and trailing white space and blank values in
         // order to determine whether the field actually has a value.
         if (value instanceof Array) {
-            value = compact(value);
+            value = compact(value).join('; ');
         } else if (typeof value === 'string') {
             value = value.trim();
         }
-        setValue($input, value);
+        setValue($input, value, init);
 
         // If this is one of a collection of text inputs under <fieldset> then
         // it has to be handled differently.
         if ($input.parent().hasClass('multi')) {
             var $fieldset = $input.parents('fieldset').first();
-            updateFieldsetInputs($fieldset);
+            updateFieldsetInputs($fieldset, undefined, init);
         } else {
-            updateFieldAndLabel($input, value);
+            updateFieldAndLabel($input, $input.val());
         }
     }
 
@@ -963,19 +1150,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target       Default: *this*.
      * @param {boolean}  [new_state]
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function setChecked(target, new_state) {
+    function setChecked(target, new_state, init) {
         var $item = $(target || this);
-        if ($item.attr('data-original-state') === undefined) {
-            var old_state = $item[0].checked;
-            if (new_state === undefined) {
-                old_state = !old_state;
-            }
-            $item.attr('data-original-state', old_state);
+        if (init) {
+            setOriginalValue($item, new_state);
         }
-        if (new_state !== undefined) {
-            $item[0].checked = new_state;
-        }
+        $item[0].checked = new_state;
     }
 
     /**
@@ -983,11 +1165,12 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target       Default: *this*.
      * @param {string}   new_value
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function setTextAreaValue(target, new_value) {
+    function setTextAreaValue(target, new_value, init) {
         var $item = $(target || this);
-        if ($item.attr('data-original-value') === undefined) {
-            $item.attr('data-original-value', textAreaValue($item.val()));
+        if (init) {
+            setOriginalValue($item, new_value);
         }
         $item.val(new_value);
     }
@@ -997,11 +1180,12 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target       Default: *this*.
      * @param {string}   new_value
+     * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function setValue(target, new_value) {
+    function setValue(target, new_value, init) {
         var $item = $(target || this);
-        if ($item.attr('data-original-value') === undefined) {
-            $item.attr('data-original-value', $item.val());
+        if (init) {
+            setOriginalValue($item, new_value);
         }
         $item.val(new_value);
     }
@@ -1081,6 +1265,82 @@ $(document).on('turbolinks:load', function() {
         return result;
     }
 
+    /**
+     * Save the original value of an element.
+     *
+     * If *value* is present, that is assigned directly as the original value.
+     * If *value* was not provided, and no saved value is present then the
+     * current value will be saved as the original value.
+     *
+     * @param {Selector}                 target
+     * @param {string|boolean|undefined} [value]
+     */
+    function setOriginalValue(target, value) {
+        var $item = $(target || this);
+        var new_value;
+        if (isDefined(value)) {
+            new_value = valueOf(value);
+        } else if (notDefined(rawOriginalValue($item))) {
+            new_value = valueOf($item);
+        }
+        if (isDefined(new_value)) {
+            $item.attr('data-original-value', new_value);
+        }
+    }
+
+    /**
+     * Get the effective original value of the element.
+     *
+     * @param {Selector} target
+     *
+     * @return {string}
+     */
+    function getOriginalValue(target) {
+        var value = rawOriginalValue(target);
+        return notDefined(value) ? '' : value;
+    }
+
+    /**
+     * Get the saved original value of the element.
+     *
+     * @param {Selector} target
+     *
+     * @return {string|undefined}
+     */
+    function rawOriginalValue(target) {
+        var $item = $(target || this);
+        return $item.attr('data-original-value');
+    }
+
+    /**
+     * Get the value string associated with *item*.
+     *
+     * If *item* is a checkbox element, the state of it's 'checked' attribute
+     * is found; if *item* is another type of element, its 'value' attribute
+     * is found.
+     *
+     * Booleans are converted to either 'true' or 'false'.
+     *
+     * @param {jQuery|HTMLElement|string|boolean|undefined} item
+     *
+     * @returns {string}
+     */
+    function valueOf(item) {
+        var value;
+        if (typeof item === 'object') {
+            var $i = $(item);
+            value  = $i.is('[type="checkbox"]') ? $i[0].checked : $i.val();
+        } else {
+            value  = item;
+        }
+        switch (typeof value) {
+            case 'boolean': value = value ? 'true' : 'false'; break;
+            case 'string':  value = value.trim();             break;
+            default:        value = '';                       break;
+        }
+        return value;
+    }
+
     // ========================================================================
     // Functions - form validation
     // ========================================================================
@@ -1119,26 +1379,17 @@ $(document).on('turbolinks:load', function() {
     function validateForm(form) {
         var $form   = formElement(form);
         var $fields = inputFields($form);
-        var ready = !$fields.hasClass('invalid');
-        if (ready && isUpdateForm($form) && !fileSelected($form)) {
+        var ready   = !$fields.hasClass('invalid');
+        if (ready && !fileSelected($form)) {
             var changes = 0;
-            $fields.each(function() {
-                var $item = $(this);
-                var old_value = $item.attr('data-original-value');
-                var old_state = $item.attr('data-original-state');
-                if (old_value !== undefined) {
-                    if (old_value !== $item.val()) {
+            if (isUpdateForm($form)) {
+                $fields.each(function() {
+                    var $item = $(this);
+                    if (valueOf($item) !== getOriginalValue($item)) {
                         changes += 1;
                     }
-                } else if (old_state !== undefined) {
-                    if (typeof old_state === 'string') {
-                        old_state = (old_state === 'true');
-                    }
-                    if (old_state !== $item[0].checked) {
-                        changes += 1;
-                    }
-                }
-            });
+                });
+            }
             ready = (changes > 0);
         }
         if (ready) {
@@ -1201,16 +1452,11 @@ $(document).on('turbolinks:load', function() {
         var url;
         if (fileSelected($form) && !canSubmit($form)) {
             url = window.location.href;
-        } else {
-            url = $button.attr('data-path');
+        } else if ((url = $button.attr('data-path'))) {
             var def_path  = Emma.Upload.path.index;
             var base_path = window.location.pathname;
             var base_url  = window.location.origin + base_path;
-            if (!url && window.location.search) {
-                url = base_path;
-            } else if (!url) {
-                url = def_path;
-            } else if ((url === base_path) || (url === base_url)) {
+            if ((url === base_path) || (url === base_url)) {
                 url = base_path;
             } else if (url.indexOf(def_path) === 0) {
                 url = def_path;
@@ -1379,6 +1625,18 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * Update the current field filtering selection.
+     *
+     * @param {string}   new_mode
+     * @param {Selector} [form]    Passed to {@link fieldDisplayFilterButtons}.
+     */
+    function fieldDisplayFilterSelect(new_mode, form) {
+        var selector = '[value="' + new_mode + '"]';
+        var $radio   = fieldDisplayFilterButtons(form).filter(selector);
+        $radio.prop('checked', true).change();
+    }
+
+    /**
      * Listen for changes on field display filter selection.
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterButtons}.
@@ -1511,100 +1769,6 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Initialize the state of the submit button.
-     *
-     * @param {Selector} [form]       Passed to {@link formElement}.
-     */
-    function setupSubmitButton(form) {
-        var $form = formElement(form);
-        submitButton($form)
-            .attr('title', submitTooltip($form))
-            .text(submitLabel($form));
-    }
-
-    /**
-     * Initialize the state of the cancel button, and set it up to clear the
-     * form when it is activated.
-     *
-     * @param {Selector} [form]       Passed to {@link formElement}.
-     *
-     * == Implementation Notes
-     * Although the button is created with 'type="reset"' HTML reset behavior
-     * is not relied upon because it only clears form fields but not file data.
-     */
-    function setupCancelButton(form) {
-        var $form = formElement(form);
-        cancelButton($form)
-            .attr('title', cancelTooltip($form))
-            .text(cancelLabel($form))
-            .off('click', cancelForm)
-            .on('click', cancelForm)
-            .each(handleKeypressAsClick);
-    }
-
-    /**
-     * Initialize the state of the file select button.
-     *
-     * @param {Selector} [form]       Passed to {@link formElement}.
-     */
-    function setupFileSelectButton(form) {
-        var $form   = formElement(form);
-        var $button = fileSelectButton($form);
-        if (isCreateForm($form)) {
-            $button.addClass('best-choice');
-        }
-        $button.attr('title', fileSelectTooltip($form));
-        $button.text(fileSelectLabel($form));
-    }
-
-    /**
-     * Adjust an input element to prevent password managers from interpreting
-     * certain fields like "Title" as ones that they should offer to
-     * autocomplete.
-     *
-     * @param {Selector} element      Default: *this*.
-     */
-    function turnOffAutocomplete(element) {
-        $(element || this).attr({
-            'autocomplete':  'off',
-            'data-lpignore': 'true' // LastPass requires this.
-        });
-    }
-
-    /**
-     * Allow a click anywhere within the element holding a label/button pair
-     * to be delegated to the enclosed input.  This broadens the "click target"
-     * and allows clicks in the "void" between the input and the label to be
-     * accredited to the input that the user was trying to click.
-     *
-     * @param {Selector} element      Default: *this*.
-     */
-    function delegateClick(element) {
-
-        var $element = $(element || this);
-        $element
-            .off('click', clickChildInput)
-            .on('click', clickChildInput);
-
-        /**
-         * If the container receives a click event in an area not covering
-         * either the input or label element then it will be handled here and
-         * "converted" into a click on the input element.
-         *
-         * Events that would have gone to the input or label will not be
-         * impeded here (nor will the event bubbling up from the input).
-         *
-         * @param {Event} event
-         */
-        function clickChildInput(event) {
-            if (event.target === event.currentTarget) {
-                event.stopPropagation();
-                $element.find('[type="radio"],[type="checkbox"]').click();
-            }
-        }
-    }
-
-    /**
      * Disable the file select button.
      *
      * @param {Selector} [form]       Passed to {@link formElement}.
@@ -1635,51 +1799,20 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
      */
     function displayUploadedFilename(file_data, element) {
-        var metadata = file_data && file_data.metadata;
-        var filename = metadata && metadata.filename;
         var $element = uploadedFilenameDisplay(element);
-        if (filename && isPresent($element)) {
-            var $filename = $element.find('.filename');
-            if (isPresent($filename)) {
-                $filename.text(filename);
-            } else {
-                $element.text(filename);
-            }
-            $element.css('display', 'block');
-        }
-    }
-
-    /**
-     * The container element for all input fields and their labels.
-     *
-     * @param {Selector} [form]       Passed to {@link fieldContainer}.
-     */
-    function normalizeLabelColumnWidth(form) {
-
-        var $container = fieldContainer(form);
-
-        // Find the widest label.
-        var max_width = 0;
-        $container.children('label').each(function() {
-            max_width = Math.max(max_width, $(this).width());
-        });
-        var column_width = '' + max_width + 'px';
-
-        // Replace the first column definition.
-        var old_columns = $container.css('grid-template-columns') || '';
-        var parts = old_columns.trim().split(/\s+/);
-        var first = parts.shift();
-        if (first.indexOf('repeat') === 0) {
-            var count = first.replace(/(repeat\()(\d+)(,.*)/, '$2') || 1;
-            if (count > 1) {
-                column_width += ' ' + RegExp.$1 + (count - 1) + RegExp.$3;
+        if (isPresent($element)) {
+            var metadata = file_data && file_data.metadata;
+            var filename = metadata && metadata.filename;
+            if (filename) {
+                var $filename = $element.find('.filename');
+                if (isPresent($filename)) {
+                    $filename.text(filename);
+                } else {
+                    $element.text(filename);
+                }
+                $element.addClass('complete');
             }
         }
-        var new_columns = column_width;
-        if (isPresent(parts)) {
-            new_columns += ' ' + parts.join(' ');
-        }
-        $container.css('grid-template-columns', new_columns);
     }
 
     /**
@@ -1751,6 +1884,28 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The hidden element with metadata information supplied by the server.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @return {jQuery}
+     */
+    function emmaDataElement(form) {
+        return formElement(form).find('#upload_emma_data');
+    }
+
+    /**
+     * The hidden element with file metadata information maintained by Uppy.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @return {jQuery}
+     */
+    function fileDataElement(form) {
+        return formElement(form).find('#upload_file_data');
+    }
+
+    /**
      * All elements that are or that contain form field inputs.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -1774,6 +1929,19 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The control button container
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @return {jQuery}
+     *
+     * @see "UploadHelper#upload_submit_button"
+     */
+    function buttonTray(form) {
+        return formElement(form).children('.button-tray');
+    }
+
+    /**
      * The submit button.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -1783,7 +1951,7 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_submit_button"
      */
     function submitButton(form) {
-        return formElement(form).children('[type="submit"]').first();
+        return buttonTray(form).children('[type="submit"]').first();
     }
 
     /**
@@ -1797,7 +1965,7 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_cancel_button"
      */
     function cancelButton(form) {
-        return formElement(form).children('[type="reset"]').first();
+        return buttonTray(form).children('.cancel-button').first();
     }
 
     /**
@@ -1844,7 +2012,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @return {jQuery}
      */
-    function fileSelectButtonContainer(form) {
+    function fileSelectContainer(form) {
         var target = 'uppy-FileInput-container';
         var $elem  = formElement(form);
         return $elem.hasClass(target) ? $elem : $elem.find('.' + target);
@@ -1858,7 +2026,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fileSelectButton(form) {
-        return fileSelectButtonContainer(form).children('button');
+        return fileSelectContainer(form).children('button');
     }
 
     /**

@@ -78,7 +78,8 @@ module LayoutHelper::NavBar
   def nav_bar_links
 
     current_params = url_parameters.except(:limit)
-    current_path   = current_base_path = request.path
+    current_path   = request.path
+    base_path      = current_path.sub(%r{^(/[^/]*)/.*$}, '\1')
     current_path  += '?' + current_params.to_param if current_params.present?
 
     links = []
@@ -92,7 +93,7 @@ module LayoutHelper::NavBar
         content_tag(:span, label, opt.merge!(class: 'active disabled'))
       elsif !current_user
         content_tag(:span, label, opt.merge!(class: 'disabled'))
-      elsif path == current_base_path
+      elsif path == base_path
         link_to(label, path, opt.merge!(class: 'active'))
       else
         link_to(label, path, opt)
@@ -101,27 +102,37 @@ module LayoutHelper::NavBar
     # Entries for the main page of each controller.
     links +=
       NAV_BAR_CONTROLLERS.map do |c|
+        primary = PRIMARY_CONTROLLERS.include?(c)
+        path    = send("#{c}_index_path")
+        current = (path == current_path)
+        base    = (path == base_path)
+
+        # The separator preceding the link.
+        separator_opt = { class: 'separator' }
+        append_css_classes!(separator_opt, 'secondary') unless primary
+        append_css_classes!(separator_opt, 'active')    if current || base
+        separator = content_tag(:span, '|', separator_opt)
+
+        # The link (inactive if already on the associated page).
         label = CONTROLLER_LABEL[c]
-        path  = send("#{c}_index_path")
         opt   = { title: CONTROLLER_TOOLTIP[c] }
-        if path == current_path
-          opt[:class] = 'active disabled'
-          content_tag(:span, label, opt)
-        elsif path == current_base_path
-          opt[:class] = 'active'
-          link_to(label, path, opt)
-        else
-          opt[:class] = 'secondary' unless PRIMARY_CONTROLLERS.include?(c)
-          link_to(label, path, opt)
-        end
+        opt[:class] = 'secondary' unless primary
+        link  =
+          if current
+            append_css_classes!(opt, 'active', 'disabled')
+            content_tag(:span, label, opt)
+          elsif base
+            append_css_classes!(opt, 'active')
+            link_to(label, path, opt)
+          else
+            link_to(label, path, opt)
+          end
+
+        separator << link
       end
 
     # Element containing links.
-    content_tag(:div, class: 'links') do
-      separator = content_tag(:span, '|', class: 'separator')
-      safe_join(links, separator)
-    end
-
+    content_tag(:div, safe_join(links), class: 'links')
   end
 
 end

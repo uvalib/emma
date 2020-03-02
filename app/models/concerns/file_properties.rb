@@ -30,10 +30,14 @@ class FileProperties < Hash
   KEY_ALIAS_MAP = {
     repository:   %i[repo],
     repositoryId: %i[repository_id id],
+=begin
     fileId:       %i[file_id       sub_id],
+=end
     fmt:          %i[type],
     ext:          nil,
+=begin
     rootname:     %i[root_name     root],
+=end
     filename:     %i[file_name     file],
   }.transform_values { |v| Array.wrap(v) }.deep_freeze
 
@@ -80,24 +84,32 @@ class FileProperties < Hash
   #
   def initialize(src, complete: false)
     hash_replace(PROPERTY_ENTRIES_TEMPLATE)
+=begin
     if src.present?
       update!(src)
       finalize if complete && !complete?
     end
+=end
+    update!(src) if src.present?
   end
 
-  # Complete initialization by causing :rootname and/or :filename to be
+=begin
+  ##Complete initialization by causing :rootname and/or :filename to be
+  # Complete initialization by causing :filename to be
   # derived from the other file properties (if needed).
   #
   # This will return *nil* if :filename, :rootname and :repositoryId are all
   # missing.
   #
   # @return [FileProperties]
-  # @return [nil] If :filename, :rootname, :repositoryId are all missing.
+  ##@return [nil] If :filename, :rootname, :repositoryId are all missing.
+  # @return [nil] If :filename and :repositoryId are both missing.
   #
   def finalize
-    self if rootname.present? && filename.present?
+    #self if rootname.present? && filename.present?
+    self if filename.present?
   end
+=end
 
   # ===========================================================================
   # :section: FileAttributes overrides
@@ -127,6 +139,7 @@ class FileProperties < Hash
     self[:repositoryId]
   end
 
+=begin
   # file_id
   #
   # @return [String, nil]
@@ -137,6 +150,7 @@ class FileProperties < Hash
   def file_id
     self[:fileId]
   end
+=end
 
   # fmt
   #
@@ -160,6 +174,7 @@ class FileProperties < Hash
     self[:ext]
   end
 
+=begin
   # rootname
   #
   # @return [String, nil]
@@ -170,6 +185,7 @@ class FileProperties < Hash
   def rootname
     self[:rootname] ||= make_rootname
   end
+=end
 
   # filename
   #
@@ -179,7 +195,10 @@ class FileProperties < Hash
   # @see FileAttributes#filename
   #
   def filename
+=begin
     self[:filename] ||= make_filename
+=end
+    self[:filename]
   end
 
   # ===========================================================================
@@ -188,9 +207,11 @@ class FileProperties < Hash
 
   public
 
+=begin
   def complete?
     self[:filename].present?
   end
+=end
 
   def property_keys
     KEYS
@@ -283,12 +304,18 @@ class FileProperties < Hash
     result = []
     result << 'repo = %s' % self[:repository].inspect
     result << 'id   = %s' % self[:repositoryId].inspect
+=begin
     result << 'fid  = %s' % self[:fileId].inspect
+=end
     result << 'fmt  = %s' % self[:fmt].inspect
     result << 'ext  = %s' % self[:ext].inspect
+=begin
     result << 'root = %s' % self[:rootname].inspect
+=end
     result << 'file = %s' % self[:filename].inspect
+=begin
     result << 'cmplt? %s' % complete?
+=end
     result << 'added  %s' % added_entries.to_s if added_keys.present?
     if leader.present?
       leader = "#{leader} | " unless leader.end_with?(' ')
@@ -527,10 +554,14 @@ class FileProperties < Hash
   #
   #   args[0] [String, nil]           repository
   #   args[1] [String, nil]           repository_id
+=begin
   #   args[2] [String, nil]           file_id
+=end
   #   args[3] [String, Symbol, nil]   fmt
   #   args[4] [String, nil]           ext
+=begin
   #   args[5] [String, nil]           rootname
+=end
   #   args[6] [String, nil]           filename
   #
   # @return [FileProperties]

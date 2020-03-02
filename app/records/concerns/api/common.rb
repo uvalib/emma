@@ -416,7 +416,7 @@ module Api::Common
   LANGUAGES =
     PRIMARY_LANGUAGES
       .map { |k| [k, LANGUAGE_LIST[k]] }.to_h
-      .reverse_merge(LANGUAGE_LIST)
+      .merge(LANGUAGE_LIST.except(*PRIMARY_LANGUAGES))
       .deep_freeze
 
   # ===========================================================================

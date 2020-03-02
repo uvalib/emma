@@ -184,6 +184,7 @@ module FileNaming
 
   public
 
+if LOCAL_DOWNLOADS
   # Indicate whether the value is a format type.
   #
   # @param [String, Symbol] value
@@ -191,7 +192,9 @@ module FileNaming
   def format_type?(value)
     FileFormat::TYPES.include?(value&.to_sym)
   end
+end
 
+if LOCAL_DOWNLOADS
   # Indicate whether the value is a filename format extension.
   #
   # @param [String, Symbol] value
@@ -199,6 +202,7 @@ module FileNaming
   def format_extension?(value)
     FileNaming.ext_to_fmt.key?(value.to_s)
   end
+end
 
 if LOCAL_DOWNLOADS
   # Indicate whether the value is a repository filename prefix.

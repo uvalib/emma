@@ -612,22 +612,28 @@ module UploadHelper
     cancel = opt.delete(:cancel)
 
     # Communicate :file_data through the form as a hidden field.
-    file_data = item&.cached_file_data || {}
+    file_data = item&.cached_file_data
     file_data = data_opt.merge(id: 'upload_file_data', value: file_data)
 
     # Communicate :emma_data through the form as a hidden field.
-    emma_data = item&.emma_metadata || {}
+    emma_data = item&.emma_data
     emma_data = data_opt.merge(id: 'upload_emma_data', value: emma_data)
+
+    # Submit button.
+    submit = upload_submit_button(action: action, label: label)
+
+    # Cancel button.
+    cancel = upload_cancel_button(action: action, url: cancel)
 
     content_tag(:div, class: "file-upload-container #{action}") do
       form_with(model: item, **opt) do |f|
         parts = []
-        parts << upload_submit_button(action: action, label: label)
-        parts << upload_cancel_button(action: action, url: cancel)
         parts << f.hidden_field(:emma_data, emma_data)
         parts << f.hidden_field(:file, file_data)
-        parts << f.file_field(:file)
-        parts << upload_filename_display
+        parts <<
+          content_tag(:div, class: 'button-tray') do
+            submit << cancel << f.file_field(:file) << upload_filename_display
+          end
         parts << upload_field_control
         parts << upload_field_container(item)
         safe_join(parts.compact, "\n")
@@ -728,6 +734,7 @@ module UploadHelper
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
+  # noinspection RailsI18nInspection
   UPLOAD_FIELD_CONTROL_VALUES =
     I18n.t('emma.upload.field_control').deep_symbolize_keys.deep_freeze
 
@@ -757,12 +764,12 @@ module UploadHelper
         tooltip  = properties[:tooltip]
         selected = (v == UPLOAD_FIELD_CONTROL_DEFAULT)
 
-        i_opt    = { role: 'radio', 'aria-labelledby': label_id }
-        input    = radio_button_tag(name, v, selected, i_opt)
+        i_opt = { role: 'radio', 'aria-labelledby': label_id }
+        input = radio_button_tag(name, v, selected, i_opt)
 
-        l_opt    = { id: label_id }
-        label    = properties[:label] || v.to_s
-        label    = label_tag(input_id, label, l_opt)
+        l_opt = { id: label_id }
+        label = properties[:label] || v.to_s
+        label = label_tag(input_id, label, l_opt)
 
         content_tag(:div, class: 'radio', title: tooltip) do
           input << label

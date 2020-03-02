@@ -136,7 +136,13 @@ $upload-entry-gap: 2rem;
         margin-bottom:  0;
 
         @media #{$narrow-screen} {
+
             flex-direction: column;
+            margin-bottom:  0.5rem;
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
         }
 
         > * {
@@ -271,6 +277,7 @@ $upload-entry-gap: 2rem;
                 margin-right:    -$icon-pad;
                 text-decoration: none;
                 font-size:       large;
+                color:           $uva-accent-blue;
                 border-radius:   50%;
 
                 &:hover {
@@ -505,7 +512,7 @@ form.select-entry {
             visibility:    hidden;
 
             @media #{$narrow-screen} {
-                margin-right: 0.5rem;
+                margin-right: 0.25rem;
             }
 
             &.optional {
@@ -553,8 +560,8 @@ form.select-entry {
 
         &.menu {
             &.single {
-                @media #{$wide-screen}   { min-width: 12.5vw; }
-                @media #{$medium-width}  { min-width: 25vw; }
+                @media #{$wide-screen}   { min-width: 15vw; }
+                @media #{$medium-width}  { min-width: 30vw; }
                 @media #{$narrow-screen} { min-width: 100%; }
             }
         }

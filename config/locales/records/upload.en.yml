@@ -54,12 +54,12 @@ en:
           tooltip:      'Repository identifier associated with the uploaded file'
           origin:       system
 
-        file_id:
-          min:          0
-          max:          1
-          label:        'File ID'
-          tooltip:      'Additional repository identifier associated with the uploaded file'
-          origin:       system
+        #file_id:
+        #  min:          0
+        #  max:          1
+        #  label:        'File ID'
+        #  tooltip:      'Additional repository identifier associated with the uploaded file'
+        #  origin:       system
 
         fmt:
           min:          1
@@ -74,6 +74,13 @@ en:
           label:        'Extension'
           tooltip:      'File extension of the uploaded file'
           origin:       file_data
+
+        state:
+          min:          0
+          max:          1
+          label:        'Status'
+          tooltip:      'Status of the upload submission'
+          origin:       system
 
         created_at:
           min:          1

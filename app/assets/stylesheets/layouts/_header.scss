@@ -346,7 +346,13 @@ $search-button-width:    6rem;
         }
 
         .secondary {
+
             color: gray;
+
+            // For now, Bookshare-related controller are hidden.
+            &:not(.active) {
+                display: none;
+            }
         }
     }
 }
@@ -377,6 +383,8 @@ $search-button-width:    6rem;
         // @see LayoutHelper#search_input
         .search-input {
             max-width: 100%;
+            // Prevent Chrome from showing its own ghost cancel button.
+            &::-webkit-search-cancel-button { -webkit-appearance: unset; }
         }
 
         // @see LayoutHelper#clear_search_button

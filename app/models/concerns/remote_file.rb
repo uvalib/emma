@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # NOTE: This may be of limited use and might be removed at some point.
 #
 class RemoteFile < FileObject
-
+if FileNaming::LOCAL_DOWNLOADS
   include HttpHelper
 
   # ===========================================================================
@@ -417,7 +417,7 @@ class RemoteFile < FileObject
   end
 
   extend ClassMethods
-
+end
 end
 
 __loading_end(__FILE__)

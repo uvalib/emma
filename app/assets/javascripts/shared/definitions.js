@@ -315,7 +315,7 @@ function cancelAction(arg) {
     if (!url && isPresent($button)) {
         url = $button.attr('data-path');
     }
-    if (!url && window.location.search) {
+    if (!url && window.location.search && !window.history.length) {
         url = window.location.pathname;
     }
     if (url === window.location.href) {

@@ -13,9 +13,9 @@ class CreateUploads < ActiveRecord::Migration[6.0]
       t.belongs_to :user
       t.string     :repository
       t.string     :repository_id
-      t.string     :file_id
       t.string     :fmt
       t.string     :ext
+      t.string     :state
       t.timestamps
     end
 

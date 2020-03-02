@@ -91,7 +91,7 @@ class Upload < ApplicationRecord
   validates_presence_of :user_id
   validates_presence_of :repository
   validates_presence_of :repository_id
-  validates_presence_of :file_id,       allow_nil: true
+  #validates_presence_of :file_id,       allow_nil: true
   validates_presence_of :fmt
   validates_presence_of :ext
   validates_presence_of :created_at
@@ -145,9 +145,12 @@ class Upload < ApplicationRecord
         user_id:       self.user_id,
         repository:    self.repository,
         repository_id: self.repository_id,
+=begin
         file_id:       self.file_id,
+=end
         fmt:           self.fmt,
         ext:           self.ext,
+        state:         self.state,
         emma_data:     self.emma_data,
         file_data:     self.file_data,
         file:             (file             || 'file NOT PRESENT'),
@@ -171,9 +174,12 @@ class Upload < ApplicationRecord
   # @option opt [String, User]   :user_id
   # @option opt [String, Symbol] :repository
   # @option opt [String]         :repository_id
+=begin
   # @option opt [String]         :file_id
+=end
   # @option opt [String, Symbol] :fmt
   # @option opt [String]         :ext
+  # @option opt [String]         :state
   # @option opt [String]         :file_data
   # @option opt [String]         :emma_data
   #
@@ -286,6 +292,7 @@ class Upload < ApplicationRecord
 
   public
 
+=begin
   # Core portion of the name associated with the file.
   #
   # @return [String, nil]
@@ -296,6 +303,7 @@ class Upload < ApplicationRecord
   def rootname
     @rootname ||= filename&.delete_suffix(".#{file.extension}")
   end
+=end
 
   # Full name of the file.
   #
