@@ -56,6 +56,8 @@ module OcfFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = OCF_FORMAT[:map]
 
   # ===========================================================================

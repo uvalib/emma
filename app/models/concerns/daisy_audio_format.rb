@@ -23,7 +23,7 @@ module DaisyAudioFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -65,6 +65,8 @@ module DaisyAudioFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = DAISY_AUDIO_FORMAT[:map]
 
   # ===========================================================================
@@ -92,7 +94,7 @@ module DaisyAudioFormat
   # @see DaisyFormat#parser
   #
   def parser
-    @parser ||= DaisyAudioParser.new(local_path)
+    @parser ||= DaisyAudioParser.new(file_handle)
   end
 
 end

@@ -22,7 +22,7 @@ module EpubFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -63,6 +63,8 @@ module EpubFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = EPUB_FORMAT[:map]
 
   # ===========================================================================
@@ -90,7 +92,7 @@ module EpubFormat
   # @see OcfFormat#parser
   #
   def parser
-    @parser ||= EpubParser.new(local_path)
+    @parser ||= EpubParser.new(file_handle)
   end
 
 end

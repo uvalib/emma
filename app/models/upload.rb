@@ -145,9 +145,6 @@ class Upload < ApplicationRecord
         user_id:       self.user_id,
         repository:    self.repository,
         repository_id: self.repository_id,
-=begin
-        file_id:       self.file_id,
-=end
         fmt:           self.fmt,
         ext:           self.ext,
         state:         self.state,
@@ -174,9 +171,6 @@ class Upload < ApplicationRecord
   # @option opt [String, User]   :user_id
   # @option opt [String, Symbol] :repository
   # @option opt [String]         :repository_id
-=begin
-  # @option opt [String]         :file_id
-=end
   # @option opt [String, Symbol] :fmt
   # @option opt [String]         :ext
   # @option opt [String]         :state
@@ -291,19 +285,6 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   public
-
-=begin
-  # Core portion of the name associated with the file.
-  #
-  # @return [String, nil]
-  #
-  # This method overrides:
-  # @see FileAttributes#rootname
-  #
-  def rootname
-    @rootname ||= filename&.delete_suffix(".#{file.extension}")
-  end
-=end
 
   # Full name of the file.
   #

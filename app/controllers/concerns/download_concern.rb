@@ -19,7 +19,7 @@ module DownloadConcern
 
   end
 
-  include SerializationConcern
+  include SerializationHelper
 
   # ===========================================================================
   # :section:

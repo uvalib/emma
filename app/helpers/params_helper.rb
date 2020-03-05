@@ -33,6 +33,24 @@ module ParamsHelper
     authenticity_token
   ].sort.freeze
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the current request is from client-side scripting.
+  #
+  def request_xhr?
+    request.xhr?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The full request URL without request parameters.
   #
   # @return [String]

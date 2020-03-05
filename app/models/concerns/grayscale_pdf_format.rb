@@ -5,9 +5,9 @@
 
 __loading_begin(__FILE__)
 
-# An Grayscale PDF file object.
+# A Grayscale PDF file object.
 #
-# @see OcfFormat
+# @see PdfFormat
 #
 module GrayscalePdfFormat
 
@@ -22,7 +22,7 @@ module GrayscalePdfFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -64,6 +64,8 @@ module GrayscalePdfFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = GRAYSCALE_PDF_FORMAT[:map]
 
   # ===========================================================================
@@ -91,7 +93,7 @@ module GrayscalePdfFormat
   # @see OcfFormat#parser
   #
   def parser
-    @parser ||= GrayscalePdfParser.new(local_path)
+    @parser ||= GrayscalePdfParser.new(file_handle)
   end
 
 end

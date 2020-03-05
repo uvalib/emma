@@ -830,14 +830,15 @@ module UploadHelper
         'Select an existing EMMA entry' # TODO: I18n
       end
 
-    menu = user ? Upload.where(user_id: user) : Upload.all
+    items = user ? Upload.where(user_id: user) : Upload.all
     menu =
-      Array.wrap(menu).map do |item|
-        data = safe_json_parse(item.file_data)
-        name = data.is_a?(Hash) && data.dig(:metadata, :filename).presence
-        name &&= " - #{name.inspect}"
-        id    = item.id
-        label = "Entry #{id}#{name}" # TODO: I18n
+      Array.wrap(items).map do |item|
+        id    = item.id.to_s
+        name  = item.filename
+        name  = ' - ' + ERB::Util.h(name) if name.present?
+        index = ERB::Util.h(id)
+        index = "&thinsp;&nbsp;#{index}"  if id.size == 1
+        label = "Entry #{index}#{name}".html_safe # TODO: I18n
         value = id
         [label, value]
       end

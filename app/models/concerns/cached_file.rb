@@ -15,11 +15,13 @@ class CachedFile < FileObject
 
   public
 
+=begin
   # Stream for accessing file contents.
   #
   # @type [IO, StringIO, nil]
   #
   attr_reader :io
+=end
 
   # ===========================================================================
   # :section: FileObject overrides
@@ -27,6 +29,7 @@ class CachedFile < FileObject
 
   public
 
+=begin
   # Create a new instance.
   #
   # @param [String, StringIO, IO] io
@@ -37,13 +40,9 @@ class CachedFile < FileObject
   #
   def initialize(io = nil, **opt)
     @io = io
-    if @io.present? # TODO: remove
-      class_name = self.class.to_s
-      class_name += ' (CachedFile)' unless class_name == 'CachedFile'
-      __debug_args(binding, leader: "... NEW #{class_name}")
-    end
     super(io, **opt)
   end
+=end
 
 end
 

@@ -13,7 +13,16 @@ module FlashHelper
     __included(base, '[FlashHelper]')
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Fall-back error message.
+  #
   # @type [String]
+  #
   DEFAULT_ERROR = I18n.t('emma.error.default', default: 'unknown').freeze
 
   # ===========================================================================

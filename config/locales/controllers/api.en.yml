@@ -12,6 +12,10 @@ en:
       title:            'Bookshare API Methods'
       tooltip:          'Bookshare API methods accessed as the current user.'
 
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
       index:
         label:          'API Methods'
         title:          'Bookshare API Methods'

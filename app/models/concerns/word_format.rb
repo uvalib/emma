@@ -21,7 +21,7 @@ module WordFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -62,6 +62,8 @@ module WordFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = WORD_FORMAT[:map]
 
   # ===========================================================================
@@ -89,7 +91,7 @@ module WordFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= WordParser.new(local_path)
+    @parser ||= WordParser.new(file_handle)
   end
 
 end

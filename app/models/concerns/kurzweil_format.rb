@@ -19,7 +19,7 @@ module KurzweilFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -60,6 +60,8 @@ module KurzweilFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = KURZWEIL_FORMAT[:map]
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module KurzweilFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= KurzweilParser.new(local_path)
+    @parser ||= KurzweilParser.new(file_handle)
   end
 
 end

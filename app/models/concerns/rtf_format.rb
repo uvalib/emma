@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# A RTF file object.
+# An RTF file object.
 #
 module RtfFormat
 
@@ -19,7 +19,7 @@ module RtfFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -60,6 +60,8 @@ module RtfFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = RTF_FORMAT[:map]
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module RtfFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= RtfParser.new(local_path)
+    @parser ||= RtfParser.new(file_handle)
   end
 
 end

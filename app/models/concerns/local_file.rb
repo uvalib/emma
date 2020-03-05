@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 class LocalFile < FileObject
 
+=begin
   # ===========================================================================
   # :section: FileObject overrides
   # ===========================================================================
@@ -17,25 +18,16 @@ class LocalFile < FileObject
 
   # Create a new instance.
   #
-  # @param [String, StringIO, IO] file
+  # @param [IO, StringIO, String] file
   # @param [Hash]                 opt
   #
   # This method overrides:
   # @see FileObject#initialize
   #
   def initialize(file, **opt)
-    if path.present? # TODO: remove
-      class_name = self.class.to_s
-      class_name += ' (LocalFile)' unless class_name == 'LocalFile'
-      __debug_args(binding, leader: "... NEW #{class_name}")
-    end
     super(file, **opt)
-    if file.is_a?(IO)
-      @filename = file.path
-    elsif !file.is_a?(StringIO)
-      @filename = file
-    end
   end
+=end
 
   # ===========================================================================
   # :section: FileAttributes overrides
@@ -43,6 +35,7 @@ class LocalFile < FileObject
 
   public
 
+=begin
   # local_path
   #
   # @return [String, StringIO, IO, nil]
@@ -53,6 +46,17 @@ class LocalFile < FileObject
   def local_path
     @local_path ||= path
   end
+=end
+
+=begin
+  # file_handle
+  #
+  # @return [File, StringIO, nil]
+  #
+  def file_handle
+    @file_handle ||= (File.open(filename) if filename.present?)
+  end
+=end
 
 end
 

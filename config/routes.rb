@@ -23,17 +23,6 @@ Rails.application.routes.draw do
   # EMMA Unified Search operations
   # ===========================================================================
 
-  if FileNaming::LOCAL_DOWNLOADS
-
-    get 'search/detail', to: 'search#file_detail', as: 'file_detail'
-
-    FileFormat::TYPES.each do |fmt|
-      opt = { defaults: { fmt: fmt.to_s } }
-      get "search/#{fmt}", to: 'search#file_detail', as: "#{fmt}_detail", **opt
-    end
-
-  end
-
   get 'search/advanced', to: 'search#advanced', as: 'advanced_search'
   get 'search/example',  to: 'search#example'
 

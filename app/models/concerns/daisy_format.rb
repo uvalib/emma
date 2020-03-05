@@ -23,7 +23,7 @@ module DaisyFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -64,6 +64,8 @@ module DaisyFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = DAISY_FORMAT[:map]
 
   # ===========================================================================
@@ -91,7 +93,7 @@ module DaisyFormat
   # @see OcfFormat#parser
   #
   def parser
-    @parser ||= DaisyParser.new(local_path)
+    @parser ||= DaisyParser.new(file_handle)
   end
 
 end

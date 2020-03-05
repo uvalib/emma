@@ -39,7 +39,7 @@ class PdfParser < FileParser
   # @return [nil]
   #
   def pdf_reader
-    @pdf_reader ||= (PDF::Reader.new(local_path) if local_path)
+    @pdf_reader ||= (PDF::Reader.new(file_handle) if file_handle)
   end
 
   # method_missing

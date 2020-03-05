@@ -31,6 +31,7 @@ module FileFormat
   #
   # @type [Array<Symbol>]
   #
+  # noinspection RailsI18nInspection
   TYPES = I18n.t('emma.format').keys.map(&:to_sym).freeze
 
   # Placeholder for an unknown format.

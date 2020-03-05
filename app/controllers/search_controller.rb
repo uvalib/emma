@@ -101,22 +101,6 @@ class SearchController < ApplicationController
     render template: 'search/index'
   end
 
-if FileNaming::LOCAL_DOWNLOADS
-  # == GET /search/detail?repositoryId=xxx[&repository=xxx]&fmt={brf|daisy|...}
-  # == GET /search/:fmt?repositoryId=xxx[&repository=xxx]
-  # Display details of a file from a repository.
-  #
-  def file_detail
-    __debug_route('SEARCH')
-    locals = get_file_details(params)
-    respond_to do |format|
-      format.html { render locals: locals }
-      format.json { render_json show_values(locals) }
-      format.xml  { render_xml  show_values(locals) }
-    end
-  end
-end
-
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================

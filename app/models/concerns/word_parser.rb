@@ -71,7 +71,7 @@ class WordParser < FileParser
   #
   def get_core_metadata
     result = {}
-    doc = get_archive_entry('docProps/core.xml', local_path)
+    doc = get_archive_entry('docProps/core.xml', file_handle)
     doc &&= Nokogiri.XML(doc)
     (doc&.xpath('.//cp:coreProperties')&.children || []).each do |element|
       next unless element.element?

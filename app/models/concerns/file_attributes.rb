@@ -22,11 +22,7 @@ module FileAttributes
 
   public
 
-  NAME_PART_SEPARATOR = '-'
-  FILE_ID_SEPARATOR   = ',' if FileNaming::LOCAL_DOWNLOADS
-  EXT_SEPARATOR       = '.'
-
-  FILE_ID_CHARS = 'a-zA-Z0-9_.-' if FileNaming::LOCAL_DOWNLOADS
+  EXT_SEPARATOR = '.'
 
   # ===========================================================================
   # :section:
@@ -46,14 +42,6 @@ module FileAttributes
   #
   attr_reader :repository_id
 
-=begin
-  # Repository identifier for the file.  (HathiTrust)
-  #
-  # @return [String, nil]
-  #
-  attr_reader :file_id
-=end
-
   # Format type of the file.
   #
   # @return [Symbol, nil]             One of FileFormat#TYPES.
@@ -72,23 +60,9 @@ module FileAttributes
 
   public
 
-=begin
-  # Core portion of the name associated with the file.
-  #
-  # @return [String, nil]
-  #
-  # @see #make_rootname
-  #
-  attr_reader :rootname
-=end
-
   # Full name of the file.
   #
   # @return [String, nil]
-  #
-=begin
-  # @see #make_filename
-=end
   #
   attr_reader :filename
 
@@ -98,17 +72,19 @@ module FileAttributes
 
   public
 
+=begin
   # The URL or file directory path used initially to specify the file object.
   #
   # @return [String]
   #
   attr_reader :path
+=end
 
-  # File system path to a local copy of the file object.
+  # Access to a local copy of the file object.
   #
-  # @return [String, StringIO, IO, nil]
+  # @return [File, StringIO, nil]
   #
-  attr_reader :local_path
+  attr_reader :file_handle
 
   # ===========================================================================
   # :section:
@@ -126,14 +102,8 @@ module FileAttributes
     src = FileProperties.new(src) unless src.is_a?(FileProperties)
     @repository    = src.repository
     @repository_id = src.repository_id
-=begin
-    @file_id       = src.file_id
-=end
     @fmt           = src.fmt
     @ext           = src.ext
-=begin
-    @rootname      = src.rootname
-=end
     @filename      = src.filename
   end
 
@@ -144,71 +114,17 @@ module FileAttributes
   # == Implementation Notes
   # The instance variables are used here rather than the attributes to avoid
   # prematurely producing completed FileProperties instance by triggering
-=begin
-  # method overrides of :rootname and/or :filename.
-=end
   # method override of :filename.
   #
   def get_file_attributes
     FileProperties[
       @repository,
       @repository_id,
-=begin
-      @file_id,
-=end
       @fmt,
       @ext,
-=begin
-      @rootname,
-=end
       @filename
     ]
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-=begin
-  # sanitize_id
-  #
-  # @param [String, Symbol] value
-  #
-  # @return [String]
-  #
-  def sanitize_id(value)
-    value.to_s.tr("^#{FILE_ID_CHARS}", '_')
-  end
-=end
-
-=begin
-  # make_rootname
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def make_rootname
-    parts = [repository_id, file_id].compact.presence
-    parts&.map { |v| sanitize_id(v) }&.join(FILE_ID_SEPARATOR)
-  end
-=end
-
-=begin
-  # make_filename
-  #
-  # @return [String]
-  # @return [nil]
-  #
-  def make_filename
-    #parts = [repository, rootname, fmt].compact.presence
-    parts = [repository, fmt].compact.presence
-    parts&.join(NAME_PART_SEPARATOR)&.tap { |name|
-      (suffix = ext || fmt&.to_s) and (name << EXT_SEPARATOR << suffix)
-    }
-  end
-=end
 
 end
 

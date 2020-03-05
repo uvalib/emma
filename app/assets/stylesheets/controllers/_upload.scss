@@ -344,6 +344,10 @@ form.select-entry {
         &:focus:hover {
             outline-color: transparent;
         }
+
+        option:first-of-type {
+            display: none;
+        }
     }
 }
 

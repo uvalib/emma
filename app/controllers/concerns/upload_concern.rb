@@ -14,16 +14,18 @@ module UploadConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'UploadConcern')
-
-    include Emma::Json
-    include FilesConcern
-    include FlashHelper
-
   end
 
-  include SessionConcern
+  include ParamsHelper
+  include FlashHelper
+
+  # ===========================================================================
+  # :section: Initialization
+  # ===========================================================================
+
+  MIME_REGISTRATION =
+    FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
   # :section: Classes

@@ -19,7 +19,7 @@ module BrfFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -60,6 +60,8 @@ module BrfFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = BRF_FORMAT[:map]
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module BrfFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= BrfParser.new(local_path)
+    @parser ||= BrfParser.new(file_handle)
   end
 
 end

@@ -19,7 +19,7 @@ module TactileFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -60,6 +60,8 @@ module TactileFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = TACTILE_FORMAT[:map]
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module TactileFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= TactileParser.new(local_path)
+    @parser ||= TactileParser.new(file_handle)
   end
 
 end

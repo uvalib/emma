@@ -19,7 +19,7 @@ module BrailleFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -60,6 +60,8 @@ module BrailleFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = BRAILLE_FORMAT[:map]
 
   # ===========================================================================
@@ -87,7 +89,7 @@ module BrailleFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= BrailleParser.new(local_path)
+    @parser ||= BrailleParser.new(file_handle)
   end
 
 end

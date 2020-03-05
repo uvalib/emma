@@ -31,7 +31,7 @@ class OcfParser < FileParser
   # @return [String]
   #
   def opf_zip_path
-    @opf_zip_path ||= find_zip_path('.opf', local_path)
+    @opf_zip_path ||= find_zip_path('.opf', file_handle)
   end
 
   # The location of the .ncx file in the ZIP archive.
@@ -39,7 +39,7 @@ class OcfParser < FileParser
   # @return [String]
   #
   def ncx_zip_path
-    @ncx_zip_path ||= find_zip_path('.ncx', local_path)
+    @ncx_zip_path ||= find_zip_path('.ncx', file_handle)
   end
 
   # ===========================================================================
@@ -115,7 +115,7 @@ class OcfParser < FileParser
   def get_opf_metadata
     result = {}
     doc = opf_zip_path
-    doc &&= get_archive_entry(doc, local_path)
+    doc &&= get_archive_entry(doc, file_handle)
     doc &&= Nokogiri.XML(doc)
 
     # Parse <package><metadata> for metadata values.
@@ -161,7 +161,7 @@ class OcfParser < FileParser
   #
   def get_ncx_metadata
     xml = ncx_zip_path
-    xml &&= get_archive_entry(xml, local_path)
+    xml &&= get_archive_entry(xml, file_handle)
     xml &&= Nokogiri.XML(xml)
     xml &&= xml.xpath('//xmlns:meta')
     xml ? parse_metas(xml) : {}
@@ -196,7 +196,7 @@ class OcfParser < FileParser
     return unless cover_id || (attrs[:properties] == 'cover-image')
     media_type = attrs[:'media-type']
     zip_path   = attrs[:href]
-    image_data = get_archive_entry(zip_path, local_path, recurse: true)
+    image_data = get_archive_entry(zip_path, file_handle, recurse: true)
     image_data &&= Base64.encode64(image_data)
     "data:#{media_type}; base64,#{image_data}" if image_data
   end

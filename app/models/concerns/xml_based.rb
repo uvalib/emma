@@ -285,8 +285,7 @@ module XmlBased
       element = args.shift
       inner   = args.shift
       __debug_line(*args) do
-        parts = [method]
-        parts << File.basename(local_path) if local_path.is_a?(String)
+        parts = [method, filename]
         if element
           name =
             if element.respond_to?(:name)
@@ -308,7 +307,7 @@ module XmlBased
           parts << "value #{value.inspect}"
           parts << "attrs #{attrs.inspect}"
         end
-        parts
+        parts.compact
       end
     end
 

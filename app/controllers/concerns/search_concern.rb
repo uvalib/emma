@@ -80,14 +80,7 @@ module SearchConcern
 
   end
 
-  include FilesConcern
   include SearchHelper
-
-  # Separator between values of a multi-valued field.
-  #
-  # @type [String]
-  #
-  FF_SEPARATOR = FileFormat::FILE_FORMAT_SEP
 
   # ===========================================================================
   # :section: Initialization
@@ -119,41 +112,6 @@ module SearchConcern
 
   public
 
-if FileNaming::LOCAL_DOWNLOADS
-  # Retrieve embedded metadata information from the indicated file (which is
-  # downloaded if it is not already present in the download cache).
-  #
-  # @param [ActionController::Parameters, Hash] opt  Passed to
-  #                                   #extract_file_properties except for:
-  #
-  # @option opt [String] :path        URL or directory path to file.
-  # @option opt [String] :url         Alias for :path.
-  #
-  # @return [Hash{repo: String, id: String, fmt: Symbol, info: Hash}] where:
-  #
-  #   repo: The repository portion of the complete file name.
-  #   id:   The repositoryId portion of the complete file name.
-  #   fmt:  The file format extension of the complete file name.
-  #   info: Metadata values extracted from the file (@see #file_info_values).
-  #
-  # == Usage Notes
-  # If :path is not given it will be derived from the other provided options.
-  #
-  def get_file_details(opt)
-    __debug_args(binding)
-    opt, prop = partition_options(opt, :path, :url)
-    path = opt[:path] || opt[:url]
-    prop = extract_file_properties(path, prop)
-    path ||= RemoteFile.make_download_path(prop)
-    {
-      repo: prop.repository,
-      id:   prop.repository_id,
-      fmt:  prop.fmt,
-      info: file_info_values(path, **prop)
-    }
-  end
-end
-
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
@@ -182,8 +140,8 @@ end
       value.map { |v| normalize_keys(v) }
     elsif value.is_a?(Array)
       normalize_keys(value.first)
-    elsif value.is_a?(String) && value.include?(FF_SEPARATOR)
-      value.split(FF_SEPARATOR).reject(&:blank?)
+    elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
+      value.split(FileFormat::FILE_FORMAT_SEP).reject(&:blank?)
     else
       value
     end

@@ -167,7 +167,7 @@ module HealthConcern
 
   # Used for checks of subsystems that don't exist.
   #
-  # @type [Hash{Symbol=>Object}]
+  # @type [HealthEntry]
   #
   INVALID_HEALTH_CHECK = HealthEntry.new(**HEALTH_18N_ENTRIES[:invalid]).freeze
 
@@ -202,8 +202,8 @@ module HealthConcern
   # If *entry* does not have an explicit :healthy message then the time taken
   # for the check is displayed.
   #
-  # @param [Symbol]    subsystem
-  # @param [Hash, nil] entry
+  # @param [Symbol]           subsystem
+  # @param [HealthEntry, nil] entry
   #
   # @return [HealthStatus]
   #
@@ -258,12 +258,20 @@ module HealthConcern
     true # TODO: future
   end
 
+  # Health status of the Unified Search service.
+  #
+  # @return [Boolean]
+  #
+  def search_status(*)
+    SearchService.active?
+  end
+
   # Health status of the Bookshare API service.
   #
   # @return [Boolean]
   #
   def bookshare_status(*)
-    BookshareService.new.get_title_count > 0
+    BookshareService.active?
   end
 
   # Health status of the ingest service.

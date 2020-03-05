@@ -168,12 +168,6 @@ module SessionConcern
     end
   end
 
-  # Indicate whether the current request is from client-side scripting.
-  #
-  def request_xhr?
-    request.xhr?
-  end
-
   # Indicate whether handling of the current request should be wrapped by
   # #session_update.
   #

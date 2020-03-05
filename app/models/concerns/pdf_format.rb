@@ -21,7 +21,7 @@ module PdfFormat
 
   # Type of associated files.
   #
-  # @type [Symbol]                    One of FileFormat#FILE_FORMATS
+  # @type [Symbol]                    One of FileFormat#TYPES
   #
   # @see FileObject#fmt
   #
@@ -62,6 +62,8 @@ module PdfFormat
   #
   # @type [Hash{Symbol=>Symbol}]
   #
+  # @see FileFormat#mapped_metadata_fields
+  #
   FIELD_MAP = PDF_FORMAT[:map]
 
   # ===========================================================================
@@ -89,7 +91,7 @@ module PdfFormat
   # @see FileFormat#parser
   #
   def parser
-    @parser ||= PdfParser.new(local_path)
+    @parser ||= PdfParser.new(file_handle)
   end
 
   # parser_metadata

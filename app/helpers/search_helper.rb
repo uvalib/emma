@@ -177,13 +177,6 @@ module SearchHelper
         "Retrieve the #{fmt} source from #{repo}." # TODO: I18n
       end
     make_link(label, url, **opt)
-      .tap do |result|
-        if FileNaming::LOCAL_DOWNLOADS
-          __debug { "#{__method__} => #{result.inspect}" }
-          info = file_info(item, path: url)
-          result << info if info.present?
-        end
-      end
   end
 
   # ===========================================================================
