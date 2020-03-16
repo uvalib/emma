@@ -693,14 +693,6 @@ module OmniAuth
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#request_phase
       #
-      # == Implementation Notes
-      # NOTE: There is currently a problem going directly to authorize_url.
-      # For some reason (probably related to headers), Location is returned
-      # as "https://auth.staging.bookshare.org/user_login", which fails.
-      # This extra step is necessary so that the Location can be edited (along
-      # with a modification to OAuth2::ClientExt#request to rewrite the
-      # Location received from "https://auth.bookshare.org/oauth/authorize").
-      #
       # @see OAuth2::ClientExt#request
       #
       def request_phase
@@ -709,20 +701,7 @@ module OmniAuth
         auth_parm = authorize_params.reverse_merge(redirect_uri: callback_url)
         auth_url  = auth_code.authorize_url(auth_parm)
         $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | authorize_url = #{auth_url.inspect}"
-
-        # NOTE: temporarily(?) fixing Bookshare redirect problem...
-        auth_url = client.request(:get, auth_url).response.env.url
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | modified authorize_url = #{auth_url.inspect}"
-
         redirect(auth_url)
-
-=begin # NOTE: The following does *not* work:
-        Rack::Response.new { |r|
-          r.write("Redirecting to #{auth_url}...")
-          r.set_header('Host', URI(BOOKSHARE_AUTH_URL).host)
-          r.redirect(auth_url)
-        }.finish
-=end
       end
 
       # authorize_params
