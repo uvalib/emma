@@ -26,7 +26,6 @@ RUN apk update && \
     make \
     mariadb-dev \
     nodejs \
-    sqlite-dev \
     tzdata \
     yarn && \
     rm -rf /var/cache/apk/*
@@ -81,9 +80,9 @@ RUN SECRET_KEY_BASE=x rake assets:precompile
 # Update permissions on the application and user home directory.
 RUN chown -R $USER:$GROUP $HOME $APP_HOME
 
-# Add the build tag
-ARG BUILD_TAG
-RUN test -n "$BUILD_TAG" && touch $APP_HOME/buildtag.build-$BUILD_TAG || touch $APP_HOME/buildtag.build-0
+# Add the build tag.
+ARG BUILD_TAG=0
+RUN touch $APP_HOME/buildtag.build-$BUILD_TAG
 
 # =============================================================================
 # Launch the application

@@ -1676,20 +1676,24 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_field_control"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        var obj  = (typeof new_mode === 'object');
-        var mode = obj ? undefined : new_mode;
-        var form = obj ? new_mode  : form_sel;
+        var obj   = (typeof new_mode === 'object');
+        var mode  = obj ? undefined : new_mode;
+        var form  = obj ? new_mode  : form_sel;
+        var $form = $(form);
         if (!mode) {
-            mode = fieldDisplayFilterCurrent(form);
+            mode = fieldDisplayFilterCurrent($form);
         }
         switch (mode) {
-            case 'filled':    fieldDisplayFilled(form);    break;
-            case 'invalid':   fieldDisplayInvalid(form);   break;
-            case 'available': fieldDisplayAvailable(form); break;
-            case 'all':       fieldDisplayAll(form);       break;
+            case 'filled':    fieldDisplayFilled($form);    break;
+            case 'invalid':   fieldDisplayInvalid($form);   break;
+            case 'available': fieldDisplayAvailable($form); break;
+            case 'all':       fieldDisplayAll($form);       break;
             default:
                 console.error('filterFieldDisplay', 'invalid mode:', mode);
         }
+        // Scroll so the the first visible field is at the top of the display
+        // beneath the field display controls.
+        $form[0].scrollIntoView();
     }
 
     /**
@@ -1938,7 +1942,7 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_submit_button"
      */
     function buttonTray(form) {
-        return formElement(form).children('.button-tray');
+        return formElement(form).find('.button-tray');
     }
 
     /**
@@ -1976,9 +1980,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function uploadedFilenameDisplay(form) {
-        var target = 'uploaded-filename';
-        var $elem  = formElement(form);
-        return $elem.hasClass(target) ? $elem : $elem.find('.' + target);
+        return formElement(form).find('.uploaded-filename');
     }
 
     /**
@@ -1989,9 +1991,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        var target = 'upload-field-control';
-        var $elem  = formElement(form);
-        return $elem.hasClass(target) ? $elem : $elem.find('.' + target);
+        return formElement(form).find('.upload-field-control');
     }
 
     /**
@@ -2013,9 +2013,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fileSelectContainer(form) {
-        var target = 'uppy-FileInput-container';
-        var $elem  = formElement(form);
-        return $elem.hasClass(target) ? $elem : $elem.find('.' + target);
+        return formElement(form).find('.uppy-FileInput-container');
     }
 
     /**
@@ -2037,9 +2035,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fieldContainer(form) {
-        var target = 'upload-fields';
-        var $elem  = formElement(form);
-        return $elem.hasClass(target) ? $elem : $elem.find('.' + target);
+        return formElement(form).find('.upload-fields');
     }
 
     /**

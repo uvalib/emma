@@ -138,11 +138,14 @@
 .file-upload-form,
 .file-upload-delete {
 
+    $form-gap:        1.5rem;
+    $form-gap-narrow: $form-gap / 3;
+
     @include grid([submit] auto [cancel] auto [file] auto [selected] 1fr);
-    @include grid-gap(1.5rem);
+    @include grid-gap($form-gap);
 
     @media #{$narrow-screen} {
-        @include grid-gap(0.5rem);
+        @include grid-gap($form-gap-narrow);
     }
 
     // Uploader for a new EMMA entry.
@@ -224,11 +227,6 @@
     // Elements - first grid row (if using button tray)
     //=========================================================================
 
-    %upload-tray-control {
-        flex:   0 1 auto;
-        margin: 0 0.5rem 1rem 0;
-    }
-
     .button-tray {
 
         @include grid-row(1);
@@ -246,6 +244,11 @@
         //=====================================================================
         // Components
         //=====================================================================
+
+        %upload-tray-control {
+            flex:   0 1 auto;
+            margin: 0 0.5rem 1rem 0;
+        }
 
         .submit-button {
             @extend %upload-tray-control;
@@ -285,7 +288,7 @@
     }
 
     //=========================================================================
-    // Elements - second grid row
+    // Elements - second grid row (if not using .controls container)
     //=========================================================================
 
     // Control for filtering which upload form fields are displayed.
@@ -300,7 +303,30 @@
         box-shadow: 0 0 0 1rem white;
 
         @media #{$narrow-screen} {
-            margin-top: 0.5rem;
+            margin-top: $form-gap-narrow;
+        }
+    }
+
+    //=========================================================================
+    // Elements - first grid row (if using .controls container)
+    //=========================================================================
+
+    .controls {
+
+        @include grid-row(1);
+        @include grid-column-span;
+
+        @include grid(1fr);
+        @include grid-gap(1.5rem);
+
+        position:      sticky;
+        top:           $form-gap;
+        margin-bottom: $form-gap;
+        background:    white;
+        box-shadow:    0 0 0.25rem $form-gap white;
+
+        @media #{$narrow-screen} {
+            box-shadow: 0 0 0.25rem $form-gap-narrow white;
         }
     }
 
@@ -319,7 +345,12 @@
 
     // Add to a button to accent it as the next best action to perform.
     .best-choice {
+
         box-shadow: 0 0 0.5rem 0.25rem $button-accent;
+
+        &:focus {
+            outline: 1px solid gray;
+        }
     }
 }
 

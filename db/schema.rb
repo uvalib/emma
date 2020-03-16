@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_15_122500) do
+ActiveRecord::Schema.define(version: 2020_01_15_122520) do
 
   create_table "artifacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "format"
@@ -116,6 +116,16 @@ ActiveRecord::Schema.define(version: 2020_01_15_122500) do
     t.string "state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "phase"
+    t.string "edit_state"
+    t.string "edit_user"
+    t.text "edit_file_data"
+    t.text "edit_emma_data"
+    t.timestamp "edited_at"
+    t.string "review_user"
+    t.boolean "review_success"
+    t.text "review_comment"
+    t.timestamp "reviewed_at"
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 

@@ -593,14 +593,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_form(item, label: nil, action: nil, **opt)
-    action    = (action || params[:action])&.to_sym
-    data_opt  = { class: 'upload-hidden' }
-
-    # Form options.
-    opt = prepend_css_classes(opt, "file-upload-form #{action}")
-    opt[:model]        = item
-    opt[:multipart]    = true
-    opt[:autocomplete] = 'off'
+    action = (action || params[:action])&.to_sym
+    opt    = prepend_css_classes(opt, "file-upload-form #{action}")
+    cancel = opt.delete(:cancel)
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
@@ -609,34 +604,42 @@ module UploadHelper
         opt[:url]      = update_upload_path
         opt[:method] ||= :put
     end
-    cancel = opt.delete(:cancel)
-
-    # Communicate :file_data through the form as a hidden field.
-    file_data = item&.cached_file_data
-    file_data = data_opt.merge(id: 'upload_file_data', value: file_data)
-
-    # Communicate :emma_data through the form as a hidden field.
-    emma_data = item&.emma_data
-    emma_data = data_opt.merge(id: 'upload_emma_data', value: emma_data)
-
-    # Submit button.
-    submit = upload_submit_button(action: action, label: label)
-
-    # Cancel button.
-    cancel = upload_cancel_button(action: action, url: cancel)
+    opt[:multipart]    = true
+    opt[:autocomplete] = 'off'
 
     content_tag(:div, class: "file-upload-container #{action}") do
       form_with(model: item, **opt) do |f|
-        parts = []
-        parts << f.hidden_field(:emma_data, emma_data)
-        parts << f.hidden_field(:file, file_data)
-        parts <<
-          content_tag(:div, class: 'button-tray') do
-            submit << cancel << f.file_field(:file) << upload_filename_display
-          end
-        parts << upload_field_control
-        parts << upload_field_container(item)
-        safe_join(parts.compact, "\n")
+        data_opt = { class: 'upload-hidden' }
+
+        # Communicate :file_data through the form as a hidden field.
+        file_data = item&.cached_file_data
+        file_data = data_opt.merge!(id: 'upload_file_data', value: file_data)
+        file_data = f.hidden_field(:file, file_data)
+
+        # Hidden data fields.
+        emma_data = item&.emma_data
+        emma_data = data_opt.merge!(id: 'upload_emma_data', value: emma_data)
+        emma_data = f.hidden_field(:emma_data, emma_data)
+
+        # Button tray.
+        tray = []
+        tray << upload_submit_button(action: action, label: label)
+        tray << upload_cancel_button(action: action, url: cancel)
+        tray << f.file_field(:file)
+        tray << upload_filename_display
+        tray = content_tag(:div, safe_join(tray), class: 'button-tray')
+
+        # Field display selections.
+        tabs = upload_field_control
+
+        # Form buttons and display selection controls.
+        controls = content_tag(:div, class: 'controls') { tray << tabs }
+
+        # Form fields.
+        fields = upload_field_container(item)
+
+        # All form sections.
+        [emma_data, file_data, controls, fields].compact.join("\n").html_safe
       end
     end
   end
