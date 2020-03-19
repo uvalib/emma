@@ -57,34 +57,35 @@ module IsbnHelper
 
   # Indicate whether the given text appears to include an ISBN.
   #
-  # @param [String] text
+  # @param [String] s
   #
   # == Usage Notes
   # If *text* matches #ISBN_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_isbn?(text)
-    text = text.to_s.strip
-    id   = remove_prefix(text)
-    (text != id) ||
+  def contains_isbn?(s)
+    s  = s.to_s.strip
+    id = remove_isbn_prefix(s)
+    (s != id) ||
       ((id =~ ISBN_IDENTIFIER) && (id.delete('^0-9X').size >= ISBN_MIN_DIGITS))
   end
 
   # Indicate whether the string is a valid ISBN.
   #
-  # @param [String] isbn
+  # @param [String] s
   #
-  def isbn?(isbn)
+  def isbn?(s)
+    isbn = remove_isbn_prefix(s)
     isbn_checksum(isbn).present? rescue false
   end
 
   # Indicate whether the string is a valid ISBN-13.
   #
-  # @param [String] isbn
+  # @param [String] s
   #
-  def isbn13?(isbn)
-    isbn   = remove_prefix(isbn)
+  def isbn13?(s)
+    isbn   = remove_isbn_prefix(s)
     check  = isbn.last.to_i
     digits = isbn.delete('^0-9')
     length = digits.size
@@ -94,10 +95,10 @@ module IsbnHelper
 
   # Indicate whether the string is a valid ISBN-10.
   #
-  # @param [String] isbn
+  # @param [String] s
   #
-  def isbn10?(isbn)
-    isbn   = remove_prefix(isbn)
+  def isbn10?(s)
+    isbn   = remove_isbn_prefix(s)
     check  = isbn.last
     digits = isbn.delete('^0-9')
     length = digits.size
@@ -111,29 +112,32 @@ module IsbnHelper
 
   # If the value is an ISBN return it in a normalized form or *nil* otherwise.
   #
-  # @param [String] isbn
+  # @param [String]  s
+  # @param [Boolean] log
   #
   # @return [String]
   # @return [nil]
   #
-  def to_isbn(isbn)
-    to_isbn13(isbn)
+  def to_isbn(s, log: true)
+    to_isbn13(s, log: log)
   end
 
   # If the value is an ISBN-13; if it is an ISBN-10, convert it to the
   # equivalent ISBN-13; otherwise return *nil*.
   #
-  # @param [String] isbn
+  # @param [String]  s
+  # @param [Boolean] log
   #
   # @return [String]
   # @return [nil]
   #
-  def to_isbn13(isbn)
-    isbn = remove_prefix(isbn).delete('^0-9X')
+  def to_isbn13(s, log: true)
+    s    = remove_isbn_prefix(s)
+    isbn = s.delete('^0-9X')
     if isbn13?(isbn)
       isbn
     elsif isbn.size != ISBN_10_DIGITS
-      Log.info { "#{__method__}: #{isbn.inspect} is not a valid ISBN-10" }
+      Log.info { "#{__method__}: #{s.inspect} is not a valid ISBN-10" } if log
     else
       digits = '978' + isbn[0..-2]
       digits + isbn_13_checksum(digits)
@@ -143,19 +147,21 @@ module IsbnHelper
   # If the value is an ISBN-10 return it; if it is an ISBN-13 that starts with
   # "978", convert it to the equivalent ISBN-10; otherwise return *nil*.
   #
-  # @param [String] isbn
+  # @param [String]  s
+  # @param [Boolean] log
   #
   # @return [String]
   # @return [nil]
   #
-  def to_isbn10(isbn)
-    isbn = remove_prefix(isbn).delete('^0-9X')
+  def to_isbn10(s, log: true)
+    s    = remove_isbn_prefix(s)
+    isbn = s.delete('^0-9X')
     if isbn10?(isbn)
       isbn
     elsif isbn.size != ISBN_13_DIGITS
-      Log.info { "#{__method__}: #{isbn.inspect} is not a valid ISBN-13" }
+      Log.info { "#{__method__}: #{s.inspect} is not a valid ISBN-13" } if log
     elsif isbn.delete_prefix!('978').blank?
-      Log.info { "#{__method__}: cannot convert #{isbn.inspect}" }
+      Log.info { "#{__method__}: cannot convert #{s.inspect}" } if log
     else
       digits = isbn[0..-2]
       digits + isbn_10_checksum(digits)
@@ -185,7 +191,6 @@ module IsbnHelper
   # @return [nil]                     If *isbn* was not valid.
   #
   def isbn_checksum(isbn, validate: true)
-    isbn   = remove_prefix(isbn)
     check  = isbn.last
     digits = isbn.delete('^0-9')
     case digits.size
@@ -269,12 +274,12 @@ module IsbnHelper
 
   # Remove an optional "isbn:" prefix and return the base identifier.
   #
-  # @param [String] isbn
+  # @param [String] s
   #
   # @return [String]
   #
-  def remove_prefix(isbn)
-    isbn.to_s.strip.sub(ISBN_PREFIX, '')
+  def remove_isbn_prefix(s)
+    s.to_s.strip.sub(ISBN_PREFIX, '')
   end
 
 end

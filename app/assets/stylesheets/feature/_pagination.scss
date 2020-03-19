@@ -21,4 +21,9 @@
             font-size: small;
         }
     }
+
+    a:focus {
+        outline:        1px solid gray;
+        outline-offset: 1px;
+    }
 }

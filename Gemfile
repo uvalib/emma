@@ -15,6 +15,9 @@ ruby '2.6.3'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0'
 
+# Use MySQL as the database for Active Record.
+gem 'mysql2'
+
 # Use Puma as the app server
 gem 'puma'
 
@@ -85,7 +88,6 @@ gem 'shrine', '~> 3.0'
 
 # == Other
 gem 'iso-639'
-gem 'jquery-rails'
 gem 'sanitize'
 
 # == Addresses bug when building on AWS
@@ -99,7 +101,7 @@ gem 'sassc', '2.1.0'
 group :production, :development do
 
   # Use MySQL as the database for Active Record.
-  gem 'mysql2'
+  # gem 'mysql2'
 
 end
 

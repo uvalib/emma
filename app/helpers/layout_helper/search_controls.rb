@@ -368,6 +368,13 @@ module LayoutHelper::SearchControls
       [controller, controller_config]
     }.to_h.deep_freeze
 
+  # Indicate whether the search control panel starts in the open state.
+  #
+  # @type [Boolean]
+  #
+  SEARCH_CONTROLS_INITIALLY_OPEN =
+    SEARCH_CONTROLS_CONFIG.dig(:_self, :open).present?
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -456,21 +463,28 @@ module LayoutHelper::SearchControls
     grid_rows.compact!
     return if grid_rows.blank?
     opt = prepend_css_classes(opt, 'search-controls', "columns-#{max_columns}")
+    append_css_classes!(opt, 'open') if SEARCH_CONTROLS_INITIALLY_OPEN
     content_tag(:div, safe_join(grid_rows, "\n"), opt)
   end
 
   # A control for toggling the visibility of advanced search controls.
   #
-  # @param [String, nil] label        Default: #ADV_SEARCH_OPENER_LABEL.
-  # @param [Hash]        opt          Passed to #button_tag.
+  # @param [Hash] opt                 Passed to #button_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def advanced_search_button(label: nil, **opt)
+  def advanced_search_button(**opt)
+    if SEARCH_CONTROLS_INITIALLY_OPEN
+      label = ADV_SEARCH_CLOSER_LABEL
+      tip   = ADV_SEARCH_CLOSER_TIP
+    else
+      label = ADV_SEARCH_OPENER_LABEL
+      tip   = ADV_SEARCH_OPENER_TIP
+    end
     opt = prepend_css_classes(opt, 'advanced-search-toggle')
-    opt[:title] ||= ADV_SEARCH_OPENER_TIP
+    opt[:title] ||= tip
     opt[:type]  ||= 'button'
-    button_tag(opt) { label ? non_breaking(label) : ADV_SEARCH_OPENER_LABEL }
+    button_tag(label, opt)
   end
 
   # ===========================================================================
@@ -530,7 +544,9 @@ module LayoutHelper::SearchControls
     params    = request_parameters
     opt[:selected] ||= params[config[:url_parameter]]
     opt[:selected] ||= (page_size if respond_to?(:page_size))
-    opt[:selected] &&= opt[:selected].to_i
+    opt[:selected] = opt[:selected].first if opt[:selected].is_a?(Array)
+    opt[:selected] = opt[:selected].to_i
+    opt.delete(:selected) if opt[:selected].zero?
     menu_container(menu_name, **opt)
   end
 
@@ -555,7 +571,7 @@ module LayoutHelper::SearchControls
     local, opt = partition_options(opt, :label, :selected)
     label    = local[:label]
     selected = local[:selected]
-    opt[:title] ||= current_menu_config(menu_name, **opt)[:tooltip]
+    opt[:title] ||= menu_tooltip(menu_name, **opt)
     menu  = menu_control(menu_name, **opt.merge(selected: selected)) or return
     label = menu_label(menu_name, **opt.merge(label: label))
     label << menu
@@ -574,7 +590,7 @@ module LayoutHelper::SearchControls
   #                                           #MENU_OPTS:
   #
   # @option opt [String, Symbol] :type      Passed to #search_form.
-  # @option opt [String]         :selected  Selected menu item.
+  # @option opt [String, Array]  :selected  Selected menu item(s).
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If menu is not available for *type*.
@@ -586,33 +602,44 @@ module LayoutHelper::SearchControls
     type      = search_type(opt[:type])
     config    = current_menu_config(menu_name, type: type)
     url_param = config[:url_parameter]
+    multiple  = config[:multiple]
     default   = config[:default]
     pairs     = config[:menu] || []
+    any_label = nil
     any_value = ''
 
-    selected   = opt[:selected]
-    selected ||= request_parameters[url_param] || default || any_value
-    if (selected = selected.to_s).blank?
+    # If any of the selected values are not already present in the menu, append
+    # them now.
+    selected = opt[:selected] || request_parameters[url_param] || default
+    selected = Array.wrap(selected).map(&:to_s).uniq
+    if selected.blank?
       selected = any_value
-    elsif pairs.none? { |_, value| value == selected }
-      # Insert a new entry if the selection value is not already in the menu.
-      sort   = entries_sorted?(pairs)
-      label  = make_menu_label(menu_name, selected)
-      pairs += [[label, selected]]
-      sort_entries!(pairs) if sort
+    else
+      values = pairs.map { |_, value| value }
+      added  = selected.reject { |sel| values.include?(sel) }
+      if added.present?
+        sorted = entries_sorted?(pairs)
+        pairs += added.map { |sel| [make_menu_label(menu_name, sel), sel] }
+        sort_entries!(pairs) if sorted
+      end
     end
 
     # Prepend a placeholder if not present.
     if default.blank? && pairs.none? { |_, value| value == any_value }
       any_label = config[:placeholder] || '(select)'
-      pairs = [[any_label, any_value]] + pairs
+      pairs = [[any_label, any_value]] + pairs unless multiple
     end
 
     # Add CSS classes which indicate the position of the control.
     prepend_grid_cell_classes!(html_opt, 'menu-control', **opt)
     search_form(url_param, type, **html_opt) do
       option_tags = options_for_select(pairs, selected)
-      select_tag(url_param, option_tags, onchange: 'this.form.submit();')
+      select_opt = {
+        onchange:           'this.form.submit();',
+        multiple:           multiple,
+        'data-placeholder': any_label
+      }
+      select_tag(url_param, option_tags, reject_blanks(select_opt))
     end
   end
 
@@ -632,18 +659,42 @@ module LayoutHelper::SearchControls
     opt, html_opt = partition_options(opt, *MENU_OPTS)
     config = current_menu_config(menu_name, **opt)
     label  = opt[:label] || config[:label]
-    if label.blank?
-      ''.html_safe
+    return ''.html_safe if label.blank?
+
+    if html_opt.delete(:sr_only) || false?(config[:label_visible])
+      opt[:sr_only] = true
     else
-      if html_opt.delete(:sr_only) || false?(config[:label_visible])
-        opt[:sr_only] = true
-      else
-        label = non_breaking(label)
-      end
-      opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
-      prepend_grid_cell_classes!(html_opt, 'menu-label', **opt)
-      label_tag(config[:url_parameter], label, html_opt)
+      label = non_breaking(label)
     end
+    opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
+    prepend_grid_cell_classes!(html_opt, 'menu-label', **opt)
+    label_tag(config[:url_parameter], label, html_opt)
+  end
+
+  # menu_tooltip
+  #
+  # @param [String, Symbol] menu_name   Menu name.
+  # @param [Hash]           opt         Passed to #current_menu_config.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [String]
+  #
+  def menu_tooltip(menu_name, **opt)
+    menu_name = menu_name.to_sym
+    config  = current_menu_config(menu_name, **opt)
+    tooltip = config[:tooltip]
+    warning =
+      if menu_name == :size
+        'support this capability'
+      elsif config[:multiple]
+        'handle multiple facet selections'
+      end
+    return tooltip unless warning
+    tooltip = tooltip.dup
+    tooltip << '.' unless tooltip.end_with?('.')
+    tooltip << '&#013;' # newline
+    tooltip << 'NOTE: The unified index does not yet ' << warning << '.'
+    tooltip.html_safe
   end
 
   # ===========================================================================
@@ -742,7 +793,7 @@ module LayoutHelper::SearchControls
   # @return [Array<Array<(String,*)>>]  The possibly-modified *menu*.
   #
   def sort_entries!(menu)
-    menu.sort_by! { |label, value| value.to_i.zero? ? label : value.to_i }
+    menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl }
   end
 
   # ===========================================================================

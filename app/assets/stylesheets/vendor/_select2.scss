@@ -1,0 +1,72 @@
+// app/assets/stylesheets/vendor/_select2.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+// @import '../../../node_modules/select2/dist/css/select2.css';
+
+//=============================================================================
+// Overrides of Select2 styles (node_modules/select2/dist/css/select2.css)
+//=============================================================================
+
+.select2-container--default {
+
+    // A multi-select control instance.
+    .select2-selection--multiple {
+
+        // The default no-wrap style is a problem for constraining the width of
+        // the enclosing grid for narrow screens because of very long facet
+        // value labels.
+        .select2-selection__rendered {
+            white-space: normal;
+        }
+
+        // Enlarge the clear-selections button.
+        .select2-selection__clear {
+            margin-top:   3px;
+            margin-right: 3px;
+            line-height:  1;
+            font-size:    x-large !important;
+            color:        gray !important;
+        }
+
+        // Make the shape of the selection badges stand out a bit more.
+        .select2-selection__choice {
+            border-color: gray;
+        }
+
+        // Make the remove-selection control stand out from the selection text.
+        .select2-selection__choice__remove {
+            margin-right:  4px;
+            padding-right: 3px;
+            border-right:  1px solid darkgray;
+        }
+    }
+
+    // The dropped-down menu used as a replacement for <select> drop-down and
+    // appended to <body>.
+    .select2-dropdown {
+        // TODO: ?
+    }
+
+    // A currently-selected value within the drop-down menu.
+    .select2-results__option {
+
+        // Setup so that :after content is pushed to the right while still
+        // allowing the appended check mark to align with the first line of the
+        // value in the case of values which must be wrapped.
+        display:         flex;
+        flex-direction:  row;
+        justify-content: space-between;
+        align-items:     baseline;
+
+        // A currently-selected value within the drop-down menu.
+        &[aria-selected="true"]:after {
+            content: "\2714"; // HEAVY CHECK MARK
+        }
+
+        // A currently-selected value within the drop-down menu which is not
+        // highlighted.
+        &:not(.select2-results__option--highlighted)[aria-selected="true"] {
+            background-color: $selected-bg;
+        }
+    }
+}

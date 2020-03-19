@@ -48,11 +48,11 @@ class SearchController < ApplicationController
   # Perform a search through the EMMA Unified Search API.
   #
   def index
-    __debug_route('SEARCH')
+    __debug_route
     search_params = url_parameters.except(*NON_SEARCH_KEYS)
     query = search_params.delete(:q).presence
     query = false if search_params.blank? && (query == NULL_SEARCH)
-    opt = pagination_setup
+    opt   = pagination_setup
     if query
       @list = api.get_records(**opt)
       self.page_items  = @list.records
@@ -74,7 +74,7 @@ class SearchController < ApplicationController
   # Display details of an existing catalog title.
   #
   def show
-    __debug_route('SEARCH')
+    __debug_route
     @item = api.get_record(titleId: @title_id)
     respond_to do |format|
       format.html
@@ -87,13 +87,31 @@ class SearchController < ApplicationController
   # Present the advanced search form.
   #
   def advanced
-    __debug_route('ADVANCED')
+    __debug_route
+  end
+
+  # == GET /search/api?...
+  # == GET /search/direct?...
+  # Perform a search directly through the EMMA Unified Search API.
+  #
+  def direct
+    __debug_route
+    opt = pagination_setup.reverse_merge(q: NULL_SEARCH)
+    @list = api.get_records(**opt)
+    self.page_items  = @list.records
+    self.total_items = @list.totalResults
+    respond_to do |format|
+      format.html { render 'search/index' }
+      format.json { render_json index_values }
+      format.xml  { render_xml  index_values }
+    end
   end
 
   # == GET /search/example
   # Perform an example (fake) search simulating the EMMA Unified Search API.
   #
   def example
+    __debug_route
     opt   = pagination_setup
     @list = api.get_example_records(**opt)
     self.page_items  = @list.records

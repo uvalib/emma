@@ -64,7 +64,7 @@ class SearchTerm
         }.to_h
       end
     @pairs ||= {}
-    @label     = config[:label] || label || labelize(@parameter, @pairs.size)
+    @label = config[:label] || label || labelize(@parameter, @pairs.size)
   end
 
   # ===========================================================================
@@ -90,6 +90,14 @@ class SearchTerm
     pairs.values
   end
 
+  # The number of field values associated with this instance.
+  #
+  # @return [Integer]
+  #
+  def count
+    pairs.size
+  end
+
   # Indicate whether this is a query (text-only) search term.
   #
   def query?
@@ -112,6 +120,18 @@ class SearchTerm
   #
   def empty?
     pairs.empty?
+  end
+
+  # Indicate whether this instance is associated with a single field values.
+  #
+  def single?
+    !multiple?
+  end
+
+  # Indicate whether this instance is associated with multiple field values.
+  #
+  def multiple?
+    count > 1
   end
 
 end

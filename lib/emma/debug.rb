@@ -67,19 +67,25 @@ module Emma::Debug
   # If the route method is not passed as a Symbol in *args* then
   # `#calling_method` is used.
   #
-  # @param [Array] args
-  # @param [Proc]  block              Passed to #__debug_line.
+  # @overload __debug_route(controller = nil, method = nil, **opt)
+  #   @param [String, Symbol] controller
+  #   @param [String, Symbol] method
+  #   @param [Hash]           opt         Passed to #__debug_line.
   #
-  # args[-1] [Hash]                   Options passed to #__debug_line.
+  # @overload __debug_route(method = nil, **opt)
+  #   @param [String, Symbol] method
+  #   @param [Hash]           opt         Passed to #__debug_line.
   #
   # @return [nil]
   #
-  def __debug_route(*args, &block)
-    opt = args.extract_options!
-    symbols, strings = args.partition { |arg| arg.is_a?(Symbol) }
-    meth  = symbols.first || calling_method
-    route = [*strings, meth].compact.join(' ')
-    __debug_line(route, "params = #{params.inspect}", opt, &block)
+  def __debug_route(controller = nil, method = nil, **opt, &block)
+    controller, method = [nil, controller] if controller.is_a?(Symbol)
+    controller ||= self.class.name || params[:controller]
+    parts = controller.to_s.underscore.split('_')
+    parts.pop if !controller.include?('_') && (parts.size > 1)
+    parts.map!(&:upcase)
+    parts << (method || calling_method)
+    __debug_line(parts.join(' '), "params = #{params.inspect}", opt, &block)
   end
 
   # Output request values and contents.

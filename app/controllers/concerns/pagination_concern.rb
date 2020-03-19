@@ -50,19 +50,35 @@ module PaginationConcern
   #
   def pagination_setup(opt = nil)
 
-    # Get values from parameters or session.
     opt = url_parameters(opt)
     ss  = session_section
+
+    # Clean up the session and return if the current controller does not
+    # support pagination.
+    if self.page_size.zero?
+      keys = %i[limit offset].each { |k| ss.delete(k.to_s) }
+      # noinspection RubyYardReturnMatch
+      return opt.except(*keys)
+    end
+
+    # Get values from parameters or session.
     page_size   = opt[:limit]&.to_i  || ss['limit']&.to_i  || self.page_size
     page_offset = opt[:offset]&.to_i || ss['offset']&.to_i || self.page_offset
 
     # Get first and current page paths; adjust values if currently on the first
     # page of results.
     current    = make_path(request.original_fullpath)
-    first_page = make_path(request.path, opt.except(:start, :offset))
+    main_page  = current.sub(/\?.*$/, '')
+    first_page = main_page
     on_first   = (current == first_page)
-    first_page = make_path(request.path, opt.except(:start, :offset, :limit))
-    on_first ||= (current == first_page)
+    unless on_first
+      first_page = make_path(main_page, opt.except(:start, :offset))
+      on_first   = (current == first_page)
+    end
+    unless on_first
+      first_page = make_path(main_page, opt.except(:start, :offset, :limit))
+      on_first   = (current == first_page)
+    end
     prev_page  =
       if on_first
         page_offset = 0
@@ -88,8 +104,10 @@ module PaginationConcern
     else
       opt[:offset] = page_offset
     end
+
     # noinspection RubyYardReturnMatch
     opt
+
   end
 
   # Analyze the *list* object to generate the path for the next page of

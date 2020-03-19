@@ -384,19 +384,23 @@ module ModelHelper
   def render_pair(label, value, field: nil, index: nil, row: 1, separator: nil)
     return if value.blank?
     prop = Upload.get_field_configuration(field)
-    rng = html_id(label || 'None')
+    rng  = html_id(label || 'None')
     type = "field-#{rng}"
-    id   = index ? "#{type}-#{index}" : type
+    v_id = type.dup
+    l_id = +"label-#{rng}"
+    [v_id, l_id].each { |id| id << "-#{index}" } if index
+
+    # Extract range values.
+    value = value.content if value.is_a?(Field::Range)
+
+    # Mark invalid values.
+    case field
+      when :dc_identifier
+        value = mark_invalid_identifiers(value)
+    end
 
     # Pre-process value and accumulate CSS classes.
-    css  = %W(row-#{row} #{type})
-    if value.is_a?(Field::Range)
-      rng   = value.base
-      mode  = value.mode
-      value = value.values
-      value = value.map { |v| rng.pairs[v] || v } if rng.respond_to?(:pairs)
-      value = value.first unless mode == :multiple
-    end
+    css = %W(row-#{row} #{type})
     if value.is_a?(Array) || prop[:type].is_a?(Class)
       i = 0
       value = value.map { |v| content_tag(:div, v, class: "item-#{i += 1}") }
@@ -408,13 +412,13 @@ module ModelHelper
     opt = { class: css }
 
     # Label and label HTML options.
-    l_opt = prepend_css_classes(opt, 'label')
+    l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
     label = prop[:label] || label || labelize(field)
     label = content_tag(:div, label, l_opt)
 
     # Value and value HTML options.
-    v_opt = prepend_css_classes(opt, 'value')
-    v_opt[:id] = id if id
+    v_opt = prepend_css_classes(opt, 'value').merge!(id: v_id)
+    v_opt[:'aria-labelledby'] = l_id
     value = content_tag(:div, value, v_opt)
 
     # noinspection RubyYardReturnMatch
@@ -489,6 +493,36 @@ module ModelHelper
 
   protected
 
+  # Wrap invalid identifier values in a <span>.
+  #
+  # @param [*, Array<*>] value
+  #
+  # @return [*, Array<*>]
+  #
+  def mark_invalid_identifiers(value)
+    return value.map { |v| mark_invalid_identifiers(v) } if value.is_a?(Array)
+    type, id = value.split(':', 2)
+    return value if id.nil? || valid_identifier?(type.to_s, id)
+    tip = "This is not a valid #{type.upcase} identifier."
+    opt = { class: 'invalid', title: tip }
+    ERB::Util.h("#{type}:") << content_tag(:span, id, opt)
+  end
+
+  # Indicate whether the given identifier is valid.
+  #
+  # @param [String] type
+  # @param [String] value
+  #
+  def valid_identifier?(type, value)
+    case type
+      when 'isbn' then isbn?(value)
+      when 'issn' then issn?(value)
+      when 'oclc' then oclc?(value)
+      when 'lccn' then lccn?(value)
+      else             value.present?
+    end
+  end
+
   # Attempt to interpret *method* as an *item* method or as a method defined
   # in the current context.
   #
@@ -531,16 +565,16 @@ module ModelHelper
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Hash, nil] terms          Passed to `#applied_search_terms`.
+  # @param [Hash, nil] _terms         Passed to `#applied_search_terms`.
   # @param [Integer]   count          Default: `#total_items`.
   # @param [Integer]   row
   #
   # @return [Array<ActiveSupport::SafeBuffer>]
   #
-  def index_controls(terms, count: nil, row: 1)
+  def index_controls(_terms, count: nil, row: 1)
     page_controls = pagination_controls
     result = []
-    result << applied_search_terms(terms, row: row)
+    result << nil # With Select2, applied search term display is redundant.
     result <<
       content_tag(:div, class: "pagination-top row-#{row + 1}") do
         page_controls + pagination_count(count)
@@ -587,16 +621,15 @@ module ModelHelper
     # Additional elements supplied by the block:
     parts += Array.wrap(yield(index, offset)) if block_given?
 
-    # Wrap parts in the .number element:
+    # Wrap parts in a container for group positioning:
+    tag = level ? "h#{level}" : 'div'
     prepend_css_classes!(html_opt, 'container')
-    tag = 'div'
-    tag = "h#{level}" if level
-    append_css_classes!(html_opt, 'clear-default-styling') if level
     container = content_tag(tag, safe_join(parts), html_opt)
 
     # Wrap the container in the actual number grid element.
-    outer_css = ['number', (row && "row-#{row}")].compact.join(' ')
-    content_tag(:div, container, class: outer_css)
+    outer_opt = { class: 'number' }
+    append_css_classes!(outer_opt, "row-#{row}") if row
+    content_tag(:div, container, outer_opt)
   end
 
   # Render a single entry for use within a list of items.
@@ -836,7 +869,7 @@ module ModelHelper
       range = nil if render_method == :render_form_input_multi
     end
     render_method ||= :render_form_input
-    placeholder   ||= prop[:placeholder] # unless render_method
+    placeholder   ||= prop[:placeholder]
     value   = Array.wrap(value).reject(&:blank?)
     invalid = required && value.empty?
     append_css_classes!(opt, 'invalid') if invalid

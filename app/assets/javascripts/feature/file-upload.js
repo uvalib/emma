@@ -277,13 +277,11 @@ $(document).on('turbolinks:load', function() {
      * is not relied upon because it only clears form fields but not file data.
      */
     function setupCancelButton(form) {
-        var $form = formElement(form);
-        cancelButton($form)
-            .attr('title', cancelTooltip($form))
-            .text(cancelLabel($form))
-            .off('click', cancelForm)
-            .on('click', cancelForm)
-            .each(handleKeypressAsClick);
+        var $form   = formElement(form);
+        var tooltip = cancelTooltip($form);
+        var label   = cancelLabel($form);
+        var $button = cancelButton($form).attr('title', tooltip).text(label);
+        handleClickAndKeypress($button, cancelForm);
     }
 
     /**
@@ -326,9 +324,7 @@ $(document).on('turbolinks:load', function() {
     function delegateClick(element) {
 
         var $element = $(element || this);
-        $element
-            .off('click', clickChildInput)
-            .on('click', clickChildInput);
+        handleClickAndKeypress($element, clickChildInput);
 
         /**
          * If the container receives a click event in an area not covering
@@ -1352,11 +1348,9 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorInputFields(form) {
 
-        var $form = formElement(form);
-
-        inputFields($form)
-            .off('change', validateInputField)
-            .on('change',  validateInputField);
+        var $form   = formElement(form);
+        var $fields = inputFields($form);
+        handleEvent($fields, 'change', validateInputField);
 
         /**
          * Update a single input field and its label.
@@ -1482,7 +1476,7 @@ $(document).on('turbolinks:load', function() {
             'ajax:complete':   onAjaxFormSubmissionComplete
         };
         $.each(event_handlers, function(type, handler) {
-            $form.off(type, handler).on(type, handler);
+            handleEvent($form, type, handler);
         });
     }
 
@@ -1614,6 +1608,13 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * A flag to indicate whether field filtering has occurred yet.
+     *
+     * @type {boolean}
+     */
+    var filter_initialized = false;
+
+    /**
      * The current field filtering selection.
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterContainer}.
@@ -1645,10 +1646,9 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorFieldDisplayFilterButtons(form) {
 
-        var $form = formElement(form);
-        fieldDisplayFilterButtons($form)
-            .off('change', fieldDisplayFilterHandler)
-            .on('change', fieldDisplayFilterHandler);
+        var $form    = formElement(form);
+        var $buttons = fieldDisplayFilterButtons($form);
+        handleEvent($buttons, 'change', fieldDisplayFilterHandler);
 
         /**
          * Update field display filtering if the target is checked.
@@ -1693,7 +1693,11 @@ $(document).on('turbolinks:load', function() {
         }
         // Scroll so the the first visible field is at the top of the display
         // beneath the field display controls.
-        $form[0].scrollIntoView();
+        if (filter_initialized) {
+            $form[0].scrollIntoView();
+        } else {
+            filter_initialized = true;
+        }
     }
 
     /**

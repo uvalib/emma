@@ -160,10 +160,7 @@ $(document).on('turbolinks:load', function() {
     // Event handlers
     // ========================================================================
 
-    $toggle_buttons
-        .off('click', togglePanel)
-        .on('click', togglePanel)
-        .each(handleKeypressAsClick);
+    handleClickAndKeypress($toggle_buttons, togglePanel);
 
     // ========================================================================
     // Actions

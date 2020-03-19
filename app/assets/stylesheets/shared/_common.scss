@@ -34,7 +34,14 @@
     &:hover  { text-decoration: none; }
 }
 
-// Counteract the effects of .sr-only (except for position and border).
+// Make an element only visible to screen readers.
+//
+// noinspection SassScssResolvedByNameOnly
+%sr-only {
+    @include screen-reader-only;
+}
+
+// Counteract the effects of %sr-only (except for position and border).
 %not-sr-only {
     width:       unset;
     height:      unset;
@@ -43,6 +50,20 @@
     white-space: unset;
     overflow:    unset;
     clip:        unset;
+}
+
+// For an element which should not inherit the default styling imposed by the
+// browser (particularly for h1-h6 elements being used to define document
+// structure but intended to be styled by supplied CSS class(es).
+%clear-default-styling {
+    margin:         0;
+    margin-block:   0;
+    margin-inline:  0;
+    padding:        0;
+    padding-block:  0;
+    padding-inline: 0;
+    font-size:      inherit;
+    font-weight:    inherit;
 }
 
 // An element that spans the entire width of the display.
@@ -197,33 +218,10 @@ select:focus {
 }
 
 // Include to make an element only visible to screen readers.
+//
+// noinspection SassScssResolvedByNameOnly
 .sr-only {
-    position: absolute;
-    width:    1px;
-    height:   1px;
-    padding:  0;
-    margin:   -1px;
-    overflow: hidden;
-    clip:     rect(0 0 0 0);
-    border:   0;
-    // Satisfy accessibility checks for contrast:
-    color:            black;
-    background-color: white;
-}
-
-// Include as the first class of an element which should not inherit the
-// default styling imposed by the browser (particularly for h1-h6 elements
-// being used to define document structure but intended to be styled by
-// supplied CSS class(es).
-.clear-default-styling {
-    margin:         0;
-    margin-block:   0;
-    margin-inline:  0;
-    padding:        0;
-    padding-block:  0;
-    padding-inline: 0;
-    font-size:      inherit;
-    font-weight:    inherit;
+    @include screen-reader-only;
 }
 
 //=============================================================================

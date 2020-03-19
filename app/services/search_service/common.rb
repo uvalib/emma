@@ -34,7 +34,7 @@ module SearchService::Common
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Get data from the API and update @response.
   #
@@ -55,6 +55,9 @@ module SearchService::Common
   #
   # @return [Faraday::Response]
   #
+  # This method overrides:
+  # @see ApiService::Common#api
+  #
   # noinspection RubyScope
   def api(verb, *args, **opt)
     error = @verb = @action = @response = @exception = nil
@@ -73,17 +76,20 @@ module SearchService::Common
 =begin
     args.unshift(API_VERSION) unless args.first == API_VERSION
 =end
-    @action = args.join('/').strip
-    @action = "/#{@action}" unless @action.start_with?('/')
-
-    @action = "#{base_url}#{@action}" # TODO: ???
+    @action = args.join('/').strip.prepend('/').squeeze('/') #.prepend(base_url)
 
     # Determine whether the HTTP method indicates a write rather than a read
     # and prepare the HTTP headers accordingly then send the API request.
-    @verb   = verb.to_s.downcase.to_sym
-    update  = %i[put post patch].include?(@verb)
-    params  = update ? @params.to_json : @params
-    headers = ({ 'Content-Type' => 'application/json' } if update)
+    @verb  = verb.to_s.downcase.to_sym
+    update = %i[put post patch].include?(@verb)
+    if update
+      params  = @params.to_json
+      headers = { 'Content-Type' => 'application/json' }
+    else
+      #params  = build_query_options(@params, decorate: true) # TODO: ???
+      params  = build_query_options(@params)
+      headers = {}
+    end
     __debug_line(leader: '>>>') {
       %w(search) << @action.inspect <<
         { params: params, headers: headers }.transform_values { |v|
@@ -130,6 +136,9 @@ module SearchService::Common
   # @param [Symbol, String]    method
   #
   # @return [void]
+  #
+  # This method overrides:
+  # @see ApiService::Common#log_exception
   #
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'

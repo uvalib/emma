@@ -91,20 +91,18 @@ module PaginationHelper
   #
   def get_page_size(**opt)
     opt  = request_parameters.slice(:controller, :action) if opt.blank?
+    controller = opt[:controller].presence
+    action     = controller && opt[:action].presence
     keys = []
-    if (controller = opt[:controller]).present?
-      if (action = opt[:action]).present?
-        keys << :"emma.#{controller}.#{action}.pagination.page_size"
-        keys << :"emma.#{controller}.#{action}.page_size"
-      end
-      keys << :"emma.#{controller}.pagination.page_size"
-      keys << :"emma.#{controller}.page_size"
-    end
+    keys << :"emma.#{controller}.#{action}.pagination.page_size" if action
+    keys << :"emma.#{controller}.#{action}.page_size"            if action
+    keys << :"emma.#{controller}.pagination.page_size"           if controller
+    keys << :"emma.#{controller}.page_size"                      if controller
     keys << :'emma.generic.pagination.page_size'
     keys << :'emma.generic.page_size'
     keys << :'emma.pagination.page_size'
     keys << :'emma.page_size'
-    I18n.t(keys.shift, default: keys)
+    I18n.t(keys.shift, default: keys).to_i
   end
 
   # Get the number of results per page.

@@ -144,6 +144,10 @@
             }
         }
 
+        &.textbox {
+            margin-right: $flex-gap-x;
+        }
+
         &.array {
 
             @include grid(minmax(25%, 1fr), 4);
@@ -314,7 +318,7 @@
     > .label {
         &.field-Title {
             @media #{$narrow-screen} {
-                display: none;
+                @include screen-reader-only;
             }
         }
     }
@@ -328,6 +332,10 @@
     //=========================================================================
     // Other
     //=========================================================================
+
+    .invalid {
+        color: red;
+    }
 
     // File format information section label.
     .file-info-label {
@@ -386,7 +394,7 @@
             background-color: white;
         }
 
-        > * {
+        .container {
 
             position: sticky;
             top:      3%;

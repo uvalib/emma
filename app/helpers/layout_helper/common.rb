@@ -122,11 +122,33 @@ module LayoutHelper::Common
       if path == request.path
         hidden_fields = url_parameters.except(id, :offset, :start).sort
         hidden_fields.partition { |k, _| k.to_s <= id.to_s }.each do |hidden|
-          hidden.map! { |k, v| hidden_field_tag(k, v, id: "#{id}-#{k}") }
+          hidden.map! { |k, v| hidden_url_parameter(id, k, v) }
         end
       end
     form_tag(path, opt) do
       [*before, *yield, *after].join("\n").html_safe
+    end
+  end
+
+  # Generate a hidden <input> which indicates a parameter for the new search
+  # URL that will result from the associated facet value being removed from the
+  # current search.
+  #
+  # @param [Symbol, String] id
+  # @param [Symbol, String] k
+  # @param [String, Array]  v
+  # @param [String]         separator
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def hidden_url_parameter(id, k, v, separator: "\n")
+    id = "#{id}-#{k}"
+    if v.is_a?(Array)
+      i = 0
+      v = v.map { |e| hidden_field_tag("#{k}[]", e, id: "#{id}-#{i += 1}") }
+      safe_join(v, separator)
+    else
+      hidden_field_tag(k, v, id: id)
     end
   end
 

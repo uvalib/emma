@@ -52,7 +52,7 @@ class TitleController < ApplicationController
   # List all catalog titles.
   #
   def index
-    __debug_route('TITLE')
+    __debug_route
     opt = request_parameters
     if helpers.contains_isbn?(opt[:keyword])
       # The search looks like an ISBN so interpret this as an ISBN search.
@@ -89,7 +89,7 @@ class TitleController < ApplicationController
   # Display details of an existing catalog title.
   #
   def show
-    __debug_route('TITLE')
+    __debug_route
     @item = api.get_title(bookshareId: @bookshare_id)
     respond_to do |format|
       format.html
@@ -102,21 +102,21 @@ class TitleController < ApplicationController
   # Add metadata for a new catalog title.
   #
   def new
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # == POST /title/:id
   # Create an entry for a new catalog title.
   #
   def create
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # == GET /title/:id/edit
   # Modify metadata of an existing catalog title entry.
   #
   def edit
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # == PUT   /title/:id
@@ -124,21 +124,21 @@ class TitleController < ApplicationController
   # Update the entry for an existing catalog title.
   #
   def update
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # == DELETE /title/:id
   # Remove an existing catalog title entry.
   #
   def destroy
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # == GET /title/:id/history
   # Show processing history for this catalog title.
   #
   def history
-    __debug_route('TITLE')
+    __debug_route
   end
 
   # ===========================================================================

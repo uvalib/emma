@@ -126,3 +126,29 @@
     -ms-user-select:     $value;
     user-select:         $value;
 }
+
+// ============================================================================
+// Special
+// ============================================================================
+
+/// Make an element only visible to screen readers.
+///
+/// This was made a mixin so that the effect could be applied within @media
+/// queries.  (Using @extend inside a @media query makes SASS crash.)
+///
+@mixin screen-reader-only {
+
+    // Make the element visually undetectable.
+    position: absolute;
+    width:    1px;
+    height:   1px;
+    padding:  0;
+    margin:   -1px;
+    overflow: hidden;
+    clip:     rect(0 0 0 0);
+    border:   0;
+
+    // Satisfy accessibility checks for contrast.
+    color:            black;
+    background-color: white;
+}

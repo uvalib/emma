@@ -117,7 +117,7 @@ module ApiService::Common
   # @return [String]
   #
   def latest_endpoint
-    params = @params.presence&.to_param
+    params = url_query(@params).presence
     [@action, params].compact.join('?')
   end
 
@@ -227,7 +227,7 @@ module ApiService::Common
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Get data from the API and update @response.
   #
@@ -264,8 +264,7 @@ module ApiService::Common
     @params[:api_key] = api_key if api_key
 
     # Form the API path from the remaining arguments.
-    @action = args.join('/').strip
-    @action = "/#{@action}" unless @action.start_with?('/')
+    @action = args.join('/').strip.prepend('/').squeeze('/')
 
     # Determine whether the HTTP method indicates a write rather than a read
     # and prepare the HTTP headers accordingly then send the API request.
@@ -421,7 +420,7 @@ module ApiService::Common
   def get_parameters(method, check_req: true, check_opt: false, **opt)
     properties     = api_methods(method)
     return invalid_params(method, 'unregistered API method') if properties.nil?
-    multi_valued   = Array.wrap(properties[:multi]).presence
+    multi          = Array.wrap(properties[:multi])
     required_keys  = required_parameters(method)
     optional_keys  = optional_parameters(method)
     key_alias      = properties[:alias] || {}
@@ -445,10 +444,7 @@ module ApiService::Common
     # @type [*]      v
     opt.slice(*specified_keys).map { |k, v|
       k = key_alias[k] || k
-      if v.is_a?(Array)
-        v = v.map { |e| quote(e) } if multi_valued&.include?(k)
-        v = v.join(' ')
-      end
+      v = quote(v, separator: ' ') if v.is_a?(Array) && !multi.include?(k)
       k = encode_parameter(k)
       [k, v]
     }.to_h

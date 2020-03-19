@@ -328,6 +328,36 @@ function cancelAction(arg) {
 }
 
 // ============================================================================
+// Function definitions - Events
+// ============================================================================
+
+/**
+ * Set an event handler without concern that it may already set.
+ *
+ * @param {jQuery}   $element
+ * @param {string}   name             Event name.
+ * @param {function} func             Event handler.
+ *
+ * @return {jQuery}
+ */
+function handleEvent($element, name, func) {
+    return $element.off(name, func).on(name, func);
+}
+
+/**
+ * Set click and keypress event handlers without concern that it may already
+ * set.
+ *
+ * @param {jQuery}   $element
+ * @param {function} func             Event handler.
+ *
+ * @return {jQuery}
+ */
+function handleClickAndKeypress($element, func) {
+    return handleEvent($element, 'click', func).each(handleKeypressAsClick);
+}
+
+// ============================================================================
 // Function definitions - Accessibility
 // ============================================================================
 
@@ -434,7 +464,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
         }
     }
 
-    return $elements.off('keydown', handler).on('keydown', handler);
+    return handleEvent($elements, 'keydown', handler);
 }
 
 /**

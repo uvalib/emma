@@ -209,6 +209,10 @@ $results-entry-margin-y: 0.67rem;
             margin-bottom: $results-entry-margin-y;
             font-family:   $font-normal;
         }
+
+        .container {
+            @extend %clear-default-styling;
+        }
     }
 }
 

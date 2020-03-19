@@ -9,56 +9,6 @@ __loading_begin(__FILE__)
 #
 module Field
 
-  # ===========================================================================
-  # :section: Modules
-  # ===========================================================================
-
-  public
-
-  # Methods for fields which should have only a single value.
-  #
-  module SingleValued
-
-    # Initialize a new instance.
-    #
-    # @param [Symbol, Object]        src
-    # @param [Symbol, String, Array] value
-    #
-    def initialize(src, value = nil)
-      super(src, :single, value)
-    end
-
-    # The single value for this field instance.
-    #
-    # @return [String, nil]
-    #
-    def value
-      values.first
-    end
-
-  end
-
-  # Methods for fields which may have multiple values.
-  #
-  module MultiValued
-
-    # Initialize a new instance.
-    #
-    # @param [Symbol, Object]        src
-    # @param [Symbol, String, Array] values
-    #
-    def initialize(src, values = nil)
-      super(src, :multiple, values)
-    end
-
-  end
-
-  # ===========================================================================
-  # :section: Classes
-  # ===========================================================================
-
-  public
-
   # A field based on a range of values defined by an EnumType.
   #
   class Range
@@ -74,12 +24,6 @@ module Field
     # @return [Class]
     #
     attr_reader :base
-
-    # Either :single or :multiple.
-    #
-    # @return [Symbol]
-    #
-    attr_reader :mode
 
     # The value(s) associated with the instance.
     #
@@ -102,24 +46,24 @@ module Field
     # Initialize a new instance.
     #
     # @param [Symbol, Object]        src
-    # @param [Symbol]                mode
     # @param [Symbol, String, Array] values
     #
-    def initialize(src, mode = nil, values = nil)
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case src
-        when Upload
-          @field = values&.to_sym
-          values = src.emma_record&.send(@field)
-        when Search::Api::Record
-          @field = values&.to_sym
-          values = src.send(@field)
+    def initialize(src, values = nil)
+      if values.is_a?(Symbol)
+        @field = values
+        @base  = Upload.get_field_configuration(@field)[:type]
+        # noinspection RubyCaseWithoutElseBlockInspection
+        case src
+          when Upload              then values = src.emma_record&.send(@field)
+          when Search::Api::Record then values = src.send(@field)
+        end
+      else
+        @field = nil
+        @base  = src
       end
-      @base = src
-      @base = Upload.get_field_configuration(@field)[:type] if @field
-      @base = String if @base.nil? || @base.is_a?(String)
-      @base = @base.to_s.constantize if @base.is_a?(Symbol)
-      @mode = mode&.to_sym || self.mode || :multiple
+      @base   = nil                    if @base.is_a?(String)
+      @base   = @base.to_s.constantize if @base.is_a?(Symbol)
+      @base ||= String
       @values = Array.wrap(values).reject(&:blank?)
     end
 
@@ -135,30 +79,62 @@ module Field
       values.blank?
     end
 
+    # Either :single or :multiple, depending on the subclass.
+    #
+    # @return [Symbol]
+    #
+    def mode
+      self.class.mode
+    end
+
+    # The resolved value for this field instance.
+    #
+    # @return [Array<String>, String, nil]
+    #
+    def content
+      value = values
+      value = value.map { |v| base.pairs[v] || v } if base.respond_to?(:pairs)
+      (mode == :single) ? value.first : value
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Either :single or :multiple, depending on the subclass.
+    #
+    # @return [Symbol]
+    #
+    def self.mode
+      safe_const_get(:MODE, false) || :multiple
+    end
+
   end
 
   # A field which may have multiple values from a range.
   #
   class Multi < Range
-    include MultiValued
+    MODE = :multiple
   end
 
   # A field which may have a single value from a range.
   #
   class Select < Range
-    include SingleValued
+    MODE = :single
   end
 
   # A field which may have multiple values.
   #
   class Collection < Range
-    include MultiValued
+    MODE = :multiple
   end
 
   # A field which may have a single value.
   #
   class Single < Range
-    include SingleValued
+    MODE = :single
   end
 
 end

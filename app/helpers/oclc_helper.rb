@@ -47,7 +47,7 @@ module OclcHelper
   #
   OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')}):?\s*/i
 
-  # A pattern matching the form of an ISSN identifier.
+  # A pattern matching the form of an OCN identifier.
   #
   # @type [Regexp]
   #
@@ -61,7 +61,7 @@ module OclcHelper
 
   # Indicate whether the given text appears to include an OCN.
   #
-  # @param [String] text
+  # @param [String] s
   #
   # Compare with:
   # @see #oclc?
@@ -71,23 +71,23 @@ module OclcHelper
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_oclc?(text)
-    text = text.to_s.strip
-    id   = remove_prefix(text)
-    (text != id) || (id =~ OCLC_IDENTIFIER)
+  def contains_oclc?(s)
+    s  = s.to_s.strip
+    id = remove_oclc_prefix(s)
+    (s != id) || (id =~ OCLC_IDENTIFIER)
   end
 
   alias_method :contains_ocn?, :contains_oclc?
 
   # Indicate whether the string is a valid OCN.
   #
-  # @param [String] ocn
+  # @param [String] s
   #
   # Compare with:
   # @see #contains_oclc?
   #
-  def oclc?(ocn)
-    to_oclc(ocn).present?
+  def oclc?(s)
+    to_oclc(s, log: false).present?
   end
 
   alias_method :ocn?, :oclc?
@@ -98,22 +98,24 @@ module OclcHelper
   # the number specified by the prefix.  If the string is only digits then it
   # will be zero-filled on the left to make a valid OCN.
   #
-  # @param [String] ocn
+  # @param [String]  s
+  # @param [Boolean] log
   #
   # @return [String]                  The OCN, zero-filled if necessary.
   # @return [nil]                     If *ocn* is not a valid OCLC identifier.
   #
-  def to_oclc(ocn)
-    ocn       = ocn.to_s.strip
-    entry     = OCLC_FORMAT.select { |prefix, _| ocn =~ /^#{prefix}/i }
+  def to_oclc(s, log: true)
+    s         = s.to_s.strip
+    entry     = OCLC_FORMAT.select { |prefix, _| s =~ /^#{prefix}/i }
     min, max  = entry.values.first || Array.wrap(OCLC_MIN_DIGITS)
-    digits    = remove_prefix(ocn)
-    zero_fill = (min.to_i - digits.size unless ocn == digits)
-    digits.insert(0, ('0' * zero_fill)) if zero_fill.to_i > 0
+    s         = remove_oclc_prefix(s)
+    digits    = s.delete('^0-9')
+    zero_fill = min.to_i - digits.size
+    digits.prepend('0' * zero_fill) if zero_fill > 0
     if digits =~ /^\d{#{min},#{max}}$/
       digits
-    else
-      Log.info { "#{__method__}: #{ocn.inspect} is not a valid OCN" }
+    elsif log
+      Log.info { "#{__method__}: #{s.inspect} is not a valid OCN" }
     end
   end
 
@@ -127,12 +129,12 @@ module OclcHelper
 
   # Remove an optional "oclc:" prefix and return the base identifier.
   #
-  # @param [String] ocn
+  # @param [String] s
   #
   # @return [String]
   #
-  def remove_prefix(ocn)
-    ocn.to_s.strip.sub(OCLC_PREFIX, '')
+  def remove_oclc_prefix(s)
+    s.to_s.strip.sub(OCLC_PREFIX, '')
   end
 
 end

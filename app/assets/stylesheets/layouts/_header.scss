@@ -364,7 +364,9 @@ $search-button-width:    6rem;
 
     @extend %banner;
 
-    padding-top: 0;
+    justify-content: flex-start;
+    align-items:     flex-start;
+    padding-top:     0;
 }
 
 // Search input bar and search controls (sort, per-page, language).
@@ -406,6 +408,8 @@ $search-button-width:    6rem;
 
         @extend %control-button;
 
+        width:            $advanced-toggle-width;
+        margin:           0;
         background-color: $panel-accent;
     }
 
@@ -430,9 +434,13 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#menu_label
+    // noinspection SassScssResolvedByNameOnly
     .menu-label {
         font-size:  large;
-        text-align: right;
+
+        @media #{$not-narrow-screen} {
+            text-align: right;
+        }
     }
 
     // @see LayoutHelper#menu_control
@@ -470,13 +478,14 @@ $search-button-width:    6rem;
             display:      flex;
             flex-wrap:    nowrap;
             margin:       $gap-y 0;
-            margin-right: calc(3 * #{$gap-x});
+            margin-right: calc(2 * #{$gap-x});
             flex:         1 1 auto;
 
             @media #{$narrow-screen} {
 
                 flex-wrap:       wrap;
                 justify-content: flex-end;
+                margin-right:    0;
 
                 * {
                     font-size: larger;
@@ -485,12 +494,14 @@ $search-button-width:    6rem;
 
             @media #{$browser-ie} {
                 margin:       $ie-gap-y 0;
-                margin-right: (3 * $ie-gap-x);
+                margin-right: (2 * $ie-gap-x);
             }
 
             //=================================================================
             // Elements
             //=================================================================
+
+            $search-clear-inset: -0.5rem;
 
             .search-input {
 
@@ -503,6 +514,7 @@ $search-button-width:    6rem;
                 }
 
                 @media #{$narrow-screen} {
+                    max-width:    92.5vw;
                     margin-right: 0;
                 }
             }
@@ -513,13 +525,13 @@ $search-button-width:    6rem;
                 left:             -2.5rem;
                 margin:           0;
                 padding:          0 0.375rem;
-                color:            darkgray;
+                color:            gray;
                 background-color: transparent;
                 border-color:     transparent;
                 transform:        scale(0.85);
 
                 @media #{$not-narrow-screen} {
-                    margin-right: -0.5rem;
+                    margin-right: $search-clear-inset;
                 }
 
                 @media #{$narrow-screen} {
@@ -534,24 +546,36 @@ $search-button-width:    6rem;
 
             .search-button {
 
-                margin: auto 0;
-                flex:   0 0 auto;
+                margin:       auto 0;
+                margin-left:  calc(2 * #{$search-clear-inset} - #{$gap-x});
+                margin-right: calc(-1 * #{$search-clear-inset});
+                flex:         0 0 auto;
+
+                @media #{$browser-ie} {
+                    margin-left:  (2 * $search-clear-inset - $ie-gap-x);
+                    margin-right: (-1 * $search-clear-inset);
+                }
 
                 @media #{$narrow-screen} {
 
-                    margin: $gap-y 0;
+                    margin:       0;
+                    margin-left:  calc(2 * #{$gap-x});
+                    margin-right: calc(-0.5 * #{$gap-x});
 
                     @media #{$browser-ie} {
-                        margin: $ie-gap-y 0;
+                        margin-left:  (2 * $ie-gap-x);
+                        margin-right: (-0.5 * $ie-gap-x);
                     }
                 }
             }
         }
 
+        // Search control toggle positioned after search input buttons for
+        // narrow (phone) and medium-width (tablet) screens.
+        //
         // noinspection CssReplaceWithShorthandSafely
         .advanced-search-toggle {
 
-            width:       $advanced-toggle-width;
             margin:      auto 0;
             margin-left: $gap-x;
             flex:        0 0 auto;
@@ -560,18 +584,20 @@ $search-button-width:    6rem;
                 margin-top:    $gap-y;
                 margin-bottom: $gap-y;
                 margin-left:   $gap-x;
-                margin-right:  calc(3 * #{$gap-x});
             }
 
             @media #{$browser-ie} {
                 margin-top:    $ie-gap-y;
                 margin-bottom: $ie-gap-y;
                 margin-left:   $ie-gap-x;
-                margin-right:  (3 * $ie-gap-x);
             }
 
             @media #{$narrow-screen} {
-                margin-left:   0;
+                margin-left: 0;
+            }
+
+            @media #{$wide-screen} {
+                display: none;
             }
         }
 
@@ -626,15 +652,14 @@ $search-button-width:    6rem;
         @extend %header-search-section;
         @extend %header-control-panel;
 
-        width:     max-content;
-        max-width: 100%;
-
         //=====================================================================
         // Grid layout
         //=====================================================================
 
         @include grid;
         @include grid-gap(0, $gap-x); // @see %grid-cell
+
+        min-width: 92.5%; // This seems to be appropriate for all screens...
 
         // Maximum number of physical columns per width breakpoint.
 
@@ -647,9 +672,15 @@ $search-button-width:    6rem;
 
         // Layout of each logical column.
 
-        $column: [label] max-content [menu] minmax(min-content, 100%);
+        @media #{$not-narrow-screen} {
+            $column: [label] max-content [menu] minmax(25%, 1fr);
+            @include grid-column-classes($max-columns, $column, $columns-map);
+        }
 
-        @include grid-column-classes($max-columns, $column, $columns-map);
+        @media #{$narrow-screen} {
+            $column: minmax(25%, 1fr);
+            @include grid-column-classes($max-columns, $column, $columns-map);
+        }
 
         @media #{$browser-ie} {
 
@@ -673,9 +704,8 @@ $search-button-width:    6rem;
         // managed "manually" here rather than via grid-gap.
         %grid-cell {
 
-            display:     block;
-            margin:      0 0 $gap-y;
-            line-height: 1.5;
+            display: block;
+            margin:  0 0 $gap-y;
 
             @media #{$browser-ie} {
                 margin-bottom: $ie-gap-y;
@@ -743,9 +773,11 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
+            margin-top:   calc(3 * #{$gap-y} / 2);
             margin-right: $gap-x;
 
             @media #{$browser-ie} {
+                margin-top:   (3 * $ie-gap-y / 2);
                 margin-right: $ie-gap-x;
             }
 
@@ -761,15 +793,18 @@ $search-button-width:    6rem;
 
             @extend %grid-cell;
 
+            margin-top:   calc(#{$gap-y} / 2);
             margin-right: calc(3 * #{$gap-x});
 
             @media #{$browser-ie} {
+                margin-top:   ($ie-gap-y / 2);
                 margin-right: (3 * $ie-gap-x);
             }
 
             select {
 
-                width: 100%;
+                width:  100%;
+                height: 100%;
 
                 @media #{$browser-ie} {
                     margin-right: $ie-gap-x;
@@ -791,6 +826,23 @@ $search-button-width:    6rem;
                     @extend %hidden-grid-cell;
                 }
             }
+        }
+    }
+
+    // Search control toggle positioned after search controls for wide screens.
+    //
+    // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+    .advanced-search-toggle {
+
+        margin-left: $gap-x;
+        flex:        0 0 auto;
+
+        @media #{$browser-ie} {
+            margin-left: $ie-gap-x;
+        }
+
+        @media #{$not-wide-screen} {
+            display: none;
         }
     }
 }

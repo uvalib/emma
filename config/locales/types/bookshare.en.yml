@@ -79,6 +79,7 @@ en:
           transcriber:              'Transcriber'
           abridger:                 'Abridger'
           adapter:                  'Adapter'
+          _default:                 author
 
         Direction:                  &DIRECTION
           asc:                      'asc'
@@ -96,7 +97,7 @@ en:
           nonspecific:              'Non-specific'
           _default:                 nonspecific
 
-        FormatType: # NOTE: The API does not mention 'HTML' or 'TEXT' but they have been observed.
+        FormatType:
           DAISY:                    'DAISY with Images'
           DAISY_AUDIO:              'DAISY Audio'
           DAISY_SEGMENTED:          'DAISY Multiple DTBooks'
@@ -104,8 +105,8 @@ en:
           EPUB3:                    'EPUB'
           PDF:                      'PDF'
           DOCX:                     'Microsoft Word'
-          HTML:                     'HTML'
-          TEXT:                     'Text'
+          HTML:                     'HTML' # NOTE: observed but undocumented
+          TEXT:                     'Text' # NOTE: observed but undocumented
 
         PeriodicalFormatType:
           DAISY:                    'DAISY with Images'
@@ -148,6 +149,7 @@ en:
           newpaper:                 'Newspaper'
           magazine:                 'Magazine'
           journal:                  'Journal'
+          _default:                 journal
 
         SiteType:
           bookshare:                'Bookshare'

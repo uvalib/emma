@@ -58,7 +58,7 @@ class EditionController < ApplicationController
   # List all editions for a periodical.
   #
   def index
-    __debug_route('EDITION')
+    __debug_route
     opt   = pagination_setup
     @list = api.get_periodical_editions(seriesId: @series_id, **opt)
     self.page_items  = @list.periodicalEditions
@@ -76,7 +76,7 @@ class EditionController < ApplicationController
   # Display details of an existing edition.
   #
   def show
-    __debug_route('EDITION')
+    __debug_route
     opt   = { seriesId: @series_id, editionId: @edition_id }
     @item = api.get_periodical_edition(**opt)
     respond_to do |format|
@@ -91,7 +91,7 @@ class EditionController < ApplicationController
   # Add metadata for a new edition.
   #
   def new
-    __debug_route('EDITION')
+    __debug_route
   end
 
   # == POST /edition/:id
@@ -99,7 +99,7 @@ class EditionController < ApplicationController
   # Upload a new edition.
   #
   def create
-    __debug_route('EDITION')
+    __debug_route
   end
 
   # == GET /edition/:id/edit
@@ -107,7 +107,7 @@ class EditionController < ApplicationController
   # Modify metadata of an existing edition entry.
   #
   def edit
-    __debug_route('EDITION')
+    __debug_route
   end
 
   # == PUT   /edition/:id
@@ -117,7 +117,7 @@ class EditionController < ApplicationController
   # Upload a replacement for an existing edition.
   #
   def update
-    __debug_route('EDITION')
+    __debug_route
   end
 
   # == DELETE /edition/:id
@@ -125,7 +125,7 @@ class EditionController < ApplicationController
   # Remove an existing edition entry.
   #
   def destroy
-    __debug_route('EDITION')
+    __debug_route
   end
 
   # == GET /edition/:id/:fmt?seriesId=:seriesId
@@ -133,7 +133,7 @@ class EditionController < ApplicationController
   # Download a periodical edition.
   #
   def download
-    __debug_route('EDITION')
+    __debug_route
     opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
     render_download(:download_periodical_edition, **opt)
   end

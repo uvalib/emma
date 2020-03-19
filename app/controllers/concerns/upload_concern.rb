@@ -111,17 +111,26 @@ module UploadConcern
 
   protected
 
-  # Error messages. # TODO: I18n
+  # Placeholder error message.
   #
-  # @type [Hash{Symbol=>String}]
+  # @type [String]
   #
-  ERROR = {
-    file_data: [Net::HTTPBadRequest, 'No file data provided'],
-    file_id:   [Net::HTTPBadRequest, 'No entry identifier provided'],
-    find:      [Net::HTTPNotFound,   'Entry %s not found'],
-    create:    [Net::HTTPConflict,   'Failed to create entry'],
-    invalid:   [Net::HTTPConflict,   'Issues to resolve: %s'],
-  }.deep_freeze
+  DEFAULT_ERROR_MESSAGE = I18n.t('emma.error.default', default: 'ERROR').freeze
+
+  # Error types and messages.
+  #
+  # @type [Hash{Symbol=>Array<(String,Class)>}]
+  #
+  # noinspection RailsI18nInspection
+  UPLOAD_ERROR =
+    I18n.t('emma.error.upload').transform_values { |properties|
+      text = properties[:message]
+      err  = properties[:error]
+      err  = "Net::#{err}" if err.is_a?(String) && !err.start_with?('Net::')
+      err  = err&.constantize unless err.is_a?(Module)
+      err  = err.exception_type if err.respond_to?(:exception_type)
+      [text, err]
+    }.symbolize_keys.deep_freeze
 
   # Raise an exception.
   #
@@ -129,7 +138,7 @@ module UploadConcern
   #   @param [String, Array<String>, ActiveModel::Errors] msg
   #
   # @overload fail(msg, value = nil)
-  #   @param [Symbol] msg             #ERROR key.
+  #   @param [Symbol] msg             #UPLOAD_ERROR key.
   #   @param [*]      value
   #
   # @raise [Net::ProtocolError]
@@ -137,15 +146,14 @@ module UploadConcern
   #
   def fail(msg, value = nil)
     err = nil
-    if msg.is_a?(Symbol)
-      err, msg = ERROR[msg]
-      # noinspection RubyRedundantSafeNavigation
-      msg = msg % Array.wrap(value).join('; ') if msg&.include?('%')
+    case msg
+      when Symbol              then txt, err = UPLOAD_ERROR[msg]
+      when ActiveModel::Errors then txt = msg.full_messages
+      else                          txt = msg
     end
-    # noinspection RubyNilAnalysis
-    err = err.respond_to?(:exception_type) ? err.exception_type : SubmitError
-    msg = msg.full_messages if msg.is_a?(ActiveModel::Errors)
-    msg = Array.wrap(msg).join('; ').presence || 'unknown error' # TODO: I18n
+    err ||= SubmitError
+    msg   = Array.wrap(txt).map { |t| t.to_s % value }.join('; ').presence
+    msg ||= DEFAULT_ERROR_MESSAGE
     raise err, msg
   end
 
@@ -194,7 +202,7 @@ module UploadConcern
         redirect_back(fallback_location: upload_index_path)
       end
     else
-      message ||= I18n.t('emma.error.default')
+      message ||= DEFAULT_ERROR_MESSAGE
       message = safe_json_parse(message).to_json.truncate(1024)
       head status, 'X-Flash-Message': message
     end

@@ -2,6 +2,8 @@
   "name": "emma",
   "private": true,
   "dependencies": {
-    "uppy": "^1.9.3"
+    "jquery":  "^3.4",
+    "select2": "~4.0",
+    "uppy":    "^1.9.3"
   }
 }

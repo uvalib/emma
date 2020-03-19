@@ -56,7 +56,7 @@ class MemberController < ApplicationController
   # List all organization members.
   #
   def index
-    __debug_route('MEMBER')
+    __debug_route
     opt   = pagination_setup
     @list = api.get_my_organization_members(**opt)
     self.page_items  = @list.userAccounts
@@ -73,7 +73,7 @@ class MemberController < ApplicationController
   # Display details of an existing organization member.
   #
   def show
-    __debug_route('MEMBER')
+    __debug_route
     @item, @preferences, @history = get_account_details(id: @user_id)
     respond_to do |format|
       format.html
@@ -86,21 +86,21 @@ class MemberController < ApplicationController
   # Add metadata for a new organization member.
   #
   def new
-    __debug_route('MEMBER')
+    __debug_route
   end
 
   # == POST /member/:id
   # Create an entry for a new organization member.
   #
   def create
-    __debug_route('MEMBER')
+    __debug_route
   end
 
   # == GET /member/:id/edit
   # Modify metadata of an existing organization member entry.
   #
   def edit
-    __debug_route('MEMBER')
+    __debug_route
   end
 
   # == PUT   /member/:id
@@ -108,14 +108,14 @@ class MemberController < ApplicationController
   # Update the entry for an existing organization member.
   #
   def update
-    __debug_route('MEMBER')
+    __debug_route
   end
 
   # == DELETE /member/:id
   # Remove an existing organization member entry.
   #
   def destroy
-    __debug_route('MEMBER')
+    __debug_route
   end
 
   # ===========================================================================

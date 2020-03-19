@@ -51,26 +51,26 @@ module IssnHelper
 
   # Indicate whether the given text appears to include an ISSN.
   #
-  # @param [String] text
+  # @param [String] s
   #
   # == Usage Notes
   # If *text* matches #ISSN_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
   # valid and invalid cases and handle each appropriately.
   #
-  def contains_issn?(text)
-    text = text.to_s.strip
-    id   = remove_prefix(text)
-    (text != id) ||
+  def contains_issn?(s)
+    s  = s.to_s.strip
+    id = remove_issn_prefix(s)
+    (s != id) ||
       ((id =~ ISSN_IDENTIFIER) && (id.delete('^0-9X').size >= ISSN_MIN_DIGITS))
   end
 
   # Indicate whether the string is a valid ISSN.
   #
-  # @param [String] issn
+  # @param [String] s
   #
-  def issn?(issn)
-    issn   = remove_prefix(issn)
+  def issn?(s)
+    issn   = remove_issn_prefix(s)
     check  = issn.last
     digits = issn.delete('^0-9')
     length = digits.size
@@ -84,15 +84,16 @@ module IssnHelper
 
   # If the value is an ISSN return it in a normalized form or *nil* otherwise.
   #
-  # @param [String] issn
+  # @param [String]  s
+  # @param [Boolean] log
   #
   # @return [String]
   # @return [nil]
   #
-  def to_issn(issn)
-    issn = remove_prefix(issn).delete('^0-9X')
+  def to_issn(s, log: true)
+    issn = remove_issn_prefix(s).delete('^0-9X')
     if issn.size != ISSN_DIGITS
-      Log.info { "#{__method__}: #{issn.inspect} is not a valid ISSN" }
+      Log.info { "#{__method__}: #{s.inspect} is not a valid ISSN" } if log
     else
       digits = issn[0..-2]
       digits + issn_checksum(digits)
@@ -131,14 +132,14 @@ module IssnHelper
 
   private
 
-  # Remove an optional "isbn:" prefix and return the base identifier.
+  # Remove an optional "issn:" prefix and return the base identifier.
   #
-  # @param [String] isbn
+  # @param [String] s
   #
   # @return [String]
   #
-  def remove_prefix(isbn)
-    isbn.to_s.strip.sub(ISSN_PREFIX, '')
+  def remove_issn_prefix(s)
+    s.to_s.strip.sub(ISSN_PREFIX, '')
   end
 
 end

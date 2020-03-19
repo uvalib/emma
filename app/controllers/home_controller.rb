@@ -59,7 +59,7 @@ class HomeController < ApplicationController
   # dashboard for an authenticated session or the welcome screen otherwise.
   #
   def main
-    __debug_route('HOME')
+    __debug_route
     if current_user
       redirect_to dashboard_path
     else
@@ -71,14 +71,14 @@ class HomeController < ApplicationController
   # The main application page for anonymous users.
   #
   def welcome
-    __debug_route('HOME')
+    __debug_route
   end
 
   # == GET /home/dashboard
   # The main application page for authenticated users.
   #
   def dashboard
-    __debug_route('HOME')
+    __debug_route
     @item, @preferences, @history = get_account_details
     response.status =
       case flash.now[:alert]

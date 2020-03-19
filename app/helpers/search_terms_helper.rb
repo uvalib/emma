@@ -58,9 +58,9 @@ module SearchTermsHelper
   # The result is ordered such that text-only (query) fields(s) come before
   # facet selection fields.
   #
-  # @param [Hash{Symbol=>String}]  pairs    Default: `#url_parameters`.
-  # @param [Symbol, Array<Symbol>] only
-  # @param [Symbol, Array<Symbol>] except
+  # @param [Hash{Symbol=>String,Array}] pairs   Default: `#url_parameters`.
+  # @param [Symbol, Array<Symbol>]      only
+  # @param [Symbol, Array<Symbol>]      except
   #
   # @return [Hash{Symbol=>SearchTerm}]
   #
@@ -77,6 +77,7 @@ module SearchTermsHelper
     queries.merge!(filters)
   end
 
+=begin # TODO: remove eventually
   # A control displaying the currently-applied search terms in the current
   # scope (by default).
   #
@@ -93,14 +94,13 @@ module SearchTermsHelper
     term_list ||= search_terms
     queries, facets = partition_options(term_list, *TEXT_SEARCH_PARAMETERS)
     queries.reject! { |_, v| v.null_search? }
-    row = positive(opt[:row]) || 1
+    mode = queries.blank? ? :facet_only : :label
+    row  = positive(opt[:row]) || 1
 
     # The label prefixing the list of active search terms.
     ld_opt = { class: 'label' }
     append_css_classes!(ld_opt, 'query') if facets.blank?
-    i18n_path = %w(search_controls _self)
-    i18n_path << (queries.blank? ? 'facet_only' : 'label')
-    leader = i18n_lookup(search_type, i18n_path)
+    leader = i18n_lookup(search_type, "search_terms.#{mode}")
     leader = content_tag(:div, leader, ld_opt)
 
     # The list of active search terms.
@@ -110,12 +110,13 @@ module SearchTermsHelper
     # The active search term element.
     html_opt = { class: "applied-search-terms row-#{row}" }
     if list.blank?
-      append_css_classes!(html_opt, 'invisible') if list.blank?
+      append_css_classes!(html_opt, 'invisible')
     else
       list = content_tag(:div, class: 'search-terms') { leader << list }
     end
     content_tag(:div, list, html_opt)
   end
+=end
 
   # Produce a text-only listing of search terms.
   #
@@ -136,6 +137,7 @@ module SearchTermsHelper
     }.compact.join(separator)
   end
 
+=begin # TODO: remove eventually
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -150,25 +152,26 @@ module SearchTermsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_applied_search_terms(term_list, **opt)
-    base_opt  = prepend_css_classes(opt, 'term')
-    separator = content_tag(:div, '/', class: 'term-separator')
-    # @type [Symbol]     _field
-    # @type [SearchTerm] search_term
+    opt = prepend_css_classes(opt, 'term')
+    sep = content_tag(:div, '/', class: 'term-separator')
     term_list.map { |_field, search_term|
       next if search_term.blank? || search_term.null_search?
-      part = {}
-      if (query = search_term.query?)
-        part[:value]     = render_search_term_text(search_term)
+      classes = []
+      section = {}
+      if search_term.query?
+        classes << 'query'
+        section[:value]     = render_search_term_text(search_term)
       else
-        part[:field]     = search_term.label
-        part[:separator] = ':'
-        part[:value]     = render_search_term_badge(search_term)
+        classes << 'facet'
+        section[:field]     = search_term.label
+        section[:separator] = ':'
+        section[:value]     = render_search_facet(search_term)
       end
-      opt = append_css_classes(base_opt, (query ? 'query' : 'facet'))
-      content_tag(:div, opt) do
-        part.map { |k, v| content_tag(:div, v, class: k) }.join.html_safe
+      classes << 'single' if search_term.single?
+      content_tag(:div, append_css_classes(opt, classes)) do
+        section.map { |k, v| content_tag(:div, v, class: k) }.join.html_safe
       end
-    }.compact.join(separator).html_safe
+    }.compact.join(sep).html_safe
   end
 
   # Render a search term value a quoted search terms.
@@ -184,19 +187,32 @@ module SearchTermsHelper
     }.join(separator).html_safe
   end
 
-  # Render a search term value as a badge with a removal control.
+  # Render one or more facet values as badges.
   #
   # @param [SearchTerm] search_term
-  # @param [String]     separator     Default: #LIST_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_search_term_badge(search_term, separator: LIST_SEPARATOR)
+  def render_search_facet(search_term)
     search_term.pairs.map { |value, label|
-      label   = content_tag(:div, label, class: 'text')
-      control = remove_search_term_button(search_term.parameter, value)
-      content_tag(:div, class: 'badge') { label << control }
-    }.join(separator).html_safe
+      # noinspection RubyYardParamTypeMatch
+      render_search_term_badge(search_term.parameter, value, label)
+    }.join.html_safe
+  end
+
+  # Render a search term value as a badge with a removal control.
+  #
+  # @param [Symbol]      field        URL parameter.
+  # @param [String]      value
+  # @param [String, nil] label
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_search_term_badge(field, value, label = nil)
+    label ||= value.to_s
+    label   = content_tag(:div, label, class: 'text')
+    control = remove_search_term_button(field, value)
+    content_tag(:div, class: 'badge') { label << control }
   end
 
   # remove_search_term_button
@@ -233,6 +249,7 @@ module SearchTermsHelper
   def normalize_parameter(value)
     Array.wrap(value).map { |v| CGI.unescape(v.to_s) }.reject(&:blank?)
   end
+=end
 
 end
 

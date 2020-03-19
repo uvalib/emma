@@ -52,7 +52,7 @@ class UploadController < ApplicationController
   # Display the current user's uploads.
   #
   def index
-    __debug_route('UPLOAD')
+    __debug_route
     opt   = pagination_setup
     @list = @user_id ? Upload.where(user_id: @user_id) : Upload.all
     self.page_items  = @list
@@ -69,7 +69,7 @@ class UploadController < ApplicationController
   # Display a single upload.
   #
   def show
-    __debug_route('UPLOAD')
+    __debug_route
     id = params[:id]        or fail(:file_id)
     @item = Upload.find(id) or fail(:find, id)
     respond_to do |format|
@@ -83,7 +83,7 @@ class UploadController < ApplicationController
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
   def new
-    __debug_route('UPLOAD')
+    __debug_route
     @item = Upload.new
     respond_with(@item)
 
@@ -99,7 +99,7 @@ class UploadController < ApplicationController
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def create
-    __debug_route('UPLOAD')
+    __debug_route
     data  = upload_post_parameters
     @item = Upload.new(data) or fail(__method__)
     @item.save
@@ -120,7 +120,7 @@ class UploadController < ApplicationController
   # changes and/or upload of a replacement file.
   #
   def edit
-    __debug_route('UPLOAD')
+    __debug_route
     id = params[:selected] || params[:id]
     case id
       when nil      then fail(:file_id)
@@ -140,7 +140,7 @@ class UploadController < ApplicationController
   # Finalize modification of an existing EMMA entry.
   #
   def update
-    __debug_route('UPLOAD')
+    __debug_route
     __debug_request
     data = upload_post_parameters
     id   = data.delete(:id) or fail(:file_id)
@@ -162,7 +162,7 @@ class UploadController < ApplicationController
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
   def delete
-    __debug_route('UPLOAD')
+    __debug_route
     id = params[:selected] || params[:id]
     case id
       when nil      then fail(:file_id)
@@ -181,7 +181,7 @@ class UploadController < ApplicationController
   #
   # noinspection RubyScope
   def destroy
-    __debug_route('UPLOAD')
+    __debug_route
     back = delete_select_upload_path
     id   = params[:id] or fail(:file_id)
     names =
@@ -213,7 +213,7 @@ class UploadController < ApplicationController
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def endpoint
-    __debug_route('UPLOAD')
+    __debug_route
     __debug_request
     stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
     self.status = stat        if stat.present?

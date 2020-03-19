@@ -64,10 +64,11 @@ module BookshareService::Common
   # @return [String]
   #
   # This method overrides:
-  # @see ApiService#latest_endpoint
+  # @see ApiService::Common#latest_endpoint
   #
   def latest_endpoint(complete = false)
-    params = (complete ? @params : @params.except(:api_key)).presence&.to_param
+    params = complete ? @params : @params.except(:api_key)
+    params = url_query(params).presence
     [@action, params].compact.join('?')
   end
 
@@ -76,7 +77,7 @@ module BookshareService::Common
   # @return [String]
   #
   # This method overrides:
-  # @see ApiService#api_key
+  # @see ApiService::Common#api_key
   #
   def api_key
     API_KEY
@@ -95,7 +96,7 @@ module BookshareService::Common
   # @return [String]
   #
   # This method overrides:
-  # @see ApiService#name_of
+  # @see ApiService::Common#name_of
   #
   def name_of(user)
     name = user.is_a?(Hash) ? user['uid'] : user
@@ -106,7 +107,7 @@ module BookshareService::Common
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
   # Get data from the API and update @response.
   #
@@ -127,6 +128,9 @@ module BookshareService::Common
   #
   # @return [Faraday::Response]
   #
+  # This method overrides:
+  # @see ApiService::Common#api
+  #
   # noinspection RubyScope
   def api(verb, *args, **opt)
     error = @verb = @action = @response = @exception = nil
@@ -145,8 +149,7 @@ module BookshareService::Common
 
     # Form the API path from the remaining arguments.
     args.unshift(API_VERSION) unless args.first == API_VERSION
-    @action = args.join('/').strip
-    @action = "/#{@action}" unless @action.start_with?('/')
+    @action = args.join('/').strip.prepend('/').squeeze('/')
 
     # Determine whether the HTTP method indicates a write rather than a read
     # and prepare the HTTP headers accordingly then send the API request.
@@ -226,7 +229,7 @@ module BookshareService::Common
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
   #
-  # Compare with:
+  # This method overrides:
   # @see ApiService::Common#transmit
   #
   # noinspection DuplicatedCode
@@ -278,6 +281,9 @@ module BookshareService::Common
   # @param [Symbol, String]    method
   #
   # @return [void]
+  #
+  # This method overrides:
+  # @see ApiService::Common#log_exception
   #
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'

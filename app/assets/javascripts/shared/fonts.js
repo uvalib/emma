@@ -14,15 +14,10 @@
             $('<script>')
                 .attr('src',  '//use.typekit.net/tgy5tlj.js')
                 .attr('type', 'text/javascript');
+        $script.appendTo($head);
     }
-    $script
-        .off('readystatechange', loadFonts)
-        .on( 'readystatechange', loadFonts)
-        .off('load', loadFonts)
-        .on( 'load', loadFonts);
-    if (adding) {
-        $head.append($script);
-    }
+    handleEvent($script, 'readystatechange', loadFonts);
+    handleEvent($script, 'load',             loadFonts);
 
     function loadFonts() {
         try {

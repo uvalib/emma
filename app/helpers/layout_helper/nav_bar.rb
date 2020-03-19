@@ -80,7 +80,7 @@ module LayoutHelper::NavBar
     current_params = url_parameters.except(:limit)
     current_path   = request.path
     base_path      = current_path.sub(%r{^(/[^/]*)/.*$}, '\1')
-    current_path  += '?' + current_params.to_param if current_params.present?
+    current_path  += '?' + url_query(current_params) if current_params.present?
 
     links = []
 

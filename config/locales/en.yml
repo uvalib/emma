@@ -27,10 +27,13 @@ en:
         asset:          'favicon.ico'
 
       stylesheets:
+        - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/css/select2.min.css'
         - 'https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.css'
         - 'application'
 
       javascripts:
+        - 'https://code.jquery.com/jquery-3.4.1.min.js'
+        - 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.12/js/select2.min.js'
         - 'https://transloadit.edgly.net/releases/uppy/v1.8.0/uppy.min.js'
         - 'application'
 
@@ -84,8 +87,7 @@ en:
     search_controls:
 
       _self:
-        label:          'Search terms:'
-        facet_only:     'Selected filters:'
+        open:           true        # False/missing => collapsed initially.
 
       _default:
         label:          ~           # Displayed before the control.
@@ -93,6 +95,7 @@ en:
         placeholder:    '(any)'     # Displayed if the control value is unset.
         url_parameter:  ~           # URL parameter for the control value.
         menu_format:    'titleize'  # Transform for values into menu labels.
+        multiple:       true        # Allow multiple selections.
         values:         ~           # Hard-wired menu values.
         default:        ~           # Hard-wired default menu value selection.
         tooltip:        ~           # Displayed hovering over control or label.
@@ -105,7 +108,7 @@ en:
       a11y_feature:
         label:          'Accessibility'
         url_parameter:  'accessibilityFeature'
-        tooltip:        'Limit by accessibility feature.'
+        tooltip:        'Limit by accessibility feature'
         values:         !ruby/symbol A11yFeature
 
       braille:
@@ -141,7 +144,7 @@ en:
       format_feature:
         label:          'Feature'
         url_parameter:  'formatFeature'
-        tooltip:        'Limit by format feature.'
+        tooltip:        'Limit by format feature'
         values:         !ruby/symbol FormatFeature
 
       language:
@@ -165,13 +168,15 @@ en:
       repository:
         label:          'Repository'
         url_parameter:  'repository'
-        tooltip:        'Limit by record originator.'
+        multiple:       false
+        tooltip:        'Limit by record originator'
         values:         !ruby/symbol EmmaRepository
 
       size:
         label:          'Page Size'
         url_parameter:  'limit'
-        tooltip:        'Specify number of search results per page'
+        multiple:       false
+        tooltip:        'Specify the number of search results per page'
         placeholder:    ~
         menu_format:    'none'
         values:
@@ -184,6 +189,7 @@ en:
       sort:
         label:          'Sort By'
         url_parameter:  'sort'
+        multiple:       false
         tooltip:        'Specify the order in which results are presented'
         placeholder:    ~
         default:        'relevance'
@@ -249,6 +255,10 @@ en:
         tooltip:        'Go to the next page of results.'
         no_link:
           tooltip:      'Currently on the last page of results.'
+
+   #search_terms:
+   #  label:            'Search terms:'
+   #  facet_only:       'Selected filters:'
 
     placeholder:
       format:           'this'

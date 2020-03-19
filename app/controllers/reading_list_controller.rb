@@ -53,7 +53,7 @@ class ReadingListController < ApplicationController
   # or organization list to which the user is subscribed).
   #
   def index
-    __debug_route('READING LIST')
+    __debug_route
     opt   = pagination_setup
     @list = api.get_all_reading_lists(**opt)
     self.page_items  = @list.lists
@@ -70,7 +70,7 @@ class ReadingListController < ApplicationController
   # Display details of a reading list.
   #
   def show
-    __debug_route('READING LIST')
+    __debug_route
     @item = api.get_reading_list(readingListId: @id)
     opt   = pagination_setup
     @list = api.get_reading_list_titles(readingListId: @id, no_raise: true)
@@ -88,7 +88,7 @@ class ReadingListController < ApplicationController
   # Add details for a new reading list.
   #
   def new
-    __debug_route('READING LIST')
+    __debug_route
     # TODO: get fields :name, :description, :access
   end
 
@@ -96,7 +96,7 @@ class ReadingListController < ApplicationController
   # Create a new reading list.
   #
   def create
-    __debug_route('READING LIST')
+    __debug_route
     opt = params.slice(:name, :description, :access).to_unsafe_h
     api.create_my_reading_list(**opt)
   end
@@ -105,7 +105,7 @@ class ReadingListController < ApplicationController
   # Modify metadata of an existing reading list.
   #
   def edit
-    __debug_route('READING LIST')
+    __debug_route
     # TODO: modify fields :name, :description, :access, :titles
   end
 
@@ -114,7 +114,7 @@ class ReadingListController < ApplicationController
   # Update the entry for an existing reading list.
   #
   def update
-    __debug_route('READING LIST')
+    __debug_route
     Array.wrap(params[:add_titles]).each do |bid|
       api.create_reading_list_title(readingListId: @id, bookshareId: bid)
     end
@@ -129,7 +129,7 @@ class ReadingListController < ApplicationController
   # Remove an existing reading list.
   #
   def destroy
-    __debug_route('READING LIST')
+    __debug_route
     # TODO: no API method; show Bookshare page
   end
 

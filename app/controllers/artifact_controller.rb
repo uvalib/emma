@@ -58,7 +58,7 @@ class ArtifactController < ApplicationController
   # List all artifacts.
   #
   def index
-    __debug_route('ARTIFACT')
+    __debug_route
     opt   = pagination_setup
     @list = api.get_artifact_list(**opt)
     self.page_items  = @list.artifacts
@@ -77,7 +77,7 @@ class ArtifactController < ApplicationController
   # Get metadata for an existing artifact.
   #
   def show
-    __debug_route('ARTIFACT')
+    __debug_route
     opt   = { bookshareId: @bookshare_id, format: @format }
     @item = api.get_artifact_metadata(**opt)
     respond_to do |format|
@@ -92,7 +92,7 @@ class ArtifactController < ApplicationController
   # Add metadata for a new artifact.
   #
   def new
-    __debug_route('ARTIFACT')
+    __debug_route
   end
 
   # == POST /artifact/:id
@@ -100,7 +100,7 @@ class ArtifactController < ApplicationController
   # Upload a new artifact.
   #
   def create
-    __debug_route('ARTIFACT')
+    __debug_route
   end
 
   # == GET /artifact/:id/edit
@@ -108,7 +108,7 @@ class ArtifactController < ApplicationController
   # Modify metadata of an existing artifact entry.
   #
   def edit
-    __debug_route('ARTIFACT')
+    __debug_route
   end
 
   # == PUT   /artifact/:id
@@ -118,7 +118,7 @@ class ArtifactController < ApplicationController
   # Upload a replacement for an existing artifact.
   #
   def update
-    __debug_route('ARTIFACT')
+    __debug_route
   end
 
   # == DELETE /artifact/:id
@@ -126,7 +126,7 @@ class ArtifactController < ApplicationController
   # Remove an existing artifact entry.
   #
   def destroy
-    __debug_route('ARTIFACT')
+    __debug_route
   end
 
   # == GET /artifact/:id/:fmt
@@ -134,7 +134,7 @@ class ArtifactController < ApplicationController
   # Download an artifact of the indicated Bookshare format type.
   #
   def download
-    __debug_route('ARTIFACT')
+    __debug_route
     opt = { bookshareId: @bookshare_id, format: @format }
     render_download(:download_title, **opt)
   end

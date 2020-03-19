@@ -31,7 +31,7 @@
 
     .skip-nav-heading {
 
-        @extend .clear-default-styling;
+        @extend %clear-default-styling;
 
         margin-bottom:           2 * $sn-entry-gap;
         font-style:              italic;
@@ -41,7 +41,7 @@
 
     .skip-nav-menu {
 
-        @extend .clear-default-styling;
+        @extend %clear-default-styling;
 
         padding-top: $sn-entry-gap;
 
@@ -55,7 +55,7 @@
 
         li {
 
-            @extend .clear-default-styling;
+            @extend %clear-default-styling;
 
             margin:     $sn-entry-gap;
             padding:    $sn-entry-gap $sn-entry-gap 0;

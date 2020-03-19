@@ -24,7 +24,7 @@ $upload-entry-gap: 2rem;
     padding-bottom: 2 * $upload-padding;
     border:         2px solid black;
     border-radius:  0.5rem;
-    background:     lighter($uva-accent-yellow, 90%);
+    background:     lighter($uva-accent-yellow, 95%);
 
     // Special-case listing when no records are found.
     &.empty {
@@ -219,7 +219,7 @@ $upload-entry-gap: 2rem;
 
     grid-row-gap: $upload-entry-gap;
 
-    .applied-search-terms,
+    //.applied-search-terms,
     .pagination-top {
         margin-bottom: $upload-entry-gap / 2;
     }
@@ -346,7 +346,7 @@ form.select-entry {
         }
 
         option:first-of-type {
-            display: none;
+            //display: none;
         }
     }
 }

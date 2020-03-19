@@ -54,7 +54,7 @@ class CategoryController < ApplicationController
   # List all categories.
   #
   def index
-    __debug_route('CATEGORY')
+    __debug_route
     opt   = pagination_setup
     @list = api.get_categories(**opt)
     self.page_items  = @list.categories

@@ -12,7 +12,7 @@ module TestHelper::SystemTests::Index
   include PaginationHelper
 
   SEARCH_COUNT_CLASS = '.search-count'
-  SEARCH_TERMS_CLASS = '.search-terms'
+  SEARCH_TERMS_CLASS = '.search-terms' # TODO: test on header facet selections
   VALUE_SELECTOR     = "#{SEARCH_TERMS_CLASS} .term .value"
 
   # ===========================================================================

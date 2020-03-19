@@ -123,32 +123,82 @@ module Emma::Common
   # @return [String]
   #
   def make_path(*args)
-    opt = args.extract_options!.symbolize_keys
+    opt = args.extract_options!
     url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')
-    url, _, query = url.partition('?')
-    parts = query.split('&').reject(&:blank?)
+    url, query = url.split('?', 2)
+    parts = query.to_s.split('&').reject(&:blank?)
     first = (parts.shift unless parts.blank? || parts.first.include?('='))
-    query = extract_query_options(parts).merge(opt).to_param.presence
+    query = url_query(parts, opt).presence
     url << '?'   if first || query
     url << first if first
     url << '&'   if first && query
     url << query if query
+    # noinspection RubyYardReturnMatch
     url
+  end
+
+  # Combine URL query parameters into a URL query string.
+  #
+  # @param [Array<URI,String,Array,Hash>] args
+  #
+  # @option args.last [Boolean] :minimize   If *false*, do not reduce single-
+  #                                           element array values to scalars
+  #                                           (default: *true*).
+  #
+  # @option args.last [Boolean] :decorate   If *false*, do not modify keys for
+  #                                           multi-element array values
+  #                                           (default: *true*).
+  #
+  # @return [String]
+  #
+  # @see #build_query_options
+  #
+  def url_query(*args)
+    opt = args.extract_options!.reverse_merge(minimize: true, decorate: true)
+    build_query_options(*args, opt).flat_map { |k, v|
+      v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
+    }.compact.join('&')
   end
 
   # Transform URL query parameters into a hash.
   #
-  # @param [URI, String, Array] pairs   Query string or array of k=v pairs.
+  # @param [Array<URI,String,Array,Hash>] args
   #
-  # @return [Hash{Symbol=>String}]
+  # @option args.last [Boolean] :minimize   If *false*, do not reduce single-
+  #                                           element array values to scalars
+  #                                           (default: *true*).
   #
-  def extract_query_options(pairs)
-    pairs = pairs.query if pairs.is_a?(URI)
-    pairs = pairs.to_s.split('&') unless pairs.is_a?(Array)
-    pairs.map { |k_v|
-      k, _, v = k_v.to_s.partition('=')
-      [k.to_sym, CGI.unescape(v)] if k.present?
-    }.compact.to_h
+  # @option args.last [Boolean] :decorate   If *true*, modify keys for multi-
+  #                                           element values (default: *false*)
+  #
+  # @return [Hash{String=>String}]
+  #
+  def build_query_options(*args)
+    opt = args.extract_options!.reverse_merge(minimize: true, decorate: false)
+    minimize = opt.delete(:minimize)
+    decorate = opt.delete(:decorate)
+    args << opt if opt.present?
+    result = {}
+    args.each do |arg|
+      arg = arg.query      if arg.is_a?(URI)
+      arg = arg.split('&') if arg.is_a?(String)
+      arg = arg.to_a       if arg.is_a?(Hash)
+      next unless arg.is_a?(Array) && arg.present?
+      res = {}
+      arg.each do |pair|
+        k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
+        k = CGI.unescape(k.to_s).delete_suffix('[]')
+        v = Array.wrap(v).reject(&:blank?).map { |s| CGI.unescape(s.to_s) }
+        res[k] = res[k] ? res[k].rmerge!(v) : v if k.present? && v.present?
+      end
+      result.rmerge!(res)
+    end
+    result.map { |k, v|
+      v = v.sort.uniq
+      v = v.first  if minimize && (v.size <= 1)
+      k = "#{k}[]" if decorate && v.is_a?(Array)
+      [k, v]
+    }.to_h
   end
 
   # ===========================================================================
@@ -522,59 +572,106 @@ module Emma::Common
     text.to_s.tr(' ', '_').underscore.camelize
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # @type [Array<String>]
+  QUOTE_MARKS = %w( ' " ).freeze
+
+  # @type [Array<ActiveSupport::SafeBuffer>]
+  HTML_QUOTES = QUOTE_MARKS.map { |q| ERB::Util.h(q) }.deep_freeze
+
   # Add surrounding quotation marks to a term.
   #
-  # @overload quote(term, quote: '"')
-  #   @param [ActiveSupport::Buffer, Array<String>] term
-  #   @param [String]                               quote
-  #   @return [ActiveSupport::Buffer]
+  # If the term is already quoted, those quotation marks are preserved.
   #
-  # @overload quote(term, quote: '"')
+  # @overload quote(term, quote: '"', separator: ', ')
   #   @param [String] term
   #   @param [String] quote
+  #   @param [String] separator
   #   @return [String]
   #
-  def quote(term, quote: '"')
-    result =
-      if term.is_a?(Array)
-        html_safe = true
-        term.map { |t|
-          quote(t).tap { |s| html_safe &&= s.html_safe? }
-        }.join(', ')
-      else
-        html_safe = term.html_safe?
-        term = term.to_s.strip
-        if %w( ' " ).include?(term[0]) && (term[0] == term[-1])
-          term
-        else
-          "#{quote}#{term}#{quote}"
-        end
-      end
-    html_safe ? result.html_safe : result
-  end
-
-  # Remove surrounding quotation marks from a term.
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<String>] terms
+  #   @param [String]        quote
+  #   @param [String]        separator
+  #   @return [String]
   #
-  # @overload strip_quotes(term)
-  #   @param [ActiveSupport::Buffer, Array<String>] term
+  # @overload quote(term, quote: '"', separator: ', ')
+  #   @param [ActiveSupport::Buffer] term
+  #   @param [String]                quote
+  #   @param [String]                separator
   #   @return [ActiveSupport::Buffer]
   #
-  # @overload strip_quotes(term)
+  # @overload quote(terms, quote: '"', separator: ', ')
+  #   @param [Array<ActiveSupport::Buffer>] terms
+  #   @param [String]                       quote
+  #   @param [String]                       separator
+  #   @return [ActiveSupport::Buffer]
+  #
+  def quote(term, quote: '"', separator: ', ')
+    if term.is_a?(Array)
+      terms = term.map { |t| quote(t, quote: quote, separator: separator) }
+      term  = terms.join(separator)
+      terms.all?(&:html_safe?) ? term.html_safe : term
+
+    elsif !term.is_a?(String)
+      "#{quote}#{term}#{quote}"
+
+    elsif term.html_safe?
+      quote  = ERB::Util.h(quote)
+      quotes = [*HTML_QUOTES, quote].uniq
+      quoted = quotes.any? { |q| term.start_with?(q) && term.end_with?(q) }
+      quoted ? term : "#{quote}#{term}#{quote}".html_safe
+
+    else
+      term   = term.strip
+      quotes = [*QUOTE_MARKS, quote].uniq
+      quoted = quotes.any? { |q| term.start_with?(q) && term.end_with?(q) }
+      quoted ? term : "#{quote}#{term}#{quote}"
+    end
+  end
+
+  # Remove pairs of surrounding quotation marks from a term.
+  #
+  # @overload strip_quotes(term, separator: ', ')
   #   @param [String] term
+  #   @param [String] separator
   #   @return [String]
   #
-  def strip_quotes(term)
-    result =
-      if term.is_a?(Array)
-        html_safe = true
-        term.map { |t|
-          strip_quotes(t).tap { |s| html_safe &&= s.html_safe? }
-        }.join(', ')
-      else
-        html_safe = term.html_safe?
-        term.to_s.strip.sub(/^(["'])(.*)\1\s*$/, '\2')
-      end
-    html_safe ? result.html_safe : result
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<String>] terms
+  #   @param [String]        separator
+  #   @return [String]
+  #
+  # @overload strip_quotes(term, separator: ', ')
+  #   @param [ActiveSupport::Buffer] term
+  #   @param [String]                separator
+  #   @return [ActiveSupport::Buffer]
+  #
+  # @overload strip_quotes(terms, separator: ', ')
+  #   @param [Array<ActiveSupport::Buffer>] terms
+  #   @param [String]                       separator
+  #   @return [ActiveSupport::Buffer]
+  #
+  def strip_quotes(term, separator: ', ')
+    if term.is_a?(Array)
+      terms  = term.map { |t| strip_quotes(t, separator: separator) }
+      result = terms.join(separator)
+      terms.all?(&:html_safe?) ? result.html_safe : result
+    elsif !term.is_a?(String)
+      term.to_s
+    elsif term.html_safe?
+      quote = HTML_QUOTES.find { |q| term.start_with?(q) && term.end_with?(q) }
+      quote ? term.delete_prefix(quote).delete_suffix(quote).html_safe : term
+    else
+      term  = term.to_s.strip
+      quote = QUOTE_MARKS.find { |q| term.start_with?(q) && term.end_with?(q) }
+      quote ? term.delete_prefix(quote).delete_suffix(quote) : term
+    end
   end
 
 end
