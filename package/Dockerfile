@@ -26,6 +26,7 @@ RUN apk update && \
     make \
     mariadb-dev \
     nodejs \
+    ruby-bundler \
     tzdata \
     yarn && \
     rm -rf /var/cache/apk/*
