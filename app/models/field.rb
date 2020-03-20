@@ -52,11 +52,8 @@ module Field
       if values.is_a?(Symbol)
         @field = values
         @base  = Upload.get_field_configuration(@field)[:type]
-        # noinspection RubyCaseWithoutElseBlockInspection
-        case src
-          when Upload              then values = src.emma_record&.send(@field)
-          when Search::Api::Record then values = src.send(@field)
-        end
+        src    = src.emma_record if src.is_a?(Upload)
+        values = src.send(@field)
       else
         @field = nil
         @base  = src

@@ -11,46 +11,28 @@ require 'sanitize'
 #
 module Bs::Shared::TitleMethods
 
+  include ::TitleMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================
-  # :section: Object overrides
+  # :section: ::TitleMethods overrides
   # ===========================================================================
 
   public
-
-  # Convert object to string.
-  #
-  # @return [String]
-  #
-  def to_s
-    label
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A label for the item.
-  #
-  # @return [String]
-  #
-  def label
-    full_title
-  end
 
   # A unique identifier for this catalog title.
   #
   # @return [String]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#identifier
   #
   def identifier
     bookshareId.to_s
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ::TitleMethods overrides
   # ===========================================================================
 
   public
@@ -91,6 +73,9 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
+  # This method overrides:
+  # @see ::TitleMethods#author_list
+  #
   def author_list(**opt)
     creator_list(*AUTHOR_TYPES, **opt)
   end
@@ -100,6 +85,9 @@ module Bs::Shared::TitleMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#editor_list
   #
   def editor_list(**opt)
     creator_list(*EDITOR_TYPES, **opt)
@@ -111,6 +99,9 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
+  # This method overrides:
+  # @see ::TitleMethods#composer_list
+  #
   def composer_list(**opt)
     creator_list(*COMPOSER_TYPES, **opt)
   end
@@ -120,6 +111,9 @@ module Bs::Shared::TitleMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#lyricist_list
   #
   def lyricist_list(**opt)
     creator_list(*LYRICIST_TYPES, **opt)
@@ -131,6 +125,9 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
+  # This method overrides:
+  # @see ::TitleMethods#arranger_list
+  #
   def arranger_list(**opt)
     creator_list(*ARRANGER_TYPES, **opt)
   end
@@ -141,18 +138,11 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
+  # This method overrides:
+  # @see ::TitleMethods#translator_list
+  #
   def translator_list(**opt)
     creator_list(*TRANSLATOR_TYPES, **opt)
-  end
-
-  # The creator(s) of this catalog title.
-  #
-  # @param [Hash] opt                 Passed to #creator_list.
-  #
-  # @return [Array<String>]
-  #
-  def creators(**opt)
-    creator_list(**opt)
   end
 
   # The author(s)/creator(s) of this catalog title.
@@ -163,6 +153,9 @@ module Bs::Shared::TitleMethods
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
   # @return [Array<String>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#creator_list
   #
   # noinspection RubyAssignmentExpressionInConditionalInspection
   def creator_list(*types, **opt)
@@ -187,6 +180,9 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
+  # This method overrides:
+  # @see ::TitleMethods#contributor_list
+  #
   def contributor_list(*types, **opt)
     result = respond_to?(:contributors) && contributors || []
     result = result.select { |c| types.include?(c.type) } if types.present?
@@ -207,6 +203,65 @@ module Bs::Shared::TitleMethods
       v = contributors.map { |c| c.label if c.type == role }.compact
       [k, v]
     }.to_h
+  end
+
+  # ===========================================================================
+  # :section: ::TitleMethods overrides
+  # ===========================================================================
+
+  public
+
+  # The ISBN.
+  #
+  # @return [String]
+  # @return [nil]                     If the value cannot be determined.
+  #
+  # This method overrides:
+  # @see ::TitleMethods#isbn
+  #
+  def isbn
+    isbn13 if respond_to?(:isbn13)
+  end
+
+  # Related ISBNs omitting the main ISBN if part of the data array.
+  #
+  # @return [Array<String>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#related_isbns
+  #
+  def related_isbns
+    Array.wrap(relatedIsbns).reject(&:blank?).uniq - Array.wrap(isbn)
+  end
+
+  # ===========================================================================
+  # :section: ::TitleMethods overrides
+  # ===========================================================================
+
+  public
+
+  # A link to a title's thumbnail image.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  # This method overrides:
+  # @see ::TitleMethods#thumbnail_image
+  #
+  def thumbnail_image
+    get_link(:thumbnail)
+  end
+
+  # A link to a title's cover image if present.
+  #
+  # @return [String]
+  # @return [nil]                     If the link was not present.
+  #
+  # This method overrides:
+  # @see ::TitleMethods#cover_image
+  #
+  def cover_image
+    get_link(:coverimage)
   end
 
   # ===========================================================================
@@ -232,151 +287,6 @@ module Bs::Shared::TitleMethods
     result
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Sanitizer for catalog title contents.
-  #
-  # @type [Sanitize]
-  #
-  CONTENT_SANITIZE = Sanitize.new(elements: %w(br b i em strong))
-
-  # The title and subtitle of this catalog title.
-  #
-  # @return [String]
-  #
-  def full_title
-    ti = title.to_s.presence
-    st = respond_to?(:subtitle) && subtitle.to_s.presence
-    if ti && st
-      # Remove the automatically-appended subtitle (in the case of search
-      # results entries).
-      ti = ti.delete_suffix(st).rstrip.delete_suffix(':') if ti.end_with?(st)
-      # Append the subtitle only if it doesn't appear to already be included in
-      # the base title itself.
-      ti = "#{ti}: #{st}" unless significant(ti).include?(significant(st))
-    end
-    ti || st || '???'
-  end
-
-  # The ISBN.
-  #
-  # @return [String]
-  # @return [nil]                     If the value cannot be determined.
-  #
-  def isbn
-    isbn13 if respond_to?(:isbn13)
-  end
-
-  # Related ISBNs omitting the main ISBN if part of the data array.
-  #
-  # @return [Array<String>]
-  #
-  def related_isbns
-    Array.wrap(relatedIsbns).reject(&:blank?).uniq - Array.wrap(isbn)
-  end
-
-  # The main and related ISBNs.
-  #
-  # @return [Array<String>]
-  #
-  def all_isbns
-    [isbn, *related_isbns]
-  end
-
-  # The year of publication (:publishDate or :copyrightDate, whichever is
-  # earlier).
-  #
-  # @return [Integer]
-  # @return [nil]                     If the value cannot be determined.
-  #
-  def year
-    %i[copyrightDate publishDate].map { |date|
-      next unless respond_to?(date)
-      value = send(date).to_s.sub(/^(\d{4}).*/, '\1').to_i
-      value unless value.zero?
-    }.compact.sort.first
-  end
-
-  # The synopsis or description with rudimentary formatting.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If the value cannot be determined.
-  #
-  # == Implementation Notes
-  # [1]  Repair malformed HTML entities.
-  # [2]  Transform one or more newlines into a pair of breaks.
-  # [3]  Normalize space characters.
-  # [4]  Strip leading/trailing spaces only after normalization.
-  # [5]  Eliminate sequences like "<p><p>".
-  # [6]  Normalize breaks, removing any leading spaces.
-  # [7]  Eliminate orphaned elements like "<p><br/>".
-  # [8]  Put explicit list elements on their own lines.
-  # [9]  Put implied list elements on their own lines.
-  # [10] Put *apparent* list elements on their own lines.
-  # [11] Treat a run of spaces as an implied paragraph break.
-  # [12] Special paragraph break.
-  # [13] Reduce runs of breaks to just a pair of breaks.
-  # [14] Remove leading breaks.
-  # [15] Remove trailing breaks.
-  #
-  def contents
-    # noinspection RubyYardReturnMatch
-    %i[synopsis description].find do |method|
-      next unless respond_to?(method) && (text = send(method)).present?
-      text.gsub!(/(?<![&])(#\d{1,5};)/,    '&\1')             # [1]
-      text.gsub!(/([[:space:]]*\n)+/,      '<br/><br/>')      # [2]
-      text.gsub!(/[[:space:]]/,            ' ')               # [3]
-      text.strip!                                             # [4]
-      text.gsub!(/<([^>])>(<\1>)+/,        '')                # [5]
-      text.gsub!(/\s*<br\s*\/?>/,          '<br/>')           # [6]
-      text.gsub!(/<[^>]><br.>/,            '<br/>')           # [7]
-      text.gsub!(/([•∙·]+)\s*/,            '<br/>•&nbsp;')    # [8]
-      text.gsub!(/<br.>\s{2,}/,            '<br/>•&nbsp;')    # [9]
-      text.gsub!(/\s+(\d+\.|[*?+])\s+/,    '<br/>\1&nbsp;')   # [10]
-      text.gsub!(/\s+(--|—)\s*([A-Z0-9])/, '<br/>\1&nbsp;\2') # [10]
-      text.gsub!(/\s{3,}/,                 '<br/><br/>')      # [11]
-      text.gsub!(/(<P>)+/,                 '<br/><br/>')      # [12]
-      text.gsub!(/(<br.>){3,}/,            '<br/><br/>')      # [13]
-      text.sub!( /\A(<br.>)+/,             '')                # [14]
-      text.sub!( /(<br.>)+\z/,             '')                # [15]
-      return CONTENT_SANITIZE.fragment(text).html_safe
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A link to a title's thumbnail image.
-  #
-  # @return [String]
-  # @return [nil]                     If the link was not present.
-  #
-  def thumbnail_image
-    get_link(:thumbnail)
-  end
-
-  # A link to a title's cover image if present.
-  #
-  # @return [String]
-  # @return [nil]                     If the link was not present.
-  #
-  def cover_image
-    get_link(:coverimage)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # The number of pages.
   #
   # @return [Integer]
@@ -398,20 +308,53 @@ module Bs::Shared::TitleMethods
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ::TitleMethods overrides
   # ===========================================================================
 
-  protected
+  public
 
-  # Reduce a string for comparision with another by eliminating characters to
-  # ignore for comparision.
+  # Field(s) that may hold the title string.
   #
-  # @param [String]
+  # @return [Array<Symbol>]
   #
-  # @return [String]
+  # This method overrides:
+  # @see ::TitleMethods#title_fields
   #
-  def significant(string)
-    string.to_s.gsub(/[[:space:][:punct:]]/, '').downcase
+  def title_fields
+    %i[title]
+  end
+
+  # Field(s) that may hold the subtitle string.
+  #
+  # @return [Array<Symbol>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#subtitle_fields
+  #
+  def subtitle_fields
+    %i[subtitle]
+  end
+
+  # Field(s) that may hold date information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#date_fields
+  #
+  def date_fields
+    %i[copyrightDate publishDate]
+  end
+
+  # Field(s) that may hold content information about the title.
+  #
+  # @return [Array<Symbol>]
+  #
+  # This method overrides:
+  # @see ::TitleMethods#contents_fields
+  #
+  def contents_fields
+    %i[synopsis description]
   end
 
 end

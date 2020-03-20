@@ -372,6 +372,7 @@ module UploadHelper
       case value
         when :emma_repository        then Field::Select.new(item, value)
         when :emma_formatFeature     then Field::Multi.new(item, value)
+        when :dc_creator             then Field::Multi.new(item, :creators)
         when :dc_language            then Field::Select.new(item, value)
         when :dc_rights              then Field::Select.new(item, value)
         when :dc_provenance          then Field::Select.new(item, value)

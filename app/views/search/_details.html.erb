@@ -14,7 +14,7 @@
   append_page_description(
     ISBN:     item.isbn,
     Language: item.dc_language,
-    Author:   item.dc_creator&.first(3),
+    Author:   item.creators.first(3),
   )
 -%>
 

@@ -68,10 +68,7 @@ ADD storage/gemrc $HOME/.gemrc
 ADD Gemfile Gemfile.lock ./
 RUN gem install bundler -v "$BUNDLER_VERSION" && \
     bundle config set no-cache true && \
-    bundle install \
-    --without=['development' 'test'] \
-    --retry=2 \
-    --jobs=6
+    bundle install --jobs=6 --retry=2 --without=['development' 'test']
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME
