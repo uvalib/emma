@@ -6,6 +6,6 @@
 rm -f "$APP_HOME"/tmp/pids/* > /dev/null 2>&1
 
 # Run migrations if necessary.
-bundle exec rake db:migrate
+rake db:migrate
 
 rails server -b 0.0.0.0 -p 8080

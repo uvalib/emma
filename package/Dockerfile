@@ -77,7 +77,7 @@ RUN bundle install \
 ADD . $APP_HOME
 
 # Generate the assets.
-RUN SECRET_KEY_BASE=x rake assets:precompile
+RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 # Update permissions on the application and user home directory.
 RUN chown -R $USER:$GROUP $HOME $APP_HOME
