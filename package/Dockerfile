@@ -65,8 +65,8 @@ ADD storage/gemrc $HOME/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
-RUN gem update --system && \
-    gem install bundler -v `tail -1 Gemfile.lock`
+RUN export BUNDLER_VERSION=`tail -1 Gemfile.lock` && \
+    gem install bundler -v "$BUNDLER_VERSION"
 RUN bundle install \
     --no-cache \
     --without=['development' 'test'] \
