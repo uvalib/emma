@@ -26,7 +26,6 @@ RUN apk update && \
     make \
     mariadb-dev \
     nodejs \
-    ruby-bundler \
     tzdata \
     yarn && \
     rm -rf /var/cache/apk/*
@@ -66,6 +65,7 @@ ADD storage/gemrc $HOME/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
+RUN gem install bundler
 RUN bundle install \
     --no-cache \
     --without=['development' 'test'] \
