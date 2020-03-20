@@ -66,12 +66,12 @@ ADD storage/gemrc $HOME/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
-RUN gem install bundler -v "$BUNDLER_VERSION"
-RUN bundle install \
-    --no-cache \
+RUN gem install bundler -v "$BUNDLER_VERSION" && \
+    bundle config set no-cache true && \
+    bundle install \
     --without=['development' 'test'] \
     --retry=2 \
-    --jobs=4
+    --jobs=6
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME
