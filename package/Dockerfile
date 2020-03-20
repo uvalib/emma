@@ -55,7 +55,8 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
 
 ENV HOME=/home/$USER \
     APP_HOME=/emma \
-    RAILS_ENV=production
+    RAILS_ENV=production \
+    BUNDLER_VERSION=2.1.4
 
 # Define work directory.
 WORKDIR $APP_HOME
@@ -65,9 +66,7 @@ ADD storage/gemrc $HOME/.gemrc
 
 # Copy the Gemfile and Gemfile.lock into the image.
 ADD Gemfile Gemfile.lock ./
-RUN export BUNDLER_VERSION=`tail -1 Gemfile.lock` && \
-    gem install bundler -v "$BUNDLER_VERSION" && \
-    bundle update rake
+RUN gem install bundler -v "$BUNDLER_VERSION"
 RUN bundle install \
     --no-cache \
     --without=['development' 'test'] \
