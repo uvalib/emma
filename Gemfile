@@ -90,9 +90,6 @@ gem 'shrine', '~> 3.0'
 gem 'iso-639'
 gem 'sanitize'
 
-# == Ensure that gem versions required by bundler will be installed
-gem 'bundler'
-
 # == Addresses bug when building on AWS
 # (see https://github.com/sass/sassc-ruby/issues/146)
 gem 'sassc', '2.1.0'

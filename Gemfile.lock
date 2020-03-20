@@ -285,7 +285,6 @@ PLATFORMS
 DEPENDENCIES
   archive-zip
   bootsnap (>= 1.1.0)
-  bundler
   byebug
   cancancan
   capybara (>= 2.15)
