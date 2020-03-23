@@ -26,7 +26,6 @@ module OAuth2
     attr_writer :connection
 =end
 
-=begin
     # Instantiate a new OAuth 2.0 client using the
     # Client ID and Client Secret registered to your
     # application.
@@ -46,6 +45,9 @@ module OAuth2
     #  on responses with 400+ status codes
     # @yield [builder] The Faraday connection builder
     def initialize(client_id, client_secret, options = {}, &block)
+      __debug_args("OAUTH2 #{__method__}", binding, log: true)
+      super
+=begin
       opts = options.dup
       @id = client_id
       @secret = client_secret
@@ -60,8 +62,8 @@ module OAuth2
                   :max_redirects    => 5,
                   :raise_errors     => true}.merge(opts)
       @options[:connection_opts][:ssl] = ssl if ssl
-    end
 =end
+    end
 
 =begin
     # Set the site host
@@ -150,8 +152,8 @@ module OAuth2
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
-      opts ||= {}
       __debug_args("OAUTH2 #{__method__}", binding, log: true)
+      opts ||= {}
 
       url = connection.build_url(url, opts[:params]).to_s
       parse = opts[:parse] || :automatic
@@ -242,37 +244,46 @@ module OAuth2
 =begin
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self)
 =end
-      @auth_code ||= OAuth2::Strategy::AuthCode.new(self).tap { |result|
+      super.tap do |result|
         __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
-      }
+      end
     end
 
-=begin
     # The Implicit strategy
     #
     # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.2
     def implicit
-      @implicit ||= OAuth2::Strategy::Implicit.new(self)
-    end
-=end
-
 =begin
+      @implicit ||= OAuth2::Strategy::Implicit.new(self)
+=end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
+
     # The Resource Owner Password Credentials strategy
     #
     # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.3
     def password
-      @password ||= OAuth2::Strategy::Password.new(self)
-    end
-=end
-
 =begin
+      @password ||= OAuth2::Strategy::Password.new(self)
+=end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
+
     # The Client Credentials strategy
     #
     # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.4
     def client_credentials
+=begin
       @client_credentials ||= OAuth2::Strategy::ClientCredentials.new(self)
-    end
 =end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
 
 =begin
     def assertion

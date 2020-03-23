@@ -51,6 +51,7 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#new
   #
   def new
+    __debug_route
     __debug_auth(log: true)
     super
   end
@@ -62,6 +63,7 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#create
   #
   def create
+    __debug_route
     __debug_auth(log: true)
     __debug_request(log: true)
     super do
@@ -77,6 +79,7 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#destroy
   #
   def destroy
+    __debug_route
     auth_data = session.delete('omniauth.auth')
     __debug_auth(log: true) { "session[omniauth.auth] = #{auth_data.inspect}" }
     super do
@@ -93,6 +96,7 @@ class User::SessionsController < Devise::SessionsController
   # exists and contains pre-fetched OAuth2 bearer tokens.
   #
   def sign_in_as
+    __debug_route
     # noinspection RubyYardParamTypeMatch
     auth_data = session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])

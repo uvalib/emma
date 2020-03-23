@@ -710,9 +710,9 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#authorize_params
       #
       def authorize_params
-        super.tap { |result|
+        super.tap do |result|
           $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-        }
+        end
 =begin
         options.authorize_params[:state] = SecureRandom.hex(24)
         options.authorize_params.merge(options_for('authorize')).tap do |params|
@@ -731,9 +731,9 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#token_params
       #
       def token_params
-        super.tap { |result|
+        super.tap do |result|
           $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-        }
+        end
 =begin
         options.token_params.merge(options_for('token'))
 =end
@@ -819,9 +819,9 @@ module OmniAuth
         params = token_params.to_hash(symbolize_keys: true)
         params[:redirect_uri] ||= callback_url
         client.auth_code.get_token(code, params, opts)
-          .tap { |result|
-            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-          }
+          .tap do |res|
+            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{res.inspect}"
+          end
       end
 
       # options_for

@@ -36,6 +36,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Initiate authentication with the remote service.
   #
   def passthru
+    __debug_route
     __debug_auth(log: true)
     __debug_request(log: true)
     super
@@ -46,6 +47,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # Callback from the Bookshare auth service to finalize authentication.
   #
   def bookshare
+    __debug_route
     auth_data = request.env['omniauth.auth']
     __debug_auth(log: true) { "env[omniauth.auth] = #{auth_data.inspect}" }
     __debug_request(log: true)
@@ -67,6 +69,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   # ???
   #
   def failure
+    __debug_route
     __debug_auth(log: true)
     __debug_request(log: true)
     super
