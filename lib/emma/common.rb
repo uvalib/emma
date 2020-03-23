@@ -309,6 +309,31 @@ module Emma::Common
     end
   end
 
+  # Return the indicated method.  If *meth* is something other than a Symbol or
+  # a Method then *nil* is returned.
+  #
+  # @overload get_method(meth, *)
+  #   @param [Method] meth
+  #   @return [Method]
+  #
+  # @overload get_method(bind, *)
+  #   @param [Binding] bind
+  #   @return [Method, nil]
+  #
+  # @overload get_method(meth, bind, *)
+  #   @param [Symbol]  meth
+  #   @param [Binding] bind
+  #   @return [Method, nil]
+  #
+  def get_method(*args)
+    meth = (args.shift unless args.first.is_a?(Binding))
+    return meth if meth.is_a?(Method)
+    bind = args.first
+    return unless bind.is_a?(Binding)
+    meth ||= bind.eval('__method__')
+    bind.receiver.method(meth) if bind.receiver.methods.include?(meth)
+  end
+
   # Return a table of a method's parameters and their values given a Binding
   # from that method invocation.
   #
@@ -332,10 +357,12 @@ module Emma::Common
     except = Array.wrap(opt[:except]).presence
     meth   = (args.shift unless args.first.is_a?(Binding))
     bind   = (args.shift if args.first.is_a?(Binding))
-    meth ||= bind&.eval('__method__')
-    meth   = bind.receiver.method(meth) if meth.is_a?(Symbol)
-    prms   = meth.is_a?(Method) ? meth.parameters : {}
-    prms.flat_map { |type, name|
+    unless meth.is_a?(Method)
+      meth = bind.eval('__method__') unless meth.is_a?(Symbol)
+      rcvr = bind.receiver
+      meth = (rcvr.method(meth) if rcvr.methods.include?(meth))
+    end
+    (meth&.parameters || {}).flat_map { |type, name|
       next if (type == :block) || name.blank? || except&.include?(name)
       next unless only.nil? || only.include?(name)
       if type == :keyrest

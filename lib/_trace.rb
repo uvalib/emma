@@ -93,11 +93,17 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # @option args.last [String]          :leader     At the start of each line.
 # @option args.last [String, Integer] :indent     Default: #CONS_INDENT.
 # @option args.last [String]          :separator  Default: "\n"
+# @option args.last [Symbol, Integer, Boolean] :log   Note [1]
 #
 # @yield Supply additional items to output.
 # @yieldreturn [Array<String>]
 #
 # @return [nil]
+#
+# == Notes
+# [1] When deployed, this option will create a log entry rather than produce
+# $stderr output.  If not deployed, the log entry is created in addition to
+# $stderr output.
 #
 def __output(*args)
   return if defined?(Log) && Log.silenced?
@@ -108,9 +114,16 @@ def __output(*args)
   leader = "#{indent}#{opt[:leader]}"
   leader += ' ' unless (leader == indent.to_s) || leader.end_with?(' ')
   args += Array.wrap(yield) if block_given?
-  lines = args.join(sep).gsub(/\n/, "\n#{leader}").strip
-  $stderr.puts(leader + lines)
-  $stderr.flush
+  lines = leader + args.join(sep).gsub(/\n/, "\n#{leader}").strip
+  if (level = opt[:log])
+    level = Emma::Log::LOG_LEVEL[level]  if level.is_a?(Symbol)
+    level = Emma::Log::LOG_LEVEL[:debug] unless level.is_a?(Numeric)
+    Log.add(level, lines)
+  end
+  unless level && application_deployed?
+    $stderr.puts(lines)
+    $stderr.flush
+  end
   nil
 end
 

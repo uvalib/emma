@@ -106,7 +106,9 @@ class FileObject
       exts  = file_extensions.map(&:to_sym)
       type  = types.shift
       ext   = exts.shift
-      __debug_args(binding) { { type: type, ext: ext, types: types, exts: exts } }
+      __debug_args(binding) do
+        { type: type, ext: ext, types: types, exts: exts }
+      end
       return unless type && ext
       Mime::Type.register(type, ext, types, exts) # TODO: needed?
       Marcel::MimeType.extend(type, extensions: file_extensions.map(&:to_s))

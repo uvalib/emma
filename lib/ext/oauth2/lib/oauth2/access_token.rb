@@ -13,6 +13,8 @@ module OAuth2
 
   module AccessTokenExt
 
+    include Emma::Debug
+
 =begin
     attr_reader :client, :token, :expires_in, :expires_at, :params
     attr_accessor :options, :refresh_token
@@ -72,7 +74,9 @@ module OAuth2
       @params = opts
 =end
       super
-      $stderr.puts "ACCESS_TOKEN #{__method__} | #{self.inspect}"
+      __debug_args("ACCESS_TOKEN #{__method__}", binding, log: true) do
+        { '@expires_in': @expires_in, '@options': @options }
+      end
     end
 
 =begin
@@ -116,9 +120,9 @@ module OAuth2
       new_token.refresh_token = refresh_token unless new_token.refresh_token
       new_token
 =end
-      super.tap { |result|
-        $stderr.puts "ACCESS_TOKEN #{__method__} => #{result.inspect}"
-      }
+      super.tap do |res|
+        __debug(log: true) { "ACCESS_TOKEN #{__method__} => #{res.inspect}" }
+      end
     end
 
 =begin
@@ -138,7 +142,7 @@ module OAuth2
     # @see Client#request
     def request(verb, path, opts = {}, &block)
       configure_authentication!(opts)
-      $stderr.puts "ACCESS_TOKEN #{__method__} | #{verb} #{path.inspect} | opts = #{opts.inspect}"
+      __debug_args("ACCESS_TOKEN #{__method__}", binding, log: true)
       @client.request(verb, path, opts, &block)
     end
 

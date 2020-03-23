@@ -139,22 +139,22 @@ class Upload < ApplicationRecord
   def initialize(opt = nil)
     __debug_args(binding)
     super(opt)
-    __debug_items {
+    __debug_items do
       {
-        id:            self.id,
-        user_id:       self.user_id,
-        repository:    self.repository,
-        repository_id: self.repository_id,
-        fmt:           self.fmt,
-        ext:           self.ext,
-        state:         self.state,
-        emma_data:     self.emma_data,
-        file_data:     self.file_data,
-        file:             (file             || 'file NOT PRESENT'),
-        file_attacher:    (file_attacher    || 'file_attacher NOT PRESENT'),
+        id:               self.id,
+        user_id:          self.user_id,
+        repository:       self.repository,
+        repository_id:    self.repository_id,
+        fmt:              self.fmt,
+        ext:              self.ext,
+        state:            self.state,
+        emma_data:        self.emma_data,
+        file_data:        self.file_data,
+        file:             (file || 'file NOT PRESENT'),
+        file_attacher:    (file_attacher || 'file_attacher NOT PRESENT'),
         cached_file_data: (cached_file_data || 'cached_file_data NOT PRESENT')
       }
-    }
+    end
   end
 
   # ===========================================================================

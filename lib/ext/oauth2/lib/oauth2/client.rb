@@ -16,6 +16,7 @@ module OAuth2
   module ClientExt
 
     include Emma::Common
+    include Emma::Debug
 
     OAUTH_DEBUG = true?(ENV['OAUTH_DEBUG'])
 
@@ -137,6 +138,7 @@ module OAuth2
     # 1 The original code had a problem in setting :logger here (repeatedly);
     #   this has been moved to #connection so that it happens only once.
     #
+=begin
     # 2 NOTE: There is currently a problem going directly to authorize_url.
     #   For some reason (probably related to headers), Location is returned
     #   as "https://auth.staging.bookshare.org/user_login", which fails.  The
@@ -144,11 +146,12 @@ module OAuth2
     #   ".staging" part of the URL since
     #   "https://auth.bookshare.org/user_login" appears to work correctly.
     #
+=end
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
       opts ||= {}
-      $stderr.puts "OAUTH2 #{__method__} | #{verb} #{url} | opts = #{opts.inspect}"
+      __debug_args("OAUTH2 #{__method__}", binding, log: true)
 
       url = connection.build_url(url, opts[:params]).to_s
       parse = opts[:parse] || :automatic
@@ -170,8 +173,10 @@ module OAuth2
               opts.delete(:body)
             end
             url = response.headers['Location'].to_s
+=begin
             # NOTE: temporarily(?) fixing Bookshare redirect problem...
             url = url.sub(%r{(/auth\.)staging\.}, '\1')
+=end
             response = request(verb, url, opts)
           end
 
@@ -203,7 +208,7 @@ module OAuth2
     # @return [AccessToken]               The initialized AccessToken.
     #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      $stderr.puts "OAUTH2 #{__method__} | access_token_opts = #{access_token_opts.inspect} | access_token_class = #{access_token_class.inspect}"
+      __debug_args("OAUTH2 #{__method__}", binding, log: true)
       super
 =begin
       method = options[:token_method]
@@ -238,7 +243,7 @@ module OAuth2
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self)
 =end
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self).tap { |result|
-        $stderr.puts "OAUTH2 #{__method__} => #{result.inspect}"
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
       }
     end
 
