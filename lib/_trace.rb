@@ -133,12 +133,14 @@ def __output(*args)
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 
   # Send to the log if deployed to AWS or if explicitly requested.
-  level = opt[:log]
-  level = Log.log_level(level, :debug) if level || application_deployed?
-  Log.add(level, lines) if level
+  unless (console_only = !defined?(Log))
+    level = opt[:log]
+    level = Log.log_level(level, :debug) if level || application_deployed?
+    Log.add(level, lines) if level
+  end
 
-  # Send to the console if running on the desktop.
-  unless application_deployed?
+  # Send to the console if running on the desktop or running rake.
+  if console_only || !application_deployed?
     $stderr.puts(lines)
     $stderr.flush
   end
