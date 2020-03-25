@@ -204,7 +204,7 @@ module OmniAuth
       #
       # @param env [Hash] The Rack environment.
       def call!(env) # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-        #__debug_items("OMNIAUTH #{__method__}", log: true) { env }
+        #__debug_items("OMNIAUTH #{__method__}") { env }
         super
 =begin
         unless env['rack.session']
@@ -242,16 +242,16 @@ module OmniAuth
       # @see OmniAuth::Strategy#request_call
       #
       def request_call
-        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         setup_phase
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
         o_p = request.get? ? request.GET : request.POST
-        __debug_line(dbg, "method  = #{request.request_method}", log: true)
-        __debug_line(dbg, "options = #{options.inspect}", log: true)
-        __debug_line(dbg, "session = #{session.inspect}", log: true)
-        __debug_line(dbg, "omniauth.params = #{o_p.inspect}", log: true)
+        __debug_line(dbg, "method  = #{request.request_method}")
+        __debug_line(dbg, "options = #{options.inspect}")
+        __debug_line(dbg, "session = #{session.inspect}")
+        __debug_line(dbg, "omniauth.params = #{o_p.inspect}")
         session['omniauth.params'] = o_p
         OmniAuth.config.before_request_phase&.call(env)
 
@@ -269,7 +269,7 @@ module OmniAuth
             log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
             env['rack.session']['omniauth.origin'] = org ||= ref
           end
-          __debug_line(dbg, log: true) do
+          __debug_line(dbg) do
             "env['rack.session']['omniauth.origin'] = #{org.inspect}"
           end
           request_phase
@@ -287,7 +287,7 @@ module OmniAuth
 
       # Performs the steps necessary to run the callback phase of a strategy.
       def callback_call
-        __debug("OMNIAUTH #{__method__}", log: true)
+        __debug("OMNIAUTH #{__method__}")
         super
 =begin
         setup_phase
@@ -555,7 +555,7 @@ module OmniAuth
       # @see OmniAuth::Strategy#call_app!
       #
       def call_app!(env = @env)
-        __debug_items("OMNIAUTH #{__method__}", log: true) { env }
+        __debug_items("OMNIAUTH #{__method__}") { env }
         super
 =begin
         @app.call(env)
@@ -705,9 +705,7 @@ module OmniAuth
             options.client_secret,
             options.client_options.deep_symbolize_keys
           ).tap do |result|
-            __debug(log: true) do
-              "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-            end
+            __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
           end
       end
 
@@ -722,11 +720,11 @@ module OmniAuth
       #
       def request_phase
         dbg = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
-        __debug(dbg, log: true)
+        __debug(dbg)
         auth_code = client.auth_code
         auth_parm = authorize_params.reverse_merge(redirect_uri: callback_url)
         auth_url  = auth_code.authorize_url(auth_parm)
-        __debug(log: true) { "#{dbg} => authorize_url = #{auth_url.inspect}" }
+        __debug { "#{dbg} => authorize_url = #{auth_url.inspect}" }
         redirect(auth_url)
       end
 
@@ -737,9 +735,7 @@ module OmniAuth
       #
       def authorize_params
         super.tap do |result|
-          __debug(log: true) do
-            "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-          end
+          __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
         end
 =begin
         options.authorize_params[:state] = SecureRandom.hex(24)
@@ -760,9 +756,7 @@ module OmniAuth
       #
       def token_params
         super.tap do |result|
-          __debug(log: true) do
-            "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
-          end
+          __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
         end
 =begin
         options.token_params.merge(options_for('token'))
@@ -778,7 +772,7 @@ module OmniAuth
       #
       # noinspection RubyScope
       def callback_phase
-        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         result = e = nil
         params = request.params.reject { |_, v| v.blank? }
         error  = params['error_reason'] || params['error']
@@ -816,19 +810,19 @@ module OmniAuth
           end
 
       rescue ::OAuth2::Error, CallbackError => e
-        __debug_line(dbg, 'INVALID', e.class, e.message, log: true)
+        __debug_line(dbg, 'INVALID', e.class, e.message)
         error ||= :invalid_credentials
 
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
-        __debug_line(dbg, 'TIMEOUT', e.class, e.message, log: true)
+        __debug_line(dbg, 'TIMEOUT', e.class, e.message)
         error = :timeout
 
       rescue ::SocketError => e
-        __debug_line(dbg, 'CONNECT', e.class, e.message, log: true)
+        __debug_line(dbg, 'CONNECT', e.class, e.message)
         error = :failed_to_connect
 
       rescue => e
-        __debug_line(dbg, 'EXCEPTION', e.class, e.message, log: true)
+        __debug_line(dbg, 'EXCEPTION', e.class, e.message)
 
       ensure
         fail!(error, e) if error
@@ -849,15 +843,13 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#build_access_token
       #
       def build_access_token
-        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         code   = request.params['code']
         opts   = options.auth_token_params.deep_symbolize_keys
         params = token_params.to_hash(symbolize_keys: true)
         params[:redirect_uri] ||= callback_url
         client.auth_code.get_token(code, params, opts)
-          .tap do |result|
-            __debug(log: true) { "#{dbg} => #{result.inspect}" }
-          end
+          .tap { |result| __debug { "#{dbg} => #{result.inspect}" } }
       end
 
       # options_for

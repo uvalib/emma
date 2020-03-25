@@ -45,7 +45,7 @@ module OAuth2
     #  on responses with 400+ status codes
     # @yield [builder] The Faraday connection builder
     def initialize(client_id, client_secret, options = {}, &block)
-      __debug_args("OAUTH2 #{__method__}", binding, log: true)
+      __debug_args("OAUTH2 #{__method__}", binding)
       super
 =begin
       opts = options.dup
@@ -104,7 +104,7 @@ module OAuth2
       connection.build_url(options[:authorize_url], params).to_s
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -116,7 +116,7 @@ module OAuth2
       connection.build_url(options[:token_url], params).to_s
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -158,7 +158,7 @@ module OAuth2
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
-      __debug_args((dbg = "OAUTH2 #{__method__}"), binding, log: true)
+      __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       opts ||= {}
 
       url = connection.build_url(url, opts[:params]).to_s
@@ -168,7 +168,7 @@ module OAuth2
           yield(req) if block_given?
         end
       response = Response.new(response, parse: parse)
-      __debug_line(dbg, log: true) do
+      __debug_line(dbg) do
         { status: response&.status, body: response&.body }
       end
 
@@ -215,9 +215,9 @@ module OAuth2
     # @return [AccessToken]               The initialized AccessToken.
     #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      __debug_args("OAUTH2 #{__method__}", binding, log: true)
+      __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "#{dbg} => #{result.inspect}" }
       end
 =begin
       method = options[:token_method]
@@ -252,7 +252,7 @@ module OAuth2
       @auth_code ||= OAuth2::Strategy::AuthCode.new(self)
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -264,7 +264,7 @@ module OAuth2
       @implicit ||= OAuth2::Strategy::Implicit.new(self)
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -276,7 +276,7 @@ module OAuth2
       @password ||= OAuth2::Strategy::Password.new(self)
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -288,7 +288,7 @@ module OAuth2
       @client_credentials ||= OAuth2::Strategy::ClientCredentials.new(self)
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 
@@ -297,7 +297,7 @@ module OAuth2
       @assertion ||= OAuth2::Strategy::Assertion.new(self)
 =end
       super.tap do |result|
-        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
     end
 

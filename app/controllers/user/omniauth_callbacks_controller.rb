@@ -37,8 +37,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def passthru
     __debug_route
-    __debug_auth(log: true)
-    __debug_request(log: true)
+    __debug_auth
+    __debug_request
     super
   end
 
@@ -49,17 +49,17 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def bookshare
     __debug_route
     auth_data = request.env['omniauth.auth']
-    __debug_auth(log: true) { "env[omniauth.auth] = #{auth_data.inspect}" }
-    __debug_request(log: true)
+    __debug_auth { "env[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_request
     user = User.from_omniauth(auth_data)
     if user.persisted?
-      __debug_auth(log: true) { 'user persisted' }
+      __debug_auth { 'user persisted' }
       last_operation_update
       # sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)
       set_flash_message(:notice, :success, kind: 'Bookshare')
     else
-      __debug_auth(log: true) { 'USER NOT PERSISTED' }
+      __debug_auth { 'USER NOT PERSISTED' }
       # session['devise.bookshare_data'] = auth_data
       # redirect_to new_user_registration_url
       failure
@@ -70,8 +70,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def failure
     __debug_route
-    __debug_auth(log: true)
-    __debug_request(log: true)
+    __debug_auth
+    __debug_request
     super
   end
 

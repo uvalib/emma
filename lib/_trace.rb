@@ -93,6 +93,7 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # @option args.last [String]          :leader     At the start of each line.
 # @option args.last [String, Integer] :indent     Default: #CONS_INDENT.
 # @option args.last [String]          :separator  Default: "\n"
+# @option args.last [Boolean]         :debug      Structure for debug output.
 # @option args.last [Symbol, Integer, Boolean] :log   Note [1]
 #
 # @yield Supply additional items to output.
@@ -107,17 +108,37 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 #
 def __output(*args)
   return if defined?(Log) && Log.silenced?
-  opt    = args.extract_options!
-  level  = opt[:log] && Log.log_level(opt[:log], :debug)
-  sep    = opt[:separator] || "\n"
+  opt = args.extract_options!
+  sep = opt[:separator] || "\n"
+
+  # Construct the string that is prepended to each output line.
   indent = opt[:indent]    || (sep.include?("\n") ? CONS_INDENT : '')
   indent = (' ' * indent if indent.is_a?(Integer) && (indent > 0))
   leader = "#{indent}#{opt[:leader]}"
   leader += ' ' unless (leader == indent.to_s) || leader.end_with?(' ')
+
+  # Combine arguments and block results into a single string.
   args += Array.wrap(yield) if block_given?
-  lines = leader + args.join(sep).gsub(/\n/, "\n#{leader}").strip
+  if opt[:debug]
+    args =
+      args.flat_map do |arg|
+        case arg
+          when Hash   then arg.map { |k, v| "#{k} = #{v}" }
+          when Array  then arg
+          when String then arg
+          else             arg.inspect
+        end
+      end
+  end
+  lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
+
+  # Send to the log if deployed to AWS or if explicitly requested.
+  level = opt[:log]
+  level = Log.log_level(level, :debug) if level || application_deployed?
   Log.add(level, lines) if level
-  unless level && application_deployed?
+
+  # Send to the console if running on the desktop.
+  unless application_deployed?
     $stderr.puts(lines)
     $stderr.flush
   end
@@ -129,30 +150,17 @@ def __debug(*); end unless CONSOLE_DEBUGGING
 
 # Write indented debug line(s) to $stderr.
 #
-# @param [Array<Hash,Array,String,*>] args
-#
-# args[-1] [Hash]                     Options passed to #__output.
+# @param [Array] args                 Passed to #__output.
+# @param [Proc]  block                Passed to #__output.
 #
 # @yield Supply additional items to output.
 # @yieldreturn [Hash,Array,String,*]
 #
 # @return [nil]
 #
-# @see #__output
-#
-def __debug(*args)
-  opt = args.extract_options!
-  args += Array.wrap(yield) if block_given?
-  __output(opt) do
-    args.flat_map do |arg|
-      case arg
-        when Hash   then arg.map { |k, v| "#{k} = #{v}" }
-        when Array  then arg
-        when String then arg
-        else             arg.inspect
-      end
-    end
-  end
+def __debug(*args, &block)
+  opt = args.extract_options!.merge(debug: true)
+  __output(*args, opt, &block)
 end if CONSOLE_DEBUGGING
 
 # =============================================================================

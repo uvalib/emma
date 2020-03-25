@@ -25,8 +25,8 @@ module Emma::Debug
   # @return [nil]
   #
   def __debug_line(*args, &block)
-    opt = args.extract_options!
-    opt[:separator] ||= ' | '
+    opt = { separator: ' | ' }
+    opt.merge!(args.pop) if args.last.is_a?(Hash)
     __debug(*args, opt, &block)
   end
 
@@ -52,23 +52,15 @@ module Emma::Debug
   #   __debug_args(__method__, binding)
   #
   def __debug_args(*args, &block)
-    p_opt, opt = partition_options(args.extract_options!, :only, :except)
+    prms_opt, opt = partition_options(args.extract_options!, :only, :except)
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
     meth = bind.eval('__method__') if meth.nil? && bind.is_a?(Binding)
     lead = opt.key?(:leader) ? opt.delete(:leader) : '+++'
     lead = [lead, meth].compact.join(' ')
-    args << get_params(meth, bind, p_opt)
+    prms = get_params(meth, bind, prms_opt)
     opt[:separator] ||= ' | '
-    __debug_items(lead, *args, opt, &block)
-=begin
-    if block_given?
-      items = Array.wrap(yield)
-      __debug_line(lead, *args, opt) { __debug_inspect_items(*items, opt) }
-    else
-      __debug_line(lead, *args, opt)
-    end
-=end
+    __debug_items(lead, *args, prms, opt, &block)
   end
 
   # Output a line for invocation of a route method.
@@ -99,7 +91,7 @@ module Emma::Debug
 
   # Output request values and contents.
   #
-  # @param [Array] args
+  # @param [Array] args               Passed to #__debug_items.
   # @param [Proc]  block              Passed to #__debug_items.
   #
   # args[0]  [Symbol]                 Calling method (def: `#calling_method`).
@@ -111,7 +103,7 @@ module Emma::Debug
     opt = args.extract_options!
     unless opt.key?(:leader)
       meth = args.first.is_a?(Symbol) ? args.shift : calling_method
-      opt[:leader] = "--- #{meth}"
+      opt  = opt.merge(leader: "--- #{meth}")
     end
     {
       session:           ['/ SESSION', session],
@@ -134,10 +126,8 @@ module Emma::Debug
   # If the endpoint method is not passed as a Symbol in *args* then
   # `#calling_method` is used.
   #
-  # @param [Array] args               Additional value(s) to output.
+  # @param [Array] args               Passed to #__debug_line.
   # @param [Proc]  block              Passed to #__debug_line.
-  #
-  # args[-1] [Hash]                   Options passed to #__debug_line.
   #
   # @return [nil]
   #
@@ -147,24 +137,20 @@ module Emma::Debug
     lead = "OMNIAUTH #{meth}"
     req  = (request&.method if respond_to?(:request))
     prms = (params.inspect  if respond_to?(:params))
-    args = [req, prms, *args].compact
-    __debug_line(lead, *args, opt, &block)
+    __debug_line(lead, req, prms, *args, opt, &block)
   end
 
   # Exception console debugging output.
   #
   # @param [String]    label
   # @param [Exception] exception
-  # @param [Array]     args
+  # @param [Array]     args           Passed to #__debug_line.
   # @param [Proc]      block          Passed to #__debug_line.
-  #
-  # args[-1] [Hash]                   Options passed to #__debug_line.
   #
   # @return [nil]
   #
   def __debug_exception(label, exception, *args, &block)
-    opt = args.extract_options!
-    opt[:leader] ||= '!!!'
+    opt = args.extract_options!.reverse_merge(leader: '!!!')
     args << "#{label} #{exception.class}"
     args << "ERROR: #{exception.message}"
     args << "api_error_message = #{api_error_message.inspect}"
@@ -174,23 +160,15 @@ module Emma::Debug
 
   # Output each data item on its own line.
   #
-  # @param [Array] args
-  #
-  # args[-1] [Hash]   Options passed to #__debug and #__debug_inspect_items.
+  # @param [Array] args               Passed to #__debug.
+  # @param [Proc]  block              Passed to #__debug_inspect_items.
   #
   # @return [nil]
   #
-  # @yield Supply additional items to output.
-  # @yieldreturn [Hash,Array,String,*]
-  #
-  def __debug_items(*args)
+  def __debug_items(*args, &block)
     opt = args.extract_options!
-    if block_given?
-      items = Array.wrap(yield)
-      __debug(*args, opt) { __debug_inspect_items(*items, opt) }
-    else
-      __debug(*args, opt)
-    end
+    items = block ? __debug_inspect_items(opt, &block) : []
+    __debug(*args, *items, opt)
   end
 
   # ===========================================================================

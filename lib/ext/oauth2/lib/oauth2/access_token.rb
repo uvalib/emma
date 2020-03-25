@@ -74,7 +74,7 @@ module OAuth2
       @params = opts
 =end
       super
-      __debug_args("ACCESS_TOKEN #{__method__}", binding, log: true) do
+      __debug_args("ACCESS_TOKEN #{__method__}", binding) do
         { '@expires_in': @expires_in, '@options': @options }
       end
     end
@@ -121,7 +121,7 @@ module OAuth2
       new_token
 =end
       super.tap do |res|
-        __debug(log: true) { "ACCESS_TOKEN #{__method__} => #{res.inspect}" }
+        __debug { "ACCESS_TOKEN #{__method__} => #{res.inspect}" }
       end
     end
 
@@ -142,7 +142,7 @@ module OAuth2
     # @see Client#request
     def request(verb, path, opts = {}, &block)
       configure_authentication!(opts)
-      __debug_args("ACCESS_TOKEN #{__method__}", binding, log: true)
+      __debug_args("ACCESS_TOKEN #{__method__}", binding)
       @client.request(verb, path, opts, &block)
     end
 
