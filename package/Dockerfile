@@ -27,8 +27,8 @@ RUN apk update && \
     mariadb-dev \
     nodejs \
     tzdata \
-    yarn && \
-    rm -rf /var/cache/apk/*
+    yarn \
+    && rm -rf /var/cache/apk/*
 
 # =============================================================================
 # System setup
@@ -58,19 +58,21 @@ ENV HOME=/home/$USER \
     RAILS_ENV=production \
     BUNDLER_VERSION=2.1.4
 
-# Define work directory.
-WORKDIR $APP_HOME
-
 # To avoid installing documentation for gems.
-ADD storage/gemrc $HOME/.gemrc
+COPY storage/gemrc $HOME/.gemrc
 
-# Copy the Gemfile and Gemfile.lock into the image.
-ADD Gemfile Gemfile.lock ./
-RUN gem install bundler -v "$BUNDLER_VERSION" && \
-    bundle config set no-cache true && \
-    bundle install --jobs=6 --retry=2 --without=['development' 'test']
+# Update bundler if needed.
+RUN gem list --silent --installed --exact bundler -v "$BUNDLER_VERSION" || \
+    gem install bundler -v "$BUNDLER_VERSION"; \
+    bundle config set no-cache true
+
+# Install required gems.
+COPY Gemfile Gemfile.lock /tmp/
+WORKDIR /tmp
+RUN bundle install --jobs 6 --retry 2 --without development test
 
 # Create work directory and copy the application to it.
+WORKDIR $APP_HOME
 ADD . $APP_HOME
 
 # Generate the assets.

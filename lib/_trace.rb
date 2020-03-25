@@ -146,18 +146,15 @@ def __output(*args)
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 
-  # Send to the log if deployed to AWS or if explicitly requested.
-  unless (console_only = !defined?(Log))
-    level = opt[:log]
-    level = Log.log_level(level, :debug) if level || application_deployed?
-    Log.add(level, lines) if level
+  # For desktop builds, if explicitly requested, copy output to the log.
+  unless (level = opt[:log]).blank? || application_deployed? || !defined?(Log)
+    level = Log.log_level(level, :debug)
+    Log.add(level, lines)
   end
 
-  # Send to the console if running on the desktop or running rake.
-  if console_only || !application_deployed?
-    $stderr.puts(lines)
-    $stderr.flush
-  end
+  # Emit output.
+  $stderr.puts(lines)
+  $stderr.flush
   nil
 end
 
