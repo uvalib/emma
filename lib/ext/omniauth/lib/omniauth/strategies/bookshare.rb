@@ -21,6 +21,8 @@ module OmniAuth
     #
     class Bookshare < OmniAuth::Strategies::OAuth2
 
+      include Emma::Debug
+
       # Pre-authorized users for development purposes.
       #
       # @type [Hash{String=>Hash}]
@@ -173,16 +175,20 @@ module OmniAuth
       end
 =end
 
-=begin
-      # Direct access to the OmniAuth logger, automatically prefixed
-      # with this strategy's name.
+      # Direct access to the OmniAuth logger, automatically prefixed with this
+      # strategy's name.
       #
-      # @example
-      #   log :warn, "This is a warning."
+      # == Implementation Note
+      # Instead of attempting to  override Configuration#default_logger this
+      # override simply manages its own logger instance
+      #
       def log(level, message)
+=begin
         OmniAuth.logger.send(level, "(#{name}) #{message}")
-      end
 =end
+        @log ||= Log.new(STDERR)
+        @log.add(Log.log_level(level)) { "omniauth: (#{name}) #{message}" }
+      end
 
 =begin
       # Duplicates this instance and runs #call! on it.
@@ -192,13 +198,15 @@ module OmniAuth
       end
 =end
 
-=begin
       # The logic for dispatching any additional actions that need
       # to be taken. For instance, calling the request phase if
       # the request path is recognized.
       #
       # @param env [Hash] The Rack environment.
       def call!(env) # rubocop:disable CyclomaticComplexity, PerceivedComplexity
+        #__debug_items("OMNIAUTH #{__method__}", log: true) { env }
+        super
+=begin
         unless env['rack.session']
           error = OmniAuth::NoSessionError.new('You must provide a session to use OmniAuth.')
           raise(error)
@@ -214,8 +222,8 @@ module OmniAuth
         return other_phase if respond_to?(:other_phase)
 
         @app.call(env)
-      end
 =end
+      end
 
 =begin
       # Responds to an OPTIONS request.
@@ -234,32 +242,36 @@ module OmniAuth
       # @see OmniAuth::Strategy#request_call
       #
       def request_call
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
         setup_phase
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
-        session['omniauth.params'] = request.get? ? request.GET : request.POST
-        $stderr.puts "OMNIAUTH #{__method__} | method  = #{request.request_method}"
-        $stderr.puts "OMNIAUTH #{__method__} | options = #{options.inspect}"
-        $stderr.puts "OMNIAUTH #{__method__} | omniauth.params = #{session['omniauth.params'].inspect}"
-        $stderr.puts "OMNIAUTH #{__method__} | session = #{session.to_hash.inspect}"
+        o_p = request.get? ? request.GET : request.POST
+        __debug_line(dbg, "method  = #{request.request_method}", log: true)
+        __debug_line(dbg, "options = #{options.inspect}", log: true)
+        __debug_line(dbg, "session = #{session.inspect}", log: true)
+        __debug_line(dbg, "omniauth.params = #{o_p.inspect}", log: true)
+        session['omniauth.params'] = o_p
         OmniAuth.config.before_request_phase&.call(env)
 
         if current_user
-          log :info, "OMNIAUTH #{__method__} | by-passing request_phase"
+          log :info, 'By-passing request_phase.'
           authorize_params # Generate session['omniauth.state']
           request.params['state'] = session['omniauth.state']
           callback_phase
 
         elsif !options.form
-          if (op = options.origin_param) && (org = request.params[op])
-            log :info, "OMNIAUTH #{__method__} | origin from request.params"
-            env['rack.session']['omniauth.origin'] = org
-          elsif (ref = env['HTTP_REFERER']) && !ref.end_with?(request_path)
-            log :info, "OMNIAUTH #{__method__} | origin from HTTP_REFERER"
-            env['rack.session']['omniauth.origin'] = ref
+          org = request.params[options.origin_param]
+          ref = env['HTTP_REFERER']
+          ref = nil if ref&.end_with?(request_path)
+          if org || ref
+            log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
+            env['rack.session']['omniauth.origin'] = org ||= ref
           end
-          $stderr.puts "OMNIAUTH #{__method__} | env['rack.session']['omniauth.origin'] = #{env['rack.session']['omniauth.origin'].inspect}"
+          __debug_line(dbg, log: true) do
+            "env['rack.session']['omniauth.origin'] = #{org.inspect}"
+          end
           request_phase
 
         elsif options.form.respond_to?(:call)
@@ -273,9 +285,11 @@ module OmniAuth
         end
       end
 
-=begin
       # Performs the steps necessary to run the callback phase of a strategy.
       def callback_call
+        __debug("OMNIAUTH #{__method__}", log: true)
+        super
+=begin
         setup_phase
         log :info, 'Callback phase initiated.'
         @env['omniauth.origin'] = session.delete('omniauth.origin')
@@ -283,8 +297,8 @@ module OmniAuth
         @env['omniauth.params'] = session.delete('omniauth.params') || {}
         OmniAuth.config.before_callback_phase.call(@env) if OmniAuth.config.before_callback_phase
         callback_phase
-      end
 =end
+      end
 
 =begin
       # Returns true if the environment recognizes either the
@@ -533,11 +547,20 @@ module OmniAuth
       end
 =end
 
-=begin
+      # call_app!
+      #
+      # @return [*]
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#call_app!
+      #
       def call_app!(env = @env)
+        __debug_items("OMNIAUTH #{__method__}", log: true) { env }
+        super
+=begin
         @app.call(env)
-      end
 =end
+      end
 
 =begin
       def full_host
@@ -681,9 +704,11 @@ module OmniAuth
             options.client_id,
             options.client_secret,
             options.client_options.deep_symbolize_keys
-          ).tap { |result|
-            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}: #{result.inspect}"
-          }
+          ).tap do |result|
+            __debug(log: true) do
+              "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+            end
+          end
       end
 
       # request_phase
@@ -696,11 +721,12 @@ module OmniAuth
       # @see OAuth2::ClientExt#request
       #
       def request_phase
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | method = #{request.request_method.inspect}"
+        dbg = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
+        __debug(dbg, log: true)
         auth_code = client.auth_code
         auth_parm = authorize_params.reverse_merge(redirect_uri: callback_url)
         auth_url  = auth_code.authorize_url(auth_parm)
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} | authorize_url = #{auth_url.inspect}"
+        __debug(log: true) { "#{dbg} => authorize_url = #{auth_url.inspect}" }
         redirect(auth_url)
       end
 
@@ -711,7 +737,9 @@ module OmniAuth
       #
       def authorize_params
         super.tap do |result|
-          $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+          __debug(log: true) do
+            "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+          end
         end
 =begin
         options.authorize_params[:state] = SecureRandom.hex(24)
@@ -732,7 +760,9 @@ module OmniAuth
       #
       def token_params
         super.tap do |result|
-          $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+          __debug(log: true) do
+            "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}"
+          end
         end
 =begin
         options.token_params.merge(options_for('token'))
@@ -748,7 +778,7 @@ module OmniAuth
       #
       # noinspection RubyScope
       def callback_phase
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
         result = e = nil
         params = request.params.reject { |_, v| v.blank? }
         error  = params['error_reason'] || params['error']
@@ -786,13 +816,19 @@ module OmniAuth
           end
 
       rescue ::OAuth2::Error, CallbackError => e
+        __debug_line(dbg, 'INVALID', e.class, e.message, log: true)
         error ||= :invalid_credentials
 
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
+        __debug_line(dbg, 'TIMEOUT', e.class, e.message, log: true)
         error = :timeout
 
       rescue ::SocketError => e
+        __debug_line(dbg, 'CONNECT', e.class, e.message, log: true)
         error = :failed_to_connect
+
+      rescue => e
+        __debug_line(dbg, 'EXCEPTION', e.class, e.message, log: true)
 
       ensure
         fail!(error, e) if error
@@ -813,14 +849,14 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#build_access_token
       #
       def build_access_token
-        $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__}"
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"), log: true)
         code   = request.params['code']
         opts   = options.auth_token_params.deep_symbolize_keys
         params = token_params.to_hash(symbolize_keys: true)
         params[:redirect_uri] ||= callback_url
         client.auth_code.get_token(code, params, opts)
-          .tap do |res|
-            $stderr.puts "OMNIAUTH-BOOKSHARE #{__method__} => #{res.inspect}"
+          .tap do |result|
+            __debug(log: true) { "#{dbg} => #{result.inspect}" }
           end
       end
 

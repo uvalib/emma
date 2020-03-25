@@ -108,6 +108,7 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 def __output(*args)
   return if defined?(Log) && Log.silenced?
   opt    = args.extract_options!
+  level  = opt[:log] && Log.log_level(opt[:log], :debug)
   sep    = opt[:separator] || "\n"
   indent = opt[:indent]    || (sep.include?("\n") ? CONS_INDENT : '')
   indent = (' ' * indent if indent.is_a?(Integer) && (indent > 0))
@@ -115,11 +116,7 @@ def __output(*args)
   leader += ' ' unless (leader == indent.to_s) || leader.end_with?(' ')
   args += Array.wrap(yield) if block_given?
   lines = leader + args.join(sep).gsub(/\n/, "\n#{leader}").strip
-  if (level = opt[:log])
-    level = Emma::Log::LOG_LEVEL[level]  if level.is_a?(Symbol)
-    level = Emma::Log::LOG_LEVEL[:debug] unless level.is_a?(Numeric)
-    Log.add(level, lines)
-  end
+  Log.add(level, lines) if level
   unless level && application_deployed?
     $stderr.puts(lines)
     $stderr.flush

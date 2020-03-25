@@ -5,8 +5,6 @@
 
 __loading_begin(__FILE__)
 
-require 'puma/null_io'
-
 # Debugging support methods.
 #
 module Emma::Debug
@@ -53,18 +51,24 @@ module Emma::Debug
   # @example Output current method parameters
   #   __debug_args(__method__, binding)
   #
-  def __debug_args(*args)
+  def __debug_args(*args, &block)
     p_opt, opt = partition_options(args.extract_options!, :only, :except)
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
+    meth = bind.eval('__method__') if meth.nil? && bind.is_a?(Binding)
     lead = opt.key?(:leader) ? opt.delete(:leader) : '+++'
     lead = [lead, meth].compact.join(' ')
     args << get_params(meth, bind, p_opt)
+    opt[:separator] ||= ' | '
+    __debug_items(lead, *args, opt, &block)
+=begin
     if block_given?
-      __debug_line(lead, *args, opt) { __debug_inspect_items(*yield, opt) }
+      items = Array.wrap(yield)
+      __debug_line(lead, *args, opt) { __debug_inspect_items(*items, opt) }
     else
       __debug_line(lead, *args, opt)
     end
+=end
   end
 
   # Output a line for invocation of a route method.
@@ -119,7 +123,7 @@ module Emma::Debug
     }.each_pair do |item, entry|
       prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
       lines = __debug_inspect_item(value, opt)
-      lines.map! { |line| "#{prefix} #{line}" } if prefix && lines.is_a?(Array)
+      lines.map! { |line| "#{prefix} #{line}" } if prefix
       __debug("#{item} =", *lines, opt)
     end
     __debug_items(*args, opt, &block) if block || args.present?
@@ -181,8 +185,12 @@ module Emma::Debug
   #
   def __debug_items(*args)
     opt = args.extract_options!
-    args += Array.wrap(yield) if block_given?
-    __debug(opt) { __debug_inspect_items(*args, opt) }
+    if block_given?
+      items = Array.wrap(yield)
+      __debug(*args, opt) { __debug_inspect_items(*items, opt) }
+    else
+      __debug(*args, opt)
+    end
   end
 
   # ===========================================================================
@@ -230,49 +238,54 @@ module Emma::Debug
   # @see Module#inspect
   #
   def __debug_inspect(value, max: nil, omission: nil, **)
-    leader = trailer = nil
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case value
-      when Puma::NullIO then leader = '(empty body)'
-    end
-    unless DEBUG_INSPECT_COMMON_CLASSES.include?(value.class)
-      leader += ' ' if leader.present?
-      leader = "#{leader}{%s}" % value.class
-    end
-    max      ||= DEBUG_INSPECT_MAX
-    omission ||= DEBUG_INSPECT_OMISSION
-    omission +=
-      case value
-        when Hash   then '}'
-        when Array  then ']'
-        when String then '"'
-        else             '>'
+    output = type = omission_end = nil
+    output =
+      if DEBUG_INSPECT_COMMON_CLASSES.include?(value.class) # DEBUG_INSPECT_COMMON_CLASSES.any? { |c| value.class < c }
+        # noinspection RubyCaseWithoutElseBlockInspection
+        case value
+          when Hash   then omission_end = '}'
+          when Array  then omission_end = ']'
+          when String then omission_end = '"'
+        end
+        value.inspect
+      else
+        type = value.class
+        case value
+          when STDERR   then '<STDERR>'
+          when STDOUT   then '<STDOUT>'
+          when StringIO then value.string.inspect
+          when Tempfile then value.path.inspect
+          when IO       then value.respond_to?(:path) ? value.path.inspect : ''
+          else               ''
+        end
       end
-    value = value.inspect.truncate(max, omission: omission)
-    [leader, value, trailer].compact.join(' ')
+  rescue => e
+    Log.debug { "#{__method__}: #{value.class}: #{e}" }
+  ensure
+    parts = []
+    parts << "{#{type}}" if type
+    parts << 'ERROR' unless output
+    if output
+      max      ||= DEBUG_INSPECT_MAX
+      omission ||= DEBUG_INSPECT_OMISSION
+      omission  += (omission_end || '>')
+      parts << output.truncate(max, omission: omission)
+    end
+    return parts.join(' ')
   end
 
-  # Produce an inspection.
+  # Generate one or more inspections.
   #
-  # @overload __debug_inspect(arg)
-  #   @param [Hash, Array] arg
-  #   @param [Hash, nil]   opt        Options passed to #__debug_inspect.
-  #   @return [Array<String>]
+  # @param [Hash, Array, *] value
+  # @param [Hash, nil]      opt       Options passed to #__debug_inspect.
   #
-  # @overload __debug_inspect(arg)
-  #   @param [*]           arg
-  #   @param [Hash, nil]   opt        Options passed to #__debug_inspect.
-  #   @return [String]
+  # @return [Array<String>]
   #
-  def __debug_inspect_item(arg, opt = nil)
-    opt ||= {}
-    case arg
-      when Hash     then arg.map { |k, v| "#{k} = #{__debug_inspect(v, opt)}" }
-      when Array    then arg.map { |v| __debug_inspect(v, opt) }
-      when StringIO then __debug_inspect(arg.string, opt)
-      when Tempfile then __debug_inspect(arg.path, opt)
-      when IO       then __debug_inspect(arg.path, opt)
-      else               __debug_inspect(arg, opt)
+  def __debug_inspect_item(value, opt = {})
+    if value.is_a?(Hash)
+      value.map { |k, v| "#{k} = #{__debug_inspect(v, opt)}" }
+    else
+      Array.wrap(value).map { |v| __debug_inspect(v, opt) }
     end
   end
 
@@ -287,13 +300,9 @@ module Emma::Debug
   # @see #__debug_inspect_item
   #
   def __debug_inspect_items(*args)
-    opt = {}
-    if block_given?
-      opt = args.pop if args.last.is_a?(Hash)
-      args += Array.wrap(yield)
-    else
-      opt = args.pop if args.last.is_a?(Hash) && (args.size > 1)
-    end
+    opt = args.last.is_a?(Hash) && (!block_given? || (args.size > 1))
+    opt = opt ? args.pop : {}
+    args += Array.wrap(yield) if block_given?
     args.flat_map { |arg| __debug_inspect_item(arg, opt) }
   end
 

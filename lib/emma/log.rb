@@ -50,7 +50,7 @@ module Emma::Log
   # method.  If the next element of *args* is an Exception, a message is
   # constructed from its contents.
   #
-  # @param [Numeric, Symbol, nil]           severity
+  # @param [Integer, Symbol, nil]           severity
   # @param [Array<String,Symbol,Exception>] args
   #
   # @yield Supplies additional parts to the log entry.
@@ -66,10 +66,8 @@ module Emma::Log
     if severity.is_a?(String)
       args.unshift(severity)
       severity = nil
-    elsif !severity.is_a?(Numeric)
-      severity &&= LOG_LEVEL[severity.to_s.downcase.to_sym]
     end
-    severity ||= LOG_LEVEL[:unknown]
+    severity = log_level(severity)
     if severity >= logger.level
       args += Array.wrap(yield) if block_given?
       args.compact!
@@ -146,6 +144,19 @@ module Emma::Log
 
   public
 
+  # Translate to the form expected by Logger#add.
+  #
+  # @param [Integer, Symbol, String] value
+  # @param [Symbol, nil]             default
+  #
+  # @return [Integer]
+  #
+  def self.log_level(value, default = :unknown)
+    return value if value.is_a?(Integer)
+    value = value.to_s.downcase.to_sym unless value.is_a?(Symbol)
+    LOG_LEVEL[value] || LOG_LEVEL[default]
+  end
+
   # local_levels
   #
   # @return [Concurrent::Map]
@@ -181,19 +192,19 @@ module Emma::Log
 
   # Set thread-safe log level.
   #
-  # @param [Integer, nil] level
+  # @param [Integer, Symbol, String, nil] value
   #
   # @return [Integer]
-  # @return [nil]                   If *level* is *nil*.
+  # @return [nil]                   If *value* is *nil*.
   #
   # Compare with:
   # @see ActiveSupport::LoggerThreadSafeLevel#local_level=
   #
-  def self.local_level=(level)
-    if level
-      local_levels[local_log_id] = level
+  def self.local_level=(value)
+    if value
+      local_levels[local_log_id] = log_level(value)
     else
-      local_levels.delete(local_log_id)
+      local_levels.delete(local_log_id) and nil
     end
   end
 
@@ -264,7 +275,7 @@ module Emma::Log
 
   # Silences the logger for the duration of the block.
   #
-  # @param [Numeric, nil] temporary_level
+  # @param [Integer, Symbol, String] temporary_level
   #
   # @see LoggerSilence#silence
   #
@@ -273,6 +284,7 @@ module Emma::Log
       block.call
     else
       self.silenced = true
+      temporary_level = log_level(temporary_level)
       logger.silence(temporary_level, &block).tap { self.silenced = false }
     end
   end
@@ -308,6 +320,14 @@ module Emma::Log
   #
   def logger=(logger)
     Log.logger = logger
+  end
+
+  # Create a new instance of the assigned Logger class.
+  #
+  # @param [Array] args               @see Logger#initialize
+  #
+  def self.new(*args)
+    logger.class.new(*args)
   end
 
 end

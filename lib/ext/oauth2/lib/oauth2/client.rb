@@ -95,24 +95,30 @@ module OAuth2
         end
     end
 
-=begin
     # The authorize endpoint URL of the OAuth2 provider
     #
     # @param [Hash] params additional query parameters
     def authorize_url(params = {})
+=begin
       params = (params || {}).merge(redirection_params)
       connection.build_url(options[:authorize_url], params).to_s
-    end
 =end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
 
-=begin
     # The token endpoint URL of the OAuth2 provider
     #
     # @param [Hash] params additional query parameters
     def token_url(params = nil)
+=begin
       connection.build_url(options[:token_url], params).to_s
-    end
 =end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
 
     # Makes a request relative to the specified site root.
     #
@@ -152,7 +158,7 @@ module OAuth2
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
-      __debug_args("OAUTH2 #{__method__}", binding, log: true)
+      __debug_args((dbg = "OAUTH2 #{__method__}"), binding, log: true)
       opts ||= {}
 
       url = connection.build_url(url, opts[:params]).to_s
@@ -162,6 +168,9 @@ module OAuth2
           yield(req) if block_given?
         end
       response = Response.new(response, parse: parse)
+      __debug_line(dbg, log: true) do
+        { status: response&.status, body: response&.body }
+      end
 
       case response.status
 
@@ -175,10 +184,6 @@ module OAuth2
               opts.delete(:body)
             end
             url = response.headers['Location'].to_s
-=begin
-            # NOTE: temporarily(?) fixing Bookshare redirect problem...
-            url = url.sub(%r{(/auth\.)staging\.}, '\1')
-=end
             response = request(verb, url, opts)
           end
 
@@ -211,7 +216,9 @@ module OAuth2
     #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       __debug_args("OAUTH2 #{__method__}", binding, log: true)
-      super
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
 =begin
       method = options[:token_method]
       mode   = options[:auth_scheme]
@@ -285,11 +292,14 @@ module OAuth2
       end
     end
 
-=begin
     def assertion
+=begin
       @assertion ||= OAuth2::Strategy::Assertion.new(self)
-    end
 =end
+      super.tap do |result|
+        __debug(log: true) { "OAUTH2 #{__method__} => #{result.inspect}" }
+      end
+    end
 
 =begin
     # The redirect_uri parameters, if configured

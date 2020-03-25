@@ -7,14 +7,14 @@ __loading_begin(__FILE__)
 
 # A file object uploaded from the client.
 #
-# @!attribute [r] :file
+# @!attribute [r] file
 #   @return [FileUploader::UploadedFile]
 #
-# @!attribute [r] :file_attacher
+# @!attribute [r] file_attacher
 #   Inserted by Shrine::Plugins:Activerecord.
 #   @return [FileUploader::Attacher]
 #
-# @!attribute [r] :cached_file_data
+# @!attribute [r] cached_file_data
 #   Inserted by Shrine::Plugins:CachedAttachmentData.
 #   @return [String, nil]
 #
