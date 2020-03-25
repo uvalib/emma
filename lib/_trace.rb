@@ -86,6 +86,9 @@ require 'io/console'
 # stand out from normal Rails.logger entries.
 CONS_INDENT = $stderr.isatty ? '' : '_   '
 
+# Output statements are neutralized for rake, etc.
+def __output(*); end unless rails_application?
+
 # Write indented line(s) to $stderr.
 #
 # @param [Array<Hash,Array,String,*>] args
@@ -145,7 +148,7 @@ def __output(*args)
     $stderr.flush
   end
   nil
-end
+end if rails_application?
 
 # Debugging statements are neutralized unless #CONSOLE_DEBUGGING is *true*.
 def __debug(*); end unless CONSOLE_DEBUGGING
