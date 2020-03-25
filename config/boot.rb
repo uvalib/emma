@@ -50,12 +50,16 @@ end
 # rake).
 #
 def rails_application?
-  return false unless defined?(APP_PATH)
-  return false if $*.any? { |arg| %w(-h --help).include?(arg) }
-  return true  if ENV['IN_PASSENGER']
-  return true  if $0.start_with?('spring app')
-  return false unless $0.end_with?('rails', 'spring')
-  $*.include?('server')
+  if !defined?(@in_rails) || @in_rails.nil?
+    @in_rails = defined?(APP_PATH)
+    @in_rails &&= $*.none? { |arg| %w(-h --help).include?(arg) }
+    @in_rails &&= (
+      !!ENV['IN_PASSENGER'] ||
+      $0.start_with?('spring app') ||
+      ($0.end_with?('rails', 'spring') && $*.include?('server'))
+    )
+  end
+  @in_rails
 end
 
 if rails_application?
