@@ -153,6 +153,8 @@ def __output(*args)
   end
 
   # Emit output.
+  $stdout.flush
+  $stderr.flush
   $stderr.puts(lines)
   $stderr.flush
   nil
