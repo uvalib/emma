@@ -169,10 +169,10 @@ module OAuth2
           req.params.update(opts[:params]) if opts[:params] # TODO: remove?
           yield(req) if block_given?
         end
-      response = Response.new(response, parse: parse)
-      __debug_line(dbg) do
+      __debug_line(dbg, 'RESPONSE', response) do
         { status: response&.status, body: response&.body }
       end
+      response = Response.new(response, parse: parse)
 
       case response.status
 
