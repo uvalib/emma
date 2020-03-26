@@ -149,13 +149,11 @@ def __output(*args)
   # For desktop builds, if explicitly requested, copy output to the log.
   unless (level = opt[:log]).blank? || application_deployed? || !defined?(Log)
     level = Log.log_level(level, :debug)
-    #Log.add(level, lines)
-    Log.add(level, "XX #{lines}")
+    Log.add(level, lines)
   end
 
   # Emit output.
-  #$stderr.puts(lines)
-  $stderr.puts("YY #{lines}")
+  $stderr.puts(lines)
   $stderr.flush
   nil
 end

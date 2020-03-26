@@ -161,10 +161,12 @@ module OAuth2
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       opts ||= {}
 
-      url = connection.build_url(url, opts[:params]).to_s
+      #url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
+      url = connection.build_url(url).to_s # TODO: remove?
       parse = opts[:parse] || :automatic
       response =
         connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
+          req.params.update(opts[:params]) if opts[:params] # TODO: remove?
           yield(req) if block_given?
         end
       response = Response.new(response, parse: parse)
@@ -176,6 +178,7 @@ module OAuth2
 
         when 301, 302, 303, 307
           # Redirect, or keep this response if beyond the limit of redirects.
+          __debug_line(dbg, "REDIRECT #{response.status}")
           opts[:redirect_count] ||= 0
           opts[:redirect_count] += 1
           if (max = options[:max_redirects]) && (opts[:redirect_count] <= max)
@@ -189,15 +192,18 @@ module OAuth2
 
         when 200..299, 300..399
           # On non-redirecting 3xx statuses, just return the response.
+          __debug_line(dbg, "STATUS #{response.status}")
 
         when 400..599
           # Server error.
+          __debug_line(dbg, "ERROR #{response.status}")
           error = Error.new(response)
           raise(error) if opts.fetch(:raise_errors, options[:raise_errors])
           response.error = error
 
         else
           # Other error.
+          __debug_line(dbg, "UNEXPECTED #{response.status}")
           error = Error.new(response)
           raise(error, "Unhandled status code value of #{response.status}")
 
