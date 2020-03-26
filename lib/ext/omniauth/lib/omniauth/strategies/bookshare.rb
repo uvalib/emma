@@ -247,12 +247,10 @@ module OmniAuth
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
-        o_p = request.get? ? request.GET : request.POST
+        session['omniauth.params'] = request.get? ? request.GET : request.POST
         __debug_line(dbg, "method  = #{request.request_method}")
         __debug_line(dbg, "options = #{options.inspect}")
         __debug_line(dbg, "session = #{session.inspect}")
-        __debug_line(dbg, "omniauth.params = #{o_p.inspect}")
-        session['omniauth.params'] = o_p
         OmniAuth.config.before_request_phase&.call(env)
 
         if current_user
@@ -267,10 +265,10 @@ module OmniAuth
           ref = nil if ref&.end_with?(request_path)
           if org || ref
             log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
-            env['rack.session']['omniauth.origin'] = org ||= ref
+            env['rack.session']['omniauth.origin'] = org || ref
           end
           __debug_line(dbg) do
-            "env['rack.session']['omniauth.origin'] = #{org.inspect}"
+            "env['rack.session']['omniauth.origin'] = #{(org || ref).inspect}"
           end
           request_phase
 

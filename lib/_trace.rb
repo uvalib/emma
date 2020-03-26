@@ -100,6 +100,9 @@ require 'io/console'
 # stand out from normal Rails.logger entries.
 CONS_INDENT = $stderr.isatty ? '' : '_   '
 
+# Initial characters which mark a debug line.
+DEBUG_LEADER = ''
+
 # Write indented line(s) to $stderr.
 #
 # @param [Array<Hash,Array,String,*>] args
@@ -172,6 +175,7 @@ end
 #
 def __debug(*args, &block)
   opt = args.extract_options!.merge(debug: true)
+  opt[:leader] ||= DEBUG_LEADER
   __output(*args, opt, &block)
 end
 

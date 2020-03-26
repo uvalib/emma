@@ -11,6 +11,12 @@ module Emma::Debug
 
   include Emma::Common
 
+  # Separator between parts on a single debug line.
+  #
+  # @type [String]
+  #
+  DEBUG_SEPARATOR = ' | '
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -25,7 +31,7 @@ module Emma::Debug
   # @return [nil]
   #
   def __debug_line(*args, &block)
-    opt = { separator: ' | ' }
+    opt = { separator: DEBUG_SEPARATOR }
     opt.merge!(args.pop) if args.last.is_a?(Hash)
     __debug(*args, opt, &block)
   end
@@ -56,11 +62,9 @@ module Emma::Debug
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
     meth = bind.eval('__method__') if meth.nil? && bind.is_a?(Binding)
-    lead = opt.key?(:leader) ? opt.delete(:leader) : '+++'
-    lead = [lead, meth].compact.join(' ')
     prms = get_params(meth, bind, prms_opt)
-    opt[:separator] ||= ' | '
-    __debug_items(lead, *args, prms, opt, &block)
+    opt[:separator] ||= DEBUG_SEPARATOR
+    __debug_items(meth&.to_s, *args, prms, opt, &block)
   end
 
   # Output a line for invocation of a route method.
@@ -103,20 +107,28 @@ module Emma::Debug
     opt = args.extract_options!
     unless opt.key?(:leader)
       meth = args.first.is_a?(Symbol) ? args.shift : calling_method
-      opt  = opt.merge(leader: "--- #{meth}")
+      opt  = opt.merge(leader: "-- #{meth}")
     end
+    count = 80
+    count -= opt[:leader].size + 1 if opt[:leader]
     {
-      session:           ['/ SESSION', session],
-      'request.env':     ['- ENV',     request.env],
-      'request.headers': ['\ HEADER',  request.headers],
-      'request.cookies': ['| COOKIE]', request.cookies],
+      session:           ['SESSION', session.to_hash],
+      'request.env':     ['ENV',     :__debug_env],
+      'request.headers': ['HEADER',  :__debug_headers],
+      'request.cookies': ['COOKIE',  request.cookies],
       'rack.input':      request.headers['rack.input'],
       'request.body':    request.body
     }.each_pair do |item, entry|
       prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
+      case value
+        when Proc   then value = value.call(request)
+        when Symbol then value = send(value, request)
+      end
       lines = __debug_inspect_item(value, opt)
-      lines.map! { |line| "#{prefix} #{line}" } if prefix
-      __debug("#{item} =", *lines, opt)
+      lines.map! { |line| "[#{prefix}] #{line}" } if prefix
+      item = +"== #{item} "
+      item << '=' * (count - item.size)
+      __debug(item, *lines, opt)
     end
     __debug_items(*args, opt, &block) if block || args.present?
   end
@@ -193,7 +205,7 @@ module Emma::Debug
   #
   # @type [Array<Class>]
   #
-  DEBUG_INSPECT_COMMON_CLASSES = [
+  DEBUG_INSPECT_COMMON = [
     Array,
     FalseClass,
     Hash,
@@ -216,40 +228,40 @@ module Emma::Debug
   # @see Module#inspect
   #
   def __debug_inspect(value, max: nil, omission: nil, **)
-    output = type = omission_end = nil
-    output =
-      if DEBUG_INSPECT_COMMON_CLASSES.include?(value.class) # DEBUG_INSPECT_COMMON_CLASSES.any? { |c| value.class < c }
-        # noinspection RubyCaseWithoutElseBlockInspection
-        case value
-          when Hash   then omission_end = '}'
-          when Array  then omission_end = ']'
-          when String then omission_end = '"'
-        end
-        value.inspect
-      else
-        type = value.class
-        case value
-          when STDERR   then '<STDERR>'
-          when STDOUT   then '<STDOUT>'
-          when StringIO then value.string.inspect
-          when Tempfile then value.path.inspect
-          when IO       then value.respond_to?(:path) ? value.path.inspect : ''
-          else               ''
-        end
+    output = type = common = nil
+    max      ||= DEBUG_INSPECT_MAX
+    omission ||= DEBUG_INSPECT_OMISSION
+    case value
+      when Hash   then omission += '}'
+      when Array  then omission += ']'
+      when String then omission += '"'
+      else             omission += '>'
+    end
+    type   = value.class
+    common = DEBUG_INSPECT_COMMON.any? { |cls| (type == cls) || (type < cls) }
+    output = (value if common)
+    output ||=
+      case value
+        when ActionDispatch::RemoteIp::GetIp then value.to_s
+        when Exception then value.full_message
+        when StringIO  then value.string
+        when STDERR    then :'<STDERR>'
+        when STDOUT    then :'<STDOUT>'
+        when IO        then value.path if value.respond_to?(:path)
+        when Tempfile  then value.path
+        when File      then value.path
       end
+    if output.nil? || output.is_a?(Symbol)
+      output = output.to_s
+    else
+      output = output.inspect
+    end
   rescue => e
     Log.debug { "#{__method__}: #{value.class}: #{e}" }
   ensure
-    parts = []
-    parts << "{#{type}}" if type
-    parts << 'ERROR' unless output
-    if output
-      max      ||= DEBUG_INSPECT_MAX
-      omission ||= DEBUG_INSPECT_OMISSION
-      omission  += (omission_end || '>')
-      parts << output.truncate(max, omission: omission)
-    end
-    return parts.join(' ')
+    type   = ("{#{type}}" unless common)
+    output = output&.truncate(max, omission: omission) || 'ERROR'
+    return [type, output].compact.join(' ')
   end
 
   # Generate one or more inspections.
@@ -282,6 +294,42 @@ module Emma::Debug
     opt = opt ? args.pop : {}
     args += Array.wrap(yield) if block_given?
     args.flat_map { |arg| __debug_inspect_item(arg, opt) }
+  end
+
+  # __debug_env
+  #
+  # @param [Hash, ActionDispatch::Request] value
+  #
+  # @return [Hash, nil]
+  #
+  def __debug_env(value = nil)
+    value ||= request
+    env = value.is_a?(ActionDispatch::Request) ? value.env : value
+    env&.to_hash&.sort&.to_h
+  end
+
+  # __debug_headers
+  #
+  # @param [Hash, ActionDispatch::Request, ActionDispatch::Response] value
+  #
+  # @return [Hash, nil]
+  #
+  def __debug_headers(value = nil)
+    value ||= request
+    hdrs = value.is_a?(ActionDispatch::Request) ? value.headers : value
+    if hdrs.respond_to?(:to_hash)
+      hdrs.to_hash
+    elsif hdrs.respond_to?(:each)
+      result = {}
+      hdrs.each do |k, v|
+        next unless (k = k.to_s) =~ /^[A-Z0-9_]+$/
+        next if ActionDispatch::Http::Headers::CGI_VARIABLES.include?(k)
+        k = k.delete_prefix('HTTP_').downcase
+        k = k.split('_').map(&:camelize).join('-')
+        result[k] = v
+      end
+      result
+    end
   end
 
   # ===========================================================================

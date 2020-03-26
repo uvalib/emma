@@ -157,10 +157,9 @@ module OAuth2
 =end
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
-    def request(verb, url, opts = nil)
+    def request(verb, url, opts = {})
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
-      body = opts && opts[:body]
-      opts = body.is_a?(Hash) ? opts.merge(body: url_query(body)) : {}
+      opts[:body] = url_query(opts[:body]) if opts[:body].is_a?(Hash)
 
       #url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
       url = connection.build_url(url).to_s # TODO: remove?
@@ -199,7 +198,7 @@ module OAuth2
           # Server error.
           __debug_line(dbg, "ERROR #{response.status}")
           error = Error.new(response)
-          raise(error) if opts.fetch(:raise_errors, options[:raise_errors])
+          raise(error) if opts[:raise_errors] || options[:raise_errors]
           response.error = error
 
         else
@@ -223,6 +222,7 @@ module OAuth2
     #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
+      access_token_opts['client_id'] ||= id
       super.tap do |result|
         __debug { "#{dbg} => #{result.inspect}" }
       end

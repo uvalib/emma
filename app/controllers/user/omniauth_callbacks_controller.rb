@@ -66,12 +66,15 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
   end
 
-  # ???
+  # == GET /users/auth/bookshare/failure
+  # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
+  # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #
   def failure
     __debug_route
     __debug_auth
     __debug_request
+    set_flash_alert # TODO: remove?
     super
   end
 
@@ -92,6 +95,25 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def after_omniauth_failure_path_for(scope) # TODO: ???
     super(scope)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Display a flash error message.
+  #
+  # @param [String, nil] message
+  # @param [String, nil] kind
+  #
+  # @return [void]
+  #
+  def set_flash_alert(message = nil, kind = 'Bookshare')
+    message ||= failure_message
+    kind    ||= OmniAuth::Utils.camelize(failed_strategy.name)
+    set_flash_message(:alert, :failure, kind: kind, reason: message)
   end
 
 end
