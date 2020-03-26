@@ -158,8 +158,11 @@ module OAuth2
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = nil)
-      __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       opts ||= {}
+      __debug_args((dbg = "OAUTH2 #{__method__}"), binding) do
+        { headers: opts[:headers], body: opts[:body] }
+      end
+      opts[:body] = opts[:body].to_json if opts[:body].is_a?(Hash)
 
       #url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
       url = connection.build_url(url).to_s # TODO: remove?
