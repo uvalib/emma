@@ -143,32 +143,28 @@ module OAuth2
     # @see OAuth2::Client#request
     #
     # == Implementation Notes
-    # 1 The original code had a problem in setting :logger here (repeatedly);
-    #   this has been moved to #connection so that it happens only once.
+    # The original code had a problem in setting :logger here (repeatedly);
+    # this has been moved to #connection so that it happens only once.
     #
-=begin
-    # 2 NOTE: There is currently a problem going directly to authorize_url.
-    #   For some reason (probably related to headers), Location is returned
-    #   as "https://auth.staging.bookshare.org/user_login", which fails.  The
-    #   redirection response code rewrites the location to remove the
-    #   ".staging" part of the URL since
-    #   "https://auth.bookshare.org/user_login" appears to work correctly.
-    #
-=end
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
-    def request(verb, url, opts = {})
+    def request(verb, url, opts = {}, &block)
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
-      opts[:body] = url_query(opts[:body]) if opts[:body].is_a?(Hash)
-      opts[:parse] ||= :automatic
+      body  = opts[:body]
+      body  = opts[:body] = url_query(body) if body.is_a?(Hash)
+      hdrs  = opts[:headers]
+      parse = opts[:parse] ||= :automatic
 
-      #url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
-      url = connection.build_url(url).to_s # TODO: remove?
+      url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
+      #url = connection.build_url(url).to_s # TODO: remove?
+=begin
       response =
         connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
-          req.params.update(opts[:params]) if opts[:params] # TODO: remove?
+          #req.params.update(opts[:params]) if opts[:params] # TODO: remove?
           yield(req) if block_given?
         end
+=end
+      response = connection.run_request(verb, url, body, hdrs, &block)
       __debug_line(dbg, 'RESPONSE', response) do
         { status: response&.status, body: response&.body }
       end
@@ -308,7 +304,6 @@ module OAuth2
       end
     end
 
-=begin
     # The redirect_uri parameters, if configured
     #
     # The redirect_uri query parameter is OPTIONAL (though encouraged) when
@@ -324,15 +319,20 @@ module OAuth2
     # @see https://tools.ietf.org/html/rfc6749#section-4.1.3
     # @see https://tools.ietf.org/html/rfc6749#section-4.2.1
     # @see https://tools.ietf.org/html/rfc6749#section-10.6
+    #
     # @return [Hash] the params to add to a request or URL
+    #
     def redirection_params
+      #options.slice(:redirect_uri).map { |k, v| [k.to_s, url_escape(v)] }.to_h
+      options.slice(:redirect_uri).map { |k, v| [k.to_s, v] }.to_h
+=begin
       if options[:redirect_uri]
         {'redirect_uri' => options[:redirect_uri]}
       else
         {}
       end
-    end
 =end
+    end
 
   end
 

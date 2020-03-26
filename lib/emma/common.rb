@@ -379,14 +379,17 @@ module Emma::Common
 
   public
 
-  # Fully URL-encode (including transforming '.' to '%2E').
+  # Fully URL-encode (including transforming '.' to '%2E') without escaping a
+  # string which is already escaped.
   #
   # @param [String] s
   #
   # @return [String]
   #
   def url_escape(s)
-    CGI.escape(s.to_s).gsub(/\./, '%2E')
+    s = s.to_s
+    s = (s =~ /%[0-9a-fA-F]{2}/) ? s.tr(' ', '+') : CGI.escape(s)
+    s.tr('.', '%2E')
   end
 
   # Extract the named references in a format string.

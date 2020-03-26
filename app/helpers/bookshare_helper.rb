@@ -211,9 +211,7 @@ module BookshareHelper
     if (ref_keys = named_format_references(path)).present?
       ref_opt, path_opt = partition_options(path_opt, *ref_keys)
       ref_opt.reject! { |_, v| v.blank? }
-      ref_opt.transform_values! do |v|
-        v.is_a?(String) ? CGI.escape(v).gsub(/\./, '%2E') : v
-      end
+      ref_opt.transform_values! { |v| v.is_a?(String) ? url_escape(v) : v }
       ref_opt[:ids] ||= ref_opt[:id]
       ref_opt[:ids] = Array.wrap(ref_opt[:ids]).join(',')
       path = format(path, ref_opt)
