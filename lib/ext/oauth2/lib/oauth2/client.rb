@@ -160,10 +160,10 @@ module OAuth2
     def request(verb, url, opts = {})
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       opts[:body] = url_query(opts[:body]) if opts[:body].is_a?(Hash)
+      opts[:parse] ||= :automatic
 
       #url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
       url = connection.build_url(url).to_s # TODO: remove?
-      parse = opts[:parse] || :automatic
       response =
         connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
           req.params.update(opts[:params]) if opts[:params] # TODO: remove?
@@ -223,7 +223,7 @@ module OAuth2
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       access_token_opts['client_id'] ||= id
-      super.tap do |result|
+      super(params, access_token_opts, access_token_class).tap do |result|
         __debug { "#{dbg} => #{result.inspect}" }
       end
 =begin

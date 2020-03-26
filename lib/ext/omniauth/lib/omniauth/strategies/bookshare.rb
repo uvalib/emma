@@ -701,7 +701,7 @@ module OmniAuth
           ::OAuth2::Client.new(
             options.client_id,
             options.client_secret,
-            options.client_options.deep_symbolize_keys
+            deep_symbolize(options.client_options)
           ).tap do |result|
             __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
           end
@@ -717,13 +717,13 @@ module OmniAuth
       # @see OAuth2::ClientExt#request
       #
       def request_phase
-        dbg = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
+        dbg  = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
         __debug(dbg)
-        auth_code = client.auth_code
-        auth_parm = authorize_params.reverse_merge(redirect_uri: callback_url)
-        auth_url  = auth_code.authorize_url(auth_parm)
-        __debug { "#{dbg} => authorize_url = #{auth_url.inspect}" }
-        redirect(auth_url)
+        code = client.auth_code
+        prms = authorize_params.reverse_merge(redirect_uri: callback_url)
+        url  = code.authorize_url(prms)
+        __debug { "#{dbg} => authorize_url = #{url.inspect}" }
+        redirect(url)
       end
 
       # authorize_params
@@ -842,11 +842,11 @@ module OmniAuth
       #
       def build_access_token
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
-        code   = request.params['code']
-        opts   = options.auth_token_params.deep_symbolize_keys
-        params = token_params.to_hash(symbolize_keys: true)
-        params[:redirect_uri] ||= callback_url
-        client.auth_code.get_token(code, params, opts)
+        code = request.params['code']
+        opts = deep_symbolize(options.auth_token_params)
+        prms = token_params.to_hash(symbolize_keys: true)
+        prms[:redirect_uri] ||= callback_url
+        client.auth_code.get_token(code, prms, opts)
           .tap { |result| __debug { "#{dbg} => #{result.inspect}" } }
       end
 
