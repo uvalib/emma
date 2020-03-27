@@ -35,8 +35,8 @@
       }
   end
 
-  # NOTE: Temporary sign-in-as links.
-  if defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
+  # NOTE: Temporary sign-in-as links (currently disabled).
+  if false && defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
     links +=
       OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.map { |id, _|
         label = t('emma.user.omniauth_callbacks.sign_in_as.label', user: id)
