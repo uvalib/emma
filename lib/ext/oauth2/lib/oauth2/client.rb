@@ -155,9 +155,11 @@ module OAuth2
       hdrs  = opts[:headers]
       parse = opts[:parse] ||= :automatic
       prms  = opts[:params]
+=begin
       if (redir = opts.dig(:params, 'redirect_uri'))
         prms = opts[:params] = prms.merge('redirect_uri' => url_escape(redir))
       end
+=end
       url      = connection.build_url(url, prms).to_s
       response = connection.run_request(verb, url, body, hdrs, &block)
       __debug_line(dbg, 'RESPONSE', response) do
@@ -317,8 +319,7 @@ module OAuth2
     # @return [Hash] the params to add to a request or URL
     #
     def redirection_params
-      #options.slice(:redirect_uri).map { |k, v| [k.to_s, url_escape(v)] }.to_h
-      options.slice(:redirect_uri).map { |k, v| [k.to_s, v] }.to_h
+      options.slice(:redirect_uri).stringify_keys
 =begin
       if options[:redirect_uri]
         {'redirect_uri' => options[:redirect_uri]}

@@ -47,12 +47,13 @@ module OAuth2
       params = {'grant_type' => 'authorization_code', 'code' => code}.merge(@client.redirection_params).merge(params)
 =end
       token_params = {
+        grant_type: 'authorization_code',
         code:       code,
         client_id:  @client.id,
-        grant_type: 'authorization_code',
       }
       token_params.merge!(@client.redirection_params)
       token_params.merge!(params)
+      token_params.stringify_keys!
       @client.get_token(token_params, opts)
     end
 
