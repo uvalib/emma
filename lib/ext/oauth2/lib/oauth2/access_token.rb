@@ -11,68 +11,70 @@ require 'oauth2/access_token'
 
 module OAuth2
 
+  # Override definitions to be prepended to OAuth2::AccessToken.
+  #
+  # !@attribute [r] client
+  #   @return [OAuth2::Client]
+  #
+  # !@attribute [r] token
+  #   @return [String]
+  #
+  # !@attribute [r] expires_in
+  #   @return [Integer, nil]
+  #
+  # !@attribute [r] expires_at
+  #   @return [Integer, nil]
+  #
+  # !@attribute [r] params
+  #
+  # !@attribute [rw] options
+  #   @return [Hash]
+  #
+  # !@attribute [rw] refresh_token
+  #   @return [String, nil]
+  #
   module AccessTokenExt
 
     include Emma::Debug
 
-=begin
-    attr_reader :client, :token, :expires_in, :expires_at, :params
-    attr_accessor :options, :refresh_token
-=end
+    # =========================================================================
+    # :section: OAuth2::AccessToken overrides
+    # =========================================================================
 
-=begin
-    class << self
-      # Initializes an AccessToken from a Hash
-      #
-      # @param [Client] the OAuth2::Client instance
-      # @param [Hash] a hash of AccessToken property values
-      # @return [AccessToken] the initialized AccessToken
-      def from_hash(client, hash)
-        hash = hash.dup
-        new(client, hash.delete('access_token') || hash.delete(:access_token), hash)
-      end
+    public
 
-      # Initializes an AccessToken from a key/value application/x-www-form-urlencoded string
-      #
-      # @param [Client] client the OAuth2::Client instance
-      # @param [String] kvform the application/x-www-form-urlencoded string
-      # @return [AccessToken] the initialized AccessToken
-      def from_kvform(client, kvform)
-        from_hash(client, Rack::Utils.parse_query(kvform))
-      end
-    end
-=end
-
-    # Initialize an AccessToken
+    # Initialize an AccessToken.
     #
-    # @param [Client] client the OAuth2::Client instance
-    # @param [String] token the Access Token value
-    # @param [Hash] opts the options to create the Access Token with
-    # @option opts [String] :refresh_token (nil) the refresh_token value
-    # @option opts [FixNum, String] :expires_in (nil) the number of seconds in which the AccessToken will expire
-    # @option opts [FixNum, String] :expires_at (nil) the epoch time in seconds in which AccessToken will expire
-    # @option opts [Symbol] :mode (:header) the transmission mode of the Access Token parameter value
-    #    one of :header, :body or :query
-    # @option opts [String] :header_format ('Bearer %s') the string format to use for the Authorization header
-    # @option opts [String] :param_name ('access_token') the parameter name to use for transmission of the
-    #    Access Token value in :body or :query transmission mode
+    # @param [Client] client          The OAuth2::Client instance.
+    # @param [String] token           The Access Token value.
+    # @param [Hash]   opts
+    #
+    # @option opts [String]        :refresh_token   The refresh_token value.
+    #
+    # @option opts [FixNum,String] :expires_in      The number of seconds in
+    #                                               which the token will expire
+    #
+    # @option opts [FixNum,String] :expires_at      The epoch time in seconds
+    #                                               which the token will expire
+    #
+    # @option opts [Symbol]        :mode            The transmission mode of
+    #                                               the Access Token parameter
+    #                                               value: :query, :body, or
+    #                                               :header (default).
+    #
+    # @option opts [String]        :header_format   Format of the Authorization
+    #                                               header. Def: 'Bearer %s'.
+    #
+    # @option opts [String]        :param_name      The parameter name to use
+    #                                               for transmission of the
+    #                                               Access Token value in :body
+    #                                               or :query transmission mode
+    #                                               Default: 'access_token'.
+    #
+    # This method overrides:
+    # @see OAuth2::AccessToken#initialize
+    #
     def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
-=begin
-      @client = client
-      @token = token.to_s
-      opts = opts.dup
-      [:refresh_token, :expires_in, :expires_at].each do |arg|
-        instance_variable_set("@#{arg}", opts.delete(arg) || opts.delete(arg.to_s))
-      end
-      @expires_in ||= opts.delete('expires')
-      @expires_in &&= @expires_in.to_i
-      @expires_at &&= @expires_at.to_i
-      @expires_at ||= Time.now.to_i + @expires_in if @expires_in
-      @options = {:mode          => opts.delete(:mode) || :header,
-                  :header_format => opts.delete(:header_format) || 'Bearer %s',
-                  :param_name    => opts.delete(:param_name) || 'access_token'}
-      @params = opts
-=end
       super
       __debug_args("ACCESS_TOKEN #{__method__}", binding) do
         { '@expires_in': @expires_in, '@options': @options }
@@ -106,40 +108,48 @@ module OAuth2
     end
 =end
 
-    # Refreshes the current Access Token
+    # Refreshes the current Access Token.
     #
-    # @return [AccessToken] a new AccessToken
+    # @param [Hash] params            Additional token parameters.
+    #
+    # @return [AccessToken]           A new AccessToken instance.
+    #
     # @note options should be carried over to the new AccessToken
+    #
+    # This method overrides:
+    # @see OAuth2::AccessToken#refresh!
+    #
     def refresh!(params = {})
-=begin
-      raise('A refresh_token is not available') unless refresh_token
-      params[:grant_type] = 'refresh_token'
-      params[:refresh_token] = refresh_token
-      new_token = @client.get_token(params)
-      new_token.options = options
-      new_token.refresh_token = refresh_token unless new_token.refresh_token
-      new_token
-=end
       super.tap do |res|
         __debug { "ACCESS_TOKEN #{__method__} => #{res.inspect}" }
       end
     end
 
 =begin
-    # Convert AccessToken to a hash which can be used to rebuild itself with AccessToken.from_hash
+    # Convert AccessToken to a hash which can be used to rebuild itself with
+    # AccessToken.from_hash.
     #
-    # @return [Hash] a hash of AccessToken property values
+    # @return [Hash]                  A hash of AccessToken property values.
+    #
     def to_hash
-      params.merge(:access_token => token, :refresh_token => refresh_token, :expires_at => expires_at)
+      params.merge(
+        access_token:   token,
+        refresh_token:  refresh_token,
+        expires_at:     expires_at
+      )
     end
 =end
 
-    # Make a request with the Access Token
+    # Make a request using the Access Token.
     #
-    # @param [Symbol] verb the HTTP request method
-    # @param [String] path the HTTP URL path of the request
-    # @param [Hash] opts the options to make the request with
-    # @see Client#request
+    # @param [Symbol] verb            The HTTP request method.
+    # @param [String] path            The URL of the request.
+    # @param [Hash]   opts            @see OAuth2::Client#request.
+    #
+    # @return [OAuth2::Response]
+    #
+    # @see OAuth2::AccessToken#request
+    #
     def request(verb, path, opts = {}, &block)
       configure_authentication!(opts)
       __debug_args("ACCESS_TOKEN #{__method__}", binding)
@@ -147,50 +157,20 @@ module OAuth2
     end
 
 =begin
-    # Make a GET request with the Access Token
+    # Get the headers hash (includes Authorization token).
     #
-    # @see AccessToken#request
-    def get(path, opts = {}, &block)
-      request(:get, path, opts, &block)
-    end
-
-    # Make a POST request with the Access Token
+    # @return [Hash]
     #
-    # @see AccessToken#request
-    def post(path, opts = {}, &block)
-      request(:post, path, opts, &block)
-    end
-
-    # Make a PUT request with the Access Token
-    #
-    # @see AccessToken#request
-    def put(path, opts = {}, &block)
-      request(:put, path, opts, &block)
-    end
-
-    # Make a PATCH request with the Access Token
-    #
-    # @see AccessToken#request
-    def patch(path, opts = {}, &block)
-      request(:patch, path, opts, &block)
-    end
-
-    # Make a DELETE request with the Access Token
-    #
-    # @see AccessToken#request
-    def delete(path, opts = {}, &block)
-      request(:delete, path, opts, &block)
-    end
-=end
-
-=begin
-    # Get the headers hash (includes Authorization token)
     def headers
-      {'Authorization' => options[:header_format] % token}
+      { 'Authorization' => (options[:header_format] % token) }
     end
 =end
 
-  private
+    # =========================================================================
+    # :section: OAuth2::AccessToken overrides
+    # =========================================================================
+
+    private
 
     # configure_authentication!
     #
@@ -205,28 +185,6 @@ module OAuth2
       opts[:params] ||= {}
       opts[:params][:api_key] = @client.id
       super
-=begin
-      case options[:mode]
-        when :header
-          opts[:headers] ||= {}
-          opts[:headers].merge!(headers)
-        when :query
-          opts[:params] ||= {}
-          opts[:params][options[:param_name]] = token
-          opts[:params][:api_key] = @client.options[:client_id]
-        when :body
-          opts[:body] ||= {}
-          if opts[:body].is_a?(Hash)
-            opts[:body][options[:param_name]] = token
-            opts[:body][:api_key] = @client.options[:client_id]
-          else
-            opts[:body] << "&#{options[:param_name]}=#{token}"
-            opts[:body] << "&api_key=#{@client.options[:client_id]}"
-          end
-        else
-          raise("invalid :mode option of #{options[:mode]}")
-      end
-=end
     end
 
   end

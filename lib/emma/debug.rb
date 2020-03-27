@@ -123,6 +123,7 @@ module Emma::Debug
       'request.body':    req.body
     }.each_pair do |item, entry|
       prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
+      # noinspection RubyCaseWithoutElseBlockInspection
       case value
         when Proc   then value = value.call(req)
         when Symbol then value = send(value, req)
@@ -303,6 +304,7 @@ module Emma::Debug
     type   = value.class
     common = DEBUG_INSPECT_COMMON.any? { |cls| (type == cls) || (type < cls) }
     output = (value if common)
+    # noinspection RubyCaseWithoutElseBlockInspection
     output ||=
       case value
         when ActionDispatch::RemoteIp::GetIp then value.to_s

@@ -178,14 +178,14 @@ module OmniAuth
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.
       #
+      # This method overrides:
+      # @see OmniAuth::Strategy#log
+      #
       # == Implementation Note
       # Instead of attempting to  override Configuration#default_logger this
       # override simply manages its own logger instance
       #
       def log(level, message)
-=begin
-        OmniAuth.logger.send(level, "(#{name}) #{message}")
-=end
         @log ||= Log.new(STDERR)
         @log.add(Log.log_level(level)) { "omniauth: (#{name}) #{message}" }
       end
@@ -228,9 +228,10 @@ module OmniAuth
 =begin
       # Responds to an OPTIONS request.
       def options_call
-        OmniAuth.config.before_options_phase.call(env) if OmniAuth.config.before_options_phase
-        verbs = OmniAuth.config.allowed_request_methods.collect(&:to_s).collect(&:upcase).join(', ')
-        [200, {'Allow' => verbs}, []]
+        OmniAuth.config.before_options_phase&.call(env)
+        verbs = OmniAuth.config.allowed_request_methods
+        verbs = verbs.map { |v| v.to_s.upcase }.join(', ')
+        [200, { 'Allow' => verbs }, []]
       end
 =end
 
@@ -284,18 +285,13 @@ module OmniAuth
       end
 
       # Performs the steps necessary to run the callback phase of a strategy.
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#callback_call
+      #
       def callback_call
         __debug("OMNIAUTH #{__method__}")
         super
-=begin
-        setup_phase
-        log :info, 'Callback phase initiated.'
-        @env['omniauth.origin'] = session.delete('omniauth.origin')
-        @env['omniauth.origin'] = nil if env['omniauth.origin'] == ''
-        @env['omniauth.params'] = session.delete('omniauth.params') || {}
-        OmniAuth.config.before_callback_phase.call(@env) if OmniAuth.config.before_callback_phase
-        callback_phase
-=end
       end
 
 =begin
@@ -558,9 +554,6 @@ module OmniAuth
       def call_app!(env = @env)
         __debug_items("OMNIAUTH #{__method__}") { env }
         super
-=begin
-        @app.call(env)
-=end
       end
 
 =begin
@@ -638,16 +631,17 @@ module OmniAuth
 
 =begin
       def fail!(message_key, exception = nil)
-        env['omniauth.error'] = exception
-        env['omniauth.error.type'] = message_key.to_sym
+        env['omniauth.error']          = exception
+        env['omniauth.error.type']     = message_key.to_sym
         env['omniauth.error.strategy'] = self
-
-        if exception
-          log :error, "Authentication failure! #{message_key}: #{exception.class}, #{exception.message}"
-        else
-          log :error, "Authentication failure! #{message_key} encountered."
-        end
-
+        message = "Authentication failure! #{message_key}"
+        message +=
+          if exception
+            ": #{exception.class}, #{exception.message}"
+          else
+            ' encountered.'
+          end
+        log :error, message
         OmniAuth.config.on_failure.call(env)
       end
 =end
@@ -699,6 +693,9 @@ module OmniAuth
       #
       # @return [::OAuth2::Client]
       #
+      # This method overrides:
+      # @see OmniAuth::Strategies::OAuth2#client
+      #
       def client
         @client ||=
           ::OAuth2::Client.new(
@@ -732,6 +729,8 @@ module OmniAuth
 
       # authorize_params
       #
+      # @return [Hash]
+      #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#authorize_params
       #
@@ -739,19 +738,11 @@ module OmniAuth
         super.tap do |result|
           __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
         end
-=begin
-        options.authorize_params[:state] = SecureRandom.hex(24)
-        options.authorize_params.merge(options_for('authorize')).tap do |params|
-          if OmniAuth.config.test_mode
-            @env ||= {}
-            @env['rack.session'] ||= {}
-          end
-          session['omniauth.state'] = params[:state]
-        end
-=end
       end
 
       # token_params
+      #
+      # @return [Hash]
       #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#token_params
@@ -760,9 +751,6 @@ module OmniAuth
         super.tap do |result|
           __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
         end
-=begin
-        options.token_params.merge(options_for('token'))
-=end
       end
 
       # callback_phase
@@ -888,20 +876,20 @@ module OmniAuth
       #
       # @param [String] id            User ID.
       #
-      # @return [::OAuth2::AccessToken]
+      # @return [OAuth2::AccessToken]
       # @return [nil]                 If *id* is not valid.
       #
       def configured_access_token(id)
         abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
         hash = CONFIGURED_AUTH[id]
-        ::OAuth2::AccessToken.from_hash(client, hash) if hash.present?
+        OAuth2::AccessToken.from_hash(client, hash) if hash.present?
       end
 
       # configured_auth_hash
       #
       # @param [String] id            Bookshare user identity (email address).
       #
-      # @return [OmniAuth::AccessToken]
+      # @return [OmniAuth::AuthHash]
       # @return [nil]                 If *id* is not valid.
       #
       def configured_auth_hash(id)
@@ -930,7 +918,7 @@ module OmniAuth
       #
       # @param [String] id            Bookshare user identity (email address).
       #
-      # @return [OmniAuth::AccessToken]
+      # @return [OmniAuth::AuthHash]
       #
       def self.configured_auth_hash(id)
         abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
