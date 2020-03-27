@@ -248,10 +248,10 @@ module OmniAuth
 
         # Store query params to be passed back via #callback_call.
         session['omniauth.params'] = request.get? ? request.GET : request.POST
-        __debug_line(dbg, "method  = #{request.request_method}")
-        __debug_line(dbg, "options = #{options.inspect}")
-        __debug_line(dbg, "session = #{session.inspect}")
         OmniAuth.config.before_request_phase&.call(env)
+        __debug_items(dbg, "#{request.request_method}") do
+          { options: options, session: __debug_session_hash }
+        end
 
         if current_user
           log :info, 'By-passing request_phase.'
@@ -369,10 +369,11 @@ module OmniAuth
 
         # Store query params from the request URL extracted in #callback_phase.
         session['omniauth.params'] = request.get? ? request.GET : request.POST
-        __debug_line(dbg, "method  = #{request.request_method}")
-        __debug_line(dbg, "options = #{options.inspect}")
-        __debug_line(dbg, "session = #{session.inspect}")
         OmniAuth.config.before_request_phase&.call(env)
+
+        __debug_items(dbg, "#{request.request_method}") do
+          { options: options, session: __debug_session_hash }
+        end
 
         org = request.params[options.origin_param]
         ref = env['HTTP_REFERER']

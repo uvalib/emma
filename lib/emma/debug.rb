@@ -99,30 +99,33 @@ module Emma::Debug
   # @param [Proc]  block              Passed to #__debug_items.
   #
   # args[0]  [Symbol]                 Calling method (def: `#calling_method`).
-  # args[-1] [Hash]                   Options passed to #__debug.
+  # args[-1] [Hash]                   Options passed to #__debug except for:
+  #
+  # @option args.last [ActionDispatch::Request] :req  Default: `#request`.
   #
   # @return [nil]
   #
   def __debug_request(*args, &block)
-    opt = args.extract_options!
+    opt = args.last.is_a?(Hash) ? args.last.dup : {}
+    req = opt.delete(:req) || request
     unless opt.key?(:leader)
       meth = args.first.is_a?(Symbol) ? args.shift : calling_method
-      opt  = opt.merge(leader: "-- #{meth}")
+      opt[:leader] = "-- #{meth}"
     end
     count = 80
     count -= opt[:leader].size + 1 if opt[:leader]
     {
-      session:           ['SESSION', session.to_hash],
-      'request.env':     ['ENV',     :__debug_env],
-      'request.headers': ['HEADER',  :__debug_headers],
-      'request.cookies': ['COOKIE',  request.cookies],
-      'rack.input':      request.headers['rack.input'],
-      'request.body':    request.body
+      session:           ['SESSION', :__debug_session_hash],
+      'request.env':     ['ENV',     :__debug_env_hash],
+      'request.headers': ['HEADER',  :__debug_header_hash],
+      'request.cookies': ['COOKIE',  req.cookies],
+      'rack.input':      req.headers['rack.input'],
+      'request.body':    req.body
     }.each_pair do |item, entry|
       prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
       case value
-        when Proc   then value = value.call(request)
-        when Symbol then value = send(value, request)
+        when Proc   then value = value.call(req)
+        when Symbol then value = send(value, req)
       end
       lines = __debug_inspect_item(value, opt)
       lines.map! { |line| "[#{prefix}] #{line}" } if prefix
@@ -181,6 +184,66 @@ module Emma::Debug
     opt = args.extract_options!
     items = block ? __debug_inspect_items(opt, &block) : []
     __debug(*args, *items, opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # __debug_session_hash
+  #
+  # @param [Hash, ActionDispatch::Request, ActionDispatch::Request::Session] value
+  #
+  # @return [Hash, nil]
+  #
+  # noinspection RubyNilAnalysis
+  def __debug_session_hash(value = nil)
+    value ||= request       if respond_to?(:request)
+    value   = value.session if value.respond_to?(:session)
+    value ||= session       if respond_to?(:session)
+    if value.respond_to?(:to_hash)
+      value.to_hash
+    elsif value.respond_to?(:each)
+      Hash.new.tap { |result| value.each { |k, v| result[k] = v } }
+    end
+  end
+
+  # __debug_env_hash
+  #
+  # @param [Hash, ActionDispatch::Request] value
+  #
+  # @return [Hash, nil]
+  #
+  def __debug_env_hash(value = nil)
+    value ||= request
+    value = value.env if value.respond_to?(:env)
+    value&.to_hash&.sort&.to_h
+  end
+
+  # __debug_header_hash
+  #
+  # @param [Hash, ActionDispatch::Request, ActionDispatch::Response] value
+  #
+  # @return [Hash, nil]
+  #
+  def __debug_header_hash(value = nil)
+    value ||= request
+    value = value.headers if value.respond_to?(:headers)
+    if value.respond_to?(:to_hash)
+      value.to_hash
+    elsif value.respond_to?(:each)
+      Hash.new.tap do |result|
+        value.each do |k, v|
+          next unless (k = k.to_s) =~ /^[A-Z0-9_]+$/
+          next if ActionDispatch::Http::Headers::CGI_VARIABLES.include?(k)
+          k = k.delete_prefix('HTTP_').downcase
+          k = k.split('_').map(&:camelize).join('-')
+          result[k] = v
+        end
+      end
+    end
   end
 
   # ===========================================================================
@@ -294,42 +357,6 @@ module Emma::Debug
     opt = opt ? args.pop : {}
     args += Array.wrap(yield) if block_given?
     args.flat_map { |arg| __debug_inspect_item(arg, opt) }
-  end
-
-  # __debug_env
-  #
-  # @param [Hash, ActionDispatch::Request] value
-  #
-  # @return [Hash, nil]
-  #
-  def __debug_env(value = nil)
-    value ||= request
-    env = value.is_a?(ActionDispatch::Request) ? value.env : value
-    env&.to_hash&.sort&.to_h
-  end
-
-  # __debug_headers
-  #
-  # @param [Hash, ActionDispatch::Request, ActionDispatch::Response] value
-  #
-  # @return [Hash, nil]
-  #
-  def __debug_headers(value = nil)
-    value ||= request
-    hdrs = value.is_a?(ActionDispatch::Request) ? value.headers : value
-    if hdrs.respond_to?(:to_hash)
-      hdrs.to_hash
-    elsif hdrs.respond_to?(:each)
-      result = {}
-      hdrs.each do |k, v|
-        next unless (k = k.to_s) =~ /^[A-Z0-9_]+$/
-        next if ActionDispatch::Http::Headers::CGI_VARIABLES.include?(k)
-        k = k.delete_prefix('HTTP_').downcase
-        k = k.split('_').map(&:camelize).join('-')
-        result[k] = v
-      end
-      result
-    end
   end
 
   # ===========================================================================

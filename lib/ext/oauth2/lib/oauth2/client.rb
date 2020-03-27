@@ -150,21 +150,20 @@ module OAuth2
     #
     def request(verb, url, opts = {}, &block)
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
+      parse = opts[:parse] ||= :automatic
       body  = opts[:body]
       body  = opts[:body] = url_query(body) if body.is_a?(Hash)
       hdrs  = opts[:headers]
-      parse = opts[:parse] ||= :automatic
       prms  = opts[:params]
-=begin
-      if (redir = opts.dig(:params, 'redirect_uri'))
-        prms = opts[:params] = prms.merge('redirect_uri' => url_escape(redir))
-      end
-=end
-      url      = connection.build_url(url, prms).to_s
-      response = connection.run_request(verb, url, body, hdrs, &block)
-      __debug_line(dbg, 'RESPONSE', response) do
-        { status: response&.status, body: response&.body }
-      end
+      url   = connection.build_url(url).to_s
+
+      response =
+        connection.run_request(verb, url, body, hdrs) do |req|
+          req.params.update(prms) if prms.present?
+          __debug_line(dbg, verb.to_s.upcase, url, req.params)
+          yield(req) if block_given?
+        end
+      __debug_line(dbg, 'RESPONSE', response)
       response = Response.new(response, parse: parse)
 
       case response.status
