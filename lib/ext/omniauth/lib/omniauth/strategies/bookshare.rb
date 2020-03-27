@@ -363,25 +363,27 @@ module OmniAuth
       # @see OmniAuth::Strategy#mock_request_call
       #
       def mock_request_call
+        __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         setup_phase
         log :info, 'MOCK - Request phase initiated.'
 
         # Store query params from the request URL extracted in #callback_phase.
         session['omniauth.params'] = request.get? ? request.GET : request.POST
-        $stderr.puts "OMNIAUTH #{__method__} | method  = #{request.request_method}"
-        $stderr.puts "OMNIAUTH #{__method__} | options = #{options.inspect}"
-        $stderr.puts "OMNIAUTH #{__method__} | omniauth.params = #{session['omniauth.params'].inspect}"
-        $stderr.puts "OMNIAUTH #{__method__} | session = #{session.to_hash.inspect}"
+        __debug_line(dbg, "method  = #{request.request_method}")
+        __debug_line(dbg, "options = #{options.inspect}")
+        __debug_line(dbg, "session = #{session.inspect}")
         OmniAuth.config.before_request_phase&.call(env)
 
-        if (op = options.origin_param) && (org = request.params[op])
-          log :info, "OMNIAUTH #{__method__} | origin from request.params"
-          env['rack.session']['omniauth.origin'] = org
-        elsif (ref = env['HTTP_REFERER']) && !ref.end_with?(request_path)
-          log :info, "OMNIAUTH #{__method__} | origin from HTTP_REFERER"
-          env['rack.session']['omniauth.origin'] = ref
+        org = request.params[options.origin_param]
+        ref = env['HTTP_REFERER']
+        ref = nil if ref&.end_with?(request_path)
+        if org || ref
+          log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
+          env['rack.session']['omniauth.origin'] = org || ref
         end
-        $stderr.puts "OMNIAUTH #{__method__} | env['rack.session']['omniauth.origin'] = #{env['rack.session']['omniauth.origin'].inspect}"
+        __debug_line(dbg) do
+          "env['rack.session']['omniauth.origin'] = #{(org || ref).inspect}"
+        end
         redirect(callback_url)
       end
 =end
