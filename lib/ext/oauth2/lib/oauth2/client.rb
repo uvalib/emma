@@ -154,16 +154,11 @@ module OAuth2
       body  = opts[:body] = url_query(body) if body.is_a?(Hash)
       hdrs  = opts[:headers]
       parse = opts[:parse] ||= :automatic
-
-      url = connection.build_url(url, opts[:params]).to_s # TODO: keep?
-      #url = connection.build_url(url).to_s # TODO: remove?
-=begin
-      response =
-        connection.run_request(verb, url, opts[:body], opts[:headers]) do |req|
-          #req.params.update(opts[:params]) if opts[:params] # TODO: remove?
-          yield(req) if block_given?
-        end
-=end
+      prms  = opts[:params]
+      if (redir = opts.dig(:params, 'redirect_uri'))
+        prms = opts[:params] = prms.merge('redirect_uri' => url_escape(redir))
+      end
+      url      = connection.build_url(url, prms).to_s
       response = connection.run_request(verb, url, body, hdrs, &block)
       __debug_line(dbg, 'RESPONSE', response) do
         { status: response&.status, body: response&.body }
@@ -218,8 +213,7 @@ module OAuth2
     #
     def get_token(params, access_token_opts = {}, access_token_class = AccessToken) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
-      access_token_opts['client_id'] ||= id
-      super(params, access_token_opts, access_token_class).tap do |result|
+      super.tap do |result|
         __debug { "#{dbg} => #{result.inspect}" }
       end
 =begin

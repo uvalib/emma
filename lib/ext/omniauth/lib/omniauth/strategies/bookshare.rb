@@ -721,8 +721,6 @@ module OmniAuth
         dbg  = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
         __debug(dbg)
         code = client.auth_code
-        ##prms = authorize_params.reverse_merge(redirect_uri: callback_url)
-        #prms = authorize_params.reverse_merge('redirect_uri' => callback_url)
         prms = authorize_params
         url  = code.authorize_url(prms)
         __debug { "#{dbg} => authorize_url = #{url.inspect}" }
@@ -846,14 +844,13 @@ module OmniAuth
       def build_access_token
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         code = request.params['code']
-        opts = deep_symbolize(options.auth_token_params)
         prms = token_params.to_hash(symbolize_keys: true)
-        ##prms[:redirect_uri] ||= url_escape(callback_url)
-        #prms['redirect_uri'] ||= url_escape(callback_url)
+        opts = deep_symbolize(options.auth_token_params)
         client.auth_code.get_token(code, prms, opts)
           .tap { |result| __debug { "#{dbg} => #{result.inspect}" } }
       end
 
+=begin
       # options_for
       #
       # @param [String, Symbol] option
@@ -867,6 +864,7 @@ module OmniAuth
         option_keys = options[:"#{option}_options"]
         options.slice(*option_keys).symbolize_keys
       end
+=end
 
       # =======================================================================
       # :section:
