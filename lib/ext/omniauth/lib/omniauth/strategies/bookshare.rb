@@ -703,7 +703,7 @@ module OmniAuth
             options.client_secret,
             deep_symbolize(options.client_options)
           ).tap do |result|
-            result.options[:redirect_uri] ||= callback_url
+            result.options[:redirect_uri] ||= callback_url.sub(/\?.*/, '')
             __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
           end
       end
