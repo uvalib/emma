@@ -10,25 +10,17 @@
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
 FROM ruby:2.6.3-alpine
-RUN apk update && \
-    apk upgrade && \
-    apk add --update --no-cache \
+RUN apk upgrade && \
+    apk add --no-cache \
     bash \
     build-base \
-    g++ \
-    gcc \
     gcompat \
     git \
-    libc-dev \
-    libffi-dev \
-    libxml2 \
     libxslt-dev \
-    make \
     mariadb-dev \
     nodejs \
     tzdata \
-    yarn \
-    && rm -rf /var/cache/apk/*
+    yarn
 
 # =============================================================================
 # System setup
@@ -55,31 +47,30 @@ RUN ln -snf "/usr/share/zoneinfo/$TZ" /etc/localtime && \
 
 ENV HOME=/home/$USER \
     APP_HOME=/emma \
-    RAILS_ENV=production \
-    BUNDLER_VERSION=2.1.4
+    RAILS_ENV=production
+
+# Change to the application directory.
+WORKDIR $APP_HOME
 
 # To avoid installing documentation for gems.
-COPY storage/gemrc $HOME/.gemrc
+ADD storage/gemrc         $HOME/.gemrc
+ADD storage/bundle-config $HOME/.bundle/config
 
-# Update bundler if needed.
-RUN gem list --silent --installed --exact bundler -v "$BUNDLER_VERSION" || \
-    gem install bundler -v "$BUNDLER_VERSION"; \
-    bundle config set no-cache true
-
-# Install required gems.
-COPY Gemfile Gemfile.lock /tmp/
-WORKDIR /tmp
-RUN bundle install --jobs 6 --retry 2 --without development test
+# Update bundler if needed then install required gems.
+ADD Gemfile Gemfile.lock  ./
+RUN BUNDLER_VERSION=`tail -1 Gemfile.lock | tr -d ' '`; \
+    gem list --silent --installed --exact bundler -v "$BUNDLER_VERSION" || \
+    gem install bundler -v "$BUNDLER_VERSION" && \
+    bundle install
 
 # Create work directory and copy the application to it.
-WORKDIR $APP_HOME
 ADD . $APP_HOME
 
 # Generate the assets.
 RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 # Update permissions on the application and user home directory.
-RUN chown -R $USER:$GROUP $HOME $APP_HOME
+RUN chown -R $USER:$GROUP $APP_HOME
 
 # Add the build tag.
 ARG BUILD_TAG=0

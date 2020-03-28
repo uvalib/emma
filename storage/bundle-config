@@ -1,0 +1,9 @@
+# storage/bundle-config
+#
+# The Dockerfile copies this to $HOME/.bundle-config in order to control the
+# operation of bundler.
+
+---
+BUNDLE_RETRY:   "2"
+BUNDLE_JOBS:    "6"
+BUNDLE_WITHOUT: "development:test"

@@ -1,6 +1,10 @@
 # storage/gemrc
 #
-# The Dockerfile copies this to $HOME/.gemrc in order to control how bundler
-# installs gems.
+# The Dockerfile copies this to $HOME/.gemrc in order to control how gems are
+# installed.
+#
+# @see https://guides.rubygems.org/command-reference/#gem-environment
 
-gem: --no-ri --no-rdoc
+---
+:verbose: false
+gem: --no-document

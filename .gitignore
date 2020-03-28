@@ -160,6 +160,7 @@ tags
 # === File uploaded in development
 /storage/
 !/storage/.keep
+!/storage/bundle-config
 !/storage/gemrc
 
 # === local environment configuration files
