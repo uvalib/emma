@@ -284,9 +284,6 @@ module OAuth2
     # @see OAuth2::Client#password
     #
     def password
-=begin
-      @password ||= OAuth2::Strategy::Password.new(self)
-=end
       super.tap do |result|
         __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
       end
