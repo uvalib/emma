@@ -59,9 +59,10 @@ module Api::Record::Schema
     # block supplied to the method.
     #
     # In addition, class-specific serializers are created using these data
-    # element definitions.
+    # element definitions by also executing the provided block.
     #
-    # @param [Array<Symbol>, nil] serializer_types
+    # @param [Array<Symbol>] serializer_types
+    # @param [Proc]          block
     #
     # @return [Hash{Symbol=>Api::Serializer}]
     #

@@ -40,7 +40,7 @@ class Api::Error < RuntimeError
 
   # Initialize a new instance.
   #
-  # @param [Array<Faraday::Response, Exception, Integer, String>] args
+  # @param [Array<Faraday::Response, Exception, Integer, String, true>] args
   #
   def initialize(*args)
     error_message = @http_status = @exception = @response = nil
@@ -50,6 +50,7 @@ class Api::Error < RuntimeError
         when Exception         then @exception = arg
         when Integer           then @http_status = arg
         when String            then error_message = arg
+        when true              then # Use default error message.
         when nil               then # Ignore nils silently.
         else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
       end

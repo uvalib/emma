@@ -185,14 +185,14 @@ module ApiExplorerConcern
 
     # run_trials
     #
-    # @param [Hash{Symbol=>Hash}, nil] methods  Default: `#trial_methods`.
     # @param [User, nil]               user
+    # @param [Hash{Symbol=>Hash}, nil] methods  Default: `#trial_methods`.
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def self.run_trials(methods = nil, user: nil)
+    def self.run_trials(user: nil, methods: nil)
       service = BookshareService.new(user: user, no_raise: true)
-      methods ||= trial_methods(service: service)
+      methods = trial_methods(service: service) if methods.blank?
       methods.map { |method, opts|
         param = opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
         value = service.send(method, **opts)

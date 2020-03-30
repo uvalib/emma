@@ -53,10 +53,10 @@ module Emma::Log
   # @param [Integer, Symbol, nil]           severity
   # @param [Array<String,Symbol,Exception>] args
   #
-  # @yield Supplies additional parts to the log entry.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [nil]
+  #
+  # @yield To supply additional parts to the log entry.
+  # @yieldreturn [String, Array<String>]
   #
   # == Usage Notes
   # This method always returns *nil* so that it can be used by itself as the
@@ -90,7 +90,8 @@ module Emma::Log
 
   # Add a DEBUG-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args
+  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
+  # @param [Proc]                           block   Passed to #add.
   #
   # @return [nil]
   #
@@ -100,7 +101,8 @@ module Emma::Log
 
   # Add an INFO-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args
+  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
+  # @param [Proc]                           block   Passed to #add.
   #
   # @return [nil]
   #
@@ -110,7 +112,8 @@ module Emma::Log
 
   # Add a WARN-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args
+  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
+  # @param [Proc]                           block   Passed to #add.
   #
   # @return [nil]
   #
@@ -120,7 +123,8 @@ module Emma::Log
 
   # Add an ERROR-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args
+  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
+  # @param [Proc]                           block   Passed to #add.
   #
   # @return [nil]
   #
@@ -130,7 +134,8 @@ module Emma::Log
 
   # Add a FATAL-level log message.
   #
-  # @param [Array<String,Symbol,Exception>] args
+  # @param [Array<String,Symbol,Exception>] args    Passed to #add.
+  # @param [Proc]                           block   Passed to #add.
   #
   # @return [nil]
   #
@@ -275,17 +280,16 @@ module Emma::Log
 
   # Silences the logger for the duration of the block.
   #
-  # @param [Integer, Symbol, String] temporary_level
+  # @param [Integer, Symbol, String] tmp_level Passed to LoggerSilence#silence.
+  # @param [Proc]                    block     Passed to LoggerSilence#silence.
   #
-  # @see LoggerSilence#silence
-  #
-  def self.silence(temporary_level = ERROR, &block)
+  def self.silence(tmp_level = ERROR, &block)
     if silenced?
       block.call
     else
       self.silenced = true
-      temporary_level = log_level(temporary_level)
-      logger.silence(temporary_level, &block).tap { self.silenced = false }
+      tmp_level = log_level(tmp_level)
+      logger.silence(tmp_level, &block).tap { self.silenced = false }
     end
   end
 
@@ -293,6 +297,7 @@ module Emma::Log
   #
   # @param [Symbol] method
   # @param [Array]  args
+  # @param [Proc]   block
   #
   def self.method_missing(method, *args, &block)
     logger.send(method, *args, &block)

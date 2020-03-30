@@ -62,7 +62,7 @@ class Bs::Message::TitleMetadataSummary < Bs::Api::Message
     attribute :isbn13,            String
     has_many  :languages,         String
     has_many  :links,             Bs::Record::Link
-    has_many  :lyricists,         Bs::Record::Name           # NOTE: deprecated
+    has_many  :lyricists,         Bs::Record::Name          # NOTE: deprecated
     attribute :publishDate,       IsoDate
     attribute :readingAgeMaximum, Integer
     attribute :readingAgeMinimum, Integer

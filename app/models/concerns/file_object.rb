@@ -26,7 +26,7 @@ class FileObject
   # @param [String, StringIO, IO] handle
   # @param [FileProperties, Hash] opt
   #
-  def initialize(handle, **opt)
+  def initialize(handle, opt = nil)
     set_file_attributes(opt)
     case handle
       when StringIO then @file_handle = handle

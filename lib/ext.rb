@@ -21,14 +21,6 @@ public
 #
 IMPLEMENT_OVERRIDES = env('IMPLEMENT_OVERRIDES', true)
 
-# This constant is defined to mark sections of code that are present only to
-# give context information to RubyMine -- for example, "include" statements
-# which allow RubyMine to indicate which methods are overrides.
-#
-# (This constant is required to be a non-false value.)
-#
-ONLY_FOR_DOCUMENTATION = true
-
 # =============================================================================
 # Loader methods
 # =============================================================================
@@ -79,11 +71,11 @@ def override(mod, mod2 = nil, &block)
   overrides =
     if mod.is_a?(Hash)
       # One or more override mappings.
-      errors << 'block invalid'    if block_given?
+      errors << 'block invalid'    if block
       errors << "#{mod2}: invalid" if mod2.present?
       mod
 
-    elsif block_given?
+    elsif block
       # Override definitions from a block.
       errors << "#{mod2}: invalid" if mod2.present?
       { mod => Module.new(&block) }

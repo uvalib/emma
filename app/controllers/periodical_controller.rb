@@ -152,7 +152,7 @@ class PeriodicalController < ApplicationController
   #
   def show_values(as: nil)
     result = { details: @item, editions: @list }
-    { periodical: super(**result, as: as) }
+    { periodical: super(result, as: as) }
   end
 
 end

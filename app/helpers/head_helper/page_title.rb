@@ -53,11 +53,11 @@ module HeadHelper::PageTitle
   # the title; otherwise this invocation is being used to emit the "<title>"
   # element.
   #
-  # @yield Supplies value(s) to #set_page_title.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
+  #
+  # @yield To supply value(s) to #set_page_title.
+  # @yieldreturn [String, Array<String>]
   #
   def page_title
     if block_given?
@@ -71,10 +71,10 @@ module HeadHelper::PageTitle
   #
   # @param [Array] values
   #
-  # @yield Supplies additional values to @page_title.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_title contents.
+  #
+  # @yield To supply additional values to @page_title.
+  # @yieldreturn [String, Array<String>]
   #
   def set_page_title(*values)
     @page_title = []
@@ -87,10 +87,10 @@ module HeadHelper::PageTitle
   #
   # @param [Array] values
   #
-  # @yield Supplies additional values to @page_title.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_title contents.
+  #
+  # @yield To supply additional values to @page_title.
+  # @yieldreturn [String, Array<String>]
   #
   def append_page_title(*values)
     @page_title ||= []

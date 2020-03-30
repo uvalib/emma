@@ -47,7 +47,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo(item, **opt)
+  def repository_source_logo(item, opt = nil)
     opt, html_opt = partition_options(opt, :source, :name, :logo)
     src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
     name = opt[:name] || repository_name(src)
@@ -58,7 +58,7 @@ module LogoHelper
       # noinspection RubyYardReturnMatch
       image_tag(asset_path(logo), html_opt)
     else
-      repository_source(src, **html_opt.merge!(source: src, name: name))
+      repository_source(src, html_opt.merge!(source: src, name: name))
     end
   end
 
@@ -72,7 +72,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source(item, **opt)
+  def repository_source(item, opt = nil)
     opt, html_opt = partition_options(opt, :source, :name)
     src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
     name = opt[:name] || repository_name(src)

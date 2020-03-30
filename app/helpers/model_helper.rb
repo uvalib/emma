@@ -71,11 +71,11 @@ module ModelHelper
   # @option opt [String, Symbol] :scope
   # @option opt [String, Symbol] :controller
   #
-  # @yield [terms] Supplies a path based on *terms* to use instead of *path*.
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [terms] To supply a path based on *terms* to use instead of *path*.
   # @yieldparam  [String] terms
   # @yieldreturn [String]
-  #
-  # @return [ActiveSupport::SafeBuffer]
   #
   def item_link(item, **opt)
     opt, html_opt = partition_options(opt, *ITEM_LINK_OPTIONS)
@@ -84,7 +84,7 @@ module ModelHelper
     if opt[:no_link]
       content_tag(:span, label, html_opt)
     else
-      path = opt[:path] || opt[:path_method] || yield(label)
+      path = (yield(label) if block_given?) || opt[:path] || opt[:path_method]
       path = path.call(item, label) if path.is_a?(Proc)
       unless (html_opt[:title] ||= opt[:tooltip])
         scope = opt[:scope] || opt[:controller]
@@ -93,7 +93,7 @@ module ModelHelper
         html_opt[:title] = I18n.t(scope, default: '')
       end
       # noinspection RubyYardParamTypeMatch
-      make_link(label, path, html_opt)
+      make_link(label, path, **html_opt)
     end
   end
 
@@ -238,7 +238,7 @@ module ModelHelper
     path = url_for(search)
 
     # noinspection RubyYardParamTypeMatch
-    make_link(label, path, html_opt)
+    make_link(label, path, **html_opt)
   end
 
   # Create record links to an external target or via the internal API interface
@@ -262,7 +262,7 @@ module ModelHelper
       next if link.blank?
       path = (api_explorer_url(link) unless no_link)
       if path.present? && !path.match?(/[{}]/)
-        make_link(link, path, html_opt)
+        make_link(link, path, **html_opt)
       else
         content_tag(:div, link, class: 'non-link')
       end
@@ -284,11 +284,11 @@ module ModelHelper
   # @param [Model]     item
   # @param [Hash, nil] pairs
   #
-  # @yield [item] Supplies additional field/value pairs based on *item*.
+  # @return [Hash{Symbol=>String}]
+  #
+  # @yield [item] To supply additional field/value pairs based on *item*.
   # @yieldparam  [Model] item         The supplied *item* parameter.
   # @yieldreturn [Hash]               Result will be merged into *pairs*.
-  #
-  # @return [Hash{Symbol=>String}]
   #
   def field_values(item, pairs = nil)
     if block_given?
@@ -594,14 +594,14 @@ module ModelHelper
   #                                     is produced rather than '<h1>', etc.
   # @option opt [Object]  :skip       Ignored.
   #
-  # @yield [index,offset] Generate additional parts within .number element.
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [index,offset] To supply additional parts within .number element.
   # @yieldparam  [Integer] index      The effective index number.
   # @yieldparam  [Integer] offset     The effective page offset.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def list_entry_number(item, **opt)
+  def list_entry_number(item, opt = nil)
     opt, html_opt = partition_options(opt, *ITEM_ENTRY_OPT)
     return unless item && opt[:index]
     index  = non_negative(opt[:index])

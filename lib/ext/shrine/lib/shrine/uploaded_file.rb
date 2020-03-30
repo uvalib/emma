@@ -54,7 +54,7 @@ class Shrine
     # @return [Hash{Symbol=>*}]
     #
     def extract_file_metadata
-      fmt_class = fmt_instance = fmt_parser = fmt_metadata = mime = fmt = nil
+      fmt_class = fmt_instance = fmt_parser = mime = fmt = nil
       ext  = extension
       mime = ext_to_mime(ext)  || mime_type
       fmt  = mime_to_fmt(mime) || ext_to_fmt(ext)

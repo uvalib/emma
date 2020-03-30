@@ -76,7 +76,7 @@ module SearchService::Common
 =begin
     args.unshift(API_VERSION) unless args.first == API_VERSION
 =end
-    @action = args.join('/').strip.prepend('/').squeeze('/') #.prepend(base_url)
+    @action = args.join('/').strip.prepend('/').squeeze('/')
 
     # Determine whether the HTTP method indicates a write rather than a read
     # and prepare the HTTP headers accordingly then send the API request.
@@ -90,12 +90,12 @@ module SearchService::Common
       params  = build_query_options(@params)
       headers = {}
     end
-    __debug_line(leader: '>>>') {
+    __debug_line(leader: '>>>') do
       %w(search) << @action.inspect <<
         { params: params, headers: headers }.transform_values { |v|
           v.inspect if v.present?
         }.compact
-    }
+    end
     @response = transmit(@verb, @action, params, headers, **opt)
 
   rescue Search::Error => error
@@ -106,16 +106,16 @@ module SearchService::Common
     error = SearchService::ResponseError.new(error)
 
   ensure
-    __debug_line(leader: '<<<') {
+    __debug_line(leader: '<<<') do
       # noinspection RubyNilAnalysis
       resp   = error.respond_to?(:response) && error.response || @response
       status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
       data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
       %w(search) << @action.inspect <<
-        { status: status, data: data }.transform_values { |v|
+        { status: status, data: data }.transform_values do |v|
           v.inspect.truncate(256)
-        }
-    }
+        end
+    end
     @response  = nil   if error
     @exception = error unless no_exception
     raise @exception   if @exception unless no_raise
@@ -143,9 +143,9 @@ module SearchService::Common
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'
     message = error.message.inspect
-    __debug_line(leader: '!!!') {
+    __debug_line(leader: '!!!') do
       %w(search) << action.inspect << message << error.class
-    }
+    end
     level  = error.is_a?(Search::Error) ? Log::WARN : Log::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }
     status = status ? error.send(status).inspect : '???'

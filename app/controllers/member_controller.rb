@@ -153,7 +153,7 @@ class MemberController < ApplicationController
   #
   def show_values(as: nil)
     result = { details: @item, preferences: @preferences, history: @history }
-    { member: super(**result, as: as) }
+    { member: super(result, as: as) }
   end
 
 end

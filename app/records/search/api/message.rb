@@ -25,10 +25,11 @@ class Search::Api::Message < Search::Api::Record
   # This method overrides:
   # @see Search::Api::Record#initialize
   #
-  def initialize(data, **opt)
-    create_message do
+  def initialize(data, opt = nil)
+    # noinspection RubyScope
+    create_message_wrapper(opt) do |opt|
       initialize_attributes
-      super(data, **opt)
+      super(data, opt)
     end
   end
 

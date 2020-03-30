@@ -405,8 +405,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def upload_details(item, **opt)
-    item_details(item, :upload, UPLOAD_SHOW_FIELDS.merge(opt))
+  def upload_details(item, opt = nil)
+    pairs = UPLOAD_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :upload, pairs)
   end
 
   # ===========================================================================
@@ -422,8 +423,9 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_list_entry(item, **opt)
-    item_list_entry(item, :upload, UPLOAD_INDEX_FIELDS.merge(opt))
+  def upload_list_entry(item, opt = nil)
+    pairs = UPLOAD_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :upload, pairs)
   end
 
   # Include control icons below the entry number.
@@ -435,8 +437,8 @@ module UploadHelper
   #
   # @see ModelHelper#list_entry_number
   #
-  def upload_list_entry_number(item, **opt)
-    list_entry_number(item, **opt) do
+  def upload_list_entry_number(item, opt = nil)
+    list_entry_number(item, opt) do
       upload_entry_icons(item)
     end
   end

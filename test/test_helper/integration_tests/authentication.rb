@@ -136,10 +136,10 @@ module TestHelper::IntegrationTests::Authentication
   #
   # @option opt [Symbol] :expect      Expected result regardless of the user.
   #
+  # @return [void]
+  #
   # @yield The caller may provide added assertions or other post-send actions.
   # @yieldreturn [void]
-  #
-  # @return [void]
   #
   def send_as(verb, user, url, **opt)
     as_user_opt, assert_opt = partition_options(opt, *RUN_TEST_OPT)

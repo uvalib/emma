@@ -63,7 +63,7 @@ module LayoutHelper::Common
   #
   def toggle_button(**opt)
     opt, html_opt = partition_options(opt, :label, :selector)
-    label = opt[:label] ? non_breaking( opt[:label]) : PANEL_OPENER_LABEL
+    label = opt[:label] ? non_breaking(opt[:label]) : PANEL_OPENER_LABEL
     prepend_css_classes!(html_opt, 'toggle')
     if (selector = opt[:selector])
       html_opt.deep_merge!(data: { selector: selector })
@@ -109,11 +109,11 @@ module LayoutHelper::Common
   # @param [Symbol, String] type
   # @param [Hash]           opt       Passed to #form_tag.
   #
-  # @yield Supplies additional field(s) for the <form>.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If search is not available for *type*.
+  #
+  # @yield To supply additional field(s) for the <form>.
+  # @yieldreturn [String, Array<String>]
   #
   def search_form(id, type, **opt)
     return if (path = search_target(type)).blank?

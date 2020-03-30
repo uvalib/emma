@@ -50,6 +50,7 @@ module OAuth2
     # @param [String] client_id
     # @param [String] client_secret
     # @param [Hash]   options
+    # @param [Proc]   block           @see OAuth2::Client#initialize
     #
     # @option options [String]  :site             The OAuth2 provider site host
     #
@@ -82,8 +83,6 @@ module OAuth2
     # @option options [Boolean] :raise_errors     If *false*, 400+ response
     #                                             statuses do not raise
     #                                             OAuth2::Error.
-    #
-    # @yield [builder] The Faraday connection builder.
     #
     # This method overrides:
     # @see OAuth2::Client#initialize
@@ -148,10 +147,6 @@ module OAuth2
 
     # Makes a request relative to the specified site root.
     #
-    # @yield [req] Gives access to the request before it is transmitted.
-    # @yieldparam [Faraday::Request] req  The Faraday request.
-    # @yieldreturn [void]                 The block should access *req*.
-    #
     # @param [Symbol] verb                One of :get, :post, :put, :delete.
     # @param [String] url                 URL path of request.
     # @param [Hash]   opts                The options to make the request with.
@@ -165,6 +160,10 @@ module OAuth2
     # @option opts [Symbol]       :parse    @see Response#initialize
     #
     # @return [OAuth2::Response]
+    #
+    # @yield [req] Gives access to the request before it is transmitted.
+    # @yieldparam [Faraday::Request] req  The Faraday request.
+    # @yieldreturn [void]                 The block accesses *req* directly.
     #
     # This method overrides:
     # @see OAuth2::Client#request

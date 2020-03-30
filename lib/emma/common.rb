@@ -259,17 +259,12 @@ module Emma::Common
   #
   def remove_blanks(item)
     case item
-      when Hash
-        item.map { |k, v|
-          v = remove_blanks(v)
-          [k, v] unless v.nil?
-        }.compact.to_h.presence
-      when Array
-        item.map { |v|
-          remove_blanks(v)
-        }.compact.presence
       when Boolean, TrueClass, FalseClass
         item
+      when Hash
+        item.transform_values { |v| remove_blanks(v) }.compact.presence
+      when Array
+        item.map { |v| remove_blanks(v) }.compact.presence
       else
         item.presence
     end
@@ -357,12 +352,13 @@ module Emma::Common
     except = Array.wrap(opt[:except]).presence
     meth   = (args.shift unless args.first.is_a?(Binding))
     bind   = (args.shift if args.first.is_a?(Binding))
-    unless meth.is_a?(Method)
+    if !meth.is_a?(Method) && bind.is_a?(Binding)
       meth = bind.eval('__method__') unless meth.is_a?(Symbol)
       rcvr = bind.receiver
       meth = (rcvr.method(meth) if rcvr.methods.include?(meth))
     end
-    (meth&.parameters || {}).flat_map { |type, name|
+    prms = meth.is_a?(Method) ? meth.parameters : {}
+    prms.flat_map { |type, name|
       next if (type == :block) || name.blank? || except&.include?(name)
       next unless only.nil? || only.include?(name)
       if type == :keyrest
@@ -567,7 +563,7 @@ module Emma::Common
   # If *text* is already HTML-ready it is returned directly.
   #
   # @param [String, Symbol]       text
-  # @param [Integer, Symbol, nil] count
+  # @param [Integer, Symbol, nil] count       Passed to #inflection.
   # @param [Boolean]              breakable   If *false* replace spaces with
   #                                             '&nbsp;' so that the result is
   #                                             not word-breakable.

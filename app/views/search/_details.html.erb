@@ -8,8 +8,7 @@
   skip  ||= nil
 
   role = ('role="article"'.html_safe if level == 1)
-  skip = Array.wrap(skip)
-  skip << :cover_image
+  skip = [*skip, :cover_image].uniq
 
   append_page_description(
     ISBN:     item.isbn,

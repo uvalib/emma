@@ -212,7 +212,7 @@ module ExplorerHelper
         query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
         href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))
       end
-      url = make_link(url, href, opt) if href.present?
+      url = make_link(url, href, **opt) if href.present?
       "&quot;#{url}&quot;"
     end
   end

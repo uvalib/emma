@@ -52,7 +52,7 @@ class ApiService
   # @option opt [String] :base_url    Base URL to the external service
   #                                     (default: #BASE_URL).
   #
-  def initialize(**opt)
+  def initialize(opt = nil)
     opt, @options = partition_options(opt, :base_url, :user)
     @options.reject! { |_, v| v.blank? }
     @base_url = opt[:base_url] || self.class.safe_const_get(:BASE_URL)
@@ -91,8 +91,8 @@ class ApiService
       # by different users).
       #
       # noinspection RubyClassVariableUsageInspection, RubyNilAnalysis
-      def self.instance(**opt)
-        opt = opt.reject { |_, v| v.blank? }
+      def self.instance(opt = nil)
+        opt = reject_blanks(opt)
         use_existing   = (@@service_instance ||= nil).present?
         use_existing &&= User.match?(opt[:user], @@service_instance.user)
         use_existing &&= (opt.except(:user) == @@service_instance.options)
@@ -105,8 +105,8 @@ class ApiService
       #
       # @return [ApiService]
       #
-      def self.update(**opt)
-        instance(**opt)
+      def self.update(opt = nil)
+        instance(opt)
       end
 
       # Remove the single instance of the class so that a fresh instance will

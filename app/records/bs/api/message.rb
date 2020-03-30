@@ -21,6 +21,12 @@ class Bs::Api::Message < Bs::Api::Record
 
   public
 
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,TrueClass,FalseClass}]
+  #
+  WRAP_FORMATS = { xml: true }.freeze
+
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Hash, String] data
@@ -32,14 +38,13 @@ class Bs::Api::Message < Bs::Api::Record
   # This method overrides:
   # @see Bs::Api::Record#initialize
   #
-  # noinspection RubyYardParamTypeMatch
-  def initialize(data, **opt)
-    create_message do
-      data = data.body.presence if data.is_a?(Faraday::Response)
-      opt[:format] ||= self.format_of(data)
-      opt[:error]  ||= true if opt[:format].blank?
-      data = wrap_outer(data, **opt) if (opt[:format] == :xml) && !opt[:error]
-      super(data, **opt)
+  def initialize(data, opt = nil)
+    # noinspection RubyScope
+    create_message_wrapper(opt) do |opt|
+      if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
+        opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
+      end
+      super(data, opt)
     end
   end
 

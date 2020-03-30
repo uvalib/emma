@@ -227,8 +227,9 @@ module PeriodicalHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def periodical_details(item, **opt)
-    item_details(item, :periodical, PERIODICAL_SHOW_FIELDS.merge(opt))
+  def periodical_details(item, opt = nil)
+    pairs = PERIODICAL_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :periodical, pairs)
   end
 
   # ===========================================================================
@@ -244,8 +245,9 @@ module PeriodicalHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def periodical_list_entry(item, **opt)
-    item_list_entry(item, :periodical, PERIODICAL_INDEX_FIELDS.merge(opt))
+  def periodical_list_entry(item, opt = nil)
+    pairs = PERIODICAL_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :periodical, pairs)
   end
 
 end

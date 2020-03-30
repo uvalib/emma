@@ -65,10 +65,9 @@ module SearchTermsHelper
   # @return [Hash{Symbol=>SearchTerm}]
   #
   def search_terms(pairs: nil, only: nil, except: nil)
-    only    = Array.wrap(only).presence
-    except  = Array.wrap(except) + NON_SEARCH_KEYS
-    pairs &&= pairs.dup if only || except
-    pairs ||= url_parameters
+    only   = Array.wrap(only).compact.uniq.presence
+    except = [*except, *NON_SEARCH_KEYS].compact.uniq.presence
+    pairs  = (only || except) && pairs&.dup || url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
     # noinspection RubyYardParamTypeMatch
@@ -120,19 +119,25 @@ module SearchTermsHelper
 
   # Produce a text-only listing of search terms.
   #
-  # @param [Hash{Symbol=>SearchTerm}] term_list   Default: `#search_terms`.
-  # @param [String]                   separator
+  # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
+  #
+  # @option term_list [String] :separator   Default: #LIST_SEARCH_SEPARATOR.
   #
   # @return [String]
   #
-  def list_search_terms(term_list, separator: LIST_SEARCH_SEPARATOR)
+  def list_search_terms(term_list = nil)
+    separator = LIST_SEARCH_SEPARATOR
+    if term_list.is_a?(Hash) && term_list.key?(:separator)
+      separator = term_list[:separator]
+      term_list = term_list.except(:separator).presence
+    end
     term_list ||= search_terms
     term_list.map { |field, search_term|
       next if search_term.blank?
       if search_term.query?
         array_string(search_term.names, quote: true)
       else
-        +"#{field}: " << array_string(search_term.values)
+        "#{field}: " + array_string(search_term.values)
       end
     }.compact.join(separator)
   end

@@ -174,8 +174,9 @@ module ReadingListHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def reading_list_details(item, **opt)
-    item_details(item, :reading_list, READING_LIST_SHOW_FIELDS.merge(opt))
+  def reading_list_details(item, opt = nil)
+    pairs = READING_LIST_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :reading_list, pairs)
   end
 
   # ===========================================================================
@@ -191,8 +192,9 @@ module ReadingListHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def reading_list_list_entry(item, **opt)
-    item_list_entry(item, :reading_list, READING_LIST_INDEX_FIELDS.merge(opt))
+  def reading_list_list_entry(item, opt = nil)
+    pairs = READING_LIST_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :reading_list, pairs)
   end
 
 end

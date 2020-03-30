@@ -168,7 +168,7 @@ class ReadingListController < ApplicationController
   #
   def show_values(as: nil)
     result = { details: @item, titles: @list }
-    { reading_list: super(**result, as: as) }
+    { reading_list: super(result, as: as) }
   end
 
 end

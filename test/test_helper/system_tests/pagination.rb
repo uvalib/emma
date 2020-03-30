@@ -60,6 +60,9 @@ module TestHelper::SystemTests::Pagination
   #
   # @return [void]
   #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
   def visit_next_page(model, **opt)
     click_link NEXT_LABEL, match: :first
     if block_given?
@@ -76,6 +79,9 @@ module TestHelper::SystemTests::Pagination
   # @param [Hash]        opt          Passed to #assert_valid_index_page.
   #
   # @return [void]
+  #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
   #
   def visit_prev_page(model, **opt)
     click_link PREV_LABEL, match: :first

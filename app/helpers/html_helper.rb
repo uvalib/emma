@@ -139,11 +139,11 @@ module HtmlHelper
   #
   # @param [Array<String,Array>] args
   #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   # @yield [classes] Exposes *args* so the block may modify it.
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
-  #
-  # @return [ActiveSupport::SafeBuffer]
   #
   def css_classes(*args)
     yield(args) if block_given?

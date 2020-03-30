@@ -84,6 +84,9 @@ module Representable
       #   @param [Array]            args
       #   @return [nil]
       #
+      # @yield To supply additional items to show.
+      # @yieldreturn [Array]
+      #
       # @see #__output
       #
       def __debug_show(mode, *args)

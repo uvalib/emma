@@ -32,11 +32,11 @@ module HeadHelper::Scripts
   # sources; otherwise this invocation is being used to emit the JavaScript
   # "<script>" element(s).
   #
-  # @yield Supplies source(s) to #set_page_javascripts.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
+  #
+  # @yield To supply source(s) to #set_page_javascripts.
+  # @yieldreturn [String, Array<String>]
   #
   def page_javascripts
     if block_given?
@@ -50,10 +50,10 @@ module HeadHelper::Scripts
   #
   # @param [Array] sources
   #
-  # @yield Supplies additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_javascript contents.
+  #
+  # @yield To supply additional source(s) to @page_javascript.
+  # @yieldreturn [String, Array<String>]
   #
   def set_page_javascripts(*sources)
     @page_javascript = []
@@ -66,10 +66,10 @@ module HeadHelper::Scripts
   #
   # @param [Array] sources
   #
-  # @yield Supplies additional source(s) to @page_javascript.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_javascript contents.
+  #
+  # @yield To supply additional source(s) to @page_javascript.
+  # @yieldreturn [String, Array<String>]
   #
   def append_page_javascripts(*sources)
     @page_javascript ||= DEFAULT_PAGE_JAVASCRIPTS.dup
@@ -90,7 +90,7 @@ module HeadHelper::Scripts
     @page_javascript.reject!(&:blank?)
     @page_javascript.uniq!
     sources = @page_javascript.dup
-    sources << meta_options(opt)
+    sources << meta_options(**opt)
     javascript_include_tag(*sources)
   end
 

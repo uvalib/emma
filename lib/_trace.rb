@@ -113,10 +113,10 @@ DEBUG_LEADER = ''
 # @option args.last [Boolean]         :debug      Structure for debug output.
 # @option args.last [Symbol, Integer, Boolean] :log   Note [1]
 #
-# @yield Supply additional items to output.
-# @yieldreturn [Array<String>]
-#
 # @return [nil]
+#
+# @yield To supply additional items to output.
+# @yieldreturn [Array<String>]
 #
 # == Notes
 # [1] When deployed, this option will create a log entry rather than produce
@@ -167,9 +167,6 @@ end
 #
 # @param [Array] args                 Passed to #__output.
 # @param [Proc]  block                Passed to #__output.
-#
-# @yield Supply additional items to output.
-# @yieldreturn [Hash,Array,String,*]
 #
 # @return [nil]
 #

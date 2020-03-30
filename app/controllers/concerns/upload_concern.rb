@@ -159,13 +159,13 @@ module UploadConcern
 
   # Generate a response to a POST.
   #
-  # @overload post_response(status, message = nil, redirect: nil)
+  # @overload post_response(status, message = nil, redirect: nil, xhr: nil)
   #   @param [Symbol, Integer]   status
   #   @param [String, Exception] message
   #   @param [String]            redirect
   #   @param [Boolean]           xhr        Force XHR handling.
   #
-  # @overload post_response(ex, redirect: nil)
+  # @overload post_response(ex, redirect: nil, xhr: nil)
   #   @param [Exception] ex
   #   @param [String]    redirect
   #   @param [Boolean]   xhr                Force XHR handling.

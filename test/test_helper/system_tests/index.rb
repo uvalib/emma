@@ -124,6 +124,9 @@ module TestHelper::SystemTests::Index
   #
   # @return [void]
   #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
   def visit_index(url, **opt)
     if url.is_a?(Symbol)
       model = url
@@ -147,12 +150,12 @@ module TestHelper::SystemTests::Index
   # @param [Symbol] model
   # @param [String] entry_class
   #
+  # @return [void]
+  #
   # @yield [index, title] Exposes each visited page for additional actions.
   # @yieldparam [Integer] index
   # @yieldparam [String]  title
   # @yieldreturn [void]
-  #
-  # @return [void]
   #
   def visit_each_show_page(model, entry_class: nil)
     entry_class ||= PROPERTY.dig(model, :index, :entry_class)

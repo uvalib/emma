@@ -107,7 +107,7 @@ module SearchService::Request::Records
   #
   def get_example_records(**opt) # TODO: remove - testing
     opt[:example] ||= :search
-    Search::Message::SearchRecordList.new(nil, **opt)
+    Search::Message::SearchRecordList.new(nil, opt)
   end
 
 end

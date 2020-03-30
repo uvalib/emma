@@ -267,7 +267,7 @@ module BookshareHelper
     html_opt[:method] ||= :delete  if %i[delete destroy].include?(action)
     html_opt[:title]  ||= i18n_lookup(controller, "#{action}.tooltip")
     # noinspection RubyYardParamTypeMatch
-    make_link(label, path, html_opt)
+    make_link(label, path, **html_opt)
   end
 
   # A direct link to a Bookshare page to open in a new browser tab.

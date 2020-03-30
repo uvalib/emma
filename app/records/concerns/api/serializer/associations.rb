@@ -76,7 +76,7 @@ module Api::Serializer::Associations
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
-        Log.warn { "#{__method__}: block not processed" } if block_given?
+        Log.warn { "#{__method__}: block ignored" } if block_given?
       else
         opt[:class]     = type
         opt[:decorator] = decorator_class(type)

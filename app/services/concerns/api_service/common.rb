@@ -272,12 +272,12 @@ module ApiService::Common
     update  = %i[put post patch].include?(@verb)
     params  = update ? @params.to_json : @params
     headers = ({ 'Content-Type' => 'application/json' } if update)
-    __debug_line(leader: '>>>') {
+    __debug_line(leader: '>>>') do
       %w(api) << @action.inspect <<
         { params: params, headers: headers }.transform_values { |v|
           v.inspect if v.present?
         }.compact
-    }
+    end
     @response = transmit(@verb, @action, params, headers, **opt)
 
   rescue Api::Error => error
@@ -288,16 +288,16 @@ module ApiService::Common
     error = ApiService::ResponseError.new(error)
 
   ensure
-    __debug_line(leader: '<<<') {
+    __debug_line(leader: '<<<') do
       # noinspection RubyNilAnalysis
       resp   = error.respond_to?(:response) && error.response || @response
       status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
       data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
       %w(api) << @action.inspect <<
-        { status: status, data: data }.transform_values { |v|
+        { status: status, data: data }.transform_values do |v|
           v.inspect.truncate(256)
-        }
-    }
+        end
+    end
     @response  = nil   if error
     @exception = error unless no_exception
     raise @exception   if @exception unless no_raise
@@ -392,9 +392,9 @@ module ApiService::Common
       raise ApiService::RedirectionError.new(response) if action.blank?
       unless no_redirect
         opt[:redirection] = (redirection += 1)
-        __debug_line(leader: '!!!') {
+        __debug_line(leader: '!!!') do
           %w(api) << "REDIRECT #{redirection} TO #{action.inspect}"
-        }
+        end
         response = transmit(:get, action, params, headers, **opt)
       end
     end
@@ -466,8 +466,8 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *opt*.
   #
-  def encode_parameters(**opt)
-    encode_parameters!(**opt)
+  def encode_parameters(opt = nil)
+    encode_parameters!(opt&.dup || {})
   end
 
   # Preserve keys that would be mistaken for an ignored system parameter.
@@ -496,8 +496,8 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *opt*.
   #
-  def decode_parameters(**opt)
-    decode_parameters!(**opt)
+  def decode_parameters(opt = nil)
+    decode_parameters!(opt&.dup || {})
   end
 
   # Restore preserved keys.
@@ -554,9 +554,9 @@ module ApiService::Common
   def log_exception(error:, action: @action, response: @response, method: nil)
     method ||= 'request'
     message = error.message.inspect
-    __debug_line(leader: '!!!') {
+    __debug_line(leader: '!!!') do
       %w(api) << action.inspect << message << error.class
-    }
+    end
     level  = error.is_a?(Api::Error) ? Log::WARN : Log::ERROR
     status = %i[http_status status].find { |m| error.respond_to?(m) }
     status = status ? error.send(status).inspect : '???'

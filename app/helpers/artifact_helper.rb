@@ -190,7 +190,7 @@ module ArtifactHelper
     formats = item&.formats || []
     formats = formats.select { |fmt| fmt.formatId == format_id } if format_id
     links =
-      formats.map { |fmt| artifact_link(item, fmt, html_opt) }.compact.sort
+      formats.map { |fmt| artifact_link(item, fmt, **html_opt) }.compact.sort
     if permitted && links.present?
       skip_nav_append('Download Formats' => '#field-Formats') # TODO: I18n
     end
@@ -263,7 +263,7 @@ module ArtifactHelper
     opt = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
-    make_link(label, '#', opt)
+    make_link(label, '#', **opt)
   end
 
   # ===========================================================================
@@ -280,8 +280,9 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def artifact_details(item, **opt)
-    item_details(item, :artifact, ARTIFACT_SHOW_FIELDS.merge(opt))
+  def artifact_details(item, opt = nil)
+    pairs = ARTIFACT_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :artifact, pairs)
   end
 
   # ===========================================================================
@@ -297,8 +298,9 @@ module ArtifactHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def artifact_list_entry(item, **opt)
-    item_list_entry(item, :artifact, ARTIFACT_INDEX_FIELDS.merge(opt))
+  def artifact_list_entry(item, opt = nil)
+    pairs = ARTIFACT_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :artifact, pairs)
   end
 
 end

@@ -87,8 +87,9 @@ module EditionHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def edition_details(item, **opt)
-    item_details(item, :edition, EDITION_SHOW_FIELDS.merge(opt))
+  def edition_details(item, opt = nil)
+    pairs = EDITION_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :edition, pairs)
   end
 
   # ===========================================================================
@@ -104,8 +105,9 @@ module EditionHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def edition_list_entry(item, **opt)
-    item_list_entry(item, :edition, EDITION_INDEX_FIELDS.merge(opt))
+  def edition_list_entry(item, opt = nil)
+    pairs = EDITION_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :edition, pairs)
   end
 
 end

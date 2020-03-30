@@ -34,21 +34,38 @@ class Api::Record
   # @param [Faraday::Response, Hash, String, nil] data
   # @param [Hash]                                 opt
   #
-  # @option opt [Symbol] :format      One of Api::Schema#SERIALIZER_TYPES.
+  # @option opt [Symbol]                               :format  Note [1]
+  # @option opt [TrueClass, Hash{Symbol=>String,true}] :wrap    Note [2]
+  # @option opt [Exception, String, TrueClass]         :error   Note [3]
   #
-  def initialize(data, **opt)
-    # noinspection RubyCaseWithoutElseBlockInspection
-    @exception =
-      case opt[:error]
-        when Exception then opt[:error]
-        when String    then Api::Error.new(opt[:error])
-      end
+  # == Notes
+  # [1] One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be
+  #     determined heuristically from *data*, with #DEFAULT_SERIALIZER_TYPE as
+  #     a fall-back.
+  #
+  # [2] A strategy for wrapping the data prior to de-serialization.  If *true*
+  #     then all types are wrapped as determined by #wrap_outer.  If a Hash,
+  #     then each key-value pair gives the format template to use or *true* to
+  #     use the template supplied by #wrap_outer.
+  #
+  # [3] If an error indication is present, the instance is initialized to
+  #     defaults and *data* is ignored.
+  #
+  def initialize(data, opt = nil)
+    opt ||= {}
+    @exception = error = opt[:error]
+    @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
     if @exception
       @serializer_type = :hash
       initialize_attributes
     else
-      @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
-      assert_serializer_type(@serializer_type)
+      data = data.body.presence if data.is_a?(Faraday::Response)
+      @serializer_type = opt[:format] || self.format_of(data)
+      assert_serializer_type(@serializer_type) if @serializer_type
+      @serializer_type ||= DEFAULT_SERIALIZER_TYPE
+      fmt_wrap = opt[:wrap]
+      fmt_wrap = fmt_wrap[@serializer_type] if fmt_wrap.is_a?(Hash)
+      data = wrap_outer(data: data, template: fmt_wrap) if fmt_wrap
       # noinspection RubyYardParamTypeMatch
       deserialize(data)
     end
@@ -282,6 +299,36 @@ class Api::Record
         when Proc  then value = value.call(error: exception)
       end
       send(:"#{attr}=", value)
+    end
+  end
+
+  # wrap_outer
+  #
+  # @param [Hash, String] data
+  # @param [Symbol]       fmt         Default: `#serializer_type`
+  # @param [String]       name        Element name (default based on class).
+  # @param [String]       template
+  #
+  # @return [Hash, String]            Same type as *data*.
+  #
+  def wrap_outer(data:, fmt: nil, name: nil, template: nil)
+    name ||= self.class.name.demodulize.camelcase(:lower)
+    return { name => data } if data.is_a?(Hash)
+    template = nil unless template.is_a?(String)
+    case (fmt || serializer_type)
+      when :xml
+        template ||= "<#{name}>%{data}</#{name}>"
+        _, prolog, body = data.partition(/^<\?.*?\?>\n?/)
+        if body.present?
+          "#{prolog}#{template}" % { data: body }
+        else
+          template % { data: data }
+        end
+      when :json
+        template ||= %Q("#{name}":{%{data}})
+        template % { data: data }
+      else
+        data
     end
   end
 

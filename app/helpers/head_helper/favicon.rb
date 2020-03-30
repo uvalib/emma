@@ -31,11 +31,11 @@ module HeadHelper::Favicon
   # If a block is given, this invocation is being used to set the favicon;
   # otherwise this invocation is being used to emit the favicon "<link>" tag.
   #
-  # @yield Supplies a value to #set_page_favicon.
-  # @yieldreturn [String]
-  #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [String]                      If block given.
+  #
+  # @yield To supply a value to #set_page_favicon.
+  # @yieldreturn [String]
   #
   def page_favicon
     if block_given?
@@ -49,10 +49,10 @@ module HeadHelper::Favicon
   #
   # @param [String] src
   #
-  # @yield Supplies a value to @page_favicon.
-  # @yieldreturn [String]
-  #
   # @return [String]                  The updated @page_favicon.
+  #
+  # @yield To supply a value to @page_favicon.
+  # @yieldreturn [String]
   #
   def set_page_favicon(src)
     # noinspection RubyYardReturnMatch
@@ -67,7 +67,7 @@ module HeadHelper::Favicon
   #
   def emit_page_favicon(**opt)
     @page_favicon ||= DEFAULT_PAGE_FAVICON
-    opt = meta_options(opt)
+    opt = meta_options(**opt)
     favicon_link_tag(@page_favicon, opt)
   end
 

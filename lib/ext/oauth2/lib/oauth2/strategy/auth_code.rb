@@ -43,9 +43,6 @@ module OAuth2
     # @see OAuth2::Strategy::AuthCode#get_token
     #
     def get_token(code, params = {}, opts = {})
-=begin
-      params = {'grant_type' => 'authorization_code', 'code' => code}.merge(@client.redirection_params).merge(params)
-=end
       token_params = {
         grant_type: 'authorization_code',
         code:       code,

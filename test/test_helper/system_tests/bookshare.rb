@@ -545,14 +545,17 @@ module TestHelper::SystemTests::Bookshare
 
   # show_section
   #
-  # @param [String]             header
-  # @param [Array<String>, nil] lines
-  # @param [Boolean]            output
+  # @param [String]        header
+  # @param [Array<String>] lines
+  # @param [Boolean]       output
   #
   # @return [Array<String>]
   #
-  def show_section(header, lines = nil, output: true)
-    lines = Array.wrap(lines)
+  # @yield To supply additional lines to show.
+  # @yieldreturn [String, Array<String>]
+  #
+  def show_section(header, lines: nil, output: true)
+    lines = lines.is_a?(Array) ? lines.dup : Array.wrap(lines)
     lines += Array.wrap(yield) if block_given?
     lines.flatten!
     if lines.present?
@@ -572,6 +575,9 @@ module TestHelper::SystemTests::Bookshare
   # @param [Boolean]         output
   #
   # @return [Array<String>]
+  #
+  # @yield To supply additional parts to show.
+  # @yieldreturn [Hash, Array]
   #
   def show_subsection(
     header,

@@ -58,11 +58,11 @@ module HeadHelper::MetaTags
   # If a block is given, this invocation is being used to accumulate "<meta>"
   # tags; otherwise this invocation is being used to emit the "<meta>" tags.
   #
-  # @yield Supplies tag/value pairs to #set_page_meta_tags.
-  # @yieldreturn [Hash]
-  #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Hash]                        If block given.
+  #
+  # @yield To supply tag/value pairs to #set_page_meta_tags.
+  # @yieldreturn [Hash]
   #
   def page_meta_tags
     if block_given?
@@ -76,10 +76,10 @@ module HeadHelper::MetaTags
   #
   # @param [Hash] pairs
   #
-  # @yield Supplies additional tag/value pairs for @page_meta_tags.
-  # @yieldreturn [Hash]
-  #
   # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
   #
   def set_page_meta_tags(pairs)
     @page_meta_tags = {}
@@ -92,10 +92,10 @@ module HeadHelper::MetaTags
   #
   # @param [Hash] pairs
   #
-  # @yield Supplies additional tag/value pairs for @page_meta_tags.
-  # @yieldreturn [Hash]
-  #
   # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
   #
   def append_page_meta_tags(pairs)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
@@ -108,10 +108,10 @@ module HeadHelper::MetaTags
   #
   # @param [Hash] pairs
   #
-  # @yield Supplies additional tag/value pairs for @page_meta_tags.
-  # @yieldreturn [Hash]
-  #
   # @return [Hash]                    The updated @page_meta_tags contents.
+  #
+  # @yield To supply additional tag/value pairs for @page_meta_tags.
+  # @yieldreturn [Hash]
   #
   def replace_page_meta_tags(pairs)
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
@@ -128,7 +128,7 @@ module HeadHelper::MetaTags
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def emit_page_meta_tags(**opt)
+  def emit_page_meta_tags(opt = nil)
     opt, html_opt = partition_options(opt, :tag_separator)
     tag_separator = opt[:tag_separator] || META_TAG_SEPARATOR
     @page_meta_tags ||= DEFAULT_PAGE_META_TAGS.dup
@@ -179,7 +179,7 @@ module HeadHelper::MetaTags
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".
   #
-  def emit_meta_tag(key, value, **opt)
+  def emit_meta_tag(key, value, opt = nil)
     opt, html_opt = partition_options(opt, *EMIT_META_TAG_OPTIONS)
     list_separator =
       opt.delete(:content_separator) || META_TAG_CONTENT_SEPARATOR

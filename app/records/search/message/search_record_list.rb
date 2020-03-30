@@ -19,6 +19,12 @@ class Search::Message::SearchRecordList < Search::Api::Message
 
   public
 
+  # Strategy for pre-wrapping message data before de-serialization.
+  #
+  # @type [Hash{Symbol=>String,TrueClass,FalseClass}]
+  #
+  WRAP_FORMATS = { xml: true, json: %q({"records":%{data}}) }.freeze
+
   # Initialize a new instance.
   #
   # @param [Faraday::Response, Hash, String] data
@@ -33,36 +39,18 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # This method overrides:
   # @see Api::Record#initialize
   #
-  # noinspection RubyYardParamTypeMatch
-  def initialize(data, **opt)
-    create_message do
-      # noinspection RubyCaseWithoutElseBlockInspection
-      @exception =
-        case opt[:error]
-          when Exception then opt[:error]
-          when String    then Api::Error.new(opt[:error])
-        end
-      if @exception
+  def initialize(data, opt = nil)
+    # noinspection RubyScope
+    create_message_wrapper(opt) do |opt|
+      if opt[:example] # TODO: remove - testing
         @serializer_type = :hash
         initialize_attributes
-      elsif opt[:example] # TODO: remove - testing
-        @serializer_type = :hash
-        initialize_attributes
-        @records = make_examples(**opt)
+        self.records = make_examples(**opt)
       else
-        @serializer_type = opt[:format] || DEFAULT_SERIALIZER_TYPE
-        assert_serializer_type(@serializer_type)
-        data = data.body.presence if data.is_a?(Faraday::Response)
-        opt[:format] ||= self.format_of(data)
-        opt[:error]  ||= true if opt[:format].blank?
-        unless opt[:error]
-          # noinspection RubyCaseWithoutElseBlockInspection
-          case opt[:format]
-            when :xml  then data = wrap_outer(data, **opt)
-            when :json then data = %Q({"records":#{data}})
-          end
+        if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
+          opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
         end
-        deserialize(data)
+        super(data, opt)
       end
     end
   end

@@ -179,10 +179,10 @@ module TestHelper::Debugging
   #
   # @option opt [String] :output      If *false* the result is not displayed.
   #
-  # @yield The caller generates line(s) to append to *items*.
-  # @yieldreturn [Array, String, *]
-  #
   # @return [String]                  The displayable result.
+  #
+  # @yield To supply additional items.
+  # @yieldreturn [Array, String, *]
   #
   def show(*items, **opt)
     model_opt, opt = partition_options(opt, *SHOW_MODEL_OPT)
@@ -274,10 +274,10 @@ module TestHelper::Debugging
   #
   # @option opt [String, Integer] :indent
   #
-  # @yield The caller generates pairs to be displayed.
-  # @yieldreturn [Hash]
-  #
   # @return [String]                  The displayable result.
+  #
+  # @yield To supply pairs to be displayed.
+  # @yieldreturn [Hash]
   #
   def show_trace(**opt)
     opt, show_opt = partition_options(opt, *SHOW_TRACE_OPT)

@@ -150,14 +150,14 @@ module FileFormat
   #
   # @param [*] info                   Information supplied by the subclass.
   #
-  # @yield field accessor label values  Per-field processing by caller.
+  # @return [Hash{String=>*}]
+  #
+  # @yield [field, accessor, label, value]  Per-field processing by caller.
   # @yieldparam [Symbol]              field
   # @yieldparam [Symbol, Proc, Array] accessor
   # @yieldparam [String]              label
-  # @yieldparam [Array<String>]       values
-  # @yieldreturn [Array<(String,Array)>]  label, values
-  #
-  # @return [Hash{String=>*}]
+  # @yieldparam [Array<String>]       value
+  # @yieldreturn [Array<(String,Array)>]  label, value
   #
   def format_metadata(info)
     return {} if info.blank?

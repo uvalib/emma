@@ -193,8 +193,9 @@ module SearchHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def search_item_details(item, **opt)
-    item_details(item, :search, SEARCH_SHOW_FIELDS.merge(opt))
+  def search_item_details(item, opt = nil)
+    pairs = SEARCH_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :search, pairs)
   end
 
   # ===========================================================================
@@ -210,8 +211,9 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def search_list_entry(item, **opt)
-    item_list_entry(item, :search, SEARCH_INDEX_FIELDS.merge(opt))
+  def search_list_entry(item, opt = nil)
+    pairs = SEARCH_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :search, pairs)
   end
 
   # Include edit and delete controls below the entry number.
@@ -225,8 +227,8 @@ module SearchHelper
   # @see UploadHelper#edit_entry_icon
   # @see UploadHelper#delete_entry_icon
   #
-  def search_list_entry_number(item, **opt)
-    list_entry_number(item, **opt) do
+  def search_list_entry_number(item, opt = nil)
+    list_entry_number(item, opt) do
       [edit_entry_icon(item), delete_entry_icon(item) ]
     end
   end

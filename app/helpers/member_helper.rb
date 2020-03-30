@@ -86,8 +86,9 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def member_details(item, **opt)
-    item_details(item, :member, MEMBER_SHOW_FIELDS.merge(opt))
+  def member_details(item, opt = nil)
+    pairs = MEMBER_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :member, pairs)
   end
 
   # Render a listing of member preferences.
@@ -99,9 +100,11 @@ module MemberHelper
   #
   # @see #render_field_values
   #
-  def member_preferences_values(item, **opt)
+  def member_preferences_values(item, opt = nil)
+    pairs = MEMBER_PREFERENCES_FIELDS
+    opt ||= {}
     render_field_values(item, model: :member, row_offset: opt[:row]) do
-      MEMBER_PREFERENCES_FIELDS.merge(opt)
+      pairs.merge(opt)
     end
   end
 
@@ -126,7 +129,7 @@ module MemberHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_history_title(label, **opt)
+  def member_history_title(label, opt = nil)
     opt, html_opt = partition_options(opt, :level)
     level = opt[:level].to_i
     label ||= t('emma.member.history.title')
@@ -155,9 +158,9 @@ module MemberHelper
   #
   # @see #render_field_values
   #
-  def member_history(item, **opt)
+  def member_history(item, opt = nil)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
-    pairs = MEMBER_HISTORY_FIELDS.merge(opt)
+    pairs = MEMBER_HISTORY_FIELDS.merge(opt || {})
     content_tag(:div, class: MEMBER_HISTORY_CSS_CLASS) do
       pairs[:index] = 0
       Array.wrap(item).map { |entry|
@@ -182,8 +185,9 @@ module MemberHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_list_entry(item, **opt)
-    item_list_entry(item, :member, MEMBER_INDEX_FIELDS.merge(opt))
+  def member_list_entry(item, opt = nil)
+    pairs = MEMBER_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :member, pairs)
   end
 
 end

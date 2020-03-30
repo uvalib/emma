@@ -32,11 +32,11 @@ module HeadHelper::Stylesheets
   # sources; otherwise this invocation is being used to emit the stylesheet
   # "<link>" element(s).
   #
-  # @yield Supplies sources(s) to #set_page_stylesheets.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [ActiveSupport::SafeBuffer]   If no block given.
   # @return [Array<String>]               If block given.
+  #
+  # @yield To supply sources(s) to #set_page_stylesheets.
+  # @yieldreturn [String, Array<String>]
   #
   def page_stylesheets
     if block_given?
@@ -50,10 +50,10 @@ module HeadHelper::Stylesheets
   #
   # @param [Array] sources
   #
-  # @yield Supplies additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_stylesheets contents.
+  #
+  # @yield To supply additional source(s) to @page_stylesheets.
+  # @yieldreturn [String, Array<String>]
   #
   def set_page_stylesheets(*sources)
     @page_stylesheets = []
@@ -66,10 +66,10 @@ module HeadHelper::Stylesheets
   #
   # @param [Array] sources
   #
-  # @yield Supplies additional source(s) to @page_stylesheets.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The updated @page_stylesheets contents.
+  #
+  # @yield To supply additional source(s) to @page_stylesheets.
+  # @yieldreturn [String, Array<String>]
   #
   def append_page_stylesheets(*sources)
     @page_stylesheets ||= DEFAULT_PAGE_STYLESHEETS.dup
@@ -90,7 +90,7 @@ module HeadHelper::Stylesheets
     @page_stylesheets.reject!(&:blank?)
     @page_stylesheets.uniq!
     sources = @page_stylesheets.dup
-    sources << meta_options(opt)
+    sources << meta_options(**opt)
     stylesheet_link_tag(*sources)
   end
 

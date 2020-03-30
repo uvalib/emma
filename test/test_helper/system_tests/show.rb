@@ -61,6 +61,9 @@ module TestHelper::SystemTests::Show
   #
   # @return [void]
   #
+  # @yield Test code to run while on the page.
+  # @yieldreturn [void]
+  #
   def visit_show_page(model, entry: nil, index: nil, entry_class: nil)
     entry ||=
       if (entry_class ||= PROPERTY.dig(model, :index, :entry_class))

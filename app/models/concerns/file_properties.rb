@@ -431,10 +431,9 @@ class FileProperties < Hash
   # already have a value.
   #
   # @param [Array<Hash>] hashes
+  # @param [Proc]        block        Passed to #copy!.
   #
   # @return [self]
-  #
-  # @see #copy!
   #
   def update!(*hashes, &block)
     copy!(*hashes, safe: true, &block)

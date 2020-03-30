@@ -41,55 +41,45 @@ module Emma::Debug
   # @overload __debug_args(bind, *added, **opt)
   #   @param [Binding]        bind
   #   @param [Array]          added   Parts appended to the output line.
-  #   @param [Hash]           opt     Passed to #get_params and #__debug_line.
+  #   @param [Hash]           opt     Passed to #get_params and #__debug_items.
+  #   @param [Proc]           block   Passed to #__debug_items.
   #   @return [nil]
   #
-  # @overload __debug_args(meth, bind, [opt])
+  # @overload __debug_args(meth, bind, *added, **opt)
   #   @param [Symbol, Method] meth
   #   @param [Binding]        bind
   #   @param [Array]          added   Parts appended to the output line.
-  #   @param [Hash]           opt     Passed to #get_params and #__debug_line.
+  #   @param [Hash]           opt     Passed to #get_params and #__debug_items.
+  #   @param [Proc]           block   Passed to #__debug_items.
   #   @return [nil]
-  #
-  # @yield Supply additional items to output.
-  # @yieldreturn [Hash,Array,String,*]
-  #
-  # @example Output current method parameters
-  #   __debug_args(__method__, binding)
   #
   def __debug_args(*args, &block)
     prms_opt, opt = partition_options(args.extract_options!, :only, :except)
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
     meth = bind.eval('__method__') if meth.nil? && bind.is_a?(Binding)
-    prms = get_params(meth, bind, prms_opt)
+    prms = meth.is_a?(Method) || (meth.is_a?(Symbol) && bind.is_a?(Binding))
+    prms = (get_params(meth, bind, prms_opt) if prms)
     opt[:separator] ||= DEBUG_SEPARATOR
     __debug_items(meth&.to_s, *args, prms, opt, &block)
   end
 
   # Output a line for invocation of a route method.
   #
-  # If the route method is not passed as a Symbol in *args* then
-  # `#calling_method` is used.
-  #
-  # @overload __debug_route(controller = nil, method = nil, **opt)
-  #   @param [String, Symbol] controller
-  #   @param [String, Symbol] method
-  #   @param [Hash]           opt         Passed to #__debug_line.
-  #
-  # @overload __debug_route(method = nil, **opt)
-  #   @param [String, Symbol] method
-  #   @param [Hash]           opt         Passed to #__debug_line.
+  # @param [String, Symbol] controller  Default: `self.class.name`.
+  # @param [String, Symbol] action      Default: `#calling_method`.
+  # @param [Hash]           opt         Passed to #__debug_line.
+  # @param [Proc]           block       Passed to #__debug_line.
   #
   # @return [nil]
   #
-  def __debug_route(controller = nil, method = nil, **opt, &block)
-    controller, method = [nil, controller] if controller.is_a?(Symbol)
+  def __debug_route(controller: nil, action: nil, **opt, &block)
     controller ||= self.class.name || params[:controller]
+    action     ||= calling_method
     parts = controller.to_s.underscore.split('_')
     parts.pop if !controller.include?('_') && (parts.size > 1)
     parts.map!(&:upcase)
-    parts << (method || calling_method)
+    parts << action
     __debug_line(parts.join(' '), "params = #{params.inspect}", opt, &block)
   end
 
@@ -336,11 +326,11 @@ module Emma::Debug
   #
   # @return [Array<String>]
   #
-  def __debug_inspect_item(value, opt = {})
+  def __debug_inspect_item(value, opt = nil)
     if value.is_a?(Hash)
-      value.map { |k, v| "#{k} = #{__debug_inspect(v, opt)}" }
+      value.map { |k, v| "#{k} = #{__debug_inspect(v, **opt)}" }
     else
-      Array.wrap(value).map { |v| __debug_inspect(v, opt) }
+      Array.wrap(value).map { |v| __debug_inspect(v, **opt) }
     end
   end
 
@@ -352,10 +342,13 @@ module Emma::Debug
   #
   # @return [Array<String>]
   #
+  # @yield To supply additional items.
+  # @yieldreturn [*, Array<*>]
+  #
   # @see #__debug_inspect_item
   #
   def __debug_inspect_items(*args)
-    opt = args.last.is_a?(Hash) && (!block_given? || (args.size > 1))
+    opt = args.last.is_a?(Hash) && (block_given? || (args.size > 1))
     opt = opt ? args.pop : {}
     args += Array.wrap(yield) if block_given?
     args.flat_map { |arg| __debug_inspect_item(arg, opt) }

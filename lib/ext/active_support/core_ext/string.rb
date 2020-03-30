@@ -30,6 +30,18 @@ class String
     self.slice!(0..(prefix.size-1)) and self if start_with?(prefix)
   end if RUBY_VERSION < '2.7' # TODO: Determine if this is needed for >= 2.7.
 
+  # ===========================================================================
+  # Fixes for RubyMine parameter definitions
+  # ===========================================================================
+
+  unless ONLY_FOR_DOCUMENTATION
+
+    # @param [Array<String>] prefix
+    # @return [String]
+    def prepend(*prefix); end
+
+  end
+
 end
 
 __loading_end(__FILE__)

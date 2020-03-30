@@ -144,10 +144,12 @@ module OAuth2
     #
     # @param [Symbol] verb            The HTTP request method.
     # @param [String] path            The URL of the request.
-    # @param [Hash]   opts            @see OAuth2::Client#request.
+    # @param [Hash]   opts            Passed to OAuth2::Client#request.
+    # @param [Proc]   block           Passed to OAuth2::Client#request.
     #
     # @return [OAuth2::Response]
     #
+    # This method overrides:
     # @see OAuth2::AccessToken#request
     #
     def request(verb, path, opts = {}, &block)

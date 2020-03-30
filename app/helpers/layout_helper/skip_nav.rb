@@ -37,10 +37,10 @@ module LayoutHelper::SkipNav
   #
   # @param [Array] entries
   #
-  # @yield Supplies additional entries to @skip_nav.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array]
+  #
+  # @yield To supply additional entries to @skip_nav.
+  # @yieldreturn [String, Array<String>]
   #
   def skip_nav_set(*entries)
     entries.flatten!
@@ -52,10 +52,10 @@ module LayoutHelper::SkipNav
   #
   # @param [Array] entries
   #
-  # @yield Supplies additional entries to @skip_nav.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array]
+  #
+  # @yield To supply additional entries to @skip_nav.
+  # @yieldreturn [String, Array<String>]
   #
   def skip_nav_append(*entries)
     entries  = @skip_nav + entries if @skip_nav.present?
@@ -67,10 +67,10 @@ module LayoutHelper::SkipNav
   #
   # @param [Array] entries
   #
-  # @yield Supplies additional entries to prepend to @skip_nav.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array]
+  #
+  # @yield To supply additional entries to prepend to @skip_nav.
+  # @yieldreturn [String, Array<String>]
   #
   def skip_nav_prepend(*entries)
     entries += Array.wrap(yield) if block_given?
@@ -90,7 +90,7 @@ module LayoutHelper::SkipNav
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def render_skip_nav(**opt)
+  def render_skip_nav(opt = nil)
     opt = prepend_css_classes(opt, 'skip-nav-menu')
     content_tag(:ul, opt) do
       skip_nav.flat_map { |entry|
@@ -135,7 +135,7 @@ module LayoutHelper::SkipNav
           other = [*t_opt[:default], *other].compact.uniq
           t_opt = t_opt.merge(default: other) if other.present?
         end
-        label = I18n.t(key, t_opt)
+        label = I18n.t(key, **t_opt)
       elsif label.to_s.start_with?('emma.')
         label = I18n.t(label)
       else

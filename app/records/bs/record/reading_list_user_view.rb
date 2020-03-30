@@ -9,7 +9,6 @@ __loading_begin(__FILE__)
 #
 # @attr [Access]                              access
 # @attr [Array<AllowsType>]                   allows
-# @attr [Array<Bs::Record::Name>]             authors
 # @attr [String]                              assignedBy
 # @attr [IsoDate]                             dateUpdated
 # @attr [String]                              description

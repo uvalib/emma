@@ -21,11 +21,11 @@ module LayoutHelper::PageClasses
   # names; otherwise this invocation is being used to emit the CSS classes for
   # inclusion in the "<body>" element definition.
   #
-  # @yield Supplies CSS class(es) to #set_page_classes.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [String]                      If no block given.
   # @return [Array<String>]               If block given.
+  #
+  # @yield To supply CSS class(es) to #set_page_classes.
+  # @yieldreturn [String, Array<String>]
   #
   def page_classes
     if block_given?
@@ -39,10 +39,10 @@ module LayoutHelper::PageClasses
   #
   # @param [Array] values
   #
-  # @yield Supplies additional CSS classes to @page_classes.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The current @page_classes contents.
+  #
+  # @yield To supply additional CSS classes to @page_classes.
+  # @yieldreturn [String, Array<String>]
   #
   def set_page_classes(*values)
     @page_classes = []
@@ -55,10 +55,10 @@ module LayoutHelper::PageClasses
   #
   # @param [Array] values
   #
-  # @yield Supplies additional CSS classes to @page_classes.
-  # @yieldreturn [String, Array<String>]
-  #
   # @return [Array<String>]           The current @page_classes contents.
+  #
+  # @yield To supply additional CSS classes to @page_classes.
+  # @yieldreturn [String, Array<String>]
   #
   def append_page_classes(*values)
     @page_classes ||= default_page_classes

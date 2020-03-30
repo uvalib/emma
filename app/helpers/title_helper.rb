@@ -322,8 +322,9 @@ module TitleHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If *item* is blank.
   #
-  def title_details(item, **opt)
-    item_details(item, :title, TITLE_SHOW_FIELDS.merge(opt))
+  def title_details(item, opt = nil)
+    pairs = TITLE_SHOW_FIELDS.merge(opt || {})
+    item_details(item, :title, pairs)
   end
 
   # ===========================================================================
@@ -339,8 +340,9 @@ module TitleHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def title_list_entry(item, **opt)
-    item_list_entry(item, :title, TITLE_INDEX_FIELDS.merge(opt))
+  def title_list_entry(item, opt = nil)
+    pairs = TITLE_INDEX_FIELDS.merge(opt || {})
+    item_list_entry(item, :title, pairs)
   end
 
 end
