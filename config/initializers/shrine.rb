@@ -6,22 +6,69 @@
 # @see https://shrinerb.com/docs/getting-started
 
 require 'shrine'
-require 'shrine/storage/file_system'
-#require 'shrine/storage/s3' # Needs "gem 'aws-sdk-s3', '~> 1.14'"
 
-UPLOAD_DIR = ENV.fetch('UPLOAD_DIR', 'storage/upload').freeze
+# =============================================================================
+# Logging
+# =============================================================================
 
 Shrine.logger       = Log.logger
 Shrine.logger.level = Log::DEBUG
 
-Shrine.storages = {
-  store: Shrine::Storage::FileSystem.new(UPLOAD_DIR),
-  cache: Shrine::Storage::FileSystem.new("#{UPLOAD_DIR}_cache"),
-}
+# =============================================================================
+# Storage setup
+# =============================================================================
+
+if application_deployed?
+
+  # == AWS S3 storage
+
+  require 'shrine/storage/s3'
+
+  s3_options = Rails.application.credential.s3
+
+  Shrine.storages = {
+    store: Shrine::Storage::S3.new(**s3_options),
+    cache: Shrine::Storage::S3.new(prefix: 'cache', **s3_options),
+  }
+
+=begin
+  Shrine.plugin :presign_endpoint,
+    presign_options: -> (request) do
+      # Uppy will send the "filename" and "type" query parameters.
+      params = request.params
+      file   = params['filename'] # Uploaded file.
+      type   = params['type']     # Default: "application/octet-stream"
+      max    = ENV.fetch('MAX_UPLOAD_BYTES', 10.megabytes).to_i
+      {
+        content_disposition:  ContentDisposition.inline(file),
+        content_type:         type,
+        content_length_range: 0..max,
+      }
+    end
+=end
+
+else
+
+  # == Local storage
+
+  require 'shrine/storage/file_system'
+
+  UPLOAD_DIR = ENV.fetch('UPLOAD_DIR', 'storage/upload').freeze
+
+  Shrine.storages = {
+    store: Shrine::Storage::FileSystem.new(UPLOAD_DIR),
+    cache: Shrine::Storage::FileSystem.new("#{UPLOAD_DIR}_cache"),
+  }
+
+end
+
+# =============================================================================
+# Plugins
+# =============================================================================
 
 Shrine.plugin :activerecord           # or :sequel
-Shrine.plugin :cached_attachment_data # To retain the file across form redisplays.
-Shrine.plugin :restore_cached_data    # Re-extract metadata when attaching a cached file.
+Shrine.plugin :cached_attachment_data # Retain the file across form redisplays.
+Shrine.plugin :restore_cached_data    # Refresh metadata for cached files.
 Shrine.plugin :rack_file              # for non-Rails apps
 
 Shrine.plugin :upload_endpoint        # For Uppy support via upload_endpoint.

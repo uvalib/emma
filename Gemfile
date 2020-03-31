@@ -85,6 +85,7 @@ gem 'prometheus-client', '< 0.10'
 gem 'archive-zip'
 gem 'pdf-reader'
 gem 'shrine', '~> 3.0'
+gem 'aws-sdk-s3', '~> 1.14'
 
 # == Other
 gem 'iso-639'

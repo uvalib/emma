@@ -106,10 +106,9 @@ module Emma::Debug
     count -= opt[:leader].size + 1 if opt[:leader]
     {
       session:           ['SESSION', :__debug_session_hash],
-      'request.env':     ['ENV',     :__debug_env_hash],
       'request.headers': ['HEADER',  :__debug_header_hash],
+      'request.env':     ['ENV',     :__debug_env_hash],
       'request.cookies': ['COOKIE',  req.cookies],
-      'rack.input':      req.headers['rack.input'],
       'request.body':    req.body
     }.each_pair do |item, entry|
       prefix, value = entry.is_a?(Array) ? entry : [nil, entry]
