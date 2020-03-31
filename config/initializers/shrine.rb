@@ -18,13 +18,18 @@ Shrine.logger.level = Log::DEBUG
 # Storage setup
 # =============================================================================
 
-if rails_application? && application_deployed?
+if application_deployed?
 
   # == AWS S3 storage
 
   require 'shrine/storage/s3'
 
-  s3_options = Rails.application.credentials.s3
+  s3_options = {
+    bucket:            'emma-storage-staging',
+    region:            ENV['AWS_REGION'],
+    secret_access_key: ENV['AWS_SECRET_KEY'],
+    access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
+  }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
   Shrine.storages = {
     store: Shrine::Storage::S3.new(**s3_options),
