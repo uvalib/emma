@@ -24,7 +24,7 @@ if application_deployed?
 
   require 'shrine/storage/s3'
 
-  s3_options = Rails.application.credential.s3
+  s3_options = Rails.application.credentials.s3
 
   Shrine.storages = {
     store: Shrine::Storage::S3.new(**s3_options),
