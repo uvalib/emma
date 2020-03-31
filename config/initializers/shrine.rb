@@ -18,7 +18,7 @@ Shrine.logger.level = Log::DEBUG
 # Storage setup
 # =============================================================================
 
-if application_deployed?
+if rails_application? && application_deployed?
 
   # == AWS S3 storage
 
