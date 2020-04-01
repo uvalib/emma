@@ -12,6 +12,8 @@ require 'down/chunked_io'
 #
 class FileHandle
 
+  include Emma::Debug
+
   # An object with one of these types may be used as the underlying handle.
   #
   # @type [Array<Class>]
@@ -38,6 +40,7 @@ class FileHandle
   #   @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO] file
   #
   def initialize(file)
+    __debug_args(binding, leader: 'FileHandle')
     @handle =
       case file
         when String     then File.new(file)
@@ -55,6 +58,7 @@ class FileHandle
   # @return [*]
   #
   def method_missing(name, *args, &block)
+    __debug_args(binding, leader: 'FileHandle')
     @handle.send(name, *args, &block) if @handle.respond_to?(name)
   end
 
