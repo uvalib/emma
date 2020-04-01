@@ -19,11 +19,11 @@ module ZipArchive
 
   # get_archive_entry
   #
-  # @param [String]                         zip_path
-  # @param [IO, StringIO, Tempfile, String] file      Physical archive file.
-  # @param [Boolean]                        recurse
+  # @param [String]             zip_path
+  # @param [String, FileHandle] file      Physical archive file.
+  # @param [Boolean]            recurse
   #
-  # @return [String]                        File contents
+  # @return [String]                      File contents
   # @return [nil]
   #
   def get_archive_entry(zip_path, file, recurse: false)
@@ -44,10 +44,10 @@ module ZipArchive
 
   # Locate the indicated file in the given archive.
   #
-  # @param [String]                         ext   Target filename extension.
-  # @param [IO, StringIO, Tempfile, String] file  Physical archive file.
+  # @param [String]             ext   Target filename extension.
+  # @param [String, FileHandle] file  Physical archive file.
   #
-  # @return [String]                    Path to metadata archive entry.
+  # @return [String]                  Path to metadata archive entry.
   # @return [nil]
   #
   def find_zip_path(ext, file)

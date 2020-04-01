@@ -82,9 +82,7 @@ module FileAttributes
 
   # Access to a local copy of the file object.
   #
-  # @return [IO, StringIO, Tempfile, nil]
-  #
-  # @see FileNaming::Methods#file_handle?
+  # @return [FileHandle, nil]
   #
   attr_reader :file_handle
 

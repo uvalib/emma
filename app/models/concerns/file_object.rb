@@ -8,6 +8,8 @@ __loading_begin(__FILE__)
 # Base class for file objects.
 #
 # @see FileAttributes
+# @see FileNaming
+# @see FileHandle
 #
 class FileObject
 
@@ -28,11 +30,10 @@ class FileObject
   #
   def initialize(handle, opt = nil)
     set_file_attributes(opt)
-    if file_handle?(handle)
-      @file_handle = handle
-      @filename    = handle.path if handle.respond_to?(:path)
-    else
-      @filename    = handle
+    case handle
+      when String     then @filename    = handle
+      when FileHandle then @file_handle = handle
+      else                 @file_handle = FileHandle.new(handle)
     end
     @fmt ||= self.class.fmt
     @ext ||= self.class.file_extension
@@ -44,15 +45,26 @@ class FileObject
 
   public
 
+  # filename
+  #
+  # @return [String, nil]
+  #
+  # This method overrides:
+  # @see FileAttributes#filename
+  #
+  def filename
+    @filename ||= @file_handle&.path
+  end
+
   # file_handle
   #
-  # @return [File, IO, StringIO, Tempfile, nil]
+  # @return [FileHandle, nil]
   #
   # This method overrides:
   # @see FileAttributes#file_handle
   #
   def file_handle
-    @file_handle ||= (File.open(filename) if filename.present?)
+    @file_handle ||= (FileHandle.new(filename) if filename.present?)
   end
 
   # ===========================================================================
