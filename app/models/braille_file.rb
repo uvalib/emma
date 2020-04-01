@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A Braille file object.
 #
-class BrailleFile < CachedFile
+class BrailleFile < FileObject
 
   include BrailleFormat
 

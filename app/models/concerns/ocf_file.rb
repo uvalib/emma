@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 # @see EpubFile
 # @see OcfFormat
 #
-class OcfFile < CachedFile
+class OcfFile < FileObject
 
   include OcfFormat
 

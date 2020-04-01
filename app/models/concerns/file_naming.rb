@@ -11,6 +11,8 @@ module FileNaming
 
   def self.included(base)
     __included(base, '[FileNaming]')
+    base.send(:include, FileNaming::Methods)
+    base.send(:extend,  FileNaming::Methods)
   end
 
   include Emma::Mime
@@ -22,26 +24,41 @@ module FileNaming
 
   public
 
+  module Methods
+
+    # Indicate whether the given object is a IO, File, StringIO, or Tempfile.
+    #
+    # @param [IO, StringIO, Tempfile, *] value
+    #
+    # @see FileAttributes#file_handle
+    #
+    def file_handle?(value)
+      value.is_a?(IO) || value.is_a?(StringIO) || value.is_a?(Tempfile)
+    end
+
+  end
+
   class << self
 
+    include FileNaming::Methods
     include ZipArchive
 
     # Create an instance of the appropriate FileObject subclass based on the
     # indicated type and, if provided, the file contents
     #
-    # @param [Symbol, String] type
-    # @param [IO]             io
+    # @param [Symbol, String]         type
+    # @param [IO, StringIO, Tempfile] handle
     #
     # @return [Class, nil]
     #
-    def format_class_instance(type, io = nil)
-      if io.is_a?(IO)
+    def format_class_instance(type, handle = nil)
+      if file_handle?(handle)
         type = type.to_sym
         case type
           when :daisy, :daisyAudio
             # This heuristic assumes that only distinction between "Daisy" and
             # "Daisy Audio" is the presence of sound files.
-            type = get_archive_entry('.mp3', io) ? :daisyAudio : :daisy
+            type = get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
         end
       end
       format_class(type)&.dup

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # An RTF file object.
 #
-class RtfFile < CachedFile
+class RtfFile < FileObject
 
   include RtfFormat
 

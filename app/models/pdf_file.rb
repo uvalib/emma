@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A PDF file object.
 #
-class PdfFile < CachedFile
+class PdfFile < FileObject
 
   include PdfFormat
 

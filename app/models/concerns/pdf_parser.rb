@@ -51,10 +51,10 @@ class PdfParser < FileParser
   #
   def method_missing(name, *args)
     if pdf_reader.respond_to?(name)
-      __debug_args('via pdf_reader', binding)
+      __debug_args("#{name} [via pdf_reader]", binding)
       pdf_reader.send(name, *args)
     elsif pdf_reader.present?
-      __debug_args('via pdf_reader.info', binding)
+      __debug_args("#{name} [via pdf_reader.info]", binding)
       pdf_reader.info[name.to_s.camelize.to_sym]
     end
   end

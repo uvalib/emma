@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Base class for objects created to access the content of an existing
 # (already downloaded) file.
 #
-class FileParser < LocalFile
+class FileParser < FileObject
 
   # ===========================================================================
   # :section:

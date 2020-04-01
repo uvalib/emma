@@ -293,7 +293,6 @@ module Emma::Debug
     type   = value.class
     common = DEBUG_INSPECT_COMMON.any? { |cls| (type == cls) || (type < cls) }
     output = (value if common)
-    # noinspection RubyCaseWithoutElseBlockInspection
     output ||=
       case value
         when ActionDispatch::RemoteIp::GetIp then value.to_s
@@ -301,9 +300,7 @@ module Emma::Debug
         when StringIO  then value.string
         when STDERR    then :'<STDERR>'
         when STDOUT    then :'<STDOUT>'
-        when IO        then value.path if value.respond_to?(:path)
-        when Tempfile  then value.path
-        when File      then value.path
+        else                value.path if value.respond_to?(:path)
       end
     if output.nil? || output.is_a?(Symbol)
       output = output.to_s

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A Kurzweil file object.
 #
-class KurzweilFile < CachedFile
+class KurzweilFile < FileObject
 
   include KurzweilFormat
 

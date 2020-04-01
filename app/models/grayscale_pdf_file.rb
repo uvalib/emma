@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A Grayscale PDF file object.
 #
-class GrayscalePdfFile < CachedFile
+class GrayscalePdfFile < FileObject
 
   include GrayscalePdfFormat
 

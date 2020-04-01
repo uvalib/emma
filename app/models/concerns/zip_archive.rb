@@ -19,9 +19,9 @@ module ZipArchive
 
   # get_archive_entry
   #
-  # @param [String]               zip_path
-  # @param [String, StringIO, IO] file      Physical archive file.
-  # @param [Boolean]              recurse
+  # @param [String]                         zip_path
+  # @param [IO, StringIO, Tempfile, String] file      Physical archive file.
+  # @param [Boolean]                        recurse
   #
   # @return [String]                        File contents
   # @return [nil]
@@ -44,8 +44,8 @@ module ZipArchive
 
   # Locate the indicated file in the given archive.
   #
-  # @param [String]               ext   Target filename extension.
-  # @param [String, StringIO, IO] file  Physical archive file.
+  # @param [String]                         ext   Target filename extension.
+  # @param [IO, StringIO, Tempfile, String] file  Physical archive file.
   #
   # @return [String]                    Path to metadata archive entry.
   # @return [nil]

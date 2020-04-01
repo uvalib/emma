@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # A Tactile file object.
 #
-class TactileFile < CachedFile
+class TactileFile < FileObject
 
   include TactileFormat
 

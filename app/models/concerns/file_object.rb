@@ -23,15 +23,16 @@ class FileObject
 
   # Create a new instance.
   #
-  # @param [String, StringIO, IO] handle
-  # @param [FileProperties, Hash] opt
+  # @param [IO, StringIO, Tempfile, String] handle
+  # @param [FileProperties, Hash]           opt
   #
   def initialize(handle, opt = nil)
     set_file_attributes(opt)
-    case handle
-      when StringIO then @file_handle = handle
-      when IO       then @file_handle = handle; @filename = handle.path
-      else               @filename    = handle
+    if file_handle?(handle)
+      @file_handle = handle
+      @filename    = handle.path if handle.respond_to?(:path)
+    else
+      @filename    = handle
     end
     @fmt ||= self.class.fmt
     @ext ||= self.class.file_extension
@@ -45,7 +46,7 @@ class FileObject
 
   # file_handle
   #
-  # @return [File, StringIO, nil]
+  # @return [File, IO, StringIO, Tempfile, nil]
   #
   # This method overrides:
   # @see FileAttributes#file_handle
