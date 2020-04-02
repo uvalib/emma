@@ -5,6 +5,7 @@
 
 __loading_begin(__FILE__)
 
+require 'io/like'
 require 'down/chunked_io'
 
 # An IO-like file object based on a number of types which are conceptually
@@ -16,9 +17,9 @@ class FileHandle
 
   # An object with one of these types may be used as the underlying handle.
   #
-  # @type [Array<Class>]
+  # @type [Array<Module>]
   #
-  VALID_BASE_TYPE = [IO, StringIO, Tempfile, Down::ChunkedIO].freeze
+  VALID_BASE_TYPE = [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO].freeze
 
   # Indicate whether the given object may be used to create a FileHandle.
   #
@@ -40,7 +41,7 @@ class FileHandle
   #   @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO] file
   #
   def initialize(file)
-    __debug_args(binding, leader: 'FileHandle')
+    __debug_items(file, separator: ' | ', leader: "FileHandle | initialize | #{file.class}")
     @handle =
       case file
         when String     then File.new(file)
@@ -58,7 +59,7 @@ class FileHandle
   # @return [*]
   #
   def method_missing(name, *args, &block)
-    __debug_args(binding, leader: 'FileHandle')
+    __debug_items(*args, separator: ' | ', leader: ("FileHandle | #{@handle.class} %-4s" % name))
     @handle.send(name, *args, &block) if @handle.respond_to?(name)
   end
 
