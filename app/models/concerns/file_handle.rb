@@ -20,7 +20,7 @@ class FileHandle
   #
   # @type [TrueClass, FalseClass]
   #
-  DEBUG_IO = true?(ENV['DEBUG_IO']) || true # TODO: remove "|| true"
+  DEBUG_IO = true?(ENV['DEBUG_IO'])
 
   # ===========================================================================
   # :section: Class methods

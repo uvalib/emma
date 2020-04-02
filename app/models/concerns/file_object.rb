@@ -35,13 +35,10 @@ class FileObject
   #
   def initialize(handle, opt = nil)
     set_file_attributes(opt)
-    case handle
-      when String     then @filename    = handle
-      when FileHandle then @file_handle = handle
-      else                 @file_handle = FileHandle.new(handle)
-    end
     @fmt ||= self.class.fmt
     @ext ||= self.class.file_extension
+    @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
+    @filename    = @file_handle.path if @file_handle.respond_to?(:path)
   end
 
   # ===========================================================================

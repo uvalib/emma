@@ -21,10 +21,26 @@ Shrine.logger.level = Log::DEBUG
 if application_deployed?
 
   # == AWS S3 storage
+  # There are four distinct S3 buckets -- one for EMMA repository storage and
+  # three to provide a pickup locations for remediated items derived from
+  # content acquired from the other repositories.
+  #
+  # 'emma-storage-*'      === S3 bucket for EMMA local storage ===
+  #   '/upload/*'         Uploaded files.
+  #   '/upload_cache/*'   Files being uploaded.
+  #   '/repository/*'     Finalized "EMMA Repository" files.
+  #   '/outbox/'
+  #   '/outbox/bs'        Staging for items to be queued for Bookshare.
+  #   '/outbox/ht'        Staging for items to be queued for HathiTrust.
+  #   '/outbox/ia'        Staging for items to be queued for Internet Archive.
+  #
+  # 'emma-bs-queue-*'     === S3 bucket for Bookshare updates ===
+  # 'emma-ht-queue-*'     === S3 bucket for HathiTrust updates ===
+  # 'emma-ia-queue-*'     === S3 bucket for Internet Archive updates ===
 
   require 'shrine/storage/s3'
 
-  s3_options = {
+  S3_OPTIONS = {
     bucket:            'emma-storage-staging',
     region:            ENV['AWS_REGION'],
     secret_access_key: ENV['AWS_SECRET_KEY'],
@@ -32,21 +48,23 @@ if application_deployed?
   }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
   Shrine.storages = {
-    store: Shrine::Storage::S3.new(**s3_options),
-    cache: Shrine::Storage::S3.new(prefix: 'cache', **s3_options),
+    store: Shrine::Storage::S3.new(prefix: 'upload',       **S3_OPTIONS),
+    cache: Shrine::Storage::S3.new(prefix: 'upload_cache', **S3_OPTIONS),
   }
 
 else
 
   # == Local storage
+  # Local storage is for desktop-testing use, based on subdirectories within
+  # the Rails project "/storage" directory.
 
   require 'shrine/storage/file_system'
 
-  UPLOAD_DIR = ENV.fetch('UPLOAD_DIR', 'storage/upload').freeze
+  STORAGE_DIR = ENV.fetch('STORAGE_DIR', 'storage').freeze
 
   Shrine.storages = {
-    store: Shrine::Storage::FileSystem.new(UPLOAD_DIR),
-    cache: Shrine::Storage::FileSystem.new("#{UPLOAD_DIR}_cache"),
+    store: Shrine::Storage::FileSystem.new("#{STORAGE_DIR}/upload"),
+    cache: Shrine::Storage::FileSystem.new("#{STORAGE_DIR}/upload_cache"),
   }
 
 end
