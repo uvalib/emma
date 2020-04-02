@@ -53,7 +53,7 @@ class FileObject
   # @see FileAttributes#filename
   #
   def filename
-    @filename ||= @file_handle&.path
+    @filename ||= (@file_handle.path if @file_handle.respond_to?(:path))
   end
 
   # file_handle
