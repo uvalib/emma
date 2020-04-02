@@ -36,22 +36,6 @@ if application_deployed?
     cache: Shrine::Storage::S3.new(prefix: 'cache', **s3_options),
   }
 
-=begin
-  Shrine.plugin :presign_endpoint,
-    presign_options: -> (request) do
-      # Uppy will send the "filename" and "type" query parameters.
-      params = request.params
-      file   = params['filename'] # Uploaded file.
-      type   = params['type']     # Default: "application/octet-stream"
-      max    = ENV.fetch('MAX_UPLOAD_BYTES', 10.megabytes).to_i
-      {
-        content_disposition:  ContentDisposition.inline(file),
-        content_type:         type,
-        content_length_range: 0..max,
-      }
-    end
-=end
-
 else
 
   # == Local storage
@@ -72,7 +56,7 @@ end
 # =============================================================================
 
 Shrine.plugin :activerecord           # or :sequel
-Shrine.plugin :cached_attachment_data # Retain the file across form redisplays.
+Shrine.plugin :cached_attachment_data # Retain the file across form redisplay.
 Shrine.plugin :restore_cached_data    # Refresh metadata for cached files.
 Shrine.plugin :rack_file              # for non-Rails apps
 

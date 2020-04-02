@@ -7,7 +7,7 @@
 
 __loading_begin(__FILE__)
 
-#require 'down'
+# require 'down' # NOTE: 'down/chunked_io' doesn't need this.
 require_subdirs(__FILE__)
 
 __loading_end(__FILE__)

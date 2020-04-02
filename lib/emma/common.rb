@@ -19,47 +19,11 @@ module Emma::Common
 
   public
 
-  # Text values which represent *true*.
-  #
-  # @type [Array<String>]
-  #
-  TRUE_VALUES  = %w(1 yes true).freeze
-
-  # Text values which represent *false*.
-  #
-  # @type [Array<String>]
-  #
-  FALSE_VALUES = %w(0 no false).freeze
-
   # Text values which represent a Boolean value.
   #
   # @type [Array<String>]
   #
   BOOLEAN_VALUES = (TRUE_VALUES + FALSE_VALUES).sort_by!(&:length).freeze
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [Object] value
-  #
-  def true?(value)
-    case value
-      when TrueClass, FalseClass then value
-      when Array, Hash, nil      then false
-      else TRUE_VALUES.include?(value.to_s.strip.downcase)
-    end
-  end
-
-  # Indicate whether the item represents a true value.
-  #
-  # @param [Object] value
-  #
-  def false?(value)
-    case value
-      when TrueClass, FalseClass then !value
-      when Array, Hash, nil      then false
-      else FALSE_VALUES.include?(value.to_s.strip.downcase)
-    end
-  end
 
   # Indicate whether the item represents a true or false value.
   #

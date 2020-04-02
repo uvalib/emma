@@ -7,6 +7,8 @@
 # Global constants
 # =============================================================================
 
+public
+
 # The time that the application was started.
 #
 # @type [Time]
@@ -25,8 +27,52 @@ BUILD_VERSION =
     .tap { |result| result.replace('unknown') if result.empty? }
 
 # =============================================================================
-# Initial console/log message before the normal boot sequence.
+# Support methods
 # =============================================================================
+
+public
+
+# Text values which represent *true*.
+#
+# @type [Array<String>]
+#
+TRUE_VALUES  = %w(1 yes true).freeze
+
+# Text values which represent *false*.
+#
+# @type [Array<String>]
+#
+FALSE_VALUES = %w(0 no false).freeze
+
+# Indicate whether the item represents a true value.
+#
+# @param [Object] value
+#
+def true?(value)
+  case value
+    when TrueClass, FalseClass then value
+    when Array, Hash, nil      then false
+    else TRUE_VALUES.include?(value.to_s.strip.downcase)
+  end
+end
+
+# Indicate whether the item represents a true value.
+#
+# @param [Object] value
+#
+def false?(value)
+  case value
+    when TrueClass, FalseClass then !value
+    when Array, Hash, nil      then false
+    else FALSE_VALUES.include?(value.to_s.strip.downcase)
+  end
+end
+
+# =============================================================================
+# Global properties
+# =============================================================================
+
+public
 
 # Indicate whether this is a deployed instance.
 #
@@ -61,6 +107,10 @@ def rails_application?
   end
   @in_rails
 end
+
+# =============================================================================
+# Initial console/log message before the normal boot sequence.
+# =============================================================================
 
 if rails_application?
   STDERR.puts "boot @ #{BOOT_TIME}"

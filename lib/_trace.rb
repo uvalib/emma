@@ -6,37 +6,6 @@
 # Loader debugging.
 
 # =============================================================================
-# Debugging - environment variables
-# =============================================================================
-
-public
-
-# Access environment variable and return the expected type.
-#
-# @param [String]       var       Name of environment variable.
-# @param [Object, nil]  default   Default value if `ENV[*var*]` is not present.
-#                                 or if it's value is blank. (This is not
-#                                 interpreted so it should be a value of the
-#                                 appropriate type.)
-#
-# @return [Boolean]               For boolean-like strings.
-# @return [Regexp]                For Regexp-like strings.
-# @return [String]                For everything else except:
-# @return [Object]                Non-string environment variable value.
-# @return [nil]                   If missing and *default* is *nil*.
-#
-def env(var, default = nil)
-  case (value = ENV[var].to_s.strip.presence)
-    when nil                  then default
-    when /^true$/i            then true
-    when /^false$/i           then false
-    when %r{^/(.*)/(i?)$}     then Regexp.new($1, $2.presence)
-    when /^%r(.)(.*)\1(i?)$/  then Regexp.new($2, $3.presence)
-    else                           value
-  end
-end
-
-# =============================================================================
 # Constants
 # =============================================================================
 
@@ -47,7 +16,7 @@ public
 # During normal operation this should be set to *false*.  Change the default
 # value here or override dynamically with the environment variable.
 #
-CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', false)
+CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 
 # Control tracking of file load order.
 #
@@ -56,7 +25,7 @@ CONSOLE_DEBUGGING = env('CONSOLE_DEBUGGING', false)
 #
 # @see #__loading
 #
-TRACE_LOADING = env('TRACE_LOADING', false)
+TRACE_LOADING = true?(ENV['TRACE_LOADING'])
 
 # Control tracking of invocation of Concern "included" blocks.
 #
@@ -65,7 +34,7 @@ TRACE_LOADING = env('TRACE_LOADING', false)
 #
 # @see #__included
 #
-TRACE_CONCERNS = env('TRACE_CONCERNS', false)
+TRACE_CONCERNS = true?(ENV['TRACE_CONCERNS'])
 
 # Control tracking of Rails notifications.
 #
@@ -74,7 +43,7 @@ TRACE_CONCERNS = env('TRACE_CONCERNS', false)
 #
 # @see #NOTIFICATIONS
 #
-TRACE_NOTIFICATIONS = env('TRACE_NOTIFICATIONS', false)
+TRACE_NOTIFICATIONS = true?(ENV['TRACE_NOTIFICATIONS'])
 
 # =============================================================================
 # Module methods

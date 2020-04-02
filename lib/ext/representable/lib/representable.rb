@@ -34,14 +34,14 @@ require 'representable/coercion'
 #
 DEBUG_REPRESENTABLE =
   ENV.fetch('DEBUG_REPRESENTABLE', false).yield_self do |v|
-    case v
-      when TrueClass       then true
-      when FalseClass      then false
-      when *%w(1 yes true) then true
-      when *%w(0 no false) then false
-      when /^:/            then v.delete_prefix(':').to_sym
-      else                      v
+    if v.is_a?(String)
+      case (v = v.to_s.strip.downcase)
+        when *TRUE_VALUES  then v = true
+        when *FALSE_VALUES then v = false
+        else                    v = v.sub(/^:/, '').to_sym
+      end
     end
+    v
   end
 
 module Representable

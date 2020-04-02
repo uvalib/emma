@@ -15,6 +15,19 @@ class FileHandle
 
   include Emma::Debug
 
+  # When *true* invocation of each low-level IO operation triggers a log debug
+  # entry.
+  #
+  # @type [TrueClass, FalseClass]
+  #
+  DEBUG_IO = true?(ENV['DEBUG_IO']) || true # TODO: remove "|| true"
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
   # An object with one of these types may be used as the underlying handle.
   #
   # @type [Array<Module>]
@@ -23,11 +36,23 @@ class FileHandle
 
   # Indicate whether the given object may be used to create a FileHandle.
   #
-  # @param [IO, StringIO, Tempfile, *] value
+  # @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO, *] value
   #
   def self.compatible?(value)
     value.is_a?(FileHandle) || VALID_BASE_TYPE.any? { |t| value.is_a?(t) }
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Expose @handle for use in #initialize.
+  #
+  # @type [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO]
+  #
+  attr_reader :handle
 
   # Initialize a new instance.
   #
@@ -41,7 +66,7 @@ class FileHandle
   #   @param [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO] file
   #
   def initialize(file)
-    __debug_items(file, separator: ' | ', leader: "FileHandle | initialize | #{file.class}")
+    __debug_handle(file, leader: "initialize | #{file.class}")
     @handle =
       case file
         when String     then File.new(file)
@@ -51,24 +76,65 @@ class FileHandle
     raise "#{file.class} incompatible" unless self.class.compatible?(@handle)
   end
 
-  # method_missing
-  #
-  # @param [Symbol] name
-  # @param [Array]  args
-  #
-  # @return [*]
-  #
-  def method_missing(name, *args, &block)
-    __debug_items(*args, separator: ' | ', leader: ("FileHandle | #{@handle.class} %-4s" % name))
-    @handle.send(name, *args, &block) #if @handle.respond_to?(name)
-  rescue => e
-    Log.error "!!! EXCEPTION IN FileHandle: #{e.class} #{e.message}\n#{caller.pretty_inspect}"
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  if DEBUG_IO
+
+    # Indicate whether the underlying object implements the given method.
+    #
+    # @param [Symbol, String] name
+    # @param [Boolean]        include_private
+    #
+    def respond_to_missing?(name, include_private = false)
+      @handle.respond_to?(name, include_private) || super
+    end
+
+    # Delegate to the underlying object.
+    #
+    # @param [Symbol, String] name
+    # @param [Array]          args
+    # @param [Proc]           block
+    #
+    # @return [*]
+    #
+    def method_missing(name, *args, &block)
+      __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))
+      @handle.send(name, *args, &block)
+    rescue => e
+      Log.error do
+        "!!! EXCEPTION IN FileHandle: #{e.class} #{e.message}\n" +
+          caller.pretty_inspect
+      end
+    end
+
+  else
+
+    delegate_missing_to :@handle
+
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
   protected
 
-  # @type [IO, StringIO, Tempfile, IO::Like, Down::ChunkedIO]
-  attr_reader :handle
+  # Debug method for this class.
+  #
+  # @param [Array] args
+  # @param [Hash]  opt
+  #
+  # @return [void]
+  #
+  def __debug_handle(*args, **opt)
+    opt[:separator] ||= ' | '
+    opt[:leader] = ['FileHandle', *opt[:leader]].compact.join(opt[:separator])
+    __debug_items(*args, **opt)
+  end
 
 end
 

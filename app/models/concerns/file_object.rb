@@ -25,8 +25,13 @@ class FileObject
 
   # Create a new instance.
   #
-  # @param [IO, StringIO, Tempfile, String] handle
-  # @param [FileProperties, Hash]           opt
+  # @overload initialize(path, opt = nil)
+  #   @param [String]               path
+  #   @param [FileProperties, Hash] opt
+  #
+  # @overload initialize(handle, opt = nil)
+  #   @param [FileHandle, IO, StringIO, Tempfile, IO::Like] handle
+  #   @param [FileProperties, Hash]                         opt
   #
   def initialize(handle, opt = nil)
     set_file_attributes(opt)

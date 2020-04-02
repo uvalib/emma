@@ -19,15 +19,15 @@ public
 # NOTE: setting to *false* should be for experimentation only since it will
 # result in untested execution paths.
 #
-IMPLEMENT_OVERRIDES = env('IMPLEMENT_OVERRIDES', true)
-
-# =============================================================================
-# Loader methods
-# =============================================================================
+IMPLEMENT_OVERRIDES = !false?(ENV['IMPLEMENT_OVERRIDES'])
 
 unless IMPLEMENT_OVERRIDES
   Log.warn("IMPLEMENT_OVERRIDES = #{IMPLEMENT_OVERRIDES.inspect}")
 end
+
+# =============================================================================
+# Loader methods
+# =============================================================================
 
 # This method can be used as a simple mechanism to override member(s) of a
 # class or module by supplying new methods or redefinitions of existing methods
