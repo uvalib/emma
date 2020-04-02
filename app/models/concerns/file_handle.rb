@@ -60,7 +60,9 @@ class FileHandle
   #
   def method_missing(name, *args, &block)
     __debug_items(*args, separator: ' | ', leader: ("FileHandle | #{@handle.class} %-4s" % name))
-    @handle.send(name, *args, &block) if @handle.respond_to?(name)
+    @handle.send(name, *args, &block) #if @handle.respond_to?(name)
+  rescue => e
+    Log.error "!!! EXCEPTION IN FileHandle: #{e.class} #{e.message}\n#{caller.pretty_inspect}"
   end
 
   protected

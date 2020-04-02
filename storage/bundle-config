@@ -5,5 +5,5 @@
 
 ---
 BUNDLE_RETRY:   "2"
-BUNDLE_JOBS:    "8"
+BUNDLE_JOBS:    "16"
 BUNDLE_WITHOUT: "development:test"
