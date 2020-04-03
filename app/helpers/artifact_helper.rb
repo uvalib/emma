@@ -130,7 +130,7 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def artifact_link(item, format, label: nil, **opt)
-    periodical = item.is_a?(Bs::Message::PeriodicalSubscription)
+    periodical = item.class.name.include?('Periodical')
     type       = periodical ? PeriodicalFormatType : FormatType
     rec_fmt    = (format if format.is_a?(Bs::Record::Format))
     format     = (rec_fmt&.identifier || format)&.to_s || type.default
