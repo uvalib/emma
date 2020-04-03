@@ -134,7 +134,7 @@ module ArtifactHelper
     type       = periodical ? PeriodicalFormatType : FormatType
     rec_fmt    = (format if format.is_a?(Bs::Record::Format))
     format     = (rec_fmt&.identifier || format)&.to_s || type.default
-    label    ||= I18n.t("emma.bookshare.type.#{type}.#{fmt}", default: nil)
+    label    ||= I18n.t("emma.bookshare.type.#{type}.#{format}", default: nil)
     label    ||= rec_fmt&.label || item.label
     opt = append_css_classes(opt, 'link')
     opt[:label] = label
