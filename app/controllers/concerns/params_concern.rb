@@ -101,22 +101,28 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
+    return if !request.get? || request.xhr?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller]
       when 'api'      then return if params[:action] == 'image'
       when 'artifact' then return if params[:action] == 'show'
       when /^devise/  then return
+      when /^user/    then return
     end
     if session['current_path'].present?
       session['return_path'] = session['current_path'].dup
+      __debug { "#{__method__} | #{params[:controller].inspect} | #{params[:action].inspect} | session['return_path'] <= #{session['return_path'].inspect}" }
     else
       session.delete('return_path')
+      __debug { "#{__method__} | #{params[:controller].inspect} | #{params[:action].inspect} | session['return_path'] -- DELETED" }
     end
     if request.path == root_path
       session.delete('current_path')
+      __debug { "#{__method__} | #{params[:controller].inspect} | #{params[:action].inspect} | session['current_path'] -- DELETED" }
     else
       request_params = url_parameters.except(:id)
       session['current_path'] = make_path(request.path, request_params)
+      __debug { "#{__method__} | #{params[:controller].inspect} | #{params[:action].inspect} | session['current_path'] <= #{session['current_path'].inspect}" }
     end
   end
 
