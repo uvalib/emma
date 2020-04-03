@@ -106,7 +106,8 @@ module OAuth2
     def connection
       @connection ||=
         Faraday.new(site, options[:connection_opts]) do |bld|
-          bld.response :logger, Log.logger if OAUTH_DEBUG
+          log_options = { bodies: { request: true, response: OAUTH_DEBUG } }
+          bld.response :logger, Log.logger, log_options
           if options[:connection_build]
             options[:connection_build].call(bld)
           else
@@ -185,17 +186,17 @@ module OAuth2
       response =
         connection.run_request(verb, url, body, hdrs) do |req|
           req.params.update(prms) if prms.present?
-          __debug_line(dbg, verb.to_s.upcase, url, req.params)
+          __debug_line(dbg) { [verb.to_s.upcase, url, req.params] }
           yield(req) if block_given?
         end
-      __debug_line(dbg, 'RESPONSE', response)
+      __debug_line(dbg) { ['RESPONSE', response] }
       response = Response.new(response, parse: opts.slice(:parse))
 
       case response.status
 
         when 301, 302, 303, 307
           # Redirect, or keep this response if beyond the limit of redirects.
-          __debug_line(dbg, "REDIRECT #{response.status}")
+          __debug_line(dbg) { "REDIRECT #{response.status}" }
           opts[:redirect_count] ||= 0
           opts[:redirect_count] += 1
           if (max = options[:max_redirects]) && (opts[:redirect_count] <= max)
@@ -209,18 +210,18 @@ module OAuth2
 
         when 200..299, 300..399
           # On non-redirecting 3xx statuses, just return the response.
-          __debug_line(dbg, "STATUS #{response.status}")
+          __debug_line(dbg) { "REDIRECT #{response.status}" }
 
         when 400..599
           # Server error.
-          __debug_line(dbg, "ERROR #{response.status}")
+          __debug_line(dbg) { "ERROR #{response.status}" }
           error = Error.new(response)
           raise(error) if opts[:raise_errors] || options[:raise_errors]
           response.error = error
 
         else
           # Other error.
-          __debug_line(dbg, "UNEXPECTED #{response.status}")
+          __debug_line(dbg) { "UNEXPECTED #{response.status}" }
           error = Error.new(response)
           raise(error, "Unhandled status code value of #{response.status}")
 

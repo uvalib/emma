@@ -127,13 +127,14 @@ class FileHandle
   #
   # @param [Array] args
   # @param [Hash]  opt
+  # @param [Proc]  block              Passed to #__debug_items.
   #
   # @return [void]
   #
-  def __debug_handle(*args, **opt)
+  def __debug_handle(*args, **opt, &block)
     opt[:separator] ||= ' | '
     opt[:leader] = ['FileHandle', *opt[:leader]].compact.join(opt[:separator])
-    __debug_items(*args, **opt)
+    __debug_items(*args, opt, &block)
   end
 
 end

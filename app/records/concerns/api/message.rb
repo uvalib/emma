@@ -54,7 +54,7 @@ module Api::Message
     yield(opt)
   ensure
     elapsed_time = time_span(start_time)
-    __debug { "<<< #{self.class} processed in #{elapsed_time}" }
+    __debug  { "<<< #{self.class} processed in #{elapsed_time}" }
     Log.info { "#{self.class} processed in #{elapsed_time}"}
   end
 

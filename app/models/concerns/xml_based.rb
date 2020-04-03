@@ -281,10 +281,11 @@ module XmlBased
     # @see #get_properties
     #
     def __debug_parse(*args)
+      opt     = args.extract_options!
       method  = args.first.is_a?(Symbol) ? args.shift : calling_method
       element = args.shift
       inner   = args.shift
-      __debug_line(*args) do
+      __debug_line(*args, opt) do
         parts = [method, filename]
         if element
           name =

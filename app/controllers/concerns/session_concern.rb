@@ -93,13 +93,14 @@ module SessionConcern
   # @see Devise::Controllers::Helpers#after_sign_in_path_for
   #
   def after_sign_in_path_for(resource_or_scope)
-    store_location_for(resource_or_scope, dashboard_path)
     path = session['current_path']
     path = nil if path == welcome_path
-    path || super(resource_or_scope)
+    path ||= dashboard_path
+    store_location_for(resource_or_scope, path)
+    path
   end
 
-  # after_sign_in_path_for
+  # after_sign_out_path_for
   #
   # @return [String]
   #
@@ -151,9 +152,9 @@ module SessionConcern
       'path'   => (path || request_path),
       'params' => url_parameters(req_params)
     )
-      .tap {
+      .tap do
         __debug { "session_update 'time' = #{last_operation_time.inspect}" }
-      }
+      end
   end
 
   # Application-specific `#session` keys.
@@ -209,8 +210,8 @@ module SessionConcern
   def session_check
     return if (t_boot = BOOT_TIME.to_i) < (t_last = last_operation_time)
     if t_last.nonzero?
+      __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
-      __debug { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
     end
     sign_out
     session.delete('omniauth.auth')

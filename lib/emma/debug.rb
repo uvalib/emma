@@ -74,13 +74,9 @@ module Emma::Debug
   # @return [nil]
   #
   def __debug_route(controller: nil, action: nil, **opt, &block)
-    controller ||= self.class.name || params[:controller]
-    action     ||= calling_method
-    parts = controller.to_s.underscore.split('_')
-    parts.pop if !controller.include?('_') && (parts.size > 1)
-    parts.map!(&:upcase)
-    parts << action
-    __debug_line(parts.join(' '), "params = #{params.inspect}", opt, &block)
+    action ||= calling_method
+    leader = __debug_route_label(controller: controller, action: action)
+    __debug_line(leader, "params = #{params.inspect}", opt, &block)
   end
 
   # Output request values and contents.
@@ -126,25 +122,6 @@ module Emma::Debug
     __debug_items(*args, opt, &block) if block || args.present?
   end
 
-  # OmniAuth endpoint console debugging output.
-  #
-  # If the endpoint method is not passed as a Symbol in *args* then
-  # `#calling_method` is used.
-  #
-  # @param [Array] args               Passed to #__debug_line.
-  # @param [Proc]  block              Passed to #__debug_line.
-  #
-  # @return [nil]
-  #
-  def __debug_auth(*args, &block)
-    opt  = args.extract_options!
-    meth = args.first.is_a?(Symbol) ? args.shift : calling_method
-    lead = "OMNIAUTH #{meth}"
-    req  = (request&.method if respond_to?(:request))
-    prms = (params.inspect  if respond_to?(:params))
-    __debug_line(lead, req, prms, *args, opt, &block)
-  end
-
   # Exception console debugging output.
   #
   # @param [String]    label
@@ -181,6 +158,23 @@ module Emma::Debug
   # ===========================================================================
 
   public
+
+  # Representation of the controller/action for a route.
+  #
+  # @param [String, Symbol] controller  Default: `self.class.name`.
+  # @param [String, Symbol] action      Default: `#calling_method`.
+  #
+  # @return [String]
+  #
+  def __debug_route_label(controller: nil, action: nil)
+    controller = (controller || self.class.name || params[:controller]).to_s
+    controller =
+      controller.underscore.split('_').tap { |parts|
+        parts.pop if !controller.include?('_') && (parts.size > 1)
+      }.map!(&:upcase).join('_')
+    action ||= calling_method
+    "#{controller} #{action}"
+  end
 
   # __debug_session_hash
   #

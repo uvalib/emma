@@ -13,20 +13,24 @@ module Faraday
 
   # Override definitions to be prepended to Faraday::Logging::Formatter.
   #
+  # By default, headers are dumped but bodies are not.
+  #
+  # @example Log request and response message bodies:
+  # Faraday.new(...) do |bld|
+  #   bld.response :logger, Log.logger, bodies: true
+  # end
+  #
+  # @example Log only request message bodies:
+  # Faraday.new(...) do |bld|
+  #   bld.response :logger, Log.logger, bodies: { request: true }
+  # end
+  #
+  # @example Log only response message bodies:
+  # Faraday.new(...) do |bld|
+  #   bld.response :logger, Log.logger, bodies: { response: true }
+  # end
+  #
   module Logging::FormatterExt
-
-    # Initialize a Formatter instance, turning on output of the request body.
-    #
-    # @param [Logger] logger
-    # @param [Hash]   options
-    #
-    # This method overrides:
-    # @see Faraday::Logging::Formatter#initialize
-    #
-    def initialize(logger:, options:)
-      super
-      @options[:bodies] = true
-    end
 
     # Render request headers.
     #

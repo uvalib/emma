@@ -52,7 +52,6 @@ class User::SessionsController < Devise::SessionsController
   #
   def new
     __debug_route
-    __debug_auth
     super
   end
 
@@ -64,7 +63,6 @@ class User::SessionsController < Devise::SessionsController
   #
   def create
     __debug_route
-    __debug_auth
     __debug_request
     super do
       api_update(user: resource)
@@ -79,9 +77,8 @@ class User::SessionsController < Devise::SessionsController
   # @see Devise::SessionsController#destroy
   #
   def destroy
-    __debug_route
     auth_data = session.delete('omniauth.auth')
-    __debug_auth { "session[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
     super do
       BookshareService.clear
       set_flash_notice(__method__, auth_data)
@@ -96,11 +93,10 @@ class User::SessionsController < Devise::SessionsController
   # exists and contains pre-fetched OAuth2 bearer tokens.
   #
   def sign_in_as
-    __debug_route
     # noinspection RubyYardParamTypeMatch
     auth_data = session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
-    __debug_auth { "session[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
     self.resource = warden.set_user(User.from_omniauth(auth_data))
     sign_in(resource_name, resource)
     api_update(user: resource)

@@ -103,11 +103,11 @@ module ParamsConcern
   def set_current_path
     return if !request.get? || request.xhr?
     # noinspection RubyCaseWithoutElseBlockInspection
-    case params[:controller]
-      when 'api'      then return if params[:action] == 'image'
-      when 'artifact' then return if params[:action] == 'show'
-      when /^devise/  then return
-      when /^user/    then return
+    case params[:controller].to_s.downcase
+      when 'api'        then return if params[:action] == 'image'
+      when 'artifact'   then return if params[:action] == 'show'
+      when %r{^devise/} then return
+      when %r{^user/}   then return
     end
     if session['current_path'].present?
       session['return_path'] = session['current_path'].dup

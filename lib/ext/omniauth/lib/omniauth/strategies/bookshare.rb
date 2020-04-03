@@ -290,7 +290,7 @@ module OmniAuth
       # @see OmniAuth::Strategy#callback_call
       #
       def callback_call
-        __debug("OMNIAUTH #{__method__}")
+        __debug { "OMNIAUTH #{__method__}" }
         super
       end
 
@@ -800,19 +800,19 @@ module OmniAuth
           end
 
       rescue ::OAuth2::Error, CallbackError => e
-        __debug_line(dbg, 'INVALID', e.class, e.message)
+        __debug_line(dbg) { ['INVALID', e.class, e.message] }
         error ||= :invalid_credentials
 
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
-        __debug_line(dbg, 'TIMEOUT', e.class, e.message)
+        __debug_line(dbg) { ['TIMEOUT', e.class, e.message] }
         error = :timeout
 
       rescue ::SocketError => e
-        __debug_line(dbg, 'CONNECT', e.class, e.message)
+        __debug_line(dbg) { ['CONNECT', e.class, e.message] }
         error = :failed_to_connect
 
       rescue => e
-        __debug_line(dbg, 'EXCEPTION', e.class, e.message)
+        __debug_line(dbg) { ['EXCEPTION', e.class, e.message] }
 
       ensure
         fail!(error, e) if error
