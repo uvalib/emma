@@ -52,6 +52,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     user = User.from_omniauth(auth_data)
     if user.persisted?
       __debug_line { [__debug_route_label, 'user persisted'] }
+      session['omniauth.auth'] = auth_data
       last_operation_update
       # sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)

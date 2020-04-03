@@ -68,13 +68,16 @@ module SessionConcern
   #
   # @type [Array<String,Regexp>]
   #
-  IGNORE_SESSION_KEYS = [
+  PRESERVE_SESSION_KEYS = [
     'flash',
     'session_id',
     '_csrf_token',
     '_turbolinks_location',
     /\./,
     /_return_to$/,
+    /^devise\./,
+    /^omniauth\./,
+    /^warden\./,
   ].freeze
 
   # ===========================================================================
@@ -163,7 +166,7 @@ module SessionConcern
   #
   def session_keys
     session.keys.reject do |key|
-      IGNORE_SESSION_KEYS.any? do |ignore_key|
+      PRESERVE_SESSION_KEYS.any? do |ignore_key|
         ignore_key.is_a?(Regexp) ? key.match?(ignore_key) : (key == ignore_key)
       end
     end
