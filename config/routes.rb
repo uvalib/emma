@@ -137,9 +137,13 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'user/omniauth_callbacks',
   }
 
-  # NOTE: for testing with fixed IDs
   devise_scope :user do
-    get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
+    # For proxy auth from the desktop via the production server:
+    get '/users/sign_in_proxy', to: 'user/sessions#sign_in_proxy',
+        as: 'sign_in_proxy'
+    # For testing with fixed IDs and tokens:
+    get '/users/sign_in_as', to: 'user/sessions#sign_in_as',
+        as: 'sign_in_as'
   end
 
 end

@@ -47,6 +47,7 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
+      option :name,          name.split('::').last.underscore
       option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {
@@ -254,6 +255,10 @@ module OmniAuth
           { options: options, session: __debug_session_hash }
         end
 
+        # Store redirect for desktop development auth proxy.
+        proxy = session['omniauth.params'].symbolize_keys.dig(:proxy)
+        session['proxy.redirect'] = proxy if proxy
+
         if current_user
           log :info, 'By-passing request_phase.'
           authorize_params # Generate session['omniauth.state']
@@ -266,10 +271,10 @@ module OmniAuth
           ref = nil if ref&.end_with?(request_path)
           if org || ref
             log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
-            env['rack.session']['omniauth.origin'] = org || ref
+            session['omniauth.origin'] = org || ref
           end
           __debug_line(dbg) do
-            "env['rack.session']['omniauth.origin'] = #{(org || ref).inspect}"
+            "session['omniauth.origin'] = #{(org || ref).inspect}"
           end
           request_phase
 
@@ -909,7 +914,7 @@ module OmniAuth
       end
 
       # =======================================================================
-      # :section:
+      # :section: Class methods
       # =======================================================================
 
       public
@@ -923,7 +928,7 @@ module OmniAuth
       def self.configured_auth_hash(id)
         abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
         hash = {
-          provider: 'bookshare',
+          provider: default_options[:name],
           uid:      id,
           info: {
             first_name: '',

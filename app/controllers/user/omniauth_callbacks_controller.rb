@@ -49,18 +49,19 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     auth_data = request.env['omniauth.auth']
     __debug_route { "env[omniauth.auth] = #{auth_data.inspect}" }
     __debug_request
-    user = User.from_omniauth(auth_data)
-    if user.persisted?
+    if (proxy_redirect = session.delete('proxy.redirect'))
+      __debug_line { [__debug_route_label, 'dev proxy'] }
+      redirect_to proxy_redirect
+
+    elsif (user = User.from_omniauth(auth_data)).persisted?
       __debug_line { [__debug_route_label, 'user persisted'] }
       session['omniauth.auth'] = auth_data
       last_operation_update
-      # sign_in_and_redirect(user, event: :authentication)
       sign_in_and_redirect(user)
       set_flash_message(:notice, :success, kind: 'Bookshare')
+
     else
       __debug_line { [__debug_route_label, 'USER NOT PERSISTED'] }
-      # session['devise.bookshare_data'] = auth_data
-      # redirect_to new_user_registration_url
       failure
     end
   end

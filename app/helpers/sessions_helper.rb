@@ -46,7 +46,7 @@ module SessionsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def sign_in_link(label: nil, provider: nil, **opt)
-    label    ||= get_label(:new, provider)
+    label    ||= get_sessions_label(:new, provider)
     provider ||= :bookshare
     html_opt = {
       class:             "session-link #{provider}-login",
@@ -66,7 +66,7 @@ module SessionsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def sign_out_link(label: nil, provider: nil, **opt)
-    label    ||= get_label(:destroy, provider)
+    label    ||= get_sessions_label(:destroy, provider)
     provider ||= :bookshare
     html_opt = {
       class:             "session-link #{provider}-logout",
@@ -76,6 +76,22 @@ module SessionsHelper
     }
     merge_html_options!(html_opt, opt)
     link_to(label, destroy_user_session_path, html_opt)
+  end
+
+  # Generate the URL to be used from a development deployment to proxy OAuth2
+  # authentication through the deployed service.
+  #
+  # @param [String, Symbol] resource
+  # @param [String, Symbol] provider
+  #
+  # @return [String]
+  #
+  def proxy_authorize_url(resource, provider)
+    proxy_host = 'https://emmadev.internal.lib.virginia.edu'
+    proxy_path = omniauth_authorize_path(resource, provider)
+    path = File.join(proxy_host, proxy_path)
+    path << (path.include?('?') ? '&' : '?')
+    path << "proxy=#{URI.escape(sign_in_proxy_url)}"
   end
 
   # ===========================================================================
@@ -88,16 +104,19 @@ module SessionsHelper
   #
   # @param [String, Symbol]      action
   # @param [String, Symbol, nil] provider
+  # @param [Hash]                opt        Passed to TranslationHelper#t.
   #
   # @return [String]
   #
-  def get_label(action, provider = nil)
-    provider = provider.to_s.capitalize
-    if provider.present?
-      t("emma.user.omniauth_callbacks.#{action}.label", provider: provider)
+  def get_sessions_label(action, provider = nil, **opt)
+    default = [:"emma.user.sessions.#{action}.label", *opt[:default]]
+    if (provider ||= opt[:provider])
+      opt[:provider] = OmniAuth::Utils.camelize(provider)
+      key = :"emma.user.omniauth_callbacks.#{action}.label"
     else
-      t("emma.user.sessions.#{action}.label", default: action.to_s.capitalize)
+      key = default.shift
     end
+    t(key, opt)
   end
 
 end

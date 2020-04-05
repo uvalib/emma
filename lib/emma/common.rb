@@ -223,7 +223,7 @@ module Emma::Common
   #
   def remove_blanks(item)
     case item
-      when Boolean, TrueClass, FalseClass
+      when TrueClass, FalseClass
         item
       when Hash
         item.transform_values { |v| remove_blanks(v) }.compact.presence

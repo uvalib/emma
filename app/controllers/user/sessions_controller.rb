@@ -85,6 +85,24 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
+  # == GET /users/sign_in_proxy?...
+  # Sign in with credentials proxied from the production service.
+  #
+  def sign_in_proxy
+    # noinspection RubyYardParamTypeMatch
+    auth_data = session['omniauth.auth'] = request.env['omniauth.auth']
+    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
+    self.resource = warden.set_user(User.from_omniauth(auth_data))
+    sign_in(resource_name, resource)
+    api_update(user: resource)
+    set_flash_notice(:create)
+    if params[:redirect]
+      redirect_to params[:redirect]
+    else
+      redirect_to after_sign_in_path_for(resource)
+    end
+  end
+
   # == GET /users/sign_in_as?id=:id
   # Sign in as the specified user.
   #

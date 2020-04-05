@@ -26,11 +26,16 @@
     }
 
   if devise_mapping.omniauthable?
+    proxy = !application_deployed?
     links +=
       resource_class.omniauth_providers.map { |provider|
-        name  = OmniAuth::Utils.camelize(provider)
-        label = t('emma.user.omniauth_callbacks.new.label', provider: name)
-        path  = omniauth_authorize_path(resource_name, provider)
+        if proxy
+          label = get_sessions_label(:sign_in_proxy, provider)
+          path  = proxy_authorize_url(resource_name, provider)
+        else
+          label = get_sessions_label(:new, provider)
+          path  = omniauth_authorize_path(resource_name, provider)
+        end
         [label, path]
       }
   end
@@ -39,7 +44,7 @@
   if false && defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
     links +=
       OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.map { |id, _|
-        label = t('emma.user.omniauth_callbacks.sign_in_as.label', user: id)
+        label = get_sessions_label(:sign_in_as, user: id)
         path  = sign_in_as_path(id: id)
         [label, path]
       }
