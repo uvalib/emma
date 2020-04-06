@@ -49,11 +49,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     auth_data = request.env['omniauth.auth']
     __debug_route { "env[omniauth.auth] = #{auth_data.inspect}" }
     __debug_request
-    if (proxy_redirect = session.delete('proxy.redirect'))
-      __debug_line { [__debug_route_label, 'dev proxy'] }
-      redirect_to proxy_redirect
-
-    elsif (user = User.from_omniauth(auth_data)).persisted?
+    user = User.from_omniauth(auth_data)
+    if user.persisted?
       __debug_line { [__debug_route_label, 'user persisted'] }
       session['omniauth.auth'] = auth_data
       last_operation_update

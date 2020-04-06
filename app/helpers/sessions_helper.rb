@@ -78,22 +78,6 @@ module SessionsHelper
     link_to(label, destroy_user_session_path, html_opt)
   end
 
-  # Generate the URL to be used from a development deployment to proxy OAuth2
-  # authentication through the deployed service.
-  #
-  # @param [String, Symbol] resource
-  # @param [String, Symbol] provider
-  #
-  # @return [String]
-  #
-  def proxy_authorize_url(resource, provider)
-    proxy_host = 'https://emmadev.internal.lib.virginia.edu'
-    proxy_path = omniauth_authorize_path(resource, provider)
-    path = File.join(proxy_host, proxy_path)
-    path << (path.include?('?') ? '&' : '?')
-    path << "proxy=#{URI.escape(sign_in_proxy_url)}"
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================

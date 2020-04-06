@@ -26,16 +26,10 @@
     }
 
   if devise_mapping.omniauthable?
-    proxy = !application_deployed?
     links +=
       resource_class.omniauth_providers.map { |provider|
-        if proxy
-          label = get_sessions_label(:sign_in_proxy, provider)
-          path  = proxy_authorize_url(resource_name, provider)
-        else
-          label = get_sessions_label(:new, provider)
-          path  = omniauth_authorize_path(resource_name, provider)
-        end
+        label = get_sessions_label(:new, provider)
+        path  = omniauth_authorize_path(resource_name, provider)
         [label, path]
       }
   end
@@ -51,7 +45,7 @@
   end
 -%>
 
-<%- links.to_h.each_pair do |label, path| -%>
+<%- links.each do |label, path| -%>
   <p>
     <%= link_to(label, path, 'data-turbolinks': false) %>
   </p>

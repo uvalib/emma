@@ -1,0 +1,29 @@
+<%# app/views/user/sessions/_synthetic.html.erb -%>
+<%-
+  # Convenience for the desktop only: Short circuit login by providing an
+  # auth token (copied from an independent browser tab which is logged-in to
+  # the production service).
+
+  return if application_deployed?
+
+-%>
+
+<%= form_tag(sign_in_token_path, class: 'sign-in-token', method: :get) do -%>
+
+  <label><%= t('emma.user.sessions.sign_in_token.label') -%></label>
+
+  <div class="field">
+    <%= label_tag      :uid, 'ID:' %>
+    <%= text_field_tag :uid %>
+  </div>
+
+  <div class="field">
+    <%= label_tag      :token, 'Token:' %>
+    <%= text_field_tag :token %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag 'Submit' %>
+  </div>
+
+<%- end -%>

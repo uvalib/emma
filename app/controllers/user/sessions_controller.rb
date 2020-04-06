@@ -21,10 +21,10 @@ class User::SessionsController < Devise::SessionsController
   # :section: Callbacks
   # ===========================================================================
 
-  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_as]
-  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
+  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_token sign_in_as]
+  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_token sign_in_as]
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
-  prepend_before_action(only: %i[create destroy sign_in_as]) do
+  prepend_before_action(only: %i[create destroy sign_in_token sign_in_as]) do
     request.env['devise.skip_timeout'] = true
   end
 
@@ -85,22 +85,18 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
-  # == GET /users/sign_in_proxy?...
+  # == GET /users/sign_in_token?uid=NAME&token=AUTH_TOKEN
+  # == GET /users/sign_in_token?auth={OmniAuth::AuthHash}
   # Sign in with credentials proxied from the production service.
   #
-  def sign_in_proxy
-    # noinspection RubyYardParamTypeMatch
-    auth_data = session['omniauth.auth'] = request.env['omniauth.auth']
-    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
-    self.resource = warden.set_user(User.from_omniauth(auth_data))
-    sign_in(resource_name, resource)
-    api_update(user: resource)
-    set_flash_notice(:create)
-    if params[:redirect]
-      redirect_to params[:redirect]
-    else
-      redirect_to after_sign_in_path_for(resource)
-    end
+  # == Usage Notes
+  # The initial request to this endpoint is redirected by Warden::Manager to
+  # OmniAuth::Strategies::Bookshare#request_call.  The second request is
+  # performed from OmniAuth::Strategies::Bookshare#callback_phase which
+  # provides the value for 'omniauth.auth'.
+  #
+  def sign_in_token
+    synthetic_authentication(__method__)
   end
 
   # == GET /users/sign_in_as?id=:id
@@ -111,19 +107,7 @@ class User::SessionsController < Devise::SessionsController
   # exists and contains pre-fetched OAuth2 bearer tokens.
   #
   def sign_in_as
-    # noinspection RubyYardParamTypeMatch
-    auth_data = session['omniauth.auth'] ||=
-      OmniAuth::Strategies::Bookshare.configured_auth_hash(params[:id])
-    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
-    self.resource = warden.set_user(User.from_omniauth(auth_data))
-    sign_in(resource_name, resource)
-    api_update(user: resource)
-    set_flash_notice(:create)
-    if params[:redirect]
-      redirect_to params[:redirect]
-    else
-      redirect_to after_sign_in_path_for(resource)
-    end
+    synthetic_authentication(__method__)
   end
 
   # ===========================================================================
@@ -146,6 +130,28 @@ class User::SessionsController < Devise::SessionsController
     user = 'unknown user' if user.blank?
     user = user.to_s
     flash[:notice] = t("emma.user.sessions.#{action}.success", user: user)
+  end
+
+  # Sign in using information supplied outside of the OAuth2 flow.
+  #
+  # @param [Symbol, String] action    Calling method; def: `params[:action]`.
+  #
+  def synthetic_authentication(action = nil)
+    action ||= params[:action] || calling_method
+    auth_data = session['omniauth.auth'] ||=
+      OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
+    __debug_route(action: action) do
+      "session[omniauth.auth] = #{auth_data.inspect}"
+    end
+    self.resource = warden.set_user(User.from_omniauth(auth_data))
+    sign_in(resource_name, resource)
+    api_update(user: resource)
+    set_flash_notice(:create)
+    if params[:redirect]
+      redirect_to params[:redirect]
+    else
+      redirect_to after_sign_in_path_for(resource)
+    end
   end
 
   # ===========================================================================

@@ -249,43 +249,42 @@ module OmniAuth
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
-        session['omniauth.params'] = request.get? ? request.GET : request.POST
-        OmniAuth.config.before_request_phase&.call(env)
+        session['omniauth.params'] = params = normalize_parameters(request)
         __debug_items(dbg, "#{request.request_method}") do
           { options: options, session: __debug_session_hash }
         end
 
-        # Store redirect for desktop development auth proxy.
-        proxy = session['omniauth.params'].symbolize_keys.dig(:proxy)
-        session['proxy.redirect'] = proxy if proxy
-
-        if current_user
-          log :info, 'By-passing request_phase.'
+        if params.key?(:commit)
+          log :info, 'By-passing request_phase (local developer uid/token)'
           authorize_params # Generate session['omniauth.state']
-          request.params['state'] = session['omniauth.state']
-          callback_phase
+          callback_call
 
-        elsif !options.form
-          org = request.params[options.origin_param]
-          ref = env['HTTP_REFERER']
-          ref = nil if ref&.end_with?(request_path)
-          if org || ref
-            log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
-            session['omniauth.origin'] = org || ref
-          end
-          __debug_line(dbg) do
-            "session['omniauth.origin'] = #{(org || ref).inspect}"
-          end
-          request_phase
+        elsif current_user
+          log :info, 'By-passing request_phase (configured uid/token)'
+          authorize_params # Generate session['omniauth.state']
+          callback_call
 
         elsif options.form.respond_to?(:call)
           log :info, 'Rendering form from supplied Rack endpoint.'
           options.form.call(env)
 
-        else # if options.form
+        elsif options.form
           log :info, 'Rendering form from underlying application.'
           call_app!
 
+        elsif options.origin_param
+          org = request.params[options.origin_param].presence
+          ref = env['HTTP_REFERER'].presence
+          ref = nil if ref&.end_with?(request_path)
+          if org || ref
+            log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
+          end
+          session['omniauth.origin'] = org ||= ref
+          __debug_line(dbg) { "session['omniauth.origin'] = #{org.inspect}" }
+          request_phase
+
+        else
+          request_phase
         end
       end
 
@@ -723,6 +722,7 @@ module OmniAuth
       # @see OAuth2::ClientExt#request
       #
       def request_phase
+        OmniAuth.config.before_request_phase&.call(env)
         dbg  = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
         __debug(dbg)
         code = client.auth_code
@@ -788,11 +788,18 @@ module OmniAuth
 
         # noinspection RubyStringKeysInHashInspection
         result =
-          if (username = current_user&.uid)
+          if (op = normalize_parameters).key?(:commit)
+            # Special case for locally-provided uid/token causes a redirect to
+            # the special endpoint for direct token sign-in.
+            self.access_token        = synthetic_access_token(op)
+            session['omniauth.auth'] = synthetic_auth_hash(op)
+            [302, { 'Location' => '/users/sign_in_token' }, []]
+
+          elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
-            self.access_token        = configured_access_token(username)
-            session['omniauth.auth'] = configured_auth_hash(username)
+            self.access_token        = synthetic_access_token(username)
+            session['omniauth.auth'] = synthetic_auth_hash(username)
             [302, { 'Location' => "/users/sign_in_as?id=#{username}" }, []]
 
           else
@@ -877,30 +884,91 @@ module OmniAuth
         request&.env['warden']&.user
       end
 
-      # configured_access_token
+      # normalize_parameters
       #
-      # @param [String] id            User ID.
+      # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
       #
-      # @return [OAuth2::AccessToken]
-      # @return [nil]                 If *id* is not valid.
+      # @return [Hash{Symbol=>*}]
       #
-      def configured_access_token(id)
-        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
-        hash = CONFIGURED_AUTH[id]
-        OAuth2::AccessToken.from_hash(client, hash) if hash.present?
+      def normalize_parameters(params = nil)
+        if params
+          self.class.normalize_parameters(params)
+        else
+          env['omniauth.params'] || {}
+        end
       end
 
-      # configured_auth_hash
+      # Generate an access token based on fixed information.
       #
-      # @param [String] id            Bookshare user identity (email address).
+      # @overload synthetic_access_token(atoken)
+      #   @param [::OAuth2::AccessToken] atoken
+      #   @return [::OAuth2::AccessToken]
       #
-      # @return [OmniAuth::AuthHash]
-      # @return [nil]                 If *id* is not valid.
+      # @overload synthetic_access_token(id)
+      #   @param [String] id          Bookshare user identity (email address).
+      #   @return [::OAuth2::AccessToken, nil]
       #
-      def configured_auth_hash(id)
-        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
-        return unless (atoken = configured_access_token(id)).present?
-        AuthHash.new(provider: name, uid: id).tap do |hash|
+      # @overload synthetic_access_token(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @return [::OAuth2::AccessToken, nil]
+      #
+      # @option params [String] :uid
+      # @option params [String] :id                 Alias for :uid.
+      # @option params [String] :access_token
+      # @option params [String] :token              Alias for :access_token.
+      #
+      def synthetic_access_token(id)
+        token = hash = nil
+        case id
+          when ::OAuth2::AccessToken
+            token  = id
+          when String
+            abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
+            hash   = CONFIGURED_AUTH[id]
+          else
+            params = normalize_parameters(id)
+            token  = params[:access_token] || params[:token]
+        end
+        return token if token.is_a?(::OAuth2::AccessToken)
+        return unless token.present? || hash.present?
+        hash ||= { access_token: token, token_type: 'bearer', scope: 'basic' }
+        ::OAuth2::AccessToken.from_hash(client, hash)
+      end
+
+      # Generate an auth hash based on fixed information.
+      #
+      # @overload synthetic_auth_hash(id, token = nil)
+      #   @param [String] id          Bookshare user identity (email address).
+      #   @param [String] token       Default from #CONFIGURED_AUTH.
+      #   @return [OmniAuth::AuthHash, nil]
+      #
+      # @overload synthetic_auth_hash(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @return [OmniAuth::AuthHash, nil]
+      #
+      # @option params [OmniAuth::AuthHash] :auth
+      # @option params [String] :uid
+      # @option params [String] :id                 Alias for :uid.
+      # @option params [String] :access_token
+      # @option params [String] :token              Alias for :access_token.
+      #
+      def synthetic_auth_hash(id, token = nil)
+        if token.present?
+          abort "#{__method__}: id must be a string" unless id.is_a?(String)
+          atoken = (token if token.is_a?(::OAuth2::AccessToken))
+          atoken ||= synthetic_access_token(token: token)
+        elsif id.is_a?(OmniAuth::AuthHash)
+          return id
+        elsif id.is_a?(String)
+          atoken = synthetic_access_token(id)
+        else
+          params = normalize_parameters(id)
+          return params[:auth] if params[:auth].is_a?(OmniAuth::AuthHash)
+          id     = params[:uid] || params[:id]
+          atoken = synthetic_access_token(params)
+        end
+        return unless atoken.present?
+        OmniAuth::AuthHash.new(provider: name, uid: id).tap do |hash|
           hash.uid   = uid
           hash.info  = info  unless skip_info?
           hash.extra = extra if extra
@@ -919,28 +987,57 @@ module OmniAuth
 
       public
 
+      # normalize_parameters
+      #
+      # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
+      #
+      # @return [Hash{Symbol=>*}]
+      #
+      def self.normalize_parameters(params)
+        params = params.params      if params.respond_to?(:params)
+        params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
+        params ||= {}
+        params.symbolize_keys
+      end
+
       # Generate an auth hash based on fixed information.
       #
-      # @param [String] id            Bookshare user identity (email address).
+      # @overload synthetic_auth_hash(id, token = nil)
+      #   @param [String] id          Bookshare user identity (email address).
+      #   @param [String] token       Default from #CONFIGURED_AUTH.
+      #   @return [OmniAuth::AuthHash]
       #
-      # @return [OmniAuth::AuthHash]
+      # @overload synthetic_auth_hash(params)
+      #   @param [ActionController::Parameters, Hash] params
+      #   @return [OmniAuth::AuthHash]
       #
-      def self.configured_auth_hash(id)
-        abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
+      # @option params [OmniAuth::AuthHash] :auth
+      # @option params [String] :uid
+      # @option params [String] :id                 Alias for :uid.
+      # @option params [String] :access_token
+      # @option params [String] :token              Alias for :access_token.
+      #
+      def self.synthetic_auth_hash(id, token = nil)
+        if token.present?
+          abort "#{__method__}: id must be a string" unless id.is_a?(String)
+        elsif id.is_a?(OmniAuth::AuthHash)
+          return id
+        elsif id.is_a?(String)
+          abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
+          token = CONFIGURED_AUTH[id]&.dig(:access_token)
+        else
+          params = normalize_parameters(id)
+          return params[:auth] if params[:auth].is_a?(OmniAuth::AuthHash)
+          id    = params[:uid] || params[:id]
+          token = params[:access_token] || params[:token]
+        end
         hash = {
-          provider: default_options[:name],
-          uid:      id,
-          info: {
-            first_name: '',
-            last_name:  '',
-            email:      id
-          },
-          credentials: {
-            token:   CONFIGURED_AUTH[id][:access_token],
-            expires: false
-          }
+          provider:    default_options[:name],
+          uid:         id,
+          info:        { first_name: '', last_name: '', email: id },
+          credentials: { token: token, expires: false }
         }.deep_stringify_keys
-        AuthHash.new(hash)
+        OmniAuth::AuthHash.new(hash)
       end
 
     end

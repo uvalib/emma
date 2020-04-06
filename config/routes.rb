@@ -137,13 +137,11 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'user/omniauth_callbacks',
   }
 
+  # Synthetic login endpoints.
   devise_scope :user do
-    # For proxy auth from the desktop via the production server:
-    get '/users/sign_in_proxy', to: 'user/sessions#sign_in_proxy',
-        as: 'sign_in_proxy'
-    # For testing with fixed IDs and tokens:
-    get '/users/sign_in_as', to: 'user/sessions#sign_in_as',
-        as: 'sign_in_as'
+    %w(sign_in_token sign_in_as).each do |endpoint|
+      get "/users/#{endpoint}", to: "user/sessions##{endpoint}", as: endpoint
+    end
   end
 
 end
@@ -192,6 +190,10 @@ unless ONLY_FOR_DOCUMENTATION
   def search_index_url(*);                        end
   def session_path(*);                            end
   def session_url(*);                             end
+  def sign_in_as_path(*);                         end
+  def sign_in_as_url(*);                          end
+  def sign_in_token_path(*);                      end
+  def sign_in_token_url(*);                       end
   def title_index_path(*);                        end
   def title_index_url(*);                         end
   def unlock_path(*);                             end

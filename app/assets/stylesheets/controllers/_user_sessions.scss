@@ -1,0 +1,55 @@
+// app/assets/stylesheets/controllers/_user_sessions.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Login page
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+.sign-in-token {
+
+    display:     inline-flex;
+    flex-wrap:   wrap;
+    align-items: center;
+
+    .field,
+    .actions {
+
+        display:     inline-flex;
+        flex-wrap:   nowrap;
+        align-items: center;
+        margin-left: $page-padding-x;
+
+        @media #{$narrow-screen} {
+            margin-top:  0.25rem;
+            margin-left: 0;
+        }
+    }
+
+    .field {
+
+        label {
+            font-weight:  bold;
+            margin-right: $flex-gap-x;
+        }
+
+        input {
+            min-width: 15vw;
+        }
+    }
+
+    .actions {
+
+        @media #{$narrow-screen} {
+            margin-right: 100%; // Push to next line.
+        }
+
+        input[type='submit'] {
+
+            @extend %control-button;
+
+            line-height: 1;
+        }
+    }
+}
