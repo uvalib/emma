@@ -69,7 +69,7 @@ module Emma::Debug
   # @param [String, Symbol] controller  Default: `self.class.name`.
   # @param [String, Symbol] action      Default: `#calling_method`.
   # @param [Hash]           opt         Passed to #__debug_line.
-  # @param [Proc]           block       Passed to #__debug_line.
+  # @param [Proc]           block       Passed to #__debug_items.
   #
   # @return [nil]
   #
@@ -77,6 +77,7 @@ module Emma::Debug
     action ||= calling_method
     leader = __debug_route_label(controller: controller, action: action)
     __debug_line(leader, "params = #{params.inspect}", opt, &block)
+    __debug_items(opt, &block) if block
   end
 
   # Output request values and contents.

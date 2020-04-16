@@ -47,7 +47,8 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   def bookshare
     auth_data = request.env['omniauth.auth']
-    __debug_route { "env[omniauth.auth] = #{auth_data.inspect}" }
+    auth_data &&= OmniAuth::AuthHash.new(auth_data)
+    __debug_route { { "env['omniauth.auth']" => auth_data } }
     __debug_request
     user = User.from_omniauth(auth_data)
     if user.persisted?
@@ -70,7 +71,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def failure
     __debug_route
     __debug_request
-    #set_flash_alert # TODO: remove?
     super
   end
 

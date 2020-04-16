@@ -162,8 +162,10 @@ module HtmlHelper
   #
   # @param [String] label
   # @param [String] path
-  # @param [Hash]   opt               Passed to #link_to.
+  # @param [Hash]   opt               Passed to #link_to except for:
   # @param [Proc]   block             Passed to #link_to.
+  #
+  # @option opt [String] :label       Overrides *label* parameter if present.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -184,6 +186,7 @@ module HtmlHelper
     unless opt.key?(:'aria-hidden')
       opt[:'aria-hidden'] = true if opt[:tabindex] == -1
     end
+    label = opt.delete(:label) || label
     link_to(label, path, opt, &block)
   end
 

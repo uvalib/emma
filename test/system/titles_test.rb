@@ -87,7 +87,7 @@ class TitlesTest < ApplicationSystemTestCase
       # Visit the first entry.
       visit_show_page(:title) do |title|
         parts = title.downcase
-        term  = terms.values.first.downcase
+        term  = terms.values.first.to_s.downcase
         show "TERM = #{term}"
         assert parts.include?(term)
       end
@@ -118,7 +118,7 @@ class TitlesTest < ApplicationSystemTestCase
       # Visit the first entry.
       visit_show_page(:title) do |title|
         parts = title.downcase.split(/[[:space:][:punct:]]+/)
-        term  = strip_quotes(terms.values.first.downcase)
+        term  = strip_quotes(terms.values.first.to_s.downcase)
         show "TERM = #{term}"
         assert parts.any? { |part| part == term }
       end

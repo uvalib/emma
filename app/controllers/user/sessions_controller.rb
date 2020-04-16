@@ -78,7 +78,7 @@ class User::SessionsController < Devise::SessionsController
   #
   def destroy
     auth_data = session.delete('omniauth.auth')
-    __debug_route { "session[omniauth.auth] = #{auth_data.inspect}" }
+    __debug_route { { "session['omniauth.auth']" => auth_data } }
     super do
       BookshareService.clear
       set_flash_notice(__method__, auth_data)
@@ -102,9 +102,7 @@ class User::SessionsController < Devise::SessionsController
   # == GET /users/sign_in_as?id=:id
   # Sign in as the specified user.
   #
-  # == Usage Notes
-  # This can only be used if OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH
-  # exists and contains pre-fetched OAuth2 bearer tokens.
+  # @see OmniAuth::Strategies::Bookshare#stored_auth
   #
   def sign_in_as
     synthetic_authentication(__method__)
@@ -137,11 +135,12 @@ class User::SessionsController < Devise::SessionsController
   # @param [Symbol, String] action    Calling method; def: `params[:action]`.
   #
   def synthetic_authentication(action = nil)
-    action ||= params[:action] || calling_method
-    auth_data = session['omniauth.auth'] ||=
-      OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
+    action  ||= params[:action] || calling_method
+    auth_data = get_omniauth_session_data
     __debug_route(action: action) do
-      "session[omniauth.auth] = #{auth_data.inspect}"
+      %w(omniauth.auth stored.auth).map { |key|
+        ["session['#{key}']", session[key]]
+      }.to_h
     end
     self.resource = warden.set_user(User.from_omniauth(auth_data))
     sign_in(resource_name, resource)
@@ -152,6 +151,22 @@ class User::SessionsController < Devise::SessionsController
     else
       redirect_to after_sign_in_path_for(resource)
     end
+  end
+
+  # Update session authentication state, starting with remembered logins
+  # (for the sake of #synthetic_auth_hash).
+  #
+  # @return [OmniAuth::AuthHash]
+  #
+  def get_omniauth_session_data
+    session['stored.auth'] =
+      OmniAuth::Strategies::Bookshare.stored_auth(session['stored.auth'])
+    session['omniauth.auth'].presence ||
+      OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params).tap do |data|
+        session['stored.auth'] =
+          OmniAuth::Strategies::Bookshare.stored_auth_update(data)
+        session['omniauth.auth'] = data
+      end
   end
 
   # ===========================================================================

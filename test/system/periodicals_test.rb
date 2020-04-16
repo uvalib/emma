@@ -87,7 +87,7 @@ class PeriodicalsTest < ApplicationSystemTestCase
       # Visit the first entry.
       visit_show_page(:periodical) do |title|
         parts = title.downcase
-        term  = terms.values.first.downcase
+        term  = terms.values.first.to_s.downcase
         show "TERM = #{term}"
         assert parts.include?(term)
       end

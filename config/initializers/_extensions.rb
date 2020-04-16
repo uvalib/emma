@@ -10,36 +10,19 @@
 # Bookshare API properties
 # =============================================================================
 
-# Users with pre-generated OAuth tokens for development purposes.
-#
-# @type [Hash{String=>String}]
-#
-# == Usage Notes
-# These exist because Bookshare has a problem with its authentication
-# flow, so tokens were generated for two EMMA users which could be used
-# directly (avoiding the OAuth2 flow).
-#
-BOOKSHARE_TEST_USERS = {
-  'emmadso@bookshare.org'        => '42091149-6ab9-4780-bf40-0fea98d15a83',
-  'emmacollection@bookshare.org' => '0223e062-6790-4ff4-8983-985c1cc1f591',
-  'emmamembership@bookshare.org' => '998521c6-14c9-4c2e-b49a-f518e7b10b13',
-}.freeze
-
 # Bookshare API key.
 #
 # This does not have a default and *must* be provided through the environment.
 #
-# @type [String]
+# @type [String, nil]
 #
-BOOKSHARE_API_KEY =
-  ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
+BOOKSHARE_API_KEY = ENV.fetch('BOOKSHARE_API_KEY', nil).freeze
 
 # Current Bookshare API version.
 #
 # @type [String]
 #
-BOOKSHARE_API_VERSION =
-  ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
+BOOKSHARE_API_VERSION = ENV.fetch('BOOKSHARE_API_VERSION', 'v2').freeze
 
 # Base Bookshare API request path.
 #
@@ -47,6 +30,7 @@ BOOKSHARE_API_VERSION =
 #
 BOOKSHARE_BASE_URL =
   ENV.fetch('BOOKSHARE_BASE_URL', 'https://api.bookshare.org')
+    .strip
     .sub(%r{^(http:)?//}, 'https://')
     .sub(%r{/+$}, '')
     .sub(%r{(/v.+)?$}) { $1 || "/#{BOOKSHARE_API_VERSION}" }
@@ -58,6 +42,41 @@ BOOKSHARE_BASE_URL =
 #
 BOOKSHARE_AUTH_URL =
   ENV.fetch('BOOKSHARE_AUTH_URL', 'https://auth.bookshare.org')
+    .strip
+    .sub(%r{^(http:)?//}, 'https://')
+    .sub(%r{/+$}, '')
+    .freeze
+
+# Users with pre-generated OAuth tokens for development purposes.
+#
+# The environment variable should be in a format acceptable to #json_parse
+# (either JSON or a rendering of a Ruby hash).
+#
+# @type [String, nil]
+#
+# @see OmniAuth::Strategies::Bookshare#stored_auth
+#
+BOOKSHARE_TEST_USERS = ENV.fetch('BOOKSHARE_TEST_USERS', nil).freeze
+
+# =============================================================================
+# EMMA Unified Search API properties
+# =============================================================================
+
+# Current EMMA Unified Search API version.
+#
+# This is informational only; search API URLs do not include it.
+#
+# @type [String]
+#
+SEARCH_API_VERSION = ENV.fetch('SEARCH_API_VERSION', '0.0.2').freeze
+
+# Base EMMA Unified Search API request path.
+#
+# @type [String]
+#
+SEARCH_BASE_URL =
+  ENV.fetch('SEARCH_BASE_URL','https://api.staging.bookshareunifiedsearch.org')
+    .strip
     .sub(%r{^(http:)?//}, 'https://')
     .sub(%r{/+$}, '')
     .freeze

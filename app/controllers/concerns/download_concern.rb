@@ -29,26 +29,21 @@ module DownloadConcern
 
   # render_download
   #
-  # @overload render_download(method, **opt)
-  #   @param [Symbol] method  API request method.
-  #   @param [Hash]   opt     Passed to the request method.
+  # @param [Symbol] method  API request method.
+  # @param [Hash]   opt     Passed to the request method.
   #
-  # @overload render_download(result)
-  #   @param [Bs::Message::StatusModel] result
+  # @return [void]
   #
   def render_download(method, **opt)
-    result =
-      if method.is_a?(Api::Message)
-        method
-      else
-        api.send(method, **opt.merge(no_raise: true, no_redirect: true))
-      end
+    # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] result
+    result = api.send(method, **opt.merge!(no_raise: true, no_redirect: true))
+    links      = result.respond_to?(:links) ? result.links : result.messages
+    @exception = result.exception
     @error     = result.error_message
     @state     = result.key.to_s.upcase
-    @link      = (result.messages.first.presence if @state == 'COMPLETED')
-    @exception = result.exception
+    @link      = (links.first.presence if @state == 'COMPLETED')
     respond_to do |format|
-      format.html { redirect_to @link if @link }
+      format.html { redirect_to @link if @link  }
       format.json { render_json download_values }
       format.xml  { render_xml  download_values }
     end

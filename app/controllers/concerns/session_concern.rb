@@ -66,6 +66,9 @@ module SessionConcern
 
   # Keys for session values that should not be touched by #cleanup_session.
   #
+  # Note that all 'devise.*', 'omniauth.*' and 'warden.*' entries are preserved
+  # because any entry with a '.' in its key name is preserved.
+  #
   # @type [Array<String,Regexp>]
   #
   PRESERVE_SESSION_KEYS = [
@@ -75,9 +78,6 @@ module SessionConcern
     '_turbolinks_location',
     /\./,
     /_return_to$/,
-    /^devise\./,
-    /^omniauth\./,
-    /^warden\./,
   ].freeze
 
   # ===========================================================================

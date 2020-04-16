@@ -88,15 +88,27 @@ public
 #
 class PublicationIdentifier < ScalarType
 
+  # Valid values for this type match this pattern.
+  #
+  # @type [RegExp]
+  #
+  PATTERN = /^(isbn|oclc|upc|issn):[0-9X]{8,14}$/i
+
   # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
 
   public
 
-  def valid?(v = nil)
-    v = v&.to_s&.strip || @value
-    v.match?(/^(isbn|oclc|upc|issn):[0-9X]{8,14}$/i)
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see ScalarType#valid?
+  #
+  def self.valid?(v)
+    normalize(v).match?(PATTERN)
   end
 
 end

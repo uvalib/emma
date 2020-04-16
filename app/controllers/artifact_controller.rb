@@ -139,6 +139,15 @@ class ArtifactController < ApplicationController
     render_download(:download_title, **opt)
   end
 
+  # == GET /artifact/retrieval?url=URL
+  # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
+  # Unified Search results).
+  #
+  def retrieval
+    __debug_route
+    render_download(:get_retrieval, url: params[:url])
+  end
+
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================

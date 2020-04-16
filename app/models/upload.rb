@@ -251,8 +251,9 @@ class Upload < ApplicationRecord
     @parser ||=
       begin
         class_name = "#{self.fmt.to_s.camelize}Parser"
-        class_name.constantize.new(attached_file.io)
+        class_name.constantize.new(attached_file_io)
       rescue => e
+        # noinspection RubyScope
         __debug  { "Upload.parser: #{class_name} not valid" }
         Log.warn { "Upload.parser: #{e.message}" }
       end
@@ -381,6 +382,21 @@ class Upload < ApplicationRecord
     @file_prop || {}
   end
 =end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Direct access to the contents of the attached file.
+  #
+  # @return [IO]
+  # @return [nil]
+  #
+  def attached_file_io
+    attached_file&.send(:io) # This is a private method.
+  end
 
   # ===========================================================================
   # :section: Class methods

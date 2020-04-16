@@ -17,6 +17,7 @@ module SearchHelper
   include PaginationHelper
   include LogoHelper
   include ModelHelper
+  include ArtifactHelper
 
   # ===========================================================================
   # :section:
@@ -164,19 +165,29 @@ module SearchHelper
   # @return [nil]
   #
   def source_retrieval_link(item, **opt)
-    local, opt = partition_options(opt, :label)
-    url = local[:url] || item.record_download_url
+    opt, html_opt = partition_options(opt, :label, :url)
+    url   = opt[:url] || item.record_download_url
+    url   = CGI.unescape(url.to_s)
+    label = opt[:label] || url
     return if url.blank?
 
-    label = local[:label] || CGI.unescape(url)
-    opt[:target] ||= '_blank'
-    opt[:title]  ||=
-      begin
-        repo = item.emma_repository.titleize
-        fmt  = item.dc_format.upcase
-        "Retrieve the #{fmt} source from #{repo}." # TODO: I18n
-      end
-    make_link(label, url, **opt)
+    unless html_opt.key?(:title)
+      fmt = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
+      rep = item.emma_repository.to_s.titleize
+      html_opt[:title] = "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
+    end
+    html_opt[:target] ||= '_blank'
+
+    case item.emma_repository
+      when 'emma', 'bookshare'
+        download_links(item, label: label, url: url, **html_opt)
+    # when 'hathiTrust'
+    #   TODO: hathiTrust retrieval link
+    # when 'internetArchive'
+    #   TODO: internetArchive retrieval link
+      else
+        make_link(label, url, **html_opt)
+    end
   end
 
   # ===========================================================================

@@ -34,15 +34,13 @@
       }
   end
 
-  # NOTE: Temporary sign-in-as links (currently disabled).
-  if false && defined?(OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH)
-    links +=
-      OmniAuth::Strategies::Bookshare::CONFIGURED_AUTH.map { |id, _|
-        label = get_sessions_label(:sign_in_as, user: id)
-        path  = sign_in_as_path(id: id)
-        [label, path]
-      }
-  end
+  # NOTE: Non-production sign-in-as links.
+  links +=
+    OmniAuth::Strategies::Bookshare.stored_auth.keys.map { |id|
+      label = get_sessions_label(:sign_in_as, user: id)
+      path  = sign_in_as_path(id: id)
+      [label, path]
+    }.compact
 -%>
 
 <%- links.each do |label, path| -%>

@@ -334,6 +334,28 @@ module BookshareService::Request::Titles
       }
     end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Retrieve an artifact by URL.
+  #
+  # This supports downloads of Bookshare items from EMMA Unified Search results
+  # by accepting a full retrieval URL (which is already a fully-formed
+  # Bookshare API links sans API key).
+  #
+  # @param [String] url
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @return [Search::Message::RetrievalResult]
+  #
+  def get_retrieval(url:, **opt)
+    api(:get, url, **opt)
+    Search::Message::RetrievalResult.new(response, error: exception)
+  end
+
 end
 
 __loading_end(__FILE__)

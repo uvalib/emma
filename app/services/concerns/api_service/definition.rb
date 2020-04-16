@@ -12,7 +12,7 @@ module ApiService::Definition
 
   # Add a method name and its properties to #api_methods.
   #
-  # @param [Hash{Symbol=>Hash}] prop
+  # @param [Hash{Symbol=>Hash{Symbol=>*}}] prop
   #
   # @return [void]
   #

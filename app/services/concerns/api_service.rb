@@ -27,12 +27,6 @@ class ApiService
 
   public
 
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  attr_reader :base_url
-
   # Internal service options along with connection options.
   #
   # @return [Hash]
@@ -47,15 +41,15 @@ class ApiService
   # @param [Hash] opt                 Stored in @options except for:
   #
   # @option opt [User]   :user        User instance which includes a
-  #                                     Bookshare user identity and a token.
+  #                                     Bookshare user identity and token.
   #
-  # @option opt [String] :base_url    Base URL to the external service
-  #                                     (default: #BASE_URL).
+  # @option opt [String] :base_url    Base URL to the external service (instead
+  #                                     of #BASE_URL defined by the subclass).
   #
   def initialize(opt = nil)
     opt, @options = partition_options(opt, :base_url, :user)
     @options.reject! { |_, v| v.blank? }
-    @base_url = opt[:base_url] || self.class.safe_const_get(:BASE_URL)
+    @base_url = opt[:base_url]
     set_user(opt[:user])
   end
 

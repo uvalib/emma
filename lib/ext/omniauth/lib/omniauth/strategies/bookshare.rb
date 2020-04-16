@@ -23,20 +23,6 @@ module OmniAuth
 
       include Emma::Debug
 
-      # Pre-authorized users for development purposes.
-      #
-      # @type [Hash{String=>Hash}]
-      #
-      # == Usage Notes
-      # These exist because Bookshare has a problem with its authentication
-      # flow, so tokens were generated for two EMMA users which could be used
-      # directly (avoiding the OAuth2 flow).
-      #
-      CONFIGURED_AUTH =
-        BOOKSHARE_TEST_USERS.transform_values { |token|
-          { access_token: token, token_type: 'bearer', scope: 'basic' }
-        }.deep_freeze
-
 =begin
       include OmniAuth::Strategy
 
@@ -47,7 +33,7 @@ module OmniAuth
 
       args %i[client_id client_secret]
 
-      option :name,          name.split('::').last.underscore
+      option :name,          name.split('::').last.to_s.underscore
       option :client_id,     BOOKSHARE_API_KEY
       option :client_secret, ''
       option :client_options, {
@@ -139,17 +125,23 @@ module OmniAuth
       # additional arguments. An `options` hash is automatically
       # created from the last argument if it is a hash.
       #
-      # @param app [Rack application] The application on which this middleware is applied.
+      # @param [*] app The application on which this middleware is applied.
       #
       # @overload new(app, options = {})
-      #   If nothing but a hash is supplied, initialized with the supplied options
-      #   overriding the strategy's default options via a deep merge.
+      #   If nothing but a hash is supplied, initialized with the supplied
+      #   options overriding the strategy's default options via a deep merge.
+      #
       # @overload new(app, *args, options = {})
-      #   If the strategy has supplied custom arguments that it accepts, they may
+      #   If the strategy has supplied custom arguments that it accepts, they
       #   will be passed through and set to the appropriate values.
       #
       # @yield [Options] Yields options to block for further configuration.
-      def initialize(app, *args, &block) # rubocop:disable UnusedMethodArgument
+      #
+      # This method overrides:
+      # @see OmniAuth::Strategy#initialize
+      #
+      # rubocop:disable UnusedMethodArgument
+      def initialize(app, *args, &block)
         @app = app
         @env = nil
         @options = self.class.default_options.dup
@@ -159,11 +151,10 @@ module OmniAuth
 
         self.class.args.each do |arg|
           break if args.empty?
-
           options[arg] = args.shift
         end
 
-        # Make sure that all of the args have been dealt with, otherwise error out.
+        # Make sure that all of the args have been dealt with, otherwise error.
         raise(ArgumentError.new("Received wrong number of arguments. #{args.inspect}")) unless args.empty?
 
         yield options if block_given?
@@ -193,41 +184,52 @@ module OmniAuth
 
 =begin
       # Duplicates this instance and runs #call! on it.
+      #
       # @param [Hash] The Rack environment.
+      #
       def call(env)
         dup.call!(env)
       end
 =end
 
+=begin
       # The logic for dispatching any additional actions that need
       # to be taken. For instance, calling the request phase if
       # the request path is recognized.
       #
       # @param env [Hash] The Rack environment.
+      #
       def call!(env) # rubocop:disable CyclomaticComplexity, PerceivedComplexity
-        #__debug_items("OMNIAUTH #{__method__}") { env }
-        super
-=begin
         unless env['rack.session']
-          error = OmniAuth::NoSessionError.new('You must provide a session to use OmniAuth.')
+          error = 'You must provide a session to use OmniAuth.'
+          error = OmniAuth::NoSessionError.new(error)
           raise(error)
         end
 
         @env = env
         @env['omniauth.strategy'] = self if on_auth_path?
 
-        return mock_call!(env) if OmniAuth.config.test_mode
-        return options_call if on_auth_path? && options_request?
-        return request_call if on_request_path? && OmniAuth.config.allowed_method?(request)
-        return callback_call if on_callback_path?
-        return other_phase if respond_to?(:other_phase)
-
-        @app.call(env)
-=end
+        if OmniAuth.config.test_mode
+          mock_call!(env)
+        elsif on_auth_path? && options_request?
+          options_call
+        elsif on_request_path? && OmniAuth.config.allowed_method?(request)
+          request_call
+        elsif on_callback_path?
+          callback_call
+        elsif respond_to?(:other_phase)
+          other_phase
+        else
+          @app.call(env)
+        end
       end
+=end
 
 =begin
       # Responds to an OPTIONS request.
+      #
+      # @return [Array<(Integer, Hash, Array<String>)>]
+      #
       def options_call
         OmniAuth.config.before_options_phase&.call(env)
         verbs = OmniAuth.config.allowed_request_methods
@@ -535,10 +537,9 @@ module OmniAuth
 =end
 
 =begin
-      CURRENT_PATH_REGEX = %r{/$}.freeze
-      EMPTY_STRING       = ''.freeze
       def current_path
-        @current_path ||= request.path_info.downcase.sub(CURRENT_PATH_REGEX, EMPTY_STRING)
+        @current_path ||=
+          request.path_info.downcase.sub(CURRENT_PATH_REGEX, EMPTY_STRING)
       end
 =end
 
@@ -572,11 +573,12 @@ module OmniAuth
           if request.scheme && request.url.match(URI::ABS_URI)
             uri = URI.parse(request.url.gsub(/\?.*$/, ''))
             uri.path = ''
-            # sometimes the url is actually showing http inside rails because the
-            # other layers (like nginx) have handled the ssl termination.
+            # sometimes the url is actually showing http inside rails because
+            # the other layers (like nginx) have handled the ssl termination.
             uri.scheme = 'https' if ssl? # rubocop:disable BlockNesting
             uri.to_s
-          else ''
+          else
+            ''
           end
         end
       end
@@ -675,11 +677,11 @@ module OmniAuth
 
 =begin
       def ssl?
-        request.env['HTTPS'] == 'on' ||
-          request.env['HTTP_X_FORWARDED_SSL'] == 'on' ||
-          request.env['HTTP_X_FORWARDED_SCHEME'] == 'https' ||
-          (request.env['HTTP_X_FORWARDED_PROTO'] && request.env['HTTP_X_FORWARDED_PROTO'].split(',')[0] == 'https') ||
-          request.env['rack.url_scheme'] == 'https'
+        (request.env['HTTPS'] == 'on') ||
+          (request.env['HTTP_X_FORWARDED_SSL'] == 'on') ||
+          (request.env['HTTP_X_FORWARDED_SCHEME'] == 'https') ||
+          (request.env['HTTP_X_FORWARDED_PROTO']&.split(',')[0] == 'https') ||
+          (request.env['rack.url_scheme'] == 'https')
       end
 =end
 
@@ -716,10 +718,10 @@ module OmniAuth
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
+      # @see OAuth2::ClientExt#request
+      #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#request_phase
-      #
-      # @see OAuth2::ClientExt#request
       #
       def request_phase
         OmniAuth.config.before_request_phase&.call(env)
@@ -923,8 +925,7 @@ module OmniAuth
           when ::OAuth2::AccessToken
             token  = id
           when String
-            abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
-            hash   = CONFIGURED_AUTH[id]
+            hash   = self.class.stored_auth[id]
           else
             params = normalize_parameters(id)
             token  = params[:access_token] || params[:token]
@@ -939,7 +940,7 @@ module OmniAuth
       #
       # @overload synthetic_auth_hash(id, token = nil)
       #   @param [String] id          Bookshare user identity (email address).
-      #   @param [String] token       Default from #CONFIGURED_AUTH.
+      #   @param [String] token       Default from #stored_auth.
       #   @return [OmniAuth::AuthHash, nil]
       #
       # @overload synthetic_auth_hash(params)
@@ -953,32 +954,33 @@ module OmniAuth
       # @option params [String] :token              Alias for :access_token.
       #
       def synthetic_auth_hash(id, token = nil)
-        if token.present?
-          abort "#{__method__}: id must be a string" unless id.is_a?(String)
-          atoken = (token if token.is_a?(::OAuth2::AccessToken))
-          atoken ||= synthetic_access_token(token: token)
+        if token.is_a?(::OAuth2::AccessToken)
+          atoken = token
+        elsif token.is_a?(String)
+          atoken = synthetic_access_token(token: token)
         elsif id.is_a?(OmniAuth::AuthHash)
           return id
         elsif id.is_a?(String)
           atoken = synthetic_access_token(id)
+        elsif (prm = normalize_parameters(id))[:auth].is_a?(OmniAuth::AuthHash)
+          return prm[:auth]
         else
-          params = normalize_parameters(id)
-          return params[:auth] if params[:auth].is_a?(OmniAuth::AuthHash)
-          id     = params[:uid] || params[:id]
-          atoken = synthetic_access_token(params)
+          id     = prm[:uid] || prm[:id]
+          atoken = synthetic_access_token(prm)
         end
+        abort "#{__method__}: id must be a string" unless id.is_a?(String)
         return unless atoken.present?
-        OmniAuth::AuthHash.new(provider: name, uid: id).tap do |hash|
-          hash.uid   = uid
-          hash.info  = info  unless skip_info?
-          hash.extra = extra if extra
-          hash.credentials = {
+        OmniAuth::AuthHash.new(
+          provider:    name,
+          uid:         id,
+          info:        { email: id }.compact.stringify_keys,
+          credentials: {
             token:         atoken.token,
             expires:       (expires = atoken.expires?),
             expires_at:    (atoken.expires_at    if expires),
             refresh_token: (atoken.refresh_token if expires)
           }.compact.stringify_keys
-        end
+        )
       end
 
       # =======================================================================
@@ -1004,7 +1006,7 @@ module OmniAuth
       #
       # @overload synthetic_auth_hash(id, token = nil)
       #   @param [String] id          Bookshare user identity (email address).
-      #   @param [String] token       Default from #CONFIGURED_AUTH.
+      #   @param [String] token       Default from #stored_auth.
       #   @return [OmniAuth::AuthHash]
       #
       # @overload synthetic_auth_hash(params)
@@ -1023,21 +1025,84 @@ module OmniAuth
         elsif id.is_a?(OmniAuth::AuthHash)
           return id
         elsif id.is_a?(String)
-          abort "#{__method__} not valid" unless defined?(CONFIGURED_AUTH)
-          token = CONFIGURED_AUTH[id]&.dig(:access_token)
+          # Lookup token below.
+        elsif (prm = normalize_parameters(id))[:auth].is_a?(OmniAuth::AuthHash)
+          return prm[:auth]
         else
-          params = normalize_parameters(id)
-          return params[:auth] if params[:auth].is_a?(OmniAuth::AuthHash)
-          id    = params[:uid] || params[:id]
-          token = params[:access_token] || params[:token]
+          id    = prm[:uid]          || prm[:id]
+          token = prm[:access_token] || prm[:token] # or lookup token below
         end
-        hash = {
+        token ||= stored_auth.dig(id, :access_token)
+        OmniAuth::AuthHash.new(
           provider:    default_options[:name],
           uid:         id,
-          info:        { first_name: '', last_name: '', email: id },
-          credentials: { token: token, expires: false }
-        }.deep_stringify_keys
-        OmniAuth::AuthHash.new(hash)
+          info:        { email: id }.stringify_keys,
+          credentials: { token: token, expires: false }.stringify_keys
+        )
+      end
+
+      # =======================================================================
+      # :section: Class methods
+      # =======================================================================
+
+      public
+
+      # A table of pre-authorized users for development purposes.
+      #
+      # @type [Hash{String=>Hash}, nil]
+      #
+      CONFIGURED_AUTH =
+        if BOOKSHARE_TEST_USERS.present?
+          safe_json_parse(BOOKSHARE_TEST_USERS, default: {})
+            .transform_values { |token|
+              { access_token: token, token_type: 'bearer', scope: 'basic' }
+            }.deep_freeze
+        end
+
+      # Table of user names/tokens acquired for use in non-production deploys.
+      #
+      # @param [Hash, nil] values     Used to initialize @@stored_auth.
+      #
+      # @return [Hash{String=>Hash}]
+      #
+      def self.stored_auth(values = nil)
+        @@stored_auth = values if values.present?
+        @@stored_auth ||= CONFIGURED_AUTH&.deep_dup || {}
+      end
+
+      # Add or update a user name/token entry.
+      #
+      # If input parameters were invalid then no change will be made.
+      #
+      # @overload stored_auth_update(auth)
+      #   @param [OmniAuth::AuthHash]            auth   User/token to add
+      #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+      #
+      # @overload stored_auth_update(auth)
+      #   @param [String]                        id     User to add.
+      #   @param [String, ::OAuth2::AccessToken] token  Associated token.
+      #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+      #
+      def self.stored_auth_update(id, token = nil)
+        if (auth = id).is_a?(OmniAuth::AuthHash)
+          id, token = [auth.uid, auth.credentials.token]
+        elsif (atoken = token).is_a?(::OAuth2::AccessToken)
+          # noinspection RubyNilAnalysis
+          token = atoken.token
+        end
+        if id.blank? || token.blank?
+          Log.warn do
+            msg = +"#{__method__}: missing "
+            msg << 'id'    if id.blank?
+            msg << ' and ' if id.blank? && token.blank?
+            msg << 'token' if token.blank?
+            msg
+          end
+        else
+          stored_auth[id] ||= { token_type: 'bearer', scope: 'basic' }
+          stored_auth[id][:access_token] = token
+        end
+        stored_auth
       end
 
     end

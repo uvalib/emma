@@ -18,37 +18,82 @@ Boolean = Axiom::Types::Boolean
 #
 class ScalarType
 
+  # The value wrapped by this instance.
+  #
+  # @return [String, nil]
+  #
   attr_reader :value
 
   delegate_missing_to :value
 
-  def initializer(v = nil, *)
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Initialize a new instance.
+  #
+  # @param [*, nil] v                 Optional initial value.
+  #
+  def initialize(v = nil, *)
     set(v)
   end
 
+  # Assign a new value to the instance.
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
   def value=(v)
     set(v)
   end
 
+  # Assign a new value to the instance.
+  #
+  # @param [*, nil] v
+  #
+  # @return [String]
+  #
   def set(v)
-    v_normalized = normalize(v)
-    acceptable   = v_normalized.nil? || valid?(v_normalized)
-    Log.error("#{self.class}: #{v.inspect}") unless acceptable
-    @value = acceptable && v_normalized || default
+    unless v.nil?
+      @value = normalize(v)
+      @value = nil unless valid?(@value)
+      Log.error { "#{self.class}: invalid value: #{v.inspect}" } if @value.nil?
+    end
+    @value ||= default
   end
 
+  # Indicate whether the instance is valid, or indicate whether *v* would be a
+  # valid value.
+  #
+  # @param [*, nil] v
+  #
   def valid?(v = nil)
-    (v || @value).present?
+    self.class.valid?(v || @value)
   end
 
+  # Return the string representation of the instance value.
+  #
+  # @return [String]
+  #
   def to_s
     @value.to_s
   end
 
+  # Return the inspection of the instance value.
+  #
+  # @return [String]
+  #
   def inspect
     "(#{to_s.inspect})"
   end
 
+  # The default value for this instance.
+  #
+  # @return [String]
+  #
   def default
     self.class.default
   end
@@ -59,8 +104,14 @@ class ScalarType
 
   protected
 
+  # Transform *v* into a valid form.
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
   def normalize(v)
-    v&.to_s&.strip
+    self.class.normalize(v)
   end
 
   # ===========================================================================
@@ -69,8 +120,36 @@ class ScalarType
 
   public
 
+  # Default value for items of this type.
+  #
+  # @return [String]
+  #
   def self.default
     ''
+  end
+
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  def self.valid?(v)
+    !v.nil?
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  protected
+
+  # Transform *v* into a valid form.
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
+  def self.normalize(v)
+    v.to_s.strip
   end
 
 end
@@ -79,15 +158,27 @@ end
 #
 class IsoDuration < ScalarType
 
+  # Valid values for this type match this pattern.
+  #
+  # @type [RegExp]
+  #
+  PATTERN = /^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/
+
   # ===========================================================================
   # :section: ScalarType overrides
   # ===========================================================================
 
   public
 
-  def valid?(v = nil)
-    v = v&.to_s&.strip || @value
-    v.match?(/^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/)
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see ScalarType#valid?
+  #
+  def self.valid?(v)
+    normalize(v).match?(PATTERN)
   end
 
 end
@@ -96,16 +187,15 @@ end
 #
 class IsoDate < ScalarType
 
-  # ===========================================================================
-  # :section: ScalarType overrides
-  # ===========================================================================
-
-  public
-
-  def valid?(v = nil)
-    year?(v) || day?(v) ||
-      (v&.to_s&.strip || @value).match?(/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/)
-  end
+  # Valid values for this type match this pattern one of these patterns.
+  #
+  # @type [Hash{Symbol=>RegExp}]
+  #
+  PATTERN = {
+    year:  /^\d{4}$/,
+    day:   /^\d{4}-\d\d-\d\d$/,
+    exact: /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dTZD$/
+  }.freeze
 
   # ===========================================================================
   # :section:
@@ -113,14 +203,79 @@ class IsoDate < ScalarType
 
   public
 
+  # Indicate whether the instance represents a year value, or indicate whether
+  # *v* represents a year value.
+  #
+  # @param [*, nil] v
+  #
   def year?(v = nil)
-    v = v&.to_s&.strip || @value
-    v.match?(/^\d{4}$/)
+    self.class.year?(v || @value)
   end
 
+  # Indicate whether the instance represents a day value, or indicate whether
+  # *v* represents a day value.
+  #
+  # @param [*, nil] v
+  #
   def day?(v = nil)
-    v = v&.to_s&.strip || @value
-    v.match?(/^\d{4}-\d\d-\d\d$/)
+    self.class.day?(v || @value)
+  end
+
+  # Indicate whether the instance represents a full ISO 8601 date value, or
+  # indicate whether *v* represents a full ISO 8601 date value.
+  #
+  # @param [*, nil] v
+  #
+  def exact?(v = nil)
+    self.class.exact?(v || @value)
+  end
+
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see ScalarType#valid?
+  #
+  def self.valid?(v)
+    v = normalize(v)
+    PATTERN.any? { |_, pattern| v.match?(pattern) }
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Indicate whether *v* represents a year value.
+  #
+  # @param [*, nil] v
+  #
+  def self.year?(v)
+    normalize(v).match?(PATTERN[:year])
+  end
+
+  # Indicate whether *v* represents a day value.
+  #
+  # @param [*, nil] v
+  #
+  def self.day?(v)
+    normalize(v).match?(PATTERN[:day])
+  end
+
+  # Indicate whether *v* represents a full ISO 8601 date value.
+  #
+  # @param [*, nil] v
+  #
+  def self.exact?(v)
+    normalize(v).match?(PATTERN[:exact])
   end
 
 end
@@ -135,7 +290,14 @@ class IsoYear < IsoDate
 
   public
 
-  def valid?(v = nil)
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see IsoDate#valid?
+  #
+  def self.valid?(v)
     year?(v)
   end
 
@@ -151,7 +313,14 @@ class IsoDay < IsoDate
 
   public
 
-  def valid?(v = nil)
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see IsoDate#valid?
+  #
+  def self.valid?(v)
     day?(v)
   end
 
@@ -167,8 +336,15 @@ class IsoLanguage < ScalarType
 
   public
 
-  def valid?(v = nil)
-    v = normalize(v) || @value
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see ScalarType#valid?
+  #
+  def self.valid?(v)
+    v = normalize(v)
     ISO_639.find_by_code(v).present?
   end
 
@@ -184,17 +360,40 @@ class EnumType < ScalarType
 
   public
 
+  # Assign a new value to the instance.
+  #
+  # @param [*, nil] v
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ScalarType#set
+  #
   def set(v)
-    # noinspection RubyAssignmentExpressionInConditionalInspection
-    unless v.nil? || valid?(v = v.to_s.strip)
-      Log.warn { "#{type}: #{v.inspect}: not in #{values}" }
-      v = nil
+    unless v.nil?
+      @value = normalize(v)
+      @value = nil unless valid?(@value)
+      Log.warn { "#{type}: #{v.inspect}: not in #{values}" } if @value.nil?
     end
-    @value = v || default
+    @value ||= default
   end
 
-  def valid?(v = @value)
-    values.include?(v.to_s)
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  public
+
+  # Indicate whether *v* would be a valid value for an item of this type.
+  #
+  # @param [*, nil] v
+  #
+  # This method overrides:
+  # @see ScalarType#valid?
+  #
+  def self.valid?(v)
+    v = normalize(v)
+    values.include?(v)
   end
 
   # ===========================================================================
@@ -267,6 +466,9 @@ class EnumType < ScalarType
   # explicitly defined the initial value is returned.
   #
   # @return [String]
+  #
+  # This method overrides:
+  # @see ScalarType#default
   #
   def self.default
     @default ||= enumeration_lookup(:default) || values&.first

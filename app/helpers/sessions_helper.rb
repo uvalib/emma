@@ -100,6 +100,7 @@ module SessionsHelper
     else
       key = default.shift
     end
+    opt[:default] = default
     t(key, opt)
   end
 

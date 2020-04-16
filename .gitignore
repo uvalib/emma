@@ -78,6 +78,9 @@ tmtags
 # === RubyMine
 /.idea/
 
+# === VSCode
+/.vscode/
+
 # === RVM / rbenv
 /.rbenv-version
 # /.ruby-version

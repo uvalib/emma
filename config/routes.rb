@@ -23,10 +23,10 @@ Rails.application.routes.draw do
   # EMMA Unified Search operations
   # ===========================================================================
 
-  get 'search/advanced', to: 'search#advanced', as: 'advanced_search'
-  get 'search/api',      to: 'search#direct'
-  get 'search/direct',   to: 'search#direct'
-  get 'search/example',  to: 'search#example'
+  get '/search/advanced', to: 'search#advanced', as: 'advanced_search'
+  get '/search/api',      to: 'search#direct'
+  get '/search/direct',   to: 'search#direct'
+  get '/search/example',  to: 'search#example'
 
   resources :search, only: %i[index show]
 
@@ -35,21 +35,21 @@ Rails.application.routes.draw do
   # ===========================================================================
 
   # Invoked from app/javascripts/feature/file-upload.js
-  post 'upload/endpoint', to: 'upload#endpoint', as: 'uploads'
+  post '/upload/endpoint', to: 'upload#endpoint', as: 'uploads'
 
   # Variants which include selection of entries to operate on.  :new_select is
   # only defined for consistency.
   %w(edit delete).each do |action|
-    path = "upload/#{action}_select"
+    path = "/upload/#{action}_select"
     opt  = { defaults: { id: 'SELECT' } }
     get path, to: "upload##{action}", as: "#{action}_select_upload", **opt
   end
 
-  get  'upload/new_select', to: redirect('upload/new'), as: 'new_select_upload'
-  get  'upload/delete/:id', to: 'upload#delete',        as: 'delete_upload'
+  get '/upload/new_select', to: redirect('upload/new'), as: 'new_select_upload'
+  get '/upload/delete/:id', to: 'upload#delete',        as: 'delete_upload'
 
-  post 'upload/create',     to: 'upload#create',        as: 'create_upload'
-  put  'upload/update',     to: 'upload#update',        as: 'update_upload'
+  post '/upload/create',    to: 'upload#create',        as: 'create_upload'
+  put  '/upload/update',    to: 'upload#update',        as: 'update_upload'
 
   resources :upload
 
@@ -83,9 +83,10 @@ Rails.application.routes.draw do
   # Artifact operations
   # ===========================================================================
 
-  resources :artifact, except: %i[index]
+  get '/artifact/retrieval',         to: 'artifact#retrieval', as: 'retrieval'
+  get '/artifact/:bookshareId/:fmt', to: 'artifact#download',  as: 'download'
 
-  get '/artifact/:bookshareId/:fmt', to: 'artifact#download', as: 'download'
+  resources :artifact, except: %i[index]
 
   # ===========================================================================
   # Organization operations
@@ -125,8 +126,8 @@ Rails.application.routes.draw do
     end
   end
 
-  match 'v2/*api_path', to: 'api#v2',    as: 'v2_api',    via: ALL_METHODS
-  get   'api/image',    to: 'api#image', as: 'image_api'
+  match '/v2/*api_path', to: 'api#v2',    as: 'v2_api',    via: ALL_METHODS
+  get   '/api/image',    to: 'api#image', as: 'image_api'
 
   # ===========================================================================
   # Authentication

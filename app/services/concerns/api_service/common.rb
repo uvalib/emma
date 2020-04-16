@@ -31,8 +31,6 @@ module ApiService::Common
 
   public
 
-  BASE_URL = 'MISSING' # To be overridden.
-
   # Control whether information requests are ever cached. # TODO: ???
   #
   # @type [Boolean]
@@ -80,6 +78,44 @@ module ApiService::Common
 
   public
 
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url
+    @base_url ||= self.class.safe_const_get(:BASE_URL)
+  end
+
+  # The URL for the API connection as a URI.
+  #
+  # @return [URI::Generic]
+  #
+  def base_uri
+    @base_uri ||= URI.parse(base_url)
+  end
+
+  # API key (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_key
+    @api_key ||= self.class.safe_const_get(:API_KEY)
+  end
+
+  # API version (if applicable).
+  #
+  # @return [String, nil]
+  #
+  def api_version
+    @api_version ||= self.class.safe_const_get(:API_VERSION)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The HTTP verb for the last #api access.
   #
   # @return [Symbol, nil]
@@ -104,29 +140,49 @@ module ApiService::Common
   #
   attr_reader :response
 
-  # Last API request type.
+  # The HTTP method of the latest API request.
   #
-  # @return [String]
+  # @overload request_type()
+  #   @return [String]                      Type derived from @verb.
   #
-  def request_type
-    @verb.to_s.upcase
+  # @overload request_type(http_method)
+  #   @param [Symbol, String] http_method
+  #   @return [String]                      Type derived from *http_method*.
+  #
+  def request_type(http_method = nil)
+    (http_method || @verb).to_s.upcase
   end
 
-  # Most recently invoked HTTP request type.
+  # Indicate whether the latest API request is an update (PUT, POST, or PATCH).
   #
-  # @return [String]
+  # @overload update_request?()
+  #   @return [TrueClass, FalseClass]       Whether @verb is an update.
   #
-  def latest_endpoint
-    params = url_query(@params).presence
-    [@action, params].compact.join('?')
+  # @overload update_request?(http_method)
+  #   @param [Symbol, String] http_method
+  #   @return [TrueClass, FalseClass]       Whether *http_method* is an update.
+  #
+  def update_request?(http_method = nil)
+    http_method = http_method.downcase.to_sym if http_method.is_a?(String)
+    %i[put post patch].include?(http_method || @verb)
   end
 
-  # API key (if applicable).
+  # Most recently invoked HTTP request URL.
   #
-  # @return [String]
-  # @return [nil]
+  # @overload latest_endpoint(complete: false)
+  #   @param [Boolean] complete       If *true* return :api_key parameter.
+  #   @return [String]                The URL derived from @params.
   #
-  def api_key
+  # @overload latest_endpoint(hash, complete: false)
+  #   @param [Hash]    hash           Parameters to check instead of @params.
+  #   @param [Boolean] complete       If *true* return :api_key parameter.
+  #   @return [String]                The URL derived from provided *hash*.
+  #
+  def latest_endpoint(opt = nil)
+    opt = (opt || @params).dup
+    opt.delete(:api_key) unless opt.delete(:complete)
+    opt = url_query(opt).presence
+    [@action, opt].compact.join('?')
   end
 
   # ===========================================================================
@@ -250,57 +306,48 @@ module ApiService::Common
   #
   # noinspection RubyScope
   def api(verb, *args, **opt)
-    error = @verb = @action = @response = @exception = nil
+    error = @action = @response = @exception = nil
+    @verb = verb.to_s.downcase.to_sym
 
-    # Set local options from parameters or service options.
+    # Set internal options from parameters or service options.
     opt, @params = partition_options(opt, *SERVICE_OPTIONS)
     no_exception = opt[:no_exception] || options[:no_exception]
     no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
     method       = opt[:method]       || calling_method
 
-    # Build API call parameters (minus local options).
-    @params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
-    decode_parameters!(@params)
-    @params[:api_key] = api_key if api_key
-
-    # Form the API path from the remaining arguments.
-    @action = args.join('/').strip.prepend('/').squeeze('/')
-
-    # Determine whether the HTTP method indicates a write rather than a read
-    # and prepare the HTTP headers accordingly then send the API request.
-    @verb   = verb.to_s.downcase.to_sym
-    update  = %i[put post patch].include?(@verb)
-    params  = update ? @params.to_json : @params
-    headers = ({ 'Content-Type' => 'application/json' } if update)
+    # Form the API path from arguments, build API call parameters (minus
+    # internal options), prepare HTTP headers according to the HTTP method,
+    # then send the API request.
+    @action = api_path(*args)
+    @params = api_options!(@params)
+    options, headers = api_headers(@params)
     __debug_line(leader: '>>>') do
-      %w(api) << @action.inspect <<
-        { params: params, headers: headers }.transform_values { |v|
-          v.inspect if v.present?
-        }.compact
+      [service_name] << @action.inspect << {}.tap do |details|
+        details[:options] = options.inspect if options.present?
+        details[:headers] = headers.inspect if headers.present?
+      end
     end
-    @response = transmit(@verb, @action, params, headers, **opt)
+    @response = transmit(@verb, @action, options, headers, **opt)
 
   rescue Api::Error => error
     log_exception(method: method, error: error)
 
   rescue => error
     log_exception(method: method, error: error)
-    error = ApiService::ResponseError.new(error)
+    error = response_error(error)
 
   ensure
     __debug_line(leader: '<<<') do
       # noinspection RubyNilAnalysis
-      resp   = error.respond_to?(:response) && error.response || @response
-      status = resp.respond_to?(:status) && resp.status || resp&.dig(:status)
-      data   = resp.respond_to?(:body) && resp.body || resp&.dig(:body)
-      %w(api) << @action.inspect <<
-        { status: status, data: data }.transform_values do |v|
-          v.inspect.truncate(256)
-        end
+      resp = error.respond_to?(:response) && error.response || @response
+      [service_name] << @action.inspect << {
+        status: resp.respond_to?(:status) && resp.status || resp&.dig(:status),
+        data:   resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
+      }.transform_values { |v| v.inspect.truncate(256) }
     end
-    @response  = nil   if error
+    @response  = nil   if error.present?
     @exception = error unless no_exception
-    raise @exception   if @exception unless no_raise
+    raise @exception   unless no_raise || @exception.nil?
     return @response
   end
 
@@ -309,6 +356,78 @@ module ApiService::Common
   # ===========================================================================
 
   protected
+
+  # HTTP ports which do not need to be explicitly included when generating an
+  # absolute path.
+  #
+  # @type [Array<Integer>]
+  #
+  COMMON_PORTS = [URI::HTTPS::DEFAULT_PORT, URI::HTTP::DEFAULT_PORT].freeze
+
+  # Form a normalized API path from one or more path fragments.
+  #
+  # If *args* represents a full path which is different than `#base_url` then
+  # an absolute path is returned.
+  #
+  # @param [Array<String,Array>] args
+  #
+  # @return [String]
+  #
+  def api_path(*args)
+    args   = args.flatten.join('/').strip
+    uri    = URI.parse(args)
+    qry    = uri.query.presence
+    path   = uri.path&.squeeze('/') || ''
+    path   = "/#{path}" unless path.start_with?('/')
+    ver    = api_version.presence
+    ver  &&= "/#{ver}"
+    result = []
+    if (host = uri.host).present? && (host != base_uri.host)
+      scheme = uri.scheme || 'https'
+      port   = uri.port
+      result << scheme << '://' << host
+      result << ':' << port if port && !COMMON_PORTS.include?(port)
+    end
+    result << ver unless (path == ver) || path.start_with?("#{ver}/")
+    result << path
+    result << '?' << qry if qry
+    result.compact.join
+  end
+
+  # Add service-specific API options.
+  #
+  # @param [Hash, nil] params         Default: @params.
+  #
+  # @return [Hash]                    The *params* hash, possibly modified.
+  #
+  # == Usage Notes
+  # If overridden, this should be called first via 'super'.
+  #
+  def api_options!(params = @params)
+    params.reject! { |k, _| IGNORED_PARAMETERS.include?(k) }
+    decode_parameters!(params)
+    params[:api_key] = api_key if api_key
+    params
+  end
+
+  # Determine whether the HTTP method indicates a write rather than a read and
+  # prepare the HTTP headers accordingly.
+  #
+  # @param [Hash] params              Default: @params.
+  # @param [Hash] headers             Default: {}.
+  #
+  # @return [Array<(String,Hash)>]    Message body plus headers for GET.
+  # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
+  #
+  def api_headers(params = nil, headers = nil)
+    params ||= @params
+    headers  = headers&.dup || {}
+    if update_request?
+      params = params.to_json
+      headers['Content-Type'] = 'application/json'
+    end
+    return params, headers
+  end
 
   # Get a connection for making cached requests.
   #
@@ -367,15 +486,33 @@ module ApiService::Common
   # @return [Faraday::Response]
   # @return [nil]
   #
+  # === Bookshare API status codes
+  # 301 Moved Permanently
+  # 302 Found (typically, redirect to download location)
+  # 200 OK
+  # 201 Created
+  # 202 Accepted
+  # 400 Bad Request
+  # 401 Unauthorized
+  # 403 Forbidden
+  # 404 Not Found
+  # 405 Method Not Allowed
+  # 406 Not Acceptable
+  # 409 Conflict
+  # 415 Unsupported Media Type
+  # 500 Internal Server Error
+  #
+  # @see https://apidocs.bookshare.org/reference/index.html#_responseCodes
+  #
   def transmit(verb, action, params, headers, **opt)
     response = connection.send(verb, action, params, headers)
-    raise ApiService::EmptyResultError.new(response) if response.nil?
+    raise empty_response_error(response) if response.nil?
     redirection = no_redirect = nil
     case response.status
       when 200..299
         result = response.body
-        raise ApiService::EmptyResultError.new(response) if result.blank?
-        raise ApiService::HtmlResultError.new(response)  if result =~ /^\s*</
+        raise empty_response_error(response) if result.blank?
+        raise html_response_error(response)  if result =~ /^\s*</
       when 301, 303, 308
         redirection = opt[:redirection].to_i
         no_redirect = (redirection >= MAX_REDIRECTS)
@@ -385,15 +522,15 @@ module ApiService::Common
         no_redirect ||=
           opt.key?(:no_redirect) ? opt[:no_redirect] : options[:no_redirect]
       else
-        raise ApiService::ResponseError.new(response)
+        raise response_error(response)
     end
     if redirection
       action = response.headers['Location']
-      raise ApiService::RedirectionError.new(response) if action.blank?
+      raise redirect_response_error(response) if action.blank?
       unless no_redirect
         opt[:redirection] = (redirection += 1)
         __debug_line(leader: '!!!') do
-          %w(api) << "REDIRECT #{redirection} TO #{action.inspect}"
+          [service_name] << "REDIRECT #{redirection} TO #{action.inspect}"
         end
         response = transmit(:get, action, params, headers, **opt)
       end
@@ -542,6 +679,46 @@ module ApiService::Common
 
   protected
 
+  # Wrap an exception or response in a service error.
+  #
+  # @param [Exception, Faraday::Response] obj
+  #
+  # @return [ApiService::ResponseError]
+  #
+  def response_error(obj)
+    ApiService::ResponseError.new(obj)
+  end
+
+  # Wrap response in a service error.
+  #
+  # @param [Faraday::Response] obj
+  #
+  # @return [ApiService::EmptyResultError]
+  #
+  def empty_response_error(obj)
+    ApiService::EmptyResultError.new(obj)
+  end
+
+  # Wrap response in a service error.
+  #
+  # @param [Faraday::Response] obj
+  #
+  # @return [ApiService::HtmlResultError]
+  #
+  def html_response_error(obj)
+    ApiService::HtmlResultError.new(obj)
+  end
+
+  # Wrap response in a service error.
+  #
+  # @param [Faraday::Response] obj
+  #
+  # @return [ApiService::RedirectionError]
+  #
+  def redirect_response_error(obj)
+    ApiService::RedirectionError.new(obj)
+  end
+
   # log_exception
   #
   # @param [Exception]         error
@@ -552,21 +729,29 @@ module ApiService::Common
   # @return [void]
   #
   def log_exception(error:, action: @action, response: @response, method: nil)
-    method ||= 'request'
     message = error.message.inspect
     __debug_line(leader: '!!!') do
-      %w(api) << action.inspect << message << error.class
+      [service_name] << action.inspect << message << error.class
     end
-    level  = error.is_a?(Api::Error) ? Log::WARN : Log::ERROR
-    status = %i[http_status status].find { |m| error.respond_to?(m) }
-    status = status ? error.send(status).inspect : '???'
-    body   = response&.body
-    Log.log(level) do
-      log = ["API #{method}: #{message}"]
+    Log.log(error.is_a?(Api::Error) ? Log::WARN : Log::ERROR) do
+      method ||= 'request'
+      status   = %i[http_status status].find { |m| error.respond_to?(m) }
+      status   = status && error.send(status)&.inspect || '???'
+      body     = response&.body
+      log = ["#{service_name.upcase} #{method}: #{message}"]
       log << "status #{status}"
       log << "body #{body}" if body.present?
       log.join('; ')
     end
+  end
+
+  # The name of the service for debugging.
+  #
+  # @return [String]
+  #
+  def service_name
+    # noinspection RubyYardReturnMatch
+    @service_name ||= self.class.name.underscore.delete_suffix('_service')
   end
 
 end
