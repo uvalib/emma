@@ -19,6 +19,102 @@ module HtmlHelper
 
   public
 
+  # Short-cut for generating an HTML "<div>" element.
+  #
+  # @param [Array] args               Passed to #html_tag.
+  # @param [Proc]  block              Passed to #html_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_div(*args, &block)
+    html_tag(:div, *args, &block)
+  end
+
+  # Short-cut for generating an HTML "<span>" element.
+  #
+  # @param [Array] args               Passed to #html_tag.
+  # @param [Proc]  block              Passed to #html_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_span(*args, &block)
+    html_tag(:span, *args, &block)
+  end
+
+  # Short-cut for generating an HTML element.
+  #
+  # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
+  # then it defaults to 'div'.
+  #
+  # @overload html_tag(tag, content, options = nil, escape = true)
+  #   @param [Symbol, String, Integer, nil]           tag
+  #   @param [ActiveSupport::SafeBuffer, String, nil] content
+  #   @param [Hash]                                   options
+  #   @param [TrueClass, FalseClass]                  escape
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @overload html_tag(tag, options = nil, escape = true, &block)
+  #   @param [Symbol, String, Integer, nil]           tag
+  #   @param [Hash]                                   options
+  #   @param [TrueClass, FalseClass]                  escape
+  #   @param [Proc]                                   block
+  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @see ActionView::Helpers::TagHelper#content_tag
+  #
+  def html_tag(tag, *args, &block)
+    level = positive(tag)
+    level &&= [level, 6].min
+    tag = "h#{level}" if level
+    tag = 'div'       if tag.blank? || tag.is_a?(Integer)
+    content = (args.shift || '' unless args.empty? || args.first.is_a?(Hash))
+    content_tag(tag, content, *args, &block)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Produce a link with appropriate accessibility settings.
+  #
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt               Passed to #link_to except for:
+  # @param [Proc]   block             Passed to #link_to.
+  #
+  # @option opt [String] :label       Overrides *label* parameter if present.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Usage Notes
+  # This method assumes that local paths are always relative.
+  #
+  def make_link(label, path, **opt, &block)
+    if opt[:target] == '_blank'
+      opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
+      opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
+    end
+    unless opt.key?(:rel)
+      opt[:rel] = 'noopener' if path.start_with?('http')
+    end
+    unless opt.key?(:tabindex)
+      opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')
+    end
+    unless opt.key?(:'aria-hidden')
+      opt[:'aria-hidden'] = true if opt[:tabindex] == -1
+    end
+    label = opt.delete(:label) || label
+    link_to(label, path, opt, &block)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Indicate whether the HTML options include any of the given CSS classes.
   #
   # @param [Hash, nil]     opt        The target options hash.
@@ -150,44 +246,6 @@ module HtmlHelper
     args.flat_map { |a|
       a.is_a?(Array) ? a : a.to_s.squish.split(' ') if a.present?
     }.compact.uniq.join(' ').html_safe
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Produce a link with appropriate accessibility settings.
-  #
-  # @param [String] label
-  # @param [String] path
-  # @param [Hash]   opt               Passed to #link_to except for:
-  # @param [Proc]   block             Passed to #link_to.
-  #
-  # @option opt [String] :label       Overrides *label* parameter if present.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # == Usage Notes
-  # This method assumes that local paths are always relative.
-  #
-  def make_link(label, path, **opt, &block)
-    if opt[:target] == '_blank'
-      opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
-      opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
-    end
-    unless opt.key?(:rel)
-      opt[:rel] = 'noopener' if path.start_with?('http')
-    end
-    unless opt.key?(:tabindex)
-      opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')
-    end
-    unless opt.key?(:'aria-hidden')
-      opt[:'aria-hidden'] = true if opt[:tabindex] == -1
-    end
-    label = opt.delete(:label) || label
-    link_to(label, path, opt, &block)
   end
 
   # ===========================================================================

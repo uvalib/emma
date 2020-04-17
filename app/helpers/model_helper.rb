@@ -82,7 +82,7 @@ module ModelHelper
     label = opt[:label] || :label
     label = item.send(label) if label.is_a?(Symbol)
     if opt[:no_link]
-      content_tag(:span, label, html_opt)
+      html_span(label, html_opt)
     else
       path = (yield(label) if block_given?) || opt[:path] || opt[:path_method]
       path = path.call(item, label) if path.is_a?(Proc)
@@ -205,7 +205,7 @@ module ModelHelper
     terms = terms.sub(/\s+\([^)]+\)$/, '') if CREATOR_FIELDS.include?(ftype)
 
     # If this instance should not be rendered as a link, return now.
-    return content_tag(:span, label, html_opt) if opt[:no_link]
+    return html_span(label, html_opt) if opt[:no_link]
 
     # Otherwise, wrap the terms phrase in quotes unless directed to handled
     # each word of the phrase separately.
@@ -264,7 +264,7 @@ module ModelHelper
       if path.present? && !path.match?(/[{}]/)
         make_link(link, path, **html_opt)
       else
-        content_tag(:div, link, class: 'non-link')
+        html_div(link, class: 'non-link')
       end
     }.compact.join(separator).html_safe
   end
@@ -403,7 +403,7 @@ module ModelHelper
     css = %W(row-#{row} #{type})
     if value.is_a?(Array) || prop[:type].is_a?(Class)
       i = 0
-      value = value.map { |v| content_tag(:div, v, class: "item-#{i += 1}") }
+      value = value.map { |v| html_div(v, class: "item-#{i += 1}") }
       value = safe_join(value, separator)
       css << 'array'
     elsif prop[:type] == 'textarea'
@@ -414,12 +414,12 @@ module ModelHelper
     # Label and label HTML options.
     l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
     label = prop[:label] || label || labelize(field)
-    label = content_tag(:div, label, l_opt)
+    label = html_div(label, l_opt)
 
     # Value and value HTML options.
     v_opt = prepend_css_classes(opt, 'value').merge!(id: v_id)
     v_opt[:'aria-labelledby'] = l_id
-    value = content_tag(:div, value, v_opt)
+    value = html_div(value, v_opt)
 
     # noinspection RubyYardReturnMatch
     label << value
@@ -505,7 +505,7 @@ module ModelHelper
     return value if id.nil? || valid_identifier?(type.to_s, id)
     tip = "This is not a valid #{type.upcase} identifier."
     opt = { class: 'invalid', title: tip }
-    ERB::Util.h("#{type}:") << content_tag(:span, id, opt)
+    ERB::Util.h("#{type}:") << html_span(id, opt)
   end
 
   # Indicate whether the given identifier is valid.
@@ -576,17 +576,20 @@ module ModelHelper
     result = []
     result << nil # With Select2, applied search term display is redundant.
     result <<
-      content_tag(:div, class: "pagination-top row-#{row + 1}") do
+      html_div(class: "pagination-top row-#{row + 1}") do
         page_controls + pagination_count(count)
       end
-    result << content_tag(:div, class: 'pagination-bottom') { page_controls }
+    result <<
+      html_div(class: 'pagination-bottom') do
+        page_controls
+      end
   end
 
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
   #
   # @param [Model] item
-  # @param [Hash]  opt                Passed to #content_tag except for:
+  # @param [Hash]  opt                Passed to #html_tag except for:
   #
   # @option opt [Integer] :index      Required index number.
   # @option opt [Integer] :offset     Default: `#page_offset`.
@@ -606,30 +609,28 @@ module ModelHelper
     return unless item && opt[:index]
     index  = non_negative(opt[:index])
     row    = positive(opt[:row])
-    level  = positive(opt[:level])
     offset = opt[:offset]&.to_i || page_offset
     parts  = []
 
     # Label visible only to screen-readers:
     label = index ? 'Entry ' : 'Empty results' # TODO: I18n
-    parts << content_tag(:span, label, class: 'sr-only')
+    parts << html_span(label, class: 'sr-only')
 
     # Visible item number value:
     value = index ? "#{offset + index + 1}" : ''
-    parts << content_tag(:span, value, class: 'value')
+    parts << html_span(value, class: 'value')
 
     # Additional elements supplied by the block:
     parts += Array.wrap(yield(index, offset)) if block_given?
 
     # Wrap parts in a container for group positioning:
-    tag = level ? "h#{level}" : 'div'
     prepend_css_classes!(html_opt, 'container')
-    container = content_tag(tag, safe_join(parts), html_opt)
+    container = html_tag(opt[:level], safe_join(parts), html_opt)
 
     # Wrap the container in the actual number grid element.
     outer_opt = { class: 'number' }
     append_css_classes!(outer_opt, "row-#{row}") if row
-    content_tag(:div, container, outer_opt)
+    html_div(container, outer_opt)
   end
 
   # Render a single entry for use within a list of items.
@@ -651,7 +652,7 @@ module ModelHelper
     elsif item.respond_to?(:identifier)
       html_opt[:id] = "#{model}-#{item.identifier}"
     end
-    content_tag(:div, html_opt) do
+    html_div(html_opt) do
       if item
         render_field_values(item, model: model, pairs: pairs, &block)
       else
@@ -678,7 +679,7 @@ module ModelHelper
   #
   def item_details(item, model, pairs = nil, &block)
     return if item.blank?
-    content_tag(:div, class: "#{model}-details") do
+    html_div(class: "#{model}-details") do
       render_field_values(item, model: model, pairs: pairs, &block)
     end
   end
@@ -981,7 +982,7 @@ module ModelHelper
       div_opt = html_opt.except(:'data-field', :'data-required')
       div_opt[:id]       = opt[:id]
       div_opt[:tabindex] = -1
-      content_tag(:div, div_opt) do
+      html_div(div_opt) do
 
         cb_opt = { role: 'option' }
         range.pairs.map { |item_value, item_label|
@@ -1023,7 +1024,7 @@ module ModelHelper
     field_opt = html_opt.merge(role: 'listbox', name: name, id: opt[:id])
     # noinspection RubyYardReturnMatch
     field_set_tag(nil, field_opt) do
-      content_tag(:div, html_opt) do
+      html_div(html_opt) do
 
         count     = html_opt.delete(:count) || (2 + selected.size)
         label_id  = name.to_s.delete_prefix('field-').prepend('label-')
@@ -1119,25 +1120,21 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_check_box(name, value, **opt)
-
     opt, html_opt = partition_options(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
-    checked = opt.delete(:checked)
-    label   = opt.delete(:label) || value
 
     # Checkbox control.
-    checked  = opt.delete(:checked) || checked
+    checked  = opt.delete(:checked)
     checkbox = check_box_tag(name, value, checked, opt)
 
     # Label for checkbox.
-    label_opt = { for: opt[:id] }.compact
-    label = label_tag(name, label, label_opt)
+    lbl_opt  = { for: opt[:id] }.compact
+    label    = opt.delete(:label) || value
+    label    = label_tag(name, label, lbl_opt)
 
     # Checkbox/label combination.
     append_css_classes!(html_opt, 'checkbox', 'single')
-    content_tag(:div, html_opt) do
-      checkbox << label
-    end
+    html_div(html_opt) { checkbox << label }
   end
 
   # STATUS_MARKER
@@ -1151,7 +1148,7 @@ module ModelHelper
   #
   # @param [Symbol, Array<Symbol>] status   One or more of %[invalid required].
   # @param [String]                label    Used with :required.
-  # @param [Hash]                  opt      Passed to #content_tag.
+  # @param [Hash]                  opt      Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1172,7 +1169,7 @@ module ModelHelper
       opt[:'data-title'] = tip
       opt[:title] ||= tip
     end
-    content_tag(:span, icon, opt)
+    html_span(icon, opt)
   end
 
   # ===========================================================================

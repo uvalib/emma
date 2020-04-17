@@ -431,7 +431,7 @@ module LayoutHelper::SearchControls
   # One or more rows of controls.
   #
   # @param [String, Symbol] type      Default: `#search_type`.
-  # @param [Hash]           opt       Passed to #content_tag.
+  # @param [Hash]           opt       Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
@@ -464,7 +464,7 @@ module LayoutHelper::SearchControls
     return if grid_rows.blank?
     opt = prepend_css_classes(opt, 'search-controls', "columns-#{max_columns}")
     append_css_classes!(opt, 'open') if SEARCH_CONTROLS_INITIALLY_OPEN
-    content_tag(:div, safe_join(grid_rows, "\n"), opt)
+    html_div(safe_join(grid_rows, "\n"), opt)
   end
 
   # A control for toggling the visibility of advanced search controls.
@@ -747,7 +747,7 @@ module LayoutHelper::SearchControls
 
   # A button to reset all filter menu selections to their default state.
   #
-  # @param [Hash] opt         Passed to #content_tag except for #GRID_OPTS and:
+  # @param [Hash] opt            Passed to #html_div except for #GRID_OPTS and:
   #
   # @option opt [String] :class       CSS classes for both spacer and button.
   #
@@ -759,7 +759,7 @@ module LayoutHelper::SearchControls
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
     prepend_grid_cell_classes!(html_opt, 'menu-spacer', **opt)
-    content_tag(:div, '&nbsp;'.html_safe, html_opt)
+    html_div('&nbsp;'.html_safe, html_opt)
   end
 
   # ===========================================================================

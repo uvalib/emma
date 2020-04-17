@@ -81,7 +81,7 @@ module SearchTermsHelper
   # scope (by default).
   #
   # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
-  # @param [Hash]      opt            Passed to the innermost :content_tag
+  # @param [Hash]      opt            Passed to #render_applied_search_terms
   #                                     except for:
   #
   # @option opt [Integer] :row        Display row (default: 1)
@@ -100,7 +100,7 @@ module SearchTermsHelper
     ld_opt = { class: 'label' }
     append_css_classes!(ld_opt, 'query') if facets.blank?
     leader = i18n_lookup(search_type, "search_terms.#{mode}")
-    leader = content_tag(:div, leader, ld_opt)
+    leader = html_div(leader, ld_opt)
 
     # The list of active search terms.
     # noinspection RubyYardParamTypeMatch
@@ -111,9 +111,9 @@ module SearchTermsHelper
     if list.blank?
       append_css_classes!(html_opt, 'invisible')
     else
-      list = content_tag(:div, class: 'search-terms') { leader << list }
+      list = html_div(class: 'search-terms') { leader << list }
     end
-    content_tag(:div, list, html_opt)
+    html_div(list, html_opt)
   end
 =end
 
@@ -152,13 +152,13 @@ module SearchTermsHelper
   # Render a set of search term labels and values.
   #
   # @param [Hash{Symbol=>SearchTerm}] term_list
-  # @param [Hash] opt                 Passed to enclosing #content_tag.
+  # @param [Hash] opt                 Passed to enclosing #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_applied_search_terms(term_list, **opt)
     opt = prepend_css_classes(opt, 'term')
-    sep = content_tag(:div, '/', class: 'term-separator')
+    sep = html_div('/', class: 'term-separator')
     term_list.map { |_field, search_term|
       next if search_term.blank? || search_term.null_search?
       classes = []
@@ -173,8 +173,8 @@ module SearchTermsHelper
         section[:value]     = render_search_facet(search_term)
       end
       classes << 'single' if search_term.single?
-      content_tag(:div, append_css_classes(opt, classes)) do
-        section.map { |k, v| content_tag(:div, v, class: k) }.join.html_safe
+      html_div(append_css_classes(opt, classes)) do
+        section.map { |k, v| html_div(v, class: k) }.join.html_safe
       end
     }.compact.join(sep).html_safe
   end
@@ -188,7 +188,7 @@ module SearchTermsHelper
   #
   def render_search_term_text(search_term, separator: LIST_SEPARATOR)
     search_term.pairs.values.map { |v|
-      content_tag(:div, quote(v), class: 'text')
+      html_div(quote(v), class: 'text')
     }.join(separator).html_safe
   end
 
@@ -215,9 +215,9 @@ module SearchTermsHelper
   #
   def render_search_term_badge(field, value, label = nil)
     label ||= value.to_s
-    label   = content_tag(:div, label, class: 'text')
+    label   = html_div(label, class: 'text')
     control = remove_search_term_button(field, value)
-    content_tag(:div, class: 'badge') { label << control }
+    html_div(class: 'badge') { label << control }
   end
 
   # remove_search_term_button

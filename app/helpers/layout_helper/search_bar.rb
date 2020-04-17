@@ -115,7 +115,7 @@ module LayoutHelper::SearchBar
 
     # Screen-reader-only label element.
     label = i18n_lookup(type, 'search_bar.input.label')
-    label &&= content_tag(:span, label, id: label_id, class: 'sr-only')
+    label &&= html_span(label, id: label_id, class: 'sr-only')
     label ||= ''.html_safe
 
     # Input field element.
@@ -130,6 +130,7 @@ module LayoutHelper::SearchBar
     clear = clear_search_button(id: id)
 
     # Result.
+    # noinspection RubyYardReturnMatch
     label << input << clear
   end
 

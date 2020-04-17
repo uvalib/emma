@@ -101,7 +101,7 @@ module HeadHelper::PageTitle
 
   # Emit the "<title>" element (within "<head>").
   #
-  # @param [Hash] opt                 Passed to #content_tag.
+  # @param [Hash] opt                 Passed to #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -116,7 +116,7 @@ module HeadHelper::PageTitle
     text = @page_title.join(' ').squish
     text.prepend(PAGE_TITLE_HEADER) unless text.start_with?(PAGE_TITLE_PREFIX)
     text << PAGE_TITLE_TRAILER      unless text.end_with?(PAGE_TITLE_SUFFIX)
-    content_tag(:title, opt.reverse_merge('data-turbolinks-eval': false)) do
+    html_tag(:title, opt.reverse_merge('data-turbolinks-eval': false)) do
       sanitized_string(text)
     end
   end

@@ -60,7 +60,7 @@ module ImageHelper
   #                                     is a link.
   # @param [String]  alt              Passed to #image_tag.
   # @param [Integer] row              Grid row of the element.
-  # @param [Hash]    opt              Passed to #content_tag except for:
+  # @param [Hash]    opt              Passed to #html_div except for:
   #
   # @option opt [String] :link        If *true* make the image a link to
   #                                     the given path.
@@ -87,7 +87,7 @@ module ImageHelper
       # noinspection RubyYardParamTypeMatch
       image = make_link(image, link, **link_opt)
     end
-    content_tag(:div, image, opt)
+    html_div(image, opt)
   end
 
   # Placeholder image.

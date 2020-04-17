@@ -39,7 +39,7 @@ module LogoHelper
   # Make a logo for a repository source.
   #
   # @param [Search::Api::Record, String, Symbol] item
-  # @param [Hash] opt                 Passed to #content_tag except for:
+  # @param [Hash] opt                 Passed to #image_tag except for:
   #
   # @option opt [String] :source      Overrides :src if present.
   # @option opt [String] :name        To be displayed instead of the source.
@@ -65,7 +65,7 @@ module LogoHelper
   # Make a textual logo for a repository source.
   #
   # @param [Search::Api::Record, String, Symbol] item
-  # @param [Hash] opt                 Passed to #content_tag except for:
+  # @param [Hash] opt                 Passed to #html_div except for:
   #
   # @option opt [String] :source      Overrides :src if present.
   # @option opt [String] :name        To be displayed instead of the source.
@@ -79,7 +79,7 @@ module LogoHelper
     if name.present?
       prepend_css_classes!(html_opt, 'repository', 'name', src)
       html_opt[:title] ||= repository_tooltip(item, name)
-      content_tag(:div, content_tag(:div, name), html_opt)
+      html_div(html_div(name), html_opt)
     else
       ''.html_safe
     end

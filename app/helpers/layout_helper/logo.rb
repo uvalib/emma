@@ -60,7 +60,7 @@ module LayoutHelper::Logo
   # The application logo.
   #
   # @param [Symbol] mode              Either :text or :image; default: :image.
-  # @param [Hash]   opt               Passed to outer #content_tag except for:
+  # @param [Hash]   opt               Passed to outer #html_div except for:
   #
   # @option opt [String] :alt         Passed to #image_tag.
   #
@@ -69,7 +69,7 @@ module LayoutHelper::Logo
   def logo_element(mode: :image, **opt)
     opt = prepend_css_classes(opt, 'logo')
     alt = opt.delete(:alt)
-    content_tag(:div, opt) do
+    html_div(opt) do
       link_to(root_path, title: logo_tagline) do
         if mode == :text
           LOGO_TEXT

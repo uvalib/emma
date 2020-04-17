@@ -45,26 +45,37 @@ module Emma::Common
 
   # Interpret *value* as a positive integer.
   #
-  # @param [String, Numeric] value
+  # @param [String, Symbol, Numeric, nil] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* <= 0 or not a number.
   #
   def positive(value)
-    result = value.to_i
+    result =
+      case value
+        when Integer then value
+        when Numeric then value.round
+        else              value.to_s.to_i
+      end
     result if result > 0
   end
 
   # Interpret *value* as zero or a positive integer.
   #
-  # @param [String, Numeric] value
+  # @param [String, Symbol, Numeric, nil] value
   #
   # @return [Integer]
   # @return [nil]                     If *value* < 0 or not a number.
   #
   def non_negative(value)
-    result = value.to_i
-    result unless value.blank? || (result < 0)
+    return if value.blank?
+    result =
+      case value
+        when Integer then value
+        when Numeric then value.round
+        else              value.to_s.to_i
+      end
+    result if result >= 0
   end
 
   # ===========================================================================

@@ -86,13 +86,13 @@ module LayoutHelper::SkipNav
 
   # Generate HTML for a "skip navigation" menu.
   #
-  # @param [Hash] opt                 Passed to #content_tag.
+  # @param [Hash] opt                 Passed to outer #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_skip_nav(opt = nil)
     opt = prepend_css_classes(opt, 'skip-nav-menu')
-    content_tag(:ul, opt) do
+    html_tag(:ul, opt) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
           # noinspection RubyYardParamTypeMatch
@@ -101,7 +101,7 @@ module LayoutHelper::SkipNav
           entry.presence
         end
       }.compact.uniq.map { |entry|
-        content_tag(:li, entry, class: 'skip-nav-entry')
+        html_tag(:li, entry, class: 'skip-nav-entry')
       }.join("\n").html_safe
     end
   end

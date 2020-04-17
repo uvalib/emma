@@ -94,7 +94,7 @@ module ExplorerHelper
         value = mask_later_exceptions(value)
         value.split(/\n/).map do |line|
           line = "#{indent}#{line}" if indent
-          line = content_tag(:div, line, class: 'exception') if html
+          line = html_div(line, class: 'exception') if html
           line
         end
 
@@ -109,7 +109,7 @@ module ExplorerHelper
         value = make_links(value) if html
         value.split(/\n/).map do |line|
           line = "#{indent}#{line}" if indent
-          line = content_tag(:div, line.html_safe, class: 'data') if html
+          line = html_div(line.html_safe, class: 'data') if html
           line
         end
 
@@ -118,7 +118,7 @@ module ExplorerHelper
         value = value.pretty_inspect
         value.split(/\n/).map do |line|
           line = "#{indent}#{line}" if indent
-          line = content_tag(:div, line, class: 'data') if html
+          line = html_div(line, class: 'data') if html
           line
         end
 

@@ -109,7 +109,8 @@ module SearchHelper
     source = '' unless EmmaRepository.values.include?(source)
     logo   = repository_source_logo(source)
     if logo.present?
-      content_tag(:div, title, class: "title #{source}".strip) << logo
+      # noinspection RubyYardReturnMatch
+      html_div(title, class: "title #{source}".strip) << logo
     else
       title_and_source(item)
     end
@@ -128,7 +129,8 @@ module SearchHelper
     name   = source&.titleize || 'LOGO'
     logo   = name && repository_source(item, source: source, name: name)
     if logo.present?
-      content_tag(:div, title, class: "title #{source}".strip) << logo
+      # noinspection RubyYardReturnMatch
+      html_div(title, class: "title #{source}".strip) << logo
     else
       ERB::Util.h(title)
     end
@@ -166,19 +168,20 @@ module SearchHelper
   #
   def source_retrieval_link(item, **opt)
     opt, html_opt = partition_options(opt, :label, :url)
-    url   = opt[:url] || item.record_download_url
-    url   = CGI.unescape(url.to_s)
-    label = opt[:label] || url
+    url = opt[:url] || item.record_download_url
+    url = CGI.unescape(url.to_s)
     return if url.blank?
 
-    unless html_opt.key?(:title)
-      fmt = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
-      rep = item.emma_repository.to_s.titleize
-      html_opt[:title] = "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
-    end
     html_opt[:target] ||= '_blank'
+    html_opt[:title]  ||=
+      begin
+        fmt = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
+        rep = item.emma_repository.to_s.titleize
+        "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
+      end
 
-    case item.emma_repository
+    label = opt[:label] || url
+    case item.emma_repository.to_s
       when 'emma', 'bookshare'
         download_links(item, label: label, url: url, **html_opt)
     # when 'hathiTrust'

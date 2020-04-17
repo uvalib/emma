@@ -109,7 +109,7 @@ module UploadHelper
   #
   def upload_preview(force = false)
     return unless force || preview_enabled?
-    content_tag(:div, '', class: UPLOAD_PREVIEW_CSS)
+    html_div('', class: UPLOAD_PREVIEW_CSS)
   end
 
   # List upload actions.  If the current action is provided, the associated
@@ -137,9 +137,9 @@ module UploadHelper
       links[current_action] = label_string % 'another'
     end
     links.merge!(actions.transform_values { |v| v.shift % v.shift })
-    content_tag(:ul, class: 'file-upload-actions') do
+    html_tag(:ul, class: 'file-upload-actions') do
       links.map { |action, label|
-        content_tag(:li, class: 'file-upload-action') do
+        html_tag(:li, class: 'file-upload-action') do
           link_to_action(label, path: { action: "#{action}_select" })
         end
       }.join("\n").html_safe
@@ -217,7 +217,7 @@ module UploadHelper
   # @param [String, Symbol] controller    Default: `params[:controller]`.
   # @param [String, Symbol] action        Default: `params[:action]`.
   # @param [String, Symbol] tag           Tag for the internal text block.
-  # @param [Hash]           opt           Passed to #content_tag.
+  # @param [Hash]           opt           Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                         If no text was defined.
@@ -243,11 +243,11 @@ module UploadHelper
     end
     unless text.html_safe?
       text = ERB::Util.h(text)
-      text = content_tag(tag, text) unless tag.nil?
+      text = html_tag(tag, text) unless tag.nil?
     end
     opt = append_css_classes(opt, 'file-upload-text')
     append_css_classes!(opt, type) unless type == 'text'
-    content_tag(:div, text, opt)
+    html_div(text, opt)
   end
 
   # ===========================================================================
@@ -339,7 +339,7 @@ module UploadHelper
     pairs.each_pair do |k, v|
       pairs[k] = render_json_data(item, v) if v.is_a?(Hash)
     end
-    content_tag(:div, class: 'data-list') do
+    html_div(class: 'data-list') do
       render_field_values(item, model: :upload, pairs: pairs)
     end
   end
@@ -456,9 +456,9 @@ module UploadHelper
   #
   def upload_entry_icons(item, **opt)
     icons = []
-    icons << upload_edit_icon(item, **opt)   if can?(:edit,   Upload)
-    icons << upload_delete_icon(item, **opt) if can?(:delete, Upload)
-    content_tag(:span, safe_join(icons), class: 'icon-tray') if icons.present?
+    icons << upload_edit_icon(item, **opt)          if can?(:edit,   Upload)
+    icons << upload_delete_icon(item, **opt)        if can?(:delete, Upload)
+    html_span(safe_join(icons), class: 'icon-tray') if icons.present?
   end
 
   # upload_edit_icon
@@ -610,7 +610,7 @@ module UploadHelper
     opt[:multipart]    = true
     opt[:autocomplete] = 'off'
 
-    content_tag(:div, class: "file-upload-container #{action}") do
+    html_div(class: "file-upload-container #{action}") do
       form_with(model: item, **opt) do |f|
         data_opt = { class: 'upload-hidden' }
 
@@ -630,13 +630,13 @@ module UploadHelper
         tray << upload_cancel_button(action: action, url: cancel)
         tray << f.file_field(:file)
         tray << upload_filename_display
-        tray = content_tag(:div, safe_join(tray), class: 'button-tray')
+        tray = html_div(safe_join(tray), class: 'button-tray')
 
         # Field display selections.
         tabs = upload_field_control
 
         # Form buttons and display selection controls.
-        controls = content_tag(:div, class: 'controls') { tray << tabs }
+        controls = html_div(class: 'controls') { tray << tabs }
 
         # Form fields.
         fields = upload_field_container(item)
@@ -717,16 +717,15 @@ module UploadHelper
   # Element for displaying the name of the file that was uploaded.
   #
   # @param [String] leader            Text preceding the filename.
-  # @param [Hash]   opt               Passed to #content_tag for outer <div>.
+  # @param [Hash]   opt               Passed to #html_div for outer <div>.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_filename_display(leader: nil, **opt)
     opt = prepend_css_classes(opt, 'uploaded-filename')
     leader ||= 'Selected file:' # TODO: I18n
-    content_tag(:div, opt) do
-      content_tag(:span, leader, class: 'leader') <<
-        content_tag(:span, '', class: 'filename')
+    html_div(opt) do
+      html_span(leader, class: 'leader') << html_span('', class: 'filename')
     end
   end
 
@@ -752,7 +751,7 @@ module UploadHelper
 
   # Control for filtering which fields are displayed.
   #
-  # @param [Hash] opt                 Passed to #content_tag for outer <div>.
+  # @param [Hash] opt                 Passed to #html_div for outer <div>.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -763,7 +762,7 @@ module UploadHelper
     name = UPLOAD_FIELD_CONTROL_NAME
     opt  = prepend_css_classes(opt, 'upload-field-control')
     opt[:role] = 'radiogroup'
-    content_tag(:div, opt) do
+    html_div(opt) do
       UPLOAD_FIELD_CONTROL_VALUES.map { |v, properties|
         input_id = "#{name}_#{v}"
         label_id = "label-#{input_id}"
@@ -777,9 +776,7 @@ module UploadHelper
         label = properties[:label] || v.to_s
         label = label_tag(input_id, label, l_opt)
 
-        content_tag(:div, class: 'radio', title: tooltip) do
-          input << label
-        end
+        html_div(class: 'radio', title: tooltip) { input << label }
       }.join("\n").html_safe
     end
   end
@@ -787,13 +784,13 @@ module UploadHelper
   # Form fields are wrapped in an element for easier grid manipulation.
   #
   # @param [Upload] item
-  # @param [Hash]   opt               Passed to #content_tag.
+  # @param [Hash]   opt               Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_field_container(item, **opt)
     opt = prepend_css_classes(opt, 'upload-fields')
-    content_tag(:div, opt) do
+    html_div(opt) do
       upload_form_fields(item) << upload_no_fields_row
     end
   end
@@ -809,7 +806,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_no_fields_row
-    content_tag(:div, UPLOAD_NO_FIELDS, class: 'no-fields')
+    html_div(UPLOAD_NO_FIELDS, class: 'no-fields')
   end
 
   # ===========================================================================
@@ -877,11 +874,11 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_delete_form(item, label: nil, **opt)
-    content_tag(:div, class: 'file-upload-container delete') do
+    html_div(class: 'file-upload-container delete') do
       opt    = prepend_css_classes(opt, 'file-upload-delete')
       submit = upload_delete_submit(item, label: label)
       cancel = upload_delete_cancel(url: opt.delete(:cancel))
-      content_tag(:div, opt) { submit << cancel }
+      html_div(opt) { submit << cancel }
     end
   end
 

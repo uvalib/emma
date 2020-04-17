@@ -307,7 +307,7 @@ module PaginationHelper
     opt   = prepend_css_classes(opt, 'search-count')
     found = get_page_count_label(count: count)
     count = number_with_delimiter(count)
-    content_tag(:div, "#{count} #{found}", opt)
+    html_div("#{count} #{found}", opt)
   end
 
   # Placeholder for an item that would have been a link if it had a path.
@@ -328,7 +328,7 @@ module PaginationHelper
     **opt
   )
     opt = prepend_css_classes(opt, 'pagination')
-    content_tag(:nav, opt) do
+    html_tag(:nav, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
         pagination_control(FIRST_PAGE, fp, **link_opt),
@@ -380,7 +380,7 @@ module PaginationHelper
     if link
       link_to(label, path, opt)
     else
-      content_tag(:span, label, append_css_classes(opt, 'disabled'))
+      html_span(label, append_css_classes(opt, 'disabled'))
     end
   end
 

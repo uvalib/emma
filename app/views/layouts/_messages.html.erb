@@ -5,7 +5,7 @@
     %i[alert notice].flat_map { |type|
       [flash.now[type], flash[type]].flat_map { |flash_content|
         Array.wrap(flash_content).map { |msg|
-          content_tag(:p, msg, class: type.to_s, role: 'alert')
+          html_tag(:p, msg, class: type.to_s, role: 'alert')
         }
       }.uniq
     }.presence

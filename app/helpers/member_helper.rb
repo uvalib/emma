@@ -123,19 +123,17 @@ module MemberHelper
   # member_history_title
   #
   # @param [String, nil] label
-  # @param [Hash]        opt          Passed to #content_tag except for:
+  # @param [Hash]        opt          Passed to #html_tag except for:
   #
-  # @option opt [Integer] :level
+  # @option opt [Integer] :level      If missing, defaults to 'div'.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_history_title(label, opt = nil)
     opt, html_opt = partition_options(opt, :level)
-    level = opt[:level].to_i
     label ||= t('emma.member.history.title')
     prepend_css_classes!(html_opt, 'list-heading')
-    tag = level.zero? ? 'div' : "h#{level}"
-    content_tag(tag, h(label), html_opt)
+    html_tag(opt[:level], h(label), html_opt)
   end
 
   # member_history_title
@@ -161,11 +159,11 @@ module MemberHelper
   def member_history(item, opt = nil)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
     pairs = MEMBER_HISTORY_FIELDS.merge(opt || {})
-    content_tag(:div, class: MEMBER_HISTORY_CSS_CLASS) do
+    html_div(class: MEMBER_HISTORY_CSS_CLASS) do
       pairs[:index] = 0
       Array.wrap(item).map { |entry|
         pairs[:index] += 1
-        content_tag(:div, class: "history-entry row-#{pairs[:index]}") do
+        html_div(class: "history-entry row-#{pairs[:index]}") do
           render_field_values(entry, model: :member, pairs: pairs)
         end
       }.join("\n").html_safe

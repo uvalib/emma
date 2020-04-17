@@ -299,7 +299,7 @@ en:
         sign_in:
           tooltip:    'You must sign in to download this item.'
         disallowed:
-          tooltip:    'Your account is not allowed to download this item.'
+          tooltip:    '%{repo} does not allow your account to download this item.'
         complete:
           tooltip:    'Click on the "%{button}" button to retrieve the file.'
 

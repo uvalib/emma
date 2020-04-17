@@ -10,7 +10,7 @@
   heading =
     unless skip.include?(:title)
       title ||= t('emma.member.preferences.title')
-      content_tag("h#{level}", h(title), class: 'list-heading')
+      html_tag(level, h(title), class: 'list-heading')
     end
 -%>
 

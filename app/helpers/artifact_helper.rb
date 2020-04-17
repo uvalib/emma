@@ -141,20 +141,22 @@ module ArtifactHelper
     url      = opt.delete(:url)
     fmt_name = format.is_a?(Bs::Record::Format) ? format.label : item.label
     if item.is_a?(Bs::Api::Record)
+      repo    = :bookshare
       type    = FormatType
       type    = PeriodicalFormatType if item.class.name.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= download_path(bookshareId: item.identifier, fmt: format)
     else # if item.is_a?(Search::Api::Record)
-      repo    = item.emma_repository
+      repo    = item.emma_repository || EmmaRepository.default
       format  = format&.to_s || item.dc_format
       lbl_key = "emma.source.#{repo}.download_fmt.#{format}"
       url   ||= item.record_download_url
       url   &&= retrieval_path(url: url)
     end
     return if url.blank?
-    fmt_name = I18n.t(lbl_key, default: fmt_name)
+    repo_name = Search::REPOSITORY.dig(repo.to_sym, :name)
+    fmt_name  = I18n.t(lbl_key, default: fmt_name)
 
     # Initialize link options.
     opt = append_css_classes(opt, 'link')
@@ -162,15 +164,19 @@ module ArtifactHelper
     opt[:path]    = url
 
     # Set up the tooltip to be shown before the item has been requested.
-    tip_opt = { default: DOWNLOAD_TOOLTIP }
-    if !has_class?(opt, 'disabled')
-      tip_opt[:fmt] = format_label(fmt_name)
-      tip_key = 'emma.download.link.tooltip'
-    elsif !signed_in?
-      tip_key = 'emma.download.link.sign_in.tooltip'
-    else
-      tip_key = 'emma.download.link.disallowed.tooltip'
-    end
+    tip_key =
+      if !has_class?(opt, 'disabled')
+        'emma.download.link.tooltip'
+      elsif !signed_in?
+        'emma.download.link.sign_in.tooltip'
+      else
+        'emma.download.link.disallowed.tooltip'
+      end
+    tip_opt = {
+      repo:    repo_name,
+      fmt:     format_label(fmt_name),
+      default: DOWNLOAD_TOOLTIP
+    }
     opt[:title] = I18n.t(tip_key, **tip_opt)
 
     # The tooltip to be shown when the item is actually available for download.
@@ -179,12 +185,16 @@ module ArtifactHelper
     opt[:'data-complete_tooltip'] = I18n.t(tip_key, **tip_opt)
     opt[:'data-turbolinks']       = false
 
-    # Emit the link and hidden auxiliary elements.
-    content_tag(:div, class: 'artifact') do
-      item_link(item, **opt) +
-        download_progress(class: 'hidden') +
-        download_button(class: 'hidden', fmt: fmt_name) +
-        download_failure(class: 'hidden')
+    # Auxiliary control elements which are initially hidden.
+    hidden_opt = { class: 'hidden' }
+    hidden = []
+    hidden << download_progress(**hidden_opt)
+    hidden << download_button(fmt: fmt_name, **hidden_opt)
+    hidden << download_failure(**hidden_opt)
+
+    # Emit the link and control elements.
+    html_div(class: 'artifact') do
+      item_link(item, **opt) << safe_join(hidden)
     end
   end
 
@@ -261,7 +271,7 @@ module ArtifactHelper
 
   # An element to indicate failure.
   #
-  # @param [Hash] opt                 Passed to #content_tag.
+  # @param [Hash] opt                 Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -269,7 +279,7 @@ module ArtifactHelper
   #
   def download_failure(**opt)
     opt = prepend_css_classes(opt, DOWNLOAD_FAILURE_CLASS)
-    content_tag(:span, '', opt)
+    html_span('', opt)
   end
 
   # An element for direct download of an artifact.

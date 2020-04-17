@@ -90,9 +90,9 @@ module LayoutHelper::NavBar
     opt   = { title: DASHBOARD_TOOLTIP }
     links <<
       if path == current_path
-        content_tag(:span, label, opt.merge!(class: 'active disabled'))
+        html_span(label, opt.merge!(class: 'active disabled'))
       elsif !current_user
-        content_tag(:span, label, opt.merge!(class: 'disabled'))
+        html_span(label, opt.merge!(class: 'disabled'))
       elsif path == base_path
         link_to(label, path, opt.merge!(class: 'active'))
       else
@@ -111,7 +111,7 @@ module LayoutHelper::NavBar
         separator_opt = { class: 'separator' }
         append_css_classes!(separator_opt, 'secondary') unless primary
         append_css_classes!(separator_opt, 'active')    if current || base
-        separator = content_tag(:span, '|', separator_opt)
+        separator = html_span('|', separator_opt)
 
         # The link (inactive if already on the associated page).
         label = CONTROLLER_LABEL[c]
@@ -120,7 +120,7 @@ module LayoutHelper::NavBar
         link  =
           if current
             append_css_classes!(opt, 'active', 'disabled')
-            content_tag(:span, label, opt)
+            html_span(label, opt)
           elsif base
             append_css_classes!(opt, 'active')
             link_to(label, path, opt)
@@ -132,7 +132,7 @@ module LayoutHelper::NavBar
       end
 
     # Element containing links.
-    content_tag(:div, safe_join(links), class: 'links')
+    html_div(safe_join(links), class: 'links')
   end
 
 end

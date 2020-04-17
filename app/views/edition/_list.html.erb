@@ -15,7 +15,7 @@
       title  += " (#{count} total)" unless skip.include?(:count)
       classes = 'list-heading'
       classes = css_classes(classes, 'empty') if list.blank?
-      content_tag("h#{level}", h(title), class: classes)
+      html_tag(level, h(title), class: classes)
     end
   opt = { offset: offset, level: (level + 1), skip: skip }
 -%>

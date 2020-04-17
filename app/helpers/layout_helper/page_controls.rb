@@ -42,7 +42,7 @@ module LayoutHelper::PageControls
     partial  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s || partial
     partial  = "#{prm[:controller]}/page_controls/#{partial}"
     controls = partial_exists?(partial) && render(partial, locals)
-    content_tag(:div, controls, class: 'page-controls') if controls.present?
+    html_div(controls, class: 'page-controls') if controls.present?
   end
 
   # Generate a list of controller/action pairs that the current user is able to
