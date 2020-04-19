@@ -73,7 +73,7 @@ class ApiController < ApplicationController
   def v2
     __debug_route
     opt  = url_parameters
-    path = opt.delete(:api_path)
+    path = opt.delete(:api_path).to_s
     if (user = opt.delete(:user)).present?
       path = request.fullpath.sub(/\?.*/, '')
       path << '?' << url_query(opt) if opt.present?

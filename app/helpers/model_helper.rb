@@ -593,8 +593,7 @@ module ModelHelper
   #
   # @option opt [Integer] :index      Required index number.
   # @option opt [Integer] :offset     Default: `#page_offset`.
-  # @option opt [Integer] :level      Heading tag level; if missing a '<div>'
-  #                                     is produced rather than '<h1>', etc.
+  # @option opt [Integer] :level      Heading tag level (@see #html_tag).
   # @option opt [Object]  :skip       Ignored.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1147,7 +1146,7 @@ module ModelHelper
   # Generate a marker which can indicate the status of an input field.
   #
   # @param [Symbol, Array<Symbol>] status   One or more of %[invalid required].
-  # @param [String]                label    Used with :required.
+  # @param [String, Symbol]        label    Used with :required.
   # @param [Hash]                  opt      Passed to #html_span.
   #
   # @return [ActiveSupport::SafeBuffer]

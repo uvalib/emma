@@ -20,6 +20,7 @@ module ApiExplorerConcern
   end
 
   include Emma::Json
+  include ExplorerHelper
 
   # ===========================================================================
   # :section: Initialization

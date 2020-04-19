@@ -61,7 +61,7 @@ class Api::Serializer::Hash < ::Api::Serializer
   # @param [String, Hash] data
   # @param [Symbol, Proc] method
   #
-  # @return [Hash]
+  # @return [Api::Record]
   # @return [nil]
   #
   # @see Representable::Hash#from_hash

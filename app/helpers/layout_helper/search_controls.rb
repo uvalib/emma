@@ -94,6 +94,7 @@ module LayoutHelper::SearchControls
     def current_menu_config(menu_name, type: nil, **)
       type &&= type.to_sym
       config = type && SEARCH_MENU_MAP[type] || SEARCH_MENU_BASE
+      # noinspection RubyYardReturnMatch
       config[menu_name.to_sym] || {}
     end
 
@@ -574,6 +575,7 @@ module LayoutHelper::SearchControls
     opt[:title] ||= menu_tooltip(menu_name, **opt)
     menu  = menu_control(menu_name, **opt.merge(selected: selected)) or return
     label = menu_label(menu_name, **opt.merge(label: label))
+    # noinspection RubyYardReturnMatch
     label << menu
   end
 
@@ -717,6 +719,7 @@ module LayoutHelper::SearchControls
   #
   def reset_menu(**opt)
     opt = append_css_classes(opt, 'reset')
+    # noinspection RubyYardReturnMatch
     menu_spacer(**opt) << reset_button(**opt)
   end
 

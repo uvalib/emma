@@ -29,22 +29,19 @@ class Bs::Api::Message < Bs::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Hash, String] data
-  # @param [Hash]                            opt
-  #
-  # @option opt [Symbol] :format      If not provided, this will be determined
-  #                                     heuristically from *data*.
+  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
+  # @param [Hash]                                              opt
   #
   # This method overrides:
   # @see Bs::Api::Record#initialize
   #
-  def initialize(data, opt = nil)
+  def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
         opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
       end
-      super(data, opt)
+      super(src, **opt)
     end
   end
 

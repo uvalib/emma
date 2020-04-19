@@ -31,12 +31,10 @@ class Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Hash, String, nil] data
-  # @param [Hash]                                 opt
-  #
-  # @option opt [Symbol]                               :format  Note [1]
-  # @option opt [TrueClass, Hash{Symbol=>String,true}] :wrap    Note [2]
-  # @option opt [Exception, String, TrueClass]         :error   Note [3]
+  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
+  # @param [Symbol]                                            format  Note [1]
+  # @param [TrueClass, Hash{Symbol=>String,true}]              wrap    Note [2]
+  # @param [Exception, String, TrueClass]                      error   Note [3]
   #
   # == Notes
   # [1] One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be
@@ -51,22 +49,24 @@ class Api::Record
   # [3] If an error indication is present, the instance is initialized to
   #     defaults and *data* is ignored.
   #
-  def initialize(data, opt = nil)
-    opt ||= {}
-    @exception = error = opt[:error]
+  def initialize(src, format: nil, wrap: nil, error: nil, **)
+    @exception = error
     @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
     if @exception
       @serializer_type = :hash
       initialize_attributes
+    elsif src.is_a?(Api::Record)
+      @serializer_type = format || DEFAULT_SERIALIZER_TYPE
+      # noinspection RubyYardParamTypeMatch
+      initialize_attributes(src)
     else
-      data = data.body.presence if data.is_a?(Faraday::Response)
-      @serializer_type = opt[:format] || self.format_of(data)
+      # @type [Hash, String, nil] data
+      data = src.is_a?(Faraday::Response) ? src.body.presence : src
+      @serializer_type = format || self.format_of(data)
       assert_serializer_type(@serializer_type) if @serializer_type
       @serializer_type ||= DEFAULT_SERIALIZER_TYPE
-      fmt_wrap = opt[:wrap]
-      fmt_wrap = fmt_wrap[@serializer_type] if fmt_wrap.is_a?(Hash)
-      data = wrap_outer(data: data, template: fmt_wrap) if fmt_wrap
-      # noinspection RubyYardParamTypeMatch
+      wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
+      data = wrap_outer(data: data, template: wrap) if wrap
       deserialize(data)
     end
   end
@@ -284,14 +284,13 @@ class Api::Record
 
   # Directly assign schema attributes.
   #
-  # @param [Hash, nil] data           Default: #default_data
+  # @param [Api::Record, Hash, nil] data  Default: #default_data
   #
-  # @return [Hash{Symbol=>BasicObject}]
-  #
-  # == Usage Notes
-  # This is only intended for use in the initialization of an error instance.
+  # @return [void]
   #
   def initialize_attributes(data = nil)
+    data = data.fields if data.is_a?(Api::Record)
+    data = data.symbolize_keys.slice(*default_data.keys) if data.is_a?(Hash)
     (data || default_data).each_pair do |attr, value|
       # noinspection RubyCaseWithoutElseBlockInspection
       case value

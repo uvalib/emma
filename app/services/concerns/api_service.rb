@@ -38,19 +38,16 @@ class ApiService
 
   # Initialize a new instance
   #
-  # @param [Hash] opt                 Stored in @options except for:
-  #
-  # @option opt [User]   :user        User instance which includes a
+  # @param [User]   user              User instance which includes a
   #                                     Bookshare user identity and token.
-  #
-  # @option opt [String] :base_url    Base URL to the external service (instead
+  # @param [String] base_url          Base URL to the external service (instead
   #                                     of #BASE_URL defined by the subclass).
+  # @param [Hash]   opt               Stored in @options
   #
-  def initialize(opt = nil)
-    opt, @options = partition_options(opt, :base_url, :user)
-    @options.reject! { |_, v| v.blank? }
-    @base_url = opt[:base_url]
-    set_user(opt[:user])
+  def initialize(user: nil, base_url: nil, **opt)
+    @options  = opt.reject { |_, v| v.blank? }
+    @base_url = base_url
+    set_user(user)
   end
 
   # ===========================================================================
@@ -90,7 +87,7 @@ class ApiService
         use_existing   = (@@service_instance ||= nil).present?
         use_existing &&= User.match?(opt[:user], @@service_instance.user)
         use_existing &&= (opt.except(:user) == @@service_instance.options)
-        use_existing ? @@service_instance : (@@service_instance = new(opt))
+        use_existing ? @@service_instance : (@@service_instance = new(**opt))
       end
 
       # Update the service instance with new information.

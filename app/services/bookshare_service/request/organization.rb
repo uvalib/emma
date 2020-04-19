@@ -72,10 +72,15 @@ module BookshareService::Request::Organization
   # NOTE: This is not a real Bookshare API call.
   #
   def get_my_organization_member(user:, **opt)
+    opt = get_parameters(__method__, **opt)&.merge!(limit: :max)
     username = name_of(user)
-    all = get_my_organization_members(limit: :max, **opt)
-    om  = all.userAccounts.find { |list| list.identifier == username }
-    Bs::Message::UserAccount.new(om)
+    acct_id  = (user if user.is_a?(String))
+    member =
+      get_my_organization_members(**opt).userAccounts.find do |acct|
+        (acct.userAccountId.to_s == acct_id) || (acct.to_s == username)
+      end
+    # noinspection RubyYardParamTypeMatch
+    Bs::Message::UserAccount.new(member)
   end
     .tap do |method|
       add_api method => {

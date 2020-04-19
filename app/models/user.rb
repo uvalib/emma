@@ -234,15 +234,16 @@ class User < ApplicationRecord
   # Get (or create) a database entry for the indicated user and update the
   # associated User object with additional information from the provider.
   #
-  # @param [Hash, OmniAuth::AuthHash] data
+  # @param [OmniAuth::AuthHash, Hash, nil] data
   #
   # @return [User]
+  # @return [nil]                     If *data* is not valid.
   #
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
   def self.from_omniauth(data)
     return unless data.is_a?(Hash)
-    data = OmniAuth::AuthHash.new(data)
+    data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)
     find_or_create_by(email: data.uid.downcase).tap do |user|
       # user.email       = auth.info.email
       user.first_name    = data.info.first_name

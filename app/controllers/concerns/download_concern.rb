@@ -37,11 +37,10 @@ module DownloadConcern
   def render_download(method, **opt)
     # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] result
     result = api.send(method, **opt.merge!(no_raise: true, no_redirect: true))
-    links      = result.respond_to?(:links) ? result.links : result.messages
     @exception = result.exception
     @error     = result.error_message
     @state     = result.key.to_s.upcase
-    @link      = (links.first.presence if @state == 'COMPLETED')
+    @link      = (result.messages.first.presence if @state == 'COMPLETED')
     respond_to do |format|
       format.html { redirect_to @link if @link  }
       format.json { render_json download_values }

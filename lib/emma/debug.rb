@@ -189,6 +189,7 @@ module Emma::Debug
     value   = value.session if value.respond_to?(:session)
     value ||= session       if respond_to?(:session)
     if value.respond_to?(:to_hash)
+      # noinspection RubyYardReturnMatch
       value.to_hash
     elsif value.respond_to?(:each)
       Hash.new.tap { |result| value.each { |k, v| result[k] = v } }
@@ -204,6 +205,7 @@ module Emma::Debug
   def __debug_env_hash(value = nil)
     value ||= request
     value = value.env if value.respond_to?(:env)
+    # noinspection RubyYardReturnMatch
     value&.to_hash&.sort&.to_h
   end
 
@@ -217,6 +219,7 @@ module Emma::Debug
     value ||= request
     value = value.headers if value.respond_to?(:headers)
     if value.respond_to?(:to_hash)
+      # noinspection RubyYardReturnMatch
       value.to_hash
     elsif value.respond_to?(:each)
       Hash.new.tap do |result|

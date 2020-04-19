@@ -80,6 +80,7 @@ module I18nHelper
     result << "emma.generic.#{action}"       if action
     result << 'emma.generic'
     result << 'emma'
+    # noinspection RubyYardReturnMatch
     result.map(&:to_sym)
   end
 

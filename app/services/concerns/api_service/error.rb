@@ -39,8 +39,8 @@ class ApiService::ResponseError < ApiService::Error
   # @return [Array]                   The *args* array (possibly modified).
   #
   def append_error_description!(args)
-    desc = args.none? { |a| a.is_a?(String) }
-    desc &&= args.find { |v| v.is_a?(Faraday::Error) }
+    desc = args.none? { |arg| arg.is_a?(String) }
+    desc &&= args.find { |arg| arg.is_a?(Faraday::Error) }
     desc &&= extract_message(desc).presence
     desc ? (args << desc) : args
   end
@@ -53,15 +53,20 @@ class ApiService::ResponseError < ApiService::Error
   # @return [nil]
   #
   def extract_message(error)
-    json = json_parse(error.response[:body], symbolize_keys: false)
-    return if json.blank?
-    desc = json['error_description']
+    body = error.response[:body].presence
+    json = body && json_parse(body, symbolize_keys: false)
+    return body if json.blank?
+
+    tag  = 'error_description'
+    desc = json[tag]
     return desc if desc.present?
+
     Array.wrap(json['messages']).find do |msg|
-      parts = msg.split(/=/)
-      tag   = parts.shift
-      next unless tag.include?('error_description')
-      return parts.join('=').gsub(/\\"/, '').presence
+      next if msg.blank?
+      if msg =~ /^[a-z0-9_]+=/i
+        next unless (msg = msg.dup).delete_prefix!("#{tag}=")
+      end
+      return msg.gsub(/\\"/, '')
     end
   end
 

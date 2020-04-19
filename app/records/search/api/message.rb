@@ -19,17 +19,17 @@ class Search::Api::Message < Search::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Hash, String] data
-  # @param [Hash]                            opt
+  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
+  # @param [Hash]                                              opt
   #
   # This method overrides:
   # @see Search::Api::Record#initialize
   #
-  def initialize(data, opt = nil)
+  def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
-      initialize_attributes
-      super(data, opt)
+      initialize_attributes unless src.is_a?(Api::Record)
+      super(src, **opt)
     end
   end
 

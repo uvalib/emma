@@ -88,6 +88,12 @@ module BookshareService::Request::Titles
       }
     end
 
+  # The identifier (:userAccountId) for the test member "Placeholder Member".
+  #
+  # @type [String]
+  #
+  BOOKSHARE_TEST_MEMBER = 'AP5xvS-m1hgZnCqITkEFi-GIxOQ-O8q4J0Q_WYsJwTXpBzqXRHladQu5tZRH7PT9VzHdfaH-cdIp'
+
   # == GET /v2/titles/{bookshareId}/{format}
   #
   # == 2.1.3. Download a title
@@ -97,7 +103,9 @@ module BookshareService::Request::Titles
   # @param [FormatType] format
   # @param [Hash]       opt           Passed to #api.
   #
-  # @option opt [String] :forUser
+  # @option opt [String] :forUser     For restricted items, this is *not*
+  #                                     optional -- it must be the
+  #                                     :userAccountId of a qualified user.
   #
   # @return [Bs::Message::StatusModel]
   #
@@ -105,6 +113,7 @@ module BookshareService::Request::Titles
   #
   def download_title(bookshareId:, format:, **opt)
     opt = get_parameters(__method__, **opt)
+    opt[:forUser] ||= BOOKSHARE_TEST_MEMBER if defined?(BOOKSHARE_TEST_MEMBER) # TODO: testing; remove
     api(:get, 'titles', bookshareId, format, **opt)
     Bs::Message::StatusModel.new(response, error: exception)
   end
@@ -352,6 +361,8 @@ module BookshareService::Request::Titles
   # @return [Search::Message::RetrievalResult]
   #
   def get_retrieval(url:, **opt)
+    url = url.sub(%r{//api\.qa\.}, '//api.') # TODO: temporary until Benetech fixes unified search
+    opt[:forUser] ||= BOOKSHARE_TEST_MEMBER if defined?(BOOKSHARE_TEST_MEMBER) # TODO: testing; remove
     api(:get, url, **opt)
     Search::Message::RetrievalResult.new(response, error: exception)
   end

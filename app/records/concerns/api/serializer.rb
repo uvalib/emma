@@ -149,6 +149,7 @@ class Api::Serializer < ::Representable::Decorator
   # instance where #error? is *true*.
   #
   def set_source_data(data)
+    # noinspection RubyYardReturnMatch
     @source_data ||= (data.dup if data.is_a?(String) || data.is_a?(Hash))
   end
 

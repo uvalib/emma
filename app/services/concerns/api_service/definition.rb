@@ -81,6 +81,7 @@ module ApiService::Definition
     if arg.is_a?(String) || arg.is_a?(Symbol)
       @@all_methods[arg.to_sym]
     elsif (synthetic = (arg.is_a?(Hash) && arg[:synthetic])) == :only
+      # noinspection RubyYardReturnMatch
       @@all_methods.except(*@@true_methods.keys)
     else
       synthetic ? @@all_methods : @@true_methods

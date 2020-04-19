@@ -57,7 +57,7 @@ class Api::Serializer::Json < ::Api::Serializer
   # @param [String, Hash] data
   # @param [Symbol, Proc] method
   #
-  # @return [Hash]
+  # @return [Api::Record]
   # @return [nil]
   #
   # @see Representable::JSON#from_json
@@ -86,6 +86,7 @@ class Api::Serializer::Json < ::Api::Serializer
   # @see Api::Serializer#set_source_data
   #
   def set_source_data(data)
+    # noinspection RubyYardReturnMatch
     @source_data ||=
       if data.is_a?(String)
         data.dup

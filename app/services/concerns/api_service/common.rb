@@ -478,6 +478,9 @@ module ApiService::Common
   # @param [Hash, nil]         headers
   # @param [Hash]              opt
   #
+  # @option opt [Boolean]      :no_redirect
+  # @option opt [Integer, nil] :redirection
+  #
   # @raise [ApiService::EmptyResultError]
   # @raise [ApiService::HtmlResultError]
   # @raise [ApiService::RedirectionError]
@@ -507,7 +510,8 @@ module ApiService::Common
   def transmit(verb, action, params, headers, **opt)
     response = connection.send(verb, action, params, headers)
     raise empty_response_error(response) if response.nil?
-    redirection = no_redirect = nil
+    no_redirect = opt[:no_redirect] || options[:no_redirect]
+    redirection = nil
     case response.status
       when 200..299
         result = response.body
@@ -518,9 +522,7 @@ module ApiService::Common
         no_redirect = (redirection >= MAX_REDIRECTS)
       when 302, 307
         redirection = opt[:redirection].to_i
-        no_redirect = (redirection >= MAX_REDIRECTS)
-        no_redirect ||=
-          opt.key?(:no_redirect) ? opt[:no_redirect] : options[:no_redirect]
+        no_redirect ||= (redirection >= MAX_REDIRECTS)
       else
         raise response_error(response)
     end

@@ -27,11 +27,8 @@ class Search::Message::SearchRecordList < Search::Api::Message
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Hash, String] data
-  # @param [Hash]                            opt
-  #
-  # @option opt [Symbol]  :format     If not provided, this will be determined
-  #                                     heuristically from *data*.
+  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
+  # @param [Hash]                                              opt
   #
   # @option opt [Boolean] :example    If this list should be generated from
   #                                     sample data. # TODO: remove - testing
@@ -39,7 +36,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # This method overrides:
   # @see Api::Record#initialize
   #
-  def initialize(data, opt = nil)
+  def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       if opt[:example] # TODO: remove - testing
@@ -50,7 +47,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
         if opt[:wrap].nil? || opt[:wrap].is_a?(Hash)
           opt[:wrap] = WRAP_FORMATS.merge(opt[:wrap] || {})
         end
-        super(data, opt)
+        super(src, **opt)
       end
     end
   end
@@ -61,6 +58,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #
   # noinspection RubyInstanceMethodNamingConvention
   def totalResults
+    # noinspection RubyYardReturnMatch
     records&.size || 0
   end
 
