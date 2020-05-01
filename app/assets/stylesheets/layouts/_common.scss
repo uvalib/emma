@@ -6,6 +6,13 @@
 // General layout.
 //=============================================================================
 
+// Prevent modal pages rendered inside an <iframe> from allowing scroll events
+// to chain to the underlying page (which happens when the page is scrolled to
+// the end of the <iframe> and you keep attempting to scroll).
+html.modal {
+    overscroll-behavior: none;
+}
+
 // noinspection SassScssResolvedByNameOnly
 body {
 

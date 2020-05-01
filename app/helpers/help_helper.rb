@@ -93,14 +93,16 @@ module HelpHelper
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
   def help_popup(topic, **opt)
-    opt  = append_css_classes(opt, 'help-popup')
+    opt = append_css_classes(opt, 'help-popup')
     opt[:title] ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    placeholder_attr = opt.delete(:attr)
+    placeholder_attr = opt.delete(:attr)&.dup || {}
+    placeholder_attr[:id] ||= "help-frame-#{topic}-#{'%06X' % rand(0..100000)}"
+    opt[:'data-iframe'] = placeholder_attr[:id]
     placeholder_text = 'Loading help topic...' # TODO: I18n
     placeholder_opt  = {
       class:       'deferred iframe',
       'data-path': help_path(id: topic, modal: true),
-      'data-attr': placeholder_attr&.to_json
+      'data-attr': placeholder_attr.to_json
     }.compact
     popup_container(**opt) do
       html_div(placeholder_text, **placeholder_opt)
@@ -155,18 +157,18 @@ module HelpHelper
   # Title/link pairs for each help topic.
   #
   # The kind of links generated depend on the :type parameter value:
-  #   :fragment - Page-relative (default)
-  #   :path     - Site-relative links.
-  #   :url      - Full URL links.
+  #   :anchor - Page-relative (default)
+  #   :path   - Site-relative links.
+  #   :url    - Full URL links.
   #
   # @param [Array<Symbol,Array>] topics   Default: `#help_topics`.
-  # @param [Symbol, nil]         type     Type of links; default: :fragment.
+  # @param [Symbol, nil]         type     Type of links; default: :anchor.
   # @param [Hash]                opt      Passed to path helper.
   #
   # @return [Array<Array<(String,String)>>]
   #
   def help_links(*topics, type: nil, **opt)
-    type ||= :fragment
+    type ||= :anchor
     opt  ||= {}
     opt[:modal] ||= modal?
     # noinspection RubyYardReturnMatch

@@ -209,6 +209,7 @@
         img {
             flex:          1 0 50%;
             margin-bottom: auto !important;
+            max-width:     50%; // Chrome needs this; other browsers don't.
         }
 
         * + img {

@@ -686,12 +686,7 @@ module LayoutHelper::SearchControls
     menu_name = menu_name.to_sym
     config  = current_menu_config(menu_name, **opt)
     tooltip = config[:tooltip]
-    warning =
-      if menu_name == :size
-        'support this capability'
-      elsif config[:multiple]
-        'handle multiple facet selections'
-      end
+    warning = ('support this capability' if menu_name == :size)
     return tooltip unless warning
     tooltip = tooltip.dup
     tooltip << '.' unless tooltip.end_with?('.')
