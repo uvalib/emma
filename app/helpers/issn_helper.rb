@@ -35,7 +35,7 @@ module IssnHelper
   #
   # @type [Regexp]
   #
-  ISSN_PREFIX = /^\s*ISSN:?\s*/i
+  ISSN_PREFIX = /^\s*ISSN[:\s]*/i
 
   # A pattern matching the form of an ISSN identifier.
   #
@@ -61,7 +61,7 @@ module IssnHelper
   def contains_issn?(s)
     s  = s.to_s.strip
     id = remove_issn_prefix(s)
-    (s != id) ||
+    (s != id) || # Explicit "issn:" prefix
       ((id =~ ISSN_IDENTIFIER) && (id.delete('^0-9X').size >= ISSN_MIN_DIGITS))
   end
 
@@ -86,17 +86,29 @@ module IssnHelper
   #
   # @param [String]  s
   # @param [Boolean] log
+  # @param [Boolean] validate         If *true*, raise an exception if the
+  #                                     checksum provided in *s* is invalid.
   #
   # @return [String]
   # @return [nil]
   #
-  def to_issn(s, log: true)
-    issn = remove_issn_prefix(s).delete('^0-9X')
-    if issn.size != ISSN_DIGITS
-      Log.info { "#{__method__}: #{s.inspect} is not a valid ISSN" } if log
-    else
+  def to_issn(s, log: true, validate: false)
+    issn   = remove_issn_prefix(s).delete('^0-9X')
+    digits = check = nil
+    if issn.size == (ISSN_DIGITS - 1) # ISSN without check digit.
+      digits = issn
+    elsif issn.size == ISSN_DIGITS
       digits = issn[0..-2]
-      digits + issn_checksum(digits)
+      check  = issn.last.to_i
+    elsif log
+      Log.info { "#{__method__}: #{s.inspect} is not a valid ISSN" }
+    end
+    if digits
+      result = issn_checksum(digits)
+      if validate && check && (result != check)
+        raise "#{issn.inspect}: check digit should be #{result}"
+      end
+      "#{digits}#{result}"
     end
   end
 

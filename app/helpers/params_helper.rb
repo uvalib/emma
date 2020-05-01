@@ -34,6 +34,12 @@ module ParamsHelper
     modal
   ].sort.freeze
 
+  # Used as the first character of a session value that has been compressed.
+  #
+  # @type [String]
+  #
+  COMPRESSION_MARKER = "\u0007"
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -94,6 +100,43 @@ module ParamsHelper
   #
   def url_parameters(p = nil)
     request_parameters(p).except!(*IGNORED_PARAMETERS)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the value has been compressed.
+  #
+  # @param [String, nil]
+  #
+  def compressed_value?(v)
+    v.to_s.start_with?(COMPRESSION_MARKER)
+  end
+
+  # compress_value
+  #
+  # @param [String, nil]
+  #
+  # @return [String, nil]
+  #
+  # @see Proc#then
+  #
+  def compress_value(v)
+    COMPRESSION_MARKER + Base64.strict_encode64(Zlib.deflate(v))
+  end
+
+  # decompress_value
+  #
+  # @param [String, nil]
+  #
+  # @return [String, nil]
+  #
+  def decompress_value(v)
+    v = Zlib.inflate(Base64.strict_decode64(v[1..-1])) if compressed_value?(v)
+    v.presence
   end
 
   # ===========================================================================

@@ -62,6 +62,7 @@ class ApiService::ResponseError < ApiService::Error
     return desc if desc.present?
 
     Array.wrap(json['messages']).find do |msg|
+      msg = msg.to_s.strip
       next if msg.blank?
       if msg =~ /^[a-z0-9_]+=/i
         next unless (msg = msg.dup).delete_prefix!("#{tag}=")

@@ -121,7 +121,7 @@ en:
       search_bar:
         label:          'Catalog Search'
         input:
-          enabled:      true
+          enabled:      false
           field:        'keyword'
           label:        'Catalog search terms:'
           placeholder:  'Enter catalog search terms...'
@@ -150,6 +150,9 @@ en:
         label:          'Titles'
         title:          'Bookshare Catalog Titles'
         tooltip:        'Find more Bookshare catalog items with %{terms}.'
+        search_bar:
+          input:
+            enabled:    true
         fields:
           title:        'Title'
           authors:      'Authors'

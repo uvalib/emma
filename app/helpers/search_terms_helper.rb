@@ -29,11 +29,24 @@ module SearchTermsHelper
   #
   NULL_SEARCH = '*'
 
+  # EMMA Unified Search types.
+  #
+  # Each entry may have:
+  #
+  #   :label          Label for the menu selection.
+  #   :tooltip        Tooltip for the menu selection.
+  #   :placeholder    Placeholder text to display in the search input box.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # noinspection RailsI18nInspection
+  SEARCH_TYPE = I18n.t('emma.search_type').deep_freeze
+
   # Non-facet search fields.
   #
   # @type [Array<Symbol>]
   #
-  TEXT_SEARCH_PARAMETERS = %i[q].freeze
+  QUERY_PARAMETERS = SEARCH_TYPE.keys.freeze
 
   # URL parameters that are definitely not search parameters.
   #
@@ -46,6 +59,37 @@ module SearchTermsHelper
   # @type [String]
   #
   LIST_SEARCH_SEPARATOR = ' | '
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Prepare label/value pairs that can be used with #options_for_select to
+  # generate a search type selection menu.
+  #
+  # @param [String, Symbol] _target_type   *ignored*
+  #
+  # @return [Array<Array<(String,Symbol)>>]
+  #
+  def search_menu_pairs(_target_type = nil)
+    SEARCH_TYPE.map do |type, config|
+      label = config[:name] || type.to_s.camelize
+      [label, type]
+    end
+  end
+
+  # Active query parameters.
+  #
+  # @param [Hash{Symbol=>*}] prm   Default: `#url_parameters`.
+  #
+  # @return [Hash{Symbol=>Array<String>}]
+  #
+  def search_parameters(prm = nil)
+    prm ||= url_parameters
+    prm.slice(*QUERY_PARAMETERS).transform_values { |v| Array.wrap(v) }
+  end
 
   # ===========================================================================
   # :section:
@@ -72,7 +116,7 @@ module SearchTermsHelper
     pairs.except!(*except) if except
     # noinspection RubyYardParamTypeMatch
     term_list = pairs.map { |f, values| [f, SearchTerm.new(f, values)] }.to_h
-    queries, filters = partition_options(term_list, *TEXT_SEARCH_PARAMETERS)
+    queries, filters = partition_options(term_list, *QUERY_PARAMETERS)
     queries.merge!(filters)
   end
 
@@ -91,7 +135,7 @@ module SearchTermsHelper
   def applied_search_terms(term_list, **opt)
     opt, term_opt = partition_options(opt, :row)
     term_list ||= search_terms
-    queries, facets = partition_options(term_list, *TEXT_SEARCH_PARAMETERS)
+    queries, facets = partition_options(term_list, *QUERY_PARAMETERS)
     queries.reject! { |_, v| v.null_search? }
     mode = queries.blank? ? :facet_only : :label
     row  = positive(opt[:row]) || 1
@@ -99,7 +143,7 @@ module SearchTermsHelper
     # The label prefixing the list of active search terms.
     ld_opt = { class: 'label' }
     append_css_classes!(ld_opt, 'query') if facets.blank?
-    leader = i18n_lookup(search_type, "search_terms.#{mode}")
+    leader = i18n_lookup(search_target, "search_terms.#{mode}")
     leader = html_div(leader, ld_opt)
 
     # The list of active search terms.

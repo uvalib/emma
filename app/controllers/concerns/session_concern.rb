@@ -51,7 +51,7 @@ module SessionConcern
   end
 
   include Emma::Debug
-  include ParamsHelper
+  include ParamsConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -95,11 +95,16 @@ module SessionConcern
   # This method overrides:
   # @see Devise::Controllers::Helpers#after_sign_in_path_for
   #
+  # == Implementation Notes
+  # This does not use Devise::Controllers::StoreLocation#store_location_for
+  # to avoid the potential of overwhelming session store by copying
+  # session['current_path'] into session['user_return_to']. This seems to be
+  # safe because the overridden function seems to be the only place where that
+  # session entry is used.
+  #
   def after_sign_in_path_for(resource_or_scope)
-    path = session['current_path']
-    path = nil if path == welcome_path
-    path ||= dashboard_path
-    store_location_for(resource_or_scope, path)
+    path = get_current_path
+    path = dashboard_path if path.nil? || (path == welcome_path)
     path
   end
 

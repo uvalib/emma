@@ -55,12 +55,15 @@ module UserConcern
     error = []
     warn  = []
     opt   = { no_raise: true }
-    opt[:user] = id if id
 
     # Main account information.
-    if id
+    if id.present?
+      opt[:user] = id
       item = api.get_account(**opt)
-      item = api.get_my_organization_member(**opt) if item.error?
+      if item.error?
+        item = api.get_my_organization_member(**opt)
+        opt[:user] = item.userAccountId || item.identifier
+      end
     else
       item = api.get_my_account(**opt)
       api.discard_exception
@@ -70,7 +73,7 @@ module UserConcern
     if item.error?
       error << item.error_message
       pref = hist = nil
-    elsif id
+    elsif opt[:user].present?
       pref = api.get_preferences(**opt)
       warn << pref.error_message if pref.error?
       # hist = api.get_download_history(**opt) # TODO: ...

@@ -41,7 +41,7 @@ module IsbnHelper
   #
   # @type [Regexp]
   #
-  ISBN_PREFIX = /^\s*ISBN:?\s*/i
+  ISBN_PREFIX = /^ISBN[:\s]*/i
 
   # A pattern matching the form of an ISBN identifier.
   #
@@ -67,7 +67,7 @@ module IsbnHelper
   def contains_isbn?(s)
     s  = s.to_s.strip
     id = remove_isbn_prefix(s)
-    (s != id) ||
+    (s != id) || # Explicit "isbn:" prefix
       ((id =~ ISBN_IDENTIFIER) && (id.delete('^0-9X').size >= ISBN_MIN_DIGITS))
   end
 
@@ -132,8 +132,7 @@ module IsbnHelper
   # @return [nil]
   #
   def to_isbn13(s, log: true)
-    s    = remove_isbn_prefix(s)
-    isbn = s.delete('^0-9X')
+    isbn = remove_isbn_prefix(s).delete('^0-9X')
     if isbn13?(isbn)
       isbn
     elsif isbn.size != ISBN_10_DIGITS
@@ -154,8 +153,7 @@ module IsbnHelper
   # @return [nil]
   #
   def to_isbn10(s, log: true)
-    s    = remove_isbn_prefix(s)
-    isbn = s.delete('^0-9X')
+    isbn = remove_isbn_prefix(s).delete('^0-9X')
     if isbn10?(isbn)
       isbn
     elsif isbn.size != ISBN_13_DIGITS

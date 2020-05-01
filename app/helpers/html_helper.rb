@@ -83,6 +83,27 @@ module HtmlHelper
     content_tag(tag, safe_join(content, "\n"), options)
   end
 
+  # An "empty" element that can be used as a placeholder.
+  #
+  # @param [Hash] opt                 Passed to #html_div except for:
+  #
+  # @option opt [String]                :comment  The text of an HTML comment
+  #                                                 to place inside the empty
+  #                                                 element.
+  # @option opt [Symbol,String,Integer] :tag      The HTML tag to use for the
+  #                                                 element instead of "<div>".
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def placeholder_element(**opt)
+    tag     = opt.delete(:tag) || :div
+    comment = opt.delete(:comment)
+    opt[:'aria-hidden'] = true
+    html_tag(tag, **opt) do
+      "<!-- #{comment} -->".html_safe if comment.present?
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

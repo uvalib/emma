@@ -85,26 +85,15 @@ en:
       # Controls
       # =======================================================================
 
-      search_bar:
-        label:          'Search'
-        input:
-          enabled:      true
-          field:        'q'
-          label:        'Search terms:'
-          placeholder:  'Enter search terms...'
+      search_controls:
+        sort:
+          reverse:      false
 
       page_controls:
         label:          'Upload Actions'
 
       pagination:
         count:          'uploads found'
-
-      search_controls:
-        sort:
-          values:       !ruby/symbol SearchSort
-          reverse:      false
-        layout:
-          - []
 
       field_control:
         filled:

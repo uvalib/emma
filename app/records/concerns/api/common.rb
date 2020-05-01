@@ -160,7 +160,7 @@ class IsoDuration < ScalarType
 
   # Valid values for this type match this pattern.
   #
-  # @type [RegExp]
+  # @type [Regexp]
   #
   PATTERN = /^P(\d+Y)?(\d+M)?(\d+D)?(T(\d+H)?(\d+M)?(\d+(\.\d+)?S)?)?$/
 
@@ -189,7 +189,7 @@ class IsoDate < ScalarType
 
   # Valid values for this type match this pattern one of these patterns.
   #
-  # @type [Hash{Symbol=>RegExp}]
+  # @type [Hash{Symbol=>Regexp}]
   #
   PATTERN = {
     year:  /^\d{4}$/,

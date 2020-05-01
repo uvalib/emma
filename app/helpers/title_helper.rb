@@ -77,20 +77,27 @@ module TitleHelper
   # @param [Hash]            opt          Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *item* has no thumbnail.
+  #
+  # == Usage Notes
+  # If *item* does not contain a thumbnail, the method returns a "blank" HTML
+  # element.
   #
   def thumbnail(item, link: false, **opt)
-    url = item.respond_to?(:thumbnail_image) && item.thumbnail_image or return
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
-    id   = item.identifier
-    link = title_path(id: id) if link
-    alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
-    row  = positive(opt[:row])
     prepend_css_classes!(html_opt, 'thumbnail')
-    html_opt[:id] = "container-img-#{id}"
-    html_opt[:'data-turbolinks-permanent'] = true
-    # noinspection RubyYardParamTypeMatch
-    image_element(url, link: link, alt: alt, row: row, **html_opt)
+    url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
+    if url.present?
+      id   = item.identifier
+      link = title_path(id: id) if link
+      alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
+      row  = positive(opt[:row])
+      html_opt[:id] = "container-img-#{id}"
+      html_opt[:'data-turbolinks-permanent'] = true
+      # noinspection RubyYardParamTypeMatch
+      image_element(url, link: link, alt: alt, row: row, **html_opt)
+    else
+      placeholder_element(comment: 'no thumbnail', **html_opt)
+    end
   end
 
   # Cover image element for the given catalog title.
@@ -101,17 +108,24 @@ module TitleHelper
   # @param [Hash]            opt          Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *item* has no cover image.
+  #
+  # == Usage Notes
+  # If *item* does not contain a cover image, the method returns a "blank" HTML
+  # element.
   #
   def cover_image(item, link: false, **opt)
-    url = item.respond_to?(:cover_image) && item.cover_image or return
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
-    id   = item.identifier
-    link = title_path(id: id) if link
-    alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
     prepend_css_classes!(html_opt, 'cover-image')
-    # noinspection RubyYardParamTypeMatch
-    image_element(url, link: link, alt: alt, **opt)
+    url = item.respond_to?(:cover_image) && item.cover_image
+    if url.present?
+      id   = item.identifier
+      link = title_path(id: id) if link
+      alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
+      # noinspection RubyYardParamTypeMatch
+      image_element(url, link: link, alt: alt, **opt)
+    else
+      placeholder_element(comment: 'no cover image', **html_opt)
+    end
   end
 
   # Item categories as search links.

@@ -34,14 +34,18 @@ module LayoutHelper::SearchControls
     # Generate the fully-realized configurations for all search controls
     # associated with a given controller.
     #
-    # @param [Symbol]    controller
-    # @param [Hash, nil] configs
+    # @param [Symbol] controller
     #
     # @return [Hash{Symbol=>Hash}]
     #
-    def search_controls_configs(controller, configs = nil)
-      configs ||= I18n.t("emma.#{controller}.search_controls")
-      SEARCH_MENU_BASE_CONFIG.deep_merge(configs).map { |menu_name, config|
+    def search_controls_configs(controller)
+      configs = SEARCH_CONTROLS_CONFIG.deep_dup
+      %W(generic #{controller}.generic #{controller}).each do |section|
+        cfg = I18n.t("emma.#{section}.search_controls", default: nil)
+        configs.deep_merge!(cfg) if cfg.present?
+      end
+      configs.map { |menu_name, config|
+        next if menu_name.to_s.start_with?('_')
         unless menu_name == :layout
           config = search_menu_config(menu_name, config)
           values = config[:values]
@@ -339,12 +343,9 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # noinspection RailsI18nInspection
   SEARCH_MENU_MAP =
-    I18n.t('emma').map { |controller, controller_config|
-      configs = controller_config[:search_controls] || {}
-      next if configs[:layout].blank?
-      [controller, search_controls_configs(controller, configs)]
+    ApplicationHelper::APP_CONTROLLERS.map { |controller|
+      [controller, search_controls_configs(controller)]
     }.compact.to_h.deep_freeze
 
   # Per-controller tables of the menu configurations associated with each
@@ -431,7 +432,7 @@ module LayoutHelper::SearchControls
 
   # One or more rows of controls.
   #
-  # @param [String, Symbol] type      Default: `#search_type`.
+  # @param [String, Symbol] type      Default: `#search_target`.
   # @param [Hash]           opt       Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -440,7 +441,7 @@ module LayoutHelper::SearchControls
   # @see en.emma.search_controls
   #
   def search_controls(type: nil, **opt)
-    type = search_type(type)
+    type = search_target(type)
     grid_rows = SEARCH_MENU_MAP.dig(type, :layout).deep_dup || [[]]
     grid_opt  = { type: type, row: 0 }
     grid_opt[:row_max] = grid_rows.size
@@ -601,7 +602,7 @@ module LayoutHelper::SearchControls
   #
   def menu_control(menu_name, **opt)
     opt, html_opt = partition_options(opt, *MENU_OPTS)
-    type      = search_type(opt[:type])
+    type      = search_target(opt[:type])
     config    = current_menu_config(menu_name, type: type)
     url_param = config[:url_parameter]
     multiple  = config[:multiple]
@@ -808,7 +809,7 @@ module LayoutHelper::SearchControls
   # current_menu_config
   #
   # @param [Symbol, String]      menu_name
-  # @param [Symbol, String, nil] type       Search type (default: #search_type)
+  # @param [Symbol, String, nil] type       Default: `#search_target`.
   #
   # @return [Hash]
   #
@@ -816,20 +817,20 @@ module LayoutHelper::SearchControls
   # @see ClassMethods#current_menu_config
   #
   def current_menu_config(menu_name, type: nil, **)
-    super(menu_name, type: search_type(type))
+    super(menu_name, type: search_target(type))
   end
 
   # url_parameter_menu_config
   #
   # @param [Symbol, String]      url_param  The name of a URL parameter.
-  # @param [Symbol, String, nil] type       Search type (default: #search_type)
+  # @param [Symbol, String, nil] type       Default: `#search_target`.
   #
   # @return [Hash]
   #
   # @see #SEARCH_PARAMETER_MENU_MAP
   #
   def url_parameter_menu_config(url_param, type: nil, **)
-    type = search_type(type) || :search
+    type = search_target(type) || :search
     SEARCH_PARAMETER_MENU_MAP.dig(type, url_param.to_sym) || {}
   end
 

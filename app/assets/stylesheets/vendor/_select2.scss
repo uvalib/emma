@@ -12,6 +12,11 @@
     // A multi-select control instance.
     .select2-selection--multiple {
 
+        // noinspection SassScssResolvedByNameOnly
+        &:focus-within {
+            @extend %focus;
+        }
+
         // The default no-wrap style is a problem for constraining the width of
         // the enclosing grid for narrow screens because of very long facet
         // value labels.
@@ -65,6 +70,7 @@
 
         // A currently-selected value within the drop-down menu which is not
         // highlighted.
+        // noinspection SassScssResolvedByNameOnly
         &:not(.select2-results__option--highlighted)[aria-selected="true"] {
             background-color: $selected-bg;
         }

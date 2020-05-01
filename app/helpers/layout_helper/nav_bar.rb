@@ -21,11 +21,17 @@ module LayoutHelper::NavBar
   #
   # @type [Array<Symbol>]
   #
+  # == Implementation Note
+  # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
+  #
   NAV_BAR_CONTROLLERS = I18n.t('emma.nav_bar.controllers').map(&:to_sym).freeze
 
-  # The important nav bar entries
+  # The important nav bar entries.
   #
   # @type [Array<Symbol>]
+  #
+  # == Implementation Note
+  # Should contain some or all of superset #PRIMARY_CONTROLLERS.
   #
   PRIMARY_CONTROLLERS = I18n.t('emma.nav_bar.primary').map(&:to_sym).freeze
 
@@ -47,7 +53,7 @@ module LayoutHelper::NavBar
   #
   CONTROLLER_LABEL =
     NAV_BAR_CONTROLLERS.map { |c|
-      [c, I18n.t("emma.#{c}.label", default: c.to_s.capitalize)]
+      [c, I18n.t("emma.#{c}.label", default: c.to_s.camelize)]
     }.to_h.deep_freeze
 
   # Controller link tooltips.

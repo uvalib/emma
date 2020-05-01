@@ -74,10 +74,16 @@ module BookshareService::Request::Organization
   def get_my_organization_member(user:, **opt)
     opt = get_parameters(__method__, **opt)&.merge!(limit: :max)
     username = name_of(user)
-    acct_id  = (user if user.is_a?(String))
+    acct_id =
+      if user.respond_to?(:userAccountId)
+        user.userAccountId
+      elsif user.is_a?(String)
+        user
+      end
+    acct_id &&= CGI.unescape(acct_id)
     member =
       get_my_organization_members(**opt).userAccounts.find do |acct|
-        (acct.userAccountId.to_s == acct_id) || (acct.to_s == username)
+        (acct.userAccountId.to_s == acct_id) || (acct.identifier == username)
       end
     # noinspection RubyYardParamTypeMatch
     Bs::Message::UserAccount.new(member)

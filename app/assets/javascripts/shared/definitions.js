@@ -291,6 +291,24 @@ function extractUrl(arg) {
     return path || '';
 }
 
+/**
+ * Return the parameters of a URL as an object.
+ *
+ * @param {string} [path]             Default: `window.location`.
+ *
+ * @return {object}
+ */
+function urlParameters(path) {
+    var result = {};
+    var params = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
+    var pairs  = params.replace(/^[?&\s]+/, '').split('&');
+    pairs.forEach(function(pair) {
+        var kv = pair.split('=');
+        result[kv[0]] = kv[1];
+    });
+    return result;
+}
+
 // noinspection JSUnusedGlobalSymbols
 /**
  * Provide an action for a cancel button, redirecting to the value of the

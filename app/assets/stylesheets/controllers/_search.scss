@@ -334,7 +334,8 @@
     //=========================================================================
 
     .invalid {
-        color: red;
+        color:  $error-fg;
+        cursor: help;
     }
 
     // File format information section label.

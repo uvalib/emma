@@ -48,10 +48,11 @@ en:
         links:                'Links'
 
       # =======================================================================
-      # Controls
+      # Layout
       # =======================================================================
 
       search_bar:
+        label:          'Periodical Search'
         input:
           enabled:      true
           field:        'title'
@@ -76,6 +77,9 @@ en:
         label:          'Periodicals'
         title:          'Bookshare Periodicals'
         tooltip:        'Find more Bookshare periodicals with %{terms}.'
+        search_bar:
+          input:
+            enabled:    true
         fields:
           title:        'Title'
           categories:   'Categories'

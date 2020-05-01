@@ -38,6 +38,29 @@ class SearchController < ApplicationController
 
   before_action { @title_id = params[:titleId] || params[:id] }
 
+  # URL parameter aliases for :identifier.
+  before_action(only: :index) do
+    opt = request_parameters
+    id_alias = opt.extract!(*PublicationIdentifier::TYPES)
+    if id_alias.present?
+      identifier = id_alias.map { |type, value| "#{type}:#{value}" }.first
+      opt[:identifier] = identifier if identifier.present?
+      redirect_to opt
+    end
+  end
+
+  # Translate a keyword query for an identifier into an :identifier query.
+  # Other query types which have include a standard identifier prefix (e.g.
+  # "isbn:...") are re-cast as :identifier queries.
+  before_action(only: :index) do
+    opt = request_parameters
+    QUERY_PARAMETERS.find do |qp|
+      next if (qp == :identifier) || opt[qp].blank?
+      next if (identifier = PublicationIdentifier.cast(opt[qp])).blank?
+      redirect_to opt.except!(qp).merge!(identifier: identifier.to_s)
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -49,11 +72,12 @@ class SearchController < ApplicationController
   #
   def index
     __debug_route
-    search_params = url_parameters.except(*NON_SEARCH_KEYS)
-    query = search_params.delete(:q).presence
-    query = false if search_params.blank? && (query == NULL_SEARCH)
-    opt   = pagination_setup
-    if query
+    opt      = pagination_setup
+    s_params = opt.except(*NON_SEARCH_KEYS)
+    q_params, s_params = partition_options(s_params, *QUERY_PARAMETERS)
+    q_params.reject! { |_, v| v.blank? }
+    if q_params.present?
+      opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       @list = api.get_records(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
@@ -63,7 +87,7 @@ class SearchController < ApplicationController
         format.json { render_json index_values }
         format.xml  { render_xml  index_values }
       end
-    elsif search_params.present?
+    elsif s_params.present?
       redirect_to opt.merge!(q: NULL_SEARCH)
     else
       render 'search/advanced'

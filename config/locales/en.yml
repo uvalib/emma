@@ -10,6 +10,19 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+      controllers:
+        - 'api'
+        - 'artifact'
+        - 'category'
+        - 'edition'
+        - 'help'
+        - 'member'
+        - 'periodical'
+        - 'reading_list'
+        - 'search'
+        - 'title'
+        - 'upload'
+
     # =========================================================================
     # HTML page head
     # =========================================================================
@@ -70,10 +83,32 @@ en:
           label:        'Less ▲'
           tooltip:      'See less'
 
+    search_type:
+      q:
+        name:           'Keyword'
+        label:          'Search terms:'
+        tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
+        placeholder:    'Enter search terms...'
+      title:
+        name:           'Title'
+        label:          'Title terms:'
+        tooltip:        'Search for one or more terms matching the title of a work'
+        placeholder:    'Enter title terms...'
+      creator:
+        name:           'Creator'
+        label:          'Creator terms:'
+        tooltip:        'Search for one or more terms matching the name of the author or creator of a work'
+        placeholder:    'Enter author/creator terms...'
+      identifier:
+        name:           'ISBN / ISSN / etc.'
+        label:          'Standard identifier:'
+        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
+        placeholder:    'Enter a standard identifier...'
+
     search_bar:
       label:            'Search'
       input:
-        enabled:        false
+        enabled:        true
         field:          'q'
         label:          'Search terms:'
         placeholder:    'Enter search terms...'
@@ -89,6 +124,7 @@ en:
     search_controls:
 
       _self:
+        enabled:        true
         open:           true        # False/missing => collapsed initially.
 
       _default:
@@ -224,7 +260,7 @@ en:
       back:             'Back'
       confirm:          'Are you sure?'
 
-    pagination:
+    pagination:         &PAGINATION
 
       page_size:        10
       separator:        '&nbsp;|&nbsp;'
@@ -341,18 +377,28 @@ en:
       tooltip:          'Search for %{items}.'
 
       # =======================================================================
-      # Controls
+      # Layout
       # =======================================================================
 
       search_bar:
         label:          '%{Item} Search'
+
+      search_controls:
+        layout:
+          - [sort,   size,           repository  ]
+          - [format, format_feature, a11y_feature]
 
       page_controls:
         label:
           one:          'Manage this %{item}'
           many:         '%{Item} Actions'
 
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
       pagination:
+        <<:             *PAGINATION
         count:          '%{items} found'
 
       # =======================================================================

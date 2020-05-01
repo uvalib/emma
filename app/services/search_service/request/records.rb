@@ -19,10 +19,55 @@ module SearchService::Request::Records
   public
 
   # == GET /search
+  # EMMA Unified Search
+  #
+  # === Search Types
+  # There are four search types:
+  #
+  #   :q          General (keyword) search
+  #   :creator    Author search
+  #   :title      Title search
+  #   :identifier ISBN/ISSN/OCN/etc search.
+  #
+  # If two or more of these are supplied, the index treats the search as the
+  # logical-AND of the search terms.
+  #
+  # === Control Parameters
+  # The single-select :sort parameter controls the order in which items of the
+  # result set are delivered.
+  #
+  # === Filters
+  # If :repository is given, results will be limited to items originating from
+  # the specified member repository.
+  #
+  # If :formatVersion is given, results will be limited to items with the
+  # specified format version.
+  #
+  # === Range Filters
+  # If :lastRemediationDate is given, results will be limited to items with a
+  # remediation date between that date and the present.
+  #
+  # === Filters (multi-select)
+  # If one or more :fmt values are given, results will be limited to items with
+  # one of those file formats (logical-OR).
+  #
+  # If one or more :formatFeature values are given, results will be limited to
+  # items with at least one of the specified format features (logical-OR).
+  #
+  # If one or more :accessibilityFeature values are given, results will be
+  # limited to items with at least one of the specified accessibility features
+  # (logical-OR).
+  #
+  # If one or more :collection values are given, results will be limited to
+  # items identified as belonging to at least one of the specified named
+  # collections (logical-OR).
   #
   # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String]                                  :q
+  # @option opt [String]                                  :creator
+  # @option opt [String]                                  :title
+  # @option opt [String]                                  :identifier
   # @option opt [DublinCoreFormat, Array<DublinCoreFormat>] :fmt
   # @option opt [FormatFeature, Array<FormatFeature>]     :formatFeature
   # @option opt [String]                                  :formatVersion
@@ -44,11 +89,15 @@ module SearchService::Request::Records
     .tap do |method|
       add_api method => {
         alias: {
+          author:               :creator,
           fmt:                  :format,
           query:                :q,
         },
         optional: {
           q:                    String,
+          creator:              String,
+          title:                String,
+          identifier:           String,
           format:               DublinCoreFormat,
           formatFeature:        FormatFeature,
           formatVersion:        String,

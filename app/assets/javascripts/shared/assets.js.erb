@@ -185,6 +185,7 @@ var Emma = (function() {
         // opener.tooltip   Tooltip for button to open advanced search controls.
         // closer.label     Label for button to close advanced search controls.
         // closer.tooltip   Tooltip for button to close advanced search controls.
+        // search_type      Label, tooltip and placeholder for each search type
         // ====================================================================
 
         AdvSearch: {
@@ -195,7 +196,8 @@ var Emma = (function() {
             closer: {
                 label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP %>"
-            }
+            },
+            search_type: o$('<%= SearchTermsHelper::SEARCH_TYPE.to_json %>')
         },
 
         // ====================================================================

@@ -20,6 +20,12 @@
     .key {
         word-break: keep-all;
     }
+
+    // noinspection SassScssResolvedByNameOnly
+    .note {
+        color:       $debug-fg;
+        margin-left: 0.5rem;
+    }
 }
 
 // noinspection SassScssResolvedByNameOnly

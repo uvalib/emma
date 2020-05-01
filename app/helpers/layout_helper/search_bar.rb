@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::SearchBar
 
   include LayoutHelper::SearchControls
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -19,23 +20,45 @@ module LayoutHelper::SearchBar
 
   # Indicate whether it is appropriate to show the search bar.
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   #
   def show_search_bar?(type = nil)
-    search_input_type(type).present?
+    search_input_target(type).present?
+  end
+
+  # Generate an element for selecting search type.
+  #
+  # @param [Hash] opt                 Passed to #select_tag except for:
+  #                                     #MENU_OPTS
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If search is not available for *type*.
+  #
+  def search_input_select(**opt)
+    menu_name = :input_select # TODO
+    opt, html_opt = partition_options(opt, *MENU_OPTS)
+    url_param   = opt[:url_parameter] || menu_name
+    multiple    = opt[:multiple]      || false
+    default     = opt[:default]       || :q
+    selected    = opt[:selected] || search_parameters.keys.presence || default
+    selected    = Array.wrap(selected).map(&:to_s).uniq
+    option_tags = options_for_select(search_menu_pairs, selected)
+    prepend_css_classes!(html_opt, 'search-input-select')
+    html_opt[:multiple] = true if multiple
+    select_tag(url_param, option_tags, html_opt)
   end
 
   # Generate an element for entering search terms.
   #
   # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #search_form.
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If search is not available for *type*.
   #
   def search_input_bar(id: nil, type: nil, **opt)
-    type ||= search_input_type or return
+    type ||= search_input_target or return
     id   ||= search_field_key(type)
     skip_nav_append(search_bar_label(type) => id)
     opt = prepend_css_classes(opt, 'search-input-bar')
@@ -46,27 +69,27 @@ module LayoutHelper::SearchBar
 
   # search_bar_label
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
   # @return [String]
   # @return [nil]
   #
   def search_bar_label(type, **opt)
-    type ||= search_input_type
+    type ||= search_input_target
     i18n_lookup(type, 'search_bar.label', **opt)
   end
 
   # The URL parameter to which search terms should be applied.
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
   # @return [Symbol]
   # @return [nil]
   #
   def search_field_key(type, **opt)
-    type ||= search_input_type
+    type ||= search_input_target
     i18n_lookup(type, 'search_bar.input.field', **opt)&.to_sym
   end
 
@@ -85,15 +108,15 @@ module LayoutHelper::SearchBar
       [type, enabled.present?]
     }.to_h
 
-  # search_input_type
+  # search_input_target
   #
   # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
   #
   # @return [Symbol]                    The controller used for searching.
   # @return [nil]                       If search input should not be enabled.
   #
-  def search_input_type(type = nil)
-    type = search_type(type)
+  def search_input_target(type = nil)
+    type = search_target(type)
     # noinspection RubyYardReturnMatch
     type if SEARCH_INPUT_ENABLED[type]
   end
@@ -101,14 +124,14 @@ module LayoutHelper::SearchBar
   # Generate a form search field input control.
   #
   # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [String, nil]         value  Default: `#params[id]`.
   # @param [Hash]                opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_input(id, type, value: nil, **opt)
-    type ||= search_input_type
+    type ||= search_input_target
     id   ||= search_field_key(type)
     id   &&= id.to_sym
     label_id = "#{id}-label"
@@ -127,7 +150,7 @@ module LayoutHelper::SearchBar
     input = search_field_tag(id, value, opt)
 
     # Control for clearing search terms.
-    clear = clear_search_button(id: id)
+    clear = clear_search_button
 
     # Result.
     # noinspection RubyYardReturnMatch
@@ -136,14 +159,14 @@ module LayoutHelper::SearchBar
 
   # Generate a form submit control.
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [String, nil]         label  Default: `#search_button_label(type)`.
   # @param [Hash]                opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def search_button(type, label: nil, **opt)
-    type  ||= search_input_type
+    type  ||= search_input_target
     label ||= search_button_label(type)
     opt = prepend_css_classes(opt, 'search-button')
     submit_tag(label, opt)
@@ -151,34 +174,30 @@ module LayoutHelper::SearchBar
 
   # search_button_label
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
   # @return [String]
   # @return [nil]
   #
   def search_button_label(type, **opt)
-    type ||= search_input_type
+    type ||= search_input_target
     i18n_lookup(type, 'search_bar.button.label', **opt)
   end
 
   # clear_search_button
   #
-  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
-  # @param [Symbol, String, nil] type   Default: `#search_input_type`
-  # @param [Hash]                opt    Passed to #link_to.
+  # @param [Hash] opt                 Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def clear_search_button(id: nil, type: nil, **opt)
-    id ||= search_field_key(type || search_input_type)
-    query_params = Array.wrap(id&.to_sym).presence || TEXT_SEARCH_PARAMETERS
-    old_params   = url_parameters
-    new_params   = old_params.except(*query_params)
+  # @see clearSearch() in app/assets/javascripts/feature/advanced-search.js
+  #
+  def clear_search_button(**opt)
     opt = prepend_css_classes(opt, 'search-clear')
     opt[:'aria-role'] ||= 'button'
     opt[:title]       ||= 'Clear search terms' # TODO: I18n
-    link_to(HEAVY_X, url_for(new_params), opt)
+    link_to(HEAVY_X, '#', opt)
   end
 
 end

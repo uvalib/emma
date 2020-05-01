@@ -23,21 +23,34 @@ module LccnHelper
 
   # Pre-2001 LCCNs have at least 13 characters; after that, 12 characters.
   #
-  # @type [Integer]
+  # The first characters (three prior to 2001, otherwise two) are alphabetic,
+  # but they may also be given as spaces.  It's not unlikely that they would be
+  # omitted from non-MARC metadata renderings.
   #
-  LCCN_MIN_CHARS = 12
+  # Pre-2001, the final character (supplement number) may also be given as a
+  # space.
+  #
+  # @type [Range]
+  #
+  LCCN_DIGITS = (8..10).freeze
 
   # A pattern matching any of the expected LCCN prefixes.
   #
   # @type [Regexp]
   #
-  LCCN_PREFIX = /^\s*LCCN:?\s*/i
+  LCCN_PREFIX = /^\s*LCCN(\s*:)?/i
 
   # A pattern matching the form of an LCCN identifier.
   #
   # @type [Regexp]
   #
-  LCCN_IDENTIFIER = /^.{#{LCCN_MIN_CHARS},}$/
+  LCCN_IDENTIFIER = /^
+    (
+      ([ _#a-z]{3})?\d{8}[ _#]? |
+      ([ _#a-z]{3})?\d{9}       |
+      ([ _#a-z]{2})?\d{10}
+    )(\/.*)?$
+  /ix
 
   # ===========================================================================
   # :section:
@@ -86,8 +99,9 @@ module LccnHelper
   # @return [nil]                     If *ocn* is not a valid OCLC identifier.
   #
   def to_lccn(s, log: true)
-    lccn = s = remove_lccn_prefix(s)
-    if (lccn.size >= LCCN_MIN_CHARS) || (lccn.delete('^0-9').size >= 8)
+    lccn   = remove_lccn_prefix(s)
+    digits = lccn.sub(%r{/.*$}, '').delete('^0-9')
+    if LCCN_DIGITS.include?(digits.size)
       lccn
     elsif log
       Log.info { "#{__method__}: #{s.inspect} is not a valid LCCN" }

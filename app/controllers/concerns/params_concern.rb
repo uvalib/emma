@@ -24,6 +24,7 @@ module ParamsConcern
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods
+      include ParamsConcern
     end
     # :nocov:
 
@@ -32,9 +33,9 @@ module ParamsConcern
     # =========================================================================
 
     before_action :set_current_path,     unless: :request_xhr?
-    before_action :set_origin,           only:   [:index]
-    before_action :resolve_sort,         only:   [:index]
-    before_action :initialize_menus,     except: [:index] # TODO: keep?
+    before_action :set_origin,           only:   %i[index]
+    before_action :resolve_sort,         only:   %i[index]
+    before_action :initialize_menus,     except: %i[index] # TODO: keep?
     before_action :cleanup_parameters
 
     append_before_action :conditional_redirect
@@ -96,6 +97,16 @@ module ParamsConcern
 
   protected
 
+  # The current path stored in the session cookie.
+  #
+  # @return [String, nil]
+  #
+  def get_current_path
+    decompress_value(session['current_path']).tap do |path|
+      session.delete('current_path') if path.blank?
+    end
+  end
+
   # Set current page used by Devise as the redirect target after sign-in.
   #
   # @return [void]
@@ -109,16 +120,13 @@ module ParamsConcern
       when %r{^devise/} then return
       when %r{^user/}   then return
     end
-    if session['current_path'].present?
-      session['return_path'] = session['current_path'].dup
-    else
-      session.delete('return_path')
-    end
     if request.path == root_path
       session.delete('current_path')
     else
-      request_params = url_parameters.except(:id)
-      session['current_path'] = make_path(request.path, request_params)
+      prms = url_parameters.except(:id)
+      path = make_path(request.path, prms)
+      comp = compress_value(path)
+      session['current_path'] = (path.size <= comp.size) ? path : comp
     end
   end
 

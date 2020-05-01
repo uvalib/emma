@@ -501,6 +501,19 @@ $search-button-width:    6rem;
         // Sections
         //=====================================================================
 
+        .search-input-select {
+
+            margin-right: 0.5rem;
+            margin-left:  calc(#{$gap-x} / 2);
+            font-size:    large;
+            color:        black;
+
+            @media #{$narrow-screen} {
+                flex:   1 0 100%;
+                height: 2rem;
+            }
+        }
+
         // noinspection CssReplaceWithShorthandSafely
         .search-input-bar {
 

@@ -88,7 +88,7 @@ module LayoutHelper::Common
   # @return [Symbol]                    The controller used for searching.
   # @return [nil]                       If searching should not be enabled.
   #
-  def search_type(type = nil)
+  def search_target(type = nil)
     (type || request_parameters[:controller])&.to_sym
   end
 
@@ -116,7 +116,7 @@ module LayoutHelper::Common
   # @yieldreturn [String, Array<String>]
   #
   def search_form(id, type, **opt)
-    return if (path = search_target(type)).blank?
+    return if (path = search_target_path(type)).blank?
     opt[:method] ||= :get
     before, after =
       if path == request.path
@@ -159,10 +159,10 @@ module LayoutHelper::Common
   #
   # @return [String]
   #
-  def search_target(type, **opt)
+  def search_target_path(type, **opt)
     url_for(opt.merge(controller: "/#{type}", action: :index, only_path: true))
   rescue ActionController::UrlGenerationError
-    search_target(:title, **opt)
+    search_target_path(:title, **opt)
   end
 
 end

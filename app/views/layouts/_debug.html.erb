@@ -5,7 +5,12 @@
     session.to_hash
       .except('warden.user.user.key', '_csrf_token')
       .transform_values { |v|
-        h(v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 '))
+        if compressed_value?(v)
+          v = decompress_value(v)
+          h(v.inspect) << html_span('[compressed]', class: 'note')
+        else
+          v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
+        end
       }
 -%>
 

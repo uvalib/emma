@@ -101,7 +101,7 @@ class SearchTerm
   # Indicate whether this is a query (text-only) search term.
   #
   def query?
-    TEXT_SEARCH_PARAMETERS.include?(parameter)
+    QUERY_PARAMETERS.include?(parameter)
   end
 
   # Indicate whether this search term represents facet value(s).

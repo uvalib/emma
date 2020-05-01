@@ -30,6 +30,18 @@ module ApplicationHelper
   #
   APP_NAME = I18n.t('emma.application.name').freeze
 
+  # The controllers for the application.
+  #
+  # @type [Array<Symbol>]
+  #
+  APP_CONTROLLERS = I18n.t('emma.application.controllers').map(&:to_sym).freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The name of this application for display purposes.
   #
   # @return [String]
@@ -37,12 +49,6 @@ module ApplicationHelper
   def app_name
     APP_NAME
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # Indicate whether a view template partial exists.
   #

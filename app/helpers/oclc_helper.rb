@@ -45,7 +45,7 @@ module OclcHelper
   #
   # @type [Regexp]
   #
-  OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')}):?\s*/i
+  OCLC_PREFIX = /^\s*(#{OCLC_FORMAT.keys.join('|')})[:\s]*/i
 
   # A pattern matching the form of an OCN identifier.
   #
