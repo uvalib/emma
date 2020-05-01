@@ -1,0 +1,25 @@
+<%# app/views/help/show.html.erb -%>
+<%-
+  # EMMA topic help page.
+  item  ||= @topic
+  entry   = help_topic(item)
+  title ||= entry[:label] || t('emma.help.show.title', **entry)
+  intro ||= entry[:intro] || t('emma.help.show.intro', default: '', **entry)
+
+  unless modal?
+    set_page_title(t('emma.help.show.label', default: title, **entry))
+    set_page_description(title)
+  end
+
+  intro = intro.presence && help_element(intro, class: 'help-intro')
+-%>
+
+<h1 class="heading"><%= title -%></h1>
+
+<%= intro %>
+
+<%= render 'help/details', item: item, skip: :title %>
+
+<div class="help-toc">
+  <%= help_toc(type: :path) %>
+</div>

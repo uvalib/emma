@@ -16,9 +16,11 @@
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe
 
-  set_page_title(title)
-  set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

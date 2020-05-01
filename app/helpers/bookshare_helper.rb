@@ -263,11 +263,14 @@ module BookshareHelper
     end
     label ||= i18n_lookup(controller, "#{action}.label") || path
     html_opt = prepend_css_classes(link_opt, 'control')
-    html_opt[:target] ||= '_blank' if path.match?(/^https?:/)
     html_opt[:method] ||= :delete  if %i[delete destroy].include?(action)
     html_opt[:title]  ||= i18n_lookup(controller, "#{action}.tooltip")
     # noinspection RubyYardParamTypeMatch
-    make_link(label, path, **html_opt)
+    if path.match?(/^https?:/)
+      external_link(label, path, **html_opt)
+    else
+      make_link(label, path, **html_opt)
+    end
   end
 
   # A direct link to a Bookshare page to open in a new browser tab.
@@ -293,7 +296,7 @@ module BookshareHelper
       tip   = 'View on the Bookshare website.' # TODO: I18n
     end
     path = bookshare_url(path, **path_opt)
-    make_link(label, path, title: tip, target: '_blank')
+    external_link(label, path, title: tip)
   end
 
   # ===========================================================================

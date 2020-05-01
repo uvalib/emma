@@ -41,6 +41,36 @@ class ApplicationController < ActionController::Base
 
   add_flash_types :error, :success # TODO: keep?
 
+  helper_method :modal?
+  helper_method :layout
+
+  # ===========================================================================
+  # :section: Helpers
+  # ===========================================================================
+
+  protected
+
+  # Indicate whether rendering within a modal dialog (<iframe>).
+  #
+  def modal?
+    @modal ||= true?(params[:modal])
+  end
+
+  # The current layout template.
+  #
+  # @return [String]
+  # @return [FalseClass]              If `request.xhr?`
+  #
+  def layout
+    if request.xhr?
+      false
+    elsif modal?
+      'modal'
+    else
+      'application'
+    end
+  end
+
 end
 
 __loading_end(__FILE__)

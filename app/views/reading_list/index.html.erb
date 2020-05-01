@@ -11,10 +11,12 @@
     index_controls(terms, count: count, row: row)
   row += [applied_terms, top_controls].compact.size
 
-  set_page_title(t('emma.reading_list.index.label', default: title))
-  append_page_title('-', list_search_terms(terms)) if terms.present?
-  set_page_description(title)
-  set_page_robots(:noindex)
+  unless modal?
+    set_page_title(t('emma.reading_list.index.label', default: title))
+    append_page_title('-', list_search_terms(terms)) if terms.present?
+    set_page_description(title)
+    set_page_robots(:noindex)
+  end
 
   title += " (#{count})" if list.blank?
 

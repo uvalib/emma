@@ -4,8 +4,10 @@
   item  ||= @item
   title ||= item&.label&.presence || t('emma.edition.show.title')
 
-  set_page_title(title)
-  set_page_description(title)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

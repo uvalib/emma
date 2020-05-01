@@ -18,6 +18,8 @@ $text-blue:  $blue;
 // Observed Bookshare site colors.
 $bookshare-blue:   #24408e;
 $bookshare-orange: #e65d24;
+$bookshare-button: #445f9e;
+$bookshare-border: #3c548c;
 
 // @see https://brand.virginia.edu/brand-essentials/colors
 $uva-blue:   #232d4b;
@@ -42,13 +44,17 @@ $uva-medium-gray:    #dadada;
 $uva-text-gray:      #666666;
 $uva-emergency-red:  #df1e43;
 
+// Text colors.
+$error-fg: $uva-emergency-red;
+$debug-fg: hotpink;
+
 // Status backgrounds.
 $failure-bg:  lighter($uva-accent-magenta, 50%);
 $success-bg:  lighter($uva-accent-green,   50%);
 $selected-bg: lighter($uva-accent-green,   75%);
 
 // Input field backgrounds.
-$input-error-bg:    lighter($uva-emergency-red,  90%);
+$input-error-bg:    lighter($uva-emergency-red, 90%);
 $input-readonly-bg: $uva-medium-gray;
 $input-disabled-bg: $input-readonly-bg;
 $input-readonly-fg: $uva-text-gray;
@@ -62,10 +68,12 @@ $success-bg: $notice-bg;
 
 // Other colors.
 $header-bg:     $uva-blue;
-$panel-bg:      lighter($uva-accent-orange, 75%);
-$panel-accent:  $uva-accent-orange;
+$panel-bg:      lighter($uva-accent-orange, 90%);
+$panel-border:  lighter($uva-accent-orange, 50%);
+$panel-accent:  lighter($uva-accent-orange, 15%);
 $button-accent: lighter($uva-accent-teal,   50%);
 $focus-accent:  $button-accent;
+$text-focus:    darker($uva-accent-teal,    10%);
 
 //=============================================================================
 // Fonts.

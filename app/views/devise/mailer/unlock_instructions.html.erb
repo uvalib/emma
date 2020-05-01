@@ -1,7 +1,7 @@
 <%# app/views/devise/mailer/unlock_instructions.html.erb -%>
 <%-
   url = unlock_path(@resource, unlock_token: @token)
-  set_page_robots(:noindex, :nofollow)
+  set_page_robots(:noindex, :nofollow) unless modal?
 -%>
 
 <p>Hello <%= @resource.email %>!</p>

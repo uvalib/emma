@@ -42,7 +42,7 @@ module DownloadConcern
     @state     = result.key.to_s.upcase
     @link      = (result.messages.first.presence if @state == 'COMPLETED')
     respond_to do |format|
-      format.html { redirect_to @link if @link  }
+      format.html { @link ? redirect_to(@link) : render(layout: layout) }
       format.json { render_json download_values }
       format.xml  { render_xml  download_values }
     end

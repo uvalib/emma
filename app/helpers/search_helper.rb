@@ -150,9 +150,8 @@ module SearchHelper
     return ERB::Util.h(id) if url.blank?
 
     origin = item.emma_repository.titleize
-    opt[:title]  ||= "View this item on the #{origin} website." # TODO: I18n
-    opt[:target] ||= '_blank'
-    make_link(id, url, **opt)
+    opt[:title] ||= "View this item on the #{origin} website." # TODO: I18n
+    external_link(id, url, **opt)
   end
 
   # Make a clickable link to retrieve a remediated file.
@@ -172,15 +171,14 @@ module SearchHelper
     url = CGI.unescape(url.to_s)
     return if url.blank?
 
-    html_opt[:target] ||= '_blank'
-    html_opt[:title]  ||=
+    label = opt[:label] || url
+    html_opt[:title] ||=
       begin
         fmt = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
         rep = item.emma_repository.to_s.titleize
         "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
       end
 
-    label = opt[:label] || url
     case item.emma_repository.to_s
       when 'emma', 'bookshare'
         download_links(item, label: label, url: url, **html_opt)
@@ -189,7 +187,7 @@ module SearchHelper
     # when 'internetArchive'
     #   TODO: internetArchive retrieval link
       else
-        make_link(label, url, **html_opt)
+        external_link(label, url, **html_opt)
     end
   end
 

@@ -31,6 +31,7 @@ module ParamsHelper
     commit
     _method
     authenticity_token
+    modal
   ].sort.freeze
 
   # ===========================================================================

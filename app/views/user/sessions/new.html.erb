@@ -11,12 +11,14 @@
   }
   submit_label = t('emma.user.sessions.new.submit')
 
-  set_page_title(title)
-  set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help_popup(:sign_in) -%></h1>
 
 <%- if form_opt.present? -%>
   <%= form_for(resource, form_opt) do |f| -%>

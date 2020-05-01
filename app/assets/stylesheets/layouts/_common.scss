@@ -24,7 +24,7 @@ body {
 .layout-content {
 
     margin:     0 $page-padding-x;
-    min-height: 50vh;
+    min-height: 75vh;
     position:   relative;
 
     @media #{$browser-ie} {
@@ -36,6 +36,13 @@ body {
             margin-right: inherit;
         }
     }
+
+    // If the skip-nav menu grows large enough, on certain screens (ones with
+    // out search controls) it may extend below the header even when it should
+    // be hidden because it has "z-order: -1".  The <body> element can't be
+    // given a z-order, but extending the coverage of this element bridges the
+    // gap so that the long tail of the skip-nav menu is covered by its shadow.
+    box-shadow: 0 0 0 $page-padding white;
 }
 
 // For the heading at the top of the content area.

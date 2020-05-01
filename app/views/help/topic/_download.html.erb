@@ -1,0 +1,147 @@
+<%# app/views/help/topic/_download.html.erb -%>
+<%-
+  # EMMA download help page.
+  signed_in          = link_to('signed in', '/help#sign_in_help')
+  search             = link_to('search',    '/help#search_help')
+  ia_help            = 'https://help.archive.org/hc/en-us/articles'
+  is_disability_help = '360026244752-Disability-Access-General-Information'
+  ia_disability_page = "#{ia_help}/#{is_disability_help}"
+  ia_disability_link = external_link('Disability Access', ia_disability_page)
+-%>
+
+<p>
+  Most if not all items will require you to be <%= signed_in -%>
+  (although certain non-restricted items may be freely downloadable, depending
+  on the originating member repository).
+  After performing a <%= search -%>, scroll to the item of interest, and click
+  on the download link to initiate a download.
+</p>
+
+<nav role="navigation" aria-labelledby="download_help_nav">
+  <p id="download_help_nav">Topics in this section:</p>
+  <ul>
+    <li>
+      <a href="#download_hathi_help">Downloading a HathiTrust item</a>
+    </li>
+    <li>
+      <a href="#download_ia_help">Downloading an Internet Archive item</a>
+    </li>
+    <li>
+      <a href="#download_bookshare_help">Downloading a Bookshare item</a>
+    </li>
+    <li>
+      <a href="#download_emma_help">Downloading an EMMA item</a>
+    </li>
+  </ul>
+</nav>
+
+<section role="region" aria-labelledby="download_hathi_help">
+
+  <h3 class="section" id="download_hathi_help">
+    Downloading a HathiTrust item
+  </h3>
+
+  <p>
+    Because HathiTrust applies its own restrictions, item download links supplied
+    to the EMMA Unified Index are actually links to the HathiTrust web page entry
+    for the creative work associated with the item.
+    Such pages may reference multiple copies of the same item --
+    unique scans contributed by different academic partners.
+  </p>
+
+  <p>
+    The actual download is performed from the hathitrust.org web page;
+    this constitutes a transaction between that web site and your web browser.
+    Currently, the EMMA system is not a party to this transaction;
+    future work may include enhancements to help reflect this information within
+    EMMA.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="download_ia_help">
+
+  <h3 class="section" id="download_ia_help">
+    Downloading an Internet Archive item
+  </h3>
+
+  <p>
+    EMMA entries from Internet Archive have download links which should cause
+    your browser to directly download from the archive.org web site.
+    For restricted items, the result is likely to be encrypted;
+    see IA's article on <%= ia_disability_link -%> for details.
+  </p>
+
+  <p>
+    Planned work will involve a way to allow the EMMA service to intercede on
+    behalf of EMMA users to streamline access to IA accessible materials.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="download_bookshare_help">
+
+  <h3 class="section" id="download_bookshare_help">
+    Downloading a Bookshare item
+  </h3>
+
+  <p>
+    When the download link for a Bookshare item is clicked, the EMMA service
+    intercepts the request to add identity information needed for the request
+    to be honored by the Bookshare service.
+  </p>
+
+  <p>
+    Bookshare assembles the requested item on-the-fly to include include an
+    internal "watermark" identifying the requester of that customized instance of
+    the requested file.
+    During the short time that this takes, EMMA client-side software will
+    monitor its status and show a "loading" image to indicate that Bookshare is
+    working on the request.
+  </p>
+
+  <p>
+    The customized instance is deposited into temporary cloud storage when it is
+    ready to be acquired --
+    at that time, the EMMA client-side software replaces the "loading" image with
+    a "Download" link.
+    Clicking on this link will acquire the newly-created file instance from cloud
+    storage.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="download_emma_help">
+
+  <h3 class="section" id="download_emma_help">
+    Downloading an EMMA item
+  </h3>
+
+  <p>
+    Items that are "native" to the EMMA repository (that is, items that have been
+    uploaded by EMMA users and/or are otherwise not to be found in any of the
+    other member repositories) come in two flavors (at least initially):
+  </p>
+
+  <ul>
+    <li>
+      Bookshare items that are part of their "EMMA Collection"
+    </li>
+    <li>
+      Items uploaded directly to EMMA by EMMA users.
+    </li>
+  </ul>
+
+  <p>
+    Items of the first type are primarily what you will find at the present time.
+    When these are downloaded, the following a similar path to Bookshare items
+    as described above, except that they are not part of the "watermarking"
+    process -- rather, they are deposited directly into cloud storage.
+  </p>
+
+  <p>
+    Items of the second type will be delivered directly from the EMMA service to
+    a signed-in user.
+  </p>
+
+</section>

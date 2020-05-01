@@ -39,7 +39,7 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_KEYS = %i[offset start limit api_key].freeze
+  NON_SEARCH_KEYS = %i[offset start limit api_key modal].freeze
 
   # Term separator for #list_search_terms.
   #

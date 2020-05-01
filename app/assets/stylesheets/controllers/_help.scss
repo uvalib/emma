@@ -1,0 +1,368 @@
+// app/assets/stylesheets/controllers/_help.scss
+
+// @use 'feature/model'; // TODO: SASS 4.0
+
+//=============================================================================
+// Placeholder classes
+//=============================================================================
+
+%help-text {
+    line-height: 1.35;
+}
+
+// noinspection SassScssResolvedByNameOnly
+%help-layout {
+    @media #{$wide-screen} {
+        max-width: 50%;
+    }
+}
+
+%help-interior {
+    > * {
+        margin:  1rem 0;
+        padding: 0;
+
+        &:first-child { margin-top:    0; }
+        &:last-child  { margin-bottom: 0; }
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+%help-styles {
+
+    @extend %help-interior;
+
+    nav,
+    section {
+
+        @extend %help-interior;
+
+        margin: 3rem 0 0;
+    }
+
+    // For "Topics in this section":
+    p + nav {
+        margin-top: 0;
+    }
+    nav > ul {
+        margin-left: 1rem;
+    }
+
+    h1 { margin-top: 2rem; }
+    h2 { margin-top: 2rem; }
+    h3 { margin-top: 2rem; font-size: 1.35em; }
+    h4 { margin-top: 2rem; font-size: 1.15em; }
+    h5 { margin-top: 2rem; font-size: 1.10em; }
+    h6 { margin-top: 2rem; font-size: 1.05em; }
+
+    a {
+        @media #{$narrow-screen} {
+            display:    inline;
+            word-break: break-all;
+        }
+
+        &:focus {
+            outline-color:  $text-focus;
+        }
+    }
+
+    p {
+        @extend %help-text;
+
+        a:focus {
+            outline-offset: 0.5px;
+        }
+    }
+
+    li {
+        line-height:         1.5;
+        list-style-position: inside;
+    }
+
+    img {
+        display:   block;
+        margin:    1.5rem auto;
+        max-width: 100%;
+        border:    1px solid gray;
+    }
+
+    //=========================================================================
+    // Modal variations
+    //=========================================================================
+
+    &.modal {
+        img {
+
+            max-width: 75%;
+
+            @media #{$narrow-screen} {
+                min-width: 100%;
+                max-width: 100%;
+            }
+        }
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+%help-elements {
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    // An inline rendering of the EMMA "Sign in" button.
+    .sign-in-button {
+
+        @extend %button;
+
+        padding:          1px 4px;
+        text-decoration:  none;
+        font-size:        inherit;
+        color:            white;
+        background-color: $header-bg;
+        border:           1px solid $header-bg;
+        border-radius:    0.375rem;
+        box-shadow:       inset 0 0 0 1px white;
+    }
+
+    // An inline rendering of the "Sign in" button on the Bookshare login page.
+    .bookshare-sign-in {
+        display:          inline;
+        vertical-align:   top;
+        padding:          5px 10px;
+        text-decoration:  none;
+        font-size:        small;
+        color:            white;
+        background-color: $bookshare-button;
+        border:           1px solid $bookshare-border;
+        border-radius:    4px;
+        box-shadow:       none;
+    }
+
+    // An inline rendering of a search facet menu label.
+    .menu-label {
+        display:          inline-block;
+        margin-top:       0.75rem;
+        padding:          0.25rem;
+        font-weight:      normal;
+        color:            white;
+        background-color: $header-bg;
+    }
+
+    // An inline rendering of the "Search" button.
+    .search-button {
+        display:          inline;
+        padding:          1px 3px;
+        line-height:      1;
+        font-size:        inherit;
+        background:       lightgray;
+        border:           1px solid gray;
+    }
+
+    // An inline rendering of the panel "More/Less" toggle button.
+    .advanced-search-toggle {
+        display:          inline;
+        font-size:        inherit;
+        color:            white;
+        border:           1px solid gray;
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    // Major sub-heading.
+    .section {
+        // TODO: ???
+    }
+
+    // Minor sub-heading.
+    .sub-section {
+        // TODO: ???
+    }
+
+    // Container for elements to be arranged side-by-side.
+    .columns {
+
+        @extend %help-interior;
+
+        display:        flex;
+        flex-direction: row;
+
+        @media #{$narrow-screen} {
+            flex-direction: column;
+        }
+
+        > * {
+
+            @extend %help-interior;
+
+            margin-top:    0.5rem;
+            margin-bottom: 0.5rem;
+
+            > * {
+                margin-top:    0.5rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        img {
+            flex:          1 0 50%;
+            margin-bottom: auto !important;
+        }
+
+        * + img {
+            margin-top: 0;
+        }
+    }
+
+    // A table of menu selections and descriptions.
+    .choices {
+
+        @extend .label-value-pairs;
+
+        margin: $results-entry-gap-y $results-entry-gap-x;
+
+        @media #{$browser-ie} {
+            margin: $ie-results-entry-gap-y $ie-results-entry-gap-x;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        // Menu selection.
+        .label {
+            // TODO: ???
+        }
+
+        // Description of menu selection.
+        .value {
+
+            @extend %help-text;
+
+            &:last-of-type { margin-bottom: 0; }
+
+            @media #{$not-narrow-screen} {
+
+                display:         list-item;
+                margin-left:     1.25rem;
+                list-style-type: disclosure-closed;
+            }
+        }
+    }
+
+    // Special notation paragraph.
+    .caveat {
+        font-weight: bold;
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+%help-panel {
+
+    @extend %panel;
+    @extend %help-layout;
+    @extend %help-styles;
+
+    margin:  1rem 0;
+    padding: 0.5rem 1rem;
+}
+
+//=============================================================================
+// Elements
+//=============================================================================
+
+// A generic help section.
+.help-section {
+    @extend %help-elements;
+}
+
+// Special information box.
+.help-intro {
+    @extend %help-panel;
+}
+
+// Free-standing panel containing help topic table-of-contents links.
+.help-toc {
+    @extend %help-panel;
+}
+
+//=============================================================================
+// Help pages
+//=============================================================================
+
+body.help {
+    .heading {
+        word-break: break-word;
+    }
+}
+
+//=============================================================================
+// Help index page
+//=============================================================================
+
+// Help metadata label/value pairs for index listings.
+// noinspection SassScssResolvedByNameOnly
+.help-list-entry {
+
+    @extend .item-list-entry;
+    @extend %help-styles;
+
+    @include grid-columns(1fr);
+
+    margin-left: 0;
+
+    @media #{$not-narrow-screen} {
+
+        margin-left: $results-entry-gap-x;
+
+        @media #{$browser-ie} {
+            margin-left: $ie-results-entry-gap-x;
+        }
+    }
+}
+
+// Zero or more .help-list-entry elements.
+// noinspection SassScssResolvedByNameOnly
+.help-list {
+
+    @extend .item-list;
+    @extend %help-layout;
+    @extend %help-styles;
+    @extend %help-elements;
+
+    margin-top: $results-entry-gap-y;
+
+    @media #{$browser-ie} {
+        margin-top: $ie-results-entry-gap-y;
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .entry-title {
+        @include grid-column-span;
+    }
+}
+
+//=============================================================================
+// Help show page
+//=============================================================================
+
+// Help metadata values.
+.help-details {
+    @extend .item-details;
+}
+
+// Container for a .help-details.
+.help-container {
+
+    @extend .item-container;
+    @extend %help-layout;
+    @extend %help-styles;
+
+    flex-wrap:      wrap;
+    flex-direction: column;
+}

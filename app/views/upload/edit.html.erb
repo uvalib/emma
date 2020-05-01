@@ -5,9 +5,8 @@
   item  ||= @item
   repo  ||= @repo || item&.repository
   logo  ||= repository_source_logo(repo)
-  modal ||= true?(params[:modal])
 
-  unless modal
+  unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
@@ -33,4 +32,4 @@
 
 <%- end -%>
 
-<%= upload_action_list unless modal %>
+<%= upload_action_list unless modal? %>

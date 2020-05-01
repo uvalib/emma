@@ -1,0 +1,397 @@
+<%# app/views/help/topic/_search.html.erb -%>
+<%-
+  # EMMA search help page.
+  search        = html_span('Search', class: 'search-button')
+  panel_closer  = LayoutHelper::Common::PANEL_CLOSER_LABEL
+  panel_closer  = html_span(panel_closer, class: 'advanced-search-toggle')
+  panel_opener  = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener  = html_span(panel_opener, class: 'advanced-search-toggle')
+  x             = '&#x2716;'.html_safe # HEAVY X
+  type_closed   = help_image(:search_type_closed)
+  type_opened   = help_image(:search_type_opened)
+  drop_down     = help_image(:drop_down)
+  single_select = help_image(:one_selection)
+  dual_select   = help_image(:two_selections)
+-%>
+
+<p>
+  To search across all entries supplied by the member repositories,
+  type in one or more <strong><em>search terms</em></strong> then press
+  <%= search -%> to engage the EMMA Unified Search service.
+</p>
+
+<nav role="navigation" aria-labelledby="search_help_nav">
+  <p id="search_help_nav">Topics in this section:</p>
+  <ul>
+    <li>
+      <a href="#search_type_help">Search Types</a>
+      <ul>
+        <li><a href="#search_q_help">Keyword Search</a></li>
+        <li><a href="#search_title_help">Title Search</a></li>
+        <li><a href="#search_creator_help">Creator Search</a></li>
+        <li><a href="#search_identifier_help">Identifier Search</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#search_filter_help">Filters</a>
+    </li>
+    <li>
+      <a href="#search_filter_single_help">Simple Filters</a>
+      <ul>
+        <li><a href="#search_repository_help">Repository</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#search_filter_multi_help">Multi-select Filters</a>
+      <ul>
+        <li><a href="#search_format_help">Format</a></li>
+        <li><a href="#search_feature_help">Feature</a></li>
+        <li><a href="#search_accessibility_help">Accessibility</a></li>
+      </ul>
+    </li>
+    <li>
+      <a href="#search_control_help">Search Result Controls</a>
+      <ul>
+        <li><a href="#search_sort_help">Sort By</a></li>
+        <li><a href="#search_page_help">Page Size</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<section role="region" aria-labelledby="search_type_help">
+
+  <h3 class="section" id="search_type_help">
+    Search Types
+  </h3>
+
+  <p>
+    Enter one or more search terms in the search input box, then press the
+    <%= search -%> button.
+  </p>
+
+  <p>
+    To clear the current search input, click on the "<%= x -%>" that will
+    appear on the right side of the search input box.
+    This does not result in a new search &mdash;
+    it simply clears characters that have been input to help begin a new
+    search.
+  </p>
+
+  <p>
+    Keyword search is best for "discovery" of items that you hadn't considered
+    before, but can lead to a large number of results &mdash;
+    especially if you give only a single search term, or if your search terms
+    contain many common words.
+  </p>
+
+  <p>
+    If you already know that you are looking for a title, or are looking for
+    a specific ISBN, then you can help reduce the number of "false positive"
+    matches by specifying the appropriate search input type.
+  </p>
+
+  <%= type_opened %>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_q_help">Keyword Search</h4>
+
+  <p>
+    This search type looks for items matching your search term(s) across a
+    combination of metadata fields (title, author, description, etc).
+  </p>
+
+  <p>
+    As a convenience, if a search term appears to be a standard identifier,
+    your keyword search will automatically converted to an
+    <a href="#search_identifier_help">identifier search</a>.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_title_help">Title Search</h4>
+
+  <p>
+    Find items whose title matches the search term(s).
+  </p>
+
+  <p>
+    For example, a Title search for "King" will return results with the word
+    "King" somewhere in the title, but won't return items by Stephen King.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_creator_help">Creator Search</h4>
+
+  <p>
+    Find items whose author/creator matches the search term(s).
+  </p>
+
+  <p>
+    For example, a Creator search for "King" will return results by an author,
+    editor or composer with "King" somewhere in their name, but won't return
+    items that simply have "King" somewhere in the title.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_identifier_help">Identifier Search</h4>
+
+  <p>
+    Find items whose ISBN, ISSN, OCLC, LCCN, or UPC matches the search term(s).
+  </p>
+
+  <p>
+    Just giving an identifier number alone should be sufficient &mdash;
+    however, there are some cases (depending on the numbering scheme) where it
+    may be necessary to prefix the identifier with its type:
+  </p>
+
+  <div class="choices">
+    <div class="label">ISBN</div>
+    <div class="value">"isbn:NNNNNNNNNN", "isbn:NNNNNNNNNNNNN"</div>
+    <div class="label">ISSN</div>
+    <div class="value">"issn:NNNNNNNN"</div>
+    <div class="label">OCLC</div>
+    <div class="value">"oclc:NNNNNNNN"</div>
+    <div class="label">LCCN</div>
+    <div class="value">"lccn:NNNNNNNNNN"</div>
+    <div class="label">UPC</div>
+    <div class="value">"upc:NNNNNNNNNNNN"</div>
+  </div>
+
+</section>
+
+<section role="region" aria-labelledby="search_filter_help">
+
+  <h3 class="section" id="search_filter_help">
+    Filters
+  </h3>
+
+  <p>
+    The menu selections below the search input bar either filter out results
+    that are not of interest or control the way that results are presented.
+    (Press <%= panel_closer -%> to reduce the number of filters shown; press
+    <%= panel_opener -%> to see all filter selections.)
+  </p>
+
+  <p>
+    Filters (also known as "limiters") reduce the result set by eliminating all
+    of the result items that don't meet the filter criteria.
+    For example, setting "Repository" to "EMMA" discards all results from the
+    current search except for items that originate from the EMMA repository.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="search_filter_single_help">
+
+  <h3 class="section" id="search_filter_single_help">
+    Simple Filters
+  </h3>
+
+  <p>
+    These are drop-down menus which can only be set to a single value.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_repository_help">
+    <span class="menu-label">Repository</span>
+  </h4>
+
+  <p>
+    Use this filter to limit results to just those from a specific member
+    repository.
+  </p>
+
+  <div class="choices">
+    <div class="label">EMMA</div>
+    <div class="value">
+      Limit to results to items which have been uploaded to the EMMA repository
+      directly (or are included in the the Bookshare "EMMA Collection").
+    </div>
+    <div class="label">Bookshare</div>
+    <div class="value">
+      Limit to results to items which are provided by the Bookshare repository.
+    </div>
+    <div class="label">HathiTrust</div>
+    <div class="value">
+      Limit to results to items which are provided by the HathiTrust repository.
+    </div>
+    <div class="label">Internet Archive</div>
+    <div class="value">
+      Limit to results to items which are provided by the Internet Archive
+      repository.
+    </div>
+  </div>
+
+</section>
+
+<section role="region" aria-labelledby="search_filter_multi_help">
+
+  <h3 class="section" id="search_filter_multi_help">
+    Multi-select Filters
+  </h3>
+
+  <p>
+    These are drop-down menus which can be set to multiple values.
+  </p>
+
+  <div class="columns">
+    <div>
+      <p>
+        Click to drop down the menu selections,
+        then click on a filter value to select it.
+      </p>
+      <p>
+        This has immediate effect of eliminating all search results that don't
+        meet the condition imposed by the selection.
+      </p>
+    </div>
+    <%= drop_down %>
+  </div>
+
+  <div class="columns">
+    <div>
+      <p>
+        After the drop-down menu closes you will see your selection as a marker
+        with a leading "<%= x -%>".
+      </p>
+      <p>
+        Click on the "<%= x -%>" to remove the filter value.
+        (This has the immediate effect of re-running the current search without
+        that filter condition.)
+      </p>
+    </div>
+    <%= single_select %>
+  </div>
+
+  <div class="columns">
+    <p>
+      Click in the area outside the marker to cause the menu to drop down
+      again.
+      Select a different filter value, and that will be added to the previous
+      facet selection value.
+    </p>
+    <%= dual_select %>
+  </div>
+
+  <p>
+    This may cause some additional results to appear,
+    because the multi-select facets use "inclusive-OR" logic &mdash;
+    meaning that they allow through items that match
+    <strong><em>at least one</em></strong>
+    of the filter values.
+  </p>
+
+  <p>
+    To clear all facet selections, click on the "<%= x -%>" on the right side
+    of the menu control.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_format_help">
+    <span class="menu-label">Format</span> (multi-select)
+  </h4>
+
+  <p>
+    Limit results to items that have at least one of the selected file formats.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_feature_help">
+    <span class="menu-label">Feature</span> (multi-select)
+  </h4>
+
+  <p>
+    Limit results to items that have at least one of the selected remediation
+    properties.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_accessibility_help">
+    <span class="menu-label">Accessibility</span> (multi-select)
+  </h4>
+
+  <p>
+    Limit results to items that have at least one of the selected accessibility
+    features.
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="search_control_help">
+
+  <h3 class="section" id="search_control_help">
+    Search Result Controls
+  </h3>
+
+  <p>
+    Several of the menus do not limit the potential set of results you receive,
+    they control the way that the index service returns the results to you.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_sort_help">
+    <span class="menu-label">Sort By</span>
+  </h4>
+
+  <p>
+    The default sort shows the result set in decreasing order of relevance,
+    starting with the entries that most closely match the search terms.
+  </p>
+
+  <div class="choices">
+    <div class="label">Relevance</div>
+    <div class="value">
+      Show the items most closely matching the search terms
+      first, followed by less close matches in decreasing order of relevance.
+    </div>
+    <div class="label">Title</div>
+    <div class="value">
+      Re-order the result set in alphabetical order of the titles of the
+      matching items.
+    </div>
+    <div class="label">Last Remediation Date</div>
+    <div class="value">
+      Re-order the result set with the most recent submissions first,
+      followed by older items in increasing order of age.
+    </div>
+  </div>
+
+  <p>
+    <strong>NOTE:</strong>
+    If search criteria are very broad, then alternate sort orders may bring
+    items to the top that are only marginally useful.
+    Selecting a sort order is most useful when items of a result set are highly
+    correlated by fairly specific search criteria (search terms plus filter
+    selections).
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h4 class="sub-section" id="search_page_help">
+    <span class="menu-label">Page Size</span>
+  </h4>
+
+  <p>
+    Select the number of results per page.
+    While some search terms may be so specific that the index can eliminate all
+    but the exactly right entry, more general terms may result in dozens (or
+    thousands) of results.
+    This filter give you control over how large result sets are broken into
+    easier-to-handle chunks.
+  </p>
+
+  <p class="caveat">
+    NOTE: The current index does not implement this capability.
+  </p>
+
+</section>

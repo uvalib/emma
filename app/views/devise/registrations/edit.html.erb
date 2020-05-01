@@ -31,9 +31,11 @@
 
   back_link = link_to(t('emma.label.back'), :back)
 
-  set_page_title(title)
-  set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

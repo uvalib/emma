@@ -5,14 +5,13 @@
   list  ||= upload_list
   count ||= total_items
   row   ||= 1
-  modal ||= true?(params[:modal])
 
   terms = search_terms
   applied_terms, top_controls, bottom_controls =
     index_controls(terms, count: count, row: row)
   row += [applied_terms, top_controls].compact.size
 
-  unless modal
+  unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
@@ -20,16 +19,10 @@
 
   title += " (#{count})" if list.blank?
 
-  template_opt = {
-    list:  list,
-    count: count,
-    row:   row,
-    skip:  :title,
-    modal: modal
-  }
+  template_opt = { list: list, count: count, row: row, skip: :title }
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help_popup(:upload) -%></h1>
 <%= upload_description %>
 
 <div class="upload-list">
@@ -40,4 +33,4 @@
 </div>
 
 <%= upload_notes %>
-<%= upload_action_list unless modal %>
+<%= upload_action_list unless modal? %>

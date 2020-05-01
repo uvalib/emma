@@ -60,7 +60,7 @@ class ReadingListController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -78,7 +78,7 @@ class ReadingListController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json show_values(as: :hash)  }
       format.xml  { render_xml  show_values(as: :array) }
     end
@@ -155,7 +155,7 @@ class ReadingListController < ApplicationController
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @overload show_values(as: :array)
-  #   @return [Array]
+  #   @return [Hash{Symbol=>Array}]
   #
   # @overload show_values(as: :hash)
   #   @return [Hash{Symbol=>Hash}]
@@ -166,6 +166,7 @@ class ReadingListController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
+  # noinspection RubyYardReturnMatch
   def show_values(as: nil)
     result = { details: @item, titles: @list }
     { reading_list: super(result, as: as) }

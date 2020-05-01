@@ -10,9 +10,11 @@
   pref  ||= @preferences
   hist  ||= @history
 
-  set_page_title(title)
-  set_page_description(title)
-  set_page_robots(:noindex)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

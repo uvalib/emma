@@ -6,8 +6,10 @@
   count ||= total_items
   title ||= item&.label || t('emma.periodical.show.title')
 
-  set_page_title(title)
-  set_page_description(Title: title)
+  unless modal?
+    set_page_title(title)
+    set_page_description(Title: title)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

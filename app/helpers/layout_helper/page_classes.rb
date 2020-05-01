@@ -97,6 +97,7 @@ module LayoutHelper::PageClasses
       result << "#{c}-#{a}" if c && a
       result << c           if c
       result << a           if a
+      result << 'modal'     if modal?
     end
   end
 

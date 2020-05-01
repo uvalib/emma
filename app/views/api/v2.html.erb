@@ -3,9 +3,11 @@
   # Display of results from an individual API call.
   title ||= t('emma.api.v2.title')
 
-  set_page_title(title, @api_result[:url].inspect)
-  set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
+  unless modal?
+    set_page_title(title, @api_result[:url].inspect)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

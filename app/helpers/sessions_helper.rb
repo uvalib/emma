@@ -41,33 +41,47 @@ module SessionsHelper
   #
   # @param [String]         label     Default: `#get_label(:new)`
   # @param [Symbol, String] provider  Default: :bookshare
+  # @param [String, nil]    path      Default: `new_user_session_path`
   # @param [Hash]           opt       Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def sign_in_link(label: nil, provider: nil, **opt)
+  # == Usage Notes
+  # Use :path = *false* to disable without changing the appearance.
+  #
+  def sign_in_link(label: nil, provider: nil, path: nil, **opt)
     label    ||= get_sessions_label(:new, provider)
     provider ||= :bookshare
+    unless path.is_a?(String)
+      path = path.is_a?(FalseClass) ? '#' : new_user_session_path
+    end
     html_opt = {
       class:             "session-link #{provider}-login",
       title:             SIGN_IN_TOOLTIP,
       'data-turbolinks': false,
     }
     merge_html_options!(html_opt, opt)
-    link_to(label, new_user_session_path, html_opt)
+    link_to(label, path, html_opt)
   end
 
   # Sign out link.
   #
   # @param [String]         label     Default: `#get_label(:destroy)`
   # @param [Symbol, String] provider  Default: :bookshare
+  # @param [String, nil]    path      Default: `destroy_user_session_path`
   # @param [Hash]           opt       Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def sign_out_link(label: nil, provider: nil, **opt)
+  # == Usage Notes
+  # Use :path = *false* to disable without changing the appearance.
+  #
+  def sign_out_link(label: nil, provider: nil, path: nil, **opt)
     label    ||= get_sessions_label(:destroy, provider)
     provider ||= :bookshare
+    unless path.is_a?(String)
+      path = path.is_a?(FalseClass) ? '#' : destroy_user_session_path
+    end
     html_opt = {
       class:             "session-link #{provider}-logout",
       title:             SIGN_OUT_TOOLTIP,
@@ -75,7 +89,7 @@ module SessionsHelper
       method:            :delete,
     }
     merge_html_options!(html_opt, opt)
-    link_to(label, destroy_user_session_path, html_opt)
+    link_to(label, path, html_opt)
   end
 
   # ===========================================================================

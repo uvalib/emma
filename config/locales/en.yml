@@ -56,9 +56,11 @@ en:
         - 'member'
         - 'reading_list'
         - 'api'
+        - 'help'
       primary:
         - 'search'
         - 'upload'
+        - 'help'
 
     panel:
       control:          &PANEL_TOGGLE

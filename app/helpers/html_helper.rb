@@ -10,7 +10,13 @@ __loading_begin(__FILE__)
 module HtmlHelper
 
   def self.included(base)
+
     __included(base, '[HtmlHelper]')
+
+    base.send(:extend, ActionView::Helpers::TagHelper)
+    base.send(:extend, ActionView::Helpers::UrlHelper)
+    base.send(:extend, self)
+
   end
 
   # ===========================================================================
@@ -51,24 +57,30 @@ module HtmlHelper
   #   @param [ActiveSupport::SafeBuffer, String, nil] content
   #   @param [Hash]                                   options
   #   @param [TrueClass, FalseClass]                  escape
-  #   @return [ActiveSupport::SafeBuffer]
   #
   # @overload html_tag(tag, options = nil, escape = true, &block)
   #   @param [Symbol, String, Integer, nil]           tag
   #   @param [Hash]                                   options
   #   @param [TrueClass, FalseClass]                  escape
   #   @param [Proc]                                   block
-  #   @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield Additional content
+  # @yieldreturn [String, Array]
+  #
+  # @return [ActiveSupport::SafeBuffer]
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #
-  def html_tag(tag, *args, &block)
+  def html_tag(tag, *args)
     level = positive(tag)
     level &&= [level, 6].min
     tag = "h#{level}" if level
     tag = 'div'       if tag.blank? || tag.is_a?(Integer)
-    content = (args.shift || '' unless args.empty? || args.first.is_a?(Hash))
-    content_tag(tag, content, *args, &block)
+    options = args.extract_options!.presence
+    content = args.flatten
+    content += Array.wrap(yield) if block_given?
+    content.reject!(&:blank?)
+    content_tag(tag, safe_join(content, "\n"), options)
   end
 
   # ===========================================================================
@@ -107,6 +119,20 @@ module HtmlHelper
     end
     label = opt.delete(:label) || label
     link_to(label, path, opt, &block)
+  end
+
+  # Produce a link to an external site which opens in a new browser tab.
+  #
+  # @param [String] label             Passed to #make_link.
+  # @param [String] path              Passed to #make_link.
+  # @param [Hash]   opt               Passed to #make_link.
+  # @param [Proc]   block             Passed to #make_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def external_link(label, path, **opt, &block)
+    opt[:target] = '_blank' unless opt.key?(:target)
+    make_link(label, path, **opt, &block)
   end
 
   # ===========================================================================

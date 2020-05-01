@@ -529,7 +529,7 @@ form.select-entry {
 
             &.invalid {
                 visibility: visible;
-                color:      red;
+                color:      $error-fg;
             }
 
             &.required {

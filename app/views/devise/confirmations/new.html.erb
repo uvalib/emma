@@ -16,7 +16,7 @@
     end
   submit_label = t('emma.user.confirmations.new.submit')
 
-  set_page_robots(:noindex, :nofollow)
+  set_page_robots(:noindex, :nofollow) unless modal?
 -%>
 
 <h1 class="heading"><%= title -%></h1>

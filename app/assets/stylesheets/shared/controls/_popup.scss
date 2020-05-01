@@ -1,0 +1,113 @@
+// app/assets/stylesheets/shared/controls/_popup.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+.popup-container {
+
+    display:  inline-block;
+    position: relative;
+
+    // noinspection SassScssResolvedByNameOnly
+    .control {
+        display:        inline-block;
+        margin:         0 0 0 0.5rem;
+        padding:        0.1875rem 0.375rem;
+        line-height:    1;
+        vertical-align: text-top;
+        font-size:      x-large;
+        color:          $uva-accent-orange;
+        background:     whitesmoke;
+        border:         1px solid $uva-accent-orange;
+        border-radius:  50%;
+        cursor:         pointer;
+
+        &:before {
+            content: "\2605"; // BLACK STAR
+        }
+
+        &:focus {
+            @extend %focus;
+        }
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    .popup {
+
+        display:          flex;
+        flex-direction:   column;
+        flex-wrap:        wrap;
+        padding:          0.5rem;
+        font:             message-box;
+        background:       white;
+        border:           0.25rem solid $uva-accent-orange;
+        border-top-width: 1.5rem;
+        border-radius:    0.75rem;
+        box-shadow:       0.25rem 0.25rem 1rem 0.125rem darkgray;
+
+        &.hidden {
+            z-index: -1;
+        }
+
+        &:not(.hidden) {
+            z-index: 1000;
+        }
+
+        @media #{$wide-screen} {
+            position:   absolute;
+            top:        1.5rem;
+            left:       1.75rem;
+            min-width:  33vw;
+            min-height: 50vh;
+        }
+
+        @media #{$medium-width} {
+            position:   fixed;
+            left:       5vw;
+            right:      5vw;
+            min-height: 33vh;
+        }
+
+        @media #{$narrow-screen} {
+            position:   fixed;
+            top:        1rem;
+            bottom:     1rem;
+            left:       0.75rem;
+            right:      0.75rem;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .closer {
+            position:    absolute;
+            top:         -1.5rem;
+            right:       0.75rem;
+            line-height: 1.5;
+            font-size:   medium;
+            font-weight: bold;
+            color:       white;
+            cursor:      pointer;
+
+            &:focus {
+                @extend %focus;
+                outline-offset: 1px;
+            }
+        }
+
+        > * {
+            flex:       1 1 auto;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        iframe {
+            border: none;
+        }
+
+        // Temporary deferred-content placeholder.
+        .deferred {
+            font-size: large;
+        }
+    }
+}

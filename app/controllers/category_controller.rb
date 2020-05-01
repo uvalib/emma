@@ -61,7 +61,7 @@ class CategoryController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end

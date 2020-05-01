@@ -1,0 +1,130 @@
+# config/locales/controllers/help.en.yml
+
+en:
+
+  emma:
+
+    help:
+
+      label:            'Help'
+      title:            'EMMA Help'
+      tooltip:          'Get help on using the EMMA system.'
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_controls:
+        sort:
+          reverse:      false
+
+      # =======================================================================
+      # Topics
+      #
+      # In order to make use of the common "_template" definitions, each topic
+      # must define:
+      #
+      #   topic:  The lowercase form of the topic name.
+      #   Topic:  The titlecase form of the topic name.
+      #
+      # For a given topic, *content* may have one of several values:
+      #
+      # * String      - a single paragraph displayed for the topic.
+      # * Array       - multiple paragraphs displayed for the topic.
+      # * Missing/nil - content is in the partial "help/topic/_TOPIC.html.erb".
+      # =======================================================================
+
+      topic:
+
+        _template:      &TOPIC_TEMPLATE
+          label:        'EMMA %{Topic} Help'
+          title:        'EMMA %{Topic}'
+          tooltip:      'Help with EMMA %{topic}.'
+          intro:        'Information on how to %{topic} in EMMA.'
+          content:      'COMING SOON...' # Use ~ to indicate an ERB template.
+
+        sign_in:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'sign-in'
+          Topic:        'Sign-in'
+          title:        'Signing in to EMMA'
+          intro:        'Information on EMMA authentication.'
+          content:      ~ # @see help/topic/**
+
+        search:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'search'
+          Topic:        'Search'
+          title:        'Searching in EMMA'
+          tooltip:      'Help with searching in EMMA.'
+          content:      ~ # @see help/topic/**
+
+        download:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'download'
+          Topic:        'Download'
+          title:        'Downloading from EMMA'
+          tooltip:      'Help with downloading files from EMMA.'
+          content:      ~ # @see help/topic/**
+
+        upload:
+          <<:           *TOPIC_TEMPLATE
+          topic:        'upload'
+          Topic:        'Upload'
+          title:        'Uploading to EMMA'
+          tooltip:      'Help with uploading files to EMMA.'
+          content:      ~ # @see help/topic/**
+
+        other:
+          <<:           *TOPIC_TEMPLATE
+
+      # =======================================================================
+      # Illustrations
+      # =======================================================================
+
+      image:
+
+        sign_in_links:
+          alt:          'Sign-in selections'
+          asset:        'help/sign_in_links.png'
+
+        bookshare_login:
+          alt:          'Bookshare login page'
+          asset:        'help/bookshare_login.png'
+
+        drop_down:
+          alt:          'Drop-down menu'
+          asset:        'help/drop_down.png'
+
+        one_selection:
+          alt:          'Multi-select menu with a single selection'
+          asset:        'help/one_selection.png'
+
+        two_selections:
+          alt:          'Multi-select menu with two selections'
+          asset:        'help/two_selections.png'
+
+        search_type_closed:
+          alt:          'Search type menu (closed)'
+          asset:        'help/search_type_closed.png'
+
+        search_type_opened:
+          alt:          'Search type menu (opened)'
+          asset:        'help/search_type_opened.png'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Help'
+        title:          'EMMA Help Topics'
+        tooltip:        'Get help on using the EMMA system.'
+      # intro:          'EMMA Help Introduction'
+
+      show:
+        # Most of the values on the show page are driven by the topic values
+        # taken from "emma.help.topic.*".
+        label:          '%{Topic} Help'
+        title:          'EMMA %{Topic} Help'
+        intro:          'Information on how to %{topic} in EMMA.'

@@ -53,11 +53,12 @@
 
     &:focus {
         text-decoration: none;
-        outline-color:   black;
+        outline-color:   $text-focus;
         outline-offset:  -0.5px;
     }
 
     &:hover {
-        text-decoration: none;
+        text-decoration: none !important;
+        box-shadow:      none;
     }
 }

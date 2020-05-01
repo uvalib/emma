@@ -5,8 +5,10 @@
   image ||= nil
   title ||= item&.label || t('emma.title.show.title')
 
-  set_page_title(title)
-  set_page_description(Title: title)
+  unless modal?
+    set_page_title(title)
+    set_page_description(Title: title)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -59,7 +59,7 @@ class UploadController < ApplicationController
     self.total_items = @list.size
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -73,13 +73,13 @@ class UploadController < ApplicationController
     id = params[:id]        or fail(:file_id)
     @item = Upload.find(id) or fail(:find, id)
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
   end
 
-  # == GET /upload/new[?modal=true]
+  # == GET /upload/new
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
   def new

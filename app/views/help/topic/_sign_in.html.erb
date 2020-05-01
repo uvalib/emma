@@ -1,0 +1,74 @@
+<%# app/views/help/topic/_sign_in.html.erb -%>
+<%-
+  # EMMA sign-in help page.
+  sign_in                = sign_in_link(class: 'sign-in-button', path: !modal?)
+  sign_in_with_bookshare = sign_in_link(provider: :bookshare, path: !modal?)
+  bookshare_login        = help_image(:bookshare_login)
+  bookshare_sign_in      = html_span('Sign in', class: 'bookshare-sign-in')
+-%>
+
+<p>
+  Searching EMMA may be performed by anyone, but downloading, uploading, and
+  other operations that affect the state of EMMA will require you to identify
+  yourself by signing in.
+</p>
+
+<nav role="navigation" aria-labelledby="sign_in_help_nav">
+  <p id="sign_in_help_nav">Topics in this section:</p>
+  <ul>
+    <li>
+      <a href="#sign_in_dev_help">Test Users</a>
+    </li>
+    <li>
+      <a href="#sign_in_bookshare_help">Sign-in via Bookshare</a>
+    </li>
+  </ul>
+</nav>
+
+<section role="region" aria-labelledby="sign_in_dev_help">
+
+  <h3 class="section" id="sign_in_dev_help">
+    Test Users
+  </h3>
+
+  <p>
+    For testing purposes, you may sign in as
+    "<strong>emmadso@bookshare.org</strong>",
+    using the password posted to the "FRAME/EMMA Project" Slack
+    ("EMMA/Bookshare Test Accounts" in the Pinned Items of the
+    <strong><em>#emma</em></strong>
+    channel).
+  </p>
+
+</section>
+
+<section role="region" aria-labelledby="sign_in_bookshare_help">
+
+  <h3 class="section" id="sign_in_bookshare_help">
+    Sign-in via Bookshare
+  </h3>
+
+  <p>
+    Pressing the <%= sign_in -%> button at the upper-right corner of the EMMA
+    screen take you to a page of sign-in options.
+    Currently the only option is via Bookshare authentication,
+    which is engaged when you click on the <%= sign_in_with_bookshare -%> link.
+  </p>
+
+  <%= bookshare_login %>
+
+  <p>
+    When you click on the <%= sign_in_with_bookshare -%> link, EMMA redirects
+    you to the Bookshare page (above) which prompts you for your Bookshare
+    credentials.
+  </p>
+
+  <p>
+    When you press <%= bookshare_sign_in -%> on that page, Bookshare redirects
+    your browser back to the original EMMA page along with a hidden
+    "bearer token".
+    (This token will be attached to your requests to indicate your confirmed
+    identity.)
+  </p>
+
+</section>

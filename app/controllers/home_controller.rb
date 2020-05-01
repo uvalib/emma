@@ -87,7 +87,7 @@ class HomeController < ApplicationController
         else                          401 # Unauthorized
       end
     respond_to do |format|
-      format.html
+      format.html { render layout: layout }
       format.json { render_json show_values(as: :hash)  }
       format.xml  { render_xml  show_values(as: :array) }
     end
@@ -102,7 +102,7 @@ class HomeController < ApplicationController
   # Response values for de-serializing the show page to JSON or XML.
   #
   # @overload show_values(as: :array)
-  #   @return [Array]
+  #   @return [Hash{Symbol=>Array}]
   #
   # @overload show_values(as: :hash)
   #   @return [Hash{Symbol=>Hash}]
@@ -113,6 +113,7 @@ class HomeController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
+  # noinspection RubyYardReturnMatch
   def show_values(as: nil)
     result = { details: @item, preferences: @preferences, history: @history }
     { account: super(result, as: as) }

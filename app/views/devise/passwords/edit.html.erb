@@ -14,9 +14,11 @@
   confirm_label = t('emma.user.passwords.edit.confirm')
   submit_label  = t('emma.user.passwords.edit.submit')
 
-  set_page_title(title)
-  set_page_description(title)
-  set_page_robots(:noindex, :nofollow)
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

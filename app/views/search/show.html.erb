@@ -6,8 +6,10 @@
   title ||= item&.label || t('emma.search.show.title')
   logo  ||= repository_source_logo(item)
 
-  set_page_title(title)
-  set_page_description(Search: title)
+  unless modal?
+    set_page_title(title)
+    set_page_description(Search: title)
+  end
 -%>
 
 <div class="heading container">

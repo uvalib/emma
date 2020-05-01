@@ -101,7 +101,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    return if !request.get? || request.xhr?
+    return if !request.get? || request.xhr? || modal?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
       when 'api'        then return if params[:action] == 'image'

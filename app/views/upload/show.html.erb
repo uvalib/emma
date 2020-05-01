@@ -4,9 +4,8 @@
   item  ||= @item
   image ||= nil
   title ||= t('emma.upload.show.title', name: item&.filename)
-  modal ||= true?(params[:modal])
 
-  unless modal
+  unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
@@ -16,8 +15,8 @@
 <h1 class="heading"><%= title -%></h1>
 <%= upload_description %>
 
-<%= render 'upload/details', item: item, image: image, modal: modal %>
+<%= render 'upload/details', item: item, image: image %>
 <%= upload_preview %>
 
 <%= upload_notes %>
-<%= upload_action_list unless modal %>
+<%= upload_action_list unless modal? %>

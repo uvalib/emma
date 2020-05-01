@@ -44,7 +44,7 @@ module SessionConcern
       __debug_exception('RESCUE_FROM', exception)
       if rendering_html?
         flash.now[:alert] ||= exception.message
-        render
+        render layout: layout
       end
     end
 

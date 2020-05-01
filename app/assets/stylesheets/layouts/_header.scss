@@ -26,6 +26,8 @@ $search-button-width:    6rem;
     margin-bottom:   -$hcm-divider-width;
     padding:         0;
     border-bottom:   $hcm-divider-width solid $hcm-color;
+    position:        relative;
+    z-index:         1;
 }
 
 //=============================================================================
@@ -77,6 +79,40 @@ $search-button-width:    6rem;
         color:     black;
         font-size: large;
     }
+}
+
+//=============================================================================
+// Controls
+//=============================================================================
+
+// @see LayoutHelper#search_input
+.search-input {
+    max-width: 100%;
+    // Prevent Chrome from showing its own ghost cancel button.
+    &::-webkit-search-cancel-button { -webkit-appearance: unset; }
+}
+
+// @see LayoutHelper#clear_search_button
+// noinspection SassScssResolvedByNameOnly
+.search-clear {
+    @include clear-selection-button;
+}
+
+// @see LayoutHelper#search_button
+// noinspection SassScssResolvedByNameOnly
+.search-button {
+    @extend %button;
+}
+
+// @see LayoutHelper#advanced_search_button
+// noinspection SassScssResolvedByNameOnly
+.advanced-search-toggle {
+
+    @extend %control-button;
+
+    width:            $advanced-toggle-width;
+    margin:           0;
+    background-color: $panel-accent;
 }
 
 //=============================================================================
@@ -173,6 +209,30 @@ $search-button-width:    6rem;
 
                 @media #{$narrow-screen} {
                     margin-top: $ie-flex-gap-y;
+                }
+            }
+        }
+
+        .help-popup {
+
+            @media #{$not-narrow-screen} {
+
+                margin-left: calc(#{$flex-gap-y} / 2);
+
+                @media #{$browser-ie} {
+                    margin-left: ($ie-flex-gap-y / 2);
+                }
+            }
+
+            @media #{$narrow-screen} {
+                text-align: right;
+            }
+
+            .popup {
+                @media #{$wide-screen} {
+                    top:   2.25rem;
+                    left:  unset;
+                    right: 0;
                 }
             }
         }
@@ -379,38 +439,7 @@ $search-button-width:    6rem;
 
     // @see LayoutHelper#search_input_bar
     .search-input-bar {
-
         @extend %header-control-interior;
-
-        // @see LayoutHelper#search_input
-        .search-input {
-            max-width: 100%;
-            // Prevent Chrome from showing its own ghost cancel button.
-            &::-webkit-search-cancel-button { -webkit-appearance: unset; }
-        }
-
-        // @see LayoutHelper#clear_search_button
-        // noinspection SassScssResolvedByNameOnly
-        .search-clear {
-            @include clear-selection-button;
-        }
-
-        // @see LayoutHelper#search_button
-        // noinspection SassScssResolvedByNameOnly
-        .search-button {
-            @extend %button;
-        }
-    }
-
-    // @see LayoutHelper#advanced_search_button
-    // noinspection SassScssResolvedByNameOnly
-    .advanced-search-toggle {
-
-        @extend %control-button;
-
-        width:            $advanced-toggle-width;
-        margin:           0;
-        background-color: $panel-accent;
     }
 
     // @see LayoutHelper#menu_spacer
