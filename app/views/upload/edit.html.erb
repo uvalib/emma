@@ -3,7 +3,7 @@
   # Prompt to modify an existing file entry.
   title ||= t('emma.upload.edit.title')
   item  ||= @item
-  repo  ||= @repo || item&.repository
+  repo  ||= item&.repository
   logo  ||= repository_source_logo(repo)
 
   unless modal?

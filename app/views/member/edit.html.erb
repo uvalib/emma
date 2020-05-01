@@ -7,7 +7,7 @@
   # the EMMA endpoint.
 
   title ||= t('emma.member.edit.title')
-  id    ||= @user_id
+  id    ||= @user
 
   click_to =
     if can?(:edit, Member)

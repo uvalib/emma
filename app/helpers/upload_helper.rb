@@ -818,13 +818,13 @@ module UploadHelper
   # Generate a menu of existing EMMA entries (uploaded items).
   #
   # @param [Symbol, String] action    Default: `#params[:action]`
-  # @param [User, String]   user      Default: @user_id
+  # @param [User, String]   user      Default: @user
   # @param [String]         prompt
   # @param [Hash]           opt       Passed to #form_tag.
   #
   def upload_items_menu(action: nil, user: nil, prompt: nil, **opt)
     action ||= params[:action]
-    user   ||= @user_id
+    user   ||= @user
     user     = user.id if user.is_a?(User)
     prompt ||=
       if user

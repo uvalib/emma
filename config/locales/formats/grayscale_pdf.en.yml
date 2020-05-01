@@ -1,6 +1,6 @@
 # config/locales/formats/grayscale_pdf.en.yml
 #
-# EPUB format
+# Grayscale PDF - TODO: Should this really be a distinct "format"?
 
 en:
 

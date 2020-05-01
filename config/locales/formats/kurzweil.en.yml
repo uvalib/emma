@@ -1,6 +1,6 @@
 # config/locales/formats/kurzweil.en.yml
 #
-# Braille format
+# Kurzweil 3000 Document format - TODO: ?
 
 en:
 
@@ -14,6 +14,7 @@ en:
         - 'application/x-kurzweil' # NOTE: fake MIME type
 
       exts:
+        - 'kes'
         - 'kurzweil'
 
       # =======================================================================

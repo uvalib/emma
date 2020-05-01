@@ -1,4 +1,4 @@
-# config/locales/en.yml
+# config/locales/controllers/title.en.yml
 #
 # TitleController pages
 
@@ -181,4 +181,3 @@ en:
       history:
         title:          'Catalog Title History'
         tooltip:        'View modifications for this Bookshare catalog title.'
-

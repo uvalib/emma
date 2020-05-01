@@ -76,7 +76,7 @@ module BookshareHelper
       id: :editionId
     },
     member: {
-      id: nil
+      id: :userAccountId
     },
     sponsor: {
       # TODO: sponsor?

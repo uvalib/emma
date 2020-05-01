@@ -2,8 +2,8 @@
 <%-
   # Prompt to upload a file.
   title ||= t('emma.upload.new.title')
-  item  ||= @item || Upload.new
-  repo  ||= @repo || item.repository
+  item  ||= @item
+  repo  ||= item&.repository
   logo  ||= repository_source_logo(repo)
 
   unless modal?

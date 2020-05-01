@@ -25,15 +25,14 @@ class UploadController < ApplicationController
   # :section: Authentication
   # ===========================================================================
 
-  # before_action :update_user
-  # before_action :authenticate_user!
+  before_action :update_user
+  before_action :authenticate_user!
 
   # ===========================================================================
   # :section: Authorization
   # ===========================================================================
 
-  # authorize_resource # TODO: upload authorization
-  skip_authorization_check # TODO: temporary - remove
+  authorize_resource
 
   # ===========================================================================
   # :section: Callbacks
@@ -54,7 +53,7 @@ class UploadController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = @user_id ? Upload.where(user_id: @user_id) : Upload.all
+    @list = @user ? Upload.where(user_id: @user.id) : []
     self.page_items  = @list
     self.total_items = @list.size
     self.next_page   = next_page_path(@list, opt)
@@ -84,7 +83,7 @@ class UploadController < ApplicationController
   #
   def new
     __debug_route
-    @item = Upload.new
+    @item = Upload.new(user_id: @user.id)
     respond_with(@item)
 
   rescue => error
@@ -100,7 +99,7 @@ class UploadController < ApplicationController
   #
   def create
     __debug_route
-    data  = upload_post_parameters
+    data  = upload_post_parameters.merge!(user_id: @user.id)
     @item = Upload.new(data) or fail(__method__)
     @item.save
     @item.errors.blank?      or fail(@item.errors)

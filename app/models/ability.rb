@@ -202,6 +202,7 @@ class Ability
     can :update, Artifact
     can :create, Upload
     can :update, Upload
+    can :delete, Upload
   end
 
   # Indicate that the user can perform as a library member.
@@ -215,7 +216,6 @@ class Ability
     can :manage, Title
     can :manage, Periodical
     can :manage, Edition
-    can :manage, ReadingList
   end
 
   # Indicate that the user can act as a student with a personal Bookshare
@@ -288,7 +288,6 @@ class Ability
     can :read, Title
     can :read, Periodical
     can :read, Edition
-    can :manage, Upload # TODO: testing - remove
   end
 
 end

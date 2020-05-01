@@ -2,7 +2,7 @@
 <%-
   # Select existing entries which contain files to operate on.
   action ||= params[:action]
-  user   ||= @user_id
+  user   ||= @user
   prompt =
     if user
       'Select an EMMA entry you created' # TODO: I18n

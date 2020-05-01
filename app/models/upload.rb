@@ -214,7 +214,6 @@ class Upload < ApplicationRecord
     @repository ||= DEFAULT_REPO
     @fmt        ||= file && mime_to_fmt(file.mime_type) || new_fmt
     @ext        ||= file&.extension || new_ext
-    @user_id    ||= 3 # TODO: testing - remove (faking "emmdso@bookshare.org" as the submitting user)
   end
 
   # ===========================================================================

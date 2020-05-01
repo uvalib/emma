@@ -9,10 +9,6 @@ __loading_begin(__FILE__)
 #
 module FileNaming
 
-  def self.included(base)
-    __included(base, '[FileNaming]')
-  end
-
   include Emma::Mime
   include Emma::Debug
 

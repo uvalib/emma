@@ -42,8 +42,8 @@ class MemberController < ApplicationController
 
   # Undo the over-encoding required in MemberHelper#member_link.
   before_action do
-    @user_id = params[:username] || params[:id]
-    @user_id &&= CGI.unescape(@user_id)
+    @account_id = params[:userAccountId] || params[:username] || params[:id]
+    @account_id &&= CGI.unescape(@account_id)
   end
 
   # ===========================================================================
@@ -74,7 +74,7 @@ class MemberController < ApplicationController
   #
   def show
     __debug_route
-    @item, @preferences, @history = get_account_details(id: @user_id)
+    @item, @preferences, @history = get_account_details(id: @account_id)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values(as: :hash)  }

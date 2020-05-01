@@ -1,6 +1,6 @@
 # config/locales/formats/rtf.en.yml
 #
-# Braille format
+# RTF (Rich Text Format)
 
 en:
 
@@ -11,7 +11,7 @@ en:
       type: 'rtf'
 
       mimes:
-        - 'application/x-rtf' # NOTE: fake MIME type
+        - 'application/rtf'
 
       exts:
         - 'rtf'
