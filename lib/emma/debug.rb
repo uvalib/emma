@@ -136,7 +136,7 @@ module Emma::Debug
     opt = args.extract_options!.reverse_merge(leader: '!!!')
     args << "#{label} #{exception.class}"
     args << "ERROR: #{exception.message}"
-    args << "api_error_message = #{api_error_message.inspect}"
+    args << "bs_api_error_message = #{bs_api_error_message.inspect}"
     args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
     __debug_line(*args, opt, &block)
   end

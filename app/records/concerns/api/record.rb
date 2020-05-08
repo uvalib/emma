@@ -49,26 +49,24 @@ class Api::Record
   # [3] If an error indication is present, the instance is initialized to
   #     defaults and *data* is ignored.
   #
+  # noinspection RubyYardParamTypeMatch
   def initialize(src, format: nil, wrap: nil, error: nil, **)
+    @serializer_type = format
+    assert_serializer_type(@serializer_type) if @serializer_type
     @exception = error
     @exception = Api::Error.new(error) if error && !error.is_a?(Exception)
     if @exception
       @serializer_type = :hash
       initialize_attributes
     elsif src.is_a?(Api::Record)
-      @serializer_type = format || DEFAULT_SERIALIZER_TYPE
-      # noinspection RubyYardParamTypeMatch
       initialize_attributes(src)
-    else
-      # @type [Hash, String, nil] data
-      data = src.is_a?(Faraday::Response) ? src.body.presence : src
-      @serializer_type = format || self.format_of(data)
-      assert_serializer_type(@serializer_type) if @serializer_type
-      @serializer_type ||= DEFAULT_SERIALIZER_TYPE
+    elsif (data = src.is_a?(Faraday::Response) ? src.body : src).present?
+      @serializer_type ||= self.format_of(data) || DEFAULT_SERIALIZER_TYPE
       wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
       data = wrap_outer(data: data, template: wrap) if wrap
       deserialize(data)
     end
+    @serializer_type ||= DEFAULT_SERIALIZER_TYPE
   end
 
   # ===========================================================================
@@ -197,14 +195,14 @@ class Api::Record
 
   public
 
-  # Default data used to initialize an error instance.
+  # Default data used to initialize an instance.
   #
   # @return [Hash{Symbol=>BasicObject}]
   #
   # @see Api::Record::Associations#property_defaults
   #
   def default_data
-    self.class.property_defaults.deep_dup
+    self.class.property_defaults
   end
 
   # The field definitions in the schema for this record.
@@ -288,15 +286,22 @@ class Api::Record
   #
   # @return [void]
   #
+  # == Usage Notes
+  # With no (or nil) argument, this initializes all fields from #default_data.
+  # (This is useful in situations where you want all fields displayable whether
+  # they were initialized with data or not).
+  #
+  # If *data* is provided, then *only* those fields will be initialized.
+  # (This is useful where you want fields that were not initialized with data
+  # to return *nil*.)
+  #
   def initialize_attributes(data = nil)
     data = data.fields if data.is_a?(Api::Record)
     data = data.symbolize_keys.slice(*default_data.keys) if data.is_a?(Hash)
     (data || default_data).each_pair do |attr, value|
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case value
-        when Class then value = value.new
-        when Proc  then value = value.call(error: exception)
-      end
+      value = value.call(error: exception) if value.is_a?(Proc)
+      value = value.new                    if value.is_a?(Class)
+      value = value.value                  if value.is_a?(ScalarType)
       send(:"#{attr}=", value)
     end
   end

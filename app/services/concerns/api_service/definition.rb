@@ -51,11 +51,21 @@ module ApiService::Definition
   #                 added by this method as a hint for the API Explorer.
   #
   def add_api(prop)
+=begin
     # __output { ". API Request method #{prop.keys.join(', ')}" }
     topic = self.to_s.demodulize
     prop = prop.transform_values { |v| v.merge(topic: topic) }
     (@@all_methods  ||= {}).merge!(prop)
     (@@true_methods ||= {}).merge!(prop.select { |_, v| v[:reference_id] })
+=end
+    base_class = self.to_s.split('::').first.constantize
+    if base_class == self
+      $stderr.puts "................................ self == base_class == #{self}"
+    else
+      $stderr.puts "................................ base_class is #{base_class}"
+    end
+    base_class = self.class if base_class == self
+    base_class.add_api(prop)
   end
 
   # Properties for each method which implements an API request.
@@ -76,6 +86,7 @@ module ApiService::Definition
   # - If :synthetic is :only then only the "fake" methods are returned.
   #
   def api_methods(arg = nil)
+=begin
     @@all_methods  ||= {}
     @@true_methods ||= {}
     if arg.is_a?(String) || arg.is_a?(Symbol)
@@ -86,6 +97,17 @@ module ApiService::Definition
     else
       synthetic ? @@all_methods : @@true_methods
     end
+=end
+    $stderr.puts "................................ ancestors == #{self.class.ancestors}"
+    $stderr.puts "................................ name == #{self.to_s.split('::')}"
+    base_class = self.class.ancestors.first
+    if base_class == self
+      $stderr.puts "................................ self == base_class == #{self}"
+    else
+      $stderr.puts "................................ base_class is #{base_class}"
+    end
+    base_class = self.class if base_class == self
+    base_class.api_methods(arg)
   end
 
   # The optional API query parameters for the given method.

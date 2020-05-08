@@ -71,12 +71,12 @@ module SearchService::Common
   # @see ApiService::Common#api_headers
   #
   def api_headers(params = nil, headers = nil)
-    params, headers = super(params, headers)
+    params, headers, body = super(params, headers)
     unless update_request?
       #params = build_query_options(@params, decorate: true) # TODO: ???
       params = build_query_options(params)
     end
-    return params, headers
+    return params, headers, body
   end
 
   # ===========================================================================

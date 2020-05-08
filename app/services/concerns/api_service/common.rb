@@ -320,19 +320,33 @@ module ApiService::Common
     # then send the API request.
     @action = api_path(*args)
     @params = api_options!(@params)
-    options, headers = api_headers(@params)
+    options, headers, body = api_headers(@params)
     __debug_line(leader: '>>>') do
       [service_name] << @action.inspect << {}.tap do |details|
         details[:options] = options.inspect if options.present?
         details[:headers] = headers.inspect if headers.present?
       end
     end
+    if body.present?
+      @action = make_path(@action, options) if options.present?
+      options = body
+    end
+    $stderr.puts "--------- #{service_name} API | transmit | @verb = #{@verb.inspect} | @action = #{@action.inspect} | @options = #{@options.inspect} | @headers = #{@headers.inspect} | opt = #{opt.inspect}"
     @response = transmit(@verb, @action, options, headers, **opt)
+    $stderr.puts "--------- #{service_name} API | @response = #{@response.inspect}"
 
   rescue Api::Error => error
+    $stderr.puts "--------- #{service_name} API | Api::Error | error = #{error.inspect}"
     log_exception(method: method, error: error)
 
+  rescue TypeError => error
+    $stderr.puts "--------- #{service_name} API | TypeError | error = #{error.inspect}"
+    $stderr.puts "--------- callstack =\n#{error.full_message}"
+    log_exception(method: method, error: error)
+    error = response_error(error)
+
   rescue => error
+    $stderr.puts "--------- #{service_name} API | Exception | error = #{error.inspect}"
     log_exception(method: method, error: error)
     error = response_error(error)
 
@@ -340,13 +354,26 @@ module ApiService::Common
     __debug_line(leader: '<<<') do
       # noinspection RubyNilAnalysis
       resp = error.respond_to?(:response) && error.response || @response
+      stat = data = nil
+      if resp
+        stat ||= resp.http_status if resp.respond_to?(:http_status)
+        stat ||= resp.status      if resp.respond_to?(:status)
+        data ||= resp.body        if resp.respond_to?(:body)
+      end
+      if resp.respond_to?(:dig)
+        stat ||= resp[:http_status]
+        stat ||= resp[:status]
+        data ||= resp[:body]
+      end
       [service_name] << @action.inspect << {
-        status: resp.respond_to?(:status) && resp.status || resp&.dig(:status),
-        data:   resp.respond_to?(:body)   && resp.body   || resp&.dig(:body)
+        status: stat || '?',
+        data:   data || '?',
+        error:  error,
       }.transform_values { |v| v.inspect.truncate(256) }
     end
     @response  = nil   if error.present?
     @exception = error unless no_exception
+    $stderr.puts "--------- #{service_name} API | ensure | @exception = #{@exception.inspect} | @response = #{@response.inspect}"
     raise @exception   unless no_raise || @exception.nil?
     return @response
   end
@@ -420,13 +447,21 @@ module ApiService::Common
   # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
   #
   def api_headers(params = nil, headers = nil)
-    params ||= @params
-    headers  = headers&.dup || {}
-    if update_request?
-      params = params.to_json
-      headers['Content-Type'] = 'application/json'
+    params  ||= @params
+    headers ||= {}
+    body      = nil
+    if params.key?(:body)
+      body   = params[:body].as_json
+      params = params.except(:body)
+    elsif update_request?
+      body   = params
+      params = {}
     end
-    return params, headers
+    if body
+      body    = reject_blanks(body).to_json
+      headers = headers.merge('Content-Type' => 'application/json')
+    end
+    return params, headers, body
   end
 
   # Get a connection for making cached requests.
@@ -513,6 +548,8 @@ module ApiService::Common
     no_redirect = opt[:no_redirect] || options[:no_redirect]
     redirection = nil
     case response.status
+      when 202
+        # No response body expected.
       when 200..299
         result = response.body
         raise empty_response_error(response) if result.blank?

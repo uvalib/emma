@@ -12,11 +12,7 @@ module UserConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'UserConcern')
-
-    include BookshareConcern
-
   end
 
   # Non-functional hints for RubyMine.
@@ -33,6 +29,8 @@ module UserConcern
 
   end
   # :nocov:
+
+  include BookshareConcern
 
   # ===========================================================================
   # :section:
@@ -59,14 +57,14 @@ module UserConcern
     # Main account information.
     if id.present?
       opt[:user] = id
-      item = api.get_account(**opt)
+      item = bs_api.get_account(**opt)
       if item.error?
-        item = api.get_my_organization_member(**opt)
+        item = bs_api.get_my_organization_member(**opt)
         opt[:user] = item.userAccountId || item.identifier
       end
     else
-      item = api.get_my_account(**opt)
-      api.discard_exception
+      item = bs_api.get_my_account(**opt)
+      bs_api.discard_exception
     end
 
     # Ancillary account information.
@@ -74,18 +72,18 @@ module UserConcern
       error << item.error_message
       pref = hist = nil
     elsif opt[:user].present?
-      pref = api.get_preferences(**opt)
+      pref = bs_api.get_preferences(**opt)
       warn << pref.error_message if pref.error?
-      # hist = api.get_download_history(**opt) # TODO: ...
+      # hist = bs_api.get_download_history(**opt) # TODO: ...
       # warn << hist.error_message if hist.error? # TODO: ...
       hist = nil
       warn << 'No API support for preferences or history'
     else
-      pref = api.get_my_preferences(**opt)
-      api.discard_exception
+      pref = bs_api.get_my_preferences(**opt)
+      bs_api.discard_exception
       error << pref.error_message if pref.error?
-      hist = api.get_my_download_history(**opt)
-      api.discard_exception
+      hist = bs_api.get_my_download_history(**opt)
+      bs_api.discard_exception
       error << hist.error_message if hist.error?
     end
 

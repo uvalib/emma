@@ -12,99 +12,76 @@ module SearchConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'SearchConcern')
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # Access the EMMA Unified Search service.
-    #
-    # @return [SearchService]
-    #
-    def api
-      @search_api ||= api_update
-    end
-
-    # Update the EMMA Unified Search service.
-    #
-    # @param [Hash] opt
-    #
-    # @return [SearchService]
-    #
-    def api_update(**opt)
-      default_opt = {}
-      default_opt[:user]     = current_user if current_user.present?
-      default_opt[:no_raise] = true         if Rails.env.test?
-      # noinspection RubyYardReturnMatch
-      @search_api = SearchService.update(**opt.reverse_merge(default_opt))
-    end
-
-    # Remove the EMMA Unified Search service.
-    #
-    # @return [nil]
-    #
-    def api_clear
-      @search_api = SearchService.clear
-    end
-
-    # Indicate whether the latest EMMA Unified Search request generated an
-    # exception.
-    #
-    def api_error?
-      defined?(@search_api) && @search_api.present? && @search_api.error?
-    end
-
-    # Get the current EMMA Unified Search exception message if the service has
-    # been started.
-    #
-    # @return [String]
-    # @return [nil]
-    #
-    def api_error_message
-      @search_api.error_message if defined?(:@search_api) && @search_api.present?
-    end
-
-    # Get the current EMMA Unified Search exception if the service has been
-    # started.
-    #
-    # @return [Exception]
-    # @return [nil]
-    #
-    def api_exception
-      @search_api.exception if defined?(:@search_api) && @search_api.present?
-    end
-
   end
 
   include SearchHelper
 
   # ===========================================================================
-  # :section: Initialization
+  # :section:
   # ===========================================================================
 
-=begin # TODO: Search notifications
-  if Log.info?
-    extend Emma::Time
-    # Log API request times.
-    ActiveSupport::Notifications.subscribe('request.faraday') do |*args|
-      _name    = args.shift # 'request.faraday'
-      starts   = args.shift
-      ends     = args.shift
-      _payload = args.shift
-      env      = args.shift
-      method   = env[:method].to_s.upcase
-      url      = env[:url]
-      host     = url.host
-      uri      = url.request_uri
-      duration = time_span(starts.to_f, ends.to_f)
-      Log.info { '[%s] %s %s (%s)' % [host, method, uri, duration] }
-    end
+  public
+
+  # Access the EMMA Unified Search API service.
+  #
+  # @return [SearchService]
+  #
+  def search_api
+    @search_api ||= search_api_update
   end
-=end
+
+  # Update the EMMA Unified Search API service.
+  #
+  # @param [Hash] opt
+  #
+  # @return [SearchService]
+  #
+  def search_api_update(**opt)
+    opt[:user] = current_user if !opt.key?(:user) && current_user.present?
+    opt[:no_raise] = true     if !opt.key?(:no_raise) && Rails.env.test?
+    # noinspection RubyYardReturnMatch
+    @search_api = SearchService.update(**opt)
+  end
+
+  # Remove the EMMA Unified Search API service.
+  #
+  # @return [nil]
+  #
+  def search_api_clear
+    @search_api = SearchService.clear
+  end
+
+  # Indicate whether the EMMA Unified Search API service has been activated.
+  #
+  def search_api_active?
+    defined?(:@search_api) && @search_api.present?
+  end
+
+  # Indicate whether the latest EMMA Unified Search API request generated an
+  # exception.
+  #
+  def search_api_error?
+    search_api_active? && @search_api&.error?
+  end
+
+  # Get the current EMMA Unified Search API exception message.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def search_api_error_message
+    @search_api&.error_message if search_api_active?
+  end
+
+  # Get the current EMMA Unified Search API exception.
+  #
+  # @return [Exception]
+  # @return [nil]
+  #
+  def search_api_exception
+    @search_api&.exception if search_api_active?
+  end
 
   # ===========================================================================
   # :section:

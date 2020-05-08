@@ -134,22 +134,23 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash] opt
+  # @param [Hash] opt                 Passed to super.
+  # @param [Proc] block               Passed to super.
   #
-  def initialize(opt = nil)
+  def initialize(opt = nil, &block)
     __debug_args(binding)
-    super(opt)
+    super(opt, &block)
     __debug_items do
       {
-        id:               self.id,
-        user_id:          self.user_id,
-        repository:       self.repository,
-        repository_id:    self.repository_id,
-        fmt:              self.fmt,
-        ext:              self.ext,
-        state:            self.state,
-        emma_data:        self.emma_data,
-        file_data:        self.file_data,
+        id:               id,
+        user_id:          user_id,
+        repository:       repository,
+        repository_id:    repository_id,
+        fmt:              fmt,
+        ext:              ext,
+        state:            state,
+        emma_data:        emma_data,
+        file_data:        file_data,
         file:             (file || 'file NOT PRESENT'),
         file_attacher:    (file_attacher || 'file_attacher NOT PRESENT'),
         cached_file_data: (cached_file_data || 'cached_file_data NOT PRESENT')
@@ -184,36 +185,64 @@ class Upload < ApplicationRecord
   #
   def assign_attributes(opt)
     __debug_args(binding)
-    new_fmt = new_ext = nil
-    if opt.present?
-      # Database fields go into *attr*; the remainder is file and EMMA data.
-      attr, data =
-        partition_options(opt, *field_names).map { |h| reject_blanks(h) }
-      if (file_data = data.delete(:file))
-        file_data = file_data.to_json if file_data.is_a?(Hash)
-        attr[:file_data] = file_data
-      elsif (file_data = attr[:file_data]).is_a?(Hash)
-        attr[:file_data] = file_data.to_json
-      end
-      __debug_items do
-        {
-          "#{__method__} file_data": attr[:file_data],
-          "#{__method__} emma_data": attr[:emma_data],
-        }
-      end
-      base = reject_blanks(json_parse(attr.delete(:emma_data)))
-      data.reverse_merge!(base) if base.present?
-      set_emma_data(data)       if data.present?
-      if (new_fmt = data[:dc_format].presence)
-        attr[:fmt] = new_fmt
-        attr[:ext] = new_ext = fmt_to_ext(new_fmt)
-        file.metadata.merge!('mime_type' => fmt_to_mime(new_fmt)) if file
-      end
-      super(attr)
+    return if opt.blank?
+
+    # Database fields go into *attr*; the remainder is file and EMMA data.
+    attr, data = partition_options(opt, *field_names)
+    $stderr.puts "#{__method__} | attr = #{attr.inspect}"
+    $stderr.puts "#{__method__} | data = #{data.inspect}"
+    $stderr.puts "#{__method__} | opt  = #{opt.inspect}"
+
+    # Get value for :file_data.
+    if (fd = data.delete(:file))
+      attr[:file_data] = fd.is_a?(Hash) ? fd.to_json : fd
+    elsif (fd = attr[:file_data]).is_a?(Hash)
+      attr[:file_data] = fd.to_json
     end
-    @repository ||= DEFAULT_REPO
-    @fmt        ||= file && mime_to_fmt(file.mime_type) || new_fmt
-    @ext        ||= file&.extension || new_ext
+
+    __debug_items do
+      {
+        "#{__method__} file_data": attr[:file_data],
+        "#{__method__} emma_data": attr[:emma_data],
+      }
+    end
+
+    # Update value for :emma_data.
+    ed = reject_blanks(json_parse(attr[:emma_data]))
+    data.reverse_merge!(ed) if ed.present?
+    set_emma_data(data)
+
+    # Adjust format/extension if a format was specified manually.
+    new_fmt = new_ext = nil
+    if data[:dc_format].present?
+      attr[:fmt] = new_fmt = data[:dc_format]
+      attr[:ext] = new_ext = fmt_to_ext(new_fmt)
+      file.metadata.merge!('mime_type' => fmt_to_mime(new_fmt)) if file
+    end
+
+    # Ensure that crucial attributes are given a value.
+    attr[:repository]    ||= DEFAULT_REPO
+    attr[:repository_id] ||= id
+    attr[:fmt]           ||= file && mime_to_fmt(file.mime_type) || new_fmt
+    attr[:ext]           ||= file&.extension || new_ext
+    attr[:updated_at]    ||= DateTime.now
+
+    # Update attributes.
+    super(attr)
+
+  end
+
+  # Allow :file_data and :emma_data to be seen fully when inspecting.
+  #
+  # @param [*] value                  Attribute value.
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ActiveRecord::AttributeMethods#format_for_inspect
+  #
+  def format_for_inspect(value)
+    value.is_a?(String) ? value.inspect : super
   end
 
   # ===========================================================================
@@ -249,7 +278,7 @@ class Upload < ApplicationRecord
   def parser
     @parser ||=
       begin
-        class_name = "#{self.fmt.to_s.camelize}Parser"
+        class_name = "#{fmt.to_s.camelize}Parser"
         class_name.constantize.new(attached_file_io)
       rescue => e
         # noinspection RubyScope
@@ -319,9 +348,11 @@ class Upload < ApplicationRecord
   # @return [String]
   # @return [nil]
   #
+  # noinspection RubyYardReturnMatch
   def set_emma_data(data)
-    @emma_metadata = @emma_record = nil # Force regeneration.
-    self.emma_data = self.class.parse_emma_data(data)&.to_json
+    @emma_record   = nil # Force regeneration.
+    @emma_metadata = self.class.parse_emma_data(data)
+    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata&.to_json
   end
 
   # Present :emma_data as a structured object (if it is present).
@@ -330,23 +361,7 @@ class Upload < ApplicationRecord
   # @return [nil]
   #
   def emma_record
-    @emma_record ||= set_emma_record(self.emma_data)
-  end
-
-  # Set :emma_data indirectly via update of #emma_record.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String] data
-  #
-  # @return [Search::Record::MetadataRecord]
-  # @return [nil]
-  #
-  def set_emma_record(data)
-    hash = self.class.parse_emma_data(data)
-    @emma_record &&= @emma_record.update(hash)
-    @emma_record ||= Search::Record::MetadataRecord.new(hash)
-    @emma_metadata = nil # Force regeneration.
-    self.emma_data = self.class.parse_emma_data(@emma_record).to_json
-    @emma_record
+    @emma_record ||= Search::Record::MetadataRecord.new(emma_metadata)
   end
 
   # Present :emma_data as a hash (if it is present).
@@ -355,18 +370,7 @@ class Upload < ApplicationRecord
   # @return [nil]
   #
   def emma_metadata
-    @emma_metadata ||= set_emma_metadata(self.emma_data)
-  end
-
-  # Set :emma_data indirectly via update of #emma_metadata.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String] data
-  #
-  # @return [Hash]
-  # @return [nil]
-  #
-  def set_emma_metadata(data)
-    @emma_metadata = self.class.parse_emma_data(set_emma_record(data))
+    @emma_metadata ||= self.class.parse_emma_data(emma_data)
   end
 
 =begin
@@ -423,13 +427,11 @@ class Upload < ApplicationRecord
         when String                         then json_parse(data)
         else raise "#{data.class}: unexpected data type"
       end
-    reject_blanks(result)
+    remove_blanks(result)
 
   rescue => e
-    if Log.debug?
-      Log.error { "#{__method__}: #{e.message}: for #{data.inspect}" }
-    else
-      Log.error { "#{__method__}: #{e.message}" }
+    Log.error do
+      [__method__, e.message, ("for #{data.inspect}" if Log.debug?)].join(': ')
     end
   end
 
@@ -538,10 +540,10 @@ class Upload < ApplicationRecord
   # Indicate whether all required fields have valid values.
   #
   def emma_data_valid?
-    if self.emma_data.blank?
+    if emma_data.blank?
       errors.add(:emma_data, :missing)
     else
-      check_required(self.emma_metadata, FIELD[:emma_data])
+      check_required(emma_metadata, FIELD[:emma_data])
     end
     errors.empty?
   end

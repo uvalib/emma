@@ -51,7 +51,7 @@ class BookshareTest < ApplicationSystemTestCase
       next if method.blank?
 
       # Note whether the specified method is unimplemented.
-      next if !api.respond_to?(method) && (missing[method] = id).present?
+      next if !bs_api.respond_to?(method) && (missing[method] = id).present?
 
       # Get the specified request parameters.
       parent_element   = element.first(:xpath, './parent::*', minimum: 0)
@@ -59,7 +59,7 @@ class BookshareTest < ApplicationSystemTestCase
       show_request_params(specified_params, method)
 
       # Get the parameters defined for the implemented method.
-      specification      = api.api_methods(method) || {}
+      specification      = bs_api.api_methods(method) || {}
       required_keys      = specification[:required]&.stringify_keys&.keys || []
       alias_params       = specification[:alias]&.stringify_keys || {}
       implemented_params = method_params(method)

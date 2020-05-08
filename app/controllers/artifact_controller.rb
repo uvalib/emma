@@ -60,7 +60,7 @@ class ArtifactController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_artifact_list(**opt)
+    @list = bs_api.get_artifact_list(**opt)
     self.page_items  = @list.artifacts
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
@@ -79,7 +79,7 @@ class ArtifactController < ApplicationController
   def show
     __debug_route
     opt   = { bookshareId: @bookshare_id, format: @format }
-    @item = api.get_artifact_metadata(**opt)
+    @item = bs_api.get_artifact_metadata(**opt)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }

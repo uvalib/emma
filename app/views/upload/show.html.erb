@@ -23,4 +23,4 @@
 <%= upload_preview %>
 
 <%= upload_notes %>
-<%= upload_action_list unless modal? %>
+<%= upload_action_list unless modal? || cannot?(:edit, Upload) %>

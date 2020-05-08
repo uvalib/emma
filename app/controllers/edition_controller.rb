@@ -60,7 +60,7 @@ class EditionController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_periodical_editions(seriesId: @series_id, **opt)
+    @list = bs_api.get_periodical_editions(seriesId: @series_id, **opt)
     self.page_items  = @list.periodicalEditions
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
@@ -78,7 +78,7 @@ class EditionController < ApplicationController
   def show
     __debug_route
     opt   = { seriesId: @series_id, editionId: @edition_id }
-    @item = api.get_periodical_edition(**opt)
+    @item = bs_api.get_periodical_edition(**opt)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }

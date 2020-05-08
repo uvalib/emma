@@ -170,7 +170,7 @@ module TestHelper::SystemTests::Bookshare
   # @return [nil]
   #
   def method_class(m)
-    api.method(m.to_sym)
+    bs_api.method(m.to_sym)
   end
 
   # method_params

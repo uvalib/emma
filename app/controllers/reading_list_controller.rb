@@ -55,7 +55,7 @@ class ReadingListController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_all_reading_lists(**opt)
+    @list = bs_api.get_all_reading_lists(**opt)
     self.page_items  = @list.lists
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
@@ -71,9 +71,9 @@ class ReadingListController < ApplicationController
   #
   def show
     __debug_route
-    @item = api.get_reading_list(readingListId: @id)
+    @item = bs_api.get_reading_list(readingListId: @id)
     opt   = pagination_setup
-    @list = api.get_reading_list_titles(readingListId: @id, no_raise: true)
+    @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
     self.page_items  = @list.titles
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
@@ -98,7 +98,7 @@ class ReadingListController < ApplicationController
   def create
     __debug_route
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    api.create_my_reading_list(**opt)
+    bs_api.create_my_reading_list(**opt)
   end
 
   # == GET /reading_list/:id/edit
@@ -116,13 +116,13 @@ class ReadingListController < ApplicationController
   def update
     __debug_route
     Array.wrap(params[:add_titles]).each do |bid|
-      api.create_reading_list_title(readingListId: @id, bookshareId: bid)
+      bs_api.create_reading_list_title(readingListId: @id, bookshareId: bid)
     end
     Array.wrap(params[:remove_titles]).each do |bid|
-      api.remove_reading_list_title(readingListId: @id, bookshareId: bid)
+      bs_api.remove_reading_list_title(readingListId: @id, bookshareId: bid)
     end
     opt = params.slice(:name, :description, :access).to_unsafe_h
-    api.update_reading_list(readingListId: @id, **opt) if opt.present?
+    bs_api.update_reading_list(readingListId: @id, **opt) if opt.present?
   end
 
   # == DELETE /reading_list/:id

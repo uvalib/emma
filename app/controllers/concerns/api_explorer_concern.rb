@@ -12,11 +12,7 @@ module ApiExplorerConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'ApiExplorerConcern')
-
-    include BookshareConcern
-
   end
 
   include Emma::Json

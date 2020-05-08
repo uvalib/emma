@@ -15,9 +15,10 @@ __loading_begin(__FILE__)
 # @attr [EmmaRepository]                emma_repository
 # @attr [Array<String>]                 emma_collection
 # @attr [String]                        emma_repositoryRecordId
-# @attr [String]                        emma_retrievalLink # NOTE: URI
-# @attr [String]                        emma_webPageLink   # NOTE: URI
+# @attr [String]                        emma_retrievalLink
+# @attr [String]                        emma_webPageLink
 # @attr [IsoDate]                       emma_lastRemediationDate
+# @attr [IsoDate]                       emma_repositoryMetadataUpdateDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
 # @attr [Array<FormatFeature>]          emma_formatFeature
@@ -52,38 +53,39 @@ class Search::Message::SearchRecord < Search::Api::Message
   include Search::Shared::TitleMethods
 
   schema do
-    attribute :emma_recordId,             String
-    attribute :emma_titleId,              String
-    attribute :emma_repository,           EmmaRepository
-    has_many  :emma_collection,           String
-    attribute :emma_repositoryRecordId,   String
-    attribute :emma_retrievalLink,        String
-    attribute :emma_webPageLink,          String
-    attribute :emma_lastRemediationDate,  IsoDate
-    attribute :emma_lastRemediationNote,  String
-    attribute :emma_formatVersion,        String
-    has_many  :emma_formatFeature,        FormatFeature
-    attribute :dc_title,                  String
-    has_many  :dc_creator,                String
-    has_many  :dc_identifier,             PublicationIdentifier
-    attribute :dc_publisher,              String
-    has_many  :dc_relation,               PublicationIdentifier
-    has_many  :dc_language,               String
-    attribute :dc_rights,                 Rights
-    attribute :dc_provenance,             Provenance
-    attribute :dc_description,            String
-    attribute :dc_format,                 DublinCoreFormat
-    attribute :dc_type,                   DcmiType
-    has_many  :dc_subject,                String
-    attribute :dcterms_dateAccepted,      IsoDate
-    attribute :dcterms_dateCopyright,     IsoYear
-    has_many  :s_accessibilityFeature,    A11yFeature
-    has_many  :s_accessibilityControl,    A11yControl
-    has_many  :s_accessibilityHazard,     A11yHazard
-    has_many  :s_accessibilityAPI,        A11yAPI
-    attribute :s_accessibilitySummary,    String
-    has_many  :s_accessMode,              A11yAccessMode
-    has_many  :s_accessModeSufficient,    A11ySufficient
+    attribute :emma_recordId,                     String
+    attribute :emma_titleId,                      String
+    attribute :emma_repository,                   EmmaRepository
+    has_many  :emma_collection,                   String
+    attribute :emma_repositoryRecordId,           String
+    attribute :emma_retrievalLink,                String
+    attribute :emma_webPageLink,                  String
+    attribute :emma_lastRemediationDate,          IsoDate
+    attribute :emma_repositoryMetadataUpdateDate, IsoDate
+    attribute :emma_lastRemediationNote,          String
+    attribute :emma_formatVersion,                String
+    has_many  :emma_formatFeature,                FormatFeature
+    attribute :dc_title,                          String
+    has_many  :dc_creator,                        String
+    has_many  :dc_identifier,                     PublicationIdentifier
+    attribute :dc_publisher,                      String
+    has_many  :dc_relation,                       PublicationIdentifier
+    has_many  :dc_language,                       String
+    attribute :dc_rights,                         Rights
+    attribute :dc_provenance,                     Provenance
+    attribute :dc_description,                    String
+    attribute :dc_format,                         DublinCoreFormat
+    attribute :dc_type,                           DcmiType
+    has_many  :dc_subject,                        String
+    attribute :dcterms_dateAccepted,              IsoDate
+    attribute :dcterms_dateCopyright,             IsoYear
+    has_many  :s_accessibilityFeature,            A11yFeature
+    has_many  :s_accessibilityControl,            A11yControl
+    has_many  :s_accessibilityHazard,             A11yHazard
+    has_many  :s_accessibilityAPI,                A11yAPI
+    attribute :s_accessibilitySummary,            String
+    has_many  :s_accessMode,                      A11yAccessMode
+    has_many  :s_accessModeSufficient,            A11ySufficient
   end
 
 end

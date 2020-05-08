@@ -12,13 +12,10 @@ module DownloadConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'DownloadConcern')
-
-    include BookshareConcern
-
   end
 
+  include BookshareConcern
   include SerializationHelper
 
   # ===========================================================================
@@ -35,12 +32,12 @@ module DownloadConcern
   # @return [void]
   #
   def render_download(method, **opt)
-    # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] result
-    result = api.send(method, **opt.merge!(no_raise: true, no_redirect: true))
-    @exception = result.exception
-    @error     = result.error_message
-    @state     = result.key.to_s.upcase
-    @link      = (result.messages.first.presence if @state == 'COMPLETED')
+    # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] res
+    res = bs_api.send(method, **opt.merge!(no_raise: true, no_redirect: true))
+    @exception = res.exception
+    @error     = res.error_message
+    @state     = res.key.to_s.upcase
+    @link      = (res.messages.first.presence if @state == 'COMPLETED')
     respond_to do |format|
       format.html { @link ? redirect_to(@link) : render(layout: layout) }
       format.json { render_json download_values }

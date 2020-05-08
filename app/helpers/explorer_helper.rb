@@ -57,7 +57,7 @@ module ExplorerHelper
   def api_explorer(method, path, **opt)
     method = method&.downcase&.to_sym || :get
     path   = URI.escape(path.to_s)
-    data   = api.send(:api, method, path, **opt.merge(no_raise: true))
+    data   = bs_api.api(method, path, **opt.merge(no_raise: true))
     data &&= data.body.presence
     {
       method:    method.to_s.upcase,
@@ -65,7 +65,7 @@ module ExplorerHelper
       opt:       opt.presence || '',
       url:       api_explorer_url(path, **opt),
       result:    data&.force_encoding('UTF-8'),
-      exception: api_exception,
+      exception: bs_api_exception,
     }.compact
   end
 

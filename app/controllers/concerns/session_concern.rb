@@ -52,6 +52,7 @@ module SessionConcern
 
   include Emma::Debug
   include ParamsConcern
+  include ApiConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:

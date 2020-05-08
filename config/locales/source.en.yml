@@ -32,7 +32,7 @@ en:
         <<:             *REPOSITORY_TEMPLATE
         name:           'EMMA'
         logo:           'EMMA-logo-UVAbg.png'
-        title_path:     'https://emma.lib.virginia.edu/title'
+        title_path:     '/upload'
         download_path:  'https://emma.lib.virginia.edu/artifact'
         download_url:   '%{download_path}/%{id}/%{fmt}'
 

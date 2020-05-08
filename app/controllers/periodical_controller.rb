@@ -54,7 +54,7 @@ class PeriodicalController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_periodicals(**opt)
+    @list = bs_api.get_periodicals(**opt)
     self.page_items  = @list.periodicals
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
@@ -70,8 +70,8 @@ class PeriodicalController < ApplicationController
   #
   def show
     __debug_route
-    @item = api.get_periodical(seriesId: @series_id)
-    @list = api.get_periodical_editions(seriesId: @series_id, no_raise: true)
+    @item = bs_api.get_periodical(seriesId: @series_id)
+    @list = bs_api.get_periodical_editions(seriesId: @series_id, no_raise: true)
     self.page_items  = @list.periodicalEditions
     self.total_items = @list.totalResults
     respond_to do |format|

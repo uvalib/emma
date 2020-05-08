@@ -58,7 +58,7 @@ class MemberController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_my_organization_members(**opt)
+    @list = bs_api.get_my_organization_members(**opt)
     self.page_items  = @list.userAccounts
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)

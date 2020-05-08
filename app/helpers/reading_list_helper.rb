@@ -64,7 +64,7 @@ module ReadingListHelper
     return if item.blank?
     result = thumbnail(item, **opt)
     return result if result.present?
-    item = api.get_title(bookshareId: item.bookshareId, no_raise: true)
+    item = bs_api.get_title(bookshareId: item.bookshareId, no_raise: true)
     thumbnail(item, **opt)
   end
 

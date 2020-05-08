@@ -32,6 +32,7 @@ module Emma::Json
   #
   # noinspection RubyYardReturnMatch
   def json_parse(arg, raise_exception: false, **opt)
+    return if arg.blank?
     if arg.is_a?(Hash)
       arg
     elsif arg.is_a?(String)

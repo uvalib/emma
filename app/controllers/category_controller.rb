@@ -56,7 +56,7 @@ class CategoryController < ApplicationController
   def index
     __debug_route
     opt   = pagination_setup
-    @list = api.get_categories(**opt)
+    @list = bs_api.get_categories(**opt)
     self.page_items  = @list.categories
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)

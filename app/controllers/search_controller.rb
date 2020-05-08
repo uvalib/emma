@@ -88,7 +88,7 @@ class SearchController < ApplicationController
     q_params.reject! { |_, v| v.blank? }
     if q_params.present?
       opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
-      @list = api.get_records(**opt)
+      @list = search_api.get_records(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
       self.next_page   = next_page_path(@list, opt) # TODO: ???
@@ -109,7 +109,7 @@ class SearchController < ApplicationController
   #
   def show
     __debug_route
-    @item = api.get_record(titleId: @title_id)
+    @item = search_api.get_record(titleId: @title_id)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }
@@ -131,7 +131,7 @@ class SearchController < ApplicationController
   def direct
     __debug_route
     opt = pagination_setup.reverse_merge(q: NULL_SEARCH)
-    @list = api.get_records(**opt)
+    @list = search_api.get_records(**opt)
     self.page_items  = @list.records
     self.total_items = @list.totalResults
     respond_to do |format|
@@ -147,7 +147,7 @@ class SearchController < ApplicationController
   def example
     __debug_route
     opt   = pagination_setup
-    @list = api.get_example_records(**opt)
+    @list = search_api.get_example_records(**opt)
     self.page_items  = @list.records
     self.total_items = @list.records.size
     render template: 'search/index'

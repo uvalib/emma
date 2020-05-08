@@ -30,6 +30,12 @@ class ApiService::ResponseError < ApiService::Error
 
   private
 
+  # Prefix seen in Bookshare error messages.
+  #
+  # @type [String]
+  #
+  ERROR_TAG = 'error_description'
+
   # If one of the arguments is a Faraday exception, use the error description
   # from its message body as the explicit message value in the arguments unless
   # they already include one.
@@ -49,26 +55,26 @@ class ApiService::ResponseError < ApiService::Error
   #
   # @param [Faraday::Error] error
   #
-  # @return [String]
-  # @return [nil]
+  # @return [Array<String>]
   #
   def extract_message(error)
     body = error.response[:body].presence
-    json = body && json_parse(body, symbolize_keys: false)
-    return body if json.blank?
-
-    tag  = 'error_description'
-    desc = json[tag]
-    return desc if desc.present?
-
-    Array.wrap(json['messages']).find do |msg|
-      msg = msg.to_s.strip
-      next if msg.blank?
-      if msg =~ /^[a-z0-9_]+=/i
-        next unless (msg = msg.dup).delete_prefix!("#{tag}=")
-      end
-      return msg.gsub(/\\"/, '')
-    end
+    json = body && json_parse(body, symbolize_keys: false).presence || {}
+    json = json.first if json.is_a?(Array) && (json.size <= 1)
+    desc = nil
+    desc ||= json.compact if json.is_a?(Array)
+    desc ||= json[ERROR_TAG].presence
+    desc ||=
+      Array.wrap(json['messages']).map { |msg|
+        msg = msg.to_s.strip
+        next if msg.blank?
+        if msg =~ /^[a-z0-9_]+=/i
+          next unless (msg = msg.dup).delete_prefix!("#{ERROR_TAG}=")
+        end
+        msg.gsub(/\\"/, '').presence
+      }.compact.presence
+    desc ||= json.values.flat_map { |v| v if v.is_a?(Array) }.compact.presence
+    Array.wrap(desc || body)
   end
 
 end

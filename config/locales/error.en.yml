@@ -76,6 +76,24 @@ en:
 
         response:       'Bad Unified Search API response'
 
+      ingest:
+
+        # @see Ingest::Error
+
+        default:        'Unknown Federated Ingest API error'
+        auth:           'Federated Ingest API authorization error'
+        comm:           'Federated Ingest API network error'
+        session:        'Federated Ingest API session error'
+        timeout:        'Federated Ingest API session token expired'
+        recv:           'Federated Ingest API receive error'
+        parse:          'Bad data from Federated Ingest'
+        xmit:           'Federated Ingest transmit error'
+        request:        'Bad request to Federated Ingest'
+
+        # @see IngestService::Error
+
+        response:       'Bad Federated Ingest response'
+
       upload:
 
         # @see UploadConcern

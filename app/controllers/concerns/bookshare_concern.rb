@@ -12,69 +12,72 @@ module BookshareConcern
   extend ActiveSupport::Concern
 
   included do |base|
-
     __included(base, 'BookshareConcern')
+  end
 
-    # =========================================================================
-    # :section:
-    # =========================================================================
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
 
-    public
+  public
 
-    # Access the Bookshare API service.
-    #
-    # @return [BookshareService]
-    #
-    def api
-      @bs_api ||= api_update
-    end
+  # Access the Bookshare API service.
+  #
+  # @return [BookshareService]
+  #
+  def bs_api
+    @bs_api ||= bs_api_update
+  end
 
-    # Update the Bookshare API service.
-    #
-    # @param [Hash] opt
-    #
-    # @return [BookshareService]
-    #
-    def api_update(**opt)
-      default_opt = {}
-      default_opt[:user]     = current_user if current_user.present?
-      default_opt[:no_raise] = true         if Rails.env.test?
-      # noinspection RubyYardReturnMatch
-      @bs_api = BookshareService.update(**opt.reverse_merge(default_opt))
-    end
+  # Update the Bookshare API service.
+  #
+  # @param [Hash] opt
+  #
+  # @return [BookshareService]
+  #
+  def bs_api_update(**opt)
+    opt[:user] = current_user if !opt.key?(:user) && current_user.present?
+    opt[:no_raise] = true     if !opt.key?(:no_raise) && Rails.env.test?
+    # noinspection RubyYardReturnMatch
+    @bs_api = BookshareService.update(**opt)
+  end
 
-    # Remove the Bookshare API service.
-    #
-    # @return [nil]
-    #
-    def api_clear
-      @bs_api = BookshareService.clear
-    end
+  # Remove the Bookshare API service.
+  #
+  # @return [nil]
+  #
+  def bs_api_clear
+    @bs_api = BookshareService.clear
+  end
 
-    # Indicate whether the latest API request generated an exception.
-    #
-    def api_error?
-      defined?(@bs_api) && @bs_api.present? && @bs_api.error?
-    end
+  # Indicate whether the Bookshare API service has been activated.
+  #
+  def bs_api_active?
+    defined?(:@bs_api) && @bs_api.present?
+  end
 
-    # Get the current API exception message if the service has been started.
-    #
-    # @return [String]
-    # @return [nil]
-    #
-    def api_error_message
-      @bs_api.error_message if defined?(:@bs_api) && @bs_api.present?
-    end
+  # Indicate whether the latest Bookshare API request generated an exception.
+  #
+  def bs_api_error?
+    bs_api_active? && @bs_api&.error?
+  end
 
-    # Get the current API exception if the service has been started.
-    #
-    # @return [Exception]
-    # @return [nil]
-    #
-    def api_exception
-      @bs_api.exception if defined?(:@bs_api) && @bs_api.present?
-    end
+  # Get the current Bookshare API exception message.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def bs_api_error_message
+    @bs_api&.error_message if bs_api_active?
+  end
 
+  # Get the current Bookshare API exception.
+  #
+  # @return [Exception]
+  # @return [nil]
+  #
+  def bs_api_exception
+    @bs_api&.exception if bs_api_active?
   end
 
 end

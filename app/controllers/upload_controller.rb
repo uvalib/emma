@@ -26,7 +26,7 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   before_action :update_user
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: %i[show]
 
   # ===========================================================================
   # :section: Authorization
@@ -103,6 +103,7 @@ class UploadController < ApplicationController
     @item = Upload.new(data) or fail(__method__)
     @item.save
     @item.errors.blank?      or fail(@item.errors)
+    finalize_upload(@item)
     post_response(:ok, @item.filename, redirect: upload_index_path)
 
   rescue SubmitError => error
@@ -146,6 +147,7 @@ class UploadController < ApplicationController
     @item = Upload.find(id) or fail(:find, id)
     @item.update(data)
     @item.errors.blank?     or fail(@item.errors)
+    finalize_upload(@item)
     post_response(:ok, @item.filename, redirect: upload_index_path)
 
   rescue SubmitError => error
@@ -183,14 +185,10 @@ class UploadController < ApplicationController
     __debug_route
     back = delete_select_upload_path
     id   = params[:id] or fail(:file_id)
-    names =
-      if id.include?(',')
-        id.split(/\s*,\s*/).map { |n| destroy_upload(Upload.find(n)) }.compact
-      else
-        @item = Upload.find(id) or fail(:find, id)
-        destroy_upload(@item)
-      end
-    post_response(:found, names, redirect: back)
+    # noinspection RubyYardParamTypeMatch
+    succeeded, failed = destroy_upload(id)
+    fail(:find, failed) if failed.present?
+    post_response(:found, succeeded, redirect: back)
 
   rescue SubmitError => error
     post_response(:conflict, error, redirect: back) # TODO: ?

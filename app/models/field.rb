@@ -53,7 +53,7 @@ module Field
         @field = values
         @base  = Upload.get_field_configuration(@field)[:type]
         src    = src.emma_record if src.is_a?(Upload)
-        values = src.send(@field)
+        values = (src.send(@field) if src.respond_to?(@field))
       else
         @field = nil
         @base  = src

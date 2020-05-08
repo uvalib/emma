@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
-  include BookshareConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:

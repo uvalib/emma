@@ -17,6 +17,7 @@ module UploadConcern
     __included(base, 'UploadConcern')
   end
 
+  include IngestConcern
   include ParamsHelper
   include FlashHelper
 
@@ -88,21 +89,113 @@ module UploadConcern
     reject_blanks(result)
   end
 
+  # Insert or update Upload records.
+  #
+  # @param [Array<Upload,String,Array>] items
+  #
+  # @return [Array<(Array,Array)>]    Succeeded paths and failed record IDs.
+  #
+  def finalize_upload(*items)
+    items, failed = collect_items(*items)
+    add_to_index(*items) if failed.blank? # TODO: schedule index update
+    succeeded = items.map(&:filename)
+    return succeeded, failed
+  end
+
   # destroy_upload
   #
-  # @param [Upload] item
+  # @param [Array<Upload,String,Array>] items
   #
-  # @return [String]
-  # @return [nil]
+  # @return [Array<(Array,Array)>]    Succeeded paths and failed record IDs.
   #
-  def destroy_upload(item)
-    return if item.blank?
-    name = item.filename
-    # TODO: Remove file from storage
-    # TODO: Remove record from 'uploads' table
-    item.destroy! # TODO: Can this be set up to delete the file?
-    # TODO: Schedule removal from unified search
-    name
+  def destroy_upload(*items)
+    items, failed = collect_items(*items)
+    succeeded = []
+    unless failed.present?
+      remove_from_index(*items) # TODO: schedule index update
+      items.map do |item|
+        name = item.filename
+        # TODO: Remove file from storage
+        # TODO: Remove record from 'uploads' table
+        item.destroy! # TODO: Can this be set up to delete the file?
+        succeeded << name
+      end
+    end
+    return succeeded, failed
+  end
+
+  # Translate into an array of Upload instances.
+  #
+  # @param [String, Upload, Array<String,Upload>] item
+  #
+  # @return [Array<Upload>]
+  #
+  def upload_submission(item)
+    item = item.gsub(/\s/, '') if item.is_a?(String)
+    item = item.split(',')     if item.is_a?(String) && item.include?(',')
+    # noinspection RubyYardReturnMatch
+    case item
+      when Upload then [item]
+      when String then [Upload.find(email: item)]
+      when Array  then item.flat_map { |i| upload_submission(i) }.compact
+      else             []
+    end
+  end
+
+  # ===========================================================================
+  # :section: TODO: temporary
+  # ===========================================================================
+
+  public
+
+  # add_to_index
+  #
+  # @param [Array<Upload,String,Array>] items
+  #
+  # @return [Array<(Array,Array)>]    Succeeded names and failed names.
+  #
+  def add_to_index(*items)
+    items, failed = collect_items(*items)
+    if items.present? && failed.blank?
+      result = ingest_api.put_records(*items)
+      fail(result.exception) if result.exception.present?
+    end
+    return items.map(&:id), failed
+  end
+
+  # remove_from_index
+  #
+  # @param [Array<Upload,String,Array>] items
+  #
+  # @return [Array<(Array,Array)>]    Succeeded names and failed names.
+  #
+  def remove_from_index(*items)
+    items, failed = collect_items(*items)
+    if items.present? && failed.blank?
+      result = ingest_api.delete_records(*items)
+      fail(result.exception) if result.exception.present?
+    end
+    return items.map(&:id), failed
+  end
+
+  # Transform a mixture of Upload objects and record identifiers.
+  #
+  # @param [Array<Upload,String,Array>] items
+  #
+  # @return [Array<(Array,Array)>]    Upload records and a list of failed ids.
+  #
+  def collect_items(*items)
+    failed = []
+    items =
+      items.flatten.flat_map { |item|
+        if item.is_a?(Upload)
+          item
+        elsif item.present?
+          item = item.include?(',') ? item.split(/\s*,\s*/) : Array.wrap(item)
+          item.map { |id| Upload.find(id).tap { |u| failed << id unless u } }
+        end
+      }.compact
+    return items, failed
   end
 
   # ===========================================================================
@@ -134,26 +227,29 @@ module UploadConcern
 
   # Raise an exception.
   #
-  # @overload fail(msg)
-  #   @param [String, Array<String>, ActiveModel::Errors] msg
-  #
   # @overload fail(msg, value = nil)
-  #   @param [Symbol] msg             #UPLOAD_ERROR key.
+  #   @param [Symbol] problem         #UPLOAD_ERROR key.
   #   @param [*]      value
+  #
+  # @overload fail(msg)
+  #   @param [String, Array<String>, Exception, ActiveModel::Errors] problem
   #
   # @raise [Net::ProtocolError]
   # @raise [StandardError]
   #
-  def fail(msg, value = nil)
+  def fail(problem, value = nil)
     err = nil
-    case msg
-      when Symbol              then txt, err = UPLOAD_ERROR[msg]
-      when ActiveModel::Errors then txt = msg.full_messages
-      else                          txt = msg
+    case problem
+      when Symbol              then msg, err = UPLOAD_ERROR[problem]
+      when Api::Error          then msg = problem.messages
+      when Exception           then msg = problem.message
+      when ActiveModel::Errors then msg = problem.full_messages
+      else                          msg = problem
     end
-    err ||= SubmitError
-    msg   = Array.wrap(txt).map { |t| t.to_s % value }.join('; ').presence
-    msg ||= DEFAULT_ERROR_MESSAGE
+    err = SubmitError unless err.is_a?(Exception)
+    msg = Array.wrap(msg)
+    msg = msg.map { |t| t.to_s % value } if value
+    msg = msg.join('; ').presence || DEFAULT_ERROR_MESSAGE
     raise err, msg
   end
 

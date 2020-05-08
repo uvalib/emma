@@ -73,7 +73,7 @@ class TitleController < ApplicationController
     else
       # Search for keyword(s) or a valid ISBN.
       opt   = pagination_setup(opt)
-      @list = api.get_titles(**opt)
+      @list = bs_api.get_titles(**opt)
       self.page_items  = @list.titles
       self.total_items = @list.totalResults
       self.next_page   = next_page_path(@list, opt)
@@ -90,7 +90,7 @@ class TitleController < ApplicationController
   #
   def show
     __debug_route
-    @item = api.get_title(bookshareId: @bookshare_id)
+    @item = bs_api.get_title(bookshareId: @bookshare_id)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }

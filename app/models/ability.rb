@@ -288,6 +288,7 @@ class Ability
     can :read, Title
     can :read, Periodical
     can :read, Edition
+    can :read, Upload # TODO: probably temporary
   end
 
 end

@@ -38,18 +38,26 @@ class Api::Error < RuntimeError
   #
   attr_reader :http_status
 
+  # Individual error messages (if the originator supplied multiple messages).
+  #
+  # @return [Array<String>]
+  #
+  attr_reader :messages
+
   # Initialize a new instance.
   #
   # @param [Array<Faraday::Response, Exception, Integer, String, true>] args
   #
   def initialize(*args)
-    error_message = @http_status = @exception = @response = nil
+    @response = @exception = @http_status = nil
+    @messages = []
     args.each do |arg|
       case arg
         when Faraday::Response then @response = arg
         when Exception         then @exception = arg
         when Integer           then @http_status = arg
-        when String            then error_message = arg
+        when String            then @messages << arg
+        when Array             then @messages += arg
         when true              then # Use default error message.
         when nil               then # Ignore nils silently.
         else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
@@ -58,20 +66,24 @@ class Api::Error < RuntimeError
     # noinspection RubyCaseWithoutElseBlockInspection
     case @exception
       when Api::Error
-        error_message ||= @exception.message
+        @messages      += @exception.messages
         @http_status  ||= @exception.http_status
         @response     ||= @exception.response
         replace_exception(@exception.exception)
       when Faraday::Error
-        error_message ||= @exception.message
+        @messages      += Array.wrap(@exception.message)
         @http_status  ||= @exception.response&.dig(:status)
         replace_exception(@exception.wrapped_exception)
       when Exception
-        error_message ||= @exception.message
+        @messages      += Array.wrap(@exception.message)
         @http_status  ||= @response&.status
     end
-    error_message ||= self.class.default_message
-    super(error_message)
+    @messages.reject!(&:blank?)
+    @messages << self.class.default_message if @messages.empty?
+    @messages.uniq!
+    super(@messages.first)
+  rescue
+    super('ERROR')
   end
 
   # ===========================================================================
