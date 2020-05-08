@@ -6,6 +6,7 @@
   skip     ||= !show_page_controls? and return
   label_id ||= 'page-controls'
   controls   = render_page_controls(label_id: label_id) or return
+
 -%>
 
 <nav class="layout-section page controls" aria-labelledby="<%= label_id -%>">

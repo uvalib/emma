@@ -366,7 +366,7 @@ module UploadHelper
       case value
         when :file_data then render_file_data(item) || '{}'
         when :emma_data then render_emma_data(item) || '{}'
-        else                 item.send(value)       || EN_DASH
+        else                 item[value]            || EN_DASH
       end
     else
       case value

@@ -43,11 +43,14 @@ en:
       # Layout
       # =======================================================================
 
+      search_bar:
+        enabled:        false
+
       search_controls:
         sort:
           values:       !ruby/symbol MemberSortOrder
         layout:
-          - [sort, size]
+          - [sort, size, ~, ~]
 
       # =======================================================================
       # Pages

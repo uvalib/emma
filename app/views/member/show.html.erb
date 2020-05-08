@@ -1,20 +1,24 @@
 <%# app/views/member/show.html.erb -%>
 <%-
   # An organization Member show page.
+
   item  ||= @item
   pref  ||= @preferences
   hist  ||= @history
   title ||= item&.label || t('emma.member.show.title')
-
-  add = { EmmaRoles: current_user.roles.map(&:to_s).join(', ') }
 
   unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex)
   end
+
+  add = { EmmaRoles: current_user.roles.map(&:to_s).join(', ') }
+
+  template_opt = { item: item, pref: pref, hist: hist, add: add }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'member/details', item: item, pref: pref, hist: hist, add: add %>
+<%= render 'member/details', template_opt %>

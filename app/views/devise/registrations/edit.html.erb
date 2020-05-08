@@ -1,13 +1,21 @@
 <%# app/views/devise/registrations/new.html.erb -%>
 <%-
   # Edit User page.
+
   title ||= t('emma.user.registrations.edit.label')
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
 
   form_opt = {
     as:   resource_name,
     url:  registration_path(resource_name),
     html: { method: :put }
   }
+
   awaiting =
     if devise_mapping.confirmable? && (email = resource.unconfirmed_email)
       t('emma.user.registrations.edit.awaiting', email: email)
@@ -31,11 +39,6 @@
 
   back_link = link_to(t('emma.label.back'), :back)
 
-  unless modal?
-    set_page_title(title)
-    set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
-  end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

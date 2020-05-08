@@ -1,6 +1,7 @@
 <%# app/views/help/show.html.erb -%>
 <%-
   # EMMA topic help page.
+
   item  ||= @topic
   entry   = help_topic(item)
   title ||= entry[:label] || t('emma.help.show.title', **entry)
@@ -12,13 +13,16 @@
   end
 
   intro = intro.presence && help_element(intro, class: 'help-intro')
+
+  template_opt = { item: item, skip: :title }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
 <%= intro %>
 
-<%= render 'help/details', item: item, skip: :title %>
+<%= render 'help/details', template_opt %>
 
 <div class="help-toc">
   <%= help_toc(type: :path) %>

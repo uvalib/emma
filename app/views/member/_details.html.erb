@@ -1,6 +1,7 @@
 <%# app/views/member/_details.html.erb -%>
 <%-
   # A Member metadata listing with preferences and history.
+
   item  ||= nil or return
   pref  ||= nil
   hist  ||= nil
@@ -8,11 +9,12 @@
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
   skip = Array.wrap(skip)
   pref = nil if skip.include?(:preferences)
   hist = nil if skip.include?(:history)
+  role = ('role="article"'.html_safe if level == 1)
   opt  = { level: (level + 1), skip: skip }
+
 -%>
 
 <div <%= role -%> class="member-container">

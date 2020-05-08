@@ -1,12 +1,14 @@
 <%# app/views/help/topic/_download.html.erb -%>
 <%-
   # EMMA download help page.
+
   signed_in          = link_to('signed in', '/help#sign_in_help')
   search             = link_to('search',    '/help#search_help')
   ia_help            = 'https://help.archive.org/hc/en-us/articles'
   is_disability_help = '360026244752-Disability-Access-General-Information'
   ia_disability_page = "#{ia_help}/#{is_disability_help}"
   ia_disability_link = external_link('Disability Access', ia_disability_page)
+
 -%>
 
 <p>

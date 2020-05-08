@@ -44,6 +44,7 @@ module LayoutHelper::SearchControls
         cfg = I18n.t("emma.#{section}.search_controls", default: nil)
         configs.deep_merge!(cfg) if cfg.present?
       end
+      configs = {} unless configs.dig(:_self, :enabled)
       configs.map { |menu_name, config|
         next if menu_name.to_s.start_with?('_')
         unless menu_name == :layout
@@ -451,6 +452,7 @@ module LayoutHelper::SearchControls
       grid_opt[:col]  = 0
       menus.map { |name|
         grid_opt[:col] += 1
+        name   = name.presence || 'blank'
         name   = name.to_s.delete_suffix('_menu')
         method = "#{name}_menu".to_sym
         if respond_to?(method, true)
@@ -550,6 +552,17 @@ module LayoutHelper::SearchControls
     opt[:selected] = opt[:selected].to_i
     opt.delete(:selected) if opt[:selected].zero?
     menu_container(menu_name, **opt)
+  end
+
+  # An empty placeholder for a menu position.
+  #
+  # @param [Hash] opt                 Passed to #menu_spacer.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def blank_menu(**opt)
+    # noinspection RubyYardReturnMatch
+    menu_spacer(**opt) << menu_spacer(**opt)
   end
 
   # ===========================================================================
@@ -758,6 +771,7 @@ module LayoutHelper::SearchControls
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
     opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
     prepend_grid_cell_classes!(html_opt, 'menu-spacer', **opt)
+    html_opt[:'aria-hidden'] = true
     html_div('&nbsp;'.html_safe, html_opt)
   end
 

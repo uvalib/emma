@@ -320,7 +320,12 @@ $upload-entry-gap: 2rem;
 
 // Container for an .upload-details.
 .upload-container {
+
     @extend .item-container;
+
+    > .cover-image {
+        display: none;
+    }
 }
 
 //=============================================================================

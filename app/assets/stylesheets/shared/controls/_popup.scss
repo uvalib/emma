@@ -45,11 +45,11 @@
         box-shadow:       0.25rem 0.25rem 1rem 0.125rem darkgray;
 
         &.hidden {
-            z-index: -1;
+            z-index: $z-hidden;
         }
 
         &:not(.hidden) {
-            z-index: 1000;
+            z-index: $z-popup;
         }
 
         @media #{$wide-screen} {
@@ -89,6 +89,7 @@
             color:       white;
             cursor:      pointer;
 
+            // noinspection CssBrowserCompatibilityForProperties
             &:focus {
                 @extend %focus;
                 outline-offset: 1px;

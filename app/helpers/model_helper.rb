@@ -793,7 +793,9 @@ module ModelHelper
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
     end
     opt[:row] = row_offset || 0
-    # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+    # noinspection RubyNilAnalysis
+    # @type [Symbol]                 label
+    # @type [Symbol, String, Number] value
     pairs.map { |label, value|
       field =
         if value.is_a?(Symbol)

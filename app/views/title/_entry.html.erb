@@ -1,6 +1,7 @@
 <%# app/views/title/_entry.html.erb -%>
 <%-
   # A single catalog Title list entry.
+
   item   ||= nil
   index  ||= nil
   return unless item || index
@@ -14,6 +15,7 @@
   skip = Array.wrap(skip)
   add  = add.merge(index: index, row: row)
   opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
+
 -%>
 
 <%= list_entry_number(item, opt)       unless skip.include?(:number) %>

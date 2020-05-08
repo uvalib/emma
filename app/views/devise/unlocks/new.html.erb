@@ -1,20 +1,23 @@
 <%# app/views/devise/unlocks/new.html.erb -%>
 <%-
   # Unlock instructions page.
-  title ||= t('emma.user.unlocks.new.title')
 
-  form_opt = {
-    as:   resource_name,
-    url:  unlock_path(resource_name),
-    html: { method: :post }
-  }
-  submit_label = t('emma.user.unlocks.new.submit')
+  title ||= t('emma.user.unlocks.new.title')
 
   unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
+  form_opt = {
+    as:   resource_name,
+    url:  unlock_path(resource_name),
+    html: { method: :post }
+  }
+
+  submit_label = t('emma.user.unlocks.new.submit')
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

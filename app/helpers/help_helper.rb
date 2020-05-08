@@ -306,7 +306,7 @@ module HelpHelper
     return content unless wrap
     lvl = opt.delete(:level)
     row = opt.delete(:row)
-    row &&= "row#{row}"
+    row &&= "row-#{row}"
     mod = ('modal' if modal?)
     opt = prepend_css_classes(opt, 'help-container', row, mod)
     opt[:role] = 'article' if lvl == 1

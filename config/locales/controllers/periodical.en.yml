@@ -51,13 +51,14 @@ en:
       # Layout
       # =======================================================================
 
-      search_bar:
-        label:          'Periodical Search'
-        input:
-          enabled:      true
-          field:        'title'
+      search_type:
+        title:
+          name:         'Title'
           label:        'Periodical search terms:'
           placeholder:  'Search periodical titles...'
+
+      search_bar:
+        label:          'Periodical Search'
 
       search_controls:
         format:
@@ -77,9 +78,6 @@ en:
         label:          'Periodicals'
         title:          'Bookshare Periodicals'
         tooltip:        'Find more Bookshare periodicals with %{terms}.'
-        search_bar:
-          input:
-            enabled:    true
         fields:
           title:        'Title'
           categories:   'Categories'

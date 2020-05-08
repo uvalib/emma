@@ -154,6 +154,13 @@ $(document).on('turbolinks:load', function() {
     var $search_clear = $search_input_form.find('.search-clear');
 
     /**
+     * The button that performs the search.
+     *
+     * @type {jQuery}
+     */
+    var $search_button = $search_input_form.find('.search-button');
+
+    /**
      * The search controls container.
      *
      * @type {jQuery}
@@ -174,8 +181,44 @@ $(document).on('turbolinks:load', function() {
      */
     var $multi_select = $controls.find('select[multiple]');
 
+    /**
+     * An indicator that is presented during a time-consuming search.
+     *
+     * @type {jQuery}
+     */
+    var $search_in_progress = $('.layout-content .search-in-progress');
+
     // ========================================================================
     // Function definitions
+    // ========================================================================
+
+    /**
+     * Set the current state of advanced search controls.
+     */
+    function initializeAdvancedSearch() {
+        if (isMissing($control_panel)) {
+            $advanced_toggle.hide();
+            $reset_button.hide();
+        } else {
+            var was_open = getControlPanelState();
+            var is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
+            if (was_open !== is_open) {
+                if (was_open === OPEN) {
+                    setControlPanelDisplay(true);
+                } else if (was_open === CLOSED) {
+                    setControlPanelDisplay(false);
+                } else {
+                    setControlPanelState(is_open);
+                }
+            }
+            initializeMultiSelect();
+        }
+        updateSearchType();
+        setSearchClearButton();
+    }
+
+    // ========================================================================
+    // Function definitions - control panel
     // ========================================================================
 
     /**
@@ -210,31 +253,6 @@ $(document).on('turbolinks:load', function() {
      */
     function getControlPanelState() {
         return sessionStorage.getItem('search-controls');
-    }
-
-    /**
-     * Set the current state of advanced search controls.
-     */
-    function initializeAdvancedSearch() {
-        if (isMissing($control_panel)) {
-            $advanced_toggle.hide();
-            $reset_button.hide();
-        } else {
-            var was_open = getControlPanelState();
-            var is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
-            if (was_open !== is_open) {
-                if (was_open === OPEN) {
-                    setControlPanelDisplay(true);
-                } else if (was_open === CLOSED) {
-                    setControlPanelDisplay(false);
-                } else {
-                    setControlPanelState(is_open);
-                }
-            }
-            initializeMultiSelect();
-        }
-        updateSearchType();
-        setSearchClearButton();
     }
 
     /**
@@ -283,15 +301,6 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
-    /**
-     * Do not show the search clear control if this search box is empty.
-     */
-    function setSearchClearButton() {
-        var characters_present = $search_input.val();
-        var state = characters_present ? 'visible' : 'hidden';
-        $search_clear.css('visibility', state);
-    }
-
     // ========================================================================
     // Function definitions - search terms
     // ========================================================================
@@ -313,7 +322,7 @@ $(document).on('turbolinks:load', function() {
     function setSearchInput(new_terms) {
         var terms;
         if (new_terms) {
-            terms = new_terms.replace('+', ' ');
+            terms = new_terms.replace(/\+/g, ' ');
             terms = decodeURIComponent(terms);
             if (terms === '*') { terms = ''; }
         }
@@ -352,6 +361,15 @@ $(document).on('turbolinks:load', function() {
     function clearSearchTerms(e, allow_default) {
         if (e && !allow_default) { e.preventDefault(); }
         setSearchTerms('');
+    }
+
+    /**
+     * Do not show the search clear control if this search box is empty.
+     */
+    function setSearchClearButton() {
+        var characters_present = $search_input.val();
+        var state = characters_present ? 'visible' : 'hidden';
+        $search_clear.css('visibility', state);
     }
 
     // ========================================================================
@@ -667,13 +685,34 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
+    // Function definitions - search overlay
+    // ========================================================================
+
+    /**
+     * Show the indicator that is presented during a time-consuming search.
+     */
+    function showInProgress() {
+        $search_in_progress.toggleClass('visible', true);
+    }
+
+    /**
+     * Hide the indicator that is presented during a time-consuming search.
+     */
+    function hideInProgress() {
+        $search_in_progress.toggleClass('visible', false);
+    }
+
+    // ========================================================================
     // Event handlers
     // ========================================================================
 
+    handleEvent($controls,     'change', showInProgress);
     handleEvent($input_select, 'change', updateSearchType);
     handleEvent($search_input, 'change', updateSearchTerms);
     handleEvent($search_input, 'keyup',  setSearchClearButton);
 
+    handleClickAndKeypress($search_button,   showInProgress);
+    handleClickAndKeypress($reset_button,    showInProgress);
     handleClickAndKeypress($search_clear,    clearSearchTerms);
     handleClickAndKeypress($advanced_toggle, toggleControlPanel);
 
@@ -682,6 +721,7 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     initializeAdvancedSearch();
+    hideInProgress();
 
     // ========================================================================
     // Internal functions

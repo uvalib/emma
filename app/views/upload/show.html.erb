@@ -1,6 +1,7 @@
 <%# app/views/upload/show.html.erb -%>
 <%-
   # Show details of an upload
+
   item  ||= @item
   image ||= nil
   title ||= t('emma.upload.show.title', name: item&.filename)
@@ -10,12 +11,15 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
+  template_opt = { item: item, image: image }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 <%= upload_description %>
 
-<%= render 'upload/details', item: item, image: image %>
+<%= render 'upload/details', template_opt %>
 <%= upload_preview %>
 
 <%= upload_notes %>

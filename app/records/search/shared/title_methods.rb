@@ -5,9 +5,11 @@
 
 __loading_begin(__FILE__)
 
-require 'sanitize'
-
 # Methods mixed in to record elements related to catalog titles.
+#
+# Attributes supplied by the including module:
+#
+# @attr [String] emma_titleId
 #
 module Search::Shared::TitleMethods
 

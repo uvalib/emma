@@ -9,6 +9,13 @@ require 'sanitize'
 
 # Methods mixed in to record elements related to catalog titles.
 #
+# Attributes supplied by the including module:
+#
+# @attr [String]  bookshareId
+# @attr [String]  isbn13
+# @attr [Integer] numImages
+# @attr [Integer] numPages
+#
 module Bs::Shared::TitleMethods
 
   include ::TitleMethods

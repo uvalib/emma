@@ -7,6 +7,11 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to periodical editions.
 #
+# Attributes supplied by the including module:
+#
+# @attr [String] editionId
+# @attr [String] editionName
+#
 module Bs::Shared::EditionMethods
 
   # ===========================================================================

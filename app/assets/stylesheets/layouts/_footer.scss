@@ -18,7 +18,7 @@
     margin-top: $footer-margin-top;
     border-top: $hcm-divider-width solid $hcm-color;
     position:   relative;
-    z-index:    1;
+    z-index:    $z-raised;
 
     @media #{$browser-not-ie} {
         margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});

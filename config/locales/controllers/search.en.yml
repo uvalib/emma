@@ -60,6 +60,8 @@ en:
       # =======================================================================
 
       search_controls:
+        format:
+          multiple:     true
         sort:
           reverse:      false
 

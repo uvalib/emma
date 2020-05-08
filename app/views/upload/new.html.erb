@@ -1,6 +1,7 @@
 <%# app/views/upload/new.html.erb -%>
 <%-
   # Prompt to upload a file.
+
   title ||= t('emma.upload.new.title')
   item  ||= @item
   repo  ||= item&.repository
@@ -11,6 +12,7 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
 -%>
 
 <div class="heading container">

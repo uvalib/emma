@@ -1,6 +1,7 @@
 <%# app/views/title/show.html.erb -%>
 <%-
   # A Catalog Title show page.
+
   item  ||= @item
   image ||= nil
   title ||= item&.label || t('emma.title.show.title')
@@ -9,8 +10,11 @@
     set_page_title(title)
     set_page_description(Title: title)
   end
+
+  template_opt = { item: item, image: image }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'title/details', item: item, image: image %>
+<%= render 'title/details', template_opt %>

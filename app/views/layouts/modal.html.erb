@@ -1,17 +1,22 @@
 <%# app/views/layouts/modal.html.erb -%>
 <%-
   # Modal (<iframe>) layout.
+
   main_id = 'main' # TODO: I18n for 'Main Content'
+
 -%>
 <!DOCTYPE html>
 <html lang="<%= page_language -%>" class="modal">
+
   <head>
     <%= page_stylesheets %>
     <%= page_javascripts %>
   </head>
+
   <body class="<%= page_classes -%>">
     <main class="layout-content" id="<%= main_id -%>">
       <%= yield %>
     </main>
   </body>
+
 </html>

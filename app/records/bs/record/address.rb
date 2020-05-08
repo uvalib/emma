@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 # @attr [String] address1
 # @attr [String] address2
 # @attr [String] city
+# @attr [String] country
 # @attr [String] postalCode
 # @attr [String] state
 #

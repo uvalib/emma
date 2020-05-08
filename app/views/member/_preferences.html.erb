@@ -1,6 +1,7 @@
 <%# app/views/member/_preferences.html.erb -%>
 <%-
   # Organization Member preferences listing.
+
   pref  ||= @preferences or return
   level ||= 2
   row   ||= 1
@@ -12,6 +13,7 @@
       title ||= t('emma.member.preferences.title')
       html_tag(level, h(title), class: 'list-heading')
     end
+
 -%>
 
 <div class="member-preferences">

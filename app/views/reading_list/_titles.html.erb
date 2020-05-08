@@ -1,6 +1,7 @@
 <%# app/views/reading_list/_titles.html.erb -%>
 <%-
   # A list of titles associated with a Reading List.
+
   title  ||= 'Reading List Titles' # TODO: I18n
   list   ||= nil
   count  ||= nil
@@ -20,6 +21,7 @@
     level:  (level + 1),
     skip:   skip,
   }
+
 -%>
 
 <div <%= role -%> class="<%= element_id -%>" id="<%= element_id -%>">

@@ -26,6 +26,14 @@ module LayoutHelper::SearchBar
     search_input_target(type).present?
   end
 
+  # Indicate whether it is appropriate to show the search input menu.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  #
+  def show_input_select?(type = nil)
+    search_input_types(type).size > 1
+  end
+
   # Generate an element for selecting search type.
   #
   # @param [Hash] opt                 Passed to #select_tag except for:
@@ -35,11 +43,12 @@ module LayoutHelper::SearchBar
   # @return [nil]                       If search is not available for *type*.
   #
   def search_input_select(**opt)
-    menu_name = :input_select # TODO
+    type = search_input_target
+    return unless show_input_select?(type)
     opt, html_opt = partition_options(opt, *MENU_OPTS)
-    url_param   = opt[:url_parameter] || menu_name
+    url_param   = opt[:url_parameter] || :input_select # TODO
     multiple    = opt[:multiple]      || false
-    default     = opt[:default]       || :q
+    default     = opt[:default]       || search_input_field(type)
     selected    = opt[:selected] || search_parameters.keys.presence || default
     selected    = Array.wrap(selected).map(&:to_s).uniq
     option_tags = options_for_select(search_menu_pairs, selected)
@@ -50,7 +59,7 @@ module LayoutHelper::SearchBar
 
   # Generate an element for entering search terms.
   #
-  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
+  # @param [Symbol, String, nil] id     Default: `#search_input_field(type)`
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #search_form.
   #
@@ -59,7 +68,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_bar(id: nil, type: nil, **opt)
     type ||= search_input_target or return
-    id   ||= search_field_key(type)
+    id   ||= search_input_field(type)
     skip_nav_append(search_bar_label(type) => id)
     opt = prepend_css_classes(opt, 'search-input-bar')
     search_form(id, type, **opt) do
@@ -76,7 +85,7 @@ module LayoutHelper::SearchBar
   # @return [nil]
   #
   def search_bar_label(type, **opt)
-    type ||= search_input_target
+    type ||= search_input_target or return
     i18n_lookup(type, 'search_bar.label', **opt)
   end
 
@@ -88,9 +97,59 @@ module LayoutHelper::SearchBar
   # @return [Symbol]
   # @return [nil]
   #
-  def search_field_key(type, **opt)
+  def search_input_field(type = nil, **opt)
+    # noinspection RubyYardReturnMatch
+    search_input_default(type, **opt)[:field]
+  end
+
+  # Screen-reader-only label for the input field.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  # @param [Hash]                opt    Passed to #i18n_lookup.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def search_input_label(type = nil, **opt)
+    # noinspection RubyYardReturnMatch
+    search_input_default(type, **opt)[:label]
+  end
+
+  # Placeholder text displayed in the search input box.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  # @param [Hash]                opt    Passed to #i18n_lookup.
+  #
+  # @return [String]
+  # @return [nil]
+  #
+  def search_input_placeholder(type = nil, **opt)
+    # noinspection RubyYardReturnMatch
+    search_input_default(type, **opt)[:placeholder]
+  end
+
+  # Properties of the default search input type.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  # @param [Hash]                opt    Passed to #i18n_lookup.
+  #
+  # @return [Hash{Symbol=>Symbol,String}]
+  #
+  def search_input_default(type = nil, **opt)
+    field, values = search_input_types(type, **opt).first
+    values ? { field: field }.merge!(values) : {}
+  end
+
+  # All defined input types.
+  #
+  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  # @param [Hash]                opt    Passed to #i18n_lookup.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def search_input_types(type = nil, **opt)
     type ||= search_input_target
-    i18n_lookup(type, 'search_bar.input.field', **opt)&.to_sym
+    i18n_lookup(type, 'search_type', **opt) || {}
   end
 
   # ===========================================================================
@@ -104,7 +163,7 @@ module LayoutHelper::SearchBar
   # @type [Hash{Symbol=>Boolean}]
   SEARCH_INPUT_ENABLED =
     SEARCH_MENU_MAP.keys.map { |type|
-      enabled = i18n_lookup(type, 'search_bar.input.enabled', mode: false)
+      enabled = i18n_lookup(type, 'search_bar.enabled', mode: false)
       [type, enabled.present?]
     }.to_h
 
@@ -123,7 +182,7 @@ module LayoutHelper::SearchBar
 
   # Generate a form search field input control.
   #
-  # @param [Symbol, String, nil] id     Default: `#search_field_key(type)`
+  # @param [Symbol, String, nil] id     Default: `#search_input_field(type)`
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [String, nil]         value  Default: `#params[id]`.
   # @param [Hash]                opt    Passed to #form_tag.
@@ -132,12 +191,12 @@ module LayoutHelper::SearchBar
   #
   def search_input(id, type, value: nil, **opt)
     type ||= search_input_target
-    id   ||= search_field_key(type)
+    id   ||= search_input_field(type)
     id   &&= id.to_sym
     label_id = "#{id}-label"
 
     # Screen-reader-only label element.
-    label = i18n_lookup(type, 'search_bar.input.label')
+    label = search_input_label(type)
     label &&= html_span(label, id: label_id, class: 'sr-only')
     label ||= ''.html_safe
 
@@ -146,7 +205,7 @@ module LayoutHelper::SearchBar
     value = '' if value == NULL_SEARCH
     opt = prepend_css_classes(opt, 'search-input')
     opt[:'aria-labelledby'] = label_id
-    opt[:placeholder] ||= i18n_lookup(type, 'search_bar.input.placeholder')
+    opt[:placeholder] ||= search_input_placeholder(type)
     input = search_field_tag(id, value, opt)
 
     # Control for clearing search terms.

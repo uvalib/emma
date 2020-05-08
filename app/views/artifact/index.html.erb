@@ -1,15 +1,12 @@
 <%# app/views/artifact/index.html.erb -%>
 <%-
   # Artifacts index.
+
   title ||= t('emma.artifact.index.title')
   list  ||= artifact_list
   count ||= total_items
+  terms ||= search_terms
   row   ||= 1
-
-  terms = search_terms
-  applied_terms, top_controls, bottom_controls =
-    index_controls(terms, count: count, row: row)
-  row += [applied_terms, top_controls].compact.size
 
   unless modal?
     set_page_title(t('emma.artifact.index.label', default: title))
@@ -18,9 +15,13 @@
     set_page_robots(:noindex, :nofollow)
   end
 
+  applied_terms, top_controls, bottom_controls =
+    index_controls(terms, count: count, row: row)
+  row   += [applied_terms, top_controls].compact.size
   title += " (#{count})" if list.blank?
 
   template_opt = { list: list, count: count, row: row, skip: :title }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

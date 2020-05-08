@@ -26,8 +26,8 @@
     border:           1px solid black;
     box-shadow:       0 0 0 1px white;
 
-    &         { z-index: -1 }
-    &.visible { z-index: 1000; }
+    &         { z-index: $z-hidden }
+    &.visible { z-index: $z-popup; }
 
     .skip-nav-heading {
 
@@ -49,6 +49,8 @@
             color:           black;
             text-decoration: none;
         }
+
+        // noinspection CssBrowserCompatibilityForProperties
         a:focus {
             outline-offset: 0.5px;
         }

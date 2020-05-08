@@ -1,10 +1,12 @@
 <%# app/views/help/topic/_sign_in.html.erb -%>
 <%-
   # EMMA sign-in help page.
+
   sign_in                = sign_in_link(class: 'sign-in-button', path: !modal?)
   sign_in_with_bookshare = sign_in_link(provider: :bookshare, path: !modal?)
   bookshare_login        = help_image(:bookshare_login)
   bookshare_sign_in      = html_span('Sign in', class: 'bookshare-sign-in')
+
 -%>
 
 <p>

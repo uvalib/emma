@@ -19,7 +19,7 @@
 
 // Make focus outline more easily seen.
 //
-// noinspection SassScssResolvedByNameOnly
+// noinspection SassScssResolvedByNameOnly,CssBrowserCompatibilityForProperties
 %focus {
     outline:        2px solid $focus-accent;
     outline-offset: 2px;

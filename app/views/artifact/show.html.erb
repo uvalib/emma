@@ -1,6 +1,7 @@
 <%# app/views/artifact/show.html.erb -%>
 <%-
   # An Artifact metadata show page.
+
   item  ||= @item
   title ||= item&.label&.presence || t('emma.artifact.show.title')
 
@@ -8,8 +9,11 @@
     set_page_title(title)
     set_page_description(title)
   end
+
+  template_opt = { item: item }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'artifact/details', item: item %>
+<%= render 'artifact/details', template_opt %>

@@ -1,15 +1,12 @@
 <%# app/views/upload/index.html.erb -%>
 <%-
   # A list of uploads by the current user.
+
   title ||= t('emma.upload.index.title')
   list  ||= upload_list
   count ||= total_items
+  terms ||= search_terms
   row   ||= 1
-
-  terms = search_terms
-  applied_terms, top_controls, bottom_controls =
-    index_controls(terms, count: count, row: row)
-  row += [applied_terms, top_controls].compact.size
 
   unless modal?
     set_page_title(title)
@@ -17,9 +14,13 @@
     set_page_robots(:noindex, :nofollow)
   end
 
+  applied_terms, top_controls, bottom_controls =
+    index_controls(terms, count: count, row: row)
+  row   += [applied_terms, top_controls].compact.size
   title += " (#{count})" if list.blank?
 
   template_opt = { list: list, count: count, row: row, skip: :title }
+
 -%>
 
 <h1 class="heading"><%= title -%><%= help_popup(:upload) -%></h1>

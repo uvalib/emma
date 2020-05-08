@@ -1,0 +1,11 @@
+<%# app/views/layouts/_overlays.html.erb -%>
+<%-
+  # Hidden element(s) that can be called up to cover the content area.
+
+  sip_content = 'Searching...' # TODO: I18n
+
+-%>
+
+<div class="search-in-progress" aria-hidden="true">
+  <div class="content"><%= sip_content -%></div>
+</div>

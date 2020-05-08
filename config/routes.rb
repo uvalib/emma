@@ -171,10 +171,14 @@ unless ONLY_FOR_DOCUMENTATION
   def confirmation_url(*);                        end
   def dashboard_path(*);                          end
   def dashboard_url(*);                           end
+  def delete_select_upload_path(*);               end
+  def delete_select_upload_url(*);                end
   def destroy_user_session_path(*);               end
   def destroy_user_session_url(*);                end
   def edit_password_path(*);                      end
   def edit_password_url(*);                       end
+  def edit_select_upload_path(*);                 end
+  def edit_select_upload_url(*);                  end
   def edition_index_path(*);                      end
   def edition_index_url(*);                       end
   def member_index_path(*);                       end
@@ -205,6 +209,10 @@ unless ONLY_FOR_DOCUMENTATION
   def title_index_url(*);                         end
   def unlock_path(*);                             end
   def unlock_url(*);                              end
+  def upload_index_path(*);                       end
+  def upload_index_url(*);                        end
+  def upload_path(*);                             end
+  def upload_url(*);                              end
   def user_bookshare_omniauth_authorize_path(*);  end
   def user_bookshare_omniauth_authorize_url(*);   end
   def version_health_path(*);                     end

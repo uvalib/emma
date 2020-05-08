@@ -1,6 +1,7 @@
 <%# app/views/reading_list/_details.html.erb -%>
 <%-
   # A Reading List metadata listing with associated titles.
+
   item  ||= nil or return
   list  ||= nil
   count ||= nil
@@ -8,9 +9,10 @@
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
   skip = Array.wrap(skip)
+  role = ('role="article"'.html_safe if level == 1)
   opt  = { list: list, count: count, level: (level + 1), skip: skip }
+
 -%>
 
 <div <%= role -%> class="reading_list-container">

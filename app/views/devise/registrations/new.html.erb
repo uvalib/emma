@@ -1,21 +1,24 @@
 <%# app/views/devise/registrations/new.html.erb -%>
 <%-
   # Sign-up page.
-  title ||= t('emma.user.registrations.new.label')
 
-  form_opt = {
-    as:  resource_name,
-    url: registration_path(resource_name)
-  }
-  min_length   = @minimum_password_length
-  min_length &&= t('emma.user.password.length', min: min_length)
-  submit_label = t('emma.user.registrations.new.submit')
+  title ||= t('emma.user.registrations.new.label')
 
   unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
+  form_opt = {
+    as:  resource_name,
+    url: registration_path(resource_name)
+  }
+
+  min_length   = @minimum_password_length
+  min_length &&= t('emma.user.password.length', min: min_length)
+  submit_label = t('emma.user.registrations.new.submit')
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -1,6 +1,7 @@
 <%# app/views/member/_list.html.erb -%>
 <%-
   # A sequence of organization Member entries.
+
   list   ||= []
   count  ||= list.size
   offset ||= page_offset
@@ -17,7 +18,9 @@
       classes = css_classes(classes, 'empty') if list.blank?
       html_tag(level, h(title), class: classes)
     end
+
   opt = { offset: offset, level: (level + 1), skip: skip }
+
 -%>
 
 <%= heading %>

@@ -4,7 +4,7 @@
   set_page_robots(:noindex, :nofollow) unless modal?
 -%>
 
-<p>Hello <%= @resource.email %>!</p>
+<p>Hello <%= @resource.email -%>!</p>
 
 <p>
   Your account has been locked due to an excessive number of unsuccessful
@@ -13,7 +13,7 @@
 
 <p>Click the link below to unlock your account:</p>
 
-<p><%= link_to 'Unlock my account', url %></p>
+<p><%= link_to 'Unlock my account', url -%></p>
 
 <%-
   abort 'devise/mailer/unlock_instructions - This is not expected to be used'

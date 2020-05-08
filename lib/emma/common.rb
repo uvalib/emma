@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'sanitize'
+
 # General support methods.
 #
 module Emma::Common

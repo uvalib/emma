@@ -1,6 +1,7 @@
 <%# app/views/layouts/_messages.html.erb -%>
 <%-
   # Flash messages.
+
   messages =
     %i[alert notice].flat_map { |type|
       [flash.now[type], flash[type]].flat_map { |flash_content|
@@ -13,6 +14,9 @@
 
   css = 'flash-messages'
   css = css_classes(css, 'hidden') if messages.blank?
+
 -%>
 
-<div class="<%= css -%>"><%= messages -%></div>
+<div class="<%= css -%>">
+  <%= messages %>
+</div>

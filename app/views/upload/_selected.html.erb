@@ -1,8 +1,11 @@
 <%# app/views/layouts/_selected.html.erb -%>
 <%-
   # Display the selected item in an expandable panel.
+
   item ||= nil or return
+
   heading = "Selected item #{item.id} record details:" # TODO: I18n
+
 -%>
 
 <div class="selected-upload">

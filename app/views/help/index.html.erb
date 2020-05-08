@@ -1,6 +1,7 @@
 <%# app/views/help/index.html.erb -%>
 <%-
   # EMMA help page.
+
   list  ||= help_topics
   title ||= t('emma.help.index.title')
   intro ||= t('emma.help.index.intro', default: '')
@@ -13,6 +14,7 @@
 
   intro = intro.presence && help_paragraphs(intro).join("\n").html_safe
   toc   = help_toc(*list)
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

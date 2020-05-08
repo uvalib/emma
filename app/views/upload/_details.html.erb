@@ -1,14 +1,16 @@
 <%# app/views/upload/_details.html.erb -%>
 <%-
   # A listing of an upload entry details.
+
   item  ||= nil or return
   image ||= nil
   add   ||= {}
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
   skip = Array.wrap(skip)
+  role = ('role="article"'.html_safe if level == 1)
+
 -%>
 
 <div <%= role -%> class="upload-container">

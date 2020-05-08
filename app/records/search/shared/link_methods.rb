@@ -5,9 +5,14 @@
 
 __loading_begin(__FILE__)
 
-require 'sanitize'
-
 # Methods mixed in to record elements related to external repository links.
+#
+# Attributes supplied by the including module:
+#
+# @attr [DublinCoreFormat]  dc_format
+# @attr [EmmaRepository]    emma_repository
+# @attr [String]            emma_repositoryRecordId
+# @attr [String]            emma_retrievalLink
 #
 module Search::Shared::LinkMethods
 

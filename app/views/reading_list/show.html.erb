@@ -1,6 +1,7 @@
 <%# app/views/reading_list/show.html.erb -%>
 <%-
   # A Reading List show page.
+
   item  ||= @item
   list  ||= page_items
   count ||= total_items
@@ -10,8 +11,11 @@
     set_page_title(title)
     set_page_description(Title: title)
   end
+
+  template_opt = { item: item, list: list, count: count }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'reading_list/details', item: item, list: list, count: count %>
+<%= render 'reading_list/details', template_opt %>

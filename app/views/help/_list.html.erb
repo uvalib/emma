@@ -1,6 +1,7 @@
 <%# app/views/help/_list.html.erb -%>
 <%-
   # A sequence of help entries.
+
   list   ||= []
   level  ||= 1
   row    ||= level
@@ -15,28 +16,30 @@
       html_tag(level, h(title), class: classes)
     end
 
-  skip << :title unless skip.include?(:title)
   level += 1
   idx = 0
   sub_heading =
     help_titles(*list).map { |topic, label|
-      classes = "entry-title row#{idx}"
+      classes = "entry-title row-#{idx}"
       idx += 1
       html_tag(level, label, class: classes, id: "#{topic}_help")
     }
-  template_opt = { level: level, skip: skip }
+
+  skip = [*skip, :title].uniq
+  opt  = { level: level, skip: skip }
+
 -%>
 
 <%= heading %>
 
 <%- if list.blank? -%>
-  <%= render 'help/entry', template_opt.merge!(index: -1, row: row) %>
+  <%= render 'help/entry', opt.merge!(index: -1, row: row) %>
 <%- else -%>
   <%- list.each_with_index do |item, idx| -%>
     <%= sub_heading[idx] %>
-    <div class="help-list-entry <%= "row#{idx}"-%>">
-      <%- template_opt.merge!(index: idx, row: (row + idx), item: item) -%>
-      <%= render 'help/entry', template_opt %>
+    <div class="help-list-entry <%= "row-#{idx}"-%>">
+      <%- opt.merge!(index: idx, row: (row + idx), item: item) -%>
+      <%= render 'help/entry', opt %>
     </div>
   <%- end -%>
 <%- end -%>

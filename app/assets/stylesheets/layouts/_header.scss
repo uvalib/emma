@@ -27,7 +27,7 @@ $search-button-width:    6rem;
     padding:         0;
     border-bottom:   $hcm-divider-width solid $hcm-color;
     position:        relative;
-    z-index:         1;
+    z-index:         $z-raised;
 }
 
 //=============================================================================
@@ -268,6 +268,7 @@ $search-button-width:    6rem;
             max-width:  100%;
         }
 
+        // noinspection CssBrowserCompatibilityForProperties
         a:focus {
             outline-offset: 3px;
         }
@@ -361,6 +362,7 @@ $search-button-width:    6rem;
 
             font-size: larger;
 
+            // noinspection CssBrowserCompatibilityForProperties
             &:focus { outline-offset:  0.575rem; }
             &:hover { text-decoration: none; }
         }
@@ -585,6 +587,7 @@ $search-button-width:    6rem;
                     margin-left:  0.25rem;
                 }
 
+                // noinspection CssBrowserCompatibilityForProperties
                 &:focus {
                     outline-offset: -3px;
                 }
@@ -718,13 +721,13 @@ $search-button-width:    6rem;
 
         // Layout of each logical column.
 
-        @media #{$not-narrow-screen} {
-            $column: [label] max-content [menu] minmax(25%, 1fr);
+        @media #{$narrow-screen} {
+            $column: minmax(25%, 1fr);
             @include grid-column-classes($max-columns, $column, $columns-map);
         }
 
-        @media #{$narrow-screen} {
-            $column: minmax(25%, 1fr);
+        @media #{$not-narrow-screen} {
+            $column: [label] max-content [menu] minmax(25%, 1fr);
             @include grid-column-classes($max-columns, $column, $columns-map);
         }
 

@@ -1,6 +1,7 @@
 <%# app/views/user/omniauth_callbacks/passthru.html.erb -%>
 <%-
   # NOTE: This will only be displayed for a fixed user identity.
+
   title ||= "PASSTHRU USER #{current_user}"
 
   unless modal?
@@ -8,6 +9,7 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -1,20 +1,22 @@
 <%# app/views/search/_details.html.erb -%>
 <%-
   # A EMMA Unified Search metadata record listing.
+
   item  ||= nil or return
   image ||= nil
   add   ||= {}
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
-  skip = [*skip, :cover_image].uniq
-
   append_page_description(
     ISBN:     item.isbn,
     Language: item.dc_language,
     Author:   item.creators.first(3),
-  )
+  ) unless modal?
+
+  skip = [*skip, :cover_image].uniq
+  role = ('role="article"'.html_safe if level == 1)
+
 -%>
 
 <div <%= role -%> class="search-container">

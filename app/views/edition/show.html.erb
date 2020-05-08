@@ -1,6 +1,7 @@
 <%# app/views/edition/show.html.erb -%>
 <%-
   # A periodical Edition show page.
+
   item  ||= @item
   title ||= item&.label&.presence || t('emma.edition.show.title')
 
@@ -8,8 +9,11 @@
     set_page_title(title)
     set_page_description(title)
   end
+
+  template_opt = { item: item }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'edition/details', item: item %>
+<%= render 'edition/details', template_opt %>

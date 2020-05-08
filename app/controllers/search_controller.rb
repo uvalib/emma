@@ -43,21 +43,31 @@ class SearchController < ApplicationController
     opt = request_parameters
     id_alias = opt.extract!(*PublicationIdentifier::TYPES)
     if id_alias.present?
-      identifier = id_alias.map { |type, value| "#{type}:#{value}" }.first
-      opt[:identifier] = identifier if identifier.present?
-      redirect_to opt
+      search_terms = id_alias.map { |type, term| "#{type}:#{term}" }.join(' ')
+      redirect_to opt.merge!(identifier: search_terms)
     end
   end
 
-  # Translate a keyword query for an identifier into an :identifier query.
+  # Translate an identifier query to a keyword query if the search term does
+  # not look like a valid identifier.
+  before_action(only: :index) do
+    opt = request_parameters
+    identifier = (opt[:identifier] if opt[:q].blank?)
+    if identifier.present? && PublicationIdentifier.cast(identifier).blank?
+      keyword = identifier.sub(/^[^:]+:/, '')
+      redirect_to opt.except(:identifier).merge!(q: keyword)
+    end
+  end
+
+  # Translate a keyword query for an identifier into an identifier query.
   # Other query types which have include a standard identifier prefix (e.g.
   # "isbn:...") are re-cast as :identifier queries.
   before_action(only: :index) do
     opt = request_parameters
-    QUERY_PARAMETERS.find do |qp|
-      next if (qp == :identifier) || opt[qp].blank?
-      next if (identifier = PublicationIdentifier.cast(opt[qp])).blank?
-      redirect_to opt.except!(qp).merge!(identifier: identifier.to_s)
+    QUERY_PARAMETERS.find do |q_param|
+      next if (q_param == :identifier) || (query = opt[q_param]).blank?
+      next if (identifier = PublicationIdentifier.cast(query)).blank?
+      redirect_to opt.except!(q_param).merge!(identifier: identifier.to_s)
     end
   end
 

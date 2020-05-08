@@ -1,6 +1,7 @@
 <%# app/views/periodical/_editions.html.erb -%>
 <%-
   # A list of editions associated with a Periodical.
+
   list   ||= nil
   count  ||= nil
   offset ||= 0
@@ -8,7 +9,8 @@
   skip   ||= nil
 
   element_id = 'edition-list'
-  skip_nav_append('Periodical Editions' => element_id) # TODO: I18n
+
+  skip_nav_append('Periodical Editions' => element_id) unless modal? # TODO: I18n
 
   role = ('role="complementary"'.html_safe if level > 1)
   opt  = {
@@ -18,6 +20,7 @@
     level:  (level + 1),
     skip:   skip,
   }
+
 -%>
 
 <div <%= role -%> class="<%= element_id -%>" id="<%= element_id -%>">

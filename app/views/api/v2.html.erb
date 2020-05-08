@@ -1,6 +1,7 @@
 <%# app/views/api/v2.html.erb -%>
 <%-
   # Display of results from an individual API call.
+
   title ||= t('emma.api.v2.title')
 
   unless modal?
@@ -8,6 +9,7 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

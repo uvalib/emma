@@ -107,11 +107,6 @@ en:
 
     search_bar:
       label:            'Search'
-      input:
-        enabled:        true
-        field:          'q'
-        label:          'Search terms:'
-        placeholder:    'Enter search terms...'
       button:
         label:          'Search'
       advanced:
@@ -133,7 +128,7 @@ en:
         placeholder:    '(any)'     # Displayed if the control value is unset.
         url_parameter:  ~           # URL parameter for the control value.
         menu_format:    'titleize'  # Transform for values into menu labels.
-        multiple:       true        # Allow multiple selections.
+        multiple:       false       # Allow multiple selections.
         values:         ~           # Hard-wired menu values.
         default:        ~           # Hard-wired default menu value selection.
         tooltip:        ~           # Displayed hovering over control or label.
@@ -146,6 +141,7 @@ en:
       a11y_feature:
         label:          'Accessibility'
         url_parameter:  'accessibilityFeature'
+        multiple:       true
         tooltip:        'Limit by accessibility feature'
         values:         !ruby/symbol A11yFeature
 
@@ -182,6 +178,7 @@ en:
       format_feature:
         label:          'Feature'
         url_parameter:  'formatFeature'
+        multiple:       true
         tooltip:        'Limit by format feature'
         values:         !ruby/symbol FormatFeature
 
@@ -206,7 +203,6 @@ en:
       repository:
         label:          'Repository'
         url_parameter:  'repository'
-        multiple:       false
         tooltip:        'Limit by record originator'
         values:         !ruby/symbol EmmaRepository
 
@@ -381,6 +377,7 @@ en:
       # =======================================================================
 
       search_bar:
+        enabled:        true
         label:          '%{Item} Search'
 
       search_controls:

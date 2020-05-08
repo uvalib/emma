@@ -7,6 +7,10 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to reading lists.
 #
+# Attributes supplied by the including module:
+#
+# @attr [String] readingListId
+#
 module Bs::Shared::ReadingListMethods
 
   # Listings of reading lists expect a non-blank description string.

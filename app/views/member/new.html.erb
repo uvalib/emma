@@ -8,6 +8,12 @@
 
   title ||= t('emma.member.new.title')
 
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
   click_to =
     if can?(:new, Member)
       'Click %s to' % link_to_action('here')
@@ -15,42 +21,6 @@
       'User %s cannot' % current_user.to_s.inspect
     end.html_safe
 
-  unless modal?
-    set_page_title(title)
-    set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
-  end
-
-=begin # NOTE: fields from Bookshare path orgAccountMembers/edit
-
-  # === Account Details
-
-  First Name    text      user.contactInfo.firstName
-  Last Name     text      user.contactInfo.lastName
-  Birth Date    text      user.dateOfBirth
-  Current Grade menu      userGrade
-  Username      text      user.userName
-  Password      text      newPassword
-  Quicklist     checkbox  onQuickList
-  District      menu      districtId / districtName
-  School        menu      schoolId / schoolName
-
-  # === Qualifying Information
-
-  Visual        checkbox  user.disabilityStatuses / VISUAL_IMPAIRMENT-SCHOOL_VERIFIED
-  Learning      checkbox  user.disabilityStatuses / LEARNING_DISABILITY-SCHOOL_VERIFIED
-  Physical      checkbox  user.disabilityStatuses / PHYSICAL_DISABILITY-SCHOOL_VERIFIED
-  has an IEP    checkbox  user.userAttributes / HAS_IEP
-  504 Qualified checkbox  user.userAttributes / HAS_ANSWERED_PLAN_QUESTION
-
-  # === Reading Preferences
-
-  Default Download Format downloadPreferences.defaultFormat
-  Audio Format            downloadPreferences.audioDeliveryMethod
-  BRF Size and format     downloadPreferences.brfFormat
-  Braille Grade           downloadPreferences.brailleEncoding
-
-=end
 -%>
 
 <h1 class="heading"><%= title -%></h1>

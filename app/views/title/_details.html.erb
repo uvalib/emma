@@ -1,21 +1,23 @@
 <%# app/views/title/_details.html.erb -%>
 <%-
   # A catalog Title metadata listing with cover image.
+
   item  ||= nil or return
   image ||= nil
   add   ||= {}
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
-  skip = Array.wrap(skip)
-
   append_page_description(
     Series:   item.seriesTitle,
     ISBN:     item.isbn,
     Language: item.languages&.first(3),
     Author:   item.authors&.first(3),
-  )
+  ) unless modal?
+
+  skip = Array.wrap(skip)
+  role = ('role="article"'.html_safe if level == 1)
+
 -%>
 
 <div <%= role -%> class="title-container">

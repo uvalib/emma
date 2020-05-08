@@ -190,7 +190,7 @@ en:
           label:        'Select file'
           enabled:
             tooltip:    'As many fields as possible will be filled-in by information extracted from your file.'
-        failure:        'Could create entry: %{error}'
+        failure:        'Could not create entry: %{error}'
         success:        'Created EMMA entry for: %{file}'
 
       new_select:

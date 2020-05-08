@@ -1,6 +1,7 @@
 <%# app/views/search/_entry.html.erb -%>
 <%-
   # A single EMMA Unified Search metadata record.
+
   item   ||= nil
   index  ||= nil
   return unless item || index
@@ -15,6 +16,7 @@
   skip = [*skip, :thumbnail].uniq
   add  = add.merge(index: index, row: row)
   opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
+
 -%>
 
 <%= list_entry_number(item, opt)       unless skip.include?(:number) %>

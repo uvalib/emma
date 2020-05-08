@@ -7,6 +7,11 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to user identities.
 #
+# Attributes supplied by the including module:
+#
+# @attr [String] emailAddress
+# @attr [String] username
+#
 module Bs::Shared::AccountMethods
 
   # ===========================================================================

@@ -1,20 +1,23 @@
 <%# app/views/devise/passwords/new.html.erb -%>
 <%-
   # Forgot password page.
-  title ||= t('emma.user.passwords.new.label')
 
-  form_opt = {
-    as:   resource_name,
-    url:  password_path(resource_name),
-    html: { method: :post }
-  }
-  submit_label = t('emma.user.passwords.new.submit')
+  title ||= t('emma.user.passwords.new.label')
 
   unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
+  form_opt = {
+    as:   resource_name,
+    url:  password_path(resource_name),
+    html: { method: :post }
+  }
+
+  submit_label = t('emma.user.passwords.new.submit')
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

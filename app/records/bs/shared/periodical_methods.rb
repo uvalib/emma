@@ -7,6 +7,11 @@ __loading_begin(__FILE__)
 
 # Methods mixed in to record elements related to periodicals.
 #
+# Attributes supplied by the including module:
+#
+# @attr [String] title
+# @attr [String] seriesId
+#
 module Bs::Shared::PeriodicalMethods
 
   # ===========================================================================

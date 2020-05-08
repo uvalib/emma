@@ -19,6 +19,7 @@ module PaginationConcern
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods
+      include PaginationConcern
     end
     # :nocov:
 
@@ -26,7 +27,7 @@ module PaginationConcern
     # :section: Callbacks
     # =========================================================================
 
-    before_action :cleanup_pagination, only: [:index]
+    before_action :cleanup_pagination, only: %i[index]
 
   end
 

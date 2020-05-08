@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_search.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+// @use 'feature/model';   // TODO: SASS 4.0
+// @use 'feature/overlay'; // TODO: SASS 4.0
 
 //=============================================================================
 // Search controls
@@ -9,7 +10,6 @@
 // noinspection SassScssResolvedByNameOnly
 .pagination-top,
 .pagination-bottom {
-//.pagination-bottom,
 //.applied-search-terms {
 
     @include grid-column-span(3);
@@ -52,6 +52,36 @@
 .search-count {
     display: inline-block;
     margin:  0.5rem 0 0 0.5rem;
+}
+
+//=============================================================================
+// In-progress overlay
+//=============================================================================
+
+// An indicator that is presented during a time-consuming search.
+// noinspection SassScssResolvedByNameOnly
+.search-in-progress {
+
+    @extend .overlay;
+
+    transition: opacity 0.5s ease-in 0.75s;
+
+    .content {
+
+        $content-color: lighter($uva-blue, 75%);
+
+        top:           50vh;
+        width:         max-content;
+        height:        max-content;
+        margin:        0 auto;
+        padding:       1rem;
+        font-size:     xx-large;
+        color:         white;
+        background:    $content-color;
+        border:        1px solid $content-color;
+        border-radius: 50%;
+        box-shadow:    0 0 3rem 3rem $content-color;
+    }
 }
 
 //=============================================================================

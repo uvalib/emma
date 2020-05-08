@@ -1,6 +1,7 @@
 <%# app/views/periodical/_details.html.erb -%>
 <%-
   # A Periodical metadata listing with associated editions.
+
   item  ||= nil or return
   list  ||= nil
   count ||= nil
@@ -8,15 +9,16 @@
   level ||= 1
   skip  ||= nil
 
-  role = ('role="article"'.html_safe if level == 1)
-  skip = Array.wrap(skip)
-  opt  = { list: list, count: count, level: level, skip: skip }
-  # NOTE: level is not incremented in this case.
-
   append_page_description(
     ISSN:     item.issn,
     Language: item.languages&.first(3),
-  )
+  ) unless modal?
+
+  skip = Array.wrap(skip)
+  role = ('role="article"'.html_safe if level == 1)
+  opt  = { list: list, count: count, level: level, skip: skip }
+  # NOTE: level is not incremented in this case.
+
 -%>
 
 <div <%= role -%> class="periodical-container">

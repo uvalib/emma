@@ -1,8 +1,11 @@
 <%# app/views/help/_details.html.erb -%>
 <%-
   # Help entry details.
+
   item  ||= nil or return
   level ||= 1
   row   ||= level
+
 -%>
+
 <%= help_section(item: item, level: level, row: row) %>

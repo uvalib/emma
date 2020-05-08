@@ -69,6 +69,7 @@
     p {
         @extend %help-text;
 
+        // noinspection CssBrowserCompatibilityForProperties
         a:focus {
             outline-offset: 0.5px;
         }

@@ -28,7 +28,7 @@ module Bs::Shared::ArtifactMethods
   # @return [Array<String>]
   #
   def fmts
-    respond_to?(:formats) ? formats : Array.wrap(fmt)
+    respond_to?(:formats) ? formats.map(&:to_s) : Array.wrap(fmt)
   end
 
 end

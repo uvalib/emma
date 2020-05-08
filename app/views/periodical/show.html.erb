@@ -1,6 +1,7 @@
 <%# app/views/periodical/show.html.erb -%>
 <%-
   # A Periodical show page.
+
   item  ||= @item
   list  ||= page_items
   count ||= total_items
@@ -10,8 +11,11 @@
     set_page_title(title)
     set_page_description(Title: title)
   end
+
+  template_opt = { item: item, list: list, count: count }
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
 
-<%= render 'periodical/details', item: item, list: list, count: count %>
+<%= render 'periodical/details', template_opt %>

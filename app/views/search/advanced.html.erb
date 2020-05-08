@@ -1,6 +1,7 @@
 <%# app/views/search/advanced.html.erb -%>
 <%-
   # EMMA Unified Search advanced search page.
+
   title ||= t('emma.search.advanced.title')
 
   unless modal?
@@ -8,6 +9,7 @@
     set_page_description(title)
     set_page_robots(:noindex)
   end
+
 -%>
 
 <h1 class="heading"><%= title -%><%= help_popup(:search) -%></h1>

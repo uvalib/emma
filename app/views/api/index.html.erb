@@ -1,6 +1,7 @@
 <%# app/views/api/index.html.erb -%>
 <%-
   # API method call test page.
+
   title ||= t('emma.api.index.title')
 
   unless modal?
@@ -8,6 +9,7 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>

@@ -3,17 +3,19 @@
   # Login page.
   title ||= t('emma.user.sessions.new.label')
 
-  form_opt = {
-    as:  resource_name,
-    url: session_path(resource_name)
-  }
-  submit_label = t('emma.user.sessions.new.submit')
-
   unless modal?
     set_page_title(title)
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
+  form_opt = {
+    as:  resource_name,
+    url: session_path(resource_name)
+  }
+
+  submit_label = t('emma.user.sessions.new.submit')
+
 -%>
 
 <h1 class="heading"><%= title -%></h1>
@@ -45,4 +47,6 @@
 
 <%= render 'devise/shared/links' %>
 
-<%- abort '/app/views/user/sessions/new.html.erb is supposed to be used' -%>
+<%-
+  abort '/app/views/user/sessions/new.html.erb is supposed to be used'
+-%>

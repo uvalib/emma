@@ -1,6 +1,7 @@
 <%# app/views/upload/delete.html.erb -%>
 <%-
   # Prompt to remove an existing file entry.
+
   title ||= t('emma.upload.delete.title')
   item  ||= @item
   repo  ||= item&.repository
@@ -11,6 +12,7 @@
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
+
 -%>
 
 <div class="heading container">

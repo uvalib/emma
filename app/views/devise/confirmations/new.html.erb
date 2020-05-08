@@ -1,22 +1,26 @@
 <%# app/views/devise/confirmations/new.html.erb -%>
 <%-
   # Resend confirmation page.
+
   title ||= t('emma.user.confirmations.new.title')
+
+  set_page_robots(:noindex, :nofollow) unless modal?
 
   form_opt = {
     as:   resource_name,
     url:  confirmation_path(resource_name),
     html: { method: :post }
   }
+
   email =
     if resource.pending_reconfirmation?
       resource.unconfirmed_email
     else
       resource.email
     end
+  email_opt    = { autofocus: true, autocomplete: 'email', value: email }
   submit_label = t('emma.user.confirmations.new.submit')
 
-  set_page_robots(:noindex, :nofollow) unless modal?
 -%>
 
 <h1 class="heading"><%= title -%></h1>
@@ -27,7 +31,7 @@
 
   <div class="field">
     <%= f.label       :email %><br/>
-    <%= f.email_field :email, autofocus: true, autocomplete: 'email', value: email %>
+    <%= f.email_field :email, email_opt %>
   </div>
 
   <div class="actions">

@@ -2,9 +2,11 @@
 <%-
   # NOTE: DEBUGGING
   # Displays the individual abilities of the current user.
+
   user    = current_user&.to_s&.presence || 'guest'
   actions = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
   models  = [Title, Artifact, Periodical, Edition, Member, ReadingList]
+
 -%>
 
 <div class="ability-debug">

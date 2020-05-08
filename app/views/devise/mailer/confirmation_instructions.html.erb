@@ -4,11 +4,11 @@
   set_page_robots(:noindex, :nofollow) unless modal?
 -%>
 
-<p>Welcome <%= @email %>!</p>
+<p>Welcome <%= @email -%>!</p>
 
 <p>You can confirm your account email through the link below:</p>
 
-<p><%= link_to 'Confirm my account', url %></p>
+<p><%= link_to 'Confirm my account', url -%></p>
 
 <%-
   abort 'devise/mailer/confirmation_instructions - This is not expected to be used'

@@ -1,6 +1,7 @@
 <%# app/views/search/show.html.erb -%>
 <%-
   # A EMMA Unified Search metadata record show page.
+
   item  ||= @item
   image ||= nil
   title ||= item&.label || t('emma.search.show.title')
@@ -10,6 +11,9 @@
     set_page_title(title)
     set_page_description(Search: title)
   end
+
+  template_opt = { item: item, image: image }
+
 -%>
 
 <div class="heading container">
@@ -17,4 +21,4 @@
   <%= logo %>
 </div>
 
-<%= render 'search/details', item: item, image: image %>
+<%= render 'search/details', template_opt %>
