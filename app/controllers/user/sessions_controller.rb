@@ -21,10 +21,10 @@ class User::SessionsController < Devise::SessionsController
   # :section: Callbacks
   # ===========================================================================
 
-  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_token sign_in_as]
-  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_token sign_in_as]
+  prepend_before_action :require_no_authentication,    only: %i[new create sign_in_as]
+  prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
-  prepend_before_action(only: %i[create destroy sign_in_token sign_in_as]) do
+  prepend_before_action(only: %i[create destroy sign_in_as]) do
     request.env['devise.skip_timeout'] = true
   end
 
@@ -85,9 +85,9 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
-  # == GET /users/sign_in_token?uid=NAME&token=AUTH_TOKEN
-  # == GET /users/sign_in_token?auth={OmniAuth::AuthHash}
-  # Sign in with credentials proxied from the production service.
+  # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
+  # == GET /users/sign_in_as?auth={OmniAuth::AuthHash}
+  # Sign in using information supplied outside of the OAuth2 flow.
   #
   # == Usage Notes
   # The initial request to this endpoint is redirected by Warden::Manager to
@@ -95,17 +95,24 @@ class User::SessionsController < Devise::SessionsController
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which
   # provides the value for 'omniauth.auth'.
   #
-  def sign_in_token
-    synthetic_authentication(__method__)
-  end
-
-  # == GET /users/sign_in_as?id=:id
-  # Sign in as the specified user.
-  #
-  # @see OmniAuth::Strategies::Bookshare#stored_auth
-  #
   def sign_in_as
-    synthetic_authentication(__method__)
+    action = params[:action]
+    uid    = params[:uid] || params[:id]
+    token  = params[:token]
+    data   = params[:auth]
+    # noinspection RubyYardParamTypeMatch
+    self.resource = user =
+      uid &&
+        user_from_id(action, uid, token) ||
+        user_from_auth_data(action, data)
+    sign_in(resource_name, user)
+    api_update(user: user)
+    set_flash_notice(:create)
+    if params[:redirect]
+      redirect_to params[:redirect]
+    else
+      redirect_to after_sign_in_path_for(user)
+    end
   end
 
   # ===========================================================================
@@ -130,43 +137,44 @@ class User::SessionsController < Devise::SessionsController
     flash[:notice] = t("emma.user.sessions.#{action}.success", user: user)
   end
 
-  # Sign in using information supplied outside of the OAuth2 flow.
+  # Lookup (and update) User by login name.
   #
-  # @param [Symbol, String] action    Calling method; def: `params[:action]`.
+  # @param [Symbol, String] action
+  # @param [String]         uid
+  # @param [String, nil]    token
   #
-  def synthetic_authentication(action = nil)
-    action  ||= params[:action] || calling_method
-    auth_data = get_omniauth_session_data
-    __debug_route(action: action) do
-      %w(omniauth.auth stored.auth).map { |key|
-        ["session['#{key}']", session[key]]
-      }.to_h
+  # @return [User]
+  # @return [nil]
+  #
+  def user_from_id(action, uid, token = nil)
+    user_name = uid.downcase
+    __debug_route(action: action, uid: uid, token: (token || '-')) do
+      { email: user_name }
     end
-    self.resource = warden.set_user(User.from_omniauth(auth_data))
-    sign_in(resource_name, resource)
-    api_update(user: resource)
-    set_flash_notice(:create)
-    if params[:redirect]
-      redirect_to params[:redirect]
-    else
-      redirect_to after_sign_in_path_for(resource)
+    session['omniauth.auth'] ||=
+      OmniAuth::Strategies::Bookshare.synthetic_auth_hash(user_name, token)
+    User.find_by(email: user_name).tap do |u|
+      u&.update(access_token: token) if token
     end
   end
 
-  # Update session authentication state, starting with remembered logins
-  # (for the sake of #synthetic_auth_hash).
+  # Create a User from authentication data (from the session or from the
+  # User table of the database).
   #
-  # @return [OmniAuth::AuthHash]
+  # @param [Symbol, String]          action
+  # @param [OmniAuth::AuthHash, nil] auth_data
   #
-  def get_omniauth_session_data
-    session['stored.auth'] =
-      OmniAuth::Strategies::Bookshare.stored_auth(session['stored.auth'])
-    session['omniauth.auth'].presence ||
-      OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params).tap do |data|
-        session['stored.auth'] =
-          OmniAuth::Strategies::Bookshare.stored_auth_update(data)
-        session['omniauth.auth'] = data
-      end
+  # @return [User]
+  #
+  def user_from_auth_data(action, auth_data = nil)
+    session.delete('omniauth.auth') if auth_data.is_a?(OmniAuth::AuthHash)
+    session['omniauth.auth'] ||= (
+      auth_data || OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
+    ).tap { |data| OmniAuth::Strategies::Bookshare.stored_auth_update(data) }
+    __debug_route(action: action, auth: (auth_data || '-')) do
+      { "session['omniauth.auth']": session['omniauth.auth'] }
+    end
+    User.from_omniauth(session['omniauth.auth'])
   end
 
   # ===========================================================================

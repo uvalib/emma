@@ -33,11 +33,11 @@ en:
           tooltip:      'End your session.'
           success:      'Signed out (%{user}).'
 
-        sign_in_token:
-          label:        'Sign in with copied auth token'
-
         sign_in_as:
           label:        'Sign in as %{user}'
+          update:
+            label:      'Sign in with copied auth token'
+            submit:     'Go'
 
       passwords:
 

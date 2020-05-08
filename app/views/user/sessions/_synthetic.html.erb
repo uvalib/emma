@@ -6,11 +6,14 @@
 
   return if application_deployed?
 
+  form_label   = t('emma.user.sessions.sign_in_as.update.label')
+  submit_label = t('emma.user.sessions.sign_in_as.update.submit')
+
 -%>
 
-<%= form_tag(sign_in_token_path, class: 'sign-in-token', method: :get) do -%>
+<%= form_tag(sign_in_as_path, class: 'sign-in-token', method: :get) do -%>
 
-  <label><%= t('emma.user.sessions.sign_in_token.label') -%></label>
+  <label><%= form_label -%></label>
 
   <div class="field">
     <%= label_tag      :uid, 'ID:' %>
@@ -23,7 +26,7 @@
   </div>
 
   <div class="actions">
-    <%= submit_tag 'Submit' %>
+    <%= submit_tag submit_label %>
   </div>
 
 <%- end -%>

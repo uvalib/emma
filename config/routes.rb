@@ -144,11 +144,9 @@ Rails.application.routes.draw do
     omniauth_callbacks: 'user/omniauth_callbacks',
   }
 
-  # Synthetic login endpoints.
+  # Synthetic login endpoint.
   devise_scope :user do
-    %w(sign_in_token sign_in_as).each do |endpoint|
-      get "/users/#{endpoint}", to: "user/sessions##{endpoint}", as: endpoint
-    end
+    get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
   end
 
 end
@@ -203,8 +201,6 @@ unless ONLY_FOR_DOCUMENTATION
   def session_url(*);                             end
   def sign_in_as_path(*);                         end
   def sign_in_as_url(*);                          end
-  def sign_in_token_path(*);                      end
-  def sign_in_token_url(*);                       end
   def title_index_path(*);                        end
   def title_index_url(*);                         end
   def unlock_path(*);                             end

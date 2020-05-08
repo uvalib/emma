@@ -718,7 +718,7 @@ module OmniAuth
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
-      # @see OAuth2::ClientExt#request
+      # @see ::OAuth2::ClientExt#request
       #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#request_phase
@@ -795,7 +795,7 @@ module OmniAuth
             # the special endpoint for direct token sign-in.
             self.access_token        = synthetic_access_token(op)
             session['omniauth.auth'] = synthetic_auth_hash(op)
-            [302, { 'Location' => '/users/sign_in_token' }, []]
+            [302, { 'Location' => '/users/sign_in_as' }, []]
 
           elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
@@ -841,7 +841,7 @@ module OmniAuth
 
       # Acquire the OAuth token from the remote service.
       #
-      # @return [OAuth2::AccessToken]
+      # @return [::OAuth2::AccessToken]
       #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#build_access_token
@@ -932,7 +932,7 @@ module OmniAuth
         end
         return token if token.is_a?(::OAuth2::AccessToken)
         return unless token.present? || hash.present?
-        hash ||= { access_token: token, token_type: 'bearer', scope: 'basic' }
+        hash ||= self.class.stored_auth_entry(token)
         ::OAuth2::AccessToken.from_hash(client, hash)
       end
 
@@ -1047,27 +1047,40 @@ module OmniAuth
 
       public
 
-      # A table of pre-authorized users for development purposes.
+      extend Emma::Json
+
+      # A table of pre-authorized user/token pairs for development purposes.
       #
-      # @type [Hash{String=>Hash}, nil]
+      # @type [Hash{String=>String}]
       #
       CONFIGURED_AUTH =
-        if BOOKSHARE_TEST_USERS.present?
-          safe_json_parse(BOOKSHARE_TEST_USERS, default: {})
-            .transform_values { |token|
-              { access_token: token, token_type: 'bearer', scope: 'basic' }
-            }.deep_freeze
-        end
+        safe_json_parse(BOOKSHARE_TEST_USERS, default: {}).deep_freeze
 
       # Table of user names/tokens acquired for use in non-production deploys.
       #
-      # @param [Hash, nil] values     Used to initialize @@stored_auth.
+      # Token are taken from the User table entries that have an :access_token
+      # value.  If BOOKSHARE_TEST_USERS is supplied, it is used to prime (or
+      # update) database table.
       #
       # @return [Hash{String=>Hash}]
       #
-      def self.stored_auth(values = nil)
-        @@stored_auth = values if values.present?
-        @@stored_auth ||= CONFIGURED_AUTH&.deep_dup || {}
+      # == Usage Notes
+      # Because the logic is only performed once, direct changes to the User
+      # table will not be reflected here, however changes made indirectly via
+      # #stored_auth_update will change both the value returned by this method
+      # and the associated User table entry.
+      #
+      def self.stored_auth
+        @@stored_auth ||=
+          begin
+            if (entries = CONFIGURED_AUTH).present?
+              tokens = entries.values.map { |v| { access_token: v } }
+              User.update(entries.keys, tokens)
+            end
+            User.where.not(access_token: nil).map { |u|
+              [u.email, stored_auth_entry(u.access_token)]
+            }.to_h
+          end
       end
 
       # Add or update a user name/token entry.
@@ -1079,30 +1092,55 @@ module OmniAuth
       #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
       #
       # @overload stored_auth_update(auth)
-      #   @param [String]                        id     User to add.
+      #   @param [String]                        uid    User to add.
       #   @param [String, ::OAuth2::AccessToken] token  Associated token.
       #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
       #
-      def self.stored_auth_update(id, token = nil)
-        if (auth = id).is_a?(OmniAuth::AuthHash)
-          id, token = [auth.uid, auth.credentials.token]
+      def self.stored_auth_update(uid, token = nil)
+        if (auth = uid).is_a?(OmniAuth::AuthHash)
+          uid, token = [auth.uid, auth.credentials.token]
         elsif (atoken = token).is_a?(::OAuth2::AccessToken)
           # noinspection RubyNilAnalysis
           token = atoken.token
         end
-        if id.blank? || token.blank?
+
+        if uid.blank? || token.blank?
           Log.warn do
-            msg = +"#{__method__}: missing "
-            msg << 'id'    if id.blank?
-            msg << ' and ' if id.blank? && token.blank?
+            msg = %W(#{__method__}: missing)
+            msg << 'uid'   if uid.blank?
+            msg << 'and'   if uid.blank? && token.blank?
             msg << 'token' if token.blank?
-            msg
+            msg.join(' ')
           end
-        else
-          stored_auth[id] ||= { token_type: 'bearer', scope: 'basic' }
-          stored_auth[id][:access_token] = token
+          return
         end
-        stored_auth
+
+        # Create or update the dynamic table entry.
+        if stored_auth[uid].blank?
+          stored_auth[uid] = stored_auth_entry(token)
+        elsif stored_auth[uid][:access_token] != token
+          stored_auth[uid][:access_token] = token
+        else
+          token = nil
+        end
+
+        # Update the database table if there was a change.
+        if token
+          User.find_or_create_by(email: uid) { |u| u.access_token = token }
+        end
+
+        # Return with the relevant entry.
+        stored_auth.slice(uid)
+      end
+
+      # Produce a stored_auth table entry value.
+      #
+      # @param [String] token
+      #
+      # @return [Hash{Symbol=>String}]
+      #
+      def self.stored_auth_entry(token)
+        { access_token: token, token_type: 'bearer', scope: 'basic' }
       end
 
     end

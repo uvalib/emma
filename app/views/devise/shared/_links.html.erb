@@ -34,13 +34,16 @@
       }
   end
 
-  # NOTE: Non-production sign-in-as links.
-  links +=
-    OmniAuth::Strategies::Bookshare.stored_auth.keys.map { |id|
-      label = get_sessions_label(:sign_in_as, user: id)
-      path  = sign_in_as_path(id: id)
-      [label, path]
-    }.compact
+  unless application_deployed?
+    links +=
+      OmniAuth::Strategies::Bookshare.stored_auth.keys.map { |id|
+        user  = html_tag(:strong, id)
+        label = get_sessions_label(:sign_in_as, user: user).html_safe
+        path  = sign_in_as_path(id: id)
+        [label, path]
+      }.compact
+  end
+
 -%>
 
 <%- links.each do |label, path| -%>
