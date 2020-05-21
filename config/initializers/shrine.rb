@@ -108,6 +108,15 @@ if CLOUD_STORAGE
     access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
   }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
+  $stderr.puts "\nRails.application.credentials.s3:\n#{Rails.application.credentials.s3.pretty_inspect}"
+  $stderr.puts "\n"
+  $stderr.puts "AWS_BUCKET        = #{ENV['AWS_BUCKET'].inspect}"
+  $stderr.puts "AWS_REGION        = #{ENV['AWS_REGION'].inspect}"
+  $stderr.puts "AWS_SECRET_KEY    = #{ENV['AWS_SECRET_KEY'].inspect}"
+  $stderr.puts "AWS_ACCESS_KEY_ID = #{ENV['AWS_ACCESS_KEY_ID'].inspect}"
+  $stderr.puts "\n"
+  $stderr.puts "ENV =\n#{ENV.pretty_inspect}"
+
   # Prepend a distinguishing prefix for development.
   storages.transform_values! { |v| "rwl_#{v}" } unless application_deployed?
 
