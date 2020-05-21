@@ -102,7 +102,7 @@ if CLOUD_STORAGE
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.
   s3_options = {
-    bucket:            ENV['AWS_BUCKET'],
+    bucket:            ENV.fetch('AWS_BUCKET', 'emma-storage-staging'),
     region:            ENV['AWS_REGION'],
     secret_access_key: ENV['AWS_SECRET_KEY'],
     access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
