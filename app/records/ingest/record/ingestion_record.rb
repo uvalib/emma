@@ -123,7 +123,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
       data[:emma_repositoryRecordId] ||= src[:repository_id]
-      data[:emma_retrievalLink]        = make_retrieval_link(data[:emma_retrievalLink])
       data[:dc_title]                ||= 'TITLE MISSING' # TODO: ???
       data[:dc_format]               ||= src[:fmt]
 
@@ -131,6 +130,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
     else
       super(src, **opt)
     end
+    self.emma_retrievalLink ||= make_retrieval_link
     @serializer_type ||= DEFAULT_SERIALIZER_TYPE # TODO: remove
     $stderr.puts "CREATE IngestionRecord | final fields = #{fields.inspect}" # TODO: remove
   end
@@ -157,12 +157,13 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   # Produce a retrieval link for an item.
   #
-  # @param [String] value
+  # @param [String] repository_id
   #
   # @return [String]
   #
-  def make_retrieval_link(value)
-    'https://emmadev.internal.lib.virginia.edu' # TODO: ???
+  def make_retrieval_link(repository_id = nil)
+    repository_id ||= (emma_repositoryRecordId rescue nil)
+    Upload.make_retrieval_link(nil, repository_id)
   end
 
 end

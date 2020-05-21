@@ -179,15 +179,17 @@ module SearchHelper
         "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
       end
 
-    case item.emma_repository.to_s
-      when 'emma', 'bookshare'
-        download_links(item, label: label, url: url, **html_opt)
-    # when 'hathiTrust'
-    #   TODO: hathiTrust retrieval link
-    # when 'internetArchive'
-    #   TODO: internetArchive retrieval link
-      else
+    case (source = item.emma_repository.presence).to_s
+      when 'emma'
         external_link(label, url, **html_opt)
+      when 'bookshare'
+        download_links(item, label: label, url: url, **html_opt)
+      when 'hathiTrust'
+        external_link(label, url, **html_opt) # TODO: hathiTrust retrieval
+      when 'internetArchive'
+        external_link(label, url, **html_opt) # TODO: internetArchive retrieval
+      else
+        Log.error { "#{__method__}: #{source.inspect}: unexpected" } if source
     end
   end
 

@@ -239,6 +239,8 @@ class Upload < ApplicationRecord
   # @option opt [String]         :file_data
   # @option opt [String]         :emma_data
   #
+  # @option opt [String]         :base_url  Used to generate emma_retrievalLink
+  #
   # @return [void]
   #
   # This method overrides:
@@ -250,6 +252,7 @@ class Upload < ApplicationRecord
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
     attr, data = partition_options(opt, *field_names)
+    url = data.delete(:base_url)
 
     # Get value for :file_data as JSON.
     fd = data.delete(:file) || attr[:file_data]
@@ -262,11 +265,18 @@ class Upload < ApplicationRecord
       }
     end
 
-    # Update :emma_data attribute directly now (and not via super).
+    # Update :emma_data attribute directly now (and not via super), ensuring
+    # that crucial attributes are given a value.
     ed = attr.delete(:emma_data)
     ed = json_parse(ed) unless ed.is_a?(Hash)
     ed = reject_blanks(ed)
     data.reverse_merge!(ed) if ed.present?
+    data[:emma_repository] ||=
+      attr[:repository] || DEFAULT_REPO
+    data[:emma_repositoryRecordId] ||=
+      attr[:repository_id] || self.class.generate_repository_id
+    data[:emma_retrievalLink] ||=
+      self.class.make_retrieval_link(url, data[:emma_repositoryRecordId])
     set_emma_data(data)
 
     # Adjust format/extension if a format was specified manually.
@@ -280,9 +290,8 @@ class Upload < ApplicationRecord
     # Ensure that crucial attributes are given a value.
     attr[:updated_at]      = DateTime.now
     attr[:created_at]    ||= attr[:updated_at]
-    attr[:repository]    ||= data[:emma_repository] || DEFAULT_REPO
+    attr[:repository]    ||= data[:emma_repository]
     attr[:repository_id] ||= data[:emma_repositoryRecordId]
-    attr[:repository_id] ||= self.class.generate_repository_id
     attr[:fmt]           ||= file && mime_to_fmt(file.mime_type) || new_fmt
     attr[:ext]           ||= file&.extension || new_ext
 
@@ -399,6 +408,30 @@ class Upload < ApplicationRecord
     file_attacher.load_data(file_data) unless file_attacher.attached?
     file
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Generate a link to the uploaded file which can be used to download the file
+  # to the client browser.
+  #
+  # @param [Hash] opt                 Passed to Shrine::UploadedFile#url.
+  #
+  # @return [String]
+  #
+  def download_link(**opt)
+    opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
+    attached_file.url(**opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Set :emma_data.
   #
@@ -544,6 +577,18 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   public
+
+  # Create a URL for use with :emma_retrievalLink.
+  #
+  # @param [String] base_url
+  # @param [String] repository_id
+  #
+  # @return [String]
+  #
+  def self.make_retrieval_link(base_url, repository_id)
+    base_url ||= 'https://emmadev.internal.lib.virginia.edu' # TODO: ???
+    File.join(base_url, 'download', repository_id).to_s
+  end
 
   # Create a unique repository item identifier.
   #

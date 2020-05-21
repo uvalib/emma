@@ -86,6 +86,7 @@ module UploadConcern
     upload = result.delete(:upload) || {}
     file   = upload[:file]
     result[:file_data] = file unless file.blank? || (file == '{}')
+    result[:base_url]  = request.base_url
     reject_blanks(result)
   end
 

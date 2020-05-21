@@ -40,7 +40,7 @@ class UploadController < ApplicationController
 
   # The @item_id member variable contains the original item specification, if
   # one was provided, and not the array of IDs represented by it.
-  before_action(only: %i[index show edit delete destroy]) do
+  before_action(only: %i[index show edit delete destroy download]) do
     @item_id = params[:selected] || params[:repository_id] || params[:id]
     @item_id = @item_id.presence
   end
@@ -114,7 +114,7 @@ class UploadController < ApplicationController
   #
   def new
     __debug_route
-    @item = Upload.new(user_id: @user.id)
+    @item = Upload.new(user_id: @user.id, base_url: request.base_url)
     respond_with(@item)
 
   rescue => error
@@ -272,6 +272,22 @@ class UploadController < ApplicationController
 
   end
 
+  # == GET /download/:id
+  #
+  # @see Upload#download_link.
+  #
+  def download
+    __debug_route
+    fail(:file_id) if @item_id.blank?
+    @item = Upload.get_record(@item_id) or fail(:find, @item_id)
+    @link = @item.download_link
+    respond_to do |format|
+      format.html { redirect_to(@link) }
+      format.json { render_json download_values }
+      format.xml  { render_xml  download_values }
+    end
+  end
+
   # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================
@@ -305,6 +321,16 @@ class UploadController < ApplicationController
     data = item.extract!(:file_data).first.last
     item[:file_data] = safe_json_parse(data)
     { entry: item }
+  end
+
+  # Response values for de-serializing download information to JSON or XML.
+  #
+  # @param [String] url
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def download_values(url = @link)
+    { url: url}
   end
 
 end

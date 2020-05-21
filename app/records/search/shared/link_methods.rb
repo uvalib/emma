@@ -55,15 +55,19 @@ module Search::Shared::LinkMethods
   def record_download_url
     return emma_retrievalLink if emma_retrievalLink.present?
     id    = emma_repositoryRecordId
-    fmt   = dc_format&.to_sym
+    dcfmt = dc_format&.to_sym
     src   = emma_repository&.to_sym
-    entry = REPOSITORY[src].presence      or raise 'invalid source'
-    path  = entry[:download_path]         or raise 'no download_path'
-    fmt   = entry.dig(:download_fmt, fmt) or raise "#{fmt}: invalid format"
+    entry = REPOSITORY[src].presence        or raise 'invalid source'
+    fmt   = entry.dig(:download_fmt, dcfmt) or raise "#{dcfmt}: invalid format"
     tag   = 'TAG' # TODO: Bookshare tag
     url   = entry[:download_url]
     url   = url[fmt.to_sym] if url.is_a?(Hash)
-    raise 'no download_url' unless url.present?
+    path  = entry[:download_path]
+    if path.blank? && (src == DEFAULT_REPOSITORY)
+      path = request.base_url if defined?(request)
+    end
+    raise 'no download_path' if path.blank?
+    raise 'no download_url'  if url.blank?
     url % { id: id, fmt: fmt, tag: tag, download_path: path }
 
   rescue RuntimeError => e

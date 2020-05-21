@@ -33,8 +33,8 @@ en:
         name:           'EMMA'
         logo:           'EMMA-logo-UVAbg.png'
         title_path:     '/upload'
-        download_path:  'https://emma.lib.virginia.edu/artifact'
-        download_url:   '%{download_path}/%{id}/%{fmt}'
+        download_path:  ~ # Use `request.base_url`.
+        download_url:   '%{download_path}/upload/download/%{id}'
 
       bookshare:
         <<:             *REPOSITORY_TEMPLATE
