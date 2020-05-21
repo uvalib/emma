@@ -3,17 +3,30 @@
   # Display the selected item in an expandable panel.
 
   item ||= nil or return
+  row  ||= 0
 
-  heading = "Selected item #{item.id} record details:" # TODO: I18n
+  if item.is_a?(Upload)
+    heading = "Selected item #{item.id} record details:" # TODO: I18n
+    classes = "selected-details row-#{row}"
+    toggle  = toggle_button(selector: ".#{classes.tr(' ', '.')}")
+  else
+    heading = "Item #{item} is not in the database" # TODO: I18n
+    classes = toggle = nil
+  end
 
 -%>
 
 <div class="selected-upload">
+
   <div class="toggle-panel-title">
     <h2 class="selected-header"><%= heading -%></h2>
-    <%= toggle_button(selector: '.selected-details') %>
+    <%= toggle %>
   </div>
-  <div class="selected-details">
-    <%= render 'upload/entry', item: item, skip: :number %>
-  </div>
+
+  <%- if toggle -%>
+    <div class="<%= classes -%>">
+      <%= render 'upload/entry', item: item, skip: :number %>
+    </div>
+  <%- end -%>
+
 </div>

@@ -21,9 +21,19 @@ module Search::Api::Common
 
   public
 
+  # The default repository for uploads.
+  #
+  # @type [Symbol]
+  #
+  # @see config/locales/source.en.yml
+  #
+  DEFAULT_REPOSITORY = I18n.t('emma.source._default').to_sym
+
   # Values associated with each source repository.
   #
   # @type [Hash{Symbol=>Hash}]
+  #
+  # @see config/locales/source.en.yml
   #
   # noinspection RailsI18nInspection
   REPOSITORY =
@@ -32,6 +42,8 @@ module Search::Api::Common
   # Type configurations.
   #
   # @type [Hash{Symbol=>Hash}]
+  #
+  # @see config/locales/types/search.en.yml
   #
   # noinspection RailsI18nInspection
   CONFIGURATION =
@@ -46,6 +58,8 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # @see config/locales/types/search.en.yml
+  #
   ENUMERATIONS =
     CONFIGURATION
       .transform_values { |cfg| cfg.except(:_default).keys.map(&:to_s) }
@@ -55,11 +69,15 @@ module Search::Api::Common
   #
   # @type [Array<Symbol>]
   #
+  # @see config/locales/types/search.en.yml
+  #
   ENUMERATION_TYPES = CONFIGURATION.keys.freeze
 
   # Enumeration default values.
   #
   # @type [Hash{Symbol=>String}]
+  #
+  # @see config/locales/types/search.en.yml
   #
   ENUMERATION_DEFAULTS =
     CONFIGURATION.transform_values { |cfg| cfg[:_default] || '' }.deep_freeze

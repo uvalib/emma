@@ -25,12 +25,16 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  # @see config/locales/types/bookshare.en.yml
+  #
   # noinspection RailsI18nInspection
   CONFIGURATION = I18n.t('emma.bookshare.type').deep_freeze
 
   # Enumeration scalar type names and properties.
   #
   # @type [Hash{Symbol=>Hash}]
+  #
+  # @see config/locales/types/bookshare.en.yml
   #
   # noinspection RailsI18nInspection
   ENUMERATIONS =
@@ -42,11 +46,15 @@ module Bs::Api::Common
   #
   # @type [Array<Symbol>]
   #
+  # @see config/locales/types/bookshare.en.yml
+  #
   ENUMERATION_TYPES = CONFIGURATION.keys.freeze
 
   # Enumeration default values.
   #
   # @type [Hash{Symbol=>String}]
+  #
+  # @see config/locales/types/bookshare.en.yml
   #
   ENUMERATION_DEFAULTS =
     CONFIGURATION.transform_values { |cfg| cfg[:_default] || '' }.deep_freeze

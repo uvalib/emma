@@ -2,7 +2,10 @@
 #
 # Data type enumerations for the Bookshare API
 #
-# @see Bs::Api::Common#CONFIGURATION
+# @see Bs::Api::Common::CONFIGURATION
+# @see Bs::Api::Common::ENUMERATIONS
+# @see Bs::Api::Common::ENUMERATION_TYPES
+# @see Bs::Api::Common::ENUMERATION_DEFAULTS
 
 en:
 

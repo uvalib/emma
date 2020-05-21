@@ -615,7 +615,7 @@ module UploadHelper
         data_opt = { class: 'upload-hidden' }
 
         # Communicate :file_data through the form as a hidden field.
-        file_data = item&.cached_file_data
+        file_data = item&.file_data&.to_json
         file_data = data_opt.merge!(id: 'upload_file_data', value: file_data)
         file_data = f.hidden_field(:file, file_data)
 
@@ -864,19 +864,21 @@ module UploadHelper
 
   # Generate a form with controls for deleting a file and its entry.
   #
-  # @param [Upload] item
-  # @param [String] label             Label for the submit button.
-  # @param [Hash]   opt               Passed to 'file-upload-delete' except for
+  # @param [Array<String,Upload>] items
+  # @param [String]               label   Label for the submit button.
+  # @param [Boolean]              force   @see #upload_delete_submit
+  # @param [Hash]                 opt     Passed to 'file-upload-delete' except
+  #                                         for:
   #
-  # @option opt [String] :cancel      URL for cancel button action (default:
-  #                                     :back).
+  # @option opt [String] :cancel          URL for cancel button action
+  #                                         (default: :back).
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_form(item, label: nil, **opt)
+  def upload_delete_form(*items, label: nil, force: nil, **opt)
     html_div(class: 'file-upload-container delete') do
       opt    = prepend_css_classes(opt, 'file-upload-delete')
-      submit = upload_delete_submit(item, label: label)
+      submit = upload_delete_submit(*items, label: label, force: force)
       cancel = upload_delete_cancel(url: opt.delete(:cancel))
       html_div(opt) { submit << cancel }
     end
@@ -884,22 +886,20 @@ module UploadHelper
 
   # upload_delete_submit
   #
-  # @param [Upload, Array<Upload>] item
-  # @param [Hash]                  opt    Passed to #make_link except for:
+  # @param [Array<String,Upload>] items
+  # @param [Hash]                 opt     Passed to #make_link except for:
   #
-  # @option opt [String] :label           Override link label.
+  # @option opt [String]  :label          Override link label.
+  # @option opt [Boolean] :force          If *true*, add 'force=true' to the
+  #                                         form submission URL.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_submit(item, **opt)
-    opt, html_opt = partition_options(opt, :label)
+  def upload_delete_submit(*items, **opt)
+    opt, html_opt = partition_options(opt, :label, :force)
     label = opt[:label] || UPLOAD_DELETE_VALUES[:submit][:label]
-    if item.is_a?(Array)
-      ids = item.map(&:id).join(',')
-    else
-      ids = item.id
-    end
-    url = ids ? upload_path(id: ids) : ''
+    ids   = Upload.collect_ids(*items).join(',').presence
+    url   = ids ? upload_path(**opt.slice(:force).merge!(id: ids)) : ''
     prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
     append_css_classes!(html_opt, (url.presence ? 'best-choice' : 'forbidden'))
     html_opt[:'aria-role'] ||= 'button'

@@ -31,7 +31,6 @@ en:
           user_id:                  'User ID'
           repository:               'Repository'
           repository_id:            'Repository ID'
-          #file_id:                  'File ID'
           fmt:                      'Fmt'
           ext:                      'Ext'
           state:                    'Status'

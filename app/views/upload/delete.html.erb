@@ -3,8 +3,10 @@
   # Prompt to remove an existing file entry.
 
   title ||= t('emma.upload.delete.title')
-  item  ||= @item
-  repo  ||= item&.repository
+  force ||= @force
+  list  ||= @list
+  list    = Array.wrap(list)
+  repo  ||= list.find { |e| break e.repository if e.is_a?(Upload) }
   logo  ||= repository_source_logo(repo)
 
   unless modal?
@@ -21,17 +23,19 @@
 </div>
 <%= upload_description %>
 
-<%- if item.blank? -%>
+<%- if list.blank? -%>
 
   <%= render 'upload/select_entry' %>
   <%= upload_notes %>
 
 <%- else -%>
 
-  <%= render 'upload/selected', item: item %>
+  <%- list.each_with_index do |item, idx| -%>
+    <%= render 'upload/selected', item: item, row: idx %>
+  <%- end -%>
 
   <%= upload_directions %>
-  <%= upload_delete_form(item) %>
+  <%= upload_delete_form(*list, force: force) %>
   <%= upload_preview %>
 
 <%- end -%>

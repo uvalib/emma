@@ -54,13 +54,6 @@ en:
           tooltip:      'Repository identifier associated with the uploaded file'
           origin:       system
 
-        #file_id:
-        #  min:          0
-        #  max:          1
-        #  label:        'File ID'
-        #  tooltip:      'Additional repository identifier associated with the uploaded file'
-        #  origin:       system
-
         fmt:
           min:          1
           max:          1

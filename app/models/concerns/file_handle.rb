@@ -133,7 +133,7 @@ class FileHandle
   #
   def __debug_handle(*args, **opt, &block)
     opt[:separator] ||= ' | '
-    opt[:leader] = ['FileHandle', *opt[:leader]].compact.join(opt[:separator])
+    opt[:leader] = [*opt[:leader], 'FileHandle'].compact.join(opt[:separator])
     __debug_items(*args, opt, &block)
   end
 

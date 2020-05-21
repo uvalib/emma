@@ -21,6 +21,7 @@ module OmniAuth
     #
     class Bookshare < OmniAuth::Strategies::OAuth2
 
+      include Emma::Json
       include Emma::Debug
 
 =begin
@@ -1046,8 +1047,6 @@ module OmniAuth
       # =======================================================================
 
       public
-
-      extend Emma::Json
 
       # A table of pre-authorized user/token pairs for development purposes.
       #

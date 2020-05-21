@@ -124,6 +124,9 @@ module Emma
     # environment).
     # config.active_job.queue_adapter     = :resque
     # config.active_job.queue_name_prefix = "emma_#{Rails.env}"
+=begin
+    config.active_job.queue_adapter = :test # TODO: testing - remove
+=end
 
     # =========================================================================
     # ActiveStorage

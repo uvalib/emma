@@ -284,6 +284,11 @@ $upload-entry-gap: 2rem;
                     text-decoration:  none;
                     background-color: white;
                 }
+
+                // noinspection CssBrowserCompatibilityForProperties
+                &:focus {
+                    outline-offset: -0.05rem;
+                }
             }
         }
 
@@ -372,6 +377,20 @@ form.select-entry {
         @media #{$not-narrow-screen} {
             margin-left:  2rem;
             margin-right: 2rem;
+        }
+    }
+
+    // Reduce spacing between successive instances.
+    & + .selected-upload {
+
+        margin-top: -1rem;
+
+        .selected-header {
+            margin-top: 0;
+        }
+
+        .toggle {
+            margin-top: -0.25rem;
         }
     }
 }

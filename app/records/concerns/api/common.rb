@@ -509,7 +509,7 @@ class EnumType < ScalarType
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # == Implementation Note
+  # == Implementation Notes
   # This needs to be a class variable so that all subclasses reference the same
   # set of values.
   #

@@ -17,7 +17,6 @@ en:
       exts:
         - 'dtbook'                          # TODO: Unsure about "dtbook"
         - 'daisyAudio'
-        - 'daisy'
 
       # =======================================================================
       # FORMAT_FIELDS

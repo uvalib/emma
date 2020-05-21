@@ -8,15 +8,12 @@ __loading_begin(__FILE__)
 # A file object uploaded from the client.
 #
 # @!attribute [r] file
+#   A de-serialized representation of the :file_data column for this model.
 #   @return [FileUploader::UploadedFile]
 #
 # @!attribute [r] file_attacher
 #   Inserted by Shrine::Plugins:Activerecord.
 #   @return [FileUploader::Attacher]
-#
-# @!attribute [r] cached_file_data
-#   Inserted by Shrine::Plugins:CachedAttachmentData.
-#   @return [String, nil]
 #
 class Upload < ApplicationRecord
 
@@ -39,13 +36,47 @@ class Upload < ApplicationRecord
     # @return [FileUploader::Attacher]
     attr_reader :file_attacher
 
-    # @return [String, nil]
-    attr_reader :cached_file_data
-
   end
   # :nocov:
 
-  DEFAULT_REPO = LogoHelper::DEFAULT_REPO.to_s.freeze
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The default repository for uploads.
+  #
+  # @type [String]
+  #
+  DEFAULT_REPO = Search::Api::Common::DEFAULT_REPOSITORY.to_s.freeze
+
+  # Non decimal-digit character(s) leading all repository ID's.
+  #
+  # This prefix serves to guarantee that repository ID's are distinct from
+  # database ID's (which are only decimal digits).
+  #
+  # @type [String]
+  #
+  REPO_ID_PREFIX = 'u'
+
+  # The maximum age (in seconds) allowed for download links which are meant to
+  # be valid only for a single time.
+  #
+  # This should be generous to allow for network delays.
+  #
+  # @type [Integer]
+  #
+  ONE_TIME_USE_EXPIRATION = 10
+
+  # The maximum age (in seconds) allowed for download links.
+  #
+  # This allows the link to be reused for a while, but not long enough to allow
+  # sharing of content URLs for distribution.
+  #
+  # @type [Integer]
+  #
+  DOWNLOAD_EXPIRATION = 1800
 
   # ===========================================================================
   # :section: Fields
@@ -91,7 +122,6 @@ class Upload < ApplicationRecord
   validates_presence_of :user_id
   validates_presence_of :repository
   validates_presence_of :repository_id
-  #validates_presence_of :file_id,       allow_nil: true
   validates_presence_of :fmt
   validates_presence_of :ext
   validates_presence_of :created_at
@@ -117,6 +147,37 @@ class Upload < ApplicationRecord
   end
 =end
 
+  before_validation { note_cb(:before_validation) } if DEBUG_SHRINE
+  after_validation  { note_cb(:after_validation) }  if DEBUG_SHRINE
+  before_save       { note_cb(:before_save) }       if DEBUG_SHRINE
+  before_create     { note_cb(:before_create) }     if DEBUG_SHRINE
+  after_create      { note_cb(:after_create) }      if DEBUG_SHRINE
+  after_save        { note_cb(:after_save) }        if DEBUG_SHRINE
+  after_commit      { note_cb(:after_commit) }      if DEBUG_SHRINE
+
+  # :before_save # should be triggering:
+  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save
+  #     Shrine::Attacher::InstanceMethods#save
+  #
+  # :after_commit, on: %i[create update] # should be triggering:
+  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_save
+  #     Shrine::Attacher::InstanceMethods#finalize
+  #       Shrine::Attacher::InstanceMethods#destroy_previous
+  #       Shrine::Attacher::InstanceMethods#promote_cached
+  #         Shrine::Attacher::InstanceMethods#promote
+  #     Shrine::Plugins::Activerecord::AttacherMethods#activerecord_persist
+  #       ActiveRecord::Persistence#save
+  #
+  # :after_commit, on: %i[destroy] # should be triggering:
+  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_destroy
+  #     Shrine::Attacher::InstanceMethods#destroy_attached
+  #       Shrine::Attacher::InstanceMethods#destroy
+
+  before_save :promote_file
+  #  after_commit :promote_file, on: %i[create update]
+  #  after_commit :delete_file,  on: %i[destroy]
+
+=begin
   # TODO: this might need to be removed.
   # Shrine actually leaves the cached version of the file around (based on the
   # assumption that there will be a age-based cleanup of that directory).  But
@@ -125,6 +186,7 @@ class Upload < ApplicationRecord
   after_destroy do
     file_attacher.destroy if file_attacher.attached?
   end
+=end
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -140,20 +202,19 @@ class Upload < ApplicationRecord
   def initialize(opt = nil, &block)
     __debug_args(binding)
     super(opt, &block)
-    __debug_items do
+    __debug_items(leader: 'new UPLOAD') do
       {
-        id:               id,
-        user_id:          user_id,
-        repository:       repository,
-        repository_id:    repository_id,
-        fmt:              fmt,
-        ext:              ext,
-        state:            state,
-        emma_data:        emma_data,
-        file_data:        file_data,
-        file:             (file || 'file NOT PRESENT'),
-        file_attacher:    (file_attacher || 'file_attacher NOT PRESENT'),
-        cached_file_data: (cached_file_data || 'cached_file_data NOT PRESENT')
+        id:               self[:id],
+        user_id:          self[:user_id],
+        repository:       self[:repository],
+        repository_id:    self[:repository_id],
+        fmt:              self[:fmt],
+        ext:              self[:ext],
+        state:            self[:state],
+        emma_data:        self[:emma_data],
+        file_data:        self[:file_data],
+        file:             (file             || '(NOT PRESENT)'),
+        file_attacher:    (file_attacher    || '(NOT PRESENT)')
       }
     end
   end
@@ -189,16 +250,10 @@ class Upload < ApplicationRecord
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
     attr, data = partition_options(opt, *field_names)
-    $stderr.puts "#{__method__} | attr = #{attr.inspect}"
-    $stderr.puts "#{__method__} | data = #{data.inspect}"
-    $stderr.puts "#{__method__} | opt  = #{opt.inspect}"
 
-    # Get value for :file_data.
-    if (fd = data.delete(:file))
-      attr[:file_data] = fd.is_a?(Hash) ? fd.to_json : fd
-    elsif (fd = attr[:file_data]).is_a?(Hash)
-      attr[:file_data] = fd.to_json
-    end
+    # Get value for :file_data as JSON.
+    fd = data.delete(:file) || attr[:file_data]
+    attr[:file_data] = fd.is_a?(Hash) ? fd.to_json : fd
 
     __debug_items do
       {
@@ -207,8 +262,10 @@ class Upload < ApplicationRecord
       }
     end
 
-    # Update value for :emma_data.
-    ed = reject_blanks(json_parse(attr[:emma_data]))
+    # Update :emma_data attribute directly now (and not via super).
+    ed = attr.delete(:emma_data)
+    ed = json_parse(ed) unless ed.is_a?(Hash)
+    ed = reject_blanks(ed)
     data.reverse_merge!(ed) if ed.present?
     set_emma_data(data)
 
@@ -221,11 +278,13 @@ class Upload < ApplicationRecord
     end
 
     # Ensure that crucial attributes are given a value.
-    attr[:repository]    ||= DEFAULT_REPO
-    attr[:repository_id] ||= id
+    attr[:updated_at]      = DateTime.now
+    attr[:created_at]    ||= attr[:updated_at]
+    attr[:repository]    ||= data[:emma_repository] || DEFAULT_REPO
+    attr[:repository_id] ||= data[:emma_repositoryRecordId]
+    attr[:repository_id] ||= self.class.generate_repository_id
     attr[:fmt]           ||= file && mime_to_fmt(file.mime_type) || new_fmt
     attr[:ext]           ||= file&.extension || new_ext
-    attr[:updated_at]    ||= DateTime.now
 
     # Update attributes.
     super(attr)
@@ -279,7 +338,7 @@ class Upload < ApplicationRecord
     @parser ||=
       begin
         class_name = "#{fmt.to_s.camelize}Parser"
-        class_name.constantize.new(attached_file_io)
+        class_name.constantize.new(attached_file&.to_io)
       rescue => e
         # noinspection RubyScope
         __debug  { "Upload.parser: #{class_name} not valid" }
@@ -337,7 +396,7 @@ class Upload < ApplicationRecord
   # @return [FileUploader::UploadedFile]
   #
   def attached_file
-    file_attacher.attach_cached(file_data) unless file_attacher.attached?
+    file_attacher.load_data(file_data) unless file_attacher.attached?
     file
   end
 
@@ -346,19 +405,17 @@ class Upload < ApplicationRecord
   # @param [Search::Record::MetadataRecord, Hash, String, nil] data
   #
   # @return [String]
-  # @return [nil]
   #
   # noinspection RubyYardReturnMatch
   def set_emma_data(data)
     @emma_record   = nil # Force regeneration.
     @emma_metadata = self.class.parse_emma_data(data)
-    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata&.to_json
+    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata.to_json
   end
 
   # Present :emma_data as a structured object (if it is present).
   #
   # @return [Search::Record::MetadataRecord]
-  # @return [nil]
   #
   def emma_record
     @emma_record ||= Search::Record::MetadataRecord.new(emma_metadata)
@@ -367,38 +424,9 @@ class Upload < ApplicationRecord
   # Present :emma_data as a hash (if it is present).
   #
   # @return [Hash]
-  # @return [nil]
   #
   def emma_metadata
     @emma_metadata ||= self.class.parse_emma_data(emma_data)
-  end
-
-=begin
-  # Properties of the attached file object.
-  #
-  # @return [Hash]
-  #
-  # @see #extract_file_object_properties
-  #
-  def file_properties
-    @file_prop ||= extract_file_object_properties
-    @file_prop || {}
-  end
-=end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Direct access to the contents of the attached file.
-  #
-  # @return [IO]
-  # @return [nil]
-  #
-  def attached_file_io
-    attached_file&.send(:io) # This is a private method.
   end
 
   # ===========================================================================
@@ -407,27 +435,23 @@ class Upload < ApplicationRecord
 
   protected
 
-  extend Emma::Json
-  extend Emma::Json
-
   # parse_emma_data
   #
   # @param [Search::Record::MetadataRecord, String, Hash] data
   #
   # @return [Hash]
-  # @return [nil]
   #
   # noinspection RubyYardParamTypeMatch
   def self.parse_emma_data(data)
-    return if data.blank?
-    result =
+    reject_blanks(
       case data
+        when nil                            then {}
         when Search::Record::MetadataRecord then data.as_json
         when Hash                           then data.deep_symbolize_keys
         when String                         then json_parse(data)
         else raise "#{data.class}: unexpected data type"
       end
-    remove_blanks(result)
+    )
 
   rescue => e
     Log.error do
@@ -516,6 +540,139 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section: Class methods - records
+  # ===========================================================================
+
+  public
+
+  # Create a unique repository item identifier.
+  #
+  # @param [String] prefix            Character(s) leading the numeric portion.
+  #
+  # @return [String]
+  #
+  # == Implementation Notes
+  # The result is a (single-character) prefix followed by 8 hexadecimal digits
+  # which represent seconds into the epoch followed by a single random hex
+  # digit.  (Depending on the granularity of the system clock this appears to
+  # be a better tie-breaker than Time#tv_nsec).
+  #
+  def self.generate_repository_id(prefix = REPO_ID_PREFIX)
+    sprintf("#{prefix}%x%x", Time.now.tv_sec, rand(16))
+  end
+
+  # Get the Upload record by either :id or :repository_id.
+  #
+  # @param [String] identifier
+  #
+  # @return [Upload, nil]
+  #
+  def self.get_record(identifier)
+    find_by(**id_term(identifier))
+  end
+
+  # Get the Upload records specified by either :id or :repository_id.
+  #
+  # Additional constraints may be supplied via *opt*.  If no *identifiers* are
+  # supplied then this method is essentially an invocation of #where which
+  # returns the matching records.
+  #
+  # @param [Array<Upload, String, Integer, Array>] ids  @see #collect_ids
+  # @param [Hash]                                  opt  Passed to #where.
+  #
+  # @return [Array<Upload>]
+  #
+  def self.get_records(*identifiers, **opt)
+    ids  = []
+    rids = []
+    collect_ids(*identifiers).each do |identifier|
+      id_term(identifier)[:id] ? (ids << identifier) : (rids << identifier)
+    end
+    result =
+      if ids.present? && rids.present?
+        terms = sql_terms(id: ids, repository_id: rids, join: :or)
+        terms = sql_terms(opt, terms, join: :and) if opt.present?
+        where(terms)
+      else
+        opt[:id]            = ids  if ids.present?
+        opt[:repository_id] = rids if rids.present?
+        where(**opt)               if opt.present?
+      end
+    result&.records || []
+  end
+
+  # Transform a mixture of ID representations into a list of single IDs.
+  #
+  # Any parameter may be (or contain):
+  # - A single ID as a String or Integer
+  # - A set of IDs as a string of the form /\d+(,\d+)*/
+  # - A range of IDs as a string of the form /\d+-\d+/
+  # - A range of the form /-\d+/ is interpreted as /0-\d+/
+  #
+  # @param [Array<Upload, String, Integer, Array>] ids
+  #
+  # @return [Array<String>]
+  #
+  # == Examples
+  #
+  # @example Single
+  #   collect_ids('123') -> %w(123)
+  #
+  # @example Sequence
+  #   collect_ids('123,789') -> %w(123 789)
+  #
+  # @example Range
+  #   collect_ids('123-126') -> %w(123 124 125 126)
+  #
+  # @example Mixed
+  #   collect_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
+  #
+  def self.collect_ids(*ids)
+    ids.flatten.flat_map { |id|
+      id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
+    }.flat_map { |id| id_range(id) }.compact.uniq
+  end
+
+  # Interpret an ID string as a range of IDs if possible
+  #
+  # @param [String, Upload, Integer] id
+  #
+  # @return [Array<String>]
+  #
+  def self.id_range(id)
+    if id.is_a?(Upload)
+      id = id.id
+    elsif !id.is_a?(String)
+      id = id.to_s
+    elsif id.include?('-') && id.gsub(/[\-\d]/, '').blank?
+      min, max = id.split('-')
+      max = [0, max.to_i].max
+      # noinspection RubyNilAnalysis
+      if max.nonzero?
+        min = [0, min.to_i].max
+        min, max = [max, min] if max < min
+        id = (min..max).map(&:to_s)
+      elsif id.match?(/^0\d*$/)
+        id = id.to_i.to_s
+      end
+    end
+    Array.wrap(id.presence)
+  end
+
+  # Interpret an identifier as either an :id or :repository_id, generating a
+  # field/value pair for use with #find_by or #where.
+  #
+  # @param [String, Symbol] id
+  #
+  # @return [Hash{Symbol=>String}]    Result will have only one entry.
+  #
+  def self.id_term(id)
+    id          = id.to_s.strip
+    digits_only = id.tr('0-9', '').blank?
+    digits_only ? { id: id } : { repository_id: id }
+  end
+
+  # ===========================================================================
   # :section: Validations
   # ===========================================================================
 
@@ -593,6 +750,67 @@ class Upload < ApplicationRecord
         end
       end
     end
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Make a debug output note to mark when a callback has occurred.
+  #
+  # @param [Symbol] type
+  #
+  # @return [void]
+  #
+  # == Usage Notes
+  # EVENT                                 SHOULD BE CALLED AUTOMATICALLY:
+  # before_save:                          activerecord_before_save
+  # after_commit, on: %i[create update]   activerecord_after_save
+  # after_commit, on: %i[destroy]         activerecord_after_destroy
+  #
+  def note_cb(type)
+    __debug_line("*** UPLOAD CALLBACK #{type} ***")
+  end
+
+  # Finalize a file upload by promoting the :cache file to a :store file.
+  #
+  # @return [void]
+  #
+  def promote_file
+    __debug_args(binding)
+    file_attacher.attach_cached(file_data) unless file_attacher.attached?
+  rescue Shrine::FileNotFound => e
+    Log.warn { "#{__method__}: #{e.message} [FILE_NOT_FOUND]" }
+  rescue Shrine::InvalidFile => e
+    Log.warn { "#{__method__}: #{e.message} [INVALID_FILE]" }
+  rescue Shrine::AttachmentChanged => e
+    Log.warn { "#{__method__}: #{e.message} [ATTACHMENT_CHANGED]" }
+  rescue Shrine::Error => e
+    Log.error { "#{__method__}: #{e.message} [unexpected Shrine error]" }
+  rescue => e
+    Log.error { "#{__method__}: #{e.message} [#{e.class} unexpected]" }
+  end
+
+  # Finalize a deletion by the removing the file from :cache and/or :store.
+  #
+  # @return [void]
+  #
+  def delete_file
+    __debug_args(binding)
+    file_attacher.attach_cached(file_data) unless file_attacher.attached?
+    file_attacher.destroy
+  rescue Shrine::FileNotFound => e
+    Log.warn { "#{__method__}: #{e.message} [FILE_NOT_FOUND]" }
+  rescue Shrine::InvalidFile => e
+    Log.warn { "#{__method__}: #{e.message} [INVALID_FILE]" }
+  rescue Shrine::AttachmentChanged => e
+    Log.warn { "#{__method__}: #{e.message} [ATTACHMENT_CHANGED]" }
+  rescue Shrine::Error => e
+    Log.error { "#{__method__}: #{e.message} [unexpected Shrine error]" }
+  rescue => e
+    Log.error { "#{__method__}: #{e.message} [#{e.class} unexpected]" }
   end
 
 end

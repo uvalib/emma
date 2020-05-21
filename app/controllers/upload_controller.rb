@@ -38,6 +38,13 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
+  # The @item_id member variable contains the original item specification, if
+  # one was provided, and not the array of IDs represented by it.
+  before_action(only: %i[index show edit delete destroy]) do
+    @item_id = params[:selected] || params[:repository_id] || params[:id]
+    @item_id = @item_id.presence
+  end
+
   respond_to :html
   respond_to :json, :xml, except: %i[edit] # TODO: ???
 
@@ -47,13 +54,22 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload
+  # == GET /upload[?(id|repository_id|selected)=ITEM_SPEC]
   # Display the current user's uploads.
+  #
+  # If an item specification is given via the :id, :repository_id, or :selected
+  # option then the results will be limited to the matching upload(s).
+  # NOTE: Currently this is not limited only to the current user's uploads.
+  #
+  # @see Upload#get_records
   #
   def index
     __debug_route
     opt   = pagination_setup
-    @list = @user ? Upload.where(user_id: @user.id) : []
+    @list = nil
+    @list ||= (Upload.get_records(*@item_id) if @item_id)
+    @list ||= (Upload.get_records(*@item_id, user_id: @user.id) if @user)
+    @list ||= []
     self.page_items  = @list
     self.total_items = @list.size
     self.next_page   = next_page_path(@list, opt)
@@ -62,24 +78,39 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
+
+  rescue => error
+    flash_failure(error)
+    redirect_back(fallback_location: root_path)
+
   end
 
   # == GET /upload/:id
+  # == GET /upload/ITEM_SPEC
   # Display a single upload.
+  #
+  # @see Upload#get_record
   #
   def show
     __debug_route
-    id = params[:id]        or fail(:file_id)
-    @item = Upload.find(id) or fail(:find, id)
+    fail(:file_id) if @item_id.blank?
+    @item = Upload.get_record(@item_id) or fail(:find, @item_id)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+
+  rescue => error
+    flash_failure(error)
+    redirect_back(fallback_location: upload_index_path)
+
   end
 
   # == GET /upload/new
   # Initiate creation of a new EMMA entry by prompting to upload a file.
+  #
+  # @see Upload#initialize
   #
   def new
     __debug_route
@@ -95,6 +126,7 @@ class UploadController < ApplicationController
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
   #
+  # @see UploadConcern#finalize_upload
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def create
@@ -115,17 +147,18 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/:id/edit
-  # == GET /upload/:repositoryId/edit
+  # == GET /upload/SELECT/edit
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
+  # @see Upload#get_record
+  #
   def edit
     __debug_route
-    id = params[:selected] || params[:id]
-    case id
-      when nil      then fail(:file_id)
-      when 'SELECT' then @item = nil
-      else               @item = Upload.find(id) or fail(:find, id)
+    fail(:file_id) if @item_id.blank?
+    @item = nil
+    unless @item_id == 'SELECT'
+      @item = Upload.get_record(@item_id) or fail(:find, @item_id)
     end
 
   rescue => error
@@ -134,19 +167,20 @@ class UploadController < ApplicationController
   end
 
   # == PUT   /upload/:id
-  # == PUT   /upload/:repositoryId
   # == PATCH /upload/:id
-  # == PATCH /upload/:repositoryId
   # Finalize modification of an existing EMMA entry.
+  #
+  # @see Upload#get_record
+  # @see UploadConcern#finalize_upload
   #
   def update
     __debug_route
     __debug_request
     data = upload_post_parameters
-    id   = data.delete(:id) or fail(:file_id)
-    @item = Upload.find(id) or fail(:find, id)
+    id   = data.delete(:id)       or fail(:file_id)
+    @item = Upload.get_record(id) or fail(:find, id)
     @item.update(data)
-    @item.errors.blank?     or fail(@item.errors)
+    @item.errors.blank?           or fail(@item.errors)
     finalize_upload(@item)
     post_response(:ok, @item.filename, redirect: upload_index_path)
 
@@ -158,17 +192,27 @@ class UploadController < ApplicationController
 
   end
 
-  # == GET /upload/:id/delete
-  # == GET /upload/:repositoryId/delete
+  # == GET /upload/delete/:id[?force=true]
+  # == GET /upload/delete/SELECT
   # Initiate removal of an existing EMMA entry along with its associated file.
+  #
+  # Use :force to attempt to remove an item from the EMMA Unified Search index
+  # even if a database record was not found.
+  #
+  # @see Upload#get_record
   #
   def delete
     __debug_route
-    id = params[:selected] || params[:id]
-    case id
-      when nil      then fail(:file_id)
-      when 'SELECT' then @item = nil
-      else               @item = Upload.find(id) or fail(:find, id)
+    ids    = Upload.collect_ids(@item_id).presence or fail(:file_id)
+    @force = true?(params[:force])
+    @list  = nil
+    unless ids.include?('SELECT')
+      @list =
+        ids.map do |id|
+          record = Upload.get_record(id)
+          fail(:find, id) unless record || @force
+          record || id
+        end
     end
 
   rescue => error
@@ -176,18 +220,20 @@ class UploadController < ApplicationController
 
   end
 
-  # == DELETE /upload/:id
-  # == DELETE /upload/:repositoryId
+  # == DELETE /upload/:id[?force=true]
+  # == DELETE /upload/ITEM_SPEC[?force=true]
   # Finalize removal of an existing EMMA entry.
+  #
+  # @see UploadConcern#destroy_upload
   #
   # noinspection RubyScope
   def destroy
     __debug_route
-    back = delete_select_upload_path
-    id   = params[:id] or fail(:file_id)
-    # noinspection RubyYardParamTypeMatch
-    succeeded, failed = destroy_upload(id)
-    fail(:find, failed) if failed.present?
+    ids    = Upload.collect_ids(@item_id).presence or fail(:file_id)
+    @force = true?(params[:force])
+    back   = delete_select_upload_path
+    succeeded, failed = destroy_upload(ids, force: @force)
+    fail(:find, failed) unless failed.blank? || @force
     post_response(:found, succeeded, redirect: back)
 
   rescue SubmitError => error
@@ -207,6 +253,7 @@ class UploadController < ApplicationController
   # == POST /upload/endpoint
   # Invoked from 'Uppy.XHRUpload'.
   #
+  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def endpoint

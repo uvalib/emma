@@ -30,7 +30,7 @@ class FileProperties < Hash
   #
   KEY_ALIAS_MAP = {
     repository:   %i[repo],
-    repositoryId: %i[repository_id id],
+    repositoryId: %i[repository_id],
     fmt:          %i[type],
     ext:          nil,
     filename:     %i[file_name file],

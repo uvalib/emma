@@ -12,6 +12,12 @@ module FileNaming
   include Emma::Mime
   include Emma::Debug
 
+  # If *true*, only known file types are considered acceptable.
+  #
+  # @type [TrueClass, FalseClass]
+  #
+  STRICT_FORMATS = false
+
   # ===========================================================================
   # :section: Module methods
   # ===========================================================================

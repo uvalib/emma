@@ -523,6 +523,13 @@ $(document).on('turbolinks:load', function() {
          * @param {Uppy.UppyFile} file
          * @param {Body}          response
          * @param {string}        upload_url
+         *
+         * == Implementation Notes
+         * The normal Shrine response has been augmented to include an
+         * 'emma_data' object in addition to the fields associated with
+         * 'file_data'.
+         *
+         * @see Shrine::UploadEndpointExt#make_response
          */
         function onFileUploadSuccess(file, response, upload_url) {
 

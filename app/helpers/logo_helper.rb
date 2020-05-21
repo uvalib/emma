@@ -19,7 +19,11 @@ module LogoHelper
 
   public
 
-  DEFAULT_REPO = :emma
+  # The default repository for uploads.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_REPO = Search::Api::Common::DEFAULT_REPOSITORY
 
   # Repository logo image assets.
   #

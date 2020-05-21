@@ -61,6 +61,7 @@ module Emma::Debug
     prms = meth.is_a?(Method) || (meth.is_a?(Symbol) && bind.is_a?(Binding))
     prms = (get_params(meth, bind, prms_opt) if prms)
     opt[:separator] ||= DEBUG_SEPARATOR
+    meth = __debug_label(caller_method: meth)
     __debug_items(meth&.to_s, *args, prms, opt, &block)
   end
 
@@ -160,6 +161,24 @@ module Emma::Debug
 
   public
 
+  # Representation of the calling method.
+  #
+  # @param [String, Symbol, Binding] caller_class   Default: `self.class.name`.
+  # @param [String, Symbol, nil]     caller_method  Default: `#calling_method`.
+  #
+  # @return [String]
+  #
+  def __debug_label(caller_class: nil, caller_method: nil)
+    caller_method = caller_method.name if caller_method.is_a?(Method)
+    if caller_class.is_a?(Binding)
+      caller_method ||= caller_class.eval('__method__')
+      caller_class = nil
+    end
+    caller_method ||= calling_method
+    caller_class  ||= self.class.name
+    "#{caller_class} #{caller_method}"
+  end
+
   # Representation of the controller/action for a route.
   #
   # @param [String, Symbol] controller  Default: `self.class.name`.
@@ -168,13 +187,13 @@ module Emma::Debug
   # @return [String]
   #
   def __debug_route_label(controller: nil, action: nil)
-    controller = (controller || self.class.name || params[:controller]).to_s
+    action     ||= calling_method
+    controller ||= self.class.name || params[:controller]
     controller =
-      controller.underscore.split('_').tap { |parts|
+      controller.to_s.underscore.split('_').tap { |parts|
         parts.pop if !controller.include?('_') && (parts.size > 1)
       }.map!(&:upcase).join('_')
-    action ||= calling_method
-    "#{controller} #{action}"
+    __debug_label(caller_class: controller, caller_method: action)
   end
 
   # __debug_session_hash
@@ -316,13 +335,21 @@ module Emma::Debug
   # Generate one or more inspections.
   #
   # @param [Hash, Array, *] value
-  # @param [Hash, nil]      opt       Options passed to #__debug_inspect.
+  # @param [Hash, nil]      opt       Options passed to #__debug_inspect except
+  #
+  # @option opt [Boolean] :compact    If *true*, ignore empty values (but show
+  #                                     if value is a FalseClass).
   #
   # @return [Array<String>]
   #
   def __debug_inspect_item(value, opt = nil)
+    compact = opt&.dig(:compact)
+    opt     = opt&.except(:compact)
     if value.is_a?(Hash)
-      value.map { |k, v| "#{k} = #{__debug_inspect(v, **opt)}" }
+      value.map { |k, v|
+        next if compact && v.blank? && !v.is_a?(FalseClass)
+        "#{k} = #{__debug_inspect(v, **opt)}"
+      }.compact
     else
       Array.wrap(value).map { |v| __debug_inspect(v, **opt) }
     end

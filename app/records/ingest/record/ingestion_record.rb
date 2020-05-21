@@ -122,7 +122,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
-      data[:emma_repositoryRecordId] ||= src[:repository_id] || src[:id]
+      data[:emma_repositoryRecordId] ||= src[:repository_id]
       data[:emma_retrievalLink]        = make_retrieval_link(data[:emma_retrievalLink])
       data[:dc_title]                ||= 'TITLE MISSING' # TODO: ???
       data[:dc_format]               ||= src[:fmt]

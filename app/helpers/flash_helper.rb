@@ -202,27 +202,47 @@ module FlashHelper
   # args[1] [Exception, String] error   Error (message) if :alert
   # args[*]                             Anything else passed to I18n#t.
   #
-  # @return [void]
+  # @return [String]
   #
   def flash_format(*args, topic:)
-    opt    = args.last.is_a?(Hash) ? args.pop : {}
+    opt    = args.last.is_a?(Hash) ? args.pop.dup : {}
     scope  = flash_i18n_scope
     method = args.shift
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case topic&.to_sym
-      when :success
-        opt[:file] = args.shift.inspect
-      when :failure
-        error = args.shift
-        error = error.message if error.respond_to?(:message)
-        opt[:error] = error.presence || DEFAULT_ERROR
+    error  = (args.shift if args.first.is_a?(Exception))
+    topic  = topic&.to_sym || (error ? :failure : :success)
+    fail   = (topic != :success)
+    msg    = fail ? Array.wrap(error&.message || DEFAULT_ERROR).dup : []
+    html   = args.any?(&:html_safe?)
+    if html
+      args.map! { |a| a.html_safe? ? a : ERB::Util.h(flash_item(a)) }
+      msg.map!  { |m| m.html_safe? ? m : ERB::Util.h(m.truncate(1024)) }
+      msg << '<br/>' if args.size > 1
+      msg << args.join('<br/>')
+    else
+      args.map! { |a| flash_item(a) }
+      msg.map!  { |m| m.truncate(1024) }
+      msg << nil unless msg.blank?
+      msg << args.join(', ')
     end
-    i18n_path = flash_i18n_path(scope, method, topic)
-    opt[:default] ||= []
+    opt[fail ? :error : :file] = msg.join(' ')
+    opt[:default] = Array.wrap(opt[:default]&.dup)
     opt[:default] << flash_i18n_path(scope, 'error', topic)
     opt[:default] << flash_i18n_path('error', topic)
     opt[:default] << DEFAULT_ERROR
-    I18n.t(i18n_path, **opt)
+    path   = flash_i18n_path(scope, method, topic)
+    result = I18n.t(path, **opt)
+    html ? result.html_safe : result
+  end
+
+  # flash_item
+  #
+  # @param [String] item
+  #
+  # @return [String]
+  #
+  def flash_item(item)
+    # noinspection RubyYardReturnMatch
+    (item.start_with?('"') ? item : item.inspect).truncate(1024)
   end
 
   # I18n scope based on the current class context.

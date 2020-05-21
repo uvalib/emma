@@ -25,24 +25,6 @@ module Search::Shared::LinkMethods
 
   public
 
-  # Values that are applicable to FileProperties.
-  #
-  # @return [Hash]
-  #
-  def file_properties
-    {
-      repository:   emma_repository,
-      repositoryId: emma_repositoryRecordId,
-      fmt:          dc_format
-    }.compact
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # URL of the associated work on the web site of the original repository.
   #
   # @return [String]

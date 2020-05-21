@@ -61,6 +61,8 @@ module LayoutHelper::Common
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see app/javascripts/feature/panel.js
+  #
   def toggle_button(**opt)
     opt, html_opt = partition_options(opt, :label, :selector)
     label = opt[:label] ? non_breaking(opt[:label]) : PANEL_OPENER_LABEL

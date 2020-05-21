@@ -89,70 +89,65 @@ module UploadConcern
     reject_blanks(result)
   end
 
-  # Insert or update Upload records.
+  # Process inserted or updated Upload records.
   #
-  # @param [Array<Upload,String,Array>] items
+  # @param [Array<Upload,Array<Upload>>] items  @see #collect_items
   #
-  # @return [Array<(Array,Array)>]    Succeeded paths and failed record IDs.
+  # @return [Array<(Array,Array)>]    Succeeded names and failed record IDs.
+  #
+  # @see #add_to_index
   #
   def finalize_upload(*items)
     items, failed = collect_items(*items)
-    add_to_index(*items) if failed.blank? # TODO: schedule index update
+    add_to_index(*items) unless failed.present?
     succeeded = items.map(&:filename)
     return succeeded, failed
   end
 
   # destroy_upload
   #
-  # @param [Array<Upload,String,Array>] items
+  # @param [Array<Upload,String,Array>] items   @see #collect_items
+  # @param [Boolean]                    force   Force removal of index entries
+  #                                               even if the related database
+  #                                               entries do not exist.
   #
   # @return [Array<(Array,Array)>]    Succeeded paths and failed record IDs.
   #
-  def destroy_upload(*items)
-    items, failed = collect_items(*items)
+  # @see #remove_from_index
+  #
+  def destroy_upload(*items, force: false)
     succeeded = []
-    unless failed.present?
-      remove_from_index(*items) # TODO: schedule index update
-      items.map do |item|
+    items, failed = collect_items(*items, force: force)
+    remove_from_index(*items, force: force) unless failed.present?
+    items = [] if failed.present?
+    items.each do |item|
+      if item.is_a?(Upload)
         name = item.filename
-        # TODO: Remove file from storage
-        # TODO: Remove record from 'uploads' table
-        item.destroy! # TODO: Can this be set up to delete the file?
-        succeeded << name
+        if item.destroy # TODO: Delete the file too
+          succeeded << name
+        else
+          failed << name
+        end
+      else
+        succeeded << "item #{item}" # TODO: I18n
       end
     end
     return succeeded, failed
   end
 
-  # Translate into an array of Upload instances.
-  #
-  # @param [String, Upload, Array<String,Upload>] item
-  #
-  # @return [Array<Upload>]
-  #
-  def upload_submission(item)
-    item = item.gsub(/\s/, '') if item.is_a?(String)
-    item = item.split(',')     if item.is_a?(String) && item.include?(',')
-    # noinspection RubyYardReturnMatch
-    case item
-      when Upload then [item]
-      when String then [Upload.find(email: item)]
-      when Array  then item.flat_map { |i| upload_submission(i) }.compact
-      else             []
-    end
-  end
-
   # ===========================================================================
-  # :section: TODO: temporary
+  # :section:
   # ===========================================================================
 
   public
 
-  # add_to_index
+  # Add the indicated items from the EMMA Unified Index.
   #
-  # @param [Array<Upload,String,Array>] items
+  # @param [Array<Upload,String,Array>] items   @see #collect_items
   #
   # @return [Array<(Array,Array)>]    Succeeded names and failed names.
+  #
+  # TODO: schedule async index update job
   #
   def add_to_index(*items)
     items, failed = collect_items(*items)
@@ -160,39 +155,62 @@ module UploadConcern
       result = ingest_api.put_records(*items)
       fail(result.exception) if result.exception.present?
     end
-    return items.map(&:id), failed
+    items.map!(&:id)
+    return items, failed
   end
 
-  # remove_from_index
+  # Remove the indicated items from the EMMA Unified Index.
   #
-  # @param [Array<Upload,String,Array>] items
+  # @param [Array<Upload,String,Array>] items   @see #collect_items
+  # @param [Boolean]                    force   Force removal of index entries
+  #                                               even if the related database
+  #                                               entries do not exist.
   #
   # @return [Array<(Array,Array)>]    Succeeded names and failed names.
   #
-  def remove_from_index(*items)
-    items, failed = collect_items(*items)
+  # TODO: schedule async index deletion job?
+  #
+  def remove_from_index(*items, force: false)
+    items, failed = collect_items(*items, force: force)
     if items.present? && failed.blank?
       result = ingest_api.delete_records(*items)
       fail(result.exception) if result.exception.present?
     end
-    return items.map(&:id), failed
+    items = items.map { |item| item.respond_to?(:id) ? item.id : item }
+    return items, failed
   end
 
-  # Transform a mixture of Upload objects and record identifiers.
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Transform a mixture of Upload objects and record identifiers into a list of
+  # Upload objects.
   #
-  # @param [Array<Upload,String,Array>] items
+  # @param [Array<Upload,String,Array>] items   @see Upload#collect_ids
+  # @param [Boolean]                    force   See Usage Notes
   #
-  # @return [Array<(Array,Array)>]    Upload records and a list of failed ids.
+  # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
+  # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
   #
-  def collect_items(*items)
+  # == Usage Notes
+  # If *force* is true, the returned list of failed records will be empty but
+  # the returned list of items may contain a mixture of Upload and String
+  # elements.
+  #
+  def collect_items(*items, force: false)
     failed = []
     items =
       items.flatten.flat_map { |item|
-        if item.is_a?(Upload)
-          item
-        elsif item.present?
-          item = item.include?(',') ? item.split(/\s*,\s*/) : Array.wrap(item)
-          item.map { |id| Upload.find(id).tap { |u| failed << id unless u } }
+        next if item.blank?
+        next item if item.is_a?(Upload)
+        # noinspection RubyYardParamTypeMatch
+        Upload.collect_ids(item).map do |identifier|
+          record = Upload.get_record(identifier)
+          failed << identifier unless record || force
+          record || identifier
         end
       }.compact
     return items, failed
@@ -268,29 +286,31 @@ module UploadConcern
   #
   def post_response(status, message = nil, redirect: nil, xhr: nil)
     status, message = [nil, status] if status.is_a?(Exception)
-    xhr ||= request_xhr?
-    exception = (message if message.is_a?(Exception))
-    if exception
-      message = exception.message
-      if exception.respond_to?(:code)
-        status = exception.code
-      elsif exception.respond_to?(:response)
-        status = exception.response.status
+    status ||= :bad_request
+    xhr    ||= request_xhr?
+    except   = (message if message.is_a?(Exception))
+    if except
+      if except.respond_to?(:code)
+        status = except.code || status
+      elsif except.respond_to?(:response)
+        status = except.response.status || status
+      end
+      Log.error do
+        "#{__method__}: #{status}: #{except.class}: #{except.full_message}"
+      end
+      message = except.message
+    end
+    message = Array.wrap(message).map { |m| m.inspect.truncate(1024) }.presence
+    unless except
+      Log.info do
+        [__method__, status, message&.join(', ')].compact.join(': ')
       end
     end
-    status ||= :bad_request
-    Log.info {
-      [__method__, status, exception&.class, message].compact.join(': ')
-    }
     if redirect || !xhr
-      if message.is_a?(Array)
-        message = message.map { |m| m.truncate(1024) }.join("\n")
-      end
-      message = message&.truncate(1024)
       if %i[ok found].include?(status) || (200..399).include?(status)
-        flash_success(message)
+        flash_success(*message)
       else
-        flash_failure(message)
+        flash_failure(*message)
       end
       if redirect
         redirect_to(redirect)
