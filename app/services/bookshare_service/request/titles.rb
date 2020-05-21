@@ -39,6 +39,7 @@ module BookshareService::Request::Titles
   # @param [Hash] opt                 Passed to #api.
   #
   # @return [Integer]
+  # @return [Exception]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_title-count
   #
@@ -47,8 +48,7 @@ module BookshareService::Request::Titles
   #
   def get_title_count(**opt)
     api(:get, 'titles', 'count', **opt)
-    data = response&.body&.presence
-    data.to_i
+    response&.body&.presence&.to_i || exception
   end
     .tap do |method|
       add_api method => {

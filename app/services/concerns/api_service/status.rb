@@ -9,11 +9,22 @@ __loading_begin(__FILE__)
 #
 module ApiService::Status
 
-  extend self
+  def self.included(base)
+    base.send(:extend, self)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Indicate whether the service is operational.
   #
-  def active?(*)
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
+  #
+  def active_status(*)
     raise 'To be overridden'
   end
 

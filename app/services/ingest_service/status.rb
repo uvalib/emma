@@ -21,13 +21,13 @@ module IngestService::Status
 
   public
 
-  # A sample ISBN search and minimum number of expected results.
+  # A sample service access and minimum number of expected results.
   #
   # @type [Hash{Symbol=>*}]
   #
-  SAMPLE_ISBN_SEARCH = {
-    parameters: { q: '9781627937269' },
-    expected:   ->(result) { result.records.size >= 5 }
+  SAMPLE_REPOSITORY_ID_ACCESS= {
+    ids:      'emma-2931211-pdf',
+    expected: ->(result) { result.records.size == 1 }
   }.freeze
 
   # ===========================================================================
@@ -38,17 +38,22 @@ module IngestService::Status
 
   # Indicate whether the service is operational.
   #
-  # @param [Hash] with
-  # @param [Proc] expect
+  # @param [String, Array<String>] with
+  # @param [Proc]                  expect
+  #
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
   #
   # This method overrides:
-  # @see ApiService::Status#active?
+  # @see ApiService::Status#active_status
   #
-  def active?(with: nil, expect: nil)
-    with   ||= SAMPLE_ISBN_SEARCH[:parameters]
-    expect ||= SAMPLE_ISBN_SEARCH[:expected]
-    result = IngestService.new.get_records(**with)
-    result.respond_to?(:records) && expect.(result)
+  def active_status(with: nil, expect: nil)
+    with   ||= SAMPLE_REPOSITORY_ID_ACCESS[:ids]
+    expect ||= SAMPLE_REPOSITORY_ID_ACCESS[:expected]
+    result   = IngestService.new.get_records(*with)
+    active   = result.respond_to?(:records) && expect.(result)
+    message  = result&.error_message
+    return active, message
   end
 
 end

@@ -41,14 +41,19 @@ module SearchService::Status
   # @param [Hash] with
   # @param [Proc] expect
   #
-  # This method overrides:
-  # @see ApiService::Status#active?
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
   #
-  def active?(with: nil, expect: nil)
+  # This method overrides:
+  # @see ApiService::Status#active_status
+  #
+  def active_status(with: nil, expect: nil)
     with   ||= SAMPLE_ISBN_SEARCH[:parameters]
     expect ||= SAMPLE_ISBN_SEARCH[:expected]
-    result = SearchService.new.get_records(**with)
-    result.respond_to?(:records) && expect.(result)
+    result   = SearchService.new.get_records(**with)
+    active   = result.respond_to?(:records) && expect.(result)
+    message  = result&.error_message
+    return active, message
   end
 
 end

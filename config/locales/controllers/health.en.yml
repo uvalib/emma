@@ -32,6 +32,12 @@ en:
         healthy:        'NOT IMPLEMENTED' # TODO: future
         failed:         'Redis unresponsive'
 
+      storage:
+        <<:             *HEALTH_DEFAULT
+        healthy:        'NOT IMPLEMENTED' # TODO: future
+        degraded:       'AWS storage degraded'
+        failed:         'AWS storage failing'
+
       search:
         <<:             *HEALTH_DEFAULT
         degraded:       'Unified Search degraded'
@@ -44,6 +50,5 @@ en:
 
       ingest:
         <<:             *HEALTH_DEFAULT
-        healthy:        'NOT IMPLEMENTED' # TODO: future
-        degraded:       'Content ingest degraded'
-        failed:         'Content ingest failing'
+        degraded:       'Federated Ingest service degraded'
+        failed:         'Federated Ingest service failing'

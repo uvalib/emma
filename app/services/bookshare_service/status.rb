@@ -23,11 +23,22 @@ module BookshareService::Status
 
   # Indicate whether the service is operational.
   #
-  # This method overrides:
-  # @see ApiService::Status#active?
+  # @return [Array<(TrueClass,nil)>]
+  # @return [Array<(FalseClass,String)>]
   #
-  def active?(*)
-    BookshareService.new.get_title_count > 0
+  # This method overrides:
+  # @see ApiService::Status#active_status
+  #
+  def active_status(*)
+    result = BookshareService.new.get_title_count
+    if result.is_a?(Exception)
+      active  = false
+      message = result.message
+    else
+      active  = (result.to_i > 0)
+      message = nil
+    end
+    return active, message
   end
 
 end

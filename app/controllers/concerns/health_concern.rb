@@ -211,9 +211,8 @@ module HealthConcern
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
     method  = entry[:method]
-    message = nil
     start   = timestamp
-    healthy =
+    healthy, message =
       case method
         when Proc       then method.call
         when Symbol     then send(method)
@@ -229,7 +228,7 @@ module HealthConcern
   ensure
     warn_only = !entry[:restart]
     degraded  = !healthy && warn_only
-    message   = degraded && entry[:degraded]
+    message ||= degraded && entry[:degraded]
     message ||= healthy ? entry[:healthy] : entry[:failed]
     message ||= time_span(start)
     healthy   = true if warn_only
@@ -244,42 +243,56 @@ module HealthConcern
 
   # Health status of the MySQL service.
   #
-  # @return [Boolean]
+  # @return [Array<(Boolean,String)>]
   #
   def mysql_status(*)
-    ActiveRecord::Base.connection_pool.with_connection(&:active?)
+    healthy = ActiveRecord::Base.connection_pool.with_connection(&:active?)
+    message = nil # TODO: MySQL status message?
+    return healthy, message
   end
 
   # Health status of the Redis service.
   #
-  # @return [Boolean]
+  # @return [Array<(Boolean,String)>]
   #
   def redis_status(*)
-    true # TODO: future
+    healthy = true # TODO: Redis health status
+    message = nil  # TODO: Redis status message?
+    return healthy, message
+  end
+
+  # Health status of AWS storage.
+  #
+  # @return [Array<(Boolean,String)>]
+  #
+  def storage_status(*)
+    healthy = true # TODO: AWS health status
+    message = nil  # TODO: AWS status message?
+    return healthy, message
   end
 
   # Health status of the Unified Search service.
   #
-  # @return [Boolean]
+  # @return [Array<(Boolean,String)>]
   #
   def search_status(*)
-    SearchService.active?
+    SearchService.active_status
   end
 
   # Health status of the Bookshare API service.
   #
-  # @return [Boolean]
+  # @return [Array<(Boolean,String)>]
   #
   def bookshare_status(*)
-    BookshareService.active?
+    BookshareService.active_status
   end
 
   # Health status of the ingest service.
   #
-  # @return [Boolean]
+  # @return [Array<(Boolean,String)>]
   #
   def ingest_status(*)
-    true # TODO: future
+    IngestService.active_status
   end
 
 end
