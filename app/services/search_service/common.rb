@@ -18,7 +18,6 @@ module SearchService::Common
   #
   def self.included(base)
     base.send(:include, SearchService::Definition)
-    base.send(:extend,  SearchService::Definition)
   end
 
   # ===========================================================================
@@ -61,8 +60,9 @@ module SearchService::Common
 
   # api_headers
   #
-  # @param [Hash] params              Default: @params.
-  # @param [Hash] headers             Default: {}.
+  # @param [Hash]         params      Default: @params.
+  # @param [Hash]         headers     Default: {}.
+  # @param [String, Hash] body        Default: *nil* unless `#update_request?`.
   #
   # @return [Array<(String,Hash)>]    Message body plus headers for GET.
   # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
@@ -70,13 +70,10 @@ module SearchService::Common
   # This method overrides:
   # @see ApiService::Common#api_headers
   #
-  def api_headers(params = nil, headers = nil)
-    params, headers, body = super(params, headers)
-    unless update_request?
-      #params = build_query_options(@params, decorate: true) # TODO: ???
-      params = build_query_options(params)
+  def api_headers(params = nil, headers = nil, body = nil)
+    super.tap do |prms, _hdrs, _body|
+      prms.replace(build_query_options(prms)) unless update_request?
     end
-    return params, headers, body
   end
 
   # ===========================================================================

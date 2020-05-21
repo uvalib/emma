@@ -79,7 +79,7 @@ class User::SessionsController < Devise::SessionsController
     auth_data = session.delete('omniauth.auth')
     __debug_route { { "session['omniauth.auth']" => auth_data } }
     super do
-      BookshareService.clear
+      ApiService.clear
       set_flash_notice(__method__, auth_data)
     end
   end

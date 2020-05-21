@@ -25,7 +25,7 @@ module MemberHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  MEMBER_CONFIGURATION      = model_configuration('emma.member').deep_freeze
+  MEMBER_CONFIGURATION      = Model.configuration('emma.member').deep_freeze
   MEMBER_INDEX_FIELDS       = MEMBER_CONFIGURATION.dig(:index,       :fields)
   MEMBER_SHOW_FIELDS        = MEMBER_CONFIGURATION.dig(:show,        :fields)
   MEMBER_HISTORY_FIELDS     = MEMBER_CONFIGURATION.dig(:history,     :fields)

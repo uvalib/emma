@@ -18,7 +18,6 @@ module BookshareService::Common
   #
   def self.included(base)
     base.send(:include, BookshareService::Definition)
-    base.send(:extend,  BookshareService::Definition)
   end
 
   # ===========================================================================
@@ -80,15 +79,15 @@ module BookshareService::Common
   #
   # @param [Hash, nil] params         Default: @params.
   #
-  # @return [Hash]                    The *params* hash, possibly modified.
+  # @return [Hash]                    New API parameters.
   #
   # This method overrides:
-  # @see ApiService::Common#api_options!
+  # @see ApiService::Common#api_options
   #
-  def api_options!(params = @params)
-    params = super(params)
-    params[:limit] = MAX_LIMIT if params[:limit].to_s == 'max'
-    params
+  def api_options(params = nil)
+    super.tap do |result|
+      result[:limit] = MAX_LIMIT if result[:limit].to_s == 'max'
+    end
   end
 
   # ===========================================================================

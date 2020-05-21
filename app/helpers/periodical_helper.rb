@@ -26,7 +26,7 @@ module PeriodicalHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  PERIODICAL_CONFIGURATION = model_configuration('emma.periodical').deep_freeze
+  PERIODICAL_CONFIGURATION = Model.configuration('emma.periodical').deep_freeze
   PERIODICAL_INDEX_FIELDS  = PERIODICAL_CONFIGURATION.dig(:index, :fields)
   PERIODICAL_SHOW_FIELDS   = PERIODICAL_CONFIGURATION.dig(:show,  :fields)
 

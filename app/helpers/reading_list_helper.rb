@@ -27,7 +27,7 @@ module ReadingListHelper
   # @type {Hash{Symbol=>Hash}}
   #
   READING_LIST_CONFIGURATION =
-    model_configuration('emma.reading_list').deep_freeze
+    Model.configuration('emma.reading_list').deep_freeze
   READING_LIST_INDEX_FIELDS  = READING_LIST_CONFIGURATION.dig(:index, :fields)
   READING_LIST_SHOW_FIELDS   = READING_LIST_CONFIGURATION.dig(:show,  :fields)
 

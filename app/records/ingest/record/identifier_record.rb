@@ -56,7 +56,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
     if src.blank?
       self.emma_recordId = opt[:value].to_s
     elsif src.is_a?(Upload)
-      attr = remove_blanks(src.emma_metadata.slice(*field_names))
+      attr = reject_blanks(src.emma_metadata.slice(*field_names))
       attr[:emma_repository]         ||= src[:repository]
       attr[:emma_repositoryRecordId] ||= src[:repository_id] || src[:id]
       attr[:dc_format]               ||= src[:fmt]

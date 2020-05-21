@@ -31,7 +31,7 @@ module WordFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  WORD_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+  WORD_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

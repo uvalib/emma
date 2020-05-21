@@ -43,7 +43,7 @@ module UploadHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  UPLOAD_CONFIGURATION = model_configuration('emma.upload').deep_freeze
+  UPLOAD_CONFIGURATION = Model.configuration('emma.upload').deep_freeze
   UPLOAD_INDEX_FIELDS  = UPLOAD_CONFIGURATION.dig(:index, :fields)
   UPLOAD_SHOW_FIELDS   = UPLOAD_CONFIGURATION.dig(:show,  :fields)
 
@@ -504,7 +504,7 @@ module UploadHelper
   #
   UPLOAD_FORM_FIELDS =
     UPLOAD_DATABASE_FIELDS
-      .except(:FileData, :EmmaData, :EMMAData)
+      .reject { |_, v| %i[file_data emma_data].include?(v) }
       .merge(SEARCH_RECORD_FIELDS)
       .freeze
 =begin # TODO: use when configuration is transitioned...

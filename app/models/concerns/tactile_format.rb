@@ -29,7 +29,7 @@ module TactileFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  TACTILE_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+  TACTILE_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

@@ -25,7 +25,7 @@ module CategoryHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  CATEGORY_CONFIGURATION = model_configuration('emma.category').deep_freeze
+  CATEGORY_CONFIGURATION = Model.configuration('emma.category').deep_freeze
   CATEGORY_INDEX_FIELDS  = CATEGORY_CONFIGURATION.dig(:index, :fields)
   CATEGORY_SHOW_FIELDS   = CATEGORY_CONFIGURATION.dig(:show,  :fields)
 

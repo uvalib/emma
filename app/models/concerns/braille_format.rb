@@ -29,7 +29,7 @@ module BrailleFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  BRAILLE_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+  BRAILLE_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

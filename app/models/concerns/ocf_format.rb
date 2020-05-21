@@ -25,7 +25,7 @@ module OcfFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  OCF_FORMAT = format_configuration('emma.ocf').deep_freeze
+  OCF_FORMAT = FileFormat.configuration('emma.ocf').deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

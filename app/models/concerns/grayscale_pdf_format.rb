@@ -33,7 +33,7 @@ module GrayscalePdfFormat
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
   GRAYSCALE_PDF_FORMAT =
-    format_configuration(PDF_FORMAT, FILE_TYPE).deep_freeze
+    FileFormat.configuration(PDF_FORMAT, FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

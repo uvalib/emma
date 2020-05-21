@@ -34,7 +34,7 @@ module DaisyAudioFormat
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
   DAISY_AUDIO_FORMAT =
-    format_configuration(DAISY_FORMAT, FILE_TYPE).deep_freeze
+    FileFormat.configuration(DAISY_FORMAT, FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

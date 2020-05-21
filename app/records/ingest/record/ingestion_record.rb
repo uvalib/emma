@@ -109,7 +109,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
       $stderr.puts "CREATE IngestionRecord | src.repository = #{src[:repository].inspect}"
       $stderr.puts "CREATE IngestionRecord | src.repository_id = #{src[:repository_id].inspect}"
       $stderr.puts "CREATE IngestionRecord | src.fmt = #{src[:fmt].inspect}"
-      data = remove_blanks(src.emma_metadata)
+      data = reject_blanks(src.emma_metadata)
       $stderr.puts "CREATE IngestionRecord | src.emma_metadata = #{src.emma_metadata.inspect}"
 
       # === Standard Identifiers ===
@@ -127,7 +127,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
       data[:dc_title]                ||= 'TITLE MISSING' # TODO: ???
       data[:dc_format]               ||= src[:fmt]
 
-      initialize_attributes(data)
+      initialize_attributes(reject_blanks(data))
     else
       super(src, **opt)
     end

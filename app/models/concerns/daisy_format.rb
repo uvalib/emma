@@ -33,7 +33,7 @@ module DaisyFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  DAISY_FORMAT = format_configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
+  DAISY_FORMAT = FileFormat.configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

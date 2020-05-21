@@ -97,7 +97,7 @@ module ArtifactHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  ARTIFACT_CONFIGURATION = model_configuration('emma.artifact').deep_freeze
+  ARTIFACT_CONFIGURATION = Model.configuration('emma.artifact').deep_freeze
   ARTIFACT_INDEX_FIELDS  = ARTIFACT_CONFIGURATION.dig(:index, :fields)
   ARTIFACT_SHOW_FIELDS   = ARTIFACT_CONFIGURATION.dig(:show,  :fields)
 

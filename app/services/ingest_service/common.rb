@@ -18,7 +18,6 @@ module IngestService::Common
   #
   def self.included(base)
     base.send(:include, IngestService::Definition)
-    base.send(:extend,  IngestService::Definition)
   end
 
   # ===========================================================================
@@ -54,34 +53,6 @@ module IngestService::Common
   def api_version
     nil
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-=begin
-  # api_headers
-  #
-  # @param [Hash] params              Default: @params.
-  # @param [Hash] headers             Default: {}.
-  #
-  # @return [Array<(String,Hash)>]    Message body plus headers for GET.
-  # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
-  #
-  # This method overrides:
-  # @see ApiService::Common#api_headers
-  #
-  def api_headers(params = nil, headers = nil)
-    params, headers = super(params, headers)
-    unless update_request?
-      #params = build_query_options(@params, decorate: true) # TODO: ???
-      params = build_query_options(params)
-    end
-    return params, headers
-  end
-=end
 
   # ===========================================================================
   # :section: Exceptions

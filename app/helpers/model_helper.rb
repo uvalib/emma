@@ -10,11 +10,7 @@ __loading_begin(__FILE__)
 module ModelHelper
 
   def self.included(base)
-
     __included(base, '[ModelHelper]')
-
-    base.send(:extend, ModuleMethods)
-
   end
 
   include Emma::Common
@@ -351,7 +347,7 @@ module ModelHelper
       field =
         if value.is_a?(Symbol)
           value
-        elsif (cfg ||= model_configuration(model)).present?
+        elsif (cfg ||= Model.configuration(model)).present?
           cfg.dig(params[:action], :fields, label) ||
             cfg.dig(:fields, :database, label) ||
             cfg.dig(:fields, :form, label) ||
@@ -800,7 +796,7 @@ module ModelHelper
       field =
         if value.is_a?(Symbol)
           value
-        elsif (cfg ||= model_configuration(model)).present?
+        elsif (cfg ||= Model.configuration(model)).present?
           cfg.dig(params[:action], :fields, label) ||
             cfg.dig(:fields, :database, label) ||
             cfg.dig(:fields, :form, label) ||
@@ -1203,69 +1199,8 @@ module ModelHelper
     append_css_classes!(opt, 'disabled') if readonly
 
     opt
-  end
-
-  # ===========================================================================
-  # :section: Module methods
-  # ===========================================================================
-
-  public
-
-  module ModuleMethods
-
-    # Get configured properties for a model and controller.
-    #
-    # @param [Symbol, String] type
-    #
-    # @return [Hash{Symbol=>String,Array,Hash}]
-    #
-    def model_configuration(type)
-      if type.is_a?(String)
-        type = type.sub(/^emma\./, '') if type.start_with?('emma.')
-        type = type.to_sym
-      end
-      return {} unless type.is_a?(Symbol)
-      @@model_configuration ||= {}
-      @@model_configuration[type] ||=
-        begin
-          hash = I18n.t("emma.#{type}")
-          hash = invert_field_entries(hash) # TODO: remove...
-          hash
-        end
-    end
-
-    private # TODO: remove these when configuration is transitioned...
-
-    def invert_field_entries(hash)
-      hash = hash.deep_dup
-      hash[:fields] &&=
-        hash[:fields].map { |field, label|
-          if label.is_a?(Hash)
-            [field, swap_entries(label)]
-          else
-            swap_entry(field, label)
-          end
-        }.to_h
-      (hash.keys - %i[fields record]).each do |action|
-        entry = hash[action]
-        next unless entry.is_a?(Hash) && (fields = entry[:fields]).is_a?(Hash)
-        entry[:fields] = swap_entries(fields)
-      end
-      hash
-    end
-
-    def swap_entries(hash)
-      hash.map { |field, label| swap_entry(field, label) }.to_h
-    end
-
-    def swap_entry(field, label)
-      label = label.to_s.split(' ').map(&:camelize).join
-      [label.to_sym, field.to_sym]
-    end
 
   end
-
-  include ModuleMethods
 
 end
 

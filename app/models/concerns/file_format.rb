@@ -377,34 +377,33 @@ module FileFormat
   end
 
   # ===========================================================================
-  # :section: Module methods
+  # :section:
   # ===========================================================================
 
   public
 
-  module ModuleMethods
+  # Common storage for configured properties for each file format.
+  #
+  class << self
 
     # Get configured properties for a file format.  If multiple sections are
     # given each successive section is recursively merged into the previous.
     #
-    # @param [Array<String, Symbol, Hash>] section
+    # @param [Array<String, Symbol, Hash>] sections
     #
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
-    def format_configuration(*section)
-      type = section.last
-      if type.is_a?(String)
-        type = type.sub(/^emma\./, '') if type.start_with?('emma.')
-        type = type.to_sym
-      end
-      return {} unless type.is_a?(Symbol)
-      @@format_configuration ||= {}
-      @@format_configuration[type] ||=
-        {}.tap do |result|
-          section.each do |sec|
+    def configuration(*sections)
+      type = sections.last
+      return {} unless type.is_a?(String) || type.is_a?(Symbol)
+      type = type.to_s
+      type = type.sub(/^emma\./, '') if type.start_with?('emma.')
+      configuration_table[type.to_sym] ||=
+        {}.tap do |hash|
+          sections.each do |section|
             # noinspection RubyYardParamTypeMatch
-            hash = sec.is_a?(Hash) ? sec : format_configuration_section(sec)
-            result.deep_merge!(hash) if hash.present?
+            section = configuration_section(section) unless section.is_a?(Hash)
+            hash.deep_merge!(section) if section.present?
           end
         end
     end
@@ -415,33 +414,36 @@ module FileFormat
     #
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
-    def format_configuration_section(section)
-      path = section.to_s
-      path = path.start_with?('emma.') ? path : "emma.#{path}"
-      hash = I18n.t(path).deep_dup
-      %i[mimes exts].each do |key|
-        hash[key] ||= []
-        hash[key].map! { |s| s.to_s.strip.downcase.presence }
-        hash[key].compact!
-      end
-      %i[fields map].each do |key|
-        hash[key] ||= {}
-        hash[key].transform_values! do |value|
-          if value.is_a?(Array)
-            value.map { |s| s.to_s.strip.to_sym.presence }.compact.presence
-          else
-            value.to_s.strip.to_sym.presence
-          end
+    def configuration_section(section)
+      section = section.to_s
+      section = "emma.#{section}" unless section.start_with?('emma.')
+      I18n.t(section).deep_dup.tap do |hash|
+        %i[mimes exts].each do |key|
+          hash[key] ||= []
+          hash[key].map! { |s| s.to_s.strip.downcase.presence }
+          hash[key].compact!
         end
-        hash[key].compact!
+        %i[fields map].each do |key|
+          hash[key] ||= {}
+          hash[key].transform_values! do |value|
+            array = value.is_a?(Array)
+            value = Array.wrap(value)
+            value.map! { |s| s.to_s.strip.to_sym.presence }.compact!
+            array ? value.presence : value.first
+          end
+          hash[key].compact!
+        end
       end
-      hash
     end
 
-  end
+    # Configured properties for each file format.
+    #
+    # @return [Hash{Symbol=>Hash}]
+    #
+    def configuration_table
+      @configuration_table ||= {}
+    end
 
-  def self.included(base)
-    base.send(:extend, ModuleMethods)
   end
 
 end

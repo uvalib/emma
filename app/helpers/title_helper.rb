@@ -26,7 +26,7 @@ module TitleHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  TITLE_CONFIGURATION = model_configuration('emma.title').deep_freeze
+  TITLE_CONFIGURATION = Model.configuration('emma.title').deep_freeze
   TITLE_INDEX_FIELDS  = TITLE_CONFIGURATION.dig(:index, :fields)
   TITLE_SHOW_FIELDS   = TITLE_CONFIGURATION.dig(:show,  :fields)
 

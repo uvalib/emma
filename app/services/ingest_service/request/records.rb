@@ -163,13 +163,10 @@ module IngestService::Request::Records
   def record_list(record)
     case record
       when Ingest::Message::IngestionRecordList
-        $stderr.puts "#{__method__} | IngestionRecordList"
         record.records
       when Ingest::Record::IngestionRecord
-        $stderr.puts "#{__method__} | IngestionRecord"
         [record]
       else
-        $stderr.puts "#{__method__} | #{record.class} = #{record.inspect}"
         [Ingest::Record::IngestionRecord.new(record)]
     end
   end
@@ -193,16 +190,12 @@ module IngestService::Request::Records
   def identifier_list(id)
     case id
       when Ingest::Message::IdentifierRecordList
-        $stderr.puts "#{__method__} | IdentifierRecordList"
         id.identifiers
       when Ingest::Record::IdentifierRecord
-        $stderr.puts "#{__method__} | IdentifierRecord"
         [id]
       when Upload, Hash, ::Api::Record
-        $stderr.puts "#{__method__} | class #{id.class} = #{id.inspect}"
         [Ingest::Record::IdentifierRecord.new(id)]
       else
-        $stderr.puts "#{__method__} | scalar #{id.class} = #{id.inspect}"
         [Ingest::Record::IdentifierRecord.new(nil, value: id)]
     end
   end

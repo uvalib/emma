@@ -16,8 +16,6 @@ module ApplicationHelper
   include Emma::Constants
   include Emma::Common
 
-  include Search::Api::Common
-
   # ===========================================================================
   # :section:
   # ===========================================================================

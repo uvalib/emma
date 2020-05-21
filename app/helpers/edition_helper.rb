@@ -25,7 +25,7 @@ module EditionHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  EDITION_CONFIGURATION = model_configuration('emma.edition').deep_freeze
+  EDITION_CONFIGURATION = Model.configuration('emma.edition').deep_freeze
   EDITION_INDEX_FIELDS  = EDITION_CONFIGURATION.dig(:index, :fields)
   EDITION_SHOW_FIELDS   = EDITION_CONFIGURATION.dig(:show,  :fields)
 

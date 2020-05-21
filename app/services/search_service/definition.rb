@@ -12,7 +12,6 @@ module SearchService::Definition
 
   def self.included(base)
     base.send(:include, ApiService::Definition)
-    base.send(:extend,  ApiService::Definition)
   end
 
 end

@@ -29,7 +29,7 @@ module BrfFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  BRF_FORMAT = format_configuration(FILE_TYPE).deep_freeze
+  BRF_FORMAT = FileFormat.configuration(FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #

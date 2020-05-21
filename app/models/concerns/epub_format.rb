@@ -32,7 +32,7 @@ module EpubFormat
   #
   # @type [Hash{Symbol=>String,Array,Hash}]
   #
-  EPUB_FORMAT = format_configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
+  EPUB_FORMAT = FileFormat.configuration(OCF_FORMAT, FILE_TYPE).deep_freeze
 
   # MIME type(s) associated with instances of this file format.
   #
