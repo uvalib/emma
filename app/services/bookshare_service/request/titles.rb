@@ -90,9 +90,12 @@ module BookshareService::Request::Titles
 
   # The identifier (:userAccountId) for the test member "Placeholder Member".
   #
-  # @type [String]
+  # @type [String, nil]
   #
-  BOOKSHARE_TEST_MEMBER = 'AP5xvS-m1hgZnCqITkEFi-GIxOQ-O8q4J0Q_WYsJwTXpBzqXRHladQu5tZRH7PT9VzHdfaH-cdIp'
+  BOOKSHARE_TEST_MEMBER =
+    Rails.root.join('test/fixtures/members.yml').yield_self { |path|
+      YAML.load_file(path)&.deep_symbolize_keys! || {}
+    }.dig(:Placeholder_Member, :user_id)
 
   # == GET /v2/titles/{bookshareId}/{format}
   #

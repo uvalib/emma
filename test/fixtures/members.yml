@@ -11,17 +11,20 @@
 # =============================================================================
 
 Rhoda_Book:
-  user_id:        'AP5xvS8z_SjEIh7HiahzSEK1teaHqzyoECsSQiTZzU72T3zZWgkK0ta3GHNDcrqeCypCgseWbT07'
+  user_id:        'AP5xvS_a65KyErYCXzSocdxq3P-KHjVk1sjNugJbL80qEUkXTpXCMtydNu2VQ95UajKBQJSObXUw'
 
 Rita_Book:
-  user_id:        'AP5xvS9dhgOAqSmHJEWi2h98eYAuhPznjlGh00dyc58-bbmWXf2q8x04Ji_7rJdwEjMXWZlau-uC'
+  user_id:        'AP5xvS-L2r6A1sGVkktlzPaDoXervEZMsVQXOFD2IjB3HwUQRaR0H-zXuykBKuhDyR-_Fj2ZUtaY'
 
 Roll_Call:
-  user_id:        'AP5xvS8JpsT8a87-m8aj3o93dvtmwIlW4nJD9NF7GHPIfhxCsj9soBjzjMySdQ8T6PC3zcYxYC9l'
+  user_id:        'AP5xvS_0c15f37zPZMpv9xu5lu9h_V_qGAzQGW42ZQzIQSSDiauGktcmkexFIPrEOtoGnZhsBNTs'
 
 Jane_Jones:
-  user_id:        'AP5xvS_SqmXdanTmeV1zHRNBMdNCwvPQKscEqVoGM-KCwzSFH4AFKb9glC7V8P_Wf6_GyqtkfjUu'
+  user_id:        'AP5xvS8UZiYUx8qVhMzHFqNtSwZWZnZlpm2L2KXqf87M_xC5MsO99cRSv2AcSXBR2KHxWL1kPzwM'
   emailAddress:   'jjones@bookshare.org'
+
+Placeholder_Member:
+  user_id:        'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
 
 # =============================================================================
 # Member types

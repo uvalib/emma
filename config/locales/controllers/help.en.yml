@@ -8,7 +8,7 @@ en:
 
       label:            'Help'
       title:            'EMMA Help'
-      tooltip:          'Get help on using the EMMA system.'
+      tooltip:          'EMMA system documentation.'
 
       # =======================================================================
       # Layout

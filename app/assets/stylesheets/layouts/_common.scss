@@ -30,7 +30,7 @@ body {
 // noinspection SassScssResolvedByNameOnly
 .layout-content {
 
-    margin:     0 $page-padding-x;
+    margin:     $page-padding;
     min-height: 75vh;
     position:   relative;
 
@@ -57,7 +57,7 @@ body {
 // noinspection SassScssResolvedByNameOnly
 .heading {
 
-    margin:     $page-padding auto;
+    margin:     calc(#{$page-padding} * 1.5) auto;
     word-break: break-all;
     font-size:  xx-large;
 
@@ -71,7 +71,7 @@ body {
 
     @media #{$browser-ie} {
 
-        margin: $ie-page-padding inherit;
+        margin: ($ie-page-padding * 1.5) inherit;
 
         @media #{$wide-screen} {
             margin-bottom: ($ie-page-padding / 2);

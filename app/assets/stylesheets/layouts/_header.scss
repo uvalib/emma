@@ -19,15 +19,16 @@ $search-button-width:    6rem;
 //
 // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 .layout-header {
+    position:        relative;
+    z-index:         $z-raised;
     display:         flex;
     flex-direction:  column;
     justify-content: flex-start;
     margin:          0;
     margin-bottom:   -$hcm-divider-width;
     padding:         0;
-    border-bottom:   $hcm-divider-width solid $hcm-color;
-    position:        relative;
-    z-index:         $z-raised;
+    border-bottom:   $hcm-divider-width solid $header-bg;
+    box-shadow:      0 0 1rem -0.25rem $header-bg;
 }
 
 //=============================================================================

@@ -18,15 +18,28 @@ Rails.application.configure do
   # preloads Rails for running tests, you may have to set it to true.
   config.eager_load = false
 
-  # Show full error reports and disable caching.
-  config.consider_all_requests_local       = true
-  config.action_controller.perform_caching = false
+  # Application code remains in memory after being loaded.
+  config.cache_classes = true
+
+  # ===========================================================================
+  # Security
+  # ===========================================================================
+
+  # Show full error reports.
+  config.consider_all_requests_local = true
 
   # Raise exceptions instead of rendering exception templates.
   config.action_dispatch.show_exceptions = false
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+
+  # ===========================================================================
+  # Caching
+  # ===========================================================================
+
+  # Disable caching.
+  config.action_controller.perform_caching = false
 
   # ===========================================================================
   # Mailer
@@ -41,7 +54,7 @@ Rails.application.configure do
   # I18n
   # ===========================================================================
 
-  # Raises error for missing translations
+  # Raises error for missing translations.
   # config.action_view.raise_on_missing_translations = true
 
   # ===========================================================================
@@ -50,6 +63,24 @@ Rails.application.configure do
 
   # Send deprecation notices to STDERR.
   config.active_support.deprecation = :stderr
+
+  # ===========================================================================
+  # ActiveRecord
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # ActiveJob
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # ActionCable
+  # ===========================================================================
+
+  # See config/application.rb
 
   # ===========================================================================
   # ActiveStorage
@@ -65,5 +96,23 @@ Rails.application.configure do
 
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
+
+  # ===========================================================================
+  # Logging
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # Assets
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # Interactive development
+  # ===========================================================================
+
+  # N/A
 
 end

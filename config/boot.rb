@@ -133,6 +133,13 @@ elsif !$0.end_with?('rails', 'rake')
   STDERR.puts "Running #{$0.inspect}"
 end
 
+unless rails_application?
+  at_exit do
+    elapsed_time = Time.now - BOOT_TIME
+    STDERR.puts("\nRun time: %0.2g seconds" % elapsed_time)
+  end
+end
+
 # =============================================================================
 # BOOT
 # =============================================================================

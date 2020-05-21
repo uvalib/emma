@@ -14,9 +14,15 @@ Rails.application.configure do
   # option for performance.
   config.eager_load = true
 
-  # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local       = false
-  config.action_controller.perform_caching = true
+  # Application code remains in memory after being loaded.
+  config.cache_classes = true
+
+  # ===========================================================================
+  # Security
+  # ===========================================================================
+
+  # Full error reports are disabled.
+  config.consider_all_requests_local = false
 
   # Ensures that a master key has been made available in either
   # ENV['RAILS_MASTER_KEY'] or in config/master.key. This key is used to
@@ -31,6 +37,9 @@ Rails.application.configure do
   # Caching
   # ===========================================================================
 
+  # Caching is turned on.
+  config.action_controller.perform_caching = true
+
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
 
@@ -44,6 +53,13 @@ Rails.application.configure do
   # config.action_mailer.raise_delivery_errors = false
 
   # ===========================================================================
+  # I18n
+  # ===========================================================================
+
+  # Raises error for missing translations.
+  # config.action_view.raise_on_missing_translations = true
+
+  # ===========================================================================
   # ActiveSupport
   # ===========================================================================
 
@@ -54,8 +70,32 @@ Rails.application.configure do
   # ActiveRecord
   # ===========================================================================
 
-  # Do not dump schema after migrations.
-  config.active_record.dump_schema_after_migration = false
+  # Do not dump schema after migrations in the deployed application.
+  config.active_record.dump_schema_after_migration = !application_deployed?
+
+  # ===========================================================================
+  # ActiveJob
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # ActionCable
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # ActiveStorage
+  # ===========================================================================
+
+  # See config/application.rb
+
+  # ===========================================================================
+  # Static files
+  # ===========================================================================
+
+  # See config/application.rb
 
   # ===========================================================================
   # Logging
@@ -72,7 +112,7 @@ Rails.application.configure do
   # config.logger =
   #   ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
-  if ENV['RAILS_LOG_TO_STDOUT'] == 'true'
+  if true?(ENV['RAILS_LOG_TO_STDOUT'])
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
@@ -85,6 +125,13 @@ Rails.application.configure do
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
 
-  # Enable serving of images, stylesheets, and JavaScripts from an asset server.
+  # Enable serving of images, stylesheets and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
+
+  # ===========================================================================
+  # Interactive development
+  # ===========================================================================
+
+  # N/A
+
 end

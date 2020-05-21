@@ -60,8 +60,8 @@ class SearchController < ApplicationController
   end
 
   # Translate a keyword query for an identifier into an identifier query.
-  # Other query types which have include a standard identifier prefix (e.g.
-  # "isbn:...") are re-cast as :identifier queries.
+  # For other query types, queries that include a standard identifier prefix
+  # (e.g. "isbn:...") are re-cast as :identifier queries.
   before_action(only: :index) do
     opt = request_parameters
     QUERY_PARAMETERS.find do |q_param|

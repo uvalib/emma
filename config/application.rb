@@ -29,12 +29,27 @@ module Emma
     # Eager-load API record and service definitions.
     config.eager_load_paths += %w(records/**/*.rb services/**/*rb)
 
+    # Eager load code on boot.
+    config.eager_load = true
+
+    # Code is not reloaded between requests.
+    config.cache_classes = true
+
+    # =========================================================================
+    # Security
+    # =========================================================================
+
+    config.session_store(
+      :cookie_store,
+      same_site: :lax,
+      key:       "#{name.split('::').first}_session"
+    )
+
     # =========================================================================
     # Caching
     # =========================================================================
 
-    # Code is not reloaded between requests.
-    config.cache_classes = true
+    # See config/environments/*.rb
 
     # =========================================================================
     # Mailer
@@ -59,12 +74,10 @@ module Emma
       Dir[Rails.root.join('config', 'locales', '**', '*.{rb,yml}').to_s]
 
     # =========================================================================
-    # ActiveStorage
+    # ActiveSupport
     # =========================================================================
 
-    # Store uploaded files on the local file system
-    # (See config/storage.yml for options.)
-    config.active_storage.service = :local
+    # See config/environments/*.rb
 
     # =========================================================================
     # ActiveRecord
@@ -113,13 +126,20 @@ module Emma
     # config.active_job.queue_name_prefix = "emma_#{Rails.env}"
 
     # =========================================================================
+    # ActiveStorage
+    # =========================================================================
+
+    # Store uploaded files on the local file system.
+    # (See config/storage.yml for options.)
+    config.active_storage.service = :local
+
+    # =========================================================================
     # Static files
     # =========================================================================
 
     # Disable serving static files from the `/public` folder by default since
     # Apache or NGINX already handles this.
-    config.public_file_server.enabled =
-      (ENV['RAILS_SERVE_STATIC_FILES'] == 'true')
+    config.public_file_server.enabled = true?(ENV['RAILS_SERVE_STATIC_FILES'])
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{1.hour}"
     }
@@ -145,6 +165,12 @@ module Emma
 
     # `config.assets.precompile` and `config.assets.version` have moved to
     # config/initializers/assets.rb
+
+    # =========================================================================
+    # Interactive development
+    # =========================================================================
+
+    # See config/environments/development.rb
 
   end
 

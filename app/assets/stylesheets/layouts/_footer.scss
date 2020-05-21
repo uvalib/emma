@@ -15,10 +15,11 @@
 
     $footer-margin-top: 1rem;
 
-    margin-top: $footer-margin-top;
-    border-top: $hcm-divider-width solid $hcm-color;
     position:   relative;
     z-index:    $z-raised;
+    margin-top: $footer-margin-top;
+    border-top: $hcm-divider-width solid $header-bg;
+    box-shadow: 0 0 1rem -0.25rem $header-bg;
 
     @media #{$browser-not-ie} {
         margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});

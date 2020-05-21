@@ -9,6 +9,9 @@
 
     // noinspection SassScssResolvedByNameOnly
     .control {
+
+        @extend %button;
+
         display:        inline-block;
         margin:         0 0 0 0.5rem;
         padding:        0.1875rem 0.375rem;
