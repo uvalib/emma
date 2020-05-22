@@ -26,8 +26,10 @@ module Emma
     # This is not compatible with the current directory layout:
     # config.add_autoload_paths_to_load_path = false
 
+=begin
     # Eager-load API record and service definitions.
-    config.eager_load_paths += %w(records/**/*.rb services/**/*rb)
+    config.eager_load_paths += %w(records/*.rb services/*.rb)
+=end
 
     # Eager load code on boot.
     config.eager_load = true
