@@ -39,6 +39,11 @@ module Emma
     # Security
     # =========================================================================
 
+    # Ensures that a master key has been made available in either
+    # ENV['RAILS_MASTER_KEY'] or in config/master.key. This key is used to
+    # decrypt credentials (and other encrypted files).
+    config.require_master_key = true
+
     config.session_store(
       :cookie_store,
       same_site: :lax,
