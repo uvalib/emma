@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'sanitize'
+=end
 
 # Methods mixed in to record elements related to catalog titles.
 #

@@ -60,6 +60,7 @@ module SerializationHelper
     (fmt == 'xml') || (respond_to?(:request) && request.format.xml?)
   end
 
+=begin
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -93,6 +94,7 @@ module SerializationHelper
     text = make_xml(item, **opt) || ''
     render xml: text, **render_opt
   end
+=end
 
   # ===========================================================================
   # :section:

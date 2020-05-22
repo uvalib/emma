@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'search/api/common'
+=end
 
 # Shared values and methods.
 #

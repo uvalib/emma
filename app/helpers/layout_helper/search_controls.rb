@@ -5,8 +5,10 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'bs'
 require 'search'
+=end
 
 # LayoutHelper::SearchControls
 #

@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'api_service/error'
+=end
 
 class SearchService::Error            < ApiService::Error;            end
 class SearchService::ResponseError    < ApiService::ResponseError;    end

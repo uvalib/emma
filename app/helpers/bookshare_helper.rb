@@ -5,7 +5,9 @@
 
 __loading_begin(__FILE__)
 
+=begin
 require 'bs'
+=end
 
 # Methods supporting access and linkages to the Bookshare API.
 #
