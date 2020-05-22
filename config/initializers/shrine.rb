@@ -8,9 +8,13 @@
 
 # Use cloud storage except for desktop development.
 #
+# Also avoid setting up AWS storage when running `rake assets:precompile` from
+# Dockerfile.
+#
 # @type [TrueClass, FalseClass]
 #
-CLOUD_STORAGE = Rails.env.production? || application_deployed?
+CLOUD_STORAGE =
+  (Rails.env.production? || application_deployed?) && rails_application?
 
 require 'shrine'
 require 'shrine/storage/s3'          if CLOUD_STORAGE
