@@ -80,7 +80,6 @@ module ApiExplorerConcern
   class ApiTesting
 
     include Emma::Common
-    include Bs
 
     # =========================================================================
     # :section:
