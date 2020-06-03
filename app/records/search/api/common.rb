@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-=begin
-require 'api/common'
-=end
-
 # Shared values and methods.
 #
 # @see Api::Common

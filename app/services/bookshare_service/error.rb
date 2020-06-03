@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-=begin
-require 'api_service/error'
-=end
-
 class BookshareService::Error            < ApiService::Error;            end
 class BookshareService::ResponseError    < ApiService::ResponseError;    end
 class BookshareService::EmptyResultError < ApiService::EmptyResultError; end

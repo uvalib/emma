@@ -5,10 +5,6 @@
 
 __loading_begin(__FILE__)
 
-=begin
-require 'api_service/error'
-=end
-
 class IngestService::Error            < ApiService::Error;            end
 class IngestService::ResponseError    < ApiService::ResponseError;    end
 class IngestService::EmptyResultError < ApiService::EmptyResultError; end

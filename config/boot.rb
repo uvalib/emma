@@ -97,7 +97,7 @@ end
 #
 def rails_application?
   if !defined?(@in_rails) || @in_rails.nil?
-    @in_rails = defined?(APP_PATH)
+    @in_rails = !!defined?(APP_PATH)
     @in_rails &&= $*.none? { |arg| %w(-h --help).include?(arg) }
     @in_rails &&= (
       !!ENV['IN_PASSENGER'] ||
@@ -109,10 +109,12 @@ def rails_application?
 end
 
 # =============================================================================
-# Initial console/log message before the normal boot sequence.
+# Pre-startup output.
 # =============================================================================
 
 if rails_application?
+
+  # Initial console/log message before the normal application boot sequence.
   STDERR.puts "boot @ #{BOOT_TIME}"
   STDERR.puts "BUILD #{BUILD_VERSION.inspect}"
   if application_deployed? # TODO: debugging - remove section eventually
@@ -129,15 +131,20 @@ if rails_application?
         .join(%Q(",\n))
         .gsub(/"([^"]+)"=>/, '... \1 = ')
   end
-elsif !$0.end_with?('rails', 'rake')
-  STDERR.puts "Running #{$0.inspect}"
-end
 
-unless rails_application?
+elsif !$0.end_with?('rails', 'rake')
+
+  # Announce atypical executions (like irb or pry).
+  STDERR.puts "Running #{$0.inspect}"
+
+elsif $*.include?('assets:precompile')
+
+  # Report on run time for 'rake assets:precompile'.
   at_exit do
     elapsed_time = Time.now - BOOT_TIME
     STDERR.puts("\nRun time: %0.2g seconds" % elapsed_time)
   end
+
 end
 
 # =============================================================================

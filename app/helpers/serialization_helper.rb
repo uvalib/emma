@@ -60,42 +60,6 @@ module SerializationHelper
     (fmt == 'xml') || (respond_to?(:request) && request.format.xml?)
   end
 
-=begin
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Render an item in JSON format.
-  #
-  # @param [Object] item
-  # @param [Hash]   opt               Passed to #render.
-  #
-  def render_json(item, **opt)
-    item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
-    item = item.merge(error: api_error_message) if api_error?
-    text = make_json(item)
-    render json: text, **opt
-  end
-
-  # Render an item in XML format.
-  #
-  # @param [Object] item
-  # @param [Hash]   opt               Passed to #render except for:
-  #
-  # @option opt [String] :separator   Passed to #make_xml.
-  # @option opt [String] :name        Passed to #make_xml.
-  #
-  def render_xml(item, **opt)
-    opt, render_opt = partition_options(opt, :separator, :name)
-    item = { response: item } unless item.is_a?(Hash) && (item.size == 1)
-    item = item.merge(error: api_error_message) if api_error?
-    text = make_xml(item, **opt) || ''
-    render xml: text, **render_opt
-  end
-=end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
