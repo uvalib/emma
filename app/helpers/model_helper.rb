@@ -137,7 +137,7 @@ module ModelHelper
         field    = field.to_sym
     end
     unless item.respond_to?(method)
-      __debug { "#{__method__}: item.#{method} invalid" }
+      __debug { "#{__method__}: #{item.class}: item.#{method} invalid" }
       return
     end
     html_opt[:field] = field
@@ -917,6 +917,8 @@ module ModelHelper
   # @option opt [String] :name        Overrides *name*
   # @option opt [String] :base        Name and id for <select>; default: *name*
   #
+  # @raise [StandardError]            If *range* is not an EnumType.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_menu_single(name, value, range:, **opt)
@@ -954,6 +956,8 @@ module ModelHelper
   #
   # @option opt [String] :name        Overrides *name*
   # @option opt [String] :base        Name and id for <select>; default: *name*
+  #
+  # @raise [StandardError]            If *range* is not an EnumType.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1075,7 +1079,9 @@ module ModelHelper
   #
   # @see updateTextInputField() in file-upload.js
   #
+  #--
   # noinspection RubyYardReturnMatch
+  #++
   def render_form_input(name, value, **opt)
     normalize_attributes!(opt)
     local, opt = partition_options(opt, :base, :name)
@@ -1138,7 +1144,9 @@ module ModelHelper
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   STATUS_MARKER = I18n.t('emma.upload.status_marker', default: {}).deep_freeze
 
   # Generate a marker which can indicate the status of an input field.

@@ -52,6 +52,16 @@ module HtmlHelper
   # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
   # then it defaults to 'div'.
   #
+  # @param [Symbol, String, Integer, nil] tag
+  # @param [Array]                        args
+  #
+  # @yield Additional content
+  # @yieldreturn [String, Array]
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Variations
+  #
   # @overload html_tag(tag, content, options = nil, escape = true)
   #   @param [Symbol, String, Integer, nil]           tag
   #   @param [ActiveSupport::SafeBuffer, String, nil] content
@@ -63,11 +73,6 @@ module HtmlHelper
   #   @param [Hash]                                   options
   #   @param [TrueClass, FalseClass]                  escape
   #   @param [Proc]                                   block
-  #
-  # @yield Additional content
-  # @yieldreturn [String, Array]
-  #
-  # @return [ActiveSupport::SafeBuffer]
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #

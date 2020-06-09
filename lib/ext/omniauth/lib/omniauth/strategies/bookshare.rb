@@ -572,7 +572,7 @@ module OmniAuth
         else
           # in Rack 1.3.x, request.url explodes if scheme is nil
           if request.scheme && request.url.match(URI::ABS_URI)
-            uri = URI.parse(request.url.gsub(/\?.*$/, ''))
+            uri = URI.parse(request.url.remove(/\?.*$/))
             uri.path = ''
             # sometimes the url is actually showing http inside rails because
             # the other layers (like nginx) have handled the ssl termination.
@@ -763,12 +763,20 @@ module OmniAuth
 
       # callback_phase
       #
+      # @raise [OmniAuth::Strategies::OAuth2::CallbackError]
+      # @raise [OAuth2::Error]
+      # @raise [Timeout::Error]
+      # @raise [Errno::ETIMEDOUT]
+      # @raise [SocketError]
+      #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
       # This method overrides:
       # @see OmniAuth::Strategies::OAuth2#callback_phase
       #
+      #--
       # noinspection RubyScope
+      #++
       def callback_phase
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         result = e = nil
@@ -903,23 +911,28 @@ module OmniAuth
 
       # Generate an access token based on fixed information.
       #
+      # @param [::OAuth2::AccessToken, ActionController::Parameters, Hash, String] id
+      #
+      # @return [::OAuth2::AccessToken, nil]
+      #
+      # == Variations
+      #
       # @overload synthetic_access_token(atoken)
       #   @param [::OAuth2::AccessToken] atoken
-      #   @return [::OAuth2::AccessToken]
       #
       # @overload synthetic_access_token(id)
       #   @param [String] id          Bookshare user identity (email address).
-      #   @return [::OAuth2::AccessToken, nil]
       #
       # @overload synthetic_access_token(params)
       #   @param [ActionController::Parameters, Hash] params
-      #   @return [::OAuth2::AccessToken, nil]
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
       #
-      # @option params [String] :uid
-      # @option params [String] :id                 Alias for :uid.
-      # @option params [String] :access_token
-      # @option params [String] :token              Alias for :access_token.
-      #
+      #--
+      # noinspection RubyYardParamTypeMatch
+      #++
       def synthetic_access_token(id)
         token = hash = nil
         case id
@@ -939,21 +952,28 @@ module OmniAuth
 
       # Generate an auth hash based on fixed information.
       #
+      # @param [ActionController::Parameters, Hash, String] id
+      # @param [String, nil]                                token
+      #
+      # @return [OmniAuth::AuthHash, nil]
+      #
+      # == Variations
+      #
       # @overload synthetic_auth_hash(id, token = nil)
       #   @param [String] id          Bookshare user identity (email address).
       #   @param [String] token       Default from #stored_auth.
-      #   @return [OmniAuth::AuthHash, nil]
       #
       # @overload synthetic_auth_hash(params)
       #   @param [ActionController::Parameters, Hash] params
-      #   @return [OmniAuth::AuthHash, nil]
+      #   @option params [OmniAuth::AuthHash] :auth
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
       #
-      # @option params [OmniAuth::AuthHash] :auth
-      # @option params [String] :uid
-      # @option params [String] :id                 Alias for :uid.
-      # @option params [String] :access_token
-      # @option params [String] :token              Alias for :access_token.
-      #
+      #--
+      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
+      #++
       def synthetic_auth_hash(id, token = nil)
         if token.is_a?(::OAuth2::AccessToken)
           atoken = token
@@ -1005,21 +1025,28 @@ module OmniAuth
 
       # Generate an auth hash based on fixed information.
       #
+      # @param [ActionController::Parameters, Hash, String] id
+      # @param [String, nil]                                token
+      #
+      # @return [OmniAuth::AuthHash, nil]
+      #
+      # == Variations
+      #
       # @overload synthetic_auth_hash(id, token = nil)
       #   @param [String] id          Bookshare user identity (email address).
       #   @param [String] token       Default from #stored_auth.
-      #   @return [OmniAuth::AuthHash]
       #
       # @overload synthetic_auth_hash(params)
       #   @param [ActionController::Parameters, Hash] params
-      #   @return [OmniAuth::AuthHash]
+      #   @option params [OmniAuth::AuthHash] :auth
+      #   @option params [String] :uid
+      #   @option params [String] :id             Alias for :uid.
+      #   @option params [String] :access_token
+      #   @option params [String] :token          Alias for :access_token.
       #
-      # @option params [OmniAuth::AuthHash] :auth
-      # @option params [String] :uid
-      # @option params [String] :id                 Alias for :uid.
-      # @option params [String] :access_token
-      # @option params [String] :token              Alias for :access_token.
-      #
+      #--
+      # noinspection RubyYardParamTypeMatch
+      #++
       def self.synthetic_auth_hash(id, token = nil)
         if token.present?
           abort "#{__method__}: id must be a string" unless id.is_a?(String)
@@ -1086,14 +1113,19 @@ module OmniAuth
       #
       # If input parameters were invalid then no change will be made.
       #
+      # @param [OmniAuth::AuthHash, String]         uid
+      # @param [String, ::OAuth2::AccessToken, nil] token
+      #
+      # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
+      #
+      # == Variations
+      #
       # @overload stored_auth_update(auth)
       #   @param [OmniAuth::AuthHash]            auth   User/token to add
-      #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
       #
       # @overload stored_auth_update(auth)
       #   @param [String]                        uid    User to add.
       #   @param [String, ::OAuth2::AccessToken] token  Associated token.
-      #   @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
       #
       def self.stored_auth_update(uid, token = nil)
         if (auth = uid).is_a?(OmniAuth::AuthHash)

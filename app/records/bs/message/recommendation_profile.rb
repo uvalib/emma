@@ -25,7 +25,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Record::RecommendationProfile
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Message::RecommendationProfile < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

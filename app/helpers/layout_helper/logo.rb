@@ -21,7 +21,9 @@ module LayoutHelper::Logo
   #
   # @type [String]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   LOGO_TEXT =
     I18n.t('emma.logo.text.label', default: ApplicationHelper::APP_NAME).freeze
 

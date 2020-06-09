@@ -49,7 +49,9 @@ module ArtifactHelper
   #
   # @type [String]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   DOWNLOAD_PROGRESS_ASSET =
     I18n.t(
       'emma.download.progress.image.asset',
@@ -123,6 +125,17 @@ module ArtifactHelper
 
   # Create an element containing a link to download the given item.
   #
+  # @param [Api::Record]                     item
+  # @param [String, Bs::Record::Format, nil] format
+  # @param [Hash]                            opt      Passed to #item_link
+  #                                                     except for:
+  #
+  # @option opt [String] :url                         Def: derived from *item*.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  # == Variations
+  #
   # @overload artifact_link(item, format, **opt)
   #   @param [Bs::Api::Record]            item
   #   @param [String, Bs::Record::Format] format
@@ -134,8 +147,6 @@ module ArtifactHelper
   #   @param [String, nil]                format
   #   @param [Hash]                       opt     Passed to #item_link.
   #   @return [ActiveSupport::SafeBuffer, nil]
-  #
-  # @option opt [String] :url         Default: derived from *item*.
   #
   def artifact_link(item, format, **opt)
     url      = opt.delete(:url)

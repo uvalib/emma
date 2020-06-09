@@ -47,7 +47,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Search::Record::MetadataRecord
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Search::Message::SearchRecord < Search::Api::Message
 
   include Search::Shared::TitleMethods

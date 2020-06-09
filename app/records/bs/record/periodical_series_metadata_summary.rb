@@ -26,7 +26,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::PeriodicalSeriesMetadataSummary
 #
+#--
 # noinspection RubyClassModuleNamingConvention, DuplicatedCode
+#++
 class Bs::Record::PeriodicalSeriesMetadataSummary < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

@@ -162,7 +162,9 @@ module Bs::Shared::TitleMethods
   # This method overrides:
   # @see ::TitleMethods#creator_list
   #
+  #--
   # noinspection RubyAssignmentExpressionInConditionalInspection
+  #++
   def creator_list(*types, **opt)
     types = types.compact.presence || CREATOR_TYPES
     list =
@@ -288,7 +290,6 @@ module Bs::Shared::TitleMethods
   def artifact_list(*types)
     result = respond_to?(:artifacts) && artifacts || []
     result = result.select { |a| types.include?(a.fmt) } if types.present?
-    # noinspection RubyYardReturnMatch
     result
   end
 

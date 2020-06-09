@@ -21,7 +21,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::UserSubscription
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::UserSubscription < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

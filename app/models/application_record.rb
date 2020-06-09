@@ -100,14 +100,19 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Translate a key and value into a SQL condition.
   #
+  # @param [String, Symbol, Hash] k
+  # @param [*, nil]               v
+  #
+  # @return [String]
+  #
+  # == Variations
+  #
   # @overload sql_clause(k, v)
   #   @param [String, Symbol] k
   #   @param [*]              v
   #
   # @overload sql_clause(hash)
   #   @param [Hash] hash              Only the first pair is used.
-  #
-  # @return [String]
   #
   # == Examples
   #

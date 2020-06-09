@@ -139,19 +139,13 @@ class MemberController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
-  # @overload show_values(as: :array)
-  #   @return [Hash{Symbol=>Array}]
+  # @param [Symbol, nil] as           Either :hash or :array if given.
   #
-  # @overload show_values(as: :hash)
-  #   @return [Hash{Symbol=>Hash}]
-  #
-  # @overload show_values
-  #   @return [Hash{Symbol=>Hash}]
+  # @return [Hash{Symbol=>Hash,Array}]
   #
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  # noinspection RubyYardReturnMatch
   def show_values(as: nil)
     result = { details: @item, preferences: @preferences, history: @history }
     { member: super(result, as: as) }

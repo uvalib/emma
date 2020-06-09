@@ -27,6 +27,8 @@ module Search::Shared::LinkMethods
 
   # URL of the associated work on the web site of the original repository.
   #
+  # @raise [StandardError]            If #REPOSITORY entry is invalid.
+  #
   # @return [String]
   # @return [nil]
   #
@@ -48,6 +50,8 @@ module Search::Shared::LinkMethods
   public
 
   # Original repository artifact download URL.
+  #
+  # @raise [StandardError]            If #REPOSITORY entry is invalid.
   #
   # @return [String]
   # @return [nil]

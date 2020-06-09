@@ -43,14 +43,20 @@ module ApiService::Definition
   # method exposes it to the modules containing the methods which implement
   # individual API endpoints.
   #
-  # @overload api_methods(arg)
-  #   @param [Hash] arg
-  #   @option arg [Boolean] :synthetic  Default: false.
-  #   @return [Hash{Symbol=>Hash}]      Properties of all methods.
+  # @param [Hash, Symbol, String, nil] arg
+  #
+  # @return [Hash, nil]
+  #
+  # == Variations
   #
   # @overload api_methods(arg)
+  #   Return properties of all methods.
+  #   @param [Hash] arg
+  #   @option arg [Boolean] :synthetic  Default: false.
+  #
+  # @overload api_methods(arg)
+  #   Properties of the named method or *nil*.
   #   @param [Symbol, String] arg       Method name.
-  #   @return [Hash, nil]               Properties of the named method.
   #
   # @see ApiService#api_methods
   #

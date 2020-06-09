@@ -29,7 +29,9 @@ module HealthConcern
   #
   # @see config/locales/controllers/health.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   HEALTH_18N_ENTRIES =
     I18n.t('emma.health').select { |_, v| v.is_a?(Hash) }.deep_freeze
 
@@ -207,7 +209,9 @@ module HealthConcern
   #
   # @return [HealthStatus]
   #
-  # noinspection RubyScope, RubyUnusedLocalVariable
+  #--
+  # noinspection RubyScope
+  #++
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
     method  = entry[:method]

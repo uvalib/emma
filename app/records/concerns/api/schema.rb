@@ -225,6 +225,8 @@ module Api::Schema
   #
   # @raise [SyntaxError]              If *type* is invalid.
   #
+  # @return [void]
+  #
   def assert_serializer_type(type)
     return if SERIALIZER_TYPES.include?(type)
     raise SyntaxError, "#{type.inspect}: not in #{SERIALIZER_TYPES.inspect}"

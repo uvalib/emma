@@ -61,12 +61,16 @@ class Api::Serializer < ::Representable::Decorator
   # @param [Symbol, Proc] method
   # @param [Hash]         opt         Options argument for *method*.
   #
+  # @raise [Exception]                Propagated if raised by *method*.
+  #
   # @return [String]
   #
   # == Usage Notes
   # This method must be overridden by the derived class to pass in :method.
   #
+  #--
   # noinspection RubyScope, RubyNilAnalysis
+  #++
   def serialize(method: nil, **opt)
     __debug { ">>> #{self.class} serialize #{method}" }
     error = nil
@@ -97,6 +101,8 @@ class Api::Serializer < ::Representable::Decorator
   # @param [String, ::Hash] data
   # @param [Symbol, Proc]   method
   #
+  # @raise [Exception]                Propagated if raised by *method*.
+  #
   # @return [Api::Record]
   # @return [nil]
   #
@@ -104,7 +110,9 @@ class Api::Serializer < ::Representable::Decorator
   # The derived class must override this to pass in :method via the arguments
   # to `super`.
   #
+  #--
   # noinspection RubyScope, RubyNilAnalysis
+  #++
   def deserialize(data, method: nil)
     return unless set_source_data(data)
     __debug { ">>> #{self.class} deserialize #{method}" }

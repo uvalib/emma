@@ -15,7 +15,9 @@ __loading_begin(__FILE__)
 # same way as titles, based on characteristics of the user and the
 # periodical, and in formats that will be specified in the response.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::Periodicals
 
   include BookshareService::Common

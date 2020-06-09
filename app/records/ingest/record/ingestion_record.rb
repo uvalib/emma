@@ -44,6 +44,9 @@ __loading_begin(__FILE__)
 #
 # @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IngestionRecord
 #
+#--
+# noinspection DuplicatedCode
+#++
 class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   include Emma::Common
@@ -91,26 +94,21 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Hash]                                              opt
+  # @param [Faraday::Response, ::Api::Record, Upload, Hash, String, nil] src
+  # @param [Hash]                                                        opt
   #
   # @option opt [String] :value       If *src* is *nil*, a unique record ID may
   #                                     be provided here as the value for the
   #                                     instance.
   #
+  # @raise [UploadConcern::SubmitError]   If metadata was malformed.
+  #
   # This method overrides:
   # @see Api::Record#initialize
   #
   def initialize(src, **opt)
-    $stderr.puts "CREATE IngestionRecord | src (#{src.class}) = #{src.inspect} | opt = #{opt.inspect}"
-    $stderr.puts "CREATE IngestionRecord | default_data = #{default_data.inspect}"
     if src.is_a?(Upload)
-      $stderr.puts "CREATE IngestionRecord | src.updated_at = #{src[:updated_at].inspect}"
-      $stderr.puts "CREATE IngestionRecord | src.repository = #{src[:repository].inspect}"
-      $stderr.puts "CREATE IngestionRecord | src.repository_id = #{src[:repository_id].inspect}"
-      $stderr.puts "CREATE IngestionRecord | src.fmt = #{src[:fmt].inspect}"
       data = reject_blanks(src.emma_metadata)
-      $stderr.puts "CREATE IngestionRecord | src.emma_metadata = #{src.emma_metadata.inspect}"
 
       # === Standard Identifiers ===
       data[:dc_identifier] = normalize_identifiers(data[:dc_identifier])
@@ -132,7 +130,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
     end
     self.emma_retrievalLink ||= make_retrieval_link
     @serializer_type ||= DEFAULT_SERIALIZER_TYPE # TODO: remove
-    $stderr.puts "CREATE IngestionRecord | final fields = #{fields.inspect}" # TODO: remove
   end
 
   # ===========================================================================
@@ -143,13 +140,17 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   # Produce standard identifiers of the form "#{prefix}:#{value}".
   #
+  # @param [ActiveRecord::Associations::CollectionAssociation, Array<String,PublicationIdentifier>] ids
+  #
+  # @return [Array<String>]
+  #
+  # == Variations
+  #
   # @overload normalize_identifiers(ids)
   #   @param [ActiveRecord::Associations::CollectionAssociation] ids
   #
   # @overload normalize_identifiers(ids)
   #   @param [Array<String,PublicationIdentifier>] ids
-  #
-  # @return [Array<String>]
   #
   def normalize_identifiers(ids)
     Array.wrap(ids).map { |id| PublicationIdentifier.cast(id)&.to_s }.compact

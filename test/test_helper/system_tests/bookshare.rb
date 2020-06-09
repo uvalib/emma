@@ -95,8 +95,8 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [Capybara::Session]
   #
-  # noinspection RubyClassVariableUsageInspection
   def bookshare_apidoc(url = nil)
+    # noinspection RubyClassVariableUsageInspection
     @@bookshare_apidoc ||=
       Capybara::Session.new(:selenium).tap do |session|
         session.visit(url || APIDOC_URL)

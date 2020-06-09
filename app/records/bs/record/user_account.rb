@@ -31,7 +31,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::UserAccount
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::UserAccount < Bs::Api::Record
 
   include Bs::Shared::AccountMethods

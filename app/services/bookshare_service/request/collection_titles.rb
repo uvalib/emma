@@ -17,7 +17,9 @@ __loading_begin(__FILE__)
 # these functions, only restricted to the titles that are associated with their
 # site.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::CollectionTitles
 
   include BookshareService::Common

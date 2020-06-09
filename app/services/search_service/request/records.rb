@@ -7,7 +7,9 @@ __loading_begin(__FILE__)
 
 # SearchService::Records
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module SearchService::Request::Records
 
   include SearchService::Common

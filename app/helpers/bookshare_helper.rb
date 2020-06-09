@@ -7,7 +7,9 @@ __loading_begin(__FILE__)
 
 # Methods supporting access and linkages to the Bookshare API.
 #
+#--
 # noinspection DuplicatedCode
+#++
 module BookshareHelper
 
   def self.included(base)
@@ -172,16 +174,19 @@ module BookshareHelper
   # Generate a Bookshare URL.  If *path* is not given, infer it from the
   # originating controller and action.
   #
+  # @param [Hash, String, nil] path
+  # @param [Hash]              path_opt   Passed to #make_path.
+  #
+  # @return [String]
+  # @return [nil]                         If the URL could not be determined.
+  #
+  # == Variations
+  #
   # @overload bookshare_url(path, **path_opt)
   #   @param [String, nil] path
-  #   @param [Hash]        path_opt   Passed to #make_path
   #
   # @overload bookshare_url(path, **path_opt)
   #   @param [Hash]        path       Controller/action.
-  #   @param [Hash]        path_opt   Passed to #make_path
-  #
-  # @return [String]
-  # @return [nil]                     If the URL could not be determined.
   #
   def bookshare_url(path, **path_opt)
 
@@ -273,16 +278,20 @@ module BookshareHelper
 
   # A direct link to a Bookshare page to open in a new browser tab.
   #
+  # @param [Bs::Api::Record, String] item
+  # @param [String]                  path
+  # @param [Hash]                    path_opt   Passed to #bookshare_url.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # == Variations
+  #
   # @overload bookshare_link(item)
   #   @param [Bs::Api::Record] item
-  #   @param [Hash]   path_opt        Passed to #bookshare_url.
   #
   # @overload bookshare_link(item, path, **path_opt)
   #   @param [String] item            Link label.
   #   @param [String] path            Passed as #bookshare_url *path* parameter
-  #   @param [Hash]   path_opt        Passed to #bookshare_url.
-  #
-  # @return [ActiveSupport::SafeBuffer]
   #
   def bookshare_link(item, path: nil, **path_opt)
     if item.is_a?(Bs::Api::Record)
@@ -304,6 +313,12 @@ module BookshareHelper
   public
 
   # Transform name(s) into Bookshare username(s).
+  #
+  # @param [String, Symbol, Array<String,Symbol>] name
+  #
+  # @return [String, Array<String>]
+  #
+  # == Variations
   #
   # @overload bookshare_user(name)
   #   @param [String, Symbol] name

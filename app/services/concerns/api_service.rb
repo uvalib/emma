@@ -108,7 +108,6 @@ class ApiService
       # per-request and not per-thread (potentially spanning multiple requests
       # by different users).
       #
-      # noinspection RubyClassVariableUsageInspection, RubyNilAnalysis
       def self.instance(opt = nil)
         opt = reject_blanks(opt)
         srv = ApiService.table[self]
@@ -133,7 +132,6 @@ class ApiService
       #
       # @return [nil]
       #
-      # noinspection RubyClassVariableUsageInspection
       def self.clear
         ApiService.table.delete(self)
       end
@@ -196,6 +194,12 @@ class ApiService
 
       # Properties for each method which implements an API request.
       #
+      # @param [Hash, Symbol, String, nil] arg
+      #
+      # @return [Hash, nil]
+      #
+      # == Variations
+      #
       # @overload api_methods(arg)
       #   @param [Hash] arg
       #   @option arg [Boolean] :synthetic  Default: false.
@@ -217,7 +221,6 @@ class ApiService
         if arg.is_a?(String) || arg.is_a?(Symbol)
           @all_methods[arg.to_sym]
         elsif (synthetic = (arg.is_a?(Hash) && arg[:synthetic])) == :only
-          # noinspection RubyYardReturnMatch
           @all_methods.except(*@true_methods.keys)
         else
           synthetic ? @all_methods : @true_methods

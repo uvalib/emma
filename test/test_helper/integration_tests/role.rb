@@ -22,8 +22,8 @@ module TestHelper::IntegrationTests::Role
   # @param [Class]                     subject
   #
   def can?(user, action, subject)
-    user = find_user(user)
-    Ability.new(user).can?(action, subject)
+    u = find_user(user)
+    Ability.new(u).can?(action, subject)
   end
 
 end

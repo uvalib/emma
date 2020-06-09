@@ -11,7 +11,9 @@ __loading_begin(__FILE__)
 
 public
 
+#--
 # noinspection RubyConstantNamingConvention
+#++
 Boolean = Axiom::Types::Boolean
 
 # Base class for custom scalar types.
@@ -587,7 +589,9 @@ module Api::Common
   #
   # @see config/locale/types.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   CATEGORIES = I18n.t('emma.categories', default: {}).deep_freeze
 
   # All language codes and labels.
@@ -596,7 +600,9 @@ module Api::Common
   #
   # @see config/locale/types.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   LANGUAGE_LIST = I18n.t('emma.language.list', default: {}).deep_freeze
 
   # Languages that appear first in the list.
@@ -614,7 +620,9 @@ module Api::Common
   #
   # @see config/locale/types.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   LANGUAGES =
     PRIMARY_LANGUAGES
       .map { |k| [k, LANGUAGE_LIST[k]] }.to_h

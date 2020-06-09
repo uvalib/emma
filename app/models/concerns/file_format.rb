@@ -31,7 +31,11 @@ module FileFormat
   #
   # @type [Array<Symbol>]
   #
+  # @see config/locales/types.en.yml
+  #
+  #--
   # noinspection RailsI18nInspection
+  #++
   TYPES = I18n.t('emma.format').keys.map(&:to_sym).freeze
 
   # Placeholder for an unknown format.
@@ -79,6 +83,9 @@ module FileFormat
   # @type [Array<Symbol>]
   #
   # @see #field_value_array
+  #
+  # Compare with:
+  # @see Upload#FIELD_ALWAYS_ARRAY
   #
   FIELD_ALWAYS_ARRAY = %i[
     AccessibilityControl
@@ -357,6 +364,13 @@ module FileFormat
 
   # Used within #field_transforms to apply a method to each element of a
   # value whether it is a scalar or an array.
+  #
+  # @param [Symbol] method
+  # @param [Array<String>, String] value
+  #
+  # @return [Array<String>, String]
+  #
+  # == Variations
   #
   # @overload transform(method, value)
   #   @param [Symbol]        method

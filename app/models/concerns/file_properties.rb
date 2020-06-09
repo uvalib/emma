@@ -8,7 +8,9 @@ __loading_begin(__FILE__)
 # A subclass of Hash used to encapsulate and manage the properties associated
 # with downloaded and downloadable files.
 #
+#--
 # noinspection RubyTooManyMethodsInspection
+#++
 class FileProperties < Hash
 
   include Emma::Debug
@@ -486,6 +488,12 @@ class FileProperties < Hash
 
   # Create a new instance from the provided collection of values.
   #
+  # @param [Hash, Array] args
+  #
+  # @return [FileProperties]
+  #
+  # == Variations
+  #
   # @overload FileProperties[args]
   #   @param [Hash] args
   #
@@ -497,8 +505,6 @@ class FileProperties < Hash
   #   args[2] [String, Symbol, nil]   fmt
   #   args[3] [String, nil]           ext
   #   args[4] [String, nil]           filename
-  #
-  # @return [FileProperties]
   #
   def self.[](*args)
     opt = (args.first if args.first.is_a?(Hash))

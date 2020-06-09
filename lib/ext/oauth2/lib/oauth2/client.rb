@@ -160,6 +160,8 @@ module OAuth2
     #                                         Default: `options[:raise_errors]`
     # @option opts [Symbol]       :parse    @see Response#initialize
     #
+    # @raise [OAuth2::Error]              For 400+ response status.
+    #
     # @return [OAuth2::Response]
     #
     # @yield [req] Gives access to the request before it is transmitted.

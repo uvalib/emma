@@ -25,7 +25,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::ReadingListUserView
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::ReadingListUserView < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

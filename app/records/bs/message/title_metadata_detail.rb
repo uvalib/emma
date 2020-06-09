@@ -77,7 +77,9 @@ __loading_begin(__FILE__)
 #   :readingAgeMinimum
 #   :site
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Message::TitleMetadataDetail < Bs::Api::Message
 
   include Bs::Shared::ArtifactMethods

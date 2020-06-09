@@ -24,7 +24,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::Organization
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::Organization < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

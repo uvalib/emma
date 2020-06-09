@@ -339,7 +339,9 @@ end
 
 # Defined as an "alias" for Emma::Log without needing to "include Emma".
 #
+#--
 # noinspection RubyConstantNamingConvention
+#++
 Log = Emma::Log
 
 __loading_end(__FILE__)

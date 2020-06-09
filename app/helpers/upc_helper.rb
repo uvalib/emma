@@ -82,6 +82,9 @@ module UpcHelper
   # @param [Boolean] validate         If *true*, raise an exception if the
   #                                     checksum provided in *s* is invalid.
   #
+  # @raise [StandardError]            If *s* contains a check digit but it is
+  #                                     not valid.
+  #
   # @return [String]
   # @return [nil]
   #

@@ -141,6 +141,12 @@ module ApiService::Common
 
   # The HTTP method of the latest API request.
   #
+  # @param [Symbol, String, nil] http_method
+  #
+  # @return [String]
+  #
+  # == Variations
+  #
   # @overload request_type()
   #   @return [String]                      Type derived from @verb.
   #
@@ -154,12 +160,16 @@ module ApiService::Common
 
   # Indicate whether the latest API request is an update (PUT, POST, or PATCH).
   #
+  # @param [Symbol, String, nil] http_method
+  #
+  # == Variations
+  #
   # @overload update_request?()
-  #   @return [TrueClass, FalseClass]       Whether @verb is an update.
+  #   Return whether @verb is an update.
   #
   # @overload update_request?(http_method)
+  #   Return whether *http_method* is an update.
   #   @param [Symbol, String] http_method
-  #   @return [TrueClass, FalseClass]       Whether *http_method* is an update.
   #
   def update_request?(http_method = nil)
     http_method = http_method.downcase.to_sym if http_method.is_a?(String)
@@ -168,14 +178,18 @@ module ApiService::Common
 
   # Most recently invoked HTTP request URL.
   #
+  # @param [Hash, nil] opt
+  #
+  # @return [String]
+  #
   # @overload latest_endpoint(complete: false)
+  #   Get the URL derived from @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
-  #   @return [String]                The URL derived from @params.
   #
   # @overload latest_endpoint(hash, complete: false)
+  #   Get the URL derived from provided *hash*.
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
-  #   @return [String]                The URL derived from provided *hash*.
   #
   def latest_endpoint(opt = nil)
     opt = (opt || @params).dup
@@ -253,6 +267,8 @@ module ApiService::Common
   #
   # @param [User] u
   #
+  # @raise [StandardError]            If *u* is invalid.
+  #
   # @return [void]
   #
   def set_user(u)
@@ -301,9 +317,13 @@ module ApiService::Common
   # @option args.last [Boolean] :no_exception   If *true*, neither set
   #                                             @exception nor raise it.
   #
+  # @raise [ApiService::ResponseError]
+  #
   # @return [Faraday::Response]
   #
+  #--
   # noinspection RubyScope
+  #++
   def api(verb, *args, **opt)
     error = @action = @response = @exception = nil
     @verb = verb.to_s.downcase.to_sym
@@ -802,7 +822,6 @@ module ApiService::Common
   # @return [String]
   #
   def service_name
-    # noinspection RubyYardReturnMatch
     @service_name ||= self.class.name.underscore.delete_suffix('_service')
   end
 

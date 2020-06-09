@@ -14,7 +14,9 @@ __loading_begin(__FILE__)
 # periodical series and editions.  These are similar in function to the title
 # resources, but with differences related to the series nature of periodicals.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::CollectionPeriodicals
 
   include BookshareService::Common

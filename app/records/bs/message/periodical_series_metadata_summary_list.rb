@@ -17,7 +17,9 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary_list
 #
+#--
 # noinspection RubyClassModuleNamingConvention
+#++
 class Bs::Message::PeriodicalSeriesMetadataSummaryList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

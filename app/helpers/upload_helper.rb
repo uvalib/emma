@@ -302,7 +302,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
+  #--
   # noinspection RubyYardParamTypeMatch
+  #++
   def render_file_data(value)
     item  = (value if value.is_a?(Upload))
     value = item.file_data if item
@@ -317,7 +319,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
+  #--
   # noinspection RubyYardParamTypeMatch
+  #++
   def render_emma_data(value)
     item  = (value if value.is_a?(Upload))
     value = item.emma_data if item
@@ -739,7 +743,9 @@ module UploadHelper
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   UPLOAD_FIELD_CONTROL_VALUES =
     I18n.t('emma.upload.field_control').deep_symbolize_keys.deep_freeze
 

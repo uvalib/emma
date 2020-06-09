@@ -92,21 +92,9 @@ module SearchConcern
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
-  # @overload normalize_keys(value)
-  #   @param [Hash] value
-  #   @return [Hash]
+  # @param [Hash, Array, String, *] value
   #
-  # @overload normalize_keys(value)
-  #   @param [Array] value
-  #   @return [Array]
-  #
-  # @overload normalize_keys(value)
-  #   @param [String] value
-  #   @return [String]
-  #
-  # @overload normalize_keys(value)
-  #   @param [*] value
-  #   @return [*]
+  # @return [Hash, Array, String, *]
   #
   def normalize_keys(value)
     if value.is_a?(Hash)

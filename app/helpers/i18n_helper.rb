@@ -7,7 +7,6 @@ __loading_begin(__FILE__)
 
 # Methods supporting I18n lookup.
 #
-# noinspection RubyNilAnalysis
 module I18nHelper
 
   def self.included(base)
@@ -210,6 +209,9 @@ module I18nHelper
   # some form of "emma.generic.unit" will be found if there is no definition
   # for the given controller.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def i18n_interpolations(controller: nil, action: nil, **opt)
     opt, i18n_opt = partition_options(opt, :long, :brief, :count, :plural)
     i18n_opt[:default] = single = plural = no_single = no_plural = nil

@@ -40,12 +40,14 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 
   # Initialize a new instance.
   #
-  # @param [Faraday::Response, Api::Record, Hash, String, nil] src
-  # @param [Hash]                                              opt
+  # @param [Faraday::Response, Api::Record, Upload, Hash, String, nil] src
+  # @param [Hash]                                                      opt
   #
   # @option opt [String] :value       If *src* is *nil*, a unique record ID may
   #                                     be provided here as the value for the
   #                                     instance.
+  #
+  # @raise [UploadConcern::SubmitError]   If metadata was malformed.
   #
   # This method overrides:
   # @see Api::Record#initialize

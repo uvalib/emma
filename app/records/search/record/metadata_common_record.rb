@@ -44,7 +44,9 @@ __loading_begin(__FILE__)
 #
 # @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/MetadataCommonRecord
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Search::Record::MetadataCommonRecord < Search::Api::Record
 
   include Search::Shared::TitleMethods

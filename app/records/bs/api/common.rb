@@ -25,7 +25,9 @@ module Bs::Api::Common
   #
   # @see config/locales/types/bookshare.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   CONFIGURATION = I18n.t('emma.bookshare.type').deep_freeze
 
   # Enumeration scalar type names and properties.
@@ -34,7 +36,9 @@ module Bs::Api::Common
   #
   # @see config/locales/types/bookshare.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   ENUMERATIONS =
     CONFIGURATION
       .transform_values { |cfg| cfg.except(:_default).keys.map(&:to_s) }

@@ -40,7 +40,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Record::TitleMetadataSummary
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Message::TitleMetadataSummary < Bs::Api::Message
 
   include Bs::Shared::ArtifactMethods

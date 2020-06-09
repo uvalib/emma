@@ -33,7 +33,9 @@ module Search::Api::Common
   #
   # @see config/locales/source.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   REPOSITORY =
     I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
 
@@ -43,7 +45,9 @@ module Search::Api::Common
   #
   # @see config/locales/types/search.en.yml
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   CONFIGURATION =
     I18n.t('emma.search.type').merge(
       EmmaRepository:
@@ -668,7 +672,7 @@ class Upc < PublicationIdentifier
   #
   def self.valid?(v)
     upc?(v)
-    v.to_s.tr('^0-9', '').size >= 12 # TODO: UPC validity
+    v.to_s.remove(/[^\d]/).size >= 12 # TODO: UPC validity
   end
 
   # ===========================================================================

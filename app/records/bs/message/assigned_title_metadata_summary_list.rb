@@ -20,7 +20,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates the form of:
 # @see Bs::Message::TitleMetadataSummaryList
 #
+#--
 # noinspection RubyClassModuleNamingConvention
+#++
 class Bs::Message::AssignedTitleMetadataSummaryList < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

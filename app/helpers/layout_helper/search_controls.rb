@@ -102,32 +102,31 @@ module LayoutHelper::SearchControls
 
     # Generate an array of label/value pairs to be used with #select_tag.
     #
+    # @param [Symbol] menu_name
+    # @param [Hash, String, Symbol, Class, Array<Array>] values
+    # @param [Hash]   opt             Passed to #make_menu_label.
+    #
+    # @return [Array<Array<(String,String)>>]
+    #
     # @overload make_menu(menu_name, entries, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Hash]          values       Configuration information.
-    #   @param [Hash]          opt          Passed to #make_menu_label.
     #
     # @overload make_menu(menu_name, i18n_scope, **opt)
     #   @param [Symbol]        menu_name
     #   @param [String]        i18n_scope
-    #   @param [Hash]          opt          Passed to #make_menu_label.
     #
     # @overload make_menu(menu_name, i18n_scope, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Symbol]        enum_type    Passed to EnumType.pairs_for.
-    #   @param [Hash]          opt          Passed to #make_menu_label.
     #
     # @overload make_menu(menu_name, enum_class, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Class]         enum_class
-    #   @param [Hash]          opt          Passed to #make_menu_label.
     #
     # @overload make_menu(menu_name, menu_pairs, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Array<Array>]  menu_pairs
-    #   @param [Hash]          opt          Passed to #make_menu_label.
-    #
-    # @return [Array<Array<(String,String)>>]
     #
     def make_menu(menu_name, values, **opt)
       config = nil
@@ -284,7 +283,9 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   SEARCH_CONTROLS_CONFIG = I18n.t('emma.search_controls').deep_freeze
 
   # The value 'emma.search_controls._default' contains each of the properties
@@ -385,7 +386,9 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   ADV_SEARCH_CONFIG = I18n.t('emma.search_bar.advanced').deep_freeze
 
   # Label for button to open advanced search controls.

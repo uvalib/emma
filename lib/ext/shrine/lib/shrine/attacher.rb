@@ -11,7 +11,9 @@ require 'shrine/attacher'
 
 class Shrine
 
+  #--
   # noinspection RubyTooManyMethodsInspection
+  #++
   module AttacherDebug
 
     # Non-functional hints for RubyMine.

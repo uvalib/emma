@@ -85,7 +85,6 @@ class HelpController < ApplicationController
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #
-  # noinspection RubyNilAnalysis
   def index_values(list = @list)
     { help: list.reduce({}) { |hash, topic| hash.merge!(show_values(topic)) } }
   end

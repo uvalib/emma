@@ -24,7 +24,9 @@ __loading_begin(__FILE__)
 # their site, while administrators are allowed access to users across all
 # sites.
 #
+#--
 # noinspection RubyParameterNamingConvention, RubyLocalVariableNamingConvention
+#++
 module BookshareService::Request::UserAccount
 
   include BookshareService::Common

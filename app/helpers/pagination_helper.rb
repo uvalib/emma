@@ -35,35 +35,45 @@ module PaginationHelper
   # == Usage Notes
   # To link to the base search without any search terms (a.k.a. "null search").
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   START_OVER = I18n.t('emma.pagination.start_over').symbolize_keys.deep_freeze
 
   # Properties for the "first page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   FIRST_PAGE = I18n.t('emma.pagination.first_page').symbolize_keys.deep_freeze
 
   # Properties for the "last page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   LAST_PAGE = I18n.t('emma.pagination.last_page').symbolize_keys.deep_freeze
 
   # Properties for the "previous page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   PREV_PAGE = I18n.t('emma.pagination.prev_page').symbolize_keys.deep_freeze
 
   # Properties for the "next page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   NEXT_PAGE = I18n.t('emma.pagination.next_page').symbolize_keys.deep_freeze
 
   # ===========================================================================

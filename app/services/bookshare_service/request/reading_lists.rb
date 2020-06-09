@@ -17,7 +17,9 @@ __loading_begin(__FILE__)
 # list, and that member will be able to use that list but will not be able to
 # modify it.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::ReadingLists
 
   include BookshareService::Common

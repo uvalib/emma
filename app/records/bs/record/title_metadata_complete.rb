@@ -77,7 +77,9 @@ __loading_begin(__FILE__)
 #   :titleSource
 #   :withdrawalDate
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::TitleMetadataComplete < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods

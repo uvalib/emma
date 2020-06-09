@@ -66,7 +66,9 @@ module SerializationConcern
   #
   # @return [Hash{Symbol=>Array,Hash}]
   #
+  #--
   # noinspection RubyNilAnalysis
+  #++
   def index_values(list = nil)
     limit =
       if list.is_a?(Api::Record) && list.respond_to?(:limit)
@@ -86,17 +88,9 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @overload show_values(items, as: :array)
-  #   @param [Hash] items
-  #   @return [Array]
+  # @param [Symbol, nil] as           Either :hash or :array if given.
   #
-  # @overload show_values(items, as: :hash)
-  #   @param [Hash] items
-  #   @return [Hash]
-  #
-  # @overload show_values(items)
-  #   @param [Hash] items
-  #   @return [Hash]
+  # @return [Hash{Symbol=>Hash,Array}]
   #
   def show_values(items, as: :hash)
     (as == :array) ? items.values : items

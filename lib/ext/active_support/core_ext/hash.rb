@@ -63,6 +63,8 @@ class Hash
   #                                               will be raised if *other* is
   #                                               not a Hash.
   #
+  # @raise [StandardError]                      If *other* is not a Hash.
+  #
   # @return [self]
   #
   def rmerge!(other, raise_error = nil)
@@ -77,7 +79,7 @@ class Hash
         end
       end
     elsif raise_error
-      raise ArgumentError, "#{other.class} invalid"
+      raise "#{other.class} invalid"
     end
     self
   end

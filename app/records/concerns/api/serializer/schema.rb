@@ -164,6 +164,8 @@ module Api::Serializer::Schema
   # @param [String, Symbol, Class] name
   # @param [Symbol]                mode
   #
+  # @raise [StandardError]                If *mode* is invalid.
+  #
   # @return [String]
   #
   def element_name(name, mode)

@@ -58,7 +58,9 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#counter
   #
+  #--
   # noinspection RubyConstantNamingConvention
+  #++
   Counter = metrics(:counter, {
     test_recv: 'Data acquisition requests',   # TODO: testing - remove
     test_send: 'Data modification requests',  # TODO: testing - remove
@@ -71,7 +73,9 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#gauge
   #
+  #--
   # noinspection RubyConstantNamingConvention
+  #++
   Gauge = metrics(:gauge, {
     test_gauge:  'A simple gauge that rands between 1 and 100 inclusive', # TODO: testing - remove
     test_gauge2: 'A second gauge', # TODO: testing - remove
@@ -84,7 +88,9 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#histogram
   #
+  #--
   # noinspection RubyConstantNamingConvention
+  #++
   Histogram = metrics(:histogram, {
     test_histogram: 'A histogram example', # TODO: testing - remove
     # TODO: histogram metrics...
@@ -96,7 +102,9 @@ module MetricsConcern
   #
   # @see https://github.com/prometheus/client_ruby#summary
   #
+  #--
   # noinspection RubyConstantNamingConvention
+  #++
   Summary = metrics(:summary, {
     test_summary: 'A summary example', # TODO: testing - remove
     # TODO: summary metrics...

@@ -7,7 +7,9 @@ __loading_begin(__FILE__)
 
 # Methods supporting access and linkages to the "EMMA Unified Search" API.
 #
+#--
 # noinspection DuplicatedCode
+#++
 module SearchHelper
 
   def self.included(base)

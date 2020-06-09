@@ -73,19 +73,22 @@ module Representable
 
       # __debug_show
       #
-      # @param [Array] args
+      # @param [Symbol, NilClass, *] mode
+      # @param [Array]               args
+      #
+      # @yield To supply additional items to show.
+      # @yieldreturn [Array]
+      #
+      # @return [nil]
+      #
+      # == Variations
       #
       # @overload __debug_show(mode, *args)
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [Array]            args
-      #   @return [nil]
       #
       # @overload __debug_show(*args)
       #   @param [Array]            args
-      #   @return [nil]
-      #
-      # @yield To supply additional items to show.
-      # @yieldreturn [Array]
       #
       # @see #__output
       #
@@ -133,14 +136,19 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
+      # @param [Symbol, NilClass, *] mode
+      # @param [Array<Symbol>]       constants
+      #
+      # @return [nil]
+      #
+      # == Variations
+      #
       # @overload __debug_lambda(mode, *constants)
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [Array<Symbol>]    constants
-      #   @return [nil]
       #
       # @overload __debug_lambda(*constants)
       #   @param [Array<Symbol>]    constants
-      #   @return [nil]
       #
       # @see #__debug_show
       #
@@ -180,16 +188,22 @@ module Representable
       # If *mode* is not compatible with the value of #DEBUG_REPRESENTABLE then
       # no overrides are performed.
       #
+      # @param [Symbol, NilClass, *] mode
+      # @param [String, nil]         label
+      # @param [Array<Symbol>]       methods
+      #
+      # @return [nil]
+      #
+      # == Variations
+      #
       # @overload __debug_method(mode, label, *methods)
       #   @param [Symbol, NilClass] mode        Either :input, :output or *nil*
       #   @param [String]           label
-      #   @param [Array<Symbol>]    constants
-      #   @return [nil]
+      #   @param [Array<Symbol>]    methods
       #
       # @overload __debug_method(label, *methods)
       #   @param [String]           label
-      #   @param [Array<Symbol>]    constants
-      #   @return [nil]
+      #   @param [Array<Symbol>]    methods
       #
       # @see #__debug_show
       #
@@ -232,7 +246,9 @@ module Representable
 
     remove_const(:Class) if const_defined?(:Class, false)
 
+    #--
     # noinspection RubyConstantNamingConvention
+    #++
     Class = ->(input, options) do
       binding = options[:binding]
       object_class = binding.evaluate_option(:class, input, options)

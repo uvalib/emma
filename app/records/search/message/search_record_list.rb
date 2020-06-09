@@ -56,7 +56,9 @@ class Search::Message::SearchRecordList < Search::Api::Message
   #
   # @return [Integer]
   #
+  #--
   # noinspection RubyInstanceMethodNamingConvention
+  #++
   def totalResults
     # noinspection RubyYardReturnMatch
     records&.size || 0
@@ -71,7 +73,10 @@ class Search::Message::SearchRecordList < Search::Api::Message
   include Search::Shared::TitleMethods
 
   # @type [Hash]
+  #
+  #--
   # noinspection RailsI18nInspection
+  #++
   EXAMPLE_DATA = I18n.t('emma.examples.search').deep_freeze
 
   # @type [Hash]

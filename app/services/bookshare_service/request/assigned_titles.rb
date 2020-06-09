@@ -13,7 +13,9 @@ __loading_begin(__FILE__)
 # Assigned titles are titles that have been assigned to an organization member
 # by a sponsor of that organization.
 #
+#--
 # noinspection RubyParameterNamingConvention, RubyLocalVariableNamingConvention
+#++
 module BookshareService::Request::AssignedTitles
 
   include BookshareService::Common

@@ -34,7 +34,9 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   HELP_ENTRY =
     I18n.t('emma.help.topic').map { |topic, entry|
 
@@ -171,7 +173,6 @@ module HelpHelper
     type ||= :anchor
     opt  ||= {}
     opt[:modal] ||= modal?
-    # noinspection RubyYardReturnMatch
     help_titles(*topics).map do |topic, title|
       case type
         when :path then [title, help_path(**opt.merge(id: topic))]

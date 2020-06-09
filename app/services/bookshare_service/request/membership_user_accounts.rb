@@ -13,7 +13,9 @@ __loading_begin(__FILE__)
 # Membership Assistant users are able to view and update the user accounts for
 # those individual members who are associated with the Assistant’s site.
 #
+#--
 # noinspection RubyParameterNamingConvention, RubyLocalVariableNamingConvention
+#++
 module BookshareService::Request::MembershipUserAccounts
 
   include BookshareService::Common

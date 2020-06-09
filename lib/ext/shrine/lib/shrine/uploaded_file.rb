@@ -28,6 +28,8 @@ class Shrine
 
     # Bibliographic metadata and remediation information.
     #
+    # @raise [UploadConcern::SubmitError]   @see #extract_file_metadata
+    #
     # @return [Hash{Symbol=>*}]
     #
     def emma_metadata
@@ -36,6 +38,8 @@ class Shrine
 
     # Parse the uploaded file to extract bibliographic metadata and remediation
     # information.
+    #
+    # @raise [UploadConcern::SubmitError]   If metadata was malformed.
     #
     # @return [Hash{Symbol=>*}]
     #

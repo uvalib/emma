@@ -49,7 +49,9 @@ class Api::Record
   # [3] If an error indication is present, the instance is initialized to
   #     defaults and *data* is ignored.
   #
+  #--
   # noinspection RubyYardParamTypeMatch
+  #++
   def initialize(src, format: nil, wrap: nil, error: nil, **)
     @serializer_type = format
     assert_serializer_type(@serializer_type) if @serializer_type

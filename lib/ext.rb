@@ -37,6 +37,12 @@ end
 # @param [Module, nil]         mod2   Module to prepend to *mod*.
 # @param [Proc]                block  Passed to Module#new.
 #
+# @raise [StandardError]              Only for a non-deployed instance.
+#
+# @return [void]
+#
+# == Variations
+#
 # @overload override mod => mod2
 #   Used outside of the definition of *mod2* to override *mod* definitions.
 #
@@ -54,8 +60,6 @@ end
 #   The block contains definitions to override *mod* definitions by
 #   prepending an anonymous module.
 #   NOTE: This may not work in all situations.
-#
-# @return [void]
 #
 # == Usage Notes
 # Within the block given, define new methods that *mod* will respond to and/or

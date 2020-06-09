@@ -81,7 +81,7 @@ class HealthController < ApplicationController
   # @return [Array<String>]
   #
   def subsystems
-    @subsystems ||= params[:subsystem].to_s.gsub(/\s/, '').split(',')
+    @subsystems ||= params[:subsystem].to_s.remove(/\s/).split(',')
   end
 
   # Acquire health status and render.

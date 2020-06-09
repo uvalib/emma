@@ -56,7 +56,9 @@ __loading_begin(__FILE__)
 #   :site
 #   :translators
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::TitleMetadataSummary < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods

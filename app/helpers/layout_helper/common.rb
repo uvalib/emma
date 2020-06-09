@@ -59,6 +59,8 @@ module LayoutHelper::Common
   # @option opt [String] :selector    Selector of the element(s) controlled by
   #                                     this button.
   #
+  # @raise [StandardError]            If *opt* does not have :'data-selector'.
+  #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see app/javascripts/feature/panel.js

@@ -153,7 +153,6 @@ module Api::Serializer::Associations
       elsif !name.include?('::')
         type = "#{service_name}::Record::#{name}"
       end
-      # noinspection RubyYardReturnMatch
       type.is_a?(Class) ? type : name.constantize
     end
 

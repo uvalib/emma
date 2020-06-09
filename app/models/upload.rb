@@ -136,17 +136,6 @@ class Upload < ApplicationRecord
   # :section: Callbacks
   # ===========================================================================
 
-=begin
-  after_create :finalize_format
-  after_create :update_attached_filename
-=end
-
-=begin
-  after_save do
-    file_attacher.promote if file_attacher.attached?
-  end
-=end
-
   before_validation { note_cb(:before_validation) } if DEBUG_SHRINE
   after_validation  { note_cb(:after_validation) }  if DEBUG_SHRINE
   before_save       { note_cb(:before_save) }       if DEBUG_SHRINE
@@ -177,8 +166,7 @@ class Upload < ApplicationRecord
   #  after_commit :promote_file, on: %i[create update]
   #  after_commit :delete_file,  on: %i[destroy]
 
-=begin
-  # TODO: this might need to be removed.
+=begin # TODO: this might need to be removed.
   # Shrine actually leaves the cached version of the file around (based on the
   # assumption that there will be a age-based cleanup of that directory).  But
   # for now we're only working from the cached version, so this allows deletion
@@ -439,7 +427,9 @@ class Upload < ApplicationRecord
   #
   # @return [String]
   #
+  #--
   # noinspection RubyYardReturnMatch
+  #++
   def set_emma_data(data)
     @emma_record   = nil # Force regeneration.
     @emma_metadata = self.class.parse_emma_data(data)
@@ -474,7 +464,9 @@ class Upload < ApplicationRecord
   #
   # @return [Hash]
   #
+  #--
   # noinspection RubyYardParamTypeMatch
+  #++
   def self.parse_emma_data(data)
     reject_blanks(
       case data
@@ -689,7 +681,7 @@ class Upload < ApplicationRecord
       id = id.id
     elsif !id.is_a?(String)
       id = id.to_s
-    elsif id.include?('-') && id.gsub(/[\-\d]/, '').blank?
+    elsif id.include?('-') && id.remove(/[\-\d]/).blank?
       min, max = id.split('-')
       max = [0, max.to_i].max
       # noinspection RubyNilAnalysis
@@ -713,7 +705,7 @@ class Upload < ApplicationRecord
   #
   def self.id_term(id)
     id          = id.to_s.strip
-    digits_only = id.tr('0-9', '').blank?
+    digits_only = id.remove(/\d/).empty?
     digits_only ? { id: id } : { repository_id: id }
   end
 

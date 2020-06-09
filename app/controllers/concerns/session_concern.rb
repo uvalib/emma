@@ -230,6 +230,8 @@ module SessionConcern
   # Remember the last operation performed in this session and set the flash
   # alert if there was an unprocessed ApiSession exception.
   #
+  # @raise [Exception]                Propagated if raised by the block.
+  #
   # == Usage Notes
   # This must be invoked as an :around_action.
   #

@@ -25,6 +25,11 @@ class FileObject
 
   # Create a new instance.
   #
+  # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle
+  # @param [FileProperties, Hash]                                 opt
+  #
+  # == Variations
+  #
   # @overload initialize(path, opt = nil)
   #   @param [String]               path
   #   @param [FileProperties, Hash] opt

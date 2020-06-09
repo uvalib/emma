@@ -7,7 +7,6 @@ __loading_begin(__FILE__)
 
 # IngestService::Records
 #
-# noinspection RubyParameterNamingConvention
 module IngestService::Request::Records
 
   include IngestService::Common
@@ -28,6 +27,13 @@ module IngestService::Request::Records
   #
   # The number of records to be updated at once is capped at 1000.
   #
+  # @param [Ingest::Message::IngestionRecordList, Array<::Api::Record>] records
+  # @param [Hash] opt                 Passed to #api.
+  #
+  # @return [Ingest::Message::Response]
+  #
+  # == Variations
+  #
   # @overload put_records(list, **opt)
   #   @param [Ingest::Message::IngestionRecordList] list
   #   @param [Hash]                                 opt       Passed to #api.
@@ -36,9 +42,7 @@ module IngestService::Request::Records
   #   @param [Array<::Api::Record>]                 records
   #   @param [Hash]                                 opt       Passed to #api.
   #
-  # @return [Ingest::Message::Response]
-  #
-  # === HTTP response codes
+  # == HTTP response codes
   # 202 Accepted        Items accepted for update.
   # 207 Multi-Status    Some items inserted or updated.
   # 400 Bad Request     Invalid input.
@@ -66,19 +70,21 @@ module IngestService::Request::Records
   #
   # The number of records to be deleted at once is capped at 1000.
   #
-  # @overload delete_records(list, **opt)
-  #   @param [Ingest::Message::IdentifierRecordList] list
-  #   @param [Hash]                                  opt      Passed to #api.
-  #
-  # @overload delete_records(*records, **opt)
-  #   @param [Array<::Api::Record>]                  records
-  #   @param [Hash]                                  opt      Passed to #api.
-  #
-  # @overload delete_records(*ids, **opt)
-  #   @param [Array<String>]                         ids
-  #   @param [Hash]                                  opt      Passed to #api.
+  # @param [Ingest::Message::IngestionRecordList, Array<::Api::Record>, Array<String>] ids
+  # @param [Hash] opt                 Passed to #api.
   #
   # @return [Ingest::Message::Response]
+  #
+  # == Variations
+  #
+  # @overload delete_records(list, **opt)
+  #   @param [Ingest::Message::IdentifierRecordList] list
+  #
+  # @overload delete_records(*records, **opt)
+  #   @param [Array<::Api::Record>] records
+  #
+  # @overload delete_records(*ids, **opt)
+  #   @param [Array<String>] ids
   #
   # === HTTP response codes
   # 202 Accepted        Items accepted for deletion.
@@ -108,19 +114,21 @@ module IngestService::Request::Records
   #
   # The number of records to be retrieved at once is capped at 1000.
   #
-  # @overload get_records(list, **opt)
-  #   @param [Ingest::Message::IdentifierRecordList] list
-  #   @param [Hash]                                  opt      Passed to #api.
-  #
-  # @overload get_records(*records, **opt)
-  #   @param [Array<::Api::Record>]                  records
-  #   @param [Hash]                                  opt      Passed to #api.
-  #
-  # @overload get_records(*ids, **opt)
-  #   @param [Array<String>]                         ids
-  #   @param [Hash]                                  opt      Passed to #api.
+  # @param [Ingest::Message::IngestionRecordList, Array<Api::Record>, Array<String>] ids
+  # @param [Hash] opt                 Passed to #api.
   #
   # @return [Search::Message::SearchRecordList]
+  #
+  # == Variations
+  #
+  # @overload get_records(list, **opt)
+  #   @param [Ingest::Message::IdentifierRecordList] list
+  #
+  # @overload get_records(*records, **opt)
+  #   @param [Array<::Api::Record>] records
+  #
+  # @overload get_records(*ids, **opt)
+  #   @param [Array<String>] ids
   #
   # === HTTP response codes
   # 200 OK              Items retrieved.
@@ -149,6 +157,12 @@ module IngestService::Request::Records
 
   # Generate an array of ingest records.
   #
+  # @param [Ingest::Message::IngestionRecordList, Ingest::Record::IngestionRecord, ::Api::Record, Upload, Hash] record
+  #
+  # @return [Array<Ingest::Record::IngestionRecord>]
+  #
+  # == Variations
+  #
   # @overload record_list(list)
   #   @param [Ingest::Message::IngestionRecordList] list
   #
@@ -156,9 +170,7 @@ module IngestService::Request::Records
   #   @param [Ingest::Record::IngestionRecord] record
   #
   # @overload record_list(record)
-  #   @param [Upload, Hash, ::Api::Record] record
-  #
-  # @return [Array<Ingest::Record::IngestionRecord>]
+  #   @param [::Api::Record, Upload, Hash] record
   #
   def record_list(record)
     case record
@@ -173,6 +185,12 @@ module IngestService::Request::Records
 
   # Generate an array of ingest identifiers.
   #
+  # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, ::Api::Record, Upload, Hash, String] id
+  #
+  # @return [Array<Ingest::Record::IdentifierRecord>]
+  #
+  # == Variations
+  #
   # @overload identifier_list(list)
   #   @param [Ingest::Message::IdentifierRecordList] list
   #
@@ -180,20 +198,19 @@ module IngestService::Request::Records
   #   @param [Ingest::Record::IdentifierRecord] record
   #
   # @overload identifier_list(record)
-  #   @param [Upload, Hash, ::Api::Record] record
+  #   @param [::Api::Record, Upload, Hash] record
   #
   # @overload identifier_list(id)
   #   @param [String] id
   #
-  # @return [Array<Ingest::Record::IdentifierRecord>]
-  #
   def identifier_list(id)
+    # noinspection RubyYardReturnMatch
     case id
       when Ingest::Message::IdentifierRecordList
         id.identifiers
       when Ingest::Record::IdentifierRecord
         [id]
-      when Upload, Hash, ::Api::Record
+      when ::Api::Record, Upload, Hash
         [Ingest::Record::IdentifierRecord.new(id)]
       else
         [Ingest::Record::IdentifierRecord.new(nil, value: id)]

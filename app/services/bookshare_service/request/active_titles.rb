@@ -18,7 +18,9 @@ __loading_begin(__FILE__)
 # and active periodicals, since there are different limitations on each of
 # them.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::ActiveTitles
 
   include BookshareService::Common

@@ -25,6 +25,8 @@ class Shrine
     # @param [Shrine::UploadedFile]    uploaded_file
     # @param [ActionDispatch::Request] request
     #
+    # @raise [UploadConcern::SubmitError]   If metadata was malformed.
+    #
     # @return [Array<(Integer, Hash, Array<String>)>]
     #
     # @see onFileUploadSuccess() in feature/file-upload.js
@@ -111,12 +113,16 @@ class Shrine
 
     # upload
     #
+    # @param [Array] args
+    #
+    # @return [*]
+    #
+    # == Variations
+    #
     # @overload upload(io, context, request)
     #   @param [Shrine::RackFile]        io
     #   @param [Hash]                    context
     #   @param [ActionDispatch::Request] request
-    #
-    # @return [*]
     #
     # This method overrides:
     # @see Shrine::UploadEndpoint#upload

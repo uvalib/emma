@@ -9,7 +9,6 @@ require 'sanitize'
 
 # Methods mixed in to record elements related to catalog titles.
 #
-#noinspection RubyYardReturnMatch
 module TitleMethods
 
   # ===========================================================================
@@ -326,6 +325,9 @@ module TitleMethods
   #
   # @return [Array<String>]
   #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
   def get_values(*fields)
     fields.find { |method|
       values = (send(method) if respond_to?(method))
@@ -342,7 +344,7 @@ module TitleMethods
   # @return [String]
   #
   def significant(string)
-    string.to_s.gsub(/[[:space:][:punct:]]/, '').downcase
+    string.to_s.remove(/[[:space:][:punct:]]/).downcase
   end
 
 end

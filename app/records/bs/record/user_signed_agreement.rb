@@ -21,7 +21,9 @@ __loading_begin(__FILE__)
 # NOTE: This duplicates:
 # @see Bs::Message::UserSignedAgreement
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Record::UserSignedAgreement < Bs::Api::Record
 
   schema do

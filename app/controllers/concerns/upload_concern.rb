@@ -233,7 +233,9 @@ module UploadConcern
   #
   # @type [Hash{Symbol=>Array<(String,Class)>}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   UPLOAD_ERROR =
     I18n.t('emma.error.upload').transform_values { |properties|
       text = properties[:message]
@@ -246,13 +248,16 @@ module UploadConcern
 
   # Raise an exception.
   #
-  # @overload fail(msg, value = nil)
-  #   @param [Symbol] problem         #UPLOAD_ERROR key.
-  #   @param [*]      value
+  # If *problem* is a symbol, it is used as a key to #UPLOAD_ERROR with *value*
+  # used for string interpolation.
   #
-  # @overload fail(msg)
-  #   @param [String, Array<String>, Exception, ActiveModel::Errors] problem
+  # Otherwise, error message(s) are extracted from *problem*.
   #
+  # @param [Symbol,String,Array<String>,Exception,ActiveModel::Errors] problem
+  # @param [*, nil]                                                    value
+  #
+  # @raise [UploadConcern::SubmitError]
+  # @raise [Api::Error]
   # @raise [Net::ProtocolError]
   # @raise [StandardError]
   #
@@ -274,16 +279,21 @@ module UploadConcern
 
   # Generate a response to a POST.
   #
+  # @param [Symbol, Integer, Exception] status
+  # @param [String, Exception]          message
+  # @param [String]                     redirect
+  # @param [Boolean]                    xhr       Force XHR handling.
+  #
+  # @return [*]
+  #
+  # == Variations
+  #
   # @overload post_response(status, message = nil, redirect: nil, xhr: nil)
   #   @param [Symbol, Integer]   status
   #   @param [String, Exception] message
-  #   @param [String]            redirect
-  #   @param [Boolean]           xhr        Force XHR handling.
   #
-  # @overload post_response(ex, redirect: nil, xhr: nil)
-  #   @param [Exception] ex
-  #   @param [String]    redirect
-  #   @param [Boolean]   xhr                Force XHR handling.
+  # @overload post_response(except, redirect: nil, xhr: nil)
+  #   @param [Exception] except
   #
   def post_response(status, message = nil, redirect: nil, xhr: nil)
     status, message = [nil, status] if status.is_a?(Exception)

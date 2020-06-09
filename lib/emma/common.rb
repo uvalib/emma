@@ -110,7 +110,6 @@ module Emma::Common
     url << first if first
     url << '&'   if first && query
     url << query if query
-    # noinspection RubyYardReturnMatch
     url
   end
 
@@ -204,7 +203,7 @@ module Emma::Common
 
   # Recursive remove blank items from a hash.
   #
-  # @param [Hash] item
+  # @param [Hash, nil] item
   #
   # @return [Hash]
   #
@@ -222,6 +221,12 @@ module Emma::Common
 
   # Recursively remove blank items from an object.
   #
+  # @param [Hash, Array, *] item
+  #
+  # @return [Hash, Array, *, nil]
+  #
+  # == Variations
+  #
   # @overload remove_blanks(item)
   #   @param [Hash] item
   #   @return [Hash, nil]
@@ -229,6 +234,10 @@ module Emma::Common
   # @overload remove_blanks(item)
   #   @param [Array] item
   #   @return [Array, nil]
+  #
+  # @overload remove_blanks(item)
+  #   @param [*] item
+  #   @return [*, nil]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element

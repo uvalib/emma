@@ -20,7 +20,9 @@ __loading_begin(__FILE__)
 # metadata resource is where you will find links to the specific file format
 # resources that are available for each specific title.
 #
+#--
 # noinspection RubyParameterNamingConvention
+#++
 module BookshareService::Request::Titles
 
   include BookshareService::Common

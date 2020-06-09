@@ -257,25 +257,27 @@ module XmlBased
 
     # Display console output.
     #
+    # @param [Array] args
+    #
+    # @return [nil]
+    #
+    # == Variations
+    #
     # @overload __debug_parse(element)
     #   @param [Nokogiri::XML::Element] element
-    #   @return [nil]
     #
     # @overload __debug_parse(element, inner)
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
-    #   @return [nil]
     #
     # @overload __debug_parse(method, element)
     #   @param [Symbol]                 method
     #   @param [Nokogiri::XML::Element] element
-    #   @return [nil]
     #
     # @overload __debug_parse(method, element, inner)
     #   @param [Symbol]                 method
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
-    #   @return [nil]
     #
     # @see #get_attributes
     # @see #get_properties

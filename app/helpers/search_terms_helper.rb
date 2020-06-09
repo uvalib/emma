@@ -39,7 +39,9 @@ module SearchTermsHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
+  #--
   # noinspection RailsI18nInspection
+  #++
   SEARCH_TYPE = I18n.t('emma.search_type').deep_freeze
 
   # Non-facet search fields.

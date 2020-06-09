@@ -38,20 +38,23 @@ module Emma::Debug
 
   # Output the parameters of the current method execution.
   #
+  # @param [Array] args
+  # @param [Proc]  block              Passed to #__debug_items.
+  #
+  # @return [nil]
+  #
+  # == Variations
+  #
   # @overload __debug_args(bind, *added, **opt)
   #   @param [Binding]        bind
   #   @param [Array]          added   Parts appended to the output line.
   #   @param [Hash]           opt     Passed to #get_params and #__debug_items.
-  #   @param [Proc]           block   Passed to #__debug_items.
-  #   @return [nil]
   #
   # @overload __debug_args(meth, bind, *added, **opt)
   #   @param [Symbol, Method] meth
   #   @param [Binding]        bind
   #   @param [Array]          added   Parts appended to the output line.
   #   @param [Hash]           opt     Passed to #get_params and #__debug_items.
-  #   @param [Proc]           block   Passed to #__debug_items.
-  #   @return [nil]
   #
   def __debug_args(*args, &block)
     prms_opt, opt = partition_options(args.extract_options!, :only, :except)
@@ -202,7 +205,9 @@ module Emma::Debug
   #
   # @return [Hash, nil]
   #
+  #--
   # noinspection RubyNilAnalysis
+  #++
   def __debug_session_hash(value = nil)
     value ||= request       if respond_to?(:request)
     value   = value.session if value.respond_to?(:session)

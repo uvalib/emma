@@ -13,7 +13,9 @@ __loading_begin(__FILE__)
 # Membership Assistant users are able to manage active titles on behalf of a
 # given user account.
 #
+#--
 # noinspection RubyParameterNamingConvention, RubyLocalVariableNamingConvention
+#++
 module BookshareService::Request::MembershipActiveTitles
 
   include BookshareService::Common

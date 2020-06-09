@@ -56,6 +56,12 @@ class FileHandle
 
   # Initialize a new instance.
   #
+  # @param [FileHandle, String, IO, StringIO, Tempfile, Down::ChunkedIO] file
+  #
+  # @raise [StandardError]            If *file* is invalid.
+  #
+  # == Variations
+  #
   # @overload initialize(other)
   #   @param [FileHandle] other
   #

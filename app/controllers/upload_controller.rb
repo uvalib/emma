@@ -62,6 +62,7 @@ class UploadController < ApplicationController
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
   # @see Upload#get_records
+  # @see app/views/upload/index.html.erb
   #
   def index
     __debug_route
@@ -78,18 +79,20 @@ class UploadController < ApplicationController
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
-
   rescue => error
     flash_failure(error)
     redirect_back(fallback_location: root_path)
-
   end
 
   # == GET /upload/:id
   # == GET /upload/ITEM_SPEC
   # Display a single upload.
   #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
+  #
   # @see Upload#get_record
+  # @see app/views/upload/show.html.erb
   #
   def show
     __debug_route
@@ -100,31 +103,31 @@ class UploadController < ApplicationController
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
-
   rescue => error
     flash_failure(error)
     redirect_back(fallback_location: upload_index_path)
-
   end
 
   # == GET /upload/new
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
   # @see Upload#initialize
+  # @see app/views/upload/new.html.erb
   #
   def new
     __debug_route
     @item = Upload.new(user_id: @user.id, base_url: request.base_url)
     respond_with(@item)
-
   rescue => error
     flash_now_failure(error)
-
   end
 
   # == POST /upload
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
+  #
+  # @raise [Net::HTTPConflict]
+  # @raise [UploadConcern::SubmitError]
   #
   # @see UploadConcern#finalize_upload
   # @see app/assets/javascripts/feature/file-upload.js
@@ -137,13 +140,10 @@ class UploadController < ApplicationController
     @item.errors.blank?      or fail(@item.errors)
     finalize_upload(@item)
     post_response(:ok, @item.filename, redirect: upload_index_path)
-
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
-
   rescue => error
     post_response(error)
-
   end
 
   # == GET /upload/:id/edit
@@ -152,6 +152,7 @@ class UploadController < ApplicationController
   # changes and/or upload of a replacement file.
   #
   # @see Upload#get_record
+  # @see app/views/upload/edit.html.erb
   #
   def edit
     __debug_route
@@ -160,15 +161,17 @@ class UploadController < ApplicationController
     unless @item_id == 'SELECT'
       @item = Upload.get_record(@item_id) or fail(:find, @item_id)
     end
-
   rescue => error
     flash_now_failure(error)
-
   end
 
   # == PUT   /upload/:id
   # == PATCH /upload/:id
   # Finalize modification of an existing EMMA entry.
+  #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
+  # @raise [UploadConcern::SubmitError]
   #
   # @see Upload#get_record
   # @see UploadConcern#finalize_upload
@@ -183,13 +186,10 @@ class UploadController < ApplicationController
     @item.errors.blank?           or fail(@item.errors)
     finalize_upload(@item)
     post_response(:ok, @item.filename, redirect: upload_index_path)
-
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
-
   rescue => error
     post_response(error)
-
   end
 
   # == GET /upload/delete/:id[?force=true]
@@ -199,7 +199,11 @@ class UploadController < ApplicationController
   # Use :force to attempt to remove an item from the EMMA Unified Search index
   # even if a database record was not found.
   #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
+  #
   # @see Upload#get_record
+  # @see app/views/upload/delete.html.erb
   #
   def delete
     __debug_route
@@ -214,19 +218,22 @@ class UploadController < ApplicationController
           record || id
         end
     end
-
   rescue => error
     flash_now_failure(error)
-
   end
 
   # == DELETE /upload/:id[?force=true]
   # == DELETE /upload/ITEM_SPEC[?force=true]
   # Finalize removal of an existing EMMA entry.
   #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
+  #
   # @see UploadConcern#destroy_upload
   #
+  #--
   # noinspection RubyScope
+  #++
   def destroy
     __debug_route
     ids    = Upload.collect_ids(@item_id).presence or fail(:file_id)
@@ -235,13 +242,10 @@ class UploadController < ApplicationController
     succeeded, failed = destroy_upload(ids, force: @force)
     fail(:find, failed) unless failed.blank? || @force
     post_response(:found, succeeded, redirect: back)
-
   rescue SubmitError => error
     post_response(:conflict, error, redirect: back) # TODO: ?
-
   rescue => error
     post_response(:not_found, error, redirect: back)
-
   end
 
   # ===========================================================================
@@ -263,16 +267,17 @@ class UploadController < ApplicationController
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
-
   rescue SubmitError => error
     post_response(:conflict, error, xhr: true) # TODO: ?
-
   rescue => error
     post_response(error, xhr: true)
-
   end
 
   # == GET /download/:id
+  # Download the file associated with an EMMA submission.
+  #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
   #
   # @see Upload#download_link.
   #

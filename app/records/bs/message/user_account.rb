@@ -40,7 +40,9 @@ __loading_begin(__FILE__)
 #   :roles
 #   :site
 #
+#--
 # noinspection DuplicatedCode
+#++
 class Bs::Message::UserAccount < Bs::Api::Message
 
   include Bs::Shared::AccountMethods

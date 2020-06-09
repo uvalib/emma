@@ -190,7 +190,7 @@ module ApiExplorerConcern
       service = BookshareService.new(user: user, no_raise: true)
       methods = trial_methods(service: service) if methods.blank?
       methods.map { |method, opts|
-        param = opts.to_s.tr('{}', '').gsub(/:(.+?)=>/, '\1: ')
+        param = opts.to_s.remove(/[{}]/).gsub(/:(.+?)=>/, '\1: ')
         value = service.send(method, **opts)
         error = (value.exception if value.respond_to?(:exception))
         trial = {
