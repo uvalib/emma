@@ -39,7 +39,7 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [Array<Symbol>]
   #
   def self.field_names
-    columns_hash.keys.map(&:to_sym)
+    columns_hash.keys.map(&:to_sym) rescue []
   end
 
   # Indicate whether two records match.
