@@ -18,7 +18,7 @@ class FileHandle
   # When *true* invocation of each low-level IO operation triggers a log debug
   # entry.
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   DEBUG_IO = true?(ENV['DEBUG_IO'])
 
@@ -86,7 +86,7 @@ class FileHandle
   # :section:
   # ===========================================================================
 
-  public
+  private
 
   if DEBUG_IO
 

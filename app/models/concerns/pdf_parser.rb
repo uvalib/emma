@@ -42,6 +42,12 @@ class PdfParser < FileParser
     @pdf_reader ||= (PDF::Reader.new(file_handle) if file_handle)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
   # method_missing
   #
   # @param [Symbol] name

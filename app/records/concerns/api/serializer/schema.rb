@@ -45,13 +45,13 @@ module Api::Serializer::Schema
 
   # The default policy for serializing empty collections.
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   DEFAULT_RENDER_EMPTY = false
 
   # The default policy for serializing empty elements.
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   DEFAULT_RENDER_NIL = false
 

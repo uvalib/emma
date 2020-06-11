@@ -180,6 +180,7 @@ module SearchHelper
         rep = item.emma_repository.to_s.titleize
         "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
       end
+    url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
 
     case (source = item.emma_repository.presence).to_s
       when 'emma'

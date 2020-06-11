@@ -32,7 +32,7 @@ module Api::Serializer::Hash::Schema
 
   # Symbolize keys in the serialization result by default.
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   SYMBOLIZE_KEYS = true
 

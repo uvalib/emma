@@ -391,8 +391,8 @@ module ModelHelper
 
     # Mark invalid values.
     case field
-      when :dc_identifier
-        value = mark_invalid_identifiers(value)
+      when :dc_language   then value = mark_invalid_languages(value)
+      when :dc_identifier then value = mark_invalid_identifiers(value)
     end
 
     # Pre-process value and accumulate CSS classes.
@@ -489,6 +489,26 @@ module ModelHelper
 
   protected
 
+  # Wrap invalid language values in a <span>.
+  #
+  # @param [*, Array<*>] value
+  #
+  # @return [*, Array<*>]
+  #
+  def mark_invalid_languages(value)
+    return value.map { |v| mark_invalid_languages(v) } if value.is_a?(Array)
+    name = IsoLanguage.find(value)&.english_name
+    if value == name
+      value
+    elsif name.present?
+      tip = "Provided value: #{value.inspect}" # TODO: I18n
+      html_span(name, title: tip)
+    else
+      tip = 'This is not a valid language.' # TODO: I18n
+      html_span(value, title: tip, class: 'invalid')
+    end
+  end
+
   # Wrap invalid identifier values in a <span>.
   #
   # @param [*, Array<*>] value
@@ -499,9 +519,8 @@ module ModelHelper
     return value.map { |v| mark_invalid_identifiers(v) } if value.is_a?(Array)
     type, id = value.split(':', 2)
     return value if id.nil? || valid_identifier?(type.to_s, id)
-    tip = "This is not a valid #{type.upcase} identifier."
-    opt = { class: 'invalid', title: tip }
-    ERB::Util.h("#{type}:") << html_span(id, opt)
+    tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
+    ERB::Util.h("#{type}:") << html_span(id, class: 'invalid', title: tip)
   end
 
   # Indicate whether the given identifier is valid.

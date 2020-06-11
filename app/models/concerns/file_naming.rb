@@ -14,7 +14,7 @@ module FileNaming
 
   # If *true*, only known file types are considered acceptable.
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   STRICT_FORMATS = false
 

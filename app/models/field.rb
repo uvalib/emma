@@ -52,8 +52,12 @@ module Field
       if values.is_a?(Symbol)
         @field = values
         @base  = Upload.get_field_configuration(@field)[:type]
-        src    = src.emma_record if src.is_a?(Upload)
-        values = (src.send(@field) if src.respond_to?(@field))
+        values = (src.emma_metadata[@field] if src.is_a?(Upload))
+        values ||=
+          begin
+            src = src.emma_record if src.is_a?(Upload)
+            src.send(@field) if src.respond_to?(@field)
+          end
       else
         @field = nil
         @base  = src

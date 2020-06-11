@@ -139,7 +139,8 @@ module IsbnHelper
       Log.info { "#{__method__}: #{s.inspect} is not a valid ISBN-10" } if log
     else
       digits = '978' + isbn[0..-2]
-      digits + isbn_13_checksum(digits)
+      check  = isbn_13_checksum(digits)
+      "#{digits}#{check}"
     end
   end
 
@@ -162,7 +163,8 @@ module IsbnHelper
       Log.info { "#{__method__}: cannot convert #{s.inspect}" } if log
     else
       digits = isbn[0..-2]
-      digits + isbn_10_checksum(digits)
+      check  = isbn_10_checksum(digits)
+      "#{digits}#{check}"
     end
   end
 

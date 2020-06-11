@@ -56,7 +56,7 @@ module Api::Serializer::Xml::Schema
   #     <copy>...</copy>
   #   </holding>
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   WRAP_COLLECTIONS = true
 
@@ -64,7 +64,7 @@ module Api::Serializer::Xml::Schema
   # (rendered) as XML attributes; if *false* then they are serialized as XML
   # elements (removing the distinction between #attribute and #has_one).
   #
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   #
   IMPLICIT_ATTRIBUTES = false
 

@@ -62,7 +62,7 @@ module Api::Serializer::Hash::Associations
     # @param [String, Symbol, Class] element
     # @param [Hash]                  options
     #
-    # @option options [TrueClass, FalseClass] :wrap
+    # @option options [Boolean] :wrap
     #
     # @return [void]
     #

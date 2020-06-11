@@ -25,60 +25,92 @@ en:
 
       fields:
 
-        database:                   &UPLOAD_DATABASE_FIELDS
+        database:                            &UPLOAD_DATABASE_FIELDS
 
-          id:                       'Database ID'
-          user_id:                  'User ID'
-          repository:               'Repository'
-          repository_id:            'Repository ID'
-          fmt:                      'Fmt'
-          ext:                      'Ext'
-          state:                    'Status'
-          created_at:               'First Upload'
-          updated_at:               'Current Upload'
-          file_data:                'File Data'
-          emma_data:                'EMMA Data'
+          id:                                'Database ID'
+          user_id:                           'User ID'
+          repository:                        'Repository'
+          repository_id:                     'Repository ID'
+          fmt:                               'Fmt'
+          ext:                               'Ext'
+          state:                             'Status'
+          created_at:                        'First Upload'
+          updated_at:                        'Current Upload'
+          file_data:                         'File Data'
+          emma_data:                         'EMMA Data'
 
-        form:                       &UPLOAD_FORM_FIELDS
+          # === Upload table fields not yet displayed via 'show' ===
+          # phase:                           '[phase]'
+          # edit_state:                      '[edit_state]'
+          # edit_user:                       '[edit_user]'
+          # edit_file_data:                  '[edit_file_data]'
+          # edit_emma_data:                  '[edit_emma_data]'
+          # edited_at:                       '[edited_at]'
+          # review_user:                     '[review_user]'
+          # review_success:                  '[review_success]'
+          # review_comment:                  '[review_comment]'
+          # reviewed_at:                     '[reviewed_at]'
+
+        form:                                &UPLOAD_FORM_FIELDS
 
           # === Unified Index information (from :emma_data) ===
-          emma_recordId:            'EMMA Record Id'
-          emma_titleId:             'EMMA Title Id'
+          emma_recordId:                     'EMMA Record Id'
+          emma_titleId:                      'EMMA Title Id'
 
           # === Repository information ===
-          emma_repository:          'EMMA Repository'
-          emma_collection:          'EMMA Collection'
-          emma_repositoryRecordId:  'EMMA RepositoryRecordId'
-          emma_retrievalLink:       'EMMA RetrievalLink'
-          emma_lastRemediationDate: 'EMMA LastRemediationDate'
-          emma_lastRemediationNote: 'EMMA LastRemediationNote'
-          emma_formatVersion:       'EMMA FormatVersion'
-          emma_formatFeature:       'EMMA FormatFeature'
+          emma_repository:                   'Source Repository'
+          emma_collection:                   'Repository Collection'
+          emma_repositoryRecordId:           'Repository Record'
+          emma_retrievalLink:                'Download Link'
+          emma_webPageLink:                  'Details Link'
+          emma_lastRemediationDate:          'File Update'
+          emma_repositoryMetadataUpdateDate: 'Entry Update'
+          emma_lastRemediationNote:          'File Update Note'
+          emma_formatVersion:                'File Format Version'
+          emma_formatFeature:                'File Format Feature'
 
           # === Bibliographic information (from :emma_data) ===
-          dc_title:                 'Title'
-          dc_creator:               'Creator'
-          dc_identifier:            'Identifier'
-          dc_publisher:             'Publisher'
-          dc_relation:              'Relation'
-          dc_language:              'Language'
-          dc_rights:                'Rights'
-          dc_provenance:            'Provenance'
-          dc_description:           'Description'
-          dc_format:                'Format'
-          dc_type:                  'Type'
-          dc_subject:               'Subject'
-          dcterms_dateAccepted:     'DateAccepted'
-          dcterms_dateCopyright:    'CopyrightDate'
+          dc_title:                          'Title'
+          dc_creator:                        'Creator'
+          dc_identifier:                     'Identifier'
+          dc_publisher:                      'Publisher'
+          dc_relation:                       'Relation'
+          dc_language:                       'Language'
+          dc_rights:                         'Rights'
+          dc_provenance:                     'Provenance'
+          dc_description:                    'Description'
+          dc_format:                         'Format'
+          dc_type:                           'Type'
+          dc_subject:                        'Subject'
+          dcterms_dateAccepted:              'DateAccepted'
+          dcterms_dateCopyright:             'CopyrightDate'
 
           # === Remediation information (from :emma_data) ===
-          s_accessibilityFeature:   'AccessibilityFeatures'
-          s_accessibilityControl:   'AccessibilityControls'
-          s_accessibilityHazard:    'AccessibilityHazards'
-          # s_accessibilityAPI:     'AccessibilityAPI' # NOTE: pointless
-          s_accessibilitySummary:   'AccessibilitySummary'
-          s_accessMode:             'AccessMode'
-          s_accessModeSufficient:   'AccessModeSufficient'
+          s_accessibilityFeature:            'Accessibility Features'
+          s_accessibilityControl:            'Accessibility Controls'
+          s_accessibilityHazard:             'Accessibility Hazards'
+          s_accessibilitySummary:            'Accessibility Summary'
+          s_accessMode:                      'Access Mode'
+          s_accessModeSufficient:            'Access Mode Sufficient'
+          # s_accessibilityAPI:              'Accessibility API'
+
+          # === New bibliographic information fields (from :emma_data) ===
+          bib_subtitle:                      '[bib_subtitle]'
+          bib_series:                        '[bib_series]'
+          bib_seriesType:                    '[bib_seriesType]'
+          bib_seriesPosition:                '[bib_seriesPosition]'
+          bib_version:                       '[bib_version]'
+
+          # === New remediation information (from :emma_data) ===
+          rem_source:                        '[rem_source]'
+          rem_metadataSource:                '[rem_metadataSource]'
+          rem_remediatedBy:                  '[rem_remediatedBy]'
+          rem_complete:                      '[rem_complete]'
+          rem_coverage:                      '[rem_coverage]'
+          rem_remediation:                   '[rem_remediation]'
+          rem_quality:                       '[rem_quality]'
+          rem_status:                        '[rem_status]'
+          rem_image_count:                   '[rem_image_count]'
 
       # =======================================================================
       # Controls
@@ -192,9 +224,6 @@ en:
         failure:        'Could not create entry: %{error}'
         success:        'Created EMMA entry for: %{file}'
 
-      new_select:
-        <<: *UPLOAD_NEW
-
       edit:             &UPLOAD_EDIT
         label:          'Change'
         title:          'Modify Your Upload'
@@ -223,9 +252,6 @@ en:
             tooltip:    'Provide an updated version of this file.'
         failure:        'Could not update EMMA entry: %{error}'
         success:        'Updated EMMA entry for %{file}'
-
-      edit_select:
-        <<: *UPLOAD_EDIT
 
       delete:           &UPLOAD_DELETE
         label:          'Remove'
@@ -256,5 +282,42 @@ en:
         failure:        'Could not remove EMMA entry: %{error}'
         success:        'Removed EMMA entry for %{file}'
 
+      new_select:
+        <<: *UPLOAD_NEW
+
+      edit_select:
+        <<: *UPLOAD_EDIT
+
       delete_select:
+        <<: *UPLOAD_DELETE
+
+      bulk_new:         &UPLOAD_BULK_NEW
+        label:          'Bulk Upload'
+        title:          'Bulk Upload for EMMA Submissions'
+        tooltip:        'Create new EMMA entries via a CSV or JSON control file.'
+        description:    'Provide a *.csv or *.json control file.'
+        directions:     ~
+        submit:
+          label:        'Begin'
+          enabled:
+            tooltip:    'Submit the control file to begin uploading'
+          disabled:
+            tooltip:    'First provide a control file'
+        cancel:
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Return to the previous screen'
+        notes:          'Some bulk upload notes...'
+        failure:        'Could not create entries: %{error}'
+        success:        'Created EMMA entry for: %{files}'
+
+      bulk_edit:
+        <<: *UPLOAD_BULK_NEW
+        label:          'Bulk Edit'
+        title:          'Bulk Edit of EMMA entries'
+        tooltip:        'Modify existing EMMA entries via a CSV or JSON control file.'
+        failure:        'Could not modify entries: %{error}'
+        success:        'Modified EMMA entries: %{files}'
+
+      bulk_delete:
         <<: *UPLOAD_DELETE

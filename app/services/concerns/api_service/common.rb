@@ -675,8 +675,8 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *opt*.
   #
-  def encode_parameters(opt = nil)
-    encode_parameters!(opt&.dup || {})
+  def encode_parameters(**opt)
+    encode_parameters!(opt)
   end
 
   # Preserve keys that would be mistaken for an ignored system parameter.
@@ -705,8 +705,8 @@ module ApiService::Common
   #
   # @return [Hash]                    A modified copy of *opt*.
   #
-  def decode_parameters(opt = nil)
-    decode_parameters!(opt&.dup || {})
+  def decode_parameters(**opt)
+    decode_parameters!(opt)
   end
 
   # Restore preserved keys.
@@ -729,15 +729,15 @@ module ApiService::Common
   #
   # @param [String, Symbol] method
   # @param [Array<String>]  errors
-  # @param [Boolean]        raise_exception
+  # @param [Boolean]        allow_raise
   #
-  # @raise [RuntimeError]             Iff *raise_exception*.
+  # @raise [RuntimeError]               Only if *allow_raise* is *true*.
   #
   # @return [nil]
   #
-  def invalid_params(method, *errors, raise_exception: RAISE_ON_INVALID_PARAMS)
+  def invalid_params(method, *errors, allow_raise: RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
-    if raise_exception
+    if allow_raise
       raise RuntimeError, ("#{method}: " + errors.join("\nAND "))
     else
       errors.each { |problem| Log.warn("#{method}: #{problem}") }

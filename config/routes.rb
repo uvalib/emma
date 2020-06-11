@@ -51,6 +51,11 @@ Rails.application.routes.draw do
   post '/upload/create',    to: 'upload#create',        as: 'create_upload'
   put  '/upload/update',    to: 'upload#update',        as: 'update_upload'
 
+  get    '/upload/bulk',    to: 'upload#bulk_new',    as: 'bulk_new_upload'
+  post   '/upload/bulk',    to: 'upload#bulk_new',    as: 'bulk_create_upload'
+  put    '/upload/bulk',    to: 'upload#bulk_edit',   as: 'bulk_update_upload'
+  delete '/upload/bulk',    to: 'upload#bulk_delete', as: 'bulk_destroy_upload'
+
   resources :upload
 
   # ===========================================================================
@@ -165,6 +170,14 @@ unless ONLY_FOR_DOCUMENTATION
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end
   def artifact_index_url(*);                      end
+  def bulk_create_upload_path(*);                 end
+  def bulk_create_upload_url(*);                  end
+  def bulk_destroy_upload_path(*);                end
+  def bulk_destroy_upload_url(*);                 end
+  def bulk_new_upload_path(*);                    end
+  def bulk_new_upload_url(*);                     end
+  def bulk_update_upload_path(*);                 end
+  def bulk_update_upload_url(*);                  end
   def category_index_path(*);                     end
   def category_index_url(*);                      end
   def check_health_path(*);                       end

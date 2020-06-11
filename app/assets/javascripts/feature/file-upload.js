@@ -115,6 +115,8 @@ $(document).on('turbolinks:load', function() {
         'select',
         'textarea',
         'input[type="text"]',
+        'input[type="date"]',
+        'input[type="time"]',
         'input[type="checkbox"]'
     ];
 
@@ -212,7 +214,7 @@ $(document).on('turbolinks:load', function() {
         fieldDisplayFilterContainer($form).children().each(function() {
             delegateClick(this);
         });
-        $form.find('.menu.multi .checkbox').each(function() {
+        $form.find('.checkbox.single').each(function() {
             delegateClick(this);
         });
 
@@ -942,9 +944,9 @@ $(document).on('turbolinks:load', function() {
      * Update the input field collection and label for a <fieldset> and its
      * enclosed set of checkboxes.
      *
-     * @param {Selector} [target]     Default: *this*.
-     * @param {Array}    [setting]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {Selector}     [target]   Default: *this*.
+     * @param {string|Array} [setting]
+     * @param {boolean}      [init]     If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_menu_multi"
      */
@@ -993,7 +995,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector}       [target]     Default: *this*.
      * @param {string|boolean} [setting]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {boolean}        [init]       If *true*, in initialization phase.
      */
     function updateCheckboxInputField(target, setting, init) {
 

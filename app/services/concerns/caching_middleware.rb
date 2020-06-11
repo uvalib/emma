@@ -233,7 +233,7 @@ module CachingMiddleware
     # @param [Faraday::Env] env
     # @param [String, nil]  cache_key
     #
-    # @return [TrueClass, FalseClass]
+    # @return [Boolean]
     # @return [nil]                   Could not determine *cache_key*.
     #
     def write_cache(env, cache_key = nil)

@@ -173,6 +173,7 @@ module IngestService::Request::Records
   #   @param [::Api::Record, Upload, Hash] record
   #
   def record_list(record)
+    # noinspection RubyYardReturnMatch
     case record
       when Ingest::Message::IngestionRecordList
         record.records

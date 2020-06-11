@@ -136,7 +136,9 @@
 //
 // noinspection SassScssResolvedByNameOnly
 .file-upload-form,
-.file-upload-delete {
+.file-upload-delete,
+.file-bulk-upload-form,
+.file-bulk-upload-delete {
 
     $form-gap:        1.5rem;
     $form-gap-narrow: $form-gap / 3;
@@ -398,6 +400,19 @@
         width:      inherit;
         max-width:  95vw;
         margin-top: 0;
+    }
+
+    // No status bar for bulk upload so extra white space is needed above.
+    .file-bulk-upload-form {
+
+        margin-top:    2rem;
+        margin-bottom: -1.5rem;
+
+        // Adjust the vertical position of the un-styled file upload button.
+        input[type="file"] {
+            line-height: 1.75;
+            font-size:   large;
+        }
     }
 
     // Inserted by Uppy via file-upload.js if FEATURES.status_bar is true.

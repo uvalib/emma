@@ -2,12 +2,13 @@
 <%-
   # Prompt to remove an existing file entry.
 
-  title ||= t('emma.upload.delete.title')
-  force ||= @force
-  list  ||= @list
-  list    = Array.wrap(list)
-  repo  ||= list.find { |e| break e.repository if e.is_a?(Upload) }
-  logo  ||= repository_source_logo(repo)
+  title  ||= t('emma.upload.delete.title')
+  force  ||= @force
+  list   ||= @list
+  list     = Array.wrap(list)
+  records  = list.select { |e| e.is_a?(Upload) }
+  repo   ||= records.first&.repository
+  logo   ||= repository_source_logo(repo)
 
   unless modal?
     set_page_title(title)
@@ -35,7 +36,7 @@
   <%- end -%>
 
   <%= upload_directions %>
-  <%= upload_delete_form(*list, force: force) %>
+  <%= upload_delete_form(*records, force: force) %>
   <%= upload_preview %>
 
 <%- end -%>

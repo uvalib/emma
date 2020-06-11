@@ -23,7 +23,7 @@ class Bs::Api::Message < Bs::Api::Record
 
   # Strategy for pre-wrapping message data before de-serialization.
   #
-  # @type [Hash{Symbol=>String,TrueClass,FalseClass}]
+  # @type [Hash{Symbol=>String,Boolean}]
   #
   WRAP_FORMATS = { xml: true }.freeze
 

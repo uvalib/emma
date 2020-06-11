@@ -61,7 +61,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
       attr = reject_blanks(src.emma_metadata.slice(*field_names))
       attr[:emma_repository]         ||= src[:repository]
       attr[:emma_repositoryRecordId] ||= src[:repository_id]
-      attr[:dc_format]               ||= src[:fmt]
+      attr[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
       initialize_attributes(attr)
     else
       super(src, **opt)

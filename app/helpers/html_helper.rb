@@ -66,12 +66,12 @@ module HtmlHelper
   #   @param [Symbol, String, Integer, nil]           tag
   #   @param [ActiveSupport::SafeBuffer, String, nil] content
   #   @param [Hash]                                   options
-  #   @param [TrueClass, FalseClass]                  escape
+  #   @param [Boolean]                                escape
   #
   # @overload html_tag(tag, options = nil, escape = true, &block)
   #   @param [Symbol, String, Integer, nil]           tag
   #   @param [Hash]                                   options
-  #   @param [TrueClass, FalseClass]                  escape
+  #   @param [Boolean]                                escape
   #   @param [Proc]                                   block
   #
   # @see ActionView::Helpers::TagHelper#content_tag
@@ -391,6 +391,213 @@ module HtmlHelper
     classes << 'col-last'   if col == opt[:col_max].to_i
     classes << 'sr-only'    if opt[:sr_only]
     classes.compact.uniq
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Safely truncate either normal or html_safe strings via #html_truncate.
+  #
+  # @param [ActiveSupport::SafeBuffer, String] str
+  # @param [Integer]                           length
+  # @param [Hash]                              opt
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  # @see #html_truncate
+  #
+  def safe_truncate(str, length = nil, **opt)
+    HtmlHelper.html_truncate(str, length, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  HTML_TRUNCATE_MAX_LENGTH = 1024
+  HTML_TRUNCATE_OMISSION   = '…'
+  HTML_TRUNCATE_SEPARATOR  = nil
+
+  # Truncate either normal or html_safe strings.
+  #
+  # If *str* is html_safe, it is assumed that it is HTML content and it is
+  # processed by #xml_truncate.  Otherwise, String#truncate is used.
+  #
+  # @param [ActiveSupport::SafeBuffer, String] str
+  # @param [Integer] length               Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Hash]    opt
+  #
+  # @option opt [Boolean]     :content    If *true*, base on content size.
+  # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
+  # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
+  #
+  # @return [ActiveSupport::SafeBuffer, String]
+  #
+  # == Usage Notes
+  # Since *str* may be a sequence of HTML elements or even just a text string
+  # with HTML entities, it is wrapped in a "<div>" to make sure that the
+  # Nokogiri parser is dealing with valid XML.
+  #
+  def self.html_truncate(str, length = nil, **opt)
+    length ||= HTML_TRUNCATE_MAX_LENGTH
+    str = str&.to_s || ''
+    return str if str.size <= length
+    opt[:omission]  ||= HTML_TRUNCATE_OMISSION
+    opt[:separator] ||= HTML_TRUNCATE_SEPARATOR
+    if str.html_safe?
+      xs  = '<div>'
+      xe  = xs.sub('<', '</')
+      xml = "#{xs}#{str.strip}#{xe}"
+      xml = Nokogiri::HTML::DocumentFragment.parse(xml)
+      xml = xml_truncate(xml, length, **opt)
+      xml = xml&.to_html(save_with: (2 | 4 | 64)) || ''
+      xml.delete_prefix!(xs)
+      xml.delete_suffix!(xe)
+      xml.squeeze!(opt[:omission])
+      xml.html_safe
+    else
+      # noinspection RubyYardReturnMatch
+      str.truncate(length, opt.except(:content))
+    end
+  end
+
+  # Truncate XML so that the rendered result is limited to the given length.
+  #
+  # If truncation is required it is done by truncating the content of
+  # Nokogiri::XML::Text nodes.  If there is not enough room for even a single
+  # character inside the final element then that element will not be included.
+  #
+  # @param [Nokogiri::XML::Node] xml
+  # @param [Integer]             len      Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Hash]                opt
+  #
+  # @option opt [Boolean]     :content    If *true*, base on content size.
+  # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
+  # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
+  #
+  # @return [Nokogiri::XML::Node]
+  # @return [nil]
+  #
+  # == Usage Notes
+  # May be problematic for small *len* values, depending on the nature of the
+  # *xml* input, but generally the result will fit within *len* (even if it
+  # is overly-aggressive in pruning the element hierarchy at the point where
+  # the available length budget runs out).
+  #
+  def self.xml_truncate(xml, len = nil, **opt)
+    opt[:omission] = HTML_TRUNCATE_OMISSION unless opt.key?(:omission)
+    omission   = opt[:omission] ||= ''
+    separator  = opt[:separator].presence
+    max_length = len || HTML_TRUNCATE_MAX_LENGTH
+    length     = (opt[:content] ? xml.content : xml.to_s).size
+
+    if max_length >= length
+      xml.dup
+
+    elsif xml.is_a?(Nokogiri::XML::Text)
+      last = max_length - omission.size
+      unless last.negative?
+        text = xml.content
+        text =
+          if opt[:content] || ((html = xml.to_s) == text)
+            # No HTML entities, just simple characters.
+            last = text.rindex(separator, last) || last if separator
+            text.slice(0, last)
+          else
+            # Do not break within an HTML entity.  HTML entities have to be
+            # converted to their Unicode equivalent in order to pass them into
+            # the Nokogiri::XML::Text constructor.
+            lookup = Nokogiri::HTML::NamedCharacters
+            part   = []
+            html.split(/&([^;]+);/) do |str|
+              code = $1.to_s
+              next if str == code # NOTE: Why?
+              if str.size > last
+                part << str.first(last)
+                break
+              elsif str.size.positive?
+                part << str
+                last -= str.size
+              end
+              entity = "&#{code};"
+              next if code.blank? || (entity.size > last)
+              last  -= entity.size
+              code   = lookup[code] unless code.delete_prefix!('#')
+              part << code.to_i.chr
+            end
+            part_index = separator  && part.rindex(separator)
+            char_index = part_index && part[part_index].rindex(separator)
+            part[part_index].slice!(0, char_index) if char_index
+            part.join
+          end
+        text << omission
+        Nokogiri::XML::Text.new(text, xml.parent)
+      end
+
+    elsif xml.children[0].is_a?(Nokogiri::XML::Text) && xml.children[1].nil?
+      node       = blank_copy(xml)
+      node_chars = node.to_s.size
+      remaining  = max_length - node_chars
+      if remaining.positive?
+        text = xml_truncate(xml.children.first, remaining, **opt)
+        size = text ? (opt[:content] ? text.content : text.to_s).size : 0
+        if size >= omission.size
+          node << text
+        elsif max_length >= (node_chars + omission.size)
+          node << Nokogiri::XML::Text.new(omission, node)
+        end
+      end
+      if node.children.present?
+        node
+      elsif max_length >= omission.size
+        Nokogiri::XML::Text.new(omission, xml.parent)
+      end
+
+    else
+      node         = blank_copy(xml)
+      remaining    = max_length
+      has_omission = false
+      xml.children.each do |child|
+        if remaining < omission.size
+          break
+        elsif remaining == omission.size
+          node << Nokogiri::XML::Text.new(omission, node) unless has_omission
+          break
+        elsif (child = xml_truncate(child, remaining, **opt)).nil?
+          return
+        else
+          length = (opt[:content] ? child.content : child.to_s).size
+          break if (length > remaining) && node.children.present?
+          remaining   -= length
+          has_omission = child.content.end_with?(omission)
+          node << child
+        end
+      end
+      node if node.children.present?
+    end
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  private
+
+  # Copy of an XML node without its children.
+  #
+  # @param [Nokogiri::XML::Node] node
+  #
+  # @return [Nokogiri::XML::Node]
+  #
+  def self.blank_copy(node)
+    result = node.dup
+    result.children.remove
+    result
   end
 
 end

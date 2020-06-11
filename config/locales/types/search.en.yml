@@ -21,8 +21,9 @@ en:
         FormatFeature:
           tts:                      'TTS'
           human:                    'Human'
-          grade1:                   'Grade 1'
-          grade2:                   'Grade 2'
+          grade1:                   'Grade 1 (uncontracted)'
+          grade2:                   'Grade 2 (contracted)'
+          nemeth:                   'Nemeth'
           technical:                'Technical'
           ueb:                      'UEB'
           ebae:                     'EBAE'
@@ -149,3 +150,26 @@ en:
           relevance:                'Relevance'
           title:                    'Title'
           lastRemediationDate:      'Last Remediation Date'
+
+        # =====================================================================
+        # From "FRAME Metadata Worksheet" (rev 4.0) but not in the index
+        # =====================================================================
+
+        RemediationStatus:
+          unremediated:             'Not Remediated'
+          remediated:               'Remediated'
+          born_accessible:          'Born Accessible'
+
+        SeriesType:
+          book:                     'Book'
+          journal:                  'Journal'
+          magazine:                 'Magazine'
+          newspaper:                'Newspaper'
+
+        TextQuality:
+          # TODO: Are these definitely mutually exclusive?
+          raw_ocr:                  'Raw OCR'
+          cleaned_ocr:              'Cleaned OCR'
+          rekeyed:                  'Rekeyed'
+          proofread:                'Proofread'
+          published:                'Published'

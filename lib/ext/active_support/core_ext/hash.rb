@@ -58,12 +58,10 @@ class Hash
   # If *other* is a Hash, then its pairs are merged into *self*; if *other* is
   # any other value, it is ignored (unless *raise_error* is *true*).
   #
-  # @param [Hash]                  other
-  # @param [TrueClass, FalseClass] raise_error  If *true*, ArgumentException
-  #                                               will be raised if *other* is
-  #                                               not a Hash.
+  # @param [Hash]    other
+  # @param [Boolean] raise_error      If *true*, raise exceptions.
   #
-  # @raise [StandardError]                      If *other* is not a Hash.
+  # @raise [StandardError]            If *other* is not a Hash.
   #
   # @return [self]
   #

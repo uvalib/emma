@@ -51,14 +51,10 @@ class Shrine
       if fmt
         FileUploader.with_file(io) do |handle|
           fmt_class    = FileNaming.format_class_instance(fmt, handle)
-          $stderr.puts "............ #{__method__} | fmt_class = #{fmt_class.inspect}"
           fmt_instance = fmt_class.new(handle)
-          $stderr.puts "............ #{__method__} | fmt_instance = #{fmt_instance.inspect}"
           fmt_parser   = fmt_instance.parser
-          $stderr.puts "............ #{__method__} | fmt_parser = #{fmt_parser.inspect}"
           fmt_metadata = fmt_parser.common_metadata rescue {}
-          $stderr.puts "............ #{__method__} | fmt_metadata = #{fmt_metadata.inspect}"
-          fmt_metadata[:dc_format] = fmt_instance.fmt
+          fmt_metadata[:dc_format] = FileFormat.metadata_fmt(fmt_instance.fmt)
         end
       elsif FileNaming::STRICT_FORMATS
         fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = ''

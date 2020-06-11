@@ -92,21 +92,22 @@
 
     .value {
 
+        $value-right-margin: calc(#{$flex-gap-x} * 2);
+
+        @media #{$wide-screen} {
+            margin-right: $value-right-margin;
+        }
+
         // noinspection CssBrowserCompatibilityForProperties
         &.field-Title {
 
             display:         flex;
             flex-direction:  row;
-            flex-wrap:       wrap;
             justify-content: space-between;
             margin:          0 0 auto;
-            font-size:       larger;
+            font-size:       x-large;
             font-weight:     bold;
             gap:             $flex-gap-y $flex-gap-x;
-
-            @media #{$wide-screen} {
-                max-width: 75%;
-            }
 
             @media #{$narrow-screen} {
 
@@ -135,8 +136,12 @@
 
                 flex:       0 0 auto;
                 margin:     auto 0;
-                height:     2.5rem;
-                max-height: 2.5rem;
+                height:     3rem;
+                max-height: 3rem;
+
+                @media #{$wide-screen} {
+                    margin-right: $value-right-margin;
+                }
 
                 @media #{$not-wide-screen} {
                     margin-top: 0.25rem;
@@ -144,13 +149,17 @@
             }
         }
 
+        &.field-Description {
+            font-size: large;
+        }
+
         &.textbox {
-            margin-right: $flex-gap-x;
+            // TODO: ?
         }
 
         &.array {
 
-            @include grid(minmax(25%, 1fr), 4);
+            @include grid(minmax(16.67%, 0.1667fr), 6);
             @include grid-row-gap($row-separation);
 
             // Array element properties
@@ -164,10 +173,6 @@
             margin-left:   $element-x-padding;
             margin-top:    0.25rem;
             margin-bottom: 0.25rem;
-
-            @media #{$wide-screen} {
-                max-width: 75%;
-            }
 
             @media #{$medium-width} {
 

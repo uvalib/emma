@@ -65,7 +65,7 @@ module Api::Serializer::Xml::Associations
     # @param [String, Symbol, Class] element
     # @param [Hash]                  options
     #
-    # @option options [TrueClass, FalseClass] :wrap
+    # @option options [Boolean] :wrap
     #
     # If options[:wrap] is *true* then it will be replaced by the *wrapper*;
     # this forces a specific collection to be wrapped even when

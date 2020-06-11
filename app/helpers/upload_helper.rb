@@ -832,22 +832,18 @@ module UploadHelper
     action ||= params[:action]
     user   ||= @user
     user     = user.id if user.is_a?(User)
-    prompt ||=
-      if user
-        'Select an EMMA entry you created' # TODO: I18n
-      else
-        'Select an existing EMMA entry' # TODO: I18n
-      end
+    prompt ||= 'Select an EMMA entry' # TODO: I18n
 
     items = user ? Upload.where(user_id: user) : Upload.all
     menu =
       Array.wrap(items).map do |item|
         id    = item.id.to_s
-        name  = item.filename
-        name  = ' - ' + ERB::Util.h(name) if name.present?
-        index = ERB::Util.h(id)
-        index = "&thinsp;&nbsp;#{index}"  if id.size == 1
-        label = "Entry #{index}#{name}".html_safe # TODO: I18n
+        name  = item.repository_id
+        file  = item.filename
+        index = id
+        index = "&thinsp;&nbsp;#{index}"         if index.size == 1
+        name  = "#{name} (#{ERB::Util.h(file)})" if file.present?
+        label = "Entry #{index} - #{name}".html_safe # TODO: I18n
         value = id
         [label, value]
       end
@@ -925,6 +921,55 @@ module UploadHelper
     opt[:action]  ||= :delete
     opt[:onclick] ||= 'cancelAction();'
     upload_cancel_button(**opt)
+  end
+
+  # ===========================================================================
+  # :section: Bulk new/edit/delete pages
+  # ===========================================================================
+
+  public
+
+  # Generate a form with controls for uploading a file, entering metadata, and
+  # submitting.
+  #
+  # @param [String]         label     Label for the submit button.
+  # @param [String, Symbol] action    Either :new or :edit.
+  # @param [Hash]           opt       Passed to #form_with except for:
+  #
+  # @option opt [String] :cancel      URL for cancel button action (default:
+  #                                     :back).
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_form(label: nil, action: nil, **opt)
+    action = (action || params[:action])&.to_sym
+    opt    = prepend_css_classes(opt, "file-bulk-upload-form #{action}")
+    cancel = opt.delete(:cancel)
+
+    # noinspection RubyCaseWithoutElseBlockInspection
+    case action
+      when :new
+        opt[:url]      = bulk_create_upload_path
+        opt[:method] ||= :post
+      when :edit
+        opt[:url]      = bulk_update_upload_path
+        opt[:method] ||= :put
+    end
+    opt[:multipart]    = true
+    opt[:autocomplete] = 'off'
+
+    html_div(class: "file-upload-container bulk #{action}") do
+      form_with(**opt) do |f|
+        html_div(class: 'controls') do
+          tray = []
+          tray << upload_submit_button(action: action, label: label)
+          tray << upload_cancel_button(action: action, url: cancel)
+          tray << f.file_field(:source)
+          tray << upload_filename_display
+          html_div(safe_join(tray), class: 'button-tray')
+        end
+      end
+    end
   end
 
 end

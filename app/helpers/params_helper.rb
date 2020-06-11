@@ -49,7 +49,7 @@ module ParamsHelper
   # Indicate whether the current request is from client-side scripting.
   #
   def request_xhr?
-    request.xhr?
+    !!request.xhr?
   end
 
   # ===========================================================================

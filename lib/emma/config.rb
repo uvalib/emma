@@ -17,13 +17,11 @@ module Emma::Config
 
   # Load a YAML configuration file.
   #
-  # @param [String, Pathname]           path  Relative or absolute path to the
-  #                                             file.
-  # @param [TrueClass, FalseClass, nil] erb   If *false* don't attempt ERB
-  #                                             translation.
+  # @param [String, Pathname] path    Relative or absolute path to the file.
+  # @param [Boolean, nil]     erb     If *false* don't attempt ERB translation.
   #
-  # @return [Hash{Symbol=>Object}]  Contents of the YAML file.
-  # @return [nil]                   If there was a problem.
+  # @return [Hash{Symbol=>Object}]    Contents of the YAML file.
+  # @return [nil]                     If there was a problem.
   #
   def self.load(path, erb = true)
     original_path = path

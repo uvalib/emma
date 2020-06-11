@@ -24,9 +24,23 @@ en:
 
         # =====================================================================
         # Database record fields
+        #
+        # NOTE: Currently each field is annotated with two attribute comments:
+        #
+        # FMW4: The name of the related entry in "FRAME Metadata Worksheet"
+        #         (rev 4.0), whether the field is Required or Optional, whether
+        #         the field is Repeatable or Non-repeatable, and a description
+        #         of the intended range of values (if specified).
+        #
+        # IA:   The related field in the CSV control file for the pre-release
+        #         bulk upload of items via Internet Archive.
+        #
         # =====================================================================
 
         id:
+          # FMW4: "Transaction ID", Required, Repeatable
+          # IA:   N/A
+          # NOTE: Obviously not repeatable per transaction.
           min:          1
           max:          1
           label:        'Database ID'
@@ -34,6 +48,9 @@ en:
           origin:       system
 
         user_id:
+          # FMW4: "Submitted By", Required, Non-repeatable, "Frame Party ID"
+          # IA:   N/A
+          # NOTE: User table "id"; table could include other associations.
           min:          1
           max:          1
           label:        'User ID'
@@ -41,6 +58,9 @@ en:
           origin:       system
 
         repository:
+          # FMW4: *missing*
+          # IA:   N/A
+          # NOTE: en.emma.upload.record.emma_data.emma_repository should have the same value.
           min:          1
           max:          1
           label:        'Repository'
@@ -48,6 +68,10 @@ en:
           origin:       system
 
         repository_id:
+          # FMW4: "Repository Item ID", Optional, Repeatable
+          # IA:   N/A
+          # NOTE: Neither optional nor repeatable.
+          # NOTE: en.emma.upload.record.emma_data.emma_repositoryRecordId should have the same value.
           min:          1
           max:          1
           label:        'Repository ID'
@@ -55,6 +79,8 @@ en:
           origin:       system
 
         fmt:
+          # FMW4: N/A
+          # IA:   N/A
           min:          1
           max:          1
           label:        'Format'
@@ -62,6 +88,8 @@ en:
           origin:       file_data
 
         ext:
+          # FMW4: N/A
+          # IA:   N/A
           min:          1
           max:          1
           label:        'Extension'
@@ -69,6 +97,8 @@ en:
           origin:       file_data
 
         state:
+          # FMW4: N/A
+          # IA:   N/A
           min:          0
           max:          1
           label:        'Status'
@@ -76,6 +106,8 @@ en:
           origin:       system
 
         created_at:
+          # FMW4: "Date Submitted to EMMA", Required, Non-repeatable, "ISO 8601"
+          # IA:   N/A
           min:          1
           max:          1
           type:         time
@@ -84,6 +116,8 @@ en:
           origin:       system
 
         updated_at:
+          # FMW4: N/A?
+          # IA:   N/A
           min:          1
           max:          1
           type:         time
@@ -92,10 +126,12 @@ en:
           origin:       system
 
         # =====================================================================
-        # Upload data
+        # Database record field with upload data in JSON format
         # =====================================================================
 
         file_data:
+          # FMW4: -
+          # IA:   -
           min:          0
           max:          1
           type:         json
@@ -104,10 +140,12 @@ en:
           origin:       system
 
           # ===================================================================
-          # Shrine file upload data
+          # file_data JSON keys - Shrine file upload data
           # ===================================================================
 
           id:
+            # FMW4: N/A
+            # IA:   N/A
             min:          1
             max:          1
             label:        'Stored File'
@@ -115,6 +153,8 @@ en:
             origin:       system
 
           storage:
+            # FMW4: N/A
+            # IA:   N/A
             min:          1
             max:          1
             label:        'Storage'
@@ -122,6 +162,8 @@ en:
             origin:       system
 
           metadata:
+            # FMW4: -
+            # IA:   -
             min:          1
             max:          1
             label:        'File Metadata'
@@ -129,6 +171,8 @@ en:
             origin:       system
 
             filename:
+              # FMW4: N/A
+              # IA:   *missing*
               min:          1
               max:          1
               label:        'Filename'
@@ -136,6 +180,9 @@ en:
               origin:       system
 
             size:
+              # FMW4: "File size", Optional, Repeatable
+              # IA:   N/A
+              # NOTE: Not actually repeatable.
               min:          1
               max:          1
               type:         number
@@ -144,6 +191,8 @@ en:
               origin:       system
 
             mime_type:
+              # FMW4: N/A
+              # IA:   N/A
               min:          1
               max:          1
               label:        'MIME Type'
@@ -151,10 +200,12 @@ en:
               origin:       system
 
         # =====================================================================
-        # Unified index data
+        # Database record field with Unified Search metadata in JSON format
         # =====================================================================
 
         emma_data:
+          # FMW4: -
+          # IA:   -
           min:          0
           max:          1
           type:         json
@@ -163,50 +214,63 @@ en:
           origin:       system
 
           # ===================================================================
-          # Unified index information
+          # emma_data JSON keys - Unified index information
           # ===================================================================
 
           emma_recordId:
+            # FMW4: "EMMA Item ID", Required, Non-repeatable
+            # IA:   N/A
             min:          0
             max:          1
             label:        'EMMA Record ID'
-            tooltip:      'EMMA Record ID'
+            tooltip:      'Identifier generated for the specific submission'
             origin:       system
 
           emma_titleId:
+            # FMW4: "EMMA Title ID", Required, Non-repeatable
+            # IA:   N/A
             min:          0
             max:          1
             label:        'EMMA Title ID'
-            tooltip:      'EMMA Title ID'
+            tooltip:      'Identifier assigned by the Unified Search index'
             origin:       system
 
           # ===================================================================
-          # Repository information
+          # emma_data JSON keys - Repository information
           # ===================================================================
 
           emma_repository:
+            # FMW4: *missing*
+            # IA:   N/A
             min:          1
             max:          1
             type:         !ruby/symbol EmmaRepository
-            label:        'EMMA Repository'
+            label:        'Source Repository'
             tooltip:      'The source repository entry associated with the remediated content file'
             origin:       system
 
           emma_collection:
+            # FMW4: *missing*
+            # IA:   "collection"
             min:          0
             max:          1
-            label:        'EMMA Collection'
+            label:        'Repository Collection'
             tooltip:      'The source repository collection of the entry associated with the remediated content file'
             origin:       system
 
           emma_repositoryRecordId:
+            # FMW4: "Repository Item ID", Optional, Repeatable
+            # IA:   N/A
+            # NOTE: Neither optional nor repeatable.
             min:          1
             max:          1
-            label:        'Repository Record'
+            label:        'Repository Record ID'
             tooltip:      'The source repository identifier for the entry associated with the remediated content file'
             origin:       system
 
           emma_retrievalLink:
+            # FMW4: *missing*
+            # IA:   N/A
             min:          0
             max:          1
             type:         url
@@ -214,23 +278,50 @@ en:
             tooltip:      'Source repository URL to retrieve a copy of the remediated content file'
             origin:       system
 
+          emma_webPageLink:
+            # FMW4: *missing*
+            # IA:   N/A
+            min:          0
+            max:          1
+            type:         url
+            label:        'Details Link'
+            tooltip:      'The source repository web page describing the creative work represented by the remediated content file'
+            origin:       system
+
           emma_lastRemediationDate:
+            # FMW4: "Status Date", Repeatable
+            # IA:   *missing*
+            # NOTE: Not actually repeatable.
             min:          1
             max:          1
             type:         date
-            label:        'Last Update'
+            label:        'Remediation Date'
             tooltip:      'Date of the most recent change to the remediated content file'
             origin:       system
 
+          emma_repositoryMetadataUpdateDate:
+            # FMW4: N/A
+            # IA:   N/A
+            min:          0
+            max:          1
+            type:         date
+            label:        'Entry Update'
+            tooltip:      'Date of the most recent change to the source repository entry for the item'
+            origin:       system
+
           emma_lastRemediationNote:
+            # FMW4: "Remediation Comments", Optional, Repeatable
+            # IA:   "remediation_comments"
             min:          0
             max:          1
             type:         textarea
-            label:        'Update Note'
+            label:        'Remediation Note'
             tooltip:      'Description of remediation for this file'
             placeholder:  'Enter description'
 
           emma_formatVersion:
+            # FMW4: *missing*
+            # IA:   N/A
             min:          0
             max:          1
             label:        'Format Version'
@@ -238,6 +329,8 @@ en:
             placeholder:  'Enter format version'
 
           emma_formatFeature:
+            # FMW4: "Feature", Required, Repeatable
+            # IA:   "contributed_format"
             min:          0
             max:          ~
             type:         !ruby/symbol FormatFeature
@@ -245,10 +338,12 @@ en:
             tooltip:      'Format features of remediated content file'
 
           # ===================================================================
-          # Bibliographic information
+          # emma_data JSON keys - Bibliographic information
           # ===================================================================
 
           dc_title:
+            # FMW4: "Title", Required, Non-repeatable
+            # IA:   "title"
             min:          1
             max:          1
             label:        'Title'
@@ -256,6 +351,8 @@ en:
             placeholder:  'Enter title of work'
 
           dc_creator:
+            # FMW4: "Contributor", Required, Repeatable
+            # IA:   *missing*
             min:          1
             max:          ~
             label:        'Creator'
@@ -263,6 +360,8 @@ en:
             placeholder:  'Enter author(s) of the work'
 
           dc_identifier:
+            # FMW4: "Public ID", Optional, Repeatable, "ISBN, DOI, OCLC, ISSN, LCCN"
+            # IA:   Combined from "doi", "issn", "isbn" fields.
             min:          0
             max:          ~
             label:        'Identifier'
@@ -270,6 +369,8 @@ en:
             placeholder:  'Enter ISBN/etc for the work'
 
           dc_publisher:
+            # FMW4: "Publisher", Required, Non-repeatable
+            # IA:   "publisher"
             min:          0
             max:          1
             label:        'Publisher'
@@ -277,6 +378,8 @@ en:
             placeholder:  'Enter publisher of the work'
 
           dc_relation:
+            # FMW4: "Related ID", Optional, Repeatable, "ISBN, DOI, OCLC, LCCN"
+            # IA:   Derived from "doi", "issn", "isbn" fields.
             min:          0
             max:          ~
             label:        'Relation'
@@ -284,14 +387,18 @@ en:
             placeholder:  'ISBN/etc for a related edition of the work'
 
           dc_language:
+            # FMW4: "Language", Required, Repeatable
+            # IA:   "language"
             min:          1
-            max:          1
+            max:          ~
             type:         !ruby/symbol LanguageType
             label:        'Language'
             tooltip:      'Language of the creative work represented by the remediated content file'
             placeholder:  'Language of the work'
 
           dc_rights:
+            # FMW4: "Source rights expression", Optional, Repeatable
+            # IA:   *missing*
             min:          1
             max:          1
             type:         !ruby/symbol Rights
@@ -299,6 +406,8 @@ en:
             tooltip:      'Reproduction rights for the creative work represented by the remediated content file'
 
           dc_provenance:
+            # FMW4: *missing*
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol Provenance
@@ -306,6 +415,8 @@ en:
             tooltip:      'Originator of the remediated content file'
 
           dc_description:
+            # FMW4: *missing*
+            # IA:   "description"
             min:          0
             max:          1
             type:         textarea
@@ -314,6 +425,8 @@ en:
             placeholder:  'Description/synopsis/abstract of the work'
 
           dc_format:
+            # FMW4: "Format", Required, Non-repeatable
+            # IA:   "contributed_format"
             min:          1
             max:          1
             type:         !ruby/symbol DublinCoreFormat
@@ -321,6 +434,8 @@ en:
             tooltip:      'Original format of the creative work represented by the remediated content file'
 
           dc_type:
+            # FMW4: *missing*
+            # IA:   "mediatype"
             min:          1
             max:          1
             type:         !ruby/symbol DcmiType
@@ -328,6 +443,8 @@ en:
             tooltip:      'Original type of creative work represented by the remediated content file'
 
           dc_subject:
+            # FMW4: *missing*
+            # IA:   "subject"
             min:          0
             max:          ~
             label:        'Subject'
@@ -335,6 +452,8 @@ en:
             placeholder:  'Enter keyword/subject term'
 
           dcterms_dateAccepted:
+            # FMW4: *missing*
+            # IA:   *missing*
             min:          0
             max:          1
             type:         date
@@ -343,6 +462,8 @@ en:
             placeholder:  'Enter date file added to repository'
 
           dcterms_dateCopyright:
+            # FMW4: "Publication Date", Required, Non-repeatable
+            # IA:   "date"
             min:          0
             max:          1
             type:         date
@@ -351,10 +472,12 @@ en:
             placeholder:  'Enter date of the creative work'
 
           # ===================================================================
-          # Remediation information
+          # emma_data JSON keys - Remediation information
           # ===================================================================
 
           s_accessibilityFeature:
+            # FMW4: "Accessibility Feature", Required, Repeatable
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol A11yFeature
@@ -362,6 +485,8 @@ en:
             tooltip:      'Accessibility features of the remediated content'
 
           s_accessibilityControl:
+            # FMW4: *missing*
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol A11yControl
@@ -369,6 +494,8 @@ en:
             tooltip:      'Accessibility controls of the remediated content'
 
           s_accessibilityHazard:
+            # FMW4: "Accessibility Hazard", Required, Repeatable
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol A11yHazard
@@ -376,6 +503,8 @@ en:
             tooltip:      'Accessibility hazards of the remediated content'
 
           s_accessMode:
+            # FMW4: "Access Mode", Required, Repeatable
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol A11yAccessMode
@@ -383,6 +512,8 @@ en:
             tooltip:      'Access mode for the remediated content'
 
           s_accessModeSufficient:
+            # FMW4: "Access Mode Sufficient", Required, Repeatable
+            # IA:   *missing*
             min:          0
             max:          1
             type:         !ruby/symbol A11ySufficient
@@ -390,6 +521,8 @@ en:
             tooltip:      'Access mode sufficient for the remediated content'
 
           s_accessibilitySummary:
+            # FMW4: "Accessibility Summary", Required, Non-repeatable
+            # IA:   *missing*
             min:          0
             max:          1
             type:         textarea
@@ -398,7 +531,236 @@ en:
             placeholder:  'Enter accessibility details'
 
           s_accessibilityAPI:
+            # FMW4: N/A
+            # IA:   N/A
+            # NOTE: Not used.
             min:          0
             max:          0
             type:         !ruby/symbol A11yAPI
             label:        'Accessibility API'
+
+          # ===================================================================
+          # emma_data JSON keys - new bibliographic fields
+          # ===================================================================
+
+          bib_subtitle:
+            # FMW4: "Subtitle", Optional, Non-repeatable
+            # IA:   *missing*
+            min:          0
+            max:          1
+            label:        '[bib_subtitle]' # TODO: ?
+            tooltip:      'NEW bibliographic metadata field (FMW4: "Subtitle"; IA: missing)' # TODO: ?
+
+          bib_series:
+            # FMW4: "Series Name", Optional, Non-repeatable
+            # IA:   *missing*
+            min:          0
+            max:          1
+            label:        '[bib_series]' # TODO: ?
+            tooltip:      'NEW bibliographic metadata field (FMW4: "Series Name"; IA: missing)' # TODO: ?
+
+          bib_seriesType:
+            # FMW4: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
+            # IA:   "series_type"
+            min:          0
+            max:          1
+            type:         !ruby/symbol SeriesType
+            label:        '[bib_seriesType]' # TODO: ?
+            tooltip:      'NEW bibliographic metadata field (FMW4: "Series Type"; IA: "series_type")' # TODO: ?
+
+          bib_seriesPosition:
+            # FMW4: "Series Position", Optional, Non-repeatable
+            # IA:   "volume"
+            min:          0
+            max:          1
+            label:        '[bib_seriesPosition]' # TODO: ?
+            tooltip:      'NEW bibliographic metadata field (FMW4: "Series Position"; IA: "volume")' # TODO: ?
+
+          bib_version:
+            # FMW4: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
+            # IA:   "version" # NOTE: seeing strings like "Edition5" -- really better if it were something like "ed. 5" or "5th ed."
+            min:          0
+            max:          1
+            label:        '[bib_version]' # TODO: ?
+            tooltip:      'NEW bibliographic metadata field (FMW4: "Version"; IA: "version")' # TODO: ?
+
+          # ===================================================================
+          # emma_data JSON keys - new remediation fields
+          # ===================================================================
+
+          rem_source:
+            # FMW4: "Provider of source", Required, Non-repeatable
+            # IA:   "contributor"
+            min:          0
+            max:          1
+            label:        '[rem_source]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Provider of source"; IA: "contributor")' # TODO: ?
+
+          rem_metadataSource:
+            # FMW4: "Metadata Source", Required, Repeatable
+            # IA:   "metadata_source"
+            min:          0
+            max:          ~
+            label:        '[rem_metadataSource]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Metadata Source"; IA: "metadata_source")' # TODO: ?
+
+          rem_remediatedBy:
+            # FMW4: "Remediated By", Required, Repeatable
+            # IA:   "remediated_by"
+            # NOTE: Not sure if this really should be repeatable.
+            min:          0
+            max:          ~
+            label:        '[rem_remediatedBy]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Remediated By"; IA: "remediated_by")' # TODO: ?
+
+          rem_complete:
+            # FMW4: "Portion?", Required, Non-repeatable, "Yes or No"
+            # IA:   "portion"
+            min:          1
+            max:          1
+            type:         boolean
+            label:        '[rem_complete]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Portion?"; IA: "portion")' # TODO: ?
+
+          rem_coverage:
+            # FMW4: "Portion Description", Required, Repeatable
+            # IA:   "portion_description"
+            # NOTE: Technically this should only be required if rem_complete is *false*.
+            min:          1
+            max:          ~
+            label:        '[rem_coverage]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Portion Description"; IA: "portion_description")' # TODO: ?
+
+          rem_remediation:
+            # FMW4: "Remediated Aspects", Required, Repeatable
+            # IA:   "remediated_aspects"
+            min:          0
+            max:          ~
+            label:        '[rem_remediation]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Remediated Aspects"; IA: "remediated_aspects")' # TODO: ?
+
+          rem_quality:
+            # FMW4: "Text Quality", Required, Non-repeatable
+            # IA:   "text_quality"
+            min:          0
+            max:          ~
+            type:         !ruby/symbol TextQuality
+            label:        '[rem_quality]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Text Quality"; IA: "text_quality")' # TODO: ?
+
+          rem_status:
+            # FMW4: "Remediation Status", Required, Non-repeatable, "Not Remediated, Remediated, Born Accessible"
+            # IA:   "remediation_status"
+            min:          0
+            max:          1
+            type:         !ruby/symbol RemediationStatus
+            label:        '[rem_status]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: "Remediation Status"; IA: "remediation_status")' # TODO: ?
+
+          rem_image_count:
+            # FMW4: N/A
+            # IA:   "imagecount"
+            min:          0
+            max:          1
+            type:         integer # TODO: ?
+            label:        '[rem_image_count]' # TODO: ?
+            tooltip:      'NEW remediation metadata field (FMW4: N/A; IA: "imagecount")' # TODO: ?
+
+        # =====================================================================
+        # Database record fields supporting submission workflow
+        # =====================================================================
+
+        phase:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          label:        'Phase'
+          tooltip:      'Submission phase'
+          origin:       system
+
+        edit_state:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          label:        'Edit Status'
+          tooltip:      'Status of modification to the submission'
+          origin:       system
+
+        edit_user:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          label:        'Edit User'
+          tooltip:      'The EMMA user who is modifying the submission'
+          origin:       system
+
+        edit_file_data:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          type:         json
+          label:        'Modified File data'
+          tooltip:      'Modified uploaded file metadata'
+          origin:       system
+
+        edit_emma_data:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          type:         json
+          label:        'Modified EMMA data'
+          tooltip:      'Modified EMMA metadata'
+          origin:       system
+
+        edited_at:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          type:         time
+          label:        'Modification Date'
+          tooltip:      'Date of last modification'
+          origin:       system
+
+        review_user:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          label:        'Reviewer'
+          tooltip:      'The EMMA user who will review the submission'
+          origin:       system
+
+        review_success:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          type:         boolean
+          label:        'Review Passed'
+          tooltip:      'Whether the submission has passed review'
+          origin:       system
+
+        review_comment:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          label:        'Review Comments'
+          tooltip:      'Comments made by the reviewer'
+          origin:       system
+
+        reviewed_at:
+          # FMW4: N/A
+          # IA:   N/A
+          min:          0
+          max:          1
+          type:         time
+          label:        'Review Date'
+          tooltip:      'Date of last review'
+          origin:       system

@@ -23,33 +23,56 @@ module Emma::Json
 
   public
 
-  # Covert a JSON string into a Hash.
+  # Covert JSON into a Hash.
   #
-  # @param [String, Hash] arg
-  # @param [Boolean] raise_exception  If *true* allow exceptions to be raised.
+  # @param [Hash, String, IO, StringIO, IO::Like, nil] arg
+  # @param [Boolean] allow_raise   Raise exceptions if *true*.
+  # @param [Hash]    opt           Passed to MultiJson#load.
   #
+  # @raise [StandardError]         If *arg* is not parseable.
+  # @raise [MultiJson::ParseError] If *arg* failed to parse and *allow_raise*.
+  #
+  # @return [nil]                  If *arg* failed to parse and !*allow_raise*.
   # @return [Hash]
-  # @return [nil]                     If *arg* failed to parse.
+  # @return [Array<Hash,Array,String>]
   #
-  # @raise [MultiJson::ParseError]    If *arg* failed to parse and
-  #                                     *raise_exception* is *true*.
+  # == Variations
   #
+  # @overload json_parse(hash = nil)
+  #   If *arg* is already a Hash, a copy of it is returned.
+  #   @param [Hash, nil] hash
+  #
+  # @overload json_parse(json, allow_raise:, **opt)
+  #   If *arg* is a String it is assumed to be JSON format (although renderings
+  #   of Ruby hashes are accommodated by converting "=>" to ":").
+  #   @param [String] json
+  #
+  # @overload json_parse(io, allow_raise:, **opt)
+  #   If *arg* is IO-like, its contents are read and parsed as JSON.
+  #   @param [IO, StringIO, IO::Like] io
+  #
+  #--
   # noinspection RubyYardReturnMatch
-  def json_parse(arg, raise_exception: false, **opt)
+  #++
+  def json_parse(arg, allow_raise: false, **opt)
     return if arg.blank?
+    arg = arg.body   if arg.respond_to?(:body)
+    arg = arg.string if arg.respond_to?(:string)
     if arg.is_a?(Hash)
-      arg
+      arg.deep_symbolize_keys
+    elsif arg.respond_to?(:read)
+      json_parse(arg.read, allow_raise: allow_raise, **opt)
+    elsif arg.respond_to?(:to_io)
+      json_parse(arg.to_io.read, allow_raise: allow_raise, **opt)
     elsif arg.is_a?(String)
       arg = arg.gsub(/=>/, ':')
       opt.reverse_merge!(symbolize_keys: true)
       MultiJson.load(arg, opt)
     else
-      raise ArgumentError
+      raise "#{arg.class} unexpected"
     end
-
   rescue => e
-    raise e if raise_exception
-    nil
+    raise e if allow_raise
   end
 
   # Attempt to interpret *arg* as JSON if it is a string.
@@ -69,23 +92,23 @@ module Emma::Json
   # pretty_json
   #
   # @param [String, Hash, *] value
-  # @param [Boolean] raise_exception  If *true* allow exceptions to be raised.
+  # @param [Boolean] allow_raise  If *true* allow exceptions to be raised.
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
   #
-  # @return [String]
-  #
-  # @raise [ArgumentError]            If *arg* was neither a String nor Hash.
   # @raise [MultiJson::ParseError]    If *arg* failed to parse.
+  # @raise [StandardError]            If *value* is not a String or Hash.
+  #
+  # @return [String]
   #
   # == Usage Notes
   # An HTML element can show the lines as they are generated if it has style
   # "white-space: pre;".
   #
-  def pretty_json(value, raise_exception: false, ruby_keys: true)
+  def pretty_json(value, allow_raise: false, ruby_keys: true)
     case value
-      when String then value = json_parse(value, raise_exception: true)
+      when String then value = json_parse(value, allow_raise: true)
       when Hash   then value = value.deep_stringify_keys
-      else             raise ArgumentError
+      else             raise "#{value.class} unexpected"
     end
     result = MultiJson.dump(value, pretty: true)
     result.gsub!(/^(\s*)"([^"]+?)":/, '\1\2:') if ruby_keys
@@ -93,7 +116,7 @@ module Emma::Json
 
   rescue => e
     Log.debug { "#{__method__}: #{e.class}: #{e.message}" }
-    raise e if raise_exception
+    raise e if allow_raise
     value.pretty_inspect
   end
 

@@ -13,6 +13,8 @@ module FlashHelper
     __included(base, '[FlashHelper]')
   end
 
+  include HtmlHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -24,6 +26,18 @@ module FlashHelper
   # @type [String]
   #
   DEFAULT_ERROR = I18n.t('emma.error.default', default: 'unknown').freeze
+
+  # Maximum length of any one flash message.
+  #
+  # @type [Integer]
+  #
+  FLASH_MAX_ITEM_SIZE = 1024
+
+  # Maximum size of all combined flash messages.
+  #
+  # @type [Integer]
+  #
+  FLASH_MAX_TOTAL_SIZE = 2 * FLASH_MAX_ITEM_SIZE
 
   # ===========================================================================
   # :section:
@@ -213,17 +227,13 @@ module FlashHelper
     fail   = (topic != :success)
     msg    = fail ? Array.wrap(error&.message || DEFAULT_ERROR).dup : []
     html   = args.any?(&:html_safe?)
-    if html
-      args.map! { |a| a.html_safe? ? a : ERB::Util.h(flash_item(a)) }
-      msg.map!  { |m| m.html_safe? ? m : ERB::Util.h(m.truncate(1024)) }
-      msg << '<br/>' if args.size > 1
-      msg << args.join('<br/>')
-    else
-      args.map! { |a| flash_item(a) }
-      msg.map!  { |m| m.truncate(1024) }
-      msg << nil unless msg.blank?
-      msg << args.join(', ')
-    end
+    sep    = html ? '<br/>' : ', '
+    max    = FLASH_MAX_ITEM_SIZE - (sep.size * (args.size + 1))
+    args   = flash_item(args, max: max, html: html, inspect: true)
+    msg    = flash_item(msg,  max: max, html: html)
+    msg << nil unless html || msg.blank?
+    msg << sep if html && (args.size > 1)
+    msg << args.join(sep)
     opt[fail ? :error : :file] = msg.join(' ')
     opt[:default] = Array.wrap(opt[:default]&.dup)
     opt[:default] << flash_i18n_path(scope, 'error', topic)
@@ -234,15 +244,52 @@ module FlashHelper
     html ? result.html_safe : result
   end
 
-  # flash_item
+  # Create item(s) to be included in the flash display.
   #
-  # @param [String] item
+  # @param [String, Array] item
+  # @param [Hash]          opt
   #
-  # @return [String]
+  # @option opt [Boolean] :inspect  If *true* show inspection of *item*.
+  # @option opt [Boolean] :html     If *true* force ActiveSupport::SafeBuffer.
+  # @option opt [Integer] :max      See below.
   #
-  def flash_item(item)
-    # noinspection RubyYardReturnMatch
-    (item.start_with?('"') ? item : item.inspect).truncate(1024)
+  # @return [ActiveSupport::SafeBuffer]   If *item* is HTML or *html* is true.
+  # @return [String]                      If *item* is not HTML.
+  # @return [Array]                       If *item* is an array.
+  #
+  # == Variations
+  #
+  # @overload flash_item(string, max: FLASH_MAX_ITEM_SIZE, **opt)
+  #   Create a single flash item which conforms to the maximum per-item size.
+  #   @param [ActiveSupport::SafeBuffer, String] string
+  #   @return [ActiveSupport::SafeBuffer, String]
+  #   @return [ActiveSupport::SafeBuffer]               If :html is *true*.
+  #
+  # @overload flash_item(array, max: FLASH_MAX_TOTAL_SIZE, **opt)
+  #   Create a set of flash items which conforms to the overall maximum size.
+  #   @param [Array<ActiveSupport::SafeBuffer,String>] array
+  #   @return [Array<ActiveSupport::SafeBuffer,String>]
+  #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
+  #
+  def flash_item(item, **opt)
+    if item.is_a?(Array)
+      opt[:max] ||= FLASH_MAX_TOTAL_SIZE
+      result = []
+      item.each do |str|
+        break unless opt[:max].positive?
+        str = flash_item(str, **opt)
+        opt[:max] -= str.size
+        result << str unless str.blank? || opt[:max].negative?
+      end
+    else
+      opt[:max] ||= FLASH_MAX_ITEM_SIZE
+      string  = item.to_s
+      inspect = opt[:inspect] && !string.html_safe? && !string.start_with?('"')
+      string  = string.inspect if inspect
+      result  = safe_truncate(string, opt[:max])
+      result  = ERB::Util.h(result) if opt[:html] && !result.html_safe?
+    end
+    result
   end
 
   # I18n scope based on the current class context.

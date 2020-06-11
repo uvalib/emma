@@ -1,0 +1,26 @@
+<%# app/views/upload/bulk_new.html.erb -%>
+<%-
+  # Prompt for a data file to direct the upload/edit of multiple files.
+
+  title ||= t('emma.upload.bulk_new.title')
+  logo  ||= repository_source_logo
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+  <%= logo %>
+</div>
+<%= upload_description %>
+
+<%= upload_directions %>
+<%= bulk_upload_form(action: :new) %>
+
+<%= upload_notes %>
+<%= upload_action_list unless modal? %>

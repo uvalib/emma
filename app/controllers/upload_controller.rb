@@ -294,6 +294,94 @@ class UploadController < ApplicationController
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == GET  /upload/bulk[?source=FILE&force=true]
+  # == POST /upload/bulk[?source=FILE&force=true]
+  # Display a form prompting for a bulk upload file in either CSV or JSON
+  # format containing an entry for each entry to submit.
+  #
+  # This endpoint responds to the form submission POST by creating the Upload
+  # entries, downloading and storing the files, and posting the new entries to
+  # the Federated Ingest API.
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_create
+  # @see app/views/upload/bulk_new.html.erb
+  #
+  def bulk_new
+    __debug_route
+    if request.post?
+      __debug_request
+      data = bulk_post_parameters.presence or fail(__method__)
+      opt  = { base_url: request.base_url, user: @user }
+      succeeded, failed = bulk_create(data, **opt)
+      fail(__method__, failed) unless failed.blank? || @force
+      post_response(:ok, succeeded, xhr: false)
+    end
+  rescue SubmitError => error
+    post_response(:conflict, error, xhr: false) # TODO: ?
+  rescue => error
+    post_response(error, xhr: false)
+  end
+
+  # == GET /upload/bulk[?source=FILE&force=true]
+  # == PUT /upload/bulk[?source=FILE&force=true]
+  # Display a form prompting for a bulk upload file in either CSV or JSON
+  # format containing an entry for each entry to change.
+  #
+  # This endpoint responds to the form submission POST by creating the Upload
+  # entries, downloading and storing the files, and posting the new entries to
+  # the Federated Ingest API.
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_update
+  # @see app/views/upload/bulk_edit.html.erb
+  #
+  def bulk_edit
+    __debug_route
+    if request.put? || request.patch?
+      __debug_request
+      data = bulk_post_parameters.presence or fail(__method__)
+      opt  = { base_url: request.base_url, user: @user }
+      succeeded, failed = bulk_update(data, **opt)
+      fail(__method__, failed) unless failed.blank? || @force
+      post_response(:ok, succeeded, xhr: false)
+    end
+  rescue SubmitError => error
+    post_response(:conflict, error, xhr: false) # TODO: ?
+  rescue => error
+    post_response(error, xhr: false)
+  end
+
+  # == DELETE /upload/bulk[?force=true]
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_destroy
+  #
+  #--
+  # noinspection RubyScope
+  #++
+  def bulk_delete
+    __debug_route
+    __debug_request
+    data = bulk_post_parameters.presence or fail(__method__)
+    succeeded, failed = bulk_destroy(data, force: @force)
+    fail(__method__, failed) unless failed.blank? || @force
+    post_response(:found, succeeded, xhr: false)
+  rescue SubmitError => error
+    post_response(:conflict, error, xhr: false) # TODO: ?
+  rescue => error
+    post_response(error, xhr: false)
+  end
+
+  # ===========================================================================
   # :section: SerializationConcern overrides
   # ===========================================================================
 

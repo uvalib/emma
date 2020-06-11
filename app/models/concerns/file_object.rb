@@ -84,6 +84,18 @@ class FileObject
 
     include FileNaming
 
+    # Set to show registration of unique MIME types during startup.
+    #
+    # @type [Boolean]
+    #
+    DEBUG_MIME_TYPES = true?(ENV['DEBUG_MIME_TYPES'])
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
     # File format defined for the subclass.
     #
     # @return [Symbol]
@@ -126,12 +138,33 @@ class FileObject
       exts  = file_extensions.map(&:to_sym)
       type  = types.shift
       ext   = exts.shift
-      __debug_args(binding) do
+      __debug_mime(binding) do
         { type: type, ext: ext, types: types, exts: exts }
       end
       return unless type && ext
       Mime::Type.register(type, ext, types, exts) # TODO: needed?
       Marcel::MimeType.extend(type, extensions: file_extensions.map(&:to_s))
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    private
+
+    # __debug_mime
+    #
+    # @param [Binding] bind           Passed to #__debug_args.
+    # @param [Proc]    block          Passed to #__debug_args.
+    #
+    # @return [void]
+    #
+    def __debug_mime(bind, &block)
+      __debug_args(bind, &block)
+    end
+
+    unless defined?(DEBUG_MIME_TYPES) && DEBUG_MIME_TYPES
+      def __debug_mime(*); end
     end
 
   end

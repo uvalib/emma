@@ -231,6 +231,20 @@ class User < ApplicationRecord
 
   public
 
+  # Return the ID indicated by *user*.
+  #
+  # @param [User, String, Integer] user
+  #
+  # @return [Integer]
+  # @return [nil]
+  #
+  def self.find_id(user)
+    user = user.to_i            if user.is_a?(String) && user.to_i.nonzero?
+    user = find_by(email: user) if user.is_a?(String)
+    user = user.id              if user.is_a?(User)
+    user
+  end
+
   # Get (or create) a database entry for the indicated user and update the
   # associated User object with additional information from the provider.
   #

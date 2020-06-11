@@ -48,7 +48,7 @@ class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 
   # Strategy for pre-wrapping message data before de-serialization.
   #
-  # @type [Hash{Symbol=>String,TrueClass,FalseClass}]
+  # @type [Hash{Symbol=>String,Boolean}]
   #
   WRAP_FORMATS = { xml: true, json: %q({"identifiers":%{data}}) }.freeze
 

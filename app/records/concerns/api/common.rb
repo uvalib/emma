@@ -350,6 +350,43 @@ class IsoLanguage < ScalarType
     ISO_639.find_by_code(v).present?
   end
 
+  # ===========================================================================
+  # :section: ScalarType overrides
+  # ===========================================================================
+
+  protected
+
+  # Transform *v* into a valid form.
+  #
+  # @param [*] v
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see PublicationIdentifier#normalize
+  #
+  def self.normalize(v)
+    find(v)&.alpha3 || super(v)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # find_language
+  #
+  # @param [String] value
+  #
+  # @return [ISO_639, nil]
+  #
+  def self.find(value)
+    value = value.to_s.strip
+    ISO_639.find_by_code(value.downcase) ||
+      ISO_639.find_by_english_name(value.capitalize)
+  end
+
 end
 
 # Base class for enumeration scalar types.

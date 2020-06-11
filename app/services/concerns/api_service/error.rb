@@ -60,19 +60,18 @@ class ApiService::ResponseError < ApiService::Error
   def extract_message(error)
     body = error.response[:body].presence
     json = body && json_parse(body, symbolize_keys: false).presence || {}
-    json = json.first if json.is_a?(Array) && (json.size <= 1)
-    desc = nil
-    desc ||= json.compact if json.is_a?(Array)
-    desc ||= json[ERROR_TAG].presence
+    json = json.first       if json.is_a?(Array) && (json.size <= 1)
+    return json.compact     if json.is_a?(Array)
+    return Array.wrap(body) unless json.is_a?(Hash)
+    desc = json[ERROR_TAG].presence
     desc ||=
       Array.wrap(json['messages']).map { |msg|
         msg = msg.to_s.strip
-        next if msg.blank?
         if msg =~ /^[a-z0-9_]+=/i
-          next unless (msg = msg.dup).delete_prefix!("#{ERROR_TAG}=")
+          next unless msg.delete_prefix!("#{ERROR_TAG}=")
         end
-        msg.gsub(/\\"/, '').presence
-      }.compact.presence
+        msg.remove(/\\"/)
+      }.reject(&:blank?).presence
     desc ||= json.values.flat_map { |v| v if v.is_a?(Array) }.compact.presence
     Array.wrap(desc || body)
   end

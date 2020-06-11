@@ -36,6 +36,16 @@ class ApplicationController < ActionController::Base
   # Handled individually by each controller subclass including SessionConcern.
 
   # ===========================================================================
+  # :section: Exceptions
+  # ===========================================================================
+
+  rescue_from ActionController::InvalidAuthenticityToken do |exception|
+    __debug_exception('RESCUE_FROM', exception)
+    flash[:alert] ||= 'Your session has expired' # TODO: I18n
+    redirect_to root_path
+  end
+
+  # ===========================================================================
   # :section: Helpers
   # ===========================================================================
 

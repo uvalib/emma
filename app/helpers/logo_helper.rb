@@ -42,7 +42,7 @@ module LogoHelper
 
   # Make a logo for a repository source.
   #
-  # @param [Search::Api::Record, String, Symbol] item
+  # @param [Search::Api::Record, String, Symbol, nil] item
   # @param [Hash] opt                 Passed to #image_tag except for:
   #
   # @option opt [String] :source      Overrides :src if present.
@@ -51,7 +51,7 @@ module LogoHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def repository_source_logo(item, opt = nil)
+  def repository_source_logo(item = nil, opt = nil)
     opt, html_opt = partition_options(opt, :source, :name, :logo)
     src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
     name = opt[:name] || repository_name(src)

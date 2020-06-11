@@ -11,6 +11,9 @@ class ApplicationRecord < ActiveRecord::Base
 
   self.abstract_class = true
 
+  # Serialize hashes as JSON rather than YAML (the default).
+  serialize :preferences, JSON
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -30,6 +33,14 @@ class ApplicationRecord < ActiveRecord::Base
   # ===========================================================================
 
   public
+
+  # The fields defined in the schema for this record.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.field_names
+    columns_hash.keys.map(&:to_sym)
+  end
 
   # Indicate whether two records match.
   #

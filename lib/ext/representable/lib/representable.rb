@@ -30,7 +30,7 @@ require 'representable/coercion'
 # - :input  for debugging parsing/de-serialization.
 # - :output for debugging rendering/serialization.
 #
-# @type [TrueClass, FalseClass, Symbol]
+# @type [Boolean, Symbol]
 #
 DEBUG_REPRESENTABLE =
   ENV.fetch('DEBUG_REPRESENTABLE', false).yield_self do |v|

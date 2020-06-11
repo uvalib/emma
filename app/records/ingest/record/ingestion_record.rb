@@ -92,6 +92,19 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   public
 
+  # Because :dc_title is a required field for ingest into Unified Search, this
+  # value is supplied if the metadata does not include a title.
+  #
+  # @type [String, nil] # TODO: MISSING_TITLE: I18n - keep?
+  #
+  MISSING_TITLE = '[TITLE MISSING]'
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Initialize a new instance.
   #
   # @param [Faraday::Response, ::Api::Record, Upload, Hash, String, nil] src
@@ -121,8 +134,8 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
       data[:emma_repositoryRecordId] ||= src[:repository_id]
-      data[:dc_title]                ||= 'TITLE MISSING' # TODO: ???
-      data[:dc_format]               ||= src[:fmt]
+      data[:dc_title]                ||= MISSING_TITLE
+      data[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
 
       initialize_attributes(reject_blanks(data))
     else

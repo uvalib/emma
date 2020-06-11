@@ -11,7 +11,7 @@
 # Also avoid setting up AWS storage when running `rake assets:precompile` from
 # Dockerfile.
 #
-# @type [TrueClass, FalseClass]
+# @type [Boolean]
 #
 CLOUD_STORAGE =
   (Rails.env.production? || application_deployed?) && rails_application?

@@ -178,9 +178,8 @@ module FileFormat
       label = field.to_s.titleize
       label, value = yield(field, accessor, label, value) if block_given?
       label = label.pluralize if value.size > 1
-      unless field_value_array.include?(field)
-        value = value.join(field_value_separator)
-      end
+      array = field_value_array.include?(field)
+      value = value.join(field_value_separator) unless array
       [label, value]
     }.compact.to_h
   end
@@ -350,18 +349,6 @@ module FileFormat
     raise "#{self.class}: #{__method__} not defined"
   end
 
-  # normalize_language
-  #
-  # @param [Array<String>] values
-  #
-  # @return [Array<String>]
-  #
-  def self.normalize_language(values)
-    values.map { |v|
-      v.match?(/^[a-z]{2}$/) && ISO_639.search(v).first&.alpha3 || v
-    }.uniq
-  end
-
   # Used within #field_transforms to apply a method to each element of a
   # value whether it is a scalar or an array.
   #
@@ -388,6 +375,35 @@ module FileFormat
     else
       send(method, value)
     end
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  # metadata_fmt
+  #
+  # @param [Symbol, String, nil] fmt
+  #
+  # @return [Symbol, String, nil]
+  #
+  def self.metadata_fmt(fmt)
+    type = fmt&.downcase
+    TYPES.include?(type) ? type : fmt
+  end
+
+  # normalize_language
+  #
+  # @param [String, Array<String>] value
+  #
+  # @return [String, Array<String>]
+  #
+  def self.normalize_language(value)
+    return value.map { |v| normalize_language(v) }.uniq if value.is_a?(Array)
+    # noinspection RubyYardParamTypeMatch
+    IsoLanguage.find(value)&.alpha3 || value
   end
 
   # ===========================================================================

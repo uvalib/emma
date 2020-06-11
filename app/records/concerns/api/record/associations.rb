@@ -160,6 +160,14 @@ module Api::Record::Associations
 
     public
 
+    # The fields defined in the schema for this record.
+    #
+    # @return [Array<Symbol>]
+    #
+    def field_names
+      property_defaults.keys
+    end
+
     # A mapping of schema property names to their default values for use in
     # constructing an error instance.
     #

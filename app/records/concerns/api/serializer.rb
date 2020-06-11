@@ -25,7 +25,7 @@ class Api::Serializer < ::Representable::Decorator
   # @type [String, Hash]
   attr_reader :source_data
 
-  # @type [TrueClass, FalseClass]
+  # @type [Boolean]
   attr_accessor :log_timing
 
   # Initialize a new instance.

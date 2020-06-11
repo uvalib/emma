@@ -14,6 +14,10 @@ __loading_begin(__FILE__)
 #   :FILE_EXTENSIONS  Array<String>
 #   :MIME_TYPES       Array<String>
 #
+# == Implementation Notes
+# Because they interfere with the Upload attributes set up via ActiveRecord,
+# attributes that are already defined will not be re-defined here.
+#
 module FileAttributes
 
   # ===========================================================================
@@ -34,25 +38,25 @@ module FileAttributes
   #
   # @return [String, nil]             One of EmmaRepository#values.
   #
-  attr_reader :repository
+  attr_reader :repository     unless defined?(:repository)
 
   # Identifier for the repository entry to which the file belongs.
   #
   # @return [String, nil]
   #
-  attr_reader :repository_id
+  attr_reader :repository_id  unless defined?(:repository_id)
 
   # Format type of the file.
   #
   # @return [Symbol, nil]             One of FileFormat#TYPES.
   #
-  attr_reader :fmt
+  attr_reader :fmt            unless defined?(:fmt)
 
   # Filename extension.
   #
   # @return [String, nil]
   #
-  attr_reader :ext
+  attr_reader :ext            unless defined?(:ext)
 
   # ===========================================================================
   # :section:
