@@ -217,7 +217,7 @@ module Import::IaBulk
 
     # Assuming that the first :dc_identifier given actually identifies the
     # associated work, move the rest into :dc_relation.
-    ids = remove_blanks(Array.wrap(fields[:dc_identifier])).uniq
+    ids = reject_blanks(Array.wrap(fields[:dc_identifier])).uniq
     if ids.size <= 1
       fields[:dc_identifier] = ids
     else
