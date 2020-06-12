@@ -353,7 +353,8 @@ module UploadConcern
       'http://localhost:3000/placeholder.pdf'
     end
 
-  # Prepare entries for bulk insert/upsert to the database.
+  # Prepare entries for bulk insert/upsert to the database, ensuring that all
+  # associated files have been copied into storage.
   #
   # @param [Array<Hash,Upload>] entries
   # @param [String]             base_url
@@ -364,14 +365,22 @@ module UploadConcern
   # @return [Array<Upload>]
   #
   def bulk_records(entries, base_url: nil, user: nil, limit: nil, **opt)
-    opt[:base_url]   = base_url #|| BULK_BASE_URL
-    opt[:user_id]    = User.find_id(user || BULK_USER)
-    opt[:importer] ||= Import::IaBulk # TODO: ?
     entries = Array.wrap(entries).reject(&:blank?)
     entries = entries.take(limit) if limit.to_i > 0
+    opt[:base_url]   = base_url || BULK_BASE_URL
+    opt[:user_id]    = User.find_id(user || BULK_USER)
+    opt[:importer] ||= Import::IaBulk # TODO: ?
+    opt[:file_tot] ||= entries.size
+    opt[:file_num] ||= 0
     entries.map do |entry|
+      opt[:file_num] += 1
+      Log.info do
+        msg = "#{__method__} [#{opt[:file_num]} of #{opt[:file_tot]}]:"
+        msg += " #{entry}" if entry.is_a?(Upload)
+        msg
+      end
       entry = upload_record(entry.merge(opt)) unless entry.is_a?(Upload)
-      entry.send(:promote_file)
+      entry.promote_file
       entry
     end
   end
@@ -381,6 +390,7 @@ module UploadConcern
   # @param [Hash] opt                 Passed to Upload#initialize except for:
   #
   # @option opt [String] :file_path   File URI or path.
+  # @option opt [Symbol] :meth        Calling method (for logging).
   #
   # @raise [StandardError]            If no :file_path was given or determined.
   #
@@ -390,11 +400,22 @@ module UploadConcern
   #
   def upload_record(opt)
     __debug_args(binding)
-    opt ||= {}
-    opt = opt.deep_symbolize_keys if opt.present?
-    file_path = opt.delete(:file_path) || BULK_PLACEHOLDER_FILE
-    raise 'No upload file provided.' if file_path.blank? # TODO: I18n
-    Upload.new(opt).tap { |entry| entry.upload_file(file_path) }
+    opt, upload_opt = partition_options(opt, :file_path, :meth)
+    file_path = opt[:file_path] || BULK_PLACEHOLDER_FILE
+    raise "#{__method__}: No upload file provided." if file_path.blank? # TODO: I18n
+    Upload.new(upload_opt.deep_symbolize_keys!).tap do |entry|
+      file = entry.upload_file(file_path)
+      Log.info do
+        name = file&.original_filename.inspect
+        type = file&.mime_type || 'unknown type'
+        size = file&.size      || 0
+        meth = opt[:meth]      || __method__
+        "#{meth}: #{name} (#{size} bytes) #{type}"
+      end
+    end
+  rescue => e
+    Log.error { "#{__method__}: #{e.class}: #{e.message}" }
+    raise e
   end
 
   # ===========================================================================

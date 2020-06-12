@@ -465,7 +465,7 @@ class Upload < ApplicationRecord
   # @param [String] file_path
   # @param [Hash]   opt               Passed to FileUploader::Attacher#attach.
   #
-  # @return [void]
+  # @return [FileUploader::UploadedFile]
   #
   # == Usage Notes
   # This method is not necessary for an Upload instance which is persisted to
@@ -922,7 +922,7 @@ class Upload < ApplicationRecord
   # :section: Callbacks
   # ===========================================================================
 
-  protected
+  public
 
   # Make a debug output note to mark when a callback has occurred.
   #
@@ -942,25 +942,31 @@ class Upload < ApplicationRecord
 
   # Finalize a file upload by promoting the :cache file to a :store file.
   #
+  # @param [Boolean] raise_error      If *false*, don't re-raise exceptions.
+  #
   # @return [void]
   #
-  def promote_file
+  def promote_file(raise_error: true)
     __debug_args(binding)
     file_attacher.attach_cached(file_data) unless file_attacher.attached?
   rescue => e
     log_exception(e, __method__)
+    raise e if raise_error
   end
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
   #
+  # @param [Boolean] raise_error      If *false*, don't re-raise exceptions.
+  #
   # @return [void]
   #
-  def delete_file
+  def delete_file(raise_error: true)
     __debug_args(binding)
     file_attacher.attach_cached(file_data) unless file_attacher.attached?
     file_attacher.destroy
   rescue => e
     log_exception(e, __method__)
+    raise e if raise_error
   end
 
   # ===========================================================================
