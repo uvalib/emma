@@ -9,7 +9,7 @@ en:
     error:
 
       default:          'unknown error'
-      failure:          'FAILURE: %{error}'
+      failure:          '%{error}'
       success:          'SUCCESS: %{file}'
 
       api:
@@ -100,38 +100,30 @@ en:
 
         invalid:
           message:      'Issues to resolve: %s'
-          error:        Net::HTTPConflict
 
         file_data:
           message:      'No file data provided'
-          error:        Net::HTTPBadRequest
 
         file_id:
           message:      'No entry identifier provided'
-          error:        Net::HTTPBadRequest
 
         find:
           message:      'Entry %s not found'
-          error:        Net::HTTPNotFound
 
         create:
           message:      'Failed to create entry'
-          error:        Net::HTTPConflict
+
+        update:
+          message:      'Failed to update entry'
+
+        destroy:
+          message:      'Failed to remove entry'
 
         bulk_new:
           message:      'Failed to create entries'
-          error:        Net::HTTPConflict
 
         bulk_edit:
           message:      'Failed to update entries'
-          error:        Net::HTTPConflict
 
         bulk_delete:
           message:      'Failed to delete entries'
-          error:        Net::HTTPConflict
-
-     #request:
-     #  generic:
-     #    default:      'Bad response from server'
-     #    failed:       'Unable to request items right now'
-     #    no_items:     'There were no items to request'

@@ -64,22 +64,22 @@ class Shrine
       end
       metadata.merge!('mime_type' => mime)
       reject_blanks(fmt_metadata)
-
-    rescue => e
-      Log.debug { "#{__method__}: #{e.class}: #{e.message}" }
-      error = e.message.presence
-      error ||=
-        if fmt.nil? || fmt_class.nil?
-          "#{mime.inspect} is not a recognized file type"
-        elsif fmt_instance.nil?
-          "Could not create #{fmt.inspect} analyzer"
-        elsif fmt_parser.nil?
-          "Could not create #{fmt.inspect} parser"
-        elsif fmt.present?
-          "Could not extract #{fmt.inspect} metadata"
-        end
-      raise UploadConcern::SubmitError, error
-
+    rescue => error
+      Log.debug { "#{__method__}: #{error.class}: #{error.message}" }
+      if error.message.blank?
+        msg =
+          if fmt.nil? || fmt_class.nil?
+            "#{mime.inspect} is not a recognized file type"
+          elsif fmt_instance.nil?
+            "Could not create #{fmt.inspect} analyzer"
+          elsif fmt_parser.nil?
+            "Could not create #{fmt.inspect} parser"
+          elsif fmt.present?
+            "Could not extract #{fmt.inspect} metadata"
+          end
+        error = UploadConcern::SubmitError.new(msg)
+      end
+      raise error
     end
 
   end

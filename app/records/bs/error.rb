@@ -43,19 +43,19 @@ public
 
 # Base exception for Bookshare API authorization errors.
 #
-class Bs::AuthError < ::Api::AuthError; end
+class Bs::AuthError < Bs::Error; end
 
 # Base exception for Bookshare API communication errors.
 #
-class Bs::CommError < ::Api::CommError; end
+class Bs::CommError < Bs::Error; end
 
 # Base exception for Bookshare API session errors.
 #
-class Bs::SessionError < ::Api::SessionError; end
+class Bs::SessionError < Bs::Error; end
 
 # Exception raised to indicate that the session token has expired.
 #
-class Bs::TimeoutError < ::Api::TimeoutError; end
+class Bs::TimeoutError < Bs::Error; end
 
 # =============================================================================
 # :section: Receive errors

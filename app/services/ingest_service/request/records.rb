@@ -173,20 +173,23 @@ module IngestService::Request::Records
   #   @param [::Api::Record, Upload, Hash] record
   #
   def record_list(record)
-    # noinspection RubyYardReturnMatch
-    case record
-      when Ingest::Message::IngestionRecordList
-        record.records
-      when Ingest::Record::IngestionRecord
-        [record]
-      else
-        [Ingest::Record::IngestionRecord.new(record)]
-    end
+    result =
+      case record
+        when Ingest::Message::IngestionRecordList
+          record.records
+        when Ingest::Record::IngestionRecord
+          record
+        when ::Api::Record, Upload, Hash
+          Ingest::Record::IngestionRecord.new(record)
+        else
+          Log.warn { "#{__method__}: unexpected: #{record.inspect}" }
+      end
+    Array.wrap(result)
   end
 
   # Generate an array of ingest identifiers.
   #
-  # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, ::Api::Record, Upload, Hash, String] id
+  # @param [Ingest::Message::IdentifierRecordList, Ingest::Record::IdentifierRecord, ::Api::Record, Upload, Hash, String] item
   #
   # @return [Array<Ingest::Record::IdentifierRecord>]
   #
@@ -202,20 +205,87 @@ module IngestService::Request::Records
   #   @param [::Api::Record, Upload, Hash] record
   #
   # @overload identifier_list(id)
-  #   @param [String] id
+  #   @param [String] item
   #
-  def identifier_list(id)
-    # noinspection RubyYardReturnMatch
-    case id
-      when Ingest::Message::IdentifierRecordList
-        id.identifiers
-      when Ingest::Record::IdentifierRecord
-        [id]
-      when ::Api::Record, Upload, Hash
-        [Ingest::Record::IdentifierRecord.new(id)]
-      else
-        [Ingest::Record::IdentifierRecord.new(nil, value: id)]
+  def identifier_list(item)
+    # noinspection RubyYardParamTypeMatch
+    result =
+      case item
+        when Ingest::Message::IdentifierRecordList
+          item.identifiers
+        when Ingest::Record::IdentifierRecord
+          item
+        when ::Api::Record, Upload
+          Ingest::Record::IdentifierRecord.new(item)
+        when Hash, String
+          identifier_records(item)
+        else
+          Log.warn { "#{__method__}: unexpected: #{item.inspect}" }
+      end
+    Array.wrap(result)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  INGEST_ID_FIELDS = %i[
+    emma_repository
+    emma_repositoryRecordId
+    emma_formatVersion
+    dc_format
+  ].freeze
+
+  # Generate records.
+  #
+  # @param [Hash, String] item
+  #
+  # @return [Array<Ingest::Record::IdentifierRecord>]
+  #
+  # == Usage Notes
+  # If the only piece of information available is the repository ID (and since
+  # the repository is implicitly "emma"), this method will return with records
+  # for each possible variation.  E.g. for item == "u5eed3496l10", will return
+  # IdentifierRecords associated with:
+  #
+  #   "emma-u5eed3496l10-brf"
+  #   "emma-u5eed3496l10-daisy"
+  #   "emma-u5eed3496l10-daisyAudio"
+  #   ...
+  #
+  # etc.
+  #
+  def identifier_records(item)
+    result = []
+    case item
+      when Hash   then attr = item.symbolize_keys
+      when /-\*$/ then attr = { emma_repositoryRecordId: item }
+      when /-/    then attr = { emma_recordId: item }
+      else             attr = { emma_repositoryRecordId: item }
     end
+    attr.compact!
+    if attr[:emma_recordId]
+      attr.slice!(:emma_recordId)
+      result = [attr]
+    elsif attr[:emma_repositoryRecordId] && attr[:dc_format]
+      attr[:emma_repository] ||= EmmaRepository.default
+      attr.slice!(*INGEST_ID_FIELDS)
+      result = [attr]
+    elsif (rid = attr[:emma_repositoryRecordId])
+      repo = format = nil
+      if rid.include?('-')
+        repo, rid, format = rid.split('-')
+        format = nil if format == '*'
+        attr[:emma_repositoryRecordId] = rid
+      end
+      attr[:emma_repository] ||= repo || EmmaRepository.default
+      attr.slice!(*INGEST_ID_FIELDS)
+      format = Array.wrap(format).presence || DublinCoreFormat.values
+      result = format.map { |fmt| attr.merge(dc_format: fmt) }
+    end
+    result.map { |v| Ingest::Record::IdentifierRecord.new(v) }
   end
 
 end

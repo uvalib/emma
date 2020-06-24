@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
+  include FlashConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -131,7 +132,7 @@ class User::SessionsController < Devise::SessionsController
     user = user.uid       if user.respond_to?(:uid)
     user = 'unknown user' if user.blank?
     user = user.to_s
-    flash[:notice] = t("emma.user.sessions.#{action}.success", user: user)
+    flash_notice(I18n.t("emma.user.sessions.#{action}.success", user: user))
   end
 
   # Lookup (and update) User by login name.

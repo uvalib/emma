@@ -241,12 +241,12 @@ module SearchHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see ModelHelper#list_entry_number
-  # @see UploadHelper#edit_entry_icon
-  # @see UploadHelper#delete_entry_icon
+  # @see UploadHelper#upload_edit_icon
+  # @see UploadHelper#upload_delete_icon
   #
   def search_list_entry_number(item, opt = nil)
     list_entry_number(item, opt) do
-      [edit_entry_icon(item), delete_entry_icon(item) ]
+      [upload_edit_icon(item), upload_delete_icon(item) ]
     end
   end
 

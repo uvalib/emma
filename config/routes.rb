@@ -34,27 +34,30 @@ Rails.application.routes.draw do
   # File upload operations
   # ===========================================================================
 
-  # Invoked from app/javascripts/feature/file-upload.js
-  post '/upload/endpoint', to: 'upload#endpoint', as: 'uploads'
+  get    '/upload/new_select',    redirect('/upload/new'),    as: 'new_select_upload'     # Only for consistency
+  get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
+  post   '/upload/create',        to: 'upload#create',        as: 'create_upload'
 
-  # Variants which include selection of entries to operate on.  :new_select is
-  # only defined for consistency.
-  %w(edit delete).each do |action|
-    path = "/upload/#{action}_select"
-    opt  = { defaults: { id: 'SELECT' } }
-    get path, to: "upload##{action}", as: "#{action}_select_upload", **opt
-  end
+  get    '/upload/edit_select',   to: 'upload#edit',          as: 'edit_select_upload',   defaults: { id: 'SELECT' }
+  get    '/upload/edit/:id',      to: 'upload#edit',          as: 'edit_upload'
+  match  '/upload/update/:id',    to: 'upload#update',        as: 'update_upload',        via: %i[put patch]
 
-  get '/upload/new_select', to: redirect('upload/new'), as: 'new_select_upload'
-  get '/upload/delete/:id', to: 'upload#delete',        as: 'delete_upload'
+  get    '/upload/delete_select', to: 'upload#delete',        as: 'delete_select_upload', defaults: { id: 'SELECT' }
+  get    '/upload/delete/:id',    to: 'upload#delete',        as: 'delete_upload'
+  delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
 
-  post '/upload/create',    to: 'upload#create',        as: 'create_upload'
-  put  '/upload/update',    to: 'upload#update',        as: 'update_upload'
+  post   '/upload/endpoint',      to: 'upload#endpoint',      as: 'uploads'               # Invoked from file-upload.js
 
-  get    '/upload/bulk',    to: 'upload#bulk_new',    as: 'bulk_new_upload'
-  post   '/upload/bulk',    to: 'upload#bulk_new',    as: 'bulk_create_upload'
-  put    '/upload/bulk',    to: 'upload#bulk_edit',   as: 'bulk_update_upload'
-  delete '/upload/bulk',    to: 'upload#bulk_delete', as: 'bulk_destroy_upload'
+  get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
+  post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
+
+  get    '/upload/bulk_edit',     to: 'upload#bulk_edit',     as: 'bulk_edit_upload'
+  match  '/upload/bulk',          to: 'upload#bulk_update',   as: 'bulk_update_upload',   via: %i[put patch]
+
+  get    '/upload/bulk_delete',   to: 'upload#bulk_delete',   as: 'bulk_delete_upload'
+  delete '/upload/bulk',          to: 'upload#bulk_destroy',  as: 'bulk_destroy_upload'
+
+  get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
 
   resources :upload
 
@@ -170,14 +173,6 @@ unless ONLY_FOR_DOCUMENTATION
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end
   def artifact_index_url(*);                      end
-  def bulk_create_upload_path(*);                 end
-  def bulk_create_upload_url(*);                  end
-  def bulk_destroy_upload_path(*);                end
-  def bulk_destroy_upload_url(*);                 end
-  def bulk_new_upload_path(*);                    end
-  def bulk_new_upload_url(*);                     end
-  def bulk_update_upload_path(*);                 end
-  def bulk_update_upload_url(*);                  end
   def category_index_path(*);                     end
   def category_index_url(*);                      end
   def check_health_path(*);                       end
@@ -188,14 +183,10 @@ unless ONLY_FOR_DOCUMENTATION
   def confirmation_url(*);                        end
   def dashboard_path(*);                          end
   def dashboard_url(*);                           end
-  def delete_select_upload_path(*);               end
-  def delete_select_upload_url(*);                end
   def destroy_user_session_path(*);               end
   def destroy_user_session_url(*);                end
   def edit_password_path(*);                      end
   def edit_password_url(*);                       end
-  def edit_select_upload_path(*);                 end
-  def edit_select_upload_url(*);                  end
   def edition_index_path(*);                      end
   def edition_index_url(*);                       end
   def member_index_path(*);                       end

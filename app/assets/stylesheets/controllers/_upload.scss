@@ -365,8 +365,13 @@ form.select-entry {
 
     // noinspection SassScssResolvedByNameOnly
     .selected-header {
+
         margin:    $page-padding 0;
         font-size: large;
+
+        .item {
+            color: $uva-text-orange;
+        }
     }
 
     .selected-details {

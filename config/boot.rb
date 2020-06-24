@@ -36,13 +36,13 @@ public
 #
 # @type [Array<String>]
 #
-TRUE_VALUES  = %w(1 yes true).freeze
+TRUE_VALUES  = %w(1 yes true on).freeze
 
 # Text values which represent *false*.
 #
 # @type [Array<String>]
 #
-FALSE_VALUES = %w(0 no false).freeze
+FALSE_VALUES = %w(0 no false off).freeze
 
 # Indicate whether the item represents a true value.
 #

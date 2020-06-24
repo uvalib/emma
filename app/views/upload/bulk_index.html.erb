@@ -1,0 +1,19 @@
+<%# app/views/upload/bulk_index.html.erb -%>
+<%-
+  # Bulk upload information. # TODO: ???
+
+  title ||= t('emma.upload.bulk_index.title')
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<div class="heading container">
+  <h1 class="heading"><%= title -%></h1>
+</div>
+
+TODO

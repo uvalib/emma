@@ -86,13 +86,13 @@ module SearchService::Common
   #
   # @param [Exception, Faraday::Response] obj
   #
-  # @return [SearchService::ResponseError]
+  # @return [SearchService::Error]
   #
   # This method overrides:
   # @see ApiService::Common#response_error
   #
   def response_error(obj)
-    SearchService::ResponseError.new(obj)
+    SearchService::Error.new(obj)
   end
 
   # Wrap response in a service error.

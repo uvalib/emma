@@ -262,9 +262,9 @@ var Emma = (function() {
                 to_fmt:      o$('<%= FileNaming.mime_to_fmt.to_json %>')
             },
             Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
-            Create: o$('<%= UploadHelper::UPLOAD_CREATE_VALUES.to_json %>'),
-            Update: o$('<%= UploadHelper::UPLOAD_UPDATE_VALUES.to_json %>'),
-            Delete: o$('<%= UploadHelper::UPLOAD_DELETE_VALUES.to_json %>')
+            Create: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:new].to_json %>'),
+            Update: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:edit].to_json %>'),
+            Delete: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:delete].to_json %>')
         }
 
     };

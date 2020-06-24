@@ -18,7 +18,11 @@ module Import
 
   public
 
-  DEBUG_IMPORT = true
+  # Set to show low-level bulk import processing.
+  #
+  # @type [Boolean]
+  #
+  DEBUG_IMPORT = true # true?(ENV['DEBUG_IMPORT'])
 
   # The prefix applied to imported field names that have not otherwise been
   # assigned a field name to be used within :emma_data.
@@ -332,7 +336,7 @@ module Import
       field  = field.first
       value  = method.is_a?(Proc) ? method.call(v) : send(method, v)
       return field, value
-    elsif respond_to?(field)
+    elsif field && respond_to?(field)
       send(field, k, v)
     elsif field.is_a?(Symbol)
       return field, values(v)
@@ -376,7 +380,7 @@ module Import
     end
   end
 
-  unless defined?(DEBUG_IMPORT) && DEBUG_IMPORT
+  unless DEBUG_IMPORT
     def __debug_import(*); end
   end
 

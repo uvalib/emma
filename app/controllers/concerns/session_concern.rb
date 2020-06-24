@@ -43,7 +43,7 @@ module SessionConcern
     rescue_from Api::Error, Faraday::Error do |exception|
       __debug_exception('RESCUE_FROM', exception)
       if rendering_html?
-        flash.now[:alert] ||= exception.message
+        flash_now_alert(exception.message) if flash.now[:alert].blank?
         render layout: layout
       end
     end
@@ -52,6 +52,7 @@ module SessionConcern
 
   include Emma::Debug
   include ParamsConcern
+  include FlashConcern
   include ApiConcern
 
   # Non-functional hints for RubyMine.
@@ -239,17 +240,15 @@ module SessionConcern
   # The "ensure" block is executed before the ApplicationController
   # "rescue_from".  However, note that Rails is doing something with "$!" which
   # causes Faraday::ClientError to be the exception that's acted upon in that
-  # block, whereas :api_error_message shows the BookshareService::ResponseError
-  # that is created in BookshareService::Common#api.
+  # block, whereas :api_error_message shows the BookshareService::Error that is
+  # created in BookshareService::Common#api.
   #
   def session_update
     error = nil
     yield
-
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error)
-    flash.now[:alert] ||= api_error_message if api_error?
-
+    flash_now_alert(api_error_message) if api_error?
   ensure
     last_operation_update
     raise error if error

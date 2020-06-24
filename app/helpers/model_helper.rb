@@ -490,6 +490,10 @@ module ModelHelper
 
   protected
 
+  VALID_LANGUAGE   = 'Provided value: %s' # TODO: I18n
+  INVALID_LANGUAGE = 'The underlying data contains this value ' \
+                     'instead of a valid ISO 639 language code.'
+
   # Wrap invalid language values in a <span>.
   #
   # @param [*, Array<*>] value
@@ -502,10 +506,10 @@ module ModelHelper
     if value == name
       value
     elsif name.present?
-      tip = "Provided value: #{value.inspect}" # TODO: I18n
+      tip = VALID_LANGUAGE % value.inspect
       html_span(name, title: tip)
     else
-      tip = 'This is not a valid language.' # TODO: I18n
+      tip = INVALID_LANGUAGE % value.inspect
       html_span(value, title: tip, class: 'invalid')
     end
   end

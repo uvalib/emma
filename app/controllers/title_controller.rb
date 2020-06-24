@@ -67,7 +67,7 @@ class TitleController < ApplicationController
       return redirect_to opt
     elsif isbn && !helpers.isbn?(isbn)
       # The supplied ISBN is not valid.
-      flash.now[:notice] = "#{isbn.inspect} is not a valid ISBN"
+      flash_now_notice("#{isbn.inspect} is not a valid ISBN") # TODO: I18n
       opt.delete(:isbn)
       @list = []
     else

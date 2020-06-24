@@ -155,16 +155,29 @@ en:
       generic:
         label:          'Upload'
         title:          'Upload'
-        submit:
+        tooltip:        '(A brief description of this operation.)'
+        description:    '(A more detailed description of this operation.)'
+        directions:     '(Brief guidance for using the operation form.)'
+        notes:          '(A more detailed description of this operation.)'
+        success:        'Operation successful %{file}'
+        failure:        'Could not proceed: %{error}'
+        warning:
+          experimental: &EXPERIMENTAL
+            directions_html: |
+              <span style="color:red">
+                WARNING: This is an experimental feature and not intended for
+                general use
+              </span>
+        submit:         &GENERIC_SUBMIT
           label:        'Submit'
           enabled:
             tooltip:    'Proceed with this action'
           disabled:
             tooltip:    'Conditions have not yet been met to proceed'
-        cancel:
+        cancel:         &GENERIC_CANCEL
           label:        'CANCEL'
           enabled:
-            tooltip:    'Do not proceed with this action'
+            tooltip:    'Do nothing and return to the previous screen.'
           disabled:
             tooltip:    'Not able to cancel at this point'
         select:
@@ -287,33 +300,76 @@ en:
       delete_select:
         <<: *UPLOAD_DELETE
 
+      bulk_index:
+        label:          'Bulk Uploads'
+        title:          'Bulk Upload Information'
+        tooltip:        'Bulk upload status information'
+        description:    'TODO: ???'
+
       bulk_new:         &UPLOAD_BULK_NEW
         label:          'Bulk Upload'
-        title:          'Bulk Upload for EMMA Submissions'
-        tooltip:        'Create new EMMA entries via a CSV or JSON control file.'
-        description:    'Provide a *.csv or *.json control file.'
+        title:          'Bulk upload of EMMA submissions'
+        tooltip:        |
+          Create new EMMA entries via a CSV or JSON control file.
+        description:    |
+          Provide a *.csv or *.json data file to specify files and metadata to
+          be used to create new EMMA entries.
         directions:     ~
-        submit:
+        notes:          'Some bulk upload notes...'
+        success:        'Created EMMA entry for: %{files}'
+        failure:        'Could not create entries: %{error}'
+        submit:         &BULK_SUBMIT
           label:        'Begin'
           enabled:
-            tooltip:    'Submit the control file to begin uploading'
+            tooltip:    'Submit the data file to begin uploading'
           disabled:
-            tooltip:    'First provide a control file'
-        cancel:
-          label:        'CANCEL'
-          enabled:
-            tooltip:    'Return to the previous screen'
-        notes:          'Some bulk upload notes...'
-        failure:        'Could not create entries: %{error}'
-        success:        'Created EMMA entry for: %{files}'
+            tooltip:    'First provide a data file'
+        cancel:         &BULK_CANCEL
+          <<: *GENERIC_CANCEL
+        <<: *EXPERIMENTAL
 
       bulk_edit:
         <<: *UPLOAD_BULK_NEW
         label:          'Bulk Edit'
-        title:          'Bulk Edit of EMMA entries'
-        tooltip:        'Modify existing EMMA entries via a CSV or JSON control file.'
-        failure:        'Could not modify entries: %{error}'
+        title:          'Bulk edit of EMMA submissions'
+        tooltip:        |
+          Modify existing EMMA entries via a CSV or JSON control file.
+        description:    |
+          Provide a *.csv or *.json data file to specify files and/or metadata
+          to be used to update existing EMMA entries.
+        directions:     ~
+        notes:          'Some bulk upload notes...'
         success:        'Modified EMMA entries: %{files}'
+        failure:        'Could not modify entries: %{error}'
+        submit:
+          <<: *BULK_SUBMIT
+        cancel:
+          <<: *BULK_CANCEL
+        <<: *EXPERIMENTAL
 
       bulk_delete:
-        <<: *UPLOAD_DELETE
+        label:          'Bulk Delete'
+        title:          'Remove EMMA submission by database or repository ID'
+        tooltip:        'Delete multiple EMMA entries by identifier.'
+        description:    |
+          Provide a comma-separated list of repository IDs to specify which
+          EMMA entries to delete.  Identifiers which are all decimal digits are
+          treated as EMMA database record identifiers, which will be used to
+          lookup the record containing the repository ID.
+        directions:     ~
+        notes:          |
+          An EMMA entry consists of three parts: (1) a record in the EMMA
+          database, (2) an associated file in cloud storage, and (3) a matching
+          entry in the Unified Index.  If an item identifier can be found in
+          the EMMA database then all three parts can be removed.  However, if
+          the checkbox above is checked, then repository IDs which are not
+          found in EMMA can still be removed from the index.
+        submit:
+          label:        'Continue'
+          enabled:
+            tooltip:    'Validate entries to be removed.'
+          disabled:
+            tooltip:    'Required information is still needed'
+        cancel:
+          <<: *BULK_CANCEL
+        <<: *EXPERIMENTAL

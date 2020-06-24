@@ -39,7 +39,7 @@ module Emma
     config.session_store(
       :cookie_store,
       same_site: :lax,
-      key:       "#{name.split('::').first}_session"
+      key:       "#{railtie_name.chomp('_application')}_session"
     )
 
     # =========================================================================

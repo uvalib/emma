@@ -32,4 +32,24 @@
         padding:    0.5rem;
         background: ghostwhite;
     }
+
+    // A new line within a flash message.
+    // @see FlashHelper::Entry#render
+    .line {
+
+        display:    block;
+        margin-top: 0.5rem;
+
+        .part {
+            display: inline-block;
+        }
+
+        .part + .part {
+            margin-left: 0.5rem;
+        }
+
+        .first:not(.last) {
+            font-weight: bold;
+        }
+    }
 }

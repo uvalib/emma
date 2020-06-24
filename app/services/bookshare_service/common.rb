@@ -100,13 +100,13 @@ module BookshareService::Common
   #
   # @param [Exception, Faraday::Response] obj
   #
-  # @return [BookshareService::ResponseError]
+  # @return [BookshareService::Error]
   #
   # This method overrides:
   # @see ApiService::Common#response_error
   #
   def response_error(obj)
-    BookshareService::ResponseError.new(obj)
+    BookshareService::Error.new(obj)
   end
 
   # Wrap response in a service error.

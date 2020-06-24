@@ -79,7 +79,7 @@ gem 'representable', '~> 3.0'
 gem 'virtus', '~> 1.0'
 
 # == Metrics
-gem 'prometheus-client', '< 0.10'
+gem 'prometheus-client'
 
 # == Upload/download
 gem 'archive-zip'

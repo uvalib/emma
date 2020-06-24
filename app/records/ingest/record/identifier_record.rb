@@ -54,8 +54,8 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #
   def initialize(src, **opt)
     @serializer_type ||= DEFAULT_SERIALIZER_TYPE
-    initialize_attributes unless src.is_a?(Api::Record)
     if src.blank?
+      initialize_attributes
       self.emma_recordId = opt[:value].to_s
     elsif src.is_a?(Upload)
       attr = reject_blanks(src.emma_metadata.slice(*field_names))
@@ -63,8 +63,16 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
       attr[:emma_repositoryRecordId] ||= src[:repository_id]
       attr[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
       initialize_attributes(attr)
+    elsif src.is_a?(Hash)
+      initialize_attributes(src)
     else
+      initialize_attributes unless src.is_a?(Api::Record)
       super(src, **opt)
+    end
+    if self.emma_recordId.present? || identifier.nil?
+      # Valid record or blank record.
+    elsif (value = identifier(no_version: true)).nil?
+      Log.Error { "IdentifierRecord: invalid: #{value.inspect}" }
     end
   end
 
@@ -76,12 +84,15 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 
   # The unique identifier represented by this instance.
   #
+  # @param [Boolean] no_version       If *true*, return "repo-rid-fmt".
+  #
   # @return [String, nil]
   #
-  def identifier
-    emma_recordId.presence ||
-      [emma_repository, emma_repositoryRecordId, dc_format, emma_formatVersion]
-        .reject(&:blank?).join('-').presence
+  def identifier(no_version: false)
+    return emma_recordId if emma_recordId.present?
+    parts = [emma_repository, emma_repositoryRecordId, dc_format]
+    parts << emma_formatVersion unless no_version
+    parts.reject(&:blank?).join('-').presence
   end
 
 end

@@ -26,24 +26,26 @@ class FileObject
   # Create a new instance.
   #
   # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle
-  # @param [FileProperties, Hash]                                 opt
+  # @param [Hash]                                                 opt
   #
   # == Variations
   #
   # @overload initialize(path, opt = nil)
-  #   @param [String]               path
-  #   @param [FileProperties, Hash] opt
+  #   @param [String] path
+  #   @param [Hash]   opt
   #
   # @overload initialize(handle, opt = nil)
   #   @param [FileHandle, IO, StringIO, Tempfile, IO::Like] handle
-  #   @param [FileProperties, Hash]                         opt
+  #   @param [Hash]                                         opt
   #
   def initialize(handle, opt = nil)
-    set_file_attributes(opt)
-    @fmt ||= self.class.fmt
-    @ext ||= self.class.file_extension
-    @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
-    @filename    = @file_handle.path if @file_handle.respond_to?(:path)
+    opt = opt&.symbolize_keys || {}
+    @repository    = opt[:repository]
+    @repository_id = opt[:repository_id]
+    @fmt           = opt[:fmt] || self.class.fmt
+    @ext           = opt[:ext] || self.class.file_extension
+    @file_handle   = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
+    @filename      = (@file_handle.path if @file_handle.respond_to?(:path))
   end
 
   # ===========================================================================
@@ -163,7 +165,7 @@ class FileObject
       __debug_args(bind, &block)
     end
 
-    unless defined?(DEBUG_MIME_TYPES) && DEBUG_MIME_TYPES
+    unless DEBUG_MIME_TYPES
       def __debug_mime(*); end
     end
 

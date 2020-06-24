@@ -55,6 +55,52 @@ module IngestService::Common
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Send an API request.
+  #
+  # @param [Symbol]            verb
+  # @param [String]            action
+  # @param [Hash, String, nil] params
+  # @param [Hash, nil]         headers
+  # @param [Hash]              opt
+  #
+  # @option opt [Boolean]      :no_redirect
+  # @option opt [Integer, nil] :redirection
+  #
+  # @raise [ApiService::EmptyResultError]
+  # @raise [ApiService::HtmlResultError]
+  # @raise [ApiService::RedirectionError]
+  # @raise [ApiService::Error]
+  #
+  # @return [Faraday::Response]
+  # @return [nil]
+  #
+  # This method overrides:
+  # @see ApiService::Common#transmit
+  #
+  def transmit(verb, action, params, headers, **opt)
+    super.tap do |response|
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case response.status
+        when 202
+          # NOTE: This *may* erroneously be the status for some bad conditions
+          if response.body.present?
+            __debug { "INGEST: HTTP 202 with body #{response.body.inspect}" }
+            raise response_error(response)
+          end
+        when 207
+          # Partial success implies partial failure:
+          __debug { "INGEST: HTTP 207 with body #{response.body.inspect}" }
+          raise response_error(response)
+      end
+    end
+  end
+
+  # ===========================================================================
   # :section: Exceptions
   # ===========================================================================
 
@@ -64,13 +110,13 @@ module IngestService::Common
   #
   # @param [Exception, Faraday::Response] obj
   #
-  # @return [IngestService::ResponseError]
+  # @return [IngestService::Error]
   #
   # This method overrides:
   # @see ApiService::Common#response_error
   #
   def response_error(obj)
-    IngestService::ResponseError.new(obj)
+    IngestService::Error.new(obj)
   end
 
   # Wrap response in a service error.

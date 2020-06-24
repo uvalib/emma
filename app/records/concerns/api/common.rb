@@ -382,9 +382,15 @@ class IsoLanguage < ScalarType
   # @return [ISO_639, nil]
   #
   def self.find(value)
-    value = value.to_s.strip
-    ISO_639.find_by_code(value.downcase) ||
-      ISO_639.find_by_english_name(value.capitalize)
+    # @type [Array<ISO_639>] entries
+    entries = ISO_639.search(value = value.to_s.strip.downcase)
+    if entries.size <= 1
+      entries.first
+    else
+      entries.find do |entry|
+        (value == entry.alpha3) || (value == entry.english_name.downcase)
+      end
+    end
   end
 
 end

@@ -52,23 +52,24 @@ class MetricsController < ApplicationController
   def test
     value = rand(0..100)
 
-    Counter[:test_recv].increment({ service: 'GET' },  3 * value)
-    Counter[:test_send].increment({ service: 'POST' }, 2 * value)
+    Counter[:test_recv].increment(by: (3 * value), labels: { service: 'GET'  })
+    Counter[:test_send].increment(by: (2 * value), labels: { service: 'POST' })
 
-    Gauge[:test_gauge].set({ route: :gauge }, value)
-    Gauge[:test_gauge2].set({}, value)
+    Gauge[:test_gauge].set(value, labels: { route: :gauge })
+    Gauge[:test_gauge2].set(value)
     g =
       REGISTRY.get(:test_gauge3) ||
-      REGISTRY.gauge(:test_gauge3, 'A third gauge')
-    g.set({ bb: 'second label' }, 18)
+      REGISTRY.gauge(:test_gauge3, docstring: 'A third gauge')
+    g.set(18, labels: { bb: 'second label' })
 
-    Histogram[:test_histogram].observe({}, value / 16)
-    Histogram[:test_histogram].observe({}, value / 4)
-    Histogram[:test_histogram].observe({}, value)
-    Histogram[:test_histogram].observe({}, value * 4)
-    Histogram[:test_histogram].observe({}, value * 16)
+    # noinspection RubyResolve
+    Histogram[:test_histogram].observe(value / 16)
+    Histogram[:test_histogram].observe(value / 4)
+    Histogram[:test_histogram].observe(value)
+    Histogram[:test_histogram].observe(value * 4)
+    Histogram[:test_histogram].observe(value * 16)
 
-    Summary[:test_summary].observe({}, value)
+    Summary[:test_summary].observe(value)
 
     respond_to do |format|
       format.any do

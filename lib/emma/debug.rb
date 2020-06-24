@@ -62,11 +62,11 @@ module Emma::Debug
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
     meth = bind.eval('__method__') if meth.nil? && bind.is_a?(Binding)
-    prms = meth.is_a?(Method) || (meth.is_a?(Symbol) && bind.is_a?(Binding))
+    prms = meth.is_a?(Method) || bind.is_a?(Binding)
     prms = (get_params(meth, bind, prms_opt) if prms)
     opt[:separator] ||= DEBUG_SEPARATOR
-    meth = __debug_label(caller_method: meth)
-    __debug_items(meth&.to_s, *args, prms, opt, &block)
+    meth = __debug_label(caller_method: meth) unless meth.is_a?(String)
+    __debug_items(meth, *args, prms, opt, &block)
   end
 
   # Output a line for invocation of a route method.

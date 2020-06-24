@@ -41,7 +41,7 @@ module MetricsConcern
       if REGISTRY.exist?(name)
         Log.warn { "#{name}: metric already registered" }
       else
-        [name, REGISTRY.send(type, name, *docstring)]
+        [name, REGISTRY.send(type, name, docstring: docstring)]
       end
     }.compact.to_h
   end

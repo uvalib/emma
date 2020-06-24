@@ -43,19 +43,19 @@ public
 
 # Base exception for EMMA Unified Search API authorization errors.
 #
-class Search::AuthError < ::Api::AuthError; end
+class Search::AuthError < Search::Error; end
 
 # Base exception for EMMA Unified Search API communication errors.
 #
-class Search::CommError < ::Api::CommError; end
+class Search::CommError < Search::Error; end
 
 # Base exception for EMMA Unified Search API session errors.
 #
-class Search::SessionError < ::Api::SessionError; end
+class Search::SessionError < Search::Error; end
 
 # Exception raised to indicate that the session token has expired.
 #
-class Search::TimeoutError < ::Api::TimeoutError; end
+class Search::TimeoutError < Search::Error; end
 
 # =============================================================================
 # :section: Receive errors

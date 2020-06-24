@@ -14,6 +14,7 @@ module FlashHelper
   end
 
   include HtmlHelper
+  include Emma::Common
 
   # ===========================================================================
   # :section:
@@ -31,13 +32,202 @@ module FlashHelper
   #
   # @type [Integer]
   #
-  FLASH_MAX_ITEM_SIZE = 1024
+  # == Implementation Note
+  # This has been sized very conservatively so that it also works in the
+  # desktop setting where the instance shares the 4096-byte cookie space with
+  # other local applications.
+  #
+  # This shouldn't be a big problem; if it is then it might be time to consider
+  # investing in setting up infrastructure for an alternative cookie mechanism.
+  #
+  FLASH_MAX_ITEM_SIZE = 512
 
   # Maximum size of all combined flash messages.
   #
   # @type [Integer]
   #
   FLASH_MAX_TOTAL_SIZE = 2 * FLASH_MAX_ITEM_SIZE
+
+  # ===========================================================================
+  # :section: Classes
+  # ===========================================================================
+
+  public
+
+  # Each instance translates to a distinct line in the flash message.
+  #
+  class Entry
+
+    include HtmlHelper
+
+    # Distinct portions of the entry.
+    #
+    # @type [Array<Upload, Hash, String, Integer>]
+    #
+    attr_reader :parts
+
+    alias_method :to_a, :parts
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Create a new instance.
+    #
+    # @param [Array<Entry, Hash, String, Array, *>] parts
+    #
+    # == Variations
+    #
+    # @overload initialize(other)
+    #   @param [Entry] other
+    #
+    # @overload initialize(first, *parts)
+    #   @param [String, Array]               first
+    #   @param [Array<String, Entry, Array>] parts
+    #
+    def initialize(*parts)
+      @parts = parts.flat_map { |part| make_parts(part) }.compact
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Process an object to extract parts.
+    #
+    # @param [Entry, Hash, String, Array, *] part
+    #
+    def make_parts(part)
+      case part
+        when nil    then part
+        when Entry  then part.parts
+        when Array  then part.map { |v| send(__method__, v) }
+        when Hash   then part.to_a.flatten(1).map { |v| send(__method__, v) }
+        else             transform(part)
+      end
+    end
+
+    # Process a single object to make it a part.
+    #
+    # @param [*] part
+    #
+    # @return [String]
+    #
+    def transform(part)
+      part.to_s
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Generate a string representation of the parts of the entry.
+    #
+    # @return [String]
+    #
+    def to_s
+      count  = @parts&.size || 0
+      result = +''
+      result << first_part(@parts.first)          if count > 0
+      result << ': '                              if count > 1
+      result << @parts[1..-2].join(', ') << ', '  if count > 2
+      result << last_part(@parts.last)            if count > 1
+      result
+    end
+
+    # Generate HTML elements for the parts of the entry.
+    #
+    # @param [Hash] opt               Passed to outer #html_div.
+    #
+    # @return [ActiveSupport::SafeBuffer]
+    #
+    # @see #render_part
+    #
+    def render(**opt)
+      columns =
+        if @parts.size > 1
+          n = 0
+          @parts.map { |part| render_part(part, (n += 1), last: @parts.size) }
+        else
+          @parts.map { |part| first_part(part, html: true) }
+        end
+      opt = prepend_css_classes(opt, 'line')
+      html_div(safe_join(columns, ' '), opt)
+    end
+
+    # render_part
+    #
+    # @param [String]       part
+    # @param [Integer, nil] position  Position of part (starting from 1).
+    # @param [Hash]         opt       Passed to #html_div except for:
+    #
+    # @option [Integer] :first        Index of the first column (default: 1).
+    # @option [Integer] :last         Index of the last column.
+    #
+    # @see #first_part
+    # @see #last_part
+    #
+    def render_part(part, position = nil, **opt)
+      first   = opt.delete(:first) || 1
+      last    = opt.delete(:last) || -1
+      classes = %w(part)
+      classes << "col-#{position}" if position
+      classes << 'first'           if position == first
+      classes << 'last'            if position == last
+      if position == first
+        part = first_part(part, html: true)
+      elsif position == last
+        part = last_part(part, html: true)
+      end
+      opt = prepend_css_classes(opt, classes)
+      html_div(part, opt)
+    end
+
+    # A hook for treating the first part of a entry as special.
+    #
+    # @param [String]  text
+    # @param [Boolean] html           If *true*, allow for HTML formatting.
+    #
+    # @return [String, ActiveSupport::SafeBuffer]
+    #
+    def first_part(text, html: false)
+      html ? ERB::Util.h(text) : text
+    end
+
+    # A hook for treating the first part of a entry as special.
+    #
+    # @param [String]  text
+    # @param [Boolean] html           If *true*, allow for HTML formatting.
+    #
+    # @return [String, ActiveSupport::SafeBuffer]
+    #
+    def last_part(text, html: false)
+      html ? ERB::Util.h(text) : text
+    end
+
+    # =========================================================================
+    # :section: Class methods
+    # =========================================================================
+
+    public
+
+    # A short-cut for creating an Entry only if required.
+    #
+    # @param [Entry, *] other
+    #
+    # @return [Entry]
+    #
+    def self.[](other)
+      other.is_a?(self) ? other : new(other)
+    end
+
+  end
 
   # ===========================================================================
   # :section:
@@ -47,7 +237,7 @@ module FlashHelper
 
   # Success flash notice.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_notice.
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_notice
   #
   # @return [void]
   #
@@ -58,7 +248,7 @@ module FlashHelper
 
   # Failure flash notice.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_alert.
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_alert.
   #
   # @return [void]
   #
@@ -69,37 +259,37 @@ module FlashHelper
 
   # Flash notice.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #set_flash.
-  # @param [Symbol]                         topic
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #set_flash.
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def flash_notice(*args, topic:)
+  def flash_notice(*args, topic: nil)
     prepend_flash_source!(args)
     set_flash(*args, topic: topic, type: :notice)
   end
 
   # Flash alert.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #set_flash.
-  # @param [Symbol]                         topic
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #set_flash.
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def flash_alert(*args, topic:)
+  def flash_alert(*args, topic: nil)
     prepend_flash_source!(args)
     set_flash(*args, topic: topic, type: :alert)
   end
 
   # Flash notification, which appears on the next page to be rendered.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_format.
-  # @param [Symbol]                         topic
-  # @param [Symbol]                         type  Either :alert or :notice.
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_format
+  # @param [Symbol]                               type  :alert or :notice
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def set_flash(*args, topic:, type:)
+  def set_flash(*args, type:, topic: nil)
     prepend_flash_source!(args)
     target  = flash_target(type)
     message = flash_format(*args, topic: topic)
@@ -114,7 +304,7 @@ module FlashHelper
 
   # Success flash now.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_now_notice.
+  # @param [Array<Exception,String,Symbol,Entry>] args  To #flash_now_notice.
   #
   # @return [void]
   #
@@ -125,7 +315,7 @@ module FlashHelper
 
   # Failure flash now.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_now_alert.
+  # @param [Array<Exception,String,Symbol,Entry>] args  To #flash_now_alert.
   #
   # @return [void]
   #
@@ -136,24 +326,24 @@ module FlashHelper
 
   # Flash now notice.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #set_flash_now.
-  # @param [Symbol]                         topic
+  # @param [Array<Exception,String,Symbol,Entry>] args  To #set_flash_now.
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def flash_now_notice(*args, topic:)
+  def flash_now_notice(*args, topic: nil)
     prepend_flash_source!(args)
     set_flash_now(*args, topic: topic, type: :notice)
   end
 
   # Flash now alert.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #set_flash_now.
-  # @param [Symbol]                         topic
+  # @param [Array<Exception,String,Symbol,Entry>] args  To #set_flash_now.
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def flash_now_alert(*args, topic:)
+  def flash_now_alert(*args, topic: nil)
     prepend_flash_source!(args)
     set_flash_now(*args, topic: topic, type: :alert)
   end
@@ -161,13 +351,13 @@ module FlashHelper
   # Flash now notification, which appears on the current page when it is
   # rendered.
   #
-  # @param [Array<Exception,String,Symbol>] args  Passed to #flash_format.
-  # @param [Symbol]                         topic
-  # @param [Symbol]                         type  Either :alert or :notice.
+  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_format
+  # @param [Symbol]                               type  :alert or :notice
+  # @param [Symbol, nil]                          topic
   #
   # @return [void]
   #
-  def set_flash_now(*args, topic:, type:)
+  def set_flash_now(*args, type:, topic: nil)
     prepend_flash_source!(args)
     target  = flash_target(type)
     message = flash_format(*args, topic: topic)
@@ -185,7 +375,7 @@ module FlashHelper
 
   # Return the method invoking flash.
   #
-  # @param [Array<Exception,String,Symbol>] args
+  # @param [Array] args
   #
   # @return [Array]                   The original *args*, possibly modified.
   #
@@ -206,48 +396,78 @@ module FlashHelper
     FLASH_TARGETS.include?(type) ? type : FLASH_TARGETS.first
   end
 
+  # Theoretical space available for flash messages.
+  #
+  # @return [Integer]
+  #
+  def flash_space_available
+    flashes = session['flash']   || {}
+    flashes = flashes['flashes'] || {}
+    in_use  = flashes.values.sum(&:size)
+    FLASH_MAX_TOTAL_SIZE - in_use
+  end
+
+  # String to display if item(s) were omitted.
+  #
+  # @param [Integer, nil] count   Total number of items.
+  # @param [Boolean]      html
+  #
+  # @return [ActiveSupport::SafeBuffer]   If *html*.
+  # @return [String]                      If !*html*.
+  #
+  def flash_omission(count = nil, html: false, **)
+    text = count ? "#{count} total" : 'more' # TODO: I18n
+    text = "[#{text}]"
+    html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"
+  end
+
   # Flash now notification, which appears on the current page when it is
   # rendered.
   #
-  # @param [Array<Exception,String,Symbol>] args
-  # @param [Symbol]                         topic
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Symbol, nil]                          topic
   #
   # args[0] [Symbol]            method  Calling method
   # args[1] [Exception, String] error   Error (message) if :alert
-  # args[*]                             Anything else passed to I18n#t.
+  # args[..-2]                          Message part(s).
+  # args[-1] [Hash]                     Passed to #flash_template except for:
   #
-  # @return [String]
+  # @option args[-1] [Boolean] :inspect   If *true* apply #inspect to messages.
   #
-  def flash_format(*args, topic:)
-    opt    = args.last.is_a?(Hash) ? args.pop.dup : {}
-    scope  = flash_i18n_scope
-    method = args.shift
-    error  = (args.shift if args.first.is_a?(Exception))
-    topic  = topic&.to_sym || (error ? :failure : :success)
-    fail   = (topic != :success)
-    msg    = fail ? Array.wrap(error&.message || DEFAULT_ERROR).dup : []
-    html   = args.any?(&:html_safe?)
-    sep    = html ? '<br/>' : ', '
-    max    = FLASH_MAX_ITEM_SIZE - (sep.size * (args.size + 1))
-    args   = flash_item(args, max: max, html: html, inspect: true)
-    msg    = flash_item(msg,  max: max, html: html)
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def flash_format(*args, topic: nil)
+    opt = (args.pop if args.last.is_a?(Hash))
+    local, opt = partition_options(opt, :inspect)
+
+    method  = args.shift
+    error   = (args.shift if args.first.is_a?(Exception))
+    msg     = nil
+    msg   ||= (error.messages  if error.respond_to?(:messages))
+    msg   ||= ([error.message] if error.respond_to?(:message))
+    msg   ||= []
+    html    = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
+
+    msg_sep = html ? "\n" : ' '
+    max     = flash_space_available - (msg_sep.size * (msg.size + 1))
+    msg     = flash_item(msg,  max: max, html: html)
+
+    arg_sep = html ? "\n" : ', '
+    max    -= msg.sum(&:size) + (arg_sep.size * (args.size + 1))
+    args    = flash_item(args, max: max, html: html, inspect: local[:inspect])
+
     msg << nil unless html || msg.blank?
-    msg << sep if html && (args.size > 1)
-    msg << args.join(sep)
-    opt[fail ? :error : :file] = msg.join(' ')
-    opt[:default] = Array.wrap(opt[:default]&.dup)
-    opt[:default] << flash_i18n_path(scope, 'error', topic)
-    opt[:default] << flash_i18n_path('error', topic)
-    opt[:default] << DEFAULT_ERROR
-    path   = flash_i18n_path(scope, method, topic)
-    result = I18n.t(path, **opt)
-    html ? result.html_safe : result
+    msg << args.join(arg_sep)
+
+    result = msg.join(msg_sep)
+    result = flash_template(msg, method: method, topic: topic, **opt) if topic
+    html ? result.html_safe : ERB::Util.h(result)
   end
 
   # Create item(s) to be included in the flash display.
   #
-  # @param [String, Array] item
-  # @param [Hash]          opt
+  # @param [String, Entry, Array] item
+  # @param [Hash]                 opt
   #
   # @option opt [Boolean] :inspect  If *true* show inspection of *item*.
   # @option opt [Boolean] :html     If *true* force ActiveSupport::SafeBuffer.
@@ -273,23 +493,63 @@ module FlashHelper
   #
   def flash_item(item, **opt)
     if item.is_a?(Array)
-      opt[:max] ||= FLASH_MAX_TOTAL_SIZE
-      result = []
+      return [] if item.blank?
+      $stderr.puts "........... flash_item | #{item.size} items | opt[:max] = #{opt[:max]} | available = #{flash_space_available}"
+      opt[:max] ||= flash_space_available
+      omission = flash_omission(item.size, **opt)
+      count    = 0
+      result   = []
       item.each do |str|
-        break unless opt[:max].positive?
-        str = flash_item(str, **opt)
+        count += 1
+        break unless opt[:max] > omission.size
+        clearance = (count == item.size) ? 0 : omission.size
+        str = flash_item(str, **opt.merge(max: (opt[:max] - clearance)))
+        next if str.blank?
         opt[:max] -= str.size
-        result << str unless str.blank? || opt[:max].negative?
+        result << str unless opt[:max].negative?
+        break if str == HTML_TRUNCATE_OMISSION
       end
+      result << omission if opt[:max].positive? && (count < item.size)
+      $stderr.puts "........... flash_item | #{item.size} items | #{result.size} lines | sizes = #{result.map(&:size)}"
+      $stderr.puts result.pretty_inspect
     else
-      opt[:max] ||= FLASH_MAX_ITEM_SIZE
-      string  = item.to_s
+      opt[:max] ||= [FLASH_MAX_ITEM_SIZE, flash_space_available].min
+      string  = (item.is_a?(Entry) && opt[:html]) ? item.render : item.to_s
       inspect = opt[:inspect] && !string.html_safe? && !string.start_with?('"')
       string  = string.inspect if inspect
       result  = safe_truncate(string, opt[:max])
       result  = ERB::Util.h(result) if opt[:html] && !result.html_safe?
     end
     result
+  end
+
+  # If a :topic was specified, it is used as part of a set of I18n paths used
+  # to locate a template to which the flash message is applied.
+  #
+  # @param [String, Array<String>] msg
+  # @param [Symbol, String]        method
+  # @param [Symbol, String]        topic
+  # @param [Boolean, nil]          html
+  # @param [String, nil]           separator
+  # @param [Hash]                  opt        Passed to I18n#t.
+  #
+  # @return [String]                          # Even if html is *true*.
+  #
+  def flash_template(msg, method:, topic:, html: nil, separator: nil, **opt)
+    topic = topic.to_sym
+    fail  = (topic != :success)
+    scope = flash_i18n_scope
+    path  = flash_i18n_path(scope, method, topic)
+    if msg.is_a?(Array)
+      separator ||= html ? "\n" : ', '
+      msg = msg.join(separator)
+    end
+    opt[fail ? :error : :file] = msg
+    opt[:default] = Array.wrap(opt[:default]&.dup)
+    opt[:default] << flash_i18n_path(scope, 'error', topic)
+    opt[:default] << flash_i18n_path('error', topic)
+    opt[:default] << DEFAULT_ERROR
+    I18n.t(path, **opt)
   end
 
   # I18n scope based on the current class context.

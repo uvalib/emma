@@ -356,6 +356,30 @@
     }
 }
 
+// noinspection SassScssResolvedByNameOnly
+.file-bulk-upload-delete {
+
+    @include grid(1fr, 2);
+
+    .line,
+    .form-controls {
+
+        @include grid-column-span;
+
+        display:    flex;
+        flex-wrap:  wrap;
+        column-gap: 0.5rem;
+    }
+
+    label {
+        flex: 0 1 auto;
+    }
+
+    input[type="text"] {
+        flex: 1 1 auto;
+    }
+}
+
 // The element which contains .file-upload-form.
 //
 // noinspection SassScssResolvedByNameOnly

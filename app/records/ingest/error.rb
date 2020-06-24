@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Base exception for EMMA Unified Search API errors.
+# Base exception for EMMA Federated Ingest API errors.
 #
 class Ingest::Error < ::Api::Error
 
@@ -41,21 +41,21 @@ end
 
 public
 
-# Base exception for EMMA Unified Search API authorization errors.
+# Base exception for EMMA Federated Ingest API authorization errors.
 #
-class Ingest::AuthError < ::Api::AuthError; end
+class Ingest::AuthError < Ingest::Error; end
 
-# Base exception for EMMA Unified Search API communication errors.
+# Base exception for EMMA Federated Ingest API communication errors.
 #
-class Ingest::CommError < ::Api::CommError; end
+class Ingest::CommError < Ingest::Error; end
 
-# Base exception for EMMA Unified Search API session errors.
+# Base exception for EMMA Federated Ingest API session errors.
 #
-class Ingest::SessionError < ::Api::SessionError; end
+class Ingest::SessionError < Ingest::Error; end
 
 # Exception raised to indicate that the session token has expired.
 #
-class Ingest::TimeoutError < ::Api::TimeoutError; end
+class Ingest::TimeoutError < Ingest::Error; end
 
 # =============================================================================
 # :section: Receive errors
@@ -63,7 +63,7 @@ class Ingest::TimeoutError < ::Api::TimeoutError; end
 
 public
 
-# Base exception for EMMA Unified Search API receive errors.
+# Base exception for EMMA Federated Ingest API receive errors.
 #
 class Ingest::RecvError < Ingest::CommError; end
 
@@ -77,11 +77,11 @@ class Ingest::ParseError < Ingest::RecvError; end
 
 public
 
-# Base exception for EMMA Unified Search API transmit errors.
+# Base exception for EMMA Federated Ingest API transmit errors.
 #
 class Ingest::XmitError < Ingest::CommError; end
 
-# Base exception for EMMA Unified Search API requests.
+# Base exception for EMMA Federated Ingest API requests.
 #
 class Ingest::RequestError < Ingest::XmitError; end
 

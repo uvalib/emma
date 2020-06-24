@@ -38,12 +38,8 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  # The @item_id member variable contains the original item specification, if
-  # one was provided, and not the array of IDs represented by it.
-  before_action(only: %i[index show edit delete destroy download]) do
-    @item_id = params[:selected] || params[:repository_id] || params[:id]
-    @item_id = @item_id.presence
-  end
+  before_action :set_item_id,    only: %i[index show edit update delete destroy download]
+  before_action :index_redirect, only: %i[show]
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit] # TODO: ???
@@ -61,15 +57,14 @@ class UploadController < ApplicationController
   # option then the results will be limited to the matching upload(s).
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
-  # @see Upload#get_records
-  # @see app/views/upload/index.html.erb
+  # @see UploadConcern#find_records
   #
   def index
     __debug_route
     opt   = pagination_setup
     @list = nil
-    @list ||= (Upload.get_records(*@item_id) if @item_id)
-    @list ||= (Upload.get_records(*@item_id, user_id: @user.id) if @user)
+    @list ||= (find_records(@item_id)          if @item_id)
+    @list ||= (find_records(user_id: @user.id) if @user)
     @list ||= []
     self.page_items  = @list
     self.total_items = @list.size
@@ -85,19 +80,16 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/:id
-  # == GET /upload/ITEM_SPEC
   # Display a single upload.
   #
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see Upload#get_record
-  # @see app/views/upload/show.html.erb
+  # @see UploadConcern#get_record
   #
   def show
     __debug_route
-    fail(:file_id) if @item_id.blank?
-    @item = Upload.get_record(@item_id) or fail(:find, @item_id)
+    @item = get_record(@item_id)
     respond_to do |format|
       format.html { render layout: layout }
       format.json { render_json show_values }
@@ -111,12 +103,12 @@ class UploadController < ApplicationController
   # == GET /upload/new
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
-  # @see Upload#initialize
-  # @see app/views/upload/new.html.erb
+  # @see UploadConcern#new_record
+  # @see #create
   #
   def new
     __debug_route
-    @item = Upload.new(user_id: @user.id, base_url: request.base_url)
+    @item = new_record(user_id: @user.id, base_url: request.base_url)
     respond_with(@item)
   rescue => error
     flash_now_failure(error)
@@ -129,38 +121,33 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPConflict]
   # @raise [UploadConcern::SubmitError]
   #
-  # @see UploadConcern#finalize_upload
+  # @see UploadConcern#upload_create
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def create
     __debug_route
-    data  = upload_post_parameters.merge!(user_id: @user.id)
-    @item = Upload.new(data) or fail(__method__)
-    @item.save
-    @item.errors.blank?      or fail(@item.errors)
-    finalize_upload(@item)
-    post_response(:ok, @item.filename, redirect: upload_index_path)
+    data = upload_post_parameters.merge!(user_id: @user.id)
+    @item, failed = upload_create(data)
+    fail(__method__, failed) if failed.present?
+    post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
   rescue => error
     post_response(error)
   end
 
-  # == GET /upload/:id/edit
-  # == GET /upload/SELECT/edit
+  # == GET /upload/edit/:id
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
-  # @see Upload#get_record
-  # @see app/views/upload/edit.html.erb
+  # If :id is "SELECT" then a menu of editable items is presented.
+  #
+  # @see UploadConcern#get_record
+  # @see #update
   #
   def edit
     __debug_route
-    fail(:file_id) if @item_id.blank?
-    @item = nil
-    unless @item_id == 'SELECT'
-      @item = Upload.get_record(@item_id) or fail(:find, @item_id)
-    end
+    @item = (get_record(@item_id) unless show_menu?(@item_id))
   rescue => error
     flash_now_failure(error)
   end
@@ -173,19 +160,16 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPNotFound]
   # @raise [UploadConcern::SubmitError]
   #
-  # @see Upload#get_record
-  # @see UploadConcern#finalize_upload
+  # @see UploadConcern#upload_update
   #
   def update
     __debug_route
     __debug_request
-    data = upload_post_parameters
-    id   = data.delete(:id)       or fail(:file_id)
-    @item = Upload.get_record(id) or fail(:find, id)
-    @item.update(data)
-    @item.errors.blank?           or fail(@item.errors)
-    finalize_upload(@item)
-    post_response(:ok, @item.filename, redirect: upload_index_path)
+    data = upload_post_parameters.merge!(user_id: @user.id)
+    id   = data.delete(:id).to_s
+    @item, failed = upload_update(id, data)
+    fail(__method__, failed) if failed.present?
+    post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
   rescue => error
@@ -193,8 +177,9 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/delete/:id[?force=true]
-  # == GET /upload/delete/SELECT
   # Initiate removal of an existing EMMA entry along with its associated file.
+  #
+  # If :id is "SELECT" then a menu of deletable items is presented.
   #
   # Use :force to attempt to remove an item from the EMMA Unified Search index
   # even if a database record was not found.
@@ -202,22 +187,16 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see Upload#get_record
-  # @see app/views/upload/delete.html.erb
+  # @see Upload#collect_ids
+  # @see UploadConcern#get_record
+  # @see #destroy
   #
   def delete
     __debug_route
-    ids    = Upload.collect_ids(@item_id).presence or fail(:file_id)
+    ids = Upload.collect_ids(@item_id).presence or fail(:file_id)
+    ids.clear if show_menu?(ids)
     @force = true?(params[:force])
-    @list  = nil
-    unless ids.include?('SELECT')
-      @list =
-        ids.map do |id|
-          record = Upload.get_record(id)
-          fail(:find, id) unless record || @force
-          record || id
-        end
-    end
+    @list  = ids.map { |id| get_record(id, no_raise: @force) || id }
   rescue => error
     flash_now_failure(error)
   end
@@ -229,18 +208,18 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see UploadConcern#destroy_upload
+  # @see UploadConcern#upload_destroy
   #
   #--
   # noinspection RubyScope
   #++
   def destroy
     __debug_route
-    ids    = Upload.collect_ids(@item_id).presence or fail(:file_id)
     @force = true?(params[:force])
     back   = delete_select_upload_path
-    succeeded, failed = destroy_upload(ids, force: @force)
-    fail(:find, failed) unless failed.blank? || @force
+    succeeded, failed = upload_destroy(@item_id, force: @force)
+    fail(__method__, failed) if failed.present?
+    fail(:file_id)           if succeeded.blank?
     post_response(:found, succeeded, redirect: back)
   rescue SubmitError => error
     post_response(:conflict, error, redirect: back) # TODO: ?
@@ -279,12 +258,12 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
+  # @see UploadConcern#get_record
   # @see Upload#download_link.
   #
   def download
     __debug_route
-    fail(:file_id) if @item_id.blank?
-    @item = Upload.get_record(@item_id) or fail(:find, @item_id)
+    @item = get_record(@item_id)
     @link = @item.download_link
     respond_to do |format|
       format.html { redirect_to(@link) }
@@ -299,86 +278,167 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET  /upload/bulk[?source=FILE&force=true]
-  # == POST /upload/bulk[?source=FILE&force=true]
+  # == GET /upload/bulk
+  # TODO: ???
+  #
+  def bulk_index
+    __debug_route
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # == GET /upload/bulk_new[?source=FILE]
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to submit.
   #
-  # This endpoint responds to the form submission POST by creating the Upload
-  # entries, downloading and storing the files, and posting the new entries to
-  # the Federated Ingest API.
-  #
-  # @raise [Net::HTTPConflict]
-  #
-  # @see UploadConcern#bulk_create
-  # @see app/views/upload/bulk_new.html.erb
+  # @see #bulk_create
   #
   def bulk_new
     __debug_route
-    if request.post?
-      __debug_request
-      data = bulk_post_parameters.presence or fail(__method__)
-      opt  = { base_url: request.base_url, user: @user }
-      succeeded, failed = bulk_create(data, **opt)
-      fail(__method__, failed) unless failed.blank? || @force
-      post_response(:ok, succeeded, xhr: false)
-    end
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # == POST /upload/bulk[?source=FILE]
+  # Create the specified Upload entries, download and store the associated
+  # files, and post the new entries to the Federated Ingest API.
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_upload_create
+  #
+  def bulk_create
+    __debug_route
+    __debug_request
+    data = bulk_post_parameters.presence or fail(__method__)
+    opt  = { base_url: request.base_url, user: @user }
+    succeeded, failed = bulk_upload_create(data, **opt)
+    fail(__method__, failed) if failed.present?
+    post_response(:ok, succeeded, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
     post_response(error, xhr: false)
   end
 
-  # == GET /upload/bulk[?source=FILE&force=true]
-  # == PUT /upload/bulk[?source=FILE&force=true]
+  # == GET /upload/bulk_edit[?source=FILE&force=true]
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to change.
   #
-  # This endpoint responds to the form submission POST by creating the Upload
-  # entries, downloading and storing the files, and posting the new entries to
-  # the Federated Ingest API.
-  #
-  # @raise [Net::HTTPConflict]
-  #
-  # @see UploadConcern#bulk_update
-  # @see app/views/upload/bulk_edit.html.erb
+  # @see UploadConcern#bulk_upload_update
   #
   def bulk_edit
     __debug_route
-    if request.put? || request.patch?
-      __debug_request
-      data = bulk_post_parameters.presence or fail(__method__)
-      opt  = { base_url: request.base_url, user: @user }
-      succeeded, failed = bulk_update(data, **opt)
-      fail(__method__, failed) unless failed.blank? || @force
-      post_response(:ok, succeeded, xhr: false)
-    end
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # == PUT /upload/bulk[?source=FILE]
+  # Modify or create the specified Upload entries, download and store the
+  # associated files (if changed), and post the new/modified entries to the
+  # Federated Ingest API.
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_upload_update
+  #
+  def bulk_update
+    __debug_route
+    __debug_request
+    data = bulk_post_parameters.presence or fail(__method__)
+    opt  = { base_url: request.base_url, user: @user }
+    succeeded, failed = bulk_upload_update(data, **opt)
+    fail(__method__, failed) if failed.present?
+    post_response(:ok, succeeded, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
     post_response(error, xhr: false)
   end
 
-  # == DELETE /upload/bulk[?force=true]
+  # == GET /upload/bulk_delete[?force=false]
+  # Select
   #
   # @raise [Net::HTTPConflict]
   #
-  # @see UploadConcern#bulk_destroy
+  # @see UploadConcern#bulk_upload_destroy
   #
   #--
   # noinspection RubyScope
   #++
   def bulk_delete
     __debug_route
+    @force = !false?(params[:force])
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # == DELETE /upload/bulk[?force=true]
+  #
+  # @raise [Net::HTTPConflict]
+  #
+  # @see UploadConcern#bulk_upload_destroy
+  #
+  #--
+  # noinspection RubyScope
+  #++
+  def bulk_destroy
+    __debug_route
     __debug_request
     data = bulk_post_parameters.presence or fail(__method__)
-    succeeded, failed = bulk_destroy(data, force: @force)
-    fail(__method__, failed) unless failed.blank? || @force
+    succeeded, failed = bulk_upload_destroy(data, force: @force)
+    fail(__method__, failed) if failed.present?
     post_response(:found, succeeded, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
     post_response(error, xhr: false)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Indicate whether URL parameters indicate that a menu should be shown rather
+  # than operating on an explicit set of identifiers.
+  #
+  # @param [String, Array<String>] id_params  Default: `@item_id`.
+  #
+  def show_menu?(id_params = nil)
+    Array.wrap(id_params || @item_id).include?('SELECT')
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Extract the best-match URL parameter which represents an item identifier.
+  #
+  # The @item_id member variable contains the original item specification, if
+  # one was provided, and not the array of IDs represented by it.
+  #
+  # @return [String, nil]
+  #
+  def set_item_id
+    # noinspection RubyYardReturnMatch
+    @item_id ||=
+      if (id = params[:selected] || params[:repository_id])
+        params[:id] = id if params.key?(:id)
+        id
+      else
+        params[:id]
+      end
+  end
+
+  # If the :show endpoint is given an :id which is actually a specification for
+  # multiple items then there is a redirect to :index.
+  #
+  def index_redirect
+    redirect_to action: :index, id: @item_id if @item_id.match?(/[^[:alnum:]]/)
   end
 
   # ===========================================================================

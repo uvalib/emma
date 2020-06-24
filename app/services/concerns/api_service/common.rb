@@ -317,7 +317,7 @@ module ApiService::Common
   # @option args.last [Boolean] :no_exception   If *true*, neither set
   #                                             @exception nor raise it.
   #
-  # @raise [ApiService::ResponseError]
+  # @raise [ApiService::Error]
   #
   # @return [Faraday::Response]
   #
@@ -552,7 +552,7 @@ module ApiService::Common
   # @raise [ApiService::EmptyResultError]
   # @raise [ApiService::HtmlResultError]
   # @raise [ApiService::RedirectionError]
-  # @raise [ApiService::ResponseError]
+  # @raise [ApiService::Error]
   #
   # @return [Faraday::Response]
   # @return [nil]
@@ -751,10 +751,10 @@ module ApiService::Common
   #
   # @param [Exception, Faraday::Response] obj
   #
-  # @return [ApiService::ResponseError]
+  # @return [ApiService::Error]
   #
   def response_error(obj)
-    ApiService::ResponseError.new(obj)
+    ApiService::Error.new(obj)
   end
 
   # Wrap response in a service error.

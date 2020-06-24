@@ -5,13 +5,15 @@
 
 __loading_begin(__FILE__)
 
-# Base exception for Bookshare API problems.
+# Base exception for external API service problems.
 #
-class ApiService::Error < Api::Error; end
+class ApiService::Error < Api::Error
 
-# Base exception for problems with content received from the Bookshare API.
-#
-class ApiService::ResponseError < ApiService::Error
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Initialize a new instance.
   #
@@ -47,8 +49,9 @@ class ApiService::ResponseError < ApiService::Error
   def append_error_description!(args)
     desc = args.none? { |arg| arg.is_a?(String) }
     desc &&= args.find { |arg| arg.is_a?(Faraday::Error) }
-    desc &&= extract_message(desc).presence
-    desc ? (args << desc) : args
+    desc &&= extract_message(desc)
+    args += desc if desc.present?
+    args
   end
 
   # Get the message from within the response body of a Faraday exception.
@@ -76,61 +79,51 @@ class ApiService::ResponseError < ApiService::Error
     Array.wrap(desc || body)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Methods to be included in subclasses.
+  #
+  module Methods
+
+    # Initialize a new subclass instance.
+    #
+    # @param [Array<Faraday::Response, Exception, Integer, String>] args
+    #
+    # When included in the subclass this method overrides:
+    # @see ApiService::Error#initialize
+    #
+    def initialize(*args)
+      super(*append_default_message!(args))
+    end
+
+  end
+
 end
 
 # Exception raised to indicate that a valid message was received but it had no
 # body or its body was empty.
 #
-class ApiService::EmptyResultError < ApiService::ResponseError
-
-  # Initialize a new instance.
-  #
-  # @param [Array<Faraday::Response, Exception, Integer, String>] args
-  #
-  # This method overrides:
-  # @see ApiService::ResponseError#initialize
-  #
-  def initialize(*args)
-    super(*append_default_message!(args))
-  end
-
+class ApiService::EmptyResultError < ApiService::Error
+  include ApiService::Error::Methods
 end
 
 # Exception raised to indicate that a message with an HTML body was received
 # when HTML was not expected.
 #
-class ApiService::HtmlResultError < ApiService::ResponseError
-
-  # Initialize a new instance.
-  #
-  # @param [Array<Faraday::Response, Exception, Integer, String>] args
-  #
-  # This method overrides:
-  # @see ApiService::ResponseError#initialize
-  #
-  def initialize(*args)
-    super(*append_default_message!(args))
-  end
-
+class ApiService::HtmlResultError < ApiService::Error
+  include ApiService::Error::Methods
 end
 
 # Exception raised to indicate a invalid redirect destination.
 #
 # @see ApiService::Common#MAX_REDIRECTS
 #
-class ApiService::RedirectionError < ApiService::ResponseError
-
-  # Initialize a new instance.
-  #
-  # @param [Array<Faraday::Response, Exception, Integer, String>] args
-  #
-  # This method overrides:
-  # @see ApiService::ResponseError#initialize
-  #
-  def initialize(*args)
-    super(*append_default_message!(args))
-  end
-
+class ApiService::RedirectionError < ApiService::Error
+  include ApiService::Error::Methods
 end
 
 __loading_end(__FILE__)

@@ -13,11 +13,14 @@ module HtmlHelper
 
     __included(base, '[HtmlHelper]')
 
-    base.send(:extend, ActionView::Helpers::TagHelper)
-    base.send(:extend, ActionView::Helpers::UrlHelper)
-    base.send(:extend, self)
+    base.send(:include, ActionView::Helpers::TagHelper)
+    base.send(:extend,  ActionView::Helpers::TagHelper)
+    base.send(:extend,  ActionView::Helpers::UrlHelper)
+    base.send(:extend,  self)
 
   end
+
+  include Emma::Common
 
   # ===========================================================================
   # :section:

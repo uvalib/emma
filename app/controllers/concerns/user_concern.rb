@@ -30,6 +30,7 @@ module UserConcern
   end
   # :nocov:
 
+  include FlashConcern
   include BookshareConcern
 
   # ===========================================================================
@@ -88,9 +89,12 @@ module UserConcern
     end
 
     # Display error(s)/warning(s).
-    if (error = error.presence) || (warn = warn.presence)
+    if error.present?
       flash.clear
-      flash.now[error ? :alert : :notice] = error || warn
+      flash_now_alert(*error)
+    elsif warn.present?
+      flash.clear
+      flash_now_notice(*warn)
     end
 
     # Return no data unless main account information is valid.

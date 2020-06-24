@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 class ApplicationController < ActionController::Base
 
+  include FlashConcern
   include MetricsConcern
 
   # ===========================================================================
@@ -41,7 +42,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do |exception|
     __debug_exception('RESCUE_FROM', exception)
-    flash[:alert] ||= 'Your session has expired' # TODO: I18n
+    flash_alert('Your session has expired') # TODO: I18n
     redirect_to root_path
   end
 
@@ -69,10 +70,10 @@ class ApplicationController < ActionController::Base
   # The current layout template.
   #
   # @return [String]
-  # @return [FalseClass]              If `request.xhr?`
+  # @return [FalseClass]              If `request_xhr?`
   #
   def layout
-    if request.xhr?
+    if request_xhr?
       false
     elsif modal?
       'modal'

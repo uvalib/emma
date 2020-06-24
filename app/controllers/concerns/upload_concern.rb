@@ -18,8 +18,8 @@ module UploadConcern
   end
 
   include IngestConcern
+  include FlashConcern
   include ParamsHelper
-  include FlashHelper
   include Emma::Csv
 
   # ===========================================================================
@@ -30,24 +30,138 @@ module UploadConcern
     FileNaming.format_classes.values.each(&:register_mime_types)
 
   # ===========================================================================
+  # :section: Modules
+  # ===========================================================================
+
+  public
+
+  # Methods to support display of Upload instances and identifiers.
+  #
+  module RenderMethods
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+    # Methods defined in Upload and numerous subclasses of Api::Record which
+    # yield the repository ID of the associated entry.
+    #
+    # @type [Array<Symbol>]
+    #
+    RID_METHODS = %i[emma_repositoryRecordId repository_id].freeze
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Extract the database ID from the given item.
+    #
+    # @param [Upload, Hash, String] item
+    #
+    # @return [String, nil]
+    #
+    def db_id(item)
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case item
+        when Upload  then item.id
+        when Hash    then item[:id] || item['id']
+        when Integer then item
+        when /^\d+$/ then item
+      end.to_s.presence
+    end
+
+    # Extract the repository ID from the given item.
+    #
+    # @param [Api::Record, Upload, Hash, String] item
+    #
+    # @return [String, nil]
+    #
+    def repository_id(item)
+      if item.is_a?(String)
+        item if item.match?(/^[^\d]/)
+      elsif item.is_a?(Hash)
+        item[:repository_id] || item['repository_id']
+      elsif (rid_method = RID_METHODS.find { |m| item.respond_to?(m) } )
+        item.send(rid_method)
+      end.to_s.presence
+    end
+
+    # Show the repository ID if it can be determined for the given item(s).
+    #
+    # @param [Api::Record, Upload, Hash, String] item
+    # @param [String, nil]                       default
+    #
+    # @return [String, ActiveSupport::SafeBuffer]
+    #
+    def make_label(item, default: '(missing)') # TODO: I18n
+      # noinspection RubyYardParamTypeMatch
+      ident = repository_id(item) || db_id(item) || default || item.to_s
+      ident = "Item #{ident}" if ident.match?(/^\d/)
+      file  = (item.filename if item.is_a?(Upload))
+      ident = "#{ident} (#{file})" if file.present?
+      ident
+    end
+
+  end
+
+  include RenderMethods
+
+  # ===========================================================================
   # :section: Classes
   # ===========================================================================
 
   public
 
+  # Each instance translates to a distinct line in the flash message.
+  #
+  class ErrorEntry < FlashHelper::Entry
+
+    include RenderMethods
+
+    # =========================================================================
+    # :section: FlashHelper::Entry overrides
+    # =========================================================================
+
+    protected
+
+    # Process a single object to make it a part.
+    #
+    # @param [*] part
+    #
+    # @return [String]
+    #
+    # This method overrides
+    # @see FlashHelper::Entry#transform
+    #
+    def transform(part)
+      make_label(part, default: '').presence || super(part)
+    end
+
+  end
+
   # Exception raised when a submission is incomplete or invalid.
   #
   class SubmitError < StandardError
 
+    # Individual error messages (if the originator supplied multiple messages).
+    #
+    # @return [Array<String>]
+    #
+    attr_reader :messages
+
     # Initialize a new instance.
     #
-    # @param [String, nil] msg
+    # @param [Array<String>, String, nil] msg
     #
     # This method overrides:
     # @see StandardError#initialize
     #
     def initialize(msg = nil)
-      super(msg || 'unknown') # TODO: I18n
+      msg ||= 'unknown' # TODO: I18n
+      @messages = Array.wrap(msg)
+      super(@messages.first)
     end
 
   end
@@ -103,8 +217,7 @@ module UploadConcern
     @force = true?(prm[:force])
     src    = prm[:src] || prm[:source]
     opt    = src ? { src: src } : { data: (req || request) }
-    # noinspection RubyYardReturnMatch
-    fetch_data(**opt)
+    Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
   end
 
   # ===========================================================================
@@ -127,6 +240,7 @@ module UploadConcern
   # @return [Array<Hash>]
   #
   def fetch_data(**opt)
+    __debug_args("UPLOAD #{__method__}", binding)
     src  = opt[:src].presence
     data = opt[:data].presence
     if data
@@ -159,51 +273,400 @@ module UploadConcern
 
   public
 
-  # Process inserted or updated Upload records.
+  # Add a new submission to the database, upload its file to storage, and add
+  # a new index entry for it.
   #
-  # @param [Array<Upload,Array<Upload>>] items  @see #collect_items
+  # @param [Upload, Hash] data
+  # @param [Boolean]      atomic      If *false*, do not stop on failure.
+  # @param [Boolean]      index       If *false*, do not update index.
   #
-  # @return [Array<(Array,Array)>]    Succeeded names and failed record IDs.
+  # @option data [String] :file_path  Only if *data* is a Hash.
+  #
+  # @return [Array<(Upload,Array)>]   Record and error messages.
   #
   # @see #add_to_index
   #
-  def finalize_upload(*items)
-    items, failed = collect_items(*items)
-    _, failed = add_to_index(*items) unless failed.present?
-    succeeded = items.map { |i| "#{i.repository_id} (#{i.filename})" }
-    return succeeded, failed
+  # Compare with:
+  # @see #bulk_upload_create
+  #
+  def upload_create(data, atomic: true, index: true)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    # Save the Upload record to the database.
+    item = db_insert(data)
+    return item, item.errors if item.errors.present?
+
+    # Include the new submission in the index.
+    return item, [] unless index
+    succeeded, failed, _ = add_to_index(item, atomic: atomic)
+    return succeeded.first, failed
   end
 
-  # destroy_upload
+  # Update an existing database record and update its associated index entry.
   #
-  # @param [Array<Upload,String,Array>] items   @see #collect_items
+  # @param [String, Upload] id
+  # @param [Hash, nil]      data
+  # @param [Boolean]        atomic    If *false*, do not stop on failure.
+  # @param [Boolean]        index     If *false*, do not update index.
+  #
+  # @return [Array<(Upload,Array)>]   Record and error messages.
+  #
+  # @see #update_in_index
+  #
+  # Compare with:
+  # @see #bulk_upload_update
+  #
+  def upload_update(id, data, atomic: true, index: true)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    # Fetch the Upload record and update it in the database.
+    item = db_update(id, data)
+    return item, item.errors if item.errors.present?
+
+    # Update the index with the modified submission.
+    return item, [] unless index
+    succeeded, failed, _ = update_in_index(item, atomic: atomic)
+    return succeeded.first, failed
+  end
+
+  # Remove Upload records from the database and from the index.
+  #
+  # @param [Array<Upload,String,Array>] items   @see #collect_records
+  # @param [Boolean]                    atomic  *true* == all-or-none
+  # @param [Boolean]                    index   *false* -> no index update
   # @param [Boolean]                    force   Force removal of index entries
   #                                               even if the related database
   #                                               entries do not exist.
   #
-  # @return [Array<(Array,Array)>]    Succeeded paths and failed record IDs.
+  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
   #
   # @see #remove_from_index
   #
-  def destroy_upload(*items, force: false)
-    items, failed = collect_items(*items, force: force)
-    _, failed = remove_from_index(*items) unless failed.present?
-    items = [] if failed.present?
-    succeeded =
+  # == Usage Notes
+  # Atomicity of the record removal phase rests on the assumption that any
+  # database problem(s) would manifest with the very first destruction attempt.
+  # If a later item fails, the successfully-destroyed items will still be
+  # removed from the index.
+  #
+  def upload_destroy(*items, atomic: true, index: true, force: false)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    # Translate entries into Upload record instances.
+    items, failed = collect_records(*items, force: force)
+    return [], failed if atomic && failed.present? || items.blank?
+
+    # Remove the records from the database.
+    destroyed = []
+    retained  = []
+    items =
       items.map { |item|
+        # noinspection RubyYardParamTypeMatch
         if !item.is_a?(Upload)
-          "item #{item.inspect}" # TODO: I18n
-        elsif !item.destroy
-          failed << item.repository_id and next
+          item                        # Only seen if *force* is *true*.
+        elsif db_delete(item)
+          destroyed << item and item
+        elsif atomic && destroyed.blank?
+          return [], [item]           # Early return with the problem item.
         else
-          item.repository_id
+          retained << item and next   # Will not be included in *items*.
         end
       }.compact
-    return succeeded, failed
+    if retained.present?
+      Log.warn do
+        msg = [__method__]
+        msg << 'not atomic' if atomic
+        msg << 'items retained in the database that will be de-indexed'
+        msg << retained.map { |item| make_label(item) }.join(', ')
+        msg.join(': ')
+      end
+      retained.map! { |item| ErrorEntry.new(item, 'not removed') } # TODO: I18n
+    end
+
+    # Remove the associated entries from the index.
+    return items, retained unless index && items.present?
+    succeeded, failed = remove_from_index(*items, atomic: atomic)
+    return succeeded, (retained + failed)
   end
 
   # ===========================================================================
-  # :section: Index ingest operations
+  # :section: Records
+  # ===========================================================================
+
+  public
+
+  # A string added to the start of each title created on a non-production
+  # instance to help distinguish it from other index results.
+  #
+  # @type [String, nil]
+  #
+  DEV_TITLE_PREFIX = ('RWL' unless application_deployed?)
+
+  # The database ID for the item, or, failing that, the repository ID.
+  #
+  # @param [Upload, Hash, String] item
+  #
+  # @return [String, nil]
+  #
+  def identifier(item)
+    db_id(item) || repository_id(item)
+  end
+
+  # Return an array of the characteristic identifiers for the item.
+  #
+  # @param [Upload, Hash, String] item
+  #
+  # @return [Array<String>]
+  #
+  def identifiers(item)
+    [db_id(item), repository_id(item)].compact
+  end
+
+  # Return with the specified record or *nil* if one could not be found.
+  #
+  # @param [String, Upload] item
+  # @param [Boolean]        no_raise  If *true*, do not raise exceptions.
+  # @param [Symbol]         meth      Calling method (for logging).
+  #
+  # @raise [StandardError]            If *item* not found and !*no_raise*.
+  #
+  # @return [Upload]                  The item; from the database if necessary.
+  # @return [nil]                     If *item* not found and *no_raise*.
+  #
+  def get_record(item, no_raise: false, meth: nil)
+    meth ||= __method__
+    # noinspection RubyYardReturnMatch
+    if item.blank?
+      fail(:file_id) unless no_raise
+    elsif (result = find_records(item).first).is_a?(Upload)
+      result
+    elsif no_raise
+      Log.warn  { "#{meth}: #{item}: skipping record" }
+    else
+      Log.error { "#{meth}: #{item}: non-existent record" }
+      fail(:find, item)
+    end
+  end
+
+  # Find all of the specified Upload records.
+  #
+  # @param [String, Upload, Array] items
+  # @param [Hash]                  opt    Passed to #collect_records.
+  #
+  # @return [Array<Upload>]
+  #
+  def find_records(items, **opt)
+    collect_records(items, **opt).first
+  end
+
+  # Create a new free-standing (un-persisted) Upload instance.
+  #
+  # @param [Hash, Upload] opt         Passed to Upload#initialize except for:
+  #
+  # @option opt [String] :file_path   File URI or path.
+  # @option opt [Symbol] :meth        Calling method (for logging).
+  #
+  # @return [Upload]
+  #
+  # @see Upload#upload_file
+  #
+  def new_record(opt)
+    __debug_args("UPLOAD #{__method__}", binding)
+    opt  = opt.attributes if opt.is_a?(Upload)
+    opt  = opt.deep_symbolize_keys
+    meth = opt.delete(:meth) || __method__
+    path = opt.delete(:file_path)
+    Upload.new(opt).tap do |record|
+      if (p = DEV_TITLE_PREFIX) && (title = record.emma_metadata[:dc_title])
+        prefix = "#{p} - "
+        prefix = nil if title.start_with?(prefix)
+        # noinspection RubyYardParamTypeMatch
+        record.modify_emma_data(dc_title: "#{prefix}#{title}") if prefix
+      end
+      # noinspection RubyYardParamTypeMatch
+      record.upload_file(path, meth: meth) if path
+    end
+  end
+
+  # ===========================================================================
+  # :section: Records
+  # ===========================================================================
+
+  protected
+
+  # Transform a mixture of Upload objects and record identifiers into a list of
+  # Upload objects.
+  #
+  # @param [Array<Upload,String,Array>] items   @see Upload#collect_ids
+  # @param [Boolean]                    force   See Usage Notes
+  # @param [Hash]                       opt     Passed to Upload#get_records.
+  #
+  # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
+  # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
+  #
+  # == Usage Notes
+  # If *force* is true, the returned list of failed records will be empty but
+  # the returned list of items may contain a mixture of Upload and String
+  # elements.
+  #
+  def collect_records(*items, force: false, **opt)
+    opt   = items.pop if items.last.is_a?(Hash) && opt.blank?
+    items = items.flatten.compact
+
+    # Searching for non-identifier criteria (e.g. { user: @user }).
+    if opt.present? && items.blank?
+      return Upload.get_records(**opt), []
+    end
+
+    # Searching for identifier criteria (possibly modified by other criteria).
+    failed = []
+    items =
+      items.flat_map { |item|
+        item.is_a?(Upload) ? item : Upload.collect_ids(item) if item.present?
+      }.compact
+
+    identifiers = items.reject { |item| item.is_a?(Upload) }
+    if identifiers.present?
+      found = {}
+      Upload.get_records(*identifiers, **opt).each do |record|
+        (id  = record.id.to_s).present?       and (found[id]  = record)
+        (rid = record.repository_id).present? and (found[rid] = record)
+      end
+      items.map! { |item| !item.is_a?(Upload) && found[item] || item }
+      items, failed = items.partition { |i| i.is_a?(Upload) } unless force
+    end
+    return items, failed
+  end
+
+  # ===========================================================================
+  # :section: Storage
+  # ===========================================================================
+
+  protected
+
+  # Associate a file with an Upload record and send the file to storage.
+  #
+  # @param [Upload, String] record
+  # @param [String]         path      File URI or path.
+  # @param [Symbol]         meth      Calling method (for logging).
+  #
+  # @raise [StandardError]            If *path* or *record* missing.
+  #
+  # @return [void]
+  #
+  # @see Upload#upload_file
+  #
+  def upload_file(record, path, meth: nil)
+    __debug_args("UPLOAD #{__method__}", binding)
+    meth ||= __method__
+    raise "#{meth}: No upload file provided." if path.blank? # TODO: I18n
+    record = get_record(record, meth: meth) unless record.is_a?(Upload)
+    record.upload_file(path, meth: meth)
+  end
+
+  # Send the given file to storage
+  #
+  # @param [Upload, String] record
+  # @param [Symbol]         meth      Calling method (for logging).
+  #
+  # @raise [StandardError]            If no :file_path was given or determined.
+  #
+  # @return [void]
+  #
+  # @see Upload#delete_file
+  #
+  def remove_file(record, meth: __method__)
+    __debug_args("UPLOAD #{__method__}", binding)
+    record = get_record(record, meth: meth) unless record.is_a?(Upload)
+    record.delete_file
+  end
+
+  # ===========================================================================
+  # :section: Database
+  # ===========================================================================
+
+  public
+
+  # db_insert
+  #
+  # @param [Upload, Hash] data
+  #
+  # @return [Upload]
+  #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
+  def db_insert(data)
+    __debug_args("UPLOAD #{__method__}", binding)
+    record = data.is_a?(Upload) ? data : new_record(data)
+    record.save
+    record
+  end
+
+  # db_update
+  #
+  # @param [Upload, String] record
+  # @param [Hash]           data
+  #
+  # @return [Upload]
+  #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
+  def db_update(record, data)
+    __debug_args("UPLOAD #{__method__}", binding)
+    record = get_record(record) unless record.is_a?(Upload)
+    record.update(data)
+    record
+  end
+
+  # db_delete
+  #
+  # @param [Upload, String] record
+  #
+  # @return [nil]                     Not destroyed.
+  # @return [*]
+  #
+  def db_delete(record)
+    __debug_args("UPLOAD #{__method__}", binding)
+    record = get_record(record) unless record.is_a?(Upload)
+    record.destroy
+  end
+
+  # ===========================================================================
+  # :section: Database
+  # ===========================================================================
+
+  protected
+
+  # Replace a list of failed database items with error entries.
+  #
+  # @param [Array<Upload,Hash,String>] items
+  # @param [String]                    message
+  # @param [Integer]                   position
+  #
+  # @return [Array<ErrorEntry>]
+  #
+  def db_failed_format!(items, message, position = 0)
+    items.map! do |item|
+      db_failed_format(item, message, (position += 1))
+    end
+  end
+
+  # Create an error entry for a single failed database item.
+  #
+  # @param [Upload, Hash, String] item
+  # @param [String]               message
+  # @param [Integer]              position
+  #
+  # @return [ErrorEntry]
+  #
+  def db_failed_format(item, message, position)
+    label = make_label(item, default: "Item #{position}") # TODO: I18n
+    ErrorEntry.new(label, message)
+  end
+
+  # ===========================================================================
+  # :section: Index ingest
   # ===========================================================================
 
   public
@@ -221,32 +684,79 @@ module UploadConcern
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
-  # @return [Array<(Array,Array)>]    Succeeded names and failed names.
+  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+  #                                         messages, and records to roll back.
   #
-  def add_to_index(*items)
-    succeeded = failed = [] # TODO: extract failed from API message
+  def add_to_index(*items, atomic: true, **)
+    __debug_args("UPLOAD #{__method__}", binding)
+    succeeded, failed, rollback = update_in_index(*items, atomic: atomic)
+    if rollback.present?
+      # Any submissions that could not be added to the index will be removed
+      # from the index.  The assumption here is that they failed because they
+      # were missing information and need to be re-submitted anyway.
+      removed, retained = upload_destroy(rollback, atomic: false, index: false)
+      if removed.present?
+        Log.info { "#{__method__}: rolled back: #{removed}" }
+        removed_rids = removed.map(&:repository_id)
+        rollback.reject! { |item| removed_rids.include?(item.repository_id) }
+      end
+      succeeded = [] if atomic
+      failed += retained if retained.present?
+      rollback.each(&:delete_file)
+    end
+    return succeeded, failed, rollback
+  end
+
+  # Add/modify the indicated items from the EMMA Unified Index.
+  #
+  # @param [Array<Upload>] items
+  #
+  # @raise [StandardError] @see IngestService::Request::Records#put_records
+  #
+  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
+  #                                         messages, and records to roll back.
+  #
+  def update_in_index(*items, **)
+    __debug_args("UPLOAD #{__method__}", binding)
+    succeeded = failed = rollback = []
+    items = items.flatten.compact
     if items.present?
       result = ingest_api.put_records(*items)
-      fail(result.exception) if result.exception.present?
-      succeeded = items.map(&:id)
+      errors = result.errors
+      if errors.blank?
+        succeeded = items
+      else
+        rollback  = errors.transform_keys! { |n| items[n.to_i-1] }.keys.dup
+        rids      = errors.transform_keys! { |item| repository_id(item) }.keys
+        succeeded = items.reject { |item| rids.include?(item.repository_id) }
+        failed    = errors.map { |rid, msg| ErrorEntry.new(rid, msg) }
+      end
     end
-    return succeeded, failed
+    return succeeded, failed, rollback
   end
 
   # Remove the indicated items from the EMMA Unified Index.
   #
-  # @param [Array<Upload>] items
+  # @param [Array<Upload, String>] items
   #
   # @raise [StandardError] @see IngestService::Request::Records#delete_records
   #
-  # @return [Array<(Array,Array)>]    Succeeded names and failed names.
+  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
   #
-  def remove_from_index(*items)
-    succeeded = failed = [] # TODO: extract failed from API message
+  def remove_from_index(*items, **)
+    __debug_args("UPLOAD #{__method__}", binding)
+    succeeded = failed = []
+    items = items.flatten.compact
     if items.present?
       result = ingest_api.delete_records(*items)
-      fail(result.exception) if result.exception.present?
-      succeeded = items.map { |item| item.respond_to?(:id) ? item.id : item }
+      errors = result.errors
+      if errors.blank?
+        succeeded = items
+      else
+        rids      = errors.keys
+        succeeded = items.reject { |item| rids.include?(repository_id(item)) }
+        failed    = errors.map { |rid, msg| ErrorEntry.new(rid, msg) }
+      end
     end
     return succeeded, failed
   end
@@ -255,15 +765,13 @@ module UploadConcern
 
   if DISABLE_UPLOAD_INDEX_UPDATE
 
-    %i[add_to_index remove_from_index].each do |m|
-      send(:define_method, m) { |*items| skip_index_ingest(m, *items) }
+    %i[add_to_index update_in_index remove_from_index].each do |m|
+      send(:define_method, m) { |*items, **| skip_index_ingest(m, *items) }
     end
 
     def skip_index_ingest(method, *items)
-      __debug { "*** SKIPPING *** #{method} | items = #{items.inspect}" }
-      succeeded = items.map { |item| item.respond_to?(:id) ? item.id : item }
-      failed    = []
-      return succeeded, failed
+      __debug { "** SKIPPING ** UPLOAD #{method} | items = #{items.inspect}" }
+      return items, []
     end
 
   end
@@ -277,84 +785,124 @@ module UploadConcern
   # Bulk uploads.
   #
   # @param [Array<Hash,Upload>] entries
-  # @param [Hash]               opt     Passed to #bulk_records.
+  # @param [Boolean]            atomic  If *false*, do not stop on failure.
+  # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Hash]               opt     Passed to #bulk_upload_file.
   #
-  # @return [Array<(Array,Array)>]      Succeeded entries and failed entries.
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
-  # @see ActiveRecord::Persistence::ClassMethods#insert_all
-  # @see #bulk_add_to_index
+  # @see #bulk_upload_file
+  # @see #bulk_db_insert
+  # @see #add_to_index
   #
-  def bulk_create(entries, **opt)
-    records = bulk_records(entries, **opt)
-    result  = Upload.insert_all(records.map(&:attributes))
-    bulk_add_to_index(result, entries, records)
+  # Compare with:
+  # @see #upload_create
+  #
+  #--
+  # noinspection DuplicatedCode
+  #++
+  def bulk_upload_create(entries, atomic: true, index: true, **opt)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    # Translate Hash entries into Upload record instances and all related files
+    # to storage.
+    records, failed = bulk_upload_file(entries, **opt)
+    return [], failed if atomic && failed.present? || records.blank?
+
+    # Save the records to the database (and send associated files to storage).
+    records, failed = bulk_db_insert(records, atomic: atomic)
+    return [], failed if atomic && failed.present? || records.blank?
+
+    # Include the new submissions in the index.
+    return records, failed unless index && records.present?
+    succeeded, rejected, _ = add_to_index(*records, atomic: atomic)
+    return succeeded, (failed + rejected)
   end
 
   # Bulk modifications.
   #
   # @param [Array<Hash,Upload>] entries
-  # @param [Hash]               opt     Passed to #bulk_records.
+  # @param [Boolean]            atomic  If *false*, do not stop on failure.
+  # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Hash]               opt     Passed to #bulk_upload_file.
   #
-  # @return [Array<(Array,Array)>]      Succeeded entries and failed entries.
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
-  # @see ActiveRecord::Persistence::ClassMethods#upsert_all
-  # @see #bulk_add_to_index
+  # @see #bulk_upload_file
+  # @see #bulk_db_update
+  # @see #update_in_index
   #
-  def bulk_update(entries, **opt)
-    records = bulk_records(entries, **opt)
-    result  = Upload.upsert_all(entries.map(&:attributes))
-    bulk_add_to_index(result, entries, records)
+  # Compare with:
+  # @see #upload_update
+  #
+  #--
+  # noinspection DuplicatedCode
+  #++
+  def bulk_upload_update(entries, atomic: true, index: true, **opt)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    # Translate hash entries into Upload record instances and ensure that all
+    # related files are in storage.
+    records, failed = bulk_upload_file(entries, **opt)
+    return [], failed if atomic && failed.present? || records.blank?
+
+    # Update records in the database.
+    records, failed = bulk_db_update(records, atomic: atomic)
+    return [], failed if atomic && failed.present? || records.blank?
+
+    # Update the index with the modified submissions.
+    return records, failed unless index && records.present?
+    succeeded, rejected, _ = update_in_index(*records, atomic: atomic)
+    return succeeded, (failed + rejected)
   end
 
   # Bulk removal.
   #
-  # @param [Array<Upload,String,Integer,Array>] id_specs
+  # @param [Array<String,Integer>] id_specs
+  # @param [Boolean]               atomic   If *false*, do not stop on failure.
+  # @param [Boolean]               index    If *false*, do not update index.
+  # @param [Boolean]               force    Force removal of index entries even
+  #                                           if the related database entries
+  #                                           do not exist.
   #
-  # @return [Array<(Array,Array)>]    Succeeded entries and failed entries.
+  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
-  # @see ActiveRecord::Persistence::ClassMethods#delete
-  # @see #bulk_remove_from_index
+  # @see #upload_destroy
   #
-  def bulk_destroy(id_specs, **)
-    ids    = Upload.collect_ids(id_specs)
-    result = Upload.delete(ids)
-    bulk_remove_from_index(result, ids)
+  # == Implementation Notes
+  # For the time being, this does not use #bulk_db_delete because the speed
+  # advantage of using a single SQL DELETE statement probably overwhelmed by
+  # the need to fetch each record in order to call :delete_file on it.
+  #
+  def bulk_upload_destroy(id_specs, atomic: true, index: true, force: false)
+    __debug_args("UPLOAD #{__method__}", binding)
+
+    upload_destroy(id_specs, atomic: atomic, index: index, force: force)
+
+    # # Translate entries into Upload record instances.
+    # items, failed = collect_records(*items, force: force)
+    # return [], failed if atomic && failed.present?
+    #
+    # # Remove the associated records from the database.
+    # ids, failed = bulk_db_delete(ids, atomic: atomic)
+    # return [], failed if atomic && failed.present? && !force
+    #
+    # # Remove the associated entries from the index.
+    # return ids, failed unless index
+    # remove_from_index(*ids, atomic: atomic)
   end
 
   # ===========================================================================
-  # :section: Bulk operations
+  # :section: Bulk operations - Storage
   # ===========================================================================
 
   protected
 
-  # Fallback URL base. TODO: ?
+  # Prepare entries for bulk insert/upsert to the database by ensuring that all
+  # associated files have been uploaded and moved into storage.
   #
-  # @type [String]
-  #
-  BULK_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
-
-  # Default user for bulk uploads. # TODO: ?
-  #
-  # @type [String]
-  #
-  BULK_USER = 'emmadso@bookshare.org'
-
-  # File to use as a placeholder if no file was given for the upload.
-  #
-  # If *false* or *nil* then #upload_record will raise an exception if no file
-  # was given.
-  #
-  # @type [String, FalseClass, NilClass]
-  #
-  BULK_PLACEHOLDER_FILE =
-    if application_deployed?
-      "#{BULK_BASE_URL}/placeholder.pdf"
-    else
-      'http://localhost:3000/placeholder.pdf'
-    end
-
-  # Prepare entries for bulk insert/upsert to the database, ensuring that all
-  # associated files have been copied into storage.
+  # Failures of individual uploads are logged; the method will return with only
+  # the successful uploads.
   #
   # @param [Array<Hash,Upload>] entries
   # @param [String]             base_url
@@ -362,147 +910,175 @@ module UploadConcern
   # @param [Integer]            limit     Only the first *limit* records.
   # @param [Hash]               opt       Optional added fields.
   #
-  # @return [Array<Upload>]
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
-  def bulk_records(entries, base_url: nil, user: nil, limit: nil, **opt)
-    entries = Array.wrap(entries).reject(&:blank?)
-    entries = entries.take(limit) if limit.to_i > 0
-    opt[:base_url]   = base_url || BULK_BASE_URL
-    opt[:user_id]    = User.find_id(user || BULK_USER)
+  # @see #new_record
+  # @see Upload#promote_file
+  #
+  def bulk_upload_file(entries, base_url: nil, user: nil, limit: nil, **opt)
+    opt[:file_path]  = Upload::BULK_PLACEHOLDER_FILE # TODO: remove when ready
+    opt[:base_url]   = base_url || Upload::BULK_BASE_URL
+    opt[:user_id]    = User.find_id(user || Upload::BULK_USER)
     opt[:importer] ||= Import::IaBulk # TODO: ?
-    opt[:file_tot] ||= entries.size
-    opt[:file_num] ||= 0
-    entries.map do |entry|
-      opt[:file_num] += 1
-      Log.info do
-        msg = "#{__method__} [#{opt[:file_num]} of #{opt[:file_tot]}]:"
-        msg += " #{entry}" if entry.is_a?(Upload)
-        msg
-      end
-      entry = upload_record(entry.merge(opt)) unless entry.is_a?(Upload)
-      entry.promote_file
-      entry
-    end
-  end
-
-  # Create a new free-standing Upload instance.
-  #
-  # @param [Hash] opt                 Passed to Upload#initialize except for:
-  #
-  # @option opt [String] :file_path   File URI or path.
-  # @option opt [Symbol] :meth        Calling method (for logging).
-  #
-  # @raise [StandardError]            If no :file_path was given or determined.
-  #
-  # @return [Upload]
-  #
-  # @see Upload#upload_file
-  #
-  def upload_record(opt)
-    __debug_args(binding)
-    opt, upload_opt = partition_options(opt, :file_path, :meth)
-    file_path = opt[:file_path] || BULK_PLACEHOLDER_FILE
-    raise "#{__method__}: No upload file provided." if file_path.blank? # TODO: I18n
-    Upload.new(upload_opt.deep_symbolize_keys!).tap do |entry|
-      file = entry.upload_file(file_path)
-      Log.info do
-        name = file&.original_filename.inspect
-        type = file&.mime_type || 'unknown type'
-        size = file&.size      || 0
-        meth = opt[:meth]      || __method__
-        "#{meth}: #{name} (#{size} bytes) #{type}"
-      end
-    end
-  rescue => e
-    Log.error { "#{__method__}: #{e.class}: #{e.message}" }
-    raise e
+    opt[:meth]     ||= __method__
+    failed  = []
+    counter = 0
+    entries = Array.wrap(entries).reject(&:blank?)
+    entries = entries.take(limit.to_i) if limit.to_i.positive?
+    records =
+      entries.map { |entry|
+        counter += 1
+        Log.info do
+          msg = "#{__method__} [#{counter} of #{entries.size}]:"
+          msg += " #{entry}" if entry.is_a?(Upload)
+          msg
+        end
+        begin
+          entry = new_record(entry.merge(opt)) unless entry.is_a?(Upload)
+          entry.promote_file
+          entry
+        rescue => error
+          failed << db_failed_format(entry, error.message, counter)
+          Log.error { "#{__method__}: #{error.class}: #{error.message}" }
+        end
+      }.compact
+    return records, failed
   end
 
   # ===========================================================================
-  # :section: Index ingest operations
+  # :section: Bulk operations - Database
   # ===========================================================================
 
   public
 
-  # bulk_add_to_index
+  # Bulk create database records.
   #
-  # @param [ActiveRecord::Result] result
-  # @param [Array<Hash,Upload>]   entries
-  # @param [Array<Upload>]        records
+  # @param [Array<Upload>] records
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
   #
-  # @return [Array<(Array,Array)>]
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
-  # @see #add_to_index
+  # @see ActiveRecord::Persistence::ClassMethods#insert_all
+  #
+  def bulk_db_insert(records, atomic: true)
+    succeeded, failed = bulk_db_operation(:insert_all, records, atomic: atomic)
+    if succeeded.present?
+      stored_idents = succeeded.map { |r| identifiers(r).presence || r }
+      succeeded     = collect_records(*stored_idents).first
+    end
+    if failed.present?
+      failed.each(&:delete_file)
+      db_failed_format!(failed, 'Not added') # TODO: I18n
+    end
+    return succeeded, failed
+  end
+
+  # Bulk modify database records.
+  #
+  # @param [Array<Upload>] records
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  #
+  # @see ActiveRecord::Persistence::ClassMethods#upsert_all
+  #
+  def bulk_db_update(records, atomic: true)
+    succeeded, failed = bulk_db_operation(:upsert_all, records, atomic: atomic)
+    if failed.present?
+      # TODO: removal of newly-added files associated with failed records.
+      db_failed_format!(failed, 'Not updated') # TODO: I18n
+    end
+    return succeeded, failed
+  end
+
+  # Bulk delete database records.
+  #
+  # @param [Array<String>] ids
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  #
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  #
+  # @see ActiveRecord::Persistence::ClassMethods#delete
+  #
+  # @deprecated Use #upload_destroy instead.
+  #
+  # == Usage Notes
+  # This method should be avoided in favor of #upload_destroy because use of
+  # SQL DELETE on multiple record IDs does nothing for removing the associated
+  # files in cloud storage.  Although code has been added to attempt to handle
+  # this issue, it's untested.
+  #
+  def bulk_db_delete(ids, atomic: true)
+    __debug_args("UPLOAD #{__method__}", binding)
+    db_action = ->() {
+      collect_records(*ids, force: false).first.each(&:delete_file)
+      Upload.delete(ids)
+    }
+    success = false
+    result =
+      if atomic
+        Upload.transaction do
+          db_action.call.tap do |count|
+            unless count == ids.size
+              msg = [__method__]
+              msg << 'atomic delete failed'
+              msg << "#{count} of #{ids.size} deleted"
+              raise ActiveRecord::Rollback, msg.join(': ')
+            end
+          end
+        end
+      else
+        db_action.call
+      end
+    success = (result == ids.size)
+  rescue => error
+    Log.error { "#{__method__}: #{error.class}: #{error.message}" }
+    raise error
+  ensure
+    # noinspection RubyScope
+    if success
+      return ids, []
+    else
+      return [], db_failed_format!(ids, 'Not removed') # TODO: I18n
+    end
+  end
+
+  # ===========================================================================
+  # :section: Bulk operations - Database
+  # ===========================================================================
+
+  protected
+
+  # bulk_db_operation
+  #
+  # @param [Symbol]        operation  Upload class method.
+  # @param [Array<Upload>] records
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
   #
   # == Implementation Notes
   # The 'failed' portion of the method return will always be empty if using
   # MySQL because ActiveRecord::Result for bulk operations does not contain
   # useful information.
   #
-  def bulk_add_to_index(result, entries, records)
-    if result.columns.blank? || (result.rows.size == records.size)
-      succeeded = records.map(&:repository_id)
-      _, failed = add_to_index(*records)
+  def bulk_db_operation(operation, records, atomic: true)
+    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+    db_action = ->() { Upload.send(operation, records.map(&:attributes)) }
+    result    = atomic ? Upload.transaction { db_action.call } : db_action.call
+
+    if result.nil?
+      __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
+      return [], records
+
+    elsif result.columns.blank? || (result.length == records.size)
+      __debug_line(dbg) { 'QUALIFIED SUCCESS' }
+      return records, []
+
     else
-      succeeded = result.map { |r| r[:repository_id] }
-      failed    = entries.reject { |e| succeeded.include?(e[:repository_id]) }
+      updated = result.to_a.flat_map { |hash| identifiers(hash) }.compact
+      __debug_line(dbg) { "UPDATED #{updated}" }
+      records.partition { |record| updated.include?(identifier(record)) }
     end
-    return succeeded, failed
-  end
-
-  # bulk_remove_from_index
-  #
-  # @param [ActiveRecord::Result] result
-  # @param [Array<String>]        ids
-  #
-  # @return [Array<(Array,Array)>]
-  #
-  # @see #remove_from_index
-  #
-  def bulk_remove_from_index(result, ids)
-    if result == ids.size
-      succeeded = ids
-      _, failed = remove_from_index(*ids)
-    else
-      succeeded = []
-      failed    = ids
-    end
-    return succeeded, failed
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Transform a mixture of Upload objects and record identifiers into a list of
-  # Upload objects.
-  #
-  # @param [Array<Upload,String,Array>] items   @see Upload#collect_ids
-  # @param [Boolean]                    force   See Usage Notes
-  #
-  # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
-  # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
-  #
-  # == Usage Notes
-  # If *force* is true, the returned list of failed records will be empty but
-  # the returned list of items may contain a mixture of Upload and String
-  # elements.
-  #
-  def collect_items(*items, force: false)
-    failed = []
-    items =
-      items.flatten.flat_map { |item|
-        next if item.blank?
-        next item if item.is_a?(Upload)
-        Upload.collect_ids(item).map do |identifier|
-          record = Upload.get_record(identifier)
-          failed << identifier unless record || force
-          record || identifier
-        end
-      }.compact
-    return items, failed
   end
 
   # ===========================================================================
@@ -550,6 +1126,7 @@ module UploadConcern
   # @raise [StandardError]
   #
   def fail(problem, value = nil)
+    __debug_args("UPLOAD #{__method__}", binding)
     err = nil
     case problem
       when Symbol              then msg, err = UPLOAD_ERROR[problem]
@@ -558,10 +1135,24 @@ module UploadConcern
       when ActiveModel::Errors then msg = problem.full_messages
       else                          msg = problem
     end
-    err = SubmitError unless err.is_a?(Exception)
-    msg = Array.wrap(msg)
-    msg = msg.map { |t| t.to_s % value } if value
-    msg = msg.join('; ').presence || DEFAULT_ERROR_MESSAGE
+    err ||= SubmitError
+    intp  = msg.is_a?(String) && msg.include?('%') # Should interpolate value?
+    msg ||= DEFAULT_ERROR_MESSAGE
+    msg   = msg.join('; ') if msg.is_a?(Array)
+    value = value.first    if value.is_a?(Array) && (value.size <= 1)
+    case value
+      when String
+        msg = ERB::Util.h(msg) if (html = value.html_safe?)
+        msg = intp ? (msg % value) : "#{msg}: #{value}"
+        msg = html ? msg.html_safe : ERB::Util.h(msg)
+      when Array
+        # noinspection RubyNilAnalysis
+        cnt = "(#{value.size})"
+        msg = intp ? (msg % cnt) : "#{msg}: #{cnt}"
+        msg = [msg] + value.map { |v| ErrorEntry[v] }
+      else
+        msg = [msg, ErrorEntry[value]]
+    end
     raise err, msg
   end
 
@@ -570,7 +1161,7 @@ module UploadConcern
   # @param [Symbol, Integer, Exception] status
   # @param [String, Exception]          message
   # @param [String]                     redirect
-  # @param [Boolean]                    xhr       Force XHR handling.
+  # @param [Boolean]                    xhr       Override `request.xhr?`.
   #
   # @return [*]
   #
@@ -584,26 +1175,30 @@ module UploadConcern
   #   @param [Exception] except
   #
   def post_response(status, message = nil, redirect: nil, xhr: nil)
+    __debug_args("UPLOAD #{__method__}", binding)
     status, message = [nil, status] if status.is_a?(Exception)
     status ||= :bad_request
     xhr      = request_xhr? if xhr.nil?
-    except   = (message if message.is_a?(Exception))
-    if except
-      if except.respond_to?(:code)
-        status = except.code || status
-      elsif except.respond_to?(:response)
-        status = except.response.status || status
+    if message.is_a?(Exception)
+      ex     = message
+      ex_msg = ex.respond_to?(:messages) ? ex.messages : Array.wrap(ex.message)
+      if ex.respond_to?(:code)
+        status = ex.code || status
+      elsif ex.respond_to?(:response)
+        status = ex.response.status || status
       end
       Log.error do
-        "#{__method__}: #{status}: #{except.class}: #{except.full_message}"
+        msg = +"#{__method__}: #{status}: #{ex.class}:"
+        if ex.is_a?(SubmitError) || ex.is_a?(Net::ProtocolError)
+          msg << ' ' << ex_msg.join(', ')
+        else
+          msg << "\n" << ex.full_message(order: :top)
+        end
       end
-      message = except.message
-    end
-    message = Array.wrap(message).map { |m| m.inspect.truncate(1024) }.presence
-    unless except
-      Log.info do
-        [__method__, status, message&.join(', ')].compact.join(': ')
-      end
+    else
+      message = Array.wrap(message).map { |v| ErrorEntry[v] }
+      ex_msg  = nil
+      Log.info { [__method__, status, message.join(', ')].join(': ') }
     end
     if redirect || !xhr
       if %i[ok found].include?(status) || (200..399).include?(status)
@@ -617,8 +1212,12 @@ module UploadConcern
         redirect_back(fallback_location: upload_index_path)
       end
     else
+      msg_max = FlashHelper::FLASH_MAX_ITEM_SIZE
+      limit   = FlashHelper::FLASH_MAX_TOTAL_SIZE
+      message = ex_msg || message
+      message = message.map { |m| m.inspect.truncate(msg_max) }.presence
+      message &&= safe_json_parse(message).to_json.truncate(limit)
       message ||= DEFAULT_ERROR_MESSAGE
-      message = safe_json_parse(message).to_json.truncate(1024)
       head status, 'X-Flash-Message': message
     end
   end

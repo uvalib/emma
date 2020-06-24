@@ -129,7 +129,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    return if !request.get? || request.xhr? || modal?
+    return unless request.get? && !request_xhr? && !modal?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
       when 'api'        then return if params[:action] == 'image'
@@ -155,7 +155,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_origin
-    return unless params[:action] == 'index'
+    return unless request.get? && (params[:action] == 'index')
     origin = (params[:controller].presence unless request.path == root_path)
     session['origin'] = origin || 'root'
   end
@@ -170,7 +170,7 @@ module ParamsConcern
   def resolve_sort
     changed = false
 
-    if self.class == SearchController
+    if params[:controller].to_s.downcase == 'search'
 
       # Relevance is the default sort but the Unified Search API doesn't
       # actually accept it as a sort type.
@@ -210,6 +210,7 @@ module ParamsConcern
   # @return [void]
   #
   def initialize_menus
+    return if params[:controller].to_s.downcase == 'upload'
     ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]

@@ -22,8 +22,6 @@ class Upload < ApplicationRecord
   include Emma::Json
   include Emma::Debug
   include FileNaming
-  include FileAttributes
-  include FileFormat
   include Model
 
   # Non-functional hints for RubyMine.
@@ -77,6 +75,29 @@ class Upload < ApplicationRecord
   # @type [Integer]
   #
   DOWNLOAD_EXPIRATION = 1800
+
+  # Fallback URL base. TODO: ?
+  #
+  # @type [String]
+  #
+  BULK_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
+
+  # Default user for bulk uploads. # TODO: ?
+  #
+  # @type [String]
+  #
+  BULK_USER = 'emmadso@bookshare.org'
+
+  # File to use as a placeholder if no file was given for the upload.
+  #
+  # @type [String, FalseClass, NilClass]
+  #
+  BULK_PLACEHOLDER_FILE =
+    if application_deployed?
+      "#{BULK_BASE_URL}/placeholder.pdf"
+    else
+      'http://localhost:3000/placeholder.pdf'
+    end
 
   # ===========================================================================
   # :section: Fields
@@ -164,18 +185,8 @@ class Upload < ApplicationRecord
   #       Shrine::Attacher::InstanceMethods#destroy
 
   before_save :promote_file
-  #  after_commit :promote_file, on: %i[create update]
-  #  after_commit :delete_file,  on: %i[destroy]
 
-=begin # TODO: this might need to be removed.
-  # Shrine actually leaves the cached version of the file around (based on the
-  # assumption that there will be a age-based cleanup of that directory).  But
-  # for now we're only working from the cached version, so this allows deletion
-  # of the upload to also clean up the cached.
-  after_destroy do
-    file_attacher.destroy if file_attacher.attached?
-  end
-=end
+  after_rollback :delete_file, on: %i[create]
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -185,8 +196,8 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash] opt                 Passed to super.
-  # @param [Proc] block               Passed to super.
+  # @param [Hash, Upload] opt         Passed to super.
+  # @param [Proc]         block       Passed to super.
   #
   def initialize(opt = nil, &block)
     __debug_args(binding)
@@ -229,7 +240,7 @@ class Upload < ApplicationRecord
   # Update database fields, including the structured contents of the :emma_data
   # field.
   #
-  # @param [Hash] opt
+  # @param [Hash, Upload] opt
   #
   # @option opt [Integer, String, User] :user_id
   # @option opt [String, Symbol]        :repository
@@ -250,6 +261,8 @@ class Upload < ApplicationRecord
   #
   def assign_attributes(opt)
     __debug_args(binding)
+    opt = opt.attributes if opt.is_a?(Upload)
+    # noinspection RubyYardParamTypeMatch
     local, fields = partition_options(opt, :base_url, :importer)
     return if fields.blank?
     fields.deep_symbolize_keys!
@@ -406,7 +419,7 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: FileAttributes overrides
+  # :section:
   # ===========================================================================
 
   public
@@ -415,18 +428,9 @@ class Upload < ApplicationRecord
   #
   # @return [String, nil]
   #
-  # This method overrides:
-  # @see FileAttributes#filename
-  #
   def filename
     @filename ||= attached_file&.original_filename
   end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
 
   # Return the attached file, loading it if necessary.
   #
@@ -464,7 +468,10 @@ class Upload < ApplicationRecord
   # Acquire a file and upload it to storage.
   #
   # @param [String] file_path
-  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach.
+  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
+  #                                     except for:
+  #
+  # @option [Symbol] :meth            Calling method (for logging).
   #
   # @return [FileUploader::UploadedFile]
   #
@@ -476,17 +483,26 @@ class Upload < ApplicationRecord
   # event handlers to copy the file to storage).
   #
   def upload_file(file_path, **opt)
-    if file_path =~ /^https?:/
-      StringIO.open(Faraday.get(file_path).body) do |io|
-        opt[:metadata] = opt[:metadata]&.dup || {}
-        opt[:metadata]['filename'] ||= File.basename(file_path)
-        file_attacher.attach(io, **opt)
+    meth = opt.delete(:meth) || __method__
+    result =
+      if file_path =~ /^https?:/
+        StringIO.open(Faraday.get(file_path).body) do |io|
+          opt[:metadata] = opt[:metadata]&.dup || {}
+          opt[:metadata]['filename'] ||= File.basename(file_path)
+          file_attacher.attach(io, **opt)
+        end
+      else
+        File.open(file_path) do |io|
+          file_attacher.attach(io, **opt)
+        end
       end
-    else
-      File.open(file_path) do |io|
-        file_attacher.attach(io, **opt)
-      end
+    Log.info do
+      name = result&.original_filename.inspect
+      size = result&.size      || 0
+      type = result&.mime_type || 'unknown MIME type'
+      "#{meth}: #{name} (#{size} bytes) #{type}"
     end
+    result
   end
 
   # ===========================================================================
@@ -494,21 +510,6 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   public
-
-  # Set :emma_data.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
-  #
-  # @return [String]
-  #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def set_emma_data(data)
-    @emma_record   = nil # Force regeneration.
-    @emma_metadata = self.class.parse_emma_data(data)
-    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata.to_json
-  end
 
   # Present :emma_data as a structured object (if it is present).
   #
@@ -526,6 +527,37 @@ class Upload < ApplicationRecord
     @emma_metadata ||= self.class.parse_emma_data(emma_data)
   end
 
+  # Set :emma_data.
+  #
+  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
+  def set_emma_data(data)
+    @emma_record   = nil # Force regeneration.
+    @emma_metadata = self.class.parse_emma_data(data)
+    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata.to_json
+  end
+
+  # Selectively modify :emma_data.
+  #
+  # @param [Hash] data
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
+  def modify_emma_data(data)
+    @emma_record   = nil # Force regeneration.
+    new_metadata   = self.class.parse_emma_data(data)
+    @emma_metadata = emma_metadata.merge(new_metadata)
+    self.emma_data = @emma_metadata.to_json
+  end
+
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -540,13 +572,18 @@ class Upload < ApplicationRecord
   # @see FileFormat::FIELD_ALWAYS_ARRAY
   #
   FIELD_ALWAYS_ARRAY = %i[
+    dc_creator
+    dc_identifier
+    dc_language
+    dc_relation
+    dc_subject
+    emma_collection
+    emma_formatFeature
     s_accessibilityControl
     s_accessibilityFeature
     s_accessibilityHazard
     s_accessMode
     s_accessModeSufficient
-    dc_creator
-    dc_subject
   ].freeze
 
   # parse_emma_data
@@ -564,15 +601,22 @@ class Upload < ApplicationRecord
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
     result = json_parse(result, no_raise: false)
     reject_blanks(result).map { |k, v|
-      if FIELD_ALWAYS_ARRAY.include?(k) && v.is_a?(String) && v.include?(',')
-        v = v.split(/\s*,\s*/)
-        v = v.first if v.size == 1
+      if FIELD_ALWAYS_ARRAY.include?(k)
+        if v.is_a?(String)
+          separator = %w( ; , ).find { |s| v.include?(s) }
+          v = v.split(separator).map(&:strip).reject(&:blank?) if separator
+        end
+        v = Array.wrap(v)
+      elsif v.is_a?(Array)
+        v = (v.size > 1) ? v.join(';') : v.first
       end
-      [k, v]
-    }.sort.to_h
-  rescue => e
+      [k, v] if v.present? || v.is_a?(FalseClass)
+    }.compact.sort.to_h
+  rescue => error
     Log.error do
-      [__method__, e.message, ("for #{data.inspect}" if Log.debug?)].join(': ')
+      msg = [__method__, error.message]
+      msg << "for #{data.inspect}" if Log.debug?
+      msg.join(': ')
     end
   end
 
@@ -728,14 +772,14 @@ class Upload < ApplicationRecord
     result =
       if ids.present? && rids.present?
         terms = sql_terms(id: ids, repository_id: rids, join: :or)
-        terms = sql_terms(opt, terms, join: :and) if opt.present?
+        terms = sql_terms(opt, *terms, join: :and) if opt.present?
         where(terms)
       else
         opt[:id]            = ids  if ids.present?
         opt[:repository_id] = rids if rids.present?
         where(**opt)               if opt.present?
       end
-    result&.records || []
+    Array.wrap(result&.records)
   end
 
   # Transform a mixture of ID representations into a list of single IDs.
@@ -778,31 +822,39 @@ class Upload < ApplicationRecord
     }.flat_map { |id| id_range(id) }.compact.uniq
   end
 
-  # Interpret an ID string as a range of IDs if possible
+  # Interpret an ID string as a range of IDs if possible.
   #
-  # @param [String, Upload, Integer] id
+  # The method supports a mixture of database IDs (which are comprised only of
+  # decimal digits) and repository IDs (which always start with a non-digit),
+  # however repository IDs cannot be part of ranges.
+  #
+  # @param [String, Integer, Upload] id
   #
   # @return [Array<String>]
   #
   def self.id_range(id)
-    if id.is_a?(Upload)
-      id = id.id
-    elsif !id.is_a?(String)
-      id = id.to_s
-    elsif (id = id.strip) == '*'
-      max = Upload.maximum('id').to_i
-      id = (1..max).map(&:to_s) if max.positive?
-    elsif id.include?('-')
-      min, max = id.split('-')
-      max = Upload.maximum('id') if max == '$'
-      max = max.to_i
-      if max.positive?
-        min = [1, min.to_i].max
-        min, max = [max, min] if max < min
-        id = (min..max).map(&:to_s)
-      end
-    elsif id.match?(/^0\d*$/)
-      id = id.to_i.to_s
+    # noinspection RubyCaseWithoutElseBlockInspection
+    case id
+      when Upload
+        id = id.id.to_s
+      when Hash
+        id = id[:id] || id['id']
+      when /[^\d$*-]/
+        # Assume this is a repository ID and not a database ID (or range).
+      when '*'
+        max = Upload.maximum('id').to_i
+        id = (1..max).map(&:to_s) if max.positive?
+      when /-/
+        min, max = id.split('-')
+        max = Upload.maximum('id') if max == '$'
+        max = max.to_i
+        if max.positive?
+          min = [1, min.to_i].max
+          min, max = [max, min] if max < min
+          id = (min..max).map(&:to_s)
+        end
+      when /^0\d*$/
+        id = id.to_i.to_s
     end
     Array.wrap(id.presence)
   end
