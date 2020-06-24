@@ -56,9 +56,12 @@ WORKDIR $APP_HOME
 ADD storage/gemrc         $HOME/.gemrc
 ADD storage/bundle-config $HOME/.bundle/config
 
-# Install required gems.
-ADD Gemfile ./
-RUN bundle install
+# Update bundler if needed then install required gems.
+ADD Gemfile Gemfile.lock  ./
+RUN BUNDLER_VERSION=`tail -1 Gemfile.lock | tr -d ' '`; \
+    gem list --silent --installed --exact bundler -v "$BUNDLER_VERSION" || \
+    gem install bundler -v "$BUNDLER_VERSION"; \
+    bundle install
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME
