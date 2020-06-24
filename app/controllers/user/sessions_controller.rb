@@ -23,9 +23,7 @@ class User::SessionsController < Devise::SessionsController
   prepend_before_action :require_no_authentication,    only: %i[new create sign_in_as]
   prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
-  prepend_before_action(only: %i[create destroy sign_in_as]) do
-    request.env['devise.skip_timeout'] = true
-  end
+  prepend_before_action :no_devise_timeout,            only: %i[create destroy sign_in_as]
 
 =begin # TODO: configure_sign_in_params ???
   before_action :configure_sign_in_params, only: [:create]
@@ -181,6 +179,12 @@ class User::SessionsController < Devise::SessionsController
   # ===========================================================================
 
   protected
+
+  # Called to avoid timing-out waiting for credentials.
+  #
+  def no_devise_timeout
+    request.env['devise.skip_timeout'] = true
+  end
 
 =begin # TODO: configure_sign_in_params ???
   # If you have extra params to permit, append them to the sanitizer.

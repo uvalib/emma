@@ -24,18 +24,19 @@ module Emma::Csv
   # Generate data from a CSV file.
   #
   # @param [String, IO, StringIO, IO::Like] src
-  # @param [Boolean] allow_raise      Raise exceptions if *true*.
+  # @param [Boolean] no_raise         If *false*, re-raise exceptions.
   # @param [Hash]    opt
   #
   # @return [Array<Hash>]
+  # @return [nil]                     Only if *no_raise* is true.
   #
   # == Variations
   #
-  # @overload csv_parse(path, allow_raise:, **opt)
+  # @overload csv_parse(path, no_raise:, **opt)
   #   @param [String]                 path  Local file path.
   #   @param [Hash]                   opt   Passed to CSV#foreach.
   #
-  # @overload csv_parse(io, allow_raise:, **opt)
+  # @overload csv_parse(io, no_raise:, **opt)
   #   @param [IO, StringIO, IO::Like] io    IO-like object.
   #   @param [Hash]                   opt   Passed to CSV#parse.
   #
@@ -43,7 +44,7 @@ module Emma::Csv
   # This addresses an observed issue with CSV#parse not enforcing UTF-8
   # encoding.
   #
-  def csv_parse(src, allow_raise: false, **opt)
+  def csv_parse(src, no_raise: true, **opt)
     opt.reverse_merge!(headers: true)
     src = src.body   if src.respond_to?(:body)
     src = src.string if src.respond_to?(:string)
@@ -56,9 +57,9 @@ module Emma::Csv
         row.to_h.transform_values { |col| force_utf8(col) }
       end
     end
-  rescue => e
-    Log.info { "#{__method__}: #{e.class}: #{e.message}" }
-    raise e if allow_raise
+  rescue => error
+    Log.info { "#{__method__}: #{error.class}: #{error.message}" }
+    raise error unless no_raise
   end
 
   # ===========================================================================

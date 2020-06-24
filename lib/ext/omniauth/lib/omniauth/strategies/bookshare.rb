@@ -257,6 +257,7 @@ module OmniAuth
           { options: options, session: __debug_session_hash }
         end
 
+        # noinspection RubyResolve
         if params.key?(:commit)
           log :info, 'By-passing request_phase (local developer uid/token)'
           authorize_params # Generate session['omniauth.state']
@@ -704,6 +705,7 @@ module OmniAuth
       # @see OmniAuth::Strategies::OAuth2#client
       #
       def client
+        # noinspection RubyResolve
         @client ||=
           ::OAuth2::Client.new(
             options.client_id,
@@ -779,7 +781,8 @@ module OmniAuth
       #++
       def callback_phase
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
-        result = e = nil
+        # noinspection RubyUnusedLocalVariable
+        result = error = nil
         params = request.params.reject { |_, v| v.blank? }
         error  = params['error_reason'] || params['error']
 
@@ -790,6 +793,7 @@ module OmniAuth
         end
 
         # Raise an exception if the returned state doesn't match.
+        # noinspection RubyResolve
         unless options.provider_ignores_state
           unless params['state'] == session.delete('omniauth.state')
             error = :csrf_detected
@@ -822,23 +826,23 @@ module OmniAuth
 
           end
 
-      rescue ::OAuth2::Error, CallbackError => e
-        __debug_line(dbg) { ['INVALID', e.class, e.message] }
+      rescue ::OAuth2::Error, CallbackError => error
+        __debug_line(dbg) { ['INVALID', error.class, error.message] }
         error ||= :invalid_credentials
 
-      rescue ::Timeout::Error, ::Errno::ETIMEDOUT => e
-        __debug_line(dbg) { ['TIMEOUT', e.class, e.message] }
+      rescue ::Timeout::Error, ::Errno::ETIMEDOUT => error
+        __debug_line(dbg) { ['TIMEOUT', error.class, error.message] }
         error = :timeout
 
-      rescue ::SocketError => e
-        __debug_line(dbg) { ['CONNECT', e.class, e.message] }
+      rescue ::SocketError => error
+        __debug_line(dbg) { ['CONNECT', error.class, error.message] }
         error = :failed_to_connect
 
-      rescue => e
-        __debug_line(dbg) { ['EXCEPTION', e.class, e.message] }
+      rescue => error
+        __debug_line(dbg) { ['EXCEPTION', error.class, error.message] }
 
       ensure
-        fail!(error, e) if error
+        fail!(error, error) if error
         return result
       end
 
@@ -859,6 +863,7 @@ module OmniAuth
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         code = request.params['code']
         prms = token_params.to_hash(symbolize_keys: true)
+        # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
         client.auth_code.get_token(code, prms, opts)
           .tap { |result| __debug { "#{dbg} => #{result.inspect}" } }
@@ -1148,6 +1153,7 @@ module OmniAuth
 
         # Create or update the dynamic table entry.
         if stored_auth[uid].blank?
+          # noinspection RubyYardParamTypeMatch
           stored_auth[uid] = stored_auth_entry(token)
         elsif stored_auth[uid][:access_token] != token
           stored_auth[uid][:access_token] = token

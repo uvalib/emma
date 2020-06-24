@@ -33,9 +33,9 @@ class Shrine
 
     # initialize
     #
-    # @param [*]      file
-    # @param [Symbol] cache
-    # @param [Symbol] store
+    # @param [Shrine::UploadedFile] file
+    # @param [Symbol]               cache
+    # @param [Symbol]               store
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#initialize
@@ -47,8 +47,8 @@ class Shrine
 
     # assign
     #
-    # @param [*]    value
-    # @param [Hash] options
+    # @param [String, Hash, IO] value
+    # @param [Hash]             options
     #
     # @return [Shrine::UploadedFile, nil]
     #
@@ -66,10 +66,12 @@ class Shrine
 
     # attach_cached
     #
-    # @param [*]    value
-    # @param [Hash] options
+    # @param [String, Hash, IO] value
+    # @param [Hash]             options   To #attach if *value* is an IO.
     #
-    # @return [Shrine::UploadedFile, nil]
+    # @raise [Shrine::Error]    If the file is not in :cache storage.
+    #
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#attach_cached
@@ -87,7 +89,9 @@ class Shrine
     #
     # @param [IO, StringIO] io
     # @param [Symbol]       storage
-    # @param [Hash]         options
+    # @param [Hash]         options   Passed to #upload.
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#attach
@@ -121,13 +125,16 @@ class Shrine
 
     # promote_cached
     #
-    # @param [Hash] options
+    # @param [Hash] options           Passed to #promote.
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#promote_cached
     #
     def promote_cached(**options)
       __debug_attacher(__method__) { options }
+      # noinspection RubyYardReturnMatch
       super
     end
 
@@ -136,11 +143,14 @@ class Shrine
     # @param [Symbol] storage
     # @param [Hash]   options
     #
+    # @return [Shrine::UploadedFile, nil]
+    #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#promote
     #
     def promote(storage: store_key, **options)
       __debug_attacher(__method__) { { storage: storage, options: options } }
+      # noinspection RubyYardReturnMatch
       super
     end
 
@@ -149,6 +159,10 @@ class Shrine
     # @param [IO, StringIO] io
     # @param [Symbol]       storage
     # @param [Hash]         options
+    #
+    # @return [Shrine::UploadedFile]
+    #
+    # @see Shrine::InstanceMethods#upload
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#attach
@@ -192,7 +206,11 @@ class Shrine
 
     # change
     #
-    # @param [*] file
+    # @param [Shrine::UploadedFile, nil] file
+    #
+    # @raise [ArgumentError]          If *file* is not an UploadedFile or *nil*
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#change
@@ -202,9 +220,13 @@ class Shrine
       super
     end
 
-    # set
+    # Sets the attached file.
     #
-    # @param [*] file
+    # @param [Shrine::UploadedFile, nil] file
+    #
+    # @raise [ArgumentError]          If *file* is not an UploadedFile or *nil*
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#set
@@ -214,7 +236,9 @@ class Shrine
       super
     end
 
-    # get
+    # Returns the attached file.
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#get
@@ -226,29 +250,42 @@ class Shrine
 
     # load_data
     #
-    # @param [Hash] data
+    # @param [Shrine::UploadedFile, Hash, String, nil] data
+    #
+    # @raise [ArgumentError]          If *value* is an invalid type.
+    #
+    # @return [UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#load_data
     #
     def load_data(data)
       __debug_attacher(__method__) { data.is_a?(Hash) ? data : { data: data } }
+      # noinspection RubyYardReturnMatch
       super
     end
 
-    # file=
+    # Sets the attached file.
     #
-    # @param [*] file
+    # @param [Shrine::UploadedFile, nil] file
+    #
+    # @raise [ArgumentError]          If *file* is an invalid type.
+    #
+    # @return [Shrine::UploadedFile, nil]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#file=
     #
-    def file=(data)
-      __debug_attacher(__method__) { data.is_a?(Hash) ? data : { data: data } }
+    def file=(file)
+      __debug_attacher(__method__) { file.is_a?(Hash) ? file : { file: file } }
       super
     end
 
     # file!
+    #
+    # @raise [Shrine::Error]          If no file is attached.
+    #
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#file!
@@ -260,7 +297,13 @@ class Shrine
 
     # uploaded_file
     #
-    # @param [*] value
+    # @param [Shrine::UploadedFile, Hash, String] value
+    #
+    # @raise [ArgumentError]          If *value* is an invalid type.
+    #
+    # @return [Shrine::UploadedFile]
+    #
+    # @see Shrine::ClassMethods#uploaded_file
     #
     # This method overrides:
     # @see Shrine::Attacher::InstanceMethods#uploaded_file

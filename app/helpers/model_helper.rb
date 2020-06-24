@@ -390,6 +390,7 @@ module ModelHelper
     value = value.content if value.is_a?(Field::Range)
 
     # Mark invalid values.
+    # noinspection RubyCaseWithoutElseBlockInspection
     case field
       when :dc_language   then value = mark_invalid_languages(value)
       when :dc_identifier then value = mark_invalid_identifiers(value)
@@ -496,7 +497,7 @@ module ModelHelper
   # @return [*, Array<*>]
   #
   def mark_invalid_languages(value)
-    return value.map { |v| mark_invalid_languages(v) } if value.is_a?(Array)
+    return value.map { |v| send(__method__, v) } if value.is_a?(Array)
     name = IsoLanguage.find(value)&.english_name
     if value == name
       value
@@ -516,7 +517,7 @@ module ModelHelper
   # @return [*, Array<*>]
   #
   def mark_invalid_identifiers(value)
-    return value.map { |v| mark_invalid_identifiers(v) } if value.is_a?(Array)
+    return value.map { |v| send(__method__, v) } if value.is_a?(Array)
     type, id = value.split(':', 2)
     return value if id.nil? || valid_identifier?(type.to_s, id)
     tip = "This is not a valid #{type.upcase} identifier." # TODO: I18n
@@ -980,7 +981,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateFieldsetCheckboxes() in file-upload.js
+  # @see updateFieldsetCheckboxes() in javascripts/feature/file-upload.js
   #
   def render_form_menu_multi(name, value, range:, **opt)
     unless range.is_a?(Class) && (range < EnumType)
@@ -1030,7 +1031,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateFieldsetInputs() in file-upload.js
+  # @see updateFieldsetInputs() in javascripts/feature/file-upload.js
   #
   def render_form_input_multi(name, value, **opt)
     normalize_attributes!(opt)
@@ -1096,7 +1097,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateTextInputField() in file-upload.js
+  # @see updateTextInputField() in javascripts/feature/file-upload.js
   #
   #--
   # noinspection RubyYardReturnMatch

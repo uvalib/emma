@@ -624,7 +624,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see config/locale/types.en.yml
+  # @see en.emma.categories in config/locale/types.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -635,7 +635,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see config/locale/types.en.yml
+  # @see en.emma.language.list config/locale/types.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -646,7 +646,7 @@ module Api::Common
   #
   # @type [Array<Symbol>]
   #
-  # @see config/locale/types.en.yml
+  # @see en.emma.language.primary config/locale/types.en.yml
   #
   PRIMARY_LANGUAGES =
     I18n.t('emma.language.primary', default: []).map(&:to_sym).freeze
@@ -655,7 +655,8 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see config/locale/types.en.yml
+  # @see #PRIMARY_LANGUAGES
+  # @see #LANGUAGE_LIST
   #
   #--
   # noinspection RailsI18nInspection

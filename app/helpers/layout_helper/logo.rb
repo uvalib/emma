@@ -71,6 +71,7 @@ module LayoutHelper::Logo
   def logo_element(mode: :image, **opt)
     opt = prepend_css_classes(opt, 'logo')
     alt = opt.delete(:alt)
+    opt[:'data-turbolinks-permanent'] = true
     html_div(opt) do
       link_to(root_path, title: logo_tagline) do
         if mode == :text

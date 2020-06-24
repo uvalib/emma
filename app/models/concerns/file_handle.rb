@@ -110,9 +110,9 @@ class FileHandle
     def method_missing(name, *args, &block)
       __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))
       @handle.send(name, *args, &block)
-    rescue => e
+    rescue => error
       Log.error do
-        "!!! EXCEPTION IN FileHandle: #{e.class} #{e.message}\n" +
+        "!!! EXCEPTION IN FileHandle: #{error.class} #{error.message}\n" +
           caller.pretty_inspect
       end
     end

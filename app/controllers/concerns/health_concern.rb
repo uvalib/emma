@@ -223,12 +223,10 @@ module HealthConcern
         when FalseClass then false
         else                 true
       end
-
-  rescue => e
+  rescue => error
     healthy = false
-    message = "#{e.class}: #{e.message}"
+    message = "#{error.class}: #{error.message}"
     Log.warn { "#{subsystem}: #{message}" }
-
   ensure
     warn_only = !entry[:restart]
     degraded  = !healthy && warn_only

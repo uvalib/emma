@@ -11,7 +11,7 @@ module TestHelper::IntegrationTests
   #
   # @param [Module] base
   #
-  # @return [Array<Module>]           @see #include_submodules
+  # @return [Array<Module>]           @see #include_submodules in lib/emma.rb
   #
   def self.included(base)
     include_submodules(base, __FILE__)

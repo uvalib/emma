@@ -63,7 +63,7 @@ module LayoutHelper::Common
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see app/javascripts/feature/panel.js
+  # @see app/assets/javascripts/feature/panel.js
   #
   def toggle_button(**opt)
     opt, html_opt = partition_options(opt, :label, :selector)
@@ -87,13 +87,15 @@ module LayoutHelper::Common
 
   # The current type of search (as indicated by the current controller).
   #
-  # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
+  # @param [Hash, Symbol, String, nil] type   Default: `#params[:controller]`.
   #
   # @return [Symbol]                    The controller used for searching.
   # @return [nil]                       If searching should not be enabled.
   #
   def search_target(type = nil)
-    (type || request_parameters[:controller])&.to_sym
+    type ||= request_parameters[:controller]
+    type = type[:controller] if type.is_a?(Hash)
+    type&.to_sym
   end
 
   # A form used to create/modify a search.

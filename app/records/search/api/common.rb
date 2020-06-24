@@ -23,7 +23,7 @@ module Search::Api::Common
   #
   # @type [Symbol]
   #
-  # @see config/locales/source.en.yml
+  # @see en.emma.source._default in config/locales/source.en.yml
   #
   DEFAULT_REPOSITORY = I18n.t('emma.source._default').to_sym
 
@@ -31,7 +31,7 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/source.en.yml
+  # @see en.emma.source in config/locales/source.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -43,7 +43,8 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/types/search.en.yml
+  # @see en.emma.search.type in config/locales/types/search.en.yml
+  # @see #REPOSITORY for `CONFIGURATION[:EmmaRepository]`
   #
   #--
   # noinspection RailsI18nInspection
@@ -53,14 +54,14 @@ module Search::Api::Common
       EmmaRepository:
         REPOSITORY
           .transform_values { |cfg| cfg[:name] }
-          .merge(_default: I18n.t('emma.source._default'))
+          .merge(_default: DEFAULT_REPOSITORY)
     ).deep_freeze
 
   # Enumeration scalar type names and properties.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/types/search.en.yml
+  # @see #CONFIGURATION
   #
   ENUMERATIONS =
     CONFIGURATION
@@ -71,7 +72,7 @@ module Search::Api::Common
   #
   # @type [Array<Symbol>]
   #
-  # @see config/locales/types/search.en.yml
+  # @see #CONFIGURATION
   #
   ENUMERATION_TYPES = CONFIGURATION.keys.freeze
 
@@ -79,7 +80,7 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see config/locales/types/search.en.yml
+  # @see #CONFIGURATION
   #
   ENUMERATION_DEFAULTS =
     CONFIGURATION.transform_values { |cfg| cfg[:_default] || '' }.deep_freeze

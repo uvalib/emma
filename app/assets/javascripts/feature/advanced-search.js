@@ -410,6 +410,7 @@ $(document).on('turbolinks:load', function() {
         var search_type = new_type || searchType();
         var $hidden = $search_input_form.find('input[type="hidden"]');
         SEARCH_TYPES.forEach(function(type) {
+            // noinspection JSCheckFunctionSignatures
             var $input = $hidden.filter('[name="' + type + '"]');
             if (type === search_type) {
                 // Make sure that there is no hidden input for this type then
@@ -421,6 +422,7 @@ $(document).on('turbolinks:load', function() {
                 });
             } else if (isMissing($input)) {
                 // Create a hidden input for this type.
+                // noinspection ReuseOfLocalVariableJS
                 $input = $('<input type="hidden">');
                 $input.attr('name', type);
                 $input.attr('id',   ('search-input-select-' + type));
@@ -449,6 +451,7 @@ $(document).on('turbolinks:load', function() {
                 }
             });
         }
+        // noinspection JSUnusedAssignment
         setSearchType(type, query);
     }
 
@@ -565,8 +568,13 @@ $(document).on('turbolinks:load', function() {
                 handleEvent($select, type, suppressMenuOpen);
             });
         }
+        // Stabilize un-displayed items so that they do not occasionally
+        // "pop out" briefly when switching between screens.
+        var $undisplayed = $controls.find('.select2-hidden-accessible');
+        $undisplayed.attr('data-turbolinks-permanent', true);
     }
 
+    // noinspection FunctionNamingConventionJS
     /**
      * Generate message translations for Select2.
      *

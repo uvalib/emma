@@ -20,10 +20,10 @@ class Attachment::DestroyJob < ApplicationJob
     attacher = FileUploader::Attacher.from_data(data)
     __debug("JOB #{__method__} | attacher = #{attacher.inspect}")
     attacher.destroy
-  rescue ActiveRecord::RecordNotFound => e
-    Log.warn { "JOB #{__method__}: skipped: #{e.message} [RecordNotFound]" }
-  rescue => e
-    Log.error { "JOB #{__method__}: error: #{e.message} [#{e.class}]" }
+  rescue ActiveRecord::RecordNotFound => err
+    Log.warn { "JOB #{__method__}: skipped: #{err.message} [RecordNotFound]" }
+  rescue => err
+    Log.error { "JOB #{__method__}: error: #{err.message} [#{err.class}]" }
   end
 
 end

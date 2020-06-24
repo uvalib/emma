@@ -29,7 +29,7 @@ class Shrine
     #
     # @return [Array<(Integer, Hash, Array<String>)>]
     #
-    # @see onFileUploadSuccess() in feature/file-upload.js
+    # @see onFileUploadSuccess() in app/assets/javascripts/feature/download.js
     #
     # This method overrides:
     # @see Shrine::UploadEndpoint#make_response
@@ -113,33 +113,28 @@ class Shrine
 
     # upload
     #
-    # @param [Array] args
+    # @param [Shrine::RackFile]        io
+    # @param [Hash]                    context
+    # @param [ActionDispatch::Request] request
     #
-    # @return [*]
-    #
-    # == Variations
-    #
-    # @overload upload(io, context, request)
-    #   @param [Shrine::RackFile]        io
-    #   @param [Hash]                    context
-    #   @param [ActionDispatch::Request] request
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::UploadEndpoint#upload
     #
-    def upload(*args)
+    def upload(io, context, request)
       super
         .tap do |result|
           __debug_ue(__method__, "RESULT -> #{result.inspect}") do
-            { io: args[0], context: args[1], request: args[2] }
+            { io: io, context: context, request: request }
           end
         end
     end
 
     # make_response
     #
-    # @param [Shrine::UploadedFile]    uploaded_file
-    # @param [ActionDispatch::Request] request
+    # @param [Shrine::UploadedFile, Hash] uploaded_file
+    # @param [ActionDispatch::Request]    request
     #
     # @return [Array<(Integer, Hash, Array<String>)>]
     #

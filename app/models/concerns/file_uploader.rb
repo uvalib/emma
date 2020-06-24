@@ -113,10 +113,10 @@ class FileUploader < Shrine
     # upload
     #
     # @param [IO, StringIO] io
-    # @param [*]            storage
+    # @param [Symbol]       storage
     # @param [Hash]         options
     #
-    # @return [*]
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::ClassMethods#upload
@@ -130,9 +130,11 @@ class FileUploader < Shrine
 
     # uploaded_file
     #
-    # @param [String, Hash, UploadedFile] object
+    # @param [Shrine::UploadedFile, Hash, String, nil] object
     #
-    # @return [*]
+    # @raise [ArgumentError]          If *object* is an invalid type.
+    #
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::ClassMethods#uploaded_file
@@ -166,8 +168,6 @@ class FileUploader < Shrine
     #
     # @param [Symbol] storage_key
     #
-    # @return [*]
-    #
     # This method overrides:
     # @see Shrine::InstanceMethods#initialize
     #
@@ -181,7 +181,7 @@ class FileUploader < Shrine
     # @param [IO, StringIO] io
     # @param [Hash]         options
     #
-    # @return [*]
+    # @return [Shrine::UploadedFile]
     #
     # This method overrides:
     # @see Shrine::InstanceMethods#upload
@@ -197,7 +197,7 @@ class FileUploader < Shrine
     # @param [Hash]         metadata
     # @param [Hash]         options
     #
-    # @return [*]
+    # @return [String]
     #
     # This method overrides:
     # @see Shrine::InstanceMethods#generate_location
@@ -214,7 +214,7 @@ class FileUploader < Shrine
     # @param [IO, StringIO] io
     # @param [Hash]         options
     #
-    # @return [*]
+    # @return [Hash{String=>String,Integer}]
     #
     # This method overrides:
     # @see Shrine::InstanceMethods#extract_metadata
@@ -222,15 +222,6 @@ class FileUploader < Shrine
     def extract_metadata(io, **options)
       __debug_uploader(__method__.to_s) { { io: io, options: options } }
       super
-    end
-
-    def attach_cached(value, **options)
-      super
-        .tap do |result|
-          __debug_uploader(__method__, "RESULT -> #{result.inspect}") do
-            { value: value, options: options }
-          end
-      end
     end
 
     # =========================================================================

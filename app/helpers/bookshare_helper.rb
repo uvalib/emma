@@ -206,11 +206,12 @@ module BookshareHelper
     # assumed to be one or more parts of a literal URL.
     lookup_path = BOOKSHARE_ACTION.dig(*path)
     path = Array.wrap(lookup_path || path)
-    path.unshift(BOOKSHARE_SITE) unless path.first.start_with?('http')
+    path.unshift(BOOKSHARE_SITE) unless path.first.to_s.start_with?('http')
     path = path.join('/')
 
     # If the path contains format references (e.g., "%{id}" or "%<id>") then
     # they should be satisfied by the options passed in to the method.
+    # noinspection RubyYardParamTypeMatch
     if (ref_keys = named_format_references(path)).present?
       ref_opt, path_opt = partition_options(path_opt, *ref_keys)
       ref_opt.reject! { |_, v| v.blank? }
@@ -329,7 +330,7 @@ module BookshareHelper
   #   @return [Array<String>]
   #
   def bookshare_user(name)
-    return name.map { |n| bookshare_user(n) } if name.is_a?(Array)
+    return name.map { |v| send(__method__, v) } if name.is_a?(Array)
     name = name.to_s.downcase
     (name.present? && !name.include?('@')) ? (BOOKSHARE_USER % name) : name
   end

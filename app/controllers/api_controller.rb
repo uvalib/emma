@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # ApiController
 #
 # @see ApiExplorerConcern
-# @see app/views/api
+# @see app/views/api/**
 #
 class ApiController < ApplicationController
 

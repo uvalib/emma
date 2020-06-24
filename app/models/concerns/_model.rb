@@ -50,8 +50,7 @@ module Model
     # @return [Hash{Symbol=>String,Array,Hash}]
     #
     def configuration(type)
-      type = type.to_s
-      type = type.sub(/^emma\./, '') if type.start_with?('emma.')
+      type = type.to_s.delete_prefix('emma.')
       # configuration_table[type.to_sym] ||= I18n.t("emma.#{type}") # TODO: restore
       # TODO: remove after configuration is transitioned...
       configuration_table[type.to_sym] ||=

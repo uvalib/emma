@@ -82,6 +82,7 @@ class Upload < ApplicationRecord
   # :section: Fields
   # ===========================================================================
 
+  # noinspection RubyResolve
   include FileUploader::Attachment(:file)
 
   # ===========================================================================
@@ -375,10 +376,10 @@ class Upload < ApplicationRecord
       begin
         class_name = "#{fmt.to_s.camelize}Parser"
         class_name.constantize.new(attached_file&.to_io)
-      rescue => e
+      rescue => error
         # noinspection RubyScope
         __debug  { "Upload.parser: #{class_name} not valid" }
-        Log.warn { "Upload.parser: #{e.message}" }
+        Log.warn { "Upload.parser: #{error.message}" }
       end
   end
 
@@ -561,7 +562,7 @@ class Upload < ApplicationRecord
     return {} if data.blank?
     result = data
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
-    result = json_parse(result, allow_raise: true)
+    result = json_parse(result, no_raise: false)
     reject_blanks(result).map { |k, v|
       if FIELD_ALWAYS_ARRAY.include?(k) && v.is_a?(String) && v.include?(',')
         v = v.split(/\s*,\s*/)
@@ -942,31 +943,31 @@ class Upload < ApplicationRecord
 
   # Finalize a file upload by promoting the :cache file to a :store file.
   #
-  # @param [Boolean] raise_error      If *false*, don't re-raise exceptions.
+  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   #
   # @return [void]
   #
-  def promote_file(raise_error: true)
-    __debug_args(binding)
+  def promote_file(no_raise: false)
+    __debug_args(binding) { { file: file } }
     file_attacher.attach_cached(file_data) unless file_attacher.attached?
-  rescue => e
-    log_exception(e, __method__)
-    raise e if raise_error
+  rescue => error
+    log_exception(error, __method__)
+    raise error unless no_raise
   end
 
   # Finalize a deletion by the removing the file from :cache and/or :store.
   #
-  # @param [Boolean] raise_error      If *false*, don't re-raise exceptions.
+  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
   #
   # @return [void]
   #
-  def delete_file(raise_error: true)
-    __debug_args(binding)
+  def delete_file(no_raise: false)
+    __debug_args(binding) { { file: file } }
     file_attacher.attach_cached(file_data) unless file_attacher.attached?
     file_attacher.destroy
-  rescue => e
-    log_exception(e, __method__)
-    raise e if raise_error
+  rescue => error
+    log_exception(error, __method__)
+    raise error unless no_raise
   end
 
   # ===========================================================================

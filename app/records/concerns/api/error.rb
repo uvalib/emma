@@ -183,15 +183,15 @@ end
 
 public
 
-# Base exception for Bookshare API authorization errors.
+# Base exception for API authorization errors.
 #
 class Api::AuthError < Api::Error; end
 
-# Base exception for Bookshare API communication errors.
+# Base exception for API communication errors.
 #
 class Api::CommError < Api::Error; end
 
-# Base exception for Bookshare API session errors.
+# Base exception for API session errors.
 #
 class Api::SessionError < Api::Error; end
 
@@ -205,7 +205,7 @@ class Api::TimeoutError < Api::SessionError; end
 
 public
 
-# Base exception for Bookshare API receive errors.
+# Base exception for API receive errors.
 #
 class Api::RecvError < Api::CommError; end
 
@@ -219,11 +219,11 @@ class Api::ParseError < Api::RecvError; end
 
 public
 
-# Base exception for Bookshare API transmit errors.
+# Base exception for API transmit errors.
 #
 class Api::XmitError < Api::CommError; end
 
-# Base exception for Bookshare API requests.
+# Base exception for API requests.
 #
 class Api::RequestError < Api::XmitError; end
 

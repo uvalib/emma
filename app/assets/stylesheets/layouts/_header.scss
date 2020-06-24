@@ -677,7 +677,7 @@ $search-button-width:    6rem;
             }
         }
 
-        // @see updateResetButton() in advanced-search.js
+        // @see updateResetButton() in javascripts/feature/advanced-search.js
         .menu-button.reset {
             @media #{$wide-screen} {
                 //display: none;

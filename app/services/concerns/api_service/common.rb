@@ -729,20 +729,16 @@ module ApiService::Common
   #
   # @param [String, Symbol] method
   # @param [Array<String>]  errors
-  # @param [Boolean]        allow_raise
+  # @param [Boolean]        no_raise
   #
-  # @raise [RuntimeError]               Only if *allow_raise* is *true*.
+  # @raise [RuntimeError]             Errors present and *no_raise* is *false*.
   #
-  # @return [nil]
+  # @return [nil]                     No errors or *no_raise* is *true*.
   #
-  def invalid_params(method, *errors, allow_raise: RAISE_ON_INVALID_PARAMS)
+  def invalid_params(method, *errors, no_raise: !RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
-    if allow_raise
-      raise RuntimeError, ("#{method}: " + errors.join("\nAND "))
-    else
-      errors.each { |problem| Log.warn("#{method}: #{problem}") }
-    end
-    nil
+    errors.each { |problem| Log.warn("#{method}: #{problem}") }
+    raise RuntimeError, ("#{method}: " + errors.join("\nAND ")) unless no_raise
   end
 
   # ===========================================================================

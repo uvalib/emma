@@ -83,6 +83,7 @@ module LayoutHelper::NavBar
   #
   def nav_bar_links
 
+    # @type [Hash] current_params
     current_params = url_parameters.except(:limit)
     current_path   = request.path
     base_path      = current_path.sub(%r{^(/[^/]*)/.*$}, '\1')

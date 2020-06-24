@@ -246,6 +246,7 @@ module FileFormat
       field_transforms[type]&.find do |k, v|
         break v if k.is_a?(Regexp) ? (key.to_s =~ k) : (key == k)
       end
+    # noinspection RubyYardReturnMatch
     case method
       when Symbol then transform(method, value)
       when Proc   then method.call(value)
@@ -401,7 +402,7 @@ module FileFormat
   # @return [String, Array<String>]
   #
   def self.normalize_language(value)
-    return value.map { |v| normalize_language(v) }.uniq if value.is_a?(Array)
+    return value.map { |v| send(__method__, v) }.uniq if value.is_a?(Array)
     # noinspection RubyYardParamTypeMatch
     IsoLanguage.find(value)&.alpha3 || value
   end
@@ -426,8 +427,7 @@ module FileFormat
     def configuration(*sections)
       type = sections.last
       return {} unless type.is_a?(String) || type.is_a?(Symbol)
-      type = type.to_s
-      type = type.sub(/^emma\./, '') if type.start_with?('emma.')
+      type = type.to_s.delete_prefix('emma.')
       configuration_table[type.to_sym] ||=
         {}.tap do |hash|
           sections.each do |section|

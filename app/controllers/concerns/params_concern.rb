@@ -32,6 +32,7 @@ module ParamsConcern
     # :section: Callbacks
     # =========================================================================
 
+    before_action :search_redirect
     before_action :set_current_path,     unless: :request_xhr?
     before_action :set_origin,           only:   %i[index]
     before_action :resolve_sort,         only:   %i[index]
@@ -89,6 +90,22 @@ module ParamsConcern
     else
       session['redirect'] ||= true
     end
+  end
+
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Called from non-SearchController pages to ensure that the search defined in
+  # the page header performs the intended operation on the SearchController and
+  # not the current controller.
+  #
+  def search_redirect
+    return if self.class == SearchController
+    query = url_parameters
+    redirect_to search_index_path(query) if query.include?(:q)
   end
 
   # ===========================================================================

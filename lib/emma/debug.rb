@@ -57,6 +57,7 @@ module Emma::Debug
   #   @param [Hash]           opt     Passed to #get_params and #__debug_items.
   #
   def __debug_args(*args, &block)
+    # noinspection RubyYardParamTypeMatch
     prms_opt, opt = partition_options(args.extract_options!, :only, :except)
     meth = (args.shift unless args.first.is_a?(Binding))
     bind = (args.shift if args.first.is_a?(Binding))
@@ -137,6 +138,7 @@ module Emma::Debug
   # @return [nil]
   #
   def __debug_exception(label, exception, *args, &block)
+    # noinspection RubyNilAnalysis
     opt = args.extract_options!.reverse_merge(leader: '!!!')
     args << "#{label} #{exception.class}"
     args << "ERROR: #{exception.message}"
@@ -329,8 +331,8 @@ module Emma::Debug
     else
       output = output.inspect
     end
-  rescue => e
-    Log.debug { "#{__method__}: #{value.class}: #{e}" }
+  rescue => error
+    Log.debug { "#{__method__}: #{value.class}: #{error}" }
   ensure
     type   = ("{#{type}}" unless common)
     output = output&.truncate(max, omission: omission) || 'ERROR'

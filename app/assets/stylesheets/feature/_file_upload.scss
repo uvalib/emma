@@ -207,7 +207,7 @@
     }
 
     // Display for the selected filename moved into place by setupUpload()
-    // in file-upload.js.
+    // in app/assets/javascripts/feature/file-upload.js.
     .uploaded-filename {
 
         @include grid-row(1);
@@ -266,7 +266,7 @@
         }
 
         // Display for the selected filename moved into place by setupUpload()
-        // in file-upload.js.
+        // in app/assets/javascripts/feature/file-upload.js.
         .uploaded-filename {
 
             @extend %upload-tray-control;

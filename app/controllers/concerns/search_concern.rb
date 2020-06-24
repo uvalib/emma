@@ -92,9 +92,9 @@ module SearchConcern
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
-  # @param [Hash, Array, String, *] value
+  # @param [*] value
   #
-  # @return [Hash, Array, String, *]
+  # @return [*]                       Same type as *value*.
   #
   def normalize_keys(value)
     if value.is_a?(Hash)

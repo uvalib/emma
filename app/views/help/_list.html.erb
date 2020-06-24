@@ -17,11 +17,11 @@
     end
 
   level += 1
-  idx = 0
+  index = 0
   sub_heading =
     help_titles(*list).map { |topic, label|
-      classes = "entry-title row-#{idx}"
-      idx += 1
+      classes = "entry-title row-#{index}"
+      index += 1
       html_tag(level, label, class: classes, id: "#{topic}_help")
     }
 

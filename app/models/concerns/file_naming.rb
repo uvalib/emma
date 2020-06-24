@@ -38,11 +38,12 @@ module FileNaming
     #
     def format_class_instance(type, handle = nil)
       if FileHandle.compatible?(handle)
-        type = type.to_sym
-        case type
+        # noinspection RubyCaseWithoutElseBlockInspection
+        case type.to_sym
           when :daisy, :daisyAudio
             # This heuristic assumes that only distinction between "Daisy" and
             # "Daisy Audio" is the presence of sound files.
+            # noinspection RubyYardParamTypeMatch
             type = get_archive_entry('.mp3', handle) ? :daisyAudio : :daisy
         end
       end

@@ -103,6 +103,7 @@ module LogoHelper
   # @return [nil]
   #
   def normalize_repository(src)
+    # noinspection RubyResolve
     src = src.emma_repository if src.respond_to?(:emma_repository)
     src = src.to_s
     # noinspection RubyYardReturnMatch
@@ -133,7 +134,7 @@ module LogoHelper
   def repository_tooltip(item, name = nil)
     name ||= repository_name(item)
     if item.is_a?(Model)
-      a = name.start_with?(/[aeiou]/i) ? 'an' : 'a'
+      a = name.match?(/^[aeiou]/i) ? 'an' : 'a'
       "This is #{a} #{name} repository item" # TODO: I18n
     else
       "From #{name}" # TODO: I18n

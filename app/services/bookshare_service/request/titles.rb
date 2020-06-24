@@ -94,6 +94,9 @@ module BookshareService::Request::Titles
   #
   # @type [String, nil]
   #
+  #--
+  # noinspection SpellCheckingInspection
+  #++
   BOOKSHARE_TEST_MEMBER = 'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
     # Rails.root.join('test/fixtures/members.yml').yield_self { |path|
     #   YAML.load_file(path)&.deep_symbolize_keys! || {}

@@ -116,6 +116,7 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(data, status, xhr) {
             debug(func, 'received data: |', data, '|');
+            // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 err = 'no data';
             } else if (typeof(data) !== 'object') {

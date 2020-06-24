@@ -122,8 +122,6 @@ module ParamsHelper
   #
   # @return [String, nil]
   #
-  # @see Proc#then
-  #
   def compress_value(v)
     COMPRESSION_MARKER + Base64.strict_encode64(Zlib.deflate(v))
   end

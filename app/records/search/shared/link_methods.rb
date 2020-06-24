@@ -37,10 +37,9 @@ module Search::Shared::LinkMethods
     entry = REPOSITORY[src].presence or raise 'invalid source'
     path  = entry[:title_path]       or raise 'no title_path'
     make_path(path, emma_repositoryRecordId)
-
-  rescue RuntimeError => e
+  rescue RuntimeError => error
     # noinspection RubyScope
-    Log.warn { "#{__method__}: #{src}: #{e.message}" }
+    Log.warn { "#{__method__}: #{src}: #{error.message}" }
   end
 
   # ===========================================================================
@@ -68,15 +67,14 @@ module Search::Shared::LinkMethods
     url   = url[fmt.to_sym] if url.is_a?(Hash)
     path  = entry[:download_path]
     if path.blank? && (src == DEFAULT_REPOSITORY)
-      path = request.base_url if defined?(request)
+      path = request.base_url if respond_to?(:request)
     end
     raise 'no download_path' if path.blank?
     raise 'no download_url'  if url.blank?
     url % { id: id, fmt: fmt, tag: tag, download_path: path }
-
-  rescue RuntimeError => e
+  rescue RuntimeError => error
     # noinspection RubyScope
-    Log.warn { "#{__method__}: #{src}: #{e.message}" }
+    Log.warn { "#{__method__}: #{src}: #{error.class}: #{error.message}" }
   end
 
 end

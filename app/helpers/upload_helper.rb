@@ -344,6 +344,7 @@ module UploadHelper
       pairs[k] = render_json_data(item, v) if v.is_a?(Hash)
     end
     html_div(class: 'data-list') do
+      # noinspection RubyYardParamTypeMatch
       render_field_values(item, model: :upload, pairs: pairs)
     end
   end
@@ -660,7 +661,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see submitButton() in file-upload.js
+  # @see submitButton() in app/assets/javascripts/feature/download.js
   #
   def upload_submit_button(**opt)
     opt    = prepend_css_classes(opt, 'submit-button', 'uppy-FileInput-btn')
@@ -688,7 +689,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelButton() in file-upload.js
+  # @see cancelButton() in app/assets/javascripts/feature/download.js
   #
   def upload_cancel_button(**opt)
     opt    = prepend_css_classes(opt, 'cancel-button', 'uppy-FileInput-btn')
@@ -762,7 +763,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_FIELD_CONTROL_VALUES
-  # @see fieldDisplayFilter() in file-upload.js
+  # @see fieldDisplayFilter() in app/assets/javascripts/feature/download.js
   #
   def upload_field_control(**opt)
     name = UPLOAD_FIELD_CONTROL_NAME
@@ -915,7 +916,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelAction() in definitions.js
+  # @see cancelAction() in app/assets/javascripts/feature/download.js
   #
   def upload_delete_cancel(**opt)
     opt[:action]  ||= :delete

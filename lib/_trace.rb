@@ -140,6 +140,7 @@ end
 # @return [nil]
 #
 def __debug(*args, &block)
+  # noinspection RubyNilAnalysis
   opt = args.extract_options!.merge(debug: true)
   opt[:leader] ||= DEBUG_LEADER
   __output(*args, opt, &block)

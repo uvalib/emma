@@ -129,9 +129,12 @@ en:
 
       search_controls:
         format:
-          values:          !ruby/symbol FormatType
+          values:       !ruby/symbol FormatType
+          multiple:     false
         sort:
-          values:          !ruby/symbol TitleSortOrder
+          values:       !ruby/symbol TitleSortOrder
+          reverse:
+            enabled:    true
         layout:
           - [sort,         size,         format      ]
           - [language,     category,     content_type]

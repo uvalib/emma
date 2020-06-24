@@ -26,10 +26,10 @@ class Attachment::PromoteJob < ApplicationJob
     attacher.atomic_promote
   rescue Shrine::AttachmentChanged => e
     Log.info { "JOB #{__method__}: skipped: #{e.message} [AttachmentChanged]" }
-  rescue ActiveRecord::RecordNotFound => e
-    Log.warn { "JOB #{__method__}: skipped: #{e.message} [RecordNotFound]" }
-  rescue => e
-    Log.error { "JOB #{__method__}: error: #{e.message} [#{e.class}]" }
+  rescue ActiveRecord::RecordNotFound => err
+    Log.warn { "JOB #{__method__}: skipped: #{err.message} [RecordNotFound]" }
+  rescue => err
+    Log.error { "JOB #{__method__}: error: #{err.message} [#{err.class}]" }
   end
 
 end

@@ -37,9 +37,8 @@ module ZipArchive
       end
     end
     nil
-
-  rescue => e
-    Log.warn { "#{__method__}(#{zip_path}): #{e.message}" }
+  rescue => error
+    Log.warn { "#{__method__}(#{zip_path}): #{error.message}" }
   end
 
   # Locate the indicated file in the given archive.
@@ -60,9 +59,8 @@ module ZipArchive
       end
     end
     nil
-
-  rescue => e
-    Log.warn { "#{__method__}(#{file}): #{e.message}" }
+  rescue => error
+    Log.warn { "#{__method__}(#{file}): #{error.message}" }
   end
 
 end

@@ -16,6 +16,7 @@ en:
         - 'category'
         - 'edition'
         - 'help'
+        - 'home'
         - 'member'
         - 'periodical'
         - 'reading_list'
@@ -174,6 +175,7 @@ en:
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         tooltip:        'Limit by remediated content type'
         values:         !ruby/symbol DublinCoreFormat
+        multiple:       true
 
       format_feature:
         label:          'Feature'
@@ -228,6 +230,7 @@ en:
         placeholder:    ~
         default:        'relevance'
         reverse:
+          enabled:      false
           label:        '%{sort} (rev)'
           suffix:       'rev'
           except:       [relevance]

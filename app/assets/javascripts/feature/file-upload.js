@@ -531,7 +531,7 @@ $(document).on('turbolinks:load', function() {
          * 'emma_data' object in addition to the fields associated with
          * 'file_data'.
          *
-         * @see Shrine::UploadEndpointExt#make_response
+         * @see "Shrine::UploadEndpointExt#make_response"
          */
         function onFileUploadSuccess(file, response, upload_url) {
 
@@ -580,6 +580,7 @@ $(document).on('turbolinks:load', function() {
             } else {
 
                 // Display the name of the provisionally uploaded file.
+                // noinspection JSCheckFunctionSignatures
                 displayUploadedFilename(file_data, $form);
 
                 // Disable the file select button.
@@ -1206,6 +1207,7 @@ $(document).on('turbolinks:load', function() {
         var new_icon = text || Emma.Upload.Status.invalid.label;
         var old_icon = $element.attr('data-icon');
         if (isMissing(old_icon)) {
+            // noinspection ReuseOfLocalVariableJS
             old_icon = $element.text();
             if (isPresent(old_icon)) {
                 $element.attr('data-icon', old_icon);
@@ -1247,7 +1249,7 @@ $(document).on('turbolinks:load', function() {
                 try {
                     result = JSON.parse(result);
                 }
-                catch (err) {
+                catch (_err) {
                     var len = result.length;
                     if (result[len-1] === ']') {
                         result = result.substr(1, (len-2));
@@ -1453,6 +1455,7 @@ $(document).on('turbolinks:load', function() {
         }
         var $form = formElement($button);
         var url;
+        // noinspection AssignmentResultUsedJS
         if (fileSelected($form) && !canSubmit($form)) {
             url = window.location.href;
         } else if ((url = $button.attr('data-path'))) {
@@ -1524,8 +1527,8 @@ $(document).on('turbolinks:load', function() {
         // console.log('ajax:success - arguments', arguments);
         var data   = arg.data;
         var event  = arg.originalEvent || {};
-        var _resp, status_text, xhr;
-        [_resp, status_text, xhr] = event.detail || [];
+        var _resp, _status_text, xhr;
+        [_resp, _status_text, xhr] = event.detail || [];
         var status = xhr.status;
         onCreateSuccess(data, status, xhr);
     }
@@ -1539,8 +1542,8 @@ $(document).on('turbolinks:load', function() {
         // console.log('ajax:error - arguments', arguments);
         var error = arg.data;
         var event = arg.originalEvent || {};
-        var _resp, status_text, xhr;
-        [_resp, status_text, xhr] = event.detail || [];
+        var _resp, _status_text, xhr;
+        [_resp, _status_text, xhr] = event.detail || [];
         var status = xhr.status;
         console.error('ajax:error', status, 'error', error, 'xhr', xhr);
         onCreateError(xhr, status, error);
@@ -1705,6 +1708,7 @@ $(document).on('turbolinks:load', function() {
         if (filter_initialized) {
             $form[0].scrollIntoView();
         } else {
+            // noinspection ReuseOfLocalVariableJS
             filter_initialized = true;
         }
     }

@@ -80,10 +80,8 @@ class Api::Serializer < ::Representable::Decorator
       when Proc   then method.call(**opt)
       else             abort "#{__method__}: subclass must supply method"
     end
-
   rescue => error
     __debug_exception("#{self.class} #{__method__}", error)
-
   ensure
     if log_timing
       elapsed_time = time_span(start_time)
@@ -123,10 +121,8 @@ class Api::Serializer < ::Representable::Decorator
       when Proc   then method.call(source_data)
       else             abort "#{__method__}: subclass must supply method"
     end
-
   rescue => error
     __debug_exception("#{self.class} #{__method__}", error)
-
   ensure
     if log_timing
       elapsed_time = time_span(start_time)

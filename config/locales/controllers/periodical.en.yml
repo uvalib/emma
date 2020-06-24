@@ -63,8 +63,11 @@ en:
       search_controls:
         format:
           values:       !ruby/symbol PeriodicalFormatType
+          multiple:     false
         sort:
           values:       !ruby/symbol PeriodicalSortOrder
+          reverse:
+            enabled:    true
         layout:
           - [sort,     size,     format]
           - [language, category        ]

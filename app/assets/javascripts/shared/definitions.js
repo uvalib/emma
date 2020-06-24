@@ -432,9 +432,6 @@ var KEYPRESS_PROP = 'keypress-click';
  *                                     skipped. Default: elements like <a>.
  *
  * @return {jQuery}
- *
- * @see {@link nodeHandleKeypressAsClick}
- * @see {@link treeHandleKeypressAsClick}
  */
 function handleKeypressAsClick(selector, direct, match, except) {
 

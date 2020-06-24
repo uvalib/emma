@@ -202,6 +202,7 @@ module BookshareService::Request::ReadingLists
   def get_reading_list(readingListId:, **opt)
     all = get_all_reading_lists(limit: :max, **opt)
     rl  = all.lists.find { |list| list.identifier == readingListId }
+    # noinspection RubyYardParamTypeMatch
     Bs::Message::ReadingListUserView.new(rl)
   end
     .tap do |method|

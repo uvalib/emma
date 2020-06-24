@@ -51,6 +51,7 @@ function flashContainer() {
  * @param {boolean} [all]
  */
 function suppressFlash(all) {
+    // noinspection AssignmentResultUsedJS, NestedAssignmentJS
     switch (all) {
         case false: enableFlash(true);                                  break;
         case true:  show_flash.messages = show_flash.errors = false;    break;
@@ -64,6 +65,7 @@ function suppressFlash(all) {
  * @param {boolean} [all]
  */
 function enableFlash(all) {
+    // noinspection AssignmentResultUsedJS, NestedAssignmentJS
     switch (all) {
         case false: suppressFlash(true);                                break;
         case true:  show_flash.messages = show_flash.errors = true;     break;

@@ -130,6 +130,7 @@ module Emma::Common
   # @see #build_query_options
   #
   def url_query(*args)
+    # noinspection RubyNilAnalysis
     opt = args.extract_options!.reverse_merge(minimize: true, decorate: true)
     build_query_options(*args, opt).flat_map { |k, v|
       v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
@@ -150,6 +151,7 @@ module Emma::Common
   # @return [Hash{String=>String}]
   #
   def build_query_options(*args)
+    # noinspection RubyNilAnalysis
     opt = args.extract_options!.reverse_merge(minimize: true, decorate: false)
     minimize = opt.delete(:minimize)
     decorate = opt.delete(:decorate)
@@ -207,10 +209,10 @@ module Emma::Common
   #
   # @return [Hash]
   #
-  # @see #remove_blanks
+  # @see #_remove_blanks
   #
   def reject_blanks(item)
-    remove_blanks(item) || {}
+    _remove_blanks(item) || {}
   end
 
   # ===========================================================================
@@ -243,14 +245,14 @@ module Emma::Common
   # Empty strings and nils are considered blank, however an item or element
   # with the explicit value of *false* is not considered blank.
   #
-  def remove_blanks(item)
+  def _remove_blanks(item)
     case item
       when TrueClass, FalseClass
         item
       when Hash
-        item.transform_values { |v| remove_blanks(v) }.compact.presence
+        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
       when Array
-        item.map { |v| remove_blanks(v) }.compact.presence
+        item.map { |v| send(__method__, v) }.compact.presence
       else
         item.presence
     end

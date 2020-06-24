@@ -20,6 +20,10 @@ module LayoutHelper::SearchControls
 
   module ClassMethods
 
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
     include Emma::Common
 
     # =========================================================================
@@ -41,7 +45,7 @@ module LayoutHelper::SearchControls
         cfg = I18n.t("emma.#{section}.search_controls", default: nil)
         configs.deep_merge!(cfg) if cfg.present?
       end
-      configs = {} unless configs.dig(:_self, :enabled)
+      configs = {} unless configs[:enabled] || configs.dig(:_self, :enabled)
       configs.map { |menu_name, config|
         next if menu_name.to_s.start_with?('_')
         unless menu_name == :layout
@@ -171,7 +175,7 @@ module LayoutHelper::SearchControls
       # Dynamically create reverse selections for the :sort menu if needed.
       config ||= current_menu_config(menu_name)
       reverse  = config[:reverse]
-      if reverse && !false?(reverse)
+      if reverse && !false?(reverse[:enabled])
         except = Array.wrap(reverse[:except]).map(&:to_s)
         pairs.flat_map do |pair|
           label, value = pair
@@ -270,7 +274,6 @@ module LayoutHelper::SearchControls
   end
 
   include ClassMethods
-  extend  ClassMethods
 
   # ===========================================================================
   # :section:
@@ -428,7 +431,8 @@ module LayoutHelper::SearchControls
   # @param [Hash, nil] p              Default: `#request_parameters`.
   #
   def show_search_controls?(p = nil)
-    (p || request_parameters)[:action] == 'index'
+    type = search_target(p)
+    SEARCH_MENU_MAP[type].present?
   end
 
   # One or more rows of controls.
@@ -439,7 +443,7 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
-  # @see en.emma.search_controls
+  # @see en.emma.search_controls in config/locales/en.yml
   #
   def search_controls(type: nil, **opt)
     type = search_target(type)

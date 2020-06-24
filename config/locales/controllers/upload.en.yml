@@ -116,10 +116,6 @@ en:
       # Controls
       # =======================================================================
 
-      search_controls:
-        sort:
-          reverse:      false
-
       page_controls:
         label:          'Upload Actions'
 

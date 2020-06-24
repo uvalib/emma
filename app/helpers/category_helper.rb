@@ -110,6 +110,7 @@ module CategoryHelper
     pairs = CATEGORY_INDEX_FIELDS
     opt ||= {}
     item_list_entry(item, :category, row: opt[:row]) do
+      # noinspection RubyResolve
       pairs.merge(category_link(item) => "(#{item.titleCount})").merge(opt)
     end
   end
