@@ -270,7 +270,7 @@ module Emma::Debug
   #
   # @type [Integer]
   #
-  DEBUG_INSPECT_MAX = application_deployed? ? 4096 : 1024
+  DEBUG_INSPECT_MAX = 1024
 
   # Truncation indicator appended to a truncated output.
   #

@@ -272,7 +272,18 @@ class Upload < ApplicationRecord
     importer = local[:importer] && Import.get_importer(local[:importer])
     if importer.present?
       known_fields, added_fields = partition_options(fields, *KNOWN_FIELDS)
+      __debug_items do # TODO: remove - debugging
+        {
+          "#{__method__} known_fields": known_fields,
+          "#{__method__} added_fields": added_fields,
+        }
+      end
       fields = importer.translate_fields(added_fields).merge!(known_fields)
+      __debug_items do # TODO: remove - debugging
+        {
+          "#{__method__} fields": fields
+        }
+      end
     end
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
@@ -339,6 +350,9 @@ class Upload < ApplicationRecord
     attr[:created_at]    = ctim
     super(attr)
 
+  rescue => error # TODO: remove - testing
+    Log.error { "#{__method__}: #{error.class}: #{error.message}"}
+    raise error
   end
 
   # Allow :file_data and :emma_data to be seen fully when inspecting.

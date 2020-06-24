@@ -72,6 +72,9 @@ CONS_INDENT = $stderr.isatty ? '' : '_   '
 # Initial characters which mark a debug line.
 DEBUG_LEADER = ''
 
+# Truncate long debug output lines to this number of characters.
+DEBUG_MAX = 2048
+
 # Write indented line(s) to $stderr.
 #
 # @param [Array<Hash,Array,String,*>] args
@@ -106,15 +109,31 @@ def __output(*args)
   # Combine arguments and block results into a single string.
   args += Array.wrap(yield) if block_given?
   if opt[:debug]
+    omit = opt[:omission] || '…'
+    max  = opt[:max]
+    max  = max - leader.size if max
     args =
-      args.flat_map do |arg|
+      args.flat_map { |arg|
         case arg
           when Hash   then arg.map { |k, v| "#{k} = #{v}" }
-          when Array  then arg
+          when Array  then arg.map(&:to_s)
           when String then arg
           else             arg.inspect
         end
-      end
+      }.map { |arg|
+        if max
+          next unless max.positive?
+          size = arg.size + sep.size
+          if max >= size
+            max -= size
+          else
+            stop = max - omit.length
+            arg  = arg[0, stop] + omit
+            max  = 0
+          end
+        end
+        arg
+      }.compact
   end
   lines = leader + args.compact.join(sep).gsub(/\n/, "\n#{leader}").strip
 
@@ -142,7 +161,9 @@ end
 def __debug(*args, &block)
   # noinspection RubyNilAnalysis
   opt = args.extract_options!.merge(debug: true)
-  opt[:leader] ||= DEBUG_LEADER
+  opt[:leader]   ||= DEBUG_LEADER
+  opt[:max]      ||= DEBUG_MAX
+  opt[:omission] ||= '...'
   __output(*args, opt, &block)
 end
 

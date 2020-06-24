@@ -203,7 +203,7 @@ module Import::IaBulk
       type &&= type.to_sym
       fmt = DC_TYPE_TO_DC_FORMAT[type] || DC_TYPE_TO_DC_FORMAT[:_default]
       fields[:dc_format] = fmt = fmt.to_s
-      Log.error do
+      Log.warn do
         "Import::IaBulk: missing 'contributed_format' - " \
           "using #{fmt.inspect} based on mediatype #{type.inspect}"
       end
