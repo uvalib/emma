@@ -685,6 +685,7 @@ module UploadConcern
   # Add the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload>] items
+  # @param [Hash]          atomic
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
@@ -1086,24 +1087,40 @@ module UploadConcern
   # MySQL because ActiveRecord::Result for bulk operations does not contain
   # useful information.
   #
-  def bulk_db_operation(operation, records, atomic: true)
+  def bulk_db_operation(operation, records, **)
     __debug_args((dbg = "UPLOAD #{__method__}"), binding)
-    db_action = ->() { Upload.send(operation, records.map(&:attributes)) }
-    result    = atomic ? Upload.transaction { db_action.call } : db_action.call
-
-    if result.nil?
-      __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
-      return [], records
-
-    elsif result.columns.blank? || (result.length == records.size)
+    result = Upload.send(operation, records.map(&:attributes))
+    if result.columns.blank? || (result.length == records.size)
       __debug_line(dbg) { 'QUALIFIED SUCCESS' }
       return records, []
-
     else
       updated = result.to_a.flat_map { |hash| identifiers(hash) }.compact
       __debug_line(dbg) { "UPDATED #{updated}" }
       records.partition { |record| updated.include?(identifier(record)) }
     end
+  end
+
+  # bulk_db_transaction
+  #
+  # @param [Symbol]        operation  Upload class method.
+  # @param [Array<Upload>] records
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  #
+  # == Implementation Notes
+  # Wrapping "INSERT INTO", etc. in a transaction seems to be problematic for
+  # the MySQL instance deployed to AWS, so there may not be a use-case that
+  # requires this method.
+  #
+  def bulk_db_transaction(operation, records, atomic: true)
+    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+    db_action = ->() { bulk_db_operation(operation, records) }
+    return db_action.call unless atomic
+    succeeded, failed = Upload.transaction(&db_action)
+    return succeeded, failed if succeeded
+    __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
+    return [], records
   end
 
   # ===========================================================================
