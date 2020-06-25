@@ -365,7 +365,7 @@ module UploadConcern
         if !item.is_a?(Upload)
           item                        # Only seen if *force* is *true*.
         elsif db_delete(item)
-          # bulk_throttle(counter) # TODO: keep?
+          bulk_throttle(counter)
           counter += 1
           destroyed << item
           item
@@ -952,7 +952,7 @@ module UploadConcern
     entries = entries.take(limit.to_i) if limit.to_i.positive?
     records =
       entries.map { |entry|
-        # bulk_throttle(counter) # TODO: keep?
+        bulk_throttle(counter)
         counter += 1
         Log.info do
           msg = "#{__method__} [#{counter} of #{entries.size}]:"
@@ -1075,10 +1075,78 @@ module UploadConcern
 
   protected
 
-  # bulk_db_operation
+  # Break sets of records into chunks of this size.
+  #
+  # @type [Integer]
+  #
+  BULK_BATCH_SIZE = 10
+
+  # Bulk database operation.  If the number of records exceeds #BULK_BATCH_SIZE
+  # then it is broken up into batches.
   #
   # @param [Symbol]        operation  Upload class method.
   # @param [Array<Upload>] records
+  # @param [Boolean]       atomic     If *false*, allow partial changes.
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  #
+  # @see #bulk_db_operation_batches
+  # @see #bulk_db_operation_batch
+  #
+  # == Implementation Notes
+  # For currently undiscovered reasons, the MySQL instance on AWS will be
+  # overwhelmed if the "VALUE" portion of the "INSERT INTO" statement is very
+  # large.  Breaking the data into bite-size chunks is currently the only
+  # available work-around.
+  #
+  def bulk_db_operation(operation, records, atomic: true, **)
+    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+    succeeded, failed =
+      if records.size <= BULK_BATCH_SIZE
+        bulk_db_operation_batch(operation, records)
+      elsif !atomic
+        bulk_db_operation_batches(operation, records)
+      else
+        Upload.transaction { bulk_db_operation_batches(operation, records) }
+      end
+    if succeeded.nil?
+      __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
+      return [], records
+    else
+      __debug_line(dbg) { { succeeded: succeeded.size, failed: failed.size } }
+      return succeeded, failed
+    end
+  end
+
+  # Invoke a database operation multiple times to process all of the given
+  # records with manageably-sized SQL commands.
+  #
+  # @param [Symbol]        operation  Upload class method.
+  # @param [Array<Upload>] records
+  #
+  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  #
+  def bulk_db_operation_batches(operation, records)
+    succeeded = []
+    failed    = []
+    counter   = 0
+    records.each_slice(BULK_BATCH_SIZE) do |batch|
+      bulk_throttle(counter)
+      min  = BULK_BATCH_SIZE * counter
+      max  = (BULK_BATCH_SIZE * (counter += 1)) - 1
+      s, f = bulk_db_operation_batch(operation, batch, from: min, to: max)
+      succeeded += s
+      failed    += f
+    end
+    return succeeded, failed
+  end
+
+  # Invoke a database operation.
+  #
+  # @param [Symbol]        operation  Upload class method.
+  # @param [Array<Upload>] records
+  # @param [Integer]       from       For logging; default: 0.
+  # @param [Integer]       to         For logging; default: tail of *records*.
   #
   # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
   #
@@ -1087,8 +1155,10 @@ module UploadConcern
   # MySQL because ActiveRecord::Result for bulk operations does not contain
   # useful information.
   #
-  def bulk_db_operation(operation, records, **)
-    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+  def bulk_db_operation_batch(operation, records, from: nil, to: nil)
+    from ||= 0
+    to   ||= records.size - 1
+    __debug(dbg = "UPLOAD #{operation} | records #{from} to #{to}")
     result = Upload.send(operation, records.map(&:attributes))
     if result.columns.blank? || (result.length == records.size)
       __debug_line(dbg) { 'QUALIFIED SUCCESS' }
@@ -1098,29 +1168,6 @@ module UploadConcern
       __debug_line(dbg) { "UPDATED #{updated}" }
       records.partition { |record| updated.include?(identifier(record)) }
     end
-  end
-
-  # bulk_db_transaction
-  #
-  # @param [Symbol]        operation  Upload class method.
-  # @param [Array<Upload>] records
-  # @param [Boolean]       atomic     If *false*, allow partial changes.
-  #
-  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
-  #
-  # == Implementation Notes
-  # Wrapping "INSERT INTO", etc. in a transaction seems to be problematic for
-  # the MySQL instance deployed to AWS, so there may not be a use-case that
-  # requires this method.
-  #
-  def bulk_db_transaction(operation, records, atomic: true)
-    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
-    db_action = ->() { bulk_db_operation(operation, records) }
-    return db_action.call unless atomic
-    succeeded, failed = Upload.transaction(&db_action)
-    return succeeded, failed if succeeded
-    __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
-    return [], records
   end
 
   # ===========================================================================
