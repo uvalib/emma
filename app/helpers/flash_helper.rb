@@ -40,7 +40,7 @@ module FlashHelper
   # This shouldn't be a big problem; if it is then it might be time to consider
   # investing in setting up infrastructure for an alternative cookie mechanism.
   #
-  FLASH_MAX_ITEM_SIZE = 512
+  FLASH_MAX_ITEM_SIZE = application_deployed? ? 512 : 256
 
   # Maximum size of all combined flash messages.
   #
@@ -449,11 +449,13 @@ module FlashHelper
     html    = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
 
     msg_sep = html ? "\n" : ' '
-    max     = flash_space_available - (msg_sep.size * (msg.size + 1))
+    sep_siz = flash_item_size(msg_sep, html: html)
+    max     = flash_space_available - (sep_siz * (msg.size + 1))
     msg     = flash_item(msg,  max: max, html: html)
 
     arg_sep = html ? "\n" : ', '
-    max    -= msg.sum(&:size) + (arg_sep.size * (args.size + 1))
+    sep_siz = flash_item_size(arg_sep, html: html)
+    max    -= flash_item_size(msg, html: html) + (sep_siz * (args.size + 1))
     args    = flash_item(args, max: max, html: html, inspect: local[:inspect])
 
     msg << nil unless html || msg.blank?
@@ -494,33 +496,66 @@ module FlashHelper
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
-      $stderr.puts "........... flash_item | #{item.size} items | opt[:max] = #{opt[:max]} | available = #{flash_space_available}"
-      opt[:max] ||= flash_space_available
-      omission = flash_omission(item.size, **opt)
-      count    = 0
-      result   = []
+      opt[:max]   ||= FLASH_MAX_TOTAL_SIZE
+      opt[:max]     = [opt[:max], flash_space_available].min
+      item_count    = item.size
+      omission      = flash_omission(item_count, **opt)
+      omission_size = flash_item_size(omission, **opt)
+      count  = 0
+      result = []
       item.each do |str|
         count += 1
-        break unless opt[:max] > omission.size
-        clearance = (count == item.size) ? 0 : omission.size
-        str = flash_item(str, **opt.merge(max: (opt[:max] - clearance)))
+        break unless opt[:max] > omission_size
+        str_max  = opt[:max]
+        str_max -= omission_size if count < item_count
+        # noinspection RubyYardParamTypeMatch
+        str = flash_item_render(str, **opt.merge(max: str_max))
         next if str.blank?
-        opt[:max] -= str.size
+        opt[:max] -= flash_item_size(str, **opt)
         result << str unless opt[:max].negative?
         break if str == HTML_TRUNCATE_OMISSION
       end
-      result << omission if opt[:max].positive? && (count < item.size)
-      $stderr.puts "........... flash_item | #{item.size} items | #{result.size} lines | sizes = #{result.map(&:size)}"
-      $stderr.puts result.pretty_inspect
+      result << omission if opt[:max].positive? && (count < item_count)
+      result
     else
-      opt[:max] ||= [FLASH_MAX_ITEM_SIZE, flash_space_available].min
-      string  = (item.is_a?(Entry) && opt[:html]) ? item.render : item.to_s
-      inspect = opt[:inspect] && !string.html_safe? && !string.start_with?('"')
-      string  = string.inspect if inspect
-      result  = safe_truncate(string, opt[:max])
-      result  = ERB::Util.h(result) if opt[:html] && !result.html_safe?
+      opt[:max] ||= FLASH_MAX_ITEM_SIZE
+      opt[:max]   = [opt[:max], flash_space_available].min
+      # noinspection RubyYardParamTypeMatch
+      flash_item_render(item, **opt)
     end
+  end
+
+  # An item's actual impact toward the the total flash size.
+  #
+  # @param [String, Entry, Array<String,Entry>] item
+  # @param [Hash]                               opt   To #flash_item_render.
+  #
+  # @return [Integer]
+  #
+  # == Usage Note
+  # This does not account for any separators that would be added when
+  # displaying multiple items.
+  #
+  def flash_item_size(item, **opt)
+    opt[:max] = nil
+    items   = Array.wrap(item).map { |v| flash_item_render(v, **opt) }
+    result  = items.sum(&:size)
+    result += items.sum { |v| v.count("\n") + v.count('"') } if opt[:html]
     result
+  end
+
+  # Render an item in the intended form for addition to the flash.
+  #
+  # @param [String, Entry] item
+  #
+  # @return [String, ActiveSupport::SafeBuffer]
+  #
+  def flash_item_render(item, html: false, inspect: false, max: nil, **)
+    res = (item.is_a?(Entry) && html) ? item.render : item.to_s
+    res = res.inspect if inspect && !res.html_safe? && !res.start_with?('"')
+    res = safe_truncate(res, max) if max
+    res = ERB::Util.h(res)        if html && !res.html_safe?
+    res
   end
 
   # If a :topic was specified, it is used as part of a set of I18n paths used

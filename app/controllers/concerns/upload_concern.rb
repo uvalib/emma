@@ -365,7 +365,7 @@ module UploadConcern
         if !item.is_a?(Upload)
           item                        # Only seen if *force* is *true*.
         elsif db_delete(item)
-          bulk_throttle(counter)
+          # bulk_throttle(counter) # TODO: keep?
           counter += 1
           destroyed << item
           item
@@ -951,7 +951,7 @@ module UploadConcern
     entries = entries.take(limit.to_i) if limit.to_i.positive?
     records =
       entries.map { |entry|
-        bulk_throttle(counter)
+        # bulk_throttle(counter) # TODO: keep?
         counter += 1
         Log.info do
           msg = "#{__method__} [#{counter} of #{entries.size}]:"
