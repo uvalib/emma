@@ -26,8 +26,8 @@ module SearchService::Status
   # @type [Hash{Symbol=>*}]
   #
   SAMPLE_ISBN_SEARCH = {
-    parameters: { q: '9781627937269' },
-    expected:   ->(result) { result.records.size >= 5 }
+    parameters: { q: 'interdimensional' },
+    expected:   ->(result) { result.records.size >= 2 }
   }.freeze
 
   # ===========================================================================

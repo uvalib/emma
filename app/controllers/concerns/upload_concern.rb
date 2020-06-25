@@ -358,13 +358,17 @@ module UploadConcern
     # Remove the records from the database.
     destroyed = []
     retained  = []
+    counter   = 0
     items =
       items.map { |item|
         # noinspection RubyYardParamTypeMatch
         if !item.is_a?(Upload)
           item                        # Only seen if *force* is *true*.
         elsif db_delete(item)
-          destroyed << item and item
+          bulk_throttle(counter)
+          counter += 1
+          destroyed << item
+          item
         elsif atomic && destroyed.blank?
           return [], [item]           # Early return with the problem item.
         else
@@ -898,6 +902,26 @@ module UploadConcern
 
   protected
 
+  # A fractional number of seconds to pause between iterations.
+  #
+  # @type [Float]
+  #
+  BULK_PAUSE = 0.01
+
+  # Release the current thread to the scheduler.
+  #
+  # @param [Integer] counter          Iteration counter.
+  # @param [Integer] frequency        E.g., '3' indicates every third iteration
+  # @param [Float]   pause            Default: `#BULK_PAUSE`.
+  #
+  # @return [void]
+  #
+  def bulk_throttle(counter, frequency: 1, pause: BULK_PAUSE)
+    return if counter.zero?
+    return if (counter % frequency).nonzero?
+    sleep(pause)
+  end
+
   # Prepare entries for bulk insert/upsert to the database by ensuring that all
   # associated files have been uploaded and moved into storage.
   #
@@ -927,6 +951,7 @@ module UploadConcern
     entries = entries.take(limit.to_i) if limit.to_i.positive?
     records =
       entries.map { |entry|
+        bulk_throttle(counter)
         counter += 1
         Log.info do
           msg = "#{__method__} [#{counter} of #{entries.size}]:"

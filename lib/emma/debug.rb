@@ -283,15 +283,16 @@ module Emma::Debug
   # @type [Array<Class>]
   #
   DEBUG_INSPECT_COMMON = [
+    ActionController::Parameters,
     Array,
     FalseClass,
     Hash,
-    Integer,
     NilClass,
+    Numeric,
     String,
+    StringIO,
     Symbol,
     TrueClass,
-    ActionController::Parameters,
   ].freeze
 
   # Decorate and truncate inspection results.
