@@ -35,11 +35,6 @@ module UploadHelper
 
   UPLOAD_PREVIEW_ENABLED = false  # TODO: upload preview ???
 
-  UPLOAD_ACTION_VALUES =
-    %i[new edit delete bulk_new bulk_edit bulk_delete].map { |action|
-      [action, i18n_button_values(:upload, action)]
-    }.to_h.deep_freeze
-
   # Configuration values for this model.
   #
   # @type {Hash{Symbol=>Hash}}
@@ -78,6 +73,28 @@ module UploadHelper
   SEARCH_RECORD_LABELS = SEARCH_RECORD_FIELDS
 =end
 
+  # Linkage information for upload actions.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  UPLOAD_ACTIONS = {
+    new: {
+      label: 'Upload %s new file',       article: 'a',  action: 'new'
+    },
+    edit: {
+      label: 'Modify %s existing entry', article: 'an', action: 'edit_select'
+    },
+    delete: {
+      label: 'Remove %s existing entry', article: 'an', action: 'delete_select'
+    }
+  }.deep_freeze
+
+  # TODO: I18n
+  #
+  # @type [String]
+  #
+  UPLOAD_ANOTHER = 'another'
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -113,37 +130,57 @@ module UploadHelper
     html_div('', class: UPLOAD_PREVIEW_CSS)
   end
 
+  # upload_action_entry
+  #
+  # @param [String, Symbol] action
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def upload_action_entry(action = nil, current: nil)
+    current ||= params[:action]
+    action  ||= current
+    entry = UPLOAD_ACTIONS[action&.to_sym]
+    return {} if entry.blank?
+    article = (action == current) ? UPLOAD_ANOTHER : entry[:article]
+    entry.merge(article: article)
+  end
+
+  # upload_action_link
+  #
+  # @param [String, Symbol] action
+  # @param [String, nil]    label     Override #UPLOAD_ACTIONS label.
+  # @param [String, nil]    path      Override #UPLOAD_ACTIONS action.
+  #
+  # @return [ActiveSupport::SafeBuffer, nil]
+  #
+  def upload_action_link(action = nil, current: nil, label: nil, path: nil)
+    entry = upload_action_entry(action, current: current)
+    return if entry.blank?
+    path  ||= { action: entry[:action] }
+    label ||= entry[:label]
+    label  %= entry[:article]
+    html_tag(:li, class: 'file-upload-action') do
+      link_to_action(label, path: path)
+    end
+  end
+
   # List upload actions.  If the current action is provided, the associated
   # action link will be appear at the top of the list.
   #
-  # @param [String, Symbol] current_action    Default: `params[:action]`
+  # @param [String, Symbol] current   Default: `params[:action]`
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_action_list(current_action = params[:action])
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case (current_action = current_action&.to_sym)
-      when :create  then current_action = :new
-      when :update  then current_action = :edit
-      when :destroy then current_action = :delete
+  def upload_action_list(current: params[:action]&.to_sym)
+    links =
+      %i[new edit delete].map { |action|
+        upload_action_link(action, current: current)
+      }.compact
+    if (first = links.index { |link| link.include?(UPLOAD_ANOTHER) })
+      links.prepend(links.delete_at(first))
     end
-    actions = {
-      new:    ['Upload %s new file' ,      'a'],  # TODO: I18n
-      edit:   ['Modify %s existing entry', 'an'], # TODO: I18n
-      delete: ['Remove %s existing entry', 'an'], # TODO: I18n
-    }
-    links = {}
-    if actions.key?(current_action)
-      label_string, _article = actions.delete(current_action)
-      links[current_action] = label_string % 'another'
-    end
-    links.merge!(actions.transform_values { |v| v.shift % v.shift })
     html_tag(:ul, class: 'file-upload-actions') do
-      links.map { |action, label|
-        html_tag(:li, class: 'file-upload-action') do
-          link_to_action(label, path: { action: "#{action}_select" })
-        end
-      }.join("\n").html_safe
+      safe_join(links, "\n")
     end
   end
 
@@ -588,6 +625,15 @@ module UploadHelper
 
   public
 
+  # Button information for upload actions.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  UPLOAD_ACTION_VALUES =
+    %i[new edit delete bulk_new bulk_edit bulk_delete].map { |action|
+      [action, i18n_button_values(:upload, action)]
+    }.to_h.deep_freeze
+
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
@@ -827,13 +873,14 @@ module UploadHelper
     user     = user.id if user.is_a?(User)
     prompt ||= 'Select an EMMA entry' # TODO: I18n
 
+    path  = upload_action_entry(action)[:action] || action
+    path  = send("#{path}_upload_path")
+
     items = user ? Upload.where(user_id: user) : Upload.all
     menu  = Array.wrap(items).map { |item| [upload_menu_label(item), item.id] }
     menu  = options_for_select(menu)
     select_opt = { prompt: prompt, onchange: 'this.form.submit();' }
 
-    path = action.to_s.start_with?('bulk_') ? action : "#{action}_select"
-    path = send("#{path}_upload_path")
     html_opt = prepend_css_classes(opt, 'select-entry', 'menu-control')
     html_opt[:method] ||= :get
     form_tag(path, html_opt) do

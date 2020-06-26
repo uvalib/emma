@@ -427,7 +427,8 @@
     }
 
     // No status bar for bulk upload so extra white space is needed above.
-    .file-bulk-upload-form {
+    .file-bulk-upload-form,
+    .file-bulk-upload-delete {
 
         margin-top:    2rem;
         margin-bottom: -1.5rem;
