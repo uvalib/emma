@@ -156,6 +156,12 @@ module SearchHelper
     external_link(id, url, **opt)
   end
 
+  # HathiTrust download parameters which cause a prompt for login.
+  #
+  # @type [String]
+  #
+  HT_DOWNLOAD_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
+
   # Make a clickable link to retrieve a remediated file.
   #
   # @param [Search::Api::Record] item
@@ -173,24 +179,46 @@ module SearchHelper
     url = CGI.unescape(url.to_s)
     return if url.blank?
 
-    label = opt[:label] || url
+    label = opt[:label] || url.dup
+
+    # Adjust the link depending on whether the current session is permitted to
+    # perform the download.
+    permitted = can?(:download, Artifact)
+    append_css_classes!(html_opt, 'disabled') unless permitted
+
+    # Set up the tooltip to be shown before the item has been requested.
     html_opt[:title] ||=
-      begin
-        fmt = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
-        rep = item.emma_repository.to_s.titleize
-        "Retrieve the #{fmt} source from #{rep}." # TODO: I18n
+      if permitted
+        fmt     = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
+        repo    = item.emma_repository.to_s.titleize
+        "Retrieve the #{fmt} source from #{repo}." # TODO: I18n
+      else
+        tip_key = (signed_in?) ? 'disallowed' : 'sign_in'
+        tip_key = "emma.download.link.#{tip_key}.tooltip"
+        fmt     = item.label
+        repo    = item.emma_repository || EmmaRepository.default
+        default = ArtifactHelper::DOWNLOAD_TOOLTIP
+        I18n.t(tip_key, fmt: fmt, repo: repo, default: default)
       end
-    url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
 
     case (source = item.emma_repository.presence).to_s
       when 'emma'
+        url.sub!(%r{localhost:\d+}, 'localhost') unless application_deployed?
         external_link(label, url, **html_opt)
+
       when 'bookshare'
         download_links(item, label: label, url: url, **html_opt)
+
       when 'hathiTrust'
-        external_link(label, url, **html_opt) # TODO: hathiTrust retrieval
+        unless url.include?(HT_DOWNLOAD_URL_PARAMS)
+          url << (url.include?('?') ? '&' : '?')
+          url << HT_DOWNLOAD_URL_PARAMS
+        end
+        external_link(label, url, **html_opt)
+
       when 'internetArchive'
         external_link(label, url, **html_opt) # TODO: internetArchive retrieval
+
       else
         Log.error { "#{__method__}: #{source.inspect}: unexpected" } if source
     end

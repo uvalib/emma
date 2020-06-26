@@ -133,7 +133,8 @@ module HtmlHelper
   # This method assumes that local paths are always relative.
   #
   def make_link(label, path, **opt, &block)
-    if opt[:target] == '_blank'
+    disabled = has_class?(opt, 'disabled')
+    if (opt[:target] == '_blank') && !disabled
       opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
       opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
     end
@@ -141,7 +142,7 @@ module HtmlHelper
       opt[:rel] = 'noopener' if path.start_with?('http')
     end
     unless opt.key?(:tabindex)
-      opt[:tabindex] = -1 if opt[:'aria-hidden'] || has_class?(opt, 'disabled')
+      opt[:tabindex] = -1 if opt[:'aria-hidden'] || disabled
     end
     unless opt.key?(:'aria-hidden')
       opt[:'aria-hidden'] = true if opt[:tabindex] == -1
