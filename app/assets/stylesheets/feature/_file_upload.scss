@@ -28,9 +28,13 @@
 
     // Text following the header on the page.
     &.description {
+
+        // noinspection SassScssResolvedByNameOnly
+        @extend %block-shadow;
+
         padding:       0 1rem;
         border:        1px solid black;
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
     }
 
     // Text preceding the main control section of the page.
@@ -298,10 +302,13 @@
 
         @include grid-column-span;
 
+        @extend %control-shadow;
+
         position:   sticky;
         top:        1rem;
         background: white;
-        box-shadow: 0 0 0 1rem white;
+        box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray,
+                    0 0 0 1rem white;
 
         @media #{$narrow-screen} {
             margin-top: $form-gap-narrow;
@@ -493,8 +500,18 @@
 ul.file-upload-actions {
 
     margin-top: 3rem;
-    padding:    1rem 0 0;
+    padding:    0.5rem 0 0;
     border-top: 2px solid gray;
 
-    li { list-style-position: inside; }
+    li.file-upload-action {
+
+        margin-top:          0.5rem;
+        list-style-position: inside;
+
+        // noinspection SassScssResolvedByNameOnly
+        .control:focus {
+            outline-color:   $text-focus;
+            outline-offset:  2.5px;
+        }
+    }
 }

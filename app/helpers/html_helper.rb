@@ -403,6 +403,44 @@ module HtmlHelper
 
   public
 
+  # Default number of digits produced by #hex_rand.
+  #
+  # @type [Integer]
+  #
+  HEX_RAND_DEFAULT_DIGITS = 8
+
+  # Generate a string of random hex digits.
+  #
+  # @param [Integer] digits
+  # @param [Boolean] upper            If *false* show lowercase hex digits.
+  #
+  # @return [String]
+  #
+  def hex_rand(digits = nil, upper: nil)
+    digits = digits.to_i
+    digits = HEX_RAND_DEFAULT_DIGITS unless digits.positive?
+    format = "%0#{digits}X"
+    format = format.downcase if upper.is_a?(FalseClass)
+    limit  = 16.pow(digits) - 1
+    format % rand(0..limit)
+  end
+
+  # Create a unique CSS identifier from *base* and a random hex digit string.
+  #
+  # @param [String] base
+  #
+  # @return [String]
+  #
+  def css_randomize(base)
+    [base, hex_rand].join('-')
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Safely truncate either normal or html_safe strings via #html_truncate.
   #
   # @param [ActiveSupport::SafeBuffer, String] str

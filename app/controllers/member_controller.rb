@@ -63,7 +63,7 @@ class MemberController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -76,7 +76,7 @@ class MemberController < ApplicationController
     __debug_route
     @item, @preferences, @history = get_account_details(id: @account_id)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values(as: :hash)  }
       format.xml  { render_xml  show_values(as: :array) }
     end

@@ -28,6 +28,8 @@ class ApplicationController < ActionController::Base
   # :section: Callbacks
   # ===========================================================================
 
+  layout :current_layout
+
   protect_from_forgery with: :exception
 
   # ===========================================================================
@@ -52,8 +54,8 @@ class ApplicationController < ActionController::Base
 
   add_flash_types :error, :success # TODO: keep?
 
+  helper_method :current_layout
   helper_method :modal?
-  helper_method :layout
 
   # ===========================================================================
   # :section: Helpers
@@ -61,18 +63,12 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  # Indicate whether rendering within a modal dialog (<iframe>).
-  #
-  def modal?
-    @modal ||= true?(params[:modal])
-  end
-
   # The current layout template.
   #
   # @return [String]
   # @return [FalseClass]              If `request_xhr?`
   #
-  def layout
+  def current_layout
     if request_xhr?
       false
     elsif modal?
@@ -80,6 +76,12 @@ class ApplicationController < ActionController::Base
     else
       'application'
     end
+  end
+
+  # Indicate whether rendering within a modal dialog (<iframe>).
+  #
+  def modal?
+    @modal ||= true?(params[:modal])
   end
 
 end

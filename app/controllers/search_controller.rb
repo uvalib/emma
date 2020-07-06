@@ -93,7 +93,7 @@ class SearchController < ApplicationController
       self.total_items = @list.totalResults
       self.next_page   = next_page_path(@list, opt) # TODO: ???
       respond_to do |format|
-        format.html { render layout: layout }
+        format.html
         format.json { render_json index_values }
         format.xml  { render_xml  index_values }
       end
@@ -111,7 +111,7 @@ class SearchController < ApplicationController
     __debug_route
     @item = search_api.get_record(titleId: @title_id)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
@@ -135,7 +135,7 @@ class SearchController < ApplicationController
     self.page_items  = @list.records
     self.total_items = @list.totalResults
     respond_to do |format|
-      format.html { render 'search/index', layout: layout }
+      format.html { render 'search/index' }
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end

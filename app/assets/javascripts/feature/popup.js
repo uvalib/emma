@@ -29,13 +29,15 @@ $(document).on('turbolinks:load', function() {
      */
     var DEBUGGING = true;
 
-    /** @const {string} */ var BUTTON_CLASS      = 'control';
-    /** @const {string} */ var PANEL_CLASS       = 'popup';
-    /** @const {string} */ var CLOSER_CLASS      = 'closer';
-    /** @const {string} */ var DEFERRED_CLASS    = 'deferred';
+    /** @const {string} */ var BUTTON_CLASS      = Emma.Popup.button.class;
+    /** @const {string} */ var PANEL_CLASS       = Emma.Popup.panel.class;
+    /** @const {string} */ var CLOSER_CLASS      = Emma.Popup.closer.class;
+    /** @const {string} */ var CONTROLS_CLASS    = Emma.Popup.controls.class;
+    /** @const {string} */ var DEFERRED_CLASS    = Emma.Popup.deferred.class;
     /** @const {string} */ var BUTTON_SELECTOR   = '.' + BUTTON_CLASS;
     /** @const {string} */ var PANEL_SELECTOR    = '.' + PANEL_CLASS;
     /** @const {string} */ var CLOSER_SELECTOR   = '.' + CLOSER_CLASS;
+    /** @const {string} */ var CONTROLS_SELECTOR = '.' + CONTROLS_CLASS;
     /** @const {string} */ var DEFERRED_SELECTOR = '.' + DEFERRED_CLASS;
     /** @const {string} */ var HIDDEN_MARKER     = 'hidden';
 
@@ -62,7 +64,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $popup_closers = $popup_panels.children(CLOSER_SELECTOR);
+    var $popup_closers = $popup_containers.find(CLOSER_SELECTOR);
 
     // ========================================================================
     // Function definitions

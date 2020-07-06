@@ -5,6 +5,9 @@
   item  ||= @item
   image ||= nil
   title ||= t('emma.upload.show.title', name: item&.filename)
+  host  ||= @host
+
+  title = "#{host} - #{title}" if host.present?
 
   unless modal?
     set_page_title(title)

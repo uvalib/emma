@@ -65,7 +65,7 @@ class EditionController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -80,7 +80,7 @@ class EditionController < ApplicationController
     opt   = { seriesId: @series_id, editionId: @edition_id }
     @item = bs_api.get_periodical_edition(**opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end

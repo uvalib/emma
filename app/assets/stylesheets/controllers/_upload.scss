@@ -270,7 +270,7 @@ $upload-entry-gap: 2rem;
             // Action button icon to perform an operation to the current item.
             .icon {
 
-                @extend %button;
+                @extend %button-hover;
 
                 padding:         0 $icon-pad;
                 margin-left:     -$icon-pad;
@@ -343,6 +343,8 @@ form.select-entry {
 
     // noinspection SassScssResolvedByNameOnly
     select {
+
+        @extend %control-shadow;
 
         max-width:     100%;
         padding:       2px;
@@ -446,6 +448,9 @@ form.select-entry {
 
     // Scrollable container for multiple single-line text input entries.
     .input.multi {
+
+        border-radius: 0.5rem;
+
         > .multi {
 
             @include grid(1fr);
@@ -501,7 +506,7 @@ form.select-entry {
     // Scrollable container for multi-select checkboxes.
     .menu.multi {
 
-        border-radius: 0.25rem;
+        border-radius: 0.5rem;
 
         > .multi {
 
@@ -570,6 +575,7 @@ form.select-entry {
     // <input> elements.
     > .value {
 
+        margin:      0;
         font-family: inherit;
         font-size:   large;
         color:       black;

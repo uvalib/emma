@@ -17,7 +17,7 @@
 
         font-weight: bold;
 
-        @media #{$wide-screen} {
+        @media #{$not-narrow-screen} {
             font-size: small;
         }
     }

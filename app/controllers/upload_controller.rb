@@ -70,13 +70,12 @@ class UploadController < ApplicationController
     self.total_items = @list.size
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
   rescue => error
-    flash_failure(error)
-    redirect_back(fallback_location: root_path)
+    show_search_failure(error, root_path)
   end
 
   # == GET /upload/:id
@@ -91,13 +90,18 @@ class UploadController < ApplicationController
     __debug_route
     @item = get_record(@item_id)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
+  rescue SubmitError => error
+    unless application_deployed?
+      @host = PRODUCTION_BASE_URL
+      @item = proxy_get_record(@item_id, @host)
+    end
+    show_search_failure(error, upload_index_path) if @item.blank?
   rescue => error
-    flash_failure(error)
-    redirect_back(fallback_location: upload_index_path)
+    show_search_failure(error, upload_index_path)
   end
 
   # == GET /upload/new
@@ -408,6 +412,35 @@ class UploadController < ApplicationController
   #
   def show_menu?(id_params = nil)
     Array.wrap(id_params || @item_id).include?('SELECT')
+  end
+
+  # Display the failure on the screen -- immediately if modal, or after a
+  # redirect otherwise.
+  #
+  # @param [Exception] error
+  # @param [String]    fallback_location    Redirect fallback if not modal.
+  #
+  def show_search_failure(error, fallback_location)
+    if modal?
+      flash_now_failure(error)
+    else
+      flash_failure(error)
+      redirect_back(fallback_location: fallback_location)
+    end
+  end
+
+  # Get item data from the production service.
+  #
+  # @param [String] rid               Repository ID of the item.
+  # @param [String] host              Base URL of production service.
+  #
+  # @return [Upload, nil]
+  #
+  def proxy_get_record(rid, host)
+    data = Faraday.get("#{host}/upload/#{rid}.json").body.presence
+    data &&= json_parse(data)
+    data &&= data[:entry]
+    new_record(data) if data.present?
   end
 
   # ===========================================================================

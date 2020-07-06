@@ -80,7 +80,7 @@ class Upload < ApplicationRecord
   #
   # @type [String]
   #
-  BULK_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
+  BULK_BASE_URL = PRODUCTION_BASE_URL
 
   # Default user for bulk uploads. # TODO: ?
   #

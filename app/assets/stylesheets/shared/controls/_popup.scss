@@ -7,10 +7,26 @@
     display:  inline-block;
     position: relative;
 
+    // Activation area in the form of text/hyperlink.
     // noinspection SassScssResolvedByNameOnly
-    .control {
+    .control.text {
 
-        @extend %button;
+        color:           -moz-hyperlinktext;
+        color:           -webkit-link;
+        color:           blue;
+        text-decoration: underline;
+        cursor:          pointer;
+
+        &:focus {
+            @extend %focus;
+        }
+    }
+
+    // Activation area in the form of an icon/button.
+    // noinspection SassScssResolvedByNameOnly
+    .control.icon {
+
+        @extend %button-hover;
 
         display:        inline-block;
         margin:         0 0 0 0.5rem;
@@ -33,8 +49,11 @@
         }
     }
 
+    // The panel displaying content which is hidden until activated.
     // noinspection SassScssResolvedByNameOnly
-    .popup {
+    .popup-panel {
+
+        @extend %popup-shadow;
 
         display:          flex;
         flex-direction:   column;
@@ -45,7 +64,7 @@
         border:           0.25rem solid $uva-accent-orange;
         border-top-width: 1.5rem;
         border-radius:    0.75rem;
-        box-shadow:       0.25rem 0.25rem 1rem 0.125rem darkgray;
+        box-shadow:       0.25rem 0.25rem 1rem 0.125rem gray;
 
         &.hidden {
             z-index: $z-hidden;
@@ -78,11 +97,20 @@
             right:      0.75rem;
         }
 
+        &.hidden {
+            z-index: $z-hidden;
+        }
+
+        &:not(.hidden) {
+            z-index: $z-popup;
+        }
+
         //=====================================================================
         // Components
         //=====================================================================
 
-        .closer {
+        // The "X" located in the upper-right corner of the panel's "frame".
+        .closer.icon {
             position:    absolute;
             top:         -1.5rem;
             right:       0.75rem;
@@ -105,6 +133,7 @@
             overflow-y: auto;
         }
 
+        // Container for the popup content.
         iframe {
             border: none;
         }
@@ -112,6 +141,32 @@
         // Temporary deferred-content placeholder.
         .deferred {
             font-size: large;
+        }
+    }
+
+    // Controls at the bottom of the popup panel (at minimum a "Close" button).
+    .popup-controls {
+
+        display:         flex;
+        justify-content: center;
+        margin:          0;
+        flex:            0 0 auto;
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        // noinspection SassScssResolvedByNameOnly
+        button {
+
+            @extend %control-button;
+
+            margin: 1rem auto 0.5rem;
+
+            @media #{$narrow-screen} {
+                margin-top:    0.5rem;
+                margin-bottom: 0.25rem;
+            }
         }
     }
 }

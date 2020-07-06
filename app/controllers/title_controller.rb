@@ -79,7 +79,7 @@ class TitleController < ApplicationController
       self.next_page   = next_page_path(@list, opt)
     end
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -92,7 +92,7 @@ class TitleController < ApplicationController
     __debug_route
     @item = bs_api.get_title(bookshareId: @bookshare_id)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end

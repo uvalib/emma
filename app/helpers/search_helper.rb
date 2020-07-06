@@ -142,24 +142,32 @@ module SearchHelper
   # repository's web site.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #make_link.
+  # @param [Hash]                opt    Passed to #record_popup or #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def source_record_link(item, **opt)
-    id  = CGI.unescape(item.emma_repositoryRecordId)
-    url = item.record_title_url
-    return ERB::Util.h(id) if url.blank?
-
-    origin = item.emma_repository.titleize
-    opt[:title] ||= "View this item on the #{origin} website." # TODO: I18n
-    external_link(id, url, **opt)
+    repo = item.emma_repository
+    if repo&.to_sym == EmmaRepository.default
+      record_popup(item, **opt)
+    elsif (url = item.record_title_url).present?
+      repo = repo&.titleize || 'source repository'             # TODO: I18n
+      opt[:title] ||= "View this item on the #{repo} website." # TODO: I18n
+      rid = CGI.unescape(item.emma_repositoryRecordId)
+      external_link(rid, url, **opt)
+    else
+      rid = CGI.unescape(item.emma_repositoryRecordId)
+      ERB::Util.h(rid)
+    end
   end
 
   # HathiTrust download parameters which cause a prompt for login.
   #
   # @type [String]
   #
+  #--
+  # noinspection SpellCheckingInspection
+  #++
   HT_DOWNLOAD_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
 
   # Make a clickable link to retrieve a remediated file.
@@ -243,6 +251,34 @@ module SearchHelper
     item_details(item, :search, pairs)
   end
 
+  # Create a container with the repository ID displayed as a link but acting as
+  # a popup toggle button and a popup panel which is initially hidden.
+  #
+  # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #popup_container except for:
+  #
+  # @option opt [Hash] :attr            Options for deferred content.
+  #
+  # @see togglePopup() in app/assets/javascripts/feature/popup.js
+  #
+  def record_popup(item, **opt)
+    rid = item.emma_repositoryRecordId
+    opt = append_css_classes(opt, 'record-popup')
+    placeholder_attr = opt.delete(:attr)&.dup || {}
+    opt[:'data-iframe'] = placeholder_attr[:id] ||= "record-frame-#{rid}"
+    opt[:title] ||= 'View this repository record.' # TODO: I18n
+    opt[:control] = { text: ERB::Util.h(rid) }
+    popup_container(**opt) do
+      placeholder_text = 'Loading record...' # TODO: I18n
+      placeholder_opt  = {
+        class:       "iframe #{PopupHelper::POPUP_DEFERRED_CLASS}",
+        'data-path': upload_path(id: rid, modal: true),
+        'data-attr': placeholder_attr.to_json
+      }
+      html_div(placeholder_text, **placeholder_opt)
+    end
+  end
+
   # ===========================================================================
   # :section: Item list (index page) support
   # ===========================================================================
@@ -274,7 +310,7 @@ module SearchHelper
   #
   def search_list_entry_number(item, opt = nil)
     list_entry_number(item, opt) do
-      [upload_edit_icon(item), upload_delete_icon(item) ]
+      [upload_edit_icon(item), upload_delete_icon(item)]
     end
   end
 

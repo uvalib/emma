@@ -54,7 +54,7 @@ class ApiController < ApplicationController
     __debug_route
     @api_results = ApiTesting.run_trials(user: current_user)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -81,7 +81,7 @@ class ApiController < ApplicationController
     else
       @api_result = api_explorer(request.method, path, opt)
       respond_to do |format|
-        format.html { render layout: layout }
+        format.html
         format.json { render_json show_values }
         format.xml  { render_xml  show_values }
       end

@@ -65,7 +65,7 @@ class ArtifactController < ApplicationController
     self.total_items = @list.totalResults
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
@@ -81,7 +81,7 @@ class ArtifactController < ApplicationController
     opt   = { bookshareId: @bookshare_id, format: @format }
     @item = bs_api.get_artifact_metadata(**opt)
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end

@@ -87,7 +87,7 @@ class HomeController < ApplicationController
         else                          401 # Unauthorized
       end
     respond_to do |format|
-      format.html { render layout: layout }
+      format.html
       format.json { render_json show_values(as: :hash)  }
       format.xml  { render_xml  show_values(as: :array) }
     end

@@ -17,25 +17,24 @@
 // Upload action button.
 .uppy-FileInput-btn {
 
-    white-space: pre;
+    // noinspection SassScssResolvedByNameOnly
+    @extend %control-button;
 
-    &:hover {
-        background-color: inherit;
-        border-color:     inherit;
-        color:            inherit;
-    }
+    // Restore some items that %control-button has overridden:
+    margin:      0;
+    padding:     10px 15px;
+    line-height: 1;
+    font-size:   0.85em;
 
     // noinspection SassScssResolvedByNameOnly
     &:not(.disabled):not(.forbidden):hover {
         background-color: $uva-accent-orange;
-        border-color:     $uva-accent-orange;
+        border-color:     $uppy-file-input-text;
+        color:            white;
     }
 
-    // noinspection SassScssResolvedByNameOnly
-    &.disabled,
-    &.forbidden {
-        background-color: $input-disabled-bg;
-        border-color:     $input-disabled-fg;
+    &.disabled:hover, &.forbidden:hover {
+        color: unset;
     }
 }
 

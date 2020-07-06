@@ -14,7 +14,8 @@
   </head>
 
   <body class="<%= page_classes -%>">
-    <main class="layout-content" id="<%= main_id -%>">
+    <main class="layout-content modal" id="<%= main_id -%>">
+      <%= render 'layouts/messages' %>
       <%= yield %>
     </main>
   </body>

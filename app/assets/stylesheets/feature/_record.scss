@@ -1,0 +1,43 @@
+// app/assets/stylesheets/feature/_record.scss
+
+// @use 'shared/controls/popup'; // TODO: SASS 4.0
+
+//=============================================================================
+// Repository record popup control
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+.record-popup {
+
+    @extend .popup-container;
+
+    .control.text {
+        // TODO: ?
+    }
+
+    .popup-panel {
+
+        @media #{$wide-screen} {
+            position: fixed;
+            top:      3rem;
+            bottom:   3rem;
+            left:     3rem;
+            right:    3rem;
+        }
+
+        @media #{$medium-width} {
+            position: fixed;
+            top:      2rem;
+            bottom:   2rem;
+            left:     2rem;
+            right:    2rem;
+        }
+    }
+}
+
+// Reduce unneeded whitespace at the top of the modal page inside an <iframe>.
+body.upload.modal {
+    .layout-content {
+        margin-top: -1rem;
+    }
+}

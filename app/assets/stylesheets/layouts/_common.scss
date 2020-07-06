@@ -44,6 +44,11 @@ body {
         }
     }
 
+    // Give a little extra clearance for the scroll bar.
+    @media #{$medium-width} {
+        padding-right: calc(1.5 * #{$page-padding-x});
+    }
+
     // If the skip-nav menu grows large enough, on certain screens (ones with
     // out search controls) it may extend below the header even when it should
     // be hidden because it has "z-order: -1".  The <body> element can't be

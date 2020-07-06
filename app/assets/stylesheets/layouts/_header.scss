@@ -19,6 +19,7 @@ $search-button-width:    6rem;
 //
 // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 .layout-header {
+
     position:        relative;
     z-index:         $z-raised;
     display:         flex;
@@ -29,6 +30,17 @@ $search-button-width:    6rem;
     padding:         0;
     border-bottom:   $hcm-divider-width solid $header-bg;
     box-shadow:      0 0 1rem -0.25rem $header-bg;
+
+    @media #{$medium-width} {
+
+        > :first-child {
+            padding-top: var(--page-padding);
+        }
+
+        > :last-child {
+            padding-bottom: var(--page-padding);
+        }
+    }
 }
 
 //=============================================================================
@@ -102,7 +114,7 @@ $search-button-width:    6rem;
 // @see LayoutHelper#search_button
 // noinspection SassScssResolvedByNameOnly
 .search-button {
-    @extend %button;
+    @extend %button-hover;
 }
 
 // @see LayoutHelper#advanced_search_button
@@ -113,7 +125,13 @@ $search-button-width:    6rem;
 
     width:            $advanced-toggle-width;
     margin:           0;
+    color:            inherit;
     background-color: $panel-accent;
+    border:           2px outset;
+
+    &:hover {
+        background-color: $panel-accent;
+    }
 }
 
 //=============================================================================
@@ -229,7 +247,7 @@ $search-button-width:    6rem;
                 text-align: right;
             }
 
-            .popup {
+            .popup-panel {
                 @media #{$wide-screen} {
                     top:   2.25rem;
                     left:  unset;
@@ -332,7 +350,7 @@ $search-button-width:    6rem;
     //
     .session {
 
-        @extend %button;
+        @extend %button-hover;
 
         min-width:     max-content;
         max-width:     max-content;
@@ -971,6 +989,7 @@ $search-button-width:    6rem;
         @extend %control-button;
 
         font-size: larger;
+        color:     inherit;
         border:    1.5px solid;
     }
 }

@@ -132,7 +132,7 @@
 // Highlight button on hover.
 //
 // noinspection SassScssResolvedByNameOnly
-%button {
+%button-hover {
 
     cursor: pointer;
 
@@ -152,18 +152,41 @@
 
 // Style like a button.
 //
+// The baseline appearance inherits (conceptually) from .uppy-FileInput-btn.
+// Classes that extend this may need to add "color: inherit" to get the
+// intended color for text (and, by default, borders).
+//
 // noinspection SassScssResolvedByNameOnly
 %control-button {
 
-    @extend %button;
+    @extend %button-hover;
 
-    display:          block;
-    margin:           auto 0;
-    padding:          2px 6px;
-    line-height:      1.125;
-    text-decoration:  none;
-    font-size:        large;
-    border-radius:    6px;
+    // From .uppy-FileInput-btn in node_modules/uppy/dist/uppy.css
+    //margin:           0;
+    //padding:          10px 15px;
+    font-family:        sans-serif;
+    //font-size:        0.85em;
+    color:              $uppy-file-input-text;
+    background:         none;
+    border:             1px solid $uppy-file-input-text;
+    border-radius:      8px;
+    //cursor:           pointer;
+    -webkit-appearance: none;
+
+    display:            block;
+    margin:             auto 0;
+    padding:            2px 6px;
+    line-height:        1.125;
+    white-space:        pre;
+    text-decoration:    none;
+    font-size:          large;
+
+    // noinspection SassScssResolvedByNameOnly
+    &.disabled,
+    &.forbidden {
+        background-color: $input-disabled-bg;
+        border-color:     $input-disabled-fg;
+    }
 }
 
 // Embolden characters while maintaining the width of the text by reducing the
@@ -171,6 +194,26 @@
 %hover-bold {
     font-weight:    bold;
     letter-spacing: -0.04em;
+}
+
+// A pop-out effect for panels.
+%popup-shadow {
+    box-shadow: 0.25rem 0.25rem 1rem 0.125rem gray;
+}
+
+// A subtle pop-out effect for text blocks.
+%block-shadow {
+    box-shadow: 0.25rem 0.25rem 0.25rem -0.0625rem lightgray;
+}
+
+// A very subtle pop-out effect for controls.
+%control-shadow {
+
+    box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray;
+
+    &:focus {
+        box-shadow: none;
+    }
 }
 
 //=============================================================================

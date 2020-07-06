@@ -44,6 +44,29 @@ $uva-medium-gray:    #dadada;
 $uva-text-gray:      #666666;
 $uva-emergency-red:  #df1e43;
 
+// Uppy colors.
+// @see node_modules/uppy/dist/uppy.css
+$uppy-white:               #fff;
+$uppy-blue:                #2275d7;
+$uppy-green:               #1bb240;
+$uppy-red:                 #e32437;
+$uppy-orange:              #f6a623;
+$uppy-light-gray:          #eaeaea;
+$uppy-dark-gray:           #939393;
+$uppy-bg-light:            #fafafa;
+$uppy-bg-dark:             rgba(0, 0, 0, 0.3);
+$uppy-focus-bg-light:      #eceef2;
+$uppy-text:                $uppy-dark-gray;
+$uppy-link-text:           #525252;
+$uppy-hover-text:          #1b5dab;
+$uppy-shadow:              rgb(34, 117, 215);
+$uppy-border:              $uppy-light-gray;
+$uppy-file-input:          #14457f;
+$uppy-file-input-text:     $uppy-file-input;
+$uppy-file-input-bg:       none;
+$uppy-file-input-text-rev: $uppy-white;
+$uppy-file-input-bg-rev:   $uppy-file-input;
+
 // Text colors.
 $error-fg: $uva-emergency-red;
 $debug-fg: hotpink;
@@ -71,7 +94,7 @@ $header-bg:     $uva-blue;
 $panel-bg:      lighter($uva-accent-orange, 90%);
 $panel-border:  lighter($uva-accent-orange, 50%);
 $panel-accent:  lighter($uva-accent-orange, 15%);
-$button-accent: lighter($uva-accent-teal,   50%);
+$button-accent: lighter($uva-accent-teal,   35%);
 $focus-accent:  $button-accent;
 $text-focus:    darker($uva-accent-teal,    10%);
 

@@ -8,7 +8,11 @@
 
 .flash-messages {
 
+    // noinspection SassScssResolvedByNameOnly
     > * {
+
+        @extend %block-shadow;
+
         margin:        1rem 0;
         padding:       1rem;
         overflow-wrap: break-word;

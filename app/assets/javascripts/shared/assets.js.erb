@@ -248,6 +248,34 @@ var Emma = (function() {
         },
 
         // ====================================================================
+        // feature/popup.js
+        //
+        // button.class       Popup activator CSS class.
+        // panel.class        Popup panel CSS class.
+        // closer.class       CSS class signifying a panel close control.
+        // controls.class     CSS class for controls below the panel.
+        // deferred.class     CSS class signifying deferred content.
+        // ====================================================================
+
+        Popup: {
+            button: {
+                class: "<%= PopupHelper::POPUP_BUTTON_CLASS %>"
+            },
+            panel: {
+                class: "<%= PopupHelper::POPUP_PANEL_CLASS %>"
+            },
+            closer: {
+                class: "<%= PopupHelper::POPUP_CLOSER_CLASS %>"
+            },
+            controls: {
+                class: "<%= PopupHelper::POPUP_CONTROLS_CLASS %>"
+            },
+            deferred: {
+                class: "<%= PopupHelper::POPUP_DEFERRED_CLASS %>"
+            }
+        },
+
+        // ====================================================================
         // feature/file-upload.js
         //
         // path.endpoint          Shrine's upload endpoint (the server route to

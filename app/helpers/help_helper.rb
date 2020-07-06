@@ -91,24 +91,29 @@ module HelpHelper
   # @param [Hash]           opt       Passed to #popup_container except for:
   #
   # @option opt [Hash] :attr          Options for deferred content.
+  # @option opt [Hash] :placeholder   Options for transient placeholder.
   #
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
   def help_popup(topic, **opt)
     opt = append_css_classes(opt, 'help-popup')
     opt[:title] ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
-    placeholder_attr = opt.delete(:attr)&.dup || {}
-    placeholder_attr[:id] ||= "help-frame-#{topic}-#{'%06X' % rand(0..100000)}"
-    opt[:'data-iframe'] = placeholder_attr[:id]
-    placeholder_text = 'Loading help topic...' # TODO: I18n
+
+    attr = opt.delete(:attr)&.dup || {}
+    id   = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
+    opt[:'data-iframe'] = attr[:id] = id
+
     placeholder_opt  = {
-      class:       'deferred iframe',
+      text:        'Loading help topic...', # TODO: I18n
+      class:       "iframe #{PopupHelper::POPUP_DEFERRED_CLASS}",
       'data-path': help_path(id: topic, modal: true),
-      'data-attr': placeholder_attr.to_json
+      'data-attr': attr.to_json
     }.compact
-    popup_container(**opt) do
-      html_div(placeholder_text, **placeholder_opt)
-    end
+    merge_html_options!(placeholder_opt, opt.delete(:placeholder))
+    placeholder = placeholder_opt.delete(:text)
+    placeholder = html_div(placeholder, **placeholder_opt)
+
+    popup_container(**opt) { placeholder }
   end
 
   # Values for a specific help topic.

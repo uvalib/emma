@@ -192,6 +192,9 @@
 
             // noinspection CssReplaceWithShorthandSafely
             > * {
+
+                @extend %control-shadow;
+
                 display:             block;
                 margin:              $element-y-margin $element-x-margin;
                 margin-right:        1rem;

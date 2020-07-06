@@ -26,6 +26,12 @@ BUILD_VERSION =
   Dir['buildtag.*'].map { |name| name.to_s.sub(/^.*buildtag\./, '') }.join(',')
     .tap { |result| result.replace('unknown') if result.empty? }
 
+# For use by the application in desktop (non-deployed) testing.
+#
+# @type [String]
+#
+PRODUCTION_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
+
 # =============================================================================
 # Support methods
 # =============================================================================
