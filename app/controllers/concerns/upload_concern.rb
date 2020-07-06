@@ -685,7 +685,7 @@ module UploadConcern
   # Add the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload>] items
-  # @param [Hash]          atomic
+  # @param [Boolean]       atomic
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #

@@ -131,15 +131,88 @@ $(document).on('turbolinks:load', function() {
     // Actions
     // ========================================================================
 
-    // Setup Uppy any <input type="file"> elements (unless this page is being
-    // reached via browser history).
+    // Setup Uppy for any <input type="file"> elements (unless this page is
+    // being reached via browser history or this is a bulk operations page).
     $file_upload_form.each(function() {
         var $form = $(this);
-        if (!isUppyInitialized($form)) {
+        if (isBulkOperationForm($form)) {
+            initializeBulkForm($form);
+        } else if (!isUppyInitialized($form)) {
             initializeUppy($form[0]);
             initializeForm($form);
         }
     });
+
+    // ========================================================================
+    // Functions - Bulk operations
+    // ========================================================================
+
+    /**
+     * Initialize form display and event handlers for bulk operations.
+     *
+     * @param {Selector} [form]       Default: *this*.
+     */
+    function initializeBulkForm(form) {
+
+        var $form = $(form || this);
+
+        // Setup buttons.
+        setupSubmitButton($form);
+        setupCancelButton($form);
+        setupFileSelectButton($form);
+
+        // Start with submit disabled until a bulk control file is supplied.
+        disableSubmit($form);
+
+        // When a file has been selected, display its name and enable submit.
+        var $input = fileSelectContainer($form).children('input[type="file"]');
+        handleEvent($input, 'change', setBulkFilename);
+
+        /**
+         * Update the form after the bulk control file is selected.
+         *
+         * @param {Event} event
+         */
+        function setBulkFilename(event) {
+            var target   = event.target || event || this;
+            var filename = ((target.files || [])[0] || {}).name;
+            if (isPresent(filename)) {
+                displayBulkFilename(filename, $form);
+                fileSelectButton($form).removeClass('best-choice');
+                enableSubmit($form);
+            }
+        }
+    }
+
+    /**
+     * Display the name of the bulk upload control file.
+     *
+     * @param {String}   filename
+     * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
+     */
+    function displayBulkFilename(filename, element) {
+        var $element = uploadedFilenameDisplay(element);
+        if (isPresent(filename) && isPresent($element)) {
+            var $filename = $element.find('.filename');
+            if (isPresent($filename)) {
+                $filename.text(filename);
+            } else {
+                $element.text(filename);
+            }
+            $element.addClass('complete');
+        }
+    }
+
+    /**
+     * Indicate whether this is a bulk operation form.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @return {boolean}
+     */
+    function isBulkOperationForm(form) {
+        return formElement(form).hasClass('bulk');
+    }
 
     // ========================================================================
     // Functions - Initialization
@@ -253,7 +326,7 @@ $(document).on('turbolinks:load', function() {
         $element.find('.uppy-FileInput-input').attr('tabindex', -1);
 
         // Set the tooltip for the file select button.
-        $element.find('button').attr('title', fileSelectTooltip($form));
+        $element.find('button,label').attr('title', fileSelectTooltip($form));
     }
 
     /**
@@ -1894,14 +1967,11 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function formElement(form) {
-        var $form = $(form);
-        if (!$form.hasClass(FORM_CLASS)) {
+        var $form = form && $(form);
+        if ($form && !$form.hasClass(FORM_CLASS)) {
             $form = $form.parents('.' + FORM_CLASS).first();
         }
-        if (isMissing($form)) {
-            $form = $file_upload_form.first();
-        }
-        return $form;
+        return $form || $file_upload_form.first();
     }
 
     /**
@@ -2041,7 +2111,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fileSelectButton(form) {
-        return fileSelectContainer(form).children('button');
+        return fileSelectContainer(form).children('button,label');
     }
 
     /**
@@ -2189,29 +2259,31 @@ $(document).on('turbolinks:load', function() {
     /**
      * The label for the Submit button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_submit]   Default: `canSubmit()`.
      *
      * @return {string}
      */
-    function submitLabel(form) {
-        var $form  = formElement(form);
-        var button = assetObject($form).submit;
-        var data   = canSubmit($form) ? button.enabled : button.disabled;
-        return data.label;
+    function submitLabel(form, can_submit) {
+        var $form = formElement(form);
+        var op    = assetObject($form).submit || {};
+        var state = buttonProperties($form, op, 'submit', can_submit);
+        return state && state.label || op.label;
     }
 
     /**
      * The tooltip for the Submit button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_submit]   Default: `canSubmit()`.
      *
      * @return {string}
      */
-    function submitTooltip(form) {
-        var $form  = formElement(form);
-        var button = assetObject($form).submit;
-        var data   = canSubmit($form) ? button.enabled : button.disabled;
-        return data.tooltip;
+    function submitTooltip(form, can_submit) {
+        var $form = formElement(form);
+        var op    = assetObject($form).submit || {};
+        var state = buttonProperties($form, op, 'submit', can_submit);
+        return state && state.tooltip || op.tooltip;
     }
 
     /**
@@ -2222,7 +2294,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function submitReadyTooltip(form) {
-        return assetObject(form).submit.enabled.tooltip;
+        return submitTooltip(form, true);
     }
 
     /**
@@ -2233,63 +2305,67 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function submitNotReadyTooltip(form) {
-        return assetObject(form).submit.disabled.tooltip;
+        return submitTooltip(form, false);
     }
 
     /**
      * The current label for the Cancel button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
      * @return {string}
      */
-    function cancelLabel(form) {
-        var $form  = formElement(form);
-        var button = assetObject($form).cancel;
-        var data   = canCancel($form) ? button.enabled : button.disabled;
-        return data.label;
+    function cancelLabel(form, can_cancel) {
+        var $form = formElement(form);
+        var op    = assetObject($form).cancel || {};
+        var state = buttonProperties($form, op, 'cancel', can_cancel);
+        return state && state.label || op.label;
     }
 
     /**
      * The current tooltip for the Cancel button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
      * @return {string}
      */
-    function cancelTooltip(form) {
-        var $form  = formElement(form);
-        var button = assetObject($form).cancel;
-        var data   = canCancel($form) ? button.enabled : button.disabled;
-        return data.tooltip;
+    function cancelTooltip(form, can_cancel) {
+        var $form = formElement(form);
+        var op    = assetObject($form).cancel || {};
+        var state = buttonProperties($form, op, 'cancel', can_cancel);
+        return state && state.tooltip || op.tooltip;
     }
 
     /**
      * The current label for the file select button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_select]   Default: `canSelect()`.
      *
      * @return {string}
      */
-    function fileSelectLabel(form) {
-        var $form  = formElement(form);
-        var branch = assetObject($form).select;
-        var data   = canSelect($form) ? branch.enabled : branch.disabled;
-        return data.label;
+    function fileSelectLabel(form, can_select) {
+        var $form = formElement(form);
+        var op    = assetObject($form).select || {};
+        var state = buttonProperties($form, op, 'select', can_select);
+        return state && state.label || op.label;
     }
 
     /**
      * The current tooltip for the file select button.
      *
-     * @param {Selector} [form]       Passed to {@link formElement}.
+     * @param {Selector} [form]         Passed to {@link formElement}.
+     * @param {boolean}  [can_select]   Default: `canSelect()`.
      *
      * @return {string}
      */
-    function fileSelectTooltip(form) {
-        var $form  = formElement(form);
-        var button = assetObject($form).select;
-        var data   = canSelect($form) ? button.enabled : button.disabled;
-        return data.tooltip;
+    function fileSelectTooltip(form, can_select) {
+        var $form = formElement(form);
+        var op    = assetObject($form).select || {};
+        var state = buttonProperties($form, op, 'select', can_select);
+        return state && state.tooltip || op.tooltip;
     }
 
     /**
@@ -2300,7 +2376,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function fileSelectDisabledLabel(form) {
-        return assetObject(form).select.disabled.label;
+        return fileSelectLabel(form, false);
     }
 
     /**
@@ -2311,7 +2387,33 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function fileSelectDisabledTooltip(form) {
-        return assetObject(form).select.disabled.tooltip;
+        return fileSelectTooltip(form, false);
+    }
+
+    /**
+     * Get label/tooltip properties for the indicated operation depending on
+     * whether it is enabled or disabled.
+     *
+     * @param {Selector} [form]         Passed to {@link assetObject}.
+     * @param {OperationProperties} [values]    Pre-fetched property values.
+     * @param {string}   [op_name]      Name of the operation.
+     * @param {boolean}  [can_perform]  Pre-determined enabled/disabled state.
+     *
+     * @returns {ElementProperties|null}
+     */
+    function buttonProperties(form, values, op_name, can_perform) {
+        var $form   = formElement(form);
+        var perform = can_perform;
+        if (notDefined(perform)) {
+            switch (op_name) {
+                case 'submit': perform = canSubmit($form); break;
+                case 'cancel': perform = canCancel($form); break;
+                case 'select': perform = canSelect($form); break;
+                default: console.error('Invalid operation "' + op_name + '"');
+            }
+        }
+        var op = isPresent(values) ? values : assetObject($form)[op_name];
+        return op && (perform ? op.enabled : op.disabled);
     }
 
     /**
@@ -2319,29 +2421,18 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @return {{
-     *      submit: {
-     *          label:    string,
-     *          tooltip:  string,
-     *          enabled:  { label: string, tooltip: string },
-     *          disabled: { label: string, tooltip: string }
-     *      }
-     *      cancel: {
-     *          label:    string,
-     *          tooltip:  string,
-     *          enabled:  { label: string, tooltip: string },
-     *          disabled: { label: string, tooltip: string }
-     *      },
-     *      select: {
-     *          label:    string,
-     *          tooltip:  string,
-     *          enabled:  { label: string, tooltip: string },
-     *          disabled: { label: string, tooltip: string }
-     *      }
-     * }}
+     * @return {ActionProperties}
      */
     function assetObject(form) {
-        return isUpdateForm(form) ? Emma.Upload.Update : Emma.Upload.Create;
+        var $form  = formElement(form);
+        var action = Emma.Upload.Action;
+        var result;
+        if (isBulkOperationForm($form)) {
+            result = isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
+        } else {
+            result = isUpdateForm($form) ? action.edit : action.new;
+        }
+        return result;
     }
 
     // ========================================================================

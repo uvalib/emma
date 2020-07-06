@@ -583,7 +583,7 @@ module Emma::Common
   def html_id(text)
     # noinspection RubyYardParamTypeMatch
     text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
-    text.to_s.tr(' ', '_').underscore.camelize
+    text.to_s.delete('[]').tr(' ', '_').underscore.camelize
   end
 
   # ===========================================================================

@@ -18,6 +18,32 @@
  */
 var OverrideScriptSettings = OverrideScriptSettings || {};
 
+/**
+ * @typedef {{
+ *  label:   string|null,
+ *  tooltip: string|null,
+ *  class:   string|null
+ * }} ElementProperties
+ */
+
+/**
+ * @typedef {{
+ *  label:    string|null,
+ *  tooltip:  string|null,
+ *  class:    string|null,
+ *  enabled:  ElementProperties|null,
+ *  disabled: ElementProperties|null
+ * }} OperationProperties
+ */
+
+/**
+ * @typedef {{
+ *  submit:  OperationProperties,
+ *  cancel:  OperationProperties,
+ *  select:  OperationProperties|null
+ * }} ActionProperties
+ */
+
 // noinspection LongLine
 /**
  * Values "imported" from the Rails project via the asset pipeline.
@@ -240,11 +266,8 @@ var Emma = (function() {
         //
         // Status                 Status marker label/tooltips.
         //
-        // Create                 Form action label/tooltips for new/create.
-        //
-        // Update                 Form action labels/tooltips for edit/update.
-        //
-        // Delete                 Form action labels/tooltips for delete.
+        // Action                 Form action label/tooltips for controller
+        //                          actions.
         //
         // ====================================================================
 
@@ -261,10 +284,26 @@ var Emma = (function() {
             mime: {
                 to_fmt:      o$('<%= FileNaming.mime_to_fmt.to_json %>')
             },
+            /**
+             * @type {{
+             *     required:    ElementProperties,
+             *     invalid:     ElementProperties,
+             *     valid:       ElementProperties,
+             *     nominal:     ElementProperties
+             * }};
+             */
             Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
-            Create: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:new].to_json %>'),
-            Update: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:edit].to_json %>'),
-            Delete: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES[:delete].to_json %>')
+            /**
+             * @type {{
+             *     new:         ActionProperties,
+             *     edit:        ActionProperties,
+             *     delete:      ActionProperties,
+             *     bulk_new:    ActionProperties,
+             *     bulk_edit:   ActionProperties,
+             *     bulk_delete: ActionProperties
+             * }};
+             */
+            Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>')
         }
 
     };

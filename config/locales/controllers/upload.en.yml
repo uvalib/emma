@@ -180,7 +180,7 @@ en:
             tooltip:    'Do nothing and return to the previous screen.'
           disabled:
             tooltip:    'Not able to cancel at this point'
-        select:
+        select:         &GENERIC_SELECT
           label:        'Select file'
           enabled:
             tooltip:    'Choose a file from your workstation.'
@@ -217,17 +217,18 @@ en:
           Choose a file to upload and provide any information about the entry
           that could not be determine from the contents of the file:
         submit:
+          <<: *GENERIC_SUBMIT
           label:        'Upload'
           enabled:
             tooltip:    'Create the new EMMA entry'
           disabled:
             tooltip:    'Required information is still needed'
         cancel:
-          label:        'CANCEL'
+          <<: *GENERIC_CANCEL
           enabled:
             tooltip:    'Do not create this entry (or start over)'
         select:
-          label:        'Select file'
+          <<: *GENERIC_SELECT
           enabled:
             tooltip:    'As many fields as possible will be filled-in by information extracted from your file.'
         failure:        'Could not create entry: %{error}'
@@ -246,16 +247,18 @@ en:
           Provide an update version of your file, or modify fields that need to
           be corrected:
         submit:
+          <<: *GENERIC_SUBMIT
           label:        'Update'
           enabled:
             tooltip:    'Modify this EMMA entry'
           disabled:
             tooltip:    'No valid changes have been made yet'
         cancel:
-          label:        'CANCEL'
+          <<: *GENERIC_CANCEL
           enabled:
             tooltip:    'Discard these changes.'
         select:
+          <<: *GENERIC_SELECT
           label:        'Replacement file'
           enabled:
             tooltip:    'Provide an updated version of this file.'
@@ -279,13 +282,12 @@ en:
           is a compelling reason to omit an item from the EMMA search index,
           please contact an EMMA administrator.
         submit:
+          <<: *GENERIC_SUBMIT
           label:        'Delete'
           enabled:
             tooltip:    'Remove this entry from EMMA.'
-          disabled:
-            tooltip:    'Required information is still needed'
         cancel:
-          label:        'CANCEL'
+          <<: *GENERIC_CANCEL
           enabled:
             tooltip:    'Keep this EMMA entry.'
         failure:        'Could not remove EMMA entry: %{error}'
@@ -319,6 +321,7 @@ en:
         success:        'Created EMMA entry for: %{files}'
         failure:        'Could not create entries: %{error}'
         submit:         &BULK_SUBMIT
+          <<: *GENERIC_SUBMIT
           label:        'Begin'
           enabled:
             tooltip:    'Submit the data file to begin uploading'
@@ -326,6 +329,8 @@ en:
             tooltip:    'First provide a data file'
         cancel:         &BULK_CANCEL
           <<: *GENERIC_CANCEL
+        select:         &BULK_SELECT
+          <<: *GENERIC_SELECT
         <<: *EXPERIMENTAL
 
       bulk_edit:
@@ -345,6 +350,8 @@ en:
           <<: *BULK_SUBMIT
         cancel:
           <<: *BULK_CANCEL
+        select:
+          <<: *BULK_SELECT
         <<: *EXPERIMENTAL
 
       bulk_delete:
@@ -365,6 +372,7 @@ en:
           the checkbox above is checked, then repository IDs which are not
           found in EMMA can still be removed from the index.
         submit:
+          <<: *BULK_SUBMIT
           label:        'Continue'
           enabled:
             tooltip:    'Validate entries to be removed.'

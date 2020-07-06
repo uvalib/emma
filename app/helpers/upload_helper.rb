@@ -663,6 +663,7 @@ module UploadHelper
     opt[:autocomplete] = 'off'
 
     html_div(class: "file-upload-container #{action}") do
+      # @type [ActionView::Helpers::FormBuilder] f
       form_with(model: item, **opt) do |f|
         data_opt = { class: 'upload-hidden' }
 
@@ -712,10 +713,9 @@ module UploadHelper
   #
   def upload_submit_button(**opt)
     opt    = prepend_css_classes(opt, 'submit-button', 'uppy-FileInput-btn')
-    label  = opt.delete(:label)
     action = (opt.delete(:action) || params[:action])&.to_sym
     values = UPLOAD_ACTION_VALUES[action]
-    label       ||= values[:submit][:label]
+    label  = opt.delete(:label) || values[:submit][:label]
     opt[:title] ||= values[:submit][:disabled][:tooltip]
     # noinspection RubyYardReturnMatch
     submit_tag(label, opt)
@@ -735,15 +735,9 @@ module UploadHelper
   #
   def upload_cancel_button(**opt)
     opt    = prepend_css_classes(opt, 'cancel-button', 'uppy-FileInput-btn')
-    label  = opt.delete(:label)
     action = (opt.delete(:action) || params[:action])&.to_sym
     values = UPLOAD_ACTION_VALUES[action]
-
-    # Get button attributes.
-    label       ||= values[:cancel][:label]
-    opt[:title] ||= values[:cancel][:tooltip]
-    opt[:type]  ||= 'reset'
-
+    label  = opt.delete(:label) || values[:cancel][:label]
     # Define the path for the cancel action.
     opt[:'data-path'] = opt.delete(:url)
     opt[:'data-path'] ||=
@@ -753,7 +747,8 @@ module UploadHelper
         when :edit   then edit_select_upload_path
         else              upload_index_path
       end
-
+    opt[:title] ||= values[:cancel][:tooltip]
+    opt[:type]  ||= 'reset'
     button_tag(label, opt)
   end
 
@@ -952,13 +947,16 @@ module UploadHelper
   #
   def upload_delete_submit(*items, **opt)
     opt, html_opt = partition_options(opt, :label, :force)
-    label = opt[:label] || UPLOAD_ACTION_VALUES[:delete][:submit][:label]
-    ids   = Upload.collect_ids(*items).join(',').presence
-    url   = ids ? upload_path(**opt.slice(:force).merge!(id: ids)) : ''
+    action = (opt.delete(:action) || params[:action])&.to_sym
+    values = UPLOAD_ACTION_VALUES[action]
+    label  = opt.delete(:label) || values[:submit][:label]
+    ids    = Upload.collect_ids(*items).join(',').presence
+    url    = ids ? upload_path(**opt.slice(:force).merge!(id: ids)) : ''
     prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
     append_css_classes!(html_opt, (url.presence ? 'best-choice' : 'forbidden'))
-    html_opt[:'aria-role'] ||= 'button'
-    html_opt[:method]      ||= :delete
+    html_opt[:title]  ||= values[:submit][:disabled][:tooltip]
+    html_opt[:role]   ||= 'button'
+    html_opt[:method] ||= :delete
     button_to(label, url, **html_opt)
   end
 
@@ -977,7 +975,7 @@ module UploadHelper
   end
 
   # ===========================================================================
-  # :section: Bulk new/edit/delete pages
+  # :section: Bulk new/edit pages
   # ===========================================================================
 
   public
@@ -996,7 +994,7 @@ module UploadHelper
   #
   def bulk_upload_form(label: nil, action: nil, **opt)
     action = (action || params[:action])&.to_sym
-    opt    = prepend_css_classes(opt, "file-bulk-upload-form #{action}")
+    opt    = prepend_css_classes(opt, "file-upload-form bulk #{action}")
     cancel = opt.delete(:cancel)
 
     # noinspection RubyCaseWithoutElseBlockInspection
@@ -1012,18 +1010,50 @@ module UploadHelper
     opt[:autocomplete] = 'off'
 
     html_div(class: "file-upload-container bulk #{action}") do
+      # @type [ActionView::Helpers::FormBuilder] f
       form_with(**opt) do |f|
         html_div(class: 'controls') do
           tray = []
           tray << upload_submit_button(action: action, label: label)
           tray << upload_cancel_button(action: action, url: cancel)
-          tray << f.file_field(:source)
+          tray << bulk_upload_file_select(f, :source)
           tray << upload_filename_display
           html_div(safe_join(tray), class: 'button-tray')
         end
       end
     end
   end
+
+  # bulk_upload_file_select
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           method
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see ActionView::Helpers::FormBuilder#label
+  # @see ActionView::Helpers::FormBuilder#file_field
+  #
+  def bulk_upload_file_select(f, method, **opt)
+    l_opt = { class: 'file-select', role: 'button', tabindex: 0 }
+    l_opt = merge_html_options(opt, l_opt)
+    label = f.label(method, 'Select', l_opt) # TODO: I18n
+
+    i_opt = { class: 'uppy-FileInput-btn', tabindex: -1 }
+    i_opt = merge_html_options(opt, i_opt)
+    input = f.file_field(method, i_opt)
+
+    html_div(class: 'uppy-FileInput-container bulk') do
+      label << input
+    end
+  end
+
+  # ===========================================================================
+  # :section: Bulk delete page
+  # ===========================================================================
+
+  public
 
   BULK_DELETE_FORCE_LABEL = # TODO: I18n
     'Attempt to remove index entries for items not in the database?'
@@ -1047,7 +1077,7 @@ module UploadHelper
   def bulk_delete_form(label: nil, force: false, ids: nil, **opt)
     action = :bulk_delete
     ids    = Array.wrap(ids).compact.presence
-    opt    = prepend_css_classes(opt, 'file-bulk-upload-delete')
+    opt    = prepend_css_classes(opt, 'file-upload-delete bulk')
     cancel = opt.delete(:cancel)
     opt[:url]          = delete_select_upload_path
     opt[:method]     ||= :get
@@ -1055,6 +1085,7 @@ module UploadHelper
     opt[:local]        = true # Turns off "data-remote='true'".
 
     html_div(class: "file-upload-container bulk #{action}") do
+      # @type [ActionView::Helpers::FormBuilder] f
       form_with(**opt) do |f|
         force_checkbox =
           html_div(class: 'line') do
