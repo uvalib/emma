@@ -21,6 +21,10 @@ en:
 
       # =======================================================================
       # Fields
+      #
+      # NOTES
+      # [1] If emma_webPageLink is present it is used as the URL for the link
+      #     displayed for emma_repositoryRecordId; @see #record_title_url.
       # =======================================================================
 
       fields:                               &SEARCH_FIELDS
@@ -53,7 +57,7 @@ en:
         s_accessModeSufficient:             'Sufficient Mode'
         s_accessibilityAPI:                 'Accessibility API'
         s_accessibilitySummary:             'Accessibility Summary'
-        emma_webPageLink:                   'Details Link'
+        # emma_webPageLink:                 'Details Link' # NOTE [1]
         emma_repositoryRecordId:            'Repository Record ID'
         emma_retrievalLink:                 'Retrieval Link'
 

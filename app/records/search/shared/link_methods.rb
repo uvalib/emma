@@ -12,6 +12,7 @@ __loading_begin(__FILE__)
 # @attr [DublinCoreFormat]  dc_format
 # @attr [EmmaRepository]    emma_repository
 # @attr [String]            emma_repositoryRecordId
+# @attr [String]            emma_webPageLink
 # @attr [String]            emma_retrievalLink
 #
 module Search::Shared::LinkMethods
@@ -27,12 +28,16 @@ module Search::Shared::LinkMethods
 
   # URL of the associated work on the web site of the original repository.
   #
+  # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
+  # manufactured from "en.emma.source.*.title_path".
+  #
   # @raise [StandardError]            If #REPOSITORY entry is invalid.
   #
   # @return [String]
   # @return [nil]
   #
   def record_title_url
+    return emma_webPageLink if emma_webPageLink.present?
     src   = emma_repository&.to_sym
     entry = REPOSITORY[src].presence or raise 'invalid source'
     path  = entry[:title_path]       or raise 'no title_path'
