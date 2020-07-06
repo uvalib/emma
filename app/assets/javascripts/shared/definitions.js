@@ -257,6 +257,18 @@ function htmlDecode(text) {
     return res;
 }
 
+/**
+ * Toggle the presence of a CSS class for one or more disjoint elements.
+ *
+ * @param {Selector|Array} selectors
+ * @param {string}         css_class
+ * @param {boolean}        [setting]
+ */
+function toggleClass(selectors, css_class, setting) {
+    var part = (selectors instanceof Array) ? selectors : [selectors];
+    part.forEach(function(e) { $(e).toggleClass(css_class, setting); });
+}
+
 // ============================================================================
 // Function definitions - URL
 // ============================================================================
@@ -467,6 +479,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
     // Attach the handler to any remaining elements, ensuring that the
     // handler is not added twice.
 
+    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
     function handler(event) {
         var key = event.keyCode || event.which;
         if (key === CHAR.Enter) {

@@ -145,6 +145,7 @@ en:
           tooltip:      'The provided value is invalid.'
         valid:
           label:        "\u2714" # HEAVY CHECK MARK
+          tooltip:      'The provided value is valid.'
         nominal:
           label:        "\u2714" # HEAVY CHECK MARK
 

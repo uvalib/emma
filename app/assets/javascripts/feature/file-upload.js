@@ -109,7 +109,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selectors for input fields.
      *
-     * @type {string[]}
+     * @constant {string[]}
      */
     var FORM_FIELD_TYPES = [
         'select',
@@ -123,9 +123,41 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for input fields.
      *
-     * @type {string}
+     * @constant {string}
      */
     var FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
+
+    /**
+     * @typedef  {Object} Relationship
+     * @property {string}           name
+     * @property {boolean|function} [required]
+     * @property {boolean|function} [unrequired]
+     * @property {string}           [required_val]
+     * @property {string}           [unrequired_val]
+     */
+
+    /**
+     * Interrelated elements.  For example:
+     *
+     * If "rem_complete" is set to "true", then "rem_coverage" is no longer
+     * required.  Conversely, if "rem_coverage" is given a value then that
+     * implies that "rem_complete" is "false".
+     *
+     * @constant {{rem_coverage: Relationship, rem_complete: Relationship}}
+     */
+    var FIELD_RELATIONSHIP = {
+        rem_complete: {
+            name:           'rem_coverage',
+            required:       function() { return $(this).val() !== 'true'; },
+            unrequired_val: ''
+        },
+        rem_coverage: {
+            name:           'rem_complete',
+            required:       function() { return isMissing($(this).val()); },
+            required_val:   '',
+            unrequired_val: 'false'
+        }
+    };
 
     // ========================================================================
     // Actions
@@ -945,6 +977,13 @@ $(document).on('turbolinks:load', function() {
         } else {
             updateTextInputField($input, new_value, init);
         }
+
+        // Update field(s) whose status depends on the current field.
+        var this_field = $input.attr('name');
+        var related    = FIELD_RELATIONSHIP[this_field];
+        if (isPresent(related)) {
+            updateRelatedField($input, related);
+        }
     }
 
     /**
@@ -1153,6 +1192,90 @@ $(document).on('turbolinks:load', function() {
         }
     }
 
+    // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS
+    /**
+     * updateRelatedField
+     *
+     * @param {string|jQuery}       name
+     * @param {string|Relationship} other_name
+     */
+    function updateRelatedField(name, other_name) {
+        if (isMissing(name)) {
+            console.error('updateRelatedField: missing primary argument');
+            return;
+        } else if (isMissing(other_name)) {
+            return;
+        }
+
+        // Determine the element for the named field.
+        var $form = formElement();
+        var this_name, $this_input;
+        if (typeof name === 'string') {
+            this_name   = name;
+            $this_input = $form.find('[name="' + this_name  + '"]');
+        } else {
+            $this_input = $(name);
+            this_name   = $this_input.attr('name');
+        }
+
+        /** @type {Relationship} */
+        var other;
+        /** @type {boolean|string} */
+        var error;
+        if (typeof other_name === 'object') {
+            other = $.extend({}, other_name);
+            error = isMissing(other) && 'empty secondary argument';
+        } else {
+            other = FIELD_RELATIONSHIP[this_name];
+            error = isMissing(other) && ('no table entry for ' + this_name);
+        }
+        if (error) {
+            console.error('updateRelatedField:', error);
+            return;
+        }
+
+        // Toggle state of the related element.
+        var $other_input = $form.find('[name="' + other.name  + '"]');
+        if (isTrue(other.required) || isFalse(other.unrequired)) {
+            $other_input.attr('data-required', true);
+            if (isDefined(other.required_val)) {
+                $other_input.val(other.required_val);
+            }
+        } else if (isTrue(other.unrequired) || isFalse(other.required)) {
+            $other_input.attr('data-required', false);
+            if (isDefined(other.unrequired_val)) {
+                $other_input.val(other.unrequired_val);
+            }
+        }
+        updateFieldAndLabel($other_input, $other_input.val());
+
+        // ====================================================================
+        // Functions
+        // ====================================================================
+
+        function isTrue(v) {
+            var result = v;
+            if (typeof result === 'function') {
+                result = result.call($this_input);
+            }
+            if (typeof result !== 'boolean') {
+                result = (String(result).toLowerCase() === 'true');
+            }
+            return result;
+        }
+
+        function isFalse(v) {
+            var result = v;
+            if (typeof result === 'function') {
+                result = result.call($this_input);
+            }
+            if (typeof result !== 'boolean') {
+                result = (String(result).toLowerCase() !== 'false');
+            }
+            return !result;
+        }
+    }
+
     /**
      * Update the input field and label for a <select>, <textarea>, or
      * <input type="text">.
@@ -1174,29 +1297,31 @@ $(document).on('turbolinks:load', function() {
             var name     = $input.attr('name');
             var $label   = $input.siblings('label[for="' + name + '"]');
             var $status  = $label.find('.status-marker');
-            var required = $input.attr('data-required');
+            var parts    = [$input, $label, $status];
+            var required = ($input.attr('data-required') === 'true');
             var missing  = isEmpty(values);
             var invalid  = missing; // TODO: per-field validation
             var valid    = !invalid && !missing;
 
+            // Establish the baseline label icon.
+            if (required) {
+                setRequired($status);
+            } else {
+                unsetRequired($status);
+            }
+            toggleClass(parts, 'required', required);
 
             // Manage positive indication of *validity* for a field that has
             // been supplied with a value (or had a value removed).
-            if (valid) {
-                $input.addClass('valid');
-                $label.addClass('valid');
-                $status.addClass('valid');
-            } else {
-                $input.removeClass('valid');
-                $label.removeClass('valid');
-                $status.removeClass('valid');
-            }
+            toggleClass(parts, 'valid', valid);
 
             // Manage positive indication of *invalidity* for an optional field
             // with an incorrect value or a required field without a correct
             // value.
             if (invalid && (!required || !missing)) {
                 setInvalid($status);
+            } else if (valid) {
+                setValid($status);
             } else {
                 unsetInvalid($status);
             }
@@ -1208,16 +1333,64 @@ $(document).on('turbolinks:load', function() {
                     restoreTooltip($status);
                 }
             }
-            if (invalid) {
-                $input.addClass('invalid');
-                $label.addClass('invalid');
-                $status.addClass('invalid');
-            } else {
-                $input.removeClass('invalid');
-                $label.removeClass('invalid');
-                $status.removeClass('invalid');
-            }
+            toggleClass(parts, 'invalid', invalid);
         }
+    }
+
+    /**
+     * Change a status marker to indicate a field with a required value.
+     *
+     * @param {Selector} element
+     */
+    function setRequired(element) {
+        setIcon(element, Emma.Upload.Status.required.label);
+    }
+
+    /**
+     * Change a status marker to indicate a field with an unrequired value.
+     *
+     * @param {Selector} element
+     */
+    function unsetRequired(element) {
+        restoreIcon(element);
+    }
+
+    /**
+     * Change a status marker to indicate a field with an invalid value.
+     *
+     * @param {Selector} element
+     */
+    function setInvalid(element) {
+        setIcon(element, Emma.Upload.Status.invalid.label);
+    }
+
+    /**
+     * Restore a status marker after the associated input value is no longer
+     * invalid.
+     *
+     * @param {Selector} element
+     */
+    function unsetInvalid(element) {
+        restoreIcon(element);
+    }
+
+    /**
+     * Change a status marker to indicate a field with an invalid value.
+     *
+     * @param {Selector} element
+     */
+    function setValid(element) {
+        setIcon(element, Emma.Upload.Status.valid.label);
+    }
+
+    /**
+     * Restore a status marker after the associated input value is no longer
+     * invalid.
+     *
+     * @param {Selector} element
+     */
+    function unsetValid(element) {
+        restoreIcon(element);
     }
 
     /**
@@ -1270,42 +1443,6 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Change a status marker to indicate a field with an invalid value.
-     *
-     * @param {Selector} element
-     * @param {string}   [text]       Default: Emma.Upload.InputInvalid.label
-     */
-    function setInvalid(element, text) {
-        var $element = $(element || this);
-        var new_icon = text || Emma.Upload.Status.invalid.label;
-        var old_icon = $element.attr('data-icon');
-        if (isMissing(old_icon)) {
-            // noinspection ReuseOfLocalVariableJS
-            old_icon = $element.text();
-            if (isPresent(old_icon)) {
-                $element.attr('data-icon', old_icon);
-            }
-        }
-        $element.text(new_icon);
-    }
-
-    /**
-     * Restore a status marker after the associated input value is no longer
-     * invalid.
-     *
-     * @param {Selector} element
-     */
-    function unsetInvalid(element) {
-        var $element = $(element || this);
-        var old_icon = $element.attr('data-icon');
-        if (isPresent(old_icon)) {
-            $element.text(old_icon);
-        } else {
-            $element.empty();
-        }
-    }
-
-    /**
      * Translate a value for a <textarea> into a string.
      *
      * @param {string|string[]} value
@@ -1319,6 +1456,7 @@ $(document).on('turbolinks:load', function() {
             if (!result || (result === '[]')) {
                 result = '';
             } else if (result[0] === '[') {
+                // noinspection UnusedCatchParameterJS
                 try {
                     result = JSON.parse(result);
                 }
@@ -1601,6 +1739,7 @@ $(document).on('turbolinks:load', function() {
         var data   = arg.data;
         var event  = arg.originalEvent || {};
         var _resp, _status_text, xhr;
+        // noinspection JSUnusedAssignment
         [_resp, _status_text, xhr] = event.detail || [];
         var status = xhr.status;
         onCreateSuccess(data, status, xhr);
@@ -1616,6 +1755,7 @@ $(document).on('turbolinks:load', function() {
         var error = arg.data;
         var event = arg.originalEvent || {};
         var _resp, _status_text, xhr;
+        // noinspection JSUnusedAssignment
         [_resp, _status_text, xhr] = event.detail || [];
         var status = xhr.status;
         console.error('ajax:error', status, 'error', error, 'xhr', xhr);
@@ -1941,6 +2081,45 @@ $(document).on('turbolinks:load', function() {
             $element.attr('title', old_tip);
         } else {
             $element.removeAttr('title');
+        }
+    }
+
+    /**
+     * Change a status marker icon.
+     *
+     * @param {Selector} element
+     * @param {string}   [text]       Default: no icon.
+     */
+    function setIcon(element, text) {
+        var $element = $(element || this);
+        var new_icon = text || '';
+        var old_icon = $element.attr('data-icon');
+        if (isMissing(old_icon)) {
+            // noinspection ReuseOfLocalVariableJS
+            old_icon = $element.text();
+            if (isPresent(old_icon)) {
+                $element.attr('data-icon', old_icon);
+            }
+        }
+        if (isPresent(new_icon)) {
+            $element.text(new_icon);
+        } else {
+            $element.empty();
+        }
+    }
+
+    /**
+     * Change the previous status marker icon.
+     *
+     * @param {Selector} element
+     */
+    function restoreIcon(element) {
+        var $element = $(element || this);
+        var old_icon = $element.attr('data-icon');
+        if (isPresent(old_icon)) {
+            $element.text(old_icon);
+        } else {
+            $element.empty();
         }
     }
 

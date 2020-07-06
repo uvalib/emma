@@ -877,18 +877,15 @@ module ModelHelper
       placeholder = value
       value = nil
     elsif value.is_a?(Field::Range)
-      range = value.base
-      mode  = value.mode
+      range = value.base if valid_range?(value.base)
+      multi = (value.mode == :multiple)
       value = value.values
       render_method =
-        if !range.ancestors.include?(EnumType)
-          :render_form_input_multi
-        elsif mode == :multiple
-          :render_form_menu_multi
+        if range
+          multi ? :render_form_menu_multi  : :render_form_menu_single
         else
-          :render_form_menu_single
+          multi ? :render_form_input_multi : :render_form_input
         end
-      range = nil if render_method == :render_form_input_multi
     end
     render_method ||= :render_form_input
     placeholder   ||= prop[:placeholder]
@@ -946,9 +943,7 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_form_menu_single(name, value, range:, **opt)
-    unless range.is_a?(Class) && (range < EnumType)
-      raise "range: #{range.inspect}: not a subclass of EnumType"
-    end
+    valid_range?(range, exception: true)
     normalize_attributes!(opt)
     opt, html_opt = partition_options(opt, :readonly, :base, :name)
     append_css_classes!(html_opt, 'menu', 'single')
@@ -988,9 +983,7 @@ module ModelHelper
   # @see updateFieldsetCheckboxes() in javascripts/feature/file-upload.js
   #
   def render_form_menu_multi(name, value, range:, **opt)
-    unless range.is_a?(Class) && (range < EnumType)
-      raise "range: #{range.inspect}: not a subclass of EnumType"
-    end
+    valid_range?(range, exception: true)
     normalize_attributes!(opt)
     opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
     append_css_classes!(html_opt, 'menu', 'multi')
@@ -1206,6 +1199,18 @@ module ModelHelper
   # ===========================================================================
 
   protected
+
+  # Indicate whether the value is a valid range type.
+  #
+  # @param [*]       range
+  # @param [Boolean] exception        If *true*, raise an exception if *false*.
+  #
+  def valid_range?(range, exception: false)
+    valid = range.is_a?(Class) && (range < EnumType)
+    exception &&= !valid
+    raise "range: #{range.inspect}: not a subclass of EnumType" if exception
+    valid
+  end
 
   # Translate attributes.
   #

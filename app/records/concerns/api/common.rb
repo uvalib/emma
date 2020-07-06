@@ -607,6 +607,7 @@ end
 # they can be referenced without prepending a namespace.
 # =============================================================================
 
+class TrueFalse      < EnumType; end
 class CategoriesType < EnumType; end
 class LanguageType   < EnumType; end
 

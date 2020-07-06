@@ -173,3 +173,11 @@ en:
           rekeyed:                  'Rekeyed'
           proofread:                'Proofread'
           published:                'Published'
+
+        # =====================================================================
+        # Other
+        # =====================================================================
+
+        TrueFalse:
+          false:                    'False'
+          true:                     'True'

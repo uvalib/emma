@@ -429,6 +429,7 @@ module UploadHelper
         when :s_accessibilityHazard  then Field::Multi.new(item, value)
         when :s_accessMode           then Field::Multi.new(item, value)
         when :s_accessModeSufficient then Field::Multi.new(item, value)
+        when :rem_complete           then Field::Binary.new(item, value)
         else                              render_value(item, value)
       end
     end

@@ -62,10 +62,12 @@ module Field
         @field = nil
         @base  = src
       end
-      @base   = nil                    if @base.is_a?(String)
-      @base   = @base.to_s.constantize if @base.is_a?(Symbol)
-      @base ||= String
-      @values = Array.wrap(values).reject(&:blank?)
+      case @base
+        when Symbol    then @base = @base.to_s.constantize
+        when 'boolean' then @base = TrueFalse
+        else                @base = String
+      end
+      @values = Array.wrap(values).map { |v| v.to_s.strip.presence }.compact
     end
 
     # =========================================================================
@@ -109,7 +111,7 @@ module Field
     # @return [Symbol]
     #
     def self.mode
-      safe_const_get(:MODE, false) || :multiple
+      safe_const_get(:MODE, true) || :multiple
     end
 
   end
@@ -136,6 +138,11 @@ module Field
   #
   class Single < Range
     MODE = :single
+  end
+
+  # Special-case for a binary (true/false/unset) field.
+  #
+  class Binary < Select
   end
 
 end
