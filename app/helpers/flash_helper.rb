@@ -577,7 +577,7 @@ module FlashHelper
     path  = flash_i18n_path(scope, method, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '
-      msg = msg.join(separator)
+      msg = msg.reject(&:blank?).join(separator)
     end
     opt[fail ? :error : :file] = msg
     opt[:default] = Array.wrap(opt[:default]&.dup)

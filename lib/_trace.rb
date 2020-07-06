@@ -128,7 +128,7 @@ def __output(*args)
             max -= size
           else
             stop = max - omit.length
-            arg  = arg[0, stop] + omit
+            arg  = (arg[0, stop] + omit unless stop.negative?)
             max  = 0
           end
         end

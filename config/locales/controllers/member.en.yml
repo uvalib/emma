@@ -76,19 +76,19 @@ en:
           <<:           *MEMBER_FIELDS
 
       new:
-        title:          'Add Member'
+        title:          'Add Bookshare Member'
         tooltip:        'Create an entry for a new Bookshare organization member.'
 
       edit:
-        title:          'Modify Member'
+        title:          'Modify Bookshare Member'
         tooltip:        'Make changes to this Bookshare organization member.'
 
       delete:
-        title:          'Remove Member'
+        title:          'Remove Bookshare Member'
         tooltip:        'Remove this Bookshare member from the organization.'
 
       history:
-        title:          'Member History'
+        title:          'Bookshare Member History'
         tooltip:        'View modifications for this Bookshare organization member.'
         fields:
           dateDownloaded: 'Date Downloaded'
@@ -101,7 +101,7 @@ en:
 
       preferences:
         label:          'Preferences'
-        title:          'Preferences'
+        title:          'Bookshare Member Preferences'
         tooltip:        'View preference settings for this Bookshare member.'
         fields:
           allowAdultContent:    'Allow Adult Content'

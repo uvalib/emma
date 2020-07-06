@@ -11,6 +11,10 @@ en:
       tagline:          'Educational Materials Made Accessible'
 
       controllers:
+
+        # Controllers that supply interactive content (that is, those
+        # controllers with a subdirectory in app/views).
+
         - 'api'
         - 'artifact'
         - 'category'
@@ -23,6 +27,23 @@ en:
         - 'search'
         - 'title'
         - 'upload'
+
+      search_controllers:
+
+        # The subset of en.emma.application.controllers that provide their own
+        # search capability; this drives how searches from the search box and
+        # advanced search controls are handled.
+        #
+        # @see ParamsConcern#search_redirect
+        #
+        # NOTE: The default search controller should be listed first.
+
+        - 'search'
+        - 'edition'
+        - 'member'
+        - 'periodical'
+        - 'reading_list'
+        - 'title'
 
     # =========================================================================
     # HTML page head
@@ -61,7 +82,12 @@ en:
         asset:          'EMMA-logo-UVAbg.png'
 
     nav_bar:
+
       controllers:
+
+        # The subset of en.emma.controllers which may be represented in the
+        # navbar, in the order in which they would be displayed.
+
         - 'search'
         - 'upload'
         - 'category'
@@ -71,7 +97,13 @@ en:
         - 'reading_list'
         - 'api'
         - 'help'
+
       primary:
+
+        # The subset of en.emma.nav_bar.controllers which are always displayed.
+        # Non-primary entries will only be displayed if the current URL
+        # includes that controller.
+
         - 'search'
         - 'upload'
         - 'help'

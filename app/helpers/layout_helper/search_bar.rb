@@ -254,8 +254,8 @@ module LayoutHelper::SearchBar
   #
   def clear_search_button(**opt)
     opt = prepend_css_classes(opt, 'search-clear')
-    opt[:'aria-role'] ||= 'button'
-    opt[:title]       ||= 'Clear search terms' # TODO: I18n
+    opt[:role]  ||= 'button'
+    opt[:title] ||= 'Clear search terms' # TODO: I18n
     link_to(HEAVY_X, '#', opt)
   end
 

@@ -98,14 +98,35 @@ module ParamsConcern
 
   protected
 
+  # Controllers which supply their own search capabilities.
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SEARCH_CONTROLLERS =
+    I18n.t('emma.application.search_controllers').map(&:to_sym).freeze
+
+  # The search controller that should be used on any pages whose controllers
+  # do not provide their own search capability.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_SEARCH_CONTROLLER = SEARCH_CONTROLLERS.first
+
   # Called from non-SearchController pages to ensure that the search defined in
   # the page header performs the intended operation on the SearchController and
   # not the current controller.
   #
+  # @see #SEARCH_CONTROLLERS
+  # @see #DEFAULT_SEARCH_CONTROLLER
+  #
   def search_redirect
-    return if self.class == SearchController
-    query = url_parameters
-    redirect_to search_index_path(query) if query.include?(:q)
+    return if SEARCH_CONTROLLERS.include?(params[:controller]&.to_sym)
+    query = request_parameters
+    return if query.slice(:q, :title, :creator, :identifier).blank?
+    redirect_to query.merge!(controller: DEFAULT_SEARCH_CONTROLLER)
   end
 
   # ===========================================================================
@@ -276,9 +297,13 @@ module ParamsConcern
   # @return [void]
   #
   def set_sort_params(sort_value)
-    reverse = is_reverse?(sort_value)
+    no_reverse = current_menu_config(:sort).dig(:reverse, :except)
+    if Array.wrap(no_reverse).include?(sort_value&.to_sym)
+      params.delete(:direction)
+    else
+      params[:direction] = is_reverse?(sort_value) ? 'desc' : 'asc'
+    end
     params[:sortOrder] = ascending_sort(sort_value)
-    params[:direction] = reverse ? 'desc' : 'asc'
   end
 
 end

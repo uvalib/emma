@@ -4,7 +4,7 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
+// noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -186,7 +186,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $search_in_progress = $('.layout-content .search-in-progress');
+    var $search_in_progress = $('body').children('.search-in-progress');
 
     // ========================================================================
     // Function definitions
@@ -272,6 +272,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean} opening
      */
     function setControlPanelToggle(opening) {
+        /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
         $advanced_toggle.html(value.label).attr('title', value.tooltip);
     }
@@ -568,10 +569,6 @@ $(document).on('turbolinks:load', function() {
                 handleEvent($select, type, suppressMenuOpen);
             });
         }
-        // Stabilize un-displayed items so that they do not occasionally
-        // "pop out" briefly when switching between screens.
-        var $undisplayed = $controls.find('.select2-hidden-accessible');
-        $undisplayed.attr('data-turbolinks-permanent', true);
     }
 
     // noinspection FunctionNamingConventionJS

@@ -152,6 +152,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean} opening
      */
     function updateToggleButton($button, opening) {
+        /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
         $button.html(value.label).attr('title', value.tooltip);
     }

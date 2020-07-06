@@ -180,7 +180,7 @@ module LayoutHelper::SearchControls
         pairs.flat_map do |pair|
           label, value = pair
           if except.include?(value)
-            pair
+            [pair]
           else
             label = sprintf(reverse[:label], sort: label)
             value = descending_sort(value, reverse[:suffix])

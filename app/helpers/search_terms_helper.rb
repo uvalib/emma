@@ -286,8 +286,8 @@ module SearchTermsHelper
         old_params.merge!(field => new_value)
       end
     opt = prepend_css_classes(opt, 'control')
-    opt[:'aria-role'] ||= 'button'
-    opt[:title]       ||= 'Click to remove this search limiter' # TODO: I18n
+    opt[:role]  ||= 'button'
+    opt[:title] ||= 'Click to remove this search limiter' # TODO: I18n
     link_to(HEAVY_X, url_for(new_params), opt)
   end
 
