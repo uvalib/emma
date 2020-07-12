@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   # File upload operations
   # ===========================================================================
 
-  get    '/upload/show/:id',      to: 'upload#show',          as: 'upload'
+  get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
 
   get    '/upload/new_select',    redirect('/upload/new'),    as: 'new_select_upload'     # Only for consistency
   get    '/upload/new',           to: 'upload#new',           as: 'new_upload'

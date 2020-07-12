@@ -272,7 +272,7 @@ module SearchHelper
       placeholder_text = 'Loading record...' # TODO: I18n
       placeholder_opt  = {
         class:       "iframe #{PopupHelper::POPUP_DEFERRED_CLASS}",
-        'data-path': upload_path(id: rid, modal: true),
+        'data-path': show_upload_path(id: rid, modal: true),
         'data-attr': placeholder_attr.to_json
       }
       html_div(placeholder_text, **placeholder_opt)

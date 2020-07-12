@@ -489,7 +489,6 @@ form.select-entry {
         @include width-fit-content;
 
         height:        2rem;
-        background:    $focus-accent;
         border-radius: 0.25rem;
 
         option {
@@ -547,27 +546,34 @@ form.select-entry {
             margin-right:  0;
             line-height:   1.5;
             font-size:     larger;
+            cursor:        default;
             visibility:    hidden;
 
             @media #{$narrow-screen} {
                 margin-right: 0.25rem;
             }
+        }
 
-            &.optional {
-            }
+        // Skip the status icon for disabled items.
+        &:not(.disabled) {
+            .status-marker {
 
-            &.valid {
-                visibility: visible;
-                color:      green;
-            }
+                &.optional {
+                }
 
-            &.invalid {
-                visibility: visible;
-                color:      $error-fg;
-            }
+                &.valid {
+                    visibility: visible;
+                    color:      green;
+                }
 
-            &.required {
-                visibility: visible;
+                &.invalid {
+                    visibility: visible;
+                    color:      $error-fg;
+                }
+
+                &.required {
+                    visibility: visible;
+                }
             }
         }
     }
@@ -597,11 +603,14 @@ form.select-entry {
             background: $input-disabled-bg;
         }
 
-        &.menu {
-            &.single {
-                @media #{$wide-screen}   { min-width: 15vw; }
-                @media #{$medium-width}  { min-width: 30vw; }
-                @media #{$narrow-screen} { min-width: 100%; }
+        &.menu.single {
+
+            @media #{$wide-screen}   { min-width: 15vw; }
+            @media #{$medium-width}  { min-width: 30vw; }
+            @media #{$narrow-screen} { min-width: 100%; }
+
+            &.valid:not(.disabled) {
+                background: $focus-accent;
             }
         }
     }

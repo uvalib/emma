@@ -117,7 +117,7 @@ module Import
   # @return [Symbol]
   #
   def hash_key(v)
-    v.to_s.strip.downcase.tr('^a-z0-9', '_').to_sym
+    v.to_s.squish.downcase.tr('^a-z0-9', '_').to_sym
   end
 
   # ===========================================================================
@@ -263,6 +263,23 @@ module Import
       next id unless prefix.present?
       id = id.delete_prefix(id_type).lstrip if id.start_with?(id_type)
       "#{prefix}#{id}"
+    end
+  end
+
+  # Transform a data item into an EnumType value.
+  #
+  # @param [*]     v
+  # @param [Class] type               A subclass of EnumType.
+  #
+  # @return [String, nil]
+  #
+  def enum_value(v, type)
+    val = string_value(v, first: true)
+    return if val.blank?
+    key = hash_key(val).to_s
+    # noinspection RubyYardReturnMatch
+    type.pairs.find do |name, label|
+      return name if name.casecmp(key).zero? || label.casecmp(val).zero?
     end
   end
 

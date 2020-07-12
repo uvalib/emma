@@ -332,6 +332,7 @@
         margin-bottom: $form-gap;
         background:    white;
         box-shadow:    0 0 0.25rem $form-gap white;
+        z-index:       $z-top;
 
         @media #{$narrow-screen} {
             box-shadow: 0 0 0.25rem $form-gap-narrow white;
@@ -453,6 +454,7 @@
         width:      inherit;
         max-width:  95vw;
         margin-top: 0;
+        z-index:    $z-visible;
     }
 
     // No status bar for bulk upload so extra white space is needed above.

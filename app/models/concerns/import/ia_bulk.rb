@@ -50,16 +50,16 @@ module Import::IaBulk
     metadata_source:      [:rem_metadataSource,       :values],
     neverindex:           :skip,
     noindex:              :skip,
-    portion:              [:rem_complete,             ->(v) { !true?(v) }],
+    portion:              [:rem_complete,             :rem_complete_value],
     portion_description:  [:rem_coverage,             :values],
     publisher:            [:dc_publisher,             :string_value],
     remediated_aspects:   [:rem_remediation,          :values],
     remediated_by:        [:rem_remediatedBy,         :values],
     remediation_comments: [:emma_lastRemediationNote, :string_value],
-    remediation_status:   [:rem_status,               :values],
-    series_type:          [:bib_seriesType,           :string_value],
+    remediation_status:   [:rem_status,               :rem_status_value],
+    series_type:          [:bib_seriesType,           :series_type_value],
     subject:              [:dc_subject,               :array_value],
-    text_quality:         [:rem_quality,              :values],
+    text_quality:         [:rem_quality,              :text_quality_value],
     title:                [:dc_title,                 :string_value],
     version:              [:bib_version,              :string_value],
     volume:               [:bib_seriesPosition,       :string_value],
@@ -161,16 +161,58 @@ module Import::IaBulk
     return field.keys, field.values
   end
 
-  # Transform a data item into one or more ISSN identifiers.
+  # Transform a "mediatype" into a :dc_format.
   #
   # @param [*] v
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def media_type_values(v)
-    v   = string_value(v, first: true)
+    v = string_value(v, first: true)
+    return if v.blank?
     key = hash_key(v)
     (MEDIA_TYPE[key] || key).to_s
+  end
+
+  # Transform a "portion" value into a :rem_complete value.
+  #
+  # @param [*] v
+  #
+  # @return [String, nil]
+  #
+  def rem_complete_value(v)
+    v = string_value(v, first: true)
+    ('true' if false?(v)) || ('false' if true?(v)) if v.present?
+  end
+
+  # Transform a "remediation_status" value into a :rem_status value.
+  #
+  # @param [*] v
+  #
+  # @return [String, nil]
+  #
+  def rem_status_value(v)
+    enum_value(v, RemediationStatus)
+  end
+
+  # Transform a "series_type" value into a :bib_seriesType value.
+  #
+  # @param [*] v
+  #
+  # @return [String, nil]
+  #
+  def series_type_value(v)
+    enum_value(v, SeriesType)
+  end
+
+  # Transform a "text_quality" value into a :rem_quality value.
+  #
+  # @param [*] v
+  #
+  # @return [String, nil]
+  #
+  def text_quality_value(v)
+    enum_value(v, TextQuality)
   end
 
   # ===========================================================================
