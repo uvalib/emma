@@ -21,14 +21,7 @@
     //=========================================================================
 
     .number {
-
         margin-top: -0.125rem;
-
-        // noinspection SassScssResolvedByNameOnly
-        @media #{$browser-ie} {
-            margin-top:   0;
-            margin-right: $ie-flex-gap-x;
-        }
     }
 }
 

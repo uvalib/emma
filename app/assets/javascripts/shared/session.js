@@ -115,6 +115,10 @@ $(document).on('turbolinks:load', function() {
     // Ignore Turbolinks on anchor links.
     document.addEventListener('turbolinks:click', clickInPageAnchor);
 
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
 /*
     // Accommodate Firefox anchor focus bug.
     window.onhashchange = focusAnchor;
@@ -122,5 +126,15 @@ $(document).on('turbolinks:load', function() {
     // Begin with focus set appropriately.
     focusAnchor();
 */
+
+    // Display an alert if running from MS Internet Explorer.
+    if (isInternetExplorer()) {
+        window.document.body.style.display = 'none';
+        alert(
+            'EMMA does not support Microsoft Internet Explorer.' + "\n\n" +
+            'Please view this site in Chrome, Firefox, Safari, ' +
+            'Microsoft Edge or other modern web browser.'
+        );
+    }
 
 });

@@ -1,6 +1,14 @@
 // app/assets/javascripts/shared/definitions.js
 
 // ============================================================================
+// JSDoc typedefs
+// ============================================================================
+
+/**
+ * @typedef {string|HTMLElement|jQuery} Selector
+ */
+
+// ============================================================================
 // Basic values and enumerations
 // ============================================================================
 
@@ -37,20 +45,6 @@ var CHAR = {
     Insert:     45,
     Delete:     46
 };
-
-// ============================================================================
-// JSDoc typedefs
-// ============================================================================
-
-// noinspection LocalVariableNamingConventionJS
-/**
- * Indicates a function parameter that expects a {@link jQuery} object or
- * something that can be used to generate a {@link jQuery} object.
- *
- * @typedef Selector
- * @type {string|HTMLElement|jQuery}
- */
-var Selector;
 
 // ============================================================================
 // Function definitions - Enumerables
@@ -260,13 +254,24 @@ function htmlDecode(text) {
 /**
  * Toggle the presence of a CSS class for one or more disjoint elements.
  *
- * @param {Selector|Array} selectors
- * @param {string}         css_class
- * @param {boolean}        [setting]
+ * @param {Selector|Selector[]} selectors
+ * @param {string}              css_class
+ * @param {boolean}             [setting]
  */
 function toggleClass(selectors, css_class, setting) {
     var part = (selectors instanceof Array) ? selectors : [selectors];
     part.forEach(function(e) { $(e).toggleClass(css_class, setting); });
+}
+
+/**
+ * Indicate whether the client browser is MS Internet Explorer.
+ *
+ * @returns {boolean}
+ */
+function isInternetExplorer() {
+    // noinspection PlatformDetectionJS
+    var ua = navigator.userAgent;
+    return (ua.indexOf('MSIE ') > -1) || (ua.indexOf('Trident/') > -1);
 }
 
 // ============================================================================

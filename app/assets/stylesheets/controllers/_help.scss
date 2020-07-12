@@ -69,7 +69,6 @@
     p {
         @extend %help-text;
 
-        // noinspection CssBrowserCompatibilityForProperties
         a:focus {
             outline-offset: 0.5px;
         }
@@ -160,10 +159,6 @@
 
         margin: $results-entry-gap-y $results-entry-gap-x;
 
-        @media #{$browser-ie} {
-            margin: $ie-results-entry-gap-y $ie-results-entry-gap-x;
-        }
-
         //=====================================================================
         // Components
         //=====================================================================
@@ -241,12 +236,7 @@
     margin-left: 0;
 
     @media #{$not-narrow-screen} {
-
         margin-left: $results-entry-gap-x;
-
-        @media #{$browser-ie} {
-            margin-left: $ie-results-entry-gap-x;
-        }
     }
 }
 
@@ -260,10 +250,6 @@
     @extend %help-elements;
 
     margin-top: $results-entry-gap-y;
-
-    @media #{$browser-ie} {
-        margin-top: $ie-results-entry-gap-y;
-    }
 
     //=========================================================================
     // Components

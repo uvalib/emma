@@ -38,16 +38,6 @@
             margin-right: calc(2 * #{$gap-x});
             flex:         0 0 auto;
         }
-
-        @media #{$browser-ie} {
-
-            margin-left: $ie-gap-x;
-
-            @media #{$narrow-screen} {
-                margin-left:  (2 * $ie-gap-x);
-                margin-right: (2 * $ie-gap-x);
-            }
-        }
     }
 }
 
@@ -63,12 +53,7 @@
     //=========================================================================
 
     .pagination-bottom {
-
         margin-top: $results-entry-gap-y;
-
-        @media #{$browser-ie} {
-            margin-top: $ie-results-entry-gap-y;
-        }
     }
 }
 

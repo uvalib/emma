@@ -31,22 +31,14 @@
     // A heading within the grid that spans all columns.
     .list-heading {
 
-        @include grid-column-span($columns);
+        @include grid-column-span;
 
         margin: $page-padding-y 0;
-
-        @media #{$browser-ie} {
-            margin: $ie-page-padding-y 0;
-        }
 
         &:first-child {
 
             margin-top:    0;
             margin-bottom: $page-padding;
-
-            @media #{$browser-ie} {
-                margin-bottom: $ie-page-padding;
-            }
 
             &.empty {
                 margin-bottom: 0;
@@ -64,13 +56,7 @@
 
     @include tabular-list(2);
 
-    // noinspection CssBrowserCompatibilityForProperties
     grid-template-columns: [label] auto [value] 1fr;
-
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$browser-ie} {
-        -ms-grid-columns: minmax(2%, max-content) 1fr;
-    }
 }
 
 // A three-column list where each row is a number, a label, and a value.
@@ -78,12 +64,6 @@
 
     @include tabular-list(3);
 
-    // noinspection CssBrowserCompatibilityForProperties
     grid-template-columns:
         [number] minmax(1%, max-content) [label] auto [value] 1fr;
-
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$browser-ie} {
-        -ms-grid-columns: minmax(1%, max-content) auto 1fr;
-    }
 }

@@ -31,10 +31,6 @@
         border-top:  2px solid lightgray;
     }
 
-    @media #{$browser-ie} {
-        -ms-grid-column: 3;
-    }
-
     //=========================================================================
     // Components
     //=========================================================================
@@ -50,12 +46,7 @@
     .value {
 
         a + a {
-
             margin-left: $gap-x;
-
-            @media #{$browser-ie} {
-                margin-left: $ie-gap-x;
-            }
         }
 
         &.field-Title {
@@ -119,16 +110,6 @@
             visibility:  hidden;
             grid-column: 3 / -1;
         }
-
-        @media #{$browser-ie} {
-
-            margin-right:    $ie-flex-gap-x;
-            -ms-grid-column: 1;
-
-            @media #{$narrow-screen} {
-                -ms-grid-column: 3;
-            }
-        }
     }
 
     // @see TitleHelper#thumbnail
@@ -146,13 +127,6 @@
         @media #{$narrow-screen} {
             grid-column: 3 / -1;
             grid-row:    span 2;
-        }
-
-        @media #{$browser-ie} {
-
-            margin-right:    $ie-flex-gap-x;
-            margin-bottom:   $ie-results-entry-gap-y;
-            -ms-grid-column: 2;
         }
     }
 }
@@ -181,12 +155,7 @@
 
     .label {
         &.field-Synopsis {
-
             padding-top: calc(#{$synopsis-pad} + #{$synopsis-border-width});
-
-            @media #{$browser-ie} {
-                padding-top: $synopsis-pad;
-            }
         }
     }
 
@@ -246,15 +215,6 @@
 
             @media #{$medium-width} {
                 margin-right: $results-entry-gap-y;
-            }
-
-            @media #{$browser-ie} {
-
-                margin-bottom: ($ie-results-entry-gap-y / 2);
-
-                @media #{$medium-width} {
-                    margin-right: $ie-results-entry-gap-y;
-                }
             }
         }
 
@@ -329,10 +289,6 @@
         @media #{$narrow-screen} {
             min-width: unset;
             max-width: 100%;
-        }
-
-        @media #{$browser-ie} {
-            margin-left: $ie-page-padding-x;
         }
 
         img:not(.placeholder) {

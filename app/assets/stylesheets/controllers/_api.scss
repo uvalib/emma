@@ -43,13 +43,6 @@ body.api-v2 {
         display:     block;
         margin-top:  $page-padding-y;
         padding-top: $page-padding-y;
-
-        @media #{$browser-ie} {
-            margin-left:  inherit;
-            margin-right: inherit;
-            margin-top:   $ie-page-padding-y;
-            padding-top:  $ie-page-padding-y;
-        }
     }
 
     .methods {
@@ -68,11 +61,6 @@ body.api-v2 {
         @media #{$narrow-screen} {
             padding-top:  0;
             column-width: unset;
-        }
-
-        @media #{$browser-ie} {
-            margin-left:  inherit;
-            margin-right: inherit;
         }
 
         //=====================================================================

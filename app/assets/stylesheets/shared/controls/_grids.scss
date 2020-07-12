@@ -1,26 +1,6 @@
 // app/assets/stylesheets/shared/controls/_grids.scss
-//
-// References:
-// @see https://css-tricks.com/css-grid-in-ie-debunking-common-ie-grid-misconceptions/
 
 // @use 'shared/common'; // TODO: SASS 4.0
-
-//=============================================================================
-// CSS function analogues.
-//=============================================================================
-
-/// Simulate CSS "repeat()" for MS Internet Explorer.
-///
-/// @param {Numeric} $columns
-/// @param {String}  $template
-///
-@function ie-repeat($columns, $template) {
-    $column: $template;
-    @for $n from 2 through $columns {
-        $template: $template $column;
-    }
-    @return $template;
-}
 
 //=============================================================================
 // Grid definitions.
@@ -33,7 +13,6 @@
 ///
 @mixin grid($template: false, $columns: 1) {
 
-    display: -ms-grid;
     display: grid;
 
     @if $template { @include grid-columns($template, $columns); }
@@ -44,7 +23,6 @@
 /// @param {Numeric} $row
 ///
 @mixin grid-row($row) {
-    -ms-grid-row:   $row;
     grid-row-start: $row;
     grid-row-end:   $row;
 }
@@ -54,29 +32,18 @@
 /// @param {Numeric} $column
 ///
 @mixin grid-column($column) {
-    @if $column <= 0 {
-        -ms-grid-column: 100;
-    } @else {
-        -ms-grid-column: $column;
-    }
     grid-column-start: $column;
     grid-column-end:   $column;
 }
 
 /// Span all grid columns.
 ///
-/// @param {Numeric} $end             Ending column (for IE only).
+/// @param {Numeric} $end             Ending column.
 /// @param {Numeric} $start           Starting column.
 ///
 @mixin grid-column-span($end: -1, $start: 1) {
-    @if $end <= 0 {
-        -ms-grid-column-span: 100;
-    } @else {
-        -ms-grid-column-span: $end;
-    }
-    -ms-grid-column:   $start;
     grid-column-start: $start;
-    grid-column-end:   -1;
+    grid-column-end:   $end;
 }
 
 /// Set up grid gap(s).
@@ -92,24 +59,6 @@
     gap:      $gap-y $gap-x;
 }
 
-/// Set up grid row gap.
-///
-/// @param {Numeric} $gap-y
-///
-@mixin grid-row-gap($gap-y: 0) {
-    grid-row-gap: $gap-y;
-    row-gap:      $gap-y;
-}
-
-/// Set up grid column gap.
-///
-/// @param {Numeric} $gap-x
-///
-@mixin grid-column-gap($gap-x: 0) {
-    grid-column-gap: $gap-x;
-    column-gap:      $gap-x;
-}
-
 /// Set grid columns.
 ///
 /// @param {String}  $template
@@ -119,10 +68,8 @@
 @mixin grid-columns($template, $columns: 1) {
     @if $template {
         @if $columns <= 1 {
-            -ms-grid-columns:      $template;
             grid-template-columns: $template;
         } @else {
-            -ms-grid-columns:      ie-repeat($columns, $template);
             grid-template-columns: repeat($columns, $template);
         }
     }
@@ -179,48 +126,5 @@
                 }
             }
         }
-
-        @media #{$browser-ie} {
-            @for $n from 1 through $columns {
-                &.columns-#{$n} {
-                    @media #{$wide-screen} {
-                        $count: min($n, $wide-max);
-                        -ms-grid-columns: ie-repeat($count, $wide-template);
-                    }
-                    @media #{$medium-width} {
-                        $count: min($n, $medium-max);
-                        -ms-grid-columns: ie-repeat($count, $medium-template);
-                    }
-                    @media #{$narrow-screen} {
-                        $count: min($n, $narrow-max);
-                        -ms-grid-columns: ie-repeat($count, $narrow-template);
-                    }
-                }
-            }
-        }
-    }
-}
-
-//=============================================================================
-// Internet Explorer grid support classes
-//=============================================================================
-
-// noinspection SassScssResolvedByNameOnly
-@media #{$browser-ie} {
-
-    // Internet Explorer's -ms-grid does not auto-position grid elements, hence
-    // each must be given classes to define its row/column position.
-    @for $n from 1 through 100  {
-        .col-#{$n}  { -ms-grid-column: $n; }
-        .row-#{$n}  { -ms-grid-row:    $n; }
-    }
-
-    // Horizontal item lists which must be vertical when the screen is narrow.
-    // (Note: Separate @for loops for each media query results in cleaner CSS.)
-    @media #{$not-narrow-screen} {
-        @for $n from 1 through 100  { .item-#{$n} { -ms-grid-column: $n; } }
-    }
-    @media #{$narrow-screen} {
-        @for $n from 1 through 100  { .item-#{$n} { -ms-grid-row:    $n; } }
     }
 }

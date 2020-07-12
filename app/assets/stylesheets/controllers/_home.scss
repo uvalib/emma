@@ -21,10 +21,6 @@ body.home-dashboard {
         min-width: 50%;
         max-width: 100%;
 
-        @media #{$browser-ie} {
-            width: 50%;
-        }
-
         > * {
             margin-top: 0.5rem;
             &:first-child { margin-top: 0; }

@@ -53,10 +53,11 @@
     $row-separation: 0.75rem;
 
     @extend .label-value-pairs;
-    @include grid-row-gap($row-separation);
+
+    row-gap: $row-separation;
 
     @media #{$narrow-screen} {
-        @include grid-row-gap(1rem);
+        row-gap: 1rem;
     }
 
     //=========================================================================
@@ -65,12 +66,7 @@
 
     .label,
     .value {
-
         margin-bottom: 0;
-
-        @media #{$browser-ie} {
-            margin-bottom: $row-separation; // Simulates row-gap.
-        }
     }
 
     .label {
@@ -98,7 +94,6 @@
             margin-right: $value-right-margin;
         }
 
-        // noinspection CssBrowserCompatibilityForProperties
         &.field-Title {
 
             display:         flex;
@@ -114,11 +109,6 @@
                 @include grid-column-span;
 
                 flex-wrap: wrap-reverse;
-            }
-
-            @media #{$browser-ie} {
-                margin-bottom: $row-separation;
-                column-gap:    $ie-flex-gap-x;
             }
 
             a:not(:hover) {
@@ -160,7 +150,8 @@
         &.array {
 
             @include grid(minmax(16.67%, 0.1667fr), 6);
-            @include grid-row-gap($row-separation);
+
+            row-gap: $row-separation;
 
             // Array element properties
             $element-border:    1px;
@@ -175,12 +166,7 @@
             margin-bottom: 0.25rem;
 
             @media #{$medium-width} {
-
                 @include grid(minmax(33%, 1fr), 3);
-
-                @media #{$browser-ie} {
-                    @include grid(1fr, 3);
-                }
             }
 
             @media #{$narrow-screen} {
@@ -242,9 +228,7 @@
 
     .label {
 
-        // noinspection CssBrowserCompatibilityForProperties
         grid-column-start: 1;
-        -ms-grid-column:   1;
 
         &.logo {
 
@@ -276,11 +260,6 @@
 
             @media #{$medium-width} {
                 grid-template-columns: minmax(max-content, 50%);
-            }
-
-            @media #{$browser-ie} {
-                display:   flex;
-                flex-wrap: wrap;
             }
 
             > * {
@@ -420,17 +399,8 @@
 
             margin-top: $gap-y;
 
-            @media #{$browser-ie} {
-                margin-top: -($ie-gap-y / 4);
-            }
-
             @media #{$medium-width} {
-
                 margin-top: calc(#{$gap-y} / 2);
-
-                @media #{$browser-ie} {
-                    margin-top: ($ie-gap-y / 2);
-                }
             }
 
             @media #{$narrow-screen} {
@@ -470,12 +440,7 @@
         }
 
         @media #{$medium-width} {
-
             margin-top: calc(2 * #{$page-padding});
-
-            @media #{$browser-ie} {
-                margin-top: (2 * $ie-page-padding);
-            }
         }
 
         @media #{$narrow-screen} {

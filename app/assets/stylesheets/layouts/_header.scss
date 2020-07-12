@@ -61,10 +61,6 @@ $search-button-width:    6rem;
 
     max-width: calc(#{$lg-width} - (2 * #{$page-padding-x}));
 
-    @media #{$browser-ie} {
-        max-width: calc(#{$lg-width} - (2 * #{$ie-page-padding-x}));
-    }
-
     @media #{$narrow-screen} {
         width:     100%;
         min-width: unset;
@@ -74,16 +70,11 @@ $search-button-width:    6rem;
 
 // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 %header-control-panel {
-
     padding:        0.5rem;
     padding-bottom: 0.25rem;
     padding-right:  0;
     border:         0.125rem dotted white;
     border-radius:  0.75rem;
-
-    @media #{$browser-ie} {
-        padding-bottom: 0;
-    }
 }
 
 // For controls with a white background within the header.
@@ -175,15 +166,6 @@ $search-button-width:    6rem;
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
             }
-
-            @media #{$browser-ie} {
-
-                margin-right: $ie-flex-gap-x;
-
-                @media #{$narrow-screen} {
-                    margin-top: $ie-flex-gap-y;
-                }
-            }
         }
     }
 
@@ -205,15 +187,6 @@ $search-button-width:    6rem;
             margin-bottom:  $flex-gap-y;
         }
 
-        @media #{$browser-ie} {
-
-            margin-left: $ie-page-padding-x;
-
-            @media #{$narrow-screen} {
-                margin-bottom: $ie-flex-gap-y;
-            }
-        }
-
         > * {
 
             margin: auto 0 auto $flex-gap-x;
@@ -221,26 +194,12 @@ $search-button-width:    6rem;
             @media #{$narrow-screen} {
                 margin: $flex-gap-y 0 0;
             }
-
-            @media #{$browser-ie} {
-
-                margin-left: $ie-flex-gap-x;
-
-                @media #{$narrow-screen} {
-                    margin-top: $ie-flex-gap-y;
-                }
-            }
         }
 
         .help-popup {
 
             @media #{$not-narrow-screen} {
-
                 margin-left: calc(#{$flex-gap-y} / 2);
-
-                @media #{$browser-ie} {
-                    margin-left: ($ie-flex-gap-y / 2);
-                }
             }
 
             @media #{$narrow-screen} {
@@ -287,7 +246,6 @@ $search-button-width:    6rem;
             max-width:  100%;
         }
 
-        // noinspection CssBrowserCompatibilityForProperties
         a:focus {
             outline-offset: 3px;
         }
@@ -312,10 +270,6 @@ $search-button-width:    6rem;
         @media #{$narrow-screen} {
             display: none;
         }
-
-        @media #{$browser-ie} {
-            line-height: 2.5;
-        }
     }
 
     // The name of the signed-in user.
@@ -324,16 +278,11 @@ $search-button-width:    6rem;
     // sufficient to show the whole name.
     //
     .user {
-
         max-width:     100%;
         font-size:     smaller;
         overflow:      hidden;
         text-overflow: ellipsis;
         flex:          0 1 auto;
-
-        @media #{$browser-ie} {
-            line-height: 2.5;
-        }
     }
 
     // The "Sign in"/"Sign out" button.
@@ -364,15 +313,6 @@ $search-button-width:    6rem;
             margin-top: $flex-gap-y;
         }
 
-        @media #{$browser-ie} {
-
-            padding: 0.5rem;
-
-            @media #{$narrow-screen} {
-                margin-top: $ie-flex-gap-y;
-            }
-        }
-
         //=====================================================================
         // Components
         //=====================================================================
@@ -381,7 +321,6 @@ $search-button-width:    6rem;
 
             font-size: larger;
 
-            // noinspection CssBrowserCompatibilityForProperties
             &:focus { outline-offset:  0.575rem; }
             &:hover { text-decoration: none; }
         }
@@ -603,11 +542,6 @@ $search-button-width:    6rem;
                 }
             }
 
-            @media #{$browser-ie} {
-                margin:       $ie-gap-y 0;
-                margin-right: (2 * $ie-gap-x);
-            }
-
             //=================================================================
             // Elements
             //=================================================================
@@ -619,10 +553,6 @@ $search-button-width:    6rem;
                 margin:       auto 0;
                 margin-right: $gap-x;
                 flex:         1 1 auto;
-
-                @media #{$browser-ie} {
-                    margin-right: $ie-gap-x;
-                }
 
                 @media #{$narrow-screen} {
                     max-width:    92.5vw;
@@ -650,7 +580,6 @@ $search-button-width:    6rem;
                     margin-left:  0.25rem;
                 }
 
-                // noinspection CssBrowserCompatibilityForProperties
                 &:focus {
                     outline-offset: -3px;
                 }
@@ -663,21 +592,10 @@ $search-button-width:    6rem;
                 margin-right: calc(-1 * #{$search-clear-inset});
                 flex:         0 0 auto;
 
-                @media #{$browser-ie} {
-                    margin-left:  (2 * $search-clear-inset - $ie-gap-x);
-                    margin-right: (-1 * $search-clear-inset);
-                }
-
                 @media #{$narrow-screen} {
-
                     margin:       0;
                     margin-left:  calc(2 * #{$gap-x});
                     margin-right: calc(-0.5 * #{$gap-x});
-
-                    @media #{$browser-ie} {
-                        margin-left:  (2 * $ie-gap-x);
-                        margin-right: (-0.5 * $ie-gap-x);
-                    }
                 }
             }
         }
@@ -696,12 +614,6 @@ $search-button-width:    6rem;
                 margin-top:    $gap-y;
                 margin-bottom: $gap-y;
                 margin-left:   $gap-x;
-            }
-
-            @media #{$browser-ie} {
-                margin-top:    $ie-gap-y;
-                margin-bottom: $ie-gap-y;
-                margin-left:   $ie-gap-x;
             }
 
             @media #{$narrow-screen} {
@@ -726,16 +638,6 @@ $search-button-width:    6rem;
 
             @media #{$narrow-screen} {
                 margin: $gap-y 0;
-            }
-
-            @media #{$browser-ie} {
-
-                margin:       $ie-gap-y 0;
-                margin-right: (2 * $ie-gap-x);
-
-                @media #{$narrow-screen} {
-                    margin-right: 0;
-                }
             }
         }
 
@@ -794,20 +696,6 @@ $search-button-width:    6rem;
             @include grid-column-classes($max-columns, $column, $columns-map);
         }
 
-        @media #{$browser-ie} {
-
-            $column: max-content minmax(min-content, 100%);
-
-            @include grid-column-classes($max-columns, $column, $columns-map);
-
-            // Each logical column is translated into two physical columns.
-            @for $n from 1 through $max-columns {
-                $col: (2 * $n) - 1;
-                .col-#{$n}              { -ms-grid-column: #{$col}; }
-                .col-#{$n} + .col-#{$n} { -ms-grid-column: #{$col + 1}; }
-            }
-        }
-
         //=====================================================================
         // Grid cell placeholder classes
         //=====================================================================
@@ -815,13 +703,8 @@ $search-button-width:    6rem;
         // In order for %hidden-grid-cell to work, vertical grid gap must be
         // managed "manually" here rather than via grid-gap.
         %grid-cell {
-
             display: block;
             margin:  0 0 $gap-y;
-
-            @media #{$browser-ie} {
-                margin-bottom: $ie-gap-y;
-            }
         }
 
         // When the advanced search grid is closed, each affected grid cell is
@@ -872,12 +755,6 @@ $search-button-width:    6rem;
             padding:       2px $padding-x;
             line-height:   1;
             justify-self:  flex-end;
-
-            @media #{$browser-ie} {
-                width:         $search-button-width;
-                margin-left:   auto;
-                margin-bottom: 0.5rem;
-            }
         }
 
         // The label to the left of a .menu-control.
@@ -887,11 +764,6 @@ $search-button-width:    6rem;
 
             margin-top:   calc(3 * #{$gap-y} / 2);
             margin-right: $gap-x;
-
-            @media #{$browser-ie} {
-                margin-top:   (3 * $ie-gap-y / 2);
-                margin-right: $ie-gap-x;
-            }
 
             &.col-first {
                 @media #{$wide-screen} {
@@ -908,19 +780,9 @@ $search-button-width:    6rem;
             margin-top:   calc(#{$gap-y} / 2);
             margin-right: calc(3 * #{$gap-x});
 
-            @media #{$browser-ie} {
-                margin-top:   ($ie-gap-y / 2);
-                margin-right: (3 * $ie-gap-x);
-            }
-
             select {
-
                 width:  100%;
                 height: 100%;
-
-                @media #{$browser-ie} {
-                    margin-right: $ie-gap-x;
-                }
             }
         }
 
@@ -948,10 +810,6 @@ $search-button-width:    6rem;
 
         margin-left: $gap-x;
         flex:        0 0 auto;
-
-        @media #{$browser-ie} {
-            margin-left: $ie-gap-x;
-        }
 
         @media #{$not-wide-screen} {
             display: none;
@@ -1035,34 +893,6 @@ $search-button-width:    6rem;
                 @media #{$narrow-screen} {
                     margin-top:    $page-control-gap-y;
                     margin-bottom: $page-control-gap-y;
-                }
-            }
-        }
-
-        @media #{$browser-ie} {
-
-            $page-control-gap-x: $ie-gap-x;
-            $page-control-gap-y: $ie-gap-y / 2;
-
-            max-width: calc(100% - (2 * #{$page-control-gap-x}));
-
-            .label {
-                margin:      $page-control-gap-y $page-control-gap-x;
-                margin-left: 0;
-            }
-
-            .controls {
-
-                margin-bottom: $page-control-gap-y;
-
-                .control {
-
-                    margin-right: $page-control-gap-x;
-
-                    @media #{$narrow-screen} {
-                        margin-top:    $page-control-gap-y;
-                        margin-bottom: $page-control-gap-y;
-                    }
                 }
             }
         }

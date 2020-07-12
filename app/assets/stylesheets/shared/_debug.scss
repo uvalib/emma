@@ -38,10 +38,6 @@
         width: 100%;
     }
 
-    @media #{$browser-ie} {
-        margin-bottom: $ie-page-padding;
-    }
-
     .ability-list {
         @extend .toggle-panel;
     }

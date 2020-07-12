@@ -19,16 +19,11 @@
     // Properties for hidden controls that are shown at different stages.
     // @see app/assets/javascripts/feature/download.js
     %transient-control {
-
         margin-left:     $gap-x;
         font-weight:     bold;
         font-size:       smaller;
         text-decoration: none;
         cursor:          pointer;
-
-        @media #{$browser-ie} {
-            margin-left: $ie-gap-x;
-        }
     }
 
     // @see ArtifactHelper#download_progress

@@ -34,16 +34,6 @@ body {
     min-height: 75vh;
     position:   relative;
 
-    @media #{$browser-ie} {
-
-        margin: 0 $ie-page-padding-x;
-
-        > * {
-            margin-left:  inherit;
-            margin-right: inherit;
-        }
-    }
-
     // Give a little extra clearance for the scroll bar.
     @media #{$medium-width} {
         padding-right: calc(1.5 * #{$page-padding-x});
@@ -73,33 +63,16 @@ body {
     @media #{$narrow-screen} {
         margin-top: calc(#{$page-padding} * 2);
     }
-
-    @media #{$browser-ie} {
-
-        margin: ($ie-page-padding * 1.5) inherit;
-
-        @media #{$wide-screen} {
-            margin-bottom: ($ie-page-padding / 2);
-        }
-
-        @media #{$narrow-screen} {
-            margin-top: ($ie-page-padding * 2);
-        }
-    }
 }
 
 // For enclosing the actual heading in a line with other items.
 //
-// noinspection CssBrowserCompatibilityForProperties,SassScssResolvedByNameOnly
+// noinspection SassScssResolvedByNameOnly
 .heading.container {
 
     display:   flex;
     flex-wrap: wrap;
     gap:       $flex-gap-y $flex-gap-x;
-
-    @media #{$browser-ie} {
-        column-gap: $ie-flex-gap-x;
-    }
 
     > * {
         margin: auto 0;

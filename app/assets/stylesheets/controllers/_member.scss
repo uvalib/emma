@@ -48,10 +48,6 @@
     display: block;
     margin:  $page-padding 0;
 
-    @media #{$browser-ie} {
-        margin: $ie-page-padding 0;
-    }
-
     .history-list {
         @extend .toggle-panel;
     }

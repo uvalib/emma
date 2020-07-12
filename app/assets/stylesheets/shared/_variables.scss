@@ -190,14 +190,6 @@ $large-screen:  $wide-screen   + "," + $tall-screen;   // E.g., desktop
 $medium-screen: $medium-width  + "," + $medium-height; // E.g., tablet
 
 //=============================================================================
-// Internet Explorer 10+ detection
-//=============================================================================
-
-$browser-ie: "(-ms-high-contrast: none), (-ms-high-contrast: active)";
-$browser-not-ie:
-    "(not -ms-high-contrast: none) and (not -ms-high-contrast: active)";
-
-//=============================================================================
 // Generic - baseline definitions.
 //=============================================================================
 
@@ -255,23 +247,6 @@ $root-thumbnail-max-y: $nominal-thumbnail-y;
         --thumbnail-max-y: #{$nominal-thumbnail-x};
     }
 }
-
-//=============================================================================
-// Internet Explorer definitions.
-//=============================================================================
-
-$ie-page-padding:    $root-page-padding;
-$ie-flex-gap:        $root-flex-gap;
-$ie-gap:             $root-gap;
-$ie-thumbnail-max-x: $root-thumbnail-max-x;
-$ie-thumbnail-max-y: $root-thumbnail-max-y;
-
-$ie-page-padding-x:  $ie-page-padding;
-$ie-page-padding-y:  ($ie-page-padding / 2);
-$ie-flex-gap-x:      $ie-flex-gap;
-$ie-flex-gap-y:      $ie-flex-gap;
-$ie-gap-x:           $ie-gap;
-$ie-gap-y:           $ie-gap;
 
 //=============================================================================
 // Responsive definitions.

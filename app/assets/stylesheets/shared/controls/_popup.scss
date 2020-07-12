@@ -120,7 +120,6 @@
             color:       white;
             cursor:      pointer;
 
-            // noinspection CssBrowserCompatibilityForProperties
             &:focus {
                 @extend %focus;
                 outline-offset: 1px;

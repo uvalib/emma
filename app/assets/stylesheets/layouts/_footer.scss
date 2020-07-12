@@ -17,11 +17,7 @@
 
     position:   relative;
     z-index:    $z-raised;
-    margin-top: $footer-margin-top;
+    margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});
     border-top: $hcm-divider-width solid $header-bg;
     box-shadow: 0 0 1rem -0.25rem $header-bg;
-
-    @media #{$browser-not-ie} {
-        margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});
-    }
 }
