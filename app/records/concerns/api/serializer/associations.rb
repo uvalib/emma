@@ -43,7 +43,7 @@ module Api::Serializer::Associations
     #     <XXX elem="value"></XXX>
     #
     def attribute(name, type, **opt)
-      type = get_type_class(type, opt)
+      type = get_type_class(type, **opt)
       opt[:type]      = type
       opt[:default] ||= scalar_default(type)
       prepare_attribute!(name, type, opt)
@@ -72,7 +72,7 @@ module Api::Serializer::Associations
     #     <XXX><elem>value</elem></XXX>
     #
     def has_one(name, type, **opt, &block)
-      type = get_type_class(type, opt)
+      type = get_type_class(type, **opt)
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
@@ -111,7 +111,7 @@ module Api::Serializer::Associations
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
     #
     def has_many(name, type, **opt, &block)
-      type = get_type_class(type, opt)
+      type = get_type_class(type, **opt)
       if scalar_type?(type)
         opt[:type]      = type
       else
@@ -131,7 +131,7 @@ module Api::Serializer::Associations
     # Determine the class to be associated with a data element.
     #
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash, nil]                  opt   Passed to #extract_type_option!
+    # @param [Hash]                       opt   Passed to #extract_type_option!
     #
     # @return [Class]
     #

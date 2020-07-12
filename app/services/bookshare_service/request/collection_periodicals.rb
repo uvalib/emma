@@ -47,6 +47,9 @@ module BookshareService::Request::CollectionPeriodicals
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_periodical-update
   #
+  #--
+  # noinspection LongLine
+  #++
   def update_periodical(seriesId:, **opt)
     opt = get_parameters(__method__, **opt)
     api(:put, 'periodicals', seriesId, **opt)

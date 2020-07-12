@@ -76,6 +76,9 @@ module BookshareService::Request::AssignedTitles
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_titles-assigned-member
   #
+  #--
+  # noinspection LongLine
+  #++
   def get_assigned_titles(user: @user, **opt)
     userIdentifier = name_of(user)
     opt = get_parameters(__method__, **opt)
@@ -114,6 +117,9 @@ module BookshareService::Request::AssignedTitles
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_title-assign
   #
+  #--
+  # noinspection LongLine
+  #++
   def create_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
     opt[:bookshareId] = bookshareId
@@ -147,6 +153,9 @@ module BookshareService::Request::AssignedTitles
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_title-unassign
   #
+  #--
+  # noinspection LongLine
+  #++
   def remove_assigned_title(user: @user, bookshareId:, **opt)
     userIdentifier = name_of(user)
     opt[:bookshareId] = bookshareId

@@ -9,7 +9,7 @@
 # For build-base:
 # @see https://git.alpinelinux.org/aports/tree/main/build-base/APKBUILD
 
-FROM ruby:2.6.3-alpine
+FROM ruby:2.7-alpine
 RUN apk upgrade && \
     apk add --no-cache \
     bash \
@@ -58,10 +58,7 @@ ADD storage/bundle-config $HOME/.bundle/config
 
 # Update bundler if needed then install required gems.
 ADD Gemfile Gemfile.lock  ./
-RUN BUNDLER_VERSION=`tail -1 Gemfile.lock | tr -d ' '`; \
-    gem list --silent --installed --exact bundler -v "$BUNDLER_VERSION" || \
-    gem install bundler -v "$BUNDLER_VERSION"; \
-    bundle install
+RUN bundle install
 
 # Create work directory and copy the application to it.
 ADD . $APP_HOME

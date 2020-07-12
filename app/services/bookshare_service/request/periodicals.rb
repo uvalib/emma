@@ -50,6 +50,9 @@ module BookshareService::Request::Periodicals
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
+  #--
+  # noinspection LongLine
+  #++
   def get_periodicals(**opt)
     opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', **opt)
@@ -86,6 +89,9 @@ module BookshareService::Request::Periodicals
   # == Usage Notes
   # This request can be made without an Authorization header.
   #
+  #--
+  # noinspection LongLine
+  #++
   def get_periodical(seriesId:, **opt)
     api(:get, 'periodicals', seriesId, **opt)
     Bs::Message::PeriodicalSeriesMetadataSummary.new(response, error: exception)
@@ -219,6 +225,9 @@ module BookshareService::Request::Periodicals
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource-list
   #
+  #--
+  # noinspection LongLine
+  #++
   def get_periodical_resource_files(seriesId:, editionId:, format:, **opt)
     api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', **opt)
     Bs::Message::TitleFileResourceList.new(response, error: exception)
@@ -251,6 +260,9 @@ module BookshareService::Request::Periodicals
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource
   #
+  #--
+  # noinspection LongLine
+  #++
   def get_periodical_resource_file(seriesId:, editionId:, format:, resourceId:, **opt)
     api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', resourceId, **opt)
     Bs::Message::StatusModel.new(response, error: exception)

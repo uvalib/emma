@@ -11,6 +11,7 @@
 # database is "scratch space" for the test suite and is wiped and recreated
 # between test runs. Don't rely on the data there!
 
+# noinspection RubyResolve
 Rails.application.configure do
 
   # Do not eager load code on boot. This avoids loading your whole application

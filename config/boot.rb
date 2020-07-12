@@ -107,8 +107,8 @@ def rails_application?
     @in_rails &&= $*.none? { |arg| %w(-h --help).include?(arg) }
     @in_rails &&= (
       !!ENV['IN_PASSENGER'] ||
-      $0.start_with?('spring app') ||
-      ($0.end_with?('rails', 'spring') && $*.include?('server'))
+      $0.to_s.start_with?('spring app') ||
+      ($0.to_s.end_with?('rails', 'spring') && $*.include?('server'))
     )
   end
   @in_rails
@@ -138,7 +138,7 @@ if rails_application?
         .gsub(/"([^"]+)"=>/, '... \1 = ')
   end
 
-elsif !$0.end_with?('rails', 'rake')
+elsif !$0.to_s.end_with?('rails', 'rake')
 
   # Announce atypical executions (like irb or pry).
   STDERR.puts "Running #{$0.inspect}"

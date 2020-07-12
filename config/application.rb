@@ -18,6 +18,7 @@ Bundler.require(*Rails.groups)
 
 module Emma
 
+  # noinspection RubyResolve
   class Application < Rails::Application
 
     # Initialize configuration defaults.

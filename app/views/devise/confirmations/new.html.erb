@@ -12,6 +12,7 @@
     html: { method: :post }
   }
 
+  # noinspection RubyResolve
   email =
     if resource.pending_reconfirmation?
       resource.unconfirmed_email

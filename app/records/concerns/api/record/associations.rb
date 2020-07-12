@@ -122,7 +122,7 @@ module Api::Record::Associations
     # Get a default for a schema property data element.
     #
     # @param [Class, String, Symbol, nil] type
-    # @param [Hash, nil]                  opt   Passed to #extract_type_option
+    # @param [Hash]                       opt   Passed to #extract_type_option
     #
     # @return [Object]  A literal value.
     # @return [Proc]    An anonymous method that generates the default value.
@@ -130,7 +130,7 @@ module Api::Record::Associations
     # Compare with:
     # @see Api::Serializer::Associations#get_type_class
     #
-    def make_default(type, opt = nil)
+    def make_default(type, **opt)
       type = extract_type_option(opt) || type || 'String'
       type = type.to_s.classify if type.is_a?(Symbol)
       name = type.to_s

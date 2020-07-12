@@ -25,6 +25,7 @@
       [label, path]
     }
 
+  # noinspection RubyResolve
   if devise_mapping.omniauthable?
     links +=
       resource_class.omniauth_providers.map { |provider|

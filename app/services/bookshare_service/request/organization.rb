@@ -74,6 +74,7 @@ module BookshareService::Request::Organization
   def get_my_organization_member(user:, **opt)
     opt = get_parameters(__method__, **opt)&.merge!(limit: :max)
     username = name_of(user)
+    # noinspection RubyResolve
     acct_id =
       if user.respond_to?(:userAccountId)
         user.userAccountId
@@ -81,6 +82,7 @@ module BookshareService::Request::Organization
         user
       end
     acct_id &&= CGI.unescape(acct_id)
+    # noinspection RubyResolve
     member =
       get_my_organization_members(**opt).userAccounts.find do |acct|
         (acct.userAccountId.to_s == acct_id) || (acct.identifier == username)

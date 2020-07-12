@@ -59,6 +59,7 @@ module UserConcern
     if id.present?
       opt[:user] = id
       item = bs_api.get_account(**opt)
+      # noinspection RubyResolve
       if item.error?
         item = bs_api.get_my_organization_member(**opt)
         opt[:user] = item.userAccountId || item.identifier

@@ -38,6 +38,9 @@ module BookshareHelper
   #
   # @type [Hash{Symbol=>Hash,String}]
   #
+  #--
+  # noinspection LongLine
+  #++
   BOOKSHARE_ACTION = {
     bookActionHistory:  "#{BOOKSHARE_CATALOG}/bookActionHistory",
     submitBook:         "#{BOOKSHARE_CATALOG}/submitBook",

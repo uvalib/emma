@@ -151,6 +151,7 @@ module ArtifactHelper
   def artifact_link(item, format, **opt)
     url      = opt.delete(:url)
     fmt_name = format.is_a?(Bs::Record::Format) ? format.label : item.label
+    # noinspection RubyResolve
     if item.is_a?(Bs::Api::Record)
       repo    = :bookshare
       type    = FormatType
@@ -228,6 +229,7 @@ module ArtifactHelper
     if item.respond_to?(:formats)
       # === Bs::Api::Record ===
       fmts = Array.wrap(item.formats).compact.uniq
+      # noinspection RubyResolve
       fmts.select! { |fmt| fmt.formatId == format_id } if format_id
       fmts.sort_by!(&:formatId)
     else

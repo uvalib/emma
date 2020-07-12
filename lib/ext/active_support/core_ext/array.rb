@@ -77,17 +77,6 @@ class Array
     self
   end
 
-  # ===========================================================================
-  # Fixes for RubyMine parameter definitions
-  # ===========================================================================
-
-  unless ONLY_FOR_DOCUMENTATION
-
-    # @return [Hash]
-    def extract_options!; {}; end
-
-  end
-
 end
 
 __loading_end(__FILE__)

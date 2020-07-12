@@ -3,6 +3,7 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
+# noinspection LongLine
 Rails.application.routes.draw do
 
   ALL_METHODS ||= %i[get put post patch delete].freeze

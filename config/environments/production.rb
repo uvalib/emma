@@ -6,6 +6,7 @@
 # Settings specified here will take precedence over those in
 # config/application.rb.
 
+# noinspection RubyResolve
 Rails.application.configure do
 
   # Eager load code on boot. This eager loads most of Rails and your

@@ -6,6 +6,7 @@
 # Settings specified here will take precedence over those in
 # config/application.rb.
 
+# noinspection RubyResolve
 Rails.application.configure do
 
   # Do not eager load code on boot.
@@ -29,6 +30,7 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
+  # noinspection RubyResolve
   if Rails.root.join('tmp', 'caching-dev.txt').exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true

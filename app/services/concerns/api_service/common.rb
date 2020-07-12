@@ -471,6 +471,7 @@ module ApiService::Common
       body    = params
       params  = {}
     end
+    # noinspection RubyNilAnalysis
     if body
       body = body.is_a?(Array) ? body.map { |v| api_body(v) } : api_body(body)
       body = body.to_json

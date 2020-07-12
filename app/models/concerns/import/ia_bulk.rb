@@ -25,9 +25,6 @@ module Import::IaBulk
   #
   # @type [Hash{Symbol=>Symbol,Array<(Symbol,(Symbol,Proc))>}]
   #
-  #--
-  # noinspection LongLine
-  #++
   SCHEMA = {
     #-------------------- --------------------------- -------------------------
     # Underscored name    Translator method or field  Value translator method

@@ -115,7 +115,7 @@ module SessionsHelper
       key = default.shift
     end
     opt[:default] = default
-    t(key, opt)
+    t(key, **opt)
   end
 
 end

@@ -101,7 +101,7 @@ module Representable
             else              '-'
           end
         return if mode.blank?
-        opt = args.extract_options!
+        opt = args.extract_options! || {}
         if block_given?
           added_args = Array.wrap(yield)
           added_opt  = added_args.extract_options!

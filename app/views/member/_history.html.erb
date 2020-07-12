@@ -2,7 +2,7 @@
 <%-
   # Organization Member download history.
 
-  # @type [Bs::Message::TitleDownloadList]
+  # noinspection RubyResolve
   hist  ||= @history or return
   list  ||= hist.titleDownloads
   count ||= hist.totalResults || list&.size || 0

@@ -131,7 +131,7 @@ module LayoutHelper::SkipNav
         elsif !other.first.is_a?(Hash)
           t_opt = { default: other }
         else
-          t_opt = other.shift
+          t_opt = other.shift || {}
           other = [*t_opt[:default], *other].compact.uniq
           t_opt = t_opt.merge(default: other) if other.present?
         end

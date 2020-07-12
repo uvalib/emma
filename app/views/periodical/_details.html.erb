@@ -9,6 +9,7 @@
   level ||= 1
   skip  ||= nil
 
+  # noinspection RubyResolve
   append_page_description(
     ISSN:     item.issn,
     Language: item.languages&.first(3),

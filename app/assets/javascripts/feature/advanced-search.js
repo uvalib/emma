@@ -637,6 +637,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} e
      */
     function updateHiddenParameters(e) {
+        // noinspection JSCheckFunctionSignatures
         setHiddenParameters(e.target);
     }
 

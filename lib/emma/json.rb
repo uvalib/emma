@@ -51,9 +51,6 @@ module Emma::Json
   #   If *arg* is IO-like, its contents are read and parsed as JSON.
   #   @param [IO, StringIO, IO::Like] io
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def json_parse(arg, no_raise: true, **opt)
     return if arg.blank?
     arg = arg.body   if arg.respond_to?(:body)
@@ -67,6 +64,7 @@ module Emma::Json
     elsif arg.is_a?(String)
       arg = arg.gsub(/=>/, ':')
       opt.reverse_merge!(symbolize_keys: true)
+      # noinspection RubyYardReturnMatch
       MultiJson.load(arg, opt)
     else
       Log.error { "#{__method__}: #{arg.class} unexpected: #{arg.inspect}" }
@@ -87,7 +85,7 @@ module Emma::Json
   #
   def safe_json_parse(arg, default: :original, **opt)
     # noinspection RubyYardReturnMatch
-    json_parse(arg, opt) || ((default == :original) ? arg : default)
+    json_parse(arg, **opt) || ((default == :original) ? arg : default)
   end
 
   # pretty_json

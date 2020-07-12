@@ -80,7 +80,6 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
   #
   def create_my_reading_list(name:, access:, **opt)
-    # noinspection RubyNilAnalysis
     opt = get_parameters(__method__, **opt).merge!(name: name, access: access)
     api(:post, 'mylists', **opt)
     Bs::Message::ReadingList.new(response, error: exception)

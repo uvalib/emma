@@ -438,7 +438,6 @@ module UploadConcern
   #
   def get_record(item, no_raise: false, meth: nil)
     meth ||= __method__
-    # noinspection RubyYardReturnMatch
     if item.blank?
       fail(:file_id) unless no_raise
     elsif (result = find_records(item).first).is_a?(Upload)
@@ -453,13 +452,13 @@ module UploadConcern
 
   # Find all of the specified Upload records.
   #
-  # @param [String, Upload, Array] items
-  # @param [Hash]                  opt    Passed to #collect_records.
+  # @param [Array<Upload,String,Array>] items
+  # @param [Hash]                       opt     Passed to #collect_records.
   #
   # @return [Array<Upload>]
   #
-  def find_records(items, **opt)
-    collect_records(items, **opt).first
+  def find_records(*items, **opt)
+    collect_records(*items, **opt).first
   end
 
   # Create a new free-standing (un-persisted) Upload instance.

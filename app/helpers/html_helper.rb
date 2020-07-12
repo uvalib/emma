@@ -84,7 +84,7 @@ module HtmlHelper
     level &&= [level, 6].min
     tag = "h#{level}" if level
     tag = 'div'       if tag.blank? || tag.is_a?(Integer)
-    options = args.extract_options!.presence
+    options = args.extract_options!
     content = args.flatten
     content += Array.wrap(yield) if block_given?
     content.reject!(&:blank?)
@@ -503,7 +503,6 @@ module HtmlHelper
       xml.squeeze!(opt[:omission])
       xml.html_safe
     else
-      # noinspection RubyYardReturnMatch
       str.truncate(length, opt.except(:content))
     end
   end

@@ -57,10 +57,9 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @return [Integer]
   #
   #--
-  # noinspection RubyInstanceMethodNamingConvention
+  # noinspection RubyInstanceMethodNamingConvention, RubyYardReturnMatch
   #++
   def totalResults
-    # noinspection RubyYardReturnMatch
     records&.size || 0
   end
 

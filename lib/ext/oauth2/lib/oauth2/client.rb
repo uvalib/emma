@@ -243,7 +243,7 @@ module OAuth2
     # This method overrides:
     # @see OAuth2::Client#get_token
     #
-    def get_token(params, access_token_opts = {}, access_token_class = AccessToken)
+    def get_token(params, access_token_opts={}, access_token_class=AccessToken)
       __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
       super.tap do |result|
         __debug { "#{dbg} => #{result.inspect}" }

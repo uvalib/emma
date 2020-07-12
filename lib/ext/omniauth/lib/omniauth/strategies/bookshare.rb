@@ -19,6 +19,9 @@ module OmniAuth
     #
     # @see https://github.com/omniauth/omniauth-oauth2
     #
+    #--
+    # noinspection LongLine
+    #++
     class Bookshare < OmniAuth::Strategies::OAuth2
 
       include Emma::Json

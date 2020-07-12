@@ -106,7 +106,6 @@ module SearchConcern
     elsif value.is_a?(Array)
       normalize_keys(value.first)
     elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
-      # noinspection RubyYardReturnMatch
       value.split(FileFormat::FILE_FORMAT_SEP).reject(&:blank?)
     else
       value

@@ -367,9 +367,6 @@ class UploadController < ApplicationController
   #
   # @see UploadConcern#bulk_upload_destroy
   #
-  #--
-  # noinspection RubyScope
-  #++
   def bulk_delete
     __debug_route
     @force = !false?(params[:force])

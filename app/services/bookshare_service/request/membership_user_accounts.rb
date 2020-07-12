@@ -591,7 +591,6 @@ module BookshareService::Request::MembershipUserAccounts
     user: @user, agreementType:, dateSigned:, printName:, **opt
   )
     userIdentifier = name_of(user)
-    # noinspection RubyNilAnalysis
     opt = get_parameters(__method__, **opt).merge!(
       agreementType: agreementType,
       dateSigned:    dateSigned,

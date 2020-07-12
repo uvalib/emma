@@ -105,6 +105,9 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyResolve
+  #++
   def title_and_source_logo(item)
     title  = item.full_title
     source = item.emma_repository
@@ -124,6 +127,9 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyResolve
+  #++
   def title_and_source(item)
     title  = item.full_title
     source = item.emma_repository
@@ -146,6 +152,9 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyResolve
+  #++
   def source_record_link(item, **opt)
     repo = item.emma_repository
     if repo&.to_sym == EmmaRepository.default
@@ -181,6 +190,9 @@ module SearchHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
   #
+  #--
+  # noinspection RubyResolve
+  #++
   def source_retrieval_link(item, **opt)
     opt, html_opt = partition_options(opt, :label, :url)
     url = opt[:url] || item.record_download_url
@@ -261,6 +273,9 @@ module SearchHelper
   #
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
+  #--
+  # noinspection RubyResolve
+  #++
   def record_popup(item, **opt)
     rid = item.emma_repositoryRecordId
     opt = append_css_classes(opt, 'record-popup')

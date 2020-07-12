@@ -62,7 +62,6 @@ class MetricsController < ApplicationController
       REGISTRY.gauge(:test_gauge3, docstring: 'A third gauge')
     g.set(18, labels: { bb: 'second label' })
 
-    # noinspection RubyResolve
     Histogram[:test_histogram].observe(value / 16)
     Histogram[:test_histogram].observe(value / 4)
     Histogram[:test_histogram].observe(value)

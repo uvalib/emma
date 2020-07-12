@@ -16,6 +16,7 @@
     html: { method: :put }
   }
 
+  # noinspection RubyResolve
   awaiting =
     if devise_mapping.confirmable? && (email = resource.unconfirmed_email)
       t('emma.user.registrations.edit.awaiting', email: email)
