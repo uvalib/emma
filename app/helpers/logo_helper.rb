@@ -19,33 +19,12 @@ module LogoHelper
 
   public
 
-  # The default repository for uploads.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_REPO = Search::Api::Common::DEFAULT_REPOSITORY
-
-  # Repository logo image assets.
-  #
-  # @type [Hash{String=>String}]
-  #
-  REPOSITORY_LOGO =
-    Search::REPOSITORY.transform_values { |entry| entry[:logo] }
-      .stringify_keys
-      .deep_freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Make a logo for a repository source.
   #
   # @param [Search::Api::Record, String, Symbol, nil] item
   # @param [Hash] opt                 Passed to #image_tag except for:
   #
-  # @option opt [String] :source      Overrides :src if present.
+  # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
   # @option opt [String] :logo        Logo asset name.
   #
@@ -53,16 +32,16 @@ module LogoHelper
   #
   def repository_source_logo(item = nil, opt = nil)
     opt, html_opt = partition_options(opt, :source, :name, :logo)
-    src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
-    name = opt[:name] || repository_name(src)
-    logo = REPOSITORY_LOGO[src]
+    repo = normalize_repository(opt[:source] || item)
+    name = opt[:name] || repository_name(repo)
+    logo = Api::Common::REPOSITORY.dig(repo, :logo)
     if logo.present?
-      prepend_css_classes!(html_opt, 'repository', 'logo', src)
+      prepend_css_classes!(html_opt, 'repository', 'logo', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
       # noinspection RubyYardReturnMatch
       image_tag(asset_path(logo), html_opt)
     else
-      repository_source(src, html_opt.merge!(source: src, name: name))
+      repository_source(repo, html_opt.merge!(source: repo, name: name))
     end
   end
 
@@ -71,17 +50,17 @@ module LogoHelper
   # @param [Search::Api::Record, String, Symbol] item
   # @param [Hash] opt                 Passed to #html_div except for:
   #
-  # @option opt [String] :source      Overrides :src if present.
+  # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source(item, opt = nil)
     opt, html_opt = partition_options(opt, :source, :name)
-    src  = normalize_repository(opt[:source] || item || DEFAULT_REPO)
-    name = opt[:name] || repository_name(src)
+    repo = normalize_repository(opt[:source] || item)
+    name = opt[:name] || repository_name(repo)
     if name.present?
-      prepend_css_classes!(html_opt, 'repository', 'name', src)
+      prepend_css_classes!(html_opt, 'repository', 'name', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
       html_div(html_div(name), html_opt)
     else
@@ -99,15 +78,19 @@ module LogoHelper
   #
   # @param [Search::Api::Record, String, Symbol, nil] src
   #
-  # @return [String]
+  # @return [Symbol]
   # @return [nil]
   #
+  #--
+  # noinspection RubyResolve, RubyYardReturnMatch
+  #++
   def normalize_repository(src)
-    # noinspection RubyResolve
-    src = src.emma_repository if src.respond_to?(:emma_repository)
-    src = src.to_s
-    # noinspection RubyYardReturnMatch
-    src if EmmaRepository.values.include?(src)
+    return Api::Common::DEFAULT_REPOSITORY if src.blank?
+    src = src.emma_repository              if src.respond_to?(:emma_repository)
+    src = src.to_s.squish
+    Api::Common::REPOSITORY.find do |repo, config|
+      return repo if (repo.to_s == src) || src.casecmp(config[:name]).zero?
+    end
   end
 
   # repository_name
@@ -118,10 +101,8 @@ module LogoHelper
   # @return [nil]
   #
   def repository_name(src)
-    src = src.emma_repository if src.respond_to?(:emma_repository)
-    src = src.to_s
-    # noinspection RubyYardReturnMatch
-    (src == DEFAULT_REPO.to_s) ? src.upcase : src.titleize if src.present?
+    repo = normalize_repository(src)
+    Api::Common::REPOSITORY.dig(repo, :name)
   end
 
   # repository_tooltip
@@ -134,9 +115,11 @@ module LogoHelper
   def repository_tooltip(item, name = nil)
     name ||= repository_name(item)
     if item.is_a?(Model)
+      name ||= 'external' # TODO: I18n
       a = name.match?(/^[aeiou]/i) ? 'an' : 'a'
       "This is #{a} #{name} repository item" # TODO: I18n
     else
+      name ||= 'an external repository' # TODO: I18n
       "From #{name}" # TODO: I18n
     end
   end

@@ -160,14 +160,14 @@ module ArtifactHelper
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= download_path(bookshareId: item.identifier, fmt: format)
     else # if item.is_a?(Search::Api::Record)
-      repo    = item.emma_repository || EmmaRepository.default
+      repo    = item.emma_repository || Api::Common::DEFAULT_REPOSITORY
       format  = format&.to_s || item.dc_format
       lbl_key = "emma.source.#{repo}.download_fmt.#{format}"
       url   ||= item.record_download_url
       url   &&= retrieval_path(url: url)
     end
     return if url.blank?
-    repo_name = Search::REPOSITORY.dig(repo.to_sym, :name)
+    repo_name = Api::Common::REPOSITORY.dig(repo.to_sym, :name)
     fmt_name  = I18n.t(lbl_key, default: fmt_name)
 
     # Initialize link options.

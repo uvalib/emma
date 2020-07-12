@@ -379,7 +379,7 @@ module ModelHelper
   #
   def render_pair(label, value, field: nil, index: nil, row: 1, separator: nil)
     return if value.blank?
-    prop = Upload.get_field_configuration(field)
+    prop = Field.configuration(field)
     rng  = html_id(label || 'None')
     type = "field-#{rng}"
     v_id = type.dup
@@ -387,7 +387,7 @@ module ModelHelper
     [v_id, l_id].each { |id| id << "-#{index}" } if index
 
     # Extract range values.
-    value = value.content if value.is_a?(Field::Range)
+    value = value.content if value.is_a?(Field::Type)
 
     # Mark invalid values.
     # noinspection RubyCaseWithoutElseBlockInspection
@@ -396,17 +396,25 @@ module ModelHelper
       when :dc_identifier then value = mark_invalid_identifiers(value)
     end
 
-    # Pre-process value and accumulate CSS classes.
-    css = %W(row-#{row} #{type})
-    if value.is_a?(Array) || prop[:type].is_a?(Class)
-      i = 0
-      value = value.map { |v| html_div(v, class: "item-#{i += 1}") }
+    # Pre-process value(s).
+    if prop[:array]
+      idx   = 0
+      value = Array.wrap(value)
+      value = value.map { |v| html_div(v, class: "item-#{idx += 1}") }
       value = safe_join(value, separator)
-      css << 'array'
-    elsif prop[:type] == 'textarea'
-      css << 'textbox'
+    elsif value.is_a?(Array)
+      separator ||= "<br/>\n".html_safe
+      value = safe_join(value, separator)
     end
-    opt = { class: css }
+
+    # Option settings for both label and value.
+    status = []
+    if prop[:array]
+      status << 'array'
+    elsif prop[:type] == 'textarea'
+      status << 'textbox'
+    end
+    opt = { class: css_classes("row-#{row}", type, *status) }
 
     # Label and label HTML options.
     l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
@@ -712,50 +720,26 @@ module ModelHelper
   # Indicate whether the given field value produces an <input> that should be
   # disabled.
   #
-  # @param [Symbol, String] value
+  # @param [Symbol, String] field
   # @param [Symbol, String] model
   #
-  def readonly_form_field?(value, model = nil)
-    readonly_form_fields(model).include?(value)
-  end
-
-  # readonly_form_fields
+  # @see UploadHelper#upload_readonly_form_field?
   #
-  # @param [Symbol, String] model
-  #
-  # @return [Array<Symbol>]
-  #
-  def readonly_form_fields(model = nil)
-    # noinspection RubyAssignmentExpressionInConditionalInspection
-    if model && respond_to?(model_method = "#{model}_readonly_form_fields")
-      send(model_method)
-    else
-      %i[id]
-    end
+  def readonly_form_field?(field, model = nil)
+    model_method = "#{model}_#{__method__}"
+    model.present? && respond_to?(model_method) && send(model_method, field)
   end
 
   # Indicate whether the given field value is required for validation.
   #
-  # @param [Symbol, String] value
+  # @param [Symbol, String] field
   # @param [Symbol, String] model
   #
-  def required_form_field?(value, model = nil)
-    required_form_fields(model).include?(value)
-  end
-
-  # required_form_fields
+  # @see UploadHelper#upload_required_form_field?
   #
-  # @param [Symbol, String] model
-  #
-  # @return [Array<Symbol>]
-  #
-  def required_form_fields(model = nil)
-    # noinspection RubyAssignmentExpressionInConditionalInspection
-    if model && respond_to?(model_method = "#{model}_required_form_fields")
-      send(model_method)
-    else
-      []
-    end
+  def required_form_field?(field, model = nil)
+    model_method = "#{model}_#{__method__}"
+    model.present? && respond_to?(model_method) && send(model_method, field)
   end
 
   # ===========================================================================
@@ -864,22 +848,17 @@ module ModelHelper
     base = html_id(label || 'None')
     type = "field-#{base}"
     name = field&.to_s || base
-    prop = Upload.get_field_configuration(field)
-
-    # Option settings for both label and value.
-    opt = { class: "row-#{row} #{type}" }
-    append_css_classes!(opt, 'required') if required
-    append_css_classes!(opt, 'disabled') if disabled
+    prop = Field.configuration(field)
 
     # Pre-process value.
     render_method = placeholder = range = nil
     if value == EN_DASH
       placeholder = value
       value = nil
-    elsif value.is_a?(Field::Range)
+    elsif value.is_a?(Field::Type)
       range = value.base if valid_range?(value.base)
       multi = (value.mode == :multiple)
-      value = value.values
+      value = value.value
       render_method =
         if range
           multi ? :render_form_menu_multi  : :render_form_menu_single
@@ -889,15 +868,20 @@ module ModelHelper
     end
     render_method ||= :render_form_input
     placeholder   ||= prop[:placeholder]
-    value   = Array.wrap(value).reject(&:blank?)
-    invalid = required && value.empty?
-    append_css_classes!(opt, 'invalid') if invalid
+    value    = Array.wrap(value).reject(&:blank?)
+    disabled = prop[:readonly] if disabled.nil?
+    required = prop[:required] if required.nil?
+    invalid  = required && value.empty?
 
     # Create status marker icon.
     status = []
     status << :required if required
+    status << :disabled if disabled
     status << :invalid  if invalid
     marker = status_marker(status: status, label: label)
+
+    # Option settings for both label and value.
+    opt = { class: css_classes("row-#{row}", type, *status) }
 
     # Label for input element.
     l_opt = append_css_classes(opt, 'label')
@@ -950,7 +934,7 @@ module ModelHelper
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
 
-    selected = value.compact.presence
+    selected = Array.wrap(value).compact.presence || ['']
 
     menu =
       range.pairs.map do |item_value, item_label|
@@ -990,7 +974,7 @@ module ModelHelper
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
 
-    selected = value.compact.presence
+    selected = Array.wrap(value).compact.presence
 
     field_opt = html_opt.merge(role: 'listbox', name: name, multiple: true)
     field_opt[:disabled] = true if opt[:readonly]
@@ -1031,60 +1015,9 @@ module ModelHelper
   # @see updateFieldsetInputs() in javascripts/feature/file-upload.js
   #
   def render_form_input_multi(name, value, **opt)
-    normalize_attributes!(opt)
-    opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
-    append_css_classes!(html_opt, 'input', 'multi')
-    field = html_opt[:'data-field']
-    name  = opt[:name] || name || opt[:base] || field
-
-    selected = value.compact.presence || ['']
-
-    field_opt = html_opt.merge(role: 'listbox', name: name, id: opt[:id])
-    # noinspection RubyYardReturnMatch
-    field_set_tag(nil, field_opt) do
-      html_div(html_opt) do
-
-        count     = html_opt.delete(:count) || (2 + selected.size)
-        label_id  = name.to_s.delete_prefix('field-').prepend('label-')
-        input_opt = {
-          role:              'textbox',
-          readonly:          opt[:readonly],
-          'aria-labelledby': label_id
-        }
-        count.times.map { |n|
-          input_name     = "[#{field}][]"
-          input_value    = selected.shift
-          input_opt[:id] = "#{field}_#{n}"
-          render_form_input(input_name, input_value, **input_opt)
-        }.join("\n").html_safe
-
-      end
-    end
+    opt = append_css_classes(opt, 'input', 'multi')
+    render_field_item(name, value, **opt)
   end
-
-  # A mapping of field type indicator to the actual type(s) that may be used
-  # with it.
-  #
-  # @type [Hash{Symbol=>Array<Class>}]
-  #
-  RENDER_FIELD_TYPES = {
-    year:   [IsoYear],
-    date:   [IsoDate, Date, ActiveSupport::TimeWithZone] +
-              [ActiveModel::Type::DateTime, ActiveModel::Type::Date],
-    time:   [Time, ActiveModel::Type::Time],
-    check:  [Boolean, TrueClass, FalseClass],
-  }.deep_freeze
-
-  # Reverse mapping of actual type to the appropriate field type indicator.
-  #
-  # @type [Hash{Class=>Symbol}]
-  #
-  RENDER_FIELD_TYPE =
-    {}.tap { |hash|
-      RENDER_FIELD_TYPES.each_pair do |type, classes|
-        classes.each { |c| hash[c] = type }
-      end
-    }.freeze
 
   # render_form_input
   #
@@ -1096,31 +1029,84 @@ module ModelHelper
   #
   # @see updateTextInputField() in javascripts/feature/file-upload.js
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def render_form_input(name, value, **opt)
+    opt = append_css_classes(opt, 'input', 'single')
+    render_field_item(name, value, **opt)
+  end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  protected
+
+  # Mapping of actual type to the appropriate field type indicator.
+  #
+  # @type [Hash{Class=>Symbol}]
+  #
+  RENDER_FIELD_TYPE = {
+    Boolean                     => :check,
+    FalseClass                  => :check,
+    TrueClass                   => :check,
+    Integer                     => :number,
+    IsoYear                     => :year,
+    ActiveModel::Type::Date     => :date,
+    ActiveModel::Type::DateTime => :date,
+    Date                        => :date,
+    DateTime                    => :date,
+    IsoDate                     => :date,
+    ActiveModel::Type::Time     => :time,
+    ActiveSupport::TimeWithZone => :time,
+    Time                        => :time,
+  }.freeze
+
+  # Convert certain field types.
+  #
+  # @type [Hash{Symbol=>Symbol}]
+  #
+  REPLACE_FIELD_TYPE = {
+    year: :text, # Currently treating :year as plain text.
+    date: :text, # Currently treating :date as plain text.
+    time: :text, # Currently treating :time as plain text.
+  }.freeze
+
+  # render_field_item
+  #
+  # @param [String] name
+  # @param [*]      value
+  # @param [Hash]   opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def render_field_item(name, value, **opt)
     normalize_attributes!(opt)
-    local, opt = partition_options(opt, :base, :name)
-    append_css_classes!(opt, 'input', 'single')
-    field = opt[:'data-field']
-    name  = local[:name] || name || local[:base] || field
-    type  = Upload.get_field_configuration(field)[:type]
+    opt, html_opt = partition_options(opt, :base, :name)
+    field = html_opt[:'data-field']
+    name  = opt[:name] || name || opt[:base] || field
+    value = Array.wrap(value).reject(&:blank?)
+    type  = Field.configuration(field)[:type]
     type  = type.to_sym if type.is_a?(String)
-    type  = RENDER_FIELD_TYPE[value.class] || :text unless type.is_a?(Symbol)
-    # noinspection RubyCaseWithoutElseBlockInspection
+    type  = RENDER_FIELD_TYPE[value.first.class] unless type.is_a?(Symbol)
+    type  = REPLACE_FIELD_TYPE[type] || type || :text
+    value =
+      case type
+        when :check    then true?(value.first)
+        when :number   then value.first.to_s.remove(/[^\d]/)
+        when :year     then value.first.to_s.sub(/\s.*$/, '')
+        when :date     then value.first.to_s
+        when :time     then value.first.to_s.sub(/^([^ ]+).*$/, '\1')
+        when :textarea then value.join("\n").split(/[ \t]*\n[ \t]*/).join("\n")
+        else value.map { |v| v.to_s.strip.presence }.compact.join(' | ')
+      end
+    # noinspection RubyYardReturnMatch
     case type
-      when :date, :year then value = value.to_s.sub(/\s.*$/, '')
-      when :time        then value = value.to_s.sub(/^([^ ]+).*$/, '\1')
-      when :textarea    then value = Array.wrap(value).join("\n")
-    end
-    case type
-      when :check    then render_check_box(name, value, **opt)
-      when :year     then text_field_tag(name, value, opt.merge!(type: :year))
-      when :date     then date_field_tag(name, value, opt)
-      when :time     then time_field_tag(name, value, opt)
-      when :textarea then text_area_tag(name, value, opt)
-      else                text_field_tag(name, value, opt)
+      when :check    then render_check_box(name, value, **html_opt)
+      when :number   then number_field_tag(name, value, html_opt.merge(min: 0))
+      when :year     then text_field_tag(name, value, html_opt)
+      when :date     then date_field_tag(name, value, html_opt)
+      when :time     then time_field_tag(name, value, html_opt)
+      when :textarea then text_area_tag(name, value, html_opt)
+      else                text_field_tag(name, value, html_opt)
     end
   end
 

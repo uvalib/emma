@@ -6,9 +6,6 @@
 # @see Search::Api::Common::ENUMERATIONS
 # @see Search::Api::Common::ENUMERATION_TYPES
 # @see Search::Api::Common::ENUMERATION_DEFAULTS
-#
-# NOTE: EmmaRepository is not defined here because it is generated dynamically
-# from Search::Api::Common::REPOSITORY.
 
 en:
 

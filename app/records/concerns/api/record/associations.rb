@@ -124,6 +124,8 @@ module Api::Record::Associations
     # @param [Class, String, Symbol, nil] type
     # @param [Hash]                       opt   Passed to #extract_type_option
     #
+    # @raise [NameError]                        If *type* is invalid.
+    #
     # @return [Object]  A literal value.
     # @return [Proc]    An anonymous method that generates the default value.
     #
@@ -135,23 +137,18 @@ module Api::Record::Associations
       type = type.to_s.classify if type.is_a?(Symbol)
       name = type.to_s
       base = name.demodulize.to_sym
-      if scalar_types.include?(base)
-        scalar_defaults[base]
-      elsif enumeration_types.include?(base)
-        enumeration_default(base)
-      elsif base.to_s.start_with?('Iso')
-        type = base.to_s.constantize
-        ->(*)  { type.new }
-      elsif !name.include?('::')
-        type = "#{service_name}::Record::#{name}".constantize
-        ->(*a) { type.new(nil, *a) }
-      elsif name.start_with?("#{service_name}::")
-        type = name.constantize unless type.is_a?(Class)
-        ->(*a) { type.new(nil, *a) }
-      else
-        type = name.constantize unless type.is_a?(Class)
-        ->(*)  { type.new }
-      end
+      return scalar_defaults[base]     if scalar_types.include?(base)
+      return enumeration_default(base) if enumeration_types.include?(base)
+      record = "#{service_name}::Record::#{name}"
+      no_arg =
+        if base.to_s.start_with?('Iso') && (type = base.to_s.safe_constantize)
+          true
+        elsif !name.include?('::') && (type = record.safe_constantize)
+          false
+        elsif type.is_a?(Class) || (type = name.constantize)
+          !name.start_with?("#{service_name}::")
+        end
+      no_arg ? ->(*) { type.new } : ->(*a, **o) { type.new(nil, *a, **o) }
     end
 
     # =========================================================================

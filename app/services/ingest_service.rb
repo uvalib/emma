@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'ingest'
+
 # Send messages through the EMMA Federated Ingestion API.
 #
 # == Authentication and authorization

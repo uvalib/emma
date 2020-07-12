@@ -59,7 +59,7 @@ module LayoutHelper::PageControls
       controller = model.to_s.underscore
     else
       controller = model.to_sym
-      model      = model.to_s.camelize.constantize
+      model      = model.to_s.camelize.safe_constantize
     end
     actions.map { |action|
       [controller, action] if (action = action&.to_sym) && can?(action, model)

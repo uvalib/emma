@@ -126,8 +126,8 @@ class BookshareTest < ApplicationSystemTestCase
     # Collect API-related class names.
     types =
       API_NAMESPACES.flat_map { |base|
-        names = base.constants.map(&:to_s)
-        names.select { |name| "#{base}::#{name}".constantize.is_a?(Class) }
+        ns = base.constants.map(&:to_s)
+        ns.select { |name| "#{base}::#{name}".safe_constantize.is_a?(Class) }
       }.sort.uniq
 
     # Scan the API documentation page.

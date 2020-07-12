@@ -19,43 +19,16 @@ module Search::Api::Common
 
   public
 
-  # The default repository for uploads.
-  #
-  # @type [Symbol]
-  #
-  # @see en.emma.source._default in config/locales/source.en.yml
-  #
-  DEFAULT_REPOSITORY = I18n.t('emma.source._default').to_sym
-
-  # Values associated with each source repository.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  # @see en.emma.source in config/locales/source.en.yml
-  #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  REPOSITORY =
-    I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
-
   # Type configurations.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see en.emma.search.type in config/locales/types/search.en.yml
-  # @see #REPOSITORY for `CONFIGURATION[:EmmaRepository]`
+  # @see "en.emma.search.type" in config/locales/types/search.en.yml
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  CONFIGURATION =
-    I18n.t('emma.search.type').merge(
-      EmmaRepository:
-        REPOSITORY
-          .transform_values { |cfg| cfg[:name] }
-          .merge(_default: DEFAULT_REPOSITORY)
-    ).deep_freeze
+  CONFIGURATION = I18n.t('emma.search.type').deep_freeze
 
   # Enumeration scalar type names and properties.
   #
@@ -118,7 +91,7 @@ class PublicationIdentifier < ScalarType
   # Include type-specific logic.
   TYPES.each do |type|
     type = type.to_s.capitalize
-    mod  = "#{type}Helper".constantize rescue nil
+    mod  = "#{type}Helper".safe_constantize
     next unless mod.present?
     send(:include, mod)
     send(:extend,  mod)
@@ -188,7 +161,7 @@ class PublicationIdentifier < ScalarType
     return if v.blank?
     return v.dup if v.is_a?(PublicationIdentifier)
     type = v.to_s.strip.sub(/^\s*([^:]+)\s*:.*$/, '\1').downcase
-    type = type.presence&.constantize rescue nil
+    type = type.presence&.safe_constantize
     return type.new(v) if type
     Isbn.new(v).tap { |r| return r if r.valid? } if contains_isbn?(v)
     Issn.new(v).tap { |r| return r if r.valid? } if contains_issn?(v)
@@ -695,20 +668,26 @@ end
 # =============================================================================
 # Generate top-level classes associated with each enumeration entry so that
 # they can be referenced without prepending a namespace.
+#
+# Values for each class come from the equivalently-name key in
+# Search::Api::Common::CONFIGURATION.
 # =============================================================================
 
-class EmmaRepository   < EnumType; end
-class FormatFeature    < EnumType; end
-class Rights           < EnumType; end
-class Provenance       < EnumType; end
-class DublinCoreFormat < EnumType; end
-class DcmiType         < EnumType; end
-class A11yFeature      < EnumType; end
-class A11yControl      < EnumType; end
-class A11yHazard       < EnumType; end
-class A11yAPI          < EnumType; end
-class A11yAccessMode   < EnumType; end
-class A11ySufficient   < EnumType; end
-class SearchSort       < EnumType; end
+class FormatFeature     < EnumType; end
+class Rights            < EnumType; end
+class Provenance        < EnumType; end
+class DublinCoreFormat  < EnumType; end
+class DcmiType          < EnumType; end
+class A11yFeature       < EnumType; end
+class A11yControl       < EnumType; end
+class A11yHazard        < EnumType; end
+class A11yAPI           < EnumType; end
+class A11yAccessMode    < EnumType; end
+class A11ySufficient    < EnumType; end
+class SearchSort        < EnumType; end
+class RemediationStatus < EnumType; end
+class SeriesType        < EnumType; end
+class TextQuality       < EnumType; end
+class TrueFalse         < EnumType; end
 
 __loading_end(__FILE__)

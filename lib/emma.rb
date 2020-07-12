@@ -102,7 +102,7 @@ def include_submodules(base, filename = nil)
     curr_constants = constants(false) - curr_constants
   end
   curr_constants.map { |name|
-    mod = "#{self}::#{name}".constantize
+    mod = "#{self}::#{name}".safe_constantize
     next unless mod.is_a?(Module) && !mod.is_a?(Class)
     yield(name, mod) if block_given?
     base.send(:include, mod)

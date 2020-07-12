@@ -329,8 +329,8 @@ $(document).on('turbolinks:load', function() {
 
         // Set initial field filtering and setup field display filter controls.
         monitorFieldDisplayFilterButtons($form);
-        var field_filter = isUpdateForm($form) ? 'available' : 'filled';
-        fieldDisplayFilterSelect(field_filter, $form);
+        normalizeLabelColumnWidth($form);
+        fieldDisplayFilterSelect($form);
 
         // Intercept form submission so that it can be handled via AJAX in
         // order to retrieve information sent back from the server via headers.
@@ -471,11 +471,9 @@ $(document).on('turbolinks:load', function() {
         }
         data = data || {};
         formFields($form).each(function() {
-            var $field = $(this);
-            var key    = $field.attr('data-field');
-            var value  = data[key];
-            updateInputField(this, value, true);
+            initializeInputField(this, data);
         });
+        resolveRelatedFields();
         disableSubmit($form);
     }
 
@@ -945,44 +943,51 @@ $(document).on('turbolinks:load', function() {
         if (isPresent(data)) {
             var $form = formElement(form);
             $.each(data, function(field, value) {
-                var $input = formField(field, $form);
-                updateInputField($input, value);
+                var $field = formField(field, $form);
+                updateInputField($field, value);
             });
+            resolveRelatedFields();
             validateForm($form);
         }
     }
 
     /**
+     * Initialize a single input field and its label.
+     *
+     * @param {Selector} [field]      Default: *this*.
+     * @param {object}   [data]
+     */
+    function initializeInputField(field, data) {
+        var $field = $(field || this);
+        var key    = $field.attr('data-field');
+        var value  = (typeof data === 'object') ? data[key] : data;
+        updateInputField($field, value, true);
+    }
+
+    /**
      * Update a single input field and its label.
      *
-     * @param {Selector} [target]     Default: *this*.
+     * @param {Selector} [field]      Default: *this*.
      * @param {*}        [new_value]
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function updateInputField(target, new_value, init) {
-        var $input = $(target || this);
+    function updateInputField(field, new_value, init) {
+        var $field = $(field || this);
 
-        if ($input.is('fieldset.input.multi')) {
-            updateFieldsetInputs($input, new_value, init);
+        if ($field.is('fieldset.input.multi')) {
+            updateFieldsetInputs($field, new_value, init);
 
-        } else if ($input.is('fieldset.menu.multi')) {
-            updateFieldsetCheckboxes($input, new_value, init);
+        } else if ($field.is('fieldset.menu.multi')) {
+            updateFieldsetCheckboxes($field, new_value, init);
 
-        } else if ($input.is('[type="checkbox"]')) {
-            updateCheckboxInputField($input, new_value, init);
+        } else if ($field.is('[type="checkbox"]')) {
+            updateCheckboxInputField($field, new_value, init);
 
-        } else if ($input.is('textarea')) {
-            updateTextAreaField($input, new_value, init);
+        } else if ($field.is('textarea')) {
+            updateTextAreaField($field, new_value, init);
 
         } else {
-            updateTextInputField($input, new_value, init);
-        }
-
-        // Update field(s) whose status depends on the current field.
-        var this_field = $input.attr('name');
-        var related    = FIELD_RELATIONSHIP[this_field];
-        if (isPresent(related)) {
-            updateRelatedField($input, related);
+            updateTextInputField($field, new_value, init);
         }
     }
 
@@ -990,9 +995,9 @@ $(document).on('turbolinks:load', function() {
      * Update the input field collection and label for a <fieldset> and its
      * enclosed set of text inputs.
      *
-     * @param {Selector} [target]     Default: *this*.
-     * @param {Array}    [new_value]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {Selector}        [target]    Default: *this*.
+     * @param {string|string[]} [new_value]
+     * @param {boolean}         [init]      If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input_multi"
      */
@@ -1057,9 +1062,9 @@ $(document).on('turbolinks:load', function() {
      * Update the input field collection and label for a <fieldset> and its
      * enclosed set of checkboxes.
      *
-     * @param {Selector}     [target]   Default: *this*.
-     * @param {string|Array} [setting]
-     * @param {boolean}      [init]     If *true*, in initialization phase.
+     * @param {Selector}        [target]    Default: *this*.
+     * @param {string|string[]} [setting]
+     * @param {boolean}         [init]      If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_menu_multi"
      */
@@ -1192,18 +1197,36 @@ $(document).on('turbolinks:load', function() {
         }
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS
+    /**
+     * Attempt to update all of the fields with relationships except for those
+     * indicated.
+     *
+     * @param {string[]} [already_modified]
+     */
+    function resolveRelatedFields(already_modified) {
+        var skip_fields = already_modified || [];
+        $.each(FIELD_RELATIONSHIP, function(field_name, relationship) {
+            if (skip_fields.indexOf(field_name) === -1) {
+                var visited = updateRelatedField(field_name, relationship);
+                if (visited) {
+                    skip_fields.push(visited.name);
+                }
+            }
+        });
+    }
+
+    // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS, OverlyComplexFunctionJS
     /**
      * updateRelatedField
      *
      * @param {string|jQuery}       name
-     * @param {string|Relationship} other_name
+     * @param {string|Relationship} [other_name]
+     *
+     * @return {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
         if (isMissing(name)) {
             console.error('updateRelatedField: missing primary argument');
-            return;
-        } else if (isMissing(other_name)) {
             return;
         }
 
@@ -1221,58 +1244,79 @@ $(document).on('turbolinks:load', function() {
         /** @type {Relationship} */
         var other;
         /** @type {boolean|string} */
-        var error;
+        var error, warn;
         if (typeof other_name === 'object') {
             other = $.extend({}, other_name);
             error = isMissing(other) && 'empty secondary argument';
+        } else if (isDefined(other_name)) {
+            $.each(FIELD_RELATIONSHIP)
+            other = FIELD_RELATIONSHIP[other_name];
+            error = isMissing(other) && ('no table entry for ' + this_name);
         } else {
             other = FIELD_RELATIONSHIP[this_name];
-            error = isMissing(other) && ('no table entry for ' + this_name);
+            if (isMissing(other)) {
+                warn  = 'no table entry for ' + this_name;
+            } else if (other_name && (other_name !== other.name)) {
+                error = 'no relation for ' + this_name + ' -> ' + other_name;
+            }
         }
         if (error) {
             console.error('updateRelatedField:', error);
+            return;
+        } else if (warn) {
+            // console.log('updateRelatedField:', warn);
             return;
         }
 
         // Toggle state of the related element.
         var $other_input = $form.find('[name="' + other.name  + '"]');
+        var modified;
         if (isTrue(other.required) || isFalse(other.unrequired)) {
-            $other_input.attr('data-required', true);
-            if (isDefined(other.required_val)) {
-                $other_input.val(other.required_val);
-            }
+            modified = modifyOther(true, other.required_val);
         } else if (isTrue(other.unrequired) || isFalse(other.required)) {
-            $other_input.attr('data-required', false);
-            if (isDefined(other.unrequired_val)) {
-                $other_input.val(other.unrequired_val);
-            }
+            modified = modifyOther(false, other.unrequired_val);
         }
-        updateFieldAndLabel($other_input, $other_input.val());
+        if (modified) {
+            updateFieldAndLabel($other_input, $other_input.val());
+        }
+        return { name: other.name, modified: modified };
 
         // ====================================================================
         // Functions
         // ====================================================================
 
         function isTrue(v) {
-            var result = v;
-            if (typeof result === 'function') {
-                result = result.call($this_input);
-            }
-            if (typeof result !== 'boolean') {
-                result = (String(result).toLowerCase() === 'true');
-            }
-            return result;
+            return isBoolean(v, true);
         }
 
         function isFalse(v) {
+            return isBoolean(v, false);
+        }
+
+        function isBoolean(v, is_true) {
             var result = v;
             if (typeof result === 'function') {
                 result = result.call($this_input);
             }
             if (typeof result !== 'boolean') {
-                result = (String(result).toLowerCase() !== 'false');
+                result = String(result).toLowerCase();
+                result = is_true ? (result === 'true') : (result !== 'false');
             }
-            return !result;
+            return is_true ? result : !result;
+        }
+
+        function modifyOther(new_required, new_value) {
+            var changed = false;
+            var old_required = $other_input.attr('data-required').toString();
+            if (old_required !== new_required.toString()) {
+                $other_input.attr('data-required', new_required);
+                changed = true;
+            }
+            if (isDefined(new_value) && ($other_input.val() !== new_value)) {
+                $other_input.val(new_value);
+                changed = true;
+            }
+            return changed;
         }
     }
 
@@ -1286,18 +1330,19 @@ $(document).on('turbolinks:load', function() {
      * @param {*}        values
      */
     function updateFieldAndLabel(target, values) {
-        var $input = $(target || this);
+        var $input  = $(target || this);
+        var name    = $input.attr('name');
+        var $label  = $input.siblings('label[for="' + name + '"]');
+        var $status = $label.find('.status-marker');
+        var parts   = [$input, $label, $status];
+
         if ($input.attr('readonly')) {
 
             // Database fields should not be marked for validation.
-            $input.removeClass('valid invalid');
+            toggleClass(parts, 'valid invalid', false);
 
         } else {
 
-            var name     = $input.attr('name');
-            var $label   = $input.siblings('label[for="' + name + '"]');
-            var $status  = $label.find('.status-marker');
-            var parts    = [$input, $label, $status];
             var required = ($input.attr('data-required') === 'true');
             var missing  = isEmpty(values);
             var invalid  = missing; // TODO: per-field validation
@@ -1580,8 +1625,9 @@ $(document).on('turbolinks:load', function() {
          * @param {Event} event
          */
         function validateInputField(event) {
-            var target = event.target || event || this;
-            updateInputField(target);
+            var $field = $(event.target || event || this);
+            updateInputField($field);
+            updateRelatedField($field);
             validateForm($form);
         }
     }
@@ -1853,13 +1899,20 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update the current field filtering selection.
      *
-     * @param {string}   new_mode
      * @param {Selector} [form]    Passed to {@link fieldDisplayFilterButtons}.
+     * @param {string}   [new_mode]
      */
-    function fieldDisplayFilterSelect(new_mode, form) {
-        var selector = '[value="' + new_mode + '"]';
-        var $radio   = fieldDisplayFilterButtons(form).filter(selector);
-        $radio.prop('checked', true).change();
+    function fieldDisplayFilterSelect(form, new_mode) {
+        var $form  = formElement(form);
+        var $radio = fieldDisplayFilterButtons($form);
+        var mode;
+        if (isDefined(new_mode)) {
+            mode = new_mode;
+        } else {
+            mode = isUpdateForm($form) ? 'available' : 'filled';
+        }
+        var selector = '[value="' + mode + '"]';
+        $radio.filter(selector).prop('checked', true).change();
     }
 
     /**

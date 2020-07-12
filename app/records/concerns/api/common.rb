@@ -482,7 +482,7 @@ class EnumType < ScalarType
   # @return [Symbol]
   #
   def self.type
-    @type ||= self.to_s.to_sym
+    self.to_s.to_sym
   end
 
   # The enumeration values associated with the subclass.
@@ -490,7 +490,7 @@ class EnumType < ScalarType
   # @return [Array<String>]
   #
   def self.values
-    @values ||= enumeration_lookup(:values)
+    enumerations.dig(type, :values)
   end
 
   # The value/label pairs associated with the subclass.
@@ -498,7 +498,7 @@ class EnumType < ScalarType
   # @return [Hash]
   #
   def self.pairs
-    @pairs ||= enumeration_lookup(:pairs)
+    enumerations.dig(type, :pairs)
   end
 
   # ===========================================================================
@@ -516,7 +516,8 @@ class EnumType < ScalarType
   # @see ScalarType#default
   #
   def self.default
-    @default ||= enumeration_lookup(:default) || values&.first
+    entry = enumerations[type]
+    entry[:default] || entry[:values]&.first
   end
 
   # ===========================================================================
@@ -570,7 +571,7 @@ class EnumType < ScalarType
   # @return [Array<String>]
   #
   def self.values_for(entry)
-    enumeration_lookup(:values, entry.to_sym)
+    enumerations.dig(entry.to_sym, :values)
   end
 
   # The value/label pairs for an enumeration.
@@ -580,36 +581,10 @@ class EnumType < ScalarType
   # @return [Hash]
   #
   def self.pairs_for(entry)
-    enumeration_lookup(:pairs, entry.to_sym)
-  end
-
-  # Lookup a property associated with an enumeration.
-  #
-  # @param [Symbol] key               Either :values or :default.
-  # @param [Symbol] entry
-  #
-  # @return [Array<String>]           Result for key == :values.
-  # @return [String]                  Result for key == :default.
-  # @return [nil]
-  #
-  # @see Bs::Api::Common#ENUMERATIONS
-  # @see Search::Api::Common#ENUMERATIONS
-  #
-  def self.enumeration_lookup(key, entry = nil)
-    entry ||= type
-    enumerations.dig(entry, key)
+    enumerations.dig(entry.to_sym, :pairs)
   end
 
 end
-
-# =============================================================================
-# Generate top-level classes associated with each enumeration entry so that
-# they can be referenced without prepending a namespace.
-# =============================================================================
-
-class TrueFalse      < EnumType; end
-class CategoriesType < EnumType; end
-class LanguageType   < EnumType; end
 
 # =============================================================================
 # Module definition
@@ -622,7 +597,45 @@ public
 module Api::Common
 
   # ===========================================================================
-  # Common configuration values
+  # Common configuration values - EmmaRepository
+  # ===========================================================================
+
+  public
+
+  # The default repository for uploads.
+  #
+  # @type [Symbol]
+  #
+  # @see "en.emma.source._default" in config/locales/source.en.yml
+  #
+  DEFAULT_REPOSITORY = I18n.t('emma.source._default').to_sym
+
+  # Values associated with each source repository.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see "en.emma.source" in config/locales/source.en.yml
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  REPOSITORY =
+    I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
+
+  # Table of repository names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #REPOSITORY
+  #
+  REPOSITORY_MAP =
+    REPOSITORY
+      .transform_values { |config| config[:name] }
+      .merge!(_default: DEFAULT_REPOSITORY)
+      .deep_freeze
+
+  # ===========================================================================
+  # Common configuration values - CategoriesType
   # ===========================================================================
 
   public
@@ -631,29 +644,43 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see en.emma.categories in config/locale/types.en.yml
+  # @see "en.emma.categories" in config/locale/types.en.yml
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  CATEGORIES = I18n.t('emma.categories', default: {}).deep_freeze
+  CATEGORY = I18n.t('emma.categories', default: {}).deep_freeze
+
+  # Table of Bookshare category names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #CATEGORY
+  #
+  CATEGORY_MAP = CATEGORY.map { |_, v| [v.to_sym, v.to_s] }.to_h.deep_freeze
+
+  # ===========================================================================
+  # Common configuration values - LanguageType
+  # ===========================================================================
+
+  public
 
   # All language codes and labels.
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see en.emma.language.list config/locale/types.en.yml
+  # @see "en.emma.language.list" in config/locale/types.en.yml
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  LANGUAGE_LIST = I18n.t('emma.language.list', default: {}).deep_freeze
+  LANGUAGE = I18n.t('emma.language.list', default: {}).deep_freeze
 
   # Languages that appear first in the list.
   #
   # @type [Array<Symbol>]
   #
-  # @see en.emma.language.primary config/locale/types.en.yml
+  # @see "en.emma.language.primary" in config/locale/types.en.yml
   #
   PRIMARY_LANGUAGES =
     I18n.t('emma.language.primary', default: []).map(&:to_sym).freeze
@@ -663,24 +690,41 @@ module Api::Common
   # @type [Hash{Symbol=>String}]
   #
   # @see #PRIMARY_LANGUAGES
-  # @see #LANGUAGE_LIST
+  # @see #LANGUAGE
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  LANGUAGES =
+  LANGUAGE_MAP =
     PRIMARY_LANGUAGES
-      .map { |k| [k, LANGUAGE_LIST[k]] }.to_h
-      .merge(LANGUAGE_LIST.except(*PRIMARY_LANGUAGES))
+      .map { |k| [k, LANGUAGE[k]] }.to_h
+      .merge(LANGUAGE.except(*PRIMARY_LANGUAGES))
       .deep_freeze
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  EnumType.add_enumerations(LanguageType:   LANGUAGES)
-  EnumType.add_enumerations(CategoriesType: CATEGORIES.values)
+  EnumType.add_enumerations(EmmaRepository: REPOSITORY_MAP)
+  EnumType.add_enumerations(CategoriesType: CATEGORY_MAP)
+  EnumType.add_enumerations(LanguageType:   LANGUAGE_MAP)
 
 end
+
+# =============================================================================
+# Generate top-level classes associated with each enumeration entry so that
+# they can be referenced without prepending a namespace.
+# =============================================================================
+
+public
+
+# @see Api::Common#REPOSITORY_MAP
+class EmmaRepository < EnumType; end
+
+# @see Api::Common#CATEGORY_MAP
+class CategoriesType < EnumType; end
+
+# @see Api::Common#LANGUAGE_MAP
+class LanguageType < EnumType; end
 
 __loading_end(__FILE__)

@@ -18,7 +18,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::Link>]              links
 # @attr [String]                               publisher
 # @attr [String]                               seriesId
-# @attr [SeriesType]                           seriesType
+# @attr [BsSeriesType]                         seriesType
 # @attr [String]                               title
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary
@@ -46,7 +46,7 @@ class Bs::Message::PeriodicalSeriesMetadataSummary < Bs::Api::Message
     has_many  :links,                Bs::Record::Link
     attribute :publisher,            String
     attribute :seriesId,             String
-    attribute :seriesType,           SeriesType
+    attribute :seriesType,           BsSeriesType
     attribute :title,                String
   end
 

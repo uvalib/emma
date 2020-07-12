@@ -23,7 +23,7 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/types/bookshare.en.yml
+  # @see "en.emma.bookshare.type" in config/locales/types/bookshare.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -34,7 +34,7 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/types/bookshare.en.yml
+  # @see #CONFIGURATION
   #
   #--
   # noinspection RailsI18nInspection
@@ -48,7 +48,7 @@ module Bs::Api::Common
   #
   # @type [Array<Symbol>]
   #
-  # @see config/locales/types/bookshare.en.yml
+  # @see #CONFIGURATION
   #
   ENUMERATION_TYPES = CONFIGURATION.keys.freeze
 
@@ -56,7 +56,7 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see config/locales/types/bookshare.en.yml
+  # @see #CONFIGURATION
   #
   ENUMERATION_DEFAULTS =
     CONFIGURATION.transform_values { |cfg| cfg[:_default] || '' }.deep_freeze
@@ -72,6 +72,9 @@ end
 # =============================================================================
 # Generate top-level classes associated with each enumeration entry so that
 # they can be referenced without prepending a namespace.
+#
+# Values for each class come from the equivalently-name key in
+# Bs::Api::Common::CONFIGURATION.
 # =============================================================================
 
 class Access                  < EnumType; end
@@ -95,7 +98,7 @@ class NarratorType            < EnumType; end
 class ProofOfDisabilitySource < EnumType; end
 class ProofOfDisabilityStatus < EnumType; end
 class RoleType                < EnumType; end
-class SeriesType              < EnumType; end
+class BsSeriesType            < EnumType; end
 class SiteType                < EnumType; end
 class SubscriptionStatus      < EnumType; end
 class Timeframe               < EnumType; end

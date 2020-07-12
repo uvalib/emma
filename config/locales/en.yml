@@ -325,10 +325,6 @@ en:
         no_link:
           tooltip:      'Currently on the last page of results.'
 
-   #search_terms:
-   #  label:            'Search terms:'
-   #  facet_only:       'Selected filters:'
-
     placeholder:
       format:           'this'
       image:            &PLACEHOLDER_IMAGE

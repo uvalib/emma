@@ -47,7 +47,7 @@ class Upload < ApplicationRecord
   #
   # @type [String]
   #
-  DEFAULT_REPO = Search::Api::Common::DEFAULT_REPOSITORY.to_s.freeze
+  DEFAULT_REPO = Api::Common::DEFAULT_REPOSITORY.to_s.freeze
 
   # Non decimal-digit character(s) leading all repository ID's.
   #
@@ -229,13 +229,13 @@ class Upload < ApplicationRecord
   #
   # @type [Array<Symbol>]
   #
-  EMMA_DATA_FIELDS = Ingest::Record::IngestionRecord.field_names.freeze
+  INDEX_FIELDS = Search::Record::MetadataRecord.field_names.freeze
 
   # Fields that are either Upload record attributes or :emma_data.
   #
   # @type [Array<Symbol>]
   #
-  KNOWN_FIELDS = (field_names + EMMA_DATA_FIELDS).freeze
+  KNOWN_FIELDS = (field_names + INDEX_FIELDS).freeze
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -562,9 +562,6 @@ class Upload < ApplicationRecord
   #
   # @return [String]
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def modify_emma_data(data)
     @emma_record   = nil # Force regeneration.
     new_metadata   = self.class.parse_emma_data(data)
@@ -577,28 +574,6 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   protected
-
-  # Metadata fields whose values should be provided as an array.
-  #
-  # @type [Array<Symbol>]
-  #
-  # Compare with:
-  # @see FileFormat::FIELD_ALWAYS_ARRAY
-  #
-  FIELD_ALWAYS_ARRAY = %i[
-    dc_creator
-    dc_identifier
-    dc_language
-    dc_relation
-    dc_subject
-    emma_collection
-    emma_formatFeature
-    s_accessibilityControl
-    s_accessibilityFeature
-    s_accessibilityHazard
-    s_accessMode
-    s_accessModeSufficient
-  ].freeze
 
   # parse_emma_data
   #
@@ -615,14 +590,18 @@ class Upload < ApplicationRecord
     result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
     result = json_parse(result, no_raise: false)
     reject_blanks(result).map { |k, v|
-      if FIELD_ALWAYS_ARRAY.include?(k)
-        if v.is_a?(String)
-          separator = %w( ; , ).find { |s| v.include?(s) }
-          v = v.split(separator).map(&:strip).reject(&:blank?) if separator
-        end
-        v = Array.wrap(v)
-      elsif v.is_a?(Array)
-        v = (v.size > 1) ? v.join(';') : v.first
+      v = Array.wrap(v).reject { |x| x.blank? unless x.is_a?(FalseClass) }
+      prop  = Field.configuration(k)
+      array = prop[:array]
+      lines = (prop[:type] == 'textarea')
+      if lines || (prop[:type] == 'text') || prop[:type].blank?
+        join = lines ? "\n"    : ';'
+        sep  = lines ? /[|\n]/ : ';'
+        v = v.join(join).split(sep) if array
+        v = v.map(&:to_s).map(&:strip).reject(&:blank?)
+        v = v.join(join) unless array
+      elsif !array
+        v = v.first
       end
       [k, v] if v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h
@@ -632,86 +611,6 @@ class Upload < ApplicationRecord
       msg << "for #{data.inspect}" if Log.debug?
       msg.join(': ')
     end
-  end
-
-  # ===========================================================================
-  # :section: Class methods - fields
-  # ===========================================================================
-
-  public
-
-  # Get configuration record fields, converting Symbol :type values into the
-  # classes they represent.
-  #
-  # @param [Symbol, String, Hash] src
-  #
-  # @return [Hash]
-  #
-  def self.field_configuration(src)
-    unless src.is_a?(Hash)
-      path =
-        src.to_s.split('.').tap { |parts|
-          parts.unshift('emma') unless parts.first == 'emma'
-          parts.push('record')  unless parts.last  == 'record'
-        }.join('.')
-      src = I18n.t(path)&.deep_dup || {}
-    end
-    src.transform_values! do |entry|
-      if entry.is_a?(Hash)
-        entry.map { |item, value|
-          if value.is_a?(Hash)
-            value = field_configuration(value)
-          elsif value.is_a?(Symbol) && (item == :type)
-            value = value.to_s.constantize rescue value
-          end
-          [item, value]
-        }.to_h
-      else
-        entry
-      end
-    end
-  end
-
-  # Field property configuration values.
-  #
-  # @type [Hash{Symbol=>Boolean,Integer,Hash}]
-  #
-  FIELD = field_configuration('emma.upload.record').deep_freeze
-
-  # Configuration properties for the given field.
-  #
-  # @param [Symbol, String] field
-  #
-  # @return [Hash]
-  #
-  def self.get_field_configuration(field)
-    f = field&.to_sym
-    FIELD[f] || FIELD.dig(:emma_data, f) || FIELD.dig(:file_data, f) || {}
-  end
-
-  # Indicate whether is field is configured to be required.
-  #
-  # @param [Symbol]  field
-  #
-  def self.required_field?(field)
-    get_field_configuration(field)[:min].to_i > 0
-  end
-
-  # Indicate whether is field is configured to be multi-valued.
-  #
-  # @param [Symbol]  field
-  #
-  def self.array_field?(field)
-    get_field_configuration(field)[:max].to_i != 1
-  end
-
-  # Indicate whether is field is configured to be unmodifiable by the user.
-  #
-  # @param [Symbol]  field
-  #
-  def self.readonly_field?(field)
-    origin = get_field_configuration(field)[:origin]
-    origin.present? && (origin != 'user')
   end
 
   # ===========================================================================
@@ -923,7 +822,7 @@ class Upload < ApplicationRecord
   # Indicate whether all required fields have valid values.
   #
   def required_fields_valid?
-    check_required(self, FIELD)
+    check_required(self, Field::CONFIG)
     errors.empty?
   end
 
@@ -933,7 +832,7 @@ class Upload < ApplicationRecord
     if emma_data.blank?
       errors.add(:emma_data, :missing)
     else
-      check_required(emma_metadata, FIELD[:emma_data])
+      check_required(emma_metadata, Field::CONFIG[:emma_data])
     end
     errors.empty?
   end

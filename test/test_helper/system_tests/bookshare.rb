@@ -316,7 +316,7 @@ module TestHelper::SystemTests::Bookshare
   def model_class(name)
     name = name.to_s.delete_prefix('_').underscore.camelize.presence or return
     API_NAMESPACES.find do |base|
-      const = ("#{base}::#{name}".constantize rescue nil) and return const
+      const = "#{base}::#{name}".safe_constantize and return const
     end
   end
 

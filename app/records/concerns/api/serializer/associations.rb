@@ -133,32 +133,33 @@ module Api::Serializer::Associations
     # @param [Class, String, Symbol, nil] type
     # @param [Hash]                       opt   Passed to #extract_type_option!
     #
+    # @raise [NameError]              If *type* is invalid.
+    #
     # @return [Class]
     #
     # Compare with:
     # @see Api::Record::Associations#make_default
     #
-    def get_type_class(type, opt = nil)
-      type = extract_type_option!(opt) || type || 'String'
-      type = type.to_s.classify if type.is_a?(Symbol)
-      name = type.to_s
-      base = name.demodulize.to_sym
-      base = :Boolean if %i[TrueClass FalseClass].include?(base)
-      if scalar_types.include?(base)
-        type = "Axiom::Types::#{base}"
-      elsif enumeration_types.include?(base)
-        type = base.to_s
-      elsif base.to_s.start_with?('Iso')
-        type = base.to_s
-      elsif !name.include?('::')
-        type = "#{service_name}::Record::#{name}"
-      end
-      type.is_a?(Class) ? type : name.constantize
+    def get_type_class(type, **opt)
+      type   = extract_type_option!(opt) || type || 'String'
+      type   = type.to_s.classify if type.is_a?(Symbol)
+      name   = type.to_s
+      base   = name.demodulize.to_sym
+      base   = :Boolean if %i[TrueClass FalseClass].include?(base)
+      scalar = "Axiom::Types::#{base}"
+      record = "#{service_name}::Record::#{name}"
+      (scalar.safe_constantize    if scalar_types.include?(base))      ||
+      (base.to_s.safe_constantize if enumeration_types.include?(base)) ||
+      (base.to_s.safe_constantize if base.to_s.start_with?('Iso'))     ||
+      (record.safe_constantize    unless name.include?('::'))          ||
+      (type.is_a?(Class) ? type : name.constantize)
     end
 
     # decorator_class
     #
     # @param [Class, String, Symbol] record_class
+    #
+    # @raise [NameError]              If *record_class* is not valid.
     #
     # @return [Proc]
     #

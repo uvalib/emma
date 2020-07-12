@@ -58,7 +58,7 @@ module FileNaming
     #
     def format_class(type)
       fmt = type.to_s.upcase_first
-      "#{fmt}File".constantize rescue nil
+      "#{fmt}File".safe_constantize
     end
 
     # format_classes

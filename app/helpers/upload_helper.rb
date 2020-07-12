@@ -322,7 +322,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_link(item, **opt)
-    opt[:path]    = upload_path(id: item.id)
+    opt[:path]    = show_upload_path(id: item.id)
     opt[:tooltip] = UPLOAD_SHOW_TOOLTIP
     item_link(item, **opt)
   end
@@ -398,7 +398,7 @@ module UploadHelper
   # @param [Upload] item
   # @param [*]      value
   #
-  # @return [*]
+  # @return [Field::Type, String]
   #
   # @see ModelHelper#render_value
   #
@@ -412,26 +412,7 @@ module UploadHelper
         else                 item[value]            || EN_DASH
       end
     else
-      case value
-        when :emma_repository        then Field::Select.new(item, value)
-        when :emma_formatFeature     then Field::Multi.new(item, value)
-        when :dc_creator             then Field::Multi.new(item, :creators)
-        when :dc_language            then Field::Select.new(item, value)
-        when :dc_rights              then Field::Select.new(item, value)
-        when :dc_provenance          then Field::Select.new(item, value)
-        when :dc_format              then Field::Select.new(item, value)
-        when :dc_type                then Field::Select.new(item, value)
-        when :dc_subject             then Field::Collection.new(item, value)
-        when :dcterms_dateAccepted   then Field::Single.new(item, value)
-        when :dcterms_dateCopyright  then Field::Single.new(item, value)
-        when :s_accessibilityFeature then Field::Multi.new(item, value)
-        when :s_accessibilityControl then Field::Multi.new(item, value)
-        when :s_accessibilityHazard  then Field::Multi.new(item, value)
-        when :s_accessMode           then Field::Multi.new(item, value)
-        when :s_accessModeSufficient then Field::Multi.new(item, value)
-        when :rem_complete           then Field::Binary.new(item, value)
-        else                              render_value(item, value)
-      end
+      Field.for(item, value) || render_value(item, value)
     end
   end
 
@@ -541,6 +522,33 @@ module UploadHelper
 
   public
 
+  # Indicate whether the given field value produces an <input> that should be
+  # disabled.
+  #
+  # @param [Symbol, String] field
+  #
+  # @see ModelHelper#readonly_form_field?
+  #
+  def upload_readonly_form_field?(field)
+    Field.configuration(field)[:readonly].present?
+  end
+
+  # Indicate whether the given field value is required for validation.
+  #
+  # @param [Symbol, String] field
+  #
+  # @see ModelHelper#required_form_field?
+  #
+  def upload_required_form_field?(field)
+    Field.configuration(field)[:required].present?
+  end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  public
+
   # Mapping of label keys to database fields and fields from
   # Search::Record::MetadataRecord.
   #
@@ -559,36 +567,6 @@ module UploadHelper
       .deep_freeze
 =end
 
-  # Fields that should not be user-editable.
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_READONLY_FORM_FIELDS =
-    UPLOAD_FORM_FIELDS.values.select { |field|
-      Upload.readonly_field?(field)
-    }.freeze
-=begin # TODO: use when configuration is transitioned...
-  UPLOAD_READONLY_FORM_FIELDS =
-    UPLOAD_FORM_FIELDS.keys.select { |field|
-      Upload.readonly_field?(field)
-    }.freeze
-=end
-
-  # Fields that are required for form validation.
-  #
-  # @type [Array<Symbol>]
-  #
-  UPLOAD_REQUIRED_FORM_FIELDS =
-    UPLOAD_FORM_FIELDS.values.select { |field|
-      Upload.required_field?(field) unless Upload.readonly_field?(field)
-    }.freeze
-=begin # TODO: use when configuration is transitioned...
-  UPLOAD_REQUIRED_FORM_FIELDS =
-    UPLOAD_FORM_FIELDS.keys.select { |field|
-      Upload.required_field?(field) unless Upload.readonly_field?(field)
-    }.freeze
-=end
-
   # Render pre-populated form fields.
   #
   # @param [Upload] item
@@ -598,26 +576,6 @@ module UploadHelper
   #
   def upload_form_fields(item, **opt)
     form_fields(item, :upload, UPLOAD_FORM_FIELDS.merge(opt))
-  end
-
-  # Fields that should not be user-editable.
-  #
-  # @return [Array<Symbol>]
-  #
-  # @see ModelHelper#readonly_form_fields
-  #
-  def upload_readonly_form_fields
-    UPLOAD_READONLY_FORM_FIELDS
-  end
-
-  # Fields that are required for form validation.
-  #
-  # @return [Array<Symbol>]
-  #
-  # @see ModelHelper#required_form_fields
-  #
-  def upload_required_form_fields
-    UPLOAD_REQUIRED_FORM_FIELDS
   end
 
   # ===========================================================================
@@ -951,8 +909,8 @@ module UploadHelper
     action = (opt.delete(:action) || params[:action])&.to_sym
     values = UPLOAD_ACTION_VALUES[action]
     label  = opt.delete(:label) || values[:submit][:label]
-    ids    = Upload.collect_ids(*items).join(',').presence
-    url    = ids ? upload_path(**opt.slice(:force).merge!(id: ids)) : ''
+    id     = Upload.collect_ids(*items).join(',').presence
+    url    = id ? destroy_upload_path(**opt.slice(:force).merge!(id: id)) : ''
     prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
     append_css_classes!(html_opt, (url.presence ? 'best-choice' : 'forbidden'))
     html_opt[:title]  ||= values[:submit][:disabled][:tooltip]

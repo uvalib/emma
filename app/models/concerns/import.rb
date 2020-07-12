@@ -378,7 +378,7 @@ module Import
     importer = mod
     if mod.is_a?(String)
       mod = "Import::#{mod.camelize}" unless mod.start_with?('Import::')
-      mod = mod.constantize rescue nil
+      mod = mod.safe_constantize
     end
     return mod if mod.is_a?(Module)
     Log.error(__method__) { "#{importer}: invalid importer" }

@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'search'
+
 # Receive messages through the EMMA Unified Search API.
 #
 # == Authentication and authorization

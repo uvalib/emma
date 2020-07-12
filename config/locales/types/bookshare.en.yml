@@ -148,7 +148,7 @@ en:
           collectionAssistant:      'Collection Assistant'
           membershipAssistant:      'Membership Assistant'
 
-        SeriesType:
+        BsSeriesType:
           newpaper:                 'Newspaper'
           magazine:                 'Magazine'
           journal:                  'Journal'

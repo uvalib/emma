@@ -1193,7 +1193,7 @@ module UploadConcern
       text = properties[:message]
       err  = properties[:error]
       err  = "Net::#{err}" if err.is_a?(String) && !err.start_with?('Net::')
-      err  = err&.constantize unless err.is_a?(Module)
+      err  = err&.safe_constantize unless err.is_a?(Module)
       err  = err.exception_type if err.respond_to?(:exception_type)
       [text, err]
     }.symbolize_keys.deep_freeze
