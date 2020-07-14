@@ -76,7 +76,7 @@ module Import::IaBulk
     text_pdf:             %i[pdf          text],
     daisy_spoken:         %i[daisy        sound     human],
     daisy_tts:            %i[daisy        sound     tts],
-    audio:                %i[daisy        sound], # TODO: not daisy?
+    audio:                %i[daisyAudio   sound], # TODO: not daisy?
     tactile_graphics:     %i[tactile],
     kurzweil:             %i[kurzweil],
     ueb_literary_grade_1: %i[braille      text      ueb   grade1  literary],
