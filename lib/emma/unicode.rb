@@ -19,6 +19,7 @@ module Emma::Unicode
   EM_SPACE      = "\u2003" # EM SPACE
   EN_DASH       = "\u2013" # EN DASH
   EM_DASH       = "\u2014" # EM DASH
+  TRIANGLE      = "\u25B2" # BLACK UP-POINTING TRIANGLE
   DELTA         = "\u25B3" # WHITE UP-POINTING TRIANGLE
   BLACK_CIRCLE  = "\u25CF" # BLACK CIRCLE
   STAR          = "\u2605" # BLACK STAR

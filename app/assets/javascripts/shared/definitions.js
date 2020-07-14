@@ -510,3 +510,14 @@ function handleKeypressAsClick(selector, direct, match, except) {
 function focusable(element) {
     return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
 }
+
+/**
+ * The focusable elements contained within *element*.
+ *
+ * @param {Selector} element
+ *
+ * @return {jQuery}
+ */
+function focusableIn(element) {
+    return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);
+}

@@ -610,6 +610,7 @@ module UploadHelper
     action = (action || params[:action])&.to_sym
     opt    = prepend_css_classes(opt, "file-upload-form #{action}")
     cancel = opt.delete(:cancel)
+    scroll_to_top_target!(opt)
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new

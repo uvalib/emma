@@ -332,6 +332,24 @@ var Emma = (function() {
              * }};
              */
             Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>')
+        },
+
+        // ====================================================================
+        // feature/scroll.js
+        //
+        // target     Properties for the element which is scrolled to the top.
+        // button     Properties for the scroll-to-top button.
+        // ====================================================================
+
+        Scroll: {
+            /**
+             * @type {ElementProperties}
+             */
+            target: o$('<%= LayoutHelper::Scroll::SCROLL_TARGET.to_json %>'),
+            /**
+             * @type {ElementProperties}
+             */
+            button: o$('<%= LayoutHelper::Scroll::SCROLL_TOP.to_json %>')
         }
 
     };

@@ -1,0 +1,83 @@
+// app/assets/stylesheets/feature/_scroll.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Scroll-to-top button
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+.scroll-to-top {
+
+    @extend %button-hover;
+
+    position:        fixed;
+    display:         block;
+    width:           min-content;
+    padding:         0.5rem;
+    line-height:     0.9;
+    font-size:       x-large;
+    text-decoration: none;
+    color:           white;
+    background:      $uva-accent-orange;
+    border:          1px solid $uva-accent-orange;
+    border-radius:   50%;
+    z-index:         $z-popup - 1;
+
+    &.icon {
+        font-size:       x-large;
+        border-radius:   50%;
+    }
+
+    &.text {
+        font-size:       1.5rem;
+        border-radius:   1rem;
+    }
+
+    &:focus {
+        text-decoration: none;
+    }
+
+    &:hover {
+        text-decoration: none;
+        border-color:    white;
+    }
+
+    &.hidden {
+        @extend %hidden;
+    }
+
+    &:not(.hidden) {
+
+        $button-bottom:       3rem;
+        $button-right:        3rem;
+        $button-bottom-small: $button-bottom / 2;
+        $button-right-small:  $button-right / 2;
+
+        @media #{$not-narrow-screen} {
+
+            bottom: $button-bottom;
+            right:  $button-right;
+
+            @keyframes show-scroll-to-top {
+                0%   { bottom: -2rem; }
+                100% { bottom: $button-bottom; }
+            }
+        }
+
+        @media #{$narrow-screen} {
+
+            bottom: $button-bottom-small;
+            right:  $button-right-small;
+
+            @keyframes show-scroll-to-top {
+                0%   { bottom: -2rem; }
+                100% { bottom: $button-bottom-small; }
+            }
+        }
+
+        animation: show-scroll-to-top 1s;
+    }
+
+}
+
