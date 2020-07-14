@@ -83,4 +83,13 @@ body {
         word-break: break-word;
         flex:       1 1 auto;
     }
+
+    @media #{$narrow-screen} {
+
+        flex-wrap: nowrap;
+
+        > * {
+            margin-top: 0;
+        }
+    }
 }

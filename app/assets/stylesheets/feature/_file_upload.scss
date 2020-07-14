@@ -7,6 +7,9 @@
 // File uploader pages.
 //=============================================================================
 
+$upload-section-gap:       3rem;
+$upload-section-gap-small: $upload-section-gap / 2;
+
 // Text sections on upload pages.
 .file-upload-text {
 
@@ -19,7 +22,13 @@
 
     // Space between consecutive text sections.
     & + & {
-        margin-top: 3rem;
+
+        margin-top: $upload-section-gap;
+
+        // noinspection SassScssResolvedByNameOnly
+        @media #{$narrow-screen} {
+            margin-top: $upload-section-gap-small;
+        }
     }
 
     //=========================================================================
@@ -48,7 +57,12 @@
 
         @extend .description;
 
-        margin: 3rem 0;
+        margin: $upload-section-gap 0;
+
+        // noinspection SassScssResolvedByNameOnly
+        @media #{$narrow-screen} {
+            margin: $upload-section-gap-small 0;
+        }
     }
 
     //=========================================================================
@@ -107,10 +121,6 @@
         padding-right: 0.5rem;
     }
 
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$narrow-screen} {
-        flex-direction: column;
-    }
 
     // A label/radio button pair.
     .radio {
@@ -307,11 +317,12 @@
         position:   sticky;
         top:        1rem;
         background: white;
-        box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray,
-                    0 0 0 1rem white;
+        box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray;
 
         @media #{$narrow-screen} {
-            margin-top: $form-gap-narrow;
+            padding:       0.25rem;
+            padding-right: 0.5rem;
+            line-height:   1.25;
         }
     }
 
@@ -325,17 +336,22 @@
         @include grid-column-span;
 
         @include grid(1fr);
-        @include grid-gap(1.5rem);
+        @include grid-gap($form-gap);
 
         position:      sticky;
         top:           $form-gap;
         margin-bottom: $form-gap;
         background:    white;
-        box-shadow:    0 0 0.25rem $form-gap white;
+        box-shadow:    0 -0.5rem 0      1.0rem white,
+                       0  0.5rem 0.5rem 0.5rem white;
         z-index:       $z-top;
 
         @media #{$narrow-screen} {
-            box-shadow: 0 0 0.25rem $form-gap-narrow white;
+
+            @include grid-gap($form-gap-narrow);
+
+            top:           2 * $form-gap-narrow;
+            margin-bottom: $form-gap-narrow;
         }
     }
 
@@ -345,7 +361,10 @@
 
     // Container for metadata field inputs.
     .upload-fields {
+
         @include grid-column-span;
+
+        z-index: $z-visible; // NOTE: Needed for Firefox.
     }
 
     //=========================================================================

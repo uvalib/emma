@@ -110,7 +110,7 @@ module Import::IaBulk
     # :dc_type    :dc_format
     #-----------  ----------
     text:         :braille,
-    sound:        :daisy,
+    sound:        :daisyAudio,
     dataset:      :pdf,
     image:        :pdf,
     still_image:  :pdf,
