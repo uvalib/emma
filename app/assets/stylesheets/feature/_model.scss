@@ -199,6 +199,12 @@ $results-entry-margin-y: 0.67rem;
 
         margin: 0 0 $page-padding-y 0;
 
+        &:last-child {
+            img {
+                width: 100%;
+            }
+        }
+
         @media #{$wide-screen} {
 
             flex:         1 1 50%;

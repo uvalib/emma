@@ -152,15 +152,18 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see #bs_link?
+  #
   #--
   # noinspection RubyResolve
   #++
   def source_record_link(item, **opt)
-    repo = item.emma_repository
-    if repo&.to_sym == EmmaRepository.default
+    url  = item.record_title_url
+    repo = bs_link?(url) ? :bookshare : item.emma_repository.presence&.to_sym
+    if repo == EmmaRepository.default
       record_popup(item, **opt)
-    elsif (url = item.record_title_url).present?
-      repo = repo&.titleize || 'source repository'             # TODO: I18n
+    elsif url.present?
+      repo = repo&.to_s&.titleize || 'source repository'       # TODO: I18n
       opt[:title] ||= "View this item on the #{repo} website." # TODO: I18n
       rid = CGI.unescape(item.emma_repositoryRecordId)
       external_link(rid, url, **opt)
@@ -169,15 +172,6 @@ module SearchHelper
       ERB::Util.h(rid)
     end
   end
-
-  # HathiTrust download parameters which cause a prompt for login.
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
-  HT_DOWNLOAD_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
 
   # Make a clickable link to retrieve a remediated file.
   #
@@ -189,6 +183,8 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]
+  #
+  # @see #bs_link?
   #
   #--
   # noinspection RubyResolve
@@ -206,42 +202,106 @@ module SearchHelper
     permitted = can?(:download, Artifact)
     append_css_classes!(html_opt, 'disabled') unless permitted
 
+    # To account for the handful of "EMMA" items that are actually Bookshare
+    # items from the "EMMA collection", change the reported repository based on
+    # the nature of the URL.
+    repo = bs_link?(url) ? :bookshare : item.emma_repository.presence&.to_sym
+
     # Set up the tooltip to be shown before the item has been requested.
     html_opt[:title] ||=
       if permitted
         fmt     = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
-        repo    = item.emma_repository.to_s.titleize
-        "Retrieve the #{fmt} source from #{repo}." # TODO: I18n
+        origin  = repo&.to_s&.titleize || 'the source repository' # TODO: I18n
+        "Retrieve the #{fmt} source from #{origin}." # TODO: I18n
       else
         tip_key = (signed_in?) ? 'disallowed' : 'sign_in'
         tip_key = "emma.download.link.#{tip_key}.tooltip"
         fmt     = item.label
-        repo    = item.emma_repository || EmmaRepository.default
+        origin  = repo || EmmaRepository.default
         default = ArtifactHelper::DOWNLOAD_TOOLTIP
-        I18n.t(tip_key, fmt: fmt, repo: repo, default: default)
+        I18n.t(tip_key, fmt: fmt, repo: origin, default: default)
       end
 
-    case (source = item.emma_repository.presence).to_s
-      when 'emma'
-        url.sub!(%r{localhost:\d+}, 'localhost') unless application_deployed?
-        external_link(label, url, **html_opt)
-
-      when 'bookshare'
+    case repo
+      when :emma
+        emma_link(label, url, **html_opt)
+      when :bookshare
         download_links(item, label: label, url: url, **html_opt)
-
-      when 'hathiTrust'
-        unless url.include?(HT_DOWNLOAD_URL_PARAMS)
-          url << (url.include?('?') ? '&' : '?')
-          url << HT_DOWNLOAD_URL_PARAMS
-        end
-        external_link(label, url, **html_opt)
-
-      when 'internetArchive'
-        external_link(label, url, **html_opt) # TODO: internetArchive retrieval
-
+      when :hathiTrust
+        ht_link(label, url, **html_opt)
+      when :internetArchive
+        ia_link(label, url, **html_opt) # TODO: internetArchive retrieval
       else
-        Log.error { "#{__method__}: #{source.inspect}: unexpected" } if source
+        Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # HathiTrust parameters which cause a prompt for login.
+  #
+  # @type [String]
+  #
+  #--
+  # noinspection SpellCheckingInspection
+  #++
+  HT_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
+
+  # Indicate whether the given URL is a Bookshare link.
+  #
+  # @param [String] url
+  #
+  # == Usage Notes
+  # This exists to support the handful of items which are represented as
+  # belonging to the "EMMA" repository but which are actually Bookshare items
+  # from the "EMMA Collection".
+  #
+  def bs_link?(url)
+    url.to_s.match?(%r{^https?://[^/]+\.bookshare\.org/})
+  end
+
+  # Produce a link to HathiTrust which opens in a new browser tab.
+  #
+  # @param [String] label             Passed to #external_link.
+  # @param [String] url               Passed to #external_link.
+  # @param [Hash]   opt               Passed to #external_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ht_link(label, url, **opt)
+    url_params    = url.split('?', 2)[1]
+    has_ht_params = url_params&.split('&')&.include?(HT_URL_PARAMS)
+    url += (url_params ? '&' : '?') + HT_URL_PARAMS unless has_ht_params
+    external_link(label, url, **opt)
+  end
+
+  # Produce a link to Internet Archive which opens in a new browser tab.
+  #
+  # @param [String] label             Passed to #external_link.
+  # @param [String] url               Passed to #external_link.
+  # @param [Hash]   opt               Passed to #external_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def ia_link(label, url, **opt)
+    external_link(label, url, **opt)
+  end
+
+  # Produce a link to EMMA which opens in a new browser tab.
+  #
+  # @param [String] label             Passed to #external_link.
+  # @param [String] url               Passed to #external_link.
+  # @param [Hash]   opt               Passed to #external_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def emma_link(label, url, **opt)
+    url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
+    external_link(label, url, **opt)
   end
 
   # ===========================================================================

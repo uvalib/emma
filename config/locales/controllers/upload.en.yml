@@ -216,7 +216,7 @@ en:
           (Bookshare, Internet Archive, or HathiTrust).
         directions:     |
           Choose a file to upload and provide any information about the entry
-          that could not be determine from the contents of the file:
+          that could not be determined from the contents of the file:
         submit:
           <<: *GENERIC_SUBMIT
           label:        'Upload'
