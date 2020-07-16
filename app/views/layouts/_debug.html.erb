@@ -1,34 +1,9 @@
 <%# app/views/layouts/_debug.html.erb -%>
 <%-
   # Session debugging information.
-  hash =
-    session.to_hash
-      .except('warden.user.user.key', '_csrf_token')
-      .transform_values { |v|
-        if compressed_value?(v)
-          v = decompress_value(v)
-          h(v.inspect) << html_span('[compressed]', class: 'note')
-        else
-          v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
-        end
-      }
+  return unless session_debug?
 -%>
 
-<div class="session-debug">
-  <table>
-    <thead>
-      <tr>
-        <th class="key">SESSION</th>
-        <th class="value">DEBUG</th>
-      </tr>
-    </thead>
-    <tbody>
-      <%- hash.map do |k, v| -%>
-        <tr>
-          <th class="key"><%= k -%></th>
-          <td class="value"><%= v -%></td>
-        </tr>
-      <%- end -%>
-    </tbody>
-  </table>
+<div class="footer-section session-debug">
+  <%= session_debug %>
 </div>

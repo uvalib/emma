@@ -11,14 +11,36 @@
     width:      100%;
     word-break: break-word;
 
+    &.footer-section {
+        margin-top: -1rem;
+    }
+
+    // noinspection CssReplaceWithShorthandSafely
+    .session-debug-table {
+
+        display:     grid;
+        margin:      0;
+        padding:     0;
+        padding-top: 1rem;
+        word-break:  break-word;
+        border-top:  1px solid;
+
+        grid-template-columns: auto 1fr;
+        gap:                   0.25rem 1rem;
+    }
+
     .key,
     .value {
-        text-align:     left;
-        vertical-align: top;
+        text-align:  left;
     }
 
     .key {
-        word-break: keep-all;
+        word-break:  keep-all;
+        font-weight: bold;
+    }
+
+    .row-first {
+        font-weight: bold;
     }
 
     // noinspection SassScssResolvedByNameOnly

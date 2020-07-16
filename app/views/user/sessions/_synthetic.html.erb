@@ -4,7 +4,7 @@
   # auth token (copied from an independent browser tab which is logged-in to
   # the production service).
 
-  return if application_deployed?
+  return unless session_debug?
 
   form_label   = t('emma.user.sessions.sign_in_as.update.label')
   submit_label = t('emma.user.sessions.sign_in_as.update.submit')

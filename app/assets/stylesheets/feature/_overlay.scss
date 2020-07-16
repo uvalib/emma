@@ -19,8 +19,9 @@
     // Add the "visible" class to the element to make the overlay appear.
     // noinspection SassScssResolvedByNameOnly
     &.visible {
-        z-index: $z-overlay;
-        opacity: 1;
+        z-index:    $z-overlay;
+        opacity:    1;
+        transition: opacity 1.5s ease-in 1.5s;
     }
 
     // Without the addition of the "visible" class, the overlay remains hidden.

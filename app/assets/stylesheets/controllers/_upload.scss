@@ -18,13 +18,13 @@ $upload-entry-gap: 2rem;
 
     @extend .item-list-entry;
 
-    @include grid-gap(0, 2rem);
-
     padding:        $upload-padding;
     padding-bottom: 2 * $upload-padding;
     border:         2px solid black;
     border-radius:  0.5rem;
     background:     lighter($uva-accent-yellow, 95%);
+
+    gap: 0 2rem;
 
     // Special-case listing when no records are found.
     &.empty {
@@ -58,6 +58,10 @@ $upload-entry-gap: 2rem;
     @media #{$narrow-screen} {
         grid-template-columns: 1fr;
     }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
 
     // Ensure that the label and value both span the grid in all screen widths
     // for the hierarchical data values.
@@ -138,16 +142,23 @@ $upload-entry-gap: 2rem;
 
         @extend .item-list;
 
-        @media #{$narrow-screen} {
-            grid-template-columns: 1fr;
-        }
-
         $wide-margin:   2rem;
         $medium-margin: 1rem;
         $narrow-margin: 0.5rem;
 
         margin:  0 $wide-margin;
         padding: $upload-padding;
+
+        @media #{$medium-width} {
+            margin: 0 $medium-margin;
+        }
+
+        @media #{$narrow-screen} {
+
+            margin: 0 $narrow-margin;
+
+            grid-template-columns: 1fr;
+        }
 
         @if not $data-list-border-color == none {
             border:         2px solid $data-list-border-color;
@@ -156,27 +167,16 @@ $upload-entry-gap: 2rem;
 
         // Adjustment for a hierarchical element which is itself a hierarchy.
         .data-list {
+
             margin-top:   1.75rem;
             margin-left:  -4rem;
             margin-right: $wide-margin;
-        }
 
-        @media #{$medium-width} {
-
-            margin-left:  $medium-margin;
-            margin-right: $medium-margin;
-
-            .data-list {
+            @media #{$medium-width} {
                 margin-right: $medium-margin * 1.25;
             }
-        }
 
-        @media #{$narrow-screen} {
-
-            margin-left:  $narrow-margin;
-            margin-right: $narrow-margin;
-
-            .data-list {
+            @media #{$narrow-screen} {
                 margin-top:   $narrow-margin / 2;
                 margin-left:  $narrow-margin;
                 margin-right: $narrow-margin;
@@ -191,7 +191,7 @@ $upload-entry-gap: 2rem;
 
     @extend .item-list;
 
-    row-gap: $upload-entry-gap;
+    @include grid-row-gap($upload-entry-gap);
 
     //.applied-search-terms,
     .pagination-top {
@@ -378,12 +378,13 @@ form.select-entry {
 // noinspection SassScssResolvedByNameOnly
 .upload-fields {
 
-    @include grid(auto 1fr);
-    @include grid-gap(1.5rem);
-
+    display:     grid;
     width:       inherit;
     line-height: 1.375;
     font-size:   large;
+
+    grid-template-columns: auto 1fr;
+    gap:                   1.5rem;
 
     // A large minimum height is set to avoid the page bouncing vertically when
     // switching between field filter settings which display a varying number
@@ -392,8 +393,10 @@ form.select-entry {
     grid-auto-rows: max-content;
 
     @media #{$narrow-screen} {
+
         grid-template-columns: 1fr;
-        row-gap:               0.25rem;
+
+        @include grid-row-gap(0.25rem);
     }
 
     //=========================================================================

@@ -52,6 +52,13 @@ module ParamsHelper
     !!request.xhr?
   end
 
+  # Indicate whether the current request is a normal HTTP GET that coming from
+  # the client browser session.
+  #
+  def route_request?
+    request.get? && !request_xhr? && !modal?
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

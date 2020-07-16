@@ -21,8 +21,11 @@
 // noinspection SassScssResolvedByNameOnly
 @mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
-    @include grid($template, $columns);
-    @include grid-gap($y-gap, $x-gap);
+    display: grid;
+
+    @include grid-columns($template, $columns);
+
+    gap: $y-gap $x-gap;
 
     //=========================================================================
     // Components

@@ -231,13 +231,13 @@
     @extend .item-list-entry;
     @extend %help-styles;
 
-    @include grid-columns(1fr);
+    margin-left: $results-entry-gap-x;
 
-    margin-left: 0;
-
-    @media #{$not-narrow-screen} {
-        margin-left: $results-entry-gap-x;
+    @media #{$narrow-screen} {
+        margin-left: 0;
     }
+
+    grid-template-columns: 1fr;
 }
 
 // Zero or more .help-list-entry elements.

@@ -217,35 +217,48 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt    The source options hash (if present).
-  # @param [Array<String,Array>] args   CSS class names.
-  # @param [Proc]                block  Passed to #append_css_classes!.
+  # @param [Hash, String, nil]   opt      The source options hash (if present).
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #append_css_classes!.
   #
-  # @return [Hash]                      A new hash with :class set.
+  # @return [Hash]                        A new hash with :class set.
   #
-  def append_css_classes(opt, *args, &block)
+  # == Variations
+  #
+  # @overload append_css_classes(opt, *classes, &block)
+  #   @param [Hash, nil]           opt      The source options hash.
+  #   @param [Array<String,Array>] classes  CSS class names.
+  #   @param [Proc]                block    Passed to #append_css_classes!.
+  #   @return [Hash]                        A new hash with :class set.
+  #
+  # @overload append_css_classes(*classes, &block)
+  #   @param [Array<String,Array>] classes  CSS class names.
+  #   @param [Proc]                block    Passed to #append_css_classes!.
+  #   @return [Hash]                        A new hash with :class set.
+  #
+  def append_css_classes(opt, *classes, &block)
     if opt && !opt.is_a?(Hash)
-      args.unshift(opt)
+      classes.unshift(opt)
       opt = nil
     end
-    append_css_classes!(opt&.dup, *args, &block)
+    append_css_classes!(opt&.dup, *classes, &block)
   end
 
   # If CSS class name(s) are provided, append them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt    The target options hash.
-  # @param [Array<String,Array>] args   CSS class names.
-  # @param [Proc]                block  Passed to #css_classes.
+  # @param [Hash, nil]           opt      The target options hash.
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #css_classes.
   #
-  # @return [Hash]                      The modified *opt* hash.
+  # @return [Hash]                        The modified *opt* hash.
   #
   # Compare with:
   # @see #prepend_css_classes!
   #
-  def append_css_classes!(opt, *args, &block)
+  def append_css_classes!(opt, *classes, &block)
     opt  ||= {}
-    added  = css_classes(*args, &block)
+    added  = css_classes(*classes, &block)
     result = (current = opt[:class]) ? css_classes(current, added) : added
     opt.merge!(class: result)
   end
@@ -253,35 +266,48 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are prepended to the existing `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt    The source options hash (if present).
-  # @param [Array<String,Array>] args   CSS class names.
-  # @param [Proc]                block  Passed to #prepend_css_classes!.
+  # @param [Hash, String, nil]   opt      The source options hash (if present).
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #prepend_css_classes!.
   #
-  # @return [Hash]                      A new hash with :class set.
+  # @return [Hash]                        A new hash with :class set.
   #
-  def prepend_css_classes(opt, *args, &block)
+  # == Variations
+  #
+  # @overload prepend_css_classes(opt, *classes, &block)
+  #   @param [Hash, nil]           opt      The source options hash.
+  #   @param [Array<String,Array>] classes  CSS class names.
+  #   @param [Proc]                block    Passed to #append_css_classes!.
+  #   @return [Hash]                        A new hash with :class set.
+  #
+  # @overload prepend_css_classes(*classes, &block)
+  #   @param [Array<String,Array>] classes  CSS class names.
+  #   @param [Proc]                block    Passed to #append_css_classes!.
+  #   @return [Hash]                        A new hash with :class set.
+  #
+  def prepend_css_classes(opt, *classes, &block)
     if opt && !opt.is_a?(Hash)
-      args.unshift(opt)
+      classes.unshift(opt)
       opt = nil
     end
-    prepend_css_classes!(opt&.dup, *args, &block)
+    prepend_css_classes!(opt&.dup, *classes, &block)
   end
 
   # If CSS class name(s) are provided, prepend them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt    The target options hash.
-  # @param [Array<String,Array>] args   CSS class names.
-  # @param [Proc]                block  Passed to #css_classes.
+  # @param [Hash, nil]           opt      The target options hash.
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #css_classes.
   #
-  # @return [Hash]                      The modified *opt* hash.
+  # @return [Hash]                        The modified *opt* hash.
   #
   # Compare with:
   # @see #append_css_classes!
   #
-  def prepend_css_classes!(opt, *args, &block)
+  def prepend_css_classes!(opt, *classes, &block)
     opt  ||= {}
-    added  = css_classes(*args, &block)
+    added  = css_classes(*classes, &block)
     result = (current = opt[:class]) ? css_classes(added, current) : added
     opt.merge!(class: result)
   end
@@ -289,7 +315,7 @@ module HtmlHelper
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
   #
-  # @param [Array<String,Array>] args
+  # @param [Array<String,Array>] classes
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -297,10 +323,10 @@ module HtmlHelper
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
   #
-  def css_classes(*args)
-    yield(args) if block_given?
-    args.flat_map { |a|
-      a.is_a?(Array) ? a : a.to_s.squish.split(' ') if a.present?
+  def css_classes(*classes)
+    yield(classes) if block_given?
+    classes.flat_map { |c|
+      c.is_a?(Array) ? c : c.to_s.squish.split(' ') if c.present?
     }.compact.uniq.join(' ').html_safe
   end
 
@@ -395,6 +421,45 @@ module HtmlHelper
     classes << 'col-last'   if col == opt[:col_max].to_i
     classes << 'sr-only'    if opt[:sr_only]
     classes.compact.uniq
+  end
+
+  # Render a table of values.
+  #
+  # @param [Hash] pairs               Key-value pairs to display.
+  # @param [Hash] opt                 Passed to outer #html_div except for:
+  #                                     #GRID_OPTS and
+  #
+  # @option opt [Boolean] :wrap       If *true* then key/value pairs are joined
+  #                                     within a wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def grid_table(pairs, **opt)
+    opt, html_opt = partition_options(opt, :wrap, *GRID_OPTS)
+    wrap = opt.delete(:wrap)
+    opt[:row]     ||= 0
+    opt[:col]     ||= 0
+    opt[:row_max] ||= pairs.size
+    opt[:col_max] ||= 1
+    table =
+      pairs.map do |key, value|
+        opt[:col] = 0  if opt[:col] == opt[:col_max]
+        opt[:row] += 1 if opt[:col].zero?
+        opt[:col] += 1
+        r_opt = { class: grid_cell_classes(**opt) }
+        k_opt = prepend_css_classes(r_opt, 'key')
+        v_opt = prepend_css_classes(r_opt, 'value')
+        if wrap
+          prepend_css_classes!(r_opt, 'entry')
+          html_div(**r_opt) do
+            key = html_div(k_opt) { ERB::Util.h(key) << ':' }
+            key << '&nbsp;'.html_safe << html_div(value, v_opt)
+          end
+        else
+          html_div(key, k_opt) << html_div(value, v_opt)
+        end
+      end
+    html_div(**html_opt) { safe_join(table, "\n") }
   end
 
   # ===========================================================================

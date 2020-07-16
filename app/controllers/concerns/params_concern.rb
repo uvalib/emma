@@ -33,7 +33,8 @@ module ParamsConcern
     # =========================================================================
 
     before_action :search_redirect
-    before_action :set_current_path,     unless: :request_xhr?
+    before_action :set_current_path,     if:     :route_request?
+    before_action :set_debug,            if:     :route_request?
     before_action :set_origin,           only:   %i[index]
     before_action :resolve_sort,         only:   %i[index]
     before_action :initialize_menus,     except: %i[index] # TODO: keep?
@@ -116,7 +117,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_current_path
-    return unless request.get? && !request_xhr? && !modal?
+    return unless route_request?
     # noinspection RubyCaseWithoutElseBlockInspection
     case params[:controller].to_s.downcase
       when 'api'        then return if params[:action] == 'image'
@@ -134,6 +135,37 @@ module ParamsConcern
     end
   end
 
+  # Set session on-screen debugging.
+  #
+  # @return [void]
+  #
+  def set_debug
+    return unless route_request?
+    return unless (debug = params.delete(:debug))
+
+    if true?(debug)
+      Log.info("#{__method__}: debug=#{debug.inspect} -> ON")
+      session['debug'] = true
+
+    elsif false?(debug)
+      Log.info("#{__method__}: debug=#{debug.inspect} -> OFF")
+      if application_deployed?
+        session.delete('debug')
+      else
+        session['debug'] = false
+      end
+
+    elsif debug.to_s.downcase == 'reset'
+      Log.info("#{__method__}: debug=#{debug.inspect} -> RESET")
+      session.delete('debug')
+
+    else
+      Log.warn("#{__method__}: debug=#{debug.inspect} -> UNEXPECTED")
+    end
+
+    will_redirect
+  end
+
   # Visiting the index page of a controller sets the session origin.
   #
   # This allows pages to behave differently depending on whether they are
@@ -142,7 +174,7 @@ module ParamsConcern
   # @return [void]
   #
   def set_origin
-    return unless request.get? && (params[:action] == 'index')
+    return unless route_request? && (params[:action] == 'index')
     origin = (params[:controller].presence unless request.path == root_path)
     session['origin'] = origin || 'root'
   end

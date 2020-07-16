@@ -670,10 +670,9 @@ $search-button-width:    6rem;
         // Grid layout
         //=====================================================================
 
-        @include grid;
-        @include grid-gap(0, $gap-x); // @see %grid-cell
-
-        min-width: 92.5%; // This seems to be appropriate for all screens...
+        display:   grid;
+        min-width: 92.5%;    // This seems to be appropriate for all screens...
+        gap:       0 $gap-x; // @see %grid-cell
 
         // Maximum number of physical columns per width breakpoint.
 

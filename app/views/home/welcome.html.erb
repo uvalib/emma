@@ -24,4 +24,4 @@
   <%= t('emma.home.welcome.notice_html', sign_in: sign_in) %>
 </div>
 
-<%= render 'ability' %>
+<%= render 'ability' if session_debug? %>

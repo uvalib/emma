@@ -6,18 +6,52 @@
 // Page footer.
 //=============================================================================
 
+$footer-margin-top: 1rem;
+
 // The <footer> at the bottom of every page.
 //
-// noinspection SassScssResolvedByNameOnly
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 .layout-footer {
+    position:       relative;
+    z-index:        $z-raised;
+    display:        flex;
+    flex-direction: column;
+    margin:         0;
+    margin-top:     calc(#{$footer-margin-top} - #{$hcm-divider-width});
+    padding:        0;
+    border-top:     $hcm-divider-width solid $header-bg;
+    box-shadow:     0 0 1rem -0.25rem $header-bg;
+}
+
+// noinspection SassScssResolvedByNameOnly
+.footer-section {
 
     @extend %banner;
 
-    $footer-margin-top: 1rem;
+    .footer-table {
 
-    position:   relative;
-    z-index:    $z-raised;
-    margin-top: calc(#{$footer-margin-top} - #{$hcm-divider-width});
-    border-top: $hcm-divider-width solid $header-bg;
-    box-shadow: 0 0 1rem -0.25rem $header-bg;
+        display: grid;
+        width:   100%;
+        margin:  0;
+        padding: 0;
+
+        grid-template-columns: 1fr 1fr;
+        gap:                   0.25rem 1rem;
+
+        .entry {
+
+            display:         flex;
+            width:           100%;
+            word-break:      keep-all;
+            justify-content: center;
+
+            &.col-first {
+                justify-content: start;
+            }
+
+            &.col-last:not(.col-first) {
+                justify-content: end;
+            }
+        }
+    }
 }

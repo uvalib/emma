@@ -37,7 +37,7 @@ $results-entry-margin-y: 0.67rem;
     align-content: flex-start;
 
     @media #{$narrow-screen} {
-        @include grid-columns(100%);
+        grid-template-columns: 100%;
     }
 
     //=========================================================================
@@ -111,10 +111,10 @@ $results-entry-margin-y: 0.67rem;
     // noinspection SassScssResolvedByNameOnly
     &.empty {
 
-        @include grid-columns(0 max-content);
-
         margin-top:    $results-entry-gap-y;
         margin-bottom: 0;
+
+        grid-template-columns: 0 max-content;
     }
 
     //=========================================================================

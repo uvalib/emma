@@ -92,7 +92,7 @@
     justify-items: stretch;
 
     @media #{$narrow-screen} {
-        @include grid-columns(1fr max-content min-content);
+        grid-template-columns: 1fr max-content min-content;
     }
 
     //=========================================================================

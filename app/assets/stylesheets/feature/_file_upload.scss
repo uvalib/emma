@@ -155,11 +155,14 @@ $upload-section-gap-small: $upload-section-gap / 2;
     $form-gap:        1.5rem;
     $form-gap-narrow: $form-gap / 3;
 
-    @include grid([submit] auto [cancel] auto [file] auto [selected] 1fr);
-    @include grid-gap($form-gap);
+    display: grid;
+
+    grid-template-columns:
+        [submit] auto [cancel] auto [file] auto [selected] 1fr;
+    gap: $form-gap;
 
     @media #{$narrow-screen} {
-        @include grid-gap($form-gap-narrow);
+        gap: $form-gap-narrow;
     }
 
     // Uploader for a new EMMA entry.
@@ -335,9 +338,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
         @include grid-row(1);
         @include grid-column-span;
 
-        @include grid(1fr);
-        @include grid-gap($form-gap);
-
+        display:       grid;
         position:      sticky;
         top:           $form-gap;
         margin-bottom: $form-gap;
@@ -346,12 +347,13 @@ $upload-section-gap-small: $upload-section-gap / 2;
                        0  0.5rem 0.5rem 0.5rem white;
         z-index:       $z-top;
 
+        grid-template-columns: 1fr;
+        gap:                   $form-gap;
+
         @media #{$narrow-screen} {
-
-            @include grid-gap($form-gap-narrow);
-
             top:           2 * $form-gap-narrow;
             margin-bottom: $form-gap-narrow;
+            gap:           $form-gap-narrow;
         }
     }
 
@@ -408,7 +410,9 @@ $upload-section-gap-small: $upload-section-gap / 2;
 // noinspection SassScssResolvedByNameOnly
 .file-upload-delete.bulk {
 
-    @include grid(1fr, 2);
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
 
     .line,
     .form-controls {
@@ -417,7 +421,8 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
         display:    flex;
         flex-wrap:  wrap;
-        column-gap: 0.5rem;
+
+        @include grid-column-gap(0.5rem);
     }
 
     label {
@@ -441,22 +446,23 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     $status-bar-is-white-space: true;
 
-    @include grid(1fr);
-    @include grid-gap(1rem);
+    display:       grid;
+    margin-top:    2rem;
+    margin-bottom: 1.5rem;
 
     @if $status-bar-is-white-space {
         margin-top: 0;
-    } @else {
-        margin-top: 2rem;
     }
-    margin-bottom: 1.5rem;
 
     @media #{$wide-screen} {
         width: 50vw;
     }
 
+    grid-template-columns: 1fr;
+    gap:                   1rem;
+
     @media #{$narrow-screen} {
-        @include grid(1fr);
+        grid-template-columns: 1fr;
     }
 
     //=========================================================================

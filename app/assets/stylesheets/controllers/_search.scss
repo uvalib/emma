@@ -54,10 +54,10 @@
 
     @extend .label-value-pairs;
 
-    row-gap: $row-separation;
+    @include grid-row-gap($row-separation);
 
     @media #{$narrow-screen} {
-        row-gap: 1rem;
+        @include grid-row-gap(1rem);
     }
 
     //=========================================================================
@@ -149,9 +149,11 @@
 
         &.array {
 
-            @include grid(minmax(16.67%, 0.1667fr), 6);
+            display: grid;
 
-            row-gap: $row-separation;
+            grid-template-columns: repeat(6, minmax(16.67%, 0.1667fr));
+
+            @include grid-row-gap($row-separation);
 
             // Array element properties
             $element-border:    1px;
@@ -166,14 +168,14 @@
             margin-bottom: 0.25rem;
 
             @media #{$medium-width} {
-                @include grid(minmax(33%, 1fr), 3);
+                grid-template-columns: repeat(3, minmax(33%, 1fr));
             }
 
             @media #{$narrow-screen} {
 
-                @include grid(1fr);
-
                 margin-left: 0;
+
+                grid-template-columns: 1fr;
             }
 
             // noinspection CssReplaceWithShorthandSafely
@@ -213,14 +215,15 @@
     @extend .item-list-entry;
     @extend .search-label-value-pairs;
 
-    @include grid(max-content 1fr);
-    @include grid-gap(1rem);
+    display:    grid;
+    margin-top: 1rem;
+
+    grid-template-columns: max-content 1fr;
+    gap:                   1rem;
 
     @media #{$not-wide-screen} {
-        @include grid(1fr);
+        grid-template-columns: 1fr;
     }
-
-    margin-top: 1rem;
 
     //=========================================================================
     // Components
@@ -351,7 +354,7 @@
     @extend .item-list;
 
     @media #{$narrow-screen} {
-        @include grid-columns(1fr);
+        grid-template-columns: 1fr;
     }
 
     //=========================================================================
@@ -425,10 +428,10 @@
         // the grid of each record aligns only to the widest label that it
         // happens to be displaying.
         @media #{$wide-screen} {
-            @include grid-columns([label] minmax(auto, 0.1375fr) [value] 1fr);
+            grid-template-columns: [label] minmax(auto, 0.1375fr) [value] 1fr;
         }
         @media #{$medium-width} {
-            @include grid-columns([label] minmax(auto, 0.25fr) [value] 1fr);
+            grid-template-columns: [label] minmax(auto, 0.25fr) [value] 1fr;
         }
     }
 

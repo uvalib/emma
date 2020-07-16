@@ -6,18 +6,6 @@
 // Grid definitions.
 //=============================================================================
 
-/// Set up grid display and optionally specify column widths.
-///
-/// @param {String}  $template
-/// @param {Numeric} $columns
-///
-@mixin grid($template: false, $columns: 1) {
-
-    display: grid;
-
-    @if $template { @include grid-columns($template, $columns); }
-}
-
 /// Place on the specified row of the grid.
 ///
 /// @param {Numeric} $row
@@ -46,20 +34,27 @@
     grid-column-end:   $end;
 }
 
-/// Set up grid gap(s).
+/// Set grid vertical gap.
 ///
 /// @param {Numeric} $gap-y           Row gap
-/// @param {Numeric} $gap-x           Column gap
 ///
-@mixin grid-gap($gap-y: 0, $gap-x: false) {
+@mixin grid-row-gap($gap-y) {
 
-    @if not $gap-x { $gap-x: $gap-y; }
-
-    grid-gap: $gap-y $gap-x;
-    gap:      $gap-y $gap-x;
+    grid-row-gap: $gap-y; // Required by Safari
+    row-gap:      $gap-y;
 }
 
-/// Set grid columns.
+/// Set grid horizontal gap.
+///
+/// @param {Numeric} $gap-x           Column gap
+///
+@mixin grid-column-gap($gap-x) {
+
+    grid-column-gap: $gap-x; // Required by Safari
+    column-gap:      $gap-x;
+}
+
+/// Define grid columns.
 ///
 /// @param {String}  $template
 /// @param {Numeric} $columns
@@ -75,7 +70,7 @@
     }
 }
 
-/// Specific grid column widths.
+/// Define .column-N classes to allow specification of grid column widths.
 ///
 /// @param {Numeric} $columns
 /// @param {String}  $template

@@ -40,7 +40,7 @@ module FlashHelper
   # This shouldn't be a big problem; if it is then it might be time to consider
   # investing in setting up infrastructure for an alternative cookie mechanism.
   #
-  FLASH_MAX_ITEM_SIZE = application_deployed? ? 512 : 256
+  FLASH_MAX_ITEM_SIZE = application_deployed? ? 384 : 256
 
   # Maximum size of all combined flash messages.
   #
