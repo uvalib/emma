@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 module LayoutHelper::SearchControls
 
   include LayoutHelper::Common
-  include SearchTermsHelper
 
   # ===========================================================================
   # :section:

@@ -62,6 +62,54 @@ module SearchTermsHelper
   #
   LIST_SEARCH_SEPARATOR = ' | '
 
+  # URL parameters related to search menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_KEYS = %i[keyword sort limit language]
+
+  # URL parameters related to search sort menu settings.
+  #
+  # @type [Array<Symbol>]
+  #
+  SEARCH_SORT_KEYS = %i[sortOrder direction]
+
+  # Controllers which supply their own search capabilities.
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SEARCH_CONTROLLERS =
+    I18n.t('emma.application.search_controllers').map(&:to_sym).freeze
+
+  # The search controller that should be used on any pages whose controllers
+  # do not provide their own search capability.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_SEARCH_CONTROLLER = SEARCH_CONTROLLERS.first
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The current type of search (as indicated by the current controller).
+  #
+  # @param [Hash, Symbol, String, nil] type   Default: `#params[:controller]`.
+  #
+  # @return [Symbol]                    The controller used for searching.
+  # @return [nil]                       If searching should not be enabled.
+  #
+  def search_target(type = nil)
+    type ||= request_parameters[:controller]
+    type = type[:controller] if type.is_a?(Hash)
+    type&.to_sym
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -122,47 +170,6 @@ module SearchTermsHelper
     queries.merge!(filters)
   end
 
-=begin # TODO: remove eventually
-  # A control displaying the currently-applied search terms in the current
-  # scope (by default).
-  #
-  # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
-  # @param [Hash]      opt            Passed to #render_applied_search_terms
-  #                                     except for:
-  #
-  # @option opt [Integer] :row        Display row (default: 1)
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def applied_search_terms(term_list, **opt)
-    opt, term_opt = partition_options(opt, :row)
-    term_list ||= search_terms
-    queries, facets = partition_options(term_list, *QUERY_PARAMETERS)
-    queries.reject! { |_, v| v.null_search? }
-    mode = queries.blank? ? :facet_only : :label
-    row  = positive(opt[:row]) || 1
-
-    # The label prefixing the list of active search terms.
-    ld_opt = { class: 'label' }
-    append_css_classes!(ld_opt, 'query') if facets.blank?
-    leader = i18n_lookup(search_target, "search_terms.#{mode}")
-    leader = html_div(leader, ld_opt)
-
-    # The list of active search terms.
-    # noinspection RubyYardParamTypeMatch
-    list = render_applied_search_terms(term_list, **term_opt)
-
-    # The active search term element.
-    html_opt = { class: "applied-search-terms row-#{row}" }
-    if list.blank?
-      append_css_classes!(html_opt, 'invisible')
-    else
-      list = html_div(class: 'search-terms') { leader << list }
-    end
-    html_div(list, html_opt)
-  end
-=end
-
   # Produce a text-only listing of search terms.
   #
   # @param [Hash{Symbol=>SearchTerm}, nil] term_list  Default: `#search_terms`.
@@ -187,120 +194,6 @@ module SearchTermsHelper
       end
     }.compact.join(separator)
   end
-
-=begin # TODO: remove eventually
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Render a set of search term labels and values.
-  #
-  # @param [Hash{Symbol=>SearchTerm}] term_list
-  # @param [Hash] opt                 Passed to enclosing #html_div.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_applied_search_terms(term_list, **opt)
-    opt = prepend_css_classes(opt, 'term')
-    sep = html_div('/', class: 'term-separator')
-    term_list.map { |_field, search_term|
-      next if search_term.blank? || search_term.null_search?
-      classes = []
-      section = {}
-      if search_term.query?
-        classes << 'query'
-        section[:value]     = render_search_term_text(search_term)
-      else
-        classes << 'facet'
-        section[:field]     = search_term.label
-        section[:separator] = ':'
-        section[:value]     = render_search_facet(search_term)
-      end
-      classes << 'single' if search_term.single?
-      html_div(append_css_classes(opt, classes)) do
-        section.map { |k, v| html_div(v, class: k) }.join.html_safe
-      end
-    }.compact.join(sep).html_safe
-  end
-
-  # Render a search term value a quoted search terms.
-  #
-  # @param [SearchTerm] search_term
-  # @param [String]     separator     Default: #LIST_SEPARATOR.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_search_term_text(search_term, separator: LIST_SEPARATOR)
-    search_term.pairs.values.map { |v|
-      html_div(quote(v), class: 'text')
-    }.join(separator).html_safe
-  end
-
-  # Render one or more facet values as badges.
-  #
-  # @param [SearchTerm] search_term
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_search_facet(search_term)
-    search_term.pairs.map { |value, label|
-      # noinspection RubyYardParamTypeMatch
-      render_search_term_badge(search_term.parameter, value, label)
-    }.join.html_safe
-  end
-
-  # Render a search term value as a badge with a removal control.
-  #
-  # @param [Symbol]      field        URL parameter.
-  # @param [String]      value
-  # @param [String, nil] label
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def render_search_term_badge(field, value, label = nil)
-    label ||= value.to_s
-    label   = html_div(label, class: 'text')
-    control = remove_search_term_button(field, value)
-    html_div(class: 'badge') { label << control }
-  end
-
-  # remove_search_term_button
-  #
-  # @param [Symbol]        field      URL parameter.
-  # @param [String, Array] value      Value(s) to remove from *field*.
-  # @param [Hash]          opt        Passed to #link_to.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def remove_search_term_button(field, value, **opt)
-    old_params = url_parameters
-    old_value  = normalize_parameter(old_params[field])
-    new_value  = old_value - normalize_parameter(value)
-    new_value  = new_value.first unless new_value.size > 1
-    new_params =
-      if new_value.blank?
-        old_params.except(field)
-      else
-        old_params.merge!(field => new_value)
-      end
-    opt = prepend_css_classes(opt, 'control')
-    opt[:role]  ||= 'button'
-    opt[:title] ||= 'Click to remove this search limiter' # TODO: I18n
-    link_to(HEAVY_X, url_for(new_params), opt)
-  end
-
-  # Normal a parameter value for comparison.
-  #
-  # @param [String, Array] value
-  #
-  # @return [Array<String>]
-  #
-  def normalize_parameter(value)
-    Array.wrap(value).map { |v| CGI.unescape(v.to_s) }.reject(&:blank?)
-  end
-=end
 
 end
 

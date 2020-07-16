@@ -12,6 +12,7 @@ module LayoutHelper::Common
   include Emma::Common
   include HtmlHelper
   include ParamsHelper
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -85,19 +86,6 @@ module LayoutHelper::Common
 
   protected
 
-  # The current type of search (as indicated by the current controller).
-  #
-  # @param [Hash, Symbol, String, nil] type   Default: `#params[:controller]`.
-  #
-  # @return [Symbol]                    The controller used for searching.
-  # @return [nil]                       If searching should not be enabled.
-  #
-  def search_target(type = nil)
-    type ||= request_parameters[:controller]
-    type = type[:controller] if type.is_a?(Hash)
-    type&.to_sym
-  end
-
   # A form used to create/modify a search.
   #
   # If currently searching for the indicated *type*, then the current URL
@@ -168,7 +156,7 @@ module LayoutHelper::Common
   def search_target_path(type, **opt)
     url_for(opt.merge(controller: "/#{type}", action: :index, only_path: true))
   rescue ActionController::UrlGenerationError
-    search_target_path(:title, **opt)
+    search_target_path(DEFAULT_SEARCH_CONTROLLER, **opt)
   end
 
 end

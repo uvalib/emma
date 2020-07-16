@@ -45,24 +45,7 @@ module ParamsConcern
 
   include Emma::Common
   include ParamsHelper
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # URL parameters related to search menu settings.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_KEYS = %i[keyword sort limit language]
-
-  # URL parameters related to search sort menu settings.
-  #
-  # @type [Array<Symbol>]
-  #
-  SEARCH_SORT_KEYS = %i[sortOrder direction]
+  include SearchTermsHelper
 
   # ===========================================================================
   # :section:
@@ -97,23 +80,6 @@ module ParamsConcern
   # ===========================================================================
 
   protected
-
-  # Controllers which supply their own search capabilities.
-  #
-  # @type [Array<Symbol>]
-  #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  SEARCH_CONTROLLERS =
-    I18n.t('emma.application.search_controllers').map(&:to_sym).freeze
-
-  # The search controller that should be used on any pages whose controllers
-  # do not provide their own search capability.
-  #
-  # @type [Symbol]
-  #
-  DEFAULT_SEARCH_CONTROLLER = SEARCH_CONTROLLERS.first
 
   # Called from non-SearchController pages to ensure that the search defined in
   # the page header performs the intended operation on the SearchController and
