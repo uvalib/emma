@@ -46,11 +46,11 @@ $footer-margin-top: 1rem;
             justify-content: center;
 
             &.col-first {
-                justify-content: start;
+                justify-content: flex-start;
             }
 
             &.col-last:not(.col-first) {
-                justify-content: end;
+                justify-content: flex-end;
             }
         }
     }
