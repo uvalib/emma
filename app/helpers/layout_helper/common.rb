@@ -128,15 +128,15 @@ module LayoutHelper::Common
   # URL that will result from the associated facet value being removed from the
   # current search.
   #
-  # @param [Symbol, String] id
-  # @param [Symbol, String] k
-  # @param [String, Array]  v
-  # @param [String]         separator
+  # @param [Symbol, String, nil] id
+  # @param [Symbol, String]      k
+  # @param [String, Array]       v
+  # @param [String]              separator
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def hidden_url_parameter(id, k, v, separator: "\n")
-    id = "#{id}-#{k}"
+    id = [id, k].reject(&:blank?).join('-')
     if v.is_a?(Array)
       i = 0
       v = v.map { |e| hidden_field_tag("#{k}[]", e, id: "#{id}-#{i += 1}") }

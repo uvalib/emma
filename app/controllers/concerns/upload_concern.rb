@@ -14,7 +14,12 @@ module UploadConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'UploadConcern')
+
+    # Methods that are exposed for use in views.
+    helper_method :title_prefix, :force_delete, :delete_truncate, :bulk_batch
+
   end
 
   include IngestConcern
@@ -172,12 +177,113 @@ module UploadConcern
 
   public
 
+  # A string added to the start of each title created on a non-production
+  # instance to help distinguish it from other index results.
+  #
+  # @type [String]
+  #
+  DEV_TITLE_PREFIX = 'RWL'
+
+  # A string added to the start of each title.
+  #
+  # This should normally be *nil*.
+  #
+  # @type [String, nil]
+  #
+  # @see #title_prefix
+  #
+  TITLE_PREFIX = (DEV_TITLE_PREFIX unless application_deployed?)
+
+  # Force deletions of Unified Index entries regardless of whether the item is
+  # in the "uploads" table.
+  #
+  # When *false*, items that cannot be found in the "uploads" table are treated
+  # as failures.
+  #
+  # When *true*, items identified by repository ID will be included in the
+  # argument list to #remove_from_index unconditionally.
+  #
+  # @type [Boolean]
+  #
+  # @see #force_delete
+  #
+  FORCE_DELETE_DEFAULT = true
+
+  # For the special case of deleting all records (effectively wiping the
+  # database) this controls whether the next available ID should be set to 1.
+  #
+  # Otherwise, the next record after removing all records will have an 'id'
+  # which is 1 greater than the last record prior to the deletion.
+  #
+  # When *false*, do not truncate the "uploads" table.
+  #
+  # When *true*, truncate the "uploads" table, resetting the initial ID to 1.
+  #
+  # @type [Boolean]
+  #
+  DELETE_TRUNCATE_DEFAULT = true
+
+  # Handle bulk uploads in batches.
+  #
+  # When *false*, the complete set of items will be moved through each phase
+  # together (all will be uploaded, then all will be added to the database,
+  # then all will be added to the index).
+  #
+  # When *true*, the set of items is broken into batches, where each batch is
+  # moved through each phase, and then the cycle is repeated with the next
+  # batch, and so on until all items have been processed.
+  #
+  # @type [Boolean]
+  #
+  # @see #bulk_batch
+  #
+  BULK_BATCH_DEFAULT = true
+
+  # Break sets of submissions into chunks of this size.
+  #
+  # This is the value returned by #bulk_batch unless a different size was
+  # explicitly given via the :batch URL parameter.
+  #
+  # @type [Integer]
+  #
+  # @see #set_bulk_batch
+  #
+  BULK_BATCH_SIZE = ENV.fetch('BULK_BATCH_SIZE', 10).to_i
+
   # POST/PUT/PATCH parameters from the upload form that are not relevant to the
   # create/update of an Upload instance.
   #
   # @type [Array<Symbol>]
   #
   IGNORED_UPLOAD_FORM_PARAMETERS = %i[limit field-control].sort.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # URL parameter relevant to the current operation.
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def upload_params
+    @upload_params || set_upload_params
+  end
+
+  # Set URL parameters relevant to the current operation.
+  #
+  # @param [ActionController::Parameters, Hash, nil] p   Def: `#url_parameters`
+  #
+  # @return [Hash{Symbol=>String}]
+  #
+  def set_upload_params(p = nil)
+    prm = url_parameters(p)
+    prm.except!(*IGNORED_UPLOAD_FORM_PARAMETERS)
+    prm.deep_symbolize_keys!
+    # noinspection RubyYardParamTypeMatch
+    @upload_params = reject_blanks(prm)
+  end
 
   # Extract POST parameters that are usable for creating/updating an Upload
   # instance.
@@ -195,13 +301,12 @@ module UploadConcern
   # being replaced.
   #
   def upload_post_parameters(p = nil)
-    result = url_parameters(p).except!(*IGNORED_UPLOAD_FORM_PARAMETERS)
-    result.deep_symbolize_keys!
-    upload = result.delete(:upload) || {}
-    file   = upload[:file]
-    result[:file_data] = file unless file.blank? || (file == '{}')
-    result[:base_url]  = request.base_url
-    reject_blanks(result)
+    prm  = set_upload_params(p)
+    data = prm.delete(:upload) || {}
+    file = data[:file]
+    prm[:file_data] = file unless file.blank? || (file == '{}')
+    prm[:base_url]  = request.base_url
+    set_upload_params(prm)
   end
 
   # Extract POST parameters and data for bulk operations.
@@ -211,13 +316,137 @@ module UploadConcern
   #
   # @return [Array<Hash>]
   #
-  def bulk_post_parameters(p = nil, req = nil)
-    prm = url_parameters(p).except!(*IGNORED_UPLOAD_FORM_PARAMETERS)
-    prm.deep_symbolize_keys!
-    @force = true?(prm[:force])
-    src    = prm[:src] || prm[:source]
-    opt    = src ? { src: src } : { data: (req || request) }
+  def upload_bulk_post_parameters(p = nil, req = nil)
+    prm = set_upload_params(p)
+    src = prm[:src] || prm[:source]
+    opt = src ? { src: src } : { data: (req || request) }
     Array.wrap(fetch_data(**opt)).map(&:symbolize_keys)
+  end
+
+  # A string added to the start of each title.
+  #
+  # @return [String, FalseClass]
+  #
+  # @see #set_title_prefix
+  #
+  def title_prefix
+    set_title_prefix(upload_params[:prefix]) if @title_prefix.nil?
+    @title_prefix
+  end
+
+  # Set the title prefix.
+  #
+  # @param [String, Boolean, nil] value
+  #
+  # @return [String, FalseClass]
+  #
+  # @see #TITLE_PREFIX
+  #
+  # == Usage Notes
+  # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
+  #
+  def set_title_prefix(value)
+    @title_prefix =
+      if false?(value)
+        false
+      elsif true?(value)
+        TITLE_PREFIX
+      else
+        value.to_s.presence || TITLE_PREFIX
+      end
+  end
+
+  # Force deletions of Unified Index entries regardless of whether the item is
+  # in the "uploads" table.
+  #
+  # @return [Boolean]
+  #
+  # @see #FORCE_DELETE_DEFAULT
+  # @see #set_force_delete
+  #
+  def force_delete
+    set_force_delete(upload_params[:force]) if @force_delete.nil?
+    @force_delete
+  end
+
+  # Set forced deletions of index entries.
+  #
+  # @param [String, Boolean, nil] value
+  #
+  # @return [Boolean]
+  #
+  # @see #parameter_setting
+  # @see #FORCE_DELETE_DEFAULT
+  #
+  def set_force_delete(value)
+    @force_delete = parameter_setting(value, FORCE_DELETE_DEFAULT)
+  end
+
+  # If all "uploads" records are removed, reset the next ID to 1.
+  #
+  # @return [Boolean]
+  #
+  # @see #DELETE_TRUNCATE_DEFAULT
+  # @see #set_delete_truncate
+  #
+  def delete_truncate
+    set_delete_truncate(upload_params[:truncate]) if @delete_truncate.nil?
+    @delete_truncate
+  end
+
+  # Set truncation of "uploads" table when all records are removed.
+  #
+  # @param [String, Boolean, nil] value
+  #
+  # @return [Boolean]
+  #
+  # @see #parameter_setting
+  # @see #DELETE_TRUNCATE_DEFAULT
+  #
+  def set_delete_truncate(value)
+    @delete_truncate = parameter_setting(value, DELETE_TRUNCATE_DEFAULT)
+  end
+
+  # Handle bulk uploads in batches.
+  #
+  # If this is disabled, the method returns *false*; otherwise it returns the
+  # batch size.
+  #
+  # @return [Integer, FalseClass]
+  #
+  # @see #set_bulk_batch
+  #
+  def bulk_batch
+    set_bulk_batch(upload_params[:batch]) if @bulk_batch.nil?
+    @bulk_batch
+  end
+
+  # Set or disable bulk operation batching.
+  #
+  # @param [Integer, String, Boolean, nil] value
+  #
+  # @return [Integer, FalseClass]
+  #
+  # @see #parameter_setting
+  # @see #BULK_BATCH_DEFAULT
+  # @see #BULK_BATCH_SIZE
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
+  #++
+  def set_bulk_batch(value)
+    @bulk_batch =
+      if value.is_a?(TrueClass)
+        BULK_BATCH_SIZE
+      elsif value.is_a?(FalseClass)
+        false
+      elsif value.to_i.positive?
+        value.to_i
+      elsif parameter_setting(value, BULK_BATCH_DEFAULT)
+        BULK_BATCH_SIZE
+      else
+        false
+      end
   end
 
   # ===========================================================================
@@ -225,6 +454,26 @@ module UploadConcern
   # ===========================================================================
 
   protected
+
+  # Pass a literal Boolean value or interpret a boolean-valued URL parameter
+  # based on its stated default value.
+  #
+  # If *default* is *false* then *true* is returned only if *value* is "true".
+  # If *default* is *true* then *false* is returned only if *value* is "false".
+  #
+  # @param [String, Boolean, nil]  value      Parameter value from `#params`.
+  # @param [Boolean]               default    Default parameter value.
+  #
+  # @return [Boolean]
+  #
+  def parameter_setting(value, default)
+    # noinspection RubyYardReturnMatch
+    if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+      value
+    else
+      default ? !false?(value) : true?(value)
+    end
+  end
 
   # Remote or locally-provided data.
   #
@@ -463,10 +712,7 @@ module UploadConcern
 
   # Create a new free-standing (un-persisted) Upload instance.
   #
-  # @param [Hash, Upload] opt         Passed to Upload#initialize except for:
-  #
-  # @option opt [String] :file_path   File URI or path.
-  # @option opt [Symbol] :meth        Calling method (for logging).
+  # @param [Hash, Upload] opt         Passed to Upload#initialize.
   #
   # @return [Upload]
   #
@@ -474,20 +720,9 @@ module UploadConcern
   #
   def new_record(opt)
     __debug_args("UPLOAD #{__method__}", binding)
-    opt  = opt.attributes if opt.is_a?(Upload)
-    opt  = opt.deep_symbolize_keys
-    meth = opt.delete(:meth) || __method__
-    path = opt.delete(:file_path)
-    Upload.new(opt).tap do |record|
-      if (p = DEV_TITLE_PREFIX) && (title = record.emma_metadata[:dc_title])
-        prefix = "#{p} - "
-        prefix = nil if title.start_with?(prefix)
-        # noinspection RubyYardParamTypeMatch
-        record.modify_emma_data(dc_title: "#{prefix}#{title}") if prefix
-      end
-      # noinspection RubyYardParamTypeMatch
-      record.upload_file(path, meth: meth) if path
-    end
+    opt = opt.attributes if opt.is_a?(Upload)
+    opt = opt.deep_symbolize_keys
+    Upload.new(opt).tap { |record| add_title_prefix(record) if title_prefix }
   end
 
   # ===========================================================================
@@ -496,10 +731,26 @@ module UploadConcern
 
   protected
 
+  # If a prefix was specified, apply it to the record's title.
+  #
+  # @param [Upload] record
+  # @param [String] prefix
+  #
+  # @return [void]
+  #
+  def add_title_prefix(record, prefix: title_prefix)
+    return if prefix.blank? || (title = record.emma_metadata[:dc_title]).nil?
+    prefix = "#{prefix} - " unless prefix.match?(/[[:punct:]]\s*$/)
+    prefix = "#{prefix} "   unless prefix.end_with?(' ')
+    return if title.start_with?(prefix)
+    # noinspection RubyYardParamTypeMatch
+    record.modify_emma_data(dc_title: "#{prefix}#{title}")
+  end
+
   # Transform a mixture of Upload objects and record identifiers into a list of
   # Upload objects.
   #
-  # @param [Array<Upload,String,Array>] items   @see Upload#collect_ids
+  # @param [Array<Upload,String,Array>] items   @see Upload#expand_ids
   # @param [Boolean]                    force   See Usage Notes
   # @param [Hash]                       opt     Passed to Upload#get_records.
   #
@@ -516,15 +767,13 @@ module UploadConcern
     items = items.flatten.compact
 
     # Searching for non-identifier criteria (e.g. { user: @user }).
-    if opt.present? && items.blank?
-      return Upload.get_records(**opt), []
-    end
+    return Upload.get_records(**opt), [] if opt.present? && items.blank?
 
     # Searching for identifier criteria (possibly modified by other criteria).
     failed = []
     items =
       items.flat_map { |item|
-        item.is_a?(Upload) ? item : Upload.collect_ids(item) if item.present?
+        item.is_a?(Upload) ? item : Upload.expand_ids(item) if item.present?
       }.compact
 
     identifiers = items.reject { |item| item.is_a?(Upload) }
@@ -558,6 +807,8 @@ module UploadConcern
   #
   # @see Upload#upload_file
   #
+  # NOTE: Currently unused.
+  #
   def upload_file(record, path, meth: nil)
     __debug_args("UPLOAD #{__method__}", binding)
     meth ||= __method__
@@ -577,6 +828,8 @@ module UploadConcern
   #
   # @see Upload#delete_file
   #
+  # NOTE: Currently unused.
+  #
   def remove_file(record, meth: __method__)
     __debug_args("UPLOAD #{__method__}", binding)
     record = get_record(record, meth: meth) unless record.is_a?(Upload)
@@ -589,7 +842,7 @@ module UploadConcern
 
   public
 
-  # db_insert
+  # Add a single Upload record to the database.
   #
   # @param [Upload, Hash] data
   #
@@ -605,7 +858,7 @@ module UploadConcern
     record
   end
 
-  # db_update
+  # Modify a single existing Upload database record.
   #
   # @param [Upload, String] record
   # @param [Hash]           data
@@ -622,7 +875,7 @@ module UploadConcern
     record
   end
 
-  # db_delete
+  # Remove a single existing Upload record from the database.
   #
   # @param [Upload, String] record
   #
@@ -698,14 +951,14 @@ module UploadConcern
       # Any submissions that could not be added to the index will be removed
       # from the index.  The assumption here is that they failed because they
       # were missing information and need to be re-submitted anyway.
-      removed, retained = upload_destroy(rollback, atomic: false, index: false)
+      removed, kept = upload_destroy(*rollback, atomic: false, index: false)
       if removed.present?
         Log.info { "#{__method__}: rolled back: #{removed}" }
         removed_rids = removed.map(&:repository_id)
         rollback.reject! { |item| removed_rids.include?(item.repository_id) }
       end
       succeeded = [] if atomic
-      failed += retained if retained.present?
+      failed += kept if kept.present?
       rollback.each(&:delete_file)
     end
     return succeeded, failed, rollback
@@ -781,6 +1034,14 @@ module UploadConcern
   end
 
   # ===========================================================================
+  # :section: Index ingest
+  # ===========================================================================
+
+  protected
+
+
+
+  # ===========================================================================
   # :section: Bulk operations
   # ===========================================================================
 
@@ -791,6 +1052,7 @@ module UploadConcern
   # @param [Array<Hash,Upload>] entries
   # @param [Boolean]            atomic  If *false*, do not stop on failure.
   # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Boolean]            batch   If *false*, execute the method directly
   # @param [Hash]               opt     Passed to #bulk_upload_file.
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
@@ -805,8 +1067,15 @@ module UploadConcern
   #--
   # noinspection DuplicatedCode
   #++
-  def bulk_upload_create(entries, atomic: true, index: true, **opt)
+  def bulk_upload_create(entries, atomic: true, index: true, batch: nil, **opt)
     __debug_args("UPLOAD #{__method__}", binding)
+
+    # Batch-execute this method unless explicitly avoided.
+    batch = bulk_batch if batch.nil?
+    if batch
+      opt.merge!(size: batch, atomic: atomic, index: index, batch: false)
+      return bulk_upload_operation(__method__, entries, **opt)
+    end
 
     # Translate Hash entries into Upload record instances and all related files
     # to storage.
@@ -828,6 +1097,7 @@ module UploadConcern
   # @param [Array<Hash,Upload>] entries
   # @param [Boolean]            atomic  If *false*, do not stop on failure.
   # @param [Boolean]            index   If *false*, do not update index.
+  # @param [Boolean]            batch   If *false*, execute the method directly
   # @param [Hash]               opt     Passed to #bulk_upload_file.
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
@@ -842,8 +1112,15 @@ module UploadConcern
   #--
   # noinspection DuplicatedCode
   #++
-  def bulk_upload_update(entries, atomic: true, index: true, **opt)
+  def bulk_upload_update(entries, atomic: true, index: true, batch: nil, **opt)
     __debug_args("UPLOAD #{__method__}", binding)
+
+    # Batch-execute this method unless explicitly avoided.
+    batch = bulk_batch if batch.nil?
+    if batch
+      opt.merge!(size: batch, atomic: atomic, index: index, batch: false)
+      return bulk_upload_operation(__method__, entries, **opt)
+    end
 
     # Translate hash entries into Upload record instances and ensure that all
     # related files are in storage.
@@ -865,9 +1142,6 @@ module UploadConcern
   # @param [Array<String,Integer>] id_specs
   # @param [Boolean]               atomic   If *false*, do not stop on failure.
   # @param [Boolean]               index    If *false*, do not update index.
-  # @param [Boolean]               force    Force removal of index entries even
-  #                                           if the related database entries
-  #                                           do not exist.
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
@@ -878,10 +1152,16 @@ module UploadConcern
   # advantage of using a single SQL DELETE statement probably overwhelmed by
   # the need to fetch each record in order to call :delete_file on it.
   #
-  def bulk_upload_destroy(id_specs, atomic: true, index: true, force: false)
+  def bulk_upload_destroy(id_specs, atomic: true, index: true)
     __debug_args("UPLOAD #{__method__}", binding)
 
-    upload_destroy(id_specs, atomic: atomic, index: index, force: force)
+    id_specs = Array.wrap(id_specs)
+    force    = force_delete
+    upload_destroy(id_specs, atomic: atomic, index: index, force: force).tap do
+      if delete_truncate && (id_specs ==  %w(*))
+        Upload.connection.truncate(Upload.table_name)
+      end
+    end
 
     # # Translate entries into Upload record instances.
     # items, failed = collect_records(*items, force: force)
@@ -897,7 +1177,7 @@ module UploadConcern
   end
 
   # ===========================================================================
-  # :section: Bulk operations - Storage
+  # :section: Bulk operations
   # ===========================================================================
 
   protected
@@ -922,6 +1202,58 @@ module UploadConcern
     sleep(pause)
   end
 
+  # Process *entries* in batches by calling *op* on successive subsets.
+  #
+  # If *size* is *false* or negative, then *entries* is processed as a single
+  # batch.
+  #
+  # If *size* is *true* or zero or missing, then *entries* is processed in
+  # batches of the default #BULK_BATCH_SIZE.
+  #
+  # @param [Symbol]             op
+  # @param [Array<Hash,Upload>] entries
+  # @param [Integer, Boolean]   size      Default: #BULK_BATCH_SIZE.
+  # @param [Hash]               opt
+  #
+  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  #
+  def bulk_upload_operation(op, entries, size: nil, **opt)
+    __debug_args((dbg = "UPLOAD #{op}"), binding)
+    opt[:bulk] ||= { total: entries.size }
+
+    # Set batch size for this iteration.
+    size = -1               if size.is_a?(FalseClass)
+    size =  0               if size.is_a?(TrueClass)
+    size = size.to_i
+    size = entries.size     if size.negative?
+    size = BULK_BATCH_SIZE  if size.zero?
+
+    # Avoid recursion when calling *op*.
+    opt[:batch] = false unless opt.key?(:batch)
+
+    succeeded = []
+    failed    = []
+    counter   = 0
+    entries.each_slice(size) do |batch|
+      bulk_throttle(counter)
+      min = size * counter
+      max = (size * (counter += 1)) - 1
+      opt[:bulk][:window] = { min: min, max: max }
+      __debug_line(dbg) { "records #{min} to #{max}" }
+      s, f = send(op, batch, **opt)
+      succeeded += s
+      failed    += f
+    end
+    __debug_line(dbg) { { succeeded: succeeded.size, failed: failed.size } }
+    return succeeded, failed
+  end
+
+  # ===========================================================================
+  # :section: Bulk operations - Storage
+  # ===========================================================================
+
+  protected
+
   # Prepare entries for bulk insert/upsert to the database by ensuring that all
   # associated files have been uploaded and moved into storage.
   #
@@ -932,7 +1264,10 @@ module UploadConcern
   # @param [String]             base_url
   # @param [User, String]       user
   # @param [Integer]            limit     Only the first *limit* records.
-  # @param [Hash]               opt       Optional added fields.
+  # @param [Hash]               opt       Passed to #new_record except for:
+  #
+  # @option opt [Hash] :bulk              Info to support bulk upload
+  #                                         reporting and error messages.
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
@@ -940,21 +1275,27 @@ module UploadConcern
   # @see Upload#promote_file
   #
   def bulk_upload_file(entries, base_url: nil, user: nil, limit: nil, **opt)
-    opt[:file_path]  = Upload::BULK_PLACEHOLDER_FILE # TODO: remove when ready
     opt[:base_url]   = base_url || Upload::BULK_BASE_URL
     opt[:user_id]    = User.find_id(user || Upload::BULK_USER)
     opt[:importer] ||= Import::IaBulk # TODO: ?
-    opt[:meth]     ||= __method__
-    failed  = []
-    counter = 0
+
+    # Honor :limit if given.
+    limit   = limit.presence.to_i
     entries = Array.wrap(entries).reject(&:blank?)
-    entries = entries.take(limit.to_i) if limit.to_i.positive?
+    entries = entries.take(limit) if limit.positive?
+
+    # Determine data properties for reporting purposes.
+    properties  = opt.delete(:bulk)
+    total_count = properties&.dig(:total)        || entries.size
+    counter     = properties&.dig(:window, :min) || 0
+
+    failed  = []
     records =
       entries.map { |entry|
         bulk_throttle(counter)
         counter += 1
         Log.info do
-          msg = "#{__method__} [#{counter} of #{entries.size}]:"
+          msg = "#{__method__} [#{counter} of #{total_count}]:"
           msg += " #{entry}" if entry.is_a?(Upload)
           msg
         end
@@ -1078,14 +1419,17 @@ module UploadConcern
   #
   # @type [Integer]
   #
-  BULK_BATCH_SIZE = 10
+  BULK_DB_BATCH_SIZE = ENV.fetch('BULK_DB_BATCH_SIZE', BULK_BATCH_SIZE).to_i
 
-  # Bulk database operation.  If the number of records exceeds #BULK_BATCH_SIZE
-  # then it is broken up into batches.
+  # Bulk database operation.
   #
-  # @param [Symbol]        operation  Upload class method.
+  # If the number of records exceeds *size* then it is broken up into batches
+  # unless explicitly avoided.
+  #
+  # @param [Symbol]        op  Upload class method.
   # @param [Array<Upload>] records
   # @param [Boolean]       atomic     If *false*, allow partial changes.
+  # @param [Integer]       size       Default: #BULK_DB_BATCH_SIZE
   #
   # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
   #
@@ -1098,15 +1442,18 @@ module UploadConcern
   # large.  Breaking the data into bite-size chunks is currently the only
   # available work-around.
   #
-  def bulk_db_operation(operation, records, atomic: true, **)
+  def bulk_db_operation(op, records, atomic: true, size: nil, **)
     __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+    size ||= BULK_DB_BATCH_SIZE
     succeeded, failed =
-      if records.size <= BULK_BATCH_SIZE
-        bulk_db_operation_batch(operation, records)
+      if records.size <= size
+        bulk_db_operation_batch(op, records)
       elsif !atomic
-        bulk_db_operation_batches(operation, records)
+        bulk_db_operation_batches(op, records, size: size)
       else
-        Upload.transaction { bulk_db_operation_batches(operation, records) }
+        Upload.transaction do
+          bulk_db_operation_batches(op, records, size: size)
+        end
       end
     if succeeded.nil?
       __debug_line(dbg) { 'TRANSACTION ROLLED BACK' }
@@ -1120,20 +1467,21 @@ module UploadConcern
   # Invoke a database operation multiple times to process all of the given
   # records with manageably-sized SQL commands.
   #
-  # @param [Symbol]        operation  Upload class method.
+  # @param [Symbol]        op         Upload class method.
   # @param [Array<Upload>] records
+  # @param [Integer]       size
   #
   # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
   #
-  def bulk_db_operation_batches(operation, records)
+  def bulk_db_operation_batches(op, records, size: BULK_DB_BATCH_SIZE)
     succeeded = []
     failed    = []
     counter   = 0
-    records.each_slice(BULK_BATCH_SIZE) do |batch|
+    records.each_slice(size) do |batch|
       bulk_throttle(counter)
-      min  = BULK_BATCH_SIZE * counter
-      max  = (BULK_BATCH_SIZE * (counter += 1)) - 1
-      s, f = bulk_db_operation_batch(operation, batch, from: min, to: max)
+      min  = size * counter
+      max  = (size * (counter += 1)) - 1
+      s, f = bulk_db_operation_batch(op, batch, from: min, to: max)
       succeeded += s
       failed    += f
     end
@@ -1142,7 +1490,7 @@ module UploadConcern
 
   # Invoke a database operation.
   #
-  # @param [Symbol]        operation  Upload class method.
+  # @param [Symbol]        op         Upload class method.
   # @param [Array<Upload>] records
   # @param [Integer]       from       For logging; default: 0.
   # @param [Integer]       to         For logging; default: tail of *records*.
@@ -1154,11 +1502,11 @@ module UploadConcern
   # MySQL because ActiveRecord::Result for bulk operations does not contain
   # useful information.
   #
-  def bulk_db_operation_batch(operation, records, from: nil, to: nil)
+  def bulk_db_operation_batch(op, records, from: nil, to: nil)
     from ||= 0
     to   ||= records.size - 1
-    __debug(dbg = "UPLOAD #{operation} | records #{from} to #{to}")
-    result = Upload.send(operation, records.map(&:attributes))
+    __debug(dbg = "UPLOAD #{op} | records #{from} to #{to}")
+    result = Upload.send(op, records.map(&:attributes))
     if result.columns.blank? || (result.length == records.size)
       __debug_line(dbg) { 'QUALIFIED SUCCESS' }
       return records, []

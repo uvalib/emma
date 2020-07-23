@@ -29,6 +29,7 @@
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
 
+    // noinspection CssBrowserCompatibilityForProperties
     .skip-nav-heading {
 
         @extend %clear-default-styling;

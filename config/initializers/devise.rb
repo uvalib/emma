@@ -7,7 +7,7 @@
 # Many of these configuration options can be set straight in your model.
 #
 #--
-# noinspection SpellCheckingInspection
+# noinspection SpellCheckingInspection, LongLine
 #++
 Devise.setup do |config|
 

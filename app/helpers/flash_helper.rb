@@ -437,33 +437,36 @@ module FlashHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def flash_format(*args, topic: nil)
-    opt = (args.pop if args.last.is_a?(Hash))
+    opt    = (args.pop if args.last.is_a?(Hash))
+    method = args.shift
+    error  = (args.shift if args.first.is_a?(Exception))
+    msg    = nil
+    msg  ||= (error.messages  if error.respond_to?(:messages))
+    msg  ||= ([error.message] if error.respond_to?(:message))
+    msg  ||= []
+
     local, opt = partition_options(opt, :inspect)
+    unless opt.key?(:html)
+      opt[:html] = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
+    end
+    f_opt = opt.slice(:html)
 
-    method  = args.shift
-    error   = (args.shift if args.first.is_a?(Exception))
-    msg     = nil
-    msg   ||= (error.messages  if error.respond_to?(:messages))
-    msg   ||= ([error.message] if error.respond_to?(:message))
-    msg   ||= []
-    html    = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
-
-    msg_sep = html ? "\n" : ' '
-    sep_siz = flash_item_size(msg_sep, html: html)
+    msg_sep = opt[:html] ? "\n" : ' '
+    sep_siz = flash_item_size(msg_sep, **f_opt)
     max     = flash_space_available - (sep_siz * (msg.size + 1))
-    msg     = flash_item(msg,  max: max, html: html)
+    msg     = flash_item(msg,  max: max, **f_opt)
 
-    arg_sep = html ? "\n" : ', '
-    sep_siz = flash_item_size(arg_sep, html: html)
-    max    -= flash_item_size(msg, html: html) + (sep_siz * (args.size + 1))
-    args    = flash_item(args, max: max, html: html, inspect: local[:inspect])
+    arg_sep = opt[:html] ? "\n" : ', '
+    sep_siz = flash_item_size(arg_sep, **f_opt)
+    max    -= flash_item_size(msg, **f_opt) + (sep_siz * (args.size + 1))
+    args    = flash_item(args, max: max, inspect: local[:inspect], **f_opt)
 
-    msg << nil unless html || msg.blank?
+    msg << nil unless opt[:html] || msg.blank?
     msg << args.join(arg_sep)
 
     result = msg.join(msg_sep)
     result = flash_template(msg, method: method, topic: topic, **opt) if topic
-    html ? result.html_safe : ERB::Util.h(result)
+    opt[:html] ? result.html_safe : ERB::Util.h(result)
   end
 
   # Create item(s) to be included in the flash display.

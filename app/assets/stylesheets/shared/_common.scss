@@ -146,6 +146,11 @@
     &:focus:hover {
         outline-color:   transparent;
     }
+
+    &.forbidden:hover {
+        text-decoration: none;
+        box-shadow:      none;
+    }
 }
 
 // Style like a button.
@@ -287,14 +292,26 @@ textarea:focus {
 }
 
 // Holds title text and a .toggle button.
+// noinspection SassScssResolvedByNameOnly
 .toggle-panel-title {
 
     display:        inline-flex;
     flex-direction: row;
 
-    // noinspection SassScssResolvedByNameOnly
-    .toggle {
-        margin-left:  $gap-x;
-        margin-right: $gap-x;
+    @media #{$narrow-screen} {
+
+        padding-bottom: 1rem;
+        flex-wrap:      wrap;
+
+        .list-heading {
+            margin-bottom: 1rem;
+        }
+    }
+
+    @media #{$not-narrow-screen} {
+        .toggle {
+            margin-left:  $gap-x;
+            margin-right: $gap-x;
+        }
     }
 }

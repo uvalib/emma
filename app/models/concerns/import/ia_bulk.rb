@@ -30,11 +30,13 @@ module Import::IaBulk
     # Underscored name    Translator method or field  Value translator method
     #-------------------- --------------------------- -------------------------
     collection:           [:emma_collection,          :values],
+    contributed_file:     :skip,
     contributed_format:   :translate_formats,
     contributor:          [:rem_source,               :string_value],
     date:                 [:dcterms_dateCopyright,    :year_value],
     description:          [:dc_description,           :string_value],
     doi:                  [:dc_identifier,            :doi_values],
+    download:             [:file_path,                :string_value],
     free_to_download:     :skip,
     free_to_view:         :skip,
     identifier:           :skip,

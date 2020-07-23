@@ -191,16 +191,15 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see Upload#collect_ids
+  # @see Upload#expand_ids
   # @see UploadConcern#get_record
   # @see #destroy
   #
   def delete
     __debug_route
-    ids = Upload.collect_ids(@item_id).presence or fail(:file_id)
+    ids = Upload.expand_ids(@item_id).presence or fail(:file_id)
     ids.clear if show_menu?(ids)
-    @force = true?(params[:force])
-    @list  = ids.map { |id| get_record(id, no_raise: @force) || id }
+    @list = ids.map { |id| get_record(id, no_raise: force_delete) || id }
   rescue => error
     flash_now_failure(error)
   end
@@ -219,9 +218,8 @@ class UploadController < ApplicationController
   #++
   def destroy
     __debug_route
-    @force = true?(params[:force])
-    back   = delete_select_upload_path
-    succeeded, failed = upload_destroy(@item_id, force: @force)
+    back = delete_select_upload_path
+    succeeded, failed = bulk_upload_destroy(@item_id)
     fail(__method__, failed) if failed.present?
     fail(:file_id)           if succeeded.blank?
     post_response(:found, succeeded, redirect: back)
@@ -291,7 +289,7 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == GET /upload/bulk_new[?source=FILE]
+  # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to submit.
   #
@@ -303,7 +301,7 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == POST /upload/bulk[?source=FILE]
+  # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   # Create the specified Upload entries, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
@@ -314,7 +312,7 @@ class UploadController < ApplicationController
   def bulk_create
     __debug_route
     __debug_request
-    data = bulk_post_parameters.presence or fail(__method__)
+    data = upload_bulk_post_parameters.presence or fail(__method__)
     opt  = { base_url: request.base_url, user: @user }
     succeeded, failed = bulk_upload_create(data, **opt)
     fail(__method__, failed) if failed.present?
@@ -325,7 +323,7 @@ class UploadController < ApplicationController
     post_response(error, xhr: false)
   end
 
-  # == GET /upload/bulk_edit[?source=FILE&force=true]
+  # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to change.
   #
@@ -337,7 +335,7 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == PUT /upload/bulk[?source=FILE]
+  # == PUT /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   # Modify or create the specified Upload entries, download and store the
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
@@ -349,7 +347,7 @@ class UploadController < ApplicationController
   def bulk_update
     __debug_route
     __debug_request
-    data = bulk_post_parameters.presence or fail(__method__)
+    data = upload_bulk_post_parameters.presence or fail(__method__)
     opt  = { base_url: request.base_url, user: @user }
     succeeded, failed = bulk_upload_update(data, **opt)
     fail(__method__, failed) if failed.present?
@@ -369,7 +367,6 @@ class UploadController < ApplicationController
   #
   def bulk_delete
     __debug_route
-    @force = !false?(params[:force])
   rescue => error
     flash_now_failure(error)
   end
@@ -380,14 +377,11 @@ class UploadController < ApplicationController
   #
   # @see UploadConcern#bulk_upload_destroy
   #
-  #--
-  # noinspection RubyScope
-  #++
   def bulk_destroy
     __debug_route
     __debug_request
-    data = bulk_post_parameters.presence or fail(__method__)
-    succeeded, failed = bulk_upload_destroy(data, force: @force)
+    data = upload_bulk_post_parameters.presence or fail(__method__)
+    succeeded, failed = bulk_upload_destroy(data)
     fail(__method__, failed) if failed.present?
     post_response(:found, succeeded, xhr: false)
   rescue SubmitError => error

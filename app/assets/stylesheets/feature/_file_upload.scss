@@ -65,6 +65,16 @@ $upload-section-gap-small: $upload-section-gap / 2;
         }
     }
 
+    // Make a little extra room for the scrollbar.
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$narrow-screen} {
+        &.description,
+        &.directions,
+        &.notes {
+            margin-right: 0.25rem;
+        }
+    }
+
     //=========================================================================
     // Enclosed element styles
     //=========================================================================
@@ -150,7 +160,8 @@ $upload-section-gap-small: $upload-section-gap / 2;
 //
 // noinspection SassScssResolvedByNameOnly
 .file-upload-form,
-.file-upload-delete {
+.file-upload-delete,
+.file-upload-bulk {
 
     $form-gap:        1.5rem;
     $form-gap-narrow: $form-gap / 3;
@@ -385,7 +396,36 @@ $upload-section-gap-small: $upload-section-gap / 2;
 }
 
 // noinspection SassScssResolvedByNameOnly
-.file-upload-form.bulk {
+.file-upload-bulk {
+
+    &.delete {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .line,
+    .form-controls {
+        @include grid-column-span;
+        @include grid-column-gap(0.5rem);
+    }
+
+    .line {
+        display:     flex;
+        align-items: flex-start;
+    }
+
+    .form-controls {
+        display: grid;
+    }
+
+    label {
+        flex: 0 1 auto;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        flex: 0 1 33%;
+    }
+
     .uppy-FileInput-container {
 
         // In modern browsers, clicking on the <label> associated with
@@ -404,33 +444,6 @@ $upload-section-gap-small: $upload-section-gap / 2;
         input[type="file"].uppy-FileInput-btn {
             @extend %sr-only;
         }
-    }
-}
-
-// noinspection SassScssResolvedByNameOnly
-.file-upload-delete.bulk {
-
-    display: grid;
-
-    grid-template-columns: repeat(2, 1fr);
-
-    .line,
-    .form-controls {
-
-        @include grid-column-span;
-
-        display:    flex;
-        flex-wrap:  wrap;
-
-        @include grid-column-gap(0.5rem);
-    }
-
-    label {
-        flex: 0 1 auto;
-    }
-
-    input[type="text"] {
-        flex: 1 1 auto;
     }
 }
 
@@ -462,6 +475,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
     gap:                   1rem;
 
     @media #{$narrow-screen} {
+        margin-right:          0.25rem; // Scrollbar clearance.
         grid-template-columns: 1fr;
     }
 
@@ -470,18 +484,12 @@ $upload-section-gap-small: $upload-section-gap / 2;
     //=========================================================================
 
     // Form containing and metadata field inputs and file upload controls.
-    .file-upload-form {
+    .file-upload-form,
+    .file-upload-bulk {
         width:      inherit;
         max-width:  95vw;
         margin-top: 0;
         z-index:    $z-visible;
-    }
-
-    // No status bar for bulk upload so extra white space is needed above.
-    .file-upload-form.bulk,
-    .file-upload-delete.bulk {
-        margin-top:    2rem;
-        margin-bottom: -1.5rem;
     }
 
     // Inserted by Uppy via file-upload.js if FEATURES.status_bar is true.
@@ -516,6 +524,66 @@ $upload-section-gap-small: $upload-section-gap / 2;
     // Inserted by Uppy via file-upload.js.
     // Doesn't need grid adjustment.
     .uppy-Informer { }
+}
+
+// Area filled by the client with on-going results from bulk upload.
+// noinspection SassScssResolvedByNameOnly
+.file-upload-results {
+
+    @extend %panel;
+    @extend %block-shadow;
+
+    padding:          1rem;
+    background-color: ghostwhite;
+    border-color:     darkgray;
+
+    .line {
+
+        display:     grid;
+        line-height: 1.5rem;
+
+        $lbl-col: minmax(auto, 0.05fr);
+
+        grid-template-columns:
+                [time_lbl] $lbl-col [time_val] minmax(auto, 0.15fr)
+                [id_lbl]   $lbl-col [id_val]   minmax(auto, 0.10fr)
+                [rid_lbl]  $lbl-col [rid_val]  minmax(auto, 0.25fr)
+                [file_lbl] $lbl-col [file_val] 1fr;
+
+        > * {
+
+            margin-left: 0.25rem;
+
+            &:first-child {
+                margin-left: 0;
+            }
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+        .value {
+            // TODO: ?
+        }
+    }
+}
+
+// The element which contains bulk operation forms.
+.file-upload-container.bulk {
+
+    $bulk-vertical-adjust: 1.5rem;
+
+    // No status bar for bulk upload so extra white space is needed above.
+    .file-upload-bulk {
+        margin-top:    2rem;
+        margin-bottom: -$bulk-vertical-adjust;
+    }
+
+    & + .file-upload-results {
+        width:      47.75vw;
+        margin-top: 2 * $bulk-vertical-adjust;
+    }
 }
 
 // List of upload actions (new, edit, delete).

@@ -82,7 +82,7 @@ module LogoHelper
   # @return [nil]
   #
   #--
-  # noinspection RubyResolve, RubyYardReturnMatch
+  # noinspection RubyResolve
   #++
   def normalize_repository(src)
     return Api::Common::DEFAULT_REPOSITORY if src.blank?

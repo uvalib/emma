@@ -124,14 +124,35 @@ function percent(part, total) {
 // ============================================================================
 
 /**
- * The number of seconds since the given timestamp was created.
+ * Interpret *value* as a time and return milliseconds into the epoch.  If
+ * *value* is missing or invalid, the current time value is returned.
  *
- * @param {number} timestamp      Original `Date.now()` value.
+ * @param {Date|number} [value]
  *
  * @return {number}
  */
-function secondsSince(timestamp) {
-    return (Date.now() - timestamp) / SECOND;
+function timeOf(value) {
+    var result;
+    switch (typeof value) {
+        case 'object': result = value.getTime(); break;
+        case 'number': result = value;           break;
+        default:       result = Date.now();      break;
+    }
+    return result;
+}
+
+/**
+ * The number of seconds since the given timestamp was created.
+ *
+ * @param {Date|number} start_time     Original `Date.now()` value.
+ * @param {Date|number} [time_now]     Default: `Date.now()`.
+ *
+ * @return {number}
+ */
+function secondsSince(start_time, time_now) {
+    var start = timeOf(start_time);
+    var now   = timeOf(time_now);
+    return (now - start) / SECOND;
 }
 
 // ============================================================================
@@ -511,6 +532,7 @@ function focusable(element) {
     return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * The focusable elements contained within *element*.
  *

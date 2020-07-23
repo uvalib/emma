@@ -14,7 +14,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {string}
      */
-    var FORM_CLASS = 'file-upload-form';
+    var UPLOAD_FORM_CLASS = 'file-upload-form';
+
+    /**
+     * CSS class for eligible form elements.
+     *
+     * @constant {String}
+     */
+    var UPLOAD_FORM_SELECTOR = '.' + UPLOAD_FORM_CLASS;
 
     /**
      * File upload forms on the page.
@@ -26,10 +33,160 @@ $(document).on('turbolinks:load', function() {
      *
      * @constant {jQuery}
      */
-    var $file_upload_form = $('.' + FORM_CLASS);
+    var $file_upload_form = $(UPLOAD_FORM_SELECTOR);
+
+    /**
+     * CSS classes for bulk operations.
+     *
+     * @constant {string}
+     */
+    var BULK_FORM_CLASS = 'file-upload-bulk';
+
+    /**
+     * CSS classes for bulk operations.
+     *
+     * @constant {string}
+     */
+    var BULK_FORM_SELECTOR = '.' + BULK_FORM_CLASS;
+
+    /**
+     * Bulk operation forms on the page.
+     *
+     * @constant {jQuery}
+     */
+    var $bulk_operation_form = $(BULK_FORM_SELECTOR).filter(':not(.delete)');
 
     // Only perform these actions on the appropriate pages.
-    if (isMissing($file_upload_form)) { return; }
+    if (isMissing($file_upload_form) && isMissing($bulk_operation_form)) {
+        return;
+    }
+
+    /**
+     * Generic form selector.
+     *
+     * @constant {string}
+     */
+    var FORM_SELECTOR = UPLOAD_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
+
+    // ========================================================================
+    // JSDoc type definitions
+    // ========================================================================
+
+    /**
+     * FileData
+     *
+     * @typedef {{
+     *      id:             string,
+     *      storage:        string,
+     *      metadata: {
+     *          filename:   string,
+     *          size:       number,
+     *          mime_type:  string,
+     *      }
+     * }} FileData
+     *
+     * @see "en.emma.upload.record.file_data"
+     */
+
+    /**
+     * EmmaData
+     *
+     * @typedef {{
+     *      emma_recordId:                      string,
+     *      emma_titleId:                       string,
+     *      emma_repository:                    string,
+     *      emma_collection:                    string|string[],
+     *      emma_repositoryRecordId:            string,
+     *      emma_retrievalLink:                 string,
+     *      emma_webPageLink:                   string,
+     *      emma_lastRemediationDate:           string,
+     *      emma_repositoryMetadataUpdateDate:  string,
+     *      emma_lastRemediationNote:           string,
+     *      emma_formatVersion:                 string,
+     *      emma_formatFeature:                 string|string[],
+     *      dc_title:                           string,
+     *      dc_creator:                         string|string[],
+     *      dc_identifier:                      string|string[],
+     *      dc_publisher:                       string,
+     *      dc_relation:                        string|string[],
+     *      dc_language:                        string|string[],
+     *      dc_rights:                          string,
+     *      dc_provenance:                      string,
+     *      dc_description:                     string,
+     *      dc_format:                          string,
+     *      dc_type:                            string,
+     *      dc_subject:                         string|string[],
+     *      dcterms_dateAccepted:               string,
+     *      dcterms_dateCopyright:              string,
+     *      s_accessibilityFeature:             string[],
+     *      s_accessibilityControl:             string[],
+     *      s_accessibilityHazard:              string[],
+     *      s_accessMode:                       string[],
+     *      s_accessModeSufficient:             string[],
+     *      s_accessibilitySummary:             string,
+     *      bib_subtitle:                       string,
+     *      bib_series:                         string,
+     *      bib_seriesType:                     string,
+     *      bib_seriesPosition:                 string,
+     *      bib_version:                        string,
+     *      rem_source:                         string,
+     *      rem_metadataSource:                 string|string[],
+     *      rem_remediatedBy:                   string|string[],
+     *      rem_complete:                       boolean,
+     *      rem_coverage:                       string|string[],
+     *      rem_remediation:                    string|string[],
+     *      rem_quality:                        string|string[],
+     *      rem_status:                         string,
+     *      rem_image_count:                    number,
+     * }} EmmaData
+     *
+     * @see "en.emma.upload.record.emma_data"
+     */
+
+    /**
+     * UploadRecord
+     *
+     * @typedef {{
+     *      id:             number,
+     *      file_data:      FileData,
+     *      emma_data:      EmmaData,
+     *      user_id:        number,
+     *      repository:     string,
+     *      repository_id:  string,
+     *      fmt:            string,
+     *      ext:            string,
+     *      state:          string,
+     *      created_at:     string,
+     *      updated_at:     string,
+     *      phase:          string,
+     *      edit_state:     string,
+     *      edit_user:      string,
+     *      edit_file_data: FileData,
+     *      edit_emma_data: EmmaData,
+     *      edited_at:      string,
+     *      review_user:    string,
+     *      review_success: string,
+     *      review_comment: string,
+     *      reviewed_at:    string
+     * }} UploadRecord
+     *
+     * @see "en.emma.upload.record"
+     */
+
+    /**
+     * UploadRecordMessage
+     *
+     * @typedef {{
+     *      entries: {
+     *          list:       {entry: UploadRecord}[],
+     *          properties: {
+     *              total:  number,
+     *              limit:  number,
+     *              links:  array|null
+     *          }
+     *      }
+     * }} UploadRecordMessage
+     */
 
     // ========================================================================
     // Constants
@@ -117,6 +274,7 @@ $(document).on('turbolinks:load', function() {
         'input[type="text"]',
         'input[type="date"]',
         'input[type="time"]',
+        'input[type="number"]',
         'input[type="checkbox"]'
     ];
 
@@ -160,19 +318,55 @@ $(document).on('turbolinks:load', function() {
     };
 
     // ========================================================================
+    // Constants - Bulk operations
+    // ========================================================================
+
+    /**
+     * Selector for the dynamic bulk upload results panel.
+     *
+     * @constant {string}
+     */
+    var BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
+
+    /**
+     * Interval for checking the contents of the "upload" table.
+     *
+     * @constant {number}
+     */
+    var BULK_CHECK_PERIOD = 1 * SECOND;
+
+    /**
+     * Indicator that a results line is filler displayed prior to detecting the
+     * first added database entry.
+     *
+     * @constant {string}
+     */
+    var TMP_LINE_CLASS = 'start';
+
+    /**
+     * Filler displayed prior to detecting the first added database entry.
+     *
+     * @constant {string}
+     */
+    var TMP_LINE = 'Uploading...'; // TODO: I18n
+
+    // ========================================================================
     // Actions
     // ========================================================================
 
     // Setup Uppy for any <input type="file"> elements (unless this page is
-    // being reached via browser history or this is a bulk operations page).
+    // being reached via browser history).
     $file_upload_form.each(function() {
         var $form = $(this);
-        if (isBulkOperationForm($form)) {
-            initializeBulkForm($form);
-        } else if (!isUppyInitialized($form)) {
+        if (!isUppyInitialized($form)) {
             initializeUppy($form[0]);
-            initializeForm($form);
+            initializeUploadForm($form);
         }
+    });
+
+    // Setup handlers for bulk operation pages.
+    $bulk_operation_form.each(function() {
+        initializeBulkForm(this);
     });
 
     // ========================================================================
@@ -195,6 +389,10 @@ $(document).on('turbolinks:load', function() {
 
         // Start with submit disabled until a bulk control file is supplied.
         disableSubmit($form);
+
+        // When the bulk control file is submitted, begin a running tally of
+        // the items that have been added/changed.
+        handleEvent($form, 'submit', monitorBulkUpload);
 
         // When a file has been selected, display its name and enable submit.
         var $input = fileSelectContainer($form).children('input[type="file"]');
@@ -244,6 +442,312 @@ $(document).on('turbolinks:load', function() {
      */
     function isBulkOperationForm(form) {
         return formElement(form).hasClass('bulk');
+    }
+
+    // ========================================================================
+    // Functions - Bulk form submission
+    // ========================================================================
+
+    /**
+     * The element containing the upload results.
+     *
+     * Currently there can only be one bulk upload results element per page.
+     * TODO: Associate results element with a specific bulk-action form.
+     *
+     * @param {Selector} [results]
+     *
+     * @return {jQuery}
+     */
+    function bulkUploadResults(results) {
+        var selector = BULK_UPLOAD_RESULTS_SELECTOR;
+        var $results = $(results);
+        return $results.is(selector) ? $results : $(selector);
+    }
+
+    /**
+     * The first database ID to monitor for results, defaulting to "1".
+     *
+     * If *record* is given, the first database ID is set to be the one which
+     * succeeds it.
+     *
+     * @param {Selector}            [results]
+     * @param {UploadRecord|number} [record]    The current max database ID.
+     *
+     * @return {string}
+     */
+    function bulkUploadResultsNextId(results, record) {
+        var name     = 'next-id';
+        var $results = bulkUploadResults(results);
+        var value    = $results.data(name);
+        var initial  = isMissing(value);
+        if (initial || isDefined(record)) {
+            value = (typeof record === 'object') ? record.id : record;
+            value = (Number(value) || 0) + 1;
+            $results.data(name, value);
+        }
+        if ((value > 1) && !$results.data('first-id')) {
+            $results.data('first-id', value);
+        }
+        return value.toString();
+    }
+
+    /**
+     * Time the download was started.
+     *
+     * The first call sets the time.  If *start_time* is provided, it resets
+     * the start time to the given value.
+     *
+     * @param {Selector}    [results]
+     * @param {Date|number} [start_time]
+     *
+     * @return {number}
+     */
+    function bulkUploadResultsStartTime(results, start_time) {
+        var name     = 'start-time';
+        var $results = bulkUploadResults(results);
+        var value    = $results.data(name);
+        if (isPresent(start_time) || isMissing(value)) {
+            value = timeOf(start_time);
+            $results.data(name, value);
+        }
+        return value;
+    }
+
+    /**
+     * Setup the element which shows intermediate results during a bulk upload.
+     */
+    function monitorBulkUpload() {
+
+        var $results = bulkUploadResults().removeClass('hidden');
+        addBulkUploadResult($results, TMP_LINE_CLASS, TMP_LINE);
+        fetchUploadEntries('$', null, startMonitoring);
+
+        /**
+         * Establish the lower-bound of database ID's to search (starting with
+         * the first ID after the current latest ID) then schedule an update.
+         *
+         * @param {UploadRecord[]} list
+         */
+        function startMonitoring(list) {
+            var record = list[list.length-1] || {};
+            bulkUploadResultsNextId($results, record);
+            bulkUploadResultsStartTime($results);
+            scheduleCheckBulkUploadResults($results);
+        }
+    }
+
+    /**
+     * If still appropriate, schedule another round of checking the "update"
+     * table.
+     *
+     * @param {Selector} results
+     * @param {number}   [milliseconds]
+     */
+    function scheduleCheckBulkUploadResults(results, milliseconds) {
+        var $results = bulkUploadResults(results);
+        var period   = milliseconds || BULK_CHECK_PERIOD;
+        var name     = 'check-period';
+        var timer    = $results.data(name);
+        if (isPresent(timer)) {
+            clearTimeout(timer);
+        }
+        if ($results.is(':visible')) {
+            var new_timer = setTimeout(checkBulkUploadResults, period);
+            $results.data(name, new_timer);
+        }
+    }
+
+    /**
+     * Setup the element which shows intermediate results during a bulk upload.
+     */
+    function checkBulkUploadResults() {
+
+        var $results = bulkUploadResults();
+        var start_id = bulkUploadResultsNextId($results);
+        fetchUploadEntries(start_id, '$', addNewLines);
+
+        /**
+         * Add lines for any entries that appeared since the last round then
+         * schedule a new round.
+         *
+         * @param {UploadRecord[]} list
+         */
+        function addNewLines(list) {
+            if (isPresent(list)) {
+                var $lines = $results.children();
+
+                // Remove initialization line(s) if present.
+                // noinspection JSCheckFunctionSignatures
+                $lines.filter('.' + TMP_LINE_CLASS).remove();
+
+                // Add a line for each record.
+                var last_id = 0;
+                var row     = $lines.length;
+                list.forEach(function(record) {
+                    row += 1;
+                    addBulkUploadResult($results, row, record);
+                    last_id = Math.max(record.id, last_id);
+                });
+
+                // Update the next ID to fetch.
+                if (last_id) {
+                    bulkUploadResultsNextId($results, last_id);
+                }
+            }
+            scheduleCheckBulkUploadResults($results);
+        }
+    }
+
+    /**
+     * Add a line to bulk upload results.
+     *
+     * @param {Selector}                   results
+     * @param {number|string}              index
+     * @param {UploadRecord|object|string} entry
+     * @param {Date|number}                [time]
+     *
+     * @return {jQuery}               The element appended to results.
+     */
+    function addBulkUploadResult(results, index, entry, time) {
+        var $results = bulkUploadResults(results);
+        var $line    = $('<div>');
+
+        // CSS classes for the added line.
+        var row_class;
+        if (typeof index === 'number') {
+            row_class = 'row-' + index;
+        } else {
+            row_class = index || '';
+        }
+        if (row_class.indexOf('line') < 0) {
+            row_class = ['line', row_class].join(' ').trim();
+        }
+        $line.addClass(row_class);
+
+        // Text content for the added line.
+        var text, html;
+        if (typeof entry !== 'object') {
+            text = entry.toString();
+        } else if (isMissing(entry.repository_id)) {
+            // A generic object.
+            text = JSON.stringify(entry).substr(0, 512);
+        } else {
+            // An object which is a de-serialized Upload record.
+            var start = bulkUploadResultsStartTime($results);
+            var fd    = entry.file_data     || {};
+            var file  = fd.metadata && fd.metadata.filename;
+            var pair  = {
+                time: secondsSince(start, time).toFixed(1),
+                id:   (entry.id            || '(missing id)'),
+                rid:  (entry.repository_id || '(missing repository_id)'),
+                file: (file ? ('"' + file + '"') : '(missing filename)')
+            };
+            html = '';
+            $.each(pair, function(k, v) {
+                html += '<span class="label">' + k + '</span>';
+                html += '<span class="value">' + v + '</span>';
+            });
+        }
+        if (html) {
+            $line.html(html);
+        } else {
+            $line.text(text);
+        }
+
+        // Append the line and scroll it into view.
+        $results.append($line)[0].scrollIntoView(false);
+        return $line;
+    }
+
+    /**
+     * Get upload entries.
+     *
+     * @param {string|number|null}       min
+     * @param {string|number|null}       max
+     * @param {function(UploadRecord[])} callback
+     */
+    function fetchUploadEntries(min, max, callback) {
+
+        var func = 'fetchEntries: ';
+        var url  = 'upload.json?selected=';
+        if (isPresent(min) && isPresent(max)) {
+            url += '' + min + '-' + max;
+        } else if (isPresent(max)) {
+            url += '1-' + max;
+        } else if (isPresent(min)) {
+            url += min;
+        } else {
+            url += '*';
+        }
+        var start = Date.now();
+
+        debug(func, 'VIA', url);
+        var results, error;
+        $.ajax({
+            url:      url,
+            type:     'GET',
+            dataType: 'json',
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
+        });
+
+        /**
+         * Extract the list of Upload entries returned as JSON.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            // noinspection AssignmentResultUsedJS
+            if (isMissing(data)) {
+                error = 'no data';
+            } else if (typeof(data) !== 'object') {
+                error = 'unexpected data type ' + typeof(data);
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                /** @type {UploadRecordMessage} message */
+                var message = data.response || data;
+                var entries = message.entries  || {};
+                var list    = entries.list  || [];
+                var first   = list[0];
+                if ((typeof first === 'object') && isPresent(first.entry)) {
+                    results = list.map(function(v) { return v.entry; });
+                } else {
+                    results = list;
+                }
+            }
+        }
+
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         error_message
+         */
+        function onError(xhr, status, error_message) {
+            error = status + ': ' + error_message;
+        }
+
+        /**
+         * Actions after the request is completed.  If there was no error, the
+         * list of extracted entries is passed to the callback function.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            if (results) {
+                callback(results);
+            } else if (error) {
+                consoleWarn(func, (url + ':'), error);
+            } else {
+                consoleError(func, (url + ':'), 'unknown failure');
+            }
+            debug(func, 'complete', secondsSince(start), 'sec.');
+        }
     }
 
     // ========================================================================
@@ -300,7 +804,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: *this*.
      */
-    function initializeForm(form) {
+    function initializeUploadForm(form) {
 
         var $form = $(form || this);
 
@@ -1428,6 +1932,7 @@ $(document).on('turbolinks:load', function() {
         setIcon(element, Emma.Upload.Status.valid.label);
     }
 
+    // noinspection JSUnusedLocalSymbols
     /**
      * Restore a status marker after the associated input value is no longer
      * invalid.
@@ -2194,16 +2699,20 @@ $(document).on('turbolinks:load', function() {
     /**
      * The given form element or the first file upload form on the page.
      *
-     * @param {Selector} [form]       Default: '.' + FORM_CLASS.
+     * @param {Selector} [form]       Default: FORM_SELECTOR.
      *
      * @return {jQuery}
      */
     function formElement(form) {
         var $form = form && $(form);
-        if ($form && !$form.hasClass(FORM_CLASS)) {
-            $form = $form.parents('.' + FORM_CLASS).first();
+        if ($form && !$form.is(FORM_SELECTOR)) {
+            $form = $form.parents(FORM_SELECTOR);
         }
-        return $form || $file_upload_form.first();
+        if (isMissing($form)) {
+            var bulk = isMissing($file_upload_form);
+            $form = bulk ? $bulk_operation_form : $file_upload_form;
+        }
+        return $form.first();
     }
 
     /**
@@ -2690,6 +3199,19 @@ $(document).on('turbolinks:load', function() {
     function showFlashError(text) {
         if (FEATURES.flash_errors) {
             flashError(text);
+        }
+    }
+
+    // ========================================================================
+    // Functions - other
+    // ========================================================================
+
+    /**
+     * Emit a console message if debugging.
+     */
+    function debug() {
+        if (DEBUGGING) {
+            consoleLog.apply(null, arguments);
         }
     }
 

@@ -3,8 +3,8 @@
   # Display the selected item in an expandable panel.
 
   item  ||= nil or return
-  force ||= @force
   row   ||= 0
+  force ||= force_delete
 
   toggle = classes = nil
   if item.is_a?(Upload)

@@ -608,7 +608,7 @@ module UploadHelper
   #
   def upload_form(item, label: nil, action: nil, **opt)
     action = (action || params[:action])&.to_sym
-    opt    = prepend_css_classes(opt, "file-upload-form #{action}")
+    opt    = prepend_css_classes(opt, 'file-upload-form', action)
     cancel = opt.delete(:cancel)
     scroll_to_top_target!(opt)
     # noinspection RubyCaseWithoutElseBlockInspection
@@ -795,11 +795,11 @@ module UploadHelper
     end
   end
 
-  # Text for #upload_no_fields_row.
+  # Text for #upload_no_fields_row. # TODO: I18n
   #
   # @type [String]
   #
-  UPLOAD_NO_FIELDS = 'NO FIELDS' # TODO: I18n
+  UPLOAD_NO_FIELDS = 'NO FIELDS'
 
   # Hidden row that is shown only when no field rows are being displayed.
   #
@@ -906,14 +906,14 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_delete_submit(*items, **opt)
-    opt, html_opt = partition_options(opt, :label, :force)
+    opt, html_opt = partition_options(opt, :label, :force, :truncate)
     action = (opt.delete(:action) || params[:action])&.to_sym
     values = UPLOAD_ACTION_VALUES[action]
     label  = opt.delete(:label) || values[:submit][:label]
-    id     = Upload.collect_ids(*items).join(',').presence
-    url    = id ? destroy_upload_path(**opt.slice(:force).merge!(id: id)) : ''
+    ids    = Upload.compact_ids(*items).join(',').presence
+    url    = (destroy_upload_path(**opt.merge!(id: ids)) if ids.present?)
     prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
-    append_css_classes!(html_opt, (url.presence ? 'best-choice' : 'forbidden'))
+    append_css_classes!(html_opt, (url ? 'best-choice' : 'forbidden'))
     html_opt[:title]  ||= values[:submit][:disabled][:tooltip]
     html_opt[:role]   ||= 'button'
     html_opt[:method] ||= :delete
@@ -935,10 +935,40 @@ module UploadHelper
   end
 
   # ===========================================================================
+  # :section: Bulk new/edit/delete pages
+  # ===========================================================================
+
+  public
+
+  # Initially hidden container used by the client to display intermediate
+  # results during the bulk upload.
+  #
+  # @param [Hash] opt                 Passed to #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_results(**opt)
+    opt = prepend_css_classes(opt, 'file-upload-results', 'hidden')
+    html_div(nil, **opt)
+  end
+
+  # ===========================================================================
   # :section: Bulk new/edit pages
   # ===========================================================================
 
   public
+
+  # BULK_UPLOAD_PREFIX_LABEL # TODO: I18n
+  #
+  # @type [String]
+  #
+  BULK_UPLOAD_PREFIX_LABEL = 'Title prefix:'
+
+  # BULK_UPLOAD_BATCH_LABEL # TODO: I18n
+  #
+  # @type [String]
+  #
+  BULK_UPLOAD_BATCH_LABEL = 'Batch size:'
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -954,7 +984,7 @@ module UploadHelper
   #
   def bulk_upload_form(label: nil, action: nil, **opt)
     action = (action || params[:action])&.to_sym
-    opt    = prepend_css_classes(opt, "file-upload-form bulk #{action}")
+    opt    = prepend_css_classes(opt, 'file-upload-bulk', action)
     cancel = opt.delete(:cancel)
 
     # noinspection RubyCaseWithoutElseBlockInspection
@@ -972,14 +1002,42 @@ module UploadHelper
     html_div(class: "file-upload-container bulk #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
       form_with(**opt) do |f|
-        html_div(class: 'controls') do
-          tray = []
-          tray << upload_submit_button(action: action, label: label)
-          tray << upload_cancel_button(action: action, url: cancel)
-          tray << bulk_upload_file_select(f, :source)
-          tray << upload_filename_display
-          html_div(safe_join(tray), class: 'button-tray')
-        end
+        lines = []
+
+        # === Batch title prefix input
+        url_param = :prefix
+        lines <<
+          if session_debug?
+            html_div(class: 'line') do
+              f.label(url_param, BULK_UPLOAD_PREFIX_LABEL) <<
+                f.text_field(url_param, value: title_prefix.presence)
+            end
+          elsif title_prefix.present?
+            hidden_url_parameter(nil, url_param, title_prefix)
+          end
+
+        # === Batch size control
+        url_param = :batch
+        lines <<
+          html_div(class: 'line') do
+            f.label(url_param, BULK_UPLOAD_BATCH_LABEL) <<
+              f.number_field(url_param, min: 0, value: bulk_batch.presence)
+          end
+
+        # === Form control panel
+        lines <<
+          html_div(class: 'form-controls') do
+            c_opt = { class: 'bulk' }
+            tray = []
+            tray << upload_submit_button(action: action, label: label, **c_opt)
+            tray << upload_cancel_button(action: action, url:  cancel, **c_opt)
+            tray << bulk_upload_file_select(f, :source, **c_opt)
+            tray << upload_filename_display(**c_opt)
+            prepend_css_classes!(c_opt, 'button-tray')
+            html_div(c_opt) { safe_join(tray) }
+          end
+
+        safe_join(lines, "\n")
       end
     end
   end
@@ -1015,11 +1073,26 @@ module UploadHelper
 
   public
 
-  BULK_DELETE_FORCE_LABEL = # TODO: I18n
+  # BULK_DELETE_FORCE_LABEL # TODO: I18n
+  #
+  # @type [String]
+  #
+  BULK_DELETE_FORCE_LABEL =
     'Attempt to remove index entries for items not in the database?'
 
-  BULK_DELETE_INPUT_LABEL = # TODO: I18n
-    'Items to delete:'
+  # BULK_TRUNCATE_DELETE_LABEL # TODO: I18n
+  #
+  # @type [String]
+  #
+  BULK_TRUNCATE_DELETE_LABEL =
+    'Reset "uploads" id field to 1?' \
+    ' (Applies only when all records are being removed.)'
+
+  # BULK_DELETE_INPUT_LABEL # TODO: I18n
+  #
+  # @type [String]
+  #
+  BULK_DELETE_INPUT_LABEL = 'Items to delete:'
 
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
@@ -1037,29 +1110,48 @@ module UploadHelper
   def bulk_delete_form(label: nil, force: false, ids: nil, **opt)
     action = :bulk_delete
     ids    = Array.wrap(ids).compact.presence
-    opt    = prepend_css_classes(opt, 'file-upload-delete bulk')
+    opt    = prepend_css_classes(opt, 'file-upload-bulk', 'delete')
     cancel = opt.delete(:cancel)
     opt[:url]          = delete_select_upload_path
     opt[:method]     ||= :get
     opt[:autocomplete] = 'off'
     opt[:local]        = true # Turns off "data-remote='true'".
 
-    html_div(class: "file-upload-container bulk #{action}") do
+    html_div(class: 'file-upload-container bulk delete') do
       # @type [ActionView::Helpers::FormBuilder] f
       form_with(**opt) do |f|
-        force_checkbox =
+        lines = []
+
+        # === Force index delete option
+        url_param = :force
+        lines <<
           html_div(class: 'line') do
-            url_param = :force
             f.check_box(url_param, checked: force) <<
               f.label(url_param, BULK_DELETE_FORCE_LABEL)
           end
-        selected_ids =
+
+        # === Reset database ID option
+        url_param = :truncate
+        lines <<
+          if session_debug?
+            html_div(class: 'line') do
+              f.check_box(url_param, checked: delete_truncate) <<
+                f.label(url_param, BULK_TRUNCATE_DELETE_LABEL)
+            end
+          else
+            hidden_url_parameter(nil, url_param, delete_truncate)
+          end
+
+        # === Item selection input
+        url_param = :selected
+        lines <<
           html_div(class: 'line') do
-            url_param = :selected
             f.label(url_param, BULK_DELETE_INPUT_LABEL) <<
               f.text_field(url_param, value: ids)
           end
-        controls =
+
+        # === Form control panel
+        lines <<
           html_div(class: 'form-controls') do
             html_div(class: 'button-tray') do
               tray = []
@@ -1068,7 +1160,8 @@ module UploadHelper
               safe_join(tray)
             end
           end
-        safe_join([force_checkbox, selected_ids, controls])
+
+        safe_join(lines, "\n")
       end
     end
   end

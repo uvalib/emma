@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'down'
+
 # A file object uploaded from the client.
 #
 # @!attribute [r] file
@@ -14,6 +16,10 @@ __loading_begin(__FILE__)
 # @!attribute [r] file_attacher
 #   Inserted by Shrine::Plugins:Activerecord.
 #   @return [FileUploader::Attacher]
+#
+# @!attribute [r] file_path
+#   Bulk upload URL
+#   @return [String, nil]
 #
 class Upload < ApplicationRecord
 
@@ -106,6 +112,12 @@ class Upload < ApplicationRecord
   # noinspection RubyResolve
   include FileUploader::Attachment(:file)
 
+  # Bulk upload URL.
+  #
+  # @return [String, nil]
+  #
+  attr_reader :file_path
+
   # ===========================================================================
   # :section: Authentication
   # ===========================================================================
@@ -196,8 +208,11 @@ class Upload < ApplicationRecord
 
   # Create a new instance.
   #
-  # @param [Hash, Upload] opt         Passed to super.
+  # @param [Hash, Upload] opt         Passed to #assign_attributes via super.
   # @param [Proc]         block       Passed to super.
+  #
+  # This method overrides:
+  # @see ActiveRecord::Core#initialize
   #
   def initialize(opt = nil, &block)
     __debug_args(binding)
@@ -225,6 +240,12 @@ class Upload < ApplicationRecord
 
   public
 
+  # Fields that used within the instance but are not persisted to the database.
+  #
+  # @type [Array<Symbol>]
+  #
+  LOCAL_FIELDS = %i[file_path].freeze
+
   # Fields that are expected to be included in :emma_data.
   #
   # @type [Array<Symbol>]
@@ -235,7 +256,7 @@ class Upload < ApplicationRecord
   #
   # @type [Array<Symbol>]
   #
-  KNOWN_FIELDS = (field_names + INDEX_FIELDS).freeze
+  KNOWN_FIELDS = (field_names + INDEX_FIELDS + LOCAL_FIELDS).freeze
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -253,6 +274,11 @@ class Upload < ApplicationRecord
   #
   # @option opt [String]         :base_url  To generate emma_retrievalLink.
   # @option opt [Module, String] :importer  @see Import#translate_fields
+  # @option opt [Boolean]        :defer     If *true* and :file_path is
+  #                                           provided via *opt*, @file_path
+  #                                           will be set but the referenced
+  #                                           file will *not* be fetched
+  #                                           automatically via #upload_file.
   #
   # @return [void]
   #
@@ -263,7 +289,7 @@ class Upload < ApplicationRecord
     __debug_args(binding)
     opt = opt.attributes if opt.is_a?(Upload)
     # noinspection RubyYardParamTypeMatch
-    local, fields = partition_options(opt, :base_url, :importer)
+    local, fields = partition_options(opt, :base_url, :importer, :defer)
     return if fields.blank?
     fields.deep_symbolize_keys!
 
@@ -290,6 +316,10 @@ class Upload < ApplicationRecord
     attr, data = partition_options(fields, *field_names)
     now = DateTime.now
     url = local[:base_url]
+
+    # Extract the path to the file to be uploaded (provided either via
+    # arguments or from bulk import data).
+    @file_path = data.delete(:file_path)
 
     # Get value for :file_data as JSON.
     fd = data.delete(:file) || attr[:file_data]
@@ -349,6 +379,9 @@ class Upload < ApplicationRecord
     attr[:updated_at]    = utim
     attr[:created_at]    = ctim
     super(attr)
+
+    # Fetch the file source if named via :file_path and not deferred.
+    upload_file(@file_path) unless @file_path.blank? || local[:defer]
 
   rescue => error # TODO: remove - testing
     Log.error { "#{__method__}: #{error.class}: #{error.message}"}
@@ -497,18 +530,12 @@ class Upload < ApplicationRecord
   # event handlers to copy the file to storage).
   #
   def upload_file(file_path, **opt)
-    meth = opt.delete(:meth) || __method__
+    meth   = opt.delete(:meth) || __method__
     result =
       if file_path =~ /^https?:/
-        StringIO.open(Faraday.get(file_path).body) do |io|
-          opt[:metadata] = opt[:metadata]&.dup || {}
-          opt[:metadata]['filename'] ||= File.basename(file_path)
-          file_attacher.attach(io, **opt)
-        end
+        upload_remote_file(file_path, **opt)
       else
-        File.open(file_path) do |io|
-          file_attacher.attach(io, **opt)
-        end
+        upload_local_file(file_path, **opt)
       end
     Log.info do
       name = result&.original_filename.inspect
@@ -517,6 +544,61 @@ class Upload < ApplicationRecord
       "#{meth}: #{name} (#{size} bytes) #{type}"
     end
     result
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Options for Down#open.
+  #
+  # @type [Hash]
+  #
+  # @see Down::NetHttp#initialize
+  # @see Down::NetHttp#open
+  # @see Down::NetHttp#create_net_http
+  #
+  DOWN_OPEN_OPTIONS = { read_timeout: 60 }.deep_freeze
+
+  # Acquire a remote file and copy it to storage.
+  #
+  # @param [String] url
+  # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
+  #
+  # @option opt [Integer] :read_retry
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  def upload_remote_file(url, **opt)
+    # @type [Down::ChunkedIO] io
+    io = Down.open(url, **DOWN_OPEN_OPTIONS)
+    opt[:metadata] = opt[:metadata]&.dup || {}
+    opt[:metadata]['filename'] ||= File.basename(url)
+    file_attacher.attach(io, **opt)
+  rescue => error
+    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    raise error
+  ensure
+    # noinspection RubyScope
+    io&.close
+  end
+
+  # Copy a local file to storage.
+  #
+  # @param [String] path
+  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
+  #
+  # @return [FileUploader::UploadedFile]
+  #
+  def upload_local_file(path, **opt)
+    File.open(path) do |io|
+      file_attacher.attach(io, **opt)
+    end
+  rescue => error
+    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
+    raise error
   end
 
   # ===========================================================================
@@ -671,7 +753,7 @@ class Upload < ApplicationRecord
   # supplied then this method is essentially an invocation of #where which
   # returns the matching records.
   #
-  # @param [Array<Upload, String, Integer, Array>] ids  @see #collect_ids
+  # @param [Array<Upload, String, Integer, Array>] ids  @see #expand_ids
   # @param [Hash]                                  opt  Passed to #where.
   #
   # @return [Array<Upload>]
@@ -679,7 +761,7 @@ class Upload < ApplicationRecord
   def self.get_records(*identifiers, **opt)
     ids  = []
     rids = []
-    collect_ids(*identifiers).each do |identifier|
+    expand_ids(*identifiers).each do |identifier|
       id_term(identifier)[:id] ? (ids << identifier) : (rids << identifier)
     end
     result =
@@ -695,83 +777,6 @@ class Upload < ApplicationRecord
     Array.wrap(result&.records)
   end
 
-  # Transform a mixture of ID representations into a list of single IDs.
-  #
-  # Any parameter may be (or contain):
-  # - A single ID as a String or Integer
-  # - A set of IDs as a string of the form /\d+(,\d+)*/
-  # - A range of IDs as a string of the form /\d+-\d+/
-  # - A range of the form /-\d+/ is interpreted as /0-\d+/
-  #
-  # @param [Array<Upload, String, Integer, Array>] ids
-  #
-  # @return [Array<String>]
-  #
-  # == Examples
-  #
-  # @example Single
-  #   collect_ids('123') -> %w(123)
-  #
-  # @example Sequence
-  #   collect_ids('123,789') -> %w(123 789)
-  #
-  # @example Range
-  #   collect_ids('123-126') -> %w(123 124 125 126)
-  #
-  # @example Mixed
-  #   collect_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
-  #
-  # @example Open-ended range
-  #   collect_ids('3-$') -> %w(3 4 5 6)
-  #
-  # @example All records
-  #   collect_ids('*')   -> %w(1 2 3 4 5 6)
-  #   collect_ids('-$')  -> %w(1 2 3 4 5 6)
-  #   collect_ids('1-$') -> %w(1 2 3 4 5 6)
-  #
-  def self.collect_ids(*ids)
-    ids.flatten.flat_map { |id|
-      id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
-    }.flat_map { |id| id_range(id) }.compact.uniq
-  end
-
-  # Interpret an ID string as a range of IDs if possible.
-  #
-  # The method supports a mixture of database IDs (which are comprised only of
-  # decimal digits) and repository IDs (which always start with a non-digit),
-  # however repository IDs cannot be part of ranges.
-  #
-  # @param [String, Integer, Upload] id
-  #
-  # @return [Array<String>]
-  #
-  def self.id_range(id)
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case id
-      when Upload
-        id = id.id.to_s
-      when Hash
-        id = id[:id] || id['id']
-      when /[^\d$*-]/
-        # Assume this is a repository ID and not a database ID (or range).
-      when '*'
-        max = Upload.maximum('id').to_i
-        id = (1..max).map(&:to_s) if max.positive?
-      when /-/
-        min, max = id.split('-')
-        max = Upload.maximum('id') if max == '$'
-        max = max.to_i
-        if max.positive?
-          min = [1, min.to_i].max
-          min, max = [max, min] if max < min
-          id = (min..max).map(&:to_s)
-        end
-      when /^0\d*$/
-        id = id.to_i.to_s
-    end
-    Array.wrap(id.presence)
-  end
-
   # Interpret an identifier as either an :id or :repository_id, generating a
   # field/value pair for use with #find_by or #where.
   #
@@ -783,6 +788,151 @@ class Upload < ApplicationRecord
     id          = id.to_s.strip
     digits_only = id.remove(/\d/).empty?
     digits_only ? { id: id } : { repository_id: id }
+  end
+
+  # The database ID of the first "upload" table record.
+  #
+  # @return [Integer]                 If 0 then the table is empty.
+  #
+  def self.minimum_id
+    Upload.minimum(:id).to_i
+  end
+
+  # The database ID of the last "upload" table record.
+  #
+  # @return [Integer]                 If 0 then the table is empty.
+  #
+  def self.maximum_id
+    Upload.maximum(:id).to_i
+  end
+
+  # Transform a mixture of ID representations into a set of one or more
+  # non-overlapping range representations.
+  #
+  # @param [Array<Upload, String, Integer, Array>] ids
+  # @param [Hash]                                  opt
+  #
+  # @option opt [Integer] :min_id     Default: `#minimum_id`
+  # @option opt [Integer] :max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  def self.compact_ids(*ids, **opt)
+    opt[:min_id] ||= minimum_id
+    opt[:max_id] ||= maximum_id
+    non_ids, ids = expand_ids(*ids, **opt).partition { |v| v.to_i.zero? }
+    non_ids.sort!.uniq!
+    ids.map! { |id| [id.to_i, opt[:min_id]].max }.sort!.uniq!
+    ids =
+      ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|
+        first = range.shift
+        last  = range.pop || first
+        (first == last) ? first.to_s : "#{first}-#{last}"
+      end
+    min, max = opt.values_at(:min_id, :max_id).map(&:to_s)
+    all = (ids == [max] if min == max)
+    all ||= (ids == [min, '$']) || (ids == [min, max])
+    all ||= ids.first&.match?(/^(0|1|#{min}|\*)?-(#{max}|\$)$/)
+    ids = %w(*) if all
+    ids + non_ids
+  end
+
+  # Transform a mixture of ID representations into a list of single IDs.
+  #
+  # Any parameter may be (or contain):
+  # - A single ID as a String or Integer
+  # - A set of IDs as a string of the form /\d+(,\d+)*/
+  # - A range of IDs as a string of the form /\d+-\d+/
+  # - A range of the form /-\d+/ is interpreted as /0-\d+/
+  #
+  # @param [Array<Upload, String, Integer, Array>] ids
+  # @param [Hash]                                  opt
+  #
+  # @option opt [Integer] :min_id     Default: `#minimum_id`
+  # @option opt [Integer] :max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  # == Examples
+  #
+  # @example Single
+  #   expand_ids('123') -> %w(123)
+  #
+  # @example Sequence
+  #   expand_ids('123,789') -> %w(123 789)
+  #
+  # @example Range
+  #   expand_ids('123-126') -> %w(123 124 125 126)
+  #
+  # @example Mixed
+  #   expand_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
+  #
+  # @example Implicit range
+  #   expand_ids('-3')  -> %w(1 2 3)
+  #   expand_ids('*-3') -> %w(1 2 3)
+  #
+  # @example Open-ended range
+  #   expand_ids('3-')  -> %w(3 4 5 6)
+  #   expand_ids('3-*') -> %w(3 4 5 6)
+  #   expand_ids('3-$') -> %w(3 4 5 6)
+  #
+  # @example All records
+  #   expand_ids('*')   -> %w(1 2 3 4 5 6)
+  #   expand_ids('-$')  -> %w(1 2 3 4 5 6)
+  #   expand_ids('*-$') -> %w(1 2 3 4 5 6)
+  #   expand_ids('1-$') -> %w(1 2 3 4 5 6)
+  #
+  # @example Last record only
+  #   expand_ids('$')   -> %w(6)
+  #   expand_ids('$-$') -> %w(6)
+  #
+  def self.expand_ids(*ids, **opt)
+    opt[:min_id] ||= minimum_id
+    opt[:max_id] ||= maximum_id
+    ids.flatten.flat_map { |id|
+      id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
+    }.flat_map { |id| expand_id_range(id, **opt) }.compact.uniq
+  end
+
+  # A valid ID range term for interpolation into a Regexp.
+  #
+  # @type [String]
+  #
+  RANGE_TERM = '(\d+|\$|\*)'
+
+  # Interpret an ID string as a range of IDs if possible.
+  #
+  # The method supports a mixture of database IDs (which are comprised only of
+  # decimal digits) and repository IDs (which always start with a non-digit),
+  # however repository IDs cannot be part of ranges.
+  #
+  # @param [String, Integer, Upload] id
+  # @param [Hash]                    opt
+  #
+  # @option opt [Integer] :min_id     Default: `#minimum_id`
+  # @option opt [Integer] :max_id     Default: `#maximum_id`
+  #
+  # @return [Array<String>]
+  #
+  # @see #expand_ids
+  #
+  def self.expand_id_range(id, **opt)
+    # noinspection RubyCaseWithoutElseBlockInspection
+    min, max =
+      case id
+        when Upload                         then [id.id]
+        when Hash                           then [id[:id] || id['id']]
+        when Numeric, /^\d+$/, '$'          then [id]
+        when '*'                            then [1,  '$']
+        when /^-#{RANGE_TERM}/              then [1,  $1]
+        when /^#{RANGE_TERM}-$/             then [$1, '$']
+        when /#{RANGE_TERM}-#{RANGE_TERM}/  then [$1, $2]
+      end
+    min &&= opt[:max_id] ||= maximum_id if (min == '$')
+    min &&= [1, min.to_i].max
+    max &&= opt[:max_id] ||= maximum_id if (max == '$') || (max == '*')
+    max &&= [1, max.to_i].max
+    (max ? (min..max).to_a : [min || id].reject(&:blank?)).map(&:to_s)
   end
 
   # ===========================================================================

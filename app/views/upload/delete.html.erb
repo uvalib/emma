@@ -3,12 +3,12 @@
   # Prompt to remove an existing file entry.
 
   title  ||= t('emma.upload.delete.title')
-  force  ||= @force
   list   ||= @list
   list     = Array.wrap(list)
   records  = list.select { |e| e.is_a?(Upload) }
   repo   ||= records.first&.repository
   logo   ||= repository_source_logo(repo)
+  force  ||= force_delete
 
   unless modal?
     set_page_title(title)

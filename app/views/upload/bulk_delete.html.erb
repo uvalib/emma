@@ -4,8 +4,8 @@
 
   title ||= t('emma.upload.bulk_delete.title')
   logo  ||= repository_source_logo
-  force ||= @force
   list  ||= @list
+  force ||= force_delete
 
   unless modal?
     set_page_title(title)
@@ -23,6 +23,7 @@
 
 <%= upload_directions %>
 <%= bulk_delete_form(force: force, ids: list) %>
+<%= bulk_upload_results %>
 
 <%= upload_notes %>
 <%= upload_action_list unless modal? %>

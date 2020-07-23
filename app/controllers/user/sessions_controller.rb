@@ -7,6 +7,9 @@ __loading_begin(__FILE__)
 
 # User session controller.
 #
+# !@attribute [r] devise_mapping
+#   @return [Devise::Mapping]
+#
 class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
@@ -14,7 +17,16 @@ class User::SessionsController < Devise::SessionsController
 
   # Non-functional hints for RubyMine.
   # :nocov:
-  include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
+  unless ONLY_FOR_DOCUMENTATION
+
+    include AbstractController::Callbacks
+
+    protected
+
+    # @return [Devise::Mapping]
+    def devise_mapping; end
+
+  end
   # :nocov:
 
   # ===========================================================================
@@ -198,5 +210,27 @@ class User::SessionsController < Devise::SessionsController
 =end
 
 end
+
+# Devise attributes defined via Devise::Models, depending on the Devise
+# configuration.
+#
+# @see Devise::Models#config
+#
+# :nocov:
+unless ONLY_FOR_DOCUMENTATION
+  class Devise::Mapping
+    def authenticatable?          ; end
+    def confirmable?              ; end
+    def database_authenticatable? ; end
+    def lockable?                 ; end
+    def omniauthable?             ; end
+    def recoverable?              ; end
+    def registerable?             ; end
+    def rememberable?             ; end
+    def timeoutable?              ; end
+    def validatable?              ; end
+  end
+end
+# :nocov:
 
 __loading_end(__FILE__)

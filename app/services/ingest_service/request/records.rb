@@ -285,7 +285,31 @@ module IngestService::Request::Records
       format = Array.wrap(format).presence || DublinCoreFormat.values
       result = format.map { |fmt| attr.merge(dc_format: fmt) }
     end
-    result.map { |v| Ingest::Record::IdentifierRecord.new(v) }
+    result.map { |v|
+      next unless allowed_record_id?(v[:emma_recordId])
+      next unless allowed_repository_id?(v[:emma_repositoryRecordId])
+      Ingest::Record::IdentifierRecord.new(v)
+    }.compact
+  end
+
+  # Indicate whether the value appears to be acceptable as a repository ID.
+  #
+  # If it's all digits then it's a database record ID.
+  #
+  # @param [String, nil] value
+  #
+  def allowed_repository_id?(value)
+    value.nil? || (value.present? && !value.match?(/^\d+$/))
+  end
+
+  # Indicate whether the value appears to be acceptable as a index record ID.
+  #
+  # @param [String, nil] value
+  #
+  def allowed_record_id?(value)
+    return true if value.nil?
+    repo, rid, fmt = value.split('-')
+    repo.present? && rid.present? && !rid.match?(/^\d+$/) && fmt.present?
   end
 
 end

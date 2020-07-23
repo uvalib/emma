@@ -38,19 +38,27 @@ $footer-margin-top: 1rem;
         grid-template-columns: 1fr 1fr;
         gap:                   0.25rem 1rem;
 
+        @media #{$narrow-screen} {
+            grid-template-columns: 1fr;
+        }
+
         .entry {
 
-            display:         flex;
-            width:           100%;
-            word-break:      keep-all;
-            justify-content: center;
+            display:    flex;
+            width:      100%;
+            word-break: keep-all;
 
-            &.col-first {
-                justify-content: flex-start;
-            }
+            @media #{$not-narrow-screen} {
 
-            &.col-last:not(.col-first) {
-                justify-content: flex-end;
+                justify-content: center;
+
+                &.col-first {
+                    justify-content: flex-start;
+                }
+
+                &.col-last:not(.col-first) {
+                    justify-content: flex-end;
+                }
             }
         }
     }

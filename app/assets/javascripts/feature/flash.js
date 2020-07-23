@@ -153,7 +153,7 @@ function clearFlash(fc) {
  */
 function flashEmpty(fc) {
     var $fc = fc || flashContainer();
-    return isMissing($fc.children());
+    return $fc.is(':empty');
 }
 
 /**
@@ -168,6 +168,7 @@ function flashHidden(fc) {
     return $fc.hasClass('hidden') || $fc.hasClass('invisible')
 }
 
+// noinspection JSUnusedGlobalSymbols
 /**
  * Indicate whether flash message(s) are being displayed.
  *

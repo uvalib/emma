@@ -43,6 +43,9 @@ class Shrine
     #
     # @return [Hash{Symbol=>*}]
     #
+    #--
+    # noinspection RubyUnusedLocalVariable
+    #++
     def extract_file_metadata
       mime = fmt = fmt_class = fmt_instance = fmt_parser = fmt_metadata = nil
       ext  = extension
