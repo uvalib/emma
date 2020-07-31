@@ -97,6 +97,7 @@ en:
         - 'reading_list'
         - 'api'
         - 'help'
+        - 'home'
 
       primary:
 
@@ -107,6 +108,7 @@ en:
         - 'search'
         - 'upload'
         - 'help'
+        - 'home'
 
     panel:
       control:          &PANEL_TOGGLE

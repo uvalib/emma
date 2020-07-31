@@ -2414,7 +2414,18 @@ $(document).on('turbolinks:load', function() {
         if (isDefined(new_mode)) {
             mode = new_mode;
         } else {
-            mode = isUpdateForm($form) ? 'available' : 'filled';
+            var action, general, first;
+            var current_action = termAction($form);
+            $.each(Emma.Upload.Filter, function(group, property) {
+                if (property.default === current_action) {
+                    action = group;
+                } else if (property.default) {
+                    general = group;
+                } else {
+                    first = first || group;
+                }
+            });
+            mode = action || general || first;
         }
         var selector = '[value="' + mode + '"]';
         $radio.filter(selector).prop('checked', true).change();
@@ -2425,7 +2436,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterButtons}.
      *
-     * @see "UploadHelper#upload_field_control"
+     * @see "UploadHelper#upload_field_group"
      */
     function monitorFieldDisplayFilterButtons(form) {
 
@@ -2456,7 +2467,7 @@ $(document).on('turbolinks:load', function() {
      *  @param {string|null} [new_mode]
      *  @param {Selector}    [form_sel]
      *
-     * @see "UploadHelper#upload_field_control"
+     * @see "UploadHelper#upload_field_group"
      */
     function filterFieldDisplay(new_mode, form_sel) {
         var obj   = (typeof new_mode === 'object');
@@ -2819,7 +2830,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
-        return formElement(form).find('.upload-field-control');
+        return formElement(form).find('.upload-field-group');
     }
 
     /**

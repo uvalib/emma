@@ -471,7 +471,7 @@ module LayoutHelper::SearchControls
     return if grid_rows.blank?
     opt = prepend_css_classes(opt, 'search-controls', "columns-#{max_columns}")
     append_css_classes!(opt, 'open') if SEARCH_CONTROLS_INITIALLY_OPEN
-    html_div(safe_join(grid_rows, "\n"), opt)
+    html_div(opt) { grid_rows }
   end
 
   # A control for toggling the visibility of advanced search controls.

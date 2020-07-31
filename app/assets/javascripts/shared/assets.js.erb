@@ -44,6 +44,15 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  * }} ActionProperties
  */
 
+/**
+ * @typedef {{
+ *  label:    string|null,
+ *  tooltip:  string|null,
+ *  enabled:  boolean|string|null,
+ *  default:  boolean|string|null
+ * }} FieldGroupProperties
+ */
+
 // noinspection LongLine
 /**
  * Values "imported" from the Rails project via the asset pipeline.
@@ -331,7 +340,16 @@ var Emma = (function() {
              *     bulk_delete: ActionProperties
              * }};
              */
-            Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>')
+            Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>'),
+            /**
+             * @type {{
+             *     available:   FieldGroupProperties,
+             *     filled:      FieldGroupProperties,
+             *     invalid:     FieldGroupProperties,
+             *     all:         FieldGroupProperties
+             * }};
+             */
+            Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP_VALUES.to_json %>')
         },
 
         // ====================================================================

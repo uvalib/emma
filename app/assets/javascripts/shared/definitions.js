@@ -50,7 +50,7 @@ var CHAR = {
 // Function definitions - Enumerables
 // ============================================================================
 
-//noinspection FunctionWithMultipleReturnPointsJS
+// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Generate a copy of the array without blank elements.
  *

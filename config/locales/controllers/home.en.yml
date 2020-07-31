@@ -14,7 +14,7 @@ en:
       #
       # %{sign_in}      HTML <a> link to the sign-in path.
 
-      label:            'Home'
+      label:            'Account'
       title:            'EMMA Test Application'
 
       # =======================================================================
@@ -25,7 +25,7 @@ en:
         label:          'Welcome'
         title:          'Welcome to EMMA'
         tooltip:        'Return to the home page.'
-        notice_html:    'You must %{sign_in} to access your account.'
+        notice_html:    'You must %{sign_in} to upload or download files.'
         text_html:      |
           <h2>Introductory text</h2>
           <p>First paragraph.</p>
@@ -34,6 +34,6 @@ en:
             Read more</a> about the project.</p>
 
       dashboard:
-        label:          'Dashboard'
-        title:          'EMMA Dashboard'
+        label:          'Account'
+        title:          'EMMA Account Dashboard'
         tooltip:        'Return to your account dashboard.'

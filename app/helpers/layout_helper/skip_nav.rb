@@ -100,9 +100,7 @@ module LayoutHelper::SkipNav
         else
           entry.presence
         end
-      }.compact.uniq.map { |entry|
-        html_tag(:li, entry, class: 'skip-nav-entry')
-      }.join("\n").html_safe
+      }.compact.uniq.map { |e| html_tag(:li, e, class: 'skip-nav-entry') }
     end
   end
 

@@ -62,7 +62,7 @@ module LogoHelper
     if name.present?
       prepend_css_classes!(html_opt, 'repository', 'name', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
-      html_div(html_div(name), html_opt)
+      html_div(html_opt) { html_div(name) }
     else
       ''.html_safe
     end

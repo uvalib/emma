@@ -112,7 +112,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
 }
 
 // Control for filtering which upload form fields are displayed.
-.upload-field-control {
+.upload-field-group {
 
     // noinspection SassScssResolvedByNameOnly
     @include user-select(none);
@@ -322,7 +322,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     // Control for filtering which upload form fields are displayed.
     // noinspection CssReplaceWithShorthandSafely
-    .upload-field-control {
+    .upload-field-group {
 
         @include grid-column-span;
 

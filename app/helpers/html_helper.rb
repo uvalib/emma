@@ -441,7 +441,7 @@ module HtmlHelper
     opt[:col]     ||= 0
     opt[:row_max] ||= pairs.size
     opt[:col_max] ||= 1
-    table =
+    html_div(**html_opt) do
       pairs.map do |key, value|
         opt[:col] = 0  if opt[:col] == opt[:col_max]
         opt[:row] += 1 if opt[:col].zero?
@@ -459,7 +459,7 @@ module HtmlHelper
           html_div(key, k_opt) << html_div(value, v_opt)
         end
       end
-    html_div(**html_opt) { safe_join(table, "\n") }
+    end
   end
 
   # ===========================================================================

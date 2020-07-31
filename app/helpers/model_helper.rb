@@ -652,7 +652,7 @@ module ModelHelper
 
     # Wrap parts in a container for group positioning:
     prepend_css_classes!(html_opt, 'container')
-    container = html_tag(opt[:level], safe_join(parts), html_opt)
+    container = html_tag(opt[:level], html_opt) { parts }
 
     # Wrap the container in the actual number grid element.
     outer_opt = { class: 'number' }
@@ -980,24 +980,20 @@ module ModelHelper
     field_opt[:disabled] = true if opt[:readonly]
     # noinspection RubyYardReturnMatch
     field_set_tag(nil, field_opt) do
-
       div_opt = html_opt.except(:'data-field', :'data-required')
       div_opt[:id]       = opt[:id]
       div_opt[:tabindex] = -1
       html_div(div_opt) do
-
         cb_opt = { role: 'option' }
-        range.pairs.map { |item_value, item_label|
+        range.pairs.map do |item_value, item_label|
           cb_name          = "[#{field}][]"
           cb_value         = item_value
           cb_opt[:id]      = "#{field}_#{item_value}"
           cb_opt[:checked] = selected&.include?(item_value)
           cb_opt[:label]   = item_label
           render_check_box(cb_name, cb_value, **cb_opt)
-        }.join("\n").html_safe
-
+        end
       end
-
     end
   end
 

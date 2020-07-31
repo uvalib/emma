@@ -95,22 +95,33 @@ en:
           # s_accessibilityAPI:              'Accessibility API'
 
           # === New bibliographic information fields (from :emma_data) ===
-          bib_subtitle:                      '[bib_subtitle]'
-          bib_series:                        '[bib_series]'
-          bib_seriesType:                    '[bib_seriesType]'
-          bib_seriesPosition:                '[bib_seriesPosition]'
-          bib_version:                       '[bib_version]'
+          bib_subtitle:                      'Subtitle'
+          bib_series:                        'Series'
+          bib_seriesType:                    'Series Type'
+          bib_seriesPosition:                'Series Position'
+          bib_version:                       'Version'
 
           # === New remediation information (from :emma_data) ===
-          rem_source:                        '[rem_source]'
-          rem_metadataSource:                '[rem_metadataSource]'
-          rem_remediatedBy:                  '[rem_remediatedBy]'
-          rem_complete:                      '[rem_complete]'
-          rem_coverage:                      '[rem_coverage]'
-          rem_remediation:                   '[rem_remediation]'
-          rem_quality:                       '[rem_quality]'
-          rem_status:                        '[rem_status]'
-          rem_image_count:                   '[rem_image_count]'
+          rem_source:                        'Source of File'
+          rem_metadataSource:                'Source of Metadata'
+          rem_remediatedBy:                  'Remediated By'
+          rem_complete:                      'Entire Document Remediated?'
+          rem_coverage:                      'Part(s) Remediated'
+          rem_remediation:                   'Remediated Aspects'
+          rem_quality:                       'Text Quality'
+          rem_status:                        'Remediation Status'
+          rem_image_count:                   'Number of Images'
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      search_controls:
+        _self:
+          enabled:      false
 
       # =======================================================================
       # Controls
@@ -122,19 +133,22 @@ en:
       pagination:
         count:          'uploads found'
 
-      field_control:
-        filled:
-          label:        'Fields with data'
-          tooltip:      'Show fields that have data or require attention.'
-        invalid:
-          label:        'Invalid fields'
-          tooltip:      'Show fields that require attention.'
+      field_group:
         available:
           label:        'All fields'
           tooltip:      'Reveal all data fields.'
+          default:      create
+        filled:
+          label:        'Fields with data'
+          tooltip:      'Show fields that have data or require attention.'
+          default:      update
+        invalid:
+          label:        'Invalid fields'
+          tooltip:      'Show fields that require attention.'
         all:
           label:        'All plus internal-use fields'
           tooltip:      'This is only for development purposes.'
+          enabled:      debug
 
       status_marker:
         required:

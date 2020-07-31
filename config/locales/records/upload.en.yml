@@ -840,7 +840,7 @@ en:
             # IR:   *missing*
             min:          0
             max:          1
-            label:        '[bib_subtitle]' # TODO: ?
+            label:        'Subtitle'
             tooltip:      |
               NEW bibliographic metadata field
               (FMW4: "Subtitle"; IA: missing)
@@ -855,7 +855,7 @@ en:
             # IR:   *missing*
             min:          0
             max:          1
-            label:        '[bib_series]' # TODO: ?
+            label:        'Series'
             tooltip:      |
               NEW bibliographic metadata field
               (FMW4: "Series Name"; IA: missing)
@@ -872,7 +872,7 @@ en:
             # NOTE:   enumeration selection for "Other".
             min:          0
             max:          1
-            label:        '[bib_seriesType]' # TODO: ?
+            label:        'Series Type'
             tooltip:      |
               NEW bibliographic metadata field
               (FMW4: "Series Type"; IA: "series_type")
@@ -887,7 +887,7 @@ en:
             # IR:   *missing*
             min:          0
             max:          1
-            label:        '[bib_seriesPosition]' # TODO: ?
+            label:        'Series Position'
             tooltip:      |
               NEW bibliographic metadata field
               (FMW4: "Series Position"; IA: "volume")
@@ -905,7 +905,7 @@ en:
             # NOTE:
             min:          0
             max:          1
-            label:        '[bib_version]' # TODO: ?
+            label:        'Version'
             tooltip:      |
               NEW bibliographic metadata field
               (FMW4: "Version"; IA: "version")
@@ -925,7 +925,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          1
-            label:        '[rem_source]' # TODO: ?
+            label:        'Source of File'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Provider of source"; IA: "contributor")
@@ -941,7 +941,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          ~
-            label:        '[rem_metadataSource]' # TODO: ?
+            label:        'Source of Metadata'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Metadata Source"; IA: "metadata_source")
@@ -958,7 +958,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          ~
-            label:        '[rem_remediatedBy]' # TODO: ?
+            label:        'Remediated By'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Remediated By"; IA: "remediated_by")
@@ -973,7 +973,7 @@ en:
             # IR:   *missing*
             min:          1
             max:          1
-            label:        '[rem_complete]' # TODO: ?
+            label:        'Entire Document Remediated?'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Portion?"; IA: "portion")
@@ -989,7 +989,7 @@ en:
             # NOTE: Becomes unrequired if rem_complete is *true*.
             min:          1
             max:          ~
-            label:        '[rem_coverage]' # TODO: ?
+            label:        'Part(s) Remediated'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Portion Description"; IA: "portion_description")
@@ -1005,7 +1005,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          ~
-            label:        '[rem_remediation]' # TODO: ?
+            label:        'Remediated Aspects'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Remediated Aspects"; IA: "remediated_aspects")
@@ -1022,7 +1022,7 @@ en:
             # TODO: Should be 'min: 1' if actually required.
             min:          0
             max:          ~
-            label:        '[rem_quality]' # TODO: ?
+            label:        'Text Quality'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Text Quality"; IA: "text_quality")
@@ -1037,7 +1037,7 @@ en:
             # IR:   *missing*
             min:          1
             max:          1
-            label:        '[rem_status]' # TODO: ?
+            label:        'Remediation Status'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: "Remediation Status"; IA: "remediation_status")
@@ -1054,7 +1054,7 @@ en:
             # TODO: Should this really be a part of the EMMA metadata?
             min:          0
             max:          1
-            label:        '[rem_image_count]' # TODO: ?
+            label:        'Number of Images'
             tooltip:      |
               NEW remediation metadata field
               (FMW4: N/A; IA: "imagecount")

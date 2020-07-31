@@ -3,7 +3,8 @@
   # Page controls on the Upload index page for an authorized user.
 
   actions   = %i[new edit_select delete_select]
-  actions  += %i[bulk_new bulk_edit bulk_delete] # TODO: conditional by user
+  # NOTE: ultimately this should be conditional based on account abilities
+  actions  += %i[bulk_new bulk_edit bulk_delete] if session_debug?
   actions   = page_control_actions(Upload, *actions) or return
   anchor_id = 'index-page-controls'
 

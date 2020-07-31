@@ -179,9 +179,7 @@ module UploadHelper
     if (first = links.index { |link| link.include?(UPLOAD_ANOTHER) })
       links.prepend(links.delete_at(first))
     end
-    html_tag(:ul, class: 'file-upload-actions') do
-      safe_join(links, "\n")
-    end
+    html_tag(:ul, class: 'file-upload-actions') { links }
   end
 
   # Supply an element containing a description for the current action context.
@@ -643,10 +641,10 @@ module UploadHelper
         tray << upload_cancel_button(action: action, url: cancel)
         tray << f.file_field(:file)
         tray << upload_filename_display
-        tray = html_div(safe_join(tray), class: 'button-tray')
+        tray = html_div(class: 'button-tray') { tray }
 
         # Field display selections.
-        tabs = upload_field_control
+        tabs = upload_field_group
 
         # Form buttons and display selection controls.
         controls = html_div(class: 'controls') { tray << tabs }
@@ -727,27 +725,21 @@ module UploadHelper
     end
   end
 
-  # Element name for field control radio buttons.
+  # Element name for field group radio buttons.
   #
   # @type [String]
   #
-  UPLOAD_FIELD_CONTROL_NAME = 'field-control'
+  UPLOAD_FIELD_GROUP_NAME = 'field-group'
 
-  # Field control radio buttons and their labels and tooltips.
+  # Field group radio buttons and their labels and tooltips.
   #
   # @type [Hash{Symbol=>Hash{Symbol=>String}}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  UPLOAD_FIELD_CONTROL_VALUES =
-    I18n.t('emma.upload.field_control').deep_symbolize_keys.deep_freeze
-
-  # Initially-selected field control radio button.
-  #
-  # @type [Symbol]
-  #
-  UPLOAD_FIELD_CONTROL_DEFAULT = :filled
+  UPLOAD_FIELD_GROUP_VALUES =
+    I18n.t('emma.upload.field_group').deep_symbolize_keys.deep_freeze
 
   # Control for filtering which fields are displayed.
   #
@@ -755,29 +747,33 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #UPLOAD_FIELD_CONTROL_VALUES
+  # @see #UPLOAD_FIELD_GROUP_VALUES
   # @see fieldDisplayFilter() in app/assets/javascripts/feature/download.js
   #
-  def upload_field_control(**opt)
-    name = UPLOAD_FIELD_CONTROL_NAME
-    opt  = prepend_css_classes(opt, 'upload-field-control')
+  def upload_field_group(**opt)
+    name = UPLOAD_FIELD_GROUP_NAME
+    opt  = prepend_css_classes(opt, 'upload-field-group')
     opt[:role] = 'radiogroup'
     html_div(opt) do
-      UPLOAD_FIELD_CONTROL_VALUES.map { |v, properties|
-        input_id = "#{name}_#{v}"
+      UPLOAD_FIELD_GROUP_VALUES.map do |group, properties|
+        enabled = properties[:enabled].to_s
+        next if false?(enabled)
+        next if (enabled == 'debug') && !session_debug?
+
+        input_id = "#{name}_#{group}"
         label_id = "label-#{input_id}"
         tooltip  = properties[:tooltip]
-        selected = (v == UPLOAD_FIELD_CONTROL_DEFAULT)
+        selected = true?(properties[:default])
 
         i_opt = { role: 'radio', 'aria-labelledby': label_id }
-        input = radio_button_tag(name, v, selected, i_opt)
+        input = radio_button_tag(name, group, selected, i_opt)
 
         l_opt = { id: label_id }
-        label = properties[:label] || v.to_s
+        label = properties[:label] || group.to_s
         label = label_tag(input_id, label, l_opt)
 
         html_div(class: 'radio', title: tooltip) { input << label }
-      }.join("\n").html_safe
+      end
     end
   end
 
@@ -1034,7 +1030,7 @@ module UploadHelper
             tray << bulk_upload_file_select(f, :source, **c_opt)
             tray << upload_filename_display(**c_opt)
             prepend_css_classes!(c_opt, 'button-tray')
-            html_div(c_opt) { safe_join(tray) }
+            html_div(c_opt) { tray }
           end
 
         safe_join(lines, "\n")

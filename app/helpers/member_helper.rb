@@ -158,15 +158,14 @@ module MemberHelper
   #
   def member_history(item, opt = nil)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
-    pairs = MEMBER_HISTORY_FIELDS.merge(opt || {})
+    pairs = MEMBER_HISTORY_FIELDS.merge(opt || {}).merge!(index: 0)
     html_div(class: MEMBER_HISTORY_CSS_CLASS) do
-      pairs[:index] = 0
-      Array.wrap(item).map { |entry|
+      Array.wrap(item).map do |entry|
         pairs[:index] += 1
         html_div(class: "history-entry row-#{pairs[:index]}") do
           render_field_values(entry, model: :member, pairs: pairs)
         end
-      }.join("\n").html_safe
+      end
     end
   end
 

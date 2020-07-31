@@ -52,9 +52,11 @@ body {
 // noinspection SassScssResolvedByNameOnly
 .heading {
 
-    margin:     calc(#{$page-padding} * 1.5) auto;
-    word-break: break-all;
-    font-size:  xx-large;
+    display:     flex;
+    align-items: center;
+    margin:      calc(#{$page-padding} * 1.5) auto;
+    word-break:  break-all;
+    font-size:   xx-large;
 
     @media #{$wide-screen} {
         margin-bottom: calc(#{$page-padding} / 2);

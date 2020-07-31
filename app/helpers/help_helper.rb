@@ -205,9 +205,9 @@ module HelpHelper
     inner_opt = opt[:inner]&.dup || {}
     inner_tag = inner_opt.delete(:tag).presence || :li
     html_tag(outer_tag, **outer_opt) do
-      help_links(*topics, type: link_type).map { |title, path|
+      help_links(*topics, type: link_type).map do |title, path|
         html_tag(inner_tag, **inner_opt) { link_to(title, path) }
-      }.join("\n").html_safe
+      end
     end
   end
 

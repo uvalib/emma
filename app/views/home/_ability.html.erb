@@ -1,7 +1,6 @@
 <%# app/views/home/_ability.html.erb -%>
 <%-
-  # NOTE: DEBUGGING
-  # Displays the individual abilities of the current user.
+  # Displays the individual abilities of the current user account.
 
   user    = current_user&.to_s&.presence || 'guest'
   actions = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]

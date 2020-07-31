@@ -255,7 +255,7 @@ module UploadConcern
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_UPLOAD_FORM_PARAMETERS = %i[limit field-control].sort.freeze
+  IGNORED_UPLOAD_FORM_PARAMETERS = %i[limit field-group].sort.freeze
 
   # ===========================================================================
   # :section:

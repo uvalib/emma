@@ -82,64 +82,52 @@ module LayoutHelper::NavBar
   # @return [ActiveSupport::SafeBuffer]
   #
   def nav_bar_links
-
-    # @type [Hash] current_params
-    current_params = url_parameters.except(:limit)
-    current_path   = request.path
-    base_path      = current_path.sub(%r{^(/[^/]*)/.*$}, '\1')
-    current_path  += '?' + url_query(current_params) if current_params.present?
-
-    links = []
-
-    # Special entry for the dashboard/welcome screen.
-    label = DASHBOARD_LABEL
-    path  = dashboard_path
-    opt   = { title: DASHBOARD_TOOLTIP }
-    links <<
-      if path == current_path
-        html_span(label, opt.merge!(class: 'active disabled'))
-      elsif !current_user
-        html_span(label, opt.merge!(class: 'disabled'))
-      elsif path == base_path
-        link_to(label, path, opt.merge!(class: 'active'))
-      else
-        link_to(label, path, opt)
-      end
-
-    # Entries for the main page of each controller.
-    links +=
+    # @type [Hash] curr_params
+    curr_params = url_parameters.except(:limit)
+    curr_path   = request.path
+    base_path   = curr_path.sub(%r{^(/[^/]*)/.*$}, '\1')
+    curr_path  += '?' + url_query(curr_params) if curr_params.present?
+    html_div(class: 'links') do
+      first = true
       NAV_BAR_CONTROLLERS.map do |c|
-        primary = PRIMARY_CONTROLLERS.include?(c)
-        path    = send("#{c}_index_path")
-        current = (path == current_path)
-        base    = (path == base_path)
+        if c == :home
+          # Special entry for the dashboard/welcome screen.
+          path    = dashboard_path
+          label   = DASHBOARD_LABEL
+          tooltip = DASHBOARD_TOOLTIP
+          hidden  = !current_user
+        else
+          # Entry for the main page of the given controller.
+          path    = send("#{c}_index_path")
+          label   = CONTROLLER_LABEL[c]
+          tooltip = CONTROLLER_TOOLTIP[c]
+          hidden  = false
+        end
+        primary   = PRIMARY_CONTROLLERS.include?(c)
+        current   = (path == curr_path)
+        base      = (path == base_path)
+        active    = current || base
+        disabled  = current
+
+        classes = []
+        classes << 'secondary' unless primary
+        classes << 'active'    if active
+        classes << 'disabled'  if disabled
+        classes << 'hidden'    if hidden
 
         # The separator preceding the link.
-        separator_opt = { class: 'separator' }
-        append_css_classes!(separator_opt, 'secondary') unless primary
-        append_css_classes!(separator_opt, 'active')    if current || base
+        separator_opt = { class: css_classes('separator', *classes) }
+        append_css_classes!(separator_opt, 'hidden') if first
         separator = html_span('|', separator_opt)
 
         # The link (inactive if already on the associated page).
-        label = CONTROLLER_LABEL[c]
-        opt   = { title: CONTROLLER_TOOLTIP[c] }
-        opt[:class] = 'secondary' unless primary
-        link  =
-          if current
-            append_css_classes!(opt, 'active', 'disabled')
-            html_span(label, opt)
-          elsif base
-            append_css_classes!(opt, 'active')
-            link_to(label, path, opt)
-          else
-            link_to(label, path, opt)
-          end
+        opt   = { class: css_classes(*classes), title: tooltip }
+        link  = disabled ? html_span(label, opt) : link_to(label, path, opt)
+        first = false unless hidden
 
         separator << link
       end
-
-    # Element containing links.
-    html_div(safe_join(links), class: 'links')
+    end
   end
 
 end
