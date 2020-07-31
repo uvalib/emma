@@ -128,6 +128,10 @@ class IngestService::Error < ApiService::Error
 
 end
 
+class IngestService::NoInputError < ApiService::NoInputError
+  include IngestService::Error::Methods
+end
+
 class IngestService::EmptyResultError < ApiService::EmptyResultError
   include IngestService::Error::Methods
 end

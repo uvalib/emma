@@ -6,6 +6,7 @@
 __loading_begin(__FILE__)
 
 class BookshareService::Error            < ApiService::Error;            end
+class BookshareService::NoInputError     < ApiService::NoInputError;     end
 class BookshareService::EmptyResultError < ApiService::EmptyResultError; end
 class BookshareService::HtmlResultError  < ApiService::HtmlResultError;  end
 class BookshareService::RedirectionError < ApiService::RedirectionError; end

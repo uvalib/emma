@@ -51,9 +51,8 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
   #
   def put_records(*records, **opt)
-    opt[:no_raise] = true
-    opt[:body] = records.flat_map { |record| record_list(record) }.compact.uniq
-    api(:put, 'records', **opt)
+    records = records.flat_map { |record| record_list(record) }.compact.uniq
+    api_send(:put, 'records', *records, **opt.merge!(meth: __method__))
     Ingest::Message::Response.new(response, error: exception)
   end
     .tap do |method|
@@ -95,9 +94,8 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
   #
   def delete_records(*ids, **opt)
-    opt[:no_raise] = true
-    opt[:body] = ids.flat_map { |id| identifier_list(id) }.compact.uniq
-    api(:post, 'recordDeletes', **opt)
+    ids = ids.flat_map { |id| identifier_list(id) }.compact.uniq
+    api_send(:post, 'recordDeletes', *ids, **opt.merge!(meth: __method__))
     Ingest::Message::Response.new(response, error: exception)
   end
     .tap do |method|
@@ -138,9 +136,8 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
   #
   def get_records(*ids, **opt)
-    opt[:no_raise] = true
-    opt[:body] = ids.flat_map { |id| identifier_list(id) }.compact.uniq
-    api(:post, 'recordGets', **opt)
+    ids = ids.flat_map { |id| identifier_list(id) }.compact.uniq
+    api_send(:post, 'recordGets', *ids, **opt.merge!(meth: __method__))
     Search::Message::SearchRecordList.new(response, error: exception)
   end
     .tap do |method|
@@ -154,6 +151,29 @@ module IngestService::Request::Records
   # ===========================================================================
 
   protected
+
+  # Send to the Ingest API unless no items were given.
+  #
+  # @param [Array] args               Passed to #api.
+  # @param [Hash]  opt                Passed to #api except for:
+  #
+  # @option opt [Symbol] :meth        Calling method.
+  #
+  def api_send(*args, **opt)
+    verb     = args.shift
+    endpoint = args.shift
+    caller   = opt.delete(:meth) || __method__
+    if args.present?
+      opt[:no_raise] = true unless opt.key?(:no_raise)
+      opt[:body]     = args
+      # noinspection RubyYardParamTypeMatch
+      api(verb, endpoint, **opt)
+    else
+      Log.info { "#{caller}: no records" }
+      @response  = nil
+      @exception = IngestService::NoInputError.new
+    end
+  end
 
   # Generate an array of ingest records.
   #

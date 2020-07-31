@@ -104,6 +104,13 @@ class ApiService::Error < Api::Error
 
 end
 
+# Exception raised to indicate that no (valid) inputs were provided so no
+# service request was made.
+#
+class ApiService::NoInputError < ApiService::Error
+  include ApiService::Error::Methods
+end
+
 # Exception raised to indicate that a valid message was received but it had no
 # body or its body was empty.
 #
