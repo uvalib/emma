@@ -320,8 +320,21 @@ module SearchHelper
   # @see UploadHelper#upload_delete_icon
   #
   def search_list_entry_number(item, opt = nil)
+    db_id =
+      if can?(:edit, Upload)
+        if item.respond_to?(:id)
+          item.id
+        elsif item.respond_to?(:emma_repositoryRecordId)
+          # noinspection RubyResolve
+          if item.emma_repository == EmmaRepository.default.to_s
+            rid = item.emma_repositoryRecordId
+            Upload.where(repository_id: rid).first&.id
+          end
+        end
+      end
     list_entry_number(item, opt) do
-      [upload_edit_icon(item), upload_delete_icon(item)]
+      # noinspection RubyYardParamTypeMatch
+      upload_entry_icons(item, id: db_id) if db_id.present?
     end
   end
 

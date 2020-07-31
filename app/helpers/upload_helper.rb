@@ -466,6 +466,27 @@ module UploadHelper
     end
   end
 
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Upload action icon definitions.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  UPLOAD_ICONS = {
+    edit: {
+      icon: DELTA,
+      tip:  'Modify this EMMA entry' # TODO: I18n
+    },
+    delete: {
+      icon: HEAVY_X,
+      tip:  'Delete this EMMA entry' # TODO: I18n
+    }
+  }.deep_freeze
+
   # Generate an element with icon controls for the operation(s) the user is
   # authorized to perform on the item.
   #
@@ -475,43 +496,51 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   # @return [nil]                       If no operations are authorized.
   #
-  # @see ModelHelper#list_entry_number
+  # @see #upload_action_icon
+  # @see #UPLOAD_ICONS
   #
   def upload_entry_icons(item, **opt)
-    icons = []
-    icons << upload_edit_icon(item, **opt)          if can?(:edit,   Upload)
-    icons << upload_delete_icon(item, **opt)        if can?(:delete, Upload)
-    html_span(safe_join(icons), class: 'icon-tray') if icons.present?
+    icons =
+      # @type [Symbol] operation
+      # @type [Hash]   properties
+      UPLOAD_ICONS.map { |operation, properties|
+        next unless can?(operation, Upload)
+        action_opt = properties.merge(opt)
+        action_opt[:id] ||= (item.id if item.respond_to?(:id))
+        upload_action_icon(operation, **action_opt)
+      }.compact
+    html_span(class: 'icon-tray') { icons } if icons.present?
   end
 
-  # upload_edit_icon
-  #
-  # @param [Upload] item
-  # @param [Hash]   opt               Passed to #make_link.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def upload_edit_icon(item, **opt)
-    url  = edit_upload_path(id: item.id)
-    icon = DELTA
-    opt  = prepend_css_classes(opt, 'edit', 'icon')
-    opt[:title] ||= 'Modify this EMMA entry' # TODO: I18n
-    make_link(icon, url, **opt)
-  end
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
 
-  # upload_delete_icon
+  protected
+
+  # Produce an upload action icon based on either :path or :id.
   #
-  # @param [Model] item
-  # @param [Hash]   opt               Passed to #make_link.
+  # @param [Symbol] op                    One of #UPLOAD_ICONS.keys.
+  # @param [Hash]   opt                   Passed to #make_link except for:
+  #
+  # @option opt [String] :id
+  # @option opt [String] :path
+  # @option opt [String] :icon
+  # @option opt [String] :tip
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* unrelated to a submission.
   #
-  def upload_delete_icon(item, **opt)
-    url  = delete_upload_path(id: item.id)
-    icon = HEAVY_X
-    opt  = prepend_css_classes(opt, 'delete', 'icon')
-    opt[:title] ||= 'Delete this EMMA entry' # TODO: I18n
-    make_link(icon, url, **opt)
+  def upload_action_icon(op, **opt)
+    id   = opt.delete(:id)
+    path = opt.delete(:path) || (send("#{op}_upload_path", id: id) if id)
+    return if path.blank?
+    icon = opt.delete(:icon) || STAR
+    tip  = opt.delete(:tip)
+    opt  = prepend_css_classes(opt, 'icon', op.to_s)
+    opt[:title] ||= tip
+    # noinspection RubyYardParamTypeMatch
+    make_link(icon, path, **opt)
   end
 
   # ===========================================================================

@@ -19,6 +19,6 @@
 
 -%>
 
-<%= list_entry_number(item, opt)       unless skip.include?(:number) %>
-<%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
+<%= search_list_entry_number(item, opt) unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true)  unless skip.include?(:thumbnail) %>
 <%= search_list_entry(item, add) %>

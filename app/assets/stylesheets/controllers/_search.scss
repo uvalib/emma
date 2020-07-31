@@ -387,14 +387,15 @@
 
         .container {
 
-            position: sticky;
-            top:      3%;
-            margin:   0.5rem 0 0;
-            padding:  0;
-
             @media #{$narrow-screen} {
                 border-bottom:    1px solid $uva-accent-blue;
                 background-color: lighter($uva-accent-blue, 97.5%);
+            }
+
+            .icon-tray {
+                padding:      2px;
+                margin-left:  1px;
+                margin-right: -4px;
             }
         }
 

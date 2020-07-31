@@ -211,87 +211,9 @@ $upload-entry-gap: 2rem;
 
         padding-top: $upload-padding * 0.75;
 
-        // Sticky container which keeps the item number and icon tray in view
-        // as the item is scrolled off the top of the screen.
-        .container {
-
-            display:        flex;
-            flex-direction: column;
-            align-items:    center;
-            position:       sticky;
-            top:            3%;
-            margin:         0;
-            padding:        0;
-
-            //=================================================================
-            // Components
-            //=================================================================
-
-            // Item number value.
-            .value {
-                margin-bottom: 1rem;
-                font-size:     large;
-                font-weight:   bold;
-            }
-
-            $icon-pad:      4px;
-            $tray-pad:      1.5 * $icon-pad;
-
-            // Vertical tray of action button icons.
-            .icon-tray {
-                display:        flex;
-                flex-direction: column;
-                align-items:    center;
-                padding:        $tray-pad;
-                margin-left:    -$tray-pad;
-                margin-right:   -$tray-pad;
-                background:     whitesmoke;
-                border:         1px solid lightgray;
-                border-radius:  0.25rem;
-            }
-
-            // Action button icon to perform an operation to the current item.
-            .icon {
-
-                @extend %button-hover;
-
-                padding:         0 $icon-pad;
-                margin-left:     -$icon-pad;
-                margin-right:    -$icon-pad;
-                text-decoration: none;
-                font-size:       large;
-                color:           $uva-accent-blue;
-                border-radius:   50%;
-
-                &:hover {
-                    text-decoration:  none;
-                    background-color: white;
-                }
-
-                &:focus {
-                    outline-offset: -0.05rem;
-                }
-            }
-        }
-
-        //=====================================================================
-        // Variations
-        //=====================================================================
-
         @media #{$narrow-screen} {
-
             margin-left:  -0.25rem;
             margin-right: 0.25rem;
-
-            .container {
-                .value {
-                    font-size: larger;
-                }
-                .icon-tray {
-                    padding-left:  4px;
-                    padding-right: 4px;
-                }
-            }
         }
     }
 }
