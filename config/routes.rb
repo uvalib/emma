@@ -24,10 +24,11 @@ Rails.application.routes.draw do
   # EMMA Unified Search operations
   # ===========================================================================
 
-  get '/search/advanced', to: 'search#advanced', as: 'advanced_search'
-  get '/search/api',      to: 'search#direct'
-  get '/search/direct',   to: 'search#direct'
-  get '/search/example',  to: 'search#example'
+  get '/search/advanced',  to: 'search#advanced',  as: 'advanced_search'
+  get '/search/api',       to: 'search#direct'
+  get '/search/direct',    to: 'search#direct'
+  get '/search/example',   to: 'search#example'
+  get '/search/retrieval', to: 'search#retrieval', as: 'retrieval'
 
   resources :search, only: %i[index show]
 
@@ -100,8 +101,8 @@ Rails.application.routes.draw do
   # Artifact operations
   # ===========================================================================
 
-  get '/artifact/retrieval',         to: 'artifact#retrieval', as: 'retrieval'
-  get '/artifact/:bookshareId/:fmt', to: 'artifact#download',  as: 'download'
+  get '/artifact/retrieval', to: 'artifact#retrieval', as: 'bs_retrieval'
+  get '/artifact/:id/:fmt',  to: 'artifact#download',  as: 'bs_download'
 
   resources :artifact, except: %i[index]
 

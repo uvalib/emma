@@ -139,6 +139,48 @@ INGEST_BASE_URL =
     .freeze
 
 # =============================================================================
+# Internet Archive access
+# =============================================================================
+
+public
+
+# IA S3 access key generated when logged in as Internet Archive user
+# "emma_pull@archive.org".
+#
+# @type [String]
+#
+# @see IaDownloadConcern#IA_AUTH
+#
+IA_ACCESS = ENV.fetch('IA_ACCESS', nil).freeze
+
+# IA S3 secret generated when logged in as Internet Archive user
+# "emma_pull@archive.org".
+#
+# @type [String]
+#
+# @see IaDownloadConcern#IA_AUTH
+#
+IA_SECRET = ENV.fetch('IA_SECRET', nil).freeze
+
+# IA server cookie for generation of "on-the-fly" content as Internet Archive
+# user "emma_pull@archive.org".
+#
+# @type [String]
+#
+# @see IaDownloadConcern#IA_COOKIES
+#
+IA_USER_COOKIE = ENV.fetch('IA_USER_COOKIE', nil).freeze
+
+# IA server cookie for generation of "on-the-fly" content as Internet Archive
+# user "emma_pull@archive.org".
+#
+# @type [String]
+#
+# @see IaDownloadConcern#IA_COOKIES
+#
+IA_SIG_COOKIE = ENV.fetch('IA_SIG_COOKIE', nil).freeze
+
+# =============================================================================
 # Load and initialize the Rails application
 # =============================================================================
 

@@ -20,7 +20,7 @@ class ArtifactController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-  include DownloadConcern
+  include BsDownloadConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -136,7 +136,7 @@ class ArtifactController < ApplicationController
   def download
     __debug_route
     opt = { bookshareId: @bookshare_id, format: @format }
-    render_download(:download_title, **opt)
+    render_bs_download(:download_title, **opt)
   end
 
   # == GET /artifact/retrieval?url=URL
@@ -145,7 +145,7 @@ class ArtifactController < ApplicationController
   #
   def retrieval
     __debug_route
-    render_download(:get_retrieval, url: params[:url])
+    render_bs_download(:get_retrieval, url: params[:url])
   end
 
   # ===========================================================================

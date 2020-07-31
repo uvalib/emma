@@ -587,7 +587,7 @@ module ApiService::Common
       when 200..299
         result = response.body
         raise empty_response_error(response) if result.blank?
-        raise html_response_error(response)  if result =~ /^\s*</
+        raise html_response_error(response)  if result =~ /\A\s*</
       when 301, 303, 308
         redirection = opt[:redirection].to_i
         no_redirect = (redirection >= MAX_REDIRECTS)

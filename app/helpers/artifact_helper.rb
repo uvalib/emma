@@ -158,13 +158,13 @@ module ArtifactHelper
       type    = PeriodicalFormatType if item.class.name.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
-      url   ||= download_path(bookshareId: item.identifier, fmt: format)
+      url   ||= bs_download_path(bookshareId: item.identifier, fmt: format)
     else # if item.is_a?(Search::Api::Record)
       repo    = item.emma_repository || Api::Common::DEFAULT_REPOSITORY
       format  = format&.to_s || item.dc_format
       lbl_key = "emma.source.#{repo}.download_fmt.#{format}"
       url   ||= item.record_download_url
-      url   &&= retrieval_path(url: url)
+      url   &&= bs_retrieval_path(url: url)
     end
     return if url.blank?
     repo_name = Api::Common::REPOSITORY.dig(repo.to_sym, :name)

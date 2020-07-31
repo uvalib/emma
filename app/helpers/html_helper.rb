@@ -133,8 +133,15 @@ module HtmlHelper
   # This method assumes that local paths are always relative.
   #
   def make_link(label, path, **opt, &block)
+    sign_in  = has_class?(opt, 'sign-in-required')
     disabled = has_class?(opt, 'disabled')
-    if (opt[:target] == '_blank') && !disabled
+    if disabled && sign_in
+      opt[:title] &&= "#{opt[:title]}\n(sign-in required)" # TODO: I18n
+      opt[:title] ||= '(Sign-in required.)'                # TODO: I18n
+      opt = remove_css_classes(opt, 'disabled')
+      opt.except!(:target, :rel, :tabindex, :'aria-hidden')
+      disabled = false
+    elsif (opt[:target] == '_blank') && !disabled
       opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
       opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
     end
@@ -153,16 +160,34 @@ module HtmlHelper
 
   # Produce a link to an external site which opens in a new browser tab.
   #
-  # @param [String] label             Passed to #make_link.
-  # @param [String] path              Passed to #make_link.
-  # @param [Hash]   opt               Passed to #make_link.
-  # @param [Proc]   block             Passed to #make_link.
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt
+  # @param [Proc]   block
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #make_link
   #
   def external_link(label, path, **opt, &block)
     opt[:target] = '_blank' unless opt.key?(:target)
     make_link(label, path, **opt, &block)
+  end
+
+  # Produce a link to download an item to the client's browser.
+  #
+  # @param [String] label
+  # @param [String] path
+  # @param [Hash]   opt
+  # @param [Proc]   block
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #external_link
+  #
+  def download_link(label, path, **opt, &block)
+    opt = prepend_css_classes(opt, 'download')
+    external_link(label, path, **opt, &block)
   end
 
   # ===========================================================================
@@ -312,6 +337,33 @@ module HtmlHelper
     opt.merge!(class: result)
   end
 
+  # If CSS class name(s) are provided, return a copy of *opt* where the names
+  # are eliminated from the existing `opt[:class]` value.
+  #
+  # @param [Hash]                opt      The source options hash.
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #append_css_classes!.
+  #
+  # @return [Hash]                        A new hash with :class set.
+  #
+  def remove_css_classes(opt, *classes, &block)
+    remove_css_classes!(opt.dup, *classes, &block)
+  end
+
+  # Eliminate the named CSS classes from the existing `opt[:class]` value.
+  #
+  # @param [Hash]                opt      The target options hash.
+  # @param [Array<String,Array>] classes  CSS class names.
+  # @param [Proc]                block    Passed to #css_classes.
+  #
+  # @return [Hash]                        The modified *opt* hash.
+  #
+  def remove_css_classes!(opt, *classes, &block)
+    new_classes = opt[:class].to_s.split(' ') - css_class_array(*classes)
+    new_classes = css_classes(*new_classes)
+    opt.merge!(class: new_classes)
+  end
+
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
   #
@@ -323,11 +375,27 @@ module HtmlHelper
   # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
   # @yieldreturn [void]                   Return ignored.
   #
-  def css_classes(*classes)
-    yield(classes) if block_given?
+  def css_classes(*classes, &block)
+    css_class_array(*classes, &block).join(' ').html_safe
+  end
+
+  # Combine arrays and space-delimited strings to produce set of unique CSS
+  # class names.
+  #
+  # @param [Array<String,Array>] classes
+  #
+  # @return [Array<String>]
+  #
+  # @yield [classes] Exposes *args* so the block may modify it.
+  # @yieldparam  [Array<String>] classes  The initial set of CSS classes.
+  # @yieldreturn [void]                   Return ignored.
+  #
+  def css_class_array(*classes, &block)
+    block.call(classes) if block
+    # noinspection RubyYardReturnMatch
     classes.flat_map { |c|
       c.is_a?(Array) ? c : c.to_s.squish.split(' ') if c.present?
-    }.compact.uniq.join(' ').html_safe
+    }.compact.uniq
   end
 
   # ===========================================================================

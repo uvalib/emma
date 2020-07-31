@@ -494,14 +494,14 @@ class Upload < ApplicationRecord
 
   public
 
-  # Generate a link to the uploaded file which can be used to download the file
+  # Generate a URL to the uploaded file which can be used to download the file
   # to the client browser.
   #
   # @param [Hash] opt                 Passed to Shrine::UploadedFile#url.
   #
   # @return [String]
   #
-  def download_link(**opt)
+  def download_url(**opt)
     opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
     attached_file.url(**opt)
   end

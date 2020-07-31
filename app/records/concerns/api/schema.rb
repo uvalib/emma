@@ -212,9 +212,9 @@ module Api::Schema
   def format_of(data)
     if data.is_a?(Hash)
       :hash
-    elsif data =~ /^\s*</
+    elsif data =~ /\A\s*</
       :xml
-    elsif data =~ /^\s*[{\[]/
+    elsif data =~ /\A\s*[{\[]/
       :json
     end
   end

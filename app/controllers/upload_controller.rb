@@ -261,12 +261,12 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPNotFound]
   #
   # @see UploadConcern#get_record
-  # @see Upload#download_link.
+  # @see Upload#download_url.
   #
   def download
     __debug_route
     @item = get_record(@item_id)
-    @link = @item.download_link
+    @link = @item.download_url
     respond_to do |format|
       format.html { redirect_to(@link) }
       format.json { render_json download_values }

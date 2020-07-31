@@ -20,7 +20,7 @@ class EditionController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
-  include DownloadConcern
+  include BsDownloadConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -135,7 +135,7 @@ class EditionController < ApplicationController
   def download
     __debug_route
     opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
-    render_download(:download_periodical_edition, **opt)
+    render_bs_download(:download_periodical_edition, **opt)
   end
 
   # ===========================================================================

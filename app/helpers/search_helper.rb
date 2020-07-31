@@ -16,10 +16,11 @@ module SearchHelper
     __included(base, '[SearchHelper]')
   end
 
-  include PaginationHelper
   include LogoHelper
   include ModelHelper
-  include ArtifactHelper
+  include PaginationHelper
+  include RepositoryHelper
+  include UploadHelper
 
   # ===========================================================================
   # :section:
@@ -89,6 +90,9 @@ module SearchHelper
   #
   # @see ModelHelper#render_value
   #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
   def search_render_value(item, value)
     case value
       when :dc_title                then title_and_source_logo(item)
@@ -200,7 +204,7 @@ module SearchHelper
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
     permitted = can?(:download, Artifact)
-    append_css_classes!(html_opt, 'disabled') unless permitted
+    append_css_classes!(html_opt, 'sign-in-required disabled') unless permitted
 
     # To account for the handful of "EMMA" items that are actually Bookshare
     # items from the "EMMA collection", change the reported repository based on
@@ -224,84 +228,16 @@ module SearchHelper
 
     case repo
       when :emma
-        emma_link(label, url, **html_opt)
+        emma_retrieval_link(item, label, url, **html_opt)
       when :bookshare
-        download_links(item, label: label, url: url, **html_opt)
+        bs_retrieval_link(item, label, url, **html_opt)
       when :hathiTrust
-        ht_link(label, url, **html_opt)
+        ht_retrieval_link(item, label, url, **html_opt)
       when :internetArchive
-        ia_link(label, url, **html_opt) # TODO: internetArchive retrieval
+        ia_retrieval_link(item, label, url, **html_opt)
       else
         Log.error { "#{__method__}: #{repo.inspect}: unexpected" } if repo
     end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # HathiTrust parameters which cause a prompt for login.
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection SpellCheckingInspection
-  #++
-  HT_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
-
-  # Indicate whether the given URL is a Bookshare link.
-  #
-  # @param [String] url
-  #
-  # == Usage Notes
-  # This exists to support the handful of items which are represented as
-  # belonging to the "EMMA" repository but which are actually Bookshare items
-  # from the "EMMA Collection".
-  #
-  def bs_link?(url)
-    url.to_s.match?(%r{^https?://[^/]+\.bookshare\.org/})
-  end
-
-  # Produce a link to HathiTrust which opens in a new browser tab.
-  #
-  # @param [String] label             Passed to #external_link.
-  # @param [String] url               Passed to #external_link.
-  # @param [Hash]   opt               Passed to #external_link.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def ht_link(label, url, **opt)
-    url_params    = url.split('?', 2)[1]
-    has_ht_params = url_params&.split('&')&.include?(HT_URL_PARAMS)
-    url += (url_params ? '&' : '?') + HT_URL_PARAMS unless has_ht_params
-    external_link(label, url, **opt)
-  end
-
-  # Produce a link to Internet Archive which opens in a new browser tab.
-  #
-  # @param [String] label             Passed to #external_link.
-  # @param [String] url               Passed to #external_link.
-  # @param [Hash]   opt               Passed to #external_link.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def ia_link(label, url, **opt)
-    external_link(label, url, **opt)
-  end
-
-  # Produce a link to EMMA which opens in a new browser tab.
-  #
-  # @param [String] label             Passed to #external_link.
-  # @param [String] url               Passed to #external_link.
-  # @param [Hash]   opt               Passed to #external_link.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def emma_link(label, url, **opt)
-    url = url.sub(%r{localhost:\d+}, 'localhost') unless application_deployed?
-    external_link(label, url, **opt)
   end
 
   # ===========================================================================
