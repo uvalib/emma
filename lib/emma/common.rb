@@ -372,7 +372,7 @@ module Emma::Common
   #
   def url_escape(s)
     s = s.to_s
-    s = (s =~ /%[0-9a-fA-F]{2}/) ? s.tr(' ', '+') : CGI.escape(s)
+    s = s.match?(/%[0-9a-fA-F]{2}/) ? s.tr(' ', '+') : CGI.escape(s)
     s.gsub(/[.]/, '%2E')
   end
 

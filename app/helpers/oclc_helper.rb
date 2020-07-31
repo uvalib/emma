@@ -69,12 +69,14 @@ module OclcHelper
   # == Usage Notes
   # If *text* matches #OCLC_PREFIX then the method returns *true* even if the
   # actual number is invalid; the caller is expected to differentiate between
-  # valid and invalid cases and handle each appropriately.
+  # valid and invalid cases and handle each appropriately.  The one exception
+  # is if the prefix is "on" -- here a the remainder must be a valid OCLC
+  # number (otherwise words like "one" are interpreted as "oclc:e").
   #
   def contains_oclc?(s)
     s  = s.to_s.strip
     id = remove_oclc_prefix(s)
-    (s != id) || (id =~ OCLC_IDENTIFIER)
+    !s.start_with?('on') && (s != id) || id.match?(OCLC_IDENTIFIER)
   end
 
   alias_method :contains_ocn?, :contains_oclc?

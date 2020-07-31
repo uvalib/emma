@@ -73,7 +73,7 @@ module LccnHelper
   def contains_lccn?(s)
     s  = s.to_s.strip
     id = remove_lccn_prefix(s)
-    (s != id) || (id =~ LCCN_IDENTIFIER)
+    (s != id) || id.match?(LCCN_IDENTIFIER)
   end
 
   # Indicate whether the string is a valid LCCN.
