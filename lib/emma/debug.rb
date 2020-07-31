@@ -132,19 +132,30 @@ module Emma::Debug
   #
   # @param [String]    label
   # @param [Exception] exception
-  # @param [Array]     args           Passed to #__debug_line.
-  # @param [Proc]      block          Passed to #__debug_line.
+  # @param [Array]     args             Passed to #__debug_line.
+  # @param [Proc]      block            Passed to #__debug_line.
+  #
+  # args[-1] [Hash]                     Options passed to #__debug except for:
+  #
+  # @option args.last [Boolean] :trace  Finish with a call stack trace to log
+  #                                       output.
   #
   # @return [nil]
   #
   def __debug_exception(label, exception, *args, &block)
     # noinspection RubyNilAnalysis
-    opt = args.extract_options!.reverse_merge(leader: '!!!')
+    opt   = args.extract_options!.reverse_merge(leader: '!!!')
+    trace = opt.delete(:trace)
     args << "#{label} #{exception.class}"
     args << "ERROR: #{exception.message}"
-    args << "bs_api_error_message = #{bs_api_error_message.inspect}"
     args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
+    %i[bs search ingest].each do |service|
+      meth  = :"#{service}_api_error_message"
+      error = (send(meth) if respond_to?(meth))
+      args << "#{meth} = #{error.inspect}" if error.present?
+    end
     __debug_line(*args, opt, &block)
+    Log.error { exception.full_message(order: :top) } if trace
   end
 
   # Output each data item on its own line.

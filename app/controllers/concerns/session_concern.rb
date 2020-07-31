@@ -48,6 +48,14 @@ module SessionConcern
       end
     end
 
+    rescue_from StandardError do |exception|
+      __debug_exception('RESCUE_FROM', exception, trace: true)
+      if rendering_html?
+        flash_now_alert(exception.message) if flash.now[:alert].blank?
+        render
+      end
+    end
+
   end
 
   include Emma::Debug
@@ -247,7 +255,7 @@ module SessionConcern
     error = nil
     yield
   rescue => error
-    __debug_exception('UNHANDLED EXCEPTION', error)
+    __debug_exception('UNHANDLED EXCEPTION', error, trace: true)
     flash_now_alert(api_error_message) if api_error?
   ensure
     last_operation_update

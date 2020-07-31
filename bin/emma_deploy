@@ -1,0 +1,291 @@
+#! /bin/bash
+#
+# Deploy changes to production EMMA.
+#
+# CI workflow causes changes to the https://github.com/uvalib/emma "master"
+# branch to be automatically deployed to the staging environment ($DEV_HOST).
+#
+# When https://github.com/uvalib/emma-production-deploy is changed, CI workflow
+# automatically deploys to the production environment ($PROD_HOST) the
+# container identified by $DEPLOY_TAG.
+#
+# This script updates $DEPLOY_TAG based on the currently-deployed staging
+# version.
+
+#==============================================================================
+# Constants
+#==============================================================================
+
+APP='emma'
+ENV='production'
+
+# Local git repos.
+
+SRC_DIR="$HOME/Work"
+APP_DIR="$SRC_DIR/$APP"
+DEPLOY_DIR="$SRC_DIR/$APP-production-deploy"
+DEPLOY_TAG="tags/$APP.tag"
+
+# Service deployments.
+
+DEV_HOST='https://emmadev.internal.lib.virginia.edu'
+PROD_HOST='https://emmadev.lib.virginia.edu'
+
+# AWS pipelines.
+
+BUILD_PIPELINE='uva-emma-codepipeline'
+DEPLOY_PIPELINE='uva-emma-production-deploy-codepipeline'
+
+AWS_REGION='us-east-1'
+AWS_PIPELINES='https://console.aws.amazon.com/codesuite/codepipeline/pipelines'
+AWS_BUILD_PIPELINE="$AWS_PIPELINES/$BUILD_PIPELINE/view?region=$AWS_REGION"
+AWS_DEPLOY_PIPELINE="$AWS_PIPELINES/$DEPLOY_PIPELINE/view?region=$AWS_REGION"
+
+# Other constants.
+
+NL='
+'
+
+#==============================================================================
+# Variables
+#==============================================================================
+
+declare -a GIT_ARGS=()
+
+QUIET=''
+VERBOSE=''
+DRY_RUN=''
+APP_VERSION=''
+
+#==============================================================================
+# Functions
+#==============================================================================
+
+#------------------------------------------------------------------------------
+# Emit text.
+#
+function Announce() # [-f|--force] message...
+{
+    local SHOW=''
+    case "$1" in
+        -f|--force) SHOW=true; shift ;;
+        -*)         Abort "Announce: unknown option '$1'" ;;
+        *)          [ "$QUIET" ] || SHOW=true ;;
+    esac
+    [ "$SHOW" ] && echo "$@"
+}
+
+#------------------------------------------------------------------------------
+# Emit text only if $VERBOSE.
+#
+function Verbose() # message...
+{
+    [ "$VERBOSE" ] && Announce '***' "$@"
+}
+
+#------------------------------------------------------------------------------
+# Emit text to stderr.
+#
+function Warning() # message...
+{
+    Announce 'WARNING:' "$@" 1>&2
+}
+
+#------------------------------------------------------------------------------
+# Emit text to stderr.
+#
+function Error() # message...
+{
+    Announce --force 'ERROR:' "$@" 1>&2
+}
+
+#------------------------------------------------------------------------------
+# Exit with an error message; show help first if indicated.
+#
+function Abort() # [-h|--help] [message...]
+{
+    local HELP=''
+    case "$1" in
+        -h|--help)  HELP=true; shift ;;
+        -*)         Abort "Abort: unknown option '$1'" ;;
+        '')         shift ;;
+    esac
+    [ $# -gt 0 ] && Error "$@"
+    [ "$HELP"  ] && Help
+    exit 1
+}
+
+#------------------------------------------------------------------------------
+# Display help to stdout.
+#
+function Help()
+{
+    Announce -f "-e|--env ENVIRONMENT  Build environment (default: $ENV)"
+    Announce -f '-n|--dry-run          Do not actually perform actions'
+    Announce -f '-q|--quiet            No added output to stdout'
+    Announce -f '-v|--verbose          Verbose output to stdout'
+    Announce -f '--                    End of script options.'
+    Announce -f 'Remaining values and/or options after "--" are passed to git.'
+}
+
+#------------------------------------------------------------------------------
+# Change directory
+#
+function cd_to() # directory
+{
+    local DIR="$1"
+    cd "$DIR" || Abort
+    Verbose "Changing to '$DIR'" || true
+}
+
+#------------------------------------------------------------------------------
+# Run program.
+#
+function Run() # [-f|--force] program [args...]
+{
+    local FORCE=''
+    case "$1" in
+        -f|--force) FORCE=true; shift ;;
+        -*)         Abort "Run: unknown option '$1'" ;;
+        '')         shift ;;
+    esac
+    if [ "$DRY_RUN" -a ! "$FORCE" ] ; then
+        echo 'RUN' "$@"
+    else
+        Verbose "Running $@"
+        "$@" || Abort
+    fi
+}
+
+#------------------------------------------------------------------------------
+# Run git.
+#
+function Git() # [-f|--force] git_args...
+{
+    local OPTIONS=''
+    case "$1" in
+        -f|--force) OPTIONS="$1"; shift ;;
+        -*)         Abort "Git: unknown option '$1'" ;;
+        '')         shift ;;
+    esac
+    Run $OPTIONS git "$@" $GIT_ARGS
+}
+
+#------------------------------------------------------------------------------
+# Get the current application version build tag from the version deployed to
+# AWS staging.
+#
+# The JSON output from "/version" should look like this:
+#
+#   {"version":"build-20200722011917"}
+#
+function GetStagingVersion()
+{
+    curl --no-progress-meter "$DEV_HOST/version" |
+    sed -r 's/^.*:"([^"]+)".*$/\1/'
+}
+
+#------------------------------------------------------------------------------
+# Update the version the deploy directory's tag file.
+#
+function UpdateDeployedVersion()
+{
+    local VERSION="$1"
+    local TARGET="$DEPLOY_DIR/$DEPLOY_TAG"
+
+    [ "$VERSION" ] || VERSION="$APP_VERSION"
+    [ "$DRY_RUN" ] && TARGET="$TARGET.tmp$$"
+
+    echo "$VERSION" > "$TARGET" && [ "`cat \"$TARGET\"`" = "$VERSION" ]
+    local -i SUCCESS=$?
+
+    if [ "$DRY_RUN" ] ; then
+        rm -f "$TARGET"
+    elif [ $SUCCESS -ne 0 ] ; then
+        Verbose "Restoring '$TARGET'"
+        Git restore "$DEPLOY_TAG"
+    fi
+    return $SUCCESS
+}
+
+#==============================================================================
+# Parse command line arguments
+#==============================================================================
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -e|--env|--environment) ENV="$2"; shift ;;
+        -n|--dry-run|--dry*)    DRY_RUN=true ;;
+        -q|--quiet)             QUIET=true ;;
+        -v|--verbose)           VERBOSE=true ;;
+        -h|-\?|--\?|--help)     Help; exit 0 ;;
+        --)                     shift; break ;; # End of script options
+        -*)                     Abort --help "Bad option: '$1'" ;;
+        *)                      break ;; # End of script arguments
+    esac
+    shift
+done
+
+#==============================================================================
+# Validate options.
+#==============================================================================
+
+case "$ENV" in
+    prod|production) ENV='production' ;;
+    dev|development) ENV='development' ;;
+    *)               Abort "$ENV: invalid -e option" ;;
+esac
+
+[ "$DRY_RUN" ] && VERBOSE=true
+
+if [ "$VERBOSE" -a "$QUIET" ] ; then
+    Announce 'Disabled --quiet option'
+    QUIET=''
+fi
+
+GIT_ARGS+=$@
+
+#==============================================================================
+Announce "Getting current build version from '$DEV_HOST'"
+#==============================================================================
+
+[ "$APP_VERSION" ] || APP_VERSION=`GetStagingVersion`
+[ "$APP_VERSION" ] || Abort "Could not get current version from $DEV_HOST"
+
+#==============================================================================
+Announce "Checking local git repo '$APP_DIR'"
+#==============================================================================
+
+cd_to "$APP_DIR"
+Git fetch --all
+Git pull
+Git gc --quiet
+
+# The production deployment should be a clone of the staging deployment.
+# Since CI causes the staging deployment to be updated whenever changes are
+# pushed, if there are un-pushed changes then they have definitely not been
+# vetted via staging so production should not yet be deployed.
+
+MODIFIED=`Git --force status --porcelain`
+if [ "$MODIFIED" ] ; then
+    MESSAGE="Cannot deploy production with untested changes:$NL$MODIFIED"
+    if [ "$DRY_RUN" ] ; then
+        Announce "$MESSAGE"
+        Announce '*** DURING NORMAL OPERATION EXECUTION WOULD END HERE ***'
+    else
+        Abort "$MESSAGE"
+    fi
+fi
+
+#==============================================================================
+Announce "Updating '$DEPLOY_DIR' to '$APP_VERSION'"
+#==============================================================================
+
+cd_to "$DEPLOY_DIR"
+Git fetch --all
+Git pull
+Git gc --quiet
+UpdateDeployedVersion "$APP_VERSION" || Abort "Could not update '$DEPLOY_TAG"
+Git push
+
+Announce "${NL}Deploy of $APP is now in progress at:$NL$AWS_BUILD_PIPELINE$NL"

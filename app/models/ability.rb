@@ -107,23 +107,24 @@ class Ability
       alias_action actions, to: action_alias
     end
     user ||= User.new # Guest user (not logged in).
-    if user.has_role?(:administrator)
+    roles  = user.roles.map { |r| r&.name&.to_sym }.compact
+    if roles.include?(:administrator)
       act_as_administrator
 =begin # TODO: These are not (yet?) supported by Bookshare
-    elsif user.has_role?(:membership_manager)
+    elsif roles.include?(:membership_manager)
       act_as_dso_primary
-    elsif user.has_role?(:membership_viewer)
+    elsif roles.include?(:membership_viewer)
       act_as_dso_staff
 =end
-    elsif user.has_role?(:catalog_curator)
+    elsif roles.include?(:catalog_curator)
       act_as_library_staff
-    elsif user.has_role?(:membership_manager)
+    elsif roles.include?(:membership_manager)
       act_as_dso_sponsor
-    elsif user.has_role?(:artifact_submitter?)
+    elsif roles.include?(:artifact_submitter)
       act_as_dso_delegate
     elsif user.linked_account?
       act_as_individual_member
-    elsif user.has_role?(:artifact_downloader)
+    elsif roles.include?(:artifact_downloader)
       act_as_organization_member
     else
       act_as_guest
