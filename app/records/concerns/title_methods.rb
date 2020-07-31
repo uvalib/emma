@@ -336,8 +336,8 @@ module TitleMethods
     } || []
   end
 
-  # Reduce a string for comparision with another by eliminating characters to
-  # ignore for comparision.
+  # Reduce a string for comparison with another by eliminating characters to
+  # ignore for comparison.
   #
   # @param [String]
   #

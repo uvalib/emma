@@ -647,13 +647,6 @@ module UploadConcern
 
   public
 
-  # A string added to the start of each title created on a non-production
-  # instance to help distinguish it from other index results.
-  #
-  # @type [String, nil]
-  #
-  DEV_TITLE_PREFIX = ('RWL' unless application_deployed?)
-
   # The database ID for the item, or, failing that, the repository ID.
   #
   # @param [Upload, Hash, String] item
@@ -1032,14 +1025,6 @@ module UploadConcern
     end
 
   end
-
-  # ===========================================================================
-  # :section: Index ingest
-  # ===========================================================================
-
-  protected
-
-
 
   # ===========================================================================
   # :section: Bulk operations

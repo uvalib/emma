@@ -25,41 +25,63 @@ module Import::IaBulk
   #
   # @type [Hash{Symbol=>Symbol,Array<(Symbol,(Symbol,Proc))>}]
   #
+  # === Notes
+  # [1] Collection is always %w(emma_uploads_restricted); this can be ignored
+  #     since this is just be used internally by IA to distinguish these items.
+  #
+  # [2] The name of the contributed file is always the basename of the URL in
+  #     the :download field.
+  #
+  # [3] Items that are only for IA internal use can be ignored since they are
+  #     not relevant to EMMA metadata.
+  #
+  # [4] Fields which pertain to upload into IA can be ignored because they are
+  #     not relevant to EMMA metadata.
+  #
+  #--
+  # noinspection SpellCheckingInspection
+  #++
   SCHEMA = {
     #-------------------- --------------------------- -------------------------
     # Underscored name    Translator method or field  Value translator method
     #-------------------- --------------------------- -------------------------
-    collection:           [:emma_collection,          :values],
-    contributed_file:     :skip,
+    collection:           :skip,                      # NOTE: [1]
+    contributed_file:     :skip,                      # NOTE: [2]
     contributed_format:   :translate_formats,
     contributor:          [:rem_source,               :string_value],
+    creator:              [:dc_creator,               :values],
     date:                 [:dcterms_dateCopyright,    :year_value],
     description:          [:dc_description,           :string_value],
     doi:                  [:dc_identifier,            :doi_values],
     download:             [:file_path,                :string_value],
     free_to_download:     :skip,
     free_to_view:         :skip,
-    identifier:           :skip,
-    'identifier-access':  :skip,
+    identifier:           :skip,                      # NOTE: [3] IA item id.
+    'identifier-access':  :skip,                      # NOTE: [3]
+    'identifier-ark':     :skip,                      # NOTE: [3]
     imagecount:           [:rem_image_count,          :ordinal_value],
     isbn:                 [:dc_identifier,            :isbn_values],
     issn:                 [:dc_identifier,            :issn_values],
     language:             [:dc_language,              :language_values],
+    lccn:                 [:dc_identifier,            :lccn_values],
     mediatype:            [:dc_type,                  :media_type_values],
     metadata_source:      [:rem_metadataSource,       :values],
-    neverindex:           :skip,
-    noindex:              :skip,
+    neverindex:           :skip,                      # NOTE: [3]
+    noindex:              :skip,                      # NOTE: [3]
     portion:              [:rem_complete,             :rem_complete_value],
     portion_description:  [:rem_coverage,             :values],
+    publicdate:           :skip,                      # NOTE: [4]
     publisher:            [:dc_publisher,             :string_value],
     remediated_aspects:   [:rem_remediation,          :values],
     remediated_by:        [:rem_remediatedBy,         :values],
     remediation_comments: [:emma_lastRemediationNote, :string_value],
     remediation_status:   [:rem_status,               :rem_status_value],
+    scanner:              :skip,                      # NOTE: [3]
     series_type:          [:bib_seriesType,           :series_type_value],
     subject:              [:dc_subject,               :array_value],
     text_quality:         [:rem_quality,              :text_quality_value],
     title:                [:dc_title,                 :string_value],
+    uploader:             :skip,                      # NOTE: [4]
     version:              [:bib_version,              :string_value],
     volume:               [:bib_seriesPosition,       :string_value],
   }.freeze
@@ -133,7 +155,7 @@ module Import::IaBulk
   # @see Import#schema
   #
   def schema
-    SCHEMA #.dup
+    SCHEMA
   end
 
   # ===========================================================================

@@ -242,6 +242,16 @@ module Import
     identifier_values(v, 'issn:')
   end
 
+  # Transform a data item into one or more LCCN identifiers.
+  #
+  # @param [*] v
+  #
+  # @return [Array<String>]
+  #
+  def lccn_values(v)
+    identifier_values(v, 'lccn:')
+  end
+
   # Transform a data item into one or more identifiers of the form expected by
   # :dc_identifier and :dc_relation.
   #

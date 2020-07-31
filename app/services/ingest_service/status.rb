@@ -23,6 +23,9 @@ module IngestService::Status
 
   # A sample service access and minimum number of expected results.
   #
+  # Title:  "Campbell Biology: Concepts & Connections"
+  # ISBN:   "9780134296012"
+  #
   # @type [Hash{Symbol=>*}]
   #
   SAMPLE_REPOSITORY_ID_ACCESS= {
