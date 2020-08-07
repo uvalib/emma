@@ -3,9 +3,10 @@
   # Show details of an upload
 
   item  ||= @item
-  image ||= nil
   title ||= t('emma.upload.show.title', name: item&.filename)
   host  ||= @host
+  image ||= nil
+  help  ||= nil # TODO: ???
 
   title = "#{host} - #{title}" if host.present?
 
@@ -19,7 +20,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 <%= upload_description %>
 
 <%= render 'upload/details', template_opt %>

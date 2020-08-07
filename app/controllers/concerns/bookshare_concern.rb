@@ -64,8 +64,8 @@ module BookshareConcern
 
   # Get the current Bookshare API exception message.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  Current service error message.
+  # @return [nil]                     No service error or service not active.
   #
   def bs_api_error_message
     @bs_api&.error_message if bs_api_active?
@@ -73,8 +73,8 @@ module BookshareConcern
 
   # Get the current Bookshare API exception.
   #
-  # @return [Exception]
-  # @return [nil]
+  # @return [Exception]               Current service exception.
+  # @return [nil]                     No exception or service not active.
   #
   def bs_api_exception
     @bs_api&.exception if bs_api_active?

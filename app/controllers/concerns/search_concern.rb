@@ -67,8 +67,8 @@ module SearchConcern
 
   # Get the current EMMA Unified Search API exception message.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  Current service error message.
+  # @return [nil]                     No service error or service not active.
   #
   def search_api_error_message
     @search_api&.error_message if search_api_active?
@@ -76,8 +76,8 @@ module SearchConcern
 
   # Get the current EMMA Unified Search API exception.
   #
-  # @return [Exception]
-  # @return [nil]
+  # @return [Exception]               Current service exception.
+  # @return [nil]                     No exception or service not active.
   #
   def search_api_exception
     @search_api&.exception if search_api_active?

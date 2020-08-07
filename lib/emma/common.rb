@@ -52,6 +52,9 @@ module Emma::Common
   # @return [Integer]
   # @return [nil]                     If *value* <= 0 or not a number.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def positive(value)
     result =
       case value
@@ -69,6 +72,9 @@ module Emma::Common
   # @return [Integer]
   # @return [nil]                     If *value* < 0 or not a number.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def non_negative(value)
     return if value.blank?
     result =
@@ -99,6 +105,9 @@ module Emma::Common
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  #++
   def make_path(*args)
     opt = args.extract_options!
     url = args.flatten.join('/').lstrip.sub(/[?&\s]+$/, '')
@@ -189,11 +198,14 @@ module Emma::Common
   # - First, a hash containing only the requested option keys and values.
   # - Second, a copy of the original *hash* without the those keys/values.
   #
-  # @param [ActionController::Parameters, Hash] hash
-  # @param [Array<Symbol>]                      keys
+  # @param [ActionController::Parameters, Hash, nil] hash
+  # @param [Array<Symbol>]                           keys
   #
   # @return [Array<(Hash, Hash)>]   Matching hash followed by remainder hash.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def partition_options(hash, *keys)
     hash ||= {}
     hash = request_parameters(hash) if hash.is_a?(ActionController::Parameters)
@@ -266,6 +278,12 @@ module Emma::Common
 
   # Return the name of the calling method.
   #
+  # @param [Array<String>, Integer, nil] call_stack
+  #
+  # @return [String]
+  #
+  # == Variations
+  #
   # @overload calling_method(call_stack = nil)
   #   @param [Array<String>] call_stack   Default: `#caller(2)`.
   #   @return [String]
@@ -281,7 +299,8 @@ module Emma::Common
       call_stack = nil
     end
     call_stack ||= caller(depth)
-    call_stack.find do |line|
+    # noinspection RubyYardReturnMatch
+    call_stack&.find do |line|
       _file_line, name = line.to_s.split(/:in\s+/)
       name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1').presence
       case name
@@ -531,8 +550,8 @@ module Emma::Common
 
   # Render text that will not break on word boundaries.
   #
-  # @param [String]  text
-  # @param [Boolean] force            If *true* then the translation will
+  # @param [String, nil] text
+  # @param [Boolean]     force        If *true* then the translation will
   #                                     happen even if text.html_safe?.
   #
   # @return [ActiveSupport::SafeBuffer]

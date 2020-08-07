@@ -8,6 +8,7 @@
 
   title ||= t('emma.title.history.title')
   id    ||= @bookshare_id
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -24,6 +25,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <p><%= click_to -%> view catalog title update history.</p>

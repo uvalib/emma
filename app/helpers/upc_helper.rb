@@ -72,6 +72,7 @@ module UpcHelper
     last   = UPC_DIGITS - 1 # The check digit.
     check  = digits[last]
     digits = digits[0..(last-1)]
+    # noinspection RubyYardParamTypeMatch
     (length >= UPC_DIGITS) && (upc_checksum(digits) == check)
   end
 
@@ -85,8 +86,8 @@ module UpcHelper
   # @raise [StandardError]            If *s* contains a check digit but it is
   #                                     not valid.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  A UPC value.
+  # @return [nil]                     If *s* was not a valid UPC.
   #
   def to_upc(s, log: true, validate: false)
     upc    = remove_upc_prefix(s).delete('^0-9')

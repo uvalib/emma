@@ -83,7 +83,7 @@ module MemberHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def member_details(item, opt = nil)
@@ -138,28 +138,29 @@ module MemberHelper
 
   # member_history_title
   #
-  # @param [Hash] opt                 Passed to #toggle_button
+  # @param [String] id                Control ID (@see #member_history)
+  # @param [Hash]   opt               Passed to #toggle_button.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def member_history_control(**opt)
-    opt[:selector] = ".#{MEMBER_HISTORY_CSS_CLASS}"
-    toggle_button(**opt)
+  def member_history_control(id:, **opt)
+    toggle_button(id: id, **opt)
   end
 
   # Render of list of member activity entries.
   #
   # @param [Bs::Api::Record, Array<Bs::Record::TitleDownload>] item
-  # @param [Hash] opt                 Additional field mappings.
+  # @param [String] id                Control ID (@see #member_history_control)
+  # @param [Hash]   opt               Additional field mappings.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #render_field_values
   #
-  def member_history(item, opt = nil)
+  def member_history(item, id:, **opt)
     item  = item.titleDownloads if item.respond_to?(:titleDownloads)
-    pairs = MEMBER_HISTORY_FIELDS.merge(opt || {}).merge!(index: 0)
-    html_div(class: MEMBER_HISTORY_CSS_CLASS) do
+    pairs = MEMBER_HISTORY_FIELDS.merge(opt).merge!(index: 0)
+    html_div(id: id, class: MEMBER_HISTORY_CSS_CLASS) do
       Array.wrap(item).map do |entry|
         pairs[:index] += 1
         html_div(class: "history-entry row-#{pairs[:index]}") do

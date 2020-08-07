@@ -9,6 +9,7 @@
   item  ||= @item
   pref  ||= @preferences
   hist  ||= @history
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -18,7 +19,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'member/details', item: item, pref: pref, hist: hist %>
 

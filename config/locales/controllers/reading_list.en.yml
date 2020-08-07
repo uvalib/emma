@@ -16,23 +16,6 @@ en:
       tooltip:          'Show subscribed Bookshare reading lists.'
 
       # =======================================================================
-      # Fields
-      # =======================================================================
-
-      fields:           &READING_LIST_FIELDS
-        description:    'Description'
-        access:         'Access'
-        owner:          'Owner'
-        assignedBy:     'Assigned By'
-        subscription:   'Subscription'
-        dateUpdated:    'Date Updated'
-        readingListId:  'Reading List ID'
-        memberCount:    'Member Count'
-        titleCount:     'Title Count'
-        allows:         'Allows'
-        links:          'Links'
-
-      # =======================================================================
       # Layout
       # =======================================================================
 
@@ -53,6 +36,23 @@ en:
         label:
           one:          'Manage this reading list'
           many:         'Reading List Actions'
+
+      # =======================================================================
+      # Fields
+      # =======================================================================
+
+      fields:           &READING_LIST_FIELDS
+        description:    'Description'
+        access:         'Access'
+        owner:          'Owner'
+        assignedBy:     'Assigned By'
+        subscription:   'Subscription'
+        dateUpdated:    'Date Updated'
+        readingListId:  'Reading List ID'
+        memberCount:    'Member Count'
+        titleCount:     'Title Count'
+        allows:         'Allows'
+        links:          'Links'
 
       # =======================================================================
       # Pages

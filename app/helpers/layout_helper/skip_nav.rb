@@ -110,8 +110,8 @@ module LayoutHelper::SkipNav
   # @param [String]                               link
   # @param [Hash]                                 opt   Passed to #link_to.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   HTML link element.
+  # @return [nil]                         If *label* or *link* is missing.
   #
   def render_skip_nav_link(label, link, **opt)
     return if label.blank? || link.blank?

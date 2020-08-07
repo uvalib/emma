@@ -20,6 +20,32 @@ en:
       tooltip:          'Search for Bookshare periodicals.'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+        title:
+          name:         'Title'
+          label:        'Periodical search terms:'
+          placeholder:  'Search periodical titles...'
+
+      search_bar:
+        label:          'Periodical Search'
+
+      search_controls:
+        format:
+          values:       !ruby/symbol PeriodicalFormatType
+          multiple:     false
+        sort:
+          values:       !ruby/symbol PeriodicalSortOrder
+          reverse:
+            enabled:    true
+        layout:
+          - [sort,     size,     format]
+          - [language, category        ]
+          - [braille,  narrator        ]
+
+      # =======================================================================
       # Fields
       # =======================================================================
 
@@ -46,32 +72,6 @@ en:
         # === Bookshare information ===
         seriesId:             'Series ID'
         links:                'Links'
-
-      # =======================================================================
-      # Layout
-      # =======================================================================
-
-      search_type:
-        title:
-          name:         'Title'
-          label:        'Periodical search terms:'
-          placeholder:  'Search periodical titles...'
-
-      search_bar:
-        label:          'Periodical Search'
-
-      search_controls:
-        format:
-          values:       !ruby/symbol PeriodicalFormatType
-          multiple:     false
-        sort:
-          values:       !ruby/symbol PeriodicalSortOrder
-          reverse:
-            enabled:    true
-        layout:
-          - [sort,     size,     format]
-          - [language, category        ]
-          - [braille,  narrator        ]
 
       # =======================================================================
       # Pages

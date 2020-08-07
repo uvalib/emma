@@ -8,7 +8,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $toggle_buttons = $('.toggle');
+    var $toggle_buttons = $('.toggle').not('.for-help');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($toggle_buttons)) {
@@ -27,25 +27,33 @@ $(document).on('turbolinks:load', function() {
     var DEBUGGING = true;
 
     /**
-     * State value indicating that advanced search is open.
+     * State value indicating that the panel is displayed.
      *
      * @constant {string}
      */
     var OPEN = 'open';
 
     /**
-     * State value indicating that advanced search is open.
+     * State value indicating that the panel is hidden.
      *
      * @constant {string}
      */
     var CLOSED = 'closed';
 
     /**
-     * Marker class indicating that advanced search is open.
+     * Marker class indicating that the panel is displayed.
      *
      * @constant {string}
      */
     var OPEN_MARKER = 'open';
+
+    /**
+     * If *true*, save the open/closed state of panels to session storage and
+     * restore the state when returning to the page.
+     *
+     * @type {boolean}
+     */
+    var RESTORE_PANEL_STATE = false;
 
     // ========================================================================
     // Function definitions
@@ -58,66 +66,94 @@ $(document).on('turbolinks:load', function() {
      */
     function togglePanel(event) {
         var $button = $(event && event.target || this);
-        var target  = getPanelSelector($button);
-        var $panel  = target && $(target);
+        var $panel  = getPanel($button);
         if (isPresent($panel)) {
             var opening = !$panel.hasClass(OPEN_MARKER);
             if (DEBUGGING) {
-                debug((opening ? 'SHOW' : 'HIDE') + ' ' + target + ' panel');
+                var action = opening ? 'SHOW' : 'HIDE';
+                debug(action, getPanelId($button), 'panel');
             }
-            setState(target, opening);
+            if (RESTORE_PANEL_STATE) {
+                setState($button, opening);
+            }
             updatePanelDisplay($button, $panel, opening);
         }
     }
 
     /**
-     * Get the selector for the panel associated with the given button.
+     * Get the panel associated with the given button.
      *
-     * @param {Selector} selector
+     * @param {Selector} button
+     *
+     * @return {jQuery|undefined}
+     */
+    function getPanel(button) {
+        var panel = getPanelId(button);
+        return panel && $('#' + panel);
+    }
+
+    /**
+     * Get the ID for the panel associated with the given button.
+     *
+     * @param {Selector} button
      *
      * @return {string|undefined}
      */
-    function getPanelSelector(selector) {
-        return $(selector).data('selector');
+    function getPanelId(button) {
+        return $(button).attr('aria-controls');
     }
 
     /**
-     * Save the state of advanced search controls in the session.
+     * Get the selector for the panel associated with the given button.
      *
-     * @param {string}         target
-     * @param {boolean|string} opening
+     * @param {Selector} button
+     *
+     * @return {string|undefined}
+     */
+    function getPanelSelector(button) {
+        var $button = $(button);
+        return $button.data('selector') || ('#' + getPanelId($button));
+    }
+
+    /**
+     * Save the state of the panel in the session.
+     *
+     * @param {string|Selector} target
+     * @param {boolean|string}  opening
      */
     function setState(target, opening) {
+        var panel = target;
         var state = opening;
-        if (typeof state !== 'string') {
-            state = state ? OPEN : CLOSED;
-        }
-        sessionStorage.setItem(target, state);
+        if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
+        if (typeof state !== 'string') { state = state ? OPEN : CLOSED; }
+        sessionStorage.setItem(panel, state);
     }
 
     /**
-     * Get the state of advanced search controls.
+     * Get the state of the panel.
      *
-     * @param {string} target
+     * @param {string|Selector} target
      *
      * @return {string}
      */
     function getState(target) {
-        return sessionStorage.getItem(target);
+        var panel = target;
+        if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
+        return sessionStorage.getItem(panel);
     }
 
     /**
-     * Set the current state of advanced search controls.
+     * Set the current state of panel(s) on the page.
      */
     function initializeState() {
         $toggle_buttons.each(function() {
             var $button = $(this);
-            var target  = getPanelSelector($button);
-            var $panel  = target && $(target);
+            var $panel  = getPanel($button);
             if (isMissing($panel)) {
                 $button.hide();
-            } else {
-                var was_open = getState(target);
+            } else if (RESTORE_PANEL_STATE) {
+                var selector = getPanelSelector($button);
+                var was_open = getState(selector);
                 var is_open  = $panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
                 if (was_open !== is_open) {
                     if (was_open === OPEN) {
@@ -125,16 +161,15 @@ $(document).on('turbolinks:load', function() {
                     } else if (was_open === CLOSED) {
                         updatePanelDisplay($button, $panel, false);
                     } else {
-                        setState(target, is_open);
+                        setState(selector, is_open);
                     }
                 }
-
             }
         });
     }
 
     /**
-     * Update the advanced search display.
+     * Update the toggle panel display.
      *
      * @param {jQuery}  $button
      * @param {jQuery}  $panel
@@ -146,7 +181,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Update the advanced search button label.
+     * Update the toggle button label.
      *
      * @param {jQuery}  $button
      * @param {boolean} opening
@@ -154,7 +189,9 @@ $(document).on('turbolinks:load', function() {
     function updateToggleButton($button, opening) {
         /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
-        $button.html(value.label).attr('title', value.tooltip);
+        $button.html(value.label);
+        $button.attr('title', value.tooltip);
+        $button.attr('aria-expanded', opening);
     }
 
     // ========================================================================

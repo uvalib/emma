@@ -131,6 +131,9 @@ module FlashHelper
     #
     # @return [String]
     #
+    #--
+    # noinspection RubyYardParamTypeMatch
+    #++
     def to_s
       count  = @parts&.size || 0
       result = +''
@@ -194,7 +197,8 @@ module FlashHelper
     # @param [String]  text
     # @param [Boolean] html           If *true*, allow for HTML formatting.
     #
-    # @return [String, ActiveSupport::SafeBuffer]
+    # @return [String]                    If *html* is *false*.
+    # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
     #
     def first_part(text, html: false)
       html ? ERB::Util.h(text) : text
@@ -205,7 +209,8 @@ module FlashHelper
     # @param [String]  text
     # @param [Boolean] html           If *true*, allow for HTML formatting.
     #
-    # @return [String, ActiveSupport::SafeBuffer]
+    # @return [String]                    If *html* is *false*.
+    # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
     #
     def last_part(text, html: false)
       html ? ERB::Util.h(text) : text
@@ -412,8 +417,8 @@ module FlashHelper
   # @param [Integer, nil] count   Total number of items.
   # @param [Boolean]      html
   #
-  # @return [ActiveSupport::SafeBuffer]   If *html*.
-  # @return [String]                      If !*html*.
+  # @return [String]                    If *html* is *false*.
+  # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
   def flash_omission(count = nil, html: false, **)
     text = count ? "#{count} total" : 'more' # TODO: I18n
@@ -445,6 +450,7 @@ module FlashHelper
     msg  ||= ([error.message] if error.respond_to?(:message))
     msg  ||= []
 
+    # noinspection RubyYardParamTypeMatch
     local, opt = partition_options(opt, :inspect)
     unless opt.key?(:html)
       opt[:html] = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
@@ -464,8 +470,13 @@ module FlashHelper
     msg << nil unless opt[:html] || msg.blank?
     msg << args.join(arg_sep)
 
-    result = msg.join(msg_sep)
-    result = flash_template(msg, method: method, topic: topic, **opt) if topic
+    result =
+      if topic
+        # noinspection RubyYardParamTypeMatch
+        flash_template(msg, method: method, topic: topic, **opt)
+      else
+        msg.join(msg_sep)
+      end
     opt[:html] ? result.html_safe : ERB::Util.h(result)
   end
 
@@ -496,6 +507,9 @@ module FlashHelper
   #   @return [Array<ActiveSupport::SafeBuffer,String>]
   #   @return [Array<ActiveSupport::SafeBuffer>]        If :html is *true*.
   #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
   def flash_item(item, **opt)
     if item.is_a?(Array)
       return [] if item.blank?
@@ -528,7 +542,7 @@ module FlashHelper
     end
   end
 
-  # An item's actual impact toward the the total flash size.
+  # An item's actual impact toward the total flash size.
   #
   # @param [String, Entry, Array<String,Entry>] item
   # @param [Hash]                               opt   To #flash_item_render.
@@ -550,8 +564,12 @@ module FlashHelper
   # Render an item in the intended form for addition to the flash.
   #
   # @param [String, Entry] item
+  # @param [Boolean, nil]  html     If *true* force ActiveSupport::SafeBuffer.
+  # @param [Boolean, nil]  inspect  If *true* show inspection of *item*.
+  # @param [Integer, nil]  max      Max length of result.
   #
-  # @return [String, ActiveSupport::SafeBuffer]
+  # @return [String]                    If *html* is *false*.
+  # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   #
   def flash_item_render(item, html: false, inspect: false, max: nil, **)
     res = (item.is_a?(Entry) && html) ? item.render : item.to_s
@@ -565,18 +583,19 @@ module FlashHelper
   # to locate a template to which the flash message is applied.
   #
   # @param [String, Array<String>] msg
-  # @param [Symbol, String]        method
   # @param [Symbol, String]        topic
+  # @param [Symbol, String, nil]   method
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
   # @param [Hash]                  opt        Passed to I18n#t.
   #
   # @return [String]                          # Even if html is *true*.
   #
-  def flash_template(msg, method:, topic:, html: nil, separator: nil, **opt)
+  def flash_template(msg, topic:, method: nil, html: nil, separator: nil, **opt)
     topic = topic.to_sym
     fail  = (topic != :success)
     scope = flash_i18n_scope
+    # noinspection RubyYardParamTypeMatch
     path  = flash_i18n_path(scope, method, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '
@@ -602,7 +621,7 @@ module FlashHelper
 
   # Build an I18n path.
   #
-  # @param [Array] parts
+  # @param [Array<String,Symbol,Array,nil>] parts
   #
   # @return [Symbol]
   #

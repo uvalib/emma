@@ -72,11 +72,11 @@ module TitleHelper
   # Thumbnail element for the given catalog title.
   #
   # @param [Bs::Api::Record] item
-  # @param [Boolean]         link         If *true* make the image a link to
+  # @param [Boolean, String] link         If *true* make the image a link to
   #                                         the show page for the item.
   # @param [Hash]            opt          Passed to #image_element.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
   #
   # == Usage Notes
   # If *item* does not contain a thumbnail, the method returns a "blank" HTML
@@ -88,12 +88,13 @@ module TitleHelper
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image
     if url.present?
       id   = item.identifier
-      link = title_path(id: id) if link
+      link = title_path(id: id) if link.is_a?(TrueClass)
+      link = nil                if link.is_a?(FalseClass)
       alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
       row  = positive(opt[:row])
       html_opt[:id] = "container-img-#{id}"
       html_opt[:'data-turbolinks-permanent'] = true
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
       image_element(url, link: link, alt: alt, row: row, **html_opt)
     else
       placeholder_element(comment: 'no thumbnail', **html_opt)
@@ -103,7 +104,7 @@ module TitleHelper
   # Cover image element for the given catalog title.
   #
   # @param [Bs::Api::Record] item
-  # @param [Boolean]         link         If *true* make the image a link to
+  # @param [Boolean, String] link         If *true* make the image a link to
   #                                         the show page for the item.
   # @param [Hash]            opt          Passed to #image_element.
   #
@@ -119,9 +120,10 @@ module TitleHelper
     url = item.respond_to?(:cover_image) && item.cover_image
     if url.present?
       id   = item.identifier
-      link = title_path(id: id) if link
+      link = title_path(id: id) if link.is_a?(TrueClass)
+      link = nil                if link.is_a?(FalseClass)
       alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
-      # noinspection RubyYardParamTypeMatch
+      # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
       image_element(url, link: link, alt: alt, **opt)
     else
       placeholder_element(comment: 'no cover image', **html_opt)
@@ -133,7 +135,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -149,7 +151,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def author_links(item, **opt)
@@ -162,7 +164,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def editor_links(item, **opt)
@@ -176,7 +178,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def composer_links(item, **opt)
@@ -190,7 +192,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def narrator_links(item, **opt)
@@ -204,7 +206,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def creator_links(item, **opt)
@@ -218,7 +220,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -235,7 +237,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -256,7 +258,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #title_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -277,7 +279,7 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def title_search_links(item, **opt)
@@ -291,7 +293,7 @@ module TitleHelper
   # @param [String] terms
   # @param [Hash]   opt                 Passed to #search_link.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML link element.
   # @return [nil]                       If no *terms* were provided.
   #
   def title_search_link(terms, **opt)
@@ -311,7 +313,8 @@ module TitleHelper
   # @param [Bs::Api::Record] item
   # @param [Object]          value
   #
-  # @return [Object]
+  # @return [Object]  HTML or scalar value.
+  # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
@@ -331,9 +334,9 @@ module TitleHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash]            opt          Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def title_details(item, opt = nil)

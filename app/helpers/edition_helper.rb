@@ -84,7 +84,7 @@ module EditionHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def edition_details(item, opt = nil)

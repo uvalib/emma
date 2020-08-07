@@ -70,7 +70,7 @@ module TestHelper::IntegrationTests::Authentication
   #
   # If the request was not successful then `#current_user` will be unchanged.
   #
-  # @param [String, Symbol, User] user
+  # @param [String, Symbol, User, nil] user
   # @param [Boolean]              follow_redirect
   #
   # @return [void]
@@ -99,8 +99,8 @@ module TestHelper::IntegrationTests::Authentication
 
   # Perform actions within the block signed-on as a test user.
   #
-  # @param [String, Symbol, User] user
-  # @param [Hash]                 opt   Passed to #run_test.
+  # @param [String, Symbol, User, nil] user
+  # @param [Hash]                      opt    Passed to #run_test.
   #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]

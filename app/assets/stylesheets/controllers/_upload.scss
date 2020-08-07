@@ -83,6 +83,13 @@ $upload-entry-gap: 2rem;
         }
     }
 
+    // Don't show the help icons when displaying the upload record.
+    .label {
+        .help-popup {
+            display: none;
+        }
+    }
+
     // If hierarchical areas don't have a border then they look better if
     // they're tightened up.
     @if $data-list-border-color == none {

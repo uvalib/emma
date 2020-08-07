@@ -251,6 +251,9 @@ module SessionConcern
   # block, whereas :api_error_message shows the BookshareService::Error that is
   # created in BookshareService::Common#api.
   #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
   def session_update
     error = nil
     yield

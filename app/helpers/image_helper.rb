@@ -55,18 +55,18 @@ module ImageHelper
 
   # Create an HTML image element.
   #
-  # @param [String]  url
-  # @param [String]  link             If present, the URL to which the image
+  # @param [String]       url
+  # @param [String, nil]  link        If present, the URL to which the image
   #                                     is a link.
-  # @param [String]  alt              Passed to #image_tag.
-  # @param [Integer] row              Grid row of the element.
-  # @param [Hash]    opt              Passed to #html_div except for:
+  # @param [String, nil]  alt         Passed to #image_tag.
+  # @param [Integer, nil] row         Grid row of the element.
+  # @param [Hash]         opt         Passed to #html_div except for:
   #
   # @option opt [String] :link        If *true* make the image a link to
   #                                     the given path.
   # @option opt [String] :alt         Passed to #image_tag.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder.
   # @return [nil]                         If *url* is invalid.
   #
   def image_element(url, link: nil, alt: nil, row: nil, **opt)

@@ -17,8 +17,8 @@ module LayoutHelper::Footer
   # @type [Hash]
   #
   FOOTER_TABLE = {
-    Website: link_to(nil, 'https://emma.uvacreate.virginia.edu'),
-    Contact: mail_to('emma4accessibility@virginia.edu')
+    Website: link_to(nil, PROJECT_SITE),
+    Contact: mail_to(CONTACT_EMAIL)
   }
 
   # ===========================================================================

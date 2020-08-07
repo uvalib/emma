@@ -235,8 +235,8 @@ class User < ApplicationRecord
   #
   # @param [User, String, Integer] user
   #
-  # @return [Integer]
-  # @return [nil]
+  # @return [Integer]                 The ID extracted or expressed by *user*.
+  # @return [nil]                     If ID could not be determined.
   #
   def self.find_id(user)
     user = user.to_i            if user.is_a?(String) && user.to_i.nonzero?
@@ -250,11 +250,14 @@ class User < ApplicationRecord
   #
   # @param [OmniAuth::AuthHash, Hash, nil] data
   #
-  # @return [User]
+  # @return [User]                    Updated record of the indicated user.
   # @return [nil]                     If *data* is not valid.
   #
   # @see https://github.com/omniauth/omniauth/wiki/Auth-Hash-Schema
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def self.from_omniauth(data)
     return unless data.is_a?(Hash)
     data = OmniAuth::AuthHash.new(data) unless data.is_a?(OmniAuth::AuthHash)

@@ -9,6 +9,7 @@
   repo   ||= records.first&.repository
   logo   ||= repository_source_logo(repo)
   force  ||= force_delete
+  help   ||= help_popup(:upload, :delete)
 
   unless modal?
     set_page_title(title)
@@ -28,7 +29,7 @@
 -%>
 
 <div class="heading container">
-  <h1 class="heading"><%= title -%></h1>
+  <h1 class="heading"><%= title -%><%= help -%></h1>
   <%= logo %>
 </div>
 <%= upload_description %>

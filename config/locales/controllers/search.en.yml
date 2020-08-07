@@ -20,6 +20,22 @@ en:
       tooltip:          'Unified search for metadata records.'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      page_controls:
+        label:
+          one:          'Manage this metadata record'
+          many:         'Record Actions'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size: 0 # NOTE: the unified index is not capable of pagination
+
+      # =======================================================================
       # Fields
       #
       # NOTES
@@ -84,22 +100,6 @@ en:
         rem_quality:                        'Text Quality'
         rem_status:                         'Remediation Status'
         rem_image_count:                    'Number of Images'
-
-      # =======================================================================
-      # Layout
-      # =======================================================================
-
-      page_controls:
-        label:
-          one:          'Manage this metadata record'
-          many:         'Record Actions'
-
-      # =======================================================================
-      # Controls
-      # =======================================================================
-
-      pagination:
-        page_size: 0 # NOTE: the unified index is not capable of pagination
 
       # =======================================================================
       # Pages

@@ -4,6 +4,7 @@
 
   title ||= t('emma.upload.bulk_new.title')
   logo  ||= repository_source_logo
+  help  ||= nil # TODO: ???
 
   unless modal?
     set_page_title(title)
@@ -14,7 +15,7 @@
 -%>
 
 <div class="heading container">
-  <h1 class="heading"><%= title -%></h1>
+  <h1 class="heading"><%= title -%><%= help -%></h1>
   <%= logo %>
 </div>
 <%= upload_description %>

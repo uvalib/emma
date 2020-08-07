@@ -41,6 +41,7 @@ module LogoHelper
       # noinspection RubyYardReturnMatch
       image_tag(asset_path(logo), html_opt)
     else
+      # noinspection RubyYardParamTypeMatch
       repository_source(repo, html_opt.merge!(source: repo, name: name))
     end
   end
@@ -78,11 +79,11 @@ module LogoHelper
   #
   # @param [Search::Api::Record, String, Symbol, nil] src
   #
-  # @return [Symbol]
-  # @return [nil]
+  # @return [Symbol]                  One of EmmaRepository#values.
+  # @return [nil]                     If *src* did not indicate a repository.
   #
   #--
-  # noinspection RubyResolve
+  # noinspection RubyResolve, RubyNilAnalysis
   #++
   def normalize_repository(src)
     return Api::Common::DEFAULT_REPOSITORY if src.blank?
@@ -97,8 +98,8 @@ module LogoHelper
   #
   # @param [Search::Api::Record, String, Symbol, nil] src
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  The name of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
   #
   def repository_name(src)
     repo = normalize_repository(src)

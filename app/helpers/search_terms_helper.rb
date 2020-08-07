@@ -178,6 +178,9 @@ module SearchTermsHelper
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def list_search_terms(term_list = nil)
     separator = LIST_SEARCH_SEPARATOR
     if term_list.is_a?(Hash) && term_list.key?(:separator)

@@ -105,7 +105,7 @@ class Search::Message::SearchRecordList < Search::Api::Message
         next unless repositories.include?(section)
         entries = entries.values.flatten(1) if entries.is_a?(Hash)
         Array.wrap(entries).map do |fields|
-          entry = make_example(fields)
+          next unless (entry = make_example(fields))
           next unless (feature - entry.emma_formatFeature).blank? if feature
           next unless entry.emma_repository == source             if source
           next unless entry.dc_format       == format             if format

@@ -18,34 +18,6 @@ var SECOND = 1000; // milliseconds
 /** @constant {number} */
 var SECONDS = SECOND;
 
-/**
- * Key codes.
- *
- * @readonly
- * @enum {number}
- */
-var CHAR = {
-    Backspace:  8,
-    Tab:        9,
-    Enter:      13,
-    Shift:      16,
-    Ctrl:       17,
-    Alt:        18,
-    CapsLock:   20,
-    Escape:     27,
-    Space:      32,
-    PageUp:     33,
-    PageDown:   34,
-    End:        35,
-    Home:       36,
-    ArrowLeft:  37,
-    ArrowUp:    38,
-    ArrowRight: 39,
-    ArrowDown:  40,
-    Insert:     45,
-    Delete:     46
-};
-
 // ============================================================================
 // Function definitions - Enumerables
 // ============================================================================
@@ -295,6 +267,26 @@ function isInternetExplorer() {
     return (ua.indexOf('MSIE ') > -1) || (ua.indexOf('Trident/') > -1);
 }
 
+/**
+ * If necessary scroll the indicated element so that it is within the viewport.
+ *
+ * @param {Selector} element
+ *
+ * @return {jQuery}
+ */
+function scrollIntoView(element) {
+    var $element = $(element);
+    var rect     = $element[0].getBoundingClientRect();
+    var top      = 0;
+    var bottom   = window.innerHeight || document.documentElement.clientHeight;
+    if (rect.top < top) {
+        $element[0].scrollIntoView(true);
+    } else if (rect.bottom > bottom) {
+        $element[0].scrollIntoView(false);
+    }
+    return $element;
+}
+
 // ============================================================================
 // Function definitions - URL
 // ============================================================================
@@ -440,9 +432,6 @@ var NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
 /** @constant {string} */
 var NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 
-/** @constant {string} */
-var KEYPRESS_PROP = 'keypress-click';
-
 /**
  * For "buttons" or "links" which are not <a> tags (or otherwise don't
  * respond by default to a carriage return as an equivalent to a click).
@@ -504,21 +493,28 @@ function handleKeypressAsClick(selector, direct, match, except) {
 
     // Attach the handler to any remaining elements, ensuring that the
     // handler is not added twice.
+    return handleEvent($elements, 'keydown', handleKeypress);
 
     // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
-    function handler(event) {
-        var key = event.keyCode || event.which;
-        if (key === CHAR.Enter) {
-            var $target  = $(event.target || this);
-            var href     = $target.attr('href');
+    /**
+     * Translate a carriage return to a click, except for links (where the
+     * key press will be handled by the browser itself).
+     *
+     * @param {KeyboardEvent} event
+     *
+     * @return {boolean}
+     */
+    function handleKeypress(event) {
+        var key = event && event.key;
+        if (key === 'Enter') {
+            var $target = $(event.target || this);
+            var href    = $target.attr('href');
             if (!href || (href === '#')) {
-                $target.prop(KEYPRESS_PROP, key).click().focusin();
+                $target.click().focusin();
                 return false;
             }
         }
     }
-
-    return handleEvent($elements, 'keydown', handler);
 }
 
 /**

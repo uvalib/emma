@@ -11,7 +11,7 @@ class ApiTest < ApplicationSystemTestCase
 
   ANONYMOUS_METHODS =
     TRIAL_METHODS.select { |k|
-      BookshareService.api_methods.dig(k, :role) == :anonymous
+      BookshareService.api_methods&.dig(k, :role) == :anonymous
     }.freeze
 
   AUTHORIZED_METHODS = (TRIAL_METHODS - ANONYMOUS_METHODS).freeze

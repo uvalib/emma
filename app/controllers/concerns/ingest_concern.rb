@@ -68,8 +68,8 @@ module IngestConcern
 
   # Get the current EMMA Federated Ingest API exception message.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  Current service error message.
+  # @return [nil]                     No service error or service not active.
   #
   def ingest_api_error_message
     @ingest_api&.error_message if ingest_api_active?
@@ -77,8 +77,8 @@ module IngestConcern
 
   # Get the current EMMA Federated Ingest API exception.
   #
-  # @return [Exception]
-  # @return [nil]
+  # @return [Exception]               Current service exception.
+  # @return [nil]                     No exception or service not active.
   #
   def ingest_api_exception
     @ingest_api&.exception if ingest_api_active?

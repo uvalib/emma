@@ -78,6 +78,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def mime_types
+      # noinspection RubyYardReturnMatch
       @mime_types ||= format_classes.transform_values(&:mime_types)
     end
 
@@ -86,6 +87,7 @@ module FileNaming
     # @return [Hash{Symbol=>Array<String>}]
     #
     def file_extensions
+      # noinspection RubyYardReturnMatch
       @file_extensions ||= format_classes.transform_values(&:file_extensions)
     end
 
@@ -140,13 +142,14 @@ module FileNaming
 
   # Map file format to (preferred) file extension.
   #
-  # @param [Symbol, String] fmt
+  # @param [Symbol, String, nil] fmt
   #
   # @return [String]
   # @return [nil]
   #
   def fmt_to_ext(fmt)
-    FileNaming.file_extensions[fmt]&.first if fmt &&= fmt.to_sym
+    # noinspection RubyNilAnalysis
+    FileNaming.file_extensions[fmt.to_sym]&.first if fmt.present?
   end
 
   # Given a MIME type, return the associated upload format.
@@ -163,13 +166,14 @@ module FileNaming
 
   # Map file format to (preferred) MIME type.
   #
-  # @param [Symbol, String] fmt
+  # @param [Symbol, String, nil] fmt
   #
   # @return [String]
   # @return [nil]
   #
   def fmt_to_mime(fmt)
-    FileNaming.mime_types[fmt]&.first if fmt &&= fmt.to_sym
+    # noinspection RubyNilAnalysis
+    FileNaming.mime_types[fmt.to_sym]&.first if fmt.present?
   end
 
 end

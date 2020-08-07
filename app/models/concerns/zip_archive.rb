@@ -19,15 +19,16 @@ module ZipArchive
 
   # get_archive_entry
   #
-  # @param [String]             zip_path
-  # @param [String, FileHandle] file      Physical archive file.
-  # @param [Boolean]            recurse
+  # @param [String, nil]             zip_path
+  # @param [String, FileHandle, nil] file       Physical archive file.
+  # @param [Boolean]                 recurse
   #
-  # @return [String]                      File contents
-  # @return [nil]
+  # @return [String]  File contents
+  # @return [nil]     If *zip_path* or *file* is blank, or could not be read.
   #
   def get_archive_entry(zip_path, file, recurse: false)
     return if zip_path.blank? || file.blank?
+    # noinspection RubyNilAnalysis
     zip_path = find_zip_path(zip_path, file) if zip_path.start_with?('.')
     Archive::Zip.open(file) do |archive|
       archive.each do |entry|
@@ -43,14 +44,15 @@ module ZipArchive
 
   # Locate the indicated file in the given archive.
   #
-  # @param [String]             ext   Target filename extension.
-  # @param [String, FileHandle] file  Physical archive file.
+  # @param [String, nil]             ext        Target filename extension.
+  # @param [String, FileHandle, nil] file       Physical archive file.
   #
-  # @return [String]                  Path to metadata archive entry.
-  # @return [nil]
+  # @return [String]  Path to metadata archive entry.
+  # @return [nil]     If *ext* or *file* is blank, or could not be read.
   #
   def find_zip_path(ext, file)
     return if ext.blank? || file.blank?
+    # noinspection RubyNilAnalysis
     ext = ".#{ext}" unless ext.start_with?('.')
     Archive::Zip.open(file) do |archive|
       archive.each do |entry|

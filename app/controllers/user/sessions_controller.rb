@@ -138,6 +138,9 @@ class User::SessionsController < Devise::SessionsController
   #
   # @return [void]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def set_flash_notice(action, user = nil)
     user ||= resource
     user = user['uid']    if user.is_a?(Hash)
@@ -153,8 +156,8 @@ class User::SessionsController < Devise::SessionsController
   # @param [String]         uid
   # @param [String, nil]    token
   #
-  # @return [User]
-  # @return [nil]
+  # @return [User]                    The updated record of the indicated user.
+  # @return [nil]                     No record for the indicated user.
   #
   def user_from_id(action, uid, token = nil)
     user_name = uid.downcase
@@ -164,7 +167,7 @@ class User::SessionsController < Devise::SessionsController
     session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.synthetic_auth_hash(user_name, token)
     User.find_by(email: user_name).tap do |u|
-      u&.update(access_token: token) if token
+      u.update(access_token: token) if u && token
     end
   end
 
@@ -174,7 +177,8 @@ class User::SessionsController < Devise::SessionsController
   # @param [Symbol, String]          action
   # @param [OmniAuth::AuthHash, nil] auth_data
   #
-  # @return [User]
+  # @return [User]                    Updated record of the indicated user.
+  # @return [nil]                     If `session['omniauth.auth']` is invalid.
   #
   def user_from_auth_data(action, auth_data = nil)
     session.delete('omniauth.auth') if auth_data.is_a?(OmniAuth::AuthHash)

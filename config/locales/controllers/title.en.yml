@@ -20,6 +20,38 @@ en:
       tooltip:          'Search for Bookshare catalog items.'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+        keyword:
+          name:         'Keyword'
+          label:        'Catalog search terms:'
+          placeholder:  'Enter catalog search terms...'
+
+      search_bar:
+        label:          'Catalog Search'
+
+      search_controls:
+        format:
+          values:       !ruby/symbol FormatType
+          multiple:     false
+        sort:
+          values:       !ruby/symbol TitleSortOrder
+          reverse:
+            enabled:    true
+        layout:
+          - [sort,         size,         format      ]
+          - [language,     category,     content_type]
+          - [braille,      narrator                  ]
+          - [warnings_exc, warnings_inc              ]
+
+      page_controls:
+        label:
+          one:          'Manage this catalog entry'
+          many:         'Catalog Actions'
+
+      # =======================================================================
       # Fields
       # =======================================================================
 
@@ -113,38 +145,6 @@ en:
         artifact_list:        'Artifacts'
         download_links:       'Formats'
         links:                'Links'
-
-      # =======================================================================
-      # Controls
-      # =======================================================================
-
-      search_type:
-        keyword:
-          name:         'Keyword'
-          label:        'Catalog search terms:'
-          placeholder:  'Enter catalog search terms...'
-
-      search_bar:
-        label:          'Catalog Search'
-
-      search_controls:
-        format:
-          values:       !ruby/symbol FormatType
-          multiple:     false
-        sort:
-          values:       !ruby/symbol TitleSortOrder
-          reverse:
-            enabled:    true
-        layout:
-          - [sort,         size,         format      ]
-          - [language,     category,     content_type]
-          - [braille,      narrator                  ]
-          - [warnings_exc, warnings_inc              ]
-
-      page_controls:
-        label:
-          one:          'Manage this catalog entry'
-          many:         'Catalog Actions'
 
       # =======================================================================
       # Pages

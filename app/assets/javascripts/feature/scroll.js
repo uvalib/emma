@@ -15,7 +15,7 @@ $(document).on('turbolinks:load', function() {
     var SCROLL_BUTTON_SELECTOR = '.' + Emma.Scroll.button.class;
 
     /** @type {jQuery} */
-    var $scroll_button = $(SCROLL_BUTTON_SELECTOR);
+    var $scroll_button = $(SCROLL_BUTTON_SELECTOR).not('.for-help');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($scroll_button)) { return; }

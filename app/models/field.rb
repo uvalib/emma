@@ -20,7 +20,8 @@ module Field
   #
   # @param [String, Symbol, Class, *] value
   #
-  # @return [Class, nil]
+  # @return [Class] The class indicated by *value*.
+  # @return [nil]   If *value* could not be cast a subclass of EnumType.
   #
   def self.enum_type(value)
     value = value.strip.downcase if value.is_a?(String)
@@ -89,7 +90,7 @@ module Field
 
   # Configuration properties for the given field.
   #
-  # @param [Symbol, String] field
+  # @param [Symbol, String, nil] field
   #
   # @return [Hash]
   #
@@ -109,7 +110,8 @@ module Field
   # @param [Upload] item
   # @param [Symbol] field
   #
-  # @return [Field::Type, nil]
+  # @return [Field::Type]             Instance based on *item* and *field*.
+  # @return [nil]                     If *field* is not valid.
   #
   def self.for(item, field)
     return if (cfg = configuration(field)).blank?

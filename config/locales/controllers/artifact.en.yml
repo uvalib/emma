@@ -16,7 +16,7 @@ en:
       tooltip:          'List Bookshare artifacts uploaded for this item.'
 
       # =======================================================================
-      # Controls
+      # Layout
       # =======================================================================
 
       search_controls:

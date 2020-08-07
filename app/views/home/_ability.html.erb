@@ -2,18 +2,21 @@
 <%-
   # Displays the individual abilities of the current user account.
 
-  user    = current_user&.to_s&.presence || 'guest'
-  actions = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
-  models  = [Title, Artifact, Periodical, Edition, Member, ReadingList]
+  user      = current_user&.to_s&.presence || 'guest'
+  actions   = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
+  models    = [Title, Artifact, Periodical, Edition, Member, ReadingList]
+  panel_css = 'ability-list'
+  panel_id  = css_randomize(panel_css)
+  toggle    = toggle_button(id: panel_id)
 
 -%>
 
 <div class="ability-debug">
   <div class="toggle-panel-title">
     <h2 class="ability-header">Authorization for user "<%= user -%>"</h2>
-    <%= toggle_button(selector: '.ability-list') %>
+    <%= toggle %>
   </div>
-  <div class="ability-list">
+  <div id="<%= panel_id -%>" class="<%= panel_css -%>">
     <table>
       <thead>
         <tr>

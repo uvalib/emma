@@ -9,6 +9,7 @@
   title  ||= t('emma.edition.edit.title')
   id     ||= @edition_id
   series ||= @series_id
+  help   ||= nil
 
   unless modal?
     set_page_title(title)
@@ -25,6 +26,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <p><%= click_to -%> modify edition metadata.</p>

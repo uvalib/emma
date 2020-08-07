@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::Common
 
   include Emma::Common
+  include Emma::Constants
   include HtmlHelper
   include ParamsHelper
   include SearchTermsHelper
@@ -54,27 +55,28 @@ module LayoutHelper::Common
 
   # toggle_button
   #
-  # @param [Hash] opt                 Passed to #button_tag except for:
+  # @param [String] id                HTML element controlled by this button.
+  # @param [String, nil] label        Default: #PANEL_OPENER_LABEL.
+  # @param [String, nil] selector     Selector of the element controlled by
+  #                                     this button (only used if panel.js
+  #                                     RESTORE_PANEL_STATE is *true*).
+  # @param [Hash] opt                 Passed to #button_tag.
   #
-  # @option opt [String] :label       Default: #PANEL_OPENER_LABEL.
-  # @option opt [String] :selector    Selector of the element(s) controlled by
-  #                                     this button.
-  #
-  # @raise [StandardError]            If *opt* does not have :'data-selector'.
+  # @raise [StandardError]            The controlled element was not specified.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see app/assets/javascripts/feature/panel.js
   #
-  def toggle_button(**opt)
-    opt, html_opt = partition_options(opt, :label, :selector)
-    label = opt[:label] ? non_breaking(opt[:label]) : PANEL_OPENER_LABEL
-    prepend_css_classes!(html_opt, 'toggle')
-    if (selector = opt[:selector])
-      html_opt.deep_merge!(data: { selector: selector })
-    elsif !html_opt[:'data-selector'] && !html_opt.dig(:data, :selector)
-      raise 'no target selector given'
+  def toggle_button(id:, label: nil, selector: nil, **opt)
+    html_opt = prepend_css_classes(opt, 'toggle')
+    html_opt[:'aria-controls'] = id       if id.present?
+    html_opt[:'data-selector'] = selector if selector.present?
+    raise 'no target id given' if html_opt[:'aria-controls'].blank?
+    if html_opt[:'data-selector'].present? && html_opt[:data].is_a?(Hash)
+      html_opt[:data].delete(:selector)
     end
+    label = label ? non_breaking(label) : PANEL_OPENER_LABEL
     html_opt[:type]  ||= 'button'
     html_opt[:title] ||= PANEL_OPENER_TIP
     button_tag(label, html_opt)
@@ -103,7 +105,7 @@ module LayoutHelper::Common
   # @param [Symbol, String] type
   # @param [Hash]           opt       Passed to #form_tag.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML form element.
   # @return [nil]                       If search is not available for *type*.
   #
   # @yield To supply additional field(s) for the <form>.

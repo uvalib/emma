@@ -28,7 +28,7 @@ class OcfParser < FileParser
 
   # The location of the .opf file in the ZIP archive.
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def opf_zip_path
     @opf_zip_path ||= find_zip_path('.opf', file_handle)
@@ -36,7 +36,7 @@ class OcfParser < FileParser
 
   # The location of the .ncx file in the ZIP archive.
   #
-  # @return [String]
+  # @return [String, nil]
   #
   def ncx_zip_path
     @ncx_zip_path ||= find_zip_path('.ncx', file_handle)

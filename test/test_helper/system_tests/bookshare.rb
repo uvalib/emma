@@ -34,6 +34,9 @@ module TestHelper::SystemTests::Bookshare
   #
   # @type [Hash{String=>String}]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   API_REQUEST_METHODS =
     BookshareService.api_methods.map { |method, properties|
       element_id = properties[:reference_id]
@@ -133,9 +136,11 @@ module TestHelper::SystemTests::Bookshare
     tables = node.find_all('table') rescue nil
     table =
       tables&.find { |t|
+        # noinspection RubyArgCount
         header = t.find_all('thead th') rescue nil
         header&.first&.text == 'Type'
       }
+    # noinspection RubyArgCount
     rows = (table&.find_all('tbody tr') rescue nil) || []
     # noinspection RubyYardReturnMatch
     rows.map { |row|
@@ -285,6 +290,7 @@ module TestHelper::SystemTests::Bookshare
     rows = node.find_all('tbody tr') rescue []
     # noinspection RubyYardReturnMatch
     rows.map { |row|
+      # noinspection RubyArgCount
       parts = row.find_all('p') rescue []
       name, desc, type = parts.map { |p| p.text.to_s.sub(/\s+/, ' ').strip }
       next unless name.present?
@@ -326,6 +332,9 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  #++
   def model_field_type(type)
     type = type.call rescue '?' if type.is_a?(Proc)
     name = type.to_s
@@ -399,7 +408,7 @@ module TestHelper::SystemTests::Bookshare
     missing  = missing.to_h unless missing.is_a?(Hash)
     header &&= "*** Missing #{header} ***\n"
     indent   = ' ' * indent if indent.is_a?(Integer)
-    width  ||= missing.keys.sort_by(&:size).last.size
+    width  ||= missing.keys.sort_by(&:size).last&.size || ''
     format   = "#{indent}%-#{width}s#{separator}#{APIDOC_URL}#%s"
     show_section(header, output: false) {
       missing.map { |item, id| sprintf(format, item, id) }
@@ -418,7 +427,7 @@ module TestHelper::SystemTests::Bookshare
     problems = problems.to_h unless problems.is_a?(Hash)
     header &&= "*** Problem #{header} ***"
     opt[:output]  = false
-    opt[:width] ||= problems.values.flat_map(&:keys).sort_by(&:size).last.size
+    opt[:width] ||= problems.values.flat_map(&:keys).sort_by(&:size).last&.size
     show_section(header, output: false) {
       problems.map { |item, problem| show_subsection(item, problem, **opt) }
     }.join("\n")
@@ -545,7 +554,7 @@ module TestHelper::SystemTests::Bookshare
 
   # show_section
   #
-  # @param [String]        header
+  # @param [String, nil]   header
   # @param [Array<String>] lines
   # @param [Boolean]       output
   #
@@ -579,6 +588,9 @@ module TestHelper::SystemTests::Bookshare
   # @yield To supply additional parts to show.
   # @yieldreturn [Hash, Array]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def show_subsection(
     header,
     parts =    nil,

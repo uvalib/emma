@@ -77,6 +77,7 @@ class Shrine
     # @see Shrine::Attacher::InstanceMethods#attach_cached
     #
     def attach_cached(value, **options)
+      # noinspection RubyYardReturnMatch
       super
         .tap do |result|
           __debug_attacher(__method__, "RESULT -> #{result.inspect}") do

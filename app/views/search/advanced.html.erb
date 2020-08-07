@@ -3,6 +3,7 @@
   # EMMA Unified Search advanced search page.
 
   title ||= t('emma.search.advanced.title')
+  help  ||= help_popup(:search)
 
   unless modal?
     set_page_title(t('emma.search.advanced.label', default: title))
@@ -12,6 +13,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help_popup(:search) -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'search/form' %>

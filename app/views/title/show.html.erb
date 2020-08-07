@@ -5,6 +5,7 @@
   item  ||= @item
   image ||= nil
   title ||= item&.label || t('emma.title.show.title')
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -15,6 +16,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'title/details', template_opt %>

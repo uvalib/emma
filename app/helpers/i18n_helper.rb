@@ -63,15 +63,15 @@ module I18nHelper
 
   # i18n_lookup_order
   #
-  # @param [Array<String,Symbol>] args
+  # @param [String, Symbol, nil] controller
+  # @param [String, Symbol, nil] action
   #
   # args[0] controller
   # args[1] action
   #
   # @return [Array<Symbol>]
   #
-  def i18n_lookup_order(*args)
-    controller, action = args
+  def i18n_lookup_order(controller = nil, action = nil)
     result = []
     result << "emma.#{controller}.#{action}" if controller && action
     result << "emma.#{controller}.generic"   if controller
@@ -96,8 +96,8 @@ module I18nHelper
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                          The specified value.
+  # @return [nil]                             No non-empty value was found.
   #
   def i18n_lookup(controller, partial_path, *defaults, **opt)
     opt, i18n_opt = partition_options(opt, :mode, :one, :many, :default)
@@ -154,8 +154,8 @@ module I18nHelper
   # The result will have all of the items for the given controller/action
   # that contain and label and/or tooltip under them.
   #
-  # @param [String, Symbol] action
   # @param [String, Symbol] controller
+  # @param [String, Symbol] action
   #
   # @return [Hash{Symbol=>Hash{Symbol=>String,Hash}}]
   #

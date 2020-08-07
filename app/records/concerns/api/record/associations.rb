@@ -132,6 +132,9 @@ module Api::Record::Associations
     # Compare with:
     # @see Api::Serializer::Associations#get_type_class
     #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
     def make_default(type, **opt)
       type = extract_type_option(opt) || type || 'String'
       type = type.to_s.classify if type.is_a?(Symbol)
@@ -187,8 +190,8 @@ module Api::Record::Associations
 
     # Set the default value for a property.
     #
-    # @param [Symbol, String] name
-    # @param [BasicObject]    value
+    # @param [Symbol, String]   name
+    # @param [BasicObject, nil] value
     #
     # @return [Hash{Symbol=>BasicObject}]
     #

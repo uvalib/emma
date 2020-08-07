@@ -122,7 +122,7 @@ module UploadHelper
   #
   # @param [Boolean] force
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If preview is not enabled.
   #
   def upload_preview(force = false)
@@ -132,7 +132,8 @@ module UploadHelper
 
   # upload_action_entry
   #
-  # @param [String, Symbol] action
+  # @param [String, Symbol, nil] action   The target action.
+  # @param [String, Symbol, nil] current  The current `params[:action]`.
   #
   # @return [Hash{Symbol=>String}]
   #
@@ -147,11 +148,13 @@ module UploadHelper
 
   # upload_action_link
   #
-  # @param [String, Symbol] action
-  # @param [String, nil]    label     Override #UPLOAD_ACTIONS label.
-  # @param [String, nil]    path      Override #UPLOAD_ACTIONS action.
+  # @param [String, Symbol, nil] action   The target action.
+  # @param [String, Symbol, nil] current  The current `params[:action]`.
+  # @param [String, nil]         label    Override #UPLOAD_ACTIONS label.
+  # @param [String, nil]         path     Override #UPLOAD_ACTIONS action.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
+  # @return [nil]                         If *action* not configured.
   #
   def upload_action_link(action = nil, current: nil, label: nil, path: nil)
     entry = upload_action_entry(action, current: current)
@@ -190,8 +193,8 @@ module UploadHelper
   #                                         nil:    Locate the text for the
   #                                                   current action.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If no text was defined.
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
   #
   def upload_description(text = nil)
     opt = { item: :description }
@@ -211,8 +214,8 @@ module UploadHelper
   #                                         nil:    Locate the text for the
   #                                                   current action.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If no text was defined.
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
   #
   def upload_directions(text = nil)
     opt = { item: :directions, tag: :h2 }
@@ -232,8 +235,8 @@ module UploadHelper
   #                                         nil:    Locate the text for the
   #                                                   current action.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If no text was defined.
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
   #
   def upload_notes(text = nil)
     opt = { item: :notes }
@@ -255,8 +258,8 @@ module UploadHelper
   # @param [String, Symbol] tag           Tag for the internal text block.
   # @param [Hash]           opt           Passed to #html_div.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If no text was defined.
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no text was provided or defined.
   #
   def upload_text_element(
     item:       nil,
@@ -335,8 +338,8 @@ module UploadHelper
   #
   # @param [String, Hash, Upload] value
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If *value* did not have valid JSON.
   #
   #--
   # noinspection RubyYardParamTypeMatch
@@ -352,8 +355,8 @@ module UploadHelper
   #
   # @param [String, Hash, Upload] value
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If *value* did not have valid JSON.
   #
   #--
   # noinspection RubyYardParamTypeMatch
@@ -371,8 +374,8 @@ module UploadHelper
   # @param [Model, nil]   item
   # @param [String, Hash] value
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If *value* was not valid JSON.
   #
   def render_json_data(item, value)
     return unless (pairs = json_parse(value))
@@ -396,7 +399,9 @@ module UploadHelper
   # @param [Upload] item
   # @param [*]      value
   #
-  # @return [Field::Type, String]
+  # @return [Field::Type]
+  # @return [String]
+  # @return [nil]
   #
   # @see ModelHelper#render_value
   #
@@ -425,7 +430,7 @@ module UploadHelper
   # @param [Upload] item
   # @param [Hash]   opt               Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def upload_details(item, opt = nil)
@@ -453,8 +458,8 @@ module UploadHelper
 
   # Include control icons below the entry number.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt
+  # @param [Upload]    item
+  # @param [Hash, nil] opt
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -493,7 +498,7 @@ module UploadHelper
   # @param [Upload] item
   # @param [Hash]   opt
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       If no operations are authorized.
   #
   # @see #upload_action_icon
@@ -528,7 +533,7 @@ module UploadHelper
   # @option opt [String] :icon
   # @option opt [String] :tip
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
   def upload_action_icon(op, **opt)
@@ -974,7 +979,7 @@ module UploadHelper
   #
   def bulk_upload_results(**opt)
     opt = prepend_css_classes(opt, 'file-upload-results', 'hidden')
-    html_div(nil, **opt)
+    html_div(**opt)
   end
 
   # ===========================================================================
@@ -1124,7 +1129,7 @@ module UploadHelper
   #
   # @param [String]         label     Label for the submit button.
   # @param [Boolean]        force
-  # @param [String,Array<String>] ids
+  # @param [String,Array<String>,nil] ids
   # @param [Hash]           opt       Passed to #form_with except for:
   #
   # @option opt [String] :cancel      URL for cancel button action (default:

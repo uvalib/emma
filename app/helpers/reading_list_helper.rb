@@ -55,7 +55,7 @@ module ReadingListHelper
   # @param [Bs::Record::ReadingListTitle] item
   # @param [Hash]                         opt  Passed to TitleHelper#thumbnail.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
   # @return [nil]                         If *item* has no thumbnail.
   #
   # @see TitleHelper#thumbnail
@@ -148,7 +148,8 @@ module ReadingListHelper
   # @param [Bs::Api::Record] item
   # @param [Object]          value
   #
-  # @return [Object]
+  # @return [Object]  HTML or scalar value.
+  # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
@@ -171,7 +172,7 @@ module ReadingListHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def reading_list_details(item, opt = nil)

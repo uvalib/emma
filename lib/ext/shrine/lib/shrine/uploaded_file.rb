@@ -52,6 +52,8 @@ class Shrine
       mime = ext_to_mime(ext)  || mime_type
       fmt  = mime_to_fmt(mime) || ext_to_fmt(ext)
       if fmt
+        # Any failure will be addressed in the 'rescue' section.
+        # noinspection RubyNilAnalysis
         FileUploader.with_file(io) do |handle|
           fmt_class    = FileNaming.format_class_instance(fmt, handle)
           fmt_instance = fmt_class.new(handle)
@@ -149,7 +151,6 @@ class Shrine
     # @param [Hash]                 options
     #
     # @return [Tempfile]
-    # @return [*]                   Return from block if block given.
     #
     # This method overrides:
     # @see Shrine::UploadedFile::InstanceMethods#stream
@@ -158,6 +159,7 @@ class Shrine
       __debug_upload(__method__) do
         { destination: destination, options: options }
       end
+      # noinspection RubyYardReturnMatch
       super
     end
 
@@ -165,8 +167,7 @@ class Shrine
     #
     # @param [Array] args           Passed to IO#read.
     #
-    # @return [Tempfile]
-    # @return [*]                   Return from block if block given.
+    # @return [String]
     #
     # This method overrides:
     # @see Shrine::UploadedFile::InstanceMethods#read

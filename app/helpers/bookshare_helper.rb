@@ -180,17 +180,20 @@ module BookshareHelper
   # @param [Hash, String, nil] path
   # @param [Hash]              path_opt   Passed to #make_path.
   #
-  # @return [String]
+  # @return [String]                      A full URL.
   # @return [nil]                         If the URL could not be determined.
   #
   # == Variations
   #
   # @overload bookshare_url(path, **path_opt)
-  #   @param [String, nil] path
+  #   @param [String, nil] path       Full or partial URL.
   #
   # @overload bookshare_url(path, **path_opt)
   #   @param [Hash]        path       Controller/action.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def bookshare_url(path, **path_opt)
 
     # If *path* was not given, get a #BOOKSHARE_ACTION reference based on the
@@ -233,6 +236,8 @@ module BookshareHelper
         v = v.join(',')  if v.is_a?(Array)
         [k, v] unless k.blank? || v.blank?
       }.compact.to_h
+
+    # noinspection RubyYardParamTypeMatch
     make_path(path, path_opt)
   end
 
@@ -249,8 +254,8 @@ module BookshareHelper
   # @param [Hash, Array]    path          Default: params :controller/:action.
   # @param [Hash]           path_opt      Path options.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   HTML link element.
+  # @return [nil]                         A valid URL could not be determined.
   #
   def link_to_action(label, link_opt: nil, path: nil, **path_opt)
     path ||= {}
@@ -286,7 +291,8 @@ module BookshareHelper
   # @param [String]                  path
   # @param [Hash]                    path_opt   Passed to #bookshare_url.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]         HTML link element.
+  # @return [nil]                               If no *path* was found.
   #
   # == Variations
   #
@@ -307,7 +313,7 @@ module BookshareHelper
       tip   = 'View on the Bookshare website.' # TODO: I18n
     end
     path = bookshare_url(path, **path_opt)
-    external_link(label, path, title: tip)
+    external_link(label, path, title: tip) if path.present?
   end
 
   # ===========================================================================
@@ -320,7 +326,8 @@ module BookshareHelper
   #
   # @param [String, Symbol, Array<String,Symbol>] name
   #
-  # @return [String, Array<String>]
+  # @return [String]
+  # @return [Array<String>]
   #
   # == Variations
   #
@@ -335,6 +342,7 @@ module BookshareHelper
   def bookshare_user(name)
     return name.map { |v| send(__method__, v) } if name.is_a?(Array)
     name = name.to_s.downcase
+    # noinspection RubyYardReturnMatch
     (name.present? && !name.include?('@')) ? (BOOKSHARE_USER % name) : name
   end
 

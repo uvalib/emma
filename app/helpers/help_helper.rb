@@ -15,6 +15,7 @@ module HelpHelper
   end
 
   include Emma::Common
+  include Emma::Constants
   include HtmlHelper
   include PopupHelper
 
@@ -88,32 +89,31 @@ module HelpHelper
   # which is initially hidden.
   #
   # @param [Symbol, String] topic
-  # @param [Hash]           opt       Passed to #popup_container except for:
+  # @param [Symbol, String] sub_topic   Starting HTML ID.
+  # @param [Hash]           opt         Passed to #popup_container except for:
   #
-  # @option opt [Hash] :attr          Options for deferred content.
-  # @option opt [Hash] :placeholder   Options for transient placeholder.
+  # @option opt [Hash] :attr            Options for deferred content.
+  # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
-  def help_popup(topic, **opt)
-    opt = append_css_classes(opt, 'help-popup')
+  def help_popup(topic, sub_topic = nil, **opt)
+    opt    = append_css_classes(opt, 'help-popup')
+    ph_opt = opt.delete(:placeholder)
+    attr   = opt.delete(:attr)&.dup || {}
+    id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
+
+    opt[:'data-iframe'] = attr[:id] = id
     opt[:title] ||= HELP_ENTRY.dig(topic.to_sym, :tooltip)
 
-    attr = opt.delete(:attr)&.dup || {}
-    id   = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
-    opt[:'data-iframe'] = attr[:id] = id
-
-    placeholder_opt  = {
-      text:        'Loading help topic...', # TODO: I18n
-      class:       "iframe #{PopupHelper::POPUP_DEFERRED_CLASS}",
-      'data-path': help_path(id: topic, modal: true),
-      'data-attr': attr.to_json
-    }.compact
-    merge_html_options!(placeholder_opt, opt.delete(:placeholder))
-    placeholder = placeholder_opt.delete(:text)
-    placeholder = html_div(placeholder, **placeholder_opt)
-
-    popup_container(**opt) { placeholder }
+    popup_container(**opt) do
+      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      ph_txt = ph_opt.delete(:text) || 'Loading help topic...' # TODO: I18n
+      ph_opt[:'data-path'] = help_path(id: topic, modal: true)
+      ph_opt[:'data-attr'] = attr.to_json
+      ph_opt[:'data-top']  = "#{topic}_#{sub_topic}_help" if sub_topic
+      html_div(ph_txt, **ph_opt)
+    end
   end
 
   # Values for a specific help topic.
@@ -260,6 +260,31 @@ module HelpHelper
     image_tag(asset_path(asset), **opt)
   end
 
+  # Render an illustration of a button element in help.
+  #
+  # @param [String] label
+  # @param [Hash]   opt               Passed to #html_span.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_span(label, **opt)
+    html_opt = append_css_classes(opt, 'for-help')
+    html_span(label, html_opt)
+  end
+
+  # Render a help link within help text.
+  #
+  # @param [String]         label
+  # @param [Symbol, String] topic
+  # @param [Hash]           opt       Passed to #link_to.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def help_jump(label, topic, sub_topic = nil, **opt)
+    path = help_path(id: topic, modal: modal?)
+    link_to(label, path, **opt)
+  end
+
   # ===========================================================================
   # :section: Item list (index page) support
   # ===========================================================================
@@ -268,12 +293,12 @@ module HelpHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Symbol]  item             Default: `#request_parameters[:id]`.
-  # @param [Boolean] wrap             If *false*, do not wrap.
-  # @param [Hash]    opt              Passed to #help_container.
+  # @param [Symbol, nil] item         Default: `#request_parameters[:id]`.
+  # @param [Boolean]     wrap         If *false*, do not wrap.
+  # @param [Hash]        opt          Passed to #help_container.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   Help contents section element.
+  # @return [nil]                         No content and *wrap* is false.
   #
   def help_section(item: nil, wrap: true, **opt)
     opt = append_css_classes(opt, 'help-section')
@@ -282,12 +307,12 @@ module HelpHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Symbol]  item             Default: `#request_parameters[:id]`.
-  # @param [Boolean] wrap             If *true*, wrap in a container element.
-  # @param [Hash]    opt              Passed to #help_container.
+  # @param [Symbol, nil] item         Default: `#request_parameters[:id]`.
+  # @param [Boolean]     wrap         If *true*, wrap in a container element.
+  # @param [Hash]        opt          Passed to #help_container.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   Help contents list element.
+  # @return [nil]                         No content and *wrap* is false.
   #
   def help_list_entry(item: nil, wrap: false, **opt)
     help_container(item: item, wrap: wrap, **opt)
@@ -295,12 +320,12 @@ module HelpHelper
 
   # Render the contents of a single entry from configuration or from a partial.
   #
-  # @param [Symbol]  item             Default: `#request_parameters[:id]`.
-  # @param [Boolean] wrap             Wrap in a "help-container" element.
-  # @param [Hash]    opt              Passed to #html_div.
+  # @param [Symbol, nil] item         Default: `#request_parameters[:id]`.
+  # @param [Boolean]     wrap         Wrap in a "help-container" element.
+  # @param [Hash]        opt          Passed to #html_div.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   Help contents element.
+  # @return [nil]                         No content and *wrap* is false.
   #
   # @see config/locales/controllers/help.en.yml
   #

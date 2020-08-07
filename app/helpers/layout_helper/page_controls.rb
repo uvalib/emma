@@ -33,8 +33,8 @@ module LayoutHelper::PageControls
   # @param [Hash] prm                 Default: `#request_parameters`.
   # @param [Hash] locals              Passed to `#render`.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       If no page_controls partials found.
   #
   def render_page_controls(prm: nil, **locals)
     prm    ||= request_parameters
@@ -51,8 +51,8 @@ module LayoutHelper::PageControls
   # @param [Class,Symbol,String] model
   # @param [Array<Symbol>]       actions
   #
-  # @return [Array<Array<(Symbol,Symbol)>>]
-  # @return [nil]
+  # @return [Array<Array<(Symbol,Symbol)>>]   Controller/action pairs.
+  # @return [nil]                             No authorized actions were found.
   #
   def page_control_actions(model, *actions)
     if model.is_a?(Class)
@@ -72,8 +72,8 @@ module LayoutHelper::PageControls
   # @param [Array<Array<(Symbol,Symbol)>>] pairs
   # @param [Hash]                          path_opt
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   HTML link element(s).
+  # @return [nil]                         No valid links could be produced.
   #
   def page_controls(*pairs, **path_opt)
     html_opt = { class: 'control' }
@@ -88,8 +88,8 @@ module LayoutHelper::PageControls
   # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
   # @param [Hash]                opt          Passed to #i18n_lookup.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                          The specified value.
+  # @return [nil]                             No non-empty value was found.
   #
   def page_controls_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]

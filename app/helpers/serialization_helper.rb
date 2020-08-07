@@ -85,7 +85,7 @@ module SerializationHelper
   # @param [String]          name       Node name if item.respond_to?(:to_xml).
   # @param [Api::Serializer] serializer
   #
-  # @return [String]
+  # @return [String]                  XML serialization of *item*.
   # @return [nil]                     If *item* is *nil* or an empty collection
   #
   def make_xml(item, separator: "\n", name: nil, serializer: nil)

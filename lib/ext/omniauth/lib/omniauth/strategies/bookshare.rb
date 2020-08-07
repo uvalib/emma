@@ -1024,6 +1024,9 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>*}]
       #
+      #--
+      # noinspection RubyNilAnalysis
+      #++
       def self.normalize_parameters(params)
         params = params.params      if params.respond_to?(:params)
         params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)

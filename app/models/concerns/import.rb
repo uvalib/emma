@@ -104,6 +104,7 @@ module Import
     if prefix.blank?
       k = k.camelize(:lower)
     else
+      # noinspection RubyNilAnalysis
       prefix = "#{prefix}_" unless prefix.end_with?('_')
       k = k.delete_prefix(prefix).camelize(:lower).prepend(prefix)
     end

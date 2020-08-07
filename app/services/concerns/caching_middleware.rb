@@ -180,6 +180,9 @@ module CachingMiddleware
     #
     # @param [Faraday::Env] env
     #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
     def cacheable?(env)
       result = false
       if (url = request_url(env)).blank?

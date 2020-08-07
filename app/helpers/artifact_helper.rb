@@ -132,7 +132,8 @@ module ArtifactHelper
   #
   # @option opt [String] :url                         Def: derived from *item*.
   #
-  # @return [ActiveSupport::SafeBuffer, nil]
+  # @return [ActiveSupport::SafeBuffer]   The HTML link element.
+  # @return [nil]                         No link URL was provided or found.
   #
   # == Variations
   #
@@ -150,6 +151,7 @@ module ArtifactHelper
   #
   def artifact_link(item, format, **opt)
     url      = opt.delete(:url)
+    # noinspection RubyNilAnalysis
     fmt_name = format.is_a?(Bs::Record::Format) ? format.label : item.label
     # noinspection RubyResolve
     if item.is_a?(Bs::Api::Record)
@@ -177,7 +179,7 @@ module ArtifactHelper
 
     # Set up the tooltip to be shown before the item has been requested.
     tip_key =
-      if !has_class?(opt, 'disabled')
+      if !has_class?(opt, 'disabled', 'sign-in-required')
         'emma.download.link.tooltip'
       elsif !signed_in?
         'emma.download.link.sign_in.tooltip'
@@ -225,7 +227,10 @@ module ArtifactHelper
     format_id = opt[:fmt].presence
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     permitted = can?(:download, Artifact)
-    append_css_classes!(html_opt, 'disabled') unless permitted
+    unless permitted
+      added_class = (signed_in?) ? 'disabled' : 'sign-in-required'
+      append_css_classes!(html_opt, added_class)
+    end
     if item.respond_to?(:formats)
       # === Bs::Api::Record ===
       fmts = Array.wrap(item.formats).compact.uniq
@@ -256,6 +261,9 @@ module ArtifactHelper
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
   def format_label(fmt, quote: '"')
     fmt ||= THIS_FORMAT
     case fmt
@@ -309,6 +317,7 @@ module ArtifactHelper
     opt = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
+    # noinspection RubyYardParamTypeMatch
     make_link(label, '#', **opt)
   end
 
@@ -323,7 +332,7 @@ module ArtifactHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   Item details HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def artifact_details(item, opt = nil)

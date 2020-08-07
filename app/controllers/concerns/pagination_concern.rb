@@ -49,6 +49,9 @@ module PaginationConcern
   #
   # @return [Hash{Symbol=>String}]    URL parameters.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def pagination_setup(opt = nil)
 
     opt = url_parameters(opt)
@@ -117,7 +120,7 @@ module PaginationConcern
   # @param [Object]    list
   # @param [Hash, nil] url_params     For `list.next`.
   #
-  # @return [String]
+  # @return [String]                  Path to generate next page of results.
   # @return [nil]                     If there is no next page.
   #
   def next_page_path(list, url_params = nil)

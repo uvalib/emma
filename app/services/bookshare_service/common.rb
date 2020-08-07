@@ -57,7 +57,7 @@ module BookshareService::Common
 
   # Extract the user name to be used for API parameters.
   #
-  # @param [User, String] user
+  # @param [User, String, nil] user
   #
   # @return [String]
   #

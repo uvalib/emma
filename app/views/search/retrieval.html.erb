@@ -4,6 +4,7 @@
 
   title ||= t('emma.download.label')
   error ||= 'No URL provided' # TODO: I18n
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -15,6 +16,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <p><%= error -%></p>

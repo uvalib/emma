@@ -96,7 +96,7 @@ module LccnHelper
   # @param [Boolean] log
   #
   # @return [String]                  The OCN, zero-filled if necessary.
-  # @return [nil]                     If *ocn* is not a valid OCLC identifier.
+  # @return [nil]                     If *s* is not a valid OCLC identifier.
   #
   def to_lccn(s, log: true)
     lccn   = remove_lccn_prefix(s)

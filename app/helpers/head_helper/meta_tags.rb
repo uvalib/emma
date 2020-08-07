@@ -152,6 +152,7 @@ module HeadHelper::MetaTags
   def merge_meta_tags!(src)
     @page_meta_tags.tap do |dst|
       if src.present?
+        # noinspection RubyNilAnalysis
         src.each_pair do |k, v|
           k = k.to_sym
           v = Array.wrap(dst[k]) + Array.wrap(v) if dst[k].present?

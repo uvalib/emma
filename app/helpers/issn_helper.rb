@@ -79,6 +79,7 @@ module IssnHelper
     else
       digits = digits[0..-2]
     end
+    # noinspection RubyYardParamTypeMatch
     (length == ISSN_DIGITS) && (issn_checksum(digits) == check)
   end
 
@@ -92,8 +93,8 @@ module IssnHelper
   # @raise [StandardError]            If *issn* contains a check digit but it
   #                                     is not valid.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  An ISSN value.
+  # @return [nil]                     If *s* was not a valid ISSN.
   #
   def to_issn(s, log: true, validate: false)
     issn   = remove_issn_prefix(s).delete('^0-9X')

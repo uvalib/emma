@@ -41,6 +41,7 @@ class Bs::Record::Category < Bs::Api::Record
   # @see Bs::Shared::CategoryMethods#bookshare_category
   #
   def bookshare_category
+    # noinspection RubyNilAnalysis
     name.to_s if categoryType.to_s.casecmp('Bookshare').zero?
   end
 

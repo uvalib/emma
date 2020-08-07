@@ -176,9 +176,11 @@ $(document).on('turbolinks:load', function() {
     /**
      * UploadRecordMessage
      *
+     * @typedef {{entry: UploadRecord }} UploadRecordMessageEntry
+     *
      * @typedef {{
      *      entries: {
-     *          list:       {entry: UploadRecord}[],
+     *          list:       UploadRecordMessageEntry[],
      *          properties: {
      *              total:  number,
      *              limit:  number,
@@ -328,6 +330,7 @@ $(document).on('turbolinks:load', function() {
      */
     var BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
 
+    // noinspection PointlessArithmeticExpressionJS
     /**
      * Interval for checking the contents of the "upload" table.
      *
@@ -655,7 +658,8 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Append the line and scroll it into view.
-        $results.append($line)[0].scrollIntoView(false);
+        $line.appendTo($results);
+        scrollIntoView($line);
         return $line;
     }
 
@@ -707,6 +711,7 @@ $(document).on('turbolinks:load', function() {
                 error = 'unexpected data type ' + typeof(data);
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
+                // noinspection JSValidateTypes
                 /** @type {UploadRecordMessage} message */
                 var message = data.response || data;
                 var entries = message.entries  || {};
@@ -1117,10 +1122,10 @@ $(document).on('turbolinks:load', function() {
          * This event occurs between the 'file-added' and 'upload-started'
          * events.
          *
-         * @param {*} status
+         * @param {{id: string, fileIDs: string[]}} data
          */
-        function onFileUploadStarting(status) {
-            console.log('Uppy: upload', status);
+        function onFileUploadStarting(data) {
+            console.log('Uppy: upload', data);
             clearFlash();
         }
 
@@ -1129,9 +1134,8 @@ $(document).on('turbolinks:load', function() {
          * received with success status (200).  At this point, the file has
          * been uploaded by Shrine, but has not yet been validated.
          *
-         * @param {Uppy.UppyFile} file
-         * @param {Body}          response
-         * @param {string}        upload_url
+         * @param {Uppy.UppyFile}                                     file
+         * @param {{status: number, body: string, uploadURL: string}} response
          *
          * == Implementation Notes
          * The normal Shrine response has been augmented to include an
@@ -1140,7 +1144,7 @@ $(document).on('turbolinks:load', function() {
          *
          * @see "Shrine::UploadEndpointExt#make_response"
          */
-        function onFileUploadSuccess(file, response, upload_url) {
+        function onFileUploadSuccess(file, response) {
 
             console.log('Uppy: upload-success', file, response);
 
@@ -1212,14 +1216,13 @@ $(document).on('turbolinks:load', function() {
          * This event occurs when the response from POST /upload/endpoint is
          * received with a failure status (4xx).
          *
-         * @param {Uppy.UppyFile} file
-         * @param {Error}         error
-         * @param {Body}          response
+         * @param {Uppy.UppyFile}                  file
+         * @param {Error}                          error
+         * @param {{status: number, body: string}} [response]
          */
         function onFileUploadError(file, error, response) {
             console.warn('Uppy: upload-error', file, error, response);
-            var msg = extractFlashMessage(error.request) || error.message;
-            showFlashError('ERROR: ' + (msg || error)); // TODO: I18n
+            showFlashError('ERROR: ' + (error.message || error)); // TODO: I18n
         }
 
         /**
@@ -1265,9 +1268,10 @@ $(document).on('turbolinks:load', function() {
             info('Retrying...'); // TODO: I18n
         });
 
-        uppy.on('retry-all', function(count) {
-            console.log('Uppy: retry-all', count);
-            var msg = 'Retrying '; // TODO: I18n
+        uppy.on('retry-all', function(files) {
+            console.log('Uppy: retry-all', files);
+            var msg   = 'Retrying '; // TODO: I18n
+            var count = files ? files.length : 0;
             msg += (count === 1) ? 'upload' : ('' + count + ' uploads');
             msg += '...';
             info(msg);
@@ -1301,8 +1305,8 @@ $(document).on('turbolinks:load', function() {
         var ftrs = features || FEATURES;
 
         // This event occurs after 'upload-success' or 'upload-error'.
-        uppy.on('complete', function(status) {
-            console.log('Uppy: complete', status);
+        uppy.on('complete', function(result) {
+            console.log('Uppy: complete', result);
         });
 
         // This event is observed concurrent with the 'progress' event.
@@ -1336,8 +1340,8 @@ $(document).on('turbolinks:load', function() {
             console.warn('Uppy: restriction-failed', file, error);
         });
 
-        uppy.on('error', function(file, error) {
-            console.warn('Uppy: error', file, error);
+        uppy.on('error', function(error) {
+            console.warn('Uppy: error', error);
         });
 
         uppy.on('preprocess-progress', function(file, status) {
@@ -1388,6 +1392,12 @@ $(document).on('turbolinks:load', function() {
         }
 
         if (ftrs.image_preview) {
+            uppy.on('thumbnail:request', function(file) {
+                console.log('Uppy: thumbnail:request', file);
+            });
+            uppy.on('thumbnail:cancel', function(file) {
+                console.log('Uppy: thumbnail:cancel', file);
+            });
             uppy.on('thumbnail:error', function(file, error) {
                 console.log('Uppy: thumbnail:error', file, error);
             });
@@ -1403,8 +1413,8 @@ $(document).on('turbolinks:load', function() {
         }
 
 /*
-        uppy.on('state-update', function(prev, next, path) {
-            console.log('Uppy: state-update', prev, next, path);
+        uppy.on('state-update', function(prev_state, next_state, patch) {
+            console.log('Uppy: state-update', prev_state, next_state, patch);
         });
 */
     }
@@ -2485,7 +2495,7 @@ $(document).on('turbolinks:load', function() {
             default:
                 console.error('filterFieldDisplay', 'invalid mode:', mode);
         }
-        // Scroll so the the first visible field is at the top of the display
+        // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
         if (filter_initialized) {
             $form[0].scrollIntoView();

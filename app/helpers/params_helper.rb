@@ -84,10 +84,13 @@ module ParamsHelper
 
   # All request parameters (including :controller and :action) as a Hash.
   #
-  # @param [ActionController::Parameters, Hash] p   Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `#params`.
   #
   # @return [Hash{Symbol=>String}]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def request_parameters(p = nil)
     p ||= respond_to?(:params) ? params : {}
     p = p.to_unsafe_h if p.respond_to?(:to_unsafe_h)
@@ -117,7 +120,7 @@ module ParamsHelper
 
   # Indicate whether the value has been compressed.
   #
-  # @param [String, nil]
+  # @param [String, nil] v
   #
   def compressed_value?(v)
     v.to_s.start_with?(COMPRESSION_MARKER)
@@ -125,9 +128,9 @@ module ParamsHelper
 
   # compress_value
   #
-  # @param [String, nil]
+  # @param [String] v
   #
-  # @return [String, nil]
+  # @return [String]
   #
   def compress_value(v)
     COMPRESSION_MARKER + Base64.strict_encode64(Zlib.deflate(v))
@@ -135,7 +138,7 @@ module ParamsHelper
 
   # decompress_value
   #
-  # @param [String, nil]
+  # @param [String, nil] v
   #
   # @return [String, nil]
   #

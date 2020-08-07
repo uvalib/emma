@@ -58,6 +58,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
       initialize_attributes
       self.emma_recordId = opt[:value].to_s
     elsif src.is_a?(Upload)
+      # noinspection RubyNilAnalysis
       attr = reject_blanks(src.emma_metadata.slice(*field_names))
       attr[:emma_repository]         ||= src[:repository]
       attr[:emma_repositoryRecordId] ||= src[:repository_id]

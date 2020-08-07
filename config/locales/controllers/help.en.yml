@@ -41,7 +41,7 @@ en:
           Topic:        'Sign-in'
           title:        'Signing in to EMMA'
           intro:        'Information on EMMA authentication.'
-          content:      ~ # @see help/topic/**
+          content:      ~ # @see app/views/help/topic/_sign_in.html.erb
 
         search:
           <<:           *TOPIC_TEMPLATE
@@ -49,7 +49,7 @@ en:
           Topic:        'Search'
           title:        'Searching in EMMA'
           tooltip:      'Help with searching in EMMA.'
-          content:      ~ # @see help/topic/**
+          content:      ~ # @see app/views/help/topic/_search.html.erb
 
         download:
           <<:           *TOPIC_TEMPLATE
@@ -57,7 +57,7 @@ en:
           Topic:        'Download'
           title:        'Downloading from EMMA'
           tooltip:      'Help with downloading files from EMMA.'
-          content:      ~ # @see help/topic/**
+          content:      ~ # @see app/views/help/topic/_download.html.erb
 
         upload:
           <<:           *TOPIC_TEMPLATE
@@ -65,10 +65,7 @@ en:
           Topic:        'Upload'
           title:        'Uploading to EMMA'
           tooltip:      'Help with uploading files to EMMA.'
-          content:      ~ # @see help/topic/**
-
-        other:
-          <<:           *TOPIC_TEMPLATE
+          content:      ~ # @see app/views/help/topic/_upload.html.erb
 
       # =======================================================================
       # Illustrations
@@ -104,6 +101,10 @@ en:
           alt:          'Search type menu (opened)'
           asset:        'help/search_type_opened.png'
 
+        upload_actions:
+          alt:          'Upload action buttons'
+          asset:        'help/upload_actions.png'
+
       # =======================================================================
       # Pages
       # =======================================================================
@@ -112,7 +113,7 @@ en:
         label:          'Help'
         title:          'EMMA Help Topics'
         tooltip:        'Get help on using the EMMA system.'
-      # intro:          'EMMA Help Introduction'
+        intro:          ~ # TODO: 'EMMA Help Introduction' ???
 
       show:
         # Most of the values on the show page are driven by the topic values

@@ -20,6 +20,57 @@ en:
       tooltip:          'Submit new items or review past uploads'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      search_controls:
+        _self:
+          enabled:      false
+
+      page_controls:
+        label:          'Upload Actions'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        count:          'uploads found'
+
+      field_group:
+        available:
+          label:        'All fields'
+          tooltip:      'Reveal all data fields.'
+          default:      create
+        filled:
+          label:        'Fields with data'
+          tooltip:      'Show fields that have data or require attention.'
+          default:      update
+        invalid:
+          label:        'Invalid fields'
+          tooltip:      'Show fields that require attention.'
+        all:
+          label:        'All plus internal-use fields'
+          tooltip:      'This is only for development purposes.'
+          enabled:      debug
+
+      status_marker:
+        required:
+          label:        "\u26A0" # WARNING SIGN
+          tooltip:      '%{This} is a required field.'
+        invalid:
+          label:        "\u26A0" # WARNING SIGN
+          tooltip:      'The provided value is invalid.'
+        valid:
+          label:        "\u2714" # HEAVY CHECK MARK
+          tooltip:      'The provided value is valid.'
+        nominal:
+          label:        "\u2714" # HEAVY CHECK MARK
+
+      # =======================================================================
       # Fields
       # =======================================================================
 
@@ -113,57 +164,6 @@ en:
           rem_image_count:                   'Number of Images'
 
       # =======================================================================
-      # Layout
-      # =======================================================================
-
-      search_bar:
-        enabled:        false
-
-      search_controls:
-        _self:
-          enabled:      false
-
-      # =======================================================================
-      # Controls
-      # =======================================================================
-
-      page_controls:
-        label:          'Upload Actions'
-
-      pagination:
-        count:          'uploads found'
-
-      field_group:
-        available:
-          label:        'All fields'
-          tooltip:      'Reveal all data fields.'
-          default:      create
-        filled:
-          label:        'Fields with data'
-          tooltip:      'Show fields that have data or require attention.'
-          default:      update
-        invalid:
-          label:        'Invalid fields'
-          tooltip:      'Show fields that require attention.'
-        all:
-          label:        'All plus internal-use fields'
-          tooltip:      'This is only for development purposes.'
-          enabled:      debug
-
-      status_marker:
-        required:
-          label:        "\u26A0" # WARNING SIGN
-          tooltip:      '%{This} is a required field.'
-        invalid:
-          label:        "\u26A0" # WARNING SIGN
-          tooltip:      'The provided value is invalid.'
-        valid:
-          label:        "\u2714" # HEAVY CHECK MARK
-          tooltip:      'The provided value is valid.'
-        nominal:
-          label:        "\u2714" # HEAVY CHECK MARK
-
-      # =======================================================================
       # Pages
       # =======================================================================
 
@@ -251,7 +251,7 @@ en:
 
       edit:             &UPLOAD_EDIT
         label:          'Change'
-        title:          'Modify Your Upload'
+        title:          'Modify Your EMMA Submission'
         tooltip:        'Upload a replacement file for an existing EMMA entry.'
         description:    |
           An EMMA repository entry can be modified by the user who created the
@@ -282,7 +282,7 @@ en:
 
       delete:           &UPLOAD_DELETE
         label:          'Remove'
-        title:          'Remove Your Uploaded Entry'
+        title:          'Remove Your EMMA Submission'
         tooltip:        'Delete an EMMA entry by removing a remediated file.'
         description:    |
           An EMMA repository entry can be removed by the user who created the

@@ -135,21 +135,26 @@ module HtmlHelper
   def make_link(label, path, **opt, &block)
     sign_in  = has_class?(opt, 'sign-in-required')
     disabled = has_class?(opt, 'disabled')
-    if disabled && sign_in
-      opt[:title] &&= "#{opt[:title]}\n(sign-in required)" # TODO: I18n
-      opt[:title] ||= '(Sign-in required.)'                # TODO: I18n
-      opt = remove_css_classes(opt, 'disabled')
-      opt.except!(:target, :rel, :tabindex, :'aria-hidden')
-      disabled = false
-    elsif (opt[:target] == '_blank') && !disabled
-      opt[:title] &&= "#{opt[:title]}\n(opens in a new window)" # TODO: I18n
-      opt[:title] ||= '(Opens in a new window.)'                # TODO: I18n
+    if sign_in
+      opt[:tabindex]   = 0 unless opt.key?(:tabindex)
+      opt[:onkeypress] = 'return false;'
+      disabled = true
+    end
+    if disabled
+      opt[:'aria-disabled'] = true
+    elsif opt[:target] == '_blank'
+      note = 'opens in a new window' # TODO: I18n
+      if opt[:title].blank?
+        opt[:title] = "(#{note.capitalize}.)"
+      elsif !opt[:title].to_s.downcase.include?(note)
+        opt[:title] = "#{opt[:title]}\n(#{note})"
+      end
     end
     unless opt.key?(:rel)
       opt[:rel] = 'noopener' if path.start_with?('http')
     end
     unless opt.key?(:tabindex)
-      opt[:tabindex] = -1 if opt[:'aria-hidden'] || disabled
+      opt[:tabindex] = -1 if opt[:'aria-hidden']
     end
     unless opt.key?(:'aria-hidden')
       opt[:'aria-hidden'] = true if opt[:tabindex] == -1
@@ -190,6 +195,25 @@ module HtmlHelper
     external_link(label, path, **opt, &block)
   end
 
+  # If *text* is a URL return it directly; if *text* is HTML, locate the first
+  # "href" and return the indicated value.
+  #
+  # @param [String, nil] text
+  #
+  # @return [String]                  A full URL.
+  # @return [nil]                     No URL could be extracted.
+  #
+  def extract_url(text)
+    url = text.to_s.strip
+    unless url.blank? || url.start_with?('http')
+      url = url.tr("\n", ' ').sub!(/.*href=["']([^"']{2,})["'].*/, '\1')
+      unless url.blank? || url.start_with?('http')
+        url = url.remove!(/^[^?]+\?url=/) && CGI.unescape(url)
+      end
+    end
+    url.presence
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -198,170 +222,179 @@ module HtmlHelper
 
   # Indicate whether the HTML options include any of the given CSS classes.
   #
-  # @param [Hash, nil]     opt        The target options hash.
+  # @param [Hash, nil]     html_opt   The target options hash.
   # @param [Array<String>] classes    CSS classes to find.
   #
-  def has_class?(opt, *classes)
-    opt_classes = opt&.dig(:class)
-    opt_classes = opt_classes.to_s.split(' ') if opt_classes.is_a?(String)
-    Array.wrap(opt_classes).any? { |c| classes.include?(c) }
+  def has_class?(html_opt, *classes)
+    opt_classes = html_opt&.dig(:class) || []
+    opt_classes = opt_classes.to_s.split(' ') unless opt_classes.is_a?(Array)
+    opt_classes.any? { |c| classes.include?(c) }
   end
 
   # Merge values from one or more options hashes.
   #
-  # @param [Hash, nil]   opt          The target options hash.
+  # @param [Hash, nil]   html_opt     The target options hash.
   # @param [Array<Hash>] args         Options hash(es) to merge into *opt*.
   #
   # @return [Hash]                    A new hash.
   #
   # @see #merge_html_options!
   #
-  def merge_html_options(opt, *args)
-    merge_html_options!(opt&.dup, *args)
+  def merge_html_options(html_opt, *args)
+    html_opt = html_opt&.dup || {}
+    merge_html_options!(html_opt, *args)
   end
 
   # Merge values from one or more hashes into an options hash.
   #
-  # @param [Hash, nil]   opt          The target options hash.
-  # @param [Array<Hash>] args         Options hash(es) to merge into *opt*.
+  # @param [Hash]        html_opt     The target options hash.
+  # @param [Array<Hash,nil>] args         Options hash(es) to merge into *opt*.
   #
   # @return [Hash]                    The modified *opt* hash.
   #
   # @see #append_css_classes!
   #
-  def merge_html_options!(opt, *args)
-    opt ||= {}
-    args.each do |arg|
-      next unless arg.is_a?(Hash)
-      opt.merge!(arg.except(:class))
-      append_css_classes!(opt, arg[:class])
-    end
-    opt
+  def merge_html_options!(html_opt, *args)
+    args.select! { |arg| arg.is_a?(Hash) }
+    classes = args.map { |arg| arg.delete(:class) }
+    append_css_classes!(html_opt, *classes)
+    html_opt.merge!(*args)
   end
 
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #
-  # @param [Hash, String, nil]   opt      The source options hash (if present).
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #append_css_classes!.
+  # @param [Hash, String, nil]   html_opt     The target options hash.
+  # @param [Array<String,Array>] classes      CSS class names.
+  # @param [Proc]                block        Passed to #append_css_classes!.
   #
-  # @return [Hash]                        A new hash with :class set.
+  # @return [Hash]                            A new hash with :class set.
   #
   # == Variations
   #
   # @overload append_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]           opt      The source options hash.
-  #   @param [Array<String,Array>] classes  CSS class names.
-  #   @param [Proc]                block    Passed to #append_css_classes!.
-  #   @return [Hash]                        A new hash with :class set.
+  #   @param [Hash, nil]           html_opt   The target options hash.
+  #   @param [Array<String,Array>] classes    CSS class names.
+  #   @param [Proc]                block      Passed to #append_css_classes!.
+  #   @return [Hash]                          A new hash with :class set.
   #
   # @overload append_css_classes(*classes, &block)
-  #   @param [Array<String,Array>] classes  CSS class names.
-  #   @param [Proc]                block    Passed to #append_css_classes!.
-  #   @return [Hash]                        A new hash with :class set.
+  #   @param [Array<String,Array>] classes    CSS class names.
+  #   @param [Proc]                block      Passed to #append_css_classes!.
+  #   @return [Hash]                          A new hash with :class set.
   #
-  def append_css_classes(opt, *classes, &block)
-    if opt && !opt.is_a?(Hash)
-      classes.unshift(opt)
-      opt = nil
+  def append_css_classes(html_opt, *classes, &block)
+    if html_opt.nil?
+      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+    elsif !html_opt.is_a?(Hash)
+      classes.unshift(html_opt)
+      html_opt = nil
     end
-    append_css_classes!(opt&.dup, *classes, &block)
+    html_opt = html_opt&.dup || {}
+    append_css_classes!(html_opt, *classes, &block)
   end
 
   # If CSS class name(s) are provided, append them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt      The target options hash.
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #css_classes.
+  # @param [Hash]                html_opt   The target options hash.
+  # @param [Array<String,Array>] classes    CSS class names.
+  # @param [Proc]                block      Passed to #css_classes.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                          The modified *opt* hash.
   #
   # Compare with:
   # @see #prepend_css_classes!
   #
-  def append_css_classes!(opt, *classes, &block)
-    opt  ||= {}
-    added  = css_classes(*classes, &block)
-    result = (current = opt[:class]) ? css_classes(current, added) : added
-    opt.merge!(class: result)
+  def append_css_classes!(html_opt, *classes, &block)
+    current = html_opt[:class].presence
+    added   = css_classes(*classes, &block)
+    result  = current ? css_classes(current, added) : added
+    html_opt.merge!(class: result)
   end
 
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are prepended to the existing `opt[:class]` value.
   #
-  # @param [Hash, String, nil]   opt      The source options hash (if present).
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #prepend_css_classes!.
+  # @param [Hash, String, nil]   html_opt     The target options hash.
+  # @param [Array<String,Array>] classes      CSS class names.
+  # @param [Proc]                block        Passed to #prepend_css_classes!.
   #
-  # @return [Hash]                        A new hash with :class set.
+  # @return [Hash]                            A new hash with :class set.
   #
   # == Variations
   #
   # @overload prepend_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]           opt      The source options hash.
-  #   @param [Array<String,Array>] classes  CSS class names.
-  #   @param [Proc]                block    Passed to #append_css_classes!.
-  #   @return [Hash]                        A new hash with :class set.
+  #   @param [Hash, nil]           html_opt   The target options hash.
+  #   @param [Array<String,Array>] classes    CSS class names.
+  #   @param [Proc]                block      Passed to #append_css_classes!.
+  #   @return [Hash]                          A new hash with :class set.
   #
   # @overload prepend_css_classes(*classes, &block)
-  #   @param [Array<String,Array>] classes  CSS class names.
-  #   @param [Proc]                block    Passed to #append_css_classes!.
-  #   @return [Hash]                        A new hash with :class set.
+  #   @param [Array<String,Array>] classes    CSS class names.
+  #   @param [Proc]                block      Passed to #append_css_classes!.
+  #   @return [Hash]                          A new hash with :class set.
   #
-  def prepend_css_classes(opt, *classes, &block)
-    if opt && !opt.is_a?(Hash)
-      classes.unshift(opt)
-      opt = nil
+  def prepend_css_classes(html_opt, *classes, &block)
+    if html_opt.nil?
+      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+    elsif !html_opt.is_a?(Hash)
+      classes.unshift(html_opt)
+      html_opt = nil
     end
-    prepend_css_classes!(opt&.dup, *classes, &block)
+    html_opt = html_opt&.dup || {}
+    prepend_css_classes!(html_opt, *classes, &block)
   end
 
   # If CSS class name(s) are provided, prepend them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash, nil]           opt      The target options hash.
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #css_classes.
+  # @param [Hash]                html_opt   The target options hash.
+  # @param [Array<String,Array>] classes    CSS class names.
+  # @param [Proc]                block      Passed to #css_classes.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                          The modified *opt* hash.
   #
   # Compare with:
   # @see #append_css_classes!
   #
-  def prepend_css_classes!(opt, *classes, &block)
-    opt  ||= {}
-    added  = css_classes(*classes, &block)
-    result = (current = opt[:class]) ? css_classes(added, current) : added
-    opt.merge!(class: result)
+  def prepend_css_classes!(html_opt, *classes, &block)
+    current = html_opt[:class].presence
+    added   = css_classes(*classes, &block)
+    result  = current ? css_classes(added, current) : added
+    html_opt.merge!(class: result)
   end
 
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are eliminated from the existing `opt[:class]` value.
   #
-  # @param [Hash]                opt      The source options hash.
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #append_css_classes!.
+  # @param [Hash]                html_opt   The target options hash.
+  # @param [Array<String,Array>] classes    CSS class names.
   #
-  # @return [Hash]                        A new hash with :class set.
+  # @return [Hash]                          A new hash with :class set.
   #
-  def remove_css_classes(opt, *classes, &block)
-    remove_css_classes!(opt.dup, *classes, &block)
+  def remove_css_classes(html_opt, *classes)
+    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
+    html_opt = html_opt&.dup || {}
+    remove_css_classes!(html_opt, *classes)
   end
 
   # Eliminate the named CSS classes from the existing `opt[:class]` value.
   #
-  # @param [Hash]                opt      The target options hash.
-  # @param [Array<String,Array>] classes  CSS class names.
-  # @param [Proc]                block    Passed to #css_classes.
+  # @param [Hash]                html_opt   The target options hash.
+  # @param [Array<String,Array>] classes    CSS class names.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                          The modified *opt* hash.
   #
-  def remove_css_classes!(opt, *classes, &block)
-    new_classes = opt[:class].to_s.split(' ') - css_class_array(*classes)
-    new_classes = css_classes(*new_classes)
-    opt.merge!(class: new_classes)
+  def remove_css_classes!(html_opt, *classes)
+    current = html_opt[:class].to_s.split(' ')
+    removed = css_class_array(*classes)
+    result  = current - removed
+    if result.present?
+      html_opt.merge!(class: css_classes(result))
+    else
+      html_opt.except!(:class)
+    end
   end
 
   # Combine arrays and space-delimited strings to produce a space-delimited
@@ -415,20 +448,22 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt
-  # @param [Array<String>] classes
+  # @param [Hash, nil]     html_opt   The target options hash.
+  # @param [Array<String>] classes    Additional CSS classes.
   # @param [Hash]          opt        Passed to #append_grid_cell_classes!.
   #
   # @return [Hash]                    A new hash.
   #
   def append_grid_cell_classes(html_opt, *classes, **opt)
-    append_grid_cell_classes!(html_opt&.dup, *classes, **opt)
+    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
+    html_opt = html_opt&.dup || {}
+    append_grid_cell_classes!(html_opt, *classes, **opt)
   end
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt
-  # @param [Array<String>] classes
+  # @param [Hash]          html_opt   The target options hash.
+  # @param [Array<String>] classes    Additional CSS classes.
   # @param [Hash]          opt        Passed to #grid_cell_classes.
   #
   # @return [Hash]                    The modified *html_opt* hash.
@@ -447,13 +482,15 @@ module HtmlHelper
   # @return [Hash]                    A new hash.
   #
   def prepend_grid_cell_classes(html_opt, *classes, **opt)
-    prepend_grid_cell_classes!(html_opt&.dup, *classes, **opt)
+    Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
+    html_opt = html_opt&.dup || {}
+    prepend_grid_cell_classes!(html_opt, *classes, **opt)
   end
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt
-  # @param [Array<String>] classes
+  # @param [Hash, nil]     html_opt   The target options hash.
+  # @param [Array<String>] classes    Additional CSS classes.
   # @param [Hash]          opt        Passed to #grid_cell_classes.
   #
   # @return [Hash]                    The modified *html_opt* hash.
@@ -577,10 +614,11 @@ module HtmlHelper
   # Safely truncate either normal or html_safe strings via #html_truncate.
   #
   # @param [ActiveSupport::SafeBuffer, String] str
-  # @param [Integer]                           length
+  # @param [Integer, nil]                      length
   # @param [Hash]                              opt
   #
-  # @return [ActiveSupport::SafeBuffer, String]
+  # @return [ActiveSupport::SafeBuffer]   If *str* was html_safe.
+  # @return [String]                      If *str* was not HTML.
   #
   # @see #html_truncate
   #
@@ -604,14 +642,15 @@ module HtmlHelper
   # processed by #xml_truncate.  Otherwise, String#truncate is used.
   #
   # @param [ActiveSupport::SafeBuffer, String] str
-  # @param [Integer] length               Def: `#HTML_TRUNCATE_MAX_LENGTH`
-  # @param [Hash]    opt
+  # @param [Integer, nil] length          Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Hash]         opt
   #
   # @option opt [Boolean]     :content    If *true*, base on content size.
   # @option opt [String, nil] :omission   Def: `#HTML_TRUNCATE_OMISSION`
   # @option opt [String, nil] :separator  Def: `#HTML_TRUNCATE_SEPARATOR`
   #
-  # @return [ActiveSupport::SafeBuffer, String]
+  # @return [ActiveSupport::SafeBuffer]   If *str* was html_safe.
+  # @return [String]                      If *str* was not HTML.
   #
   # == Usage Notes
   # Since *str* may be a sequence of HTML elements or even just a text string
@@ -647,7 +686,7 @@ module HtmlHelper
   # character inside the final element then that element will not be included.
   #
   # @param [Nokogiri::XML::Node] xml
-  # @param [Integer]             len      Def: `#HTML_TRUNCATE_MAX_LENGTH`
+  # @param [Integer, nil]        len      Def: `#HTML_TRUNCATE_MAX_LENGTH`
   # @param [Hash]                opt
   #
   # @option opt [Boolean]     :content    If *true*, base on content size.
@@ -692,6 +731,7 @@ module HtmlHelper
               code = $1.to_s
               next if str == code # NOTE: Why?
               if str.size > last
+                # noinspection Rails3Deprecated
                 part << str.first(last)
                 break
               elsif str.size.positive?
@@ -737,6 +777,7 @@ module HtmlHelper
       remaining    = max_length
       has_omission = false
       xml.children.each do |child|
+        # noinspection RubyNilAnalysis
         if remaining < omission.size
           break
         elsif remaining == omission.size
@@ -745,6 +786,7 @@ module HtmlHelper
         elsif (child = xml_truncate(child, remaining, **opt)).nil?
           return
         else
+          # noinspection RubyNilAnalysis
           length = (opt[:content] ? child.content : child.to_s).size
           break if (length > remaining) && node.children.present?
           remaining   -= length

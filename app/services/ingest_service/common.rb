@@ -84,18 +84,20 @@ module IngestService::Common
   #
   def transmit(verb, action, params, headers, **opt)
     super.tap do |response|
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case response.status
-        when 202
-          # NOTE: This *may* erroneously be the status for some bad conditions
-          if response.body.present?
-            __debug { "INGEST: HTTP 202 with body #{response.body.inspect}" }
+      if response.is_a?(Faraday::Response)
+        # noinspection RubyCaseWithoutElseBlockInspection
+        case response.status
+          when 202
+            # NOTE: *May* erroneously be the status for some bad conditions.
+            if response.body.present?
+              __debug { "INGEST: HTTP 202 with body #{response.body.inspect}" }
+              raise response_error(response)
+            end
+          when 207
+            # Partial success implies partial failure:
+            __debug { "INGEST: HTTP 207 with body #{response.body.inspect}" }
             raise response_error(response)
-          end
-        when 207
-          # Partial success implies partial failure:
-          __debug { "INGEST: HTTP 207 with body #{response.body.inspect}" }
-          raise response_error(response)
+        end
       end
     end
   end

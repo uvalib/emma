@@ -108,15 +108,18 @@
         @for $n from 1 through $columns {
             &.columns-#{$n} {
                 @media #{$wide-screen} {
-                    $count: min($n, $wide-max);
+                    $count: $wide-max;
+                    @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $wide-template);
                 }
                 @media #{$medium-width} {
-                    $count: min($n, $medium-max);
+                    $count: $medium-max;
+                    @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $medium-template);
                 }
                 @media #{$narrow-screen} {
-                    $count: min($n, $narrow-max);
+                    $count: $narrow-max;
+                    @if ($n < $count) { $count: $n; }
                     grid-template-columns: repeat($count, $narrow-template);
                 }
             }

@@ -59,7 +59,7 @@ module ModelHelper
   # @param [Model] item
   # @param [Hash]  opt                Passed to #make_link except for:
   #
-  # @option opt [Boolean]        :no_link
+  # @option opt [Boolean]        :no_link       If *true*, create a <span>.
   # @option opt [String]         :tooltip
   # @option opt [String, Symbol] :label         Default: `item.label`.
   # @option opt [String, Proc]   :path          Default: from block.
@@ -67,7 +67,7 @@ module ModelHelper
   # @option opt [String, Symbol] :scope
   # @option opt [String, Symbol] :controller
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML link or text element.
   #
   # @yield [terms] To supply a path based on *terms* to use instead of *path*.
   # @yieldparam  [String] terms
@@ -117,7 +117,7 @@ module ModelHelper
   # @option opt [String] :separator     Default: #DEFAULT_ELEMENT_SEPARATOR
   # @option opt [Symbol] :link_method   Default: :search_link
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def search_links(item, **opt)
@@ -186,7 +186,7 @@ module ModelHelper
   # @option opt [Symbol, String] :scope
   # @option opt [Symbol, String] :controller
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]       An HTML link element.
   # @return [nil]                             If no *terms* were provided.
   #
   def search_link(terms, **opt)
@@ -277,8 +277,8 @@ module ModelHelper
   # `item#field_names` is used.  If no block is provided and *pairs* is present
   # then this function simply returns *pairs* as-is.
   #
-  # @param [Model]     item
-  # @param [Hash, nil] pairs
+  # @param [Model, Api::Record, nil] item
+  # @param [Hash, nil]               pairs
   #
   # @return [Hash{Symbol=>String}]
   #
@@ -286,6 +286,9 @@ module ModelHelper
   # @yieldparam  [Model] item         The supplied *item* parameter.
   # @yieldreturn [Hash]               Result will be merged into *pairs*.
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  #++
   def field_values(item, pairs = nil)
     if block_given?
       yield(item).reverse_merge(pairs || {})
@@ -311,15 +314,15 @@ module ModelHelper
 
   # Render field/value pairs.
   #
-  # @param [Model]          item
-  # @param [String, Symbol] model
-  # @param [Hash]           pairs       Except for #render_pair options.
-  # @param [Integer]        row_offset  Default: 0.
-  # @param [String]         separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Proc]           block       Passed to #field_values.
+  # @param [Model]               item
+  # @param [String, Symbol, nil] model
+  # @param [Hash, nil]           pairs        Except for #render_pair options.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Proc]                block        Passed to #field_values.
   #
-  # @option pairs [Integer] :index      Offset for making unique element IDs)
-  #                                       passed to #render_pair.
+  # @option pairs [Integer] :index            Offset to make unique element IDs
+  #                                             passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -331,14 +334,16 @@ module ModelHelper
     separator:  DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
-    cfg = nil
     if item.is_a?(ActiveRecord::Base)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
       pairs      = field_values(item, pairs, &block)
-    else
+    elsif item.present?
       pairs      = field_values(item, pairs, &block)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
+    else
+      return ''.html_safe
     end
+    cfg = nil
     opt[:row] = row_offset || 0
     # noinspection RubyNilAnalysis
     # @type [Symbol]                 label
@@ -347,11 +352,15 @@ module ModelHelper
       field =
         if value.is_a?(Symbol)
           value
-        elsif (cfg ||= Model.configuration(model)).present?
-          cfg.dig(params[:action], :fields, label) ||
-            cfg.dig(:fields, :database, label) ||
-            cfg.dig(:fields, :form, label) ||
-            cfg.dig(:fields, label)
+        elsif model
+          # noinspection RubyYardParamTypeMatch
+          cfg ||= Model.configuration(model)
+          if cfg.present?
+            cfg.dig(params[:action], :fields, label) ||
+              cfg.dig(:fields, :database, label) ||
+              cfg.dig(:fields, :form, label) ||
+              cfg.dig(:fields, label)
+          end
         end
       opt[:row] += 1
       opt[:field] = field
@@ -362,22 +371,25 @@ module ModelHelper
 
   # Render a single label/value pair.
   #
-  # @param [String, Symbol] label
-  # @param [Object]         value
-  # @param [Symbol]         field
-  # @param [Integer]        index       Offset for making unique element IDs.
-  # @param [Integer]        row         Display row.
-  # @param [String]         separator   Inserted between elements if *value* is
-  #                                       an array.
+  # @param [String, Symbol, nil] label
+  # @param [Object, nil]         value
+  # @param [Symbol, nil]         field
+  # @param [Integer, nil]        index      Offset to make unique element IDs.
+  # @param [Integer, nil]        row        Display row.
+  # @param [String, nil]         separator  Inserted between elements if
+  #                                           *value* is an array.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                       If *value* is blank.
+  # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
+  # @return [nil]                           If *value* is blank.
   #
   # == Usage Notes
   # If *label* is HTML then no ".field-???" class is included for the ".label"
   # and ".value" elements.
   #
-  def render_pair(label, value, field: nil, index: nil, row: 1, separator: nil)
+  #--
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  #++
+  def render_pair(label, value, field: nil, index: nil, row: nil, separator: nil)
     return if value.blank?
     prop = Field.configuration(field)
     rng  = html_id(label || 'None')
@@ -407,6 +419,14 @@ module ModelHelper
       value = safe_join(value, separator)
     end
 
+    # Create a help icon control if applicable.
+    help =
+      if field == :emma_retrievalLink
+        url  = extract_url(value)
+        repo = url_repository(url)
+        help_popup(:download, repo)
+      end
+
     # Option settings for both label and value.
     status = []
     if prop[:array]
@@ -414,11 +434,17 @@ module ModelHelper
     elsif prop[:type] == 'textarea'
       status << 'textbox'
     end
-    opt = { class: css_classes("row-#{row}", type, *status) }
+    row ||= 0
+    opt   = { class: css_classes("row-#{row}", type, *status) }
 
     # Label and label HTML options.
     l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
     label = prop[:label] || label || labelize(field)
+    if help.present?
+      already_html = label.is_a?(ActiveSupport::SafeBuffer)
+      label = html_span(label, class: 'text') unless already_html
+      label += help
+    end
     label = html_div(label, l_opt)
 
     # Value and value HTML options.
@@ -437,17 +463,19 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_empty_value(message = NO_RESULTS)
+    # noinspection RubyYardReturnMatch
     render_pair(nil, message)
   end
 
   # Transform a field value for HTML rendering.
   #
-  # @param [Model]          item
-  # @param [Object]         value
-  # @param [String, Symbol] model     If provided, a model-specific method will
-  #                                     be invoked instead.
+  # @param [Model]               item
+  # @param [Object, nil]         value
+  # @param [String, Symbol, nil] model  If provided, a model-specific method
+  #                                       will be invoked instead.
   #
-  # @return [Object]
+  # @return [Object]  HTML or scalar value.
+  # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   def render_value(item, value, model: nil)
     # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -558,8 +586,8 @@ module ModelHelper
   # @param [String, Symbol, *] m
   # @param [Hash]              opt    Options (used only if appropriate).
   #
-  # @return [Object]
-  # @return [nil]
+  # @return [Object]                  HTML or scalar value.
+  # @return [nil]                     If executed method returned nil.
   #
   def execute(item, m, **opt)
     if item.respond_to?(m)
@@ -605,7 +633,7 @@ module ModelHelper
     result << nil # With Select2, applied search term display is redundant.
     result <<
       html_div(class: "pagination-top row-#{row + 1}") do
-        page_controls + pagination_count(count)
+        page_controls + pagination_count(count || total_items)
       end
     result <<
       html_div(class: 'pagination-bottom') do
@@ -616,8 +644,8 @@ module ModelHelper
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
   #
-  # @param [Model] item
-  # @param [Hash]  opt                Passed to #html_tag except for:
+  # @param [Model]     item
+  # @param [Hash, nil] opt            Passed to #html_tag except for:
   #
   # @option opt [Integer] :index      Required index number.
   # @option opt [Integer] :offset     Default: `#page_offset`.
@@ -664,8 +692,8 @@ module ModelHelper
   #
   # @param [Model]          item
   # @param [String, Symbol] model
-  # @param [Hash, nil]      pairs     Label/value pairs.
-  # @param [Proc]           block     Passed to #render_field_values.
+  # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Proc]           block         Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -701,7 +729,7 @@ module ModelHelper
   # @param [Hash, nil]      pairs         Label/value pairs.
   # @param [Proc]           block         Passed to #render_field_values.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def item_details(item, model, pairs = nil, &block)
@@ -720,24 +748,24 @@ module ModelHelper
   # Indicate whether the given field value produces an <input> that should be
   # disabled.
   #
-  # @param [Symbol, String] field
-  # @param [Symbol, String] model
+  # @param [Symbol, String]      field
+  # @param [Symbol, String, nil] model
   #
   # @see UploadHelper#upload_readonly_form_field?
   #
-  def readonly_form_field?(field, model = nil)
+  def readonly_form_field?(field, model)
     model_method = "#{model}_#{__method__}"
     model.present? && respond_to?(model_method) && send(model_method, field)
   end
 
   # Indicate whether the given field value is required for validation.
   #
-  # @param [Symbol, String] field
-  # @param [Symbol, String] model
+  # @param [Symbol, String]      field
+  # @param [Symbol, String, nil] model
   #
   # @see UploadHelper#upload_required_form_field?
   #
-  def required_form_field?(field, model = nil)
+  def required_form_field?(field, model)
     model_method = "#{model}_#{__method__}"
     model.present? && respond_to?(model_method) && send(model_method, field)
   end
@@ -750,30 +778,28 @@ module ModelHelper
 
   # Render pre-populated form fields.
   #
-  # @param [Model]          item
-  # @param [String, Symbol] model
-  # @param [Hash, nil]      pairs         Label/value pairs.
-  # @param [Proc]           block         Passed to #render_form_fields.
+  # @param [Model]               item
+  # @param [String, Symbol, nil] model
+  # @param [Hash, nil]           pairs  Label/value pairs.
+  # @param [Proc]                block  Passed to #render_form_fields.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If no fields are present.
   #
   def form_fields(item, model, pairs = nil, &block)
-    return if item.blank?
     render_form_fields(item, model: model, pairs: pairs, &block)
   end
 
   # Render field/value pairs.
   #
-  # @param [Model]          item
-  # @param [String, Symbol] model
-  # @param [Hash]           pairs       Except for #render_form_pair options.
-  # @param [Integer]        row_offset  Default: 0.
-  # @param [String]         separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
-  # @param [Proc]           block       Passed to #field_values.
+  # @param [Model]               item
+  # @param [String, Symbol, nil] model
+  # @param [Hash, nil]           pairs        Except #render_form_pair options.
+  # @param [Integer, nil]        row_offset   Def: 0.
+  # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Proc]                block        Passed to #field_values.
   #
-  # @option pairs [Integer] :index      Offset for making unique element IDs)
-  #                                       passed to #render_form_pair.
+  # @option pairs [Integer] :index            Offset to make unique element IDs
+  #                                             passed to #render_form_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -788,32 +814,39 @@ module ModelHelper
     separator:  DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
-    cfg = nil
     if item.is_a?(ActiveRecord::Base)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
       pairs      = field_values(item, pairs, &block)
-    else
+    elsif item.present?
       pairs      = field_values(item, pairs, &block)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
+    else
+      return ''.html_safe
     end
+    cfg = nil
     opt[:row] = row_offset || 0
     # noinspection RubyNilAnalysis
     # @type [Symbol]                 label
     # @type [Symbol, String, Number] value
     pairs.map { |label, value|
+      # @type [Symbol, String] field
       field =
         if value.is_a?(Symbol)
           value
-        elsif (cfg ||= Model.configuration(model)).present?
-          cfg.dig(params[:action], :fields, label) ||
-            cfg.dig(:fields, :database, label) ||
-            cfg.dig(:fields, :form, label) ||
-            cfg.dig(:fields, label)
+        elsif model
+          # noinspection RubyYardParamTypeMatch
+          cfg ||= Model.configuration(model)
+          if cfg.present?
+            cfg.dig(params[:action], :fields, label) ||
+              cfg.dig(:fields, :database, label) ||
+              cfg.dig(:fields, :form, label) ||
+              cfg.dig(:fields, label)
+          end
         end
       opt[:row] += 1
       opt[:field]    = field
-      opt[:disabled] = readonly_form_field?(field, model)
-      opt[:required] = required_form_field?(field, model)
+      opt[:disabled] = readonly_form_field?(field, model) if field
+      opt[:required] = required_form_field?(field, model) if field
       value = render_value(item, value, model: model)
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
@@ -822,19 +855,22 @@ module ModelHelper
   # Render a single label/value pair.
   #
   # @param [String, Symbol] label
-  # @param [Object]         value
+  # @param [Object, nil]    value
   # @param [Symbol]         field       For 'data-field' attribute.
   # @param [Integer]        index       Offset for making unique element IDs.
   # @param [Integer]        row         Display row.
   # @param [Boolean]        disabled
   # @param [Boolean]        required    For 'data-required' attribute.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *value* is blank.
   #
   # Compare with:
   # @see #render_pair
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  #++
   def render_form_pair(
     label,
     value,

@@ -46,8 +46,8 @@ module TestHelper::Debugging
 
   # Produce the top frame of debug output for a test.
   #
-  # @param [String, Symbol] test_name
-  # @param [Hash]           opt
+  # @param [String, Symbol, nil] test_name
+  # @param [Hash]                opt
   #
   # @option opt [Symbol] :test        Overrides *test_name* if given.
   # @option opt [String] :part
@@ -66,8 +66,8 @@ module TestHelper::Debugging
 
   # Produce the bottom frame of debug output for a test.
   #
-  # @param [String, Symbol] test_name
-  # @param [Hash]           opt
+  # @param [String, Symbol, nil] test_name
+  # @param [Hash]                opt
   #
   # @option opt [Symbol] :test        Overrides :name if given.
   # @option opt [String] :part
@@ -159,8 +159,8 @@ module TestHelper::Debugging
 
   # Display a user in output.
   #
-  # @param [String, Symbol, User] user  Default: `#current_user`.
-  # @param [Hash]                 opt   Passed to #show.
+  # @param [String, Symbol, User, nil] user   Default: `#current_user`.
+  # @param [Hash]                      opt    Passed to #show.
   #
   # @return [String]
   #
@@ -282,7 +282,7 @@ module TestHelper::Debugging
     pairs  = block_given? && yield || {}
     indent = opt[:indent] || ''
     indent = ' ' * indent if indent.is_a?(Integer)
-    width  = pairs.keys.map(&:to_s).sort_by(&:size).last.size
+    width  = pairs.keys.map(&:to_s).sort_by(&:size).last&.size || ''
     format = "#{indent}*** %-#{width}s = %s"
     lines  = pairs.map { |k, v| sprintf(format, k, v) }
     show(**show_opt) do

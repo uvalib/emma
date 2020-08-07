@@ -620,6 +620,7 @@ class Upload < ApplicationRecord
   # @return [Hash]
   #
   def emma_metadata
+    # noinspection RubyYardReturnMatch
     @emma_metadata ||= self.class.parse_emma_data(emma_data)
   end
 
@@ -659,7 +660,7 @@ class Upload < ApplicationRecord
 
   # parse_emma_data
   #
-  # @param [Search::Record::MetadataRecord, String, Hash] data
+  # @param [Search::Record::MetadataRecord, String, Hash, nil] data
   #
   # @return [Hash]
   #
@@ -703,8 +704,8 @@ class Upload < ApplicationRecord
 
   # Create a URL for use with :emma_retrievalLink.
   #
-  # @param [String] base_url
-  # @param [String] repository_id
+  # @param [String, nil] base_url       Default: `#BULK_BASE_URL`.
+  # @param [String]      repository_id
   #
   # @return [String]
   #

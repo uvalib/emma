@@ -9,6 +9,7 @@
   title ||= t('emma.artifact.new.title')
   id    ||= @bookshare_id
   fmt   ||= @format
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -25,6 +26,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <p><%= click_to -%> upload an artifact.</p>

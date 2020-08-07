@@ -12,7 +12,11 @@ module IaDownloadConcern
   extend ActiveSupport::Concern
 
   included do |base|
+
     __included(base, 'IaDownloadConcern')
+
+    include RepositoryHelper
+
   end
 
   include ActionController::DataStreaming
@@ -96,7 +100,6 @@ module IaDownloadConcern
   #
   def render_ia_download(url, **opt)
     url  = "#{IA_DOWNLOAD_BASE_URL}/#{url}" unless url.start_with?('http')
-    id   = File.basename(File.dirname(url))
     base = File.basename(url)
     ext  = base.sub!(/^.*(_[^.]*\.zip)$/, '\1') || File.extname(url)
     path = url
@@ -108,6 +111,7 @@ module IaDownloadConcern
       __debug_line(dbg) { { path: path } }
       response =
         Faraday.get(path, nil, hdrs) do |req|
+          # noinspection RubyResolve
           req.options.params_encoder = Faraday::IaParamsEncoder
         end
       dbg << " | status #{response.status.inspect}"
@@ -180,11 +184,11 @@ module IaDownloadConcern
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::Error]
+  # @return [ApiService::Error] # TODO: ???
   # @return [String]
   #
   def ia_response_error(obj)
-    #ApiService::Error.new(obj)
+    ApiService::Error.new(obj) unless true # TODO: ???
     'bad response' # TODO: I18n
   end
 
@@ -192,11 +196,11 @@ module IaDownloadConcern
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::EmptyResultError]
+  # @return [ApiService::EmptyResultError] # TODO: ???
   # @return [String]
   #
   def ia_empty_response_error(obj)
-    #ApiService::EmptyResultError.new(obj)
+    ApiService::EmptyResultError.new(obj) unless true # TODO: ???
     'empty response' # TODO: I18n
   end
 
@@ -204,11 +208,11 @@ module IaDownloadConcern
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::HtmlResultError]
+  # @return [ApiService::HtmlResultError] # TODO: ???
   # @return [String]
   #
   def ia_html_response_error(obj)
-    #ApiService::HtmlResultError.new(obj)
+    ApiService::HtmlResultError.new(obj) unless true # TODO: ???
     'forbidden response' # TODO: I18n
   end
 
@@ -216,11 +220,11 @@ module IaDownloadConcern
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::RedirectionError]
+  # @return [ApiService::RedirectionError] # TODO: ???
   # @return [String]
   #
   def ia_redirect_response_error(obj)
-    #ApiService::RedirectionError.new(obj)
+    ApiService::RedirectionError.new(obj) unless true # TODO: ???
     'too many redirects' # TODO: I18n
   end
 

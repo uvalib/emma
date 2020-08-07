@@ -6,6 +6,7 @@
   list  ||= page_items
   count ||= total_items
   title ||= item&.label || t('emma.periodical.show.title')
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -16,6 +17,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'periodical/details', template_opt %>

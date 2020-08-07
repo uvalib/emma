@@ -233,7 +233,7 @@ module BookshareService::Request::Titles
   #
   def get_artifact_metadata(bookshareId:, format:, **opt)
     title = get_title(bookshareId: bookshareId, **opt)
-    # noinspection RubyArgCount
+    # noinspection RubyNilAnalysis, RubyArgCount
     title.artifact_list.find { |a| format == a.format }
   end
     .tap do |method|

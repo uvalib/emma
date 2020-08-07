@@ -7,6 +7,7 @@
   count ||= total_items
   terms ||= search_terms
   row   ||= 1
+  help  ||= help_popup(:upload)
 
   unless modal?
     set_page_title(title)
@@ -23,7 +24,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help_popup(:upload) -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 <%= upload_description %>
 
 <div class="upload-list">

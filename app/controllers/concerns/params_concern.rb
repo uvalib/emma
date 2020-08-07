@@ -63,8 +63,8 @@ module ParamsConcern
   #                                     final state of `params` to be used by
   #                                     #conditional_redirect.
   # @return [false]                   Setting by an intermediate filter
-  # @return [String]
-  # @return [Hash]
+  # @return [String]                  Redirection URL.
+  # @return [Hash]                    Redirection path components.
   #
   # @see #conditional_redirect
   #
@@ -104,7 +104,8 @@ module ParamsConcern
 
   # The current path stored in the session cookie.
   #
-  # @return [String, nil]
+  # @return [String]                  Value of `session['current_path']`.
+  # @return [nil]                     No 'current_path' found.
   #
   def get_current_path
     decompress_value(session['current_path']).tap do |path|

@@ -6,6 +6,7 @@
   pref  ||= @preferences
   hist  ||= @history
   title ||= item&.label || t('emma.member.show.title')
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -19,6 +20,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'member/details', template_opt %>

@@ -53,6 +53,7 @@ class SearchTerm
     config     = url_parameter_menu_config(@parameter)
     @pairs =
       if values.is_a?(Hash)
+        # noinspection RubyNilAnalysis
         values.stringify_keys.transform_values(&:to_s)
       elsif values.present?
         Array.wrap(values).map { |v|

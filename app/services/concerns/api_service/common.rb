@@ -82,6 +82,7 @@ module ApiService::Common
   # @return [String]
   #
   def base_url
+    # noinspection RubyYardReturnMatch
     @base_url ||= self.class.safe_const_get(:BASE_URL)
   end
 
@@ -172,6 +173,7 @@ module ApiService::Common
   #   @param [Symbol, String] http_method
   #
   def update_request?(http_method = nil)
+    # noinspection RubyNilAnalysis
     http_method = http_method.downcase.to_sym if http_method.is_a?(String)
     %i[put post patch].include?(http_method || @verb)
   end
@@ -191,6 +193,9 @@ module ApiService::Common
   #   @param [Hash]    hash           Parameters to check instead of @params.
   #   @param [Boolean] complete       If *true* return :api_key parameter.
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+  #++
   def latest_endpoint(opt = nil)
     opt = (opt || @params).dup
     opt.delete(:api_key) unless opt.delete(:complete)
@@ -265,7 +270,7 @@ module ApiService::Common
 
   # Set the user for the current session.
   #
-  # @param [User] u
+  # @param [User, nil] u
   #
   # @raise [StandardError]            If *u* is invalid.
   #
@@ -354,13 +359,16 @@ module ApiService::Common
     @response = transmit(@verb, @action, options, headers, **opt)
 
   rescue Api::Error => error
+    # noinspection RubyYardParamTypeMatch
     log_exception(method: method, error: error)
 
   rescue TypeError => error
+    # noinspection RubyYardParamTypeMatch
     log_exception(method: method, error: error)
     error = response_error(error)
 
   rescue => error
+    # noinspection RubyYardParamTypeMatch
     log_exception(method: method, error: error)
     error = response_error(error)
 
@@ -443,6 +451,9 @@ module ApiService::Common
   # == Usage Notes
   # If overridden, this should be called first via 'super'.
   #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch, RubyYardReturnMatch
+  #++
   def api_options(params = nil)
     params ||= @params
     params = params.reject { |k, _| IGNORED_PARAMETERS.include?(k) }
@@ -750,42 +761,42 @@ module ApiService::Common
 
   # Wrap an exception or response in a service error.
   #
-  # @param [Exception, Faraday::Response] obj
+  # @param [Exception, Faraday::Response, nil] obj
   #
   # @return [ApiService::Error]
   #
   def response_error(obj)
-    ApiService::Error.new(obj)
+    ApiService::Error.new(*obj)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Faraday::Response] obj
+  # @param [Faraday::Response, nil] obj
   #
   # @return [ApiService::EmptyResultError]
   #
   def empty_response_error(obj)
-    ApiService::EmptyResultError.new(obj)
+    ApiService::EmptyResultError.new(*obj)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Faraday::Response] obj
+  # @param [Faraday::Response, nil] obj
   #
   # @return [ApiService::HtmlResultError]
   #
   def html_response_error(obj)
-    ApiService::HtmlResultError.new(obj)
+    ApiService::HtmlResultError.new(*obj)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Faraday::Response] obj
+  # @param [Faraday::Response, nil] obj
   #
   # @return [ApiService::RedirectionError]
   #
   def redirect_response_error(obj)
-    ApiService::RedirectionError.new(obj)
+    ApiService::RedirectionError.new(*obj)
   end
 
   # log_exception

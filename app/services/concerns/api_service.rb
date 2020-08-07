@@ -40,11 +40,11 @@ class ApiService
 
   # Initialize a new instance
   #
-  # @param [User]   user              User instance which includes a
+  # @param [User, nil]   user         User instance which includes a
   #                                     Bookshare user identity and token.
-  # @param [String] base_url          Base URL to the external service (instead
+  # @param [String, nil] base_url     Base URL to the external service (instead
   #                                     of #BASE_URL defined by the subclass).
-  # @param [Hash]   opt               Stored in @options
+  # @param [Hash]        opt          Stored in @options
   #
   def initialize(user: nil, base_url: nil, **opt)
     @options  = opt.reject { |_, v| v.blank? }
@@ -92,7 +92,7 @@ class ApiService
 
       # The single instance of this class.
       #
-      # @param [Hash] opt             Passed to ApiService#initialize.
+      # @param [Hash, nil] opt        Passed to ApiService#initialize.
       #
       # @return [ApiService]
       #
@@ -108,6 +108,9 @@ class ApiService
       # per-request and not per-thread (potentially spanning multiple requests
       # by different users).
       #
+      #--
+      # noinspection RubyNilAnalysis
+      #++
       def self.instance(opt = nil)
         opt = reject_blanks(opt)
         srv = ApiService.table[self]
@@ -119,7 +122,7 @@ class ApiService
 
       # Update the service instance with new information.
       #
-      # @param [Hash] opt                 Passed to ApiService#initialize.
+      # @param [Hash, nil] opt           Passed to ApiService#initialize.
       #
       # @return [ApiService]
       #
@@ -218,6 +221,7 @@ class ApiService
       def self.api_methods(arg = nil)
         @all_methods  ||= {}
         @true_methods ||= {}
+        # noinspection RubyNilAnalysis
         if arg.is_a?(String) || arg.is_a?(Symbol)
           @all_methods[arg.to_sym]
         elsif (synthetic = (arg.is_a?(Hash) && arg[:synthetic])) == :only

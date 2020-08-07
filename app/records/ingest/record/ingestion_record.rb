@@ -122,6 +122,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   #
   def initialize(src, **opt)
     if src.is_a?(Upload)
+      # noinspection RubyNilAnalysis
       data = reject_blanks(src.emma_metadata)
 
       # === Standard Identifiers ===

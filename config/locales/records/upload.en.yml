@@ -1,6 +1,6 @@
 # config/locales/records/upload.en.yml
 #
-# Upload record fields
+# Upload record fields ("uploads" in db/schema.rb).
 #
 # MIN MAX INTERPRETATION
 # --- --- ---------------------------------------------------------------------

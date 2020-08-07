@@ -193,6 +193,7 @@ module Bs::Shared::TitleMethods
   def contributor_list(*types, **opt)
     result = respond_to?(:contributors) && contributors || []
     result = result.select { |c| types.include?(c.type) } if types.present?
+    # noinspection RubyNilAnalysis
     result.map { |c| c.label(opt[:role]) }
   end
 
@@ -290,6 +291,7 @@ module Bs::Shared::TitleMethods
   def artifact_list(*types)
     result = respond_to?(:artifacts) && artifacts || []
     result = result.select { |a| types.include?(a.fmt) } if types.present?
+    # noinspection RubyYardReturnMatch
     result
   end
 

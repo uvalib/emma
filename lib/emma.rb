@@ -35,6 +35,7 @@ public
 # @see Dir#glob
 #
 def require_files(relative_to, *patterns)
+  return if relative_to.blank?
   dir = File.dirname(relative_to)
   patterns.flatten.reject(&:blank?).uniq.flat_map do |pattern|
     Dir.glob("#{dir}/#{pattern}")
@@ -56,6 +57,7 @@ end
 # @see #require_files
 #
 def require_subdirs(relative_to, *patterns)
+  return if relative_to.blank?
   subdirs = patterns.flatten.reject(&:blank?).uniq
   subdirs << '' if subdirs.blank?
   subdirs.map! { |subdir| "#{subdir}/**/*.rb" }
@@ -72,6 +74,7 @@ end
 # @see #require_files
 #
 def require_submodules(filename)
+  return if filename.blank?
   directory = File.basename(filename, '.*')
   modules   = "#{directory}/*.rb"
   require_files(filename, modules)
@@ -97,7 +100,8 @@ end
 #
 def include_submodules(base, filename = nil)
   curr_constants = constants(false)
-  if filename
+  if filename.present?
+    # noinspection RubyYardParamTypeMatch
     require_submodules(filename)
     curr_constants = constants(false) - curr_constants
   end

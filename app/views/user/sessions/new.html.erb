@@ -3,6 +3,7 @@
   # Login page.
 
   title ||= t('emma.user.sessions.new.label')
+  help  ||= help_popup(:sign_in)
 
   unless modal?
     set_page_title(title)
@@ -12,7 +13,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%><%= help_popup(:sign_in) -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= render 'user/sessions/local' %>
 <%= render 'devise/shared/links' %>

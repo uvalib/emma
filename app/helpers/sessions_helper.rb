@@ -39,10 +39,10 @@ module SessionsHelper
 
   # Sign in (via Bookshare) link.
   #
-  # @param [String]         label     Default: `#get_label(:new)`
-  # @param [Symbol, String] provider  Default: :bookshare
-  # @param [String, nil]    path      Default: `new_user_session_path`
-  # @param [Hash]           opt       Passed to #link_to.
+  # @param [String, nil]          label     Default: `#get_label(:new)`
+  # @param [Symbol, String, nil]  provider  Default: :bookshare
+  # @param [Boolean, String, nil] path      Default: `new_user_session_path`
+  # @param [Hash]                 opt       Passed to #link_to.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -50,11 +50,11 @@ module SessionsHelper
   # Use :path = *false* to disable without changing the appearance.
   #
   def sign_in_link(label: nil, provider: nil, path: nil, **opt)
+    path       = '#' if path.is_a?(FalseClass)
+    path       = nil if path.is_a?(TrueClass)
+    path     ||= new_user_session_path
     label    ||= get_sessions_label(:new, provider)
     provider ||= :bookshare
-    unless path.is_a?(String)
-      path = path.is_a?(FalseClass) ? '#' : new_user_session_path
-    end
     html_opt = {
       class:             "session-link #{provider}-login",
       title:             SIGN_IN_TOOLTIP,

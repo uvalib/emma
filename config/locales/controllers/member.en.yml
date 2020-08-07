@@ -16,6 +16,23 @@ en:
       tooltip:          'Show Bookshare organization members.'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_bar:
+        enabled:        false
+
+      search_controls:
+        format:
+          multiple:     false
+        sort:
+          values:       !ruby/symbol MemberSortOrder
+          reverse:
+            enabled:    true
+        layout:
+          - [sort, size, ~, ~]
+
+      # =======================================================================
       # Fields
       # =======================================================================
 
@@ -38,23 +55,6 @@ en:
         site:                     'Site'
         roles:                    'Roles'
         links:                    'Links'
-
-      # =======================================================================
-      # Layout
-      # =======================================================================
-
-      search_bar:
-        enabled:        false
-
-      search_controls:
-        format:
-          multiple:     false
-        sort:
-          values:       !ruby/symbol MemberSortOrder
-          reverse:
-            enabled:    true
-        layout:
-          - [sort, size, ~, ~]
 
       # =======================================================================
       # Pages

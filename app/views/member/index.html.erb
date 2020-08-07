@@ -6,6 +6,7 @@
   count ||= total_items
   terms ||= search_terms
   row   ||= 1
+  help  ||= nil
 
   unless modal?
     set_page_title(t('emma.member.index.label', default: title))
@@ -23,7 +24,7 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <div class="member-list">
   <%= applied_terms %>

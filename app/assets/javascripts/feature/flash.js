@@ -227,7 +227,7 @@ function addFlashError(text, type, role, fc) {
  */
 function extractFlashMessage(xhr) {
     var lines = [];
-    var flash_data = xhr.getResponseHeader('X-Flash-Message');
+    var flash_data = xhr && xhr.getResponseHeader('X-Flash-Message');
     if (flash_data) {
         try {
             var messages = JSON.parse(flash_data);

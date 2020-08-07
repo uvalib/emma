@@ -73,9 +73,9 @@ module TestHelper::SystemTests::Show
           else              find(entry_class, match: :first)
         end
       end
-    link  = entry.find('.value.field-Title a')
-    title = link.text
-    link.click(wait: true)
+    link  = entry&.find('.value.field-Title a')
+    title = link&.text || 'NO TITLE'
+    link&.click(wait: true)
     if block_given?
       yield(title)
     else

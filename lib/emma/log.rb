@@ -151,8 +151,8 @@ module Emma::Log
 
   # Translate to the form expected by Logger#add.
   #
-  # @param [Integer, Symbol, String] value
-  # @param [Symbol, nil]             default
+  # @param [Integer, Symbol, String, nil] value
+  # @param [Symbol, nil]                  default
   #
   # @return [Integer]
   #

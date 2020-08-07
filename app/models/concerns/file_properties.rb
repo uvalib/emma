@@ -81,7 +81,8 @@ class FileProperties < Hash
   #
   def initialize(src, complete: false)
     hash_replace(PROPERTY_ENTRIES_TEMPLATE)
-    update!(src) if src.present?
+    hashes = Array.wrap(src).compact
+    update!(*hashes) if hashes.present?
   end
 
   # ===========================================================================
@@ -518,6 +519,9 @@ class FileProperties < Hash
   #
   # @return [Array<(FileProperties,Hash)>]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def self.partition_options(hash)
     hash ||= {}
     prop = hash.slice(*RESERVED_KEYS)

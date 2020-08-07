@@ -306,10 +306,24 @@
     //=========================================================================
 
     > .label {
+
         &.field-Title {
             @media #{$narrow-screen} {
                 @include screen-reader-only;
             }
+        }
+
+        // Field labels with help icons:
+        &.field-RetrievalLink {
+            display:        flex;
+            flex-direction: row;
+            align-items:    center;
+        }
+
+        .help-popup .control.icon {
+            margin-left: 0.375rem;
+            padding:     0.25rem 0.3125rem;
+            font-size:   small;
         }
     }
 

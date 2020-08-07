@@ -14,7 +14,6 @@ class SearchController < ApplicationController
   include PaginationConcern
   include SerializationConcern
   include SearchConcern
-  include IaDownloadConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -38,7 +37,6 @@ class SearchController < ApplicationController
   # ===========================================================================
 
   before_action(only: :show) { @title_id = params[:titleId] || params[:id] }
-  before_action(only: :retrieval) { @url = params[:url] }
 
   # URL parameter aliases for :identifier.
   before_action(only: :index) do
@@ -124,18 +122,6 @@ class SearchController < ApplicationController
   #
   def advanced
     __debug_route
-  end
-
-  # == GET /search/retrieval?url=URL
-  # Retrieve a file from a member repository.
-  #
-  def retrieval
-    __debug_route
-    if ia_link?(@url)
-      render_ia_download(@url)
-    else
-      Log.error { "/search/retrieval can't handle #{@url.inspect}"}
-    end
   end
 
   # == GET /search/api?...

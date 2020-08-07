@@ -591,7 +591,8 @@ module BookshareService::Request::MembershipUserAccounts
     user: @user, agreementType:, dateSigned:, printName:, **opt
   )
     userIdentifier = name_of(user)
-    opt = get_parameters(__method__, **opt).merge!(
+    opt = get_parameters(__method__, **opt)
+    opt&.merge!(
       agreementType: agreementType,
       dateSigned:    dateSigned,
       printName:     printName
@@ -993,8 +994,8 @@ module BookshareService::Request::MembershipUserAccounts
   #
   def create_reading_list(user: @user, name:, access:, **opt)
     userIdentifier = name_of(user)
-    # noinspection RubyNilAnalysis
-    opt = get_parameters(__method__, **opt).merge!(name: name, access: access)
+    opt = get_parameters(__method__, **opt)
+    opt&.merge!(name: name, access: access)
     api(:post, 'accounts', userIdentifier, 'lists', **opt)
     Bs::Message::ReadingList.new(response, error: exception)
   end

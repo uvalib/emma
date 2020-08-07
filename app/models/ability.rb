@@ -102,6 +102,9 @@ class Ability
   # See the wiki for details:
   # @see https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def initialize(user)
     ACTION_ALIAS.each_pair do |actions, action_alias|
       alias_action actions, to: action_alias

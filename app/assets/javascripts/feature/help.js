@@ -8,7 +8,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $help_content = $('body').find('.help-section');
+    var $help_content = $('.help-section');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($help_content)) {
@@ -26,12 +26,7 @@ $(document).on('turbolinks:load', function() {
      * @type {string[]}
      */
     var ILLUSTRATION_ONLY = [
-        '.advanced-search-toggle',
-        '.bookshare-sign-in',
-     // '.menu-label',                // Not a functional element.
-        '.search-button',
-        '.session-link',
-        '.sign-in-button'
+        '.for-help'
     ];
 
     // ========================================================================

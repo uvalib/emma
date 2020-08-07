@@ -65,7 +65,8 @@ module UploadConcern
     #
     # @param [Upload, Hash, String] item
     #
-    # @return [String, nil]
+    # @return [String]                  Record ID (:id).
+    # @return [nil]                     No valid :id specified.
     #
     def db_id(item)
       # noinspection RubyCaseWithoutElseBlockInspection
@@ -81,7 +82,8 @@ module UploadConcern
     #
     # @param [Api::Record, Upload, Hash, String] item
     #
-    # @return [String, nil]
+    # @return [String]                  Repository ID (:rid).
+    # @return [nil]                     No valid :rid specified.
     #
     def repository_id(item)
       if item.is_a?(String)
@@ -98,7 +100,7 @@ module UploadConcern
     # @param [Api::Record, Upload, Hash, String] item
     # @param [String, nil]                       default
     #
-    # @return [String, ActiveSupport::SafeBuffer]
+    # @return [String]
     #
     def make_label(item, default: '(missing)') # TODO: I18n
       # noinspection RubyYardParamTypeMatch
@@ -325,7 +327,8 @@ module UploadConcern
 
   # A string added to the start of each title.
   #
-  # @return [String, FalseClass]
+  # @return [String]                  Value to prepend to title.
+  # @return [FalseClass]              No prefix should be used.
   #
   # @see #set_title_prefix
   #
@@ -338,7 +341,8 @@ module UploadConcern
   #
   # @param [String, Boolean, nil] value
   #
-  # @return [String, FalseClass]
+  # @return [String]                  Value to prepend to title.
+  # @return [FalseClass]              No prefix should be used.
   #
   # @see #TITLE_PREFIX
   #
@@ -379,6 +383,7 @@ module UploadConcern
   # @see #FORCE_DELETE_DEFAULT
   #
   def set_force_delete(value)
+    # noinspection RubyYardReturnMatch
     @force_delete = parameter_setting(value, FORCE_DELETE_DEFAULT)
   end
 
@@ -404,6 +409,7 @@ module UploadConcern
   # @see #DELETE_TRUNCATE_DEFAULT
   #
   def set_delete_truncate(value)
+    # noinspection RubyYardReturnMatch
     @delete_truncate = parameter_setting(value, DELETE_TRUNCATE_DEFAULT)
   end
 
@@ -412,7 +418,8 @@ module UploadConcern
   # If this is disabled, the method returns *false*; otherwise it returns the
   # batch size.
   #
-  # @return [Integer, FalseClass]
+  # @return [Integer]                 Bulk batch size.
+  # @return [FalseClass]              Bulk operations should not be batched.
   #
   # @see #set_bulk_batch
   #
@@ -425,7 +432,8 @@ module UploadConcern
   #
   # @param [Integer, String, Boolean, nil] value
   #
-  # @return [Integer, FalseClass]
+  # @return [Integer]                 Bulk batch size.
+  # @return [FalseClass]              Bulk operations should not be batched.
   #
   # @see #parameter_setting
   # @see #BULK_BATCH_DEFAULT
@@ -532,6 +540,7 @@ module UploadConcern
   # @option data [String] :file_path  Only if *data* is a Hash.
   #
   # @return [Array<(Upload,Array)>]   Record and error messages.
+  # @return [Array<(nil,Array)>]      No record; error message.
   #
   # @see #add_to_index
   #
@@ -543,7 +552,8 @@ module UploadConcern
 
     # Save the Upload record to the database.
     item = db_insert(data)
-    return item, item.errors if item.errors.present?
+    return item, ['Entry not created'] unless item.is_a?(Upload) # TODO: I18n
+    return item, item.errors           if item.errors.present?
 
     # Include the new submission in the index.
     return item, [] unless index
@@ -559,6 +569,7 @@ module UploadConcern
   # @param [Boolean]        index     If *false*, do not update index.
   #
   # @return [Array<(Upload,Array)>]   Record and error messages.
+  # @return [Array<(nil,Array)>]      No record; error message.
   #
   # @see #update_in_index
   #
@@ -570,7 +581,8 @@ module UploadConcern
 
     # Fetch the Upload record and update it in the database.
     item = db_update(id, data)
-    return item, item.errors if item.errors.present?
+    return item, ["Entry #{id} not found"] unless item.is_a?(Upload) # TODO: I18n
+    return item, item.errors               if item.errors.present?
 
     # Update the index with the modified submission.
     return item, [] unless index
@@ -651,7 +663,8 @@ module UploadConcern
   #
   # @param [Upload, Hash, String] item
   #
-  # @return [String, nil]
+  # @return [String]                  Record :id or :rid.
+  # @return [nil]                     No identifier could be determined.
   #
   def identifier(item)
     db_id(item) || repository_id(item)
@@ -807,7 +820,7 @@ module UploadConcern
     meth ||= __method__
     raise "#{meth}: No upload file provided." if path.blank? # TODO: I18n
     record = get_record(record, meth: meth) unless record.is_a?(Upload)
-    record.upload_file(path, meth: meth)
+    record.upload_file(path, meth: meth) if record.present?
   end
 
   # Send the given file to storage
@@ -826,7 +839,7 @@ module UploadConcern
   def remove_file(record, meth: __method__)
     __debug_args("UPLOAD #{__method__}", binding)
     record = get_record(record, meth: meth) unless record.is_a?(Upload)
-    record.delete_file
+    record.delete_file if record.present?
   end
 
   # ===========================================================================
@@ -839,32 +852,30 @@ module UploadConcern
   #
   # @param [Upload, Hash] data
   #
-  # @return [Upload]
+  # @return [Upload]                  The provided or created record.
+  # @return [nil]                     If the record was not created or updated.
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def db_insert(data)
     __debug_args("UPLOAD #{__method__}", binding)
     record = data.is_a?(Upload) ? data : new_record(data)
-    record.save
+    record&.save
+    # noinspection RubyYardReturnMatch
     record
   end
 
   # Modify a single existing Upload database record.
   #
   # @param [Upload, String] record
-  # @param [Hash]           data
+  # @param [Hash, nil]      data
   #
-  # @return [Upload]
+  # @return [Upload]                  The provided or located record.
+  # @return [nil]                     If the record was not found or updated.
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
   def db_update(record, data)
     __debug_args("UPLOAD #{__method__}", binding)
     record = get_record(record) unless record.is_a?(Upload)
-    record.update(data)
+    record&.update(data)
+    # noinspection RubyYardReturnMatch
     record
   end
 
@@ -872,13 +883,13 @@ module UploadConcern
   #
   # @param [Upload, String] record
   #
-  # @return [nil]                     Not destroyed.
+  # @return [nil]                     If the record was not found or removed.
   # @return [*]
   #
   def db_delete(record)
     __debug_args("UPLOAD #{__method__}", binding)
     record = get_record(record) unless record.is_a?(Upload)
-    record.destroy
+    record&.destroy
   end
 
   # ===========================================================================

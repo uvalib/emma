@@ -319,6 +319,7 @@ module IngestService::Request::Records
   # @param [String, nil] value
   #
   def allowed_repository_id?(value)
+    # noinspection RubyNilAnalysis
     value.nil? || (value.present? && !value.match?(/^\d+$/))
   end
 
@@ -328,6 +329,7 @@ module IngestService::Request::Records
   #
   def allowed_record_id?(value)
     return true if value.nil?
+    # noinspection RubyNilAnalysis
     repo, rid, fmt = value.split('-')
     repo.present? && rid.present? && !rid.match?(/^\d+$/) && fmt.present?
   end

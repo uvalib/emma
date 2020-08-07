@@ -24,11 +24,10 @@ Rails.application.routes.draw do
   # EMMA Unified Search operations
   # ===========================================================================
 
-  get '/search/advanced',  to: 'search#advanced',  as: 'advanced_search'
-  get '/search/api',       to: 'search#direct'
-  get '/search/direct',    to: 'search#direct'
-  get '/search/example',   to: 'search#example'
-  get '/search/retrieval', to: 'search#retrieval', as: 'retrieval'
+  get '/search/advanced', to: 'search#advanced', as: 'advanced_search'
+  get '/search/api',      to: 'search#direct'
+  get '/search/direct',   to: 'search#direct'
+  get '/search/example',  to: 'search#example'
 
   resources :search, only: %i[index show]
 
@@ -69,7 +68,8 @@ Rails.application.routes.draw do
   # File download operations
   # ===========================================================================
 
-  get '/download/:id', to: 'upload#download', as: 'file_download'
+  get '/download/:id', to: 'upload#download',  as: 'file_download'
+  get '/retrieval',    to: 'upload#retrieval', as: 'retrieval'
 
   # ===========================================================================
   # Category operations

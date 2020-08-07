@@ -81,6 +81,7 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
+    # noinspection RubyYardParamTypeMatch
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -122,6 +123,7 @@ class Api::Serializer < ::Representable::Decorator
       else             abort "#{__method__}: subclass must supply method"
     end
   rescue => error
+    # noinspection RubyYardParamTypeMatch
     __debug_exception("#{self.class} #{__method__}", error)
   ensure
     if log_timing
@@ -143,7 +145,7 @@ class Api::Serializer < ::Representable::Decorator
   # If *data* is a String, it is assumed that it is already in the form
   # required by the derived serializer class.
   #
-  # @param [String, Hash] data
+  # @param [String, ::Hash] data
   #
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.

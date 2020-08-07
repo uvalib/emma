@@ -73,8 +73,8 @@ class ApplicationController < ActionController::Base
 
   # The current layout template.
   #
-  # @return [String]
-  # @return [FalseClass]              If `request_xhr?`
+  # @return [String]                  Basename of views/layouts/* template.
+  # @return [FalseClass]              If this is an XHR request.
   #
   def current_layout
     if request_xhr?

@@ -6,21 +6,23 @@
   row   ||= 0
   force ||= force_delete
 
-  toggle = classes = nil
+  toggle = panel_id = panel_css = nil
   if item.is_a?(Upload)
-    heading = "Selected item #{item.id} record details:" # TODO: I18n
-    classes = "selected-details row-#{row}"
-    toggle  = toggle_button(selector: ".#{classes.tr(' ', '.')}")
+    heading   = "Selected item #{item.id} record details:" # TODO: I18n
+    panel_css = 'selected-details'
+    panel_id  = css_randomize(panel_css)
+    toggle    = toggle_button(id: panel_id)
+    panel_css = "#{panel_css} row-#{row}"
   elsif !force
-    name    = html_span(item, class: 'item')
-    heading = "Item #{name} is not in the database".html_safe # TODO: I18n
+    name      = html_span(item, class: 'item')
+    heading   = "Item #{name} is not in the database".html_safe # TODO: I18n
   elsif item.include?('-')
-    name    = html_span(item, class: 'item')
-    heading = "Removing index entry #{name}".html_safe # TODO: I18n
+    name      = html_span(item, class: 'item')
+    heading   = "Removing index entry #{name}".html_safe # TODO: I18n
   else
-    repo  ||= EmmaRepository.default
-    name    = html_span("#{repo}-#{item}-*", class: 'item')
-    heading = "No index entries match #{name}".html_safe # TODO: I18n
+    repo    ||= EmmaRepository.default
+    name      = html_span("#{repo}-#{item}-*", class: 'item')
+    heading   = "No index entries match #{name}".html_safe # TODO: I18n
   end
 
 -%>
@@ -33,7 +35,7 @@
   </div>
 
   <%- if toggle -%>
-    <div class="<%= classes -%>">
+    <div id="<%= panel_id -%>" class="<%= panel_css -%>">
       <%= render 'upload/entry', item: item, skip: :number %>
     </div>
   <%- end -%>

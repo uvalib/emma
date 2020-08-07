@@ -2,8 +2,38 @@
 <%-
   # EMMA upload help page.
 
-  signed_in = link_to('signed in', '/help#sign_in_help')
+  signed_in       = help_jump('signed in', :sign_in)
+  delta           = UploadHelper::UPLOAD_ICONS.dig(:edit, :icon)
+  delta           = html_span(delta, 'aria-label': 'triangle')
+  x               = UploadHelper::UPLOAD_ICONS.dig(:delete, :icon)
+  x               = html_span(x, 'aria-label': 'X')
+  edit_tip        = UploadHelper::UPLOAD_ICONS.dig(:edit, :tip)
+  delete_tip      = UploadHelper::UPLOAD_ICONS.dig(:delete, :tip)
+  upload_actions  = help_image(:upload_actions)
+  panel_opener    = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener    = help_span(panel_opener, class: 'toggle')
 
+  create_config   = UploadHelper::UPLOAD_ACTION_VALUES[:new]
+  create_select   = create_config.dig(:select, :enabled, :label)
+  create_select   = help_span(create_select, class: 'uppy-FileInput-btn')
+  create_submit   = create_config.dig(:submit, :enabled, :label)
+  create_submit   = help_span(create_submit, class: 'uppy-FileInput-btn')
+  create_cancel   = create_config.dig(:cancel, :enabled, :label)
+  create_cancel   = help_span(create_cancel, class: 'uppy-FileInput-btn')
+
+  edit_config     = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
+  edit_select     = edit_config.dig(:select, :enabled, :label)
+  edit_select     = help_span(edit_select, class: 'uppy-FileInput-btn')
+  edit_submit     = edit_config.dig(:submit, :enabled, :label)
+  edit_submit     = help_span(edit_submit, class: 'uppy-FileInput-btn')
+  edit_cancel     = edit_config.dig(:cancel, :enabled, :label)
+  edit_cancel     = help_span(edit_cancel, class: 'uppy-FileInput-btn')
+
+  delete_config   = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
+  delete_submit   = delete_config.dig(:submit, :enabled, :label)
+  delete_submit   = help_span(delete_submit, class: 'uppy-FileInput-btn')
+  delete_cancel   = delete_config.dig(:cancel, :enabled, :label)
+  delete_cancel   = help_span(delete_cancel, class: 'uppy-FileInput-btn')
 -%>
 
 <p>
@@ -15,79 +45,335 @@
   <p id="upload_help_nav">Topics in this section:</p>
   <ul>
     <li>
-      <a href="#upload_new_submission_help">Submitting a new item</a>
+      <a href="#upload_overview_help">OVERVIEW</a>
     </li>
     <li>
-      <a href="#upload_edit_submission_help">Correcting a submission</a>
+      <a href="#upload_new_help">Submitting a new item to EMMA</a>
     </li>
     <li>
-      <a href="#upload_destroy_submission_help">Cancelling a submission</a>
+      <a href="#upload_edit_help">Updating an existing EMMA entry</a>
     </li>
     <li>
-      <a href="#upload_edit_entry_help">Updating an existing entry</a>
-    </li>
-    <li>
-      <a href="#upload_destroy_entry_help">Deleting an existing entry</a>
+      <a href="#upload_delete_help">Removing an existing EMMA entry</a>
     </li>
   </ul>
 </nav>
 
-<section role="region" aria-labelledby="upload_new_submission_help">
+<section role="region" aria-labelledby="upload_overview_help">
 
-  <h3 class="section" id="upload_new_submission_help">
-    Submitting a new item
+  <h2 class="section" id="upload_overview_help">
+    OVERVIEW
+  </h2>
+
+  <p>
+    All of EMMA’s functionality related to working with submissions is
+    available after selecting Uploads from the navigation menu.
+    The Uploads main page displays all of the files that have been previously
+    uploaded to EMMA under your account.
+  </p>
+
+  <h3 class="sub-section" id="upload_actions_menu_help">
+    Upload Actions menu
   </h3>
 
   <p>
-    TODO
+    The available functions are displayed at the top of each Uploads page as a
+    set of buttons:
+    <%= upload_actions %>
+  </p>
+
+  <div class="choices">
+    <div class="label"><a href="#upload_new_help">Create</a></div>
+    <div class="value">Submit a new item</div>
+    <div class="label"><a href="#upload_edit_help">Change</a></div>
+    <div class="value">Modify an existing item</div>
+    <div class="label"><a href="#upload_delete_help">Remove</a></div>
+    <div class="value">Remove an existing item</div>
+  </div>
+
+  <p>
+    When you have completed remediation of a file and wish to share it with the
+    EMMA community, this can be done by clicking the
+    <strong>Create</strong> button.
+    EMMA requires that you provide both the book’s content
+    (a single file or multiple files contained within a single *.zip file)
+    and metadata about the book that will benefit other EMMA users in
+    determining if this volume will match their needs.
+  </p>
+
+  <h3 class="sub-section" id="upload_actions_menu_help">
+    Upload Actions short-cuts
+  </h3>
+
+  <p>
+    Each item listed on the Uploads page is associated with controls to manage
+    that item (to the left of the item details on desktop displays;
+    at the top of the screen on mobile displays):
+  </p>
+
+  <div class="choices">
+    <div class="label"><%= delta -%></div>
+    <div class="value">“<%= edit_tip -%>”</div>
+    <div class="label"><%= x -%></div>
+    <div class="value">“<%= delete_tip -%>”</div>
+  </div>
+
+  <p>
+    Clicking on <%= delta -%> will redirect your browser to a new screen that
+    will allow you to modify the associated entry.
+  </p>
+
+  <p>
+    Clicking on <%= x -%> will redirect your browser to a new screen that will
+    prompt you to delete the associated entry.
   </p>
 
 </section>
 
-<section role="region" aria-labelledby="upload_edit_submission_help">
+<section role="region" aria-labelledby="upload_new_help">
 
-  <h3 class="section" id="upload_edit_submission_help">
-    Correcting a submission
+  <h2 class="section" id="upload_new_help">
+    Submitting a new item to EMMA
+  </h2>
+
+  <p>
+    EMMA requires that you provide both the book’s content
+    (a single file or multiple files contained within a single *.zip file)
+    and metadata about the book that will benefit other EMMA users in
+    determining if this volume will match their needs.
+  </p>
+
+  <h3 class="sub-section" id="upload_new_prepare_help">
+    Step 1: Prepare a file for upload
   </h3>
 
   <p>
-    TODO
+    Currently remediated content must be submitted as a single file.
+    If your content is comprised of multiple individual files, you will need
+    to combine them into a single ZIP archive in order to submit them as a
+    single EMMA entry.
+  </p>
+
+  <h3 class="sub-section" id="upload_new_select_help">
+    Step 2: Select a file to upload
+  </h3>
+
+  <p>
+    Press the
+    <%= create_select -%>
+    button to open your browser's file dialog.
+    Navigate to find the file on your workstation, and select it to begin the
+    provisional upload of the file.
+  </p>
+
+  <p>
+    As this is occurring, an orange progress bar will appear just above the
+    buttons.
+    When file processed successfully, EMMA will display the file name.
+  </p>
+
+  <p>
+    (If the progress bar completes but no file name is listed,
+    then a problem encountered in processing the file.
+    You may wish to contact <%= contact_email -%>.)
+  </p>
+
+  <p>
+    This step gives EMMA an opportunity to verify the integrity of the file.
+    For certain file formats, metadata may be discovered that will be used to
+    "pre-populate" the submission form.
+  </p>
+
+  <h3 class="sub-section" id="upload_new_metadata_help">
+    Step 3: Provide metadata
+  </h3>
+
+  <p>
+    In order to make your remediation efforts findable in EMMA, information
+    must be supplied to identify the source material and the nature of the
+    file being uploaded.
+    These include:
+  </p>
+
+  <ul>
+    <li>Bibliographic metadata, such as Title, Creator (Author), Language,
+      Format, and Type.
+    </li>
+    <li>Remediation data, which will help other EMMA users know whether the
+      entire volume was remediated, specify which chapters were remediated,
+      and/or indicate whether the volume was born accessible.
+    </li>
+    <li>Source Repository, where you will indicate the source of the original
+      file that was remediated.
+      This may include the EMMA repository itself, one of the partner
+      repositories (HathiTrust, Bookshare, or Internet Archive), or one of the
+      other choices in the dropdown list.
+    </li>
+  </ul>
+
+  <section role="region" aria-labelledby="upload_metadata_filters_help">
+
+    <h3 class="sub-section" id="upload_metadata_filters_help">
+      Metadata field filters
+    </h3>
+
+    <p>
+      EMMA defines a significant number of metadata fields, so there are three
+      radio buttons to provide different views of the data entered so far:
+    </p>
+
+    <%# ------------------------------------------------------------------- -%>
+
+    <h4 class="sub-section" id="upload_new_all_fields_help">
+      All Fields
+    </h4>
+
+    <p>
+      The initial selection is unfiltered, showing form fields for all of the
+      metadata types defined by EMMA.
+    </p>
+
+    <%# ------------------------------------------------------------------- -%>
+
+    <h4 class="sub-section" id="upload_new_data_fields_help">
+      Fields with data
+    </h4>
+
+    <p>
+      Select this option to see only the fields that have been filled, either
+      with data extracted from the file, or with values that have been entered
+      manually.
+    </p>
+
+    <p>
+      This filter option also shows required fields that have not been
+      supplied.
+    </p>
+
+    <%# --------------------------------------------------------------------- -%>
+
+    <h4 class="sub-section" id="upload_new_invalid_fields_help">
+      Invalid Fields
+    </h4>
+
+    <p>
+      Select this option to see only required fields that have not been
+      supplied and/or optional fields which do not have acceptable values.
+    </p>
+
+    <p>
+      If this filter option shows no fields, then the entry should be ready to
+      be submitted.
+    </p>
+
+  </section>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h3 class="sub-section" id="upload_new_submit_help">
+    Step 4: Complete the submission
+  </h3>
+
+  <p>
+    When all required fields have been supplied, and all fields with data are
+    valid, then the
+    <%= create_submit -%>
+    button will be enabled.
+    Press it to complete the submission.
+  </p>
+
+  <p>
+    If you decide that you do not want to submit the item, you may click
+    <%= create_cancel -%>
+    (which will attempt to return you to the previous page),
+    or simply go to any other page in EMMA.
   </p>
 
 </section>
 
-<section role="region" aria-labelledby="upload_destroy_submission_help">
+<section role="region" aria-labelledby="upload_edit_help">
 
-  <h3 class="section" id="upload_destroy_submission_help">
-    Cancelling a submission
-  </h3>
+  <h2 class="section" id="upload_edit_help">
+    Updating an existing EMMA entry
+  </h2>
 
   <p>
-    TODO
+    If you arrive at this page through the Upload Actions
+    <strong>Change</strong> button,
+    you will be presented with a drop-down list of your previous submissions.
+    Select the desired entry from the list to proceed.
+  </p>
+
+  <p>
+    The form for modifying an existing entry is very similar to the form for
+    creating a new entry, except that the initial field filter is
+    "Fields with data".
+  </p>
+
+  <p>
+    You may modify metadata associated with your submission by reviewing and
+    modifying the metadata fields
+    (refer to
+    "<a href="#upload_new_help">Submitting a new item to EMMA</a>"
+    above for a description of how the fields are organized).
+  </p>
+
+  <p>
+    You may also replace the file that was originally submitted with a new
+    file.
+    To do this, select the
+    <%= edit_select -%>
+    button.
+    Refer to
+    "<a href="upload_new_select_help">Select a file to upload</a>"
+    above for a description of the remainder of this process.
+  </p>
+
+  <p>
+    When the changes have been validated, the
+    <%= edit_submit -%>
+    button will be enabled.
+  </p>
+
+  <p>
+    If you decide that you do not want to commit to the changes, you may click
+    <%= edit_cancel -%>
+    (which will attempt to return you to the previous page),
+    or simply go to any other page in EMMA.
   </p>
 
 </section>
 
-<section role="region" aria-labelledby="upload_edit_entry_help">
+<section role="region" aria-labelledby="upload_delete_help">
 
-  <h3 class="section" id="upload_edit_entry_help">
-    Updating an existing entry
-  </h3>
+  <h2 class="section" id="upload_delete_help">
+    Removing an existing EMMA entry
+  </h2>
 
   <p>
-    TODO
+    If you arrive at this page through the Upload Actions
+    <strong>Remove</strong> button,
+    you will be presented with a drop-down list of your previous submissions.
+    Select the desired entry from the list to proceed.
   </p>
 
-</section>
-
-<section role="region" aria-labelledby="upload_destroy_entry_help">
-
-  <h3 class="section" id="upload_destroy_entry_help">
-    Deleting an existing entry
-  </h3>
+  <p>
+    To verify that this is really the item you want to delete, you may click on
+    <%= panel_opener -%> to display the item's metadata.
+  </p>
 
   <p>
-    TODO
+    If you decide that you do not want to delete the item, you may click
+    <%= delete_cancel -%>
+    (which will attempt to return you to the previous page),
+    or simply go to any other page in EMMA.
+  </p>
+
+  <p>
+    If you are certain that you want to delete the item, then click
+    <%= delete_submit -%>.
+    This will removes the remediated content file and the associated entry from
+    the EMMA Unified Index.
   </p>
 
 </section>

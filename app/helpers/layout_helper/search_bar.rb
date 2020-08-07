@@ -18,6 +18,18 @@ module LayoutHelper::SearchBar
 
   public
 
+  # The icon used within the search bar to clear the current search.
+  #
+  # @type [String]
+  #
+  CLEAR_SEARCH_ICON = HEAVY_X
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Indicate whether it is appropriate to show the search bar.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
@@ -39,7 +51,7 @@ module LayoutHelper::SearchBar
   # @param [Hash] opt                 Passed to #select_tag except for:
   #                                     #MENU_OPTS
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML input element.
   # @return [nil]                       If search is not available for *type*.
   #
   def search_input_select(**opt)
@@ -63,14 +75,16 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #search_form.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML input element.
   # @return [nil]                       If search is not available for *type*.
   #
   def search_input_bar(id: nil, type: nil, **opt)
-    type ||= search_input_target or return
+    type ||= search_input_target
     id   ||= search_input_field(type)
+    return unless id && type
     skip_nav_append(search_bar_label(type) => id)
     opt = prepend_css_classes(opt, 'search-input-bar')
+    # noinspection RubyYardParamTypeMatch
     search_form(id, type, **opt) do
       search_input(id, type) + search_button(type)
     end
@@ -81,8 +95,8 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
   #
   def search_bar_label(type, **opt)
     type ||= search_input_target or return
@@ -94,8 +108,8 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [Symbol]
-  # @return [nil]
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
   #
   def search_input_field(type = nil, **opt)
     # noinspection RubyYardReturnMatch
@@ -107,8 +121,8 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
   #
   def search_input_label(type = nil, **opt)
     # noinspection RubyYardReturnMatch
@@ -120,8 +134,8 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
   #
   def search_input_placeholder(type = nil, **opt)
     # noinspection RubyYardReturnMatch
@@ -160,7 +174,11 @@ module LayoutHelper::SearchBar
 
   extend I18nHelper
 
+  # A table of controllers and whether their pages should show search input in
+  # the page heading.
+  #
   # @type [Hash{Symbol=>Boolean}]
+  #
   SEARCH_INPUT_ENABLED =
     SEARCH_MENU_MAP.keys.map { |type|
       enabled = i18n_lookup(type, 'search_bar.enabled', mode: false)
@@ -192,7 +210,7 @@ module LayoutHelper::SearchBar
   def search_input(id, type, value: nil, **opt)
     type ||= search_input_target
     id   ||= search_input_field(type)
-    id   &&= id.to_sym
+    id     = id&.to_sym
     label_id = "#{id}-label"
 
     # Screen-reader-only label element.
@@ -236,8 +254,8 @@ module LayoutHelper::SearchBar
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
   # @param [Hash]                opt    Passed to #i18n_lookup.
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                    The specified value.
+  # @return [nil]                       No non-empty value was found.
   #
   def search_button_label(type, **opt)
     type ||= search_input_target
@@ -256,7 +274,7 @@ module LayoutHelper::SearchBar
     opt = prepend_css_classes(opt, 'search-clear')
     opt[:role]  ||= 'button'
     opt[:title] ||= 'Clear search terms' # TODO: I18n
-    link_to(HEAVY_X, '#', opt)
+    link_to(CLEAR_SEARCH_ICON, '#', opt)
   end
 
 end

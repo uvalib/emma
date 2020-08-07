@@ -62,7 +62,7 @@ class Api::Record
       initialize_attributes
     elsif src.is_a?(Api::Record)
       initialize_attributes(src)
-    elsif (data = src.is_a?(Faraday::Response) ? src.body : src).present?
+    elsif (data = src.is_a?(Faraday::Response) ? src&.body : src).present?
       @serializer_type ||= self.format_of(data) || DEFAULT_SERIALIZER_TYPE
       wrap = wrap[@serializer_type] if wrap.is_a?(Hash)
       data = wrap_outer(data: data, template: wrap) if wrap
@@ -297,6 +297,9 @@ class Api::Record
   # (This is useful where you want fields that were not initialized with data
   # to return *nil*.)
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def initialize_attributes(data = nil)
     data = data.fields if data.is_a?(Api::Record)
     data = data.symbolize_keys.slice(*default_data.keys) if data.is_a?(Hash)
@@ -318,6 +321,7 @@ class Api::Record
   # @return [Hash, String]            Same type as *data*.
   #
   def wrap_outer(data:, fmt: nil, name: nil, template: nil)
+    # noinspection RubyNilAnalysis
     name ||= self.class.name.demodulize.camelcase(:lower)
     return { name => data } if data.is_a?(Hash)
     template = nil unless template.is_a?(String)

@@ -21,6 +21,7 @@ module SearchHelper
   include PaginationHelper
   include RepositoryHelper
   include UploadHelper
+  include PopupHelper
 
   # ===========================================================================
   # :section:
@@ -86,7 +87,8 @@ module SearchHelper
   # @param [Search::Api::Record] item
   # @param [Object]              value
   #
-  # @return [Object]
+  # @return [Object]  HTML or scalar value.
+  # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
@@ -163,7 +165,7 @@ module SearchHelper
   #++
   def source_record_link(item, **opt)
     url  = item.record_title_url
-    repo = bs_link?(url) ? :bookshare : item.emma_repository.presence&.to_sym
+    repo = url_repository(url) || item.emma_repository.presence&.to_sym
     if repo == EmmaRepository.default
       record_popup(item, **opt)
     elsif url.present?
@@ -185,8 +187,8 @@ module SearchHelper
   # @option opt [String] :label         Link text (default: the URL).
   # @option opt [String] :url           Overrides `item.record_download_url`.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer] HTML link element.
+  # @return [nil]                       If no *url* was provided or found.
   #
   # @see #bs_link?
   #
@@ -204,12 +206,12 @@ module SearchHelper
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
     permitted = can?(:download, Artifact)
-    append_css_classes!(html_opt, 'sign-in-required disabled') unless permitted
+    append_css_classes!(html_opt, 'sign-in-required') unless permitted
 
     # To account for the handful of "EMMA" items that are actually Bookshare
     # items from the "EMMA collection", change the reported repository based on
     # the nature of the URL.
-    repo = bs_link?(url) ? :bookshare : item.emma_repository.presence&.to_sym
+    repo = url_repository(url) || item.emma_repository.presence&.to_sym
 
     # Set up the tooltip to be shown before the item has been requested.
     html_opt[:title] ||=
@@ -251,7 +253,7 @@ module SearchHelper
   # @param [Search::Api::Record] item
   # @param [Hash]                opt    Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def search_item_details(item, opt = nil)
@@ -266,6 +268,7 @@ module SearchHelper
   # @param [Hash]                opt    Passed to #popup_container except for:
   #
   # @option opt [Hash] :attr            Options for deferred content.
+  # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
@@ -273,20 +276,22 @@ module SearchHelper
   # noinspection RubyResolve
   #++
   def record_popup(item, **opt)
-    rid = item.emma_repositoryRecordId
-    opt = append_css_classes(opt, 'record-popup')
-    placeholder_attr = opt.delete(:attr)&.dup || {}
-    opt[:'data-iframe'] = placeholder_attr[:id] ||= "record-frame-#{rid}"
-    opt[:title] ||= 'View this repository record.' # TODO: I18n
-    opt[:control] = { text: ERB::Util.h(rid) }
+    opt    = append_css_classes(opt, 'record-popup')
+    ph_opt = opt.delete(:placeholder)
+    attr   = opt.delete(:attr)&.dup || {}
+    rid    = item.emma_repositoryRecordId
+    id     = opt[:'data-iframe'] || attr[:id] || "record-frame-#{rid}"
+
+    opt[:'data-iframe'] = attr[:id] = id
+    opt[:title]   ||= 'View this repository record.' # TODO: I18n
+    opt[:control] ||= { text: ERB::Util.h(rid) }
+
     popup_container(**opt) do
-      placeholder_text = 'Loading record...' # TODO: I18n
-      placeholder_opt  = {
-        class:       "iframe #{PopupHelper::POPUP_DEFERRED_CLASS}",
-        'data-path': show_upload_path(id: rid, modal: true),
-        'data-attr': placeholder_attr.to_json
-      }
-      html_div(placeholder_text, **placeholder_opt)
+      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
+      ph_opt[:'data-path'] = show_upload_path(id: rid, modal: true)
+      ph_opt[:'data-attr'] = attr.to_json
+      html_div(ph_txt, **ph_opt)
     end
   end
 

@@ -135,7 +135,7 @@ module PaginationHelper
 
   # Get the path to the first page of results.
   #
-  # @return [String]
+  # @return [String]                  URL for the first page of results.
   # @return [nil]                     If @first_page is unset.
   #
   def first_page
@@ -146,7 +146,7 @@ module PaginationHelper
   #
   # @param [String, Symbol] value
   #
-  # @return [String]
+  # @return [String]                  New URL for the first page of results.
   # @return [nil]                     If @first_page is unset.
   #
   def first_page=(value)
@@ -155,7 +155,7 @@ module PaginationHelper
 
   # Get the path to the last page of results.
   #
-  # @return [String]
+  # @return [String]                  URL for the last page of results.
   # @return [nil]                     If @last_page is unset.
   #
   def last_page
@@ -166,7 +166,7 @@ module PaginationHelper
   #
   # @param [String, Symbol] value
   #
-  # @return [String]
+  # @return [String]                  New URL for the last page of results.
   # @return [nil]                     If @last_page is unset.
   #
   def last_page=(value)
@@ -175,7 +175,7 @@ module PaginationHelper
 
   # Get the path to the next page of results
   #
-  # @return [String]
+  # @return [String]                  URL for the next page of results.
   # @return [nil]                     If @next_page is unset.
   #
   def next_page
@@ -186,7 +186,7 @@ module PaginationHelper
   #
   # @param [String, Symbol] value
   #
-  # @return [String]
+  # @return [String]                  New URL for the next page of results.
   # @return [nil]                     If @next_page is unset.
   #
   def next_page=(value)
@@ -195,7 +195,7 @@ module PaginationHelper
 
   # Get the path to the previous page of results.
   #
-  # @return [String]
+  # @return [String]                  URL for the previous page of results.
   # @return [nil]                     If @prev_page is unset.
   #
   def prev_page
@@ -206,7 +206,7 @@ module PaginationHelper
   #
   # @param [String, Symbol] value
   #
-  # @return [String]
+  # @return [String]                  New URL for the previous page of results.
   # @return [nil]                     If @prev_page is unset.
   #
   def prev_page=(value)
@@ -231,7 +231,7 @@ module PaginationHelper
     @page_offset = value.to_i
   end
 
-  # Get the current page of results.
+  # Get the current page of result items.
   #
   # @return [Array]
   #
@@ -239,7 +239,7 @@ module PaginationHelper
     @page_items ||= []
   end
 
-  # Set the current page of results.
+  # Set the current page of result items.
   #
   # @param [Array] values
   #
@@ -278,7 +278,7 @@ module PaginationHelper
   # @param [String, Symbol] value     One of [:back, :forward, :go].
   # @param [Integer, nil]   page      Passed to #page_history for *action* :go.
   #
-  # @return [String]
+  # @return [String]                  A value usable with 'href'.
   # @return [nil]                     If *value* is invalid.
   #
   def page_path(value, page = nil)
@@ -305,18 +305,19 @@ module PaginationHelper
 
   # Page count display.
   #
-  # @param [Integer] count
-  # @param [Hash]    opt              Options to .search-count wrapper element.
+  # @param [Integer]   count
+  # @param [Hash, nil] opt            Options to .search-count wrapper element.
   #
   # @option opt [Symbol] :controller
   # @option opt [Symbol] :action
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def pagination_count(count, **opt)
+  def pagination_count(count, opt = nil)
     opt   = prepend_css_classes(opt, 'search-count')
     found = get_page_count_label(count: count)
     count = number_with_delimiter(count)
+    # noinspection RubyYardParamTypeMatch
     html_div("#{count} #{found}", opt)
   end
 
@@ -362,8 +363,8 @@ module PaginationHelper
   # @option opt [Symbol]  :controller
   # @option opt [Integer] :count
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  The specified value.
+  # @return [nil]                     No non-empty value was found.
   #
   def get_page_count_label(**opt)
     controller = opt[:controller] || request_parameters[:controller]
@@ -383,7 +384,7 @@ module PaginationHelper
     link = path.present?
     if label.is_a?(Hash)
       prop  = label
-      label = prop[:label]
+      label = prop[:label] || '(missing)'
       tip   = link ? prop[:tooltip] : prop.dig(:no_link, :tooltip)
       opt[:title] = tip if tip.present?
     end

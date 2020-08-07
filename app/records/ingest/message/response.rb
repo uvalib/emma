@@ -72,8 +72,7 @@ class Ingest::Message::Response < Ingest::Api::Message
   # @return [Hash{Integer=>String}]
   #
   def make_error_table(entries = nil)
-    entries = entries ? Array.wrap(entries) : messages
-    entries.map { |entry|
+    Array.wrap(entries || messages).map { |entry|
       identifier, message = entry.split(' - ', 2)
       [identifier, message] if message.present?
     }.compact.to_h

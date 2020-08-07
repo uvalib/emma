@@ -42,7 +42,7 @@ module RepositoryHelper
   # @param [String] url
   #
   def emma_link?(url)
-    url.to_s.match?(%r{^https?://emma[^/]*\.virginia\.edu/})
+    url.to_s.strip.match?(%r{^https?://emma[^/]*\.virginia\.edu/})
   end
 
   # Indicate whether the given URL is a Bookshare link.
@@ -55,7 +55,7 @@ module RepositoryHelper
   # from the "EMMA Collection".
   #
   def bs_link?(url)
-    url.to_s.match?(%r{^https?://([^/]+\.)?bookshare\.org/})
+    url.to_s.strip.match?(%r{^https?://([^/]+\.)?bookshare\.org/})
   end
 
   # Indicate whether the given URL is an Internet Archive link.
@@ -63,7 +63,7 @@ module RepositoryHelper
   # @param [String] url
   #
   def ht_link?(url)
-    url.to_s.match?(%r{^https?://([^/]+\.)?handle\.net/})
+    url.to_s.strip.match?(%r{^https?://([^/]+\.)?handle\.net/})
   end
 
   # Indicate whether the given URL is an Internet Archive link.
@@ -71,7 +71,22 @@ module RepositoryHelper
   # @param [String] url
   #
   def ia_link?(url)
-    url.to_s.match?(%r{^https?://([^/]+\.)?archive\.org/})
+    url.to_s.strip.match?(%r{^https?://([^/]+\.)?archive\.org/})
+  end
+
+  # Report the member repository associated with the given URL.
+  #
+  # @param [String] url
+  #
+  # @return [Symbol]                  One of `EmmaRepository#values`.
+  # @return [nil]                     If not associated with any repository.
+  #
+  def url_repository(url)
+    return if url.blank?
+    (:emma            if emma_link?(url)) ||
+    (:bookshare       if bs_link?(url))   ||
+    (:hathiTrust      if ht_link?(url))   ||
+    (:internetArchive if ia_link?(url))
   end
 
   # ===========================================================================

@@ -164,6 +164,7 @@ class Api::Error < RuntimeError
   def self.default_message(allow_nil: false, source: nil)
     type = self.class.to_s
     source ||= type.sub(/::.*$/, '').underscore.presence
+    # noinspection RubyNilAnalysis
     type = type.demodulize.underscore.sub(/_?error$/, '').presence
     keys = []
     keys << :"emma.error.#{source}.#{type}"       if source && type

@@ -55,13 +55,13 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Translate hash keys/values into SQL conditions.
   #
-  # @param [Array<Hash,String>] terms
-  # @param [String, Symbol]     connector   Either :or or :and; default: :and.
-  # @param [String, Symbol]     join        Alias for :connector.
-  # @param [Hash]               other       Additional terms.
+  # @param [Array<Hash,String>]  terms
+  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and.
+  # @param [String, Symbol, nil] join       Alias for :connector.
+  # @param [Hash]                other      Additional terms.
   #
-  # @return [String]
-  # @return [Array]                         If *connector* is set to *nil*.
+  # @return [String]  SQL expression.
+  # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
   # == Examples
   # @example Single term - Hash
@@ -89,11 +89,11 @@ class ApplicationRecord < ActiveRecord::Base
   # Translate hash keys/values into SQL conditions.
   #
   # @param [Hash]           hash
-  # @param [String, Symbol] connector   Either :or or :and; default: :and.
-  # @param [String, Symbol] join        Alias for :connector.
+  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and.
+  # @param [String, Symbol, nil] join       Alias for :connector.
   #
-  # @return [String]
-  # @return [Array]                     If *connector* is set to *nil*.
+  # @return [String]  SQL expression.
+  # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
   # == Examples
   #

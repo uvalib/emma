@@ -167,7 +167,7 @@ module Emma::Debug
   #
   def __debug_items(*args, &block)
     opt = args.extract_options!
-    items = block ? __debug_inspect_items(opt, &block) : []
+    items = block ? __debug_inspect_items(*[opt], &block) : []
     __debug(*args, *items, opt)
   end
 
@@ -179,12 +179,13 @@ module Emma::Debug
 
   # Representation of the calling method.
   #
-  # @param [String, Symbol, Binding] caller_class   Default: `self.class.name`.
-  # @param [String, Symbol, nil]     caller_method  Default: `#calling_method`.
+  # @param [String, Symbol, Binding, nil] caller_class   Def: `self.class.name`
+  # @param [String, Symbol, Method,  nil] caller_method  Def: `#calling_method`
   #
   # @return [String]
   #
   def __debug_label(caller_class: nil, caller_method: nil)
+    # noinspection RubyNilAnalysis
     caller_method = caller_method.name if caller_method.is_a?(Method)
     if caller_class.is_a?(Binding)
       caller_method ||= caller_class.eval('__method__')
@@ -197,8 +198,8 @@ module Emma::Debug
 
   # Representation of the controller/action for a route.
   #
-  # @param [String, Symbol] controller  Default: `self.class.name`.
-  # @param [String, Symbol] action      Default: `#calling_method`.
+  # @param [String, Symbol, nil] controller   Default: `self.class.name`.
+  # @param [String, Symbol, nil] action       Default: `#calling_method`.
   #
   # @return [String]
   #
@@ -207,6 +208,7 @@ module Emma::Debug
     controller ||= self.class.name || params[:controller]
     controller =
       controller.to_s.underscore.split('_').tap { |parts|
+        # noinspection RubyNilAnalysis
         parts.pop if !controller.include?('_') && (parts.size > 1)
       }.map!(&:upcase).join('_')
     __debug_label(caller_class: controller, caller_method: action)

@@ -2,7 +2,10 @@
 <%-
   # API method call test page.
 
-  title ||= t('emma.api.index.title')
+  title   ||= t('emma.api.index.title')
+  # noinspection RubyNilAnalysis
+  methods ||= BookshareService.api_methods.keys.sort
+  help    ||= nil
 
   unless modal?
     set_page_title(title)
@@ -12,10 +15,10 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <div id="methods" class="methods">
-  <%- BookshareService.api_methods.keys.sort.each do |method| -%>
+  <%- methods.each do |method| -%>
     <%- if (css = @api_results.dig(method, :status)).present? -%>
       <%- href = '#__' + method.to_s -%>
       <%= make_link(method, href, class: css, 'data-turbolinks': false) -%>

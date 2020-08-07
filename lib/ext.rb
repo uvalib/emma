@@ -101,6 +101,7 @@ def override(mod, mod2 = nil, &block)
     end
   end
   overrides.each_pair do |target, new_definitions|
+    # noinspection RailsParamDefResolve
     target.send(:prepend, new_definitions)
   end
 end

@@ -17,6 +17,7 @@ class BookshareTest < ApplicationSystemTestCase
   test 'bookshare - API methods' do
     reference = {}
     duplicate = {}
+    # noinspection RubyNilAnalysis
     BookshareService.api_methods.each_pair do |method, properties|
       if (ref_id = properties[:reference_id].to_s).blank?
         next

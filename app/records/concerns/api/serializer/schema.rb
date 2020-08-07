@@ -162,17 +162,19 @@ module Api::Serializer::Schema
   # Transform *name* into the form indicated by the given naming mode.
   #
   # @param [String, Symbol, Class] name
-  # @param [Symbol]                mode
+  # @param [Symbol, nil]           mode
   #
   # @raise [StandardError]                If *mode* is invalid.
   #
   # @return [String]
   #
-  def element_name(name, mode)
+  #--
+  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  #++
+  def element_name(name, mode = nil)
     name = name.to_s       if name.is_a?(Symbol) || name.is_a?(Class)
     name = name.class.to_s unless name.is_a?(String)
     name = name.demodulize
-    # noinspection RubyYardReturnMatch
     case mode
       when :default, nil          then name
       when :underscore            then name.underscore

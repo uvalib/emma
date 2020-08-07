@@ -2,12 +2,14 @@
 <%-
   # EMMA search help page.
 
-  search        = html_span('Search', class: 'search-button')
+  search        = 'Search'
+  search        = help_span(search, class: 'search-button')
   panel_closer  = LayoutHelper::Common::PANEL_CLOSER_LABEL
-  panel_closer  = html_span(panel_closer, class: 'advanced-search-toggle')
+  panel_closer  = help_span(panel_closer, class: 'advanced-search-toggle')
   panel_opener  = LayoutHelper::Common::PANEL_OPENER_LABEL
-  panel_opener  = html_span(panel_opener, class: 'advanced-search-toggle')
-  x             = '&#x2716;'.html_safe # HEAVY X
+  panel_opener  = help_span(panel_opener, class: 'advanced-search-toggle')
+  x             = LayoutHelper::SearchBar::CLEAR_SEARCH_ICON
+  x             = html_span(x, 'aria-label': 'X')
   type_closed   = help_image(:search_type_closed)
   type_opened   = help_image(:search_type_opened)
   drop_down     = help_image(:drop_down)
@@ -16,15 +18,12 @@
 
 -%>
 
-<p>
-  To search across all entries supplied by the member repositories,
-  type in one or more <strong><em>search terms</em></strong> then press
-  <%= search -%> to engage the EMMA Unified Search service.
-</p>
-
 <nav role="navigation" aria-labelledby="search_help_nav">
   <p id="search_help_nav">Topics in this section:</p>
   <ul>
+    <li>
+      <a href="#search_overview_help">OVERVIEW</a>
+    </li>
     <li>
       <a href="#search_type_help">Search Types</a>
       <ul>
@@ -61,15 +60,62 @@
   </ul>
 </nav>
 
+<section role="region" aria-labelledby="search_overview_help">
+
+  <h2 class="section" id="search_overview_help">
+    OVERVIEW
+  </h2>
+
+  <p>
+    A search term is required to begin.
+    You may search for matches on the basis of:
+  </p>
+
+  <ul class="list">
+    <li><strong>Keyword</strong> (default choice)</li>
+    <li><strong>Title</strong></li>
+    <li><strong>Creator</strong> (e.g., Author)</li>
+    <li><strong>Identifier</strong> (e.g., ISBN)</li>
+  </ul>
+
+  <p>
+    The <strong>Sort By</strong> default selection is Relevancy, and this
+    should be appropriate for most searches.
+  </p>
+
+  <p>
+    The remaining filters are all optional:
+  </p>
+
+  <ul class="list">
+    <li><strong>Repository</strong>:
+      pick one, or default to all repositories
+    </li>
+    <li><strong>Page Size</strong>:
+      <em>not currently implemented</em>
+    </li>
+    <li><strong>Format</strong>, <strong>Feature</strong>, and
+      <strong>Accessibility</strong>:
+      you may make multiple selections for each control.
+      These will generate matches when ANY of the selected choices matches an
+      item.
+      Note that selections of filters tend to reduce the number of matches.
+    </li>
+  </ul>
+
+</section>
+
 <section role="region" aria-labelledby="search_type_help">
 
-  <h3 class="section" id="search_type_help">
+  <h2 class="section" id="search_type_help">
     Search Types
-  </h3>
+  </h2>
 
   <p>
     Enter one or more search terms in the search input box, then press the
     <%= search -%> button.
+    (A search term can be a single word or phrase, title, identifier or author
+    name.)
   </p>
 
   <p>
@@ -97,7 +143,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_q_help">Keyword Search</h4>
+  <h3 class="sub-section" id="search_q_help">Keyword Search</h3>
 
   <p>
     This search type looks for items matching your search term(s) across a
@@ -112,7 +158,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_title_help">Title Search</h4>
+  <h3 class="sub-section" id="search_title_help">Title Search</h3>
 
   <p>
     Find items whose title matches the search term(s).
@@ -125,7 +171,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_creator_help">Creator Search</h4>
+  <h3 class="sub-section" id="search_creator_help">Creator Search</h3>
 
   <p>
     Find items whose author/creator matches the search term(s).
@@ -139,7 +185,7 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_identifier_help">Identifier Search</h4>
+  <h3 class="sub-section" id="search_identifier_help">Identifier Search</h3>
 
   <p>
     Find items whose ISBN, ISSN, OCLC, LCCN, or UPC matches the search term(s).
@@ -168,9 +214,9 @@
 
 <section role="region" aria-labelledby="search_filter_help">
 
-  <h3 class="section" id="search_filter_help">
+  <h2 class="section" id="search_filter_help">
     Filters
-  </h3>
+  </h2>
 
   <p>
     The menu selections below the search input bar either filter out results
@@ -190,9 +236,9 @@
 
 <section role="region" aria-labelledby="search_filter_single_help">
 
-  <h3 class="section" id="search_filter_single_help">
+  <h2 class="section" id="search_filter_single_help">
     Simple Filters
-  </h3>
+  </h2>
 
   <p>
     These are drop-down menus which can only be set to a single value.
@@ -200,9 +246,9 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_repository_help">
+  <h3 class="sub-section" id="search_repository_help">
     <span class="menu-label">Repository</span>
-  </h4>
+  </h3>
 
   <p>
     Use this filter to limit results to just those from a specific member
@@ -212,20 +258,20 @@
   <div class="choices">
     <div class="label">EMMA</div>
     <div class="value">
-      Limit to results to items that have been uploaded to the EMMA repository
-      directly (or are included in the the Bookshare "EMMA Collection").
+      Limit the results to items that have been uploaded to the EMMA repository
+      directly (or are included in the Bookshare "EMMA Collection").
     </div>
     <div class="label">Bookshare</div>
     <div class="value">
-      Limit to results to items that are provided by the Bookshare repository.
+      Limit the results to items that are provided by the Bookshare repository.
     </div>
     <div class="label">HathiTrust</div>
     <div class="value">
-      Limit to results to items that are provided by the HathiTrust repository.
+      Limit the results to items that are provided by the HathiTrust repository.
     </div>
     <div class="label">Internet Archive</div>
     <div class="value">
-      Limit to results to items that are provided by the Internet Archive
+      Limit the results to items that are provided by the Internet Archive
       repository.
     </div>
   </div>
@@ -234,9 +280,9 @@
 
 <section role="region" aria-labelledby="search_filter_multi_help">
 
-  <h3 class="section" id="search_filter_multi_help">
+  <h2 class="section" id="search_filter_multi_help">
     Multi-select Filters
-  </h3>
+  </h2>
 
   <p>
     These are drop-down menus which can be set to multiple values.
@@ -249,8 +295,8 @@
         then click on a filter value to select it.
       </p>
       <p>
-        This has immediate effect of eliminating all search results that don't
-        meet the condition imposed by the selection.
+        This has the immediate effect of eliminating all search results that
+        don't meet the condition imposed by the selection.
       </p>
     </div>
     <%= drop_down %>
@@ -259,7 +305,7 @@
   <div class="columns">
     <div>
       <p>
-        After the drop-down menu closes you will see your selection as a marker
+        After the drop-down menu closes, your selection will appear as a marker
         with a leading "<%= x -%>".
       </p>
       <p>
@@ -296,9 +342,9 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_format_help">
+  <h3 class="sub-section" id="search_format_help">
     <span class="menu-label">Format</span> (multi-select)
-  </h4>
+  </h3>
 
   <p>
     Limit results to items that have at least one of the selected file formats.
@@ -306,9 +352,9 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_feature_help">
+  <h3 class="sub-section" id="search_feature_help">
     <span class="menu-label">Feature</span> (multi-select)
-  </h4>
+  </h3>
 
   <p>
     Limit results to items that have at least one of the selected remediation
@@ -317,9 +363,9 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_accessibility_help">
+  <h3 class="sub-section" id="search_accessibility_help">
     <span class="menu-label">Accessibility</span> (multi-select)
-  </h4>
+  </h3>
 
   <p>
     Limit results to items that have at least one of the selected accessibility
@@ -330,20 +376,20 @@
 
 <section role="region" aria-labelledby="search_control_help">
 
-  <h3 class="section" id="search_control_help">
+  <h2 class="section" id="search_control_help">
     Search Result Controls
-  </h3>
+  </h2>
 
   <p>
-    Several of the menus do not limit the potential set of results you receive,
-    they control the way that the index service returns the results to you.
+    The following menus do not limit the potential set of results you receive;
+    they just control the order and presentation of results.
   </p>
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_sort_help">
+  <h3 class="sub-section" id="search_sort_help">
     <span class="menu-label">Sort By</span>
-  </h4>
+  </h3>
 
   <p>
     The default sort shows the result set in decreasing order of relevance,
@@ -379,21 +425,21 @@
 
   <%# --------------------------------------------------------------------- -%>
 
-  <h4 class="sub-section" id="search_page_help">
+  <h3 class="sub-section" id="search_page_help">
     <span class="menu-label">Page Size</span>
-  </h4>
+  </h3>
 
   <p>
     Select the number of results per page.
     While some search terms may be so specific that the index can eliminate all
     but the exactly right entry, more general terms may result in dozens (or
     thousands) of results.
-    This filter give you control over how large result sets are broken into
+    This filter gives you control over how large result sets are broken into
     easier-to-handle chunks.
   </p>
 
   <p class="caveat">
-    NOTE: The current index does not implement this capability.
+    NOTE: This capability is not implemented in the current version of EMMA.
   </p>
 
 </section>

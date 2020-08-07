@@ -51,6 +51,9 @@ module Emma::Json
   #   If *arg* is IO-like, its contents are read and parsed as JSON.
   #   @param [IO, StringIO, IO::Like] io
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def json_parse(arg, no_raise: true, **opt)
     return if arg.blank?
     arg = arg.body   if arg.respond_to?(:body)

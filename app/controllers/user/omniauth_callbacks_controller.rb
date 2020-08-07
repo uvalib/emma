@@ -51,7 +51,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     __debug_route { { "env['omniauth.auth']" => auth_data } }
     __debug_request
     user = User.from_omniauth(auth_data)
-    if user.persisted?
+    if user&.persisted?
       __debug_line { [__debug_route_label, 'user persisted'] }
       session['omniauth.auth'] = auth_data
       last_operation_update

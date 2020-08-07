@@ -65,6 +65,20 @@ module ApplicationHelper
     lookup_context.template_exists?(path, prefixes, true)
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The "mailto:" link for the general e-mail contact.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def contact_email
+    mail_to(CONTACT_EMAIL)
+  end
+
 end
 
 __loading_end(__FILE__)

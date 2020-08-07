@@ -15,6 +15,7 @@ class UploadController < ApplicationController
   include PaginationConcern
   include SerializationConcern
   include UploadConcern
+  include IaDownloadConcern
 
   # Non-functional hints for RubyMine.
   # :nocov:
@@ -40,6 +41,8 @@ class UploadController < ApplicationController
 
   before_action :set_item_id,    only: %i[index show edit update delete destroy download]
   before_action :index_redirect, only: %i[show]
+
+  before_action(only: :retrieval) { @url = params[:url] }
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit] # TODO: ???
@@ -274,6 +277,18 @@ class UploadController < ApplicationController
     end
   end
 
+  # == GET /retrieval?url=URL
+  # Retrieve a file from a member repository.
+  #
+  def retrieval
+    __debug_route
+    if ia_link?(@url)
+      render_ia_download(@url)
+    else
+      Log.error { "/retrieval can't handle #{@url.inspect}"}
+    end
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -425,7 +440,8 @@ class UploadController < ApplicationController
   # @param [String] rid               Repository ID of the item.
   # @param [String] host              Base URL of production service.
   #
-  # @return [Upload, nil]
+  # @return [Upload]                  Object created from received data.
+  # @return [nil]                     Bad data and/or no object created.
   #
   def proxy_get_record(rid, host)
     data = Faraday.get("#{host}/upload/#{rid}.json").body.presence
@@ -445,7 +461,8 @@ class UploadController < ApplicationController
   # The @item_id member variable contains the original item specification, if
   # one was provided, and not the array of IDs represented by it.
   #
-  # @return [String, nil]
+  # @return [String]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :selected, :repository_id found.
   #
   def set_item_id
     # noinspection RubyYardReturnMatch

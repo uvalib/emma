@@ -90,6 +90,7 @@ module IsbnHelper
     digits = isbn.delete('^0-9')
     length = digits.size
     digits = digits[0..-2]
+    # noinspection RubyYardParamTypeMatch
     (length == ISBN_13_DIGITS) && (isbn_13_checksum(digits) == check)
   end
 
@@ -107,6 +108,7 @@ module IsbnHelper
     else
       digits = digits[0..-2]
     end
+    # noinspection RubyYardParamTypeMatch
     (length == ISBN_10_DIGITS) && (isbn_10_checksum(digits) == check)
   end
 
@@ -115,8 +117,8 @@ module IsbnHelper
   # @param [String]  s
   # @param [Boolean] log
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  An ISBN-13 value.
+  # @return [nil]                     If *s* was not a valid ISBN.
   #
   def to_isbn(s, log: true)
     to_isbn13(s, log: log)
@@ -128,8 +130,8 @@ module IsbnHelper
   # @param [String]  s
   # @param [Boolean] log
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  ISBN-13 version of *s*.
+  # @return [nil]                     If *s* was not a valid ISBN-10.
   #
   def to_isbn13(s, log: true)
     isbn = remove_isbn_prefix(s).delete('^0-9X')
@@ -150,8 +152,8 @@ module IsbnHelper
   # @param [String]  s
   # @param [Boolean] log
   #
-  # @return [String]
-  # @return [nil]
+  # @return [String]                  ISBN-10 version of *s*.
+  # @return [nil]                     If *s* was not a convertible ISBN-13.
   #
   def to_isbn10(s, log: true)
     isbn = remove_isbn_prefix(s).delete('^0-9X')
@@ -163,6 +165,7 @@ module IsbnHelper
       Log.info { "#{__method__}: cannot convert #{s.inspect}" } if log
     else
       digits = isbn[0..-2]
+      # noinspection RubyYardParamTypeMatch
       check  = isbn_10_checksum(digits)
       "#{digits}#{check}"
     end
@@ -197,6 +200,7 @@ module IsbnHelper
 
       when ISBN_13_DIGITS
         # Full ISBN-13.
+        # noinspection RubyYardParamTypeMatch
         result = isbn_13_checksum(digits[0..-2])
         check  = check.to_i
 
@@ -207,6 +211,7 @@ module IsbnHelper
 
       when ISBN_10_DIGITS
         # Full ISBN-10.
+        # noinspection RubyYardParamTypeMatch
         result = isbn_10_checksum(digits[0..-2])
         check  = check.to_s
 

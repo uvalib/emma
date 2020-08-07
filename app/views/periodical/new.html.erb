@@ -7,6 +7,7 @@
   # the EMMA endpoint.
 
   title ||= t('emma.periodical.new.title')
+  help  ||= nil
 
   unless modal?
     set_page_title(title)
@@ -23,6 +24,6 @@
 
 -%>
 
-<h1 class="heading"><%= title -%></h1>
+<h1 class="heading"><%= title -%><%= help -%></h1>
 
 <p><%= click_to -%> add a periodical.</p>

@@ -11,14 +11,15 @@
 
   skip = Array.wrap(skip)
   role = ('role="complementary"'.html_safe if level > 1)
-  heading =
+  panel_id = css_randomize(MemberHelper::MEMBER_HISTORY_CSS_CLASS)
+  heading  =
     unless skip.include?(:title)
       title ||= t('emma.member.history.title')
       title  += " (#{count} events)" unless skip.include?(:count)
       classes = ('empty' if list.blank?)
       html_div(class: 'toggle-panel-title') {
         member_history_title(title, level: level, class: classes) <<
-          member_history_control
+          member_history_control(id: panel_id)
       }
     end
 
@@ -26,5 +27,5 @@
 
 <div <%= role -%> class="member-history">
   <%= heading %>
-  <%= member_history(list) %>
+  <%= member_history(list, id: panel_id) %>
 </div>

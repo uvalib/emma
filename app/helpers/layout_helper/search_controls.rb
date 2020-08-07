@@ -97,7 +97,7 @@ module LayoutHelper::SearchControls
     # @see #SEARCH_MENU_MAP
     #
     def current_menu_config(menu_name, type: nil, **)
-      type &&= type.to_sym
+      type   = type&.to_sym
       config = type && SEARCH_MENU_MAP[type] || SEARCH_MENU_BASE
       # noinspection RubyYardReturnMatch
       config[menu_name.to_sym] || {}
@@ -247,7 +247,7 @@ module LayoutHelper::SearchControls
     # @param [String] value           Base :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]
+    # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
     def ascending_sort(value, suffix = nil)
@@ -261,7 +261,7 @@ module LayoutHelper::SearchControls
     # @param [String] value           Base :sort key.
     # @param [String] suffix          Default: #REVERSE_SORT_SUFFIX
     #
-    # @return [String]
+    # @return [String]                Value for :sortOrder parameter.
     # @return [nil]                   If *value* is blank.
     #
     def descending_sort(value, suffix = nil)
@@ -436,11 +436,11 @@ module LayoutHelper::SearchControls
 
   # One or more rows of controls.
   #
-  # @param [String, Symbol] type      Default: `#search_target`.
-  # @param [Hash]           opt       Passed to #html_div.
+  # @param [String, Symbol] type          Default: `#search_target`.
+  # @param [Hash]           opt           Passed to #html_div.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]
+  # @return [ActiveSupport::SafeBuffer]   An HTML element.
+  # @return [nil]                         If no controls were found for *type*.
   #
   # @see en.emma.search_controls in config/locales/en.yml
   #
@@ -514,8 +514,8 @@ module LayoutHelper::SearchControls
   #
   # @param [Hash] opt                 Passed to #menu_container.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                     If menu is not available in this context.
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
   #
   # @see #search_controls
   # @see ParamsConcern#resolve_sort
@@ -539,8 +539,8 @@ module LayoutHelper::SearchControls
   #
   # @param [Hash] opt                 Passed to #menu_container.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                     If menu is not available in this context.
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
   #
   # @see #search_controls
   # @see PaginationHelper#page_size
@@ -582,7 +582,7 @@ module LayoutHelper::SearchControls
   # @option opt [String] :label         If missing, no label is included.
   # @option opt [String] :selected      Passed to #menu_control.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
   # @return [nil]                       If menu is not available for *type*.
   #
   def menu_container(menu_name, **opt)
@@ -611,14 +611,14 @@ module LayoutHelper::SearchControls
   # @option opt [String, Symbol] :type      Passed to #search_form.
   # @option opt [String, Array]  :selected  Selected menu item(s).
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML menu element.
   # @return [nil]                         If menu is not available for *type*.
   #
   # @see HtmlHelper#grid_cell_classes
   #
   def menu_control(menu_name, **opt)
     opt, html_opt = partition_options(opt, *MENU_OPTS)
-    type      = search_target(opt[:type])
+    type      = search_target(opt[:type]) or return
     config    = current_menu_config(menu_name, type: type)
     url_param = config[:url_parameter]
     multiple  = config[:multiple]
@@ -695,8 +695,8 @@ module LayoutHelper::SearchControls
   # @param [String, Symbol] menu_name   Menu name.
   # @param [Hash]           opt         Passed to #current_menu_config.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  # @return [String]
+  # @return [String]                    Tooltip text.
+  # @return [ActiveSupport::SafeBuffer] Tooltip for :size menu.
   #
   def menu_tooltip(menu_name, **opt)
     menu_name = menu_name.to_sym

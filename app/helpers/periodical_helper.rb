@@ -74,7 +74,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #periodical_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -91,7 +91,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #periodical_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -108,7 +108,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #periodical_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -129,7 +129,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #periodical_search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   # Compare with:
@@ -147,7 +147,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt        Passed to #search_links.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
   #
   def periodical_search_links(item, **opt)
@@ -165,7 +165,7 @@ module PeriodicalHelper
   # @option opt [Boolean] :all_words
   # @option opt [Boolean] :no_link
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer] An HTML link element.
   # @return [nil]                       If no *terms* were provided.
   #
   def periodical_search_link(terms, **opt)
@@ -198,7 +198,8 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Object]          value
   #
-  # @return [Object]
+  # @return [Object]  HTML or scalar value.
+  # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
@@ -224,7 +225,7 @@ module PeriodicalHelper
   # @param [Bs::Api::Record] item
   # @param [Hash]            opt      Additional field mappings.
   #
-  # @return [ActiveSupport::SafeBuffer]
+  # @return [ActiveSupport::SafeBuffer]   HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def periodical_details(item, opt = nil)

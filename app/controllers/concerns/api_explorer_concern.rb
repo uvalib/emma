@@ -125,6 +125,9 @@ module ApiExplorerConcern
     #
     # @type [Array<Symbol>]
     #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
     METHODS =
       BookshareService.api_methods
         .select  { |method, _| method.to_s.start_with?('get_', 'download_') }
@@ -189,6 +192,7 @@ module ApiExplorerConcern
     def self.run_trials(user: nil, methods: nil)
       service = BookshareService.new(user: user, no_raise: true)
       methods = trial_methods(service: service) if methods.blank?
+      # noinspection RubyNilAnalysis
       methods.map { |method, opts|
         param = opts.to_s.remove(/[{}]/).gsub(/:(.+?)=>/, '\1: ')
         value = service.send(method, **opts)
