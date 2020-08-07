@@ -71,6 +71,49 @@ module ApplicationHelper
 
   public
 
+  # Render a description for the page from configuration.
+  #
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
+  # @param [String, Symbol, nil] action       Default: `params[:action]`
+  # @param [Hash]                opt          Passed to #html_div
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]
+  #
+  def page_description(controller: nil, action: nil, **opt)
+    text = page_description_text(controller: controller, action: action)
+    html_div(prepend_css_classes(opt, 'panel')) { text } if text.present?
+  end
+
+  # Get the configured page description.
+  #
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`
+  # @param [String, Symbol, nil] action       Default: `params[:action]`
+  # @param [String, Symbol, nil] type         Optional type under action.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [String]
+  # @return [nil]
+  #
+  def page_description_text(controller: nil, action: nil, type: nil)
+    controller ||= params[:controller]
+    action     ||= params[:action]
+    entry = I18n.t("emma.#{controller}.#{action}", default: {})
+    types = type || %i[description text]
+    Array.wrap(types).find do |t|
+      html  = "#{t}_html".to_sym
+      plain = t.to_sym
+      text  = entry[html]&.html_safe || entry[plain]
+      return text if text.present?
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # The "mailto:" link for the general e-mail contact.
   #
   # @return [ActiveSupport::SafeBuffer]

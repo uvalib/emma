@@ -17,6 +17,8 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
+<%= page_description %>
+
 <div id="methods" class="methods">
   <%- methods.each do |method| -%>
     <%- if (css = @api_results.dig(method, :status)).present? -%>

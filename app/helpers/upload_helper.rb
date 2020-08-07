@@ -271,15 +271,9 @@ module UploadHelper
     **opt
   )
     type = item&.to_s&.delete_suffix('_html') || 'text'
-    if text.nil?
-      controller ||= params[:controller]
-      action     ||= params[:action]
-      path       ||= ['emma', controller, action, type].join('.')
-      text = I18n.t("#{path}_html", default: nil)
-      text &&= text.html_safe
-      text ||= I18n.t(path, default: nil)
-      return if text.blank?
-    end
+    text ||=
+      page_description_text(controller: controller, action: action, type: type)
+    return if text.blank?
     unless text.html_safe?
       text = ERB::Util.h(text)
       text = html_tag(tag, text) unless tag.nil?

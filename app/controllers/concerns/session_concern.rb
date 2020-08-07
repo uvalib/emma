@@ -15,6 +15,8 @@ module SessionConcern
 
     __included(base, 'SessionConcern')
 
+    include SerializationHelper
+
     # Non-functional hints for RubyMine.
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION

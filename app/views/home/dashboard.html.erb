@@ -21,6 +21,8 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
+<%= page_description %>
+
 <%= render 'member/details', item: item, pref: pref, hist: hist %>
 
 <%= render 'ability' if session_debug? %>

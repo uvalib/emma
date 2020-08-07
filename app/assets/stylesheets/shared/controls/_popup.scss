@@ -40,6 +40,10 @@
         border-radius:  50%;
         cursor:         pointer;
 
+        @media #{$narrow-screen} {
+            display: inline-block;
+        }
+
         &:before {
             content: "\2605"; // BLACK STAR
         }

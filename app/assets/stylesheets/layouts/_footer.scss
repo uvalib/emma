@@ -28,6 +28,8 @@ $footer-margin-top: 1rem;
 
     @extend %banner;
 
+    min-height: 5vh;
+
     .footer-table {
 
         display: grid;

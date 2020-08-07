@@ -403,3 +403,15 @@ body.help {
         border-radius:    6px;
     }
 }
+
+//=============================================================================
+// Special handling for the help index page.
+//=============================================================================
+
+body.help:not(.modal) {
+
+    .entry-title {
+        padding-top: 2rem;
+        border-top:  0.25rem solid gray;
+    }
+}

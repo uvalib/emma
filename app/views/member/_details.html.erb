@@ -15,7 +15,16 @@
   role = ('role="article"'.html_safe if level == 1)
   opt  = { level: (level + 1), skip: skip }
 
+  heading =
+    if (level == 1) && !skip.include?(:title)
+      title ||= 'Account Details' # TODO: I18n
+      tag = "h#{level + 1}"
+      html_tag(tag, title, class: 'account list-heading')
+    end
+
 -%>
+
+<%= heading %>
 
 <div <%= role -%> class="member-container">
   <%= member_details(item, add) %>

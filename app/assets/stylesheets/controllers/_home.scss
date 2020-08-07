@@ -7,30 +7,43 @@
 //=============================================================================
 
 // noinspection SassScssResolvedByNameOnly
+.panel {
+
+    @extend %panel;
+    @extend %block-shadow;
+
+    @include width-fit-content;
+
+    min-width:   50%;
+    max-width:   50%;
+    padding:     1rem;
+    line-height: 1.375;
+
+    @media #{$medium-width} {
+        min-width: 75%;
+        max-width: 75%;
+    }
+
+    @media #{$narrow-screen} {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    > * {
+        margin-top: 0.5rem;
+        &:first-child { margin-top:    0; }
+        &:last-child  { margin-bottom: 0; }
+    }
+
+    > br {
+        margin-top: 0.25rem;
+        &:first-child { margin-top: 0.25rem; }
+    }
+}
+
 body.home-main,
 body.home-welcome,
 body.home-dashboard {
-
-    .panel {
-
-        @extend %panel;
-        @extend %block-shadow;
-
-        @include width-fit-content;
-
-        min-width: 50%;
-        max-width: 100%;
-
-        > * {
-            margin-top: 0.5rem;
-            &:first-child { margin-top: 0; }
-        }
-
-        > br {
-            margin-top: 0.25rem;
-            &:first-child { margin-top: 0.25rem; }
-        }
-    }
 
     .sign-in {
         margin-top:    2rem;
@@ -39,6 +52,7 @@ body.home-dashboard {
     }
 
     .sign-in + .ability-debug {
+        // noinspection SassScssResolvedByNameOnly
         @media #{$wide-screen} {
             margin-top: 50vh;
         }

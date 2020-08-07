@@ -207,8 +207,10 @@ en:
         title:          'Your EMMA Uploads'
         tooltip:        'Review uploads of remediated content to EMMA.'
         description:    |
-          This is a listing of all EMMA entries you have created by
-          uploading remediated files.
+          This is a listing of all EMMA entries you have created.
+          With the buttons above, you may upload remediated content, remove an
+          item that you previously uploaded, or modify metadata or content for
+          an item was was previously uploaded.
         fields:
           <<:           *UPLOAD_DATABASE_FIELDS
 
@@ -224,10 +226,12 @@ en:
         title:          'Upload Remediated Content'
         tooltip:        'Upload a file to create a new EMMA entry.'
         description:    |
-          Uploading a file to EMMA creates a new EMMA repository entry,
-          which assumes that the remediated file is the rendering of a creative
-          work which does not derive from any other member repository
-          (Bookshare, Internet Archive, or HathiTrust).
+          You may share a remediated work with the EMMA community by uploading
+          here.
+          Fields marked with a red triangle are required, but please include
+          other identifying information where available.
+          Hover your mouse over buttons or field names for additional
+          information.
         directions:     |
           Choose a file to upload and provide any information about the entry
           that could not be determined from the contents of the file:

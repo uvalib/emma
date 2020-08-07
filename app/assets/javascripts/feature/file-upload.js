@@ -2512,7 +2512,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldDisplayOnly}.
      */
     function fieldDisplayFilled(form) {
-        fieldDisplayOnly('.valid, .invalid', form);
+        var matches = '.valid:not(.disabled), .invalid:not(.disabled)';
+        fieldDisplayOnly(matches, form);
     }
 
     /**

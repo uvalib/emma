@@ -27,13 +27,41 @@ en:
         tooltip:        'Return to the home page.'
         notice_html:    'You must %{sign_in} to upload or download files.'
         text_html:      |
-          <h2>Introductory text</h2>
-          <p>First paragraph.</p>
-          <p>Second paragraph.</p>
-          <p><a href="https://mellon.org/resources/news/articles/grants-university-libraries-develop-accessibility-infrastructure-and-best-practices/">
-            Read more</a> about the project.</p>
+          <p>
+            The purpose of this project and the infrastructure we are creating
+            is to reduce the duplication of effort in disability service
+            offices at colleges and universities across the United States, and
+            thereby to enable faster, better service for those needing
+            accessible learning materials.
+          </p>
+          <p>
+            Support for this work comes from the Andrew W. Mellon Foundation.
+            The university partners on this project are
+              George Mason University,
+              Northern Arizona University,
+              Vanderbilt University,
+              Texas A&M University,
+              the University of Illinois,
+              the University of Virginia,
+              and the University of Wisconsin.
+            The repository partners are
+              Bookshare,
+              HathiTrust,
+              and the Internet Archive.
+            If you would like to be notified when EMMA is ready for broader
+            participation, please email
+            <a href="emma4accessibility@virginia.edu">
+              emma4accessibility@virginia.edu
+            </a>
+            .
+          </p>
 
       dashboard:
         label:          'Account'
         title:          'EMMA Account Dashboard'
         tooltip:        'Return to your account dashboard.'
+        text_html:      |
+          Your EMMA account information is managed by Bookshare.
+          To modify, visit the Bookshare
+          <a href="https://www.bookshare.org/myAccount">My Account</a>
+          page.
