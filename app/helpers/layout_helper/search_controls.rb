@@ -701,19 +701,10 @@ module LayoutHelper::SearchControls
   # @param [Hash]           opt         Passed to #current_menu_config.
   #
   # @return [String]                    Tooltip text.
-  # @return [ActiveSupport::SafeBuffer] Tooltip for :size menu.
+  # @return [nil]                       If no tooltip was defined.
   #
   def menu_tooltip(menu_name, **opt)
-    menu_name = menu_name.to_sym
-    config  = current_menu_config(menu_name, **opt)
-    tooltip = config[:tooltip]
-    warning = ('support this capability' if menu_name == :size)
-    return tooltip unless warning
-    tooltip = tooltip.dup
-    tooltip << '.' unless tooltip.end_with?('.')
-    tooltip << '&#013;' # newline
-    tooltip << 'NOTE: The unified index does not yet ' << warning << '.'
-    tooltip.html_safe
+    current_menu_config(menu_name, **opt)[:tooltip]
   end
 
   # ===========================================================================
