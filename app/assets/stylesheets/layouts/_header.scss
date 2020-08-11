@@ -594,7 +594,7 @@ $search-button-width:    6rem;
                 flex:         0 0 auto;
 
                 @media #{$narrow-screen} {
-                    margin:       0;
+                    margin-top:   calc(2 * #{$gap-y});
                     margin-left:  calc(2 * #{$gap-x});
                     margin-right: calc(-0.5 * #{$gap-x});
                 }

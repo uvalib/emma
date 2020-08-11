@@ -66,6 +66,7 @@ module LayoutHelper::SearchBar
     option_tags = options_for_select(search_menu_pairs, selected)
     prepend_css_classes!(html_opt, 'search-input-select')
     html_opt[:multiple] = true if multiple
+    html_opt[:'aria-label'] = 'Search Type' # TODO: I18n
     select_tag(url_param, option_tags, html_opt)
   end
 

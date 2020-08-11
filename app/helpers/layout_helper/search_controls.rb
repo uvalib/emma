@@ -590,8 +590,10 @@ module LayoutHelper::SearchControls
     label    = local[:label]
     selected = local[:selected]
     opt[:title] ||= menu_tooltip(menu_name, **opt)
-    menu  = menu_control(menu_name, **opt.merge(selected: selected)) or return
-    label = menu_label(menu_name, **opt.merge(label: label))
+    l_id  = "#{menu_name}_label"
+    m_opt = opt.merge(selected: selected, label_id: l_id)
+    menu  = menu_control(menu_name, **m_opt) or return
+    label = menu_label(menu_name, **opt.merge(label: label, id: l_id))
     # noinspection RubyYardReturnMatch
     label << menu
   end
@@ -605,25 +607,27 @@ module LayoutHelper::SearchControls
   # prepended.
   #
   # @param [String, Symbol] menu_name       Menu name.
-  # @param [Hash]           opt             Passed to #label_tag except for
-  #                                           #MENU_OPTS:
+  # @param [Hash]           opt             Passed to #search_form except for
+  #                                           :label_id and #MENU_OPTS:
   #
   # @option opt [String, Symbol] :type      Passed to #search_form.
   # @option opt [String, Array]  :selected  Selected menu item(s).
+  # @option opt [String, Symbol] :label_id  ID of associated label element.
   #
-  # @return [ActiveSupport::SafeBuffer]   HTML menu element.
-  # @return [nil]                         If menu is not available for *type*.
+  # @return [ActiveSupport::SafeBuffer]     HTML menu element.
+  # @return [nil]                           If menu is not available for *type*.
   #
   # @see HtmlHelper#grid_cell_classes
   #
   def menu_control(menu_name, **opt)
-    opt, html_opt = partition_options(opt, *MENU_OPTS)
+    opt, html_opt = partition_options(opt, :label_id, *MENU_OPTS)
     type      = search_target(opt[:type]) or return
     config    = current_menu_config(menu_name, type: type)
     url_param = config[:url_parameter]
     multiple  = config[:multiple]
     default   = config[:default]
     pairs     = config[:menu] || []
+    label_id  = opt.delete(:label_id)
     any_label = nil
     any_value = ''
 
@@ -656,6 +660,7 @@ module LayoutHelper::SearchControls
       select_opt = {
         onchange:           'this.form.submit();',
         multiple:           multiple,
+        'aria-labelledby':  label_id,
         'data-placeholder': any_label
       }
       select_tag(url_param, option_tags, reject_blanks(select_opt))

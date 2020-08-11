@@ -554,6 +554,15 @@ $(document).on('turbolinks:load', function() {
                 debug:      DEBUGGING,
                 language:   select2Language()
             });
+            $select.each(function() {
+                var $control = $(this);
+                var label    = $control.attr('aria-label');
+                var label_id = $control.attr('aria-labelledby');
+                var attrs    = {};
+                if (label)    { attrs['aria-label']      = label; }
+                if (label_id) { attrs['aria-labelledby'] = label_id; }
+                $control.siblings('.select2').find('input').attr(attrs);
+            });
             if (DEBUGGING) {
                 MULTI_SELECT_EVENTS.forEach(function(type) {
                     handleEvent($select, type, logSelectEvent);

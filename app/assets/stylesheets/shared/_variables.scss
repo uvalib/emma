@@ -93,7 +93,7 @@ $success-bg: $notice-bg;
 $header-bg:     $uva-blue;
 $panel-bg:      lighter($uva-accent-orange, 90%);
 $panel-border:  lighter($uva-accent-orange, 50%);
-$panel-accent:  lighter($uva-accent-orange, 15%);
+$panel-accent:  $uva-accent-orange;
 $button-accent: lighter($uva-accent-teal,   35%);
 $focus-accent:  $button-accent;
 $text-focus:    darker($uva-accent-teal,    10%);

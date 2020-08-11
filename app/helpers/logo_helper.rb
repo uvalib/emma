@@ -22,7 +22,7 @@ module LogoHelper
   # Make a logo for a repository source.
   #
   # @param [Search::Api::Record, String, Symbol, nil] item
-  # @param [Hash] opt                 Passed to #image_tag except for:
+  # @param [Hash] opt                 Passed to #html_span wrapper except for:
   #
   # @option opt [String] :source      Overrides derived value if present.
   # @option opt [String] :name        To be displayed instead of the source.
@@ -38,8 +38,7 @@ module LogoHelper
     if logo.present?
       prepend_css_classes!(html_opt, 'repository', 'logo', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
-      # noinspection RubyYardReturnMatch
-      image_tag(asset_path(logo), html_opt)
+      html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
       # noinspection RubyYardParamTypeMatch
       repository_source(repo, html_opt.merge!(source: repo, name: name))

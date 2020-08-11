@@ -334,8 +334,16 @@
     }
 
     > .value {
+
         &.field-Format {
             font-weight: bold;
+        }
+
+        &.field-RetrievalLink {
+            @media #{$narrow-screen} {
+                margin-top:    0.5rem;
+                margin-bottom: 0.5rem;
+            }
         }
     }
 
