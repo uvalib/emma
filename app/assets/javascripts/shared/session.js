@@ -5,7 +5,8 @@
 $(document).on('turbolinks:load', function() {
 
     /**
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var FOCUS_DELAY = 100;
 

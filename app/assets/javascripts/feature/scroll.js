@@ -10,7 +10,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class indicating the "scroll-to-top" button.
      *
-     * @constant {Selector}
+     * @constant
+     * @type {Selector}
      */
     var SCROLL_BUTTON_SELECTOR = '.' + Emma.Scroll.button.class;
 
@@ -27,21 +28,24 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant {boolean}
+     * @constant
+     * @type {boolean}
      */
     var DEBUGGING = false;
 
     /**
      * Selector for the element which is scrolled to the top.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var SCROLL_TARGET_SELECTOR = '.' + Emma.Scroll.target.class;
 
     /**
      * Selector(s) for scroll target with fall-backs.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var SCROLL_TARGET_SELECTORS = [SCROLL_TARGET_SELECTOR, '#main', 'body'];
 

@@ -1,7 +1,7 @@
 // app/assets/javascripts/shared/definitions.js
 
 // ============================================================================
-// JSDoc typedefs
+// JSDoc type definitions
 // ============================================================================
 
 /**
@@ -12,10 +12,20 @@
 // Basic values and enumerations
 // ============================================================================
 
-/** @constant {number} */
-var SECOND = 1000; // milliseconds
+/**
+ * Milliseconds per second.
+ *
+ * @constant
+ * @type {number}
+ */
+var SECOND = 1000;
 
-/** @constant {number} */
+/**
+ * Alias for SECOND.
+ *
+ * @constant
+ * @type {number}
+ */
 var SECONDS = SECOND;
 
 // ============================================================================
@@ -322,8 +332,9 @@ function create(element, properties) {
     prop.class   && $element.addClass(prop.class);
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
-    prop.text    && $element.text(prop.text);
-    prop.html    && $element.html(prop.html);
+    if      (typeof prop.html  === 'string') { $element.html(prop.html);  }
+    else if (typeof prop.label === 'string') { $element.text(prop.label); }
+    else if (typeof prop.text  === 'string') { $element.text(prop.text);  }
     return $element;
 }
 
@@ -449,27 +460,62 @@ function handleClickAndKeypress($element, func) {
 // Function definitions - Accessibility
 // ============================================================================
 
-/** @constant {string[]} */
+/**
+ * Tags of elements that can receive focus.
+ *
+ * @constant
+ * @type {string[]}
+ */
 var FOCUS_ELEMENTS = ['a', 'area', 'button', 'input', 'select', 'textarea'];
 
-/** @constant {string} */
+/**
+ * Selector for FOCUS_ELEMENTS elements.
+ *
+ * @constant
+ * @type {string}
+ */
 var FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
 
-/** @constant {string[]} */
+/**
+ * Attributes indicating that an element should receive focus.
+ *
+ * @constant
+ * @type {string[]}
+ */
 var FOCUS_ATTRIBUTES =
     ['href', 'controls', 'data-path', 'draggable', 'tabindex'];
 
-/** @constant {string} */
+/**
+ * Selector for FOCUS_ATTRIBUTES elements.
+ *
+ * @constant
+ * @type {string}
+ */
 var FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
 
-/** @constant {string} */
+/**
+ * Selector for focusable elements.
+ *
+ * @constant
+ * @type {string}
+ */
 var FOCUS_SELECTOR =
     FOCUS_ELEMENTS_SELECTOR + ', ' + FOCUS_ATTRIBUTES_SELECTOR;
 
-/** @constant {string[]} */
+/**
+ * Attributes indicating that an element should NOT receive focus.
+ *
+ * @constant
+ * @type {string[]}
+ */
 var NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
 
-/** @constant {string} */
+/**
+ * Selector for focusable elements that should not receive focus.
+ *
+ * @constant
+ * @type {string}
+ */
 var NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 
 /**

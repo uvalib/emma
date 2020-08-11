@@ -22,28 +22,32 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant {boolean}
+     * @constant
+     * @type {boolean}
      */
     var DEBUGGING = true;
 
     /**
      * State value indicating that the panel is displayed.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var OPEN = 'open';
 
     /**
      * State value indicating that the panel is hidden.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var CLOSED = 'closed';
 
     /**
      * Marker class indicating that the panel is displayed.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var OPEN_MARKER = 'open';
 
@@ -189,7 +193,7 @@ $(document).on('turbolinks:load', function() {
     function updateToggleButton($button, opening) {
         /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
-        $button.html(value.text);
+        $button.html(value.label);
         $button.attr('title', value.tooltip);
         $button.attr('aria-expanded', opening);
     }

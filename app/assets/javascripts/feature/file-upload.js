@@ -12,14 +12,16 @@ $(document).on('turbolinks:load', function() {
     /**
      * CSS class for eligible form elements.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var UPLOAD_FORM_CLASS = 'file-upload-form';
 
     /**
      * CSS class for eligible form elements.
      *
-     * @constant {String}
+     * @constant
+     * @type {String}
      */
     var UPLOAD_FORM_SELECTOR = '.' + UPLOAD_FORM_CLASS;
 
@@ -31,28 +33,32 @@ $(document).on('turbolinks:load', function() {
      * supports the concept that there could be an arbitrary number of them.
      * (That scenario has not been tested.)
      *
-     * @constant {jQuery}
+     * @constant
+     * @type {jQuery}
      */
     var $file_upload_form = $(UPLOAD_FORM_SELECTOR);
 
     /**
      * CSS classes for bulk operations.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var BULK_FORM_CLASS = 'file-upload-bulk';
 
     /**
      * CSS classes for bulk operations.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var BULK_FORM_SELECTOR = '.' + BULK_FORM_CLASS;
 
     /**
      * Bulk operation forms on the page.
      *
-     * @constant {jQuery}
+     * @constant
+     * @type {jQuery}
      */
     var $bulk_operation_form = $(BULK_FORM_SELECTOR).filter(':not(.delete)');
 
@@ -64,7 +70,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Generic form selector.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var FORM_SELECTOR = UPLOAD_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
 
@@ -197,7 +204,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant {boolean}
+     * @constant
+     * @type {boolean}
      */
     var DEBUGGING = true;
 
@@ -216,7 +224,8 @@ $(document).on('turbolinks:load', function() {
      * flash_errors     Display flash errors.
      * debugging:       Turn on Uppy debugging.
      *
-     * @constant {{
+     * @constant
+     * @type {{
      *      replace_input:  boolean,
      *      upload_to_aws:  boolean,
      *      progress_bar:   boolean,
@@ -247,28 +256,32 @@ $(document).on('turbolinks:load', function() {
     /**
      * How long to display transient messages.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var MESSAGE_DURATION = 3 * SECONDS;
 
     /**
      * Selector for Uppy drag-and-drop target.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var DRAG_AND_DROP_SELECTOR = '.' + Emma.Upload.css.drag_target;
 
     /**
      * Selector for thumbnail display of the selected file.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var PREVIEW_SELECTOR = '.' + Emma.Upload.css.preview;
 
     /**
      * Selectors for input fields.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var FORM_FIELD_TYPES = [
         'select',
@@ -283,7 +296,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for input fields.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
 
@@ -303,7 +317,8 @@ $(document).on('turbolinks:load', function() {
      * required.  Conversely, if "rem_coverage" is given a value then that
      * implies that "rem_complete" is "false".
      *
-     * @constant {{rem_coverage: Relationship, rem_complete: Relationship}}
+     * @constant
+     * @type {{rem_coverage: Relationship, rem_complete: Relationship}}
      */
     var FIELD_RELATIONSHIP = {
         rem_complete: {
@@ -326,7 +341,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Selector for the dynamic bulk upload results panel.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
 
@@ -334,7 +350,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Interval for checking the contents of the "upload" table.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var BULK_CHECK_PERIOD = 1 * SECOND;
 
@@ -342,14 +359,16 @@ $(document).on('turbolinks:load', function() {
      * Indicator that a results line is filler displayed prior to detecting the
      * first added database entry.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var TMP_LINE_CLASS = 'start';
 
     /**
      * Filler displayed prior to detecting the first added database entry.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var TMP_LINE = 'Uploading...'; // TODO: I18n
 
@@ -1902,7 +1921,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setRequired(element) {
-        setIcon(element, Emma.Upload.Status.required.text);
+        setIcon(element, Emma.Upload.Status.required.label);
     }
 
     /**
@@ -1920,7 +1939,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setInvalid(element) {
-        setIcon(element, Emma.Upload.Status.invalid.text);
+        setIcon(element, Emma.Upload.Status.invalid.label);
     }
 
     /**
@@ -1939,7 +1958,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setValid(element) {
-        setIcon(element, Emma.Upload.Status.valid.text);
+        setIcon(element, Emma.Upload.Status.valid.label);
     }
 
     // noinspection JSUnusedLocalSymbols
@@ -3031,7 +3050,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).submit || {};
         var state = buttonProperties($form, op, 'submit', can_submit);
-        return state && state.text || op.text;
+        return state && state.label || op.label;
     }
 
     /**
@@ -3083,7 +3102,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).cancel || {};
         var state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state && state.text || op.text;
+        return state && state.label || op.label;
     }
 
     /**
@@ -3113,7 +3132,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).select || {};
         var state = buttonProperties($form, op, 'select', can_select);
-        return state && state.text || op.text;
+        return state && state.label || op.label;
     }
 
     /**

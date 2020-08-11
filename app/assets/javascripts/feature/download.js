@@ -71,7 +71,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant {boolean}
+     * @constant
+     * @type {boolean}
      */
     var DEBUGGING = true;
 
@@ -79,21 +80,24 @@ $(document).on('turbolinks:load', function() {
     /**
      * Frequency for re-requesting a download link.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var RETRY_PERIOD = 1 * SECOND;
 
     /**
      * Frequency for re-requesting a download link for DAISY_AUDIO.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
 
     /**
      * Retry period value which indicates the end of retrying.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      */
     var NO_RETRY = -1;
 
@@ -105,7 +109,8 @@ $(document).on('turbolinks:load', function() {
      * REQUESTING: The request to generate an artifact is in progress.
      * READY:      A direct link to the generated artifact is available.
      *
-     * @constant {{FAILED: string, REQUESTING: string, READY: string}}
+     * @constant
+     * @type {{FAILED: string, REQUESTING: string, READY: string}}
      */
     var STATE = {
         FAILED:     'failed',
@@ -116,14 +121,16 @@ $(document).on('turbolinks:load', function() {
     /**
      * Bookshare page for adding/modifying members.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
 
     /**
      * Properties for the elements of the member selection popup panel.
      *
-     * @constant {{
+     * @constant
+     * @type {{
      *  url:        string,
      *  name:       string,
      *  panel:      ElementProperties,
@@ -134,9 +141,11 @@ $(document).on('turbolinks:load', function() {
      *      type:       string|null|undefined,
      *      class:      string|null|undefined,
      *      tooltip:    string|null|undefined,
-     *      text:       string|null|undefined
-     *      input:      ElementProperties,
-     *      label:      ElementProperties,
+     *      label:      string|null|undefined,
+     *      text:       string|null|undefined,
+     *      html:       string|null|undefined,
+     *      row_input:  ElementProperties,
+     *      row_label:  ElementProperties,
      *      notice:     ElementProperties
      *  },
      *  buttons:    ElementProperties,
@@ -155,7 +164,7 @@ $(document).on('turbolinks:load', function() {
         title: {
             tag:     'label',
             class:   '',
-            text:    'Select a member', // TODO: I18n
+            label:   'Select a member', // TODO: I18n
             tooltip: ''
         },
         note: {
@@ -166,15 +175,15 @@ $(document).on('turbolinks:load', function() {
             tooltip: ''
         },
         fields: {
-            tag:   'div',
-            class: 'fields',
-            input: {
+            tag:         'div',
+            class:       'fields',
+            row_input: {
                 tag:     'input',
                 type:    'radio',
                 class:   '',
                 tooltip: ''
             },
-            label: {
+            row_label: {
                 tag:     'label',
                 class:   '',
                 tooltip: ''
@@ -200,7 +209,7 @@ $(document).on('turbolinks:load', function() {
             tag:     'button',
             type:    'submit',
             class:   '',
-            text:    'Submit', // TODO: I18n
+            label:   'Submit', // TODO: I18n
             enabled: {
                 class:   '',
                 tooltip: ''
@@ -213,7 +222,7 @@ $(document).on('turbolinks:load', function() {
         cancel: {
             tag:     'button',
             class:   '',
-            text:    'Cancel', // TODO: I18n
+            label:   'Cancel', // TODO: I18n
             tooltip: ''
         }
     };
@@ -368,21 +377,21 @@ $(document).on('turbolinks:load', function() {
         var $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
 
         // Start with a title.
-        var form_id = randomizeClass(MEMBER_POPUP.name);
-        var $title  = create(MEMBER_POPUP.title).attr('for', form_id);
-        $panel.attr('id', form_id);
+        var id      = randomizeClass(MEMBER_POPUP.name);
+        var $title  = create(MEMBER_POPUP.title).attr('for', id);
+        $panel.attr('id', id);
 
         // Follow with an explanatory note.
         var $note = create(MEMBER_POPUP.note);
 
         // Construct the member selection group.
         var $fields = create(MEMBER_POPUP.fields);
-        var $radio  = create(MEMBER_POPUP.fields.input).attr('name', form_id);
+        var $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
         var row     = 0;
         $.each(member_table, function(account_id, full_name) {
             var $input = $radio.clone().attr('value', account_id);
-            var $label = create(MEMBER_POPUP.fields.label).text(full_name);
-            var row_id = form_id + '-row' + row.toString();
+            var $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
+            var row_id = id + '-row' + row.toString();
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
             row += 1;
@@ -614,7 +623,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Progress indicator element selector.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var PROGRESS_SELECTOR = '.' + Emma.Download.progress.class;
 
@@ -647,7 +657,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Failure message element selector.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var FAILURE_SELECTOR = '.' + Emma.Download.failure.class;
 
@@ -684,7 +695,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Download button element selector.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var BUTTON_SELECTOR = '.' + Emma.Download.button.class;
 
@@ -767,7 +779,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Name of the data attribute holding the link's retry period.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var RETRY_ATTRIBUTE = 'retry';
 

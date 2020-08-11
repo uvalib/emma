@@ -7,14 +7,16 @@
 /**
  * Container element for flash messages.
  *
- * @constant {string}
+ * @constant
+ * @type {string}
  */
 var FLASH_CONTAINER_CSS = 'flash-messages';
 
 /**
  * Selector root for flash messages.
  *
- * @constant {string}
+ * @constant
+ * @type {string}
  */
 var FLASH_ROOT_SELECTOR = '.' + FLASH_CONTAINER_CSS;
 

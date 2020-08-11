@@ -26,49 +26,56 @@ $(document).on('turbolinks:load', function() {
     /**
      * Flag controlling console debug output.
      *
-     * @constant {boolean}
+     * @constant
+     * @type {boolean}
      */
     var DEBUGGING = true;
 
     /**
      * State value indicating that the advanced search control panel is open.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var OPEN = 'open';
 
     /**
      * State value indicating that the advanced search control panel is closed.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var CLOSED = 'closed';
 
     /**
      * Marker class indicating that the advanced search control panel is open.
      *
-     * @constant {string}
+     * @constant
+     * @type {string}
      */
     var OPEN_MARKER = 'open';
 
     /**
      * Search types and their display properties.
      *
-     * @constant {object}
+     * @constant
+     * @type {object}
      */
     var SEARCH_TYPE = Emma.AdvSearch.search_type;
 
     /**
      * Search types.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var SEARCH_TYPES = Object.keys(SEARCH_TYPE);
 
     /**
      * Events exposed by Select2.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var MULTI_SELECT_EVENTS = [
         'change',
@@ -88,7 +95,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * The longest Select2 event name.
      *
-     * @constant {number}
+     * @constant
+     * @type {number}
      *
      * @see logSelectEvent
      */
@@ -274,7 +282,7 @@ $(document).on('turbolinks:load', function() {
     function setControlPanelToggle(opening) {
         /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
-        $advanced_toggle.html(value.text).attr('title', value.tooltip);
+        $advanced_toggle.html(value.label).attr('title', value.tooltip);
     }
 
     /**
@@ -519,7 +527,8 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which precede the change which causes a new search to be
      * performed.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var PRE_CHANGE_EVENTS = ['select2:selecting', 'select2:unselecting'];
 
@@ -527,7 +536,8 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which follow a change which causes a new search to be
      * performed.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var POST_CHANGE_EVENTS = ['select2:select', 'select2:unselect'];
 
@@ -535,7 +545,8 @@ $(document).on('turbolinks:load', function() {
      * Select2 events which should detect whether to suppress the opening of
      * the drop-down menu.
      *
-     * @constant {string[]}
+     * @constant
+     * @type {string[]}
      */
     var CHECK_SUPPRESS_MENU_EVENTS = ['select2:opening'];
 

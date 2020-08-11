@@ -18,23 +18,33 @@
  */
 var OverrideScriptSettings = OverrideScriptSettings || {};
 
+// ============================================================================
+// JSDoc type definitions
+// ============================================================================
+
 /**
+ * ElementProperties
+ *
  * @typedef {{
  *  tag:      string|null|undefined,
  *  type:     string|null|undefined,
  *  class:    string|null|undefined,
  *  tooltip:  string|null|undefined,
+ *  label:    string|null|undefined,
  *  text:     string|null|undefined,
  *  html:     string|null|undefined
  * }} ElementProperties
  */
 
 /**
+ * Action Properties
+ *
  * @typedef {{
  *  tag:      string|null|undefined,
  *  type:     string|null|undefined,
  *  class:    string|null|undefined,
  *  tooltip:  string|null|undefined,
+ *  label:    string|null|undefined,
  *  text:     string|null|undefined,
  *  html:     string|null|undefined,
  *  enabled:  ElementProperties|null|undefined,
@@ -43,6 +53,8 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  */
 
 /**
+ * RouteActionProperties
+ *
  * @typedef {{
  *  submit:  ActionProperties,
  *  cancel:  ActionProperties,
@@ -51,6 +63,8 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
  */
 
 /**
+ * FieldGroupProperties
+ *
  * @typedef {{
  *  label:    string|null,
  *  tooltip:  string|null,
@@ -263,11 +277,11 @@ var Emma = (function() {
          */
         AdvSearch: {
             opener: {
-                text:    "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL %>",
+                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP %>"
             },
             closer: {
-                text:    "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
+                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP %>"
             },
             search_type: o$('<%= SearchTermsHelper::SEARCH_TYPE.to_json %>')
@@ -290,11 +304,11 @@ var Emma = (function() {
          */
         Panel: {
             opener: {
-                text:    "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
+                label:   "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
                 tooltip: "<%= LayoutHelper::Common::PANEL_OPENER_TIP %>"
             },
             closer: {
-                text:    "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
+                label:   "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::Common::PANEL_CLOSER_TIP %>"
             }
         },
