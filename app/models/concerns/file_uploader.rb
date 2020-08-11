@@ -51,7 +51,7 @@ require 'shrine'
 #   @return [Shrine::Attacher]
 #
 # == Implementation Notes
-# If #DEBUG_SHRINE is true then the overrides defined in Shrine::UploaderDebug
+# If #SHRINE_DEBUG is true then the overrides defined in Shrine::UploaderDebug
 # (lib/ext/shrine/lib/shrine.rb) apply to the methods inherited from Shrine.
 #
 class FileUploader < Shrine
@@ -102,7 +102,7 @@ class FileUploader < Shrine
 
   public
 
-  if DEBUG_SHRINE
+  if SHRINE_DEBUG
 
     # =========================================================================
     # :section: Shrine::ClassMethods overrides

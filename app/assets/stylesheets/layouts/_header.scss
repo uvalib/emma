@@ -182,9 +182,8 @@ $search-button-width:    6rem;
         flex:            1 1 auto;
 
         @media #{$narrow-screen} {
-            flex-direction: column-reverse;
-            margin-top:     0;
-            margin-bottom:  $flex-gap-y;
+            margin-top:    0;
+            margin-bottom: $flex-gap-y;
         }
 
         > * {
@@ -203,7 +202,8 @@ $search-button-width:    6rem;
             }
 
             @media #{$narrow-screen} {
-                text-align: right;
+                margin-top:   calc(2 * #{$flex-gap-y});
+                margin-right: calc(2 * #{$flex-gap-x});
             }
 
             .popup-panel {
@@ -310,7 +310,8 @@ $search-button-width:    6rem;
         flex:          0 0 auto;
 
         @media #{$narrow-screen} {
-            margin-top: $flex-gap-y;
+            margin-top:    $flex-gap-y;
+            margin-bottom: auto;
         }
 
         //=====================================================================
@@ -514,6 +515,7 @@ $search-button-width:    6rem;
 
             @media #{$narrow-screen} {
                 flex:   1 0 100%;
+                margin: 0;
                 height: 2rem;
             }
 
@@ -555,8 +557,7 @@ $search-button-width:    6rem;
                 flex:         1 1 auto;
 
                 @media #{$narrow-screen} {
-                    max-width:    92.5vw;
-                    margin-right: 0;
+                    margin-right: 0.125rem;
                 }
             }
 

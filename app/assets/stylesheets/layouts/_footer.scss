@@ -42,13 +42,16 @@ $footer-margin-top: 1rem;
 
         @media #{$narrow-screen} {
             grid-template-columns: 1fr;
+            gap:                   0.5rem;
         }
 
         .entry {
 
-            display:    flex;
-            width:      100%;
-            word-break: keep-all;
+            display:     flex;
+            flex-wrap:   wrap;
+            width:       100%;
+            line-height: 1.25;
+            word-break:  keep-all;
 
             @media #{$not-narrow-screen} {
 

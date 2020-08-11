@@ -4,11 +4,14 @@
 
 .popup-container {
 
-    display:  inline-block;
-    position: relative;
+    display: inline-block;
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$not-narrow-screen} {
+        position: relative;
+    }
 
     // Activation area in the form of text/hyperlink.
-    // noinspection SassScssResolvedByNameOnly
     .control.text {
 
         color:           -moz-hyperlinktext;
@@ -17,6 +20,7 @@
         text-decoration: underline;
         cursor:          pointer;
 
+        // noinspection SassScssResolvedByNameOnly
         &:focus {
             @extend %focus;
         }
@@ -88,17 +92,18 @@
 
         @media #{$medium-width} {
             position:   fixed;
+            top:        5vh;
+            bottom:     5vh;
             left:       5vw;
             right:      5vw;
-            min-height: 33vh;
         }
 
         @media #{$narrow-screen} {
             position:   fixed;
-            top:        1rem;
-            bottom:     1rem;
-            left:       0.75rem;
-            right:      0.75rem;
+            top:        3vh;
+            bottom:     3vh;
+            left:       3vw;
+            right:      3vw;
         }
 
         &.hidden {
@@ -139,6 +144,7 @@
         // Container for the popup content.
         iframe {
             border: none;
+            width:  100%;
         }
 
         // Temporary deferred-content placeholder.

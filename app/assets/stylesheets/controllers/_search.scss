@@ -24,15 +24,6 @@
 // noinspection SassScssResolvedByNameOnly
 .repository {
 
-    height:     3rem;
-    max-height: 3rem;
-    max-width:  100%;
-
-    @media #{$wide-screen} {
-        height:     4.5rem;
-        max-height: 4.5rem;
-    }
-
     &.name {
 
         display:         flex;
@@ -41,6 +32,18 @@
 
         div {
             @extend %text-logo;
+        }
+    }
+
+    img {
+
+        height:     3rem;
+        max-height: 3rem;
+        max-width:  100%;
+
+        @media #{$wide-screen} {
+            height:     4.5rem;
+            max-height: 4.5rem;
         }
     }
 }
@@ -88,7 +91,7 @@
 
     .value {
 
-        $value-right-margin: calc(#{$flex-gap-x} * 2);
+        $value-right-margin: calc(2 * #{$flex-gap-x});
 
         @media #{$wide-screen} {
             margin-right: $value-right-margin;
@@ -125,8 +128,6 @@
             .repository {
 
                 flex:       0 0 auto;
-                margin:     auto 0;
-                height:     3rem;
                 max-height: 3rem;
 
                 @media #{$wide-screen} {
@@ -136,6 +137,11 @@
                 @media #{$not-wide-screen} {
                     margin-top: 0.25rem;
                 }
+
+                img {
+                    height:     3rem;
+                    max-height: 3rem;
+                }
             }
         }
 
@@ -144,7 +150,7 @@
         }
 
         &.textbox {
-            // TODO: ?
+            // TODO: ??? .search-label-value-pairs .value.textbox
         }
 
         &.array {

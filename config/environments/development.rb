@@ -94,7 +94,7 @@ Rails.application.configure do
   # ===========================================================================
 
   config.public_file_server.headers = {
-    'Cache-Control' => "public, max-age=#{2.days}"
+    'Cache-Control' => "public, max-age=#{30.days}"
   }
 
   # ===========================================================================

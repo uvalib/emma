@@ -181,7 +181,7 @@ class Shrine
     include DebugMethods
     extend  DebugMethods
 
-  end if DEBUG_SHRINE
+  end if SHRINE_DEBUG
 
 end
 
@@ -190,6 +190,6 @@ end
 # =============================================================================
 
 override Shrine::UploadEndpoint => Shrine::UploadEndpointExt
-override Shrine::UploadEndpoint => Shrine::UploadEndpointDebug if DEBUG_SHRINE
+override Shrine::UploadEndpoint => Shrine::UploadEndpointDebug if SHRINE_DEBUG
 
 __loading_end(__FILE__)

@@ -12,7 +12,7 @@
     if (adding) {
         $script =
             $('<script>')
-                .attr('src',  '//use.typekit.net/tgy5tlj.js')
+                .attr('src',  'https://use.typekit.net/tgy5tlj.js')
                 .attr('type', 'text/javascript');
         $script.appendTo($head);
     }

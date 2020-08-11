@@ -47,8 +47,8 @@ plugin :tmp_restart
 # Logging
 # =============================================================================
 
-debug if ENV.fetch('PUMA_DEBUG', true) # TODO: testing - remove?
-log_requests ENV.fetch('PUMA_LOG_REQUESTS', true) # TODO: testing - remove?
+debug if true?(ENV['PUMA_DEBUG'])
+log_requests true?(ENV['PUMA_LOG_REQUESTS'])
 
 before_fork        { puts 'PUMA before_fork: starting workers' }
 on_worker_boot     { puts 'PUMA on_worker_boot' }

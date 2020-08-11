@@ -278,7 +278,7 @@ class Shrine
       include DebugMethods
       extend  DebugMethods
 
-    end if DEBUG_SHRINE
+    end if SHRINE_DEBUG
 
   end
 
@@ -288,6 +288,6 @@ end
 # Override gem definitions
 # =============================================================================
 
-override Shrine::Storage::S3 => Shrine::Storage::S3Debug if DEBUG_SHRINE
+override Shrine::Storage::S3 => Shrine::Storage::S3Debug if SHRINE_DEBUG
 
 __loading_end(__FILE__)

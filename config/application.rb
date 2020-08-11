@@ -142,7 +142,7 @@ module Emma
     # Apache or NGINX already handles this.
     config.public_file_server.enabled = true?(ENV['RAILS_SERVE_STATIC_FILES'])
     config.public_file_server.headers = {
-      'Cache-Control' => "public, max-age=#{1.hour}"
+      'Cache-Control' => "public, max-age=#{30.days}"
     }
 
     # =========================================================================

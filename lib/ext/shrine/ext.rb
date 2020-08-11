@@ -11,8 +11,7 @@ __loading_begin(__FILE__)
 #
 # @type [Boolean]
 #
-DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE']) || true # TODO: delete
-#DEBUG_SHRINE = true?(ENV['DEBUG_SHRINE']) # TODO: restore
+SHRINE_DEBUG = true?(ENV['SHRINE_DEBUG'])
 
 require 'shrine'
 require_subdirs(__FILE__)

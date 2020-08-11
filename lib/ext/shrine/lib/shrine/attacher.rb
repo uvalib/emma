@@ -478,7 +478,7 @@ class Shrine
     include DebugMethods
     extend  DebugMethods
 
-  end if DEBUG_SHRINE
+  end if SHRINE_DEBUG
 
 end
 
@@ -486,6 +486,6 @@ end
 # Override gem definitions
 # =============================================================================
 
-override Shrine::Attacher => Shrine::AttacherDebug if DEBUG_SHRINE
+override Shrine::Attacher => Shrine::AttacherDebug if SHRINE_DEBUG
 
 __loading_end(__FILE__)

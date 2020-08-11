@@ -49,7 +49,18 @@
         margin-top: 0;
     }
     nav > ul {
+
         margin-left: 1rem;
+
+        @media #{$narrow-screen} {
+
+            margin-left: 0;
+
+            > li {
+                margin-left:         0.1875rem;
+                list-style-position: outside;
+            }
+        }
     }
 
     h1 { margin-top: 2rem; }
@@ -100,7 +111,6 @@
             max-width: 75%;
 
             @media #{$narrow-screen} {
-                min-width: 100%;
                 max-width: 100%;
             }
         }
@@ -118,6 +128,10 @@
         justify-content: space-between;
         align-items:     flex-end;
 
+        @media #{$narrow-screen} {
+            flex-wrap: wrap-reverse;
+        }
+
         // Sub-heading text.
         .text {
             display: block;
@@ -125,20 +139,31 @@
         }
 
         // Repository logo.
-        img.logo {
-            display:    block;
-            height:     3rem;
-            max-height: 3rem;
-            max-width:  50%;
-            margin:     0;
-            padding:    0.25rem 0.375rem;
-            flex:       0 1 0;
+        .logo {
+            display: block;
+            flex:    0 1 auto;
+
+            @media #{$not-narrow-screen} {
+                margin-left: 1rem;
+            }
+
+            @media #{$narrow-screen} {
+                max-width:     90%;
+                margin-bottom: $flex-gap-y;
+            }
+
+            img {
+                max-width:  100%;
+                margin:     auto;
+                padding:    0.25rem 0.375rem;
+                object-fit: scale-down;
+            }
         }
     }
 
     // Minor sub-heading.
     .sub-section {
-        // TODO: ???
+        // TODO: ??? %help-elements .sub-section
     }
 
     // Container for elements to be arranged side-by-side.
@@ -167,9 +192,13 @@
         }
 
         img {
-            flex:          1 0 50%;
+
+            flex:          1 0 auto;
             margin-bottom: auto !important;
-            max-width:     50%; // Chrome needs this; other browsers don't.
+
+            @media #{$not-narrow-screen} {
+                max-width: 50%; // Chrome needs this; other browsers don't.
+            }
         }
 
         * + img {
@@ -190,7 +219,7 @@
 
         // Menu selection.
         .label {
-            // TODO: ???
+            // TODO: ??? %help-elements .choices .label
         }
 
         // Description of menu selection.

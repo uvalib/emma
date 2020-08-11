@@ -54,7 +54,7 @@ body {
 
     display:     flex;
     align-items: center;
-    margin:      calc(#{$page-padding} * 1.5) auto;
+    margin:      calc(1.5 * #{$page-padding}) auto;
     word-break:  break-all;
     font-size:   xx-large;
 
@@ -63,7 +63,7 @@ body {
     }
 
     @media #{$narrow-screen} {
-        margin-top: calc(#{$page-padding} * 2);
+        margin-top: calc(2 * #{$page-padding});
     }
 }
 

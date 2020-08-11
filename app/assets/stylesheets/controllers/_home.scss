@@ -20,13 +20,11 @@
     line-height: 1.375;
 
     @media #{$medium-width} {
-        min-width: 75%;
-        max-width: 75%;
+        max-width: 100%;
     }
 
     @media #{$narrow-screen} {
-        min-width: 100%;
-        max-width: 100%;
+        max-width: 90%;
     }
 
     > * {

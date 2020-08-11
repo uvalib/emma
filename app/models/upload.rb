@@ -170,13 +170,13 @@ class Upload < ApplicationRecord
   # :section: Callbacks
   # ===========================================================================
 
-  before_validation { note_cb(:before_validation) } if DEBUG_SHRINE
-  after_validation  { note_cb(:after_validation) }  if DEBUG_SHRINE
-  before_save       { note_cb(:before_save) }       if DEBUG_SHRINE
-  before_create     { note_cb(:before_create) }     if DEBUG_SHRINE
-  after_create      { note_cb(:after_create) }      if DEBUG_SHRINE
-  after_save        { note_cb(:after_save) }        if DEBUG_SHRINE
-  after_commit      { note_cb(:after_commit) }      if DEBUG_SHRINE
+  before_validation { note_cb(:before_validation) } if SHRINE_DEBUG
+  after_validation  { note_cb(:after_validation) }  if SHRINE_DEBUG
+  before_save       { note_cb(:before_save) }       if SHRINE_DEBUG
+  before_create     { note_cb(:before_create) }     if SHRINE_DEBUG
+  after_create      { note_cb(:after_create) }      if SHRINE_DEBUG
+  after_save        { note_cb(:after_save) }        if SHRINE_DEBUG
+  after_commit      { note_cb(:after_commit) }      if SHRINE_DEBUG
 
   # :before_save # should be triggering:
   #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save

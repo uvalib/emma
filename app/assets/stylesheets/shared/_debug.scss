@@ -43,6 +43,26 @@
     }
 
     // noinspection SassScssResolvedByNameOnly
+    @media #{$narrow-screen} {
+
+        .session-debug-table {
+            grid-template-columns: 1fr;
+            gap:                   0.5rem;
+        }
+
+        .key:not(.row-first) {
+            border-top:  1px solid;
+            margin-top:  0.25rem;
+            padding-top: 0.25rem;
+        }
+
+        .value:not(.row-first) {
+            margin-left: 0.75rem;
+        }
+
+    }
+
+    // noinspection SassScssResolvedByNameOnly
     .note {
         color:       $debug-fg;
         margin-left: 0.5rem;
