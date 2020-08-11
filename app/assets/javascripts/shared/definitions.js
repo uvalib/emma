@@ -323,6 +323,7 @@ function create(element, properties) {
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
     prop.text    && $element.text(prop.text);
+    prop.html    && $element.html(prop.html);
     return $element;
 }
 

@@ -147,6 +147,7 @@
         outline-color:   transparent;
     }
 
+    &.forbidden:focus,
     &.forbidden:hover {
         text-decoration: none;
         box-shadow:      none;

@@ -114,9 +114,16 @@ $(document).on('turbolinks:load', function() {
     };
 
     /**
+     * Bookshare page for adding/modifying members.
+     *
+     * @constant {string}
+     */
+    var BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
+
+    /**
      * Properties for the elements of the member selection popup panel.
      *
-     * @type {{
+     * @constant {{
      *  url:        string,
      *  name:       string,
      *  panel:      ElementProperties,
@@ -130,6 +137,7 @@ $(document).on('turbolinks:load', function() {
      *      text:       string|null|undefined
      *      input:      ElementProperties,
      *      label:      ElementProperties,
+     *      notice:     ElementProperties
      *  },
      *  buttons:    ElementProperties,
      *  submit:     ActionProperties,
@@ -170,6 +178,17 @@ $(document).on('turbolinks:load', function() {
                 tag:     'label',
                 class:   '',
                 tooltip: ''
+            },
+            notice: {
+                tag:     'div',
+                class:   'notice',
+                html:    'You must define one or more qualifying members at ' +
+                         '<a href="' + BS_ACCOUNT_URL + '" target="_blank">' +
+                             'Bookshare' +
+                         '</a>' +
+                         ' then ' +
+                         '<a href="javascript:location.reload()">refresh</a>' +
+                         ' this page.'
             }
         },
         buttons: {
@@ -369,6 +388,11 @@ $(document).on('turbolinks:load', function() {
             row += 1;
         });
 
+        // Handle the edge case where the user has no members defined.
+        if (row === 0) {
+            create(MEMBER_POPUP.fields.notice).appendTo($fields);
+        }
+
         // Construct the button tray for the bottom of the panel.
         var $tray   = create(MEMBER_POPUP.buttons);
         var $submit = create(MEMBER_POPUP.submit);
@@ -405,9 +429,11 @@ $(document).on('turbolinks:load', function() {
             if ($fields.is(':checked')) {
                 $submit.removeClass(disabled);
                 $submit.attr('title', MEMBER_POPUP.submit.enabled.tooltip);
+                $submit.attr('tabindex', 0);
             } else {
                 $submit.addClass(disabled);
                 $submit.attr('title', MEMBER_POPUP.submit.disabled.tooltip);
+                $submit.attr('tabindex', -1);
             }
         });
         $panel[0].reset();
