@@ -20,28 +20,32 @@ var OverrideScriptSettings = OverrideScriptSettings || {};
 
 /**
  * @typedef {{
- *  label:   string|null,
- *  tooltip: string|null,
- *  class:   string|null
+ *  tag:      string|null|undefined,
+ *  type:     string|null|undefined,
+ *  class:    string|null|undefined,
+ *  tooltip:  string|null|undefined,
+ *  text:     string|null|undefined
  * }} ElementProperties
  */
 
 /**
  * @typedef {{
- *  label:    string|null,
- *  tooltip:  string|null,
- *  class:    string|null,
- *  enabled:  ElementProperties|null,
- *  disabled: ElementProperties|null
- * }} OperationProperties
+ *  tag:      string|null|undefined,
+ *  type:     string|null|undefined,
+ *  class:    string|null|undefined,
+ *  tooltip:  string|null|undefined,
+ *  text:     string|null|undefined
+ *  enabled:  ElementProperties|null|undefined,
+ *  disabled: ElementProperties|null|undefined
+ * }} ActionProperties
  */
 
 /**
  * @typedef {{
- *  submit:  OperationProperties,
- *  cancel:  OperationProperties,
- *  select:  OperationProperties|null
- * }} ActionProperties
+ *  submit:  ActionProperties,
+ *  cancel:  ActionProperties,
+ *  select:  ActionProperties|null|undefined
+ * }} RouteActionProperties
  */
 
 /**
@@ -175,12 +179,24 @@ var Emma = (function() {
         DEPLOYED:   b$("<%= application_deployed? %>"),
 
         // ====================================================================
-        // feature/images.js
-        //
-        // image.asset  Asset path for the animated "downloading" GIF.
-        // image.alt    Placeholder image alt text.
+        // Feature settings
         // ====================================================================
 
+        /**
+         * ====================================================================
+         * feature/images.js
+         *
+         * - image.asset      Asset path for the animated "downloading" GIF.
+         * - image.alt        Placeholder image alt text.
+         * ====================================================================
+         *
+         * @type {{
+         *    image: {
+         *        asset:  string,
+         *        alt:    string,
+         *    }
+         * }}
+         */
         placeholder: {
             image: {
                 asset: "<%= asset_path(ImageHelper::PLACEHOLDER_IMAGE_ASSET) %>",
@@ -188,17 +204,29 @@ var Emma = (function() {
             }
         },
 
-        // ====================================================================
-        // feature/download.js
-        //
-        // button.class       Artifact download button element CSS class.
-        // progress.class     Artifact download progress indicator element CSS class.
-        // failure.class      Artifact download failure message element CSS class.
-        // failure.prefix     Prefix for download failure message labels.
-        // failure.cancelled  Failure message for a user-cancelled download.
-        // failure.unknown    Unknown download failure.
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/download.js
+         *
+         * - button.class       Artifact download button element CSS class.
+         * - progress.class     Artifact download progress indicator element CSS class.
+         * - failure.class      Artifact download failure message element CSS class.
+         * - failure.prefix     Prefix for download failure message labels.
+         * - failure.cancelled  Failure message for a user-cancelled download.
+         * - failure.unknown    Unknown download failure.
+         * ====================================================================
+         *
+         * @type {{
+         *    button:         ElementProperties,
+         *    progress:       ElementProperties,
+         *    failure: {
+         *        class:      string,
+         *        prefix:     string,
+         *        cancelled:  string,
+         *        unknown:    string
+         *    }
+         * }}
+         */
         Download: {
             button: {
                 class:     "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>"
@@ -214,58 +242,80 @@ var Emma = (function() {
             }
         },
 
-        // ====================================================================
-        // feature/advanced-search.js
-        //
-        // opener.label     Label for button to open advanced search controls.
-        // opener.tooltip   Tooltip for button to open advanced search controls.
-        // closer.label     Label for button to close advanced search controls.
-        // closer.tooltip   Tooltip for button to close advanced search controls.
-        // search_type      Label, tooltip and placeholder for each search type
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/advanced-search.js
+         *
+         * - opener.text      Label for button to open advanced search controls.
+         * - opener.tooltip   Tooltip for button to open advanced search controls.
+         * - closer.text      Label for button to close advanced search controls.
+         * - closer.tooltip   Tooltip for button to close advanced search controls.
+         * - search_type      Label, tooltip and placeholder for each search type
+         * ====================================================================
+         *
+         * @type {{
+         *    opener:       ElementProperties,
+         *    closer:       ElementProperties,
+         *    search_type:  ElementProperties
+         * }}
+         */
         AdvSearch: {
             opener: {
-                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL %>",
+                text:    "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP %>"
             },
             closer: {
-                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
+                text:    "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP %>"
             },
             search_type: o$('<%= SearchTermsHelper::SEARCH_TYPE.to_json %>')
         },
 
-        // ====================================================================
-        // feature/panel.js
-        //
-        // opener.label     Label for button to open a collapsible panel.
-        // opener.tooltip   Tooltip for button to open a collapsible panel.
-        // closer.label     Label for button to close a collapsible panel.
-        // closer.tooltip   Tooltip for button to close a collapsible panel.
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/panel.js
+         *
+         * - opener.text      Label for button to open a collapsible panel.
+         * - opener.tooltip   Tooltip for button to open a collapsible panel.
+         * - closer.text      Label for button to close a collapsible panel.
+         * - closer.tooltip   Tooltip for button to close a collapsible panel.
+         * ====================================================================
+         *
+         * @type {{
+         *    opener: ElementProperties,
+         *    closer: ElementProperties,
+         * }}
+         */
         Panel: {
             opener: {
-                label:   "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
+                text:    "<%= LayoutHelper::Common::PANEL_OPENER_LABEL %>",
                 tooltip: "<%= LayoutHelper::Common::PANEL_OPENER_TIP %>"
             },
             closer: {
-                label:   "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
+                text:    "<%= LayoutHelper::Common::PANEL_CLOSER_LABEL %>",
                 tooltip: "<%= LayoutHelper::Common::PANEL_CLOSER_TIP %>"
             }
         },
 
-        // ====================================================================
-        // feature/popup.js
-        //
-        // button.class       Popup activator CSS class.
-        // panel.class        Popup panel CSS class.
-        // closer.class       CSS class signifying a panel close control.
-        // controls.class     CSS class for controls below the panel.
-        // deferred.class     CSS class signifying deferred content.
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/popup.js
+         *
+         * - button.class     Popup activator CSS class.
+         * - panel.class      Popup panel CSS class.
+         * - closer.class     CSS class signifying a panel close control.
+         * - controls.class   CSS class for controls below the panel.
+         * - deferred.class   CSS class signifying deferred content.
+         * ====================================================================
+         *
+         * @type {{
+         *    button:   ElementProperties,
+         *    panel:    ElementProperties,
+         *    closer:   ElementProperties,
+         *    controls: ElementProperties,
+         *    deferred: ElementProperties,
+         * }}
+         */
         Popup: {
             button: {
                 class: "<%= PopupHelper::POPUP_BUTTON_CLASS %>"
@@ -284,30 +334,55 @@ var Emma = (function() {
             }
         },
 
-        // ====================================================================
-        // feature/file-upload.js
-        //
-        // path.endpoint          Shrine's upload endpoint (the server route to
-        //                          which uploads are directed).
-        //
-        // path.create            The POST endpoint for creating a database
-        //                          entry for the uploaded file.
-        //
-        // css.drag_target        CSS class for the element used to hold an
-        //                          Uppy drag-and-drop target.
-        //
-        // css.preview            CSS class for the element used to hold an
-        //                          Uppy preview thumbnail image.
-        //
-        // mime.to_fmt            A table mapping MIME type to file format.
-        //
-        // Status                 Status marker label/tooltips.
-        //
-        // Action                 Form action label/tooltips for controller
-        //                          actions.
-        //
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/file-upload.js
+         *
+         * - path.endpoint    Shrine's upload endpoint (the server route to which uploads are directed).
+         * - path.create      The POST endpoint for creating a database entry for the uploaded file.
+         * - css.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
+         * - css.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
+         * - mime.to_fmt      A table mapping MIME type to file format.
+         * - Status           Status marker label/tooltips.
+         * - Action           Form action label/tooltips for controller actions.
+         * - Filter           Form action label/tooltips for form field filter selections.
+         * ====================================================================
+         *
+         * @type {{
+         *    path: {
+         *        index:          string,
+         *        create:         string,
+         *        endpoint:       string,
+         *    },
+         *    css: {
+         *        target_target:  string,
+         *        preview:        string,
+         *    },
+         *    mime: {
+         *        to_fmt:         object,
+         *    },
+         *    Status: {
+         *        required:       ElementProperties,
+         *        invalid:        ElementProperties,
+         *        valid:          ElementProperties,
+         *        nominal:        ElementProperties
+         *    },
+         *    Action: {
+         *        new:            RouteActionProperties,
+         *        edit:           RouteActionProperties,
+         *        delete:         RouteActionProperties,
+         *        bulk_new:       RouteActionProperties,
+         *        bulk_edit:      RouteActionProperties,
+         *        bulk_delete:    RouteActionProperties
+         *    },
+         *    Filter: {
+         *        available:      FieldGroupProperties,
+         *        filled:         FieldGroupProperties,
+         *        invalid:        FieldGroupProperties,
+         *        all:            FieldGroupProperties
+         *    }
+         * }}
+         */
         Upload: {
             path: {
                 index:       "<%= UploadHelper::UPLOAD_URL %>",
@@ -321,52 +396,26 @@ var Emma = (function() {
             mime: {
                 to_fmt:      o$('<%= FileNaming.mime_to_fmt.to_json %>')
             },
-            /**
-             * @type {{
-             *     required:    ElementProperties,
-             *     invalid:     ElementProperties,
-             *     valid:       ElementProperties,
-             *     nominal:     ElementProperties
-             * }};
-             */
             Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
-            /**
-             * @type {{
-             *     new:         ActionProperties,
-             *     edit:        ActionProperties,
-             *     delete:      ActionProperties,
-             *     bulk_new:    ActionProperties,
-             *     bulk_edit:   ActionProperties,
-             *     bulk_delete: ActionProperties
-             * }};
-             */
             Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>'),
-            /**
-             * @type {{
-             *     available:   FieldGroupProperties,
-             *     filled:      FieldGroupProperties,
-             *     invalid:     FieldGroupProperties,
-             *     all:         FieldGroupProperties
-             * }};
-             */
             Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP_VALUES.to_json %>')
         },
 
-        // ====================================================================
-        // feature/scroll.js
-        //
-        // target     Properties for the element which is scrolled to the top.
-        // button     Properties for the scroll-to-top button.
-        // ====================================================================
-
+        /**
+         * ====================================================================
+         * feature/scroll.js
+         *
+         * - target   Properties for the element which is scrolled to the top.
+         * - button   Properties for the scroll-to-top button.
+         * ====================================================================
+         *
+         * @type {{
+         *     target:  ElementProperties,
+         *     button:  ElementProperties
+         * }}
+         */
         Scroll: {
-            /**
-             * @type {ElementProperties}
-             */
             target: o$('<%= LayoutHelper::Scroll::SCROLL_TARGET.to_json %>'),
-            /**
-             * @type {ElementProperties}
-             */
             button: o$('<%= LayoutHelper::Scroll::SCROLL_TOP.to_json %>')
         }
 

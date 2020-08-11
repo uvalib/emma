@@ -36,40 +36,10 @@ class SearchController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action(only: :show) { @title_id = params[:titleId] || params[:id] }
-
-  # URL parameter aliases for :identifier.
-  before_action(only: :index) do
-    opt = request_parameters
-    id_alias = opt.extract!(*PublicationIdentifier::TYPES)
-    if id_alias.present?
-      search_terms = id_alias.map { |type, term| "#{type}:#{term}" }.join(' ')
-      redirect_to opt.merge!(identifier: search_terms)
-    end
-  end
-
-  # Translate an identifier query to a keyword query if the search term does
-  # not look like a valid identifier.
-  before_action(only: :index) do
-    opt = request_parameters
-    identifier = (opt[:identifier] if opt[:q].blank?)
-    if identifier.present? && PublicationIdentifier.cast(identifier).blank?
-      keyword = identifier.sub(/^[^:]+:/, '')
-      redirect_to opt.except(:identifier).merge!(q: keyword)
-    end
-  end
-
-  # Translate a keyword query for an identifier into an identifier query.
-  # For other query types, queries that include a standard identifier prefix
-  # (e.g. "isbn:...") are re-cast as :identifier queries.
-  before_action(only: :index) do
-    opt = request_parameters
-    QUERY_PARAMETERS.find do |q_param|
-      next if (q_param == :identifier) || (query = opt[q_param]).blank?
-      next if (identifier = PublicationIdentifier.cast(query)).blank?
-      redirect_to opt.except!(q_param).merge!(identifier: identifier.to_s)
-    end
-  end
+  before_action :identifier_alias_redirect,   only: %i[index]
+  before_action :invalid_identifier_redirect, only: %i[index]
+  before_action :identifier_keyword_redirect, only: %i[index]
+  before_action :set_title_id,                only: %i[show]
 
   # ===========================================================================
   # :section:
@@ -181,7 +151,7 @@ class SearchController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item)
+  def show_values(item = @item, **)
     { records: normalize_keys(item) }
   end
 

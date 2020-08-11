@@ -40,7 +40,7 @@ class TitleController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action { @bookshare_id = params[:bookshareId] || params[:id] }
+  before_action :set_bookshare_id
 
   # ===========================================================================
   # :section:
@@ -169,7 +169,7 @@ class TitleController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item)
+  def show_values(item = @item, **)
     { catalog_title: item }
   end
 

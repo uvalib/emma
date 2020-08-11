@@ -44,8 +44,10 @@ class ArtifactController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action { @bookshare_id = params[:bookshareId] || params[:id] }
-  before_action { @format = params[:fmt] || FormatType.default }
+  before_action :set_bookshare_id
+  before_action :set_format,        except: %i[retrieval]
+  before_action :set_member,        only:   %i[download retrieval]
+  before_action :set_url,           only:   %i[retrieval]
 
   # ===========================================================================
   # :section:
@@ -129,23 +131,27 @@ class ArtifactController < ApplicationController
     __debug_route
   end
 
-  # == GET /artifact/:id/:fmt
-  # == GET /artifact/:bookshareId/:fmt
+  # == GET /artifact/:id/:fmt?member=BS_ACCOUNT_ID
+  # == GET /artifact/:id/:fmt?forUser=BS_ACCOUNT_ID
+  # == GET /artifact/:bookshareId/:fmt?member=BS_ACCOUNT_ID
+  # == GET /artifact/:bookshareId/:fmt?forUser=BS_ACCOUNT_ID
   # Download an artifact of the indicated Bookshare format type.
   #
   def download
     __debug_route
-    opt = { bookshareId: @bookshare_id, format: @format }
+    opt = { bookshareId: @bookshare_id, format: @format, forUser: @member }
     render_bs_download(:download_title, **opt)
   end
 
-  # == GET /artifact/retrieval?url=URL
+  # == GET /artifact/retrieval?url=URL&forUser=BS_ACCOUNT_ID
+  # == GET /artifact/retrieval?url=URL&member=BS_ACCOUNT_ID
   # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
   # Unified Search results).
   #
   def retrieval
     __debug_route
-    render_bs_download(:get_retrieval, url: params[:url])
+    opt = { url: @url, forUser: @member }
+    render_bs_download(:get_retrieval, **opt)
   end
 
   # ===========================================================================
@@ -176,7 +182,7 @@ class ArtifactController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item)
+  def show_values(item = @item, **)
     { artifact: item }
   end
 

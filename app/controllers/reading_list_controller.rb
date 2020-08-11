@@ -40,7 +40,7 @@ class ReadingListController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action { @id = params[:readingListId] || params[:id] }
+  before_action :set_reading_list_id
 
   # ===========================================================================
   # :section:
@@ -79,8 +79,8 @@ class ReadingListController < ApplicationController
     self.next_page   = next_page_path(@list, opt)
     respond_to do |format|
       format.html
-      format.json { render_json show_values(as: :hash)  }
-      format.xml  { render_xml  show_values(as: :array) }
+      format.json { render_json show_values }
+      format.xml  { render_xml  show_values(nil, as: :array) }
     end
   end
 
@@ -154,6 +154,7 @@ class ReadingListController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
+  # @param [Hash, nil]   result
   # @param [Symbol, nil] as           Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
@@ -161,8 +162,8 @@ class ReadingListController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(as: nil)
-    result = { details: @item, titles: @list }
+  def show_values(result = nil, as: nil)
+    result ||= { details: @item, titles: @list }
     { reading_list: super(result, as: as) }
   end
 

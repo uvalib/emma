@@ -44,9 +44,10 @@ class EditionController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action { @edition_id = params[:editionId] || params[:id] }
-  before_action { @series_id  = params[:seriesId] }
-  before_action { @format     = params[:fmt] || FormatType.default }
+  before_action :set_series_id
+  before_action :set_edition_id,  except: %i[index]
+  before_action :set_format
+  before_action :set_member,      only: %i[download]
 
   # ===========================================================================
   # :section:
@@ -128,13 +129,18 @@ class EditionController < ApplicationController
     __debug_route
   end
 
-  # == GET /edition/:id/:fmt?seriesId=:seriesId
-  # == GET /edition/:editionId/:fmt?seriesId=:seriesId
+  # == GET /edition/:id/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
+  # == GET /edition/:editionId/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
   # Download a periodical edition.
   #
   def download
     __debug_route
-    opt = { seriesId: @series_id, editionId: @edition_id, format: @format }
+    opt = {
+      seriesId:  @series_id,
+      editionId: @edition_id,
+      format:    @format,
+      forUser:   @member
+    }
     render_bs_download(:download_periodical_edition, **opt)
   end
 
@@ -166,7 +172,7 @@ class EditionController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item)
+  def show_values(item = @item, **)
     { edition: item }
   end
 

@@ -386,7 +386,7 @@ en:
 
       button:
         label:        'Download'
-        tooltip:      'Click here to retrieve %{fmt} file.'
+        tooltip:      'Click here to retrieve the %{fmt} file.'
 
     # =========================================================================
     # Generic (parameterized) page definitions

@@ -207,7 +207,7 @@ module ArtifactHelper
     hidden << download_failure(**hidden_opt)
 
     # Emit the link and control elements.
-    html_div(class: 'artifact') do
+    html_div(class: 'artifact popup-container') do
       item_link(item, **opt) << safe_join(hidden)
     end
   end
@@ -256,8 +256,8 @@ module ArtifactHelper
 
   # Prepare a format name for use in a tooltip or label.
   #
-  # @param [String, nil] fmt
-  # @param [String, nil] quote        Quote character; default: '"'.
+  # @param [String, Symbol, nil] fmt
+  # @param [String, nil]         quote  Quote character; default: '"'.
   #
   # @return [String]
   #
@@ -266,6 +266,7 @@ module ArtifactHelper
   #++
   def format_label(fmt, quote: '"')
     fmt ||= THIS_FORMAT
+    fmt = fmt.to_s
     case fmt
       when /^".*"$/, /^'.*'$/ then fmt
       when /\S\s\S/           then "#{quote}#{fmt}#{quote}"
@@ -305,9 +306,9 @@ module ArtifactHelper
 
   # An element for direct download of an artifact.
   #
-  # @param [String, nil] label
-  # @param [String, nil] fmt
-  # @param [Hash]        opt          Passed to #make_link.
+  # @param [String, nil]         label
+  # @param [String, Symbol, nil] fmt
+  # @param [Hash]                opt    Passed to #make_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #

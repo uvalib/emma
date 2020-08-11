@@ -189,7 +189,7 @@ $(document).on('turbolinks:load', function() {
     function updateToggleButton($button, opening) {
         /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
-        $button.html(value.label);
+        $button.html(value.text);
         $button.attr('title', value.tooltip);
         $button.attr('aria-expanded', opening);
     }

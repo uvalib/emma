@@ -602,7 +602,7 @@ module HtmlHelper
   # @return [String]
   #
   def css_randomize(base)
-    [base, hex_rand].join('-')
+    "#{base}-#{hex_rand}"
   end
 
   # ===========================================================================

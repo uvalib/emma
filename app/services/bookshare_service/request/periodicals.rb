@@ -181,7 +181,9 @@ module BookshareService::Request::Periodicals
   # @param [FormatType] format
   # @param [Hash]       opt           Passed to #api.
   #
-  # @option opt [String] :forUser
+  # @option opt [String] :forUser     For restricted items, this is *not*
+  #                                     optional -- it must be the
+  #                                     :userAccountId of a qualified user.
   #
   # @return [Bs::Message::StatusModel]
   #

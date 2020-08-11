@@ -257,6 +257,18 @@ function toggleClass(selectors, css_class, setting) {
 }
 
 /**
+ * Create a unique CSS class name by appending a random hex number.
+ *
+ * @param {string} css_class
+ *
+ * @return {string}
+ */
+function randomizeClass(css_class) {
+    var random = Math.floor(Math.random() * 1000000);
+    return css_class + '-' + random.toString(16);
+}
+
+/**
  * Indicate whether the client browser is MS Internet Explorer.
  *
  * @returns {boolean}
@@ -284,6 +296,33 @@ function scrollIntoView(element) {
     } else if (rect.bottom > bottom) {
         $element[0].scrollIntoView(false);
     }
+    return $element;
+}
+
+/**
+ * Create an HTML element.
+ *
+ * @param {string|ElementProperties} element
+ * @param {ElementProperties}        [properties]
+ *
+ * @returns {jQuery}
+ */
+function create(element, properties) {
+    var prop, tag;
+    if (typeof element === 'object') {
+        prop = element;
+        tag  = element.tag;
+    } else {
+        prop = properties;
+        tag  = element;
+    }
+    prop = prop || {};
+    tag  = tag  || 'div';
+    var $element = (tag[0] === '<') ? $(tag) : $('<' + tag + '>');
+    prop.class   && $element.addClass(prop.class);
+    prop.type    && $element.attr('type',  prop.type);
+    prop.tooltip && $element.attr('title', prop.tooltip);
+    prop.text    && $element.text(prop.text);
     return $element;
 }
 

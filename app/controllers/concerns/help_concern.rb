@@ -39,6 +39,21 @@ module HelpConcern
     entry
   end
 
+  # ===========================================================================
+  # :section: Callbacks
+  # ===========================================================================
+
+  protected
+
+  # Extract the URL parameter which specifies a help topic.
+  #
+  # @return [Symbol]                  Value of `params[:id]`.
+  # @return [nil]                     No :id, :topic found.
+  #
+  def set_help_topic
+    @topic = (params[:topic] || params[:id])&.to_sym
+  end
+
 end
 
 __loading_end(__FILE__)

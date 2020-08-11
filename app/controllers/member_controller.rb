@@ -77,8 +77,8 @@ class MemberController < ApplicationController
     @item, @preferences, @history = get_account_details(id: @account_id)
     respond_to do |format|
       format.html
-      format.json { render_json show_values(as: :hash)  }
-      format.xml  { render_xml  show_values(as: :array) }
+      format.json { render_json show_values }
+      format.xml  { render_xml  show_values(nil, as: :array) }
     end
   end
 
@@ -139,6 +139,7 @@ class MemberController < ApplicationController
 
   # Response values for de-serializing the show page to JSON or XML.
   #
+  # @param [Hash, nil]   result
   # @param [Symbol, nil] as           Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
@@ -146,8 +147,8 @@ class MemberController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(as: nil)
-    result = { details: @item, preferences: @preferences, history: @history }
+  def show_values(result = nil, as: nil)
+    result ||= { details: @item, preferences: @preferences, history: @history }
     { member: super(result, as: as) }
   end
 

@@ -38,7 +38,7 @@ class HelpController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action { @topic = (params[:topic] || params[:id])&.to_sym }
+  before_action :set_help_topic
 
   # ===========================================================================
   # :section:
@@ -98,7 +98,7 @@ class HelpController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(topic = @topic)
+  def show_values(topic = @topic, **)
     { topic => get_help_entry(topic) }
   end
 

@@ -90,18 +90,6 @@ module BookshareService::Request::Titles
       }
     end
 
-  # The identifier (:userAccountId) for the test member "Placeholder Member".
-  #
-  # @type [String, nil]
-  #
-  #--
-  # noinspection SpellCheckingInspection, LongLine
-  #++
-  BOOKSHARE_TEST_MEMBER = 'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
-    # Rails.root.join('test/fixtures/members.yml').yield_self { |path|
-    #   YAML.load_file(path)&.deep_symbolize_keys! || {}
-    # }.dig(:Placeholder_Member, :user_id)
-
   # == GET /v2/titles/{bookshareId}/{format}
   #
   # == 2.1.3. Download a title
@@ -121,7 +109,6 @@ module BookshareService::Request::Titles
   #
   def download_title(bookshareId:, format:, **opt)
     opt = get_parameters(__method__, **opt)
-    opt[:forUser] ||= BOOKSHARE_TEST_MEMBER if defined?(BOOKSHARE_TEST_MEMBER) # TODO: testing; remove
     api(:get, 'titles', bookshareId, format, **opt)
     Bs::Message::StatusModel.new(response, error: exception)
   end
@@ -370,7 +357,6 @@ module BookshareService::Request::Titles
   #
   def get_retrieval(url:, **opt)
     url = url.sub(%r{//api\.qa\.}, '//api.') # TODO: temporary until Benetech fixes unified search
-    opt[:forUser] ||= BOOKSHARE_TEST_MEMBER if defined?(BOOKSHARE_TEST_MEMBER) # TODO: testing; remove
     api(:get, url, **opt)
     Search::Message::RetrievalResult.new(response, error: exception)
   end

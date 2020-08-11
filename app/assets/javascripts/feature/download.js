@@ -14,6 +14,57 @@ $(document).on('turbolinks:load', function() {
     if (isMissing($artifact_links)) { return; }
 
     // ========================================================================
+    // JSDoc type definitions
+    // ========================================================================
+
+    /**
+     * Member
+     *
+     * @typedef {{ href: string, rel: string }} Linkage
+     *
+     * @typedef {{
+     *       firstName: string,
+     *       lastName:  string,
+     *       middle:    string,
+     *       prefix:    string,
+     *       suffix:    string
+     * }} MemberName
+     *
+     * @typedef {{
+     *       allowAdultContent:         boolean,
+     *       canDownload:               boolean,
+     *       dateOfBirth:               string,
+     *       emailAddress:              string,
+     *       hasAgreement:              boolean,
+     *       language:                  string,
+     *       links:                     Linkage[],
+     *       locked:                    boolean,
+     *       name:                      MemberName,
+     *       phoneNumber:               string,
+     *       proofOfDisabilityStatus:   string,
+     *       roles:                     string[],
+     *       site:                      string,
+     *       subscriptionStatus:        string,
+     *       userAccountId              string,
+     * }} Member
+     *
+     * @typedef {{member: Member}} MemberEntry
+     *
+     * @typedef {{
+     *      total: number,
+     *      limit: number|undefined,
+     *      links: Linkage[]
+     * }} MessageProperties
+     *
+     * @typedef {{
+     *      members: {
+     *          list:       MemberEntry[],
+     *          properties: MessageProperties
+     *      }
+     * }} MemberMessage
+     */
+
+    // ========================================================================
     // Constants
     // ========================================================================
 
@@ -62,18 +113,133 @@ $(document).on('turbolinks:load', function() {
         READY:      'complete'
     };
 
+    /**
+     * Properties for the elements of the member selection popup panel.
+     *
+     * @type {{
+     *  url:        string,
+     *  name:       string,
+     *  panel:      ElementProperties,
+     *  title:      ElementProperties,
+     *  note:       ElementProperties,
+     *  fields:  {
+     *      tag:        string|null|undefined,
+     *      type:       string|null|undefined,
+     *      class:      string|null|undefined,
+     *      tooltip:    string|null|undefined,
+     *      text:       string|null|undefined
+     *      input:      ElementProperties,
+     *      label:      ElementProperties,
+     *  },
+     *  buttons:    ElementProperties,
+     *  submit:     ActionProperties,
+     *  cancel:     ActionProperties
+     * }}
+     */
+    var MEMBER_POPUP = {
+        url:     '/member.json',
+        name:    'member-select',
+        panel: {
+            tag:     'form',
+            class:   'member-select popup-panel',
+            tooltip: ''
+        },
+        title: {
+            tag:     'label',
+            class:   '',
+            text:    'Select a member', // TODO: I18n
+            tooltip: ''
+        },
+        note: {
+            tag:     'div',
+            class:   'note',
+            text:    'Bookshare requires that downloads be made on behalf ' +
+                     'of a member with a qualifying disability.', // TODO: I18n
+            tooltip: ''
+        },
+        fields: {
+            tag:   'div',
+            class: 'fields',
+            input: {
+                tag:     'input',
+                type:    'radio',
+                class:   '',
+                tooltip: ''
+            },
+            label: {
+                tag:     'label',
+                class:   '',
+                tooltip: ''
+            }
+        },
+        buttons: {
+            tag:     'div',
+            class:   'tray',
+            tooltip: ''
+        },
+        submit: {
+            tag:     'button',
+            type:    'submit',
+            class:   '',
+            text:    'Submit', // TODO: I18n
+            enabled: {
+                class:   '',
+                tooltip: ''
+            },
+            disabled: {
+                class:   'forbidden',
+                tooltip: 'Make a selection to proceed' // TODO: I18n
+            }
+        },
+        cancel: {
+            tag:     'button',
+            class:   '',
+            text:    'Cancel', // TODO: I18n
+            tooltip: ''
+        }
+    };
+
     // ========================================================================
     // Event handlers
     // ========================================================================
 
     // Override download links in order to get the artifact asynchronously.
     $artifact_links.click(function(event) {
-        var $link = $(this || event.target);
-        if ($link.hasClass(STATE.READY)) {
-            endRequesting($link);
-        } else if (!$link.hasClass(STATE.REQUESTING)) {
-            beginRequesting($link);
-            requestArtifact($link);
+        var $link  = $(this || event.target);
+        var $panel = $link.siblings('.popup-panel');
+        var url    = $link.attr('href');
+        var params = urlParameters(url);
+        var member = params['member'] || params['forUser'];
+        member = member || $link.data('member') || $link.data('forUser');
+        if (isPresent(member)) {
+            manageDownloadState($link);
+        } else if (isPresent($panel)) {
+            hideFailureMessage($link);
+            $panel.removeClass('hidden');
+            scrollIntoView($panel);
+        } else {
+            hideFailureMessage($link);
+            getMembers(function(member_table) {
+                var $panel = createMemberPopup(member_table);
+                $panel.submit(function(event) {
+                    event.preventDefault();
+                    var members = [];
+                    $panel.find(':checked').each(function() {
+                        members.push(this.value);
+                        this.checked = false; // Reset for later iteration.
+                    });
+                    $panel.addClass('hidden');
+                    if (isPresent(members)) {
+                        $link.data('member', members.join(','));
+                        manageDownloadState($link);
+                    } else {
+                        set(STATE.FAILED, $link);
+                        endRequesting($link, Emma.Download.failure.cancelled);
+                    }
+                });
+                $panel.insertAfter($link);
+                scrollIntoView($panel);
+            });
         }
         return false;
     }).each(handleKeypressAsClick);
@@ -83,18 +249,207 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Fetch the Bookshare members associated with the current user and pass
+     * them to the callback function.
+     *
+     * @param {function(object)} callback
+     */
+    function getMembers(callback) {
+        var func  = 'getMembers: ';
+        var url   = MEMBER_POPUP.url;
+        var start = Date.now();
+
+        debug(func, 'VIA', url);
+        var err, result = {};
+        $.ajax({
+            url:      url,
+            type:     'GET',
+            dataType: 'json',
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
+        });
+
+        /**
+         * Parse the reply to create the table of member account IDs and member
+         * names.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            debug(func, 'received data: |', data, '|');
+            // noinspection AssignmentResultUsedJS
+            if (isMissing(data)) {
+                err = 'no data';
+            } else if (typeof(data) !== 'object') {
+                err = 'unexpected data type ' + typeof(data);
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                var info = data.response || data;
+                /** @type {MemberEntry[]} members */
+                var members = info.members && info.members.list || [];
+                members.forEach(function(entry) {
+                    var member = entry.member;
+                    var part   = member.name || {};
+                    var name   = '' + part.prefix + ' ';
+                    name += part.lastName + ' ';
+                    name += part.suffix + ',';
+                    name += part.firstName + ' ';
+                    name += part.middle;
+                    name = name.replace(/\s+/g, ' ');
+                    name = name.replace(/\s?,\s?/g, ', ');
+                    name = name.trim();
+                    name = name || ('id: ' + member.userAccountId);
+                    result[member.userAccountId] = name;
+                });
+            }
+        }
+
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         error
+         */
+        function onError(xhr, status, error) {
+            err = status + ': ' + error;
+        }
+
+        /**
+         * Actions after the request is completed.  Invoke the callback with
+         * the member selection table unless there was an error.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            debug(func, 'complete', secondsSince(start), 'sec.');
+            if (err) {
+                consoleWarn(func, (url + ':'), err);
+            } else {
+                callback(result);
+            }
+        }
+    }
+
+    /**
+     * Create a popup for displaying a selection of Bookshare members which
+     * invokes the callback with the selected member(s) when the enclosed form
+     * is submitted.
+     *
+     * @param {object} member_table
+     *
+     * @return {jQuery}
+     */
+    function createMemberPopup(member_table) {
+
+        var $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
+
+        // Start with a title.
+        var form_id = randomizeClass(MEMBER_POPUP.name);
+        var $title  = create(MEMBER_POPUP.title).attr('for', form_id);
+        $panel.attr('id', form_id);
+
+        // Follow with an explanatory note.
+        var $note = create(MEMBER_POPUP.note);
+
+        // Construct the member selection group.
+        var $fields = create(MEMBER_POPUP.fields);
+        var $radio  = create(MEMBER_POPUP.fields.input).attr('name', form_id);
+        var row     = 0;
+        $.each(member_table, function(account_id, full_name) {
+            var $input = $radio.clone().attr('value', account_id);
+            var $label = create(MEMBER_POPUP.fields.label).text(full_name);
+            var row_id = form_id + '-row' + row.toString();
+            $input.attr('id',  row_id).appendTo($fields);
+            $label.attr('for', row_id).appendTo($fields);
+            row += 1;
+        });
+
+        // Construct the button tray for the bottom of the panel.
+        var $tray   = create(MEMBER_POPUP.buttons);
+        var $submit = create(MEMBER_POPUP.submit);
+        var $cancel = create(MEMBER_POPUP.cancel);
+        $tray.append($submit).append($cancel);
+
+        // Implement the cancel button.
+        $cancel.click(function() {
+            resetMemberPopup($panel);
+            $panel.submit();
+        });
+
+        // The caller is responsible for making use of the panel.
+        $title.appendTo($panel);
+        $note.appendTo($panel);
+        $fields.appendTo($panel);
+        $tray.appendTo($panel);
+        return resetMemberPopup($panel);
+    }
+
+    /**
+     * Reset the state of the popup member panel form.
+     *
+     * @param {Selector} panel
+     *
+     * @return {jQuery}
+     */
+    function resetMemberPopup(panel) {
+        var disabled = MEMBER_POPUP.submit.disabled.class;
+        var $panel   = $(panel);
+        var $submit  = $panel.find('[type="submit"]').addClass(disabled);
+        var $fields  = $panel.find('.fields input');
+        $fields.change(function() {
+            if ($fields.is(':checked')) {
+                $submit.removeClass(disabled);
+                $submit.attr('title', MEMBER_POPUP.submit.enabled.tooltip);
+            } else {
+                $submit.addClass(disabled);
+                $submit.attr('title', MEMBER_POPUP.submit.disabled.tooltip);
+            }
+        });
+        $panel[0].reset();
+        return $panel;
+    }
+
+    /**
+     * Perform the appropriate action depending on the state of the link.
+     *
+     * @param {Selector} link
+     */
+    function manageDownloadState(link) {
+        var $link = $(link);
+        if ($link.hasClass(STATE.READY)) {
+            endRequesting($link);
+        } else if (!$link.hasClass(STATE.REQUESTING)) {
+            beginRequesting($link);
+            requestArtifact($link);
+        }
+    }
+
+    /**
      * Asynchronously request an artifact download URL.
      *
      * @param {Selector} link
      */
     function requestArtifact(link) {
 
-        var func  = 'requestArtifact: ';
-        var $link = $(link);
-        var url   = $link.attr('href');
-        var start = Date.now();
+        var func   = 'requestArtifact: ';
+        var $link  = $(link);
+        var url    = $link.attr('href');
+        var params = urlParameters(url);
+
+        // Update URL with Bookshare member if not already present.
+        if (!params['member'] && !params['forUser']) {
+            var member = $link.data('member') || $link.data('forUser');
+            var append = (url.indexOf('?') > 0) ? '&' : '?';
+            url += append + 'member=' + member;
+        }
 
         debug(func, 'VIA', url);
+        var start = Date.now();
         var err, delay, target;
         $.ajax({
             url:      url,

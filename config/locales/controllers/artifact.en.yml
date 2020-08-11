@@ -88,3 +88,7 @@ en:
       download:
         label:          'Download'
         title:          'Artifact Download'
+
+      retrieval:
+        label:          'Download'
+        title:          'Artifact Download'

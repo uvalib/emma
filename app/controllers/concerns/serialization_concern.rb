@@ -77,7 +77,7 @@ module SerializationConcern
         list.size
       end
     {
-      list: page_items.map { |item| show_values(item) },
+      list: page_items.map { |item| show_values(item, as: nil) },
       properties: {
         total: total_items,
         limit: limit,
@@ -88,11 +88,13 @@ module SerializationConcern
 
   # Response values for serializing the show page to JSON or XML.
   #
-  # @param [Symbol, nil] as           Either :hash or :array if given.
+  # @param [Hash, nil, *] items
+  # @param [Symbol, nil]  as          Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
   #
-  def show_values(items, as: :hash)
+  def show_values(items, as: nil)
+    as ||= :hash
     (as == :array) ? items.values : items
   end
 

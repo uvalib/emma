@@ -274,7 +274,7 @@ $(document).on('turbolinks:load', function() {
     function setControlPanelToggle(opening) {
         /** @type {{label: string, tooltip: string}} */
         var value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
-        $advanced_toggle.html(value.label).attr('title', value.tooltip);
+        $advanced_toggle.html(value.text).attr('title', value.tooltip);
     }
 
     /**

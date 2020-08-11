@@ -40,9 +40,9 @@ class UploadController < ApplicationController
   # ===========================================================================
 
   before_action :set_item_id,    only: %i[index show edit update delete destroy download]
+  before_action :set_url,        only: %i[retrieval]
+  before_action :set_member,     only: %i[retrieval]
   before_action :index_redirect, only: %i[show]
-
-  before_action(only: :retrieval) { @url = params[:url] }
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit] # TODO: ???
@@ -277,13 +277,15 @@ class UploadController < ApplicationController
     end
   end
 
-  # == GET /retrieval?url=URL
+  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
   # Retrieve a file from a member repository.
   #
   def retrieval
     __debug_route
     if ia_link?(@url)
       render_ia_download(@url)
+    elsif bs_link?(@url)
+      redirect_to bs_retrieval_path(url: @url, forUser: @member)
     else
       Log.error { "/retrieval can't handle #{@url.inspect}"}
     end
@@ -475,6 +477,29 @@ class UploadController < ApplicationController
       end
   end
 
+  # Extract the URL parameter which indicates a remote URL path.
+  #
+  # @return [String]                  Value of `params[:url]`.
+  # @return [nil]                     No :url found.
+  #
+  def set_url
+    # noinspection RubyYardReturnMatch
+    @url ||= params[:url]
+  end
+
+  # Extract the URL parameter which indicates a Bookshare member.
+  #
+  # @return [String]                  Value of `params[:member]`.
+  # @return [nil]                     No :member, :forUser found.
+  #
+  def set_member
+    @member ||= params[:forUser] || params[:member]
+    @member ||=
+      if current_user&.uid == 'emmadso@bookshare.org'
+        nil # TODO: BookshareService::BOOKSHARE_TEST_MEMBER
+      end
+  end
+
   # If the :show endpoint is given an :id which is actually a specification for
   # multiple items then there is a redirect to :index.
   #
@@ -510,7 +535,7 @@ class UploadController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @item)
+  def show_values(item = @item, **)
     item = item.attributes.symbolize_keys if item.is_a?(Upload)
     data = item.extract!(:file_data).first.last
     item[:file_data] = safe_json_parse(data)

@@ -1902,7 +1902,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setRequired(element) {
-        setIcon(element, Emma.Upload.Status.required.label);
+        setIcon(element, Emma.Upload.Status.required.text);
     }
 
     /**
@@ -1920,7 +1920,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setInvalid(element) {
-        setIcon(element, Emma.Upload.Status.invalid.label);
+        setIcon(element, Emma.Upload.Status.invalid.text);
     }
 
     /**
@@ -1939,7 +1939,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function setValid(element) {
-        setIcon(element, Emma.Upload.Status.valid.label);
+        setIcon(element, Emma.Upload.Status.valid.text);
     }
 
     // noinspection JSUnusedLocalSymbols
@@ -3031,7 +3031,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).submit || {};
         var state = buttonProperties($form, op, 'submit', can_submit);
-        return state && state.label || op.label;
+        return state && state.text || op.text;
     }
 
     /**
@@ -3083,7 +3083,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).cancel || {};
         var state = buttonProperties($form, op, 'cancel', can_cancel);
-        return state && state.label || op.label;
+        return state && state.text || op.text;
     }
 
     /**
@@ -3113,7 +3113,7 @@ $(document).on('turbolinks:load', function() {
         var $form = formElement(form);
         var op    = assetObject($form).select || {};
         var state = buttonProperties($form, op, 'select', can_select);
-        return state && state.label || op.label;
+        return state && state.text || op.text;
     }
 
     /**
@@ -3157,10 +3157,10 @@ $(document).on('turbolinks:load', function() {
      * Get label/tooltip properties for the indicated operation depending on
      * whether it is enabled or disabled.
      *
-     * @param {Selector} [form]         Passed to {@link assetObject}.
-     * @param {OperationProperties} [values]    Pre-fetched property values.
-     * @param {string}   [op_name]      Name of the operation.
-     * @param {boolean}  [can_perform]  Pre-determined enabled/disabled state.
+     * @param {Selector}           [form] Passed to {@link assetObject}.
+     * @param {ActionProperties} [values] Pre-fetched property values.
+     * @param {string}          [op_name] Name of the operation.
+     * @param {boolean}     [can_perform] Pre-determined enabled/disabled state
      *
      * @returns {ElementProperties|null}
      */
