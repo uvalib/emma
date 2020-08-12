@@ -21,7 +21,10 @@ class Api::Error < RuntimeError
   # If applicable, the original exception that was rescued which resulted in
   # raising an Api::Error exception.
   #
-  # @return [Exception, nil]
+  # If there was no original exception, this will return the instance itself
+  # so that it can be used with Kernel#raise.
+  #
+  # @return [Exception]
   #
   attr_reader :exception
 
@@ -63,7 +66,6 @@ class Api::Error < RuntimeError
         else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
       end
     end
-    # noinspection RubyCaseWithoutElseBlockInspection
     case @exception
       when Api::Error
         @messages      += @exception.messages
@@ -77,6 +79,8 @@ class Api::Error < RuntimeError
       when Exception
         @messages      += Array.wrap(@exception.message)
         @http_status  ||= @response&.status
+      else
+        @exception = self # Required for Kernel#raise.
     end
     @messages.reject!(&:blank?)
     @messages << self.class.default_message if @messages.empty?
@@ -162,7 +166,7 @@ class Api::Error < RuntimeError
   # @see en.emma.error.api in config/locales/en.yml
   #
   def self.default_message(allow_nil: false, source: nil)
-    type = self.class.to_s
+    type = name.to_s
     source ||= type.sub(/::.*$/, '').underscore.presence
     # noinspection RubyNilAnalysis
     type = type.demodulize.underscore.sub(/_?error$/, '').presence

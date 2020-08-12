@@ -285,7 +285,7 @@ module HtmlHelper
   #
   def append_css_classes(html_opt, *classes, &block)
     if html_opt.nil?
-      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+      # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
       classes.unshift(html_opt)
       html_opt = nil
@@ -337,7 +337,7 @@ module HtmlHelper
   #
   def prepend_css_classes(html_opt, *classes, &block)
     if html_opt.nil?
-      Log.debug { "#{__method__}: nil html_opt from #{caller}" }
+      # Log.debug { "#{__method__}: nil html_opt from #{caller}" }
     elsif !html_opt.is_a?(Hash)
       classes.unshift(html_opt)
       html_opt = nil

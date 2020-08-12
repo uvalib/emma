@@ -184,48 +184,40 @@ module IaDownloadConcern
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::Error] # TODO: ???
-  # @return [String]
+  # @return [ApiService::Error]
   #
   def ia_response_error(obj)
-    ApiService::Error.new(obj) unless true # TODO: ???
-    'bad response' # TODO: I18n
+    ApiService::Error.new(obj)
   end
 
   # Wrap response in a service error.
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::EmptyResultError] # TODO: ???
-  # @return [String]
+  # @return [ApiService::EmptyResultError]
   #
   def ia_empty_response_error(obj)
-    ApiService::EmptyResultError.new(obj) unless true # TODO: ???
-    'empty response' # TODO: I18n
+    ApiService::EmptyResultError.new(obj)
   end
 
   # Wrap response in a service error.
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::HtmlResultError] # TODO: ???
-  # @return [String]
+  # @return [ApiService::HtmlResultError]
   #
   def ia_html_response_error(obj)
-    ApiService::HtmlResultError.new(obj) unless true # TODO: ???
-    'forbidden response' # TODO: I18n
+    ApiService::HtmlResultError.new(obj)
   end
 
   # Wrap response in a service error.
   #
   # @param [Faraday::Response] obj
   #
-  # @return [ApiService::RedirectionError] # TODO: ???
-  # @return [String]
+  # @return [ApiService::RedirectionError]
   #
   def ia_redirect_response_error(obj)
-    ApiService::RedirectionError.new(obj) unless true # TODO: ???
-    'too many redirects' # TODO: I18n
+    ApiService::RedirectionError.new(obj)
   end
 
 end

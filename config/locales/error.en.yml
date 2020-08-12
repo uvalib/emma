@@ -29,8 +29,8 @@ en:
         # @see ApiService::Error
 
         response:       'Bad API response'
-        empty_result:   'Empty API result body'
-        html_result:    'Invalid (HTML) result body'
+        empty_result:   'Empty API result'
+        html_result:    'Invalid API result'
         redirection:    'Missing HTTP redirect location'
         redirect_limit: 'Too many HTTP redirects'
 
