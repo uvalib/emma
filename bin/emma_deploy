@@ -80,7 +80,7 @@ function Announce() # [-f|--force] message...
 #
 function Verbose() # message...
 {
-    [ "$VERBOSE" ] && Announce '***' "$@"
+    [ "$VERBOSE" ] && Announce '***' "$@" 1>&2
 }
 
 #------------------------------------------------------------------------------
@@ -201,7 +201,10 @@ function UpdateDeployedVersion()
 
     if [ "$DRY_RUN" ] ; then
         rm -f "$TARGET"
-    elif [ $SUCCESS -ne 0 ] ; then
+    elif [ $SUCCESS -eq 0 ] ; then
+        Verbose "Committing '$TARGET'"
+        Git commit -a -m "Deploying version $APP_VERSION"
+    else
         Verbose "Restoring '$TARGET'"
         Git restore "$DEPLOY_TAG"
     fi
@@ -288,4 +291,4 @@ Git gc --quiet
 UpdateDeployedVersion "$APP_VERSION" || Abort "Could not update '$DEPLOY_TAG"
 Git push
 
-Announce "${NL}Deploy of $APP is now in progress at:$NL$AWS_BUILD_PIPELINE$NL"
+Announce "${NL}Deploy of $APP is now in progress at:$NL$AWS_DEPLOY_PIPELINE$NL"
