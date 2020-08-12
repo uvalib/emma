@@ -177,7 +177,7 @@ module OmniAuth
       # This method overrides:
       # @see OmniAuth::Strategy#log
       #
-      # == Implementation Note
+      # == Implementation Notes
       # Instead of attempting to  override Configuration#default_logger this
       # override simply manages its own logger instance
       #

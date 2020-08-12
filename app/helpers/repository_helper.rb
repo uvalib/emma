@@ -156,8 +156,13 @@ module RepositoryHelper
   #
   # @see HtmlHelper#download_link
   #
+  # == Implementation Notes
+  # Encrypted DAISY files are handled differently; for an explanation:
+  # @see IaDownloadConcern#render_ia_download
+  #
   def ia_retrieval_link(_item, label, url, **opt)
-    download_link(label, retrieval_path(url: url), **opt)
+    url = retrieval_path(url: url) unless url.end_with?('daisy.zip')
+    download_link(label, url, **opt)
   end
 
 end

@@ -21,7 +21,7 @@ module LayoutHelper::NavBar
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Note
+  # == Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
   NAV_BAR_CONTROLLERS = I18n.t('emma.nav_bar.controllers').map(&:to_sym).freeze
@@ -30,7 +30,7 @@ module LayoutHelper::NavBar
   #
   # @type [Array<Symbol>]
   #
-  # == Implementation Note
+  # == Implementation Notes
   # Should contain some or all of superset #PRIMARY_CONTROLLERS.
   #
   PRIMARY_CONTROLLERS = I18n.t('emma.nav_bar.primary').map(&:to_sym).freeze

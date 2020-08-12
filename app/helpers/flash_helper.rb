@@ -32,7 +32,7 @@ module FlashHelper
   #
   # @type [Integer]
   #
-  # == Implementation Note
+  # == Implementation Notes
   # This has been sized very conservatively so that it also works in the
   # desktop setting where the instance shares the 4096-byte cookie space with
   # other local applications.

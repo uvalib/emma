@@ -51,7 +51,7 @@ module IaDownloadConcern
 
   # Cookies to be sent to the IA server.
   #
-  # === Implementation Notes
+  # == Implementation Notes
   # These values were obtained from a desktop development VM after installing
   # the "ia" Python script and running "ia configure" with the Email address
   # "emmadso@bookshare.org".  This generates a configuration file ~/.ia which
@@ -95,8 +95,13 @@ module IaDownloadConcern
   # which will succeed if the unencrypted item can be generated "on-the-fly".
   #
   # 3. As a last-ditch fallback, the encrypted form of the original URL is
-  # explicitly requested.  If the sequence gets to this stage, there may be a
-  # problem with credentials (e.g., the )
+  # explicitly requested.
+  #
+  # NOTE: This method does not handle DAISY downloads from IA.
+  # At this time IA does not support "on-the-fly" generation of unencrypted
+  # DAISY.  The link to download encrypted DAISY is available without
+  # authentication directly from the client browser.  In fact, attempting to
+  # request it via this method has become problematic.
   #
   def render_ia_download(url, **opt)
     url  = "#{IA_DOWNLOAD_BASE_URL}/#{url}" unless url.start_with?('http')
@@ -111,6 +116,7 @@ module IaDownloadConcern
       __debug_line(dbg) { { path: path } }
       response =
         Faraday.get(path, nil, hdrs) do |req|
+          __debug_line(dbg, 'REQUEST') { { headers: req.headers } }
           # noinspection RubyResolve
           req.options.params_encoder = Faraday::IaParamsEncoder
         end
