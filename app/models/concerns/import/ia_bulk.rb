@@ -251,11 +251,6 @@ module Import::IaBulk
   #
   def normalize_results(fields)
 
-    # NOTE: Prefix to help identify this record via Unified Search
-    title = Array.wrap(fields[:dc_title]).first
-    title ||= Ingest::Record::IngestionRecord::MISSING_TITLE
-    fields[:dc_title] = "IA_BULK - #{title}" # TODO: testing - remove
-
     # Correct an issue caused by "contributed_format" == "Audio" items which
     # incorrectly have "mediatype" == "texts".
     type = fields[:dc_type]
