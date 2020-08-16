@@ -555,9 +555,22 @@ $(document).on('turbolinks:load', function() {
                 consoleWarn(func, (url + ':'), err);
                 endRequesting($link, err);
             } else {
-                setTimeout(function() { requestArtifact($link); }, delay);
+                setTimeout(reRequestArtifact, delay);
             }
             debug(func, 'complete', secondsSince(start), 'sec.');
+        }
+
+        /**
+         * Poll for completion of the artifact being generated unless the
+         * current browser tab is not visible.  In that case, do nothing but
+         * reschedule another polling attempt.
+         */
+        function reRequestArtifact() {
+            if (document.hidden) {
+                setTimeout(reRequestArtifact, delay);
+            } else {
+                requestArtifact($link);
+            }
         }
     }
 

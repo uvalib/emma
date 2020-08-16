@@ -25,7 +25,7 @@ en:
 
       search_controls:
         size:
-          tooltip:      "Specify the number of search results per page.\nNOTE:The unified index does not yet support this capability."
+          tooltip:      "Specify the number of search results per page.\nNOTE: The EMMA Unified Index does not yet support this capability."
           values:
             - 100
           default:      100
