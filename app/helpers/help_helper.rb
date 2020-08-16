@@ -280,7 +280,7 @@ module HelpHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def help_jump(label, topic, sub_topic = nil, **opt)
+  def help_jump(label, topic, **opt)
     path = help_path(id: topic, modal: modal?)
     link_to(label, path, **opt)
   end

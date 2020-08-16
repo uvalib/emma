@@ -2,12 +2,13 @@
 <%-
   # EMMA download help page.
 
-  signed_in = help_jump('signed in', :sign_in)
-  search    = help_jump('search',    :search)
-  emma_logo = repository_source_logo(:emma)
-  bs_logo   = repository_source_logo(:bookshare)
-  ht_logo   = repository_source_logo(:hathiTrust)
-  ia_logo   = repository_source_logo(:internetArchive)
+  signed_in  = help_jump('signed in', :sign_in)
+  search     = help_jump('search',    :search)
+  emma_logo  = repository_source_logo(:emma)
+  bs_logo    = repository_source_logo(:bookshare)
+  ht_logo    = repository_source_logo(:hathiTrust)
+  ia_logo    = repository_source_logo(:internetArchive)
+  ia_timeout = help_image(:ia_timeout, class: 'no-border wide')
 
   ia_help            = 'https://help.archive.org/hc/en-us/articles'
   is_disability_help = '360026244752-Disability-Access-General-Information'
@@ -88,15 +89,37 @@
   </h2>
 
   <p>
-    EMMA entries from Internet Archive have download links which should cause
-    your browser to directly download from the archive.org web site.
-    For restricted items, the result is likely to be encrypted;
-    refer to IA's article on <%= ia_disability_link -%> for details.
+    EMMA manages downloads from Internet Archive in two ways, depending on the
+    type of file:
   </p>
 
   <p>
-    Planned work will involve a way to allow the EMMA service to intercede on
-    behalf of EMMA users to streamline access to IA accessible materials.
+    For DAISY, Internet Archive currently only delivers encrypted content.
+    In this case, the download link is a direct link to Internet Archive
+    because the file itself is freely-available.
+  </p>
+
+  <p>
+    Use of the DAISY content, however, will require a key as described within
+    the download itself.
+    Refer to IA's article on <%= ia_disability_link -%> for details.
+  </p>
+
+  <p>
+    For other types (EPUB, PDF, etc.), EMMA intercedes by making a request to
+    Internet Archive's facility for generating unencumbered sources
+    "on-the-fly".
+    Because these files are created dynamically, there may be some delay before
+    the browser download dialog appears.
+  </p>
+
+  <p>
+    You may see an error message:
+    <%= ia_timeout %>
+    This indicates that the current attempt to download was completed
+    unsuccessfully.
+    Retrying the download link after a few minutes, however, should result in
+    the download without further delay.
   </p>
 
 </section>
@@ -108,28 +131,105 @@
     <%= bs_logo %>
   </h2>
 
+  <nav role="navigation" aria-labelledby="download_bookshare_nav">
+    <label id="download_bookshare_nav" class="sr-only">
+      Topics in this section:
+    </label>
+    <ul>
+      <li>
+        <a href="#download_bookshare_member_help">
+          Bookshare member required
+        </a>
+      </li>
+      <li>
+        <a href="#download_bookshare_process_help">
+          The Bookshare download process
+        </a>
+      </li>
+      <li>
+        <a href="#download_bookshare_DAISY_AUDIO_help">
+          Special note about DAISY Audio downloads
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <h3 class="section" id="download_bookshare_member_help">
+    Bookshare member required
+  </h3>
+
   <p>
-    When the download link for a Bookshare item is clicked, the EMMA service
-    intercepts the request to add identity information needed for the request
-    to be honored by the Bookshare service.
+    Bookshare requires that downloads be performed on behalf of members with
+    qualifying disabilities, so the first step in the download is to make
+    a selection from the list of members associated with your EMMA/Bookshare
+    account.
+  </p>
+
+  <p>
+    The popup dialog that EMMA presents will not allow you to proceed until a
+    qualified member has been selected from the list.
+    You may cancel the dialog without a selection to end the download process
+    at that point.
+  </p>
+
+  <h3 class="section" id="download_bookshare_process_help">
+    The Bookshare download process
+  </h3>
+
+  <p>
+    The EMMA service constructs a request containing the identity of the
+    qualified member and other authorization information.
+    This request is passed on to the Bookshare service to initiate preparation
+    of a custom file instance.
   </p>
 
   <p>
     Bookshare assembles the requested item on-the-fly to include an internal
-    "watermark" identifying the requester of that customized instance of the
-    requested file.
-    During the short time that this takes, EMMA client-side software will
-    monitor its status and show a "loading" image to indicate that Bookshare is
-    working on the request.
+    "watermark" identifying the requester and qualifying member.
+    During the short time that this takes (for most formats), EMMA client-side
+    software will monitor its status and show a "loading" image to indicate
+    that Bookshare is working on the request.
   </p>
 
   <p>
     The customized instance is deposited into temporary cloud storage when it
     is ready to be acquired &mdash;
     at that time, the EMMA client-side software replaces the "loading" image
-    with a "Download" link.
-    Clicking on this link will acquire the newly-created file instance from
-    cloud storage.
+    with a "Download" button.
+    Click on this button to acquire the newly-created file instance from cloud
+    storage.
+  </p>
+
+  <p>
+    (See the next section if you find that the "Download" link does not work.)
+  </p>
+
+  <h3 class="section" id="download_bookshare_DAISY_AUDIO_help">
+    Special note about DAISY Audio downloads
+  </h3>
+
+  <p>
+    Because audio is generated by on-the-fly text-to-speech translation, these
+    downloads can take an <em>extremely</em> long time for Bookshare to
+    prepare.
+    Depending on the size and complexity of the source text, wait times over
+    one hour are possible.
+    Although it may seem "stuck", the Bookshare service is actually working on
+    your requested file.
+  </p>
+
+  <p>
+    If you choose to wait until the "Download" button appears
+    (or if you come back to your browser after waiting for a while),
+    you may find that the link to the file in cloud storage is no longer valid.
+  </p>
+
+  <p>
+    The generated file itself, however, is still in cloud storage &mdash;
+    click on the download link and re-create your request to get a fresh
+    download link.
+    (Since the file has already been generated there will be no wait time for
+    the new "Download" button to appear.)
   </p>
 
 </section>

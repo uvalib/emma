@@ -80,6 +80,54 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Uppy plugin selection plus other optional settings.
+     *
+     * replace_input:   Hide the <input type="file"> present in the container.
+     * upload_to_aws:   Cloud upload enabled.
+     * progress_bar:    Minimal upload progress bar.
+     * status_bar:      Heftier progress and control bar.
+     * popup_messages:  Popup event/status messages.
+     * dashboard:       Uppy dashboard.
+     * drag_and_drop:   Drag-and-drop file selection enabled.
+     * image_preview:   Image preview thumbnail.
+     * flash_messages   Display flash messages.
+     * flash_errors     Display flash errors.
+     * debugging:       Turn on Uppy debugging.
+     *
+     * @typedef {{
+     *      replace_input:  boolean,
+     *      upload_to_aws:  boolean,
+     *      progress_bar:   boolean,
+     *      status_bar:     boolean,
+     *      popup_messages: boolean,
+     *      dashboard:      boolean,
+     *      drag_and_drop:  boolean,
+     *      image_preview:  boolean,
+     *      flash_messages: boolean,
+     *      flash_errors:   boolean,
+     *      debugging:      boolean
+     * }} UppyFeatures
+     */
+
+    /**
+     * A live copy of Uppy features.
+     *
+     * @typedef {{
+     *      replace_input:  boolean,
+     *      upload_to_aws:  boolean,
+     *      progress_bar:   boolean,
+     *      status_bar:     boolean,
+     *      popup_messages: boolean,
+     *      dashboard:      boolean,
+     *      drag_and_drop:  boolean|HTMLElement,
+     *      image_preview:  boolean|HTMLElement,
+     *      flash_messages: boolean,
+     *      flash_errors:   boolean,
+     *      debugging:      boolean
+     * }} UppyFeatureSettings
+     */
+
+    /**
      * FileData
      *
      * @typedef {{
@@ -212,32 +260,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Uppy plugin selection plus other optional settings.
      *
-     * replace_input:   Hide the <input type="file"> present in the container.
-     * upload_to_aws:   Cloud upload enabled.
-     * progress_bar:    Minimal upload progress bar.
-     * status_bar:      Heftier progress and control bar.
-     * popup_messages:  Popup event/status messages.
-     * dashboard:       Uppy dashboard.
-     * drag_and_drop:   Drag-and-drop file selection enabled.
-     * image_preview:   Image preview thumbnail.
-     * flash_messages   Display flash messages.
-     * flash_errors     Display flash errors.
-     * debugging:       Turn on Uppy debugging.
-     *
      * @constant
-     * @type {{
-     *      replace_input:  boolean,
-     *      upload_to_aws:  boolean,
-     *      progress_bar:   boolean,
-     *      status_bar:     boolean,
-     *      popup_messages: boolean,
-     *      dashboard:      boolean,
-     *      drag_and_drop:  boolean,
-     *      image_preview:  boolean,
-     *      flash_messages: boolean,
-     *      flash_errors:   boolean,
-     *      debugging:      boolean
-     * }}
+     * @type {UppyFeatures}
      */
     var FEATURES = {
         replace_input:  true,
@@ -785,10 +809,11 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeUppy(file_upload_form) {
 
+        /** @type {UppyFeatureSettings} feature */
+        var feature    = $.extend({}, FEATURES);
         var form       = file_upload_form || this;
         var $form      = $(form);
         var $container = $form.parent();
-        var feature    = $.extend({}, FEATURES);
 
         // Get targets for these features; disable the feature if its target is
         // not present.
@@ -1057,48 +1082,47 @@ $(document).on('turbolinks:load', function() {
     /**
      * Build an Uppy instance with specified plugins.
      *
-     * @param {HTMLElement} form
-     * @param {object}      [features]
+     * @param {HTMLElement}         form
+     * @param {UppyFeatureSettings} features
      *
      * @return {Uppy}
      */
     function buildUppy(form, features) {
         var container = form.parentElement;
-        var ftrs      = features || FEATURES;
         var uppy = Uppy.Core({
             id:          form.id,
             autoProceed: true,
-            debug:       ftrs.debugging
+            debug:       features.debugging
         });
-        if (ftrs.dashboard) {
+        if (features.dashboard) {
             uppy.use(Uppy.Dashboard, { target: container, inline: true });
         } else {
-            if (ftrs.replace_input) {
+            if (features.replace_input) {
                 uppy.use(Uppy.FileInput, {
                     target: buttonTray(form)[0], // NOTE: not container
                     locale: { strings: { chooseFiles: fileSelectLabel(form) } }
                 });
             }
-            if (ftrs.drag_and_drop) {
-                uppy.use(Uppy.DragDrop, { target: ftrs.drag_and_drop });
+            if (features.drag_and_drop) {
+                uppy.use(Uppy.DragDrop, { target: features.drag_and_drop });
             }
-            if (ftrs.progress_bar) {
+            if (features.progress_bar) {
                 uppy.use(Uppy.ProgressBar, { target: container });
             }
-            if (ftrs.status_bar) {
+            if (features.status_bar) {
                 uppy.use(Uppy.StatusBar, {
                     target: container,
                     showProgressDetails: true
                 });
             }
         }
-        if (ftrs.popup_messages) {
+        if (features.popup_messages) {
             uppy.use(Uppy.Informer, { target: container });
         }
-        if (ftrs.image_preview) {
+        if (features.image_preview) {
             uppy.use(Uppy.ThumbnailGenerator, { thumbnailWidth: 400 });
         }
-        if (ftrs.upload_to_aws) {
+        if (features.upload_to_aws) {
             uppy.use(Uppy.AwsS3, {
                 limit:        2,
                 timeout:      Uppy.ms('1 minute'),
@@ -1117,19 +1141,17 @@ $(document).on('turbolinks:load', function() {
      * Setup handlers for Uppy events that drive the workflow of uploading
      * a file and creating a database entry from it.
      *
-     * @param {Uppy}        uppy
-     * @param {HTMLElement} form
-     * @param {object}      [features]
+     * @param {Uppy}                uppy
+     * @param {HTMLElement}         form
+     * @param {UppyFeatureSettings} features
      */
     function setupHandlers(uppy, form, features) {
-
-        var ftrs = features || FEATURES;
 
         uppy.on('upload',         onFileUploadStarting);
         uppy.on('upload-success', onFileUploadSuccess);
         uppy.on('upload-error',   onFileUploadError);
 
-        if (ftrs.image_preview) {
+        if (features.image_preview) {
             uppy.on('thumbnail:generated', onThumbnailGenerated);
         }
 
@@ -1167,7 +1189,7 @@ $(document).on('turbolinks:load', function() {
 
             console.log('Uppy: upload-success', file, response);
 
-            if (ftrs.popup_messages) {
+            if (features.popup_messages) {
                 uppyInfoClear(uppy);
             }
 
@@ -1252,21 +1274,20 @@ $(document).on('turbolinks:load', function() {
          */
         function onThumbnailGenerated(file, image) {
             console.log('Uppy: thumbnail:generated', file, image);
-            ftrs.image_preview.src = image;
+            features.image_preview.src = image;
         }
     }
 
     /**
      * Setup handlers for Uppy events that should trigger popup messages.
      *
-     * @param {Uppy}   uppy
-     * @param {object} [features]
+     * @param {Uppy}                uppy
+     * @param {UppyFeatureSettings} features
      */
     function setupMessages(uppy, features) {
 
-        var ftrs = features || FEATURES;
         var info;
-        if (ftrs.popup_messages) {
+        if (features.popup_messages) {
             info = function(txt, time, lvl) { uppyInfo(uppy, txt, time, lvl); }
         } else {
             info = function() {}; // A placeholder "null function".
@@ -1316,12 +1337,10 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set up console debugging messages for other Uppy events.
      *
-     * @param {Uppy}   uppy
-     * @param {object} [features]
+     * @param {Uppy}                uppy
+     * @param {UppyFeatureSettings} features
      */
     function setupDebugging(uppy, features) {
-
-        var ftrs = features || FEATURES;
 
         // This event occurs after 'upload-success' or 'upload-error'.
         uppy.on('complete', function(result) {
@@ -1395,7 +1414,7 @@ $(document).on('turbolinks:load', function() {
             console.log('Uppy: plugin-remove', (instance.id || instance));
         });
 
-        if (ftrs.dashboard) {
+        if (features.dashboard) {
             uppy.on('dashboard:modal-open', function() {
                 console.log('Uppy: dashboard:modal-open');
             });
@@ -1410,7 +1429,7 @@ $(document).on('turbolinks:load', function() {
             });
         }
 
-        if (ftrs.image_preview) {
+        if (features.image_preview) {
             uppy.on('thumbnail:request', function(file) {
                 console.log('Uppy: thumbnail:request', file);
             });
@@ -1425,7 +1444,7 @@ $(document).on('turbolinks:load', function() {
             });
         }
 
-        if (ftrs.upload_to_aws) {
+        if (features.upload_to_aws) {
             uppy.on('s3-multipart:part-uploaded', function(file, pt) {
                 console.log('Uppy: s3-multipart:part-uploaded', file, pt);
             });

@@ -85,6 +85,10 @@ en:
           alt:          'Drop-down menu'
           asset:        'help/drop_down.png'
 
+        ia_timeout:
+          alt:          'Close this browser tab and retry the original download link.'
+          asset:        'help/ia_timeout.png'
+
         one_selection:
           alt:          'Multi-select menu with a single selection'
           asset:        'help/one_selection.png'

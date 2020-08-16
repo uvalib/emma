@@ -95,10 +95,14 @@
     }
 
     img {
+
         display:   block;
         margin:    1.5rem auto;
         max-width: 100%;
-        border:    1px solid gray;
+
+        &:not(.no-border) {
+            border: 1px solid gray;
+        }
     }
 
     //=========================================================================
@@ -108,7 +112,9 @@
     &.modal {
         img {
 
-            max-width: 75%;
+            &:not(.wide) {
+                max-width: 75%;
+            }
 
             @media #{$narrow-screen} {
                 max-width: 100%;
@@ -247,6 +253,11 @@
     // Special notation paragraph.
     .caveat {
         font-weight: bold;
+    }
+
+    // Navigation links at the start of a section.
+    .section + nav {
+        margin-top: 1rem;
     }
 }
 
