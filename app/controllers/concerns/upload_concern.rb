@@ -1562,9 +1562,9 @@ module UploadConcern
     err = nil
     case problem
       when Symbol              then msg, err = UPLOAD_ERROR[problem]
+      when ActiveModel::Errors then msg = problem.full_messages
       when Api::Error          then msg = problem.messages
       when Exception           then msg = problem.message
-      when ActiveModel::Errors then msg = problem.full_messages
       else                          msg = problem
     end
     err ||= SubmitError

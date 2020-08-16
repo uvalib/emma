@@ -18,16 +18,6 @@ class Api::Error < RuntimeError
 
   public
 
-  # If applicable, the original exception that was rescued which resulted in
-  # raising an Api::Error exception.
-  #
-  # If there was no original exception, this will return the instance itself
-  # so that it can be used with Kernel#raise.
-  #
-  # @return [Exception]
-  #
-  attr_reader :exception
-
   # If applicable, the HTTP response that resulted in the original exception.
   #
   # @return [Faraday::Response, nil]
@@ -49,102 +39,149 @@ class Api::Error < RuntimeError
 
   # Initialize a new instance.
   #
-  # @param [Array<Faraday::Response, Exception, Integer, String, true>] args
+  # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args
+  # @param [String, nil] default      Default message.
   #
-  def initialize(*args)
-    @response = @exception = @http_status = nil
+  # This method overrides:
+  # @see Exception#initialize
+  #
+  def initialize(*args, default: nil)
+    @response = @http_status = @cause = nil
     @messages = []
     args.each do |arg|
       case arg
-        when Faraday::Response then @response = arg
-        when Exception         then @exception = arg
+        when Faraday::Response then @response    = arg
+        when Exception         then @cause       = arg
         when Integer           then @http_status = arg
         when String            then @messages << arg
         when Array             then @messages += arg
         when true              then # Use default error message.
-        when nil               then # Ignore nils silently.
+        when nil               then # Ignore silently.
         else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
       end
     end
-    case @exception
+    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
+    case @cause
       when Api::Error
-        @messages      += @exception.messages
-        @http_status  ||= @exception.http_status
-        @response     ||= @exception.response
-        replace_exception(@exception.exception)
+        @messages     += @cause.messages
+        @http_status ||= @cause.http_status
+        @response    ||= @cause.response
+        @cause         = @cause.cause
       when Faraday::Error
-        @messages      += Array.wrap(@exception.message)
-        @http_status  ||= @exception.response&.dig(:status)
-        replace_exception(@exception.wrapped_exception)
+        @messages     += faraday_error(*@cause.message)
+        @http_status ||= @cause.response&.dig(:status)
+        @cause         = @cause.wrapped_exception
       when Exception
-        @messages      += Array.wrap(@exception.message)
-        @http_status  ||= @response&.status
-      else
-        @exception = self # Required for Kernel#raise.
+        @messages     += Array.wrap(@cause.message)
+        @http_status ||= @response&.status
     end
-    @messages.reject!(&:blank?)
-    @messages << self.class.default_message if @messages.empty?
     @messages.uniq!
+    @messages.reject!(&:blank?)
+    @messages << (default || default_message) if @messages.empty?
     super(@messages.first)
   rescue
     super('ERROR')
   end
 
   # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  private
-
-  # replace_exception
-  #
-  # @param [Exception] e
-  #
-  # @return [Exception, nil]
-  #
-  def replace_exception(e)
-    @exception = e if e.is_a?(Exception)
-  end
-
-  # ===========================================================================
-  # :section: Object overrides
+  # :section: Exception overrides
   # ===========================================================================
 
   public
+
+  # To satisfy Kernel#raise this returns the instance itself.
+  #
+  # @return [Exception]
+  #
+  # This method overrides:
+  # @see Exception#exception
+  #
+  def exception(*)
+    self
+  end
+
+  # A fall-back for returning #messages as a single string.
+  #
+  # @param [String] connector         Connector between multiple messages.
+  #
+  # @return [String]
+  #
+  # This overrides:
+  # @see Exception#to_s
+  #
+  def to_s(connector: ', ')
+    @messages.join(connector)
+  end
+
+  # A fall-back for returning #messages as a single string.
+  #
+  # @return [String]
+  #
+  # This overrides:
+  # @see Exception#message
+  #
+  def message
+    to_s
+  end
 
   # inspect
   #
   # @return [String]
   #
   # This method overrides
-  # @see Object#inspect
+  # @see Exception#inspect
   #
   def inspect
     items = {
       http_status: @http_status.inspect,
       response:    @response.inspect,
-      exception:   api_format_result(@exception, html: false, indent: 2),
+      cause:       api_format_result(@cause, html: false, indent: 2),
     }.map { |k, v| "@#{k}=#{v}" }.join(', ')
-    '#<%s: %s %s>' % [self.class, self.message, items]
+    '#<%s: %s %s>' % [self.class, message, items]
+  end
+
+  # Execution stack associated with the original exception.
+  #
+  # @return [Array<String>, nil]
+  #
+  # This overrides:
+  # @see Exception#message
+  #
+  def backtrace
+    cause&.backtrace || super
+  end
+
+  # If applicable, the original exception that was rescued which resulted in
+  # raising an Api::Error exception.
+  #
+  # @return [Exception, nil]
+  #
+  # This overrides:
+  # @see Exception#cause
+  #
+  def cause
+    @cause
   end
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
-  protected
+  public
 
-  # Force the default message (if it is defined) into the arguments unless they
-  # already include an explicit message value.
+  # Enhance Faraday::Error messages.
   #
-  # @param [Array] args
+  # @param [Array<String>] messages
   #
-  # @return [Array]                   The *args* array (possibly modified).
+  # @return [Array<String>]
   #
-  def append_default_message!(args)
-    default = args.none? { |a| a.is_a?(String) }
-    default &&= self.class.default_message(allow_nil: true).presence
-    default ? (args << default) : args
+  def faraday_error(*messages)
+    messages.map do |m|
+      m.sub(/status (\d+)/) do |s|
+        description = Net::HTTP::STATUS_CODES[$1.to_i]
+        description ? "#{s} (#{description})" : s
+      end
+    end
   end
 
   # ===========================================================================
@@ -153,83 +190,82 @@ class Api::Error < RuntimeError
 
   public
 
-  # Default error message for the current instance based on the name of its
-  # class.
-  #
-  # @param [Boolean] allow_nil
-  # @param [Symbol]  source           Source repository
-  #
-  # @return [String]
-  # @return [nil]                     If *allow_nil* is set to *true* and no
-  #                                     default message is defined.
-  #
-  # @see en.emma.error.api in config/locales/en.yml
-  #
-  def self.default_message(allow_nil: false, source: nil)
-    type = name.to_s
-    source ||= type.sub(/::.*$/, '').underscore.presence
-    # noinspection RubyNilAnalysis
-    type = type.demodulize.underscore.sub(/_?error$/, '').presence
-    keys = []
-    keys << :"emma.error.#{source}.#{type}"       if source && type
-    keys << :"emma.error.api.#{type}"             if type
-    keys << :"emma.error.#{source}.default"       if source
-    keys << :'emma.error.api.default'
-    keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
-    keys.uniq!
-    I18n.t(keys.shift, default: keys)
+  module Methods
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol, nil]
+    #
+    # NOTE: To be overridden by the subclass of Api::Error
+    #
+    def service
+    end
+
+    # Name of the error and subkey into config/locales/error.en.yml.
+    #
+    # @return [Symbol, nil]
+    #
+    # NOTE: To be overridden by the subclass of Api::Error
+    #
+    def error_type
+    end
+
+    # The descriptive name of the service for use in display and messages.
+    #
+    # @param [Symbol, String, nil] source     Source repository
+    #
+    # @return [String]
+    #
+    def service_name(source: nil)
+      source ||= service
+      keys = []
+      keys << :"emma.error.#{source}._name" if source
+      keys << :'emma.error.api._name'
+      keys << 'remote service'
+      I18n.t(keys.shift, default: keys)
+    end
+
+    # Default error message for the current instance based on the name of its
+    # class.
+    #
+    # @param [Symbol, String, nil] source     Source repository
+    # @param [Symbol, String, nil] type       Error type.
+    # @param [Boolean]             allow_nil
+    #
+    # @return [String]                The appropriate error message.
+    # @return [nil]                   If *allow_nil* is set to *true* and no
+    #                                   default message is defined.
+    #
+    # @see en.emma.error.api in config/locales/error.en.yml
+    #
+    def default_message(source: nil, type: nil, allow_nil: false)
+      source ||= service
+      type   ||= error_type
+      name = service_name(source: source)
+      opt  = { service: name, Service: name.upcase_first }
+      keys = []
+      keys << :"emma.error.#{source}.#{type}"       if source && type
+      keys << :"emma.error.api.#{type}"             if type
+      keys << :"emma.error.#{source}.default"       if source
+      keys << :'emma.error.api.default'
+      keys << "#{type&.capitalize || 'API'} error"  unless allow_nil
+      I18n.t(keys.shift, default: keys, **opt)
+    end
+
   end
 
+  include Methods
+
 end
-
-# =============================================================================
-# :section: Authorization errors
-# =============================================================================
-
-public
-
-# Base exception for API authorization errors.
-#
-class Api::AuthError < Api::Error; end
-
-# Base exception for API communication errors.
-#
-class Api::CommError < Api::Error; end
-
-# Base exception for API session errors.
-#
-class Api::SessionError < Api::Error; end
-
-# Exception raised to indicate that the session token has expired.
-#
-class Api::TimeoutError < Api::SessionError; end
-
-# =============================================================================
-# :section: Receive errors
-# =============================================================================
-
-public
-
-# Base exception for API receive errors.
-#
-class Api::RecvError < Api::CommError; end
-
-# Exception raised to indicate a problem with received data.
-#
-class Api::ParseError < Api::RecvError; end
-
-# =============================================================================
-# :section: Transmit errors
-# =============================================================================
-
-public
-
-# Base exception for API transmit errors.
-#
-class Api::XmitError < Api::CommError; end
-
-# Base exception for API requests.
-#
-class Api::RequestError < Api::XmitError; end
 
 __loading_end(__FILE__)

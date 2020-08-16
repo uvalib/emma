@@ -9,13 +9,6 @@ require 'ingest'
 
 # Send messages through the EMMA Federated Ingestion API.
 #
-# == Authentication and authorization
-# Bookshare uses OAuth2, which is handled in this application by Devise and
-# OmniAuth.
-#
-# @see lib/emma/config.rb
-# @see config/initializers/devise.rb
-#
 class IngestService < ApiService
 
   include Ingest

@@ -26,20 +26,6 @@ module BookshareService::Common
 
   public
 
-  API_KEY      = BOOKSHARE_API_KEY
-  BASE_URL     = BOOKSHARE_BASE_URL
-  API_VERSION  = BOOKSHARE_API_VERSION
-  AUTH_URL     = BOOKSHARE_AUTH_URL
-  DEFAULT_USER = 'anonymous' # For examples # TODO: ???
-
-  # Validate the presence of these values required for the full interactive
-  # instance of the application.
-  if rails_application?
-    Log.error('Missing BOOKSHARE_API_KEY')  unless API_KEY
-    Log.error('Missing BOOKSHARE_BASE_URL') unless BASE_URL
-    Log.error('Missing BOOKSHARE_AUTH_URL') unless AUTH_URL
-  end
-
   # Maximum accepted value for a :limit parameter.
   #
   # @type [Integer]
@@ -48,6 +34,12 @@ module BookshareService::Common
   # Determined experimentally.
   #
   MAX_LIMIT = 100
+
+  # For use in example.
+  #
+  # @type [String]
+  #
+  DEFAULT_USER = 'anonymous'
 
   # The identifier (:userAccountId) for the test member "Placeholder Member".
   # (Only usable by "emmadso@bookshare.org".)
@@ -61,6 +53,45 @@ module BookshareService::Common
   # Rails.root.join('test/fixtures/members.yml').yield_self { |path|
   #   YAML.load_file(path)&.deep_symbolize_keys! || {}
   # }.dig(:Placeholder_Member, :user_id)
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Validate the presence of these values required for the full interactive
+  # instance of the application.
+  required_env_vars(
+    :BOOKSHARE_AUTH_URL,
+    :BOOKSHARE_BASE_URL,
+    :BOOKSHARE_API_KEY,
+    :BOOKSHARE_API_VERSION
+  )
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url
+    @base_url ||= BOOKSHARE_BASE_URL
+  end
+
+  # Bookshare API key.
+  #
+  # @return [String]
+  #
+  def api_key
+    BOOKSHARE_API_KEY
+  end
+
+  # API version is not a part of request URLs.
+  #
+  # @return [nil]
+  #
+  def api_version
+    BOOKSHARE_API_VERSION
+  end
 
   # ===========================================================================
   # :section: Authentication
@@ -101,64 +132,6 @@ module BookshareService::Common
     super.tap do |result|
       result[:limit] = MAX_LIMIT if result[:limit].to_s == 'max'
     end
-  end
-
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  protected
-
-  # Wrap an exception or response in a service error.
-  #
-  # @param [Exception, Faraday::Response] obj
-  #
-  # @return [BookshareService::Error]
-  #
-  # This method overrides:
-  # @see ApiService::Common#response_error
-  #
-  def response_error(obj)
-    BookshareService::Error.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [BookshareService::EmptyResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#empty_response_error
-  #
-  def empty_response_error(obj)
-    BookshareService::EmptyResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [BookshareService::HtmlResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#html_response_error
-  #
-  def html_response_error(obj)
-    BookshareService::HtmlResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [BookshareService::RedirectionError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#redirect_response_error
-  #
-  def redirect_response_error(obj)
-    BookshareService::RedirectionError.new(obj)
   end
 
 end

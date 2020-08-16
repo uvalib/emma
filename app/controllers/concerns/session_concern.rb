@@ -45,7 +45,7 @@ module SessionConcern
     rescue_from Api::Error, Faraday::Error do |exception|
       __debug_exception('RESCUE_FROM', exception)
       if rendering_html?
-        flash_now_alert(exception.message) if flash.now[:alert].blank?
+        flash_now_alert(exception) if flash.now[:alert].blank?
         render
       end
     end
@@ -53,7 +53,7 @@ module SessionConcern
     rescue_from StandardError do |exception|
       __debug_exception('RESCUE_FROM', exception, trace: true)
       if rendering_html?
-        flash_now_alert(exception.message) if flash.now[:alert].blank?
+        flash_now_alert(exception) if flash.now[:alert].blank?
         render
       end
     end

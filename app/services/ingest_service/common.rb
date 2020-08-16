@@ -26,32 +26,32 @@ module IngestService::Common
 
   public
 
-  API_KEY      = INGEST_API_KEY
-  BASE_URL     = INGEST_BASE_URL
-  API_VERSION  = INGEST_API_VERSION
-
   # Validate the presence of these values required for the full interactive
   # instance of the application.
-  if rails_application?
-    Log.error('Missing INGEST_API_KEY')  unless API_KEY
-    Log.error('Missing INGEST_BASE_URL') unless BASE_URL
+  required_env_vars(:INGEST_BASE_URL, :INGEST_API_KEY)
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url
+    @base_url ||= INGEST_BASE_URL
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
+  # Federated Ingest API key.
+  #
+  # @return [String]
+  #
+  def api_key
+    INGEST_API_KEY
+  end
 
-  public
-
-  # API version is not a part of search URLs.
+  # API version is not a part of request URLs.
   #
   # @return [nil]
   #
-  # This method overrides:
-  # @see ApiService::Common#api_version
-  #
   def api_version
-    nil
+    # INGEST_API_VERSION
   end
 
   # ===========================================================================
@@ -100,64 +100,6 @@ module IngestService::Common
         end
       end
     end
-  end
-
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  protected
-
-  # Wrap an exception or response in a service error.
-  #
-  # @param [Exception, Faraday::Response] obj
-  #
-  # @return [IngestService::Error]
-  #
-  # This method overrides:
-  # @see ApiService::Common#response_error
-  #
-  def response_error(obj)
-    IngestService::Error.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [IngestService::EmptyResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#empty_response_error
-  #
-  def empty_response_error(obj)
-    IngestService::EmptyResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [IngestService::HtmlResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#html_response_error
-  #
-  def html_response_error(obj)
-    IngestService::HtmlResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [IngestService::RedirectionError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#redirect_response_error
-  #
-  def redirect_response_error(obj)
-    IngestService::RedirectionError.new(obj)
   end
 
 end

@@ -45,7 +45,7 @@ class UploadController < ApplicationController
   before_action :index_redirect, only: %i[show]
 
   respond_to :html
-  respond_to :json, :xml, except: %i[edit] # TODO: ???
+  respond_to :json, :xml, except: %i[edit]
 
   # ===========================================================================
   # :section:
@@ -238,65 +238,6 @@ class UploadController < ApplicationController
 
   public
 
-  # == POST /upload/endpoint
-  # Invoked from 'Uppy.XHRUpload'.
-  #
-  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
-  # @see app/assets/javascripts/feature/file-upload.js
-  #
-  def endpoint
-    __debug_route
-    __debug_request
-    stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
-    self.status = stat        if stat.present?
-    self.headers.merge!(hdrs) if hdrs.present?
-    self.response_body = body if body.present?
-  rescue SubmitError => error
-    post_response(:conflict, error, xhr: true) # TODO: ?
-  rescue => error
-    post_response(error, xhr: true)
-  end
-
-  # == GET /download/:id
-  # Download the file associated with an EMMA submission.
-  #
-  # @raise [Net::HTTPBadRequest]
-  # @raise [Net::HTTPNotFound]
-  #
-  # @see UploadConcern#get_record
-  # @see Upload#download_url.
-  #
-  def download
-    __debug_route
-    @item = get_record(@item_id)
-    @link = @item.download_url
-    respond_to do |format|
-      format.html { redirect_to(@link) }
-      format.json { render_json download_values }
-      format.xml  { render_xml  download_values }
-    end
-  end
-
-  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
-  # Retrieve a file from a member repository.
-  #
-  def retrieval
-    __debug_route
-    if ia_link?(@url)
-      render_ia_download(@url)
-    elsif bs_link?(@url)
-      redirect_to bs_retrieval_path(url: @url, forUser: @member)
-    else
-      Log.error { "/retrieval can't handle #{@url.inspect}"}
-    end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # == GET /upload/bulk
   # TODO: ???
   #
@@ -405,6 +346,65 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
     post_response(error, xhr: false)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == POST /upload/endpoint
+  # Invoked from 'Uppy.XHRUpload'.
+  #
+  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  # @see app/assets/javascripts/feature/file-upload.js
+  #
+  def endpoint
+    __debug_route
+    __debug_request
+    stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
+    self.status = stat        if stat.present?
+    self.headers.merge!(hdrs) if hdrs.present?
+    self.response_body = body if body.present?
+  rescue SubmitError => error
+    post_response(:conflict, error, xhr: true) # TODO: ?
+  rescue => error
+    post_response(error, xhr: true)
+  end
+
+  # == GET /download/:id
+  # Download the file associated with an EMMA submission.
+  #
+  # @raise [Net::HTTPBadRequest]
+  # @raise [Net::HTTPNotFound]
+  #
+  # @see UploadConcern#get_record
+  # @see Upload#download_url.
+  #
+  def download
+    __debug_route
+    @item = get_record(@item_id)
+    @link = @item.download_url
+    respond_to do |format|
+      format.html { redirect_to(@link) }
+      format.json { render_json download_values }
+      format.xml  { render_xml  download_values }
+    end
+  end
+
+  # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
+  # Retrieve a file from a member repository.
+  #
+  def retrieval
+    __debug_route
+    if ia_link?(@url)
+      render_ia_download(@url)
+    elsif bs_link?(@url)
+      redirect_to bs_retrieval_path(url: @url, forUser: @member)
+    else
+      Log.error { "/retrieval can't handle #{@url.inspect}"}
+    end
   end
 
   # ===========================================================================

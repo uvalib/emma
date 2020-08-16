@@ -9,13 +9,6 @@ require 'search'
 
 # Receive messages through the EMMA Unified Search API.
 #
-# == Authentication and authorization
-# Bookshare uses OAuth2, which is handled in this application by Devise and
-# OmniAuth.
-#
-# @see lib/emma/config.rb
-# @see config/initializers/devise.rb
-#
 class SearchService < ApiService
 
   include Search

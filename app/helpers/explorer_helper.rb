@@ -37,9 +37,9 @@ module ExplorerHelper
   # @return [String]
   #
   def api_explorer_url(path, **opt)
-    api_version = "/#{BookshareService::API_VERSION}/"
+    api_version = "/#{BOOKSHARE_API_VERSION}/"
     make_path(path, opt).tap do |result|
-      result.delete_prefix!(BookshareService::BASE_URL)
+      result.delete_prefix!(BOOKSHARE_BASE_URL)
       unless result.start_with?('http', api_version)
         result.prepend(api_version).squeeze!('/')
       end
@@ -71,7 +71,7 @@ module ExplorerHelper
 
   # Generate HTML from the result of an API method invocation.
   #
-  # @param [Api::Record, Faraday::Response, Exception, Integer, String] value
+  # @param [Api::Record, Faraday::Response, Exception, Integer, String, nil] value
   # @param [Integer, String] indent     Space count or literal indent string.
   # @param [String]          separator  Default: "\n".
   # @param [Boolean]         html       If *false* then URLs will not be turned
@@ -81,6 +81,9 @@ module ExplorerHelper
   # @return [ActiveSupport::SafeBuffer] If *html* is *true*.
   # @return [String]                    If *html* is *false*.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def api_format_result(value, indent: nil, separator: "\n", html: true)
     record = value.is_a?(Api::Record)
     value  = value.body if value.is_a?(Faraday::Response)
@@ -139,12 +142,19 @@ module ExplorerHelper
 
   # Format data objects for Explorer display.
   #
-  # @param [Api::Record, Exception, Numeric, String] value
+  # @param [Api::Record, Exception, Numeric, String, nil] value
   #
   # @return [String]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def pretty_format(value)
     case value
+      when nil, Numeric
+        value.inspect
+      when Api::Record
+        value.to_json(pretty: true)
       when ApiService::HtmlResultError
         value.response.body
       when Faraday::Error
@@ -161,10 +171,6 @@ module ExplorerHelper
         ].join("\n")
       when Exception
         value.pretty_inspect.gsub(/@[^=]+=/, (PF_NEWLINE + '\0'))
-      when Api::Record
-        value.to_json(pretty: true)
-      when Numeric
-        value.inspect
       else
         pretty_json(value)
     end
@@ -178,13 +184,13 @@ module ExplorerHelper
 
   # Abbreviate all but the first instance of the rendering of an exception.
   #
-  # @param [String] html              An HTML-ready string.
+  # @param [String, nil] html         An HTML-ready string.
   #
   # @return [String]                  The modified string.
   #
   def mask_later_exceptions(html)
     mask = false
-    html.gsub(/(@exception=#<[A-Z0-9_:]+Error)(.*?)(>,)/i) do |substring|
+    html.to_s.gsub(/(@exception=#<[A-Z0-9_:]+Error)(.*?)(>,)/i) do |substring|
       if mask
         "#{$1} ... #{$3}"
       else
@@ -197,7 +203,7 @@ module ExplorerHelper
   # Transform URLs into links by translating Bookshare API hrefs into local
   # paths.
   #
-  # @param [String] html              An HTML-ready string.
+  # @param [String, nil] html         An HTML-ready string.
   # @param [Hash]   opt               Passed to #make_link.
   #
   # @return [String]                  The modified string.
@@ -205,9 +211,9 @@ module ExplorerHelper
   def make_links(html, **opt)
     opt[:rel]    ||= 'noreferrer'
     opt[:target] ||= '_blank' unless params[:action] == 'v2'
-    html.gsub(%r{&quot;https?://.+&quot;}) do |s|
+    html.to_s.gsub(%r{&quot;https?://.+&quot;}) do |s|
       url = href = s.split('&quot;')[1].html_safe
-      if href.start_with?(BookshareService::BASE_URL)
+      if href.start_with?(BOOKSHARE_BASE_URL)
         uri   = URI.parse(CGI.unescapeHTML(url)) rescue nil
         query = uri&.query&.sub(/api_key=[^&]*&?/, '')&.presence
         href  = uri && ERB::Util.h([uri.path, query].compact.join('?'))

@@ -113,6 +113,24 @@ module ApiService::Definition
     }.compact
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # To appear in the definition of each service's Common module for variables
+  # that should should be defined in "config/environment.rb".
+  #
+  # @param [Array<Symbol, String>] vars
+  #
+  # @return [void]
+  #
+  def required_env_vars(*vars)
+    return unless rails_application?
+    vars.each { |var| Log.error "Missing #{var}" unless const_defined?(var) }
+  end
+
 end
 
 __loading_end(__FILE__)

@@ -180,6 +180,17 @@ IA_USER_COOKIE = ENV.fetch('IA_USER_COOKIE', nil).freeze
 #
 IA_SIG_COOKIE = ENV.fetch('IA_SIG_COOKIE', nil).freeze
 
+# Base Internet Archive download path.
+#
+# @type [String]
+#
+IA_DOWNLOAD_BASE_URL =
+  ENV.fetch('IA_DOWNLOAD_BASE_URL', 'https://archive.org/download')
+    .strip
+    .sub(%r{^(http:)?//}, 'https://')
+    .sub(%r{/+$}, '')
+    .freeze
+
 # =============================================================================
 # Load and initialize the Rails application
 # =============================================================================

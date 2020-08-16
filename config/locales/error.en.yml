@@ -14,85 +14,67 @@ en:
 
       api:
 
-        # @see Api::Error
+        # @see ApiService::Error.error_subclass
 
-        default:        'Unknown API error'
-        auth:           'API authorization error'
-        comm:           'API network error'
-        session:        'API session error'
-        timeout:        'API session token expired'
-        recv:           'API receive error'
-        parse:          'API sent bad data'
-        xmit:           'API transmit error'
-        request:        'Bad API request'
+        _name:          'remote service API'
+        default:        'Unknown %{service} error'
 
-        # @see ApiService::Error
+        # == Transmission errors
 
-        response:       'Bad API response'
-        empty_result:   'Empty API result'
-        html_result:    'Invalid API result'
-        redirection:    'Missing HTTP redirect location'
-        redirect_limit: 'Too many HTTP redirects'
+        auth:           '%{Service} authorization error'
+        comm:           '%{Service} network error'
+        session:        '%{Service} session error'
+        connect:        '%{Service} could not be contacted'
+        timeout:        '%{Service} timed out'
+        xmit:           '%{Service} transmit error'
+        recv:           '%{Service} receive error'
+        parse:          '%{Service} sent bad data'
+
+        # == Request errors
+
+        request:        'Malformed request sent to %{service}'
+        no_input:       'Empty request sent to %{service}'
+
+        # == Response errors
+
+        response:       'Bad %{service} response'
+        empty_result:   'Empty %{service} result'
+        html_result:    'Invalid %{service} result'
+        redirection:    'Missing HTTP redirect location from %{service}'
+        redirect_limit: 'Too many HTTP redirects from %{service}'
 
       bookshare:
 
-        # @see Bs::Error
+        # @see BookshareService::Error.error_subclass
 
-        default:        'Unknown Bookshare API error'
-        auth:           'Bookshare API authorization error'
-        comm:           'Bookshare API network error'
-        session:        'Bookshare API session error'
-        timeout:        'Bookshare API session token expired'
-        recv:           'Bookshare API receive error'
-        parse:          'Bad data from Bookshare API'
-        xmit:           'Bookshare API transmit error'
-        request:        'Bad request to Bookshare API'
-        account:        'Bookshare API account request error'
-        subscription:   'Bookshare API subscription request error'
-        title:          'Bookshare API catalog title request error'
-        periodical:     'Bookshare API periodical request error'
-        reading_list:   'Bookshare API reading list request error'
-        organization:   'Bookshare API organization request error'
+        _name:          'Bookshare service'
 
-        # @see BookshareService::Error
+        # == Request errors
 
-        response:       'Bad Bookshare API response'
+        account:        '%{Service} account request error'
+        subscription:   '%{Service} subscription request error'
+        title:          '%{Service} catalog title request error'
+        periodical:     '%{Service} periodical request error'
+        reading_list:   '%{Service} reading list request error'
+        organization:   '%{Service} organization request error'
 
       search:
 
-        # @see Search::Error
+        # @see SearchService::Error.error_subclass
 
-        default:        'Unknown Unified Search API error'
-        auth:           'Unified Search API authorization error'
-        comm:           'Unified Search API network error'
-        session:        'Unified Search API session error'
-        timeout:        'Unified Search API session token expired'
-        recv:           'Unified Search API receive error'
-        parse:          'Bad data from Unified Search API'
-        xmit:           'Unified Search API transmit error'
-        request:        'Bad request to Unified Search API'
-
-        # @see SearchService::Error
-
-        response:       'Bad Unified Search API response'
+        _name:          'EMMA Unified Search service'
 
       ingest:
 
-        # @see Ingest::Error
+        # @see IngestService::Error.error_subclass
 
-        default:        'Unknown Federated Ingest API error'
-        auth:           'Federated Ingest API authorization error'
-        comm:           'Federated Ingest API network error'
-        session:        'Federated Ingest API session error'
-        timeout:        'Federated Ingest API session token expired'
-        recv:           'Federated Ingest API receive error'
-        parse:          'Bad data from Federated Ingest'
-        xmit:           'Federated Ingest transmit error'
-        request:        'Bad request to Federated Ingest'
+        _name:          'Bookshare Federated Ingest service'
 
-        # @see IngestService::Error
+      ia_download:
 
-        response:       'Bad Federated Ingest response'
+        # @see IaDownloadService::Error.error_subclass
+
+        _name:          'Internet Archive download service'
 
       upload:
 

@@ -26,30 +26,32 @@ module SearchService::Common
 
   public
 
-  BASE_URL     = SEARCH_BASE_URL
-  API_VERSION  = SEARCH_API_VERSION
-
   # Validate the presence of these values required for the full interactive
   # instance of the application.
-  if rails_application?
-    Log.error('Missing SEARCH_BASE_URL') unless BASE_URL
+  required_env_vars(:SEARCH_BASE_URL)
+
+  # The URL for the API connection.
+  #
+  # @return [String]
+  #
+  def base_url
+    @base_url ||= SEARCH_BASE_URL
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
+  # An API key is not a part of search URLs.
+  #
+  # @return [nil]
+  #
+  def api_key
+    nil
+  end
 
   # API version is not a part of search URLs.
   #
   # @return [nil]
   #
-  # This method overrides:
-  # @see ApiService::Common#api_version
-  #
   def api_version
-    nil
+    # SEARCH_API_VERSION
   end
 
   # ===========================================================================
@@ -74,64 +76,6 @@ module SearchService::Common
     super.tap do |prms, _hdrs, _body|
       prms.replace(build_query_options(prms)) unless update_request?
     end
-  end
-
-  # ===========================================================================
-  # :section: Exceptions
-  # ===========================================================================
-
-  protected
-
-  # Wrap an exception or response in a service error.
-  #
-  # @param [Exception, Faraday::Response] obj
-  #
-  # @return [SearchService::Error]
-  #
-  # This method overrides:
-  # @see ApiService::Common#response_error
-  #
-  def response_error(obj)
-    SearchService::Error.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [SearchService::EmptyResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#empty_response_error
-  #
-  def empty_response_error(obj)
-    SearchService::EmptyResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [SearchService::HtmlResultError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#html_response_error
-  #
-  def html_response_error(obj)
-    SearchService::HtmlResultError.new(obj)
-  end
-
-  # Wrap response in a service error.
-  #
-  # @param [Faraday::Response] obj
-  #
-  # @return [SearchService::RedirectionError]
-  #
-  # This method overrides:
-  # @see ApiService::Common#redirect_response_error
-  #
-  def redirect_response_error(obj)
-    SearchService::RedirectionError.new(obj)
   end
 
 end

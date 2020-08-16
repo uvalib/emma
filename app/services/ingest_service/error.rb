@@ -9,15 +9,32 @@ __loading_begin(__FILE__)
 #
 class IngestService::Error < ApiService::Error
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Methods to be included in related classes.
   #
   module Methods
+
+    def self.included(base)
+      base.send(:extend, self)
+    end
+
+    include ApiService::Error::Methods unless ONLY_FOR_DOCUMENTATION
+
+    # =========================================================================
+    # :section: ApiService::Error overrides
+    # =========================================================================
+
+    public
+
+    # Name of the service and key into config/locales/error.en.yml.
+    #
+    # @return [Symbol]
+    #
+    # When included in the subclass this method overrides:
+    # @see ApiService::Error::Methods#service
+    #
+    def service
+      :ingest
+    end
 
     # Get the message from within the response body of a Faraday exception.
     #
@@ -29,11 +46,10 @@ class IngestService::Error < ApiService::Error
     # @see #parse_delete_errors
     #
     # When included in the subclass this method overrides:
-    # @see ApiService::Error#extract_message
+    # @see ApiService::Error::Methods#extract_message
     #
     def extract_message(error)
       body = error.response[:body].presence
-      $stderr.puts "----- INGEST #{self.class} #{__method__} | error = #{body}"
       json = body && json_parse(body, symbolize_keys: false).presence || {}
       json = json.first   if json.is_a?(Array) && (json.size <= 1)
       return json.compact if json.is_a?(Array)
@@ -47,6 +63,12 @@ class IngestService::Error < ApiService::Error
         end
       Array.wrap(message || body)
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
 
     # Ingest creation error messages.
     #
@@ -126,22 +148,31 @@ class IngestService::Error < ApiService::Error
 
   include IngestService::Error::Methods
 
+  # ===========================================================================
+  # :section: Error subclasses
+  # ===========================================================================
+
+  generate_error_subclasses
+
 end
 
-class IngestService::NoInputError < ApiService::NoInputError
-  include IngestService::Error::Methods
-end
-
-class IngestService::EmptyResultError < ApiService::EmptyResultError
-  include IngestService::Error::Methods
-end
-
-class IngestService::HtmlResultError < ApiService::HtmlResultError
-  include IngestService::Error::Methods
-end
-
-class IngestService::RedirectionError < ApiService::RedirectionError
-  include IngestService::Error::Methods
+# noinspection LongLines, DuplicatedCode
+unless ONLY_FOR_DOCUMENTATION
+  class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.auth"            || "en.emma.error.api.auth"
+  class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.comm"            || "en.emma.error.api.comm"
+  class IngestService::SessionError       < ApiService::SessionError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.session"         || "en.emma.error.api.session"
+  class IngestService::ConnectError       < ApiService::ConnectError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.connect"         || "en.emma.error.api.connect"
+  class IngestService::TimeoutError       < ApiService::TimeoutError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.timeout"         || "en.emma.error.api.timeout"
+  class IngestService::XmitError          < ApiService::XmitError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.xmit"            || "en.emma.error.api.xmit"
+  class IngestService::RecvError          < ApiService::RecvError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.recv"            || "en.emma.error.api.recv"
+  class IngestService::ParseError         < ApiService::ParseError;         include IngestService::Error::Methods; end # "en.emma.error.ingest.parse"           || "en.emma.error.api.parse"
+  class IngestService::RequestError       < ApiService::RequestError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.request"         || "en.emma.error.api.request"
+  class IngestService::NoInputError       < ApiService::NoInputError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.no_input"        || "en.emma.error.api.no_input"
+  class IngestService::ResponseError      < ApiService::ResponseError;      include IngestService::Error::Methods; end # "en.emma.error.ingest.response"        || "en.emma.error.api.response"
+  class IngestService::EmptyResultError   < ApiService::EmptyResultError;   include IngestService::Error::Methods; end # "en.emma.error.ingest.empty_result"    || "en.emma.error.api.empty_result"
+  class IngestService::HtmlResultError    < ApiService::HtmlResultError;    include IngestService::Error::Methods; end # "en.emma.error.ingest.html_result"     || "en.emma.error.api.html_result"
+  class IngestService::RedirectionError   < ApiService::RedirectionError;   include IngestService::Error::Methods; end # "en.emma.error.ingest.redirection"     || "en.emma.error.api.redirection"
+  class IngestService::RedirectLimitError < ApiService::RedirectLimitError; include IngestService::Error::Methods; end # "en.emma.error.ingest.redirect_limit"  || "en.emma.error.api.redirect_limit"
 end
 
 __loading_end(__FILE__)

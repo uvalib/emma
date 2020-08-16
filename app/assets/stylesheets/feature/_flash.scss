@@ -44,6 +44,10 @@
         display:    block;
         margin-top: 0.5rem;
 
+        &.first {
+            margin-top: 0;
+        }
+
         .part {
             display: inline-block;
         }
