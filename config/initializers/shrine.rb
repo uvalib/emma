@@ -106,13 +106,13 @@ if CLOUD_STORAGE
   # S3 options are kept in encrypted credentials but can be overridden by
   # environment variables.
   s3_options = {
-    bucket:            ENV.fetch('AWS_BUCKET', 'emma-storage-staging'),
-    region:            ENV.fetch('AWS_REGION', 'us-east-1'),
-    secret_access_key: ENV['AWS_SECRET_KEY'],
-    access_key_id:     ENV['AWS_ACCESS_KEY_ID'],
+    bucket:            AWS_BUCKET,
+    region:            AWS_REGION,
+    secret_access_key: AWS_SECRET_KEY,
+    access_key_id:     AWS_ACCESS_KEY_ID,
   }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
-  # Prepend a distinguishing prefix for development.
+  # Prepend a distinguishing prefix for desktop development.
   storages.transform_values! { |v| "rwl_#{v}" } unless application_deployed?
 
   Shrine.storages =

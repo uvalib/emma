@@ -60,18 +60,11 @@ module BookshareService::Common
 
   public
 
-  # Validate the presence of these values required for the full interactive
-  # instance of the application.
-  required_env_vars(
-    :BOOKSHARE_AUTH_URL,
-    :BOOKSHARE_BASE_URL,
-    :BOOKSHARE_API_KEY,
-    :BOOKSHARE_API_VERSION
-  )
-
   # The URL for the API connection.
   #
   # @return [String]
+  #
+  # @see #BOOKSHARE_BASE_URL
   #
   def base_url
     @base_url ||= BOOKSHARE_BASE_URL
@@ -81,6 +74,8 @@ module BookshareService::Common
   #
   # @return [String]
   #
+  # @see #BOOKSHARE_API_KEY
+  #
   def api_key
     BOOKSHARE_API_KEY
   end
@@ -88,6 +83,8 @@ module BookshareService::Common
   # API version is not a part of request URLs.
   #
   # @return [nil]
+  #
+  # @see #BOOKSHARE_API_VERSION
   #
   def api_version
     BOOKSHARE_API_VERSION

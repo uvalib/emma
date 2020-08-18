@@ -324,18 +324,13 @@ module ApiService::Common
   #
   # @param [Symbol, String]           verb  One of :get, :post, :put, :delete
   # @param [Array<String,ScalarType>] args  Path components of the API request.
-  # @param [Hash]                     opt   API request parameters.
+  # @param [Hash]                     opt   API request parameters except for:
   #
-  # args[0]   [String]  Path component.
-  # ...
-  # args[-2]  [String]  Path component.
-  # args[-1]  [Hash]    URL parameters except for:
-  #
-  # @option args.last [Boolean] :no_raise       If *true*, set @exception but
-  #                                             do not raise it.
-  #
-  # @option args.last [Boolean] :no_exception   If *true*, neither set
-  #                                             @exception nor raise it.
+  # @option opt [Symbol]  :method         The calling method.
+  # @option opt [Boolean] :no_raise       If *true*, set @exception but do not
+  #                                         raise it.
+  # @option opt [Boolean] :no_exception   If *true*, neither set @exception nor
+  #                                         raise it.
   #
   # @raise [ApiService::Error]
   #
@@ -345,11 +340,11 @@ module ApiService::Common
   # noinspection RubyScope
   #++
   def api(verb, *args, **opt)
-    @action = @response = @exception = nil
+    @action = @response = @exception = error = nil
     @verb   = verb.to_s.downcase.to_sym
 
     # Set internal options from parameters or service options.
-    opt, @params = partition_options(opt, *SERVICE_OPTIONS)
+    opt, @params = partition_options(opt, :method, *SERVICE_OPTIONS)
     no_exception = opt[:no_exception] || options[:no_exception]
     no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
     method       = opt[:method]       || calling_method
@@ -625,6 +620,7 @@ module ApiService::Common
     case response.status
       when 202
         # No response body expected.
+        action = nil
       when 200..299
         result = response.body
         raise empty_response_error(response) if result.blank?

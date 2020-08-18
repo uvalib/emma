@@ -88,6 +88,12 @@ def application_deployed?
   !!ENV['AWS_REGION']
 end
 
+# Indicate whether this is a development-build instance.
+#
+def development?
+  ENV['RAILS_ENV'] != 'production'
+end
+
 # Indicate whether this instance is being run from the interactive debugger.
 #
 # == Usage Notes

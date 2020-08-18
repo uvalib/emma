@@ -26,13 +26,11 @@ module IngestService::Common
 
   public
 
-  # Validate the presence of these values required for the full interactive
-  # instance of the application.
-  required_env_vars(:INGEST_BASE_URL, :INGEST_API_KEY)
-
   # The URL for the API connection.
   #
   # @return [String]
+  #
+  # @see #INGEST_BASE_URL
   #
   def base_url
     @base_url ||= INGEST_BASE_URL
@@ -41,6 +39,8 @@ module IngestService::Common
   # Federated Ingest API key.
   #
   # @return [String]
+  #
+  # @see #INGEST_API_KEY
   #
   def api_key
     INGEST_API_KEY

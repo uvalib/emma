@@ -27,7 +27,7 @@ module IngestService::Request::Records
   #
   # The number of records to be updated at once is capped at 1000.
   #
-  # @param [Ingest::Message::IngestionRecordList, Array<::Api::Record>] records
+  # @param [Array<Ingest::Message::IngestionRecordList, ::Api::Record>] records
   # @param [Hash] opt                 Passed to #api.
   #
   # @return [Ingest::Message::Response]
@@ -51,8 +51,9 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
   #
   def put_records(*records, **opt)
-    records = records.flat_map { |record| record_list(record) }.compact.uniq
-    api_send(:put, 'records', *records, **opt.merge!(meth: __method__))
+    opt[:method] ||= __method__
+    records = records.flat_map { |record| record_list(record) }
+    api_send(:put, 'records', records, **opt)
     Ingest::Message::Response.new(response, error: exception)
   end
     .tap do |method|
@@ -94,8 +95,9 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
   #
   def delete_records(*ids, **opt)
-    ids = ids.flat_map { |id| identifier_list(id) }.compact.uniq
-    api_send(:post, 'recordDeletes', *ids, **opt.merge!(meth: __method__))
+    opt[:method] ||= __method__
+    ids = ids.flat_map { |id| identifier_list(id) }
+    api_send(:post, 'recordDeletes', ids, **opt)
     Ingest::Message::Response.new(response, error: exception)
   end
     .tap do |method|
@@ -136,8 +138,9 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
   #
   def get_records(*ids, **opt)
-    ids = ids.flat_map { |id| identifier_list(id) }.compact.uniq
-    api_send(:post, 'recordGets', *ids, **opt.merge!(meth: __method__))
+    opt[:method] ||= __method__
+    ids = ids.flat_map { |id| identifier_list(id) }
+    api_send(:post, 'recordGets', ids, **opt)
     Search::Message::SearchRecordList.new(response, error: exception)
   end
     .tap do |method|
@@ -154,22 +157,22 @@ module IngestService::Request::Records
 
   # Send to the Ingest API unless no items were given.
   #
-  # @param [Array] args               Passed to #api.
-  # @param [Hash]  opt                Passed to #api except for:
+  # @param [Symbol]      verb         One of :get, :post, :put, :delete
+  # @param [String]      endpoint     Service path.
+  # @param [Array]       body         Passed to #api as :body.
+  # @param [Hash]        opt          Passed to #api.
   #
   # @option opt [Symbol] :meth        Calling method.
   #
-  def api_send(*args, **opt)
-    verb     = args.shift
-    endpoint = args.shift
-    caller   = opt.delete(:meth) || __method__
-    if args.present?
+  def api_send(verb, endpoint, body, **opt)
+    body = Array.wrap(body).compact.uniq
+    if body.present?
       opt[:no_raise] = true unless opt.key?(:no_raise)
-      opt[:body]     = args
-      # noinspection RubyYardParamTypeMatch
+      opt[:body]     = body
       api(verb, endpoint, **opt)
     else
-      Log.info { "#{caller}: no records" }
+      meth = opt[:method] || __method__
+      Log.info { "#{meth}: no records" }
       @response  = nil
       @exception = IngestService::NoInputError.new
     end

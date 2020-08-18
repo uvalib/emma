@@ -70,13 +70,11 @@ module IaDownloadService::Common
 
   public
 
-  # Validate the presence of these values required for the full interactive
-  # instance of the application.
-  required_env_vars(:IA_DOWNLOAD_BASE_URL)
-
   # The URL for the API connection.
   #
   # @return [String]
+  #
+  # @see #IA_DOWNLOAD_BASE_URL
   #
   def base_url
     @base_url ||= IA_DOWNLOAD_BASE_URL

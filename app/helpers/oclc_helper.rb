@@ -76,7 +76,7 @@ module OclcHelper
   def contains_oclc?(s)
     s  = s.to_s.strip
     id = remove_oclc_prefix(s)
-    !s.start_with?('on') && (s != id) || id.match?(OCLC_IDENTIFIER)
+    !s.downcase.start_with?('on') && (s != id) || id.match?(OCLC_IDENTIFIER)
   end
 
   alias_method :contains_ocn?, :contains_oclc?

@@ -271,8 +271,8 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     data = upload_bulk_post_parameters.presence or fail(__method__)
-    opt  = { base_url: request.base_url, user: @user }
-    succeeded, failed = bulk_upload_create(data, **opt)
+    url  = request.base_url
+    succeeded, failed = bulk_upload_create(data, base_url: url, user: @user)
     fail(__method__, failed) if failed.present?
     post_response(:ok, succeeded, xhr: false)
   rescue SubmitError => error
@@ -306,8 +306,8 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     data = upload_bulk_post_parameters.presence or fail(__method__)
-    opt  = { base_url: request.base_url, user: @user }
-    succeeded, failed = bulk_upload_update(data, **opt)
+    url  = request.base_url
+    succeeded, failed = bulk_upload_update(data, base_url: url, user: @user)
     fail(__method__, failed) if failed.present?
     post_response(:ok, succeeded, xhr: false)
   rescue SubmitError => error

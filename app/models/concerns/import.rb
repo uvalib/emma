@@ -22,7 +22,7 @@ module Import
   #
   # @type [Boolean]
   #
-  DEBUG_IMPORT = true # true?(ENV['DEBUG_IMPORT'])
+  IMPORT_DEBUG = true?(ENV['IMPORT_DEBUG'])
 
   # The prefix applied to imported field names that have not otherwise been
   # assigned a field name to be used within :emma_data.
@@ -408,7 +408,7 @@ module Import
     end
   end
 
-  unless DEBUG_IMPORT
+  unless IMPORT_DEBUG
     def __debug_import(*); end
   end
 

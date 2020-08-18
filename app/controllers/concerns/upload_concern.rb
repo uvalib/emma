@@ -179,6 +179,14 @@ module UploadConcern
 
   public
 
+  # The Federated Ingest API cannot accept more than 1000 items; this puts a
+  # hard upper-bound on batch sizes and the size of input values that certain
+  # methods can accept.
+  #
+  # @type [Integer]
+  #
+  INGEST_MAX_SIZE = 1000
+
   # A string added to the start of each title created on a non-production
   # instance to help distinguish it from other index results.
   #
@@ -241,6 +249,12 @@ module UploadConcern
   #
   BULK_BATCH_DEFAULT = true
 
+  # Batches larger than this number are not permitted.
+  #
+  # @type [Integer]
+  #
+  MAX_BATCH_SIZE = INGEST_MAX_SIZE - 1
+
   # Break sets of submissions into chunks of this size.
   #
   # This is the value returned by #bulk_batch unless a different size was
@@ -250,7 +264,7 @@ module UploadConcern
   #
   # @see #set_bulk_batch
   #
-  BULK_BATCH_SIZE = ENV.fetch('BULK_BATCH_SIZE', 10).to_i
+  BULK_BATCH_SIZE = [ENV.fetch('BULK_BATCH_SIZE', 10).to_i, MAX_BATCH_SIZE].min
 
   # POST/PUT/PATCH parameters from the upload form that are not relevant to the
   # create/update of an Upload instance.
@@ -449,7 +463,7 @@ module UploadConcern
       elsif value.is_a?(FalseClass)
         false
       elsif value.to_i.positive?
-        value.to_i
+        [value.to_i, MAX_BATCH_SIZE].min
       elsif parameter_setting(value, BULK_BATCH_DEFAULT)
         BULK_BATCH_SIZE
       else
@@ -609,7 +623,7 @@ module UploadConcern
   # If a later item fails, the successfully-destroyed items will still be
   # removed from the index.
   #
-  def upload_destroy(*items, atomic: true, index: true, force: false)
+  def upload_destroy(*items, atomic: true, index: true, force: false, **)
     __debug_args("UPLOAD #{__method__}", binding)
 
     # Translate entries into Upload record instances.
@@ -980,7 +994,7 @@ module UploadConcern
   def update_in_index(*items, **)
     __debug_args("UPLOAD #{__method__}", binding)
     succeeded = failed = rollback = []
-    items = items.flatten.compact
+    items = normalize_index_items(items, meth: __method__)
     if items.present?
       result = ingest_api.put_records(*items)
       errors = result.errors
@@ -1007,7 +1021,7 @@ module UploadConcern
   def remove_from_index(*items, **)
     __debug_args("UPLOAD #{__method__}", binding)
     succeeded = failed = []
-    items = items.flatten.compact
+    items = normalize_index_items(items, meth: __method__)
     if items.present?
       result = ingest_api.delete_records(*items)
       errors = result.errors
@@ -1038,6 +1052,30 @@ module UploadConcern
   end
 
   # ===========================================================================
+  # :section: Index ingest
+  # ===========================================================================
+
+  public
+
+  # Return a flatten array of items.
+  #
+  # @param [Array<Upload, String, Array>] items
+  # @param [Symbol, nil]                  meth    The calling method.
+  #
+  # @raise [SubmitError] If the number of items is too large to be ingested.
+  #
+  # @return [Array]
+  #
+  def normalize_index_items(items, meth: nil)
+    items = items.flatten.compact
+    return items unless items.size > INGEST_MAX_SIZE
+    error = [meth, 'item count', "#{item.size} > #{INGEST_MAX_SIZE}"]
+    error = compact.join(': ')
+    Log.Error(error)
+    fail(error)
+  end
+
+  # ===========================================================================
   # :section: Bulk operations
   # ===========================================================================
 
@@ -1048,8 +1086,8 @@ module UploadConcern
   # @param [Array<Hash,Upload>] entries
   # @param [Boolean]            atomic  If *false*, do not stop on failure.
   # @param [Boolean]            index   If *false*, do not update index.
-  # @param [Boolean]            batch   If *false*, execute the method directly
-  # @param [Hash]               opt     Passed to #bulk_upload_file.
+  # @param [Hash]               opt     Passed to #bulk_upload_file via
+  #                                       #bulk_upload_operation.
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
@@ -1063,13 +1101,13 @@ module UploadConcern
   #--
   # noinspection DuplicatedCode
   #++
-  def bulk_upload_create(entries, atomic: true, index: true, batch: nil, **opt)
+  def bulk_upload_create(entries, atomic: true, index: true, **opt)
     __debug_args("UPLOAD #{__method__}", binding)
 
-    # Batch-execute this method unless explicitly avoided.
-    batch = bulk_batch if batch.nil?
-    if batch
-      opt.merge!(size: batch, atomic: atomic, index: index, batch: false)
+    # Batch-execute this method unless it is being invoked within a batch.
+    if opt[:bulk].blank?
+      batch = bulk_batch || MAX_BATCH_SIZE
+      opt.merge!(size: batch, atomic: atomic, index: index)
       return bulk_upload_operation(__method__, entries, **opt)
     end
 
@@ -1093,8 +1131,8 @@ module UploadConcern
   # @param [Array<Hash,Upload>] entries
   # @param [Boolean]            atomic  If *false*, do not stop on failure.
   # @param [Boolean]            index   If *false*, do not update index.
-  # @param [Boolean]            batch   If *false*, execute the method directly
-  # @param [Hash]               opt     Passed to #bulk_upload_file.
+  # @param [Hash]               opt     Passed to #bulk_upload_file via
+  #                                       #bulk_upload_operation.
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
@@ -1108,13 +1146,13 @@ module UploadConcern
   #--
   # noinspection DuplicatedCode
   #++
-  def bulk_upload_update(entries, atomic: true, index: true, batch: nil, **opt)
+  def bulk_upload_update(entries, atomic: true, index: true, **opt)
     __debug_args("UPLOAD #{__method__}", binding)
 
-    # Batch-execute this method unless explicitly avoided.
-    batch = bulk_batch if batch.nil?
-    if batch
-      opt.merge!(size: batch, atomic: atomic, index: index, batch: false)
+    # Batch-execute this method unless it is being invoked within a batch.
+    if opt[:bulk].blank?
+      batch = bulk_batch || MAX_BATCH_SIZE
+      opt.merge!(size: batch, atomic: atomic, index: index)
       return bulk_upload_operation(__method__, entries, **opt)
     end
 
@@ -1135,9 +1173,11 @@ module UploadConcern
 
   # Bulk removal.
   #
-  # @param [Array<String,Integer>] id_specs
-  # @param [Boolean]               atomic   If *false*, do not stop on failure.
-  # @param [Boolean]               index    If *false*, do not update index.
+  # @param [Array<String,Integer,Hash,Upload>] id_specs
+  # @param [Boolean] atomic           If *false*, do not stop on failure.
+  # @param [Boolean] index            If *false*, do not update index.
+  # @param [Hash]    opt              Passed to #upload_destroy via
+  #                                     #bulk_upload_operation.
   #
   # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
   #
@@ -1148,28 +1188,28 @@ module UploadConcern
   # advantage of using a single SQL DELETE statement probably overwhelmed by
   # the need to fetch each record in order to call :delete_file on it.
   #
-  def bulk_upload_destroy(id_specs, atomic: true, index: true)
+  def bulk_upload_destroy(id_specs, atomic: true, index: true, **opt)
     __debug_args("UPLOAD #{__method__}", binding)
-
     id_specs = Array.wrap(id_specs)
     force    = force_delete
-    upload_destroy(id_specs, atomic: atomic, index: index, force: force).tap do
-      if delete_truncate && (id_specs ==  %w(*))
+
+    # Translate entries into Upload record instances if possible.
+    items, failed = collect_records(*id_specs, force: force)
+    return [], failed if atomic && failed.present? || items.blank?
+
+    # Batching occurs unconditionally in order to ensure that the requested
+    # items can be successfully removed from the index.
+    batch = bulk_batch || MAX_BATCH_SIZE
+    opt.merge!(size: batch, atomic: atomic, index: index, force: force)
+    succeeded, failed = bulk_upload_operation(:upload_destroy, items, **opt)
+    if delete_truncate && (id_specs == %w(*))
+      if failed.blank?
         Upload.connection.truncate(Upload.table_name)
+      else
+        Log.warn('database not truncated due to the presence of errors')
       end
     end
-
-    # # Translate entries into Upload record instances.
-    # items, failed = collect_records(*items, force: force)
-    # return [], failed if atomic && failed.present?
-    #
-    # # Remove the associated records from the database.
-    # ids, failed = bulk_db_delete(ids, atomic: atomic)
-    # return [], failed if atomic && failed.present? && !force
-    #
-    # # Remove the associated entries from the index.
-    # return ids, failed unless index
-    # remove_from_index(*ids, atomic: atomic)
+    return succeeded, failed
   end
 
   # ===========================================================================
@@ -1206,10 +1246,10 @@ module UploadConcern
   # If *size* is *true* or zero or missing, then *entries* is processed in
   # batches of the default #BULK_BATCH_SIZE.
   #
-  # @param [Symbol]             op
-  # @param [Array<Hash,Upload>] entries
-  # @param [Integer, Boolean]   size      Default: #BULK_BATCH_SIZE.
-  # @param [Hash]               opt
+  # @param [Symbol]                            op
+  # @param [Array<String,Integer,Hash,Upload>] entries
+  # @param [Integer, Boolean]                  size     Def: #BULK_BATCH_SIZE.
+  # @param [Hash]                              opt
   #
   # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
   #
@@ -1223,9 +1263,6 @@ module UploadConcern
     size = size.to_i
     size = entries.size     if size.negative?
     size = BULK_BATCH_SIZE  if size.zero?
-
-    # Avoid recursion when calling *op*.
-    opt[:batch] = false unless opt.key?(:batch)
 
     succeeded = []
     failed    = []

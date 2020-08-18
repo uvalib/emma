@@ -377,7 +377,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    var BULK_CHECK_PERIOD = 1 * SECOND;
+    var BULK_CHECK_PERIOD = 10 * SECOND;
 
     /**
      * Indicator that a results line is filler displayed prior to detecting the
@@ -716,7 +716,7 @@ $(document).on('turbolinks:load', function() {
     function fetchUploadEntries(min, max, callback) {
 
         var func = 'fetchEntries: ';
-        var url  = 'upload.json?selected=';
+        var url  = '/upload.json?selected=';
         if (isPresent(min) && isPresent(max)) {
             url += '' + min + '-' + max;
         } else if (isPresent(max)) {

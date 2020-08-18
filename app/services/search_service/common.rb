@@ -26,13 +26,11 @@ module SearchService::Common
 
   public
 
-  # Validate the presence of these values required for the full interactive
-  # instance of the application.
-  required_env_vars(:SEARCH_BASE_URL)
-
   # The URL for the API connection.
   #
   # @return [String]
+  #
+  # @see #SEARCH_BASE_URL
   #
   def base_url
     @base_url ||= SEARCH_BASE_URL

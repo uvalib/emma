@@ -90,7 +90,7 @@ class FileObject
     #
     # @type [Boolean]
     #
-    DEBUG_MIME_TYPES = true?(ENV['DEBUG_MIME_TYPES'])
+    MIME_TYPE_DEBUG = true?(ENV['MIME_TYPE_DEBUG'])
 
     # =========================================================================
     # :section:
@@ -165,7 +165,7 @@ class FileObject
       __debug_args(bind, &block)
     end
 
-    unless DEBUG_MIME_TYPES
+    unless MIME_TYPE_DEBUG
       def __debug_mime(*); end
     end
 

@@ -192,6 +192,90 @@ IA_DOWNLOAD_BASE_URL =
     .freeze
 
 # =============================================================================
+# Amazon Web Services
+# =============================================================================
+
+public
+
+# Amazon AWS region.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String]
+#
+AWS_REGION = ENV.fetch('AWS_REGION', 'us-east-1').freeze
+
+# Amazon S3 storage.
+#
+# Defined in the "terraform-infrastructure" GitLab project in the files
+# "emma.lib.virginia.edu/ecs-tasks/staging/environment.vars" and
+# "emma.lib.virginia.edu/ecs-tasks/production/environment.vars".
+#
+# @type [String]
+#
+AWS_BUCKET =
+  ENV.fetch('AWS_BUCKET') {
+    application_deployed? ? 'emma-storage-production' : 'emma-storage-staging'
+  }.freeze
+
+# Amazon identity access key.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String]
+#
+AWS_ACCESS_KEY_ID = ENV.fetch('AWS_ACCESS_KEY_ID', nil).freeze
+
+# Amazon identity secret.
+#
+# This should be supplied by the UVA cloud infrastructure on startup.
+#
+# @type [String]
+#
+AWS_SECRET_KEY = ENV.fetch('AWS_SECRET_KEY', nil).freeze
+
+# =============================================================================
+# Verify required environment variables
+# =============================================================================
+
+if rails_application?
+  vars = [
+    # === Bookshare authentication
+    :BOOKSHARE_AUTH_URL,
+
+    # === Bookshare API
+    :BOOKSHARE_API_KEY,
+    :BOOKSHARE_API_VERSION,
+    :BOOKSHARE_BASE_URL,
+
+    # === EMMA Unified Index API
+    :SEARCH_BASE_URL,
+
+    # === EMMA Federated Ingest API
+    :INGEST_BASE_URL,
+    :INGEST_API_KEY,
+
+    # === Internet Archive downloads
+    :IA_DOWNLOAD_BASE_URL,
+    :IA_ACCESS,
+    :IA_SECRET,
+    :IA_SIG_COOKIE,
+    :IA_USER_COOKIE,
+  ]
+  if application_deployed? || !development?
+    # == Amazon Web Services
+    vars += %i[AWS_REGION AWS_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_KEY]
+  end
+  vars.each do |var|
+    if !respond_to?(var)
+      STDERR.puts "Missing #{var}"
+    elsif (v = eval(var)).nil? || (v.respond_to?(:empty?) && v.empty?)
+      STDERR.puts "Empty #{var}"
+    end
+  end
+end
+
+# =============================================================================
 # Load and initialize the Rails application
 # =============================================================================
 

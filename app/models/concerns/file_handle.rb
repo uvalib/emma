@@ -20,7 +20,7 @@ class FileHandle
   #
   # @type [Boolean]
   #
-  DEBUG_IO = true?(ENV['DEBUG_IO'])
+  IO_DEBUG = true?(ENV['IO_DEBUG'])
 
   # ===========================================================================
   # :section: Class methods
@@ -88,7 +88,7 @@ class FileHandle
 
   private
 
-  if DEBUG_IO
+  if IO_DEBUG
 
     # Indicate whether the underlying object implements the given method.
     #
