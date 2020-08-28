@@ -242,9 +242,6 @@ module ArtifactHelper
       fmts = [format_id] # Note that *nil* is acceptable in this case.
     end
     links = fmts.map { |fmt| artifact_link(item, fmt, **html_opt) }.compact
-    if permitted && links.present?
-      skip_nav_append('Download Formats' => '#field-Formats') # TODO: I18n
-    end
     safe_join(links, separator)
   end
 

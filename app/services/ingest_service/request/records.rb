@@ -96,8 +96,8 @@ module IngestService::Request::Records
   #
   def delete_records(*ids, **opt)
     opt[:method] ||= __method__
-    ids = ids.flat_map { |id| identifier_list(id) }
-    api_send(:post, 'recordDeletes', ids, **opt)
+    id_list = ids.flat_map { |id| identifier_list(id) }
+    api_send(:post, 'recordDeletes', id_list, **opt)
     Ingest::Message::Response.new(response, error: exception)
   end
     .tap do |method|
@@ -139,8 +139,8 @@ module IngestService::Request::Records
   #
   def get_records(*ids, **opt)
     opt[:method] ||= __method__
-    ids = ids.flat_map { |id| identifier_list(id) }
-    api_send(:post, 'recordGets', ids, **opt)
+    id_list = ids.flat_map { |id| identifier_list(id) }
+    api_send(:post, 'recordGets', id_list, **opt)
     Search::Message::SearchRecordList.new(response, error: exception)
   end
     .tap do |method|

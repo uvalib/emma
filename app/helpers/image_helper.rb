@@ -36,6 +36,12 @@ module ImageHelper
   #
   PLACEHOLDER_IMAGE_ASSET = I18n.t('emma.placeholder.image.asset').freeze
 
+  # Asynchronous image placeholder image CSS class.
+  #
+  # @type [String]
+  #
+  PLACEHOLDER_IMAGE_CLASS = 'placeholder'
+
   # Asynchronous image placeholder image alt text.
   #
   # @type [String]
@@ -101,7 +107,7 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def image_placeholder(url, image: nil, **opt)
-    opt  = prepend_css_classes(opt, 'placeholder')
+    opt  = prepend_css_classes(opt, PLACEHOLDER_IMAGE_CLASS)
     data = { path: url, 'turbolinks-track': false }
     data[:alt] = opt[:alt] if opt[:alt]
     opt[:data] = opt[:data]&.merge(data) || data

@@ -92,22 +92,22 @@ module LayoutHelper::NavBar
       NAV_BAR_CONTROLLERS.map do |c|
         if c == :home
           # Special entry for the dashboard/welcome screen.
-          path    = dashboard_path
-          label   = DASHBOARD_LABEL
-          tooltip = DASHBOARD_TOOLTIP
-          hidden  = !current_user
+          path   = dashboard_path
+          label  = DASHBOARD_LABEL
+          tip    = DASHBOARD_TOOLTIP
+          hidden = !current_user
         else
           # Entry for the main page of the given controller.
-          path    = send("#{c}_index_path")
-          label   = CONTROLLER_LABEL[c]
-          tooltip = CONTROLLER_TOOLTIP[c]
-          hidden  = false
+          path   = send("#{c}_index_path")
+          label  = CONTROLLER_LABEL[c]
+          tip    = CONTROLLER_TOOLTIP[c]
+          hidden = false
         end
-        primary   = PRIMARY_CONTROLLERS.include?(c)
-        current   = (path == curr_path)
-        base      = (path == base_path)
-        active    = current || base
-        disabled  = current
+        primary  = PRIMARY_CONTROLLERS.include?(c)
+        current  = (path == curr_path)
+        base     = (path == base_path)
+        active   = current || base
+        disabled = current
 
         classes = []
         classes << 'secondary' unless primary
@@ -116,12 +116,13 @@ module LayoutHelper::NavBar
         classes << 'hidden'    if hidden
 
         # The separator preceding the link.
-        separator_opt = { class: css_classes('separator', *classes) }
-        append_css_classes!(separator_opt, 'hidden') if first
-        separator = html_span('|', separator_opt)
+        sep_css = %w(separator)
+        sep_css << 'hidden'    if first
+        separator = html_span('|', class: css_classes(*classes, *sep_css))
 
         # The link (inactive if already on the associated page).
-        opt   = { class: css_classes(*classes), title: tooltip }
+        tip  += "\n" + '(Current page)' if disabled # TODO: I18n
+        opt   = { class: css_classes(*classes), title: tip }
         link  = disabled ? html_span(label, opt) : link_to(label, path, opt)
         first = false unless hidden
 

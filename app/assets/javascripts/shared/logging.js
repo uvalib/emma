@@ -5,65 +5,45 @@
 /**
  * Emit a console log message.
  *
- * @param {*} arguments
+ * @param {...*} args
  */
-function consoleLog() {
-    console.log(logJoin.apply(null, arguments));
+function consoleLog(...args) {
+    console.log(...consoleArgs(args));
 }
 
 /**
  * Emit a console warning message.
  *
- * @param {*} arguments
+ * @param {...*} args
  */
-function consoleWarn() {
-    console.warn(logJoin.apply(null, arguments));
+function consoleWarn(...args) {
+    console.warn(...consoleArgs(args));
 }
 
-// noinspection JSUnusedGlobalSymbols
 /**
  * Emit a console warning message.
  *
- * @param {*} arguments
+ * @param {...*} args
  */
-function consoleError() {
-    console.error(logJoin.apply(null, arguments));
+function consoleError(...args) {
+    console.error(...consoleArgs(args));
 }
 
 /**
- * Join strings into a single message.
- *
- * @param {*} arguments
- *
- * @return {string}
- */
-function logJoin() {
-    var args  = Array.prototype.slice.call(arguments);
-    var parts = logFlatArray(args);
-    return parts.join(' ');
-}
-
-/**
- * Flatten nested arrays to yield a single array of strings.
+ * Prepare for console output.
  *
  * @param {Array|*} arg
  *
  * @return {Array}
  */
-function logFlatArray(arg) {
-    var result = [];
-    if (arg === false) {
-        result.push('false');
-    } else if (isEmpty(arg)) {
-        // No change to result.
-    } else if (arg instanceof Array) {
-        for (var i = 0; i < arg.length; i++) {
-            result = result.concat(logFlatArray(arg[i]));
-        }
-    } else if (typeof arg === 'object') {
-        result.push(JSON.stringify(arg));
+function consoleArgs(arg) {
+    let result = [];
+    if (Array.isArray(arg)) {
+        flatten(arg).forEach(function(v) { result.push(...consoleArgs(v)); });
+    } else if (typeof arg === 'string') {
+        result.push(arg.trim());
     } else {
-        result.push(arg.toString().trim());
+        result.push(asString(arg));
     }
     return result;
 }

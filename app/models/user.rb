@@ -91,8 +91,6 @@ __loading_begin(__FILE__)
 #
 class User < ApplicationRecord
 
-  include Roles
-
   has_many :members
   has_many :reading_lists
 
@@ -198,12 +196,12 @@ class User < ApplicationRecord
   #
   def assign_default_role
     return if self.roles.present?
+    # noinspection RubyCaseWithoutElseBlockInspection
     prototype_user =
       case self.uid
         when 'emmadso@bookshare.org'        then :dso        # NOTE: tmp test user
         when 'emmacollection@bookshare.org' then :collection # NOTE: tmp test user
         when 'emmamembership@bookshare.org' then :membership # NOTE: tmp test user
-        else                                     :anonymous
       end
     add_roles(prototype_user)
   end
@@ -216,12 +214,17 @@ class User < ApplicationRecord
 
   # Add EMMA role(s) to the current user based on its prototype.
   #
-  # @param [Symbol] prototype_user    @see `Roles#DEFAULT_ROLES.keys`.
+  # @param [Symbol, nil] prototype    Default: `Roles#DEFAULT_PROTOTYPE`.
   #
   # @return [Array<Role>]             Added role(s).
   #
-  def add_roles(prototype_user)
-    added_roles = DEFAULT_ROLES[prototype_user] || DEFAULT_ROLES[:anonymous]
+  def add_roles(prototype = nil)
+    prototype ||= Roles::DEFAULT_PROTOTYPE
+    added_roles = Roles::PROTOTYPE[prototype]
+    if added_roles.blank?
+      Log.error("#{__method__}: invalid prototype #{prototype.inspect}")
+      added_roles = Roles::PROTOTYPE[:anonymous]
+    end
     added_roles.map { |role| add_role(role) }
   end
 

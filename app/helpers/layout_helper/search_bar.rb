@@ -270,12 +270,15 @@ module LayoutHelper::SearchBar
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see clearSearch() in app/assets/javascripts/feature/advanced-search.js
+  # @see HtmlHelper#icon_button
   #
   def clear_search_button(**opt)
     opt = prepend_css_classes(opt, 'search-clear')
     opt[:role]  ||= 'button'
     opt[:title] ||= 'Clear search terms' # TODO: I18n
-    link_to(CLEAR_SEARCH_ICON, '#', opt)
+    opt[:icon]  ||= CLEAR_SEARCH_ICON
+    opt[:url]   ||= '#'
+    icon_button(**opt)
   end
 
 end

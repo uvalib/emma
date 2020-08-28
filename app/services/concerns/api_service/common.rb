@@ -395,6 +395,7 @@ module ApiService::Common
   ensure
     log_exception(error, method: method) if error
     __debug_line(leader: '<<<') do
+      # noinspection RubyNilAnalysis
       resp = error.respond_to?(:response) && error.response || @response
       stat = data = nil
       if resp

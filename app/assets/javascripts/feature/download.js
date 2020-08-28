@@ -8,7 +8,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $artifact_links = $('.artifact .link');
+    let $artifact_links = $('.artifact .link');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($artifact_links)) { return; }
@@ -18,43 +18,68 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
+     * Linkage
+     *
+     * @typedef {{
+     *      href:   string,
+     *      rel:    string
+     * }} Linkage
+     */
+
+    /**
+     * MemberName
+     *
+     * @typedef {{
+     *      firstName:  string,
+     *      lastName:   string,
+     *      middle:     string,
+     *      prefix:     string,
+     *      suffix:     string
+     * }} MemberName
+     */
+
+    /**
      * Member
      *
-     * @typedef {{ href: string, rel: string }} Linkage
-     *
      * @typedef {{
-     *       firstName: string,
-     *       lastName:  string,
-     *       middle:    string,
-     *       prefix:    string,
-     *       suffix:    string
-     * }} MemberName
-     *
-     * @typedef {{
-     *       allowAdultContent:         boolean,
-     *       canDownload:               boolean,
-     *       dateOfBirth:               string,
-     *       emailAddress:              string,
-     *       hasAgreement:              boolean,
-     *       language:                  string,
-     *       links:                     Linkage[],
-     *       locked:                    boolean,
-     *       name:                      MemberName,
-     *       phoneNumber:               string,
-     *       proofOfDisabilityStatus:   string,
-     *       roles:                     string[],
-     *       site:                      string,
-     *       subscriptionStatus:        string,
-     *       userAccountId              string,
+     *      allowAdultContent:          boolean,
+     *      canDownload:                boolean,
+     *      dateOfBirth:                string,
+     *      emailAddress:               string,
+     *      hasAgreement:               boolean,
+     *      language:                   string,
+     *      links:                      Linkage[],
+     *      locked:                     boolean,
+     *      name:                       MemberName,
+     *      phoneNumber:                string,
+     *      proofOfDisabilityStatus:    string,
+     *      roles:                      string[],
+     *      site:                       string,
+     *      subscriptionStatus:         string,
+     *      userAccountId               string,
      * }} Member
-     *
-     * @typedef {{member: Member}} MemberEntry
+     */
+
+    /**
+     * MemberEntry
      *
      * @typedef {{
-     *      total: number,
-     *      limit: number|undefined,
-     *      links: Linkage[]
+     *      member: Member
+     * }} MemberEntry
+     */
+
+    /**
+     * MessageProperties
+     *
+     * @typedef {{
+     *      total:  number,
+     *      limit:  number|undefined,
+     *      links:  Linkage[]
      * }} MessageProperties
+     */
+
+    /**
+     * MemberMessage
      *
      * @typedef {{
      *      members: {
@@ -74,16 +99,16 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
+    const DEBUGGING = true;
 
-    //noinspection PointlessArithmeticExpressionJS
+    // noinspection PointlessArithmeticExpressionJS
     /**
      * Frequency for re-requesting a download link.
      *
      * @constant
      * @type {number}
      */
-    var RETRY_PERIOD = 1 * SECOND;
+    const RETRY_PERIOD = 1 * SECOND;
 
     /**
      * Frequency for re-requesting a download link for DAISY_AUDIO.
@@ -91,7 +116,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    var RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
+    const RETRY_DAISY_AUDIO = 5 * RETRY_PERIOD;
 
     /**
      * Retry period value which indicates the end of retrying.
@@ -99,7 +124,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    var NO_RETRY = -1;
+    const NO_RETRY = -1;
 
     /**
      * Download link state.  Each key represents a state and each value is the
@@ -112,7 +137,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {{FAILED: string, REQUESTING: string, READY: string}}
      */
-    var STATE = {
+    const STATE = {
         FAILED:     'failed',
         REQUESTING: 'requesting',
         READY:      'complete'
@@ -124,7 +149,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
+    const BS_ACCOUNT_URL = 'https://www.bookshare.org/orgAccountMembers';
 
     /**
      * Properties for the elements of the member selection popup panel.
@@ -153,12 +178,12 @@ $(document).on('turbolinks:load', function() {
      *  cancel:     ActionProperties
      * }}
      */
-    var MEMBER_POPUP = {
+    const MEMBER_POPUP = {
         url:     '/member.json',
         name:    'member-select',
         panel: {
             tag:     'form',
-            class:   'member-select popup-panel',
+            class:   cssClasses('member-select', Emma.Popup.panel.class),
             tooltip: ''
         },
         title: {
@@ -192,7 +217,7 @@ $(document).on('turbolinks:load', function() {
                 tag:     'div',
                 class:   'notice',
                 html:    'You must define one or more qualifying members at ' +
-                         '<a href="' + BS_ACCOUNT_URL + '" target="_blank">' +
+                         `<a href="${BS_ACCOUNT_URL}" target="_blank">` +
                              'Bookshare' +
                          '</a>' +
                          ' then ' +
@@ -227,19 +252,69 @@ $(document).on('turbolinks:load', function() {
         }
     };
 
+    /**
+     * Member popup panel selector.
+     *
+     * @constant
+     * @type {string}
+     */
+    const MEMBER_POPUP_SELECTOR = selector(MEMBER_POPUP.panel.class);
+
+    /**
+     * Progress indicator element selector.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PROGRESS_SELECTOR = selector(Emma.Download.progress.class);
+
+    /**
+     * Failure message element selector.
+     *
+     * @constant
+     * @type {string}
+     */
+    const FAILURE_SELECTOR = selector(Emma.Download.failure.class);
+
+    /**
+     * Download button element selector.
+     *
+     * @constant
+     * @type {string}
+     */
+    const BUTTON_SELECTOR = selector(Emma.Download.button.class);
+
+    /**
+     * Name of the data attribute holding the link's retry period.
+     *
+     * @constant
+     * @type {string}
+     */
+    const RETRY_ATTRIBUTE = 'retry';
+
     // ========================================================================
     // Event handlers
     // ========================================================================
 
     // Override download links in order to get the artifact asynchronously.
-    $artifact_links.click(function(event) {
-        var $link  = $(this || event.target);
-        var $panel = $link.siblings('.popup-panel');
-        var url    = $link.attr('href');
-        var params = urlParameters(url);
-        var member = params['member'] || params['forUser'];
-        member = member || $link.data('member') || $link.data('forUser');
-        if (isPresent(member)) {
+    handleClickAndKeypress($artifact_links, getDownload);
+
+    // ========================================================================
+    // Functions
+    // ========================================================================
+
+    /**
+     * Prompt for Bookshare member and download.
+     *
+     * @param {Event} event
+     *
+     * @return {boolean}              Always *false* to end event propagation.
+     */
+    function getDownload(event) {
+        let $link  = $(this || event.target);
+        let $panel = $link.siblings(MEMBER_POPUP_SELECTOR);
+        const url  = $link.attr('href');
+        if (setLinkMember($link, getUrlMember(url))) {
             manageDownloadState($link);
         } else if (isPresent($panel)) {
             hideFailureMessage($link);
@@ -247,48 +322,64 @@ $(document).on('turbolinks:load', function() {
             scrollIntoView($panel);
         } else {
             hideFailureMessage($link);
-            getMembers(function(member_table) {
-                var $panel = createMemberPopup(member_table);
-                $panel.submit(function(event) {
-                    event.preventDefault();
-                    var members = [];
-                    $panel.find(':checked').each(function() {
-                        members.push(this.value);
-                        this.checked = false; // Reset for later iteration.
-                    });
-                    $panel.addClass('hidden');
-                    if (isPresent(members)) {
-                        $link.data('member', members.join(','));
-                        manageDownloadState($link);
-                    } else {
-                        set(STATE.FAILED, $link);
-                        endRequesting($link, Emma.Download.failure.cancelled);
-                    }
-                });
-                $panel.insertAfter($link);
-                scrollIntoView($panel);
+            getMembers(function(member_table, error) {
+                if (isPresent(member_table)) {
+                    $panel = createMemberPopup(member_table);
+                    handleEvent($panel, 'submit', onSubmit);
+                    $panel.insertAfter($link);
+                    scrollIntoView($panel);
+                } else if (error) {
+                    endRequesting($link, error);
+                } else {
+                    endRequesting($link, Emma.Download.failure.unknown);
+                }
             });
         }
         return false;
-    }).each(handleKeypressAsClick);
 
-    // ========================================================================
-    // Internal functions
-    // ========================================================================
+        /**
+         * Handle form submission by associating the selection(s) with the
+         * link.  If none were selected, make sure all associations are removed
+         * from the link.
+         *
+         * NOTE: Currently on single-select due to the Bookshare API method.
+         *
+         * @param {Event} event
+         */
+        function onSubmit(event) {
+            event.preventDefault();
+            let members = [];
+            $panel.find(':checked').each(function() {
+                members.push(this.value);
+                this.checked = false; // Reset for later iteration.
+            });
+            $panel.addClass('hidden');
+            if (setLinkMember($link, members)) {
+                manageDownloadState($link);
+            } else {
+                endRequesting($link, Emma.Download.failure.cancelled);
+            }
+            return false;
+        }
+    }
 
     /**
      * Fetch the Bookshare members associated with the current user and pass
      * them to the callback function.
      *
-     * @param {function(object)} callback
+     * @param {function(object, string?)} callback
      */
     function getMembers(callback) {
-        var func  = 'getMembers: ';
-        var url   = MEMBER_POPUP.url;
-        var start = Date.now();
+        const func  = 'getMembers: ';
+        const url   = MEMBER_POPUP.url;
+        const start = Date.now();
 
         debug(func, 'VIA', url);
-        var err, result = {};
+
+        /** @type {MemberMessage|object|undefined} info */
+        let message;
+        let error = '';
+
         $.ajax({
             url:      url,
             type:     'GET',
@@ -307,31 +398,14 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            debug(func, 'received data: |', data, '|');
-            // noinspection AssignmentResultUsedJS
+            // debug(func, 'received data: |', data, '|');
             if (isMissing(data)) {
-                err = 'no data';
+                error = 'no data';
             } else if (typeof(data) !== 'object') {
-                err = 'unexpected data type ' + typeof(data);
+                error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                var info = data.response || data;
-                /** @type {MemberEntry[]} members */
-                var members = info.members && info.members.list || [];
-                members.forEach(function(entry) {
-                    var member = entry.member;
-                    var part   = member.name || {};
-                    var name   = '' + part.prefix + ' ';
-                    name += part.lastName + ' ';
-                    name += part.suffix + ',';
-                    name += part.firstName + ' ';
-                    name += part.middle;
-                    name = name.replace(/\s+/g, ' ');
-                    name = name.replace(/\s?,\s?/g, ', ');
-                    name = name.trim();
-                    name = name || ('id: ' + member.userAccountId);
-                    result[member.userAccountId] = name;
-                });
+                message = data.response || data;
             }
         }
 
@@ -340,10 +414,14 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {XMLHttpRequest} xhr
          * @param {string}         status
-         * @param {string}         error
+         * @param {string}         message
          */
-        function onError(xhr, status, error) {
-            err = status + ': ' + error;
+        function onError(xhr, status, message) {
+            if (xhr.status === 401) {
+                error = Emma.Download.failure.sign_in;
+            } else {
+                error = `${status}: ${xhr.status} ${message}`;
+            }
         }
 
         /**
@@ -355,11 +433,41 @@ $(document).on('turbolinks:load', function() {
          */
         function onComplete(xhr, status) {
             debug(func, 'complete', secondsSince(start), 'sec.');
-            if (err) {
-                consoleWarn(func, (url + ':'), err);
+            if (error) {
+                consoleWarn(func, `${url}:`, error);
+                callback(null, error);
             } else {
-                callback(result);
+                callback(extractMemberData(message));
             }
+        }
+
+        /**
+         * Produce a mapping of member ID to member name from the message.
+         *
+         * @param {MemberMessage|object} [data]    Default: message.
+         *
+         * @returns {object}
+         */
+        function extractMemberData(data) {
+            let result    = {};
+            const info    = data || message;
+            const members = info.members && info.members.list || [];
+            members.forEach(function(entry) {
+                const member = entry.member;
+                const part   = member.name || {};
+                let name     = '';
+                name += part.prefix    + ' ';
+                name += part.lastName  + ' ';
+                name += part.suffix    + ',';
+                name += part.firstName + ' ';
+                name += part.middle;
+                name = name.replace(/\s+/g, ' ');
+                name = name.replace(/\s?,\s?/g, ', ');
+                name = name.trim();
+                name = name || `id: ${member.userAccountId}`;
+                result[member.userAccountId] = name;
+            });
+            return result;
         }
     }
 
@@ -374,24 +482,24 @@ $(document).on('turbolinks:load', function() {
      */
     function createMemberPopup(member_table) {
 
-        var $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
+        let $panel = create(MEMBER_POPUP.panel).attr('href', '#0');
 
         // Start with a title.
-        var id      = randomizeClass(MEMBER_POPUP.name);
-        var $title  = create(MEMBER_POPUP.title).attr('for', id);
+        const id   = randomizeClass(MEMBER_POPUP.name);
+        let $title = create(MEMBER_POPUP.title).attr('for', id);
         $panel.attr('id', id);
 
         // Follow with an explanatory note.
-        var $note = create(MEMBER_POPUP.note);
+        let $note = create(MEMBER_POPUP.note);
 
         // Construct the member selection group.
-        var $fields = create(MEMBER_POPUP.fields);
-        var $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
-        var row     = 0;
+        let $fields = create(MEMBER_POPUP.fields);
+        let $radio  = create(MEMBER_POPUP.fields.row_input).attr('name', id);
+        let row     = 0;
         $.each(member_table, function(account_id, full_name) {
-            var $input = $radio.clone().attr('value', account_id);
-            var $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
-            var row_id = id + '-row' + row.toString();
+            let $input = $radio.clone().attr('value', account_id);
+            let $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
+            let row_id = `${id}-row${row}`;
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
             row += 1;
@@ -403,9 +511,9 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Construct the button tray for the bottom of the panel.
-        var $tray   = create(MEMBER_POPUP.buttons);
-        var $submit = create(MEMBER_POPUP.submit);
-        var $cancel = create(MEMBER_POPUP.cancel);
+        let $tray   = create(MEMBER_POPUP.buttons);
+        let $submit = create(MEMBER_POPUP.submit);
+        let $cancel = create(MEMBER_POPUP.cancel);
         $tray.append($submit).append($cancel);
 
         // Implement the cancel button.
@@ -430,10 +538,10 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function resetMemberPopup(panel) {
-        var disabled = MEMBER_POPUP.submit.disabled.class;
-        var $panel   = $(panel);
-        var $submit  = $panel.find('[type="submit"]').addClass(disabled);
-        var $fields  = $panel.find('.fields input');
+        const disabled = MEMBER_POPUP.submit.disabled.class;
+        let $panel     = $(panel);
+        let $submit    = $panel.find('[type="submit"]').addClass(disabled);
+        let $fields    = $panel.find('.fields input');
         $fields.change(function() {
             if ($fields.is(':checked')) {
                 $submit.removeClass(disabled);
@@ -455,7 +563,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function manageDownloadState(link) {
-        var $link = $(link);
+        let $link = $(link);
         if ($link.hasClass(STATE.READY)) {
             endRequesting($link);
         } else if (!$link.hasClass(STATE.REQUESTING)) {
@@ -470,22 +578,25 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function requestArtifact(link) {
-
-        var func   = 'requestArtifact: ';
-        var $link  = $(link);
-        var url    = $link.attr('href');
-        var params = urlParameters(url);
+        const func  = 'requestArtifact: ';
+        const start = Date.now();
+        let $link   = $(link);
+        let url     = $link.attr('href') || $link.data('path') || '';
 
         // Update URL with Bookshare member if not already present.
-        if (!params['member'] && !params['forUser']) {
-            var member = $link.data('member') || $link.data('forUser');
-            var append = (url.indexOf('?') > 0) ? '&' : '?';
-            url += append + 'member=' + member;
+        if (!getUrlMember(url)) {
+            const member = getLinkMember($link);
+            const append = url.includes('?') ? '&' : '?';
+            url += `${append}member=${member}`;
         }
 
         debug(func, 'VIA', url);
-        var start = Date.now();
-        var err, delay, target;
+
+        /** @type {string} target */
+        let target = undefined;
+        let delay  = undefined;
+        let error  = '';
+
         $.ajax({
             url:      url,
             type:     'GET',
@@ -505,23 +616,23 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            debug(func, 'received data: |', data, '|');
+            // debug(func, 'received data: |', data, '|');
             // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
-                err = 'no data';
+                error = 'no data';
             } else if (typeof(data) !== 'object') {
-                err = 'unexpected data type ' + typeof(data);
+                error = `unexpected data type ${typeof data}`;
             } else if ((delay = getRetryPeriod($link)) === NO_RETRY) {
-                err = Emma.Download.failure.cancelled;
+                error = Emma.Download.failure.cancelled;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
-                var info = data.response || data;
+                const info = data.response || data;
                 target = info.url;
                 if (!target) {
                     if (info.error) {
-                        err = 'reported error: "' + info.error + '"';
+                        error = `reported error: "${info.error}"`;
                     } else if (info.state !== 'SUBMITTED') {
-                        err = 'unexpected state: "' + info.state + '"';
+                        error = `unexpected state: "${info.state}"`;
                     }
                 }
             }
@@ -532,10 +643,10 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {XMLHttpRequest} xhr
          * @param {string}         status
-         * @param {string}         error
+         * @param {string}         message
          */
-        function onError(xhr, status, error) {
-            err = status + ': ' + error;
+        function onError(xhr, status, message) {
+            error = `${status}: ${xhr.status} ${message}`;
         }
 
         /**
@@ -548,16 +659,16 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
+            debug(func, 'complete', secondsSince(start), 'sec.');
             if (target) {
                 $link.data('path', target);
                 endRequesting($link);
-            } else if (err) {
-                consoleWarn(func, (url + ':'), err);
-                endRequesting($link, err);
+            } else if (error) {
+                consoleWarn(func, `${url}:`, error);
+                endRequesting($link, error);
             } else {
                 setTimeout(reRequestArtifact, delay);
             }
-            debug(func, 'complete', secondsSince(start), 'sec.');
         }
 
         /**
@@ -615,31 +726,71 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} event
      */
     function cancelRequest(event) {
-        var state = STATE.REQUESTING;
-        var $link = $(this || event.target);
+        const state = STATE.REQUESTING;
+        let $link   = $(this || event.target);
         if (!$link.hasClass(state)) {
-            var selector = '.' + state;
-            var $e = $link.siblings(selector);
-            if (!$e.hasClass(state)) {
-                $e = $link.parents(selector);
+            let selector = '.' + state;
+            let $element = $link.siblings(selector);
+            if (!$element.hasClass(state)) {
+                $element = $link.parents(selector);
             }
-            $link = $e.first();
+            $link = $element.first();
         }
         endRequesting($link, Emma.Download.failure.cancelled);
         setRetryPeriod($link, NO_RETRY);
     }
 
     // ========================================================================
-    // Internal functions - progress indicator
+    // Functions - members
     // ========================================================================
 
     /**
-     * Progress indicator element selector.
+     * Extract a member from URL parameters.
      *
-     * @constant
-     * @type {string}
+     * @param {string} url
+     *
+     * @return {string|undefined}
      */
-    var PROGRESS_SELECTOR = '.' + Emma.Download.progress.class;
+    function getUrlMember(url) {
+        const params = urlParameters(url);
+        return params['member'] || params['forUser'];
+    }
+
+    /**
+     * Get the member associated with the download link.
+     *
+     * @param {jQuery} $link
+     *
+     * @returns {string}
+     */
+    function getLinkMember($link) {
+        const for_user = $link.attr('data-forUser');
+        $link.removeAttr('data-forUser');
+        return for_user || $link.attr('data-member') || '';
+    }
+
+    /**
+     * Set the member associated with the download link.
+     *
+     * @param {jQuery}          $link
+     * @param {string|string[]} [member]
+     *
+     * @returns {string}
+     */
+    function setLinkMember($link, member) {
+        const value = Array.isArray(member) ? member.join(',') : member;
+        if (value) {
+            $link.attr('data-member', value);
+        } else {
+            $link.removeAttr('data-member');
+        }
+        $link.removeAttr('data-forUser');
+        return value || '';
+    }
+
+    // ========================================================================
+    // Functions - progress indicator
+    // ========================================================================
 
     /**
      * Display a "downloading" progress indicator.
@@ -647,7 +798,7 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function showProgressIndicator($link) {
-        var $indicator = $link.siblings(PROGRESS_SELECTOR);
+        let $indicator = $link.siblings(PROGRESS_SELECTOR);
         if ($indicator.hasClass('hidden')) {
             $indicator.removeClass('hidden').on('click', cancelRequest);
         }
@@ -659,21 +810,13 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideProgressIndicator($link) {
-        var $indicator = $link.siblings(PROGRESS_SELECTOR);
+        let $indicator = $link.siblings(PROGRESS_SELECTOR);
         $indicator.addClass('hidden').off('click', cancelRequest);
     }
 
     // ========================================================================
-    // Internal functions - failure message
+    // Functions - failure message
     // ========================================================================
-
-    /**
-     * Failure message element selector.
-     *
-     * @constant
-     * @type {string}
-     */
-    var FAILURE_SELECTOR = '.' + Emma.Download.failure.class;
 
     /**
      * Display a download failure message after the download link.
@@ -682,12 +825,12 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [error]
      */
     function showFailureMessage($link, error) {
-        var content = error || '';
+        let content = error || '';
         if (!content.match(/cancelled/)) {
-            var error_message = error || Emma.Download.failure.unknown;
+            const error_message = error || Emma.Download.failure.unknown;
             content = '' + Emma.Download.failure.prefix + error_message;
         }
-        var $failure = $link.siblings(FAILURE_SELECTOR);
+        let $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.attr('title', content).text(content).removeClass('hidden');
     }
 
@@ -697,21 +840,13 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function hideFailureMessage($link) {
-        var $failure = $link.siblings(FAILURE_SELECTOR);
+        let $failure = $link.siblings(FAILURE_SELECTOR);
         $failure.addClass('hidden');
     }
 
     // ========================================================================
-    // Internal functions - download button
+    // Functions - download button
     // ========================================================================
-
-    /**
-     * Download button element selector.
-     *
-     * @constant
-     * @type {string}
-     */
-    var BUTTON_SELECTOR = '.' + Emma.Download.button.class;
 
     /**
      * Show the button to download the artifact.
@@ -720,20 +855,21 @@ $(document).on('turbolinks:load', function() {
      * @param {string|jQuery} [target]
      */
     function showDownloadButton(link, target) {
-        var $link = $(link);
-        var url   = target || $link.data('path');
+        const func = 'showDownloadButton:';
+        let $link  = $(link);
+        const url  = target || $link.data('path');
         if (target) {
             $link.data('path', url);
         }
-        debug('showDownloadButton: FROM', url);
-        var new_tip = $link.data('complete_tooltip');
+        debug(func, 'FROM', url);
+        const new_tip = $link.data('complete_tooltip');
         if (new_tip) {
-            var original_tip = $link.attr('title');
+            const original_tip = $link.attr('title');
             $link.data('tooltip', original_tip);
             $link.attr('title', new_tip);
         }
         $link.addClass('disabled').attr('tabindex', -1);
-        var $button = $link.siblings(BUTTON_SELECTOR);
+        let $button = $link.siblings(BUTTON_SELECTOR);
         $button.attr('href', url).removeClass('hidden');
     }
 
@@ -743,19 +879,19 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} link
      */
     function hideDownloadButton(link) {
-        var $link = $(link);
-        var original_tip = $link.data('tooltip');
+        let $link          = $(link);
+        const original_tip = $link.data('tooltip');
         if (original_tip) {
             $link.attr('title', original_tip);
         }
         $link.removeData('path');
         $link.removeClass('disabled').removeAttr('tabindex');
-        var $button = $link.siblings(BUTTON_SELECTOR);
+        let $button = $link.siblings(BUTTON_SELECTOR);
         $button.addClass('hidden');
     }
 
     // ========================================================================
-    // Internal functions - download link state
+    // Functions - download link state
     // ========================================================================
 
     /**
@@ -765,14 +901,13 @@ $(document).on('turbolinks:load', function() {
      * @param {jQuery} $link
      */
     function set(new_state, $link) {
-        for (var key in STATE) {
-            var state = STATE[key];
+        $.each(STATE, function(key, state) {
             if (state === new_state) {
                 $link.addClass(state);
             } else {
                 clear(state, $link);
             }
-        }
+        });
     }
 
     /**
@@ -786,16 +921,8 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Internal functions - retry period
+    // Functions - retry period
     // ========================================================================
-
-    /**
-     * Name of the data attribute holding the link's retry period.
-     *
-     * @constant
-     * @type {string}
-     */
-    var RETRY_ATTRIBUTE = 'retry';
 
     /**
      * Get the retry period for a download link.
@@ -815,7 +942,7 @@ $(document).on('turbolinks:load', function() {
      * @param {number} [value]        Default: RETRY_PERIOD.
      */
     function setRetryPeriod($link, value) {
-        var period = value || defaultRetryPeriod($link);
+        const period = value || defaultRetryPeriod($link);
         $link.data(RETRY_ATTRIBUTE, period);
     }
 
@@ -836,21 +963,21 @@ $(document).on('turbolinks:load', function() {
      * @return {number}
      */
     function defaultRetryPeriod($link) {
-        var href = $link.attr('href') || '';
+        const href = $link.attr('href') || '';
         return href.match(/DAISY_AUDIO/) ? RETRY_DAISY_AUDIO : RETRY_PERIOD;
     }
 
     // ========================================================================
-    // Internal functions - other
+    // Functions - other
     // ========================================================================
 
     /**
      * Emit a console message if debugging.
+     *
+     * @param {...*} args
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

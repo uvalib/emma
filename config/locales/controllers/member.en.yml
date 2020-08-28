@@ -25,12 +25,26 @@ en:
       search_controls:
         format:
           multiple:     false
+        size:
+          tooltip:      'Specify the number of search results per page'
+          values:
+            - 10
+            - 25
+            - 50
+            - 100
         sort:
           values:       !ruby/symbol MemberSortOrder
           reverse:
             enabled:    true
         layout:
           - [sort, size, ~, ~]
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size:      10
 
       # =======================================================================
       # Fields

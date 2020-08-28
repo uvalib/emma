@@ -1070,7 +1070,7 @@ module UploadConcern
     items = items.flatten.compact
     return items unless items.size > INGEST_MAX_SIZE
     error = [meth, 'item count', "#{item.size} > #{INGEST_MAX_SIZE}"]
-    error = compact.join(': ')
+    error = error.compact.join(': ')
     Log.Error(error)
     fail(error)
   end

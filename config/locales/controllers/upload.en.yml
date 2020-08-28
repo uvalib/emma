@@ -44,14 +44,12 @@ en:
         available:
           label:        'All fields'
           tooltip:      'Reveal all data fields.'
-          default:      create
-        filled:
-          label:        'Fields with data'
-          tooltip:      'Show fields that have data or require attention.'
-          default:      update
         invalid:
           label:        'Invalid fields'
           tooltip:      'Show fields that require attention.'
+        filled:
+          label:        'Fields with data'
+          tooltip:      'Show fields that have data or require attention.'
         all:
           label:        'All plus internal-use fields'
           tooltip:      'This is only for development purposes.'

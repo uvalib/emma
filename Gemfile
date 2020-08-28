@@ -91,10 +91,6 @@ gem 'aws-sdk-s3', '~> 1.14'
 gem 'iso-639'
 gem 'sanitize'
 
-# == Addresses bug when building on AWS
-# (see https://github.com/sass/sassc-ruby/issues/146)
-gem 'sassc', '2.1.0'
-
 # =============================================================================
 # Production
 # =============================================================================

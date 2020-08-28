@@ -31,7 +31,7 @@
 ///                                      100% == white
 ///
 /// == Usage Notes
-/// Some accessibility checkers can't handle RGBA colors; use this instead of
+/// Some color contrast checkers can't handle RGBA colors; use this instead of
 ///     rgba() if the intent of using transparency is to lighten a color.
 ///
 /// Use this in place of the SASS lighten() or darken() functions since the

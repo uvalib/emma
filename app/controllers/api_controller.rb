@@ -151,7 +151,7 @@ class ApiController < ApplicationController
   # This method overrides:
   # @see SerializationConcern#show_values
   #
-  def show_values(item = @api_result)
+  def show_values(item = @api_result, **)
     result =
       item.map { |k, v|
         v = safe_json_parse(v) if %i[result exception].include?(k)

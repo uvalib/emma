@@ -8,7 +8,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $help_content = $('.help-section');
+    let $help_content = $('.help-section');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($help_content)) {
@@ -25,7 +25,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {string[]}
      */
-    var ILLUSTRATION_ONLY = [
+    const ILLUSTRATION_ONLY = [
         '.for-help'
     ];
 
@@ -38,7 +38,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(','));
+    let $illustrations = $help_content.find(ILLUSTRATION_ONLY.join(','));
 
     // ========================================================================
     // Actions
@@ -46,8 +46,9 @@ $(document).on('turbolinks:load', function() {
 
     // Ensure that elements intended for the purpose of illustration do not
     // act like live controls.
+    // noinspection JSUnresolvedFunction
     $illustrations.each(function() {
-        var $this = $(this);
+        let $this = $(this);
         $this.attr('tabindex',       -1);
         $this.attr('role',           'none');
         $this.css( 'pointer-events', 'none');

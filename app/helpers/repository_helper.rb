@@ -76,17 +76,21 @@ module RepositoryHelper
 
   # Report the member repository associated with the given URL.
   #
-  # @param [String] url
+  # @param [String]               url
+  # @param [Symbol, Boolean, nil] default   *true* => `EmmaRepository#default`.
   #
   # @return [Symbol]                  One of `EmmaRepository#values`.
   # @return [nil]                     If not associated with any repository.
   #
-  def url_repository(url)
+  def url_repository(url, default: nil)
     return if url.blank?
-    (:emma            if emma_link?(url)) ||
-    (:bookshare       if bs_link?(url))   ||
-    (:hathiTrust      if ht_link?(url))   ||
-    (:internetArchive if ia_link?(url))
+    # noinspection RubyYardReturnMatch
+    (:emma                  if emma_link?(url))          ||
+    (:bookshare             if bs_link?(url))            ||
+    (:hathiTrust            if ht_link?(url))            ||
+    (:internetArchive       if ia_link?(url))            ||
+    (EmmaRepository.default if default.is_a?(TrueClass)) ||
+    default.presence
   end
 
   # ===========================================================================

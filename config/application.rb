@@ -160,12 +160,7 @@ module Emma
     # Assets
     # =========================================================================
 
-    # Compress JavaScripts and CSS.
-    config.assets.css_compressor = :scss
-    config.assets.js_compressor  = Uglifier.new(harmony: true)
-
-    # `config.assets.precompile` and `config.assets.version` have moved to
-    # config/initializers/assets.rb
+    # See config/initializers/assets.rb
 
     # =========================================================================
     # Interactive development

@@ -201,7 +201,7 @@ module Roles
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  DEFAULT_ROLES = {
+  PROTOTYPE = {
     dso: %i[
       catalog_searcher
       artifact_downloader
@@ -220,6 +220,14 @@ module Roles
     ],
     anonymous: %i[catalog_searcher],
   }.deep_freeze
+
+  # The name of the default set of roles for a new user.
+  #
+  # @type [Symbol]
+  #
+  # @see Roles#PROTOTYPE
+  #
+  DEFAULT_PROTOTYPE = :dso
 
 end
 

@@ -12,7 +12,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $search_sections = $('.layout-section.search');
+    let $search_sections = $('.layout-section.search');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($search_sections)) {
@@ -29,7 +29,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
+    const DEBUGGING = true;
 
     /**
      * State value indicating that the advanced search control panel is open.
@@ -37,7 +37,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var OPEN = 'open';
+    const OPEN = 'open';
 
     /**
      * State value indicating that the advanced search control panel is closed.
@@ -45,7 +45,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var CLOSED = 'closed';
+    const CLOSED = 'closed';
 
     /**
      * Marker class indicating that the advanced search control panel is open.
@@ -53,7 +53,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var OPEN_MARKER = 'open';
+    const OPEN_MARKER = 'open';
 
     /**
      * Search types and their display properties.
@@ -61,7 +61,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {object}
      */
-    var SEARCH_TYPE = Emma.AdvSearch.search_type;
+    const SEARCH_TYPE = Emma.AdvSearch.search_type;
 
     /**
      * Search types.
@@ -69,7 +69,11 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    var SEARCH_TYPES = Object.keys(SEARCH_TYPE);
+    const SEARCH_TYPES = Object.keys(SEARCH_TYPE);
+
+    // ========================================================================
+    // Constants - multi-select menus
+    // ========================================================================
 
     /**
      * Events exposed by Select2.
@@ -77,7 +81,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    var MULTI_SELECT_EVENTS = [
+    const MULTI_SELECT_EVENTS = [
         'change',
         'change.select2',
         'select2:clearing',
@@ -100,13 +104,40 @@ $(document).on('turbolinks:load', function() {
      *
      * @see logSelectEvent
      */
-    var MULTI_SELECT_EVENTS_WIDTH = (function() {
-        var max = 0;
+    const MULTI_SELECT_EVENTS_WIDTH = (function() {
+        let max = 0;
         MULTI_SELECT_EVENTS.forEach(function(type) {
             max = Math.max(max, type.length);
         });
         return max;
     })();
+
+    /**
+     * Select2 events which precede the change which causes a new search to be
+     * performed.
+     *
+     * @constant
+     * @type {string[]}
+     */
+    const PRE_CHANGE_EVENTS = ['select2:selecting', 'select2:unselecting'];
+
+    /**
+     * Select2 events which follow a change which causes a new search to be
+     * performed.
+     *
+     * @constant
+     * @type {string[]}
+     */
+    const POST_CHANGE_EVENTS = ['select2:select', 'select2:unselect'];
+
+    /**
+     * Select2 events which should detect whether to suppress the opening of
+     * the drop-down menu.
+     *
+     * @constant
+     * @type {string[]}
+     */
+    const CHECK_SUPPRESS_MENU_EVENTS = ['select2:opening'];
 
     // ========================================================================
     // Variables
@@ -117,87 +148,108 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $advanced_toggle = $search_sections.find('.advanced-search-toggle');
+    let $advanced_toggle = $search_sections.find('.advanced-search-toggle');
 
     /**
      * All instances of the search filter reset button.
      *
      * @type {jQuery}
      */
-    var $reset_button = $search_sections.find('.menu-button.reset');
+    let $reset_button = $search_sections.find('.menu-button.reset');
 
     /**
      * The element with the search bar and related controls.
      *
      * @type {jQuery}
      */
-    var $search_bar_container = $search_sections.find('.search-bar-container');
+    let $search_bar_container = $search_sections.find('.search-bar-container');
 
     /**
      * The menu which changes the search type.
      *
      * @type {jQuery}
      */
-    var $input_select = $search_bar_container.find('.search-input-select');
+    let $input_select = $search_bar_container.find('.search-input-select');
 
     /**
      * The form enclosing the search input box.
      *
      * @type {jQuery}
      */
-    var $search_input_form = $search_bar_container.find('.search-input-bar');
+    let $search_input_form = $search_bar_container.find('.search-input-bar');
 
     /**
      * The input box associated with the advanced search toggle.
      *
      * @type {jQuery}
      */
-    var $search_input = $search_input_form.find('.search-input');
+    let $search_input = $search_input_form.find('.search-input');
 
     /**
      * The input clear button.
      *
      * @type {jQuery}
      */
-    var $search_clear = $search_input_form.find('.search-clear');
+    let $search_clear = $search_input_form.find('.search-clear');
 
     /**
      * The button that performs the search.
      *
      * @type {jQuery}
      */
-    var $search_button = $search_input_form.find('.search-button');
+    let $search_button = $search_input_form.find('.search-button');
 
     /**
      * The search controls container.
      *
      * @type {jQuery}
      */
-    var $control_panel = $search_sections.find('.search-controls');
+    let $control_panel = $search_sections.find('.search-controls');
 
     /**
      * The search control menu <form> elements.
      *
      * @type {jQuery}
      */
-    var $controls = $control_panel.find('.menu-control');
+    let $controls = $control_panel.find('.menu-control');
 
     /**
      * Multi-select dropdown menus.
      *
      * @type {jQuery}
      */
-    var $multi_select = $controls.find('select[multiple]');
+    let $multi_select = $controls.find('select[multiple]');
 
     /**
      * An indicator that is presented during a time-consuming search.
      *
      * @type {jQuery}
      */
-    var $search_in_progress = $('body').children('.search-in-progress');
+    let $search_in_progress = $('body').children('.search-in-progress');
 
     // ========================================================================
-    // Function definitions
+    // Event handlers
+    // ========================================================================
+
+    handleEvent($controls,     'change', showInProgress);
+    handleEvent($input_select, 'change', updateSearchType);
+    handleEvent($search_input, 'change', updateSearchTerms);
+    handleEvent($search_input, 'keyup',  setSearchClearButton);
+
+    handleClickAndKeypress($search_button,   showInProgress);
+    handleClickAndKeypress($reset_button,    showInProgress);
+    handleClickAndKeypress($search_clear,    clearSearchTerms);
+    handleClickAndKeypress($advanced_toggle, toggleControlPanel);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    initializeAdvancedSearch();
+    hideInProgress();
+
+    // ========================================================================
+    // Functions
     // ========================================================================
 
     /**
@@ -208,8 +260,8 @@ $(document).on('turbolinks:load', function() {
             $advanced_toggle.hide();
             $reset_button.hide();
         } else {
-            var was_open = getControlPanelState();
-            var is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
+            let was_open = getControlPanelState();
+            let is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
             if (was_open !== is_open) {
                 if (was_open === OPEN) {
                     setControlPanelDisplay(true);
@@ -226,16 +278,17 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Function definitions - control panel
+    // Functions - control panel
     // ========================================================================
 
     /**
      * Toggle visibility of advanced search controls.
      */
     function toggleControlPanel() {
-        var opening = !$control_panel.hasClass(OPEN_MARKER);
+        const opening = !$control_panel.hasClass(OPEN_MARKER);
         if (DEBUGGING) {
-            debug((opening ? 'SHOW' : 'HIDE') + ' advanced search controls');
+            const action = opening ? 'SHOW' : 'HIDE';
+            debug(action, 'advanced search controls');
         }
         setControlPanelState(opening);
         setControlPanelDisplay(opening);
@@ -247,7 +300,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean|string} opening
      */
     function setControlPanelState(opening) {
-        var state = opening;
+        let state = opening;
         if (typeof state !== 'string') {
             state = state ? OPEN : CLOSED;
         }
@@ -281,7 +334,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setControlPanelToggle(opening) {
         /** @type {{label: string, tooltip: string}} */
-        var value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
+        const value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
         $advanced_toggle.html(value.label).attr('title', value.tooltip);
     }
 
@@ -300,10 +353,10 @@ $(document).on('turbolinks:load', function() {
      * @see ".search-bar-container.menu-button.reset in shared/_header.scss"
      */
     function setResetButton(opening) {
-        var state = opening ? 'visible' : 'hidden';
+        const state = opening ? 'visible' : 'hidden';
         $reset_button.each(function() {
-            var $button = $(this);
-            var manage  = $button.css('--manage-visibility');
+            let $button = $(this);
+            let manage  = $button.css('--manage-visibility');
             if (isDefined(manage) && (manage.trim() === 'true')) {
                 $button.css('visibility', state);
             }
@@ -311,7 +364,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Function definitions - search terms
+    // Functions - search terms
     // ========================================================================
 
     /**
@@ -329,7 +382,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [new_terms]    New search terms ('' if missing).
      */
     function setSearchInput(new_terms) {
-        var terms;
+        let terms = undefined;
         if (new_terms) {
             terms = new_terms.replace(/\+/g, ' ');
             terms = decodeURIComponent(terms);
@@ -376,13 +429,12 @@ $(document).on('turbolinks:load', function() {
      * Do not show the search clear control if this search box is empty.
      */
     function setSearchClearButton() {
-        var characters_present = $search_input.val();
-        var state = characters_present ? 'visible' : 'hidden';
+        const state = $search_input.val() ? 'visible' : 'hidden';
         $search_clear.css('visibility', state);
     }
 
     // ========================================================================
-    // Function definitions - search type
+    // Functions - search type
     // ========================================================================
 
     /**
@@ -401,8 +453,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [new_terms]    Sets the search terms if provided.
      */
     function setSearchType(new_type, new_terms) {
-        var search_type  = new_type  || searchType();
-        var search_terms = new_terms || searchTerms();
+        const search_type  = new_type  || searchType();
+        const search_terms = new_terms || searchTerms();
         $input_select.val(search_type);
         setSearchInput(search_terms);
         setSearchBar(search_type);
@@ -416,11 +468,11 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [new_type]
      */
     function setSearchBar(new_type) {
-        var search_type = new_type || searchType();
-        var $hidden = $search_input_form.find('input[type="hidden"]');
+        const search_type = new_type || searchType();
+        let $hidden       = $search_input_form.find('input[type="hidden"]');
         SEARCH_TYPES.forEach(function(type) {
             // noinspection JSCheckFunctionSignatures
-            var $input = $hidden.filter('[name="' + type + '"]');
+            let $input = $hidden.filter(`[name="${type}"]`);
             if (type === search_type) {
                 // Make sure that there is no hidden input for this type then
                 // update the search input element.
@@ -434,7 +486,7 @@ $(document).on('turbolinks:load', function() {
                 // noinspection ReuseOfLocalVariableJS
                 $input = $('<input type="hidden">');
                 $input.attr('name', type);
-                $input.attr('id',   ('search-input-select-' + type));
+                $input.attr('id',   `search-input-select-${type}`);
                 $input.appendTo($search_input_form);
                 $input.val('');
             } else {
@@ -449,12 +501,12 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} [e]
      */
     function updateSearchType(e) {
-        var type, query;
+        let [type, query] = [];
         if (e) {
             type = e.target.value;
         } else {
             $.each(urlParameters(), function(param, value) {
-                if (SEARCH_TYPES.indexOf(param) >= 0) {
+                if (SEARCH_TYPES.includes(param)) {
                     type  = param;
                     query = value;
                 }
@@ -465,7 +517,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Function definitions - menus
+    // Functions - menus
     // ========================================================================
 
     /**
@@ -476,8 +528,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [new_value]    Default: {@link searchTerms}.
      */
     function setMenuParameters(new_type, new_value) {
-        var type  = new_type  || searchType();
-        var query = new_value || searchTerms();
+        const type  = new_type  || searchType();
+        const query = new_value || searchTerms();
         $controls.each(function() {
             setHiddenParameters(this, type, query);
         });
@@ -492,10 +544,10 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [new_value]  Default: {@link searchTerms}.
      */
     function setHiddenParameters(control, new_type, new_value) {
-        var search   = new_type  || searchType();
-        var query    = new_value || searchTerms();
-        var $this    = $(control);
-        var $control, $menu;
+        const search = new_type  || searchType();
+        const query  = new_value || searchTerms();
+        let $control, $menu;
+        let $this = $(control);
         if ($this.hasClass('menu-control')) {
             $control = $this;
             $menu    = $this.children('select');
@@ -503,52 +555,24 @@ $(document).on('turbolinks:load', function() {
             $control = $this.parents('.menu-control');
             $menu    = $this;
         }
-        var menu_id  = $menu.attr('id');
-        var $hidden  = $control.find('input[type="hidden"]');
+        const menu_id = $menu.attr('id');
+        let $hidden   = $control.find('input[type="hidden"]');
         SEARCH_TYPES.forEach(function(type) {
-            var search_terms = (type === search) ? query : '';
-            var $input       = $hidden.filter('[name="' + type + '"]');
+            let $input = $hidden.filter(`[name="${type}"]`);
             if (isMissing($input)) {
                 // noinspection ReuseOfLocalVariableJS
                 $input = $('<input type="hidden">');
                 $input.attr('name', type);
-                $input.attr('id',   (menu_id + '-' + type));
+                $input.attr('id',   `${menu_id}-${type}`);
                 $input.appendTo($control);
             }
-            $input.val(search_terms);
+            $input.val((type === search) ? query : '');
         });
     }
 
     // ========================================================================
-    // Function definitions - multi-select menus
+    // Functions - multi-select menus
     // ========================================================================
-
-    /**
-     * Select2 events which precede the change which causes a new search to be
-     * performed.
-     *
-     * @constant
-     * @type {string[]}
-     */
-    var PRE_CHANGE_EVENTS = ['select2:selecting', 'select2:unselecting'];
-
-    /**
-     * Select2 events which follow a change which causes a new search to be
-     * performed.
-     *
-     * @constant
-     * @type {string[]}
-     */
-    var POST_CHANGE_EVENTS = ['select2:select', 'select2:unselect'];
-
-    /**
-     * Select2 events which should detect whether to suppress the opening of
-     * the drop-down menu.
-     *
-     * @constant
-     * @type {string[]}
-     */
-    var CHECK_SUPPRESS_MENU_EVENTS = ['select2:opening'];
 
     /**
      * Initialize Select2 for multi-select menus.
@@ -557,7 +581,7 @@ $(document).on('turbolinks:load', function() {
      * @see https://select2.org/programmatic-control/events
      */
     function initializeMultiSelect() {
-        var $select = $multi_select.not('.select2-hidden-accessible');
+        let $select = $multi_select.not('.select2-hidden-accessible');
         if (isPresent($select)) {
             $select.select2({
                 width:      '100%',
@@ -566,12 +590,13 @@ $(document).on('turbolinks:load', function() {
                 language:   select2Language()
             });
             $select.each(function() {
-                var $control = $(this);
-                var label    = $control.attr('aria-label');
-                var label_id = $control.attr('aria-labelledby');
-                var attrs    = {};
+                let attrs      = {};
+                let $control   = $(this);
+                const label    = $control.attr('aria-label');
+                const label_id = $control.attr('aria-labelledby');
                 if (label)    { attrs['aria-label']      = label; }
                 if (label_id) { attrs['aria-labelledby'] = label_id; }
+                // noinspection JSCheckFunctionSignatures
                 $control.siblings('.select2').find('input').attr(attrs);
             });
             if (DEBUGGING) {
@@ -601,8 +626,7 @@ $(document).on('turbolinks:load', function() {
      * @see ../../../node_modules/select2/src/js/select2/i18n/en.js
      */
     function select2Language() {
-        var translations = {};
-        var text = { // TODO: I18n
+        const text = { // TODO: I18n
             //errorLoading:    'The results could not be loaded.',
             //inputTooLong:    'Please delete {n} character',
             //inputTooShort:   'Please enter {n} or more characters',
@@ -612,13 +636,14 @@ $(document).on('turbolinks:load', function() {
             //searching:       'Searching…',
             removeAllItems:  'Remove all selected values'
         };
+        let translations = {};
         $.each(text, function(name, value) {
             switch (name) {
                 case 'inputTooLong':
                     translations[name] =
                         function(args) {
-                            var overage = args.input.length - args.maximum;
-                            var result  = value.replace(/{n}/, overage);
+                            const overage = args.input.length - args.maximum;
+                            let result    = value.replace(/{n}/, overage);
                             if (overage !== 1) { result += 's'; }
                             return result;
                         };
@@ -626,15 +651,15 @@ $(document).on('turbolinks:load', function() {
                 case 'inputTooShort':
                     translations[name] =
                         function(args) {
-                            var remaining = args.minimum - args.input.length;
+                            const remaining = args.minimum - args.input.length;
                             return value.replace(/{n}/, remaining);
                         };
                     break;
                 case 'maximumSelected':
                     translations[name] =
                         function(args) {
-                            var limit  = args.maximum;
-                            var result = value.replace(/{n}/, limit);
+                            const limit = args.maximum;
+                            let result  = value.replace(/{n}/, limit);
                             if (limit !== 1) { result += 's'; }
                             return result;
                         };
@@ -668,7 +693,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} e
      */
     function updateEvent(e) {
-        var $target = $(e.target);
+        let $target = $(e.target);
         $target.prop('ongoing-event', e.type);
     }
 
@@ -682,7 +707,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} e
      */
     function suppressMenuOpen(e) {
-        var $target = $(e.target);
+        let $target = $(e.target);
         if ($target.prop('ongoing-event')) {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -696,22 +721,23 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} e
      */
     function logSelectEvent(e) {
-        var spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH - e.type.length));
-        var evt    = e.type + ' '.repeat(spaces);
-        var tgt    = e.target;
-        var target = '';
-        //if (tgt.localName) { target += tgt.localName; }
-          if (tgt.id)        { target += '#' + tgt.id; }
-        //if (tgt.className) { target += '.' + tgt.className; }
-        //if (tgt.type)      { target += '[' + tgt.type + ']'; }
-        var $selected = $(tgt).siblings().find('[aria-activedescendant]');
-        var selected  = $selected.attr('aria-activedescendant');
+        const spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH-e.type.length));
+        const evt    = e.type + ' '.repeat(spaces);
+        const tgt    = e.target;
+        let target   = '';
+      //if (tgt.localName) { target += tgt.localName; }
+        if (tgt.id)        { target += '#' + tgt.id; }
+      //if (tgt.className) { target += '.' + tgt.className; }
+      //if (tgt.type)      { target += `[${tgt.type}]`; }
+        // noinspection JSCheckFunctionSignatures
+        let $selected  = $(tgt).siblings().find('[aria-activedescendant]');
+        const selected = $selected.attr('aria-activedescendant');
         if (selected) { target += ' ' + selected; }
         console.log('SELECT2', evt, target);
     }
 
     // ========================================================================
-    // Function definitions - search overlay
+    // Functions - search overlay
     // ========================================================================
 
     /**
@@ -729,37 +755,16 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleEvent($controls,     'change', showInProgress);
-    handleEvent($input_select, 'change', updateSearchType);
-    handleEvent($search_input, 'change', updateSearchTerms);
-    handleEvent($search_input, 'keyup',  setSearchClearButton);
-
-    handleClickAndKeypress($search_button,   showInProgress);
-    handleClickAndKeypress($reset_button,    showInProgress);
-    handleClickAndKeypress($search_clear,    clearSearchTerms);
-    handleClickAndKeypress($advanced_toggle, toggleControlPanel);
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    initializeAdvancedSearch();
-    hideInProgress();
-
-    // ========================================================================
-    // Internal functions
+    // Functions - other
     // ========================================================================
 
     /**
      * Emit a console message if debugging.
+     *
+     * @param {...*} args
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

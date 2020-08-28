@@ -8,7 +8,7 @@
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
-    var $toggle_buttons = $('.toggle').not('.for-help');
+    let $toggle_buttons = $('.toggle').not('.for-help');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($toggle_buttons)) {
@@ -25,31 +25,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
-
-    /**
-     * State value indicating that the panel is displayed.
-     *
-     * @constant
-     * @type {string}
-     */
-    var OPEN = 'open';
-
-    /**
-     * State value indicating that the panel is hidden.
-     *
-     * @constant
-     * @type {string}
-     */
-    var CLOSED = 'closed';
-
-    /**
-     * Marker class indicating that the panel is displayed.
-     *
-     * @constant
-     * @type {string}
-     */
-    var OPEN_MARKER = 'open';
+    const DEBUGGING = true;
 
     /**
      * If *true*, save the open/closed state of panels to session storage and
@@ -57,10 +33,46 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {boolean}
      */
-    var RESTORE_PANEL_STATE = false;
+    const RESTORE_PANEL_STATE = false;
+
+    /**
+     * State value indicating that the panel is displayed.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OPEN = 'open';
+
+    /**
+     * State value indicating that the panel is hidden.
+     *
+     * @constant
+     * @type {string}
+     */
+    const CLOSED = 'closed';
+
+    /**
+     * Marker class indicating that the panel is displayed.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OPEN_MARKER = 'open';
 
     // ========================================================================
-    // Function definitions
+    // Event handlers
+    // ========================================================================
+
+    handleClickAndKeypress($toggle_buttons, onTogglePanel);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    initializeState();
+
+    // ========================================================================
+    // Functions
     // ========================================================================
 
     /**
@@ -68,13 +80,13 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Event} event
      */
-    function togglePanel(event) {
-        var $button = $(event && event.target || this);
-        var $panel  = getPanel($button);
+    function onTogglePanel(event) {
+        let $button = $(event && event.target || this);
+        let $panel  = getPanel($button);
         if (isPresent($panel)) {
-            var opening = !$panel.hasClass(OPEN_MARKER);
+            const opening = !$panel.hasClass(OPEN_MARKER);
             if (DEBUGGING) {
-                var action = opening ? 'SHOW' : 'HIDE';
+                const action = opening ? 'SHOW' : 'HIDE';
                 debug(action, getPanelId($button), 'panel');
             }
             if (RESTORE_PANEL_STATE) {
@@ -92,7 +104,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery|undefined}
      */
     function getPanel(button) {
-        var panel = getPanelId(button);
+        const panel = getPanelId(button);
         return panel && $('#' + panel);
     }
 
@@ -115,7 +127,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string|undefined}
      */
     function getPanelSelector(button) {
-        var $button = $(button);
+        let $button = $(button);
         return $button.data('selector') || ('#' + getPanelId($button));
     }
 
@@ -126,8 +138,8 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean|string}  opening
      */
     function setState(target, opening) {
-        var panel = target;
-        var state = opening;
+        let panel = target;
+        let state = opening;
         if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
         if (typeof state !== 'string') { state = state ? OPEN : CLOSED; }
         sessionStorage.setItem(panel, state);
@@ -141,7 +153,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function getState(target) {
-        var panel = target;
+        let panel = target;
         if (typeof panel !== 'string') { panel = getPanelSelector(panel); }
         return sessionStorage.getItem(panel);
     }
@@ -150,15 +162,16 @@ $(document).on('turbolinks:load', function() {
      * Set the current state of panel(s) on the page.
      */
     function initializeState() {
+        // noinspection JSUnresolvedFunction
         $toggle_buttons.each(function() {
-            var $button = $(this);
-            var $panel  = getPanel($button);
+            let $button = $(this);
+            let $panel  = getPanel($button);
             if (isMissing($panel)) {
                 $button.hide();
             } else if (RESTORE_PANEL_STATE) {
-                var selector = getPanelSelector($button);
-                var was_open = getState(selector);
-                var is_open  = $panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
+                const selector = getPanelSelector($button);
+                const was_open = getState(selector);
+                const is_open  = $panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
                 if (was_open !== is_open) {
                     if (was_open === OPEN) {
                         updatePanelDisplay($button, $panel, true);
@@ -192,35 +205,23 @@ $(document).on('turbolinks:load', function() {
      */
     function updateToggleButton($button, opening) {
         /** @type {{label: string, tooltip: string}} */
-        var value = opening ? Emma.Panel.closer : Emma.Panel.opener;
+        const value = opening ? Emma.Panel.closer : Emma.Panel.opener;
         $button.html(value.label);
         $button.attr('title', value.tooltip);
         $button.attr('aria-expanded', opening);
     }
 
     // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleClickAndKeypress($toggle_buttons, togglePanel);
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    initializeState();
-
-    // ========================================================================
-    // Internal functions
+    // Functions - other
     // ========================================================================
 
     /**
      * Emit a console message if debugging.
+     *
+     * @param {...*} args
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

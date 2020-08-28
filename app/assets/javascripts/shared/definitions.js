@@ -5,7 +5,7 @@
 // ============================================================================
 
 /**
- * @typedef {string|HTMLElement|jQuery} Selector
+ * @typedef {string|jQuery|HTMLElement|EventTarget} Selector
  */
 
 // ============================================================================
@@ -18,7 +18,7 @@
  * @constant
  * @type {number}
  */
-var SECOND = 1000;
+const SECOND = 1000;
 
 /**
  * Alias for SECOND.
@@ -26,66 +26,10 @@ var SECOND = 1000;
  * @constant
  * @type {number}
  */
-var SECONDS = SECOND;
+const SECONDS = SECOND;
 
 // ============================================================================
-// Function definitions - Enumerables
-// ============================================================================
-
-// noinspection FunctionWithMultipleReturnPointsJS
-/**
- * Generate a copy of the array without blank elements.
- *
- * @param {Array|object|string|*} item
- *
- * @return {Array|object|string|*}
- */
-function compact(item) {
-    if (item instanceof Array) {
-        return compactArray(item);
-    } else if (typeof item === 'object') {
-        return compactObject(item);
-    } else if (typeof item === 'string') {
-        return item.trim();
-    } else {
-        return item;
-    }
-}
-
-/**
- * Generate a copy of the array without blank elements.
- *
- * @param {Array} item
- *
- * @return {Array}
- */
-function compactArray(item) {
-    var result = [];
-    item.forEach(function(v) {
-        var value = compact(v);
-        if (isPresent(value)) { result.push(value); }
-    });
-    return result;
-}
-
-/**
- * Generate a copy of the array without blank elements.
- *
- * @param {object} item
- *
- * @return {object}
- */
-function compactObject(item) {
-    var result = {};
-    $.each(item, function(k, v) {
-        var value = compact(v);
-        if (isPresent(value)) { result[k] = value; }
-    });
-    return result;
-}
-
-// ============================================================================
-// Function definitions - Math
+// Functions - Math
 // ============================================================================
 
 /**
@@ -102,7 +46,130 @@ function percent(part, total) {
 }
 
 // ============================================================================
-// Function definitions - Time and date
+// Functions - Enumerables
+// ============================================================================
+
+/**
+ * Create an array to hold the item if it is not already one.
+ *
+ * @param {*} item
+ *
+ * @returns {array}
+ */
+function arrayWrap(item) {
+    return Array.isArray(item) ? item : [item];
+}
+
+/**
+ * Render an item as a string (used in place of `JSON.stringify`).
+ *
+ * @param {*}      item
+ * @param {number} [limit]            Maximum length of result.
+ *
+ * @return {string}
+ */
+function asString(item, limit) {
+    let result = '';
+    let left   = '';
+    let right  = '';
+    let space  = '';
+
+    if (typeof item === 'string') {
+        // A string value.
+        result += item;
+        left   = '"';
+        right  = '"';
+
+    } else if (!item || (typeof item !== 'object')) {
+        // A numeric, boolean, undefined, or null value.
+        result += item;
+
+    } else if (Array.isArray(item)) {
+        // An array object.
+        result = item.map(function(v) { return asString(v) }).join(', ');
+        left   = '[';
+        right  = ']';
+
+    } else if (item.hasOwnProperty('originalEvent')) {
+        // JSON.stringify fails with "cyclic object value" for jQuery events.
+        result = asString(item.originalEvent);
+
+    } else {
+        // A generic object.
+        let pairs = function(v, k) { return `"${k}": ${asString(v)}`; };
+        result = $.map(item, pairs).join(', ');
+        left   = '{';
+        right  = '}';
+        if (result) { space = ' '; }
+    }
+
+    left  = `${left}${space}`;
+    right = `${space}${right}`;
+    if (limit && (limit < (result.length + left.length + right.length))) {
+        const omit = '...';
+        const max  = limit - omit.length - left.length - right.length;
+        result = (max > 0) ? result.substr(0, max) : '';
+        result += omit;
+    }
+    return left + result + right;
+}
+
+// noinspection FunctionWithMultipleReturnPointsJS
+/**
+ * Generate a copy of the item without blank elements.
+ *
+ * @param {Array|object|string|*} item
+ *
+ * @return {Array|object|string|*}
+ */
+function compact(item) {
+    if (typeof item === 'string') {
+        return item.trim();
+
+    } else if (Array.isArray(item)) {
+        let arr = [];
+        item.forEach(function(v) {
+            const value = compact(v);
+            if (isPresent(value)) { arr.push(...arrayWrap(value)); }
+        });
+        return arr;
+
+    } else if (typeof item === 'object') {
+        let obj = {};
+        $.each(item, function(k, v) {
+            const value = compact(v);
+            if (isPresent(value)) { obj[k] = value; }
+        });
+        return obj;
+
+    } else {
+        return item;
+    }
+}
+
+/**
+ * Flatten one or more nested arrays.
+ *
+ * @param {Array|*} item...
+ *
+ * @return {Array}
+ */
+function flatten(item) {
+    let result = [];
+    if (arguments.length > 1) {
+        const args = Array.from(arguments);
+        args.forEach(function(v) { result.push(...flatten(v)); });
+    } else if (Array.isArray(item)) {
+        item.forEach(function(v) { result.push(...flatten(v)); });
+    } else {
+        const value = (typeof item === 'string') ? item.trim() : item;
+        if (value) { result.push(value); }
+    }
+    return result;
+}
+
+// ============================================================================
+// Functions - Time and date
 // ============================================================================
 
 /**
@@ -114,7 +181,7 @@ function percent(part, total) {
  * @return {number}
  */
 function timeOf(value) {
-    var result;
+    let result;
     switch (typeof value) {
         case 'object': result = value.getTime(); break;
         case 'number': result = value;           break;
@@ -132,13 +199,13 @@ function timeOf(value) {
  * @return {number}
  */
 function secondsSince(start_time, time_now) {
-    var start = timeOf(start_time);
-    var now   = timeOf(time_now);
+    const start = timeOf(start_time);
+    const now   = timeOf(time_now);
     return (now - start) / SECOND;
 }
 
 // ============================================================================
-// Function definitions - Element values
+// Functions - Element values
 // ============================================================================
 
 /**
@@ -160,7 +227,7 @@ function isDefined(item) {
  * @return {boolean}
  */
 function notDefined(item) {
-    return !isDefined(item);
+    return typeof item === 'undefined';
 }
 
 // noinspection FunctionWithMultipleReturnPointsJS
@@ -178,7 +245,7 @@ function isEmpty(item) {
     } else if (isDefined(item.length)) {
         return !item.length;
     } else if (typeof item === 'object') {
-        for (var property in item) {
+        for (let property in item) {
             if (item.hasOwnProperty(property)) {
                 return false;
             }
@@ -219,7 +286,7 @@ function isMissing(item) {
  * @return {boolean}
  */
 function isPresent(item) {
-    return !isMissing(item);
+    return notEmpty(item);
 }
 
 /**
@@ -230,11 +297,99 @@ function isPresent(item) {
  * @return {string}
  */
 function attributeSelector(attributes) {
-    return '[' + attributes.join('], [') + ']';
+    const list = attributes.join('], [');
+    return `[${list}]`;
 }
 
 // ============================================================================
-// Function definitions - HTML
+// Functions - CSS
+// ============================================================================
+
+/**
+ * Multiplier for Math.random().
+ *
+ * @constant
+ * @type {number}
+ */
+const SIX_DIGITS = 1000000;
+
+/**
+ * Create a unique CSS class name by appending a random hex number.
+ *
+ * @param {string} css_class
+ *
+ * @return {string}
+ */
+function randomizeClass(css_class) {
+    const random = Math.floor(Math.random() * SIX_DIGITS);
+    return css_class + '-' + random.toString(16);
+}
+
+/**
+ * Toggle the presence of a CSS class for one or more disjoint elements.
+ *
+ * @param {Selector|Selector[]} sel
+ * @param {string}              cls
+ * @param {boolean}             [setting]
+ */
+function toggleClass(sel, cls, setting) {
+    arrayWrap(sel).forEach(function(e) { $(e).toggleClass(cls, setting); });
+}
+
+/**
+ * Join one or more CSS class names or arrays of class names.
+ *
+ * @param {...string|Array} args
+ *
+ * @return {string}
+ */
+function cssClasses(...args) {
+    let result = [];
+    args.forEach(function(arg) {
+        let values = undefined;
+        if (typeof arg === 'string') {
+            values = arg.trim().replace(/\s+/, ' ').split(' ');
+        } else if (Array.isArray(arg)) {
+            values = cssClasses(...arg);
+        } else if (typeof arg === 'object') {
+            values = cssClasses(...arg['class']);
+        }
+        if (isPresent(values)) {
+            result.push(...values);
+        }
+    });
+    return result.join(' ');
+}
+
+/**
+ * Form a selector from one or more selectors or class names.
+ *
+ * @param {...string|Array} args
+ *
+ * @return {string}
+ */
+function selector(...args) {
+    let result = [];
+    cssClasses(...args).split(' ').forEach(function(v) {
+        if (v === ',') {
+            result.push(', ');
+        } else if (v.includes(',')) {
+            const parts  = v.split(',');
+            const values = cssClasses(...parts).join(', ');
+            result.push(values);
+        } else if (v[0] === '#') {    // ID selector
+            result.unshift(v);
+        } else if (v[0] === '.') {    // CSS class selector
+            result.push(v);
+        } else {                      // CSS class
+            result.push('.' + v);
+        }
+    });
+    return result.join('').trim();
+}
+
+// ============================================================================
+// Functions - HTML
 // ============================================================================
 
 /**
@@ -245,48 +400,9 @@ function attributeSelector(attributes) {
  * @return {string}
  */
 function htmlDecode(text) {
-    var res = '';
-    var str = text.toString().trim();
-    if (str) {
-        var doc = new DOMParser().parseFromString(str, 'text/html');
-        res = doc.documentElement.textContent;
-    }
-    return res;
-}
-
-/**
- * Toggle the presence of a CSS class for one or more disjoint elements.
- *
- * @param {Selector|Selector[]} selectors
- * @param {string}              css_class
- * @param {boolean}             [setting]
- */
-function toggleClass(selectors, css_class, setting) {
-    var part = (selectors instanceof Array) ? selectors : [selectors];
-    part.forEach(function(e) { $(e).toggleClass(css_class, setting); });
-}
-
-/**
- * Create a unique CSS class name by appending a random hex number.
- *
- * @param {string} css_class
- *
- * @return {string}
- */
-function randomizeClass(css_class) {
-    var random = Math.floor(Math.random() * 1000000);
-    return css_class + '-' + random.toString(16);
-}
-
-/**
- * Indicate whether the client browser is MS Internet Explorer.
- *
- * @returns {boolean}
- */
-function isInternetExplorer() {
-    // noinspection PlatformDetectionJS
-    var ua = navigator.userAgent;
-    return (ua.indexOf('MSIE ') > -1) || (ua.indexOf('Trident/') > -1);
+    let str = text.toString().trim();
+    let doc = str && new DOMParser().parseFromString(str, 'text/html');
+    return doc && doc.documentElement.textContent;
 }
 
 /**
@@ -297,10 +413,10 @@ function isInternetExplorer() {
  * @return {jQuery}
  */
 function scrollIntoView(element) {
-    var $element = $(element);
-    var rect     = $element[0].getBoundingClientRect();
-    var top      = 0;
-    var bottom   = window.innerHeight || document.documentElement.clientHeight;
+    let $element = $(element);
+    const rect   = $element[0].getBoundingClientRect();
+    const top    = 0;
+    const bottom = window.innerHeight || document.documentElement.clientHeight;
     if (rect.top < top) {
         $element[0].scrollIntoView(true);
     } else if (rect.bottom > bottom) {
@@ -318,20 +434,16 @@ function scrollIntoView(element) {
  * @returns {jQuery}
  */
 function create(element, properties) {
-    var prop, tag;
-    if (typeof element === 'object') {
-        prop = element;
-        tag  = element.tag;
-    } else {
-        prop = properties;
-        tag  = element;
-    }
-    prop = prop || {};
-    tag  = tag  || 'div';
-    var $element = (tag[0] === '<') ? $(tag) : $('<' + tag + '>');
+    const obj  = (typeof element === 'object');
+    const prop = (obj ? element     : properties) || {};
+    const tag  = (obj ? element.tag : element)    || 'div';
+
+    // noinspection HtmlUnknownTag
+    let $element = (tag[0] === '<') ? $(tag) : $(`<${tag}>`);
     prop.class   && $element.addClass(prop.class);
     prop.type    && $element.attr('type',  prop.type);
     prop.tooltip && $element.attr('title', prop.tooltip);
+
     if      (typeof prop.html  === 'string') { $element.html(prop.html);  }
     else if (typeof prop.label === 'string') { $element.text(prop.label); }
     else if (typeof prop.text  === 'string') { $element.text(prop.text);  }
@@ -339,37 +451,58 @@ function create(element, properties) {
 }
 
 // ============================================================================
-// Function definitions - URL
+// Functions - URL
 // ============================================================================
 
 /**
- * Extract the URL present in *arg*.
+ * Extract the URL value associated with *arg*.
  *
- * @param {Event|Location|object|string} arg
+ * @param {string|HashChangeEvent|Event|Location|{url: string}} arg
  *
  * @return {string}
  */
-function extractUrl(arg) {
-    var path;
-    if (arg instanceof Event) {
-        // If *arg* is a HashChangeEvent then newURL will be present.
-        // (Checking for "instanceof" is avoided because of MS IE.)
-        // noinspection JSUnresolvedVariable
-        path = arg.target ? arg.target.href : arg.newURL;
-
-    } else if (arg instanceof Location) {
-        // The full path including hash.
-        path = arg.href;
-
-    } else if (typeof arg === 'object') {
-        // Microsoft Edge seems to return location as a simple Object.
-        path = arg.href;
-
-    } else if (typeof arg === 'string') {
-        // Assumedly the caller is expecting a URL.
-        path = arg;
+function urlFrom(arg) {
+    let result = undefined;
+    // noinspection IfStatementWithTooManyBranchesJS
+    if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
+        result = arg;
+    } else if ((typeof arg !== 'object') || Array.isArray(arg)) {
+        // Skipping invalid argument.
+    } else if (isDefined(arg.newURL)) { // HashChangeEvent
+        result = arg.newURL;
+    } else if (isDefined(arg.target) && isDefined(arg.target.href)) { // Event
+        result = arg.target.href;
+    } else if (isDefined(arg.href)) {   // Location, HTMLBaseElement
+        result = arg.href;
+    } else if (isDefined(arg.url)) {    // object
+        result = arg.url;
     }
-    return path || '';
+    return result || '';
+}
+
+/**
+ * Make an object out of a URL parameter string.
+ *
+ * @param {string} str
+ *
+ * @return {object}
+ */
+function asParams(str) {
+    let result = {};
+    if (typeof str === 'string') {
+        str.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
+            let parts = pair.split('=');
+            const k   = parts.shift();
+            if (k) {
+                result[k] = parts.join('=');
+            }
+        });
+    } else if (typeof str === 'object') {
+        result = str;
+    } else {
+        console.error(`asParams: cannot handle ${typeof str}: ${str}`);
+    }
+    return result;
 }
 
 /**
@@ -380,14 +513,68 @@ function extractUrl(arg) {
  * @return {object}
  */
 function urlParameters(path) {
-    var result = {};
-    var params = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
-    var pairs  = params.replace(/^[?&\s]+/, '').split('&');
-    pairs.forEach(function(pair) {
-        var kv = pair.split('=');
-        result[kv[0]] = kv[1];
+    const prms = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
+    return asParams(prms);
+}
+
+/**
+ * Assemble strings and/or objects to create an absolute URL.
+ *
+ * @param {string|object|string[]|object[]} parts
+ *
+ * @return {string}
+ */
+function makeUrl(...parts) {
+    let path   = [];
+    let params = {};
+
+    // Accumulate path parts and param parts.
+    flatten(parts).forEach(function(arg) {
+        if (typeof arg === 'object') {
+            $.extend(params, arg);
+        } else if (arg.match(/^[?&]/)) {
+            $.extend(params, asParams(arg));
+        } else if (arg.includes('?')) {
+            let half = arg.split('?');
+            path.push(half.shift());
+            $.extend(params, asParams(half.join('&')));
+        } else if (arg.includes('=')) {
+            $.extend(params, asParams(arg));
+        } else {
+            path.push(arg);
+        }
     });
-    return result;
+
+    // Assemble the parts of the path.  If the start of the path does not
+    // happen to be the first argument it will be brought to the beginning.
+    let path_starter  = undefined;
+    let starter_index = path.findIndex(function(v) {
+        if (v.match(/^https?:/)) {
+            path_starter = v;
+        } else if (v.startsWith('//')) {
+            path_starter = window.location.protocol + v;
+        }
+        return isPresent(path_starter);
+    });
+    if (isEmpty(path)) {
+        path.push(window.location.origin + window.location.pathname);
+    } else if (isMissing(path_starter)) {
+        path.unshift(window.location.origin);
+    } else {
+        let tmp_path = [path_starter];
+        tmp_path.push(...path.slice(0, starter_index));
+        tmp_path.push(...path.slice(starter_index + 1));
+        path = tmp_path;
+    }
+    let url = path.join('/');
+
+    // Assemble the parts of the parameters.
+    if (isPresent(params)) {
+        url += '?';
+        url += $.map(params, function(v, k) { return `${k}=${v}`; }).join('&');
+    }
+
+    return url;
 }
 
 // noinspection JSUnusedGlobalSymbols
@@ -398,20 +585,20 @@ function urlParameters(path) {
  * @param {string|Selector|Event} arg
  */
 function cancelAction(arg) {
-    var $button, url;
+    let $button = undefined;
+    let url     = undefined;
     if (typeof arg === 'object') {
         arg.stopPropagation();
         $button = $(arg.target);
     } else if (isMissing(arg)) {
         $button = $(this);
-    } else if (arg.indexOf('http') === 0) {
-        url     = arg;
-    } else if (arg.indexOf('/') === 0) {
+    } else if (arg.startsWith('http') || arg.startsWith('/')) {
         url     = arg;
     } else {
         $button = $(arg);
     }
     if (!url && isPresent($button)) {
+        // noinspection JSObjectNullOrUndefined
         url = $button.attr('data-path');
     }
     if (!url && window.location.search && !window.history.length) {
@@ -427,7 +614,7 @@ function cancelAction(arg) {
 }
 
 // ============================================================================
-// Function definitions - Events
+// Functions - Events
 // ============================================================================
 
 /**
@@ -457,7 +644,7 @@ function handleClickAndKeypress($element, func) {
 }
 
 // ============================================================================
-// Function definitions - Accessibility
+// Functions - Accessibility
 // ============================================================================
 
 /**
@@ -466,7 +653,7 @@ function handleClickAndKeypress($element, func) {
  * @constant
  * @type {string[]}
  */
-var FOCUS_ELEMENTS = ['a', 'area', 'button', 'input', 'select', 'textarea'];
+const FOCUS_ELEMENTS = ['a', 'area', 'button', 'input', 'select', 'textarea'];
 
 /**
  * Selector for FOCUS_ELEMENTS elements.
@@ -474,7 +661,7 @@ var FOCUS_ELEMENTS = ['a', 'area', 'button', 'input', 'select', 'textarea'];
  * @constant
  * @type {string}
  */
-var FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
+const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
 
 /**
  * Attributes indicating that an element should receive focus.
@@ -482,7 +669,7 @@ var FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
  * @constant
  * @type {string[]}
  */
-var FOCUS_ATTRIBUTES =
+const FOCUS_ATTRIBUTES =
     ['href', 'controls', 'data-path', 'draggable', 'tabindex'];
 
 /**
@@ -491,7 +678,7 @@ var FOCUS_ATTRIBUTES =
  * @constant
  * @type {string}
  */
-var FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
+const FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
 
 /**
  * Selector for focusable elements.
@@ -499,7 +686,7 @@ var FOCUS_ATTRIBUTES_SELECTOR = attributeSelector(FOCUS_ATTRIBUTES);
  * @constant
  * @type {string}
  */
-var FOCUS_SELECTOR =
+const FOCUS_SELECTOR =
     FOCUS_ELEMENTS_SELECTOR + ', ' + FOCUS_ATTRIBUTES_SELECTOR;
 
 /**
@@ -508,7 +695,7 @@ var FOCUS_SELECTOR =
  * @constant
  * @type {string[]}
  */
-var NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
+const NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
 
 /**
  * Selector for focusable elements that should not receive focus.
@@ -516,7 +703,7 @@ var NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
  * @constant
  * @type {string}
  */
-var NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
+const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
 
 /**
  * For "buttons" or "links" which are not <a> tags (or otherwise don't
@@ -553,23 +740,23 @@ function handleKeypressAsClick(selector, direct, match, except) {
      *
      * @type {jQuery}
      */
-    var $elements = (typeof selector === 'number') ? $(this) : $(selector);
+    let $elements = (typeof selector === 'number') ? $(this) : $(selector);
 
     // Apply match criteria to select all elements that would be expected to
     // receive a keypress based on their attributes.
-    var criteria = [];
+    let criteria = [];
     if (match && (typeof match === 'string')) {
         criteria.push(match);
     } else if (direct || (match === true) || notDefined(match)) {
         criteria.push(FOCUS_ATTRIBUTES_SELECTOR);
     }
     if (isPresent(criteria)) {
-        var sel = criteria.join(', ');
+        const sel = criteria.join(', ');
         $elements = direct ? $elements.filter(sel) : $elements.find(sel);
     }
 
     // Ignore elements that won't be reached by tabbing to them.
-    var exceptions = [NO_FOCUS_SELECTOR];
+    let exceptions = [NO_FOCUS_SELECTOR];
     if (except && (typeof except === 'string')) {
         exceptions.push(except);
     }
@@ -591,10 +778,10 @@ function handleKeypressAsClick(selector, direct, match, except) {
      * @return {boolean}
      */
     function handleKeypress(event) {
-        var key = event && event.key;
+        const key = event && event.key;
         if (key === 'Enter') {
-            var $target = $(event.target || this);
-            var href    = $target.attr('href');
+            let $target = $(event.target || this);
+            const href  = $target.attr('href');
             if (!href || (href === '#')) {
                 $target.click().focusin();
                 return false;
@@ -624,4 +811,19 @@ function focusable(element) {
  */
 function focusableIn(element) {
     return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);
+}
+
+// ============================================================================
+// Functions - Browser
+// ============================================================================
+
+/**
+ * Indicate whether the client browser is MS Internet Explorer.
+ *
+ * @returns {boolean}
+ */
+function isInternetExplorer() {
+    // noinspection PlatformDetectionJS
+    const ua = navigator.userAgent || '';
+    return ua.includes('MSIE ') || ua.includes('Trident/');
 }

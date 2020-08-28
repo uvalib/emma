@@ -201,19 +201,22 @@
 }
 
 // A pop-out effect for panels.
+// noinspection SassScssResolvedByNameOnly
 %popup-shadow {
-    box-shadow: 0.25rem 0.25rem 1rem 0.125rem gray;
+    box-shadow: $popup-shadow;
 }
 
 // A subtle pop-out effect for text blocks.
+// noinspection SassScssResolvedByNameOnly
 %block-shadow {
-    box-shadow: 0.25rem 0.25rem 0.25rem -0.0625rem lightgray;
+    box-shadow: $block-shadow;
 }
 
 // A very subtle pop-out effect for controls.
+// noinspection SassScssResolvedByNameOnly
 %control-shadow {
 
-    box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray;
+    box-shadow: $control-shadow;
 
     &:focus {
         box-shadow: none;

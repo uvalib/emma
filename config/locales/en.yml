@@ -246,15 +246,12 @@ en:
         label:          'Page Size'
         url_parameter:  'limit'
         multiple:       false
-        tooltip:        'Specify the number of search results per page'
+        tooltip:        "Specify the number of search results per page.\nNOTE: The EMMA Unified Index does not yet support this capability."
         placeholder:    ~
         menu_format:    'none'
         values:
-          - 10
-          - 25
-          - 50
           - 100
-        default:        10
+        default:        ~ # Use emma.*.pagination.page_size
 
       sort:
         label:          'Sort By'
@@ -298,7 +295,7 @@ en:
 
     pagination:         &PAGINATION
 
-      page_size:        10
+      page_size:        100
       separator:        '&nbsp;|&nbsp;'
       count:            'items found'
 
@@ -382,6 +379,7 @@ en:
       failure:
         prefix:       'Download failed: '
         cancelled:    'Download cancelled'
+        sign_in:      'You must sign in to EMMA first.'
         unknown:      'unknown error'
 
       button:

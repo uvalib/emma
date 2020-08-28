@@ -67,7 +67,7 @@ module SerializationConcern
   # @return [Hash{Symbol=>Array,Hash}]
   #
   #--
-  # noinspection RubyNilAnalysis
+  # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
   #++
   def index_values(list = nil)
     limit =

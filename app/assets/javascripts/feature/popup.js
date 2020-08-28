@@ -7,11 +7,11 @@
 // noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
-    /** @const {string} */ var POPUP_CLASS    = 'popup-container';
-    /** @const {string} */ var POPUP_SELECTOR = '.' + POPUP_CLASS;
+    /** @const {string}   */ const POPUP_CLASS    = 'popup-container';
+    /** @const {Selector} */ const POPUP_SELECTOR = selector(POPUP_CLASS);
 
     /** @type {jQuery} */
-    var $popup_containers = $(POPUP_SELECTOR).not('.for-help');
+    let $popup_containers = $(POPUP_SELECTOR).not('.for-help');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($popup_containers)) {
@@ -28,22 +28,24 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
+    const DEBUGGING = false;
 
-    /** @const {string} */ var BUTTON_CLASS      = Emma.Popup.button.class;
-    /** @const {string} */ var PANEL_CLASS       = Emma.Popup.panel.class;
-    /** @const {string} */ var CLOSER_CLASS      = Emma.Popup.closer.class;
-    /** @const {string} */ var CONTROLS_CLASS    = Emma.Popup.controls.class;
-    /** @const {string} */ var DEFERRED_CLASS    = Emma.Popup.deferred.class;
-    /** @const {string} */ var BUTTON_SELECTOR   = '.' + BUTTON_CLASS;
-    /** @const {string} */ var PANEL_SELECTOR    = '.' + PANEL_CLASS;
-    /** @const {string} */ var CLOSER_SELECTOR   = '.' + CLOSER_CLASS;
-    /** @const {string} */ var CONTROLS_SELECTOR = '.' + CONTROLS_CLASS;
-    /** @const {string} */ var DEFERRED_SELECTOR = '.' + DEFERRED_CLASS;
-    /** @const {string} */ var HIDDEN_MARKER     = 'hidden';
+    /** @const {string} */ const BUTTON_CLASS      = Emma.Popup.button.class;
+    /** @const {string} */ const PANEL_CLASS       = Emma.Popup.panel.class;
+    /** @const {string} */ const CLOSER_CLASS      = Emma.Popup.closer.class;
+    /** @const {string} */ const CONTROLS_CLASS    = Emma.Popup.controls.class;
+    /** @const {string} */ const DEFERRED_CLASS    = Emma.Popup.deferred.class;
+    /** @const {string} */ const HIDDEN_MARKER     = Emma.Popup.hidden.class;
+    /** @const {string} */ const COMPLETE_MARKER   = 'complete';
+    /** @const {string} */ const BUTTON_SELECTOR   = selector(BUTTON_CLASS);
+    /** @const {string} */ const PANEL_SELECTOR    = selector(PANEL_CLASS);
+    /** @const {string} */ const CLOSER_SELECTOR   = selector(CLOSER_CLASS);
+    /** @const {string} */ const CONTROLS_SELECTOR = selector(CONTROLS_CLASS);
+    /** @const {string} */ const DEFERRED_SELECTOR = selector(DEFERRED_CLASS);
+    /** @const {string} */ const HIDDEN_SELECTOR   = selector(HIDDEN_MARKER);
 
     // ========================================================================
-    // Constants
+    // Variables
     // ========================================================================
 
     /**
@@ -51,47 +53,109 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $all_popups = $popup_containers.children(PANEL_SELECTOR);
+    let $all_popups = $popup_containers.children(PANEL_SELECTOR);
 
     /**
      * All popup close buttons.
      *
      * @type {jQuery}
      */
-    var $popup_closers = $popup_containers.find(CLOSER_SELECTOR);
+    let $popup_closers = $popup_containers.find(CLOSER_SELECTOR);
 
     /**
      * All popup control buttons on the page.
      *
      * @type {jQuery}
      */
-    var $popup_buttons = $popup_containers.children(BUTTON_SELECTOR);
+    let $popup_buttons = $popup_containers.children(BUTTON_SELECTOR);
 
     // ========================================================================
-    // Function definitions
+    // Event handlers
+    // ========================================================================
+
+    handleEvent($(window), 'keyup', onKeyUp);
+    handleEvent($(window), 'click', onClick);
+
+    handleClickAndKeypress($popup_buttons, onTogglePopup);
+    handleClickAndKeypress($popup_closers, onTogglePopup);
+
+    // ========================================================================
+    // Actions
+    // ========================================================================
+
+    // Make sure popups start hidden.
+    $all_popups.toggleClass(HIDDEN_MARKER, true);
+
+    // ========================================================================
+    // Functions
     // ========================================================================
 
     /**
      * Toggle visibility of a button and its popup element.
      *
-     * @param {Event} event
+     * @param {Selector} [target]     Default: *this*.
      */
-    function togglePopup(event) {
-        var $target = $(event && event.target || this);
-        var $popup  = findPopup($target);
+    function togglePopup(target) {
+        let func         = 'togglePopup:';
+        let $target      = $(target || this);
+        let $popup       = findPopup($target);
+        let $iframe      = $popup.children('iframe');
+        let $placeholder = $popup.children(DEFERRED_SELECTOR);
 
-        // Toggle the popup element state.
-        $popup.toggleClass(HIDDEN_MARKER);
+        // Include the ID of the iframe for logging.
+        if (DEBUGGING) {
+            let id = $popup.data('id');
+            id = id || $iframe.attr('id');
+            id = id || ($placeholder.data('attr') || {}).id;
+            func += ` ${id || 'unknown'}:`;
+        }
 
-        // Fetch deferred content when the popup is unhidden the first time.
-        // Subsequently, ensure that the popup is fully visible within the
-        // viewport when it is opened.
-        if (!$popup.hasClass(HIDDEN_MARKER)) {
-            if ($popup.hasClass('complete')) {
-                showPopup($popup);
+        // Restore placeholder text if necessary.
+        const placeholder_text = $placeholder.data('text');
+        if (placeholder_text) {
+            $placeholder.text(placeholder_text);
+        }
+        if (isDefined(placeholder_text)) {
+            $placeholder.removeData('text');
+        }
+
+        const opening  = $popup.hasClass(HIDDEN_MARKER);
+        const complete = $popup.hasClass(COMPLETE_MARKER);
+        if (opening && complete) {
+            // If the existing hidden popup can be re-used, ensure that it is
+            // fully visible and the contents are scrolled to the indicated
+            // anchor.
+            debug(func, 'RE-OPENING');
+            showPopup($popup);
+            scrollFrameDocument($iframe, $popup.data('topic'));
+
+        } else if (opening) {
+            // Fetch deferred content when the popup is unhidden the first time
+            // (or after being deleted below after closing).
+            debug(func, 'LOADING');
+            $popup.removeClass(HIDDEN_MARKER);
+            $placeholder.each(fetchContent);
+
+        } else if (complete) {
+            // If the <iframe> exists and contains a different page than the
+            // original then remove it in order to re-fetch the original the
+            // next time it is opened.
+            const expected_page = $popup.data('page');
+            const content       = $iframe[0] && $iframe[0].contentDocument;
+            const current_page  = content    && content.location.pathname;
+            if (expected_page === current_page) {
+                debug(func, 'CLOSING', current_page);
             } else {
-                $popup.find(DEFERRED_SELECTOR).each(fetchContent);
+                debug(func, 'CLOSING', '-', 'REMOVING', current_page);
+                $placeholder.removeClass(HIDDEN_MARKER);
+                $iframe.remove();
+                $popup.removeClass(COMPLETE_MARKER);
             }
+            $popup.addClass(HIDDEN_MARKER);
+
+        } else {
+            consoleWarn(func, 'CLOSING', '-', 'INCOMPLETE POPUP');
+            $popup.addClass(HIDDEN_MARKER);
         }
     }
 
@@ -103,8 +167,8 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function findPopup(target) {
-        var $target = $(target);
-        var $popup;
+        let $target = $(target);
+        let $popup;
         if ($target.hasClass(PANEL_CLASS)) {
             $popup  = $target;
         } else if ($target.hasClass(BUTTON_CLASS)) {
@@ -119,23 +183,12 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Close the indicated popup element.
+     * All popups which are currently open.
      *
-     * @param {Selector} popup
+     * @returns {jQuery}
      */
-    function hidePopup(popup) {
-        $(popup).addClass(HIDDEN_MARKER);
-    }
-
-    /**
-     * Open the indicated popup element.
-     *
-     * @param {Selector} popup
-     */
-    function showPopup(popup) {
-        var $popup = $(popup);
-        $popup.removeClass(HIDDEN_MARKER);
-        scrollIntoView($popup);
+    function findOpenPopups() {
+        return $all_popups.not(HIDDEN_SELECTOR);
     }
 
     // noinspection FunctionWithMultipleReturnPointsJS
@@ -147,12 +200,14 @@ $(document).on('turbolinks:load', function() {
      */
     function fetchContent(placeholder) {
 
-        var $placeholder = $(placeholder || this);
-        var $popup       = $placeholder.parents(PANEL_SELECTOR).first();
-        var source_url   = $placeholder.data('path');
+        const func       = 'fetchContent:';
+        let $placeholder = $(placeholder || this);
+        let $popup       = $placeholder.parents(PANEL_SELECTOR).first();
+        const source_url = $placeholder.data('path');
 
         // Validate parameters and return if there is missing information.
-        var error, type;
+        let error = undefined;
+        let type;
         if (isMissing(source_url)) {
             error = 'no source URL';
         } else if ($placeholder.hasClass('iframe')) {
@@ -163,15 +218,16 @@ $(document).on('turbolinks:load', function() {
             error = 'no type';
         }
         if (error) {
-            console.warn('fetchContent:', error);
+            consoleWarn(func, error);
             return;
         }
 
         // Setup the element that will actually contain the received content
         // then fetch it.  The element will appear only if successfully loaded.
-        var $content = $('<' + type + '>');
+        // noinspection HtmlUnknownTag
+        let $content = $(`<${type}>`);
         $content.attr(Emma.to_object($placeholder.data('attr')));
-        $content.addClass('hidden');
+        $content.addClass(HIDDEN_MARKER);
         $content.insertAfter($placeholder);
         handleEvent($content, 'error', onError);
         handleEvent($content, 'load',  onLoad);
@@ -184,7 +240,10 @@ $(document).on('turbolinks:load', function() {
          * @param {Event} event
          */
         function onError(event) {
-            console.warn('fetchContent:', type, 'FAILED', event);
+            consoleWarn(func, type, 'FAILED', event);
+            if (!$placeholder.data('text')) {
+                $placeholder.data('text', $placeholder.text());
+            }
             $placeholder.text('Could not load content.');
             $content.remove();
         }
@@ -192,49 +251,171 @@ $(document).on('turbolinks:load', function() {
         /**
          * When the popup content is loaded replace the placeholder <iframe>
          * with the content <iframe>.  If an anchor (initial element ID) was
-         * specified by the 'data-top' attribute in the placeholder, scroll the
-         * <iframe> to bring that element to the top of the panel display.
+         * specified by the 'data-topic' attribute in the placeholder, scroll
+         * the <iframe> to bring the element with that ID to the top of the
+         * panel display.
          *
          * @param {Event} event
          */
         function onLoad(event) {
-            console.log('fetchContent:', type, 'LOAD', event);
+            if ($popup.hasClass(COMPLETE_MARKER)) {
 
-            // Replace the placeholder with the downloaded content and prepare
-            // to handle key presses that are directed to the <iframe>.
-            $placeholder.remove();
-            $content.removeClass('hidden');
-            handleEvent($content.contents(), 'keyup', handleInnerEscapeKey);
+                // The user has clicked on a link within the <iframe> and a new
+                // page has been loaded into it.
+                debug(func, type, 'PAGE REPLACED');
 
-            // Make sure the associated popup element is displayed.
-            showPopup($popup);
+            } else {
 
-            // Scroll the <iframe> content to the indicated anchor.  For some
-            // reason, this is also causing the root window to scroll too, so
-            // its Y position is restored after the <iframe> is scrolled in
-            // order to nullify that effect.
-            var top = $placeholder.data('top');
-            if (top) {
-                var saved_y = window.parent.scrollY;
-                var iframe  = $content[0].contentWindow.document;
-                var section = iframe.getElementById(top);
-                section.scrollIntoView(true);
-                window.parent.scrollTo(0, saved_y);
+                // The initial load of the popup target page.
+                debug(func, type, 'LOAD');
+                const iframe = $content[0].contentDocument;
+                const topic  = $placeholder.data('topic');
+
+                // Record the initial page and anchor displayed in the <iframe>
+                $popup.data('id',    $content[0].id); // For logging.
+                $popup.data('page',  iframe.location.pathname);
+                $popup.data('topic', topic);
+                $popup.addClass(COMPLETE_MARKER);
+
+                // Replace the placeholder with the downloaded content.
+                $placeholder.addClass(HIDDEN_MARKER);
+                $content.removeClass(HIDDEN_MARKER);
+
+                // Prepare to handle key presses that are directed to the
+                // <iframe>.
+                handleEvent($content.contents(), 'keyup', onIframeKeyUp);
+
+                // Make sure the associated popup element is displayed and
+                // scrolled into position.
+                showPopup($popup);
+                scrollFrameDocument($content, topic);
             }
-
-            $popup.addClass('complete');
         }
 
         // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
         /**
          * Allow "Escape" key from within the <iframe> to close the popup.
          *
+         * Re-focus on the parent window so that the hidden popup does not
+         * continue to intercept keypress events.
+         *
          * @param {KeyboardEvent} event
          */
-        function handleInnerEscapeKey(event) {
-            var key = event && event.key;
+        function onIframeKeyUp(event) {
+            const key = event && event.key;
             if (key === 'Escape') {
+                debug('ESC pressed in popup', $popup.data('id'));
                 hidePopup($popup);
+                window.parent.focus();
+                return false;
+            }
+        }
+    }
+
+    /**
+     * Scroll the <iframe> content to the indicated anchor.
+     *
+     * @param {Selector} iframe
+     * @param {string}   [topic]      Default: top of document.
+     */
+    function scrollFrameDocument(iframe, topic) {
+        let $iframe = $(iframe);
+        const id    = $iframe.attr('id') || '???';
+        const func  = `scrollFrameDocument: popup ${id}:`;
+        let doc     = $iframe[0] && $iframe[0].contentDocument;
+        let anchor  = topic  && topic.replace(/^#/, '');
+        let section = anchor && doc && doc.getElementById(anchor);
+        let error   = undefined;
+        let warn    = undefined;
+        if (isEmpty($iframe)) {
+            error   = 'NO IFRAME';
+        } else if (isEmpty(doc)) {
+            error   = 'NO DOCUMENT';
+        } else if (notDefined(topic)) {
+            anchor  = '#TOP'; // For reporting.
+            section = doc.body;
+        } else if (isMissing(anchor)) {
+            error   = 'NO ANCHOR';
+        } else if (!section) {
+            warn    = `${anchor}: ANCHOR MISSING IN DOCUMENT`;
+        }
+
+        if (error) {
+            consoleError(func, error);
+        } else if (warn) {
+            consoleWarn(func, warn);
+        } else {
+            // For some reason, scrollIntoView is also causing the root window
+            // to scroll, so the Y position is restored to nullify that effect.
+            debug(func, 'anchor =', anchor);
+            const saved_y = window.parent.scrollY;
+            section.scrollIntoView(true);
+            window.parent.scrollTo(0, saved_y);
+        }
+    }
+
+    /**
+     * Open the indicated popup element.
+     *
+     * @param {Selector} [popup]      Default: *this*.
+     */
+    function showPopup(popup) {
+        let $popup = $(popup || this);
+        debugPopups('showPopup', $popup);
+        $popup.removeClass(HIDDEN_MARKER);
+        scrollIntoView($popup);
+    }
+
+    /**
+     * Close the indicated popup element.
+     *
+     * @param {Selector} [popup]      Default: *this*.
+     */
+    function hidePopup(popup) {
+        let $popup = $(popup || this);
+        debugPopups('hidePopup', $popup);
+        $popup.addClass(HIDDEN_MARKER);
+    }
+
+    /**
+     * Close all popups that are not hidden.
+     *
+     * @param {Selector} [popups]     Default: `{@link findOpenPopups()}`.
+     */
+    function hideAllOpenPopups(popups) {
+        debug('hideAllOpenPopups');
+        let $popups = popups ? $(popups) : findOpenPopups();
+        $popups.each(function() { togglePopup(this); });
+    }
+
+    // ========================================================================
+    // Functions - event handlers
+    // ========================================================================
+
+    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+    /**
+     * Allow "Escape" key to close an open popup.
+     *
+     * If the event originates from outside of a popup control or open popup,
+     * then close all open popups.
+     *
+     * @param {KeyboardEvent} event
+     */
+    function onKeyUp(event) {
+        // debugEvent('onKeyUp', event);
+        const key = event && event.key;
+        if (key === 'Escape') {
+            // debug('> ESC pressed outside of popup controls or panels');
+            let $target = $(event.target || this);
+            let $popup  = findPopup($target).not(HIDDEN_SELECTOR);
+            let $popups = isMissing($popup) && findOpenPopups();
+            if (isPresent($popup)) {
+                debug('> ESC pressed in window; closing single open popup');
+                hidePopup($popup);
+                return false;
+            } else if (isPresent($popups)) {
+                debug('> ESC pressed in window; closing all open popups');
+                hideAllOpenPopups($popups);
                 return false;
             }
         }
@@ -242,54 +423,89 @@ $(document).on('turbolinks:load', function() {
 
     // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
     /**
-     * Allow "Escape" key to close an open popup.
+     * Close all popups that are not hidden.
      *
-     * If the event originates from outside of an open popup, then close all
-     * open popups.
-     *
-     * @param {KeyboardEvent} event
+     * @param {MouseEvent} event
      */
-    function handleEscapeKey(event) {
-        var key = event && event.key;
-        if (key === 'Escape') {
-            var $target = $(event.target || this);
-            var $popup  = findPopup($target);
-            if (isPresent($popup) && !$popup.hasClass(HIDDEN_MARKER)) {
-                hidePopup($popup);
-            } else {
-                hidePopup($all_popups);
+    function onClick(event) {
+        // debugEvent('onClick', event);
+        let $target = $(event.target);
+        let $parent = $target.parents().first();
+        if ($parent.hasClass(PANEL_CLASS)) {
+            debug('> CLICK within open panel');
+        } else if ($target.hasClass(PANEL_CLASS)) {
+            debug('> CLICK on open panel');
+        } else if ($parent.hasClass(POPUP_CLASS)) {
+            debug('> CLICK popup control');
+        } else if ($target.hasClass(POPUP_CLASS)) {
+            debug('> CLICK within popup control');
+        } else {
+            debug('> CLICK outside of popup controls or panels');
+            let $popups = findOpenPopups();
+            if (isPresent($popups)) {
+                hideAllOpenPopups($popups);
             }
-            return false;
         }
     }
 
-    // ========================================================================
-    // Event handlers
-    // ========================================================================
-
-    handleEvent($(window), 'keyup', handleEscapeKey);
-
-    handleClickAndKeypress($popup_buttons, togglePopup);
-    handleClickAndKeypress($popup_closers, togglePopup);
-
-    // ========================================================================
-    // Actions
-    // ========================================================================
-
-    // Make sure popups start hidden.
-    $all_popups.toggleClass(HIDDEN_MARKER, true);
+    /**
+     * Toggle visibility of a button and its popup element.
+     *
+     * @param {Event} event
+     */
+    function onTogglePopup(event) {
+        debugEvent('onTogglePopup', event);
+        event.stopPropagation();
+        togglePopup(event.target);
+        return false;
+    }
 
     // ========================================================================
-    // Internal functions
+    // Functions - other
     // ========================================================================
 
     /**
-     * Emit a console message if debugging.
+     * Report on 0 or more popups.
+     *
+     * @param {string} label
+     * @param {jQuery} $popup
      */
-    function debug() {
+    function debugPopups(label, $popup) {
         if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
+            const func = label.endsWith(':') ? label : `${label}:`;
+            if ($popup.length === 0) {
+                consoleLog(func, 'NO POPUPS');
+            } else if ($popup.length === 1) {
+                const id    = $popup.data('id')    || '-';
+                const page  = $popup.data('page')  || '-';
+                const topic = $popup.data('topic') || '-';
+                consoleLog(func, 'id =', id, 'page =', page, 'topic =', topic);
+            } else {
+                consoleLog(func, 'all', $popup.length, 'popups');
+            }
         }
+    }
+
+    /**
+     * Report on an event.
+     *
+     * @param {string} label
+     * @param {Event}  event
+     */
+    function debugEvent(label, event) {
+        if (DEBUGGING) {
+            console.log('***', label, '***');
+            console.log(event);
+        }
+    }
+
+    /**
+     * Emit a console message if debugging.
+     *
+     * @param {...*} args
+     */
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

@@ -25,6 +25,13 @@ en:
       search_controls:
         format:
           multiple:     false
+        size:
+          tooltip:      'Specify the number of search results per page'
+          values:
+            - 10
+            - 25
+            - 50
+            - 100
         sort:
           values:       !ruby/symbol MyReadingListSortOrder
           reverse:
@@ -36,6 +43,13 @@ en:
         label:
           one:          'Manage this reading list'
           many:         'Reading List Actions'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size:      10
 
       # =======================================================================
       # Fields

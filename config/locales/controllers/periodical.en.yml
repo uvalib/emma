@@ -36,6 +36,13 @@ en:
         format:
           values:       !ruby/symbol PeriodicalFormatType
           multiple:     false
+        size:
+          tooltip:      'Specify the number of search results per page'
+          values:
+            - 10
+            - 25
+            - 50
+            - 100
         sort:
           values:       !ruby/symbol PeriodicalSortOrder
           reverse:
@@ -44,6 +51,13 @@ en:
           - [sort,     size,     format]
           - [language, category        ]
           - [braille,  narrator        ]
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      pagination:
+        page_size:      10
 
       # =======================================================================
       # Fields

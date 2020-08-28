@@ -423,7 +423,7 @@ module ModelHelper
     help =
       if field == :emma_retrievalLink
         url  = extract_url(value)
-        repo = url_repository(url)
+        repo = url_repository(url, default: !application_deployed?)
         help_popup(:download, repo)
       end
 

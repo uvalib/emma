@@ -4,9 +4,10 @@
 //= require shared/definitions
 //= require shared/logging
 //= require feature/flash
-//x require ../../../../node_modules/uppy/bundle
 
-// noinspection FunctionWithMultipleReturnPointsJS
+// import Uppy from 'uppy'; // NOTE: This is not acceptable to Uglifier
+
+// noinspection FunctionWithMultipleReturnPointsJS,JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -15,7 +16,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var UPLOAD_FORM_CLASS = 'file-upload-form';
+    const UPLOAD_FORM_CLASS = 'file-upload-form';
 
     /**
      * CSS class for eligible form elements.
@@ -23,7 +24,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {String}
      */
-    var UPLOAD_FORM_SELECTOR = '.' + UPLOAD_FORM_CLASS;
+    const UPLOAD_FORM_SELECTOR = selector(UPLOAD_FORM_CLASS);
 
     /**
      * File upload forms on the page.
@@ -36,7 +37,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {jQuery}
      */
-    var $file_upload_form = $(UPLOAD_FORM_SELECTOR);
+    let $file_upload_form = $(UPLOAD_FORM_SELECTOR);
 
     /**
      * CSS classes for bulk operations.
@@ -44,7 +45,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var BULK_FORM_CLASS = 'file-upload-bulk';
+    const BULK_FORM_CLASS = 'file-upload-bulk';
 
     /**
      * CSS classes for bulk operations.
@@ -52,7 +53,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var BULK_FORM_SELECTOR = '.' + BULK_FORM_CLASS;
+    const BULK_FORM_SELECTOR = selector(BULK_FORM_CLASS);
 
     /**
      * Bulk operation forms on the page.
@@ -60,20 +61,12 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {jQuery}
      */
-    var $bulk_operation_form = $(BULK_FORM_SELECTOR).filter(':not(.delete)');
+    let $bulk_operation_form = $(BULK_FORM_SELECTOR).not('.delete');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($file_upload_form) && isMissing($bulk_operation_form)) {
         return;
     }
-
-    /**
-     * Generic form selector.
-     *
-     * @constant
-     * @type {string}
-     */
-    var FORM_SELECTOR = UPLOAD_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
 
     // ========================================================================
     // JSDoc type definitions
@@ -128,7 +121,7 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * FileData
+     * Shrine upload information for the submission.
      *
      * @typedef {{
      *      id:             string,
@@ -144,7 +137,7 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * EmmaData
+     * EMMA metadata for the submission.
      *
      * @typedef {{
      *      emma_recordId:                      string,
@@ -199,7 +192,7 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * UploadRecord
+     * A complete submission database record.
      *
      * @typedef {{
      *      id:             number,
@@ -229,9 +222,15 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * UploadRecordMessage
+     * Response message list element for a single submission.
      *
-     * @typedef {{entry: UploadRecord }} UploadRecordMessageEntry
+     * @typedef {{
+     *      entry: UploadRecord
+     * }} UploadRecordMessageEntry
+     */
+
+    /**
+     * JSON format of a response message containing a list of submissions.
      *
      * @typedef {{
      *      entries: {
@@ -245,6 +244,18 @@ $(document).on('turbolinks:load', function() {
      * }} UploadRecordMessage
      */
 
+    /**
+     * Field relationship.
+     *
+     * @typedef {{
+     *      name:           string,
+     *      required:       (boolean|function)?,
+     *      unrequired:     (boolean|function)?,
+     *      required_val:   string?,
+     *      unrequired_val: string?
+     * }} Relationship
+     */
+
     // ========================================================================
     // Constants
     // ========================================================================
@@ -255,7 +266,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
+    const DEBUGGING = true;
 
     /**
      * Uppy plugin selection plus other optional settings.
@@ -263,7 +274,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {UppyFeatures}
      */
-    var FEATURES = {
+    const FEATURES = {
         replace_input:  true,
         upload_to_aws:  false,
         popup_messages: true,
@@ -283,7 +294,15 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    var MESSAGE_DURATION = 3 * SECONDS;
+    const MESSAGE_DURATION = 3 * SECONDS;
+
+    /**
+     * Generic form selector.
+     *
+     * @constant
+     * @type {string}
+     */
+    const FORM_SELECTOR = UPLOAD_FORM_SELECTOR + ',' + BULK_FORM_SELECTOR;
 
     /**
      * Selector for Uppy drag-and-drop target.
@@ -291,7 +310,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var DRAG_AND_DROP_SELECTOR = '.' + Emma.Upload.css.drag_target;
+    const DRAG_AND_DROP_SELECTOR = selector(Emma.Upload.css.drag_target);
 
     /**
      * Selector for thumbnail display of the selected file.
@@ -299,7 +318,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var PREVIEW_SELECTOR = '.' + Emma.Upload.css.preview;
+    const PREVIEW_SELECTOR = selector(Emma.Upload.css.preview);
 
     /**
      * Selectors for input fields.
@@ -307,7 +326,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    var FORM_FIELD_TYPES = [
+    const FORM_FIELD_TYPES = [
         'select',
         'textarea',
         'input[type="text"]',
@@ -323,17 +342,9 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
+    const FORM_FIELD_SELECTOR = FORM_FIELD_TYPES.join(', ');
 
-    /**
-     * @typedef  {Object} Relationship
-     * @property {string}           name
-     * @property {boolean|function} [required]
-     * @property {boolean|function} [unrequired]
-     * @property {string}           [required_val]
-     * @property {string}           [unrequired_val]
-     */
-
+    // noinspection JSValidateTypes
     /**
      * Interrelated elements.  For example:
      *
@@ -342,9 +353,9 @@ $(document).on('turbolinks:load', function() {
      * implies that "rem_complete" is "false".
      *
      * @constant
-     * @type {{rem_coverage: Relationship, rem_complete: Relationship}}
+     * @type {{rem_complete: Relationship, rem_coverage: Relationship}}
      */
-    var FIELD_RELATIONSHIP = {
+    const FIELD_RELATIONSHIP = {
         rem_complete: {
             name:           'rem_coverage',
             required:       function() { return $(this).val() !== 'true'; },
@@ -368,7 +379,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
+    const BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
 
     // noinspection PointlessArithmeticExpressionJS
     /**
@@ -377,7 +388,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {number}
      */
-    var BULK_CHECK_PERIOD = 10 * SECOND;
+    const BULK_CHECK_PERIOD = 10 * SECONDS;
 
     /**
      * Indicator that a results line is filler displayed prior to detecting the
@@ -386,7 +397,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var TMP_LINE_CLASS = 'start';
+    const TMP_LINE_CLASS = 'start';
 
     /**
      * Filler displayed prior to detecting the first added database entry.
@@ -394,7 +405,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var TMP_LINE = 'Uploading...'; // TODO: I18n
+    const TMP_LINE = 'Uploading...'; // TODO: I18n
 
     // ========================================================================
     // Actions
@@ -403,7 +414,7 @@ $(document).on('turbolinks:load', function() {
     // Setup Uppy for any <input type="file"> elements (unless this page is
     // being reached via browser history).
     $file_upload_form.each(function() {
-        var $form = $(this);
+        let $form = $(this);
         if (!isUppyInitialized($form)) {
             initializeUppy($form[0]);
             initializeUploadForm($form);
@@ -426,7 +437,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeBulkForm(form) {
 
-        var $form = $(form || this);
+        let $form = $(form || this);
 
         // Setup buttons.
         setupSubmitButton($form);
@@ -441,7 +452,7 @@ $(document).on('turbolinks:load', function() {
         handleEvent($form, 'submit', monitorBulkUpload);
 
         // When a file has been selected, display its name and enable submit.
-        var $input = fileSelectContainer($form).children('input[type="file"]');
+        let $input = fileSelectContainer($form).children('input[type="file"]');
         handleEvent($input, 'change', setBulkFilename);
 
         /**
@@ -450,32 +461,13 @@ $(document).on('turbolinks:load', function() {
          * @param {Event} event
          */
         function setBulkFilename(event) {
-            var target   = event.target || event || this;
-            var filename = ((target.files || [])[0] || {}).name;
+            const target   = event.target || event || this;
+            const filename = ((target.files || [])[0] || {}).name;
             if (isPresent(filename)) {
-                displayBulkFilename(filename, $form);
+                displayFilename(filename, $form);
                 fileSelectButton($form).removeClass('best-choice');
                 enableSubmit($form);
             }
-        }
-    }
-
-    /**
-     * Display the name of the bulk upload control file.
-     *
-     * @param {String}   filename
-     * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
-     */
-    function displayBulkFilename(filename, element) {
-        var $element = uploadedFilenameDisplay(element);
-        if (isPresent(filename) && isPresent($element)) {
-            var $filename = $element.find('.filename');
-            if (isPresent($filename)) {
-                $filename.text(filename);
-            } else {
-                $element.text(filename);
-            }
-            $element.addClass('complete');
         }
     }
 
@@ -505,8 +497,8 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function bulkUploadResults(results) {
-        var selector = BULK_UPLOAD_RESULTS_SELECTOR;
-        var $results = $(results);
+        const selector = BULK_UPLOAD_RESULTS_SELECTOR;
+        let $results   = $(results);
         return $results.is(selector) ? $results : $(selector);
     }
 
@@ -522,10 +514,10 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function bulkUploadResultsNextId(results, record) {
-        var name     = 'next-id';
-        var $results = bulkUploadResults(results);
-        var value    = $results.data(name);
-        var initial  = isMissing(value);
+        const name    = 'next-id';
+        let $results  = bulkUploadResults(results);
+        let value     = $results.data(name);
+        const initial = isMissing(value);
         if (initial || isDefined(record)) {
             value = (typeof record === 'object') ? record.id : record;
             value = (Number(value) || 0) + 1;
@@ -549,9 +541,9 @@ $(document).on('turbolinks:load', function() {
      * @return {number}
      */
     function bulkUploadResultsStartTime(results, start_time) {
-        var name     = 'start-time';
-        var $results = bulkUploadResults(results);
-        var value    = $results.data(name);
+        const name   = 'start-time';
+        let $results = bulkUploadResults(results);
+        let value    = $results.data(name);
         if (isPresent(start_time) || isMissing(value)) {
             value = timeOf(start_time);
             $results.data(name, value);
@@ -564,7 +556,7 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorBulkUpload() {
 
-        var $results = bulkUploadResults().removeClass('hidden');
+        let $results = bulkUploadResults().removeClass('hidden');
         addBulkUploadResult($results, TMP_LINE_CLASS, TMP_LINE);
         fetchUploadEntries('$', null, startMonitoring);
 
@@ -575,7 +567,7 @@ $(document).on('turbolinks:load', function() {
          * @param {UploadRecord[]} list
          */
         function startMonitoring(list) {
-            var record = list[list.length-1] || {};
+            const record = list.slice(-1)[0] || {};
             bulkUploadResultsNextId($results, record);
             bulkUploadResultsStartTime($results);
             scheduleCheckBulkUploadResults($results);
@@ -590,15 +582,15 @@ $(document).on('turbolinks:load', function() {
      * @param {number}   [milliseconds]
      */
     function scheduleCheckBulkUploadResults(results, milliseconds) {
-        var $results = bulkUploadResults(results);
-        var period   = milliseconds || BULK_CHECK_PERIOD;
-        var name     = 'check-period';
-        var timer    = $results.data(name);
+        let $results = bulkUploadResults(results);
+        const period = milliseconds || BULK_CHECK_PERIOD;
+        const name   = 'check-period';
+        const timer  = $results.data(name);
         if (isPresent(timer)) {
             clearTimeout(timer);
         }
         if ($results.is(':visible')) {
-            var new_timer = setTimeout(checkBulkUploadResults, period);
+            const new_timer = setTimeout(checkBulkUploadResults, period);
             $results.data(name, new_timer);
         }
     }
@@ -608,8 +600,8 @@ $(document).on('turbolinks:load', function() {
      */
     function checkBulkUploadResults() {
 
-        var $results = bulkUploadResults();
-        var start_id = bulkUploadResultsNextId($results);
+        let $results   = bulkUploadResults();
+        const start_id = bulkUploadResultsNextId($results);
         fetchUploadEntries(start_id, '$', addNewLines);
 
         /**
@@ -620,15 +612,15 @@ $(document).on('turbolinks:load', function() {
          */
         function addNewLines(list) {
             if (isPresent(list)) {
-                var $lines = $results.children();
+                let $lines = $results.children();
 
                 // Remove initialization line(s) if present.
                 // noinspection JSCheckFunctionSignatures
                 $lines.filter('.' + TMP_LINE_CLASS).remove();
 
                 // Add a line for each record.
-                var last_id = 0;
-                var row     = $lines.length;
+                let last_id = 0;
+                let row     = $lines.length;
                 list.forEach(function(record) {
                     row += 1;
                     addBulkUploadResult($results, row, record);
@@ -655,43 +647,38 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}               The element appended to results.
      */
     function addBulkUploadResult(results, index, entry, time) {
-        var $results = bulkUploadResults(results);
-        var $line    = $('<div>');
+        let $results = bulkUploadResults(results);
+        let $line    = $('<div>');
 
         // CSS classes for the added line.
-        var row_class;
-        if (typeof index === 'number') {
-            row_class = 'row-' + index;
-        } else {
-            row_class = index || '';
+        let row = (typeof index === 'number') ? `row-${index}` : (index || '');
+        if (!row.includes('line')) {
+            row = `line ${row}`.trim();
         }
-        if (row_class.indexOf('line') < 0) {
-            row_class = ['line', row_class].join(' ').trim();
-        }
-        $line.addClass(row_class);
+        $line.addClass(row);
 
         // Text content for the added line.
-        var text, html;
+        let text = '';
+        let html = '';
         if (typeof entry !== 'object') {
             text = entry.toString();
         } else if (isMissing(entry.repository_id)) {
             // A generic object.
-            text = JSON.stringify(entry).substr(0, 512);
+            text = asString(entry, 512);
         } else {
             // An object which is a de-serialized Upload record.
-            var start = bulkUploadResultsStartTime($results);
-            var fd    = entry.file_data     || {};
-            var file  = fd.metadata && fd.metadata.filename;
-            var pair  = {
+            const start = bulkUploadResultsStartTime($results);
+            const fd    = entry.file_data     || {};
+            const file  = fd.metadata && fd.metadata.filename;
+            const pair  = {
                 time: secondsSince(start, time).toFixed(1),
                 id:   (entry.id            || '(missing id)'),
                 rid:  (entry.repository_id || '(missing repository_id)'),
-                file: (file ? ('"' + file + '"') : '(missing filename)')
+                file: (file && `"${file}"` || '(missing filename)')
             };
-            html = '';
             $.each(pair, function(k, v) {
-                html += '<span class="label">' + k + '</span>';
-                html += '<span class="value">' + v + '</span>';
+                html += `<span class="label">${k}</span>`;
+                html += `<span class="value">${v}</span>`;
             });
         }
         if (html) {
@@ -714,22 +701,22 @@ $(document).on('turbolinks:load', function() {
      * @param {function(UploadRecord[])} callback
      */
     function fetchUploadEntries(min, max, callback) {
+        const func  = 'fetchEntries:';
+        const start = Date.now();
 
-        var func = 'fetchEntries: ';
-        var url  = '/upload.json?selected=';
-        if (isPresent(min) && isPresent(max)) {
-            url += '' + min + '-' + max;
-        } else if (isPresent(max)) {
-            url += '1-' + max;
-        } else if (isPresent(min)) {
-            url += min;
-        } else {
-            url += '*';
-        }
-        var start = Date.now();
+        let range;
+        if (min && max) { range = `${min}-${max}`; }
+        else if (max)   { range = `1-${max}`; }
+        else if (min)   { range = min; }
+        else            { range = '*'; }
+        const url = `/upload.json?selected=${range}`;
 
         debug(func, 'VIA', url);
-        var results, error;
+
+        /** @type {UploadRecord[]} records */
+        let records = undefined;
+        let error   = '';
+
         $.ajax({
             url:      url,
             type:     'GET',
@@ -747,23 +734,24 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
+            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
             // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
-                error = 'unexpected data type ' + typeof(data);
+                error = `unexpected data type ${typeof data}`;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
                 // noinspection JSValidateTypes
                 /** @type {UploadRecordMessage} message */
-                var message = data.response || data;
-                var entries = message.entries  || {};
-                var list    = entries.list  || [];
-                var first   = list[0];
+                const message = data.response   || data;
+                const entries = message.entries || {};
+                const list    = entries.list    || [];
+                const first   = list[0];
                 if ((typeof first === 'object') && isPresent(first.entry)) {
-                    results = list.map(function(v) { return v.entry; });
+                    records = list.map(function(v) { return v.entry; });
                 } else {
-                    results = list;
+                    records = list;
                 }
             }
         }
@@ -773,10 +761,10 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {XMLHttpRequest} xhr
          * @param {string}         status
-         * @param {string}         error_message
+         * @param {string}         message
          */
-        function onError(xhr, status, error_message) {
-            error = status + ': ' + error_message;
+        function onError(xhr, status, message) {
+            error = `${status}: ${xhr.status} ${message}`;
         }
 
         /**
@@ -787,14 +775,14 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            if (results) {
-                callback(results);
-            } else if (error) {
-                consoleWarn(func, (url + ':'), error);
-            } else {
-                consoleError(func, (url + ':'), 'unknown failure');
-            }
             debug(func, 'complete', secondsSince(start), 'sec.');
+            if (records) {
+                callback(records);
+            } else if (error) {
+                consoleWarn(func, `${url}:`, error);
+            } else {
+                consoleError(func, `${url}:`, 'unknown failure');
+            }
         }
     }
 
@@ -810,10 +798,10 @@ $(document).on('turbolinks:load', function() {
     function initializeUppy(file_upload_form) {
 
         /** @type {UppyFeatureSettings} feature */
-        var feature    = $.extend({}, FEATURES);
-        var form       = file_upload_form || this;
-        var $form      = $(form);
-        var $container = $form.parent();
+        let feature    = $.extend({}, FEATURES);
+        let form       = file_upload_form || this;
+        let $form      = $(form);
+        let $container = $form.parent();
 
         // Get targets for these features; disable the feature if its target is
         // not present.
@@ -826,7 +814,7 @@ $(document).on('turbolinks:load', function() {
 
         // === Initialization ===
 
-        var uppy = buildUppy(form, feature);
+        let uppy = buildUppy(form, feature);
 
         // Events for these features are also applicable to Uppy.Dashboard.
         if (feature.dashboard) {
@@ -855,7 +843,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeUploadForm(form) {
 
-        var $form = $(form || this);
+        let $form = $(form || this);
 
         // Setup buttons.
         setupSubmitButton($form);
@@ -896,8 +884,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function initializeFileSelectContainer(form) {
-        var $form    = formElement(form);
-        var $element = fileSelectContainer($form);
+        let $form    = formElement(form);
+        let $element = fileSelectContainer($form);
 
         // Uppy will replace <input type="file"> with its own mechanisms so
         // the original should not be displayed.
@@ -920,7 +908,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link formElement}.
      */
     function setupSubmitButton(form) {
-        var $form = formElement(form);
+        let $form = formElement(form);
         submitButton($form)
             .attr('title', submitTooltip($form))
             .text(submitLabel($form));
@@ -937,10 +925,10 @@ $(document).on('turbolinks:load', function() {
      * is not relied upon because it only clears form fields but not file data.
      */
     function setupCancelButton(form) {
-        var $form   = formElement(form);
-        var tooltip = cancelTooltip($form);
-        var label   = cancelLabel($form);
-        var $button = cancelButton($form).attr('title', tooltip).text(label);
+        let $form     = formElement(form);
+        const tooltip = cancelTooltip($form);
+        const label   = cancelLabel($form);
+        let $button   = cancelButton($form).attr('title', tooltip).text(label);
         handleClickAndKeypress($button, cancelForm);
     }
 
@@ -950,8 +938,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link formElement}.
      */
     function setupFileSelectButton(form) {
-        var $form   = formElement(form);
-        var $button = fileSelectButton($form);
+        let $form   = formElement(form);
+        let $button = fileSelectButton($form);
         if (isCreateForm($form)) {
             $button.addClass('best-choice');
         }
@@ -983,7 +971,7 @@ $(document).on('turbolinks:load', function() {
      */
     function delegateClick(element) {
 
-        var $element = $(element || this);
+        let $element = $(element || this);
         handleClickAndKeypress($element, clickChildInput);
 
         /**
@@ -1011,14 +999,15 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function initializeFormFields(form) {
-        var $form = formElement(form);
-        var data  = emmaDataElement($form).val();
+        const func = 'initializeFormFields:';
+        let $form  = formElement(form);
+        let data   = emmaDataElement($form).val();
         if (data) {
             try {
                 data = JSON.parse(data);
             }
             catch (err) {
-                console.warn('initializeFormFields:', err, '- data:', data);
+                consoleWarn(func, err, '-', 'data:', data);
                 data = undefined;
             }
         }
@@ -1037,26 +1026,26 @@ $(document).on('turbolinks:load', function() {
      */
     function normalizeLabelColumnWidth(form) {
 
-        var $container = fieldContainer(form);
+        let $container = fieldContainer(form);
 
         // Find the widest label.
-        var max_width = 0;
+        let max_width = 0;
         $container.children('label').each(function() {
             max_width = Math.max(max_width, $(this).width());
         });
-        var column_width = '' + max_width + 'px';
+        let column_width = `${max_width}px`;
 
         // Replace the first column definition.
-        var old_columns = $container.css('grid-template-columns') || '';
-        var parts = old_columns.trim().split(/\s+/);
-        var first = parts.shift();
-        if (first.indexOf('repeat') === 0) {
-            var count = first.replace(/(repeat\()(\d+)(,.*)/, '$2') || 1;
+        const columns = $container.css('grid-template-columns') || '';
+        let parts     = columns.trim().split(/\s+/);
+        const first   = parts.shift();
+        if (first.startsWith('repeat')) {
+            const count = first.replace(/(repeat\()(\d+)(,.*)/, '$2') || 1;
             if (count > 1) {
                 column_width += ' ' + RegExp.$1 + (count - 1) + RegExp.$3;
             }
         }
-        var new_columns = column_width;
+        let new_columns = column_width;
         if (isPresent(parts)) {
             new_columns += ' ' + parts.join(' ');
         }
@@ -1075,7 +1064,7 @@ $(document).on('turbolinks:load', function() {
      * @return {boolean}
      */
     function isUppyInitialized(container) {
-        var $container = formContainer(container);
+        let $container = formContainer(container);
         return isPresent($container.find('.uppy-Root'));
     }
 
@@ -1088,28 +1077,34 @@ $(document).on('turbolinks:load', function() {
      * @return {Uppy}
      */
     function buildUppy(form, features) {
-        var container = form.parentElement;
-        var uppy = Uppy.Core({
+        let container = form.parentElement;
+        // noinspection JSUnresolvedVariable, JSUnresolvedFunction
+        let uppy = Uppy.Core({
             id:          form.id,
             autoProceed: true,
             debug:       features.debugging
         });
         if (features.dashboard) {
+            // noinspection JSUnresolvedVariable
             uppy.use(Uppy.Dashboard, { target: container, inline: true });
         } else {
             if (features.replace_input) {
+                // noinspection JSUnresolvedVariable
                 uppy.use(Uppy.FileInput, {
                     target: buttonTray(form)[0], // NOTE: not container
                     locale: { strings: { chooseFiles: fileSelectLabel(form) } }
                 });
             }
             if (features.drag_and_drop) {
+                // noinspection JSUnresolvedVariable
                 uppy.use(Uppy.DragDrop, { target: features.drag_and_drop });
             }
             if (features.progress_bar) {
+                // noinspection JSUnresolvedVariable
                 uppy.use(Uppy.ProgressBar, { target: container });
             }
             if (features.status_bar) {
+                // noinspection JSUnresolvedVariable
                 uppy.use(Uppy.StatusBar, {
                     target: container,
                     showProgressDetails: true
@@ -1117,18 +1112,22 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (features.popup_messages) {
+            // noinspection JSUnresolvedVariable
             uppy.use(Uppy.Informer, { target: container });
         }
         if (features.image_preview) {
+            // noinspection JSUnresolvedVariable
             uppy.use(Uppy.ThumbnailGenerator, { thumbnailWidth: 400 });
         }
         if (features.upload_to_aws) {
+            // noinspection JSUnresolvedVariable, JSUnresolvedFunction
             uppy.use(Uppy.AwsS3, {
                 limit:        2,
                 timeout:      Uppy.ms('1 minute'),
                 companionUrl: 'https://companion.myapp.com/' // TODO: ???
             });
         }
+        // noinspection JSUnresolvedVariable
         uppy.use(Uppy.XHRUpload, {
             endpoint:   Emma.Upload.path.endpoint,
             fieldName: 'file',
@@ -1147,11 +1146,15 @@ $(document).on('turbolinks:load', function() {
      */
     function setupHandlers(uppy, form, features) {
 
+        // noinspection JSCheckFunctionSignatures
         uppy.on('upload',         onFileUploadStarting);
+        // noinspection JSCheckFunctionSignatures
         uppy.on('upload-success', onFileUploadSuccess);
+        // noinspection JSCheckFunctionSignatures
         uppy.on('upload-error',   onFileUploadError);
 
         if (features.image_preview) {
+            // noinspection JSCheckFunctionSignatures
             uppy.on('thumbnail:generated', onThumbnailGenerated);
         }
 
@@ -1166,7 +1169,7 @@ $(document).on('turbolinks:load', function() {
          * @param {{id: string, fileIDs: string[]}} data
          */
         function onFileUploadStarting(data) {
-            console.log('Uppy: upload', data);
+            debug('Uppy:', 'upload', data);
             clearFlash();
         }
 
@@ -1187,38 +1190,38 @@ $(document).on('turbolinks:load', function() {
          */
         function onFileUploadSuccess(file, response) {
 
-            console.log('Uppy: upload-success', file, response);
+            debug('Uppy:', 'upload-success', file, response);
 
             if (features.popup_messages) {
                 uppyInfoClear(uppy);
             }
 
-            var $form = $(form);
-            var body  = response.body || {};
+            let $form = $(form);
+            let body  = response.body || {};
 
             // Save uploaded EMMA metadata.
-            var emma_data = body.emma_data || {};
+            let emma_data = body.emma_data || {};
             if (isPresent(emma_data)) {
                 emma_data = compact(emma_data);
-                var $emma_data = emmaDataElement($form);
+                let $emma_data = emmaDataElement($form);
                 if (isPresent($emma_data)) {
-                    $emma_data.val(JSON.stringify(emma_data));
+                    $emma_data.val(asString(emma_data));
                 }
                 delete body.emma_data;
             }
 
             // Set hidden field value to the uploaded file data so that it is
             // submitted with the form as the attachment.
-            var file_data = body;
+            const file_data = body;
             if (file_data) {
-                var $file_data = fileDataElement($form);
+                let $file_data = fileDataElement($form);
                 if (isPresent($file_data)) {
-                    $file_data.val(JSON.stringify(file_data));
+                    $file_data.val(asString(file_data));
                 }
                 if (!emma_data.dc_format) {
-                    var meta = file_data.metadata;
-                    var mime = meta && meta.mime_type;
-                    var fmt  = Emma.Upload.mime.to_fmt[mime] || [];
+                    const meta = file_data.metadata;
+                    const mime = meta && meta.mime_type;
+                    const fmt  = Emma.Upload.mime.to_fmt[mime] || [];
                     if (fmt[0]) { emma_data.dc_format = fmt[0]; }
                 }
             }
@@ -1262,8 +1265,8 @@ $(document).on('turbolinks:load', function() {
          * @param {{status: number, body: string}} [response]
          */
         function onFileUploadError(file, error, response) {
-            console.warn('Uppy: upload-error', file, error, response);
-            showFlashError('ERROR: ' + (error.message || error)); // TODO: I18n
+            consoleWarn('Uppy:', 'upload-error', file, error, response);
+            showFlashError(`ERROR: ${error.message || error}`); // TODO: I18n
         }
 
         /**
@@ -1273,7 +1276,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}        image
          */
         function onThumbnailGenerated(file, image) {
-            console.log('Uppy: thumbnail:generated', file, image);
+            debug('Uppy:', 'thumbnail:generated', file, image);
             features.image_preview.src = image;
         }
     }
@@ -1286,7 +1289,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setupMessages(uppy, features) {
 
-        var info;
+        let info;
         if (features.popup_messages) {
             info = function(txt, time, lvl) { uppyInfo(uppy, txt, time, lvl); }
         } else {
@@ -1294,42 +1297,48 @@ $(document).on('turbolinks:load', function() {
         }
 
         uppy.on('upload-started', function(file) {
-            console.warn('Uppy: upload-started', file);
-            info('Uploading "' + (file.name || file) + '"'); // TODO: I18n
+            consoleWarn('Uppy:', 'upload-started', file);
+            info(`Uploading "${file.name || file}"`); // TODO: I18n
         });
 
         uppy.on('upload-pause', function(file_id, is_paused) {
-            console.log('Uppy: upload-pause', file_id, is_paused);
+            debug('Uppy:', 'upload-pause', file_id, is_paused);
             info(is_paused ? 'PAUSED' : 'RESUMED'); // TODO: I18n
         });
 
         uppy.on('upload-retry', function(file_id) {
-            console.log('Uppy: upload-retry', file_id);
+            debug('Uppy:', 'upload-retry', file_id);
             info('Retrying...'); // TODO: I18n
         });
 
         uppy.on('retry-all', function(files) {
-            console.log('Uppy: retry-all', files);
-            var msg   = 'Retrying '; // TODO: I18n
-            var count = files ? files.length : 0;
-            msg += (count === 1) ? 'upload' : ('' + count + ' uploads');
-            msg += '...';
-            info(msg);
+            debug('Uppy:', 'retry-all', files);
+            const count   = files ? files.length : 0;
+            const uploads = (count === 1) ? 'upload' : `${count} uploads`;
+            info(`Retrying ${uploads}...`); // TODO: I18n
         });
 
         uppy.on('pause-all', function() {
-            console.log('Uppy: pause-all');
+            debug('Uppy:', 'pause-all');
             info('Uploading PAUSED'); // TODO: I18n
         });
 
         uppy.on('cancel-all', function() {
-            console.log('Uppy: cancel-all');
+            debug('Uppy:', 'cancel-all');
             info('Uploading CANCELLED'); // TODO: I18n
         });
 
         uppy.on('resume-all', function() {
-            console.log('Uppy: resume-all');
+            debug('Uppy:', 'resume-all');
             info('Uploading RESUMED'); // TODO: I18n
+        });
+
+        uppy.on('restriction-failed', function(file, error) {
+            consoleWarn('Uppy:', 'restriction-failed', file, error);
+        });
+
+        uppy.on('error', function(error) {
+            consoleWarn('Uppy:', 'error', error);
         });
 
     }
@@ -1349,12 +1358,10 @@ $(document).on('turbolinks:load', function() {
 
         // This event is observed concurrent with the 'progress' event.
         uppy.on('upload-progress', function(file, progress) {
-            var bytes = progress.bytesUploaded;
-            var total = progress.bytesTotal;
-            var msg = 'Uppy: Uploading';
-            msg += ' ' + bytes + ' of ' + total;
-            msg += ' (' + percent(bytes, total) + '%)';
-            console.log(msg);
+            const bytes = progress.bytesUploaded;
+            const total = progress.bytesTotal;
+            const pct   = percent(bytes, total);
+            console.log('Uppy: Uploading', bytes, 'of', total, `(${pct}%)`);
         });
 
         // This event is observed concurrent with the 'upload-progress' event.
@@ -1372,14 +1379,6 @@ $(document).on('turbolinks:load', function() {
 
         uppy.on('file-removed', function(file) {
             console.log('Uppy: file-removed', file);
-        });
-
-        uppy.on('restriction-failed', function(file, error) {
-            console.warn('Uppy: restriction-failed', file, error);
-        });
-
-        uppy.on('error', function(error) {
-            console.warn('Uppy: error', error);
         });
 
         uppy.on('preprocess-progress', function(file, status) {
@@ -1466,8 +1465,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string} [message_level]
      */
     function uppyInfo(uppy, text, time, message_level) {
-        var level    = message_level || 'info';
-        var duration = time || MESSAGE_DURATION;
+        const level    = message_level || 'info';
+        const duration = time || MESSAGE_DURATION;
         uppy.info(text, level, duration);
     }
 
@@ -1478,6 +1477,19 @@ $(document).on('turbolinks:load', function() {
      */
     function uppyInfoClear(uppy) {
         uppyInfo(uppy, '', 1);
+    }
+
+    /**
+     * Stop displaying the Uppy progress bar.
+     *
+     * This function shouldn't be necessary, but the 'hideAfterFinish' option
+     * for ProgressBar *only* sets 'aria-hidden' -- it doesn't actually hide
+     * the control itself.
+     */
+    function hideUppyProgressBar() {
+        let $control = formContainer().find('.uppy-ProgressBar');
+        $control.attr('aria-hidden', true);
+        $control.css('visibility', 'hidden');
     }
 
     // ========================================================================
@@ -1493,9 +1505,9 @@ $(document).on('turbolinks:load', function() {
      */
     function populateFormFields(data, form) {
         if (isPresent(data)) {
-            var $form = formElement(form);
+            let $form = formElement(form);
             $.each(data, function(field, value) {
-                var $field = formField(field, $form);
+                let $field = formField(field, $form);
                 updateInputField($field, value);
             });
             resolveRelatedFields();
@@ -1510,9 +1522,9 @@ $(document).on('turbolinks:load', function() {
      * @param {object}   [data]
      */
     function initializeInputField(field, data) {
-        var $field = $(field || this);
-        var key    = $field.attr('data-field');
-        var value  = (typeof data === 'object') ? data[key] : data;
+        let $field  = $(field || this);
+        const key   = $field.attr('data-field');
+        const value = (typeof data === 'object') ? data[key] : data;
         updateInputField($field, value, true);
     }
 
@@ -1524,7 +1536,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function updateInputField(field, new_value, init) {
-        var $field = $(field || this);
+        let $field = $(field || this);
 
         if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, init);
@@ -1555,13 +1567,13 @@ $(document).on('turbolinks:load', function() {
      */
     function updateFieldsetInputs(target, new_value, init) {
 
-        var $fieldset = $(target || this);
-        var $inputs   = $fieldset.find('input');
+        let $fieldset = $(target || this);
+        let $inputs   = $fieldset.find('input');
 
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
-        var value, values;
-        if (new_value instanceof Array) {
+        let value, values;
+        if (Array.isArray(new_value)) {
             values = compact(new_value);
             $inputs.each(function(i) {
                 value = values[i];
@@ -1579,10 +1591,10 @@ $(document).on('turbolinks:load', function() {
             });
             if (new_value) {
                 value = new_value.trim();
-                var index = -1;
+                let index = -1;
                 // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
                 $inputs.each(function(i) {
-                    var old_value = this.value || '';
+                    const old_value = this.value || '';
                     if (old_value === value) {
                         // The value is present in this slot.
                         index = -1;
@@ -1622,16 +1634,16 @@ $(document).on('turbolinks:load', function() {
      */
     function updateFieldsetCheckboxes(target, setting, init) {
 
-        var $fieldset   = $(target || this);
-        var $checkboxes = $fieldset.find('input[type="checkbox"]');
+        let $fieldset   = $(target || this);
+        let $checkboxes = $fieldset.find('input[type="checkbox"]');
 
         // If a value is provided, use it to define the state of the contained
         // checkboxes if it is an array, or to set a specific checkbox if it
         // is a string.
-        if (setting instanceof Array) {
-            var values = compact(setting);
+        if (Array.isArray(setting)) {
+            const values = compact(setting);
             $checkboxes.each(function() {
-                var checked = (values.indexOf(this.value) >= 0);
+                const checked = values.includes(this.value);
                 setChecked(this, checked, init);
             });
         } else if (typeof setting === 'string') {
@@ -1649,7 +1661,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         // Enumerate the checked items and update the fieldset.
-        var checked = [];
+        let checked = [];
         $checkboxes.each(function() {
             if (this.checked) { checked.push(this.value); }
         });
@@ -1668,12 +1680,11 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}        [init]       If *true*, in initialization phase.
      */
     function updateCheckboxInputField(target, setting, init) {
-
-        var $input    = $(target || this);
-        var $fieldset = $input.parents('fieldset').first();
-        var checkbox  = $input[0];
-
-        var checked;
+        const func     = 'updateCheckboxInputField:';
+        let $input     = $(target || this);
+        let $fieldset  = $input.parents('fieldset').first();
+        const checkbox = $input[0];
+        let checked    = undefined;
         if (notDefined(setting)) {
             checked = checkbox.checked;
         } else if (typeof setting === 'boolean') {
@@ -1689,7 +1700,7 @@ $(document).on('turbolinks:load', function() {
         if (isDefined(checked)) {
             setChecked($input, checked, init);
         } else {
-            console.warn('updateCheckboxInputField unexpected:', setting);
+            consoleWarn(func, 'unexpected:', setting);
         }
 
         // Update the enclosing fieldset.
@@ -1708,8 +1719,8 @@ $(document).on('turbolinks:load', function() {
      * @see "ModelHelper#render_form_input"
      */
     function updateTextAreaField(target, new_value, init) {
-        var $input = $(target || this);
-        var value  = textAreaValue(new_value || $input.val());
+        let $input  = $(target || this);
+        const value = textAreaValue(new_value || $input.val());
         setTextAreaValue($input, value, init);
         updateFieldAndLabel($input, value);
     }
@@ -1726,13 +1737,12 @@ $(document).on('turbolinks:load', function() {
      * @see "ModelHelper#render_form_input"
      */
     function updateTextInputField(target, new_value, init) {
-
-        var $input = $(target || this);
-        var value  = new_value || $input.val();
+        let $input = $(target || this);
+        let value  = new_value || $input.val();
 
         // Clean up stray leading and trailing white space and blank values in
         // order to determine whether the field actually has a value.
-        if (value instanceof Array) {
+        if (Array.isArray(value)) {
             value = compact(value).join('; ');
         } else if (typeof value === 'string') {
             value = value.trim();
@@ -1742,7 +1752,7 @@ $(document).on('turbolinks:load', function() {
         // If this is one of a collection of text inputs under <fieldset> then
         // it has to be handled differently.
         if ($input.parent().hasClass('multi')) {
-            var $fieldset = $input.parents('fieldset').first();
+            let $fieldset = $input.parents('fieldset').first();
             updateFieldsetInputs($fieldset, undefined, init);
         } else {
             updateFieldAndLabel($input, $input.val());
@@ -1756,10 +1766,10 @@ $(document).on('turbolinks:load', function() {
      * @param {string[]} [already_modified]
      */
     function resolveRelatedFields(already_modified) {
-        var skip_fields = already_modified || [];
+        let skip_fields = already_modified || [];
         $.each(FIELD_RELATIONSHIP, function(field_name, relationship) {
-            if (skip_fields.indexOf(field_name) === -1) {
-                var visited = updateRelatedField(field_name, relationship);
+            if (!skip_fields.includes(field_name)) {
+                const visited = updateRelatedField(field_name, relationship);
                 if (visited) {
                     skip_fields.push(visited.name);
                 }
@@ -1777,52 +1787,56 @@ $(document).on('turbolinks:load', function() {
      * @return {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
+        const func = 'updateRelatedField:';
         if (isMissing(name)) {
-            console.error('updateRelatedField: missing primary argument');
+            consoleError(func, 'missing primary argument');
             return;
         }
 
         // Determine the element for the named field.
-        var $form = formElement();
-        var this_name, $this_input;
+        let $form = formElement();
+        let this_name;
+        let $this_input;
         if (typeof name === 'string') {
             this_name   = name;
-            $this_input = $form.find('[name="' + this_name  + '"]');
+            $this_input = $form.find(`[name="${this_name}"]`);
         } else {
             $this_input = $(name);
             this_name   = $this_input.attr('name');
         }
 
         /** @type {Relationship} */
-        var other;
-        /** @type {boolean|string} */
-        var error, warn;
+        let other;
+        /** @type {boolean|string|undefined} */
+        let error = undefined;
+        /** @type {boolean|string|undefined} */
+        let warn  = undefined;
         if (typeof other_name === 'object') {
             other = $.extend({}, other_name);
             error = isMissing(other) && 'empty secondary argument';
         } else if (isDefined(other_name)) {
             $.each(FIELD_RELATIONSHIP)
             other = FIELD_RELATIONSHIP[other_name];
-            error = isMissing(other) && ('no table entry for ' + this_name);
+            error = isMissing(other) && `no table entry for ${this_name}`;
         } else {
             other = FIELD_RELATIONSHIP[this_name];
             if (isMissing(other)) {
-                warn  = 'no table entry for ' + this_name;
+                warn  = `no table entry for ${this_name}`;
             } else if (other_name && (other_name !== other.name)) {
-                error = 'no relation for ' + this_name + ' -> ' + other_name;
+                error = `no relation for ${this_name} -> ${other_name}`;
             }
         }
         if (error) {
-            console.error('updateRelatedField:', error);
+            consoleError(func, error);
             return;
         } else if (warn) {
-            // console.log('updateRelatedField:', warn);
+            // consoleWarn(func, warn);
             return;
         }
 
         // Toggle state of the related element.
-        var $other_input = $form.find('[name="' + other.name  + '"]');
-        var modified;
+        let $other_input = $form.find(`[name="${other.name}"]`);
+        let modified     = undefined;
         if (isTrue(other.required) || isFalse(other.unrequired)) {
             modified = modifyOther(true, other.required_val);
         } else if (isTrue(other.unrequired) || isFalse(other.required)) {
@@ -1846,7 +1860,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         function isBoolean(v, is_true) {
-            var result = v;
+            let result = v;
             if (typeof result === 'function') {
                 result = result.call($this_input);
             }
@@ -1858,8 +1872,8 @@ $(document).on('turbolinks:load', function() {
         }
 
         function modifyOther(new_required, new_value) {
-            var changed = false;
-            var old_required = $other_input.attr('data-required').toString();
+            let changed        = false;
+            const old_required = $other_input.attr('data-required').toString();
             if (old_required !== new_required.toString()) {
                 $other_input.attr('data-required', new_required);
                 changed = true;
@@ -1882,11 +1896,12 @@ $(document).on('turbolinks:load', function() {
      * @param {*}        values
      */
     function updateFieldAndLabel(target, values) {
-        var $input  = $(target || this);
-        var name    = $input.attr('name');
-        var $label  = $input.siblings('label[for="' + name + '"]');
-        var $status = $label.find('.status-marker');
-        var parts   = [$input, $label, $status];
+        let $input  = $(target || this);
+        const name  = $input.attr('name');
+        let $label  = $input.siblings(`label[for="${name}"]`);
+        // noinspection JSCheckFunctionSignatures
+        let $status = $label.find('.status-marker');
+        const parts = [$input, $label, $status];
 
         if ($input.attr('readonly')) {
 
@@ -1895,10 +1910,10 @@ $(document).on('turbolinks:load', function() {
 
         } else {
 
-            var required = ($input.attr('data-required') === 'true');
-            var missing  = isEmpty(values);
-            var invalid  = missing; // TODO: per-field validation
-            var valid    = !invalid && !missing;
+            const required = ($input.attr('data-required') === 'true');
+            const missing  = isEmpty(values);
+            let invalid    = missing; // TODO: per-field validation
+            const valid    = !invalid && !missing;
 
             // Establish the baseline label icon.
             if (required) {
@@ -2003,7 +2018,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function setChecked(target, new_state, init) {
-        var $item = $(target || this);
+        let $item = $(target || this);
         if (init) {
             setOriginalValue($item, new_state);
         }
@@ -2018,7 +2033,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function setTextAreaValue(target, new_value, init) {
-        var $item = $(target || this);
+        let $item = $(target || this);
         if (init) {
             setOriginalValue($item, new_value);
         }
@@ -2033,7 +2048,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
     function setValue(target, new_value, init) {
-        var $item = $(target || this);
+        let $item = $(target || this);
         if (init) {
             setOriginalValue($item, new_value);
         }
@@ -2048,7 +2063,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function textAreaValue(value) {
-        var result = value;
+        let result = value;
         if (typeof result === 'string') {
             result = result.trim();
             if (!result || (result === '[]')) {
@@ -2059,7 +2074,7 @@ $(document).on('turbolinks:load', function() {
                     result = JSON.parse(result);
                 }
                 catch (_err) {
-                    var len = result.length;
+                    const len = result.length;
                     if (result[len-1] === ']') {
                         result = result.substr(1, (len-2));
                     } else {
@@ -2071,11 +2086,9 @@ $(document).on('turbolinks:load', function() {
                 result = [result];
             }
         }
-        if (result instanceof Array) {
+        if (Array.isArray(result)) {
             result = compact(result);
-            for (var i = 0; i < result.length; i++) {
-                result[i] = htmlDecode(result[i]);
-            }
+            result = result.map(function(v) { return htmlDecode(v); });
             result = result.join("\n");
         }
         return result;
@@ -2092,8 +2105,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string|boolean|undefined} [value]
      */
     function setOriginalValue(target, value) {
-        var $item = $(target || this);
-        var new_value;
+        let $item     = $(target || this);
+        let new_value = undefined;
         if (isDefined(value)) {
             new_value = valueOf(value);
         } else if (notDefined(rawOriginalValue($item))) {
@@ -2112,7 +2125,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function getOriginalValue(target) {
-        var value = rawOriginalValue(target);
+        const value = rawOriginalValue(target);
         return notDefined(value) ? '' : value;
     }
 
@@ -2124,7 +2137,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string|undefined}
      */
     function rawOriginalValue(target) {
-        var $item = $(target || this);
+        let $item = $(target || this);
         return $item.attr('data-original-value');
     }
 
@@ -2142,9 +2155,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {string}
      */
     function valueOf(item) {
-        var value;
+        let value;
         if (typeof item === 'object') {
-            var $i = $(item);
+            let $i = $(item);
             value  = $i.is('[type="checkbox"]') ? $i[0].checked : $i.val();
         } else {
             value  = item;
@@ -2168,8 +2181,8 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorInputFields(form) {
 
-        var $form   = formElement(form);
-        var $fields = inputFields($form);
+        let $form   = formElement(form);
+        let $fields = inputFields($form);
         handleEvent($fields, 'change', validateInputField);
 
         /**
@@ -2178,7 +2191,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Event} event
          */
         function validateInputField(event) {
-            var $field = $(event.target || event || this);
+            let $field = $(event.target || event || this);
             updateInputField($field);
             updateRelatedField($field);
             validateForm($form);
@@ -2192,14 +2205,14 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function validateForm(form) {
-        var $form   = formElement(form);
-        var $fields = inputFields($form);
-        var ready   = !$fields.hasClass('invalid');
+        let $form   = formElement(form);
+        let $fields = inputFields($form);
+        let ready   = !$fields.hasClass('invalid');
         if (ready && !fileSelected($form)) {
-            var changes = 0;
+            let changes = 0;
             if (isUpdateForm($form)) {
                 $fields.each(function() {
-                    var $item = $(this);
+                    let $item = $(this);
                     if (valueOf($item) !== getOriginalValue($item)) {
                         changes += 1;
                     }
@@ -2220,8 +2233,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function enableSubmit(form) {
-        var $form = formElement(form);
-        var tip   = submitReadyTooltip($form);
+        let $form = formElement(form);
+        const tip = submitReadyTooltip($form);
         submitButton($form)
             .addClass('best-choice')
             .removeClass('disabled forbidden')
@@ -2236,8 +2249,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function disableSubmit(form) {
-        var $form = formElement(form);
-        var tip   = submitNotReadyTooltip($form);
+        let $form = formElement(form);
+        const tip = submitNotReadyTooltip($form);
         submitButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
@@ -2256,27 +2269,26 @@ $(document).on('turbolinks:load', function() {
      * @param {Event} [event]
      */
     function cancelForm(event) {
-        var $button;
+        let $button;
         if (typeof event === 'object') {
             event.stopPropagation();
             $button = $(event.target);
         } else {
             $button = $(event || this);
         }
-        var $form = formElement($button);
-        var url;
+        let $form = formElement($button);
+        let url;
         // noinspection AssignmentResultUsedJS
         if (fileSelected($form) && !canSubmit($form)) {
             url = window.location.href;
         } else if ((url = $button.attr('data-path'))) {
-            var def_path  = Emma.Upload.path.index;
-            var base_path = window.location.pathname;
-            var base_url  = window.location.origin + base_path;
+            const def_path  = Emma.Upload.path.index;
+            const def_url   = window.location.origin + def_path;
+            const base_path = window.location.pathname;
+            const base_url  = window.location.origin + base_path;
             if ((url === base_path) || (url === base_url)) {
                 url = base_path;
-            } else if (url.indexOf(def_path) === 0) {
-                url = def_path;
-            } else if (url.indexOf(window.location.origin + def_path) === 0) {
+            } else if (url.startsWith(def_path) || url.startsWith(def_url)) {
                 url = def_path;
             }
         }
@@ -2289,14 +2301,15 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorRequestResponse(form) {
-        var $form = formElement(form);
-        var event_handlers = {
+        const event_handlers = {
             'ajax:before':     beforeAjax,
             'ajax:beforeSend': beforeAjaxFormSubmission,
+            'ajax:stopped':    onAjaxStopped,
             'ajax:success':    onAjaxFormSubmissionSuccess,
             'ajax:error':      onAjaxFormSubmissionError,
             'ajax:complete':   onAjaxFormSubmissionComplete
         };
+        let $form = formElement(form);
         $.each(event_handlers, function(type, handler) {
             handleEvent($form, type, handler);
         });
@@ -2308,7 +2321,7 @@ $(document).on('turbolinks:load', function() {
      * @param {object} arg
      */
     function beforeAjax(arg) {
-        // console.log('ajax:before - arguments', arguments);
+        // debug('ajax:before', '-', 'arguments', Array.from(arguments));
     }
 
     /**
@@ -2317,8 +2330,8 @@ $(document).on('turbolinks:load', function() {
      * @param {object} arg
      */
     function beforeAjaxFormSubmission(arg) {
-        // console.log('ajax:beforeSend - arguments', arguments);
-        var $form = formElement();
+        // debug('ajax:beforeSend', '-', 'arguments', Array.from(arguments));
+        let $form = formElement();
 
         // Disable empty database fields.
         databaseInputFields($form).each(function() {
@@ -2329,18 +2342,26 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * Called if "ajax:before" or 'ajax:beforeSend' rejects the request.
+     *
+     * @param {object} arg
+     */
+    function onAjaxStopped(arg) {
+        debug('ajax:stopped', '-', 'arguments', Array.from(arguments));
+    }
+
+    /**
      * Process rails-ujs 'ajax:success' event data.
      *
      * @param {object} arg
      */
     function onAjaxFormSubmissionSuccess(arg) {
-        // console.log('ajax:success - arguments', arguments);
-        var data   = arg.data;
-        var event  = arg.originalEvent || {};
-        var _resp, _status_text, xhr;
-        // noinspection JSUnusedAssignment
-        [_resp, _status_text, xhr] = event.detail || [];
-        var status = xhr.status;
+        // debug('ajax:success', '-', 'arguments', Array.from(arguments));
+        const data  = arg.data;
+        const event = arg.originalEvent || {};
+        // noinspection JSUnusedLocalSymbols
+        const [_resp, _status_text, xhr] = event.detail || [];
+        const status = xhr.status;
         onCreateSuccess(data, status, xhr);
     }
 
@@ -2350,14 +2371,13 @@ $(document).on('turbolinks:load', function() {
      * @param {object} arg
      */
     function onAjaxFormSubmissionError(arg) {
-        // console.log('ajax:error - arguments', arguments);
-        var error = arg.data;
-        var event = arg.originalEvent || {};
-        var _resp, _status_text, xhr;
-        // noinspection JSUnusedAssignment
-        [_resp, _status_text, xhr] = event.detail || [];
-        var status = xhr.status;
-        console.error('ajax:error', status, 'error', error, 'xhr', xhr);
+        // debug('ajax:error', '-', 'arguments', Array.from(arguments));
+        const error = arg.data;
+        const event = arg.originalEvent || {};
+        // noinspection JSUnusedLocalSymbols
+        const [_resp, _status_text, xhr] = event.detail || [];
+        const status = xhr.status;
+        consoleError('ajax:error', status, 'error', error, 'xhr', xhr);
         onCreateError(xhr, status, error);
     }
 
@@ -2367,7 +2387,7 @@ $(document).on('turbolinks:load', function() {
      * @param {object} arg
      */
     function onAjaxFormSubmissionComplete(arg) {
-        // console.log('ajax:complete - arguments', arguments);
+        // debug('ajax:complete - arguments', Array.from(arguments));
         onCreateComplete();
     }
 
@@ -2380,13 +2400,14 @@ $(document).on('turbolinks:load', function() {
      * @param {XMLHttpRequest} xhr
      */
     function onCreateSuccess(data, status, xhr) {
-        var flash   = compact(extractFlashMessage(xhr));
-        var entry   = (flash.length > 1) ? 'entries' : 'entry';
-        var message = 'EMMA ' + entry + ' ' + termActionOccurred(); // TODO: I18n
+        const func  = 'onCreateSuccess:';
+        const flash = compact(extractFlashMessage(xhr));
+        const entry = (flash.length > 1) ? 'entries' : 'entry';
+        let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
         if (isPresent(flash)) {
             message += ' for: ' + flash.join(', ');
         }
-        console.log('onCreateSuccess:', message);
+        debug(func, message);
         showFlashMessage(message);
     }
 
@@ -2401,16 +2422,17 @@ $(document).on('turbolinks:load', function() {
      * @param {string}         error
      */
     function onCreateError(xhr, status, error) {
-        var flash   = compact(extractFlashMessage(xhr));
-        var message = 'EMMA entry not ' + termActionOccurred() + ':'; // TODO: I18n
+        const func  = 'onCreateError:';
+        const flash = compact(extractFlashMessage(xhr));
+        let message = `EMMA entry not ${termActionOccurred()}:`; // TODO: I18n
         if (flash.length > 1) {
             message += "\n" + flash.join("\n");
         } else if (flash.length === 1) {
             message += ' ' + flash[0];
         } else {
-            message += ' ' + status + ': ' + error;
+            message += ` ${status}: ${error}`;
         }
-        console.warn('onCreateError:', message);
+        consoleWarn(func, message);
         showFlashError(message);
     }
 
@@ -2431,6 +2453,7 @@ $(document).on('turbolinks:load', function() {
     // Functions - form field filtering
     // ========================================================================
 
+    // noinspection ES6ConvertVarToLetConst
     /**
      * A flag to indicate whether field filtering has occurred yet.
      *
@@ -2456,14 +2479,14 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [new_mode]
      */
     function fieldDisplayFilterSelect(form, new_mode) {
-        var $form  = formElement(form);
-        var $radio = fieldDisplayFilterButtons($form);
-        var mode;
+        let $form  = formElement(form);
+        let $radio = fieldDisplayFilterButtons($form);
+        let mode;
         if (isDefined(new_mode)) {
             mode = new_mode;
         } else {
-            var action, general, first;
-            var current_action = termAction($form);
+            const current_action = termAction($form);
+            let [action, general, first] = [];
             $.each(Emma.Upload.Filter, function(group, property) {
                 if (property.default === current_action) {
                     action = group;
@@ -2475,7 +2498,7 @@ $(document).on('turbolinks:load', function() {
             });
             mode = action || general || first;
         }
-        var selector = '[value="' + mode + '"]';
+        let selector = `[value="${mode}"]`;
         $radio.filter(selector).prop('checked', true).change();
     }
 
@@ -2488,8 +2511,8 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorFieldDisplayFilterButtons(form) {
 
-        var $form    = formElement(form);
-        var $buttons = fieldDisplayFilterButtons($form);
+        let $form    = formElement(form);
+        let $buttons = fieldDisplayFilterButtons($form);
         handleEvent($buttons, 'change', fieldDisplayFilterHandler);
 
         /**
@@ -2498,7 +2521,7 @@ $(document).on('turbolinks:load', function() {
          * @param {Event} event
          */
         function fieldDisplayFilterHandler(event) {
-            var $target = $(event.target || event || this);
+            let $target = $(event.target || event || this);
             if ($target.is(':checked')) {
                 filterFieldDisplay($target.val(), $form);
             }
@@ -2518,20 +2541,18 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_field_group"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        var obj   = (typeof new_mode === 'object');
-        var mode  = obj ? undefined : new_mode;
-        var form  = obj ? new_mode  : form_sel;
-        var $form = $(form);
-        if (!mode) {
-            mode = fieldDisplayFilterCurrent($form);
-        }
+        const func = 'filterFieldDisplay:';
+        const obj  = (typeof new_mode === 'object');
+        const form = obj ? new_mode  : form_sel;
+        let $form  = $(form);
+        const mode =
+            (obj ? undefined : new_mode) || fieldDisplayFilterCurrent($form);
         switch (mode) {
-            case 'filled':    fieldDisplayFilled($form);    break;
-            case 'invalid':   fieldDisplayInvalid($form);   break;
-            case 'available': fieldDisplayAvailable($form); break;
-            case 'all':       fieldDisplayAll($form);       break;
-            default:
-                console.error('filterFieldDisplay', 'invalid mode:', mode);
+            case 'available': fieldDisplayAvailable($form);              break;
+            case 'invalid':   fieldDisplayInvalid($form);                break;
+            case 'filled':    fieldDisplayFilled($form);                 break;
+            case 'all':       fieldDisplayAll($form);                    break;
+            default:          consoleError(func, 'invalid mode:', mode); break;
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
@@ -2550,8 +2571,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldDisplayOnly}.
      */
     function fieldDisplayFilled(form) {
-        var matches = '.valid:not(.disabled), .invalid:not(.disabled)';
-        fieldDisplayOnly(matches, form);
+        fieldDisplayOnly('.valid:not(.disabled)', form);
     }
 
     /**
@@ -2579,9 +2599,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      */
     function fieldDisplayAll(form) {
-        var $container = fieldContainer(form);
-        $container.children().show();
-        $container.children('.no-fields').hide();
+        fieldContainer(form).children().show().filter('.no-fields').hide();
     }
 
     /**
@@ -2591,10 +2609,9 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      */
     function fieldDisplayOnly(match, form) {
-        var $container = fieldContainer(form);
-        var $visible   = $container.children(match);
-        var $no_fields = $container.children('.no-fields');
-        $container.children().hide();
+        let $fields    = fieldContainer(form).children().hide();
+        let $visible   = $fields.filter(match);
+        let $no_fields = $fields.filter('.no-fields');
         if (isPresent($visible)) {
             $visible.show();
             $no_fields.hide();
@@ -2610,10 +2627,9 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      */
     function fieldDisplayExcept(match, form) {
-        var $container = fieldContainer(form);
-        $container.children().show();
-        $container.children(match).hide();
-        $container.children('.no-fields').hide();
+        let $fields = fieldContainer(form).children().show();
+        $fields.filter(match).hide();
+        $fields.filter('.no-fields').hide();
     }
 
     // ========================================================================
@@ -2626,9 +2642,9 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link formElement}.
      */
     function disableFileSelectButton(form) {
-        var $form = formElement(form);
-        var label = fileSelectDisabledLabel($form);
-        var tip   = fileSelectDisabledTooltip($form);
+        let $form   = formElement(form);
+        const label = fileSelectDisabledLabel($form);
+        const tip   = fileSelectDisabledTooltip($form);
         fileSelectButton($form)
             .removeClass('best-choice')
             .addClass('forbidden')
@@ -2651,12 +2667,22 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
      */
     function displayUploadedFilename(file_data, element) {
-        var $element = uploadedFilenameDisplay(element);
-        if (isPresent($element)) {
-            var metadata = file_data && file_data.metadata;
-            var filename = metadata && metadata.filename;
-            if (filename) {
-                var $filename = $element.find('.filename');
+        const metadata = file_data && file_data.metadata;
+        const filename = metadata  && metadata.filename;
+        displayFilename(filename, element);
+    }
+
+    /**
+     * Display the name of the uploaded file.
+     *
+     * @param {String}   filename
+     * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
+     */
+    function displayFilename(filename, element) {
+        if (isPresent(filename)) {
+            let $element = uploadedFilenameDisplay(element);
+            if (isPresent($element)) {
+                let $filename = $element.find('.filename');
                 if (isPresent($filename)) {
                     $filename.text(filename);
                 } else {
@@ -2664,6 +2690,7 @@ $(document).on('turbolinks:load', function() {
                 }
                 $element.addClass('complete');
             }
+            hideUppyProgressBar();
         }
     }
 
@@ -2674,9 +2701,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [text]       Default: Emma.Upload.InputInvalid.tooltip
      */
     function setTooltip(element, text) {
-        var $element = $(element || this);
-        var new_tip  = text || Emma.Upload.Status.invalid.tooltip;
-        var old_tip  = $element.attr('data-title');
+        let $element = $(element || this);
+        let old_tip  = $element.attr('data-title');
         if (isMissing(old_tip)) {
             // noinspection ReuseOfLocalVariableJS
             old_tip = $element.attr('title');
@@ -2684,6 +2710,7 @@ $(document).on('turbolinks:load', function() {
                 $element.attr('data-title', old_tip);
             }
         }
+        const new_tip = text || Emma.Upload.Status.invalid.tooltip;
         $element.attr('title', new_tip);
     }
 
@@ -2693,8 +2720,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element      Default: *this*.
      */
     function restoreTooltip(element) {
-        var $element = $(element || this);
-        var old_tip  = $element.attr('data-title');
+        let $element  = $(element || this);
+        const old_tip = $element.attr('data-title');
         if (isPresent(old_tip)) {
             $element.attr('title', old_tip);
         } else {
@@ -2709,9 +2736,8 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [text]       Default: no icon.
      */
     function setIcon(element, text) {
-        var $element = $(element || this);
-        var new_icon = text || '';
-        var old_icon = $element.attr('data-icon');
+        let $element = $(element || this);
+        let old_icon = $element.attr('data-icon');
         if (isMissing(old_icon)) {
             // noinspection ReuseOfLocalVariableJS
             old_icon = $element.text();
@@ -2719,6 +2745,7 @@ $(document).on('turbolinks:load', function() {
                 $element.attr('data-icon', old_icon);
             }
         }
+        const new_icon = text || '';
         if (isPresent(new_icon)) {
             $element.text(new_icon);
         } else {
@@ -2732,8 +2759,8 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function restoreIcon(element) {
-        var $element = $(element || this);
-        var old_icon = $element.attr('data-icon');
+        let $element   = $(element || this);
+        const old_icon = $element.attr('data-icon');
         if (isPresent(old_icon)) {
             $element.text(old_icon);
         } else {
@@ -2764,12 +2791,12 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function formElement(form) {
-        var $form = form && $(form);
+        let $form = form && $(form);
         if ($form && !$form.is(FORM_SELECTOR)) {
             $form = $form.parents(FORM_SELECTOR);
         }
         if (isMissing($form)) {
-            var bulk = isMissing($file_upload_form);
+            const bulk = isMissing($file_upload_form);
             $form = bulk ? $bulk_operation_form : $file_upload_form;
         }
         return $form.first();
@@ -2817,7 +2844,7 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function formField(field, form) {
-        return formElement(form).find('[data-field="' + field + '"]');
+        return formElement(form).find(`[data-field="${field}"]`);
     }
 
     /**
@@ -3066,9 +3093,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function submitLabel(form, can_submit) {
-        var $form = formElement(form);
-        var op    = assetObject($form).submit || {};
-        var state = buttonProperties($form, op, 'submit', can_submit);
+        let $form   = formElement(form);
+        const op    = assetObject($form).submit || {};
+        const state = buttonProperties($form, op, 'submit', can_submit);
         return state && state.label || op.label;
     }
 
@@ -3081,9 +3108,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function submitTooltip(form, can_submit) {
-        var $form = formElement(form);
-        var op    = assetObject($form).submit || {};
-        var state = buttonProperties($form, op, 'submit', can_submit);
+        let $form   = formElement(form);
+        const op    = assetObject($form).submit || {};
+        const state = buttonProperties($form, op, 'submit', can_submit);
         return state && state.tooltip || op.tooltip;
     }
 
@@ -3118,9 +3145,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function cancelLabel(form, can_cancel) {
-        var $form = formElement(form);
-        var op    = assetObject($form).cancel || {};
-        var state = buttonProperties($form, op, 'cancel', can_cancel);
+        let $form   = formElement(form);
+        const op    = assetObject($form).cancel || {};
+        const state = buttonProperties($form, op, 'cancel', can_cancel);
         return state && state.label || op.label;
     }
 
@@ -3133,9 +3160,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function cancelTooltip(form, can_cancel) {
-        var $form = formElement(form);
-        var op    = assetObject($form).cancel || {};
-        var state = buttonProperties($form, op, 'cancel', can_cancel);
+        let $form   = formElement(form);
+        const op    = assetObject($form).cancel || {};
+        const state = buttonProperties($form, op, 'cancel', can_cancel);
         return state && state.tooltip || op.tooltip;
     }
 
@@ -3148,9 +3175,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function fileSelectLabel(form, can_select) {
-        var $form = formElement(form);
-        var op    = assetObject($form).select || {};
-        var state = buttonProperties($form, op, 'select', can_select);
+        let $form   = formElement(form);
+        const op    = assetObject($form).select || {};
+        const state = buttonProperties($form, op, 'select', can_select);
         return state && state.label || op.label;
     }
 
@@ -3163,9 +3190,9 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function fileSelectTooltip(form, can_select) {
-        var $form = formElement(form);
-        var op    = assetObject($form).select || {};
-        var state = buttonProperties($form, op, 'select', can_select);
+        let $form   = formElement(form);
+        const op    = assetObject($form).select || {};
+        const state = buttonProperties($form, op, 'select', can_select);
         return state && state.tooltip || op.tooltip;
     }
 
@@ -3203,17 +3230,18 @@ $(document).on('turbolinks:load', function() {
      * @returns {ElementProperties|null}
      */
     function buttonProperties(form, values, op_name, can_perform) {
-        var $form   = formElement(form);
-        var perform = can_perform;
+        const func  = 'buttonProperties:';
+        let $form   = formElement(form);
+        let perform = can_perform;
         if (notDefined(perform)) {
             switch (op_name) {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
                 case 'select': perform = canSelect($form); break;
-                default: console.error('Invalid operation "' + op_name + '"');
+                default:       consoleError(func, `Invalid: "${op_name}"`);
             }
         }
-        var op = isPresent(values) ? values : assetObject($form)[op_name];
+        const op = isPresent(values) ? values : assetObject($form)[op_name];
         return op && (perform ? op.enabled : op.disabled);
     }
 
@@ -3225,9 +3253,9 @@ $(document).on('turbolinks:load', function() {
      * @return {ActionProperties}
      */
     function assetObject(form) {
-        var $form  = formElement(form);
-        var action = Emma.Upload.Action;
-        var result;
+        let $form    = formElement(form);
+        const action = Emma.Upload.Action;
+        let result;
         if (isBulkOperationForm($form)) {
             result = isUpdateForm($form) ? action.bulk_edit : action.bulk_new;
         } else {
@@ -3268,11 +3296,11 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Emit a console message if debugging.
+     *
+     * @param {...*} args
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

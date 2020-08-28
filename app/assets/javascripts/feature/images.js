@@ -7,11 +7,19 @@
 // noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
-    /** @type {jQuery} */
-    var $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
+    /**
+     * Placeholder elements for images that are to be loaded asynchronously.
+     *
+     * @type {jQuery}
+     */
+    let $placeholders = $('*:not(.complete) > .placeholder:not(.hidden)');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($placeholders)) { return; }
+
+    // ========================================================================
+    // Constants
+    // ========================================================================
 
     /**
      * Flag controlling console debug output.
@@ -19,16 +27,40 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = true;
+    const DEBUGGING = true;
+
+    /**
+     * Placeholder CSS class.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PLACEHOLDER_CLASS = Emma.Image.placeholder.class;
+
+    /**
+     * Placeholder alt text.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PLACEHOLDER_ALT = Emma.Image.placeholder.alt;
+
+    /**
+     * Placeholder image source.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PLACEHOLDER_SRC = Emma.Image.placeholder.asset;
 
     // ========================================================================
     // Actions
     // ========================================================================
 
-    // noinspection JSUnresolvedFunction
+    // Download all deferred images.
     $placeholders.each(function() {
-        var $image = $(this);
-        var src;
+        let $image = $(this);
+        let src;
         // noinspection JSAssignmentUsedAsCondition, AssignmentResultUsedJS
         if (src = $image.data('path')) {
             debug('FETCHING IMAGE data-path ==', src);
@@ -43,7 +75,7 @@ $(document).on('turbolinks:load', function() {
     });
 
     // ========================================================================
-    // Internal functions
+    // Functions
     // ========================================================================
 
     /**
@@ -53,17 +85,19 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   [source]
      */
     function loadImage(image, source) {
+        const func  = 'loadImage:';
+        let $image  = $(image || this);
+        const src   = source || $image.data('path') || $image.attr('src');
+        const url   = urlProxyPath(src);
+        const start = Date.now();
 
-        var func   = 'loadImage: ';
-        var $image = $(image);
-        var src    = source || $image.data('path') || $image.attr('src');
-        var url    = urlProxyPath(src);
-        var start  = Date.now();
+        /** @type {string} content */
+        let content = undefined;
+        let error   = '';
 
-        var err, content;
         $.ajax({
-            url:  url,
-            type: 'GET',
+            url:      url,
+            type:     'GET',
             success:  onSuccess,
             error:    onError,
             complete: onComplete
@@ -79,7 +113,7 @@ $(document).on('turbolinks:load', function() {
         function onSuccess(data, status, xhr) {
             debug(func, 'received', (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
-                err = 'no data';
+                error   = 'no data';
             } else {
                 content = 'data:image/jpg;base64,' + data;
             }
@@ -90,10 +124,10 @@ $(document).on('turbolinks:load', function() {
          *
          * @param {XMLHttpRequest} xhr
          * @param {string}         status
-         * @param {string}         error
+         * @param {string}         message
          */
-        function onError(xhr, status, error) {
-            err = status + ': ' + error;
+        function onError(xhr, status, message) {
+            error = `${status}: ${xhr.status} ${message}`;
         }
 
         /**
@@ -103,32 +137,41 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            if (err) {
-                consoleWarn(func, (url + ':'), err);
-            } else {
-                // Prepare the image container.
-                var $container = $image.parent();
-                if ($image.hasClass('placeholder')) {
-                    // Add this for accessibility analyzers that don't
-                    // ignore hidden images:
-                    $image.attr('alt', 'Downloading...');
-                    $image.addClass('hidden');
-                } else {
-                    $container.empty();
-                }
-
-                // Insert the new image element.
-                var id  = $image.data('id')  || $container.data('id');
-                var alt = $image.data('alt') || $container.data('alt');
-                $('<img>')
-                    .attr('src', content)
-                    .attr('alt', (alt || ''))
-                    .attr('id',  (id  || imageId(src)))
-                    .data('turbolinks-permanent', true)
-                    .appendTo($container);
-                $container.addClass('complete');
-            }
             debug(func, 'complete', secondsSince(start), 'sec.');
+            if (error) {
+                consoleWarn(func, `${url}:`, error);
+            } else {
+                insertImage(content);
+            }
+        }
+
+        /**
+         * Load the deferred image into its container.
+         *
+         * @param {string} [data]       Default: content.
+         */
+        function insertImage(data) {
+            let image_content = data || content;
+
+            // Prepare the image container by hiding the placeholder (with an
+            // appropriate alt tag for accessibility analyzers that don't
+            // ignore hidden images).
+            let $container = $image.parent();
+            if ($image.hasClass(PLACEHOLDER_CLASS)) {
+                $image.attr('alt', 'Downloading...'); // TODO: I18n
+                $image.addClass('hidden');
+            } else {
+                $container.empty();
+            }
+
+            // Insert the new image element.
+            const id  = $image.data('id')  || $container.data('id');
+            const alt = $image.data('alt') || $container.data('alt');
+            makeImage(image_content, alt)
+                .attr('id', (id  || imageId(src)))
+                .attr('data-turbolinks-permanent', true)
+                .appendTo($container);
+            $container.addClass('complete');
         }
     }
 
@@ -151,7 +194,7 @@ $(document).on('turbolinks:load', function() {
      * @return {string}
      */
     function imageId(url) {
-        var file_name = url.replace(/^.*\//, '');
+        const file_name = url.replace(/^.*\//, '');
         return 'img-' + escape(file_name);
     }
 
@@ -161,20 +204,34 @@ $(document).on('turbolinks:load', function() {
      * @return {jQuery}
      */
     function imagePlaceholder() {
-        return $('<img>')
-            .attr('src', Emma.placeholder.image.asset)
-            .attr('alt', Emma.placeholder.image.alt)
-            .data('turbolinks-track', false)
-            .addClass('placeholder');
+        return makeImage(PLACEHOLDER_SRC, PLACEHOLDER_ALT)
+            .addClass(PLACEHOLDER_CLASS)
+            .attr('data-turbolinks-track', false);
     }
 
     /**
-     * Emit a console message if debugging.
+     * Create an image element.
+     *
+     * @param {string} src
+     * @param {string} [alt]
+     *
+     * @return {jQuery}
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function makeImage(src, alt) {
+        return $(`<img alt="${alt || ''}" src="${src}">`);
+    }
+
+    // ========================================================================
+    // Functions - other
+    // ========================================================================
+
+    /**
+     * Emit a console message if debugging.
+     *
+     * @param {...*} args
+     */
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

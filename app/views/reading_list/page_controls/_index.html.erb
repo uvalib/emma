@@ -2,8 +2,9 @@
 <%-
   # Page controls on a Reading List index page for an authorized user.
 
-  actions   = page_control_actions(ReadingList, :new).presence or return
-  anchor_id = 'index-page-controls'
+  actions    = page_control_actions(ReadingList, :new).presence or return
+  anchor_id  = 'index-page-controls'
+  label_id ||= css_randomize(anchor_id)
 
   skip_nav_prepend(reading_list: anchor_id) unless modal?
 
@@ -11,5 +12,9 @@
 
 -%>
 
-<div class="label" id="<%= anchor_id -%>"><%= page_controls_label -%>:</div>
-<div class="controls"><%= page_controls(*actions, **path_opt) %></div>
+<div class="label" id="<%= label_id -%>">
+  <%= page_controls_label -%>:
+</div>
+<div class="controls" id="<%= anchor_id -%>">
+  <%= page_controls(*actions, **path_opt) %>
+</div>

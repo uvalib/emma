@@ -1,4 +1,12 @@
-# Be sure to restart your server when you modify this file.
+# config/initializers/assets.rb
+#
+# frozen_string_literal: true
+# warn_indent:           true
+#
+# Configuration for asset pre-compilation.
+#
+# NOTE: This includes option settings needed to get Uglifier to work for ES6.
+# @see Uglifier#DEFAULTS
 
 # Version of your assets, change this if you want to expire all your assets.
 Rails.application.config.assets.version = '1.0'
@@ -12,3 +20,13 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
+
+# Compress JavaScripts and CSS.
+Rails.application.config.assets.css_compressor = :scss
+Rails.application.config.assets.js_compressor =
+  Uglifier.new(
+    harmony:  true,                     # To allow ES6.
+    ie8:      false,
+    output:   { comments: :none },
+    compress: { collapse_vars: false }  # Found to be needed for ES6.
+  )

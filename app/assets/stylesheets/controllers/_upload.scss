@@ -415,7 +415,7 @@ form.select-entry {
         // This assumes that the first option is a blank value used to clear
         // the menu selection.
         option:first-of-type {
-            color: gray;
+            color: $uva-text-gray;
         }
     }
 

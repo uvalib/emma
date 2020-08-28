@@ -13,10 +13,10 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {Selector}
      */
-    var SCROLL_BUTTON_SELECTOR = '.' + Emma.Scroll.button.class;
+    const SCROLL_BUTTON_SELECTOR = selector(Emma.Scroll.button.class);
 
     /** @type {jQuery} */
-    var $scroll_button = $(SCROLL_BUTTON_SELECTOR).not('.for-help');
+    let $scroll_button = $(SCROLL_BUTTON_SELECTOR).not('.for-help');
 
     // Only perform these actions on the appropriate pages.
     if (isMissing($scroll_button)) { return; }
@@ -31,7 +31,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {boolean}
      */
-    var DEBUGGING = false;
+    const DEBUGGING = false;
 
     /**
      * Selector for the element which is scrolled to the top.
@@ -39,7 +39,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    var SCROLL_TARGET_SELECTOR = '.' + Emma.Scroll.target.class;
+    const SCROLL_TARGET_SELECTOR = selector(Emma.Scroll.target.class);
 
     /**
      * Selector(s) for scroll target with fall-backs.
@@ -47,7 +47,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    var SCROLL_TARGET_SELECTORS = [SCROLL_TARGET_SELECTOR, '#main', 'body'];
+    const SCROLL_TARGET_SELECTORS = [SCROLL_TARGET_SELECTOR, '#main', 'body'];
 
     // ========================================================================
     // Variables
@@ -58,43 +58,11 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    var $scroll_target;
+    let $scroll_target;
     $.each(SCROLL_TARGET_SELECTORS, function(_, selector) {
         $scroll_target = $(selector);
         return isMissing($scroll_target);
     });
-
-    // ========================================================================
-    // Function definitions
-    // ========================================================================
-
-    /**
-     * Set visibility of the scroll-to-top button.
-     *
-     * @param {Event|boolean} [event]
-     */
-    function toggleScrollButton(event) {
-        var visible;
-        if (notDefined(event)) {
-            visible = false;
-        } else if (typeof event === 'boolean') {
-            visible = event;
-        } else {
-            var $container  = $(window);
-            var scroll_pos  = $container.scrollTop();
-            var visible_pos = $container.height() / 2;
-            visible = (scroll_pos > visible_pos);
-        }
-        $scroll_button.toggleClass('hidden', !visible);
-    }
-
-    /**
-     * Scroll so that the top of the target element is visible.
-     */
-    function scrollToTop() {
-        $scroll_target[0].scrollIntoView();
-        //focusableIn($scroll_target).first().focus();
-    }
 
     // ========================================================================
     // Event handlers
@@ -108,19 +76,52 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     // Button should start hidden initially and only appear after scrolling.
+    // However, if the page is refreshed with the window already scrolled, then
+    // button should appear immediately.
     toggleScrollButton();
 
     // ========================================================================
-    // Internal functions
+    // Functions
+    // ========================================================================
+
+    /**
+     * Set visibility of the scroll-to-top button.
+     *
+     * @param {Event|boolean} [event]
+     */
+    function toggleScrollButton(event) {
+        let visible;
+        if (typeof event === 'boolean') {
+            visible = event;
+        } else {
+            let $container    = $(window);
+            const scroll_pos  = $container.scrollTop();
+            const visible_pos = $container.height() / 2;
+            visible = (scroll_pos > visible_pos);
+        }
+        $scroll_button.toggleClass('hidden', !visible);
+    }
+
+    /**
+     * Scroll so that the top of the target element is visible.
+     */
+    function scrollToTop() {
+        debug('scrollToTop');
+        $scroll_target[0].scrollIntoView();
+        //focusableIn($scroll_target).first().focus();
+    }
+
+    // ========================================================================
+    // Functions - other
     // ========================================================================
 
     /**
      * Emit a console message if debugging.
+     *
+     * @param {...*} args
      */
-    function debug() {
-        if (DEBUGGING) {
-            consoleLog.apply(null, arguments);
-        }
+    function debug(...args) {
+        if (DEBUGGING) { consoleLog(...args); }
     }
 
 });

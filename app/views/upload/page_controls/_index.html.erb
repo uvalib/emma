@@ -2,11 +2,12 @@
 <%-
   # Page controls on the Upload index page for an authorized user.
 
-  actions   = %i[new edit_select delete_select]
+  actions    = %i[new edit_select delete_select]
   # NOTE: ultimately this should be conditional based on account abilities
-  actions  += %i[bulk_new bulk_edit bulk_delete] if session_debug?
-  actions   = page_control_actions(Upload, *actions) or return
-  anchor_id = 'index-page-controls'
+  actions   += %i[bulk_new bulk_edit bulk_delete] if session_debug?
+  actions    = page_control_actions(Upload, *actions) or return
+  anchor_id  = 'index-page-controls'
+  label_id ||= css_randomize(anchor_id)
 
   skip_nav_prepend(title: anchor_id) unless modal?
 
@@ -14,5 +15,9 @@
 
 -%>
 
-<div class="label" id="<%= anchor_id -%>"><%= page_controls_label -%>:</div>
-<div class="controls"><%= page_controls(*actions, **path_opt) %></div>
+<div class="label" id="<%= label_id -%>">
+  <%= page_controls_label -%>:
+</div>
+<div class="controls" id="<%= anchor_id -%>">
+  <%= page_controls(*actions, **path_opt) %>
+</div>

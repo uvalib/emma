@@ -23,24 +23,10 @@ en:
       # Layout
       # =======================================================================
 
-      search_controls:
-        size:
-          tooltip:      "Specify the number of search results per page.\nNOTE: The EMMA Unified Index does not yet support this capability."
-          values:
-            - 100
-          default:      100
-
       page_controls:
         label:
           one:          'Manage this metadata record'
           many:         'Record Actions'
-
-      # =======================================================================
-      # Controls
-      # =======================================================================
-
-      pagination:
-        page_size: 0 # NOTE: the unified index is not capable of pagination
 
       # =======================================================================
       # Fields

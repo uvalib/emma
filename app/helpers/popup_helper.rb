@@ -27,6 +27,8 @@ module PopupHelper
   POPUP_CLOSER_CLASS   = 'closer'
   POPUP_CONTROLS_CLASS = 'popup-controls'
   POPUP_DEFERRED_CLASS = 'deferred'
+  POPUP_RESIZE_CLASS   = 'resizeable'
+  POPUP_HIDDEN_MARKER  = 'hidden'
 
   # ===========================================================================
   # :section:
@@ -39,8 +41,9 @@ module PopupHelper
   # @param [Hash] opt                 Passed to 'popup-container' except for:
   #
   # @option opt [String]  :title      Tooltip for the visible control.
-  # @option opt [Boolean] :hidden     If *true*, the panel is displayed
-  #                                     initially.
+  # @option opt [Boolean] :hidden     If *false*, panel is displayed initially.
+  # @option opt [Boolean] :resize     If *true*, the panel is resizeable.
+  # @option opt [Boolean] :left_grab  If *true*, resize grab is on the left.
   # @option opt [Hash]    :control    Options for the visible control.
   # @option opt [Hash]    :panel      Options for the popup panel element.
   # @option opt [Hash]    :closer     Options for the panel closer icon.
@@ -49,7 +52,9 @@ module PopupHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def popup_container(**opt)
-    hidden = ('hidden' if !opt.key?(:hidden) || opt.delete(:hidden))
+    hidden = (POPUP_HIDDEN_MARKER if !opt.key?(:hidden) || opt.delete(:hidden))
+    resize = (POPUP_RESIZE_CLASS  if !opt.key?(:resize) || opt.delete(:resize))
+    left   = ('left-grab'         if opt.delete(:left_grab))
 
     # Visible popup toggle control.
     control_tip = opt.delete(:title)
@@ -60,9 +65,13 @@ module PopupHelper
     control_opt[:'aria-label']    ||= control_opt[:title]
     control_opt[:'aria-haspopup'] ||= 'dialog'
     text = control_opt.delete(:text).presence
-    icon = control_opt.delete(:icon).presence
     append_css_classes!(control_opt, (text ? 'text' : 'icon'))
-    control = html_span(**control_opt) { text || icon }
+    control =
+      if text
+        html_span(text, **control_opt)
+      else
+        icon_button(**control_opt)
+      end
 
     # Popup panel closer button in the top-right of the panel "frame".
     closer_css = POPUP_CLOSER_CLASS
@@ -87,7 +96,7 @@ module PopupHelper
     controls = html_div(class: POPUP_CONTROLS_CLASS) { close }
 
     # The popup panel element starts hidden initially.
-    panel_css = [POPUP_PANEL_CLASS, hidden]
+    panel_css = [POPUP_PANEL_CLASS, resize, left, hidden]
     panel_opt = prepend_css_classes(opt.delete(:panel), *panel_css)
     panel_opt[:role] ||= 'dialog'
     panel_opt[:'aria-modal'] = true unless panel_opt.key?(:'aria-modal')

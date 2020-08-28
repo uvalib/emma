@@ -18,7 +18,7 @@
   </div>
   <div class="control-area">
     <div class="user" title="<%= username_tip -%>"><%= username -%></div>
-    <%= help_popup(:sign_in) unless signed_in? %>
+    <%= help_popup(:sign_in, left_grab: true) unless signed_in? %>
     <div class="session"><%= session_link -%></div>
   </div>
 </div>

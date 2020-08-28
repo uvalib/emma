@@ -4,11 +4,17 @@
 
 .popup-container {
 
-    display: inline-block;
+    display:        inline-block;
+    vertical-align: middle;
 
     // noinspection SassScssResolvedByNameOnly
     @media #{$not-narrow-screen} {
         position: relative;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$medium-width} {
+        top: -0.5rem;
     }
 
     // Activation area in the form of text/hyperlink.
@@ -48,12 +54,16 @@
             display: inline-block;
         }
 
-        &:before {
-            content: "\2605"; // BLACK STAR
-        }
-
         &:focus {
             @extend %focus;
+        }
+
+        &:hover {
+            text-decoration: none;
+        }
+
+        .symbol {
+            color: black; // For color contrast checkers.
         }
     }
 
@@ -72,15 +82,6 @@
         border:           0.25rem solid $uva-accent-orange;
         border-top-width: 1.5rem;
         border-radius:    0.75rem;
-        box-shadow:       0.25rem 0.25rem 1rem 0.125rem gray;
-
-        &.hidden {
-            z-index: $z-hidden;
-        }
-
-        &:not(.hidden) {
-            z-index: $z-popup;
-        }
 
         @media #{$wide-screen} {
             position:   absolute;
@@ -127,6 +128,7 @@
             font-size:   medium;
             font-weight: bold;
             color:       white;
+            background:  $uva-accent-orange; // For color contrast checkers.
             cursor:      pointer;
 
             &:focus {
@@ -150,6 +152,34 @@
         // Temporary deferred-content placeholder.
         .deferred {
             font-size: large;
+        }
+
+        //=====================================================================
+        // Variations
+        //=====================================================================
+
+        // Resizable panels are only for the desktop form factor.
+        @media #{$wide-screen} {
+
+            // The panel with a resize grab at the lower right-hand corner.
+            &.resizeable {
+                padding-top: 1.75rem;
+                border:      0.25rem solid $uva-accent-orange;
+                box-shadow:  inset 0 3.5rem 0 -2.25rem $uva-accent-orange,
+                                   $block-shadow;
+                resize:      both;
+                overflow:    auto;
+            }
+
+            // Put the resize grab on the left side.  (This is better for the
+            // "Sign-in" help panel since it can only grow to the left.)
+            &.left-grab {
+                direction: rtl;
+            }
+
+            .closer.icon {
+                top: -0.25rem;
+            }
         }
     }
 

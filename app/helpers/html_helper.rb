@@ -21,6 +21,7 @@ module HtmlHelper
   end
 
   include Emma::Common
+  include Emma::Unicode
 
   # ===========================================================================
   # :section:
@@ -109,6 +110,44 @@ module HtmlHelper
     opt[:'aria-hidden'] = true
     html_tag(tag, **opt) do
       "<!-- #{comment} -->".html_safe if comment.present?
+    end
+  end
+
+  # Generate a symbol-based icon button or link which should be both accessible
+  # and cater to the quirks of various accessibility scanners.
+  #
+  # @param [String, nil] icon         Default: Emma::Unicode#STAR
+  # @param [String, nil] text         Default: 'Action'
+  # @param [String, nil] url          Default: '#'
+  # @param [Hash]        opt          Passed to #link_to or #html_span except:
+  #
+  # @option opt [String] :symbol      Overrides *symbol*
+  # @option opt [String] :text        Overrides *text*
+  # @option opt [String] :url         Overrides *url*
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def icon_button(icon = nil, text = nil, url = nil, **opt)
+    opt, html_opt = partition_options(opt, :icon, :text, :url)
+    icon = opt[:icon] || icon || STAR
+    text = opt[:text] || text || html_opt[:title] || 'Action' # TODO: I18n
+    url  = opt[:url]  || url
+    link = +''.html_safe
+
+    # Screen-reader only text.
+    link << html_span(text, class: 'text sr-only')
+
+    # Non-screen-reader symbol.
+    link << html_span(icon, class: 'symbol', 'aria-hidden': true)
+
+    html_opt[:title] ||= text
+    if url
+      link_to(link, url, html_opt)
+    else
+      html_span(link, html_opt)
     end
   end
 

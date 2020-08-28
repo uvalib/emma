@@ -331,7 +331,6 @@ $upload-section-gap-small: $upload-section-gap / 2;
         position:   sticky;
         top:        1rem;
         background: white;
-        box-shadow: 0.25rem 0.25rem 0.25rem -0.125rem lightgray;
 
         @media #{$narrow-screen} {
             padding:       0.25rem;

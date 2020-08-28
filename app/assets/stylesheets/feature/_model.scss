@@ -19,6 +19,12 @@ $results-entry-gap-y:    $page-padding;
 // without being scaled to display dimensions.
 $results-entry-margin-y: 0.67rem;
 
+// Padding for control icons (.number .container .icon-tray .icon).
+$icon-pad: 4px;
+
+// Padding for control icon holder (.number .container .icon-tray).
+$tray-pad: 1.5 * $icon-pad;
+
 //=============================================================================
 // Item metadata
 //=============================================================================
@@ -181,9 +187,6 @@ $results-entry-margin-y: 0.67rem;
                 }
             }
 
-            $icon-pad:      4px;
-            $tray-pad:      1.5 * $icon-pad;
-
             // Vertical tray of action button icons.
             .icon-tray {
 
@@ -198,8 +201,8 @@ $results-entry-margin-y: 0.67rem;
                 border-radius:  0.25rem;
 
                 @media #{$narrow-screen} {
-                    padding-left:  4px;
-                    padding-right: 4px;
+                    padding-left:  $icon-pad;
+                    padding-right: $icon-pad;
                 }
             }
 

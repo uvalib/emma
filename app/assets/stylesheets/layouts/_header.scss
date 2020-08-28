@@ -59,7 +59,8 @@ $search-button-width:    6rem;
 
     @extend %header-section;
 
-    max-width: calc(#{$lg-width} - (2 * #{$page-padding-x}));
+    max-width:        calc(#{$lg-width} - (2 * #{$page-padding-x}));
+    background-color: inherit;
 
     @media #{$narrow-screen} {
         width:     100%;
@@ -362,8 +363,15 @@ $search-button-width:    6rem;
             }
         }
 
-        .active {
-            text-decoration: underline;
+        // Highlight the main page for the current controller.
+        .active:not(.separator) {
+
+            margin-top: -3px;
+            border-top: 3px solid $uva-accent-orange;
+
+            &:not(.disabled):hover {
+                text-decoration: underline;
+            }
         }
 
         .secondary {
@@ -471,7 +479,7 @@ $search-button-width:    6rem;
             // noinspection CssOverwrittenProperties
             option:before {
                 display:        block;
-                color:          gray;
+                color:          $uva-text-gray;
                 background:     white;
                 border:         6px solid white;
                 content:        "...";
@@ -508,6 +516,7 @@ $search-button-width:    6rem;
 
         .search-input-select {
 
+            height:       1.75rem;
             margin-right: 0.5rem;
             margin-left:  calc(#{$gap-x} / 2);
             font-size:    large;
@@ -521,6 +530,12 @@ $search-button-width:    6rem;
 
             option {
                 color: inherit; // Needed everywhere except Firefox.
+
+                // This is needed for the Firefox Accessibility panel because
+                // the default color (transparent) is #0000 (black with an
+                // opacity of 0), which does not play well with color contrast
+                // evaluation.
+                background-color: inherit;
             }
         }
 
@@ -553,36 +568,43 @@ $search-button-width:    6rem;
             .search-input {
 
                 margin:       auto 0;
-                margin-right: $gap-x;
+                margin-right: calc(1.5 * #{$gap-x});
                 flex:         1 1 auto;
 
                 @media #{$narrow-screen} {
-                    margin-right: 0.125rem;
+                    margin-right:  0.125rem;
+                    margin-bottom: 0.25rem;
                 }
             }
 
             .search-clear {
 
                 position:         relative;
-                left:             -2.5rem;
-                margin:           0;
+                left:             -2.75rem;
+                margin:           auto 0;
                 padding:          0 0.375rem;
-                color:            gray;
-                background-color: transparent;
+                color:            $uva-text-gray;
+                background-color: white;
                 border-color:     transparent;
-                transform:        scale(0.85);
 
                 @media #{$not-narrow-screen} {
                     margin-right: $search-clear-inset;
                 }
 
                 @media #{$narrow-screen} {
-                    margin-right: -2.5rem;
+                    top:          -0.125rem;
+                    left:         -2.5rem;
+                    margin-right: -2.25rem;
                     margin-left:  0.25rem;
                 }
 
                 &:focus {
-                    outline-offset: -3px;
+                    outline-offset: -4px;
+                }
+
+                * {
+                    font-size: 80%;
+                    color:     inherit;
                 }
             }
 
@@ -594,9 +616,9 @@ $search-button-width:    6rem;
                 flex:         0 0 auto;
 
                 @media #{$narrow-screen} {
-                    margin-top:   calc(2 * #{$gap-y});
-                    margin-left:  calc(2 * #{$gap-x});
-                    margin-right: calc(-0.5 * #{$gap-x});
+                    margin-top:   0;
+                    margin-left:  $gap-x;
+                    margin-right: 0;
                 }
             }
         }
@@ -782,7 +804,7 @@ $search-button-width:    6rem;
 
             select {
                 width:  100%;
-                height: 100%;
+                height: 2rem;
             }
         }
 

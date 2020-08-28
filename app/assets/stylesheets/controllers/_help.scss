@@ -155,7 +155,7 @@
 
             @media #{$narrow-screen} {
                 max-width:     90%;
-                margin-bottom: $flex-gap-y;
+                margin-bottom: calc(2 * #{$flex-gap-y});
             }
 
             img {
@@ -442,6 +442,23 @@ body.help {
         display:          inline;
         padding:          4px 6px;
         border-radius:    6px;
+    }
+}
+
+//=============================================================================
+// Special handling for resizable modal help pages.
+//=============================================================================
+
+body.help.modal {
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$wide-screen} {
+        .help-intro,
+        .help-toc,
+        .help-list,
+        .help-container {
+            max-width: unset;
+        }
     }
 }
 

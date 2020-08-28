@@ -6,9 +6,9 @@
 // Colors.
 //=============================================================================
 
-$green: #00ff00;
-$red:   #ff0000;
-$blue:  #0000ff;
+$green:      #00ff00;
+$red:        #ff0000;
+$blue:       #0000ff;
 
 $text-green: $green;
 $text-red:   #a80000;   // Passes WCAG AAA on "background-color: snow".
@@ -22,13 +22,13 @@ $bookshare-button: #445f9e;
 $bookshare-border: #3c548c;
 
 // @see https://brand.virginia.edu/brand-essentials/colors
-$uva-blue:   #232d4b;
-$uva-orange: #e57200;
+$uva-blue:           #232d4b;
+$uva-orange:         #e57200;
 
 // UVA text colors.
 // @see https://brand.virginia.edu/brand-essentials/colors/web-palette
-$uva-text-blue:   $uva-blue;
-$uva-text-orange: $uva-orange; // >= 24px normal; >= 18px bold
+$uva-text-blue:      $uva-blue;
+$uva-text-orange:    $uva-orange; // >= 24px normal; >= 18px bold
 
 // UVA accent colors.
 // @see https://brand.virginia.edu/brand-essentials/colors/web-palette
@@ -68,13 +68,13 @@ $uppy-file-input-text-rev: $uppy-white;
 $uppy-file-input-bg-rev:   $uppy-file-input;
 
 // Text colors.
-$error-fg: $uva-emergency-red;
-$debug-fg: hotpink;
+$error-fg:          $uva-emergency-red;
+$debug-fg:          hotpink;
 
 // Status backgrounds.
-$failure-bg:  lighter($uva-accent-magenta, 50%);
-$success-bg:  lighter($uva-accent-green,   50%);
-$selected-bg: lighter($uva-accent-green,   75%);
+$failure-bg:        lighter($uva-accent-magenta, 50%);
+$success-bg:        lighter($uva-accent-green,   50%);
+$selected-bg:       lighter($uva-accent-green,   75%);
 
 // Input field backgrounds.
 $input-error-bg:    lighter($uva-emergency-red, 90%);
@@ -84,26 +84,34 @@ $input-readonly-fg: $uva-text-gray;
 $input-disabled-fg: $input-readonly-fg;
 
 // Flash backgrounds.
-$alert-bg:   $failure-bg;
-$notice-bg:  $success-bg;
-$failure-bg: $alert-bg;
-$success-bg: $notice-bg;
+$alert-bg:          $failure-bg;
+$notice-bg:         $success-bg;
+$failure-bg:        $alert-bg;
+$success-bg:        $notice-bg;
 
 // Other colors.
-$header-bg:     $uva-blue;
-$panel-bg:      lighter($uva-accent-orange, 90%);
-$panel-border:  lighter($uva-accent-orange, 50%);
-$panel-accent:  $uva-accent-orange;
-$button-accent: lighter($uva-accent-teal,   35%);
-$focus-accent:  $button-accent;
-$text-focus:    darker($uva-accent-teal,    10%);
+$header-bg:         $uva-blue;
+$panel-bg:          lighter($uva-accent-orange, 90%);
+$panel-border:      lighter($uva-accent-orange, 50%);
+$panel-accent:      $uva-accent-orange;
+$button-accent:     lighter($uva-accent-teal,   35%);
+$focus-accent:      $button-accent;
+$text-focus:        darker($uva-accent-teal,    10%);
+
+//=============================================================================
+// Box shadow components.
+//=============================================================================
+
+$block-shadow:      0.25rem 0.25rem 0.25rem -0.0625rem lightgray;
+$control-shadow:    0.25rem 0.25rem 0.25rem -0.125rem  lightgray;
+$popup-shadow:      0.25rem 0.25rem    1rem  0.125rem  gray;
 
 //=============================================================================
 // Fonts.
 //=============================================================================
 
-$font-normal:    "franklin-gothic-urw", "Arial", sans-serif;
-$font-condensed: "franklin-gothic-urw-cond", "Arial Narrow", sans-serif;
+$font-normal:       "franklin-gothic-urw", "Arial", sans-serif;
+$font-condensed:    "franklin-gothic-urw-cond", "Arial Narrow", sans-serif;
 
 //=============================================================================
 // High-contrast mode.
