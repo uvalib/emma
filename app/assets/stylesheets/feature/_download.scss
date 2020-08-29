@@ -66,6 +66,7 @@
         }
     }
 
+    // @see createMemberPopup() in app/assets/javascripts/feature/download.js
     .popup-panel {
 
         padding: 1rem;
@@ -111,25 +112,38 @@
 
             display:               grid;
             grid-template-columns: [check] auto [label] 1fr;
-            grid-auto-rows:        min-content;
+            align-content:         flex-start;
             gap:                   0.25rem;
             margin:                1rem 0.25rem;
             padding:               0;
             border:                none;
             overflow:              auto;
+            overscroll-behavior:   contain;
             flex-grow:             1;
 
-            @media #{$medium-width} {
-                flex-basis: 75%;
+            // Because this is the only element that can grow, the height of
+            // the panel can be constrained only by limiting the height of this
+            // element.  If it's not constrained, and there are very many
+            // members in the list, then the panel will grow down the page
+            // (meaning that the submit button may be far from the top of the
+            // panel and below the bottom of the screen).
+            @media #{$wide-screen} {
+                max-height: 25vh;
             }
 
-            @media #{$narrow-screen} {
-                flex-basis: 50vh;
+            // For the form factors in which the height of the panel itself is
+            // constrained (by the limits of the screen), if the list has lots
+            // of members then "flex-basis: auto" will make flex try (and fail)
+            // to give this element enough vertical space for the whole list.
+            // Zeroing out the basis allows flex to resolve the layout without
+            // concern for the "ideal" height of the element.
+            @media #{$not-wide-screen} {
+                flex-basis: 0;
             }
 
             input {
-                margin-top: 0.25rem;
-                align-self: flex-start;
+                margin-top:    auto;
+                margin-bottom: auto;
             }
 
             label {
