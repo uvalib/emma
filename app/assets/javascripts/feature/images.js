@@ -180,7 +180,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string} url
      *
-     * @return {string}
+     * @returns {string}
      */
     function urlProxyPath(url) {
         return '/api/image?url=' + encodeURIComponent(url);
@@ -191,7 +191,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string} url
      *
-     * @return {string}
+     * @returns {string}
      */
     function imageId(url) {
         const file_name = url.replace(/^.*\//, '');
@@ -201,7 +201,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Create a placeholder image element.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function imagePlaceholder() {
         return makeImage(PLACEHOLDER_SRC, PLACEHOLDER_ALT)
@@ -215,7 +215,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string} src
      * @param {string} [alt]
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function makeImage(src, alt) {
         return $(`<img alt="${alt || ''}" src="${src}">`);

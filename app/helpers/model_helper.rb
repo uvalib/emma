@@ -907,13 +907,13 @@ module ModelHelper
     value    = Array.wrap(value).reject(&:blank?)
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
-    invalid  = required && value.empty?
 
     # Create status marker icon.
     status = []
     status << :required if required
     status << :disabled if disabled
-    status << :invalid  if invalid
+    status << :invalid  if required && value.empty?
+    status << :valid    if value.present?
     marker = status_marker(status: status, label: label)
 
     # Option settings for both label and value.
@@ -1197,7 +1197,7 @@ module ModelHelper
     status = Array.wrap(status).compact
     append_css_classes!(opt, *status) if status.present?
     icon, tip =
-      %i[required invalid valid nominal].find { |state|
+      %i[valid required invalid nominal].find { |state|
         next unless status.include?(state) && (entry = STATUS_MARKER[state])
         break entry.values
       } || STATUS_MARKER.values.last.values

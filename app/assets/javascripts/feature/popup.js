@@ -237,7 +237,7 @@ $(document).on('turbolinks:load', function() {
          * If there was a problem with loading the popup content, display
          * a message in the popup placeholder element.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function onError(event) {
             consoleWarn(func, type, 'FAILED', event);
@@ -255,7 +255,7 @@ $(document).on('turbolinks:load', function() {
          * the <iframe> to bring the element with that ID to the top of the
          * panel display.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function onLoad(event) {
             if ($popup.hasClass(COMPLETE_MARKER)) {
@@ -299,7 +299,7 @@ $(document).on('turbolinks:load', function() {
          * Re-focus on the parent window so that the hidden popup does not
          * continue to intercept keypress events.
          *
-         * @param {KeyboardEvent} event
+         * @param {jQuery.Event|KeyboardEvent} event
          */
         function onIframeKeyUp(event) {
             const key = event && event.key;
@@ -399,7 +399,7 @@ $(document).on('turbolinks:load', function() {
      * If the event originates from outside of a popup control or open popup,
      * then close all open popups.
      *
-     * @param {KeyboardEvent} event
+     * @param {jQuery.Event|KeyboardEvent} event
      */
     function onKeyUp(event) {
         // debugEvent('onKeyUp', event);
@@ -425,7 +425,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Close all popups that are not hidden.
      *
-     * @param {MouseEvent} event
+     * @param {jQuery.Event|MouseEvent} event
      */
     function onClick(event) {
         // debugEvent('onClick', event);
@@ -451,7 +451,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Toggle visibility of a button and its popup element.
      *
-     * @param {Event} event
+     * @param {jQuery.Event} event
      */
     function onTogglePopup(event) {
         debugEvent('onTogglePopup', event);
@@ -489,8 +489,8 @@ $(document).on('turbolinks:load', function() {
     /**
      * Report on an event.
      *
-     * @param {string} label
-     * @param {Event}  event
+     * @param {string}             label
+     * @param {jQuery.Event|Event} event
      */
     function debugEvent(label, event) {
         if (DEBUGGING) {

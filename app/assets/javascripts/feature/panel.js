@@ -78,7 +78,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Toggle visibility of a toggle button and its panel.
      *
-     * @param {Event} event
+     * @param {jQuery.Event} event
      */
     function onTogglePanel(event) {
         let $button = $(event && event.target || this);
@@ -101,7 +101,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} button
      *
-     * @return {jQuery|undefined}
+     * @returns {jQuery|undefined}
      */
     function getPanel(button) {
         const panel = getPanelId(button);
@@ -113,7 +113,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} button
      *
-     * @return {string|undefined}
+     * @returns {string|undefined}
      */
     function getPanelId(button) {
         return $(button).attr('aria-controls');
@@ -124,7 +124,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} button
      *
-     * @return {string|undefined}
+     * @returns {string|undefined}
      */
     function getPanelSelector(button) {
         let $button = $(button);
@@ -150,7 +150,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string|Selector} target
      *
-     * @return {string}
+     * @returns {string}
      */
     function getState(target) {
         let panel = target;

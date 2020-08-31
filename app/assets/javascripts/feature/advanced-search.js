@@ -310,7 +310,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Get the state of advanced search controls.
      *
-     * @return {string}
+     * @returns {string}
      */
     function getControlPanelState() {
         return sessionStorage.getItem('search-controls');
@@ -370,7 +370,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current search terms as defined by the contents of the input box.
      *
-     * @return {string}
+     * @returns {string}
      */
     function searchTerms() {
         return $search_input.val();
@@ -405,23 +405,23 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update the search box and menus.
      *
-     * @param {Event} e
+     * @param {jQuery.Event} event
      */
-    function updateSearchTerms(e) {
-        setSearchTerms(e.target.value);
+    function updateSearchTerms(event) {
+        setSearchTerms(event.target.value);
     }
 
     /**
      * Clear the search box.
      *
-     * @param {Event}   [e]
+     * @param {jQuery.Event} [event]
      * @param {boolean} [allow_default]   If *true*, do not mark the event as
      *                                      handled (*false* by default because
      *                                      the '.search-clear' control is an
      *                                      <a> in order to preserve tab order)
      */
-    function clearSearchTerms(e, allow_default) {
-        if (e && !allow_default) { e.preventDefault(); }
+    function clearSearchTerms(event, allow_default) {
+        if (event && !allow_default) { event.preventDefault(); }
         setSearchTerms('');
     }
 
@@ -440,7 +440,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * The current search type as defined by the input selection menu.
      *
-     * @return {string}
+     * @returns {string}
      */
     function searchType() {
         return $input_select.val();
@@ -498,12 +498,12 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update the input select menu, search box, and menus.
      *
-     * @param {Event} [e]
+     * @param {jQuery.Event} [event]
      */
-    function updateSearchType(e) {
+    function updateSearchType(event) {
         let [type, query] = [];
-        if (e) {
-            type = e.target.value;
+        if (event) {
+            type = event.target.value;
         } else {
             $.each(urlParameters(), function(param, value) {
                 if (SEARCH_TYPES.includes(param)) {
@@ -620,7 +620,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Generate message translations for Select2.
      *
-     * @return {object}
+     * @returns {object}
      *
      * @see https://select2.org/i18n
      * @see ../../../node_modules/select2/src/js/select2/i18n/en.js
@@ -679,22 +679,22 @@ $(document).on('turbolinks:load', function() {
      * This supports the ability for a multi-select menu to be used to modify
      * search results without having to also press "Search".
      *
-     * @param {Event} e
+     * @param {jQuery.Event} event
      */
-    function updateHiddenParameters(e) {
+    function updateHiddenParameters(event) {
         // noinspection JSCheckFunctionSignatures
-        setHiddenParameters(e.target);
+        setHiddenParameters(event.target);
     }
 
     /**
      * Cause the current event to be remembered for coordination with the
      * {@link suppressMenuOpen} handler.
      *
-     * @param {Event} e
+     * @param {jQuery.Event} event
      */
-    function updateEvent(e) {
-        let $target = $(e.target);
-        $target.prop('ongoing-event', e.type);
+    function updateEvent(event) {
+        let $target = $(event.target);
+        $target.prop('ongoing-event', event.type);
     }
 
     /**
@@ -704,13 +704,13 @@ $(document).on('turbolinks:load', function() {
      * This way, deselecting a facet selection performs its action without the
      * unnecessary opening-and-closing of the drop down menu.
      *
-     * @param {Event} e
+     * @param {jQuery.Event} event
      */
-    function suppressMenuOpen(e) {
-        let $target = $(e.target);
+    function suppressMenuOpen(event) {
+        let $target = $(event.target);
         if ($target.prop('ongoing-event')) {
-            e.preventDefault();
-            e.stopImmediatePropagation();
+            event.preventDefault();
+            event.stopImmediatePropagation();
             $target.removeProp('ongoing-event').select2('close');
         }
     }
@@ -718,12 +718,13 @@ $(document).on('turbolinks:load', function() {
     /**
      * Log a Select2 event.
      *
-     * @param {Event} e
+     * @param {jQuery.Event} event
      */
-    function logSelectEvent(e) {
-        const spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH-e.type.length));
-        const evt    = e.type + ' '.repeat(spaces);
-        const tgt    = e.target;
+    function logSelectEvent(event) {
+        const type   = event.type;
+        const spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH - type.length));
+        const evt    = type + ' '.repeat(spaces);
+        const tgt    = event.target;
         let target   = '';
       //if (tgt.localName) { target += tgt.localName; }
         if (tgt.id)        { target += '#' + tgt.id; }

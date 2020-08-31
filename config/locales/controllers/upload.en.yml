@@ -103,8 +103,8 @@ en:
         form:                                &UPLOAD_FORM_FIELDS
 
           # === Unified Index information (from :emma_data) ===
-          emma_recordId:                     'EMMA Record Id'
-          emma_titleId:                      'EMMA Title Id'
+          emma_recordId:                     'EMMA Record ID'
+          emma_titleId:                      'EMMA Title ID'
 
           # === Repository information ===
           emma_repository:                   'Source Repository'
@@ -114,7 +114,7 @@ en:
           emma_webPageLink:                  'Details Link'
           emma_lastRemediationDate:          'File Update'
           emma_repositoryMetadataUpdateDate: 'Entry Update'
-          emma_lastRemediationNote:          'File Update Note'
+          emma_lastRemediationNote:          'Remediation Note'
           emma_formatVersion:                'File Format Version'
           emma_formatFeature:                'File Format Feature'
 
@@ -131,8 +131,8 @@ en:
           dc_format:                         'Format'
           dc_type:                           'Type'
           dc_subject:                        'Subject'
-          dcterms_dateAccepted:              'DateAccepted'
-          dcterms_dateCopyright:             'CopyrightDate'
+          dcterms_dateAccepted:              'Date Accepted'
+          dcterms_dateCopyright:             'Copyright Date'
 
           # === Remediation information (from :emma_data) ===
           s_accessibilityFeature:            'Accessibility Features'

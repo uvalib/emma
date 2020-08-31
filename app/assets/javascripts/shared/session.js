@@ -50,7 +50,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Event|Location|string} arg
      * @param {boolean}               [add_hash]    Default: *true*.
      *
-     * @return {string}
+     * @returns {string}
      *
      * == Usage Notes
      * Local URLs are assumedly to be relative.

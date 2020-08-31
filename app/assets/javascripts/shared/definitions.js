@@ -38,7 +38,7 @@ const SECONDS = SECOND;
  * @param {number} part
  * @param {number} total
  *
- * @return {number}
+ * @returns {number}
  */
 function percent(part, total) {
     // noinspection MagicNumberJS
@@ -66,7 +66,7 @@ function arrayWrap(item) {
  * @param {*}      item
  * @param {number} [limit]            Maximum length of result.
  *
- * @return {string}
+ * @returns {string}
  */
 function asString(item, limit) {
     let result = '';
@@ -119,17 +119,18 @@ function asString(item, limit) {
  * Generate a copy of the item without blank elements.
  *
  * @param {Array|object|string|*} item
+ * @param {boolean}               [trim]    If *false*, don't trim white space.
  *
- * @return {Array|object|string|*}
+ * @returns {Array|object|string|*}
  */
-function compact(item) {
+function compact(item, trim) {
     if (typeof item === 'string') {
-        return item.trim();
+        return (trim === false) ? item : item.trim();
 
     } else if (Array.isArray(item)) {
         let arr = [];
         item.forEach(function(v) {
-            const value = compact(v);
+            const value = compact(v, trim);
             if (isPresent(value)) { arr.push(...arrayWrap(value)); }
         });
         return arr;
@@ -137,7 +138,7 @@ function compact(item) {
     } else if (typeof item === 'object') {
         let obj = {};
         $.each(item, function(k, v) {
-            const value = compact(v);
+            const value = compact(v, trim);
             if (isPresent(value)) { obj[k] = value; }
         });
         return obj;
@@ -152,7 +153,7 @@ function compact(item) {
  *
  * @param {Array|*} item...
  *
- * @return {Array}
+ * @returns {Array}
  */
 function flatten(item) {
     let result = [];
@@ -178,7 +179,7 @@ function flatten(item) {
  *
  * @param {Date|number} [value]
  *
- * @return {number}
+ * @returns {number}
  */
 function timeOf(value) {
     let result;
@@ -196,7 +197,7 @@ function timeOf(value) {
  * @param {Date|number} start_time     Original `Date.now()` value.
  * @param {Date|number} [time_now]     Default: `Date.now()`.
  *
- * @return {number}
+ * @returns {number}
  */
 function secondsSince(start_time, time_now) {
     const start = timeOf(start_time);
@@ -213,7 +214,7 @@ function secondsSince(start_time, time_now) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isDefined(item) {
     return typeof item !== 'undefined';
@@ -224,7 +225,7 @@ function isDefined(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function notDefined(item) {
     return typeof item === 'undefined';
@@ -236,7 +237,7 @@ function notDefined(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isEmpty(item) {
     // noinspection NegatedIfStatementJS
@@ -261,7 +262,7 @@ function isEmpty(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function notEmpty(item) {
     return !isEmpty(item);
@@ -272,7 +273,7 @@ function notEmpty(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isMissing(item) {
     return isEmpty(item);
@@ -283,7 +284,7 @@ function isMissing(item) {
  *
  * @param {*} item
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function isPresent(item) {
     return notEmpty(item);
@@ -294,7 +295,7 @@ function isPresent(item) {
  *
  * @param {string[]} attributes
  *
- * @return {string}
+ * @returns {string}
  */
 function attributeSelector(attributes) {
     const list = attributes.join('], [');
@@ -318,7 +319,7 @@ const SIX_DIGITS = 1000000;
  *
  * @param {string} css_class
  *
- * @return {string}
+ * @returns {string}
  */
 function randomizeClass(css_class) {
     const random = Math.floor(Math.random() * SIX_DIGITS);
@@ -341,7 +342,7 @@ function toggleClass(sel, cls, setting) {
  *
  * @param {...string|Array} args
  *
- * @return {string}
+ * @returns {string}
  */
 function cssClasses(...args) {
     let result = [];
@@ -366,7 +367,7 @@ function cssClasses(...args) {
  *
  * @param {...string|Array} args
  *
- * @return {string}
+ * @returns {string}
  */
 function selector(...args) {
     let result = [];
@@ -397,7 +398,7 @@ function selector(...args) {
  *
  * @param {string} text
  *
- * @return {string}
+ * @returns {string}
  */
 function htmlDecode(text) {
     let str = text.toString().trim();
@@ -410,7 +411,7 @@ function htmlDecode(text) {
  *
  * @param {Selector} element
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function scrollIntoView(element) {
     let $element = $(element);
@@ -457,9 +458,9 @@ function create(element, properties) {
 /**
  * Extract the URL value associated with *arg*.
  *
- * @param {string|HashChangeEvent|Event|Location|{url: string}} arg
+ * @param {string|Event|jQuery.Event|Location|{url: string}} arg
  *
- * @return {string}
+ * @returns {string}
  */
 function urlFrom(arg) {
     let result = undefined;
@@ -468,10 +469,9 @@ function urlFrom(arg) {
         result = arg;
     } else if ((typeof arg !== 'object') || Array.isArray(arg)) {
         // Skipping invalid argument.
-    } else if (isDefined(arg.newURL)) { // HashChangeEvent
-        result = arg.newURL;
-    } else if (isDefined(arg.target) && isDefined(arg.target.href)) { // Event
-        result = arg.target.href;
+    } else if (isDefined(arg.target)) { // Event or jQuery.Event
+        const event = isDefined(arg.originalEvent) && arg.originalEvent || arg;
+        result = isDefined(event.newURL) ? event.newURL : event.target.href;
     } else if (isDefined(arg.href)) {   // Location, HTMLBaseElement
         result = arg.href;
     } else if (isDefined(arg.url)) {    // object
@@ -485,7 +485,7 @@ function urlFrom(arg) {
  *
  * @param {string} str
  *
- * @return {object}
+ * @returns {object}
  */
 function asParams(str) {
     let result = {};
@@ -510,7 +510,7 @@ function asParams(str) {
  *
  * @param {string} [path]             Default: `window.location`.
  *
- * @return {object}
+ * @returns {object}
  */
 function urlParameters(path) {
     const prms = path ? path.replace(/^[^?]*\?/, '') : window.location.search;
@@ -522,7 +522,7 @@ function urlParameters(path) {
  *
  * @param {string|object|string[]|object[]} parts
  *
- * @return {string}
+ * @returns {string}
  */
 function makeUrl(...parts) {
     let path   = [];
@@ -618,13 +618,44 @@ function cancelAction(arg) {
 // ============================================================================
 
 /**
+ * The default delay for {@link debounce}.
+ *
+ * @constant
+ * @type {number}
+ */
+const DEBOUNCE_DELAY = 250; // milliseconds
+
+/**
+ * Generate a wrapper function which executes the callback function only after
+ * the indicated delay.
+ *
+ * @param {function} callback
+ * @param {number}   [wait]           Default: {@link DEBOUNCE_DELAY}.
+ *
+ * @returns {function}
+ */
+function debounce(callback, wait) {
+    let delay = wait || DEBOUNCE_DELAY; // milliseconds
+    let timeout;
+    return function() {
+        let _this = this;
+        let args  = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            timeout = null;
+            callback.apply(_this, args);
+        }, delay);
+    }
+}
+
+/**
  * Set an event handler without concern that it may already set.
  *
- * @param {jQuery}   $element
- * @param {string}   name             Event name.
- * @param {function} func             Event handler.
+ * @param {jQuery}                 $element
+ * @param {string}                 name     Event name.
+ * @param {function(jQuery.Event)} func     Event handler.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function handleEvent($element, name, func) {
     return $element.off(name, func).on(name, func);
@@ -634,10 +665,10 @@ function handleEvent($element, name, func) {
  * Set click and keypress event handlers without concern that it may already
  * set.
  *
- * @param {jQuery}   $element
- * @param {function} func             Event handler.
+ * @param {jQuery}                 $element
+ * @param {function(jQuery.Event)} func     Event handler.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function handleClickAndKeypress($element, func) {
     return handleEvent($element, 'click', func).each(handleKeypressAsClick);
@@ -731,7 +762,7 @@ const NO_FOCUS_SELECTOR = attributeSelector(NO_FOCUS_ATTRIBUTES);
  *                                     elements with tabindex == -1 are
  *                                     skipped. Default: elements like <a>.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function handleKeypressAsClick(selector, direct, match, except) {
 
@@ -773,9 +804,9 @@ function handleKeypressAsClick(selector, direct, match, except) {
      * Translate a carriage return to a click, except for links (where the
      * key press will be handled by the browser itself).
      *
-     * @param {KeyboardEvent} event
+     * @param {jQuery.Event|KeyboardEvent} event
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function handleKeypress(event) {
         const key = event && event.key;
@@ -795,7 +826,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
  *
  * @param {Selector} element
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function focusable(element) {
     return isPresent($(element).filter(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR));
@@ -807,7 +838,7 @@ function focusable(element) {
  *
  * @param {Selector} element
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function focusableIn(element) {
     return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);

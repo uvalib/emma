@@ -297,6 +297,17 @@ $(document).on('turbolinks:load', function() {
     const MESSAGE_DURATION = 3 * SECONDS;
 
     /**
+     * How long to wait after the user enters characters into a field before
+     * re-validating the form.
+     *
+     * @constant
+     * @type {number}
+     *
+     * @see monitorInputFields
+     */
+    const DEBOUNCE_DELAY = 500; // milliseconds
+
+    /**
      * Generic form selector.
      *
      * @constant
@@ -458,11 +469,10 @@ $(document).on('turbolinks:load', function() {
         /**
          * Update the form after the bulk control file is selected.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function setBulkFilename(event) {
-            const target   = event.target || event || this;
-            const filename = ((target.files || [])[0] || {}).name;
+            const filename = ((event.target.files || [])[0] || {}).name;
             if (isPresent(filename)) {
                 displayFilename(filename, $form);
                 fileSelectButton($form).removeClass('best-choice');
@@ -476,7 +486,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isBulkOperationForm(form) {
         return formElement(form).hasClass('bulk');
@@ -494,7 +504,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [results]
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function bulkUploadResults(results) {
         const selector = BULK_UPLOAD_RESULTS_SELECTOR;
@@ -511,7 +521,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector}            [results]
      * @param {UploadRecord|number} [record]    The current max database ID.
      *
-     * @return {string}
+     * @returns {string}
      */
     function bulkUploadResultsNextId(results, record) {
         const name    = 'next-id';
@@ -538,7 +548,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector}    [results]
      * @param {Date|number} [start_time]
      *
-     * @return {number}
+     * @returns {number}
      */
     function bulkUploadResultsStartTime(results, start_time) {
         const name   = 'start-time';
@@ -644,7 +654,7 @@ $(document).on('turbolinks:load', function() {
      * @param {UploadRecord|object|string} entry
      * @param {Date|number}                [time]
      *
-     * @return {jQuery}               The element appended to results.
+     * @returns {jQuery}              The element appended to results.
      */
     function addBulkUploadResult(results, index, entry, time) {
         let $results = bulkUploadResults(results);
@@ -982,7 +992,7 @@ $(document).on('turbolinks:load', function() {
          * Events that would have gone to the input or label will not be
          * impeded here (nor will the event bubbling up from the input).
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function clickChildInput(event) {
             if (event.target === event.currentTarget) {
@@ -1061,7 +1071,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [container]  Default: {@link formElement}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isUppyInitialized(container) {
         let $container = formContainer(container);
@@ -1074,7 +1084,7 @@ $(document).on('turbolinks:load', function() {
      * @param {HTMLElement}         form
      * @param {UppyFeatureSettings} features
      *
-     * @return {Uppy}
+     * @returns {Uppy}
      */
     function buildUppy(form, features) {
         let container = form.parentElement;
@@ -1525,7 +1535,7 @@ $(document).on('turbolinks:load', function() {
         let $field  = $(field || this);
         const key   = $field.attr('data-field');
         const value = (typeof data === 'object') ? data[key] : data;
-        updateInputField($field, value, true);
+        updateInputField($field, value, true, true);
     }
 
     /**
@@ -1533,13 +1543,14 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [field]      Default: *this*.
      * @param {*}        [new_value]
+     * @param {boolean}  [trim]       If *false*, don't trim white space.
      * @param {boolean}  [init]       If *true*, in initialization phase.
      */
-    function updateInputField(field, new_value, init) {
+    function updateInputField(field, new_value, trim, init) {
         let $field = $(field || this);
 
         if ($field.is('fieldset.input.multi')) {
-            updateFieldsetInputs($field, new_value, init);
+            updateFieldsetInputs($field, new_value, trim, init);
 
         } else if ($field.is('fieldset.menu.multi')) {
             updateFieldsetCheckboxes($field, new_value, init);
@@ -1548,10 +1559,10 @@ $(document).on('turbolinks:load', function() {
             updateCheckboxInputField($field, new_value, init);
 
         } else if ($field.is('textarea')) {
-            updateTextAreaField($field, new_value, init);
+            updateTextAreaField($field, new_value, trim, init);
 
         } else {
-            updateTextInputField($field, new_value, init);
+            updateTextInputField($field, new_value, trim, init);
         }
     }
 
@@ -1561,11 +1572,12 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector}        [target]    Default: *this*.
      * @param {string|string[]} [new_value]
+     * @param {boolean}         [trim]      If *false*, don't trim white space.
      * @param {boolean}         [init]      If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input_multi"
      */
-    function updateFieldsetInputs(target, new_value, init) {
+    function updateFieldsetInputs(target, new_value, trim, init) {
 
         let $fieldset = $(target || this);
         let $inputs   = $fieldset.find('input');
@@ -1581,7 +1593,7 @@ $(document).on('turbolinks:load', function() {
                     value = '';
                 }
                 if (isDefined(value)) {
-                    setValue(this, value, init);
+                    setValue(this, value, true, init);
                 }
             });
         } else {
@@ -1609,7 +1621,7 @@ $(document).on('turbolinks:load', function() {
                     }
                 });
                 if (index >= 0) {
-                    setValue($inputs[index], value, init);
+                    setValue($inputs[index], new_value, trim, init);
                 }
             }
         }
@@ -1712,16 +1724,23 @@ $(document).on('turbolinks:load', function() {
      *
      * For this type, the label is a sibling of the input element.
      *
-     * @param {Selector} [target]     Default: *this*.
-     * @param {*}        [new_value]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {Selector}    [target]        Default: *this*.
+     * @param {string|null} [new_value]
+     * @param {boolean}     [trim]          If *false*, don't trim white space.
+     * @param {boolean}     [init]          If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input"
      */
-    function updateTextAreaField(target, new_value, init) {
-        let $input  = $(target || this);
-        const value = textAreaValue(new_value || $input.val());
-        setTextAreaValue($input, value, init);
+    function updateTextAreaField(target, new_value, trim, init) {
+        let $input = $(target || this);
+        let value  = new_value;
+        if (value !== null) {
+            value = value || $input.val();
+            if (trim !== false) {
+                value = textAreaValue(value);
+            }
+        }
+        setValue($input, value, trim, init);
         updateFieldAndLabel($input, value);
     }
 
@@ -1730,30 +1749,28 @@ $(document).on('turbolinks:load', function() {
      *
      * For these types, the label is a sibling of the input element.
      *
-     * @param {Selector} [target]     Default: *this*.
-     * @param {*}        [new_value]
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {Selector}    [target]        Default: *this*.
+     * @param {string|null} [new_value]
+     * @param {boolean}     [trim]          If *false*, don't trim white space.
+     * @param {boolean}     [init]          If *true*, in initialization phase.
      *
      * @see "ModelHelper#render_form_input"
      */
-    function updateTextInputField(target, new_value, init) {
+    function updateTextInputField(target, new_value, trim, init) {
         let $input = $(target || this);
-        let value  = new_value || $input.val();
-
-        // Clean up stray leading and trailing white space and blank values in
-        // order to determine whether the field actually has a value.
+        let value  = new_value;
         if (Array.isArray(value)) {
             value = compact(value).join('; ');
-        } else if (typeof value === 'string') {
-            value = value.trim();
+        } else if (value !== null) {
+            value = value || $input.val();
         }
-        setValue($input, value, init);
+        setValue($input, value, trim, init);
 
         // If this is one of a collection of text inputs under <fieldset> then
         // it has to be handled differently.
         if ($input.parent().hasClass('multi')) {
             let $fieldset = $input.parents('fieldset').first();
-            updateFieldsetInputs($fieldset, undefined, init);
+            updateFieldsetInputs($fieldset, undefined, trim, init);
         } else {
             updateFieldAndLabel($input, $input.val());
         }
@@ -1784,7 +1801,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string|jQuery}       name
      * @param {string|Relationship} [other_name]
      *
-     * @return {undefined | { name: string, modified: boolean|undefined }}
+     * @returns {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
         const func = 'updateRelatedField:';
@@ -1912,7 +1929,7 @@ $(document).on('turbolinks:load', function() {
 
             const required = ($input.attr('data-required') === 'true');
             const missing  = isEmpty(values);
-            let invalid    = missing; // TODO: per-field validation
+            let invalid    = required && missing; // TODO: per-field validation
             const valid    = !invalid && !missing;
 
             // Establish the baseline label icon.
@@ -1937,13 +1954,17 @@ $(document).on('turbolinks:load', function() {
             } else {
                 unsetInvalid($status);
             }
+
+            // Update the tooltip on the status icon.
             if (!required) {
                 invalid = invalid && !missing;
-                if (invalid) {
-                    setTooltip($status);
-                } else {
-                    restoreTooltip($status);
-                }
+            }
+            if (invalid && !required) {
+                setTooltip($status);
+            } else if (valid) {
+                setTooltip($status, Emma.Upload.Status.valid.tooltip);
+            } else {
+                restoreTooltip($status);
             }
             toggleClass(parts, 'invalid', invalid);
         }
@@ -2028,31 +2049,21 @@ $(document).on('turbolinks:load', function() {
     /**
      * If the input value is changing, save the old value.
      *
-     * @param {Selector} target       Default: *this*.
-     * @param {string}   new_value
-     * @param {boolean}  [init]       If *true*, in initialization phase.
+     * @param {Selector}    target      Default: *this*.
+     * @param {string|null} new_value
+     * @param {boolean}     [trim]      If *false*, don't trim white space.
+     * @param {boolean}     [init]      If *true*, in initialization phase.
      */
-    function setTextAreaValue(target, new_value, init) {
+    function setValue(target, new_value, trim, init) {
         let $item = $(target || this);
-        if (init) {
-            setOriginalValue($item, new_value);
+        let value = new_value || '';
+        if (trim !== false) {
+            value = value.trim();
         }
-        $item.val(new_value);
-    }
-
-    /**
-     * If the input value is changing, save the old value.
-     *
-     * @param {Selector} target       Default: *this*.
-     * @param {string}   new_value
-     * @param {boolean}  [init]       If *true*, in initialization phase.
-     */
-    function setValue(target, new_value, init) {
-        let $item = $(target || this);
         if (init) {
-            setOriginalValue($item, new_value);
+            setOriginalValue($item, value);
         }
-        $item.val(new_value);
+        $item.val(value);
     }
 
     /**
@@ -2060,7 +2071,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string|string[]} value
      *
-     * @return {string}
+     * @returns {string}
      */
     function textAreaValue(value) {
         let result = value;
@@ -2122,7 +2133,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target
      *
-     * @return {string}
+     * @returns {string}
      */
     function getOriginalValue(target) {
         const value = rawOriginalValue(target);
@@ -2134,7 +2145,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} target
      *
-     * @return {string|undefined}
+     * @returns {string|undefined}
      */
     function rawOriginalValue(target) {
         let $item = $(target || this);
@@ -2183,16 +2194,70 @@ $(document).on('turbolinks:load', function() {
 
         let $form   = formElement(form);
         let $fields = inputFields($form);
-        handleEvent($fields, 'change', validateInputField);
+        handleEvent($fields, 'change', onChange);
+        handleEvent($fields, 'cut',    debounce(onCut));
+        handleEvent($fields, 'paste',  debounce(onPaste));
+        handleEvent($fields, 'keyup',  debounce(onKeyUp, DEBOUNCE_DELAY));
+
+        /**
+         * Revalidate the form after the element's content changes.
+         *
+         * In the case of checkboxes/radio buttons this happens when the value
+         * of the element changes; otherwise it happens when the element loses
+         * focus.
+         *
+         * @param {jQuery.Event} event
+         */
+        function onChange(event) {
+            // debug('*** CHANGE ***');
+            validateInputField(event);
+        }
+
+        /**
+         * After the cut-to-clipboard has completed, re-validate the form based
+         * on the new contents of the element.
+         *
+         * @param {jQuery.Event|ClipboardEvent} event
+         */
+        function onCut(event) {
+            // debug('*** CUT ***');
+            validateInputField(event);
+        }
+
+        /**
+         * After the paste-from-clipboard has completed, re-validate the form
+         * based on the new contents of the element.
+         *
+         * @param {jQuery.Event|ClipboardEvent} event
+         */
+        function onPaste(event) {
+            // debug('*** PASTE ***');
+            validateInputField(event);
+        }
+
+        /**
+         * Respond to key presses only after the user has paused, rather than
+         * re-validating the entire form with every key stroke.
+         *
+         * @param {jQuery.Event|KeyboardEvent} event
+         *
+         * @returns {function}
+         */
+        function onKeyUp(event) {
+            // debug('*** KEYUP ***');
+            validateInputField(event, undefined, false);
+        }
 
         /**
          * Update a single input field and its label.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
+         * @param {string|null}  [value]  Default: current element value.
+         * @param {boolean}      [trim]   If *false*, don't trim white space.
          */
-        function validateInputField(event) {
-            let $field = $(event.target || event || this);
-            updateInputField($field);
+        function validateInputField(event, value, trim) {
+            let $field = $(event.target);
+            updateInputField($field, value, trim);
             updateRelatedField($field);
             validateForm($form);
         }
@@ -2266,7 +2331,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Cancel the current action.
      *
-     * @param {Event} [event]
+     * @param {jQuery.Event} [event]
      */
     function cancelForm(event) {
         let $button;
@@ -2466,7 +2531,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterContainer}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function fieldDisplayFilterCurrent(form) {
         return fieldDisplayFilterContainer(form).find(':checked').val();
@@ -2518,10 +2583,10 @@ $(document).on('turbolinks:load', function() {
         /**
          * Update field display filtering if the target is checked.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function fieldDisplayFilterHandler(event) {
-            let $target = $(event.target || event || this);
+            let $target = $(event.target);
             if ($target.is(':checked')) {
                 filterFieldDisplay($target.val(), $form);
             }
@@ -2733,9 +2798,9 @@ $(document).on('turbolinks:load', function() {
      * Change a status marker icon.
      *
      * @param {Selector} element
-     * @param {string}   [text]       Default: no icon.
+     * @param {string}   [icon]       Default: no icon.
      */
-    function setIcon(element, text) {
+    function setIcon(element, icon) {
         let $element = $(element || this);
         let old_icon = $element.attr('data-icon');
         if (isMissing(old_icon)) {
@@ -2745,7 +2810,7 @@ $(document).on('turbolinks:load', function() {
                 $element.attr('data-icon', old_icon);
             }
         }
-        const new_icon = text || '';
+        const new_icon = icon || '';
         if (isPresent(new_icon)) {
             $element.text(new_icon);
         } else {
@@ -2777,7 +2842,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [container]    Passed to {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function formContainer(container) {
         return formElement(container).parent();
@@ -2788,7 +2853,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: FORM_SELECTOR.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function formElement(form) {
         let $form = form && $(form);
@@ -2807,7 +2872,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function emmaDataElement(form) {
         return formElement(form).find('#upload_emma_data');
@@ -2818,7 +2883,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fileDataElement(form) {
         return formElement(form).find('#upload_file_data');
@@ -2829,7 +2894,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function formFields(form) {
         return formElement(form).find('[data-field]');
@@ -2841,7 +2906,7 @@ $(document).on('turbolinks:load', function() {
      * @param {string}   field
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function formField(field, form) {
         return formElement(form).find(`[data-field="${field}"]`);
@@ -2852,7 +2917,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      *
      * @see "UploadHelper#upload_submit_button"
      */
@@ -2865,7 +2930,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      *
      * @see "UploadHelper#upload_submit_button"
      */
@@ -2878,7 +2943,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      *
      * @see setupCancelButton
      * @see "UploadHelper#upload_cancel_button"
@@ -2892,7 +2957,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function uploadedFilenameDisplay(form) {
         return formElement(form).find('.uploaded-filename');
@@ -2903,7 +2968,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fieldDisplayFilterContainer(form) {
         return formElement(form).find('.upload-field-group');
@@ -2914,7 +2979,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]  Passed to {@link fieldDisplayFilterContainer}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fieldDisplayFilterButtons(form) {
         return fieldDisplayFilterContainer(form).find('input[type="radio"]');
@@ -2925,7 +2990,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fileSelectContainer(form) {
         return formElement(form).find('.uppy-FileInput-container');
@@ -2936,7 +3001,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fileSelectButton(form) {
         return fileSelectContainer(form).children('button,label');
@@ -2947,7 +3012,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function fieldContainer(form) {
         return formElement(form).find('.upload-fields');
@@ -2958,7 +3023,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link fieldContainer}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function inputFields(form) {
         return fieldContainer(form).find(FORM_FIELD_SELECTOR);
@@ -2969,7 +3034,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link inputFields}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function databaseInputFields(form) {
         return inputFields(form).filter('[readonly]');
@@ -2980,7 +3045,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link inputFields}.
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function checkboxInputFields(form) {
         return inputFields(form).filter('[type="checkbox"]');
@@ -2995,7 +3060,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link submitButton}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function canSubmit(form) {
         return submitButton(form).attr('data-state') === 'ready';
@@ -3006,7 +3071,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link submitButton}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function canCancel(form) {
         return true; // TODO: canCancel?
@@ -3017,7 +3082,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link fileSelected}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function canSelect(form) {
         return !fileSelected(form);
@@ -3029,7 +3094,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link uploadedFilenameDisplay}
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function fileSelected(form) {
         return uploadedFilenameDisplay(form).css('display') !== 'none';
@@ -3044,7 +3109,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isCreateForm(form) {
         return formElement(form).hasClass('new');
@@ -3056,7 +3121,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *
-     * @return {boolean}
+     * @returns {boolean}
      */
     function isUpdateForm(form) {
         return formElement(form).hasClass('edit');
@@ -3067,7 +3132,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function termAction(form) {
         return isUpdateForm(form) ? 'update' : 'create'; // TODO: I18n
@@ -3078,7 +3143,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function termActionOccurred(form) {
         return isUpdateForm(form) ? 'updated' : 'created'; // TODO: I18n
@@ -3090,7 +3155,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_submit]   Default: `canSubmit()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function submitLabel(form, can_submit) {
         let $form   = formElement(form);
@@ -3105,7 +3170,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_submit]   Default: `canSubmit()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function submitTooltip(form, can_submit) {
         let $form   = formElement(form);
@@ -3119,7 +3184,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link assetObject}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function submitReadyTooltip(form) {
         return submitTooltip(form, true);
@@ -3130,7 +3195,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link assetObject}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function submitNotReadyTooltip(form) {
         return submitTooltip(form, false);
@@ -3142,7 +3207,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function cancelLabel(form, can_cancel) {
         let $form   = formElement(form);
@@ -3157,7 +3222,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_cancel]   Default: `canCancel()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function cancelTooltip(form, can_cancel) {
         let $form   = formElement(form);
@@ -3172,7 +3237,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_select]   Default: `canSelect()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function fileSelectLabel(form, can_select) {
         let $form   = formElement(form);
@@ -3187,7 +3252,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]         Passed to {@link formElement}.
      * @param {boolean}  [can_select]   Default: `canSelect()`.
      *
-     * @return {string}
+     * @returns {string}
      */
     function fileSelectTooltip(form, can_select) {
         let $form   = formElement(form);
@@ -3201,7 +3266,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link assetObject}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function fileSelectDisabledLabel(form) {
         return fileSelectLabel(form, false);
@@ -3212,7 +3277,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link assetObject}.
      *
-     * @return {string}
+     * @returns {string}
      */
     function fileSelectDisabledTooltip(form) {
         return fileSelectTooltip(form, false);
@@ -3250,7 +3315,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} [form]       Passed to {@link isUpdateForm}.
      *
-     * @return {ActionProperties}
+     * @returns {ActionProperties}
      */
     function assetObject(form) {
         let $form    = formElement(form);

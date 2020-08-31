@@ -180,7 +180,7 @@ en:
           # IR:   -
           min:          0
           max:          1
-          label:        'File data'
+          label:        'File Data'
           tooltip:      'Uploaded file metadata'
           help_html:    |
             <strong>TODO</strong>
@@ -287,7 +287,7 @@ en:
           # IR:   -
           min:          0
           max:          1
-          label:        'EMMA data'
+          label:        'EMMA Data'
           tooltip:      'Retrieved EMMA metadata'
           help_html:    |
             <strong>TODO</strong>

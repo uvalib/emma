@@ -59,7 +59,7 @@ $(document).on('turbolinks:load', function() {
      * Intercept anchor links to scroll to the element on the page inside the
      * <iframe>.
      *
-     * @param {Event} [event]
+     * @param {jQuery.Event|UIEvent} [event]
      *
      * @returns {boolean}   False to indicate that the event has been handled.
      */

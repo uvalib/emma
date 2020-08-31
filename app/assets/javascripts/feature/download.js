@@ -306,9 +306,9 @@ $(document).on('turbolinks:load', function() {
     /**
      * Prompt for Bookshare member and download.
      *
-     * @param {Event} event
+     * @param {jQuery.Event} event
      *
-     * @return {boolean}              Always *false* to end event propagation.
+     * @returns {boolean}             Always *false* to end event propagation.
      */
     function getDownload(event) {
         let $link  = $(this || event.target);
@@ -344,7 +344,7 @@ $(document).on('turbolinks:load', function() {
          *
          * NOTE: Currently on single-select due to the Bookshare API method.
          *
-         * @param {Event} event
+         * @param {jQuery.Event} event
          */
         function onSubmit(event) {
             event.preventDefault();
@@ -478,7 +478,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {object} member_table
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function createMemberPopup(member_table) {
 
@@ -535,7 +535,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {Selector} panel
      *
-     * @return {jQuery}
+     * @returns {jQuery}
      */
     function resetMemberPopup(panel) {
         const disabled = MEMBER_POPUP.submit.disabled.class;
@@ -723,7 +723,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Stop polling with "download" requests.
      *
-     * @param {Event} event
+     * @param {jQuery.Event} event
      */
     function cancelRequest(event) {
         const state = STATE.REQUESTING;
@@ -749,7 +749,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {string} url
      *
-     * @return {string|undefined}
+     * @returns {string|undefined}
      */
     function getUrlMember(url) {
         const params = urlParameters(url);
@@ -929,7 +929,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery} $link
      *
-     * @return {number|undefined}
+     * @returns {number|undefined}
      */
     function getRetryPeriod($link) {
         return $link.data(RETRY_ATTRIBUTE);
@@ -960,7 +960,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {jQuery} $link
      *
-     * @return {number}
+     * @returns {number}
      */
     function defaultRetryPeriod($link) {
         const href = $link.attr('href') || '';

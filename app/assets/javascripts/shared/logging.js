@@ -34,7 +34,7 @@ function consoleError(...args) {
  *
  * @param {Array|*} arg
  *
- * @return {Array}
+ * @returns {Array}
  */
 function consoleArgs(arg) {
     let result = [];

@@ -44,7 +44,7 @@ var show_flash = {
  *
  * @param {Selector} [selector]         Default: {@link FLASH_ROOT_SELECTOR}.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function flashContainer(selector) {
     return $(selector || FLASH_ROOT_SELECTOR);
@@ -117,7 +117,7 @@ function flashError(text, type, role, fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function showFlash(fc) {
     return flashContainer(fc).removeClass('hidden').removeClass('invisible');
@@ -128,7 +128,7 @@ function showFlash(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function hideFlash(fc) {
     return flashContainer(fc).addClass('hidden');
@@ -139,7 +139,7 @@ function hideFlash(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {jQuery}
+ * @returns {jQuery}
  */
 function clearFlash(fc) {
     let $fc = hideFlash(fc);
@@ -152,7 +152,7 @@ function clearFlash(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function flashEmpty(fc) {
     return flashContainer(fc).is(':empty');
@@ -163,7 +163,7 @@ function flashEmpty(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function flashHidden(fc) {
     let $fc = flashContainer(fc);
@@ -176,7 +176,7 @@ function flashHidden(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @return {boolean}
+ * @returns {boolean}
  */
 function flashDisplayed(fc) {
     let $fc = flashContainer(fc);
@@ -223,7 +223,7 @@ function addFlashError(text, type, role, fc) {
  *
  * @param {XMLHttpRequest} xhr
  *
- * @return {array}
+ * @returns {array}
  *
  * @see "UploadController#post_response"
  */
