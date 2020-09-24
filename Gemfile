@@ -64,10 +64,10 @@ gem 'jbuilder', '~> 2.5'
 # =============================================================================
 
 # == AuthN/AuthZ
+gem 'cancancan'
 gem 'devise'
 gem 'oauth2', '~> 1.4'
 gem 'omniauth-oauth2', '~> 1.6'
-gem 'cancancan'
 gem 'rolify'
 
 # == Serialization
@@ -83,6 +83,7 @@ gem 'prometheus-client'
 
 # == Upload/download
 gem 'archive-zip'
+gem 'aws-sdk-s3', '~> 1.14'
 gem 'pdf-reader'
 gem 'shrine', '~> 3.0'
 gem 'aws-sdk-s3', '~> 1.14'

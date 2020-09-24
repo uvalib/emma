@@ -1197,7 +1197,7 @@ module ModelHelper
     status = Array.wrap(status).compact
     append_css_classes!(opt, *status) if status.present?
     icon, tip =
-      %i[valid required invalid nominal].find { |state|
+      %i[required disabled invalid valid].find { |state|
         next unless status.include?(state) && (entry = STATUS_MARKER[state])
         break entry.values
       } || STATUS_MARKER.values.last.values

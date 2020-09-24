@@ -274,7 +274,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {UppyFeatures}
      */
-    const FEATURES = {
+    const FEATURES = deepFreeze({
         replace_input:  true,
         upload_to_aws:  false,
         popup_messages: true,
@@ -286,7 +286,7 @@ $(document).on('turbolinks:load', function() {
         flash_messages: true,
         flash_errors:   true,
         debugging:      DEBUGGING
-    };
+    });
 
     /**
      * How long to display transient messages.
@@ -337,7 +337,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const FORM_FIELD_TYPES = [
+    const FORM_FIELD_TYPES = deepFreeze([
         'select',
         'textarea',
         'input[type="text"]',
@@ -345,7 +345,7 @@ $(document).on('turbolinks:load', function() {
         'input[type="time"]',
         'input[type="number"]',
         'input[type="checkbox"]'
-    ];
+    ]);
 
     /**
      * Selector for input fields.
@@ -366,7 +366,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {{rem_complete: Relationship, rem_coverage: Relationship}}
      */
-    const FIELD_RELATIONSHIP = {
+    const FIELD_RELATIONSHIP = deepFreeze({
         rem_complete: {
             name:           'rem_coverage',
             required:       function() { return $(this).val() !== 'true'; },
@@ -378,7 +378,7 @@ $(document).on('turbolinks:load', function() {
             required_val:   '',
             unrequired_val: 'false'
         }
-    };
+    });
 
     // ========================================================================
     // Constants - Bulk operations
@@ -1335,7 +1335,7 @@ $(document).on('turbolinks:load', function() {
 
         uppy.on('cancel-all', function() {
             debug('Uppy:', 'cancel-all');
-            info('Uploading CANCELLED'); // TODO: I18n
+            info('Uploading CANCELED'); // TODO: I18n
         });
 
         uppy.on('resume-all', function() {
@@ -1832,7 +1832,6 @@ $(document).on('turbolinks:load', function() {
             other = $.extend({}, other_name);
             error = isMissing(other) && 'empty secondary argument';
         } else if (isDefined(other_name)) {
-            $.each(FIELD_RELATIONSHIP)
             other = FIELD_RELATIONSHIP[other_name];
             error = isMissing(other) && `no table entry for ${this_name}`;
         } else {
@@ -1929,102 +1928,29 @@ $(document).on('turbolinks:load', function() {
 
             const required = ($input.attr('data-required') === 'true');
             const missing  = isEmpty(values);
-            let invalid    = required && missing; // TODO: per-field validation
+            const invalid  = required && missing; // TODO: per-field validation
             const valid    = !invalid && !missing;
 
-            // Establish the baseline label icon.
-            if (required) {
-                setRequired($status);
-            } else {
-                unsetRequired($status);
-            }
-            toggleClass(parts, 'required', required);
-
-            // Manage positive indication of *validity* for a field that has
-            // been supplied with a value (or had a value removed).
-            toggleClass(parts, 'valid', valid);
-
-            // Manage positive indication of *invalidity* for an optional field
-            // with an incorrect value or a required field without a correct
-            // value.
-            if (invalid && (!required || !missing)) {
-                setInvalid($status);
-            } else if (valid) {
-                setValid($status);
-            } else {
-                unsetInvalid($status);
-            }
-
-            // Update the tooltip on the status icon.
-            if (!required) {
-                invalid = invalid && !missing;
-            }
-            if (invalid && !required) {
-                setTooltip($status);
-            } else if (valid) {
+            // Update the status icon and tooltip.
+            if (valid) {
+                setIcon($status,    Emma.Upload.Status.valid.label);
                 setTooltip($status, Emma.Upload.Status.valid.tooltip);
+            } else if (invalid && !missing) {
+                setIcon($status,    Emma.Upload.Status.invalid.label);
+                setTooltip($status, Emma.Upload.Status.invalid.tooltip);
+            } else if (required) {
+                setIcon($status,    Emma.Upload.Status.required.label);
+                restoreTooltip($status);
             } else {
+                restoreIcon($status);
                 restoreTooltip($status);
             }
-            toggleClass(parts, 'invalid', invalid);
+
+            // Update CSS status classes on all parts of the field.
+            toggleClass(parts, 'required', required);
+            toggleClass(parts, 'invalid',  invalid);
+            toggleClass(parts, 'valid',    valid);
         }
-    }
-
-    /**
-     * Change a status marker to indicate a field with a required value.
-     *
-     * @param {Selector} element
-     */
-    function setRequired(element) {
-        setIcon(element, Emma.Upload.Status.required.label);
-    }
-
-    /**
-     * Change a status marker to indicate a field with an unrequired value.
-     *
-     * @param {Selector} element
-     */
-    function unsetRequired(element) {
-        restoreIcon(element);
-    }
-
-    /**
-     * Change a status marker to indicate a field with an invalid value.
-     *
-     * @param {Selector} element
-     */
-    function setInvalid(element) {
-        setIcon(element, Emma.Upload.Status.invalid.label);
-    }
-
-    /**
-     * Restore a status marker after the associated input value is no longer
-     * invalid.
-     *
-     * @param {Selector} element
-     */
-    function unsetInvalid(element) {
-        restoreIcon(element);
-    }
-
-    /**
-     * Change a status marker to indicate a field with an invalid value.
-     *
-     * @param {Selector} element
-     */
-    function setValid(element) {
-        setIcon(element, Emma.Upload.Status.valid.label);
-    }
-
-    // noinspection JSUnusedLocalSymbols
-    /**
-     * Restore a status marker after the associated input value is no longer
-     * invalid.
-     *
-     * @param {Selector} element
-     */
-    function unsetValid(element) {
-        restoreIcon(element);
     }
 
     /**
@@ -2763,7 +2689,7 @@ $(document).on('turbolinks:load', function() {
      * Set a temporary tooltip.
      *
      * @param {Selector} element      Default: *this*.
-     * @param {string}   [text]       Default: Emma.Upload.InputInvalid.tooltip
+     * @param {string}   [text]       Default: no tooltip
      */
     function setTooltip(element, text) {
         let $element = $(element || this);
@@ -2775,8 +2701,11 @@ $(document).on('turbolinks:load', function() {
                 $element.attr('data-title', old_tip);
             }
         }
-        const new_tip = text || Emma.Upload.Status.invalid.tooltip;
-        $element.attr('title', new_tip);
+        if (isPresent(text)) {
+            $element.attr('title', text);
+        } else {
+            $element.removeAttr('title');
+        }
     }
 
     /**
@@ -2811,11 +2740,7 @@ $(document).on('turbolinks:load', function() {
             }
         }
         const new_icon = icon || '';
-        if (isPresent(new_icon)) {
-            $element.text(new_icon);
-        } else {
-            $element.empty();
-        }
+        $element.text(new_icon);
     }
 
     /**
@@ -2825,12 +2750,8 @@ $(document).on('turbolinks:load', function() {
      */
     function restoreIcon(element) {
         let $element   = $(element || this);
-        const old_icon = $element.attr('data-icon');
-        if (isPresent(old_icon)) {
-            $element.text(old_icon);
-        } else {
-            $element.empty();
-        }
+        const old_icon = $element.attr('data-icon') || '';
+        $element.text(old_icon);
     }
 
     // ========================================================================
@@ -3067,7 +2988,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Indicate whether the form can be cancelled.
+     * Indicate whether the form can be canceled.
      *
      * @param {Selector} [form]       Passed to {@link submitButton}.
      *

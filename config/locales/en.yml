@@ -378,7 +378,7 @@ en:
 
       failure:
         prefix:       'Download failed: '
-        cancelled:    'Download cancelled'
+        canceled:     'Download canceled'
         sign_in:      'You must sign in to EMMA first.'
         unknown:      'unknown error'
 

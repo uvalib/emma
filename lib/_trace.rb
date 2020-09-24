@@ -18,6 +18,14 @@ public
 #
 CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 
+# Control console output.
+#
+# Normally __output (and __debug) are not displayed in IRB or other non-Rails
+# invocations of the code.  The environment variable should normally be *false*
+# ()or missing) in order to avoid extraneous output during rake, irb, etc.
+#
+CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
+
 # Control tracking of file load order.
 #
 # During normal operation this should be set to *false*.  Change the default
@@ -101,10 +109,10 @@ def __output(*args)
   sep = opt[:separator] || "\n"
 
   # Construct the string that is prepended to each output line.
-  indent = opt[:indent]    || (sep.include?("\n") ? CONS_INDENT : '')
+  indent = opt[:indent] || (sep.include?("\n") ? CONS_INDENT : '')
   indent = (' ' * indent if indent.is_a?(Integer) && (indent > 0))
   leader = "#{indent}#{opt[:leader]}"
-  leader += ' ' unless (leader == indent.to_s) || leader.end_with?(' ')
+  leader += ' ' unless (leader == indent.to_s) || leader.match?(/\s$/)
 
   # Combine arguments and block results into a single string.
   args += Array.wrap(yield) if block_given?
@@ -167,7 +175,7 @@ def __debug(*args, &block)
   __output(*args, opt, &block)
 end
 
-neutralize_methods(:__output) unless rails_application?
+neutralize_methods(:__output) unless CONSOLE_OUTPUT
 neutralize_methods(:__debug)  unless CONSOLE_DEBUGGING
 
 # =============================================================================

@@ -65,8 +65,8 @@ en:
         valid:
           label:        "\u2714" # HEAVY CHECK MARK
           tooltip:      'The provided value is valid.'
-        nominal:
-          label:        "\u2714" # HEAVY CHECK MARK
+        disabled:
+          label:        "\u2716" # HEAVY MULTIPLICATION X
 
       # =======================================================================
       # Fields

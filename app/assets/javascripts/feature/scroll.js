@@ -47,7 +47,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const SCROLL_TARGET_SELECTORS = [SCROLL_TARGET_SELECTOR, '#main', 'body'];
+    const SCROLL_TARGET_SELECTORS =
+        deepFreeze([SCROLL_TARGET_SELECTOR, '#main', 'body']);
 
     // ========================================================================
     // Variables

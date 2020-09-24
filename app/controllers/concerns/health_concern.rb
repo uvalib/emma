@@ -132,16 +132,18 @@ module HealthConcern
     end
 
     def healthy?
-      health.values.all?(&:healthy?)
+      v = health.values
+      v.blank? || v.all?(&:healthy?)
     end
 
     def failed?
-      health.values.all?(&:failed?)
+      v = health.values
+      v.present? && v.all?(&:failed?)
     end
 
     def degraded?
       v = health.values
-      v.any?(&:degraded?) || (v.select(&:healthy?).size < health.size)
+      v.any?(&:degraded?) || v.any?(&:failed?)
     end
 
     delegate_missing_to :health

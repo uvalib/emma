@@ -267,10 +267,11 @@ if rails_application?
     vars += %i[AWS_REGION AWS_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_KEY]
   end
   vars.each do |var|
-    if !respond_to?(var)
+    if self.class.const_defined?(var)
+      v = self.class.const_get(var)
+      STDERR.puts "Empty #{var}" if v.respond_to?(:empty?) ? v.empty? : v.nil?
+    else
       STDERR.puts "Missing #{var}"
-    elsif (v = eval(var)).nil? || (v.respond_to?(:empty?) && v.empty?)
-      STDERR.puts "Empty #{var}"
     end
   end
 end

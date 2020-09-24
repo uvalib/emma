@@ -69,7 +69,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const SEARCH_TYPES = Object.keys(SEARCH_TYPE);
+    const SEARCH_TYPES = deepFreeze(Object.keys(SEARCH_TYPE));
 
     // ========================================================================
     // Constants - multi-select menus
@@ -81,7 +81,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const MULTI_SELECT_EVENTS = [
+    const MULTI_SELECT_EVENTS = deepFreeze([
         'change',
         'change.select2',
         'select2:clearing',
@@ -94,7 +94,7 @@ $(document).on('turbolinks:load', function() {
         'select2:unselect',
         'select2:closing',
         'select2:close'
-    ];
+    ]);
 
     /**
      * The longest Select2 event name.
@@ -119,7 +119,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const PRE_CHANGE_EVENTS = ['select2:selecting', 'select2:unselecting'];
+    const PRE_CHANGE_EVENTS =
+        deepFreeze(['select2:selecting', 'select2:unselecting']);
 
     /**
      * Select2 events which follow a change which causes a new search to be
@@ -128,7 +129,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const POST_CHANGE_EVENTS = ['select2:select', 'select2:unselect'];
+    const POST_CHANGE_EVENTS =
+        deepFreeze(['select2:select', 'select2:unselect']);
 
     /**
      * Select2 events which should detect whether to suppress the opening of
@@ -137,7 +139,8 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string[]}
      */
-    const CHECK_SUPPRESS_MENU_EVENTS = ['select2:opening'];
+    const CHECK_SUPPRESS_MENU_EVENTS =
+        deepFreeze(['select2:opening']);
 
     // ========================================================================
     // Variables

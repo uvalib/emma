@@ -13,7 +13,7 @@ use Rack::Deflater
 use Prometheus::Middleware::Collector
 use Prometheus::Middleware::Exporter
 
-run ->(_) { [200, { 'Content-Type' => 'text/html' }, %w(OK)] }
+run ->(*) { [200, { 'Content-Type' => 'text/html' }, %w(OK)] }
 
 # =============================================================================
 # Start application

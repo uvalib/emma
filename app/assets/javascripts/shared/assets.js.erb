@@ -233,36 +233,36 @@ var Emma = (function() {
          * - progress.class     Artifact download progress indicator element CSS class.
          * - failure.class      Artifact download failure message element CSS class.
          * - failure.prefix     Prefix for download failure message labels.
-         * - failure.cancelled  Failure message for a user-cancelled download.
+         * - failure.canceled   Failure message for a user-canceled download.
          * - failure.sign_in    Message for authentication failure.
          * - failure.unknown    Unknown download failure.
          * ====================================================================
          *
          * @type {{
-         *    button:         ElementProperties,
-         *    progress:       ElementProperties,
+         *    button:       ElementProperties,
+         *    progress:     ElementProperties,
          *    failure: {
-         *        class:      string,
-         *        prefix:     string,
-         *        cancelled:  string,
-         *        sign_in:    string,
-         *        unknown:    string
+         *        class:    string,
+         *        prefix:   string,
+         *        canceled: string,
+         *        sign_in:  string,
+         *        unknown:  string
          *    }
          * }}
          */
         Download: {
             button: {
-                class:     "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>"
+                class:    "<%= ArtifactHelper::DOWNLOAD_BUTTON_CLASS %>"
             },
             progress: {
-                class:     "<%= ArtifactHelper::DOWNLOAD_PROGRESS_CLASS %>"
+                class:    "<%= ArtifactHelper::DOWNLOAD_PROGRESS_CLASS %>"
             },
             failure: {
-                class:     "<%= ArtifactHelper::DOWNLOAD_FAILURE_CLASS %>",
-                prefix:    "<%= I18n.t('emma.download.failure.prefix') %>",
-                cancelled: "<%= I18n.t('emma.download.failure.cancelled') %>",
-                sign_in:   "<%= I18n.t('emma.download.failure.sign_in') %>",
-                unknown:   "<%= I18n.t('emma.download.failure.unknown') %>"
+                class:    "<%= ArtifactHelper::DOWNLOAD_FAILURE_CLASS %>",
+                prefix:   "<%= I18n.t('emma.download.failure.prefix') %>",
+                canceled: "<%= I18n.t('emma.download.failure.canceled') %>",
+                sign_in:  "<%= I18n.t('emma.download.failure.sign_in') %>",
+                unknown:  "<%= I18n.t('emma.download.failure.unknown') %>"
             }
         },
 
@@ -393,7 +393,7 @@ var Emma = (function() {
          *        required:     ElementProperties,
          *        invalid:      ElementProperties,
          *        valid:        ElementProperties,
-         *        nominal:      ElementProperties
+         *        disabled:     ElementProperties
          *    },
          *    Action: {
          *        new:          RouteActionProperties,
@@ -462,6 +462,6 @@ var Emma = (function() {
     // Exported values.
     // ========================================================================
 
-    return settings;
+    return deepFreeze(settings);
 
 })();

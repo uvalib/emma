@@ -169,6 +169,31 @@ function flatten(item) {
     return result;
 }
 
+/**
+ * Make a completely frozen copy of an item.
+ *
+ * @param {Array|object|*} item       Source item (which will be unaffected).
+ *
+ * @returns {Array|object|*}          An immutable copy of *item*.
+ */
+function deepFreeze(item) {
+    let new_item;
+    if (Array.isArray(item)) {
+        new_item = item.map(function(v) { return deepFreeze(v); });
+    } else if (typeof item === 'object') {
+        new_item = {};
+        const prop_names = Object.getOwnPropertyNames(item);
+        $.each(item, function(k, v) {
+            if (prop_names.includes(k)) {
+                new_item[k] = deepFreeze(v);
+            }
+        });
+    } else {
+        new_item = item;
+    }
+    return Object.freeze(new_item);
+}
+
 // ============================================================================
 // Functions - Time and date
 // ============================================================================
@@ -684,7 +709,8 @@ function handleClickAndKeypress($element, func) {
  * @constant
  * @type {string[]}
  */
-const FOCUS_ELEMENTS = ['a', 'area', 'button', 'input', 'select', 'textarea'];
+const FOCUS_ELEMENTS =
+    deepFreeze(['a', 'area', 'button', 'input', 'select', 'textarea']);
 
 /**
  * Selector for FOCUS_ELEMENTS elements.
@@ -701,7 +727,7 @@ const FOCUS_ELEMENTS_SELECTOR = FOCUS_ELEMENTS.join(', ');
  * @type {string[]}
  */
 const FOCUS_ATTRIBUTES =
-    ['href', 'controls', 'data-path', 'draggable', 'tabindex'];
+    deepFreeze(['href', 'controls', 'data-path', 'draggable', 'tabindex']);
 
 /**
  * Selector for FOCUS_ATTRIBUTES elements.
@@ -726,7 +752,7 @@ const FOCUS_SELECTOR =
  * @constant
  * @type {string[]}
  */
-const NO_FOCUS_ATTRIBUTES = ['tabindex="-1"'];
+const NO_FOCUS_ATTRIBUTES = deepFreeze(['tabindex="-1"']);
 
 /**
  * Selector for focusable elements that should not receive focus.

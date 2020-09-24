@@ -104,7 +104,7 @@ class IaDownloadService::Error < ApiService::Error
 
 end
 
-# noinspection LongLines, DuplicatedCode
+# noinspection LongLine, DuplicatedCode
 unless ONLY_FOR_DOCUMENTATION
   class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.auth"           || "en.emma.error.api.auth"
   class IaDownloadService::CommError          < ApiService::CommError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.comm"           || "en.emma.error.api.comm"

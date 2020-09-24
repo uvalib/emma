@@ -46,7 +46,7 @@ class BookshareService::Error < ApiService::Error
 
 end
 
-# noinspection LongLines, DuplicatedCode
+# noinspection LongLine, DuplicatedCode
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class BookshareService::AuthError          < ApiService::AuthError;          include BookshareService::Error::Methods; end # "en.emma.error.bookshare.auth"           || "en.emma.error.api.auth"

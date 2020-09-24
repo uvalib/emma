@@ -137,11 +137,11 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {{FAILED: string, REQUESTING: string, READY: string}}
      */
-    const STATE = {
+    const STATE = deepFreeze({
         FAILED:     'failed',
         REQUESTING: 'requesting',
         READY:      'complete'
-    };
+    });
 
     /**
      * Bookshare page for adding/modifying members.
@@ -178,7 +178,7 @@ $(document).on('turbolinks:load', function() {
      *  cancel:     ActionProperties
      * }}
      */
-    const MEMBER_POPUP = {
+    const MEMBER_POPUP = deepFreeze({
         url:     '/member.json',
         name:    'member-select',
         panel: {
@@ -250,7 +250,7 @@ $(document).on('turbolinks:load', function() {
             label:   'Cancel', // TODO: I18n
             tooltip: ''
         }
-    };
+    });
 
     /**
      * Member popup panel selector.
@@ -357,7 +357,7 @@ $(document).on('turbolinks:load', function() {
             if (setLinkMember($link, members)) {
                 manageDownloadState($link);
             } else {
-                endRequesting($link, Emma.Download.failure.cancelled);
+                endRequesting($link, Emma.Download.failure.canceled);
             }
             return false;
         }
@@ -623,7 +623,7 @@ $(document).on('turbolinks:load', function() {
             } else if (typeof(data) !== 'object') {
                 error = `unexpected data type ${typeof data}`;
             } else if ((delay = getRetryPeriod($link)) === NO_RETRY) {
-                error = Emma.Download.failure.cancelled;
+                error = Emma.Download.failure.canceled;
             } else {
                 // The actual data may be inside '{ "response" : { ... } }'.
                 const info = data.response || data;
@@ -736,7 +736,7 @@ $(document).on('turbolinks:load', function() {
             }
             $link = $element.first();
         }
-        endRequesting($link, Emma.Download.failure.cancelled);
+        endRequesting($link, Emma.Download.failure.canceled);
         setRetryPeriod($link, NO_RETRY);
     }
 
@@ -826,7 +826,7 @@ $(document).on('turbolinks:load', function() {
      */
     function showFailureMessage($link, error) {
         let content = error || '';
-        if (!content.match(/cancelled/)) {
+        if (!content.match(/cancell?ed/i)) {
             const error_message = error || Emma.Download.failure.unknown;
             content = '' + Emma.Download.failure.prefix + error_message;
         }

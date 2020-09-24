@@ -156,7 +156,7 @@ class IngestService::Error < ApiService::Error
 
 end
 
-# noinspection LongLines, DuplicatedCode
+# noinspection LongLine, DuplicatedCode
 unless ONLY_FOR_DOCUMENTATION
   class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.auth"            || "en.emma.error.api.auth"
   class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.comm"            || "en.emma.error.api.comm"

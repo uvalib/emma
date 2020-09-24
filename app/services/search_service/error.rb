@@ -46,7 +46,7 @@ class SearchService::Error < ApiService::Error
 
 end
 
-# noinspection LongLines, DuplicatedCode
+# noinspection LongLine, DuplicatedCode
 unless ONLY_FOR_DOCUMENTATION
   class SearchService::AuthError          < ApiService::AuthError;          include SearchService::Error::Methods; end # "en.emma.error.search.auth"            || "en.emma.error.api.auth"
   class SearchService::CommError          < ApiService::CommError;          include SearchService::Error::Methods; end # "en.emma.error.search.comm"            || "en.emma.error.api.comm"
