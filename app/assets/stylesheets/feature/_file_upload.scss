@@ -563,7 +563,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
         }
 
         .value {
-            // TODO: ??? .file-upload-results .line .value
+            word-break: break-all;
         }
     }
 }

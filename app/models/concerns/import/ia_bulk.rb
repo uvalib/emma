@@ -54,6 +54,7 @@ module Import::IaBulk
     description:          [:dc_description,           :string_value],
     doi:                  [:dc_identifier,            :doi_values],
     download:             [:file_path,                :string_value],
+    format:               :skip,                      # NOTE: [3]
     free_to_download:     :skip,
     free_to_view:         :skip,
     identifier:           :skip,                      # NOTE: [3] IA item id.
