@@ -85,7 +85,7 @@ gem 'prometheus-client'
 gem 'archive-zip'
 gem 'aws-sdk-s3', '~> 1.14'
 gem 'pdf-reader'
-gem 'shrine', '~> 3.0'
+gem 'shrine', '~> 3.3'
 gem 'aws-sdk-s3', '~> 1.14'
 
 # == Other
