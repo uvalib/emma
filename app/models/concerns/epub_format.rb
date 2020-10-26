@@ -77,9 +77,6 @@ module EpubFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see OcfFormat#configuration
-  #
   def configuration
     EPUB_FORMAT
   end
@@ -87,9 +84,6 @@ module EpubFormat
   # parser
   #
   # @return [EpubParser]
-  #
-  # This method overrides:
-  # @see OcfFormat#parser
   #
   def parser
     @parser ||= EpubParser.new(file_handle)

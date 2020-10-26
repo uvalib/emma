@@ -58,9 +58,6 @@ class FileObject
   #
   # @return [String, nil]
   #
-  # This method overrides:
-  # @see FileAttributes#filename
-  #
   def filename
     @filename ||= (@file_handle.path if @file_handle.respond_to?(:path))
   end
@@ -68,9 +65,6 @@ class FileObject
   # file_handle
   #
   # @return [FileHandle, nil]
-  #
-  # This method overrides:
-  # @see FileAttributes#file_handle
   #
   def file_handle
     @file_handle ||= (FileHandle.new(filename) if filename.present?)

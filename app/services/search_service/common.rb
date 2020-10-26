@@ -21,7 +21,7 @@ module SearchService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   public
@@ -53,7 +53,7 @@ module SearchService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected
@@ -66,9 +66,6 @@ module SearchService::Common
   #
   # @return [Array<(String,Hash)>]    Message body plus headers for GET.
   # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
-  #
-  # This method overrides:
-  # @see ApiService::Common#api_headers
   #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |prms, _hdrs, _body|

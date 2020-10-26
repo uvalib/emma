@@ -20,9 +20,6 @@ class ApiService::Error < Api::Error
   # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args
   # @param [String, nil] default      Default message.
   #
-  # This method overrides:
-  # @see Api::Error#initialize
-  #
   def initialize(*args, default: nil)
     if args.none? { |a| a.is_a?(String) }
       error = args.find { |arg| arg.is_a?(Faraday::Error) }
@@ -42,9 +39,6 @@ class ApiService::Error < Api::Error
   # @param [Array<String>] messages
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see Api::Error#faraday_error
   #
   def faraday_error(*messages)
     super.map do |m|
@@ -66,10 +60,13 @@ class ApiService::Error < Api::Error
       base.send(:extend, self)
     end
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     include Api::Error::Methods unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
-    # :section:
+    # :section: Api::Error::Methods overrides
     # =========================================================================
 
     public
@@ -80,9 +77,6 @@ class ApiService::Error < Api::Error
     # is returned; otherwise the name is derived from the class name.
     #
     # @return [Symbol]
-    #
-    # This method overrides:
-    # @see Api::Error::Methods#service
     #
     # == Examples
     #
@@ -108,9 +102,6 @@ class ApiService::Error < Api::Error
     #
     # @return [Symbol, nil]
     #
-    # This method overrides:
-    # @see Api::Error::Methods#error_type
-    #
     # == Examples
     #
     # @example BookshareService::EmptyResultError
@@ -132,12 +123,15 @@ class ApiService::Error < Api::Error
     #
     # @return [String, nil]
     #
-    # This method overrides:
-    # @see Api::Error::Methods#default_message
-    #
     def default_message
       @default_message ||= super
     end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
 
     # Error types extracted from "config/locales/error.en.yml".
     #
@@ -258,6 +252,8 @@ class ApiService::Error < Api::Error
 
 end
 
+# Non-functional hints for RubyMine type checking.
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
 
   # ===========================================================================
@@ -412,5 +408,6 @@ unless ONLY_FOR_DOCUMENTATION
   end
 
 end
+# :nocov:
 
 __loading_end(__FILE__)

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Overrides to Ingest::Api::Serializer::Associations for XML serializers.
+# Overrides for XML serializers.
 #
 # @see Api::Serializer::Xml::Associations
 #

@@ -21,7 +21,7 @@ class CategoryController < ApplicationController
   include SerializationConcern
   include BookshareConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -78,9 +78,6 @@ class CategoryController < ApplicationController
   # @param [ApiCategoriesList] list
   #
   # @return [Hash{Symbol=>Hash}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#index_values
   #
   def index_values(list = @list)
     { categories: super(list) }

@@ -15,7 +15,10 @@ class BookshareService::Error < ApiService::Error
       base.send(:extend, self)
     end
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     include ApiService::Error::Methods unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
     # :section: ApiService::Error::Methods overrides
@@ -26,9 +29,6 @@ class BookshareService::Error < ApiService::Error
     # Name of the service and key into config/locales/error.en.yml.
     #
     # @return [Symbol]
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#service
     #
     def service
       :bookshare
@@ -46,6 +46,7 @@ class BookshareService::Error < ApiService::Error
 
 end
 
+# Non-functional hints for RubyMine type checking.
 # noinspection LongLine, DuplicatedCode
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION

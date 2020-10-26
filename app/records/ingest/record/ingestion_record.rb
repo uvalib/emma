@@ -117,9 +117,6 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   #
   # @raise [UploadConcern::SubmitError]   If metadata was malformed.
   #
-  # This method overrides:
-  # @see Api::Record#initialize
-  #
   def initialize(src, **opt)
     if src.is_a?(Upload)
       # noinspection RubyNilAnalysis

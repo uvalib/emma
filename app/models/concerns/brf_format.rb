@@ -74,9 +74,6 @@ module BrfFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     BRF_FORMAT
   end
@@ -84,9 +81,6 @@ module BrfFormat
   # parser
   #
   # @return [BrfParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= BrfParser.new(file_handle)

@@ -1067,7 +1067,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Indicate whether Uppy already appears to be set up.
      *
-     * @param {Selector} [container]  Default: {@link formElement}.
+     * @param {Selector} [container]  Default: {@link formContainer}.
      *
      * @returns {boolean}
      */
@@ -1482,6 +1482,7 @@ $(document).on('turbolinks:load', function() {
     function uppyInfo(uppy, text, time, message_level) {
         const level    = message_level || 'info';
         const duration = time || MESSAGE_DURATION;
+        // noinspection JSCheckFunctionSignatures
         uppy.info(text, level, duration);
     }
 
@@ -2981,7 +2982,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
-    // Functions - state
+    // Functions - form status
     // ========================================================================
 
     /**

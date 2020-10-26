@@ -22,9 +22,6 @@ class Search::Api::Message < Search::Api::Record
   # @param [Faraday::Response, Api::Record, Hash, String, nil] src
   # @param [Hash]                                              opt
   #
-  # This method overrides:
-  # @see Search::Api::Record#initialize
-  #
   def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|

@@ -1,4 +1,4 @@
-# app/services/concerns/bookshare_service/status.rb
+# app/services/bookshare_service/status.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -16,7 +16,7 @@ module BookshareService::Status
   include ApiService::Status
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Status overrides
   # ===========================================================================
 
   public
@@ -25,9 +25,6 @@ module BookshareService::Status
   #
   # @return [Array<(TrueClass,nil)>]
   # @return [Array<(FalseClass,String)>]
-  #
-  # This method overrides:
-  # @see ApiService::Status#active_status
   #
   def active_status(*)
     result = BookshareService.new.get_title_count

@@ -106,9 +106,6 @@ class HealthController < ApplicationController
   # If one or more comma-delimited subsystems is specified, full logging is
   # performed unless the URL parameter 'logging=false' is included.
   #
-  # This method overrides:
-  # @see LogConcern#suppress_logger
-  #
   def suppress_logger
     logging = params[:logging]
     logging =

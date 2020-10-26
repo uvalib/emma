@@ -118,9 +118,6 @@ class FileUploader < Shrine
     #
     # @return [Shrine::UploadedFile]
     #
-    # This method overrides:
-    # @see Shrine::ClassMethods#upload
-    #
     def self.upload(io, storage, **options)
       __debug_uploader(__method__) do
         { io: io, storage: storage, options: options }
@@ -136,9 +133,6 @@ class FileUploader < Shrine
     #
     # @return [Shrine::UploadedFile]
     #
-    # This method overrides:
-    # @see Shrine::ClassMethods#uploaded_file
-    #
     def self.uploaded_file(object)
       __debug_uploader(__method__) { { object: object } }
       super
@@ -149,9 +143,6 @@ class FileUploader < Shrine
     # @param [IO, StringIO] io
     #
     # @return [void]
-    #
-    # This method overrides:
-    # @see Shrine::ClassMethods#with_file
     #
     def self.with_file(io)
       __debug_uploader(__method__) { { io: io } }
@@ -168,9 +159,6 @@ class FileUploader < Shrine
     #
     # @param [Symbol] storage_key
     #
-    # This method overrides:
-    # @see Shrine::InstanceMethods#initialize
-    #
     def initialize(storage_key)
       __debug_uploader('NEW') { { storage_key: storage_key } }
       super
@@ -182,9 +170,6 @@ class FileUploader < Shrine
     # @param [Hash]         options
     #
     # @return [Shrine::UploadedFile]
-    #
-    # This method overrides:
-    # @see Shrine::InstanceMethods#upload
     #
     def upload(io, **options)
       __debug_uploader(__method__.to_s) { { io: io, options: options } }
@@ -199,9 +184,6 @@ class FileUploader < Shrine
     #
     # @return [String]
     #
-    # This method overrides:
-    # @see Shrine::InstanceMethods#generate_location
-    #
     def generate_location(io, metadata: {}, **options)
       __debug_uploader(__method__.to_s) do
         { io: io, metadata: metadata, options: options }
@@ -215,9 +197,6 @@ class FileUploader < Shrine
     # @param [Hash]         options
     #
     # @return [Hash{String=>String,Integer}]
-    #
-    # This method overrides:
-    # @see Shrine::InstanceMethods#extract_metadata
     #
     def extract_metadata(io, **options)
       __debug_uploader(__method__.to_s) { { io: io, options: options } }

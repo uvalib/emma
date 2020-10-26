@@ -37,7 +37,7 @@ module Api::Serializer::Hash::Schema
   SYMBOLIZE_KEYS = true
 
   # ===========================================================================
-  # :section: Api::Schema overrides
+  # :section: Api::Serializer::Schema overrides
   # ===========================================================================
 
   public
@@ -45,9 +45,6 @@ module Api::Serializer::Hash::Schema
   # The naming mode for de-serializing data elements from a hash format.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#element_parse_naming
   #
   def element_parse_naming
     HASH_ELEMENT_PARSE_NAMING
@@ -57,9 +54,6 @@ module Api::Serializer::Hash::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#attribute_parse_naming
-  #
   def attribute_parse_naming
     HASH_ATTRIBUTE_PARSE_NAMING
   end
@@ -67,9 +61,6 @@ module Api::Serializer::Hash::Schema
   # The naming mode for serializing data elements to a hash format.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#element_render_naming
   #
   def element_render_naming
     HASH_ELEMENT_RENDER_NAMING
@@ -79,26 +70,17 @@ module Api::Serializer::Hash::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#attribute_render_naming
-  #
   def attribute_render_naming
     HASH_ATTRIBUTE_RENDER_NAMING
   end
 
   # The policy for serializing empty collections to a hash format.
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#render_empty?
-  #
   def render_empty?
     HASH_RENDER_EMPTY
   end
 
   # The policy for serializing empty elements to hash format.
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#render_nil?
   #
   def render_nil?
     HASH_RENDER_NIL

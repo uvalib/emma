@@ -295,7 +295,7 @@ module Emma::Common
   #
   # @param [Array<String>, Integer, nil] call_stack
   #
-  # @return [String]
+  # @return [String, nil]
   #
   # == Variations
   #

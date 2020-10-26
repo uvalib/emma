@@ -15,7 +15,7 @@ module PaginationConcern
 
     __included(base, 'PaginationConcern')
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods

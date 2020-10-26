@@ -18,7 +18,7 @@ class PeriodicalController < ApplicationController
   include SerializationConcern
   include BookshareConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -129,9 +129,6 @@ class PeriodicalController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(list = @list)
     { periodicals: super(list) }
   end
@@ -142,9 +139,6 @@ class PeriodicalController < ApplicationController
   # @param [Symbol, nil] as           Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(result = nil, as: nil)
     result ||= { details: @item, editions: @list }

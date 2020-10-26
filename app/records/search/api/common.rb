@@ -180,9 +180,6 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ScalarType#to_s
-  #
   def to_s
     "#{prefix}:#{number}"
   end
@@ -199,9 +196,6 @@ class PublicationIdentifier < ScalarType
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ScalarType#normalize
-  #
   def self.normalize(v)
     v.to_s.strip.downcase.sub(/^([^:]+)[:\s]+/, '\1:')
   end
@@ -209,9 +203,6 @@ class PublicationIdentifier < ScalarType
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     normalize(v).match?(PATTERN)
@@ -233,9 +224,6 @@ class Isbn < PublicationIdentifier
   #
   # @return [Symbol]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#type
-  #
   def type
     self.class.type
   end
@@ -244,9 +232,6 @@ class Isbn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#prefix
-  #
   def prefix
     type.to_s
   end
@@ -254,9 +239,6 @@ class Isbn < PublicationIdentifier
   # The identifier number portion of the value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#number
   #
   def number
     value
@@ -274,9 +256,6 @@ class Isbn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
-  #
   def self.normalize(v)
     remove_isbn_prefix(v)
   end
@@ -284,9 +263,6 @@ class Isbn < PublicationIdentifier
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     isbn?(v)
@@ -322,9 +298,6 @@ class Issn < PublicationIdentifier
   #
   # @return [Symbol]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#type
-  #
   def type
     self.class.type
   end
@@ -333,9 +306,6 @@ class Issn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#prefix
-  #
   def prefix
     type.to_s
   end
@@ -343,9 +313,6 @@ class Issn < PublicationIdentifier
   # The identifier number portion of the value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#number
   #
   def number
     value
@@ -363,9 +330,6 @@ class Issn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
-  #
   def self.normalize(v)
     remove_issn_prefix(v)
   end
@@ -373,9 +337,6 @@ class Issn < PublicationIdentifier
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     issn?(v)
@@ -411,9 +372,6 @@ class Oclc < PublicationIdentifier
   #
   # @return [Symbol]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#type
-  #
   def type
     self.class.type
   end
@@ -422,9 +380,6 @@ class Oclc < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#prefix
-  #
   def prefix
     type.to_s
   end
@@ -432,9 +387,6 @@ class Oclc < PublicationIdentifier
   # The identifier number portion of the value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#number
   #
   def number
     value
@@ -452,9 +404,6 @@ class Oclc < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
-  #
   def self.normalize(v)
     remove_oclc_prefix(v)
   end
@@ -462,9 +411,6 @@ class Oclc < PublicationIdentifier
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     oclc?(v)
@@ -500,9 +446,6 @@ class Lccn < PublicationIdentifier
   #
   # @return [Symbol]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#type
-  #
   def type
     self.class.type
   end
@@ -511,9 +454,6 @@ class Lccn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#prefix
-  #
   def prefix
     type.to_s
   end
@@ -521,9 +461,6 @@ class Lccn < PublicationIdentifier
   # The identifier number portion of the value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#number
   #
   def number
     value
@@ -541,9 +478,6 @@ class Lccn < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
-  #
   def self.normalize(v)
     remove_lccn_prefix(v)
   end
@@ -551,9 +485,6 @@ class Lccn < PublicationIdentifier
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     lccn?(v)
@@ -589,9 +520,6 @@ class Upc < PublicationIdentifier
   #
   # @return [Symbol]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#type
-  #
   def type
     self.class.type
   end
@@ -600,9 +528,6 @@ class Upc < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#prefix
-  #
   def prefix
     type.to_s
   end
@@ -610,9 +535,6 @@ class Upc < PublicationIdentifier
   # The identifier number portion of the value.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#number
   #
   def number
     value
@@ -630,9 +552,6 @@ class Upc < PublicationIdentifier
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
-  #
   def self.normalize(v)
     super # TODO: UPC normalize
   end
@@ -640,9 +559,6 @@ class Upc < PublicationIdentifier
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     upc?(v)

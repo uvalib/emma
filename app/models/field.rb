@@ -337,9 +337,6 @@ module Field
 
     # Indicate whether this instance is unassociated with any field values.
     #
-    # This method overrides:
-    # @see Field::Type#empty?
-    #
     def empty?
       super && range.blank?
     end
@@ -350,9 +347,6 @@ module Field
     #
     # @return [Array]   If mode == :multiple
     # @return [*]       If mode == :single
-    #
-    # This method overrides:
-    # @see Field::Type#set
     #
     def set(new_value)
       @valid = true

@@ -78,9 +78,6 @@ module GrayscalePdfFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see OcfFormat#configuration
-  #
   def configuration
     GRAYSCALE_PDF_FORMAT
   end
@@ -88,9 +85,6 @@ module GrayscalePdfFormat
   # parser
   #
   # @return [GrayscalePdfParser]
-  #
-  # This method overrides:
-  # @see OcfFormat#parser
   #
   def parser
     @parser ||= GrayscalePdfParser.new(file_handle)

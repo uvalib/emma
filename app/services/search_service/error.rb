@@ -15,10 +15,13 @@ class SearchService::Error < ApiService::Error
       base.send(:extend, self)
     end
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     include ApiService::Error::Methods unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
-    # :section: ApiService::Error overrides
+    # :section: ApiService::Error::Methods overrides
     # =========================================================================
 
     public
@@ -26,9 +29,6 @@ class SearchService::Error < ApiService::Error
     # Name of the service and key into config/locales/error.en.yml.
     #
     # @return [Symbol]
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#service
     #
     def service
       :search
@@ -46,7 +46,9 @@ class SearchService::Error < ApiService::Error
 
 end
 
+# Non-functional hints for RubyMine type checking.
 # noinspection LongLine, DuplicatedCode
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class SearchService::AuthError          < ApiService::AuthError;          include SearchService::Error::Methods; end # "en.emma.error.search.auth"            || "en.emma.error.api.auth"
   class SearchService::CommError          < ApiService::CommError;          include SearchService::Error::Methods; end # "en.emma.error.search.comm"            || "en.emma.error.api.comm"
@@ -64,5 +66,6 @@ unless ONLY_FOR_DOCUMENTATION
   class SearchService::RedirectionError   < ApiService::RedirectionError;   include SearchService::Error::Methods; end # "en.emma.error.search.redirection"     || "en.emma.error.api.redirection"
   class SearchService::RedirectLimitError < ApiService::RedirectLimitError; include SearchService::Error::Methods; end # "en.emma.error.search.redirect_limit"  || "en.emma.error.api.redirect_limit"
 end
+# :nocov:
 
 __loading_end(__FILE__)

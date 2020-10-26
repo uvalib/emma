@@ -33,9 +33,6 @@ class Search::Message::SearchRecordList < Search::Api::Message
   # @option opt [Boolean] :example    If this list should be generated from
   #                                     sample data. # TODO: remove - testing
   #
-  # This method overrides:
-  # @see Api::Record#initialize
-  #
   def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|

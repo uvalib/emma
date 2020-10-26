@@ -1,4 +1,4 @@
-# lib/ext/oauth2/lib/oauth2/client.rb
+# lib/ext/oauth2/lib/oauth2/strategy/auth_code.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true

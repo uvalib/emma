@@ -74,9 +74,6 @@ module KurzweilFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     KURZWEIL_FORMAT
   end
@@ -84,9 +81,6 @@ module KurzweilFormat
   # parser
   #
   # @return [KurzweilParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= KurzweilParser.new(file_handle)

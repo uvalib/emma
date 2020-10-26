@@ -5,11 +5,8 @@
 
 __loading_begin(__FILE__)
 
-# Definitions used within the #schema block when it is executed in the context
-# of the class which includes this module.
-#
-# Definition of the #schema method which defines the serializable data elements
-# for the including class.
+# Definition of the #schema method used within the class definition to declare
+# the serializable data elements associated with the class.
 #
 # @see Api::Record::Schema
 #

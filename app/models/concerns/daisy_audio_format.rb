@@ -79,9 +79,6 @@ module DaisyAudioFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see DaisyFormat#configuration
-  #
   def configuration
     DAISY_AUDIO_FORMAT
   end
@@ -89,9 +86,6 @@ module DaisyAudioFormat
   # parser
   #
   # @return [DaisyAudioParser]
-  #
-  # This method overrides:
-  # @see DaisyFormat#parser
   #
   def parser
     @parser ||= DaisyAudioParser.new(file_handle)

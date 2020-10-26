@@ -17,7 +17,7 @@ class UploadController < ApplicationController
   include UploadConcern
   include IaDownloadConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -519,9 +519,6 @@ class UploadController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(list = @list)
     { entries: super(list) }
   end
@@ -531,9 +528,6 @@ class UploadController < ApplicationController
   # @param [Upload, Hash] item
   #
   # @return [Hash{Symbol=>*}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(item = @item, **)
     item = item.attributes.symbolize_keys if item.is_a?(Upload)

@@ -22,9 +22,6 @@ class Ingest::Api::Message < Ingest::Api::Record
   # @param [Faraday::Response, Api::Record, Hash, String, nil] src
   # @param [Hash]                                              opt
   #
-  # This method overrides:
-  # @see Ingest::Api::Record#initialize
-  #
   def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|

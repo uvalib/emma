@@ -16,7 +16,7 @@ class Shrine
   #++
   module AttacherDebug
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include Shrine::Attacher::InstanceMethods
@@ -37,9 +37,6 @@ class Shrine
     # @param [Symbol]               cache
     # @param [Symbol]               store
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#initialize
-    #
     def initialize(file: nil, cache: :cache, store: :store)
       __debug_attacher('NEW') { { file: file, cache: cache, store: store } }
       super
@@ -51,9 +48,6 @@ class Shrine
     # @param [Hash]             options
     #
     # @return [Shrine::UploadedFile, nil]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#assign
     #
     def assign(value, **options)
       super
@@ -73,9 +67,6 @@ class Shrine
     #
     # @return [Shrine::UploadedFile]
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#attach_cached
-    #
     def attach_cached(value, **options)
       # noinspection RubyYardReturnMatch
       super
@@ -94,9 +85,6 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#attach
-    #
     def attach(io, storage: store_key, **options)
       __debug_attacher(__method__) do
         { io: io, storage: storage, options: options }
@@ -106,8 +94,7 @@ class Shrine
 
     # finalize
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#finalize
+    # @return [void]
     #
     def finalize
       __debug_attacher(__method__)
@@ -116,8 +103,7 @@ class Shrine
 
     # save
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#save
+    # @return [void]
     #
     def save
       __debug_attacher(__method__)
@@ -129,9 +115,6 @@ class Shrine
     # @param [Hash] options           Passed to #promote.
     #
     # @return [Shrine::UploadedFile, nil]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#promote_cached
     #
     def promote_cached(**options)
       __debug_attacher(__method__) { options }
@@ -145,9 +128,6 @@ class Shrine
     # @param [Hash]   options
     #
     # @return [Shrine::UploadedFile, nil]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#promote
     #
     def promote(storage: store_key, **options)
       __debug_attacher(__method__) { { storage: storage, options: options } }
@@ -165,9 +145,6 @@ class Shrine
     #
     # @see Shrine::InstanceMethods#upload
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#attach
-    #
     def upload(io, storage = store_key, **options)
       __debug_attacher(__method__) do
         { io: io, storage: storage, options: options }
@@ -177,8 +154,7 @@ class Shrine
 
     # destroy_previous
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#destroy_previous
+    # @return [void]
     #
     def destroy_previous
       __debug_attacher(__method__)
@@ -187,8 +163,7 @@ class Shrine
 
     # destroy_attached
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#destroy_attached
+    # @return [void]
     #
     def destroy_attached
       __debug_attacher(__method__)
@@ -197,8 +172,7 @@ class Shrine
 
     # destroy
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#destroy
+    # @return [void]
     #
     def destroy
       __debug_attacher(__method__)
@@ -213,9 +187,6 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#change
-    #
     def change(file)
       __debug_attacher(__method__) { { file: file } }
       super
@@ -229,9 +200,6 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#set
-    #
     def set(file)
       __debug_attacher(__method__) { { file: file } }
       super
@@ -240,9 +208,6 @@ class Shrine
     # Returns the attached file.
     #
     # @return [Shrine::UploadedFile, nil]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#get
     #
     def get
       super
@@ -256,9 +221,6 @@ class Shrine
     # @raise [ArgumentError]          If *value* is an invalid type.
     #
     # @return [UploadedFile, nil]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#load_data
     #
     def load_data(data)
       __debug_attacher(__method__) { data.is_a?(Hash) ? data : { data: data } }
@@ -274,9 +236,6 @@ class Shrine
     #
     # @return [Shrine::UploadedFile, nil]
     #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#file=
-    #
     def file=(file)
       __debug_attacher(__method__) { file.is_a?(Hash) ? file : { file: file } }
       super
@@ -287,9 +246,6 @@ class Shrine
     # @raise [Shrine::Error]          If no file is attached.
     #
     # @return [Shrine::UploadedFile]
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#file!
     #
     def file!
       super
@@ -305,9 +261,6 @@ class Shrine
     # @return [Shrine::UploadedFile]
     #
     # @see Shrine::ClassMethods#uploaded_file
-    #
-    # This method overrides:
-    # @see Shrine::Attacher::InstanceMethods#uploaded_file
     #
     def uploaded_file(value)
       __debug_attacher(__method__) do
@@ -326,9 +279,6 @@ class Shrine
     #
     # @return [void]
     #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_validate
-    #
     def activerecord_validate
       __debug_attacher(__method__)
       super
@@ -337,9 +287,6 @@ class Shrine
     # activerecord_before_save
     #
     # @return [void]
-    #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save
     #
     def activerecord_before_save
       __debug_attacher(__method__)
@@ -350,9 +297,6 @@ class Shrine
     #
     # @return [void]
     #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_save
-    #
     def activerecord_after_save
       __debug_attacher(__method__)
       super
@@ -361,9 +305,6 @@ class Shrine
     # activerecord_after_destroy
     #
     # @return [void]
-    #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_destroy
     #
     def activerecord_after_destroy
       __debug_attacher(__method__)
@@ -374,9 +315,6 @@ class Shrine
     #
     # @return [void]
     #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_persist
-    #
     def activerecord_persist
       __debug_attacher(__method__)
       super
@@ -385,9 +323,6 @@ class Shrine
     # activerecord_reload
     #
     # @return [void]
-    #
-    # This method overrides:
-    # @see Shrine::Plugins::Activerecord::AttacherMethods#activerecord_reload
     #
     def activerecord_reload
       __debug_attacher(__method__)
@@ -407,9 +342,6 @@ class Shrine
     #
     # @return [FileUploader]
     #
-    # This method overrides:
-    # @see Shrine::Plugins::Entity::AttacherMethods#load_entity
-    #
     def load_entity(record, name)
       __debug_attacher(__method__) { { name: name, record: record } }
       super
@@ -421,9 +353,6 @@ class Shrine
     # @param [Symbol, String] name
     #
     # @return [FileUploader]
-    #
-    # This method overrides:
-    # @see Shrine::Plugins::Entity::AttacherMethods#set_entity
     #
     def set_entity(record, name)
       super
@@ -437,9 +366,6 @@ class Shrine
     # reload
     #
     # @return [FileUploader]
-    #
-    # This method overrides:
-    # @see Shrine::Plugins::Entity::AttacherMethods#reload
     #
     def reload
       __debug_attacher(__method__)

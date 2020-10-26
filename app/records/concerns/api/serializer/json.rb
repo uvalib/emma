@@ -29,9 +29,6 @@ class Api::Serializer::Json < ::Api::Serializer
   #
   # @return [Symbol]                  Always :json.
   #
-  # This method overrides:
-  # @see Api::Serializer#serializer_type
-  #
   def serializer_type
     SERIALIZER_TYPE
   end
@@ -44,9 +41,6 @@ class Api::Serializer::Json < ::Api::Serializer
   # @return [String]
   #
   # @see Representable::JSON#to_json
-  #
-  # This method overrides:
-  # @see Api::Serializer#serialize
   #
   def serialize(method: :to_json, **opt)
     super
@@ -61,9 +55,6 @@ class Api::Serializer::Json < ::Api::Serializer
   # @return [nil]
   #
   # @see Representable::JSON#from_json
-  #
-  # This method overrides:
-  # @see Api::Serializer#deserialize
   #
   def deserialize(data, method: :from_json)
     super
@@ -81,9 +72,6 @@ class Api::Serializer::Json < ::Api::Serializer
   #
   # @return [String]
   # @return [nil]                 If *data* is neither a String nor a Hash.
-  #
-  # This method overrides:
-  # @see Api::Serializer#set_source_data
   #
   def set_source_data(data)
     # noinspection RubyYardReturnMatch

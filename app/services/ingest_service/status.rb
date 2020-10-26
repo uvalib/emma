@@ -1,4 +1,4 @@
-# app/services/concerns/ingest_service/status.rb
+# app/services/ingest_service/status.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -34,7 +34,7 @@ module IngestService::Status
   }.freeze
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Status overrides
   # ===========================================================================
 
   public
@@ -46,9 +46,6 @@ module IngestService::Status
   #
   # @return [Array<(TrueClass,nil)>]
   # @return [Array<(FalseClass,String)>]
-  #
-  # This method overrides:
-  # @see ApiService::Status#active_status
   #
   def active_status(with: nil, expect: nil)
     with   ||= SAMPLE_REPOSITORY_ID_ACCESS[:ids]

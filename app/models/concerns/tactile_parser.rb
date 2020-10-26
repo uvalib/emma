@@ -21,9 +21,6 @@ class TactileParser < FileParser
   #
   # @return [OpenStruct]
   #
-  # This method overrides:
-  # @see FileParser#metadata
-  #
   def metadata
     OpenStruct.new # TODO: Tactile metadata?
   end

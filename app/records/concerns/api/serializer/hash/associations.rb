@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Overrides to Api::Serializer::Associations for Hash serializers.
+# Overrides for Hash serializers.
 #
 #--
 # noinspection DuplicatedCode

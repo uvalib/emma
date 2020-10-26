@@ -17,7 +17,7 @@ module SessionConcern
 
     include SerializationHelper
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods
@@ -65,7 +65,7 @@ module SessionConcern
   include FlashConcern
   include ApiConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include Devise::Controllers::Helpers unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -104,9 +104,6 @@ module SessionConcern
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see Devise::Controllers::Helpers#after_sign_in_path_for
-  #
   # == Implementation Notes
   # This does not use Devise::Controllers::StoreLocation#store_location_for
   # to avoid the potential of overwhelming session store by copying
@@ -123,9 +120,6 @@ module SessionConcern
   # after_sign_out_path_for
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see Devise::Controllers::Helpers#after_sign_out_path_for
   #
   def after_sign_out_path_for(*)
     welcome_path

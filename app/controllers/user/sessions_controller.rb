@@ -15,7 +15,7 @@ class User::SessionsController < Devise::SessionsController
   include SessionConcern
   include FlashConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
@@ -49,16 +49,13 @@ class User::SessionsController < Devise::SessionsController
   append_around_action :session_update
 
   # ===========================================================================
-  # :section:
+  # :section: Devise::SessionsController overrides
   # ===========================================================================
 
   public
 
   # == GET /users/sign_in
   # Prompt the user for login credentials.
-  #
-  # This method overrides:
-  # @see Devise::SessionsController#new
   #
   def new
     __debug_route
@@ -67,9 +64,6 @@ class User::SessionsController < Devise::SessionsController
 
   # == POST /users/sign_in
   # Begin login session.
-  #
-  # This method overrides:
-  # @see Devise::SessionsController#create
   #
   def create
     __debug_route
@@ -83,9 +77,6 @@ class User::SessionsController < Devise::SessionsController
   # == DELETE /users/sign_out
   # End login session.
   #
-  # This method overrides:
-  # @see Devise::SessionsController#destroy
-  #
   def destroy
     auth_data = session.delete('omniauth.auth')
     __debug_route { { "session['omniauth.auth']" => auth_data } }
@@ -94,6 +85,12 @@ class User::SessionsController < Devise::SessionsController
       set_flash_notice(__method__, auth_data)
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
   # == GET /users/sign_in_as?auth={OmniAuth::AuthHash}

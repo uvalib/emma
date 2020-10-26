@@ -26,9 +26,6 @@ class WordParser < FileParser
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  # This method overrides:
-  # @see XmlBased#retrieve_metadata
-  #
   def retrieve_metadata
     get_core_metadata
   end

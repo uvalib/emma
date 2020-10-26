@@ -22,7 +22,7 @@ class EditionController < ApplicationController
   include SerializationConcern
   include BsDownloadConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -156,9 +156,6 @@ class EditionController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(list = @list)
     { editions: super(list) }
   end
@@ -168,9 +165,6 @@ class EditionController < ApplicationController
   # @param [Bs::Record::PeriodicalEdition, Hash] item
   #
   # @return [Hash{Symbol=>Bs::Record::PeriodicalEdition,Hash}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(item = @item, **)
     { edition: item }

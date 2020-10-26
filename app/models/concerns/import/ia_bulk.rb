@@ -152,9 +152,6 @@ module Import::IaBulk
   #
   # @return [Hash]
   #
-  # This method overrides:
-  # @see Import#schema
-  #
   def schema
     SCHEMA
   end

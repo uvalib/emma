@@ -42,9 +42,6 @@ class Api::Error < RuntimeError
   # @param [Array<Faraday::Response, Exception, Integer, String, true, nil>] args
   # @param [String, nil] default      Default message.
   #
-  # This method overrides:
-  # @see Exception#initialize
-  #
   def initialize(*args, default: nil)
     @response = @http_status = @cause = nil
     @messages = []
@@ -93,9 +90,6 @@ class Api::Error < RuntimeError
   #
   # @return [Exception]
   #
-  # This method overrides:
-  # @see Exception#exception
-  #
   def exception(*)
     self
   end
@@ -106,9 +100,6 @@ class Api::Error < RuntimeError
   #
   # @return [String]
   #
-  # This overrides:
-  # @see Exception#to_s
-  #
   def to_s(connector: ', ')
     @messages.join(connector)
   end
@@ -117,9 +108,6 @@ class Api::Error < RuntimeError
   #
   # @return [String]
   #
-  # This overrides:
-  # @see Exception#message
-  #
   def message
     to_s
   end
@@ -127,9 +115,6 @@ class Api::Error < RuntimeError
   # inspect
   #
   # @return [String]
-  #
-  # This method overrides
-  # @see Exception#inspect
   #
   def inspect
     items = {
@@ -144,9 +129,6 @@ class Api::Error < RuntimeError
   #
   # @return [Array<String>, nil]
   #
-  # This overrides:
-  # @see Exception#message
-  #
   def backtrace
     cause&.backtrace || super
   end
@@ -155,9 +137,6 @@ class Api::Error < RuntimeError
   # raising an Api::Error exception.
   #
   # @return [Exception, nil]
-  #
-  # This overrides:
-  # @see Exception#cause
   #
   def cause
     @cause

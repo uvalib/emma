@@ -26,9 +26,6 @@ module Search::Shared::TitleMethods
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ::TitleMethods#identifier
-  #
   def identifier
     emma_titleId.to_s
   end
@@ -43,9 +40,6 @@ module Search::Shared::TitleMethods
   # from each name where appropriate.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#contributor_list
   #
   def contributor_list
     get_values(:dc_creator).uniq.map do |v|
@@ -73,9 +67,6 @@ module Search::Shared::TitleMethods
   # @return [String]
   # @return [nil]                     If the value cannot be determined.
   #
-  # This method overrides:
-  # @see ::TitleMethods#isbn
-  #
   def isbn
     @isbn ||= extract_isbns(:dc_identifier).first
   end
@@ -84,9 +75,6 @@ module Search::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#related_isbns
-  #
   def related_isbns
     @related_isbns ||= all_isbns - [isbn]
   end
@@ -94,9 +82,6 @@ module Search::Shared::TitleMethods
   # The main and related ISBNs.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#all_isbns
   #
   def all_isbns
     @all_isbns ||= extract_isbns(:dc_identifier, :dc_relation)
@@ -129,9 +114,6 @@ module Search::Shared::TitleMethods
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#title_fields
-  #
   def title_fields
     %i[dc_title]
   end
@@ -140,9 +122,6 @@ module Search::Shared::TitleMethods
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#date_fields
-  #
   def date_fields
     %i[dcterms_dateCopyright emma_lastRemediationDate]
   end
@@ -150,9 +129,6 @@ module Search::Shared::TitleMethods
   # Field(s) that may hold content information about the title.
   #
   # @return [Array<Symbol>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#contents_fields
   #
   def contents_fields
     %i[dc_description]

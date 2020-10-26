@@ -169,9 +169,9 @@ Rails.application.routes.draw do
 
 end
 
-# Non-functional hints for RubyMine.
-# :nocov:
+# Non-functional hints for RubyMine type checking.
 # noinspection RubyInstanceMethodNamingConvention
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
   def api_index_path(*);                          end
   def api_index_url(*);                           end

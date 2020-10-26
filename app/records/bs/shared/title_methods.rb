@@ -29,9 +29,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ::TitleMethods#identifier
-  #
   def identifier
     bookshareId.to_s
   end
@@ -78,9 +75,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#author_list
-  #
   def author_list(**opt)
     creator_list(*AUTHOR_TYPES, **opt)
   end
@@ -90,9 +84,6 @@ module Bs::Shared::TitleMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#editor_list
   #
   def editor_list(**opt)
     creator_list(*EDITOR_TYPES, **opt)
@@ -104,9 +95,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#composer_list
-  #
   def composer_list(**opt)
     creator_list(*COMPOSER_TYPES, **opt)
   end
@@ -116,9 +104,6 @@ module Bs::Shared::TitleMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#lyricist_list
   #
   def lyricist_list(**opt)
     creator_list(*LYRICIST_TYPES, **opt)
@@ -130,9 +115,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<String>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#arranger_list
-  #
   def arranger_list(**opt)
     creator_list(*ARRANGER_TYPES, **opt)
   end
@@ -142,9 +124,6 @@ module Bs::Shared::TitleMethods
   # @param [Hash] opt                 Passed to #creator_list.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#translator_list
   #
   def translator_list(**opt)
     creator_list(*TRANSLATOR_TYPES, **opt)
@@ -158,9 +137,6 @@ module Bs::Shared::TitleMethods
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#creator_list
   #
   #--
   # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -186,9 +162,6 @@ module Bs::Shared::TitleMethods
   # @option opt [Boolean] :role       If *true*, append the contributor type.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#contributor_list
   #
   def contributor_list(*types, **opt)
     result = respond_to?(:contributors) && contributors || []
@@ -224,9 +197,6 @@ module Bs::Shared::TitleMethods
   # @return [String]
   # @return [nil]                     If the value cannot be determined.
   #
-  # This method overrides:
-  # @see ::TitleMethods#isbn
-  #
   def isbn
     isbn13 if respond_to?(:isbn13)
   end
@@ -234,9 +204,6 @@ module Bs::Shared::TitleMethods
   # Related ISBNs omitting the main ISBN if part of the data array.
   #
   # @return [Array<String>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#related_isbns
   #
   def related_isbns
     Array.wrap(relatedIsbns).reject(&:blank?).uniq - Array.wrap(isbn)
@@ -253,9 +220,6 @@ module Bs::Shared::TitleMethods
   # @return [String]
   # @return [nil]                     If the link was not present.
   #
-  # This method overrides:
-  # @see ::TitleMethods#thumbnail_image
-  #
   def thumbnail_image
     get_link(:thumbnail)
   end
@@ -264,9 +228,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [String]
   # @return [nil]                     If the link was not present.
-  #
-  # This method overrides:
-  # @see ::TitleMethods#cover_image
   #
   def cover_image
     get_link(:coverimage)
@@ -325,9 +286,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#title_fields
-  #
   def title_fields
     %i[title]
   end
@@ -335,9 +293,6 @@ module Bs::Shared::TitleMethods
   # Field(s) that may hold the subtitle string.
   #
   # @return [Array<Symbol>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#subtitle_fields
   #
   def subtitle_fields
     %i[subtitle]
@@ -347,9 +302,6 @@ module Bs::Shared::TitleMethods
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see ::TitleMethods#date_fields
-  #
   def date_fields
     %i[copyrightDate publishDate]
   end
@@ -357,9 +309,6 @@ module Bs::Shared::TitleMethods
   # Field(s) that may hold content information about the title.
   #
   # @return [Array<Symbol>]
-  #
-  # This method overrides:
-  # @see ::TitleMethods#contents_fields
   #
   def contents_fields
     %i[synopsis description]

@@ -17,10 +17,13 @@ class IngestService::Error < ApiService::Error
       base.send(:extend, self)
     end
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     include ApiService::Error::Methods unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
-    # :section: ApiService::Error overrides
+    # :section: ApiService::Error::Methods overrides
     # =========================================================================
 
     public
@@ -28,9 +31,6 @@ class IngestService::Error < ApiService::Error
     # Name of the service and key into config/locales/error.en.yml.
     #
     # @return [Symbol]
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#service
     #
     def service
       :ingest
@@ -44,9 +44,6 @@ class IngestService::Error < ApiService::Error
     #
     # @see #parse_create_errors
     # @see #parse_delete_errors
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#extract_message
     #
     def extract_message(error)
       body = error.response[:body].presence
@@ -131,7 +128,7 @@ class IngestService::Error < ApiService::Error
     #
     #   {
     #     "emma-RID_A-FMT_A" : [ 'Document not found' ],
-    #     "emma-RID_B-FMT-B" : [ 'Document not found' ],
+    #     "emma-RID_B-FMT_B" : [ 'Document not found' ],
     #   }
     #
     # where "RID_?" is the repository ID of the offending entry.
@@ -156,7 +153,9 @@ class IngestService::Error < ApiService::Error
 
 end
 
+# Non-functional hints for RubyMine type checking.
 # noinspection LongLine, DuplicatedCode
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.auth"            || "en.emma.error.api.auth"
   class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.comm"            || "en.emma.error.api.comm"
@@ -174,5 +173,6 @@ unless ONLY_FOR_DOCUMENTATION
   class IngestService::RedirectionError   < ApiService::RedirectionError;   include IngestService::Error::Methods; end # "en.emma.error.ingest.redirection"     || "en.emma.error.api.redirection"
   class IngestService::RedirectLimitError < ApiService::RedirectLimitError; include IngestService::Error::Methods; end # "en.emma.error.ingest.redirect_limit"  || "en.emma.error.api.redirect_limit"
 end
+# :nocov:
 
 __loading_end(__FILE__)

@@ -20,7 +20,7 @@ module ParamsConcern
     # Needed for #set_sort_params.
     include LayoutHelper::SearchControls
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     unless ONLY_FOR_DOCUMENTATION
       include AbstractController::Callbacks::ClassMethods

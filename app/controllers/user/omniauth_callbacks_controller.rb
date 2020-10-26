@@ -86,9 +86,6 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see Devise::OmniauthCallbacksController#after_omniauth_failure_path_for
-  #
   def after_omniauth_failure_path_for(scope) # TODO: ???
     super(scope)
   end

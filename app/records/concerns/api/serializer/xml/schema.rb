@@ -69,7 +69,7 @@ module Api::Serializer::Xml::Schema
   IMPLICIT_ATTRIBUTES = false
 
   # ===========================================================================
-  # :section: Api::Schema overrides
+  # :section: Api::Serializer::Schema overrides
   # ===========================================================================
 
   public
@@ -77,9 +77,6 @@ module Api::Serializer::Xml::Schema
   # The naming mode for de-serializing data elements from XML.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#element_parse_naming
   #
   def element_parse_naming
     XML_ELEMENT_PARSE_NAMING
@@ -89,9 +86,6 @@ module Api::Serializer::Xml::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#attribute_parse_naming
-  #
   def attribute_parse_naming
     XML_ATTRIBUTE_PARSE_NAMING
   end
@@ -99,9 +93,6 @@ module Api::Serializer::Xml::Schema
   # The naming mode for serializing data elements to XML.
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#element_render_naming
   #
   def element_render_naming
     XML_ELEMENT_RENDER_NAMING
@@ -111,26 +102,17 @@ module Api::Serializer::Xml::Schema
   #
   # @return [Symbol]                  One of #ELEMENT_NAMING_MODES
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#attribute_render_naming
-  #
   def attribute_render_naming
     XML_ATTRIBUTE_RENDER_NAMING
   end
 
   # The policy for serializing empty collections to XML.
   #
-  # This method overrides:
-  # @see Api::Serializer::Schema#render_empty?
-  #
   def render_empty?
     XML_RENDER_EMPTY
   end
 
   # The policy for serializing empty elements to XML.
-  #
-  # This method overrides:
-  # @see Api::Serializer::Schema#render_nil?
   #
   def render_nil?
     XML_RENDER_NIL

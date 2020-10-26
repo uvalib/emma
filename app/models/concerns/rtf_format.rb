@@ -74,9 +74,6 @@ module RtfFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     RTF_FORMAT
   end
@@ -84,9 +81,6 @@ module RtfFormat
   # parser
   #
   # @return [RtfParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= RtfParser.new(file_handle)

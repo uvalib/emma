@@ -248,9 +248,6 @@ class Api::Record
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see Model#field_names
-  #
   def field_names
     field_definitions.map { |field| field[:name].to_sym }.sort
   end
@@ -264,9 +261,6 @@ class Api::Record
   # inspect
   #
   # @return [String]
-  #
-  # This method overrides
-  # @see Object#inspect
   #
   def inspect
     items =

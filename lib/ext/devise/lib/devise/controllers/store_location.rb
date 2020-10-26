@@ -15,12 +15,20 @@ module Devise
   #
   module Controllers::StoreLocationExt
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
+    include Devise::Controllers::StoreLocation unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
+
+    # =========================================================================
+    # :section: Devise::Controllers::StoreLocation overrides
+    # =========================================================================
+
+    public
+
     # Replace "user_return_to" with "current_path".
     #
     # @param [*] resource_or_scope
-    #
-    # This method overrides:
-    # @see Devise::Controllers::StoreLocation#stored_location_key_for
     #
     def stored_location_key_for(resource_or_scope)
       scope = Devise::Mapping.find_scope!(resource_or_scope)

@@ -76,9 +76,6 @@ module WordFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     WORD_FORMAT
   end
@@ -86,9 +83,6 @@ module WordFormat
   # parser
   #
   # @return [WordParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= WordParser.new(file_handle)

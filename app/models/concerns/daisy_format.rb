@@ -78,9 +78,6 @@ module DaisyFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see OcfFormat#configuration
-  #
   def configuration
     DAISY_FORMAT
   end
@@ -88,9 +85,6 @@ module DaisyFormat
   # parser
   #
   # @return [DaisyParser]
-  #
-  # This method overrides:
-  # @see OcfFormat#parser
   #
   def parser
     @parser ||= DaisyParser.new(file_handle)

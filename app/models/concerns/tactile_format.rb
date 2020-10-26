@@ -74,9 +74,6 @@ module TactileFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     TACTILE_FORMAT
   end
@@ -84,9 +81,6 @@ module TactileFormat
   # parser
   #
   # @return [TactileParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= TactileParser.new(file_handle)

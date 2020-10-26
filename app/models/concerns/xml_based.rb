@@ -12,7 +12,7 @@ require 'nokogiri'
 module XmlBased
 
   # ===========================================================================
-  # :section:
+  # :section: FileParser overrides
   # ===========================================================================
 
   public
@@ -23,9 +23,6 @@ module XmlBased
   #
   # @return [OpenStruct]
   #
-  # This method overrides:
-  # @see FileParser#metadata
-  #
   def metadata
     @metadata ||=
       OpenStruct.new(
@@ -34,6 +31,12 @@ module XmlBased
         }
       )
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # Gather all metadata values.
   #

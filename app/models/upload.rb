@@ -411,9 +411,6 @@ class Upload < ApplicationRecord
   #
   # @return [Array<Symbol>]
   #
-  # This method overrides:
-  # @see Model#field_names
-  #
   def field_names
     attribute_names.map(&:to_sym)
   end

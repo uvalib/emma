@@ -17,7 +17,7 @@ class HelpController < ApplicationController
   include SerializationConcern
   include HelpConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -94,9 +94,6 @@ class HelpController < ApplicationController
   # @param [Symbol] topic
   #
   # @return [Hash{Symbol=>*}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(topic = @topic, **)
     { topic => get_help_entry(topic) }

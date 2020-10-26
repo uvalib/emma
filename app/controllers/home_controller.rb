@@ -21,7 +21,7 @@ class HomeController < ApplicationController
   include SessionConcern
   include SerializationConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -105,9 +105,6 @@ class HomeController < ApplicationController
   # @param [Symbol, nil] as           Either :hash or :array if given.
   #
   # @return [Hash{Symbol=>Hash,Array}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(result = nil, as: nil)
     result ||= { details: @item, preferences: @preferences, history: @history }

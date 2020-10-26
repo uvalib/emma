@@ -70,9 +70,6 @@ module OcfFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     OCF_FORMAT
   end

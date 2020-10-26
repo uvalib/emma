@@ -46,7 +46,7 @@ class Shrine
 
   module UploadEndpointDebug
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     include Shrine::UploadEndpointExt unless ONLY_FOR_DOCUMENTATION
     # :nocov:

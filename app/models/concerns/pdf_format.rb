@@ -76,9 +76,6 @@ module PdfFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     PDF_FORMAT
   end
@@ -87,9 +84,6 @@ module PdfFormat
   #
   # @return [PdfParser]
   #
-  # This method overrides:
-  # @see FileFormat#parser
-  #
   def parser
     @parser ||= PdfParser.new(file_handle)
   end
@@ -97,9 +91,6 @@ module PdfFormat
   # parser_metadata
   #
   # @return [PdfParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser_metadata
   #
   def parser_metadata
     parser
@@ -117,9 +108,6 @@ module PdfFormat
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see FileFormat#format_date
-  #
   def format_date(value)
     super(scrub_date(value))
   end
@@ -129,9 +117,6 @@ module PdfFormat
   # @param [String, Date, DateTime] value
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see FileFormat#format_date_time
   #
   def format_date_time(value)
     super(scrub_date(value))

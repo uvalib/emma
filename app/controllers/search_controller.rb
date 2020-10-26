@@ -15,7 +15,7 @@ class SearchController < ApplicationController
   include SerializationConcern
   include SearchConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -135,9 +135,6 @@ class SearchController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(list = @list)
     { records: super(list) }
   end
@@ -147,9 +144,6 @@ class SearchController < ApplicationController
   # @param [Search::Record::MetadataRecord, Hash] item
   #
   # @return [Hash{Symbol=>Hash}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(item = @item, **)
     normalize_keys(item)

@@ -18,7 +18,7 @@ class ApiController < ApplicationController
   include SerializationConcern
   include ApiExplorerConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -117,9 +117,6 @@ class ApiController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(items = @api_results)
     result =
       items.map { |action, response|
@@ -147,9 +144,6 @@ class ApiController < ApplicationController
   # @param [Hash] item
   #
   # @return [Hash{Symbol=>Hash}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(item = @api_result, **)
     result =

@@ -1,4 +1,4 @@
-# lib/tasks/test_application.rb
+# lib/tasks/test_application.rake
 #
 # frozen_string_literal: true
 # warn_indent:           true

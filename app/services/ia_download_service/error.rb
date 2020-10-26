@@ -17,10 +17,13 @@ class IaDownloadService::Error < ApiService::Error
 
     include HtmlHelper
 
+    # Non-functional hints for RubyMine type checking.
+    # :nocov:
     include ApiService::Error::Methods unless ONLY_FOR_DOCUMENTATION
+    # :nocov:
 
     # =========================================================================
-    # :section: ApiService::Error overrides
+    # :section: ApiService::Error::Methods overrides
     # =========================================================================
 
     public
@@ -28,9 +31,6 @@ class IaDownloadService::Error < ApiService::Error
     # Name of the service and key into config/locales/error.en.yml.
     #
     # @return [Symbol]
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#service
     #
     def service
       :ia_download
@@ -42,9 +42,6 @@ class IaDownloadService::Error < ApiService::Error
     #
     # @return [Array<String>]
     # @return [Array<ActiveSupport::SafeBuffer>]  If note(s) were added.
-    #
-    # When included in the subclass this method overrides:
-    # @see ApiService::Error::Methods#extract_message
     #
     def extract_message(error)
       result = []
@@ -104,7 +101,9 @@ class IaDownloadService::Error < ApiService::Error
 
 end
 
+# Non-functional hints for RubyMine type checking.
 # noinspection LongLine, DuplicatedCode
+# :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.auth"           || "en.emma.error.api.auth"
   class IaDownloadService::CommError          < ApiService::CommError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.comm"           || "en.emma.error.api.comm"
@@ -122,5 +121,6 @@ unless ONLY_FOR_DOCUMENTATION
   class IaDownloadService::RedirectionError   < ApiService::RedirectionError;   include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.redirection"    || "en.emma.error.api.redirection"
   class IaDownloadService::RedirectLimitError < ApiService::RedirectLimitError; include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.redirect_limit" || "en.emma.error.api.redirect_limit"
 end
+# :nocov:
 
 __loading_end(__FILE__)

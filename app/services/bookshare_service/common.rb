@@ -102,9 +102,6 @@ module BookshareService::Common
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ApiService::Common#name_of
-  #
   def name_of(user)
     name = user.is_a?(Hash) ? user['uid'] : user
     name.to_s.presence || DEFAULT_USER
@@ -121,9 +118,6 @@ module BookshareService::Common
   # @param [Hash, nil] params         Default: @params.
   #
   # @return [Hash]                    New API parameters.
-  #
-  # This method overrides:
-  # @see ApiService::Common#api_options
   #
   def api_options(params = nil)
     super.tap do |result|

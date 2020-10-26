@@ -17,7 +17,7 @@ module ExplorerHelper
   include Emma::Json
   include HtmlHelper
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include BookshareConcern unless ONLY_FOR_DOCUMENTATION
   # :nocov:

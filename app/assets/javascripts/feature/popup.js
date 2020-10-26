@@ -90,6 +90,7 @@ $(document).on('turbolinks:load', function() {
     // Functions
     // ========================================================================
 
+    // noinspection FunctionTooLongJS
     /**
      * Toggle visibility of a button and its popup element.
      *

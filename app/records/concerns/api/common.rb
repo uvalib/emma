@@ -176,9 +176,6 @@ class IsoDuration < ScalarType
   #
   # @param [*, nil] v
   #
-  # This method overrides:
-  # @see ScalarType#valid?
-  #
   def self.valid?(v)
     normalize(v).match?(PATTERN)
   end
@@ -242,9 +239,6 @@ class IsoDate < ScalarType
   #
   # @param [*, nil] v
   #
-  # This method overrides:
-  # @see ScalarType#valid?
-  #
   def self.valid?(v)
     v = normalize(v)
     PATTERN.any? { |_, pattern| v.match?(pattern) }
@@ -296,9 +290,6 @@ class IsoYear < IsoDate
   #
   # @param [*, nil] v
   #
-  # This method overrides:
-  # @see IsoDate#valid?
-  #
   def self.valid?(v)
     year?(v)
   end
@@ -318,9 +309,6 @@ class IsoDay < IsoDate
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see IsoDate#valid?
   #
   def self.valid?(v)
     day?(v)
@@ -342,9 +330,6 @@ class IsoLanguage < ScalarType
   #
   # @param [*, nil] v
   #
-  # This method overrides:
-  # @see ScalarType#valid?
-  #
   def self.valid?(v)
     v = normalize(v)
     ISO_639.find_by_code(v).present?
@@ -361,9 +346,6 @@ class IsoLanguage < ScalarType
   # @param [*] v
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see PublicationIdentifier#normalize
   #
   def self.normalize(v)
     find(v)&.alpha3 || super(v)
@@ -411,9 +393,6 @@ class EnumType < ScalarType
   #
   # @return [String]
   #
-  # This method overrides:
-  # @see ScalarType#set
-  #
   def set(v)
     unless v.nil?
       @value = normalize(v)
@@ -432,9 +411,6 @@ class EnumType < ScalarType
   # Indicate whether *v* would be a valid value for an item of this type.
   #
   # @param [*, nil] v
-  #
-  # This method overrides:
-  # @see ScalarType#valid?
   #
   def self.valid?(v)
     v = normalize(v)
@@ -511,9 +487,6 @@ class EnumType < ScalarType
   # explicitly defined the initial value is returned.
   #
   # @return [String]
-  #
-  # This method overrides:
-  # @see ScalarType#default
   #
   def self.default
     entry = enumerations[type]

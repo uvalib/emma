@@ -65,7 +65,7 @@ module IaDownloadService::Common
   }.join('; ')
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   public
@@ -99,7 +99,7 @@ module IaDownloadService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   public
@@ -108,15 +108,12 @@ module IaDownloadService::Common
   #
   # @type [Integer]
   #
-  # This method overrides:
-  # @see ApiService::Common#max_redirects
-  #
   def max_redirects
     IA_MAX_REDIRECTS
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected
@@ -130,9 +127,6 @@ module IaDownloadService::Common
   # @return [Array<(String,Hash)>]    Message body plus headers for GET.
   # @return [Array<(Hash,Hash)>]      Query plus headers for PUT, POST, PATCH.
   #
-  # This method overrides:
-  # @see ApiService::Common#api_headers
-  #
   def api_headers(params = nil, headers = nil, body = nil)
     super.tap do |_prms, hdrs, _body|
       auth   = hdrs.delete(:authorization) || IA_AUTH
@@ -143,7 +137,7 @@ module IaDownloadService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected
@@ -166,9 +160,6 @@ module IaDownloadService::Common
   #
   # @return [Faraday::Response]
   # @return [nil]
-  #
-  # This method overrides:
-  # @see ApiService::Common#transmit
   #
   # == Implementation Notes
   # This will take several iterations, depending on the nature of the IA file.

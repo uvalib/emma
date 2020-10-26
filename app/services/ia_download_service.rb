@@ -28,9 +28,6 @@ class IaDownloadService < ApiService
   #                                     of #BASE_URL defined by the subclass).
   # @param [Hash]        opt          Stored in @options
   #
-  # This method overrides:
-  # @see ApiService#initialize
-  #
   def initialize(user: nil, base_url: nil, **opt)
     opt[:params_encoder] ||= Faraday::IaParamsEncoder
     super(user: user, base_url: base_url, **opt)

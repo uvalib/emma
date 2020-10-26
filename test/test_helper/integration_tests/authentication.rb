@@ -182,9 +182,9 @@ module TestHelper::IntegrationTests::Authentication
     end
   end
 
-  # Non-functional hints for RubyMine.
-  # :nocov:
+  # Non-functional hints for RubyMine type checking.
   # noinspection RubyUnusedLocalVariable
+  # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
     # @param [String] user

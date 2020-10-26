@@ -1,4 +1,4 @@
-# lib/ext/faraday/lib/faraday/logging/ia_params_encoder.rb
+# lib/ext/faraday/lib/faraday/encoders/ia_params_encoder.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -18,6 +18,12 @@ module Faraday
     extend EncodeMethods
     extend DecodeMethods
 
+    # =========================================================================
+    # :section: Faraday::EncodeMethods overrides
+    # =========================================================================
+
+    public
+
     # Same as the overridden method but does not sort.
     #
     # @param params [Hash, Array, #to_hash, nil] Parameters to be encoded
@@ -25,9 +31,6 @@ module Faraday
     # @return [String]
     #
     # @raise [TypeError] If *params* can not be converted to a Hash.
-    #
-    # This method overrides
-    # @see Faraday::EncodeMethods#encode
     #
     def self.encode(params)
       return if params.nil?

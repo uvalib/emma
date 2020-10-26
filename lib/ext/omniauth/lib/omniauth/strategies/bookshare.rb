@@ -141,9 +141,6 @@ module OmniAuth
       #
       # @yield [Options] Yields options to block for further configuration.
       #
-      # This method overrides:
-      # @see OmniAuth::Strategy#initialize
-      #
       # rubocop:disable UnusedMethodArgument
       def initialize(app, *args, &block)
         @app = app
@@ -173,9 +170,6 @@ module OmniAuth
 
       # Direct access to the OmniAuth logger, automatically prefixed with this
       # strategy's name.
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategy#log
       #
       # == Implementation Notes
       # Instead of attempting to  override Configuration#default_logger this
@@ -246,9 +240,6 @@ module OmniAuth
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategy#request_call
-      #
       def request_call
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         setup_phase
@@ -297,9 +288,6 @@ module OmniAuth
 
       # Performs the steps necessary to run the callback phase of a strategy.
       #
-      # This method overrides:
-      # @see OmniAuth::Strategy#callback_call
-      #
       def callback_call
         __debug { "OMNIAUTH #{__method__}" }
         super
@@ -347,9 +335,6 @@ module OmniAuth
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategy#mock_call!
-      #
       def mock_call!(*)
         if on_request_path? && OmniAuth.config.allowed_method?(request)
           mock_request_call
@@ -365,9 +350,6 @@ module OmniAuth
       # mock_request_call
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategy#mock_request_call
       #
       def mock_request_call
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
@@ -400,9 +382,6 @@ module OmniAuth
       # mock_callback_call
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategy#mock_callback_call
       #
       def mock_callback_call
         setup_phase
@@ -558,9 +537,6 @@ module OmniAuth
       #
       # @return [*]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategy#call_app!
-      #
       def call_app!(env = @env)
         __debug_items("OMNIAUTH #{__method__}") { env }
         super
@@ -704,9 +680,6 @@ module OmniAuth
       #
       # @return [::OAuth2::Client]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#client
-      #
       def client
         # noinspection RubyResolve
         @client ||=
@@ -726,9 +699,6 @@ module OmniAuth
       #
       # @see ::OAuth2::ClientExt#request
       #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#request_phase
-      #
       def request_phase
         OmniAuth.config.before_request_phase&.call(env)
         dbg  = "OMNIAUTH-BOOKSHARE #{__method__} | #{request.request_method}"
@@ -744,9 +714,6 @@ module OmniAuth
       #
       # @return [Hash]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#authorize_params
-      #
       def authorize_params
         super.tap do |result|
           __debug { "OMNIAUTH-BOOKSHARE #{__method__} => #{result.inspect}" }
@@ -756,9 +723,6 @@ module OmniAuth
       # token_params
       #
       # @return [Hash]
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#token_params
       #
       def token_params
         super.tap do |result|
@@ -775,9 +739,6 @@ module OmniAuth
       # @raise [SocketError]
       #
       # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#callback_phase
       #
       #--
       # noinspection RubyScope
@@ -859,9 +820,6 @@ module OmniAuth
       #
       # @return [::OAuth2::AccessToken]
       #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#build_access_token
-      #
       def build_access_token
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
         code = request.params['code']
@@ -878,9 +836,6 @@ module OmniAuth
       # @param [String, Symbol] option
       #
       # @return [Hash]
-      #
-      # This method overrides:
-      # @see OmniAuth::Strategies::OAuth2#options_for
       #
       def options_for(option)
         option_keys = options[:"#{option}_options"]

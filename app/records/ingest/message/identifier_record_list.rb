@@ -29,9 +29,6 @@ class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
   # @param [Faraday::Response, Api::Record, Hash, String, nil] src
   # @param [Hash]                                              opt
   #
-  # This method overrides:
-  # @see Api::Record#initialize
-  #
   def initialize(src, **opt)
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
@@ -41,7 +38,7 @@ class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
 =end
 
   # ===========================================================================
-  # :section:
+  # :section: Ingest::Api::Message overrides
   # ===========================================================================
 
   protected
@@ -57,9 +54,6 @@ class Ingest::Message::IdentifierRecordList < Ingest::Api::Message
   # @param [Hash] opt                 May be modified.
   #
   # @return [void]
-  #
-  # This method overrides:
-  # @see Ingest::Api::Message#apply_wrap!
   #
   def apply_wrap!(opt)
     super(opt, WRAP_FORMATS)

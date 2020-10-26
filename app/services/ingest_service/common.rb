@@ -21,7 +21,7 @@ module IngestService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   public
@@ -55,7 +55,7 @@ module IngestService::Common
   end
 
   # ===========================================================================
-  # :section:
+  # :section: ApiService::Common overrides
   # ===========================================================================
 
   protected
@@ -78,9 +78,6 @@ module IngestService::Common
   #
   # @return [Faraday::Response]
   # @return [nil]
-  #
-  # This method overrides:
-  # @see ApiService::Common#transmit
   #
   def transmit(verb, action, params, headers, **opt)
     super.tap do |response|

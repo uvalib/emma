@@ -15,7 +15,7 @@ class Shrine
 
     include FileNaming
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     include Shrine::UploadedFile::InstanceMethods unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -91,7 +91,7 @@ class Shrine
 
   module UploadedFileDebug
 
-    # Non-functional hints for RubyMine.
+    # Non-functional hints for RubyMine type checking.
     # :nocov:
     include Shrine::UploadedFileExt unless ONLY_FOR_DOCUMENTATION
     # :nocov:
@@ -106,9 +106,6 @@ class Shrine
     #
     # @param [Hash] data
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#initialize
-    #
     def initialize(data)
       __debug_upload('NEW') { data.is_a?(Hash) ? data : { data: data } }
       super
@@ -120,9 +117,6 @@ class Shrine
     #
     # @return [IO]
     # @return [*]                   Return from block if block given.
-    #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#open
     #
     def open(**options)
       __debug_upload(__method__) { options }
@@ -137,9 +131,6 @@ class Shrine
     # @return [Tempfile]
     # @return [*]                   Return from block if block given.
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#download
-    #
     def download(**options)
       __debug_upload(__method__) { options }
       super
@@ -151,9 +142,6 @@ class Shrine
     # @param [Hash]                 options
     #
     # @return [Tempfile]
-    #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#stream
     #
     def stream(destination, **options)
       __debug_upload(__method__) do
@@ -169,9 +157,6 @@ class Shrine
     #
     # @return [String]
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#read
-    #
     def read(*args)
       __debug_upload(__method__, *args)
       super
@@ -179,8 +164,7 @@ class Shrine
 
     # rewind
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#rewind
+    # @return [void]
     #
     def rewind
       __debug_upload(__method__)
@@ -189,8 +173,7 @@ class Shrine
 
     # close
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#close
+    # @return [void]
     #
     def close
       __debug_upload(__method__)
@@ -202,8 +185,7 @@ class Shrine
     # @param [IO, StringIO] io
     # @param [Hash]         options
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#replace
+    # @return [void]
     #
     def replace(io, **options)
       __debug_upload(__method__) { { io: io, options: options } }
@@ -212,8 +194,7 @@ class Shrine
 
     # delete
     #
-    # This method overrides:
-    # @see Shrine::UploadedFile::InstanceMethods#delete
+    # @return [void]
     #
     def delete
       __debug_upload(__method__)
@@ -227,6 +208,8 @@ class Shrine
     public
 
     # extract_file_metadata
+    #
+    # @return [Hash{Symbol=>*}]
     #
     # This method overrides:
     # @see Shrine::UploadedFileExt#extract_file_metadata

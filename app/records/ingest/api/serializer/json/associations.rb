@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Overrides to Ingest::Api::Serializer::Associations for JSON serializers.
+# Overrides for JSON serializers.
 #
 # @see Api::Serializer::Json::Associations
 #

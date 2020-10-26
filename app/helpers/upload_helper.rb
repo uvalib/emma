@@ -846,6 +846,8 @@ module UploadHelper
   # @param [String]         prompt
   # @param [Hash]           opt       Passed to #form_tag.
   #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   def upload_items_menu(action: nil, user: nil, prompt: nil, **opt)
     action ||= params[:action]
     user   ||= @user
@@ -862,6 +864,7 @@ module UploadHelper
 
     html_opt = prepend_css_classes(opt, 'select-entry', 'menu-control')
     html_opt[:method] ||= :get
+    # noinspection RubyYardReturnMatch
     form_tag(path, html_opt) do
       select_tag(:selected, menu, select_opt)
     end

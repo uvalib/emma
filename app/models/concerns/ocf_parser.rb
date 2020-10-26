@@ -52,9 +52,6 @@ class OcfParser < FileParser
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  # This method overrides:
-  # @see XmlBased#retrieve_metadata
-  #
   def retrieve_metadata
     [get_opf_metadata, get_ncx_metadata, get_image_metadata].reduce(&:rmerge!)
   end

@@ -40,9 +40,6 @@ class ApiCachingMiddleware < Faraday::Middleware
   # @option opt [Hash]                                :store_options
   # @option opt [ActiveSupport::Duration, Integer]    :expires_in
   #
-  # This method overrides:
-  # @see CachingMiddleware::Concern#initialize
-  #
   def initialize(app, opt = nil)
     opt = DEFAULT_OPTIONS.deep_merge(opt || {})
     @store_options = opt[:store_options] || {}
@@ -63,9 +60,6 @@ class ApiCachingMiddleware < Faraday::Middleware
   #
   # @return [String]
   # @return [nil]                     If there is no request active.
-  #
-  # This method overrides:
-  # @see CachingMiddleware::Concern#key
   #
   def key(env)
     super.sub(/([?&])api=[^&]+/, '\1') # TODO: include user ID

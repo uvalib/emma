@@ -30,9 +30,6 @@ class Api::Serializer::Hash < ::Api::Serializer
   #
   # @return [Symbol]                  Always :hash.
   #
-  # This method overrides:
-  # @see Api::Serializer#serializer_type
-  #
   def serializer_type
     SERIALIZER_TYPE
   end
@@ -46,9 +43,6 @@ class Api::Serializer::Hash < ::Api::Serializer
   # @return [String]
   #
   # @see Representable::Hash#to_hash
-  #
-  # This method overrides:
-  # @see Api::Serializer#serialize
   #
   def serialize(method: :to_hash, symbolize_keys: SYMBOLIZE_KEYS, **opt)
     result = super(method: method, **opt)
@@ -65,9 +59,6 @@ class Api::Serializer::Hash < ::Api::Serializer
   # @return [nil]
   #
   # @see Representable::Hash#from_hash
-  #
-  # This method overrides:
-  # @see Api::Serializer#deserialize
   #
   def deserialize(data, method: :from_hash)
     super

@@ -22,7 +22,7 @@ class ArtifactController < ApplicationController
   include SerializationConcern
   include BsDownloadConcern
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include AbstractController::Callbacks unless ONLY_FOR_DOCUMENTATION
   # :nocov:
@@ -166,9 +166,6 @@ class ArtifactController < ApplicationController
   #
   # @return [Hash{Symbol=>Hash}]
   #
-  # This method overrides:
-  # @see SerializationConcern#index_values
-  #
   def index_values(list = @list)
     { artifacts: super(list) }
   end
@@ -178,9 +175,6 @@ class ArtifactController < ApplicationController
   # @param [Bs::Record::ArtifactMetadata, Hash] item
   #
   # @return [Hash{Symbol=>Bs::Record::ArtifactMetadata,Hash}]
-  #
-  # This method overrides:
-  # @see SerializationConcern#show_values
   #
   def show_values(item = @item, **)
     { artifact: item }

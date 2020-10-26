@@ -9,7 +9,7 @@ module TestHelper::SystemTests::Pagination
 
   include TestHelper::SystemTests::Index
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   include Capybara::Minitest::Assertions unless ONLY_FOR_DOCUMENTATION
   # :nocov:

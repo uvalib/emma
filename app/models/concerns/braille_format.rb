@@ -74,9 +74,6 @@ module BrailleFormat
   #
   # @return [Hash{Symbol=>String,Array,Hash}]
   #
-  # This method overrides:
-  # @see FileFormat#configuration
-  #
   def configuration
     BRAILLE_FORMAT
   end
@@ -84,9 +81,6 @@ module BrailleFormat
   # parser
   #
   # @return [BrailleParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
   #
   def parser
     @parser ||= BrailleParser.new(file_handle)

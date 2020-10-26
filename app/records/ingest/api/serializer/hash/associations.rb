@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Overrides to Ingest::Api::Serializer::Associations for Hash serializers.
+# Overrides for Hash serializers.
 #
 # @see Api::Serializer::Hash::Associations
 #

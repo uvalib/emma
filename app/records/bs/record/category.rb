@@ -37,9 +37,6 @@ class Bs::Record::Category < Bs::Api::Record
   # @return [String]
   # @return [nil]                     If not translatable.
   #
-  # This method overrides
-  # @see Bs::Shared::CategoryMethods#bookshare_category
-  #
   def bookshare_category
     # noinspection RubyNilAnalysis
     name.to_s if categoryType.to_s.casecmp('Bookshare').zero?

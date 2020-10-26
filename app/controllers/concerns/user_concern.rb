@@ -15,7 +15,7 @@ module UserConcern
     __included(base, 'UserConcern')
   end
 
-  # Non-functional hints for RubyMine.
+  # Non-functional hints for RubyMine type checking.
   # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
