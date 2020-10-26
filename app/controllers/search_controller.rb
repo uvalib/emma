@@ -152,7 +152,7 @@ class SearchController < ApplicationController
   # @see SerializationConcern#show_values
   #
   def show_values(item = @item, **)
-    { records: normalize_keys(item) }
+    normalize_keys(item)
   end
 
 end

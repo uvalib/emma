@@ -36,6 +36,14 @@ var show_flash = {
 };
 
 // ============================================================================
+// Event handlers
+// ============================================================================
+
+$(document).on('turbolinks:before-cache', function() {
+    flashContainer().remove();
+});
+
+// ============================================================================
 // Functions
 // ============================================================================
 
@@ -54,6 +62,8 @@ function flashContainer(selector) {
  * Prevent flash messages from being generated.
  *
  * @param {boolean} [all]
+ *
+ * @returns {void}
  */
 function suppressFlash(all) {
     // noinspection AssignmentResultUsedJS, NestedAssignmentJS
@@ -68,6 +78,8 @@ function suppressFlash(all) {
  * Restore generation of flash messages.
  *
  * @param {boolean} [all]
+ *
+ * @returns {void}
  */
 function enableFlash(all) {
     // noinspection AssignmentResultUsedJS, NestedAssignmentJS
@@ -87,12 +99,16 @@ function enableFlash(all) {
  * @param {string}   [type]
  * @param {string}   [role]
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ *
+ * @returns {jQuery}                  The flash container.
  */
 function flashMessage(text, type, role, fc) {
+    let $fc = flashContainer(fc);
     if (show_flash.messages) {
-        let $fc = clearFlash(fc);
+        clearFlash($fc);
         addFlashMessage(text, type, role, $fc);
     }
+    return $fc;
 }
 
 /**
@@ -104,12 +120,16 @@ function flashMessage(text, type, role, fc) {
  * @param {string}   [type]
  * @param {string}   [role]
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ *
+ * @returns {jQuery}                  The flash container.
  */
 function flashError(text, type, role, fc) {
+    let $fc = flashContainer(fc);
     if (show_flash.errors) {
-        let $fc = clearFlash(fc);
+        clearFlash($fc);
         addFlashError(text, type, role, $fc);
     }
+    return $fc;
 }
 
 /**
@@ -117,10 +137,12 @@ function flashError(text, type, role, fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @returns {jQuery}
+ * @returns {jQuery}                  The flash container.
  */
 function showFlash(fc) {
-    return flashContainer(fc).removeClass('hidden').removeClass('invisible');
+    let $fc = flashContainer(fc);
+    $fc.removeClass('hidden').removeClass('invisible');
+    return scrollIntoView($fc);
 }
 
 /**
@@ -128,7 +150,7 @@ function showFlash(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @returns {jQuery}
+ * @returns {jQuery}                  The flash container.
  */
 function hideFlash(fc) {
     return flashContainer(fc).addClass('hidden');
@@ -139,12 +161,10 @@ function hideFlash(fc) {
  *
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
  *
- * @returns {jQuery}
+ * @returns {jQuery}                  The flash container.
  */
 function clearFlash(fc) {
-    let $fc = hideFlash(fc);
-    $fc.children().remove();
-    return $fc;
+    return hideFlash(fc).empty();
 }
 
 /**
@@ -190,13 +210,15 @@ function flashDisplayed(fc) {
  * @param {string}   [type]
  * @param {string}   [role]
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ *
+ * @returns {jQuery}                  The flash container.
  */
 function addFlashMessage(text, type, role, fc) {
     const css_class = type || 'notice';
     const aria_role = role || 'alert';
     const msg       = text ? text.replace("\n", '<br/>') : '???';
     let $msg = $('<p>').addClass(css_class).attr('role', aria_role).html(msg);
-    showFlash(fc).append($msg);
+    return showFlash(fc).append($msg);
 }
 
 /**
@@ -206,11 +228,13 @@ function addFlashMessage(text, type, role, fc) {
  * @param {string}   [type]
  * @param {string}   [role]
  * @param {Selector} [fc]             Default: `{@link flashContainer}()`.
+ *
+ * @returns {jQuery}                  The flash container.
  */
 function addFlashError(text, type, role, fc) {
     const css_class = type || 'alert';
     const aria_role = role || 'alert';
-    addFlashMessage(text, css_class, aria_role, fc);
+    return addFlashMessage(text, css_class, aria_role, fc);
 }
 
 // ============================================================================

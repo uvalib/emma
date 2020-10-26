@@ -32,11 +32,9 @@ module Emma::Common
   # @param [Object] value
   #
   def boolean?(value)
-    case value
-      when TrueClass, FalseClass then true
-      when Array, Hash, nil      then false
-      else BOOLEAN_VALUES.include?(value.to_s.strip.downcase)
-    end
+    return true  if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+    return false unless value.is_a?(String) || value.is_a?(Symbol)
+    BOOLEAN_VALUES.include?(value.to_s.strip.downcase)
   end
 
   # ===========================================================================
@@ -62,7 +60,7 @@ module Emma::Common
         when Numeric then value.round
         else              value.to_s.to_i
       end
-    result if result > 0
+    result if result.positive?
   end
 
   # Interpret *value* as zero or a positive integer.
@@ -83,7 +81,24 @@ module Emma::Common
         when Numeric then value.round
         else              value.to_s.to_i
       end
-    result if result >= 0
+    result unless result.negative?
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the given string value contains only decimal digits.
+  #
+  # @param [String, Symbol, Numeric, nil] value
+  #
+  def digits_only?(value)
+    return true  if value.is_a?(Integer)
+    return false if [String, Symbol, Numeric].none? { |t| value.is_a?(t) }
+    # noinspection RubyNilAnalysis
+    (value = value.to_s).present? && value.delete('0-9').blank?
   end
 
   # ===========================================================================
@@ -602,7 +617,9 @@ module Emma::Common
   def html_id(text)
     # noinspection RubyYardParamTypeMatch
     text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
-    text.to_s.delete('[]').tr(' ', '_').underscore.camelize
+    text = text.to_s.gsub(/[^[:graph:]]/, '_')
+    text = text.tr('_', ' ').remove(/[[:punct:]]/).squish.tr(' ', '_')
+    text.underscore.camelize
   end
 
   # ===========================================================================

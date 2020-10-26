@@ -242,62 +242,77 @@ module FlashHelper
 
   # Success flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_notice
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_success(*args)
+  # @see #flash_notice
+  #
+  def flash_success(*args, **opt)
     prepend_flash_source!(args)
-    flash_notice(*args, topic: :success)
+    flash_notice(*args, topic: :success, **opt)
   end
 
   # Failure flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_alert.
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_failure(*args)
+  # @see #flash_alert
+  #
+  def flash_failure(*args, **opt)
     prepend_flash_source!(args)
-    flash_alert(*args, topic: :failure)
+    flash_alert(*args, topic: :failure, **opt)
   end
 
   # Flash notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #set_flash.
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_notice(*args, topic: nil)
+  # @see #set_flash
+  #
+  def flash_notice(*args, topic: nil, **opt)
     prepend_flash_source!(args)
-    set_flash(*args, topic: topic, type: :notice)
+    set_flash(*args, topic: topic, type: :notice, **opt)
   end
 
   # Flash alert.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #set_flash.
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_alert(*args, topic: nil)
+  # @see #set_flash
+  #
+  def flash_alert(*args, topic: nil, **opt)
     prepend_flash_source!(args)
-    set_flash(*args, topic: topic, type: :alert)
+    set_flash(*args, topic: topic, type: :alert, **opt)
   end
 
   # Flash notification, which appears on the next page to be rendered.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_format
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol]                               type  :alert or :notice
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def set_flash(*args, type:, topic: nil)
+  # @see #flash_format
+  #
+  def set_flash(*args, type:, topic: nil, **opt)
     prepend_flash_source!(args)
     target  = flash_target(type)
-    message = flash_format(*args, topic: topic)
+    message = flash_format(*args, topic: topic, **opt)
     flash[target] = message
   end
 
@@ -309,64 +324,97 @@ module FlashHelper
 
   # Success flash now.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  To #flash_now_notice.
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_now_success(*args)
+  # @see #flash_now_notice
+  #
+  def flash_now_success(*args, **opt)
     prepend_flash_source!(args)
-    flash_now_notice(*args, topic: :success)
+    flash_now_notice(*args, topic: :success, **opt)
   end
 
   # Failure flash now.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  To #flash_now_alert.
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_now_failure(*args)
+  # @see #flash_now_alert
+  #
+  def flash_now_failure(*args, **opt)
     prepend_flash_source!(args)
-    flash_now_alert(*args, topic: :failure)
+    flash_now_alert(*args, topic: :failure, **opt)
   end
 
   # Flash now notice.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  To #set_flash_now.
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_now_notice(*args, topic: nil)
+  # @see #set_flash_now
+  #
+  def flash_now_notice(*args, topic: nil, **opt)
     prepend_flash_source!(args)
-    set_flash_now(*args, topic: topic, type: :notice)
+    set_flash_now(*args, topic: topic, type: :notice, **opt)
   end
 
   # Flash now alert.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  To #set_flash_now.
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def flash_now_alert(*args, topic: nil)
+  # @see #set_flash_now
+  #
+  def flash_now_alert(*args, topic: nil, **opt)
     prepend_flash_source!(args)
-    set_flash_now(*args, topic: topic, type: :alert)
+    set_flash_now(*args, topic: topic, type: :alert, **opt)
   end
 
   # Flash now notification, which appears on the current page when it is
   # rendered.
   #
-  # @param [Array<Exception,String,Symbol,Entry>] args  Passed to #flash_format
+  # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol]                               type  :alert or :notice
   # @param [Symbol, nil]                          topic
+  # @param [Hash]                                 opt
   #
   # @return [void]
   #
-  def set_flash_now(*args, type:, topic: nil)
+  # @see #flash_format
+  #
+  def set_flash_now(*args, type:, topic: nil, **opt)
     prepend_flash_source!(args)
     target  = flash_target(type)
-    message = flash_format(*args, topic: topic)
+    message = flash_format(*args, topic: topic, **opt)
     flash.now[target] = message
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Create items(s) to be included in the 'X-Flash-Message' header to support
+  # the ability of the client to update the flash display.
+  #
+  # @param [Array<Exception,String,Symbol,Entry>] args
+  #
+  # @see #flash_format
+  #
+  def flash_xhr(*args, **opt)
+    opt[:xhr] = true
+    flash_format(*args, topic: nil, **opt)
   end
 
   # ===========================================================================
@@ -378,14 +426,16 @@ module FlashHelper
   # @type [Array<Symbol>]
   FLASH_TARGETS = %i[notice alert].freeze
 
-  # Return the method invoking flash.
+  # Prepend the method invoking flash if there is not already one at the start
+  # of *args*.
   #
   # @param [Array] args
   #
   # @return [Array]                   The original *args*, possibly modified.
   #
   def prepend_flash_source!(args)
-    args.unshift(calling_method(3).to_sym) unless args.first.is_a?(Symbol)
+    caller_name = (calling_method(3)&.to_sym unless args.first.is_a?(Symbol))
+    args.unshift(caller_name) if caller_name
     args
   end
 
@@ -426,8 +476,11 @@ module FlashHelper
     html ? %Q(<div class="line">#{text}</div>).html_safe : "\n#{text}"
   end
 
-  # Flash now notification, which appears on the current page when it is
-  # rendered.
+  # Create item(s) to be included in the flash display.
+  #
+  # By default, when displaying an Exception, this method also logs the
+  # exception and its stack trace (to avoid "eating" the exception when this
+  # method is called from an exception handler block).
   #
   # @param [Array<Exception,String,Symbol,Entry>] args
   # @param [Symbol, nil]                          topic
@@ -438,20 +491,52 @@ module FlashHelper
   # args[-1] [Hash]                     Passed to #flash_template except for:
   #
   # @option args[-1] [Boolean] :inspect   If *true* apply #inspect to messages.
+  # @option args[-1] [*]       :status    Override reported exception status.
+  # @option args[-1] [Boolean] :log       If *false* do not log exceptions.
+  # @option args[-1] [Boolean] :trace     If *true* always log exception trace.
+  # @option args[-1] [Symbol]  :meth      Calling method.
+  # @option args[-1] [Boolean] :xhr       Format for 'X-Flash-Message'.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [String]                      For :xhr.
   #
-  def flash_format(*args, topic: nil)
-    opt    = (args.pop if args.last.is_a?(Hash))
-    method = args.shift
-    error  = (args.shift if args.first.is_a?(Exception))
-    msg    = nil
-    msg  ||= (error.messages  if error.respond_to?(:messages))
-    msg  ||= ([error.message] if error.respond_to?(:message))
-    msg  ||= []
+  def flash_format(*args, topic: nil, **opt)
+    meth = (args.shift if args.first.is_a?(Symbol))
+    excp = (args.shift if args.first.is_a?(Exception))
+    local, opt = partition_options(opt, :inspect, :status, :log, :trace, :meth)
 
-    # noinspection RubyYardParamTypeMatch
-    local, opt = partition_options(opt, :inspect)
+    meth ||= local[:meth]
+    status = local[:status]
+    opt[:html] = false if opt[:xhr]
+
+    # Lead with the message derived from an Exception.
+    msg = []
+    msg += excp.respond_to?(:messages) ? excp.messages : [excp.message] if excp
+
+    # Log exceptions or messages.
+    unless false?(local[:log])
+      if excp
+        status ||= (excp.code            if excp.respond_to?(:code))
+        status ||= (excp.response.status if excp.respond_to?(:response))
+        trace    = true?(local[:trace])
+        trace  ||=
+          !excp.is_a?(UploadWorkflow::SubmitError) &&
+          !excp.is_a?(Net::ProtocolError)
+        Log.error do
+          err_msg = +"#{meth}: "
+          err_msg << "#{status}: " if status.present?
+          err_msg << "#{excp.class}: "
+          if trace
+            err_msg << "\n" << excp.full_message(order: :top)
+          else
+            err_msg << ' '  << msg.join(', ')
+          end
+        end
+      else
+        Log.info { [meth, status, args.join(', ')].join(': ') }
+      end
+    end
+
     unless opt.key?(:html)
       opt[:html] = (msg + args).any? { |m| m.html_safe? || m.is_a?(Entry) }
     end
@@ -473,11 +558,17 @@ module FlashHelper
     result =
       if topic
         # noinspection RubyYardParamTypeMatch
-        flash_template(msg, method: method, topic: topic, **opt)
+        flash_template(msg, meth: meth, topic: topic, **opt)
       else
         msg.join(msg_sep)
       end
-    opt[:html] ? result.html_safe : ERB::Util.h(result)
+    if opt[:xhr]
+      result
+    elsif opt[:html]
+      result.html_safe
+    else
+      ERB::Util.h(result)
+    end
   end
 
   # Create item(s) to be included in the flash display.
@@ -584,29 +675,29 @@ module FlashHelper
   #
   # @param [String, Array<String>] msg
   # @param [Symbol, String]        topic
-  # @param [Symbol, String, nil]   method
+  # @param [Symbol, String, nil]   meth
   # @param [Boolean, nil]          html
   # @param [String, nil]           separator
   # @param [Hash]                  opt        Passed to I18n#t.
   #
   # @return [String]                          # Even if html is *true*.
   #
-  def flash_template(msg, topic:, method: nil, html: nil, separator: nil, **opt)
-    topic = topic.to_sym
-    fail  = (topic != :success)
+  def flash_template(msg, topic:, meth: nil, html: nil, separator: nil, **opt)
     scope = flash_i18n_scope
+    topic = topic.to_sym
     # noinspection RubyYardParamTypeMatch
-    path  = flash_i18n_path(scope, method, topic)
+    i18n_path = flash_i18n_path(scope, meth, topic)
     if msg.is_a?(Array)
       separator ||= html ? "\n" : ', '
       msg = msg.reject(&:blank?).join(separator)
     end
-    opt[fail ? :error : :file] = msg
+    i18n_key = (topic == :success) ? :file : :error
+    opt[i18n_key] = msg
     opt[:default] = Array.wrap(opt[:default]&.dup)
     opt[:default] << flash_i18n_path(scope, 'error', topic)
     opt[:default] << flash_i18n_path('error', topic)
     opt[:default] << DEFAULT_ERROR
-    I18n.t(path, **opt)
+    I18n.t(i18n_path, **opt)
   end
 
   # I18n scope based on the current class context.

@@ -188,7 +188,7 @@ module Import
   #
   def ordinal_value(v)
     v = string_value(v).to_i
-    v if v > 0
+    v if v.positive?
   end
 
   # Transform a date data item into a four-digit year.

@@ -499,10 +499,9 @@ $(document).on('turbolinks:load', function() {
         $.each(member_table, function(account_id, full_name) {
             let $input = $radio.clone().attr('value', account_id);
             let $label = create(MEMBER_POPUP.fields.row_label).text(full_name);
-            let row_id = `${id}-row${row}`;
+            let row_id = `${id}-row${row++}`;
             $input.attr('id',  row_id).appendTo($fields);
             $label.attr('for', row_id).appendTo($fields);
-            row += 1;
         });
 
         // Handle the edge case where the user has no members defined.

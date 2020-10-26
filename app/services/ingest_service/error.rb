@@ -56,9 +56,9 @@ class IngestService::Error < ApiService::Error
       message =
         if json.is_a?(Hash)
           case json.keys.first.to_s.downcase
-            when /^document-\d+/           then parse_create_errors(json)
-            when /^[a-z]+-[a-z\d]+-[a-z]+/ then parse_delete_errors(json)
-            else                                json
+            when /^document-\d+/      then parse_create_errors(json)
+            when /^[^-]+-[^-]+-[^-]+/ then parse_delete_errors(json)
+            else                           json
           end
         end
       Array.wrap(message || body)

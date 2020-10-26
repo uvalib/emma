@@ -35,7 +35,7 @@ module BookshareService::Status
       active  = false
       message = result.message
     else
-      active  = (result.to_i > 0)
+      active  = result.to_i.positive?
       message = nil
     end
     return active, message

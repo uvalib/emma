@@ -302,7 +302,7 @@ module Bs::Shared::TitleMethods
   #
   def page_count
     count = respond_to?(:numPages) ? numPages.to_i : 0
-    count if count > 0
+    count if count.positive?
   end
 
   # The number of images.
@@ -312,7 +312,7 @@ module Bs::Shared::TitleMethods
   #
   def image_count
     count = respond_to?(:numImages) ? numImages.to_i : 0
-    count if count > 0
+    count if count.positive?
   end
 
   # ===========================================================================

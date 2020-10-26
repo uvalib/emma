@@ -242,7 +242,7 @@ class User < ApplicationRecord
   # @return [nil]                     If ID could not be determined.
   #
   def self.find_id(user)
-    user = user.to_i            if user.is_a?(String) && user.to_i.nonzero?
+    user = user.to_i            if user.is_a?(String) && digits_only?(user)
     user = find_by(email: user) if user.is_a?(String)
     user = user.id              if user.is_a?(User)
     user

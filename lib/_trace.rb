@@ -110,7 +110,7 @@ def __output(*args)
 
   # Construct the string that is prepended to each output line.
   indent = opt[:indent] || (sep.include?("\n") ? CONS_INDENT : '')
-  indent = (' ' * indent if indent.is_a?(Integer) && (indent > 0))
+  indent = (' ' * indent if indent.is_a?(Integer) && indent.positive?)
   leader = "#{indent}#{opt[:leader]}"
   leader += ' ' unless (leader == indent.to_s) || leader.match?(/\s$/)
 

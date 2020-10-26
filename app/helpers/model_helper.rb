@@ -596,7 +596,7 @@ module ModelHelper
       args = method(m).arity
       if args.zero?
         send(m)
-      elsif args > 0
+      elsif args.positive?
         send(m, item)
       elsif args == -1
         send(m, **opt)
@@ -1205,7 +1205,10 @@ module ModelHelper
       opt[:'data-icon'] = icon
     end
     if tip
-      tip %= { This: (label ? %Q("#{label}") : 'This') } if tip.include?('%')
+      if tip.include?('%')
+        label &&= label.to_s.sub(/[[:punct:]]+$/, '')
+        tip %= { This: (label ? %Q("#{label}") : 'This') } # TODO: I18n
+      end
       opt[:'data-title'] = tip
       opt[:title] ||= tip
     end

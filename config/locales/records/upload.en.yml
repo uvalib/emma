@@ -25,12 +25,12 @@ en:
         # =====================================================================
         # Database record fields
         #
-        # NOTE: Currently each field is annotated with two attribute comments:
+        # NOTE: Currently each field is annotated with four attribute comments:
         #
-        # FMW4: The name of the related entry in "FRAME Metadata Worksheet"
-        #         (rev 4.0), whether the field is Required or Optional, whether
-        #         the field is Repeatable or Non-repeatable, and a description
-        #         of the intended range of values (if specified).
+        # FMM5: The name of the related entry in "FRAME Metadata Model 5.0",
+        #         whether the field is Required or Optional, whether the field
+        #         is Repeatable or Non-repeatable, and a description of the
+        #         intended range of values (if specified).
         #
         # IA:   The related field in the CSV control file for the pre-release
         #         bulk upload of items via Internet Archive.
@@ -42,11 +42,10 @@ en:
         # =====================================================================
 
         id:
-          # FMW4: "Transaction ID", Required, Repeatable
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
-          # NOTE: Obviously not repeatable per transaction.
           min:          1
           max:          1
           label:        'Database ID'
@@ -57,11 +56,12 @@ en:
           origin:       system
 
         user_id:
-          # FMW4: "Submitted By", Required, Non-repeatable, "Frame Party ID"
+          # FMM5: "Submitted By", Required, Non-repeatable, "FRAME Party ID"
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
           # NOTE: User table "id"; table could include other associations.
+          # NOTE: Actually maps on to "EMMA User ID".
           min:          1
           max:          1
           label:        'User ID'
@@ -71,7 +71,7 @@ en:
           origin:       system
 
         repository:
-          # FMW4: *missing*
+          # FMM5: *missing*
           # IA:   N/A
           # SR:   equivalent to emma_repository
           # IR:   equivalent to emma_repository
@@ -88,22 +88,23 @@ en:
         repository_id:
           # FMW4: "Repository Item ID", Optional, Repeatable
           # IA:   N/A
-          # SR:   equivalent to emma_repositoryRecordId
-          # IR:   equivalent to emma_repositoryRecordId
-          # NOTE: Neither optional nor repeatable.
-          # NOTE: Should have the same value as:
-          # NOTE:   en.emma.upload.record.emma_data.emma_repositoryRecordId
+          # SR:   N/A
+          # IR:   N/A
+          # NOTE: Obviously not repeatable per transaction.
           min:          1
           max:          1
-          label:        'Repository ID'
+          label:        'Submission ID'
           tooltip:      |
-            Repository identifier associated with the uploaded file
+            An identifier associated with the file upload submission.
+            For EMMA-native repository entries, this is equivalent to the
+            "Repository Record ID".  For entries derived from member repository
+            items, this is the "tracking number" of the request.
           help_html:    |
             <strong>TODO</strong>
           origin:       system
 
         fmt:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -116,7 +117,7 @@ en:
           origin:       file_data
 
         ext:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -129,7 +130,7 @@ en:
           origin:       file_data
 
         state:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -142,7 +143,7 @@ en:
           origin:       system
 
         created_at:
-          # FMW4: "Date Submitted to EMMA", Required, Non-repeatable, "ISO 8601"
+          # FMM5: "Date Submitted to EMMA", Required, Non-repeatable, "ISO 8601"
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -156,7 +157,7 @@ en:
           origin:       system
 
         updated_at:
-          # FMW4: N/A?
+          # FMM5: N/A?
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -174,7 +175,7 @@ en:
         # =====================================================================
 
         file_data:
-          # FMW4: -
+          # FMM5: -
           # IA:   -
           # SR:   -
           # IR:   -
@@ -192,7 +193,7 @@ en:
           # ===================================================================
 
           id:
-            # FMW4: N/A
+            # FMM5: N/A
             # IA:   N/A
             # SR:   N/A
             # IR:   N/A
@@ -205,7 +206,7 @@ en:
             origin:       system
 
           storage:
-            # FMW4: N/A
+            # FMM5: N/A
             # IA:   N/A
             # SR:   N/A
             # IR:   N/A
@@ -218,7 +219,7 @@ en:
             origin:       system
 
           metadata:
-            # FMW4: -
+            # FMM5: -
             # IA:   -
             # SR:   -
             # IR:   -
@@ -231,8 +232,8 @@ en:
             origin:       system
 
             filename:
-              # FMW4: N/A
-              # IA:   *missing*
+              # FMM5: N/A
+              # IA:   "contributed_file"
               # SR:   N/A
               # IR:   N/A
               min:          1
@@ -244,7 +245,7 @@ en:
               origin:       system
 
             size:
-              # FMW4: "File size", Optional, Repeatable
+              # FMM5: "File Size", Optional, Repeatable
               # IA:   N/A
               # SR:   N/A
               # IR:   N/A
@@ -261,7 +262,7 @@ en:
               origin:       system
 
             mime_type:
-              # FMW4: N/A
+              # FMM5: "File Type", Required, Non-repeatable
               # IA:   N/A
               # SR:   N/A
               # IR:   N/A
@@ -281,7 +282,7 @@ en:
         # =====================================================================
 
         emma_data:
-          # FMW4: -
+          # FMM5: -
           # IA:   -
           # SR:   -
           # IR:   -
@@ -299,12 +300,13 @@ en:
           # ===================================================================
 
           emma_recordId:
-            # FMW4: "EMMA Item ID", Required, Non-repeatable
+            # FMM5: "EMMA Item ID", Required, Non-repeatable
             # IA:   N/A
             # SR:   String
             # IR:   N/A
-            # NOTE: Can't be "required" - unknown for the initial submission.
-            # NOTE: Auto-generated by Federated Ingest service for all items.
+            # NOTE: Tuple: (repository, rid, dc_format, emma_formatVersion).
+            # NOTE: Based on submission_id for EMMA-native items.
+            # NOTE: Based on parent emma_repositoryRecordId for derived items.
             min:          0
             max:          1
             label:        'EMMA Record ID'
@@ -314,12 +316,13 @@ en:
             origin:       system
 
           emma_titleId:
-            # FMW4: "EMMA Title ID", Required, Non-repeatable
+            # FMM5: "EMMA Title ID", Required, Non-repeatable
             # IA:   N/A
             # SR:   String
             # IR:   N/A
-            # NOTE: Can't be "required" - unknown for the initial submission.
             # NOTE: Auto-generated by Federated Ingest service for all items.
+            # NOTE: Can't be "required" for EMMA-native submissions.
+            # NOTE: From parent emma_titleId for submissions of derived items.
             min:          0
             max:          1
             label:        'EMMA Title ID'
@@ -333,25 +336,28 @@ en:
           # ===================================================================
 
           emma_repository:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   N/A
             # SR:   EmmaRepository
             # IR:   EmmaRepository
-            # NOTE: Auto-generated as "emma" for new submissions.
-            # NOTE: Supplied by Unified Search service for non-EMMA items.
+            # NOTE: User-supplied for a derivation of a member repository item.
+            # NOTE: User-supplied as "emma" for new submissions.
+            # NOTE: Should have the same value as:
+            # NOTE:   en.emma.upload.record.repository
             min:          1
             max:          1
             label:        'Source Repository'
             tooltip:      |
               The source repository entry associated with the remediated
-              content file
+              content file.  Select "EMMA" if the file was not based on content
+              from any of the other listed repositories.
             help_html:    |
               <strong>TODO</strong>
             type:         !ruby/symbol EmmaRepository
             origin:       system
 
           emma_collection:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   "collection"
             # SR:   Array<String>
             # IR:   Array<String>
@@ -366,11 +372,12 @@ en:
             origin:       system
 
           emma_repositoryRecordId:
-            # FMW4: "Repository Item ID", Optional, Repeatable
+            # FMM5: "Repository Item ID", Optional, Repeatable
             # IA:   N/A
             # SR:   String
             # IR:   String
             # NOTE: Neither optional nor repeatable.
+            # NOTE: Same as submission_id for EMMA-native submissions.
             # NOTE: Auto-generated for EMMA submissions.
             # NOTE: Supplied by Unified Search service for non-EMMA items.
             min:          1
@@ -378,13 +385,15 @@ en:
             label:        'Repository Record ID'
             tooltip:      |
               The source repository identifier for the entry associated with
-              the remediated content file
+              the remediated content file.
+              For EMMA repository entries, this is equivalent to the
+              "Submission ID".
             help_html:    |
               <strong>TODO</strong>
             origin:       system
 
           emma_retrievalLink:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   N/A
             # SR:   String
             # IR:   String
@@ -402,7 +411,7 @@ en:
             origin:       system
 
           emma_webPageLink:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   N/A
             # SR:   String
             # IR:   String
@@ -420,7 +429,7 @@ en:
             origin:       system
 
           emma_lastRemediationDate:
-            # FMW4: "Status Date", Repeatable
+            # FMM5: "Remediation Status Date", Required, Repeatable
             # IA:   *missing*
             # SR:   IsoDate
             # IR:   IsoDate
@@ -436,7 +445,7 @@ en:
             origin:       system
 
           emma_repositoryMetadataUpdateDate:
-            # FMW4: N/A
+            # FMM5: N/A
             # IA:   N/A
             # SR:   IsoDate
             # IR:   IsoDate
@@ -452,7 +461,7 @@ en:
             origin:       system
 
           emma_lastRemediationNote:
-            # FMW4: "Remediation Comments", Optional, Repeatable
+            # FMM5: "Remediation Comments", Optional, Repeatable
             # IA:   "remediation_comments"
             # SR:   String
             # IR:   String
@@ -468,7 +477,7 @@ en:
             type:         textarea
 
           emma_formatVersion:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   N/A
             # SR:   String
             # IR:   String
@@ -481,7 +490,7 @@ en:
             placeholder:  'Enter format version'
 
           emma_formatFeature:
-            # FMW4: "Feature", Required, Repeatable
+            # FMM5: "Feature", Required, Repeatable
             # IA:   "contributed_format"
             # SR:   Array<FormatFeature>
             # IR:   Array<FormatFeature>
@@ -500,7 +509,7 @@ en:
           # ===================================================================
 
           dc_title:
-            # FMW4: "Title", Required, Non-repeatable
+            # FMM5: "Title", Required, Non-repeatable
             # IA:   "title"
             # SR:   String
             # IR:   String
@@ -515,16 +524,16 @@ en:
             placeholder:  'Enter title of work'
 
           dc_creator:
-            # FMW4: "Contributor", Required, Repeatable
+            # FMM5: "Contributor", Required, Repeatable
             # IA:   *missing*
             # SR:   Array<String>
             # IR:   Array<String>
             min:          1
             max:          ~
-            label:        'Creator'
+            label:        'Author/Creator'
             tooltip:      |
-              Author/creator of the creative work represented by the remediated
-              content file
+              Author/editor/creator of the creative work represented by the
+              remediated content file
             help_html:    |
               Include authors, editors, translators, etc. of the creative work
               itself.
@@ -533,7 +542,7 @@ en:
             placeholder:  'Enter author(s) of the work'
 
           dc_identifier:
-            # FMW4: "Public ID", Optional, Repeatable, "ISBN, DOI, OCLC, ISSN, LCCN"
+            # FMM5: "Public ID", Optional, Repeatable, "ISBN, DOI, OCLC, ISSN, LCCN"
             # IA:   Combined from "doi", "issn", "isbn" fields.
             # SR:   Array<PublicationIdentifier>
             # IR:   Array<PublicationIdentifier>
@@ -548,7 +557,7 @@ en:
             placeholder:  'Enter ISBN/etc for the work'
 
           dc_publisher:
-            # FMW4: "Publisher", Required, Non-repeatable
+            # FMM5: "Publisher", Required, Non-repeatable
             # IA:   "publisher"
             # SR:   String
             # IR:   String
@@ -565,7 +574,7 @@ en:
             placeholder:  'Enter publisher of the work'
 
           dc_relation:
-            # FMW4: "Related ID", Optional, Repeatable, "ISBN, DOI, OCLC, LCCN"
+            # FMM5: "Related ID", Optional, Repeatable, "ISBN, DOI, OCLC, LCCN"
             # IA:   Derived from "doi", "issn", "isbn" fields.
             # SR:   Array<PublicationIdentifier>
             # IR:   Array<PublicationIdentifier>
@@ -584,7 +593,7 @@ en:
             placeholder:  'ISBN/etc for a related edition of the work'
 
           dc_language:
-            # FMW4: "Language", Required, Repeatable
+            # FMM5: "Language", Required, Repeatable
             # IA:   "language"
             # SR:   Array<String>
             # IR:   Array<String>
@@ -600,7 +609,7 @@ en:
             type:         !ruby/symbol LanguageType
 
           dc_rights:
-            # FMW4: "Source rights expression", Optional, Repeatable
+            # FMM5: "Source Rights Expression", Optional, Repeatable
             # IA:   *missing*
             # SR:   Rights
             # IR:   Rights
@@ -617,7 +626,7 @@ en:
             type:         !ruby/symbol Rights
 
           dc_provenance:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   *missing*
             # SR:   Provenance
             # IR:   Provenance
@@ -632,7 +641,7 @@ en:
             type:         !ruby/symbol Provenance
 
           dc_description:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   "description"
             # SR:   String
             # IR:   String
@@ -648,7 +657,7 @@ en:
             type:         textarea
 
           dc_format:
-            # FMW4: "Format", Required, Non-repeatable
+            # FMM5: "Format", Required, Non-repeatable
             # IA:   "contributed_format"
             # SR:   DublinCoreFormat
             # IR:   DublinCoreFormat
@@ -663,7 +672,7 @@ en:
             type:         !ruby/symbol DublinCoreFormat
 
           dc_type:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   "mediatype"
             # SR:   DcmiType
             # IR:   DcmiType
@@ -678,7 +687,7 @@ en:
             type:         !ruby/symbol DcmiType
 
           dc_subject:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   "subject"
             # SR:   Array<String>
             # IR:   Array<String>
@@ -693,7 +702,7 @@ en:
             placeholder:  'Enter keyword/subject term'
 
           dcterms_dateAccepted:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   *missing*
             # SR:   IsoDate
             # IR:   IsoDate
@@ -709,7 +718,7 @@ en:
             type:         date
 
           dcterms_dateCopyright:
-            # FMW4: "Publication Date", Required, Non-repeatable
+            # FMM5: "Publication Date", Required, Non-repeatable
             # IA:   "date"
             # SR:   IsoYear
             # IR:   IsoYear
@@ -731,7 +740,7 @@ en:
           # ===================================================================
 
           s_accessibilityFeature:
-            # FMW4: "Accessibility Feature", Required, Repeatable
+            # FMM5: "Accessibility Feature", Required, Repeatable
             # IA:   *missing*
             # SR:   Array<A11yFeature>
             # IR:   Array<A11yFeature>
@@ -745,7 +754,7 @@ en:
             type:         !ruby/symbol A11yFeature
 
           s_accessibilityControl:
-            # FMW4: *missing*
+            # FMM5: *missing*
             # IA:   *missing*
             # SR:   Array<A11yControl>
             # IR:   Array<A11yControl>
@@ -758,7 +767,7 @@ en:
             type:         !ruby/symbol A11yControl
 
           s_accessibilityHazard:
-            # FMW4: "Accessibility Hazard", Required, Repeatable
+            # FMM5: "Accessibility Hazard", Required, Repeatable
             # IA:   *missing*
             # SR:   Array<A11yHazard>
             # IR:   Array<A11yHazard>
@@ -772,7 +781,7 @@ en:
             type:         !ruby/symbol A11yHazard
 
           s_accessMode:
-            # FMW4: "Access Mode", Required, Repeatable
+            # FMM5: "Access Mode", Required, Repeatable
             # IA:   *missing*
             # SR:   Array<A11yAccessMode>
             # IR:   Array<A11yAccessMode>
@@ -786,7 +795,7 @@ en:
             type:         !ruby/symbol A11yAccessMode
 
           s_accessModeSufficient:
-            # FMW4: "Access Mode Sufficient", Required, Repeatable
+            # FMM5: "Access Mode Sufficient", Required, Repeatable
             # IA:   *missing*
             # SR:   Array<A11ySufficient>
             # IR:   Array<A11ySufficient>
@@ -800,7 +809,7 @@ en:
             type:         !ruby/symbol A11ySufficient
 
           s_accessibilitySummary:
-            # FMW4: "Accessibility Summary", Required, Non-repeatable
+            # FMM5: "Accessibility Summary", Required, Non-repeatable
             # IA:   *missing*
             # SR:   String
             # IR:   String
@@ -815,7 +824,7 @@ en:
             type:         textarea
 
           s_accessibilityAPI:
-            # FMW4: N/A
+            # FMM5: N/A
             # IA:   N/A
             # SR:   Array<A11yAPI>
             # IR:   Array<A11yAPI>
@@ -833,23 +842,8 @@ en:
           # emma_data JSON keys - new bibliographic fields
           # ===================================================================
 
-          bib_subtitle:
-            # FMW4: "Subtitle", Optional, Non-repeatable
-            # IA:   *missing*
-            # SR:   *missing*
-            # IR:   *missing*
-            min:          0
-            max:          1
-            label:        'Subtitle'
-            tooltip:      |
-              NEW bibliographic metadata field
-              (FMW4: "Subtitle"; IA: missing)
-            help_html:    |
-              <strong>TODO</strong>
-            placeholder:  'Enter sub-title of work (if applicable)'
-
           bib_series:
-            # FMW4: "Series Name", Optional, Non-repeatable
+            # FMM5: "Series Name", Optional, Non-repeatable
             # IA:   *missing*
             # SR:   *missing*
             # IR:   *missing*
@@ -858,13 +852,13 @@ en:
             label:        'Series'
             tooltip:      |
               NEW bibliographic metadata field
-              (FMW4: "Series Name"; IA: missing)
+              (FMM5: "Series Name"; IA: missing)
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Journal name or publication series (if applicable)'
 
           bib_seriesType:
-            # FMW4: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
+            # FMM5: "Series Type", Optional, Non-repeatable, "Book, Journal, Newspaper, Magazine"
             # IA:   "series_type"
             # SR:   *missing*
             # IR:   *missing*
@@ -875,13 +869,13 @@ en:
             label:        'Series Type'
             tooltip:      |
               NEW bibliographic metadata field
-              (FMW4: "Series Type"; IA: "series_type")
+              (FMM5: "Series Type"; IA: "series_type")
             help_html:    |
               <strong>TODO</strong>
             type:         !ruby/symbol SeriesType
 
           bib_seriesPosition:
-            # FMW4: "Series Position", Optional, Non-repeatable
+            # FMM5: "Series Position", Optional, Non-repeatable
             # IA:   "volume"
             # SR:   *missing*
             # IR:   *missing*
@@ -890,13 +884,13 @@ en:
             label:        'Series Position'
             tooltip:      |
               NEW bibliographic metadata field
-              (FMW4: "Series Position"; IA: "volume")
+              (FMM5: "Series Position"; IA: "volume")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Journal volume/issue/number'
 
           bib_version:
-            # FMW4: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
+            # FMM5: "Version", Optional, Non-repeatable, "EditionN, ISO 8601, InitialPub, Corrected, Augmented"
             # IA:   "version"
             # SR:   *missing*
             # IR:   *missing*
@@ -908,7 +902,7 @@ en:
             label:        'Version'
             tooltip:      |
               NEW bibliographic metadata field
-              (FMW4: "Version"; IA: "version")
+              (FMM5: "Version"; IA: "version")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Enter edition, version, etc.'
@@ -918,7 +912,7 @@ en:
           # ===================================================================
 
           rem_source:
-            # FMW4: "Provider of source", Required, Non-repeatable
+            # FMM5: "Provider of source", Required, Non-repeatable
             # IA:   "contributor"
             # SR:   *missing*
             # IR:   *missing*
@@ -928,13 +922,13 @@ en:
             label:        'Source of File'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Provider of source"; IA: "contributor")
+              (FMM5: "Provider of source"; IA: "contributor")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Enter source of original content'
 
           rem_metadataSource:
-            # FMW4: "Metadata Source", Required, Repeatable
+            # FMM5: "Metadata Source", Required, Repeatable
             # IA:   "metadata_source"
             # SR:   *missing*
             # IR:   *missing*
@@ -944,13 +938,13 @@ en:
             label:        'Source of Metadata'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Metadata Source"; IA: "metadata_source")
+              (FMM5: "Metadata Source"; IA: "metadata_source")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Enter source of metadata'
 
           rem_remediatedBy:
-            # FMW4: "Remediated By", Required, Repeatable
+            # FMM5: "Remediated By", Required, Repeatable
             # IA:   "remediated_by"
             # SR:   *missing*
             # IR:   *missing*
@@ -961,13 +955,13 @@ en:
             label:        'Remediated By'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Remediated By"; IA: "remediated_by")
+              (FMM5: "Remediated By"; IA: "remediated_by")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Enter source of remediated file'
 
           rem_complete:
-            # FMW4: "Portion?", Required, Non-repeatable, "Yes or No"
+            # FMM5: "Portion?", Required, Non-repeatable, "Yes or No"
             # IA:   "portion"
             # SR:   *missing*
             # IR:   *missing*
@@ -976,13 +970,13 @@ en:
             label:        'Entire Document Remediated?'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Portion?"; IA: "portion")
+              (FMM5: "Portion?"; IA: "portion")
             help_html:    |
               <strong>TODO</strong>
             type:         boolean
 
           rem_coverage:
-            # FMW4: "Portion Description", Required, Repeatable
+            # FMM5: "Portion Description", Required, Repeatable
             # IA:   "portion_description"
             # SR:   *missing*
             # IR:   *missing*
@@ -992,13 +986,13 @@ en:
             label:        'Part(s) Remediated'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Portion Description"; IA: "portion_description")
+              (FMM5: "Portion Description"; IA: "portion_description")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Describe the part(s) that have been remediated'
 
           rem_remediation:
-            # FMW4: "Remediated Aspects", Required, Repeatable
+            # FMM5: "Remediated Aspects", Required, Repeatable
             # IA:   "remediated_aspects"
             # SR:   *missing*
             # IR:   *missing*
@@ -1008,14 +1002,14 @@ en:
             label:        'Remediated Aspects'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Remediated Aspects"; IA: "remediated_aspects")
+              (FMM5: "Remediated Aspects"; IA: "remediated_aspects")
             help_html:    |
               <strong>TODO</strong>
             placeholder:  'Describe remediation(s)'
             type:         textarea
 
           rem_quality:
-            # FMW4: "Text Quality", Required, Non-repeatable
+            # FMM5: "Text Quality", Required, Non-repeatable
             # IA:   "text_quality"
             # SR:   *missing*
             # IR:   *missing*
@@ -1025,13 +1019,13 @@ en:
             label:        'Text Quality'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Text Quality"; IA: "text_quality")
+              (FMM5: "Text Quality"; IA: "text_quality")
             help_html:    |
               <strong>TODO</strong>
             type:         !ruby/symbol TextQuality
 
           rem_status:
-            # FMW4: "Remediation Status", Required, Non-repeatable, "Not Remediated, Remediated, Born Accessible"
+            # FMM5: "Remediation Status", Required, Non-repeatable, "Not Remediated, Remediated, Born Accessible"
             # IA:   "remediation_status"
             # SR:   *missing*
             # IR:   *missing*
@@ -1040,24 +1034,24 @@ en:
             label:        'Remediation Status'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: "Remediation Status"; IA: "remediation_status")
+              (FMM5: "Remediation Status"; IA: "remediation_status")
             help_html:    |
               <strong>TODO</strong>
             type:         !ruby/symbol RemediationStatus
 
           rem_image_count:
-            # FMW4: N/A
+            # FMM5: N/A
             # IA:   "imagecount"
             # SR:   *missing*
             # IR:   *missing*
             # NOTE: This is actually an IA-specific field.
-            # TODO: Should this really be a part of the EMMA metadata?
+            # NOTE: Currently "turned off" for EMMA submissions.
             min:          0
-            max:          1
+            max:          0
             label:        'Number of Images'
             tooltip:      |
               NEW remediation metadata field
-              (FMW4: N/A; IA: "imagecount")
+              (FMM5: N/A; IA: "imagecount")
             help_html:    |
               <strong>TODO</strong>
             type:         number
@@ -1067,7 +1061,7 @@ en:
         # =====================================================================
 
         phase:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1080,7 +1074,7 @@ en:
           origin:       system
 
         edit_state:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1093,7 +1087,7 @@ en:
           origin:       system
 
         edit_user:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1106,7 +1100,7 @@ en:
           origin:       system
 
         edit_file_data:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1120,7 +1114,7 @@ en:
           origin:       system
 
         edit_emma_data:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1134,7 +1128,7 @@ en:
           origin:       system
 
         edited_at:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1148,7 +1142,7 @@ en:
           origin:       system
 
         review_user:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1161,7 +1155,7 @@ en:
           origin:       system
 
         review_success:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1175,7 +1169,7 @@ en:
           origin:       system
 
         review_comment:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -1188,7 +1182,7 @@ en:
           origin:       system
 
         reviewed_at:
-          # FMW4: N/A
+          # FMM5: N/A
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A

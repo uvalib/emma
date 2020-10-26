@@ -52,26 +52,22 @@ FALSE_VALUES = %w(0 no false off).freeze
 
 # Indicate whether the item represents a true value.
 #
-# @param [Object] value
+# @param [TrueClass, FalseClass, String, Symbol, *] value
 #
 def true?(value)
-  case value
-    when TrueClass, FalseClass then value
-    when Array, Hash, nil      then false
-    else TRUE_VALUES.include?(value.to_s.strip.downcase)
-  end
+  return value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+  return false unless value.is_a?(String) || value.is_a?(Symbol)
+  TRUE_VALUES.include?(value.to_s.strip.downcase)
 end
 
 # Indicate whether the item represents a true value.
 #
-# @param [Object] value
+# @param [TrueClass, FalseClass, String, Symbol, *] value
 #
 def false?(value)
-  case value
-    when TrueClass, FalseClass then !value
-    when Array, Hash, nil      then false
-    else FALSE_VALUES.include?(value.to_s.strip.downcase)
-  end
+  return !value if value.is_a?(TrueClass) || value.is_a?(FalseClass)
+  return false  unless value.is_a?(String) || value.is_a?(Symbol)
+  FALSE_VALUES.include?(value.to_s.strip.downcase)
 end
 
 # =============================================================================

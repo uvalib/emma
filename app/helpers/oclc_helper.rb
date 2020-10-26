@@ -113,7 +113,7 @@ module OclcHelper
     s         = remove_oclc_prefix(s)
     digits    = s.delete('^0-9')
     zero_fill = min.to_i - digits.size
-    digits.prepend('0' * zero_fill) if zero_fill > 0
+    digits.prepend('0' * zero_fill) if zero_fill.positive?
     if digits =~ /^\d{#{min},#{max}}$/
       digits
     elsif log

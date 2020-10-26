@@ -797,103 +797,103 @@ module ApiService::Common
 
   # Wrap an exception or response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   #
   # @return [ApiService::Error]
   #
-  def request_error(*args)
+  def request_error(args = nil)
     error_subclass[:request].new(*args)
   end
 
   # Generate a authorization service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::ConnectError]
   #
-  def auth_error(*args)
+  def auth_error(args = nil)
     error_subclass[:auth].new(*args)
   end
 
   # Generate a bad data service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::ConnectError]
   #
-  def parse_error(*args)
+  def parse_error(args = nil)
     error_subclass[:parse].new(*args)
   end
 
   # Generate a connect service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::ConnectError]
   #
-  def connect_error(*args)
+  def connect_error(args = nil)
     error_subclass[:connect].new(*args)
   end
 
   # Generate a timeout service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::TimeoutError]
   #
-  def timeout_error(*args)
+  def timeout_error(args = nil)
     error_subclass[:timeout].new(*args)
   end
 
   # Wrap an exception or response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   #
   # @return [ApiService::Error]
   #
-  def response_error(*args)
+  def response_error(args = nil)
     error_subclass[:response].new(*args)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::EmptyResultError]
   #
-  def empty_response_error(*args)
+  def empty_response_error(args = nil)
     error_subclass[:empty_response].new(*args)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::HtmlResultError]
   #
-  def html_response_error(*args)
+  def html_response_error(args = nil)
     error_subclass[:html_response].new(*args)
   end
 
   # Wrap response in a service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::RedirectionError]
   #
-  def redirect_error(*args)
+  def redirect_error(args = nil)
     error_subclass[:redirection].new(*args)
   end
 
   # Generate a redirect limit service error.
   #
-  # @param [Array<Faraday::Response, Exception, String>, nil] args
+  # @param [Faraday::Response, Exception, String, Array, nil] args
   #
   # @return [ApiService::RedirectLimitError]
   #
-  def redirect_limit_error(*args)
+  def redirect_limit_error(args = nil)
     error_subclass[:redirect_limit].new(*args)
   end
 

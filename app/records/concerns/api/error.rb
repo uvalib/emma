@@ -75,8 +75,8 @@ class Api::Error < RuntimeError
         @messages     += Array.wrap(@cause.message)
         @http_status ||= @response&.status
     end
-    @messages.uniq!
     @messages.reject!(&:blank?)
+    @messages.uniq!
     @messages << (default || default_message) if @messages.empty?
     super(@messages.first)
   rescue

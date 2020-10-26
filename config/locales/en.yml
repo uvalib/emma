@@ -119,11 +119,11 @@ en:
           tooltip:      'See less'
 
     search_type:
-      q:
-        name:           'Keyword'
-        label:          'Search terms:'
-        tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
-        placeholder:    'Enter search terms...'
+      identifier:
+        name:           'ISBN / ISSN / etc.'
+        label:          'Standard identifier:'
+        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
+        placeholder:    'Enter a standard identifier...'
       title:
         name:           'Title'
         label:          'Title terms:'
@@ -134,11 +134,11 @@ en:
         label:          'Creator terms:'
         tooltip:        'Search for one or more terms matching the name of the author or creator of a work'
         placeholder:    'Enter author/creator terms...'
-      identifier:
-        name:           'ISBN / ISSN / etc.'
-        label:          'Standard identifier:'
-        tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
-        placeholder:    'Enter a standard identifier...'
+      q:
+        name:           'Keyword'
+        label:          'Search terms:'
+        tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
+        placeholder:    'Enter search terms...'
 
     search_bar:
       label:            'Search'

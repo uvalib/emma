@@ -1628,66 +1628,51 @@ module UploadConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception] status
-  # @param [String, Exception]          message
+  # @param [String, Exception]          item
   # @param [String]                     redirect
   # @param [Boolean]                    xhr       Override `request.xhr?`.
+  # @param [Symbol]                     meth      Calling method.
   #
   # @return [*]
   #
   # == Variations
   #
-  # @overload post_response(status, message = nil, redirect: nil, xhr: nil)
+  # @overload post_response(status, item = nil, redirect: nil, xhr: nil)
   #   @param [Symbol, Integer]   status
-  #   @param [String, Exception] message
+  #   @param [String, Exception] item
   #
   # @overload post_response(except, redirect: nil, xhr: nil)
   #   @param [Exception] except
   #
-  def post_response(status, message = nil, redirect: nil, xhr: nil)
-    __debug_args("UPLOAD #{__method__}", binding)
-    status, message = [nil, status] if status.is_a?(Exception)
-    status ||= :bad_request
-    xhr      = request_xhr? if xhr.nil?
-    if message.is_a?(Exception)
-      ex     = message
-      ex_msg = ex.respond_to?(:messages) ? ex.messages : Array.wrap(ex.message)
-      if ex.respond_to?(:code)
-        status = ex.code || status
-      elsif ex.respond_to?(:response)
-        status = ex.response.status || status
-      end
-      Log.error do
-        msg = +"#{__method__}: #{status}: #{ex.class}:"
-        if ex.is_a?(SubmitError) || ex.is_a?(Net::ProtocolError)
-          msg << ' ' << ex_msg.join(', ')
-        else
-          msg << "\n" << ex.full_message(order: :top)
-        end
-      end
+  def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)
+    meth ||= calling_method
+    __debug_args("UPLOAD #{meth} #{__method__}", binding)
+    status, item = [nil, status] if status.is_a?(Exception)
+
+    if item.is_a?(Exception)
+      status ||= (item.code            if item.respond_to?(:code))
+      status ||= (item.response.status if item.respond_to?(:response))
+      message = Array.wrap(item)
     else
-      message = Array.wrap(message).map { |v| ErrorEntry[v] }
-      ex_msg  = nil
-      Log.info { [__method__, status, message.join(', ')].join(': ') }
+      message = Array.wrap(item).map { |v| ErrorEntry[v] }
     end
-    if redirect || !xhr
+    status ||= :bad_request
+
+    opt = { meth: meth, status: status }
+    xhr = request_xhr? if xhr.nil?
+    if xhr && !redirect
+      head status, 'X-Flash-Message': flash_xhr(*message, **opt)
+    else
       if %i[ok found].include?(status) || (200..399).include?(status)
-        flash_success(*message)
+        flash_success(*message, **opt)
       else
-        flash_failure(*message)
+        flash_failure(*message, **opt)
       end
       if redirect
         redirect_to(redirect)
       else
         redirect_back(fallback_location: upload_index_path)
       end
-    else
-      msg_max = FlashHelper::FLASH_MAX_ITEM_SIZE
-      limit   = FlashHelper::FLASH_MAX_TOTAL_SIZE
-      message = ex_msg || message
-      message = message.map { |m| m.inspect.truncate(msg_max) }.presence
-      message &&= safe_json_parse(message).to_json.truncate(limit)
-      message ||= DEFAULT_ERROR_MESSAGE
-      head status, 'X-Flash-Message': message
     end
   end
 

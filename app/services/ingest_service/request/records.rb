@@ -322,8 +322,7 @@ module IngestService::Request::Records
   # @param [String, nil] value
   #
   def allowed_repository_id?(value)
-    # noinspection RubyNilAnalysis
-    value.nil? || (value.present? && !value.match?(/^\d+$/))
+    value.nil? || !digits_only?(value)
   end
 
   # Indicate whether the value appears to be acceptable as a index record ID.
