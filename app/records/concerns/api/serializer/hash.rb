@@ -8,6 +8,7 @@ __loading_begin(__FILE__)
 # Base class for object-specific serializers that process data passed in as a
 # Hash.
 #
+# @see Representable::Hash
 # @see Api::Record::Schema::ClassMethods#schema
 #
 class Api::Serializer::Hash < ::Api::Serializer

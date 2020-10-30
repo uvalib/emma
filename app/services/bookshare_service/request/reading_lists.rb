@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# BookshareService::ReadingLists
+# BookshareService::Request::ReadingLists
 #
 # == Usage Notes
 #

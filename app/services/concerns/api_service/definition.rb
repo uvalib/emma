@@ -47,6 +47,8 @@ module ApiService::Definition
   #
   # @return [Hash, nil]
   #
+  # @see ApiService#api_methods
+  #
   # == Variations
   #
   # @overload api_methods(arg)
@@ -57,8 +59,6 @@ module ApiService::Definition
   # @overload api_methods(arg)
   #   Properties of the named method or *nil*.
   #   @param [Symbol, String] arg       Method name.
-  #
-  # @see ApiService#api_methods
   #
   def api_methods(arg = nil)
     self.class.ancestors.first&.api_methods(arg)

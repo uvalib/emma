@@ -64,6 +64,7 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
   # == Examples
+  #
   # @example Single term - Hash
   #   cond = { age: '18', hgt = 1.8 }
   #   sql_terms(cond) -> "age = '18' AND hgt = '1.8'"

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# IngestService::Records
+# IngestService::Request::Records
 #
 module IngestService::Request::Records
 
@@ -32,6 +32,9 @@ module IngestService::Request::Records
   #
   # @return [Ingest::Message::Response]
   #
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
+  #
   # == Variations
   #
   # @overload put_records(list, **opt)
@@ -43,12 +46,10 @@ module IngestService::Request::Records
   #   @param [Hash]                                 opt       Passed to #api.
   #
   # == HTTP response codes
+  #
   # 202 Accepted        Items accepted for update.
   # 207 Multi-Status    Some items inserted or updated.
   # 400 Bad Request     Invalid input.
-  #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
   #
   def put_records(*records, **opt)
     opt[:meth] ||= __method__
@@ -75,6 +76,9 @@ module IngestService::Request::Records
   #
   # @return [Ingest::Message::Response]
   #
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
+  #
   # == Variations
   #
   # @overload delete_records(list, **opt)
@@ -87,12 +91,10 @@ module IngestService::Request::Records
   #   @param [Array<String>] ids
   #
   # === HTTP response codes
+  #
   # 202 Accepted        Items accepted for deletion.
   # 207 Multi-Status    Some items deleted.
   # 400 Bad Request     Invalid input.
-  #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
   #
   def delete_records(*ids, **opt)
     opt[:meth] ||= __method__
@@ -119,6 +121,9 @@ module IngestService::Request::Records
   #
   # @return [Search::Message::SearchRecordList]
   #
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
+  #
   # == Variations
   #
   # @overload get_records(list, **opt)
@@ -131,11 +136,9 @@ module IngestService::Request::Records
   #   @param [Array<String>] ids
   #
   # === HTTP response codes
+  #
   # 200 OK              Items retrieved.
   # 400 Bad Request     Invalid input.
-  #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api
-  # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
   #
   def get_records(*ids, **opt)
     opt[:meth] ||= __method__

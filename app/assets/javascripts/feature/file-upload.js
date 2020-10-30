@@ -187,6 +187,7 @@ $(document).on('turbolinks:load', function() {
      * }} EmmaData
      *
      * @see "en.emma.upload.record.emma_data"
+     * @see "AwsS3::Record::SubmissionPackage"
      */
 
     /**
@@ -1262,12 +1263,12 @@ $(document).on('turbolinks:load', function() {
          * @param {Uppy.UppyFile}                                     file
          * @param {{status: number, body: string, uploadURL: string}} response
          *
+         * @see "Shrine::UploadEndpointExt#make_response"
+         *
          * == Implementation Notes
          * The normal Shrine response has been augmented to include an
          * 'emma_data' object in addition to the fields associated with
          * 'file_data'.
-         *
-         * @see "Shrine::UploadEndpointExt#make_response"
          */
         function onFileUploadSuccess(file, response) {
 
@@ -3213,7 +3214,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Display the name of the uploaded file.
+     * Display the name of the file selected by the user.
      *
      * @param {String}   filename
      * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.

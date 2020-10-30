@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 # Base class for object-specific serializers that process JSON data.
 #
+# @see Representable::JSON
 # @see Api::Record::Schema::ClassMethods#schema
 #
 class Api::Serializer::Json < ::Api::Serializer

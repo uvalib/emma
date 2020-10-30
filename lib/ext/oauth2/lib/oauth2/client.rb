@@ -13,16 +13,16 @@ module OAuth2
 
   # Override definitions to be prepended to OAuth2::Client.
   #
-  # !@attribute [r] id
+  # @!attribute [r] id
   #   @return [String]
   #
-  # !@attribute [r] secret
+  # @!attribute [r] secret
   #   @return [String]
   #
-  # !@attribute [r] site
+  # @!attribute [r] site
   #   @return [String]
   #
-  # !@attribute [rw] options
+  # @!attribute [rw] options
   #   @return [Hash]
   #
   module ClientExt

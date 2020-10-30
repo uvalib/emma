@@ -37,6 +37,7 @@ class Api::Record
   # @param [Exception, String, TrueClass]                      error   Note [3]
   #
   # == Notes
+  #
   # [1] One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be
   #     determined heuristically from *data*, with #DEFAULT_SERIALIZER_TYPE as
   #     a fall-back.

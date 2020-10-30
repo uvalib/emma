@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SearchService::Records
+# SearchService::Request::Records
 #
 #--
 # noinspection RubyParameterNamingConvention

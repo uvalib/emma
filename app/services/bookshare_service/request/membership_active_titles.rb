@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# BookshareService::MembershipActiveTitles
+# BookshareService::Request::MembershipActiveTitles
 #
 # == Usage Notes
 #

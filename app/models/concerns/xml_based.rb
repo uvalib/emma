@@ -259,6 +259,9 @@ module XmlBased
     #
     # @return [nil]
     #
+    # @see #get_attributes
+    # @see #get_properties
+    #
     # == Variations
     #
     # @overload __debug_parse(element)
@@ -276,9 +279,6 @@ module XmlBased
     #   @param [Symbol]                 method
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
-    #
-    # @see #get_attributes
-    # @see #get_properties
     #
     def __debug_parse(*args)
       opt     = args.extract_options!

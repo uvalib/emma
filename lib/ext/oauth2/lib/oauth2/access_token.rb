@@ -13,24 +13,24 @@ module OAuth2
 
   # Override definitions to be prepended to OAuth2::AccessToken.
   #
-  # !@attribute [r] client
+  # @!attribute [r] client
   #   @return [OAuth2::Client]
   #
-  # !@attribute [r] token
+  # @!attribute [r] token
   #   @return [String]
   #
-  # !@attribute [r] expires_in
+  # @!attribute [r] expires_in
   #   @return [Integer, nil]
   #
-  # !@attribute [r] expires_at
+  # @!attribute [r] expires_at
   #   @return [Integer, nil]
   #
-  # !@attribute [r] params
+  # @!attribute [r] params
   #
-  # !@attribute [rw] options
+  # @!attribute [rw] options
   #   @return [Hash]
   #
-  # !@attribute [rw] refresh_token
+  # @!attribute [rw] refresh_token
   #   @return [String, nil]
   #
   module AccessTokenExt

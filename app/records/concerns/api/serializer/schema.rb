@@ -95,11 +95,15 @@ module Api::Serializer::Schema
 
   # The default policy for serializing empty collections.
   #
+  # @see Representable::Binding::Collection#skipable_empty_value?
+  #
   def render_empty?
     DEFAULT_RENDER_EMPTY
   end
 
   # The default policy for serializing empty elements.
+  #
+  # @see Representable::Binding#skipable_empty_value?
   #
   def render_nil?
     DEFAULT_RENDER_NIL

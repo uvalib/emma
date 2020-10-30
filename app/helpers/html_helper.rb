@@ -64,6 +64,8 @@ module HtmlHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  # @see ActionView::Helpers::TagHelper#content_tag
+  #
   # == Variations
   #
   # @overload html_tag(tag, content, options = nil, escape = true)
@@ -77,8 +79,6 @@ module HtmlHelper
   #   @param [Hash]                                   options
   #   @param [Boolean]                                escape
   #   @param [Proc]                                   block
-  #
-  # @see ActionView::Helpers::TagHelper#content_tag
   #
   def html_tag(tag, *args)
     level = positive(tag)

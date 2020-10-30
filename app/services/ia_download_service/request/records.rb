@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# IaDownloadService::Records
+# IaDownloadService::Request::Records
 #
 #--
 # noinspection RubyParameterNamingConvention

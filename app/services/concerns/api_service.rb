@@ -7,11 +7,7 @@ __loading_begin(__FILE__)
 
 require 'middleware'
 
-# Send/receive messages through the Bookshare API.
-#
-# == Authentication and authorization
-# Bookshare uses OAuth2, which is handled in this application by Devise and
-# OmniAuth.
+# Send/receive messages to/from a remote service.
 #
 # @see lib/emma/config.rb
 # @see config/initializers/devise.rb

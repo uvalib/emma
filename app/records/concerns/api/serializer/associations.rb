@@ -47,6 +47,7 @@ module Api::Serializer::Associations
     #   @param [Hash]                  opt
     #
     # == Examples
+    #
     # @example JSON:
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
     #     "XXX" : { "elem" : "value" }
@@ -91,6 +92,7 @@ module Api::Serializer::Associations
     #   @param [Proc]                  block
     #
     # == Examples
+    #
     # @example JSON:
     #   class XXX < Api::Record; schema { has_one :elem }; end  -->
     #     "XXX" : { "elem" : "value" }
@@ -141,6 +143,7 @@ module Api::Serializer::Associations
     #   @param [Proc]                  block
     #
     # == Examples
+    #
     # @example JSON:
     #   class XXX < Api::Record; schema { has_many :elem }; end  -->
     #     "XXX" : { "elem" : [...] }

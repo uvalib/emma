@@ -81,6 +81,8 @@ module Representable
       #
       # @return [nil]
       #
+      # @see #__output
+      #
       # == Variations
       #
       # @overload __debug_show(mode, *args)
@@ -89,8 +91,6 @@ module Representable
       #
       # @overload __debug_show(*args)
       #   @param [Array]            args
-      #
-      # @see #__output
       #
       def __debug_show(mode, *args)
         mode =
@@ -141,6 +141,8 @@ module Representable
       #
       # @return [nil]
       #
+      # @see #__debug_show
+      #
       # == Variations
       #
       # @overload __debug_lambda(mode, *constants)
@@ -149,8 +151,6 @@ module Representable
       #
       # @overload __debug_lambda(*constants)
       #   @param [Array<Symbol>]    constants
-      #
-      # @see #__debug_show
       #
       def __debug_lambda(mode, *constants)
         if mode == :input
@@ -194,6 +194,8 @@ module Representable
       #
       # @return [nil]
       #
+      # @see #__debug_show
+      #
       # == Variations
       #
       # @overload __debug_method(mode, label, *methods)
@@ -204,8 +206,6 @@ module Representable
       # @overload __debug_method(label, *methods)
       #   @param [String]           label
       #   @param [Array<Symbol>]    methods
-      #
-      # @see #__debug_show
       #
       def __debug_method(mode, label, *methods)
         if mode == :input

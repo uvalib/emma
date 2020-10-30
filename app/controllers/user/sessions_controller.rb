@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # User session controller.
 #
-# !@attribute [r] devise_mapping
+# @!attribute [r] devise_mapping
 #   @return [Devise::Mapping]
 #
 class User::SessionsController < Devise::SessionsController

@@ -25,7 +25,8 @@ module Import::IaBulk
   #
   # @type [Hash{Symbol=>Symbol,Array<(Symbol,(Symbol,Proc))>}]
   #
-  # === Notes
+  # == Notes
+  #
   # [1] Collection is always %w(emma_uploads_restricted); this can be ignored
   #     since this is just be used internally by IA to distinguish these items.
   #

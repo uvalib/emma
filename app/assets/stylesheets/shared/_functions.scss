@@ -30,15 +30,15 @@
 ///                                        0% == no change
 ///                                      100% == white
 ///
+/// @see https://sass-lang.com/documentation/functions/color#darken
+/// @see https://sass-lang.com/documentation/functions/color#lighten
+///
 /// == Usage Notes
 /// Some color contrast checkers can't handle RGBA colors; use this instead of
 ///     rgba() if the intent of using transparency is to lighten a color.
 ///
 /// Use this in place of the SASS lighten() or darken() functions since the
 ///     may have unintended consequences versus scale-color():
-///
-/// @see https://sass-lang.com/documentation/functions/color#darken
-/// @see https://sass-lang.com/documentation/functions/color#lighten
 ///
 // noinspection CssInvalidFunction
 @function lighter($color, $level) {

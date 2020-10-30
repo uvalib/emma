@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# BookshareService::CollectionPeriodicals
+# BookshareService::Request::CollectionPeriodicals
 #
 # == Usage Notes
 #
