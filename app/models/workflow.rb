@@ -612,6 +612,14 @@ public
 #
 module Workflow::Base::Events
 
+  include Workflow::Base::Simulation
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # All defined workflow events.
   #
   # @type [Array<Symbol>]
