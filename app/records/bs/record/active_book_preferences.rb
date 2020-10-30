@@ -20,8 +20,8 @@ class Bs::Record::ActiveBookPreferences < Bs::Api::Record
 
   schema do
     has_many  :allows,   AllowsType
-    attribute :format,   Bs::Record::Format
-    attribute :language, String
+    has_one   :format,   Bs::Record::Format
+    has_one   :language
     has_many  :links,    Bs::Record::Link
   end
 

@@ -296,6 +296,19 @@ module Representable
 
   end
 
+  # The "render pipeline" for the Representable gem defines this filter so that
+  # the default for a property is returned if it is deemed to be skippable.
+  # While that might be reasonable when parsing to de-serialize a message, it's
+  # unexpected when serializing to generate a message.
+  #
+  # Since this method is not used when parsing, it can be safely redefined.
+  #
+  remove_const(:RenderDefault)
+  # noinspection RubyConstantNamingConvention
+  RenderDefault = ->(input, options) do
+    input unless options[:binding].skipable_empty_value?(input)
+  end
+
 end
 
 module Representable

@@ -28,18 +28,18 @@ class Bs::Message::ReadingList < Bs::Api::Message
   include Bs::Shared::ReadingListMethods
 
   schema do
-    attribute :access,          Access
+    has_one   :access,          Access
     has_many  :allows,          AllowsType
-    attribute :assignedBy,      String
-    attribute :dateUpdated,     IsoDate
-    attribute :description,     String, default: DEF_READING_LIST_DESCRIPTION
+    has_one   :assignedBy
+    has_one   :dateUpdated,     IsoDate
+    has_one   :description,     default: DEF_READING_LIST_DESCRIPTION
     has_many  :links,           Bs::Record::Link
-    attribute :memberCount,     Integer
-    attribute :name,            String
-    attribute :owner,           String
-    attribute :readingListId,   String
-    attribute :subscriberCount, Integer
-    attribute :titleCount,      Integer
+    has_one   :memberCount,     Integer
+    has_one   :name
+    has_one   :owner
+    has_one   :readingListId
+    has_one   :subscriberCount, Integer
+    has_one   :titleCount,      Integer
   end
 
 end

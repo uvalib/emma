@@ -27,11 +27,11 @@ class Bs::Message::ActiveBookList < Bs::Api::Message
   schema do
     has_many  :activeTitles, Bs::Record::ActiveBook
     has_many  :allows,       AllowsType
-    attribute :limit,        Integer
+    has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link
     has_one   :message,      Bs::Record::StatusModel
-    attribute :next,         String
-    attribute :totalResults, Integer
+    has_one   :next
+    has_one   :totalResults, Integer
   end
 
 end

@@ -20,10 +20,10 @@ class Bs::Record::Category < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :categoryType, CategoryType
-    attribute :description,  String
+    has_one   :categoryType, CategoryType
+    has_one   :description
     has_many  :links,        Bs::Record::Link
-    attribute :name,         String
+    has_one   :name
   end
 
   # ===========================================================================

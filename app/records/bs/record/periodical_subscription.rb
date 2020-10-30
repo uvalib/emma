@@ -20,8 +20,8 @@ class Bs::Record::PeriodicalSubscription < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :dateSubscribed, IsoDate
-    attribute :format,         PeriodicalFormatType
+    has_one   :dateSubscribed, IsoDate
+    has_one   :format,         PeriodicalFormatType
     has_many  :links,          Bs::Record::Link
     has_one   :periodical,     Bs::Record::PeriodicalSeriesMetadataSummary
   end

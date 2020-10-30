@@ -22,9 +22,9 @@ class Bs::Record::TitleFileResource < Bs::Api::Record
   schema do
     attribute :lastModifiedDate, IsoDate
     has_many  :links,            Bs::Record::Link
-    attribute :localURI,         String
-    attribute :mimeType,         String
-    attribute :size,             String      # TODO: not Integer?
+    attribute :localURI
+    attribute :mimeType
+    attribute :size                                       # TODO: not Integer?
   end
 
 end

@@ -22,11 +22,11 @@ class Bs::Message::TitleMetadataCompleteList < Bs::Api::Message
 
   schema do
     has_many  :allows,       AllowsType
-    attribute :limit,        Integer
+    has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link
-    attribute :next,         String
+    has_one   :next
     has_many  :titles,       Bs::Record::TitleMetadataComplete
-    attribute :totalResults, Integer
+    has_one   :totalResults, Integer
   end
 
 end

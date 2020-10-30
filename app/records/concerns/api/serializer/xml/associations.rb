@@ -36,7 +36,7 @@ module Api::Serializer::Xml::Associations
       super
       if options[:attribute].is_a?(FalseClass)
         options.delete(:attribute)
-      elsif IMPLICIT_ATTRIBUTES && !options.key?(:attribute)
+      elsif !attributes_as_elements? && !options.key?(:attribute)
         options[:attribute] = true
       end
       options[:as] ||= attribute_render_name(name)
@@ -56,7 +56,7 @@ module Api::Serializer::Xml::Associations
     def prepare_one!(name, element, options)
       super
       options.delete(:wrap) if boolean?(options[:wrap])
-      options[:as] ||= element_render_name(element)
+      options[:as] ||= element_render_name(name)
     end
 
     # XML-specific operations for #has_many data elements.

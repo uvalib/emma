@@ -19,6 +19,12 @@ class Api::Serializer::Xml < ::Api::Serializer
 
   SERIALIZER_TYPE = :xml
 
+  # The leading line of an XML document.
+  #
+  # @type [String]
+  #
+  XML_PROLOG = %q(<?xml version="1.0" encoding="UTF-8"?>)
+
   # ===========================================================================
   # :section: Api::Serializer overrides
   # ===========================================================================
@@ -43,7 +49,9 @@ class Api::Serializer::Xml < ::Api::Serializer
   # @see Representable::XML#to_xml
   #
   def serialize(method: :to_xml, **opt)
-    super
+    opt[:wrap] = represented.class.name.demodulize
+    xml = add_xml_namespaces(super)
+    xml.start_with?(XML_PROLOG) ? xml : "#{XML_PROLOG}\n#{xml}"
   end
 
   # Load data elements from the supplied data in XML format.
@@ -58,6 +66,25 @@ class Api::Serializer::Xml < ::Api::Serializer
   #
   def deserialize(data, method: :from_xml)
     super
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Add XML namespaces to a copy of a top-level XML element.
+  #
+  # @param [String]    xml
+  # @param [Hash, nil] additional     Added namespaces.
+  #
+  # @return [String]                  Modified XML.
+  #
+  def add_xml_namespaces(xml, additional: nil)
+    pairs = xml_namespaces.merge(additional || {})
+    attrs = pairs.map { |ns, path| %Q(#{ns}="#{path}") }
+    xml.sub(/^<([^?>\n][^>\n]*)>/) { '<%s>' % [$1, *attrs].join(' ').squish }
   end
 
   # ===========================================================================

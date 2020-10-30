@@ -19,10 +19,10 @@ class Bs::Record::Grade < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :gradeCode, String
-    attribute :gradeId,   String                            # NOTE: deprecated
+    has_one   :gradeCode
+    has_one   :gradeId                                      # NOTE: deprecated
     has_many  :links,     Bs::Record::Link
-    attribute :name,      String
+    has_one   :name
   end
 
   # ===========================================================================

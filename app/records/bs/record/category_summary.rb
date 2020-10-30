@@ -20,10 +20,10 @@ class Bs::Record::CategorySummary < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :description, String
+    has_one   :description
     has_many  :links,       Bs::Record::Link
-    attribute :name,        String
-    attribute :titleCount,  Integer
+    has_one   :name
+    has_one   :titleCount,  Integer
   end
 
 end

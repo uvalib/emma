@@ -68,31 +68,31 @@ class Bs::Record::TitleMetadataSummary < Bs::Api::Record
   schema do
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :authors,           Bs::Record::Name          # NOTE: deprecated
-    attribute :available,         Boolean
-    attribute :bookshareId,       String
+    has_one   :available,         Boolean
+    has_one   :bookshareId
     has_many  :categories,        Bs::Record::Category
     has_many  :composers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :contentWarnings,   ContentWarning
     has_many  :contributors,      Bs::Record::Contributor
-    attribute :copyrightDate,     IsoYear
+    has_one   :copyrightDate,     IsoYear
     has_many  :formats,           Bs::Record::Format
-    attribute :instruments,       String
-    attribute :isbn13,            String
-    has_many  :languages,         String
+    has_one   :instruments
+    has_one   :isbn13
+    has_many  :languages
     has_many  :links,             Bs::Record::Link
     has_many  :lyricists,         Bs::Record::Name          # NOTE: deprecated
-    attribute :publishDate,       IsoDate
-    attribute :readingAgeMaximum, Integer
-    attribute :readingAgeMinimum, Integer
-    attribute :seriesNumber,      String
-    attribute :seriesTitle,       String
-    attribute :site,              String
-    attribute :subtitle,          String
-    attribute :synopsis,          String
-    attribute :title,             String
-    attribute :titleContentType,  String
+    has_one   :publishDate,       IsoDate
+    has_one   :readingAgeMaximum, Integer
+    has_one   :readingAgeMinimum, Integer
+    has_one   :seriesNumber
+    has_one   :seriesTitle
+    has_one   :site
+    has_one   :subtitle
+    has_one   :synopsis
+    has_one   :title
+    has_one   :titleContentType
     has_many  :translators,       Bs::Record::Name          # NOTE: deprecated
-    attribute :vocalParts,        String
+    has_one   :vocalParts
   end
 
 end

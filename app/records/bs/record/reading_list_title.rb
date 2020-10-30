@@ -44,29 +44,29 @@ class Bs::Record::ReadingListTitle < Bs::Api::Record
   schema do
     has_many  :allows,           AllowsType
     has_many  :authors,          Bs::Record::Name           # NOTE: deprecated
-    attribute :available,        Boolean
-    attribute :award,            String
-    attribute :bookshareId,      String
-    attribute :category,         String
+    has_one   :available,        Boolean
+    has_one   :award
+    has_one   :bookshareId
+    has_one   :category
     has_many  :composers,        Bs::Record::Name           # NOTE: deprecated
-    attribute :copyrightDate,    IsoYear
-    attribute :dateAdded,        IsoDate
+    has_one   :copyrightDate,    IsoYear
+    has_one   :dateAdded,        IsoDate
     has_many  :formats,          Bs::Record::Format
-    attribute :instruments,      String
-    attribute :isbn13,           String
-    has_many  :languages,        String
+    has_one   :instruments
+    has_one   :isbn13
+    has_many  :languages
     has_many  :links,            Bs::Record::Link
-    attribute :month,            Integer
-    attribute :publishDate,      IsoDate
-    attribute :ranking,          Integer
-    attribute :seriesNumber,     String
-    attribute :seriesTitle,      String
-    attribute :subtitle,         String
-    attribute :synopsis,         String
-    attribute :title,            String
-    attribute :titleContentType, String
-    attribute :vocalParts,       String
-    attribute :year,             Integer
+    has_one   :month,            Integer
+    has_one   :publishDate,      IsoDate
+    has_one   :ranking,          Integer
+    has_one   :seriesNumber
+    has_one   :seriesTitle
+    has_one   :subtitle
+    has_one   :synopsis
+    has_one   :title
+    has_one   :titleContentType
+    has_one   :vocalParts
+    has_one   :year,             Integer
   end
 
 end

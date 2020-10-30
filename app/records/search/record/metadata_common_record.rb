@@ -52,35 +52,35 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
   include Search::Shared::TitleMethods
 
   schema do
-    attribute :emma_repository,                   EmmaRepository
-    has_many  :emma_collection,                   String
-    attribute :emma_repositoryRecordId,           String
-    attribute :emma_retrievalLink,                String
-    attribute :emma_webPageLink,                  String
-    attribute :emma_lastRemediationDate,          IsoDate
-    attribute :emma_repositoryMetadataUpdateDate, IsoDate
-    attribute :emma_lastRemediationNote,          String
-    attribute :emma_formatVersion,                String
+    has_one   :emma_repository,                   EmmaRepository
+    has_many  :emma_collection
+    has_one   :emma_repositoryRecordId
+    has_one   :emma_retrievalLink
+    has_one   :emma_webPageLink
+    has_one   :emma_lastRemediationDate,          IsoDate
+    has_one   :emma_repositoryMetadataUpdateDate, IsoDate
+    has_one   :emma_lastRemediationNote
+    has_one   :emma_formatVersion
     has_many  :emma_formatFeature,                FormatFeature
-    attribute :dc_title,                          String
-    has_many  :dc_creator,                        String
+    has_one   :dc_title
+    has_many  :dc_creator
     has_many  :dc_identifier,                     PublicationIdentifier
-    attribute :dc_publisher,                      String
+    has_one   :dc_publisher
     has_many  :dc_relation,                       PublicationIdentifier
-    has_many  :dc_language,                       String
-    attribute :dc_rights,                         Rights
-    attribute :dc_provenance,                     Provenance
-    attribute :dc_description,                    String
-    attribute :dc_format,                         DublinCoreFormat
-    attribute :dc_type,                           DcmiType
-    has_many  :dc_subject,                        String
-    attribute :dcterms_dateAccepted,              IsoDate
-    attribute :dcterms_dateCopyright,             IsoYear
+    has_many  :dc_language
+    has_one   :dc_rights,                         Rights
+    has_one   :dc_provenance,                     Provenance
+    has_one   :dc_description
+    has_one   :dc_format,                         DublinCoreFormat
+    has_one   :dc_type,                           DcmiType
+    has_many  :dc_subject
+    has_one   :dcterms_dateAccepted,              IsoDate
+    has_one   :dcterms_dateCopyright,             IsoYear
     has_many  :s_accessibilityFeature,            A11yFeature
     has_many  :s_accessibilityControl,            A11yControl
     has_many  :s_accessibilityHazard,             A11yHazard
     has_many  :s_accessibilityAPI,                A11yAPI
-    attribute :s_accessibilitySummary,            String
+    has_one   :s_accessibilitySummary
     has_many  :s_accessMode,                      A11yAccessMode
     has_many  :s_accessModeSufficient,            A11ySufficient
   end

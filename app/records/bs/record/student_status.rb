@@ -16,7 +16,7 @@ class Bs::Record::StudentStatus < Bs::Api::Record
 
   schema do
     has_one   :grade,            Bs::Record::Grade
-    attribute :organizationName, String
+    has_one   :organizationName
   end
 
   # ===========================================================================

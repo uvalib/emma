@@ -19,10 +19,10 @@ module Api::Serializer::Xml::Schema
 
   XML_ELEMENT_PARSE_NAMING    = DEFAULT_ELEMENT_PARSE_NAMING
   XML_ATTRIBUTE_PARSE_NAMING  = DEFAULT_ATTRIBUTE_PARSE_NAMING
-  XML_ELEMENT_RENDER_NAMING   = DEFAULT_ELEMENT_RENDER_NAMING
-  XML_ATTRIBUTE_RENDER_NAMING = DEFAULT_ATTRIBUTE_RENDER_NAMING
+  XML_ELEMENT_RENDER_NAMING   = :default
+  XML_ATTRIBUTE_RENDER_NAMING = :default
   XML_RENDER_EMPTY            = DEFAULT_RENDER_EMPTY
-  XML_RENDER_NIL              = false
+  XML_RENDER_NIL              = DEFAULT_RENDER_NIL
 
   # ===========================================================================
   # :section:
@@ -60,13 +60,67 @@ module Api::Serializer::Xml::Schema
   #
   WRAP_COLLECTIONS = true
 
-  # If this value is *true* then #attribute schema values are serialized
-  # (rendered) as XML attributes; if *false* then they are serialized as XML
+  # If this value is *false* then #attribute schema values are serialized
+  # (rendered) as XML attributes; if *true* then they are serialized as XML
   # elements (removing the distinction between #attribute and #has_one).
   #
   # @type [Boolean]
   #
-  IMPLICIT_ATTRIBUTES = false
+  ATTRIBUTES_AS_ELEMENTS = true
+
+  # Mapping of class to XML type.
+  #
+  # @type [Hash{Class=>String}]
+  #
+  XML_TYPE = {
+    Axiom::Types::Boolean  => 'xs:boolean',
+    Axiom::Types::Date     => 'xs:date',
+    Axiom::Types::DateTime => 'xs:date',
+    Axiom::Types::Integer  => 'xs:integer',
+    Axiom::Types::String   => 'xs:string',
+    Axiom::Types::Time     => 'xs:time',
+    String                 => 'xs:string',
+    Integer                => 'xs:integer',
+    TrueClass              => 'xs:boolean',
+    FalseClass             => 'xs:boolean',
+  }.freeze
+
+  # Scalar values are expressed as strings by default.
+  #
+  # @type [String]
+  #
+  DEFAULT_XML_TYPE = 'xs:string'
+
+  # Base set of XML namespaces to present when rendering full messages.
+  #
+  # @type [Hash{String=>String}]
+  #
+  DEFAULT_XML_NAMESPACES = {
+    'xmlns'    => 'https://emma.lib.virginia.edu/schema',
+    'xmlns:xs' => 'http://www.w3.org/2001/XMLSchema'
+  }.freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # If this value is *false* then #attribute schema values are serialized
+  # (rendered) as XML attributes; if *true* then they are serialized as XML
+  # elements (removing the distinction between #attribute and #has_one).
+  #
+  def attributes_as_elements?
+    ATTRIBUTES_AS_ELEMENTS
+  end
+
+  # The set of XML namespaces.
+  #
+  # @type [Hash{String=>String}]
+  #
+  def xml_namespaces
+    @xml_namespaces ||= DEFAULT_XML_NAMESPACES
+  end
 
   # ===========================================================================
   # :section: Api::Serializer::Schema overrides
@@ -116,6 +170,31 @@ module Api::Serializer::Xml::Schema
   #
   def render_nil?
     XML_RENDER_NIL
+  end
+
+  # ===========================================================================
+  # :section: Api::Serializer::Schema overrides
+  # ===========================================================================
+
+  public
+
+  # Transform *name* into the form indicated by the given naming mode.
+  #
+  # @param [String, Symbol, Class] name
+  # @param [Symbol, nil]           mode
+  #
+  # @raise [StandardError]                If *mode* is invalid.
+  #
+  # @return [String]
+  #
+  def element_name(name, mode = nil)
+    if (xml_type = XML_TYPE[name])
+      super(xml_type)
+    elsif scalar_type?(name)
+      super(DEFAULT_XML_TYPE)
+    else
+      super(name, mode)
+    end
   end
 
 end

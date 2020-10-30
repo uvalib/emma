@@ -29,12 +29,12 @@ class Bs::Record::PeriodicalEdition < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :editionId,       String
-    attribute :editionName,     String
-    attribute :expirationDate,  IsoDate
+    has_one   :editionId
+    has_one   :editionName
+    has_one   :expirationDate,  IsoDate
     has_many  :formats,         Bs::Record::Format
     has_many  :links,           Bs::Record::Link
-    attribute :publicationDate, IsoDate
+    has_one   :publicationDate, IsoDate
   end
 
 end

@@ -27,18 +27,18 @@ class Bs::Record::ActivePeriodical < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :activeTitleId, String
+    has_one   :activeTitleId
     has_many  :allows,        AllowsType
-    attribute :assignedBy,    String
-    attribute :dateAdded,     IsoDate
+    has_one   :assignedBy
+    has_one   :dateAdded,     IsoDate
     has_one   :format,        Bs::Record::Format
-    attribute :lastUpdated,   IsoDate
+    has_one   :lastUpdated,   IsoDate
     has_many  :links,         Bs::Record::Link
     has_one   :periodical,    Bs::Record::PeriodicalEdition
-    attribute :seriesId,      String
-    attribute :size,          Integer
+    has_one   :seriesId
+    has_one   :size,          Integer
     has_one   :status,        Bs::Record::StatusModel
-    attribute :title,         String
+    has_one   :title
   end
 
 end

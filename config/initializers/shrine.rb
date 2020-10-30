@@ -13,12 +13,16 @@
 #
 # @type [Boolean]
 #
-CLOUD_STORAGE =
-  (Rails.env.production? || application_deployed?) && rails_application?
+SHRINE_CLOUD_STORAGE =
+  ENV.fetch('SHRINE_CLOUD_STORAGE') {
+    (Rails.env.production? || application_deployed?) && rails_application?
+  }.then { |setting|
+    true?(setting)
+  }
 
 require 'shrine'
-require 'shrine/storage/s3'          if CLOUD_STORAGE
-require 'shrine/storage/file_system' unless CLOUD_STORAGE
+require 'shrine/storage/s3'          if SHRINE_CLOUD_STORAGE
+require 'shrine/storage/file_system' unless SHRINE_CLOUD_STORAGE
 
 # =============================================================================
 # Logging
@@ -45,7 +49,7 @@ Shrine.plugin :determine_mime_type,
               analyzer:         :marcel,
               analyzer_options: { filename_fallback: true }
 
-=begin
+=begin # TODO: Shrine backgrounding?
 # =============================================================================
 # Backgrounding
 # =============================================================================
@@ -70,7 +74,7 @@ storages = {
   cache: 'upload_cache'               # Initial upload destination.
 }
 
-if CLOUD_STORAGE
+if SHRINE_CLOUD_STORAGE
 
   # === AWS S3 storage ===
   #

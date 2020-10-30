@@ -25,13 +25,26 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Attributes#attribute to define a schema property
     # that is handled as an attribute.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Hash]                  opt
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
     #
     # @return [void]
     #
+    # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
+    #
+    # == Variations
+    #
+    # @overload has_one(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
     #
     # == Examples
     # @example JSON:
@@ -42,8 +55,8 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { attribute :elem }; end  -->
     #     <XXX elem="value"></XXX>
     #
-    def attribute(name, type, **opt)
-      type = get_type_class(type, **opt)
+    def attribute(name, *args, **opt)
+      type = get_type_class(args.shift, **opt)
       opt[:type]      = type
       opt[:default] ||= scalar_default(type)
       prepare_attribute!(name, type, opt)
@@ -53,14 +66,29 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Associations#has_one to define a schema property
     # that is handled as a single element.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Hash]                  opt
-    # @param [Proc]                  block   Passed to #property.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
+    # @param [Proc]   block           Passed to #property.
     #
     # @return [void]
     #
+    # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
+    #
+    # == Variations
+    #
+    # @overload has_one(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
     #
     # == Examples
     # @example JSON:
@@ -68,15 +96,15 @@ module Api::Serializer::Associations
     #     "XXX" : { "elem" : "value" }
     #
     # @example XML:
-    #   class XXX < Api::Record; schema { attribute :elem }; end  -->
+    #   class XXX < Api::Record; schema { has_one :elem }; end  -->
     #     <XXX><elem>value</elem></XXX>
     #
-    def has_one(name, type, **opt, &block)
-      type = get_type_class(type, **opt)
+    def has_one(name, *args, **opt, &block)
+      type = get_type_class(args.shift, **opt)
       if scalar_type?(type)
         opt[:type]      = type
         opt[:default] ||= scalar_default(type)
-        Log.warn { "#{__method__}: block ignored" } if block_given?
+        Log.warn { "#{__method__}: block ignored" } if block
       else
         opt[:class]     = type
         opt[:decorator] = decorator_class(type)
@@ -88,14 +116,29 @@ module Api::Serializer::Associations
     # Simulate ActiveRecord::Associations#has_many to define a schema property
     # that is handled as a collection.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Hash]                  opt
-    # @param [Proc]                  block   Passed to #property.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt
+    # @param [Proc]   block           Passed to #property.
     #
     # @return [void]
     #
+    # @see Declarative::Schema::DSL#property
     # @see Api::Record::Schema::ClassMethods#schema
+    #
+    # == Variations
+    #
+    # @overload has_many(name, **opt, &block)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
+    #
+    # @overload has_many(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #   @param [Proc]                  block
     #
     # == Examples
     # @example JSON:
@@ -110,8 +153,8 @@ module Api::Serializer::Associations
     #   class XXX < Api::Record; schema { has_many :elem }; end  -->
     #     <XXX><elem>...</elem>...<elem>...</elem></XXX>
     #
-    def has_many(name, type, **opt, &block)
-      type = get_type_class(type, **opt)
+    def has_many(name, *args, **opt, &block)
+      type = get_type_class(args.shift, **opt)
       if scalar_type?(type)
         opt[:type]      = type
       else
@@ -144,7 +187,7 @@ module Api::Serializer::Associations
     # noinspection RubyNilAnalysis, RubyYardReturnMatch
     #++
     def get_type_class(type, **opt)
-      type   = extract_type_option!(opt) || type || 'String'
+      type   = extract_type_option!(opt) || type || String
       type   = type.to_s.classify if type.is_a?(Symbol)
       name   = type.to_s
       base   = name.demodulize.to_sym
@@ -186,7 +229,7 @@ module Api::Serializer::Associations
     # @return [void]
     #
     def prepare_attribute!(name, _element, options)
-      options[:attribute]  = true if %i[href rel].include?(name)
+      options[:attribute]  = true if %w(href rel).include?(name.to_s)
       options[:render_nil] = render_nil?
     end
 
@@ -200,6 +243,7 @@ module Api::Serializer::Associations
     #
     def prepare_one!(_name, _element, options)
       options.delete(:collection)
+      options[:render_nil] = render_nil?
     end
 
     # Format-specific operations for #has_many data elements.

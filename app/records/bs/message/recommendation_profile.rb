@@ -34,17 +34,17 @@ class Bs::Message::RecommendationProfile < Bs::Api::Message
 
   schema do
     has_many  :allows,                  AllowsType
-    has_many  :excludedAuthors,         String
+    has_many  :excludedAuthors
     has_many  :excludedCategories,      Bs::Record::Category
     has_many  :excludedContentWarnings, ContentWarning
-    attribute :includeGlobalCollection, Boolean
-    has_many  :includedAuthors,         String
+    has_one   :includeGlobalCollection, Boolean
+    has_many  :includedAuthors
     has_many  :includedCategories,      Bs::Record::Category
     has_many  :includedContentWarnings, ContentWarning
     has_many  :links,                   Bs::Record::Link
-    attribute :narratorGender,          Gender
-    attribute :narratorType,            NarratorType
-    attribute :readingAge,              Integer
+    has_one   :narratorGender,          Gender
+    has_one   :narratorType,            NarratorType
+    has_one   :readingAge,              Integer
   end
 
 end

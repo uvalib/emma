@@ -17,8 +17,8 @@ class Bs::Record::PeriodicalEditionSummary < Bs::Api::Record
   include Bs::Shared::EditionMethods
 
   schema do
-    attribute :editionId,   String
-    attribute :editionName, String
+    has_one   :editionId
+    has_one   :editionName
   end
 
 end

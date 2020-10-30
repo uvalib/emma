@@ -22,11 +22,11 @@ class Bs::Message::ReadingListList < Bs::Api::Message
 
   schema do
     has_many  :allows,        AllowsType
-    attribute :limit,         Integer
+    has_one   :limit,         Integer
     has_many  :links,         Bs::Record::Link
     has_many  :lists,         Bs::Record::ReadingListUserView
-    attribute :next,          String
-    attribute :totalResults,  Integer
+    has_one   :next
+    has_one   :totalResults,  Integer
   end
 
 end

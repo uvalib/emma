@@ -36,18 +36,18 @@ class Bs::Message::PeriodicalSeriesMetadataSummary < Bs::Api::Message
 
   schema do
     has_many  :categories,           Bs::Record::Category
-    has_many  :countries,            String
-    attribute :description,          String
-    attribute :editionCount,         Integer
-    attribute :externalCategoryCode, String
-    attribute :issn,                 String
-    has_many  :languages,            String
+    has_many  :countries
+    has_one   :description
+    has_one   :editionCount,         Integer
+    has_one   :externalCategoryCode
+    has_one   :issn
+    has_many  :languages
     has_one   :latestEdition,        Bs::Record::PeriodicalEditionSummary
     has_many  :links,                Bs::Record::Link
-    attribute :publisher,            String
-    attribute :seriesId,             String
-    attribute :seriesType,           BsSeriesType
-    attribute :title,                String
+    has_one   :publisher
+    has_one   :seriesId
+    has_one   :seriesType,           BsSeriesType
+    has_one   :title
   end
 
 end

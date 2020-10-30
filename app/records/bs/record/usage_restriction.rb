@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Record::UsageRestriction < Bs::Api::Record
 
   schema do
-    attribute :name,               String
-    attribute :usageRestrictionId, String
+    has_one   :name
+    has_one   :usageRestrictionId
   end
 
   # ===========================================================================

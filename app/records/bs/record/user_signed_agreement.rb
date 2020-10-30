@@ -27,14 +27,14 @@ __loading_begin(__FILE__)
 class Bs::Record::UserSignedAgreement < Bs::Api::Record
 
   schema do
-    attribute :agreementId,           String
-    attribute :agreementType,         AgreementType
-    attribute :dateExpired,           String
-    attribute :dateSigned,            String
-    attribute :printName,             String
-    attribute :recordingUser,         String
-    attribute :signedByLegalGuardian, Boolean
-    attribute :username,              String
+    has_one   :agreementId
+    has_one   :agreementType,         AgreementType
+    has_one   :dateExpired
+    has_one   :dateSigned
+    has_one   :printName
+    has_one   :recordingUser
+    has_one   :signedByLegalGuardian, Boolean
+    has_one   :username
   end
 
   # ===========================================================================

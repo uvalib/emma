@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Record::Format < Bs::Api::Record
 
   schema do
-    attribute :formatId, String
-    attribute :name,     String
+    has_one   :formatId
+    has_one   :name
   end
 
   # ===========================================================================

@@ -21,10 +21,10 @@ class Bs::Message::CategoriesList < Bs::Api::Message
 
   schema do
     has_many  :categories,   Bs::Record::CategorySummary
-    attribute :limit,        Integer
+    has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link
-    attribute :next,         String
-    attribute :totalResults, Integer
+    has_one   :next
+    has_one   :totalResults, Integer
   end
 
 end

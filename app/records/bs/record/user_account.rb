@@ -41,23 +41,23 @@ class Bs::Record::UserAccount < Bs::Api::Record
 
   schema do
     has_one   :address,                 Bs::Record::Address
-    attribute :allowAdultContent,       Boolean
-    attribute :canDownload,             Boolean
-    attribute :dateOfBirth,             String
-    attribute :deleted,                 Boolean
-    attribute :emailAddress,            String
+    has_one   :allowAdultContent,       Boolean
+    has_one   :canDownload,             Boolean
+    has_one   :dateOfBirth
+    has_one   :deleted,                 Boolean
+    has_one   :emailAddress
     has_one   :guardian,                Bs::Record::Name
-    attribute :hasAgreement,            Boolean
-    attribute :language,                String
+    has_one   :hasAgreement,            Boolean
+    has_one   :language
     has_many  :links,                   Bs::Record::Link
-    attribute :locked,                  Boolean
+    has_one   :locked,                  Boolean
     has_one   :name,                    Bs::Record::Name
-    attribute :phoneNumber,             String
-    attribute :proofOfDisabilityStatus, ProofOfDisabilityStatus
-    has_many  :roles,                   String
-    attribute :site,                    SiteType
-    attribute :subscriptionStatus,      SubscriptionStatus
-    attribute :userAccountId,           String
+    has_one   :phoneNumber
+    has_one   :proofOfDisabilityStatus, ProofOfDisabilityStatus
+    has_many  :roles
+    has_one   :site,                    SiteType
+    has_one   :subscriptionStatus,      SubscriptionStatus
+    has_one   :userAccountId
   end
 
 end

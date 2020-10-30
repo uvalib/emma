@@ -19,7 +19,7 @@ class Bs::Record::ReadingListSubscription < Bs::Api::Record
 
   schema do
     has_many  :allows,  AllowsType
-    attribute :enabled, Boolean
+    has_one   :enabled, Boolean
     has_many  :links,   Bs::Record::Link
   end
 

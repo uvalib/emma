@@ -30,20 +30,20 @@ class Bs::Record::ArtifactMetadata < Bs::Api::Record
   include Bs::Shared::ArtifactMethods
 
   schema do
-    attribute :brailleCode,             String
-    attribute :brailleGrade,            BrailleGrade
-    attribute :brailleMusicScoreLayout, BrailleMusicScoreLayout
-    attribute :brailleType,             BrailleType
-    attribute :dateAdded,               IsoDate
-    attribute :duration,                IsoDuration
-    attribute :externalIdentifierCode,  String
-    attribute :format,                  String
-    attribute :fundingSource,           String
-    attribute :globalBookServiceId,     String
+    has_one   :brailleCode
+    has_one   :brailleGrade,            BrailleGrade
+    has_one   :brailleMusicScoreLayout, BrailleMusicScoreLayout
+    has_one   :brailleType,             BrailleType
+    has_one   :dateAdded,               IsoDate
+    has_one   :duration,                IsoDuration
+    has_one   :externalIdentifierCode
+    has_one   :format
+    has_one   :fundingSource
+    has_one   :globalBookServiceId
     has_one   :narrator,                Bs::Record::Narrator
-    attribute :numberOfVolumes,         Integer
-    attribute :producer,                String
-    attribute :supplier,                String
+    has_one   :numberOfVolumes,         Integer
+    has_one   :producer
+    has_one   :supplier
     has_one   :transcriber,             Bs::Record::Name
   end
 

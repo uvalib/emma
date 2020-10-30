@@ -26,13 +26,13 @@ class Bs::Record::TitleDownload < Bs::Api::Record
 
   schema do
     has_many  :authors,        Bs::Record::Name             # NOTE: deprecated
-    attribute :dateDownloaded, IsoDate
-    attribute :downloadedBy,   String
-    attribute :downloadedFor,  String
+    has_one   :dateDownloaded, IsoDate
+    has_one   :downloadedBy
+    has_one   :downloadedFor
     has_one   :format,         Bs::Record::Format
     has_many  :links,          Bs::Record::Link
     has_one   :status,         Bs::Record::StatusModel
-    attribute :title,          String
+    has_one   :title
   end
 
 end

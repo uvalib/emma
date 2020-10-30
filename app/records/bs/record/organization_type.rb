@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Record::OrganizationType < Bs::Api::Record
 
   schema do
-    attribute :description, String
-    attribute :name,        String
+    has_one   :description
+    has_one   :name
   end
 
   # ===========================================================================

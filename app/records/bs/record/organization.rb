@@ -33,16 +33,16 @@ class Bs::Record::Organization < Bs::Api::Record
 
   schema do
     has_one   :address,          Bs::Record::Address
-    attribute :hasOrgAgreement,  Boolean
+    has_one   :hasOrgAgreement,  Boolean
     has_many  :links,            Bs::Record::Link
-    attribute :organizationId,   String
-    attribute :organizationName, String
-    attribute :organizationType, String
-    attribute :phoneNumber,      String
+    has_one   :organizationId
+    has_one   :organizationName
+    has_one   :organizationType
+    has_one   :phoneNumber
     has_one   :primaryContact,   Bs::Record::Sponsor
-    attribute :site,             SiteType
-    attribute :subscriptionType, String
-    attribute :webSite,          String
+    has_one   :site,             SiteType
+    has_one   :subscriptionType
+    has_one   :webSite
   end
 
 end

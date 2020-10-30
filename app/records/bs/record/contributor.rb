@@ -20,7 +20,7 @@ class Bs::Record::Contributor < Bs::Api::Record
   schema do
     has_many  :links, Bs::Record::Link
     has_one   :name,  Bs::Record::ContributorName
-    attribute :type,  ContributorType
+    has_one   :type,  ContributorType
   end
 
   # ===========================================================================

@@ -18,11 +18,11 @@ __loading_begin(__FILE__)
 class Bs::Message::OauthToken < Bs::Api::Message
 
   schema do
-    attribute :access_token,  String
-    attribute :expires_in,    String
-    attribute :refresh_token, String
-    attribute :scope,         String
-    attribute :token_type,    String
+    has_one   :access_token
+    has_one   :expires_in
+    has_one   :refresh_token
+    has_one   :scope
+    has_one   :token_type
   end
 
 end

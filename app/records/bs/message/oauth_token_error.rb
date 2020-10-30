@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Message::OauthTokenError < Bs::Api::Message
 
   schema do
-    attribute :error,             TokenErrorType
-    attribute :error_description, String
+    has_one   :error,             TokenErrorType
+    has_one   :error_description
   end
 
 end

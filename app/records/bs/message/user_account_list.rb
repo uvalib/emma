@@ -23,7 +23,7 @@ class Bs::Message::UserAccountList < Bs::Api::Message
   schema do
     has_many  :allows,       AllowsType
     has_many  :links,        Bs::Record::Link
-    attribute :totalResults, Integer
+    has_one   :totalResults, Integer
     has_many  :userAccounts, Bs::Record::UserAccount
   end
 

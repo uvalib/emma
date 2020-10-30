@@ -50,27 +50,27 @@ class Bs::Record::AssignedTitleMetadataSummary < Bs::Api::Record
   include Bs::Shared::TitleMethods
 
   schema do
-    attribute :assignedBy,       String
+    has_one   :assignedBy
     has_many  :authors,          Bs::Record::Name           # NOTE: deprecated
-    attribute :available,        Boolean
-    attribute :bookshareId,      String
+    has_one   :available,        Boolean
+    has_one   :bookshareId
     has_many  :composers,        Bs::Record::Name           # NOTE: deprecated
-    attribute :copyrightDate,    IsoYear
-    attribute :dateAdded,        String
-    attribute :dateDownloaded,   String
+    has_one   :copyrightDate,    IsoYear
+    has_one   :dateAdded
+    has_one   :dateDownloaded
     has_many  :formats,          Bs::Record::Format
-    attribute :instruments,      String
-    attribute :isbn13,           String
-    has_many  :languages,        String
+    has_one   :instruments
+    has_one   :isbn13
+    has_many  :languages
     has_many  :links,            Bs::Record::Link
-    attribute :publishDate,      IsoDate
-    attribute :seriesNumber,     String
-    attribute :seriesTitle,      String
-    attribute :subtitle,         String
-    attribute :synopsis,         String
-    attribute :title,            String
-    attribute :titleContentType, String
-    attribute :vocalParts,       String
+    has_one   :publishDate,      IsoDate
+    has_one   :seriesNumber
+    has_one   :seriesTitle
+    has_one   :subtitle
+    has_one   :synopsis
+    has_one   :title
+    has_one   :titleContentType
+    has_one   :vocalParts
   end
 
 end

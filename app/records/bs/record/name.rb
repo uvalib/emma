@@ -21,12 +21,12 @@ class Bs::Record::Name < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :firstName, String
-    attribute :lastName,  String
+    has_one   :firstName
+    has_one   :lastName
     has_many  :links,     Bs::Record::Link
-    attribute :middle,    String
-    attribute :prefix,    String
-    attribute :suffix,    String
+    has_one   :middle
+    has_one   :prefix
+    has_one   :suffix
   end
 
   # ===========================================================================

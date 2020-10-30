@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 class Bs::Record::DownloadTimeframe < Bs::Api::Record
 
   schema do
-    attribute :name, Timeframe
+    has_one :name, Timeframe
   end
 
   # ===========================================================================

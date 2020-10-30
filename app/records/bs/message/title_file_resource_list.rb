@@ -19,7 +19,7 @@ class Bs::Message::TitleFileResourceList < Bs::Api::Message
 
   schema do
     has_many  :links,              Bs::Record::Link
-    attribute :next,               String
+    has_one   :next
     has_many  :titleFileResources, Bs::Record::TitleFileResource
   end
 

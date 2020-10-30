@@ -25,12 +25,12 @@ class Bs::Message::ActiveBookProfile < Bs::Api::Message
   schema do
     has_many  :allows,                AllowsType
     has_many  :links,                 Bs::Record::Link
-    attribute :maxContributions,      Integer
+    has_one   :maxContributions,      Integer
     has_one   :preferences,           Bs::Record::ActiveBookPreferences
     has_one   :recommendationProfile, Bs::Record::RecommendationProfile
     has_one   :requestList,           Bs::Record::ReadingListUserView
-    attribute :useRecommendations,    Boolean
-    attribute :useRequestList,        Boolean
+    has_one   :useRecommendations,    Boolean
+    has_one   :useRequestList,        Boolean
   end
 
 end

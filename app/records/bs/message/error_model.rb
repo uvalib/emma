@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Message::ErrorModel < Bs::Api::Message
 
   schema do
-    attribute :key,      String
-    has_many  :messages, String
+    has_one   :key
+    has_many  :messages
   end
 
   # ===========================================================================

@@ -25,15 +25,15 @@ class Bs::Message::MyAccountPreferences < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :allowAdultContent,    Boolean
-    attribute :brailleCellLineWidth, Integer
-    attribute :brailleFormat,        BrailleFmt
-    attribute :brailleGrade,         BrailleGrade
+    has_one   :allowAdultContent,    Boolean
+    has_one   :brailleCellLineWidth, Integer
+    has_one   :brailleFormat,        BrailleFmt
+    has_one   :brailleGrade,         BrailleGrade
     has_one   :format,               Bs::Record::Format
-    attribute :language,             String
+    has_one   :language
     has_many  :links,                Bs::Record::Link
-    attribute :showAllBooks,         Boolean
-    attribute :useUeb,               Boolean
+    has_one   :showAllBooks,         Boolean
+    has_one   :useUeb,               Boolean
   end
 
 end

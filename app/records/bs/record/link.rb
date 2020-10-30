@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Record::Link < Bs::Api::Record
 
   schema do
-    attribute :href, String
-    attribute :rel,  String
+    has_one   :href
+    has_one   :rel
   end
 
   # ===========================================================================

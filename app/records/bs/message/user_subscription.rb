@@ -30,12 +30,12 @@ class Bs::Message::UserSubscription < Bs::Api::Message
 
   schema do
     has_one   :downloadTimeframe,    Bs::Record::DownloadTimeframe
-    attribute :endDate,              IsoDate
+    has_one   :endDate,              IsoDate
     has_many  :links,                Bs::Record::Link
-    attribute :notes,                String
-    attribute :numBooksAllowed,      Integer
-    attribute :startDate,            IsoDate
-    attribute :subscriptionId,       String
+    has_one   :notes
+    has_one   :numBooksAllowed,      Integer
+    has_one   :startDate,            IsoDate
+    has_one   :subscriptionId
     has_one   :userSubscriptionType, Bs::Record::UserSubscriptionType
   end
 

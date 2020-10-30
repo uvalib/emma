@@ -15,8 +15,8 @@ __loading_begin(__FILE__)
 class Bs::Record::UserPod < Bs::Api::Record
 
   schema do
-    attribute :disabilityType, DisabilityType
-    attribute :proofSource,    String
+    has_one   :disabilityType, DisabilityType
+    has_one   :proofSource
   end
 
   # ===========================================================================

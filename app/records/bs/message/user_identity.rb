@@ -21,7 +21,7 @@ class Bs::Message::UserIdentity < Bs::Api::Message
   schema do
     has_many  :links,    Bs::Record::Link
     has_one   :name,     Bs::Record::Name
-    attribute :username, String
+    has_one   :username
   end
 
 end

@@ -24,12 +24,12 @@ class Bs::Message::ReadingListTitlesList < Bs::Api::Message
 
   schema do
     has_many  :allows,        AllowsType
-    attribute :limit,         Integer
+    has_one   :limit,         Integer
     has_many  :links,         Bs::Record::Link
-    attribute :next,          String
-    attribute :readingListId, String
+    has_one   :next
+    has_one   :readingListId
     has_many  :titles,        Bs::Record::ReadingListTitle
-    attribute :totalResults,  Integer
+    has_one   :totalResults,  Integer
   end
 
 end

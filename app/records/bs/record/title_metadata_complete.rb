@@ -87,59 +87,59 @@ class Bs::Record::TitleMetadataComplete < Bs::Api::Record
   include Bs::Shared::TitleMethods
 
   schema do
-    attribute :adultContent,         Boolean
-    attribute :allowRecommend,       Boolean
+    has_one   :adultContent,         Boolean
+    has_one   :allowRecommend,       Boolean
     has_many  :arrangers,            Bs::Record::Name       # NOTE: deprecated
     has_many  :artifacts,            Bs::Record::ArtifactMetadata
     has_many  :authors,              Bs::Record::Name       # NOTE: deprecated
-    attribute :available,            Boolean
-    attribute :bookshareId,          String
+    has_one   :available,            Boolean
+    has_one   :bookshareId
     has_many  :categories,           Bs::Record::Category
     has_many  :composers,            Bs::Record::Name       # NOTE: deprecated
     has_many  :contentWarnings,      ContentWarning
     has_many  :contributors,         Bs::Record::Contributor
-    attribute :copyright,            String
-    attribute :copyrightDate,        IsoYear
-    has_many  :countries,            String
-    attribute :dtbookSize,           Integer
-    attribute :externalCategoryCode, String
+    has_one   :copyright
+    has_one   :copyrightDate,        IsoYear
+    has_many  :countries
+    has_one   :dtbookSize,           Integer
+    has_one   :externalCategoryCode
     has_many  :formats,              Bs::Record::Format
     has_many  :grades,               Bs::Record::Grade
-    attribute :hasChordSymbols,      Boolean
-    attribute :instruments,          String
-    attribute :isbn13,               String
-    attribute :key,                  String
-    has_many  :languages,            String
-    attribute :lastUpdatedDate,      IsoDate
+    has_one   :hasChordSymbols,      Boolean
+    has_one   :instruments
+    has_one   :isbn13
+    has_one   :key
+    has_many  :languages
+    has_one   :lastUpdatedDate,      IsoDate
     has_many  :links,                Bs::Record::Link
     has_many  :lyricists,            Bs::Record::Name       # NOTE: deprecated
-    attribute :movementNumber,       String
-    attribute :movementTitle,        String
-    attribute :musicLayout,          String
-    attribute :musicScoreType,       String
-    attribute :notes,                String
-    attribute :numImages,            Integer
-    attribute :numPages,             Integer
-    attribute :opus,                 String
-    attribute :proofreader,          String
-    attribute :publishDate,          IsoDate
-    attribute :publisher,            String
-    has_many  :relatedIsbns,         String
-    attribute :replacementId,        String
-    attribute :seriesNumber,         String
-    attribute :seriesSubtitle,       String
-    attribute :seriesTitle,          String
-    attribute :site,                 String
-    attribute :submitter,            String
-    attribute :subtitle,             String
-    attribute :synopsis,             String
-    attribute :title,                String
-    attribute :titleContentType,     String
-    attribute :titleSource,          String
+    has_one   :movementNumber
+    has_one   :movementTitle
+    has_one   :musicLayout
+    has_one   :musicScoreType
+    has_one   :notes
+    has_one   :numImages,            Integer
+    has_one   :numPages,             Integer
+    has_one   :opus
+    has_one   :proofreader
+    has_one   :publishDate,          IsoDate
+    has_one   :publisher
+    has_many  :relatedIsbns
+    has_one   :replacementId
+    has_one   :seriesNumber
+    has_one   :seriesSubtitle
+    has_one   :seriesTitle
+    has_one   :site
+    has_one   :submitter
+    has_one   :subtitle
+    has_one   :synopsis
+    has_one   :title
+    has_one   :titleContentType
+    has_one   :titleSource
     has_many  :translators,          Bs::Record::Name       # NOTE: deprecated
     has_one   :usageRestriction,     Bs::Record::UsageRestriction
-    attribute :vocalParts,           String
-    attribute :withdrawalDate,       IsoDate
+    has_one   :vocalParts
+    has_one   :withdrawalDate,       IsoDate
   end
 
 end

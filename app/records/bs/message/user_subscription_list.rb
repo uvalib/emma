@@ -22,10 +22,10 @@ class Bs::Message::UserSubscriptionList < Bs::Api::Message
 
   schema do
     has_many  :allows,            AllowsType
-    attribute :limit,             Integer
+    has_one   :limit,             Integer
     has_many  :links,             Bs::Record::Link
-    attribute :next,              String
-    attribute :totalResults,      Integer
+    has_one   :next
+    has_one   :totalResults,      Integer
     has_many  :userSubscriptions, Bs::Record::UserSubscription
   end
 

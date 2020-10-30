@@ -25,52 +25,85 @@ module Api::Record::Associations
     # In the context of a class derived from Api::Record, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Array]                 _      Additional arguments are ignored.
-    # @param [Hash]                  opt    Passed to #add_single_property.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_single_property.
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#attribute
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def attribute(name, type, *_, **opt)
-      add_single_property(name, type, **opt)
+    # == Variations
+    #
+    # @overload has_one(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    def attribute(name, *args, **opt)
+      add_single_property(name, *args, **opt)
     end
 
     # In the context of a class derived from Api::Record, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Array]                 _      Additional arguments are ignored.
-    # @param [Hash]                  opt    Passed to #add_single_property.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_single_property.
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_one(name, type, *_, **opt)
-      add_single_property(name, type, **opt)
+    # == Variations
+    #
+    # @overload has_one(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_one(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    def has_one(name, *args, **opt)
+      add_single_property(name, *args, **opt)
     end
 
     # In the context of a class derived from Api::Record, this definition
     # allows the method to be mapped directly to Module#attr_accessor.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Array]                 _      Additional arguments are ignored.
-    # @param [Hash]                  opt    Passed to #add_collection_property.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt             Passed to #add_collection_property.
     #
     # @return [void]
     #
     # @see Api::Serializer::Associations::ClassMethods#has_one
     # @see Api::Record::Schema::ClassMethods#schema
     #
-    def has_many(name, type, *_, **opt)
-      add_collection_property(name, type, **opt)
+    # == Variations
+    #
+    # @overload has_many(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload has_many(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    def has_many(name, *args, **opt)
+      add_collection_property(name, *args, **opt)
     end
 
     # =========================================================================
@@ -81,12 +114,26 @@ module Api::Record::Associations
 
     # Define a single data element property.
     #
-    # @param [Symbol]                name
-    # @param [Class, String, Symbol] type
-    # @param [Array]                 _      Additional arguments are ignored.
-    # @param [Hash]                  opt    Passed to #make_default.
+    # @param [Symbol] name
+    # @param [Array]  args
+    # @param [Hash]   opt                     Passed to #make_default.
     #
-    def add_single_property(name, type, *_, **opt)
+    # @return [void]
+    #
+    # == Variations
+    #
+    # @overload add_single_property(name, **opt)
+    #   @param [Symbol]                name
+    #   @param [Hash]                  opt
+    #
+    # @overload add_single_property(name, type, *_, **opt)
+    #   @param [Symbol]                name
+    #   @param [Class, String, Symbol] type
+    #   @param [Array]                 _      Additional arguments are ignored.
+    #   @param [Hash]                  opt
+    #
+    def add_single_property(name, *args, **opt)
+      type  = args.shift || String
       value = make_default(type, **opt)
       add_property(name, value)
     end
@@ -94,12 +141,10 @@ module Api::Record::Associations
     # Define an array data element property.
     #
     # @param [Symbol] name
-    # @param [Array]  _               Additional arguments are ignored.
-    # @param [Hash]   __              Options are tolerated but discarded.
     #
-    # args[0]   The attribute name
+    # @return [void]
     #
-    def add_collection_property(name, *_, **__)
+    def add_collection_property(name, *)
       value = []
       add_property(name, value)
     end

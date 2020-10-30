@@ -28,18 +28,18 @@ class Bs::Record::Sponsor < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :allowAdultContent, Boolean
-    attribute :canDownload,       Boolean
-    attribute :deleted,           Boolean
-    attribute :emailAddress,      String
-    attribute :hasAgreement,      Boolean
-    attribute :language,          String
+    has_one   :allowAdultContent, Boolean
+    has_one   :canDownload,       Boolean
+    has_one   :deleted,           Boolean
+    has_one   :emailAddress
+    has_one   :hasAgreement,      Boolean
+    has_one   :language
     has_many  :links,             Bs::Record::Link
-    attribute :locked,            Boolean
+    has_one   :locked,            Boolean
     has_one   :name,              Bs::Record::Name
-    attribute :phoneNumber,       String
-    attribute :site,              SiteType
-    attribute :title,             String
+    has_one   :phoneNumber
+    has_one   :site,              SiteType
+    has_one   :title
   end
 
 end

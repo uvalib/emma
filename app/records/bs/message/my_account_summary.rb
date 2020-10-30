@@ -39,17 +39,17 @@ class Bs::Message::MyAccountSummary < Bs::Api::Message
 
   schema do
     has_one   :address,                 Bs::Record::Address
-    attribute :canDownload,             Boolean
-    attribute :dateOfBirth,             String
+    has_one   :canDownload,             Boolean
+    has_one   :dateOfBirth
     has_one   :guardian,                Bs::Record::Name
-    attribute :hasAgreement,            Boolean
+    has_one   :hasAgreement,            Boolean
     has_many  :links,                   Bs::Record::Link
     has_one   :name,                    Bs::Record::Name
-    attribute :phoneNumber,             String
-    attribute :proofOfDisabilityStatus, ProofOfDisabilityStatus
+    has_one   :phoneNumber
+    has_one   :proofOfDisabilityStatus, ProofOfDisabilityStatus
     has_one   :studentStatus,           Bs::Record::StudentStatus
-    attribute :subscriptionStatus,      SubscriptionStatus
-    attribute :username,                String
+    has_one   :subscriptionStatus,      SubscriptionStatus
+    has_one   :username
   end
 
 end

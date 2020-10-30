@@ -19,12 +19,12 @@ __loading_begin(__FILE__)
 class Bs::Record::Address < Bs::Api::Record
 
   schema do
-    attribute :address1,   String
-    attribute :address2,   String
-    attribute :city,       String
-    attribute :country,    String
-    attribute :postalCode, String
-    attribute :state,      String
+    has_one   :address1
+    has_one   :address2
+    has_one   :city
+    has_one   :country
+    has_one   :postalCode
+    has_one   :state
   end
 
   # ===========================================================================

@@ -16,9 +16,9 @@ __loading_begin(__FILE__)
 class Bs::Record::Narrator < Bs::Api::Record
 
   schema do
-    attribute :gender, Gender
-    attribute :name,   String
-    attribute :type,   NarratorType
+    has_one   :gender, Gender
+    has_one   :name
+    has_one   :type,   NarratorType
   end
 
   # ===========================================================================

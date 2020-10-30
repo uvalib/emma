@@ -18,8 +18,8 @@ class Bs::Record::ContributorName < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :displayName, String
-    attribute :indexName,   String
+    has_one   :displayName
+    has_one   :indexName
     has_many  :links,       Bs::Record::Link
   end
 

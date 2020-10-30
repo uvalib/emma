@@ -17,9 +17,9 @@ __loading_begin(__FILE__)
 class Search::Message::RetrievalResult < Search::Api::Message
 
   schema do
-    attribute :key,      String
-    has_many  :messages, String
-    has_many  :links,    String
+    has_one   :key
+    has_many  :messages
+    has_many  :links
   end
 
   # ===========================================================================

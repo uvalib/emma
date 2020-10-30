@@ -22,9 +22,9 @@ class Bs::Message::TitleDownloadList < Bs::Api::Message
   schema do
     has_many  :allows,         AllowsType
     has_many  :links,          Bs::Record::Link
-    attribute :next,           String
+    has_one   :next
     has_many  :titleDownloads, Bs::Record::TitleDownload
-    attribute :totalResults,   Integer
+    has_one   :totalResults,   Integer
   end
 
 end

@@ -25,15 +25,15 @@ class Bs::Record::ActiveBook < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    attribute :activeTitleId, String
+    has_one   :activeTitleId
     has_many  :allows,        AllowsType
-    attribute :assignedBy,    String
+    has_one   :assignedBy
     has_one   :book,          Bs::Record::TitleMetadataSummary
-    attribute :dateAdded,     IsoDate
+    has_one   :dateAdded,     IsoDate
     has_one   :format,        Bs::Record::Format
-    attribute :lastUpdated,   IsoDate
+    has_one   :lastUpdated,   IsoDate
     has_many  :links,         Bs::Record::Link
-    attribute :size,          Integer
+    has_one   :size,          Integer
     has_one   :status,        Bs::Record::StatusModel
   end
 
