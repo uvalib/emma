@@ -109,6 +109,22 @@ en:
           alt:          'Upload action buttons'
           asset:        'help/upload_actions.png'
 
+        source_menu:
+          alt:          'Source Repository menu (closed)'
+          asset:        'help/source_menu.png'
+
+        source_menu_opened:
+          alt:          'Source Repository menu (opened)'
+          asset:        'help/source_menu_opened.png'
+
+        source_menu_ht:
+          alt:          'HathiTrust selected in the Source Repository menu'
+          asset:        'help/source_menu_ht.png'
+
+        source_selected_fields:
+          alt:          'Example of fields acquired from a "parent" source entry'
+          asset:        'help/source_selected_fields.png'
+
       # =======================================================================
       # Pages
       # =======================================================================

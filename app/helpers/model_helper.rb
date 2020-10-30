@@ -915,6 +915,12 @@ module ModelHelper
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
 
+    # Create a help icon control if applicable.
+    help =
+      if field == :emma_repository
+        help_popup(:upload, :repository)
+      end
+
     # Create status marker icon.
     status = []
     status << :required if required
@@ -933,6 +939,10 @@ module ModelHelper
     l_opt[:title] ||= prop[:tooltip] if prop[:tooltip]
     label = prop[:label] || label
     label = label ? ERB::Util.h(label) : labelize(name)
+    if help.present?
+      label = html_span(label, class: 'text')
+      label = html_span { label << help }
+    end
     label = label_tag(name, l_opt) { label << marker }
 
     # Input element pre-populated with value.

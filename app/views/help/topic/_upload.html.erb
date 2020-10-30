@@ -2,38 +2,44 @@
 <%-
   # EMMA upload help page.
 
-  signed_in       = help_jump('signed in', :sign_in)
-  delta           = UploadHelper::UPLOAD_ICONS.dig(:edit, :icon)
-  delta           = html_span(delta, 'aria-label': 'triangle')
-  x               = UploadHelper::UPLOAD_ICONS.dig(:delete, :icon)
-  x               = html_span(x, 'aria-label': 'X')
-  edit_tip        = UploadHelper::UPLOAD_ICONS.dig(:edit, :tip)
-  delete_tip      = UploadHelper::UPLOAD_ICONS.dig(:delete, :tip)
-  upload_actions  = help_image(:upload_actions)
-  panel_opener    = LayoutHelper::Common::PANEL_OPENER_LABEL
-  panel_opener    = help_span(panel_opener, class: 'toggle')
+  signed_in         = help_jump('signed in', :sign_in)
+  delta             = UploadHelper::UPLOAD_ICONS.dig(:edit, :icon)
+  delta             = html_span(delta, 'aria-label': 'triangle')
+  x                 = UploadHelper::UPLOAD_ICONS.dig(:delete, :icon)
+  x                 = html_span(x, 'aria-label': 'X')
+  edit_tip          = UploadHelper::UPLOAD_ICONS.dig(:edit, :tip)
+  delete_tip        = UploadHelper::UPLOAD_ICONS.dig(:delete, :tip)
+  upload_actions    = help_image(:upload_actions)
+  panel_opener      = LayoutHelper::Common::PANEL_OPENER_LABEL
+  panel_opener      = help_span(panel_opener, class: 'toggle')
 
-  create_config   = UploadHelper::UPLOAD_ACTION_VALUES[:new]
-  create_select   = create_config.dig(:select, :enabled, :label)
-  create_select   = help_span(create_select, class: 'uppy-FileInput-btn')
-  create_submit   = create_config.dig(:submit, :enabled, :label)
-  create_submit   = help_span(create_submit, class: 'uppy-FileInput-btn')
-  create_cancel   = create_config.dig(:cancel, :enabled, :label)
-  create_cancel   = help_span(create_cancel, class: 'uppy-FileInput-btn')
+  create_config     = UploadHelper::UPLOAD_ACTION_VALUES[:new]
+  create_select     = create_config.dig(:select, :enabled, :label)
+  create_select     = help_span(create_select, class: 'uppy-FileInput-btn')
+  create_submit     = create_config.dig(:submit, :enabled, :label)
+  create_submit     = help_span(create_submit, class: 'uppy-FileInput-btn')
+  create_cancel     = create_config.dig(:cancel, :enabled, :label)
+  create_cancel     = help_span(create_cancel, class: 'uppy-FileInput-btn')
 
-  edit_config     = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
-  edit_select     = edit_config.dig(:select, :enabled, :label)
-  edit_select     = help_span(edit_select, class: 'uppy-FileInput-btn')
-  edit_submit     = edit_config.dig(:submit, :enabled, :label)
-  edit_submit     = help_span(edit_submit, class: 'uppy-FileInput-btn')
-  edit_cancel     = edit_config.dig(:cancel, :enabled, :label)
-  edit_cancel     = help_span(edit_cancel, class: 'uppy-FileInput-btn')
+  edit_config       = UploadHelper::UPLOAD_ACTION_VALUES[:edit]
+  edit_select       = edit_config.dig(:select, :enabled, :label)
+  edit_select       = help_span(edit_select, class: 'uppy-FileInput-btn')
+  edit_submit       = edit_config.dig(:submit, :enabled, :label)
+  edit_submit       = help_span(edit_submit, class: 'uppy-FileInput-btn')
+  edit_cancel       = edit_config.dig(:cancel, :enabled, :label)
+  edit_cancel       = help_span(edit_cancel, class: 'uppy-FileInput-btn')
 
-  delete_config   = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
-  delete_submit   = delete_config.dig(:submit, :enabled, :label)
-  delete_submit   = help_span(delete_submit, class: 'uppy-FileInput-btn')
-  delete_cancel   = delete_config.dig(:cancel, :enabled, :label)
-  delete_cancel   = help_span(delete_cancel, class: 'uppy-FileInput-btn')
+  delete_config     = UploadHelper::UPLOAD_ACTION_VALUES[:delete]
+  delete_submit     = delete_config.dig(:submit, :enabled, :label)
+  delete_submit     = help_span(delete_submit, class: 'uppy-FileInput-btn')
+  delete_cancel     = delete_config.dig(:cancel, :enabled, :label)
+  delete_cancel     = help_span(delete_cancel, class: 'uppy-FileInput-btn')
+
+  upload_step       = 0
+  source_menu       = help_image(:source_menu,            class: 'wide')
+  source_menu_open  = help_image(:source_menu_opened,     class: 'wide')
+  source_menu_ht    = help_image(:source_menu_ht,         class: 'wide')
+  source_selected   = help_image(:source_selected_fields, class: 'wide')
 -%>
 
 <p>
@@ -146,7 +152,8 @@
   </p>
 
   <h3 class="sub-section" id="upload_new_prepare_help">
-    Step 1: Prepare a file for upload
+    Step <%= upload_step += 1 -%>:
+    Prepare a file for upload
   </h3>
 
   <p>
@@ -157,7 +164,8 @@
   </p>
 
   <h3 class="sub-section" id="upload_new_select_help">
-    Step 2: Select a file to upload
+    Step <%= upload_step += 1 -%>:
+    Select a file to upload
   </h3>
 
   <p>
@@ -186,8 +194,52 @@
     "pre-populate" the submission form.
   </p>
 
+  <h3 class="sub-section" id="upload_repository_help">
+    Step <%= upload_step += 1 -%>:
+    Indicate the Source Repository
+  </h3>
+
+  <%= source_menu %>
+
+  <p>
+    Select "EMMA" if your file was an original scan, or is derived from a
+    source other than one of EMMA's participating member repositories.
+  </p>
+
+  <p>
+    If your remediated file is based on a file from a participating member
+    repository, you must indicate the EMMA entry associated with that original
+    file.
+  </p>
+
+  <%= source_menu_open %>
+
+  <p>
+    When you select member repository source, you will be prompted for the
+    identity of the original entry.
+    For most items the standard identifier (ISBN, OCLC, etc.) is sufficient to
+    locate the proper EMMA entry.
+    (For items without a standard identifier, the full title should work.)
+  </p>
+
+  <%= source_menu_ht %>
+
+  <p>
+    After the original item has been identified, you'll see that your
+    submission has "inherited" the bibliographic metadata of the original item:
+  </p>
+
+  <%= source_selected %>
+
+  <p>
+    These fields appear differently as a reminder that the bibliographic
+    metadata (title-level cataloging information) is not subject to change for
+    items derived from EMMA entries supplied by member repositories.
+  </p>
+
   <h3 class="sub-section" id="upload_new_metadata_help">
-    Step 3: Provide metadata
+    Step <%= upload_step += 1 -%>:
+    Provide metadata
   </h3>
 
   <p>
@@ -273,7 +325,8 @@
   <%# --------------------------------------------------------------------- -%>
 
   <h3 class="sub-section" id="upload_new_submit_help">
-    Step 4: Complete the submission
+    Step <%= upload_step += 1 -%>:
+    Complete the submission
   </h3>
 
   <p>
@@ -289,6 +342,29 @@
     <%= create_cancel -%>
     (which will attempt to return you to the previous page),
     or simply go to any other page in EMMA.
+  </p>
+
+  <%# --------------------------------------------------------------------- -%>
+
+  <h3 class="sub-section" id="upload_repository_detail_help">
+    EMMA-native versus member repository submissions
+  </h3>
+
+  <p>
+    "EMMA-native" submissions (where "EMMA" is selected as the "Source
+    Repository") will be entered into the EMMA index immediately after
+    completion.
+    This means that your submission can start appearing in EMMA search results
+    almost immediately.
+  </p>
+
+  <p>
+    The remediation of a file derived from the holdings of a member repository
+    must be submitted back to  is submitted back to that repository for
+    inclusion in their collection.
+    Depending the policy of the specific member repository, there may be some
+    delay (hours or days) before the new member repository item associated with
+    your submission starts to appear in EMMA search results.
   </p>
 
 </section>

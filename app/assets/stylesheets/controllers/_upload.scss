@@ -480,6 +480,12 @@ form.select-entry {
             margin-top: 0.75rem;
         }
 
+        .help-popup .control.icon {
+            margin-bottom: 0.25rem;
+            padding:       0.3125rem 0.375rem;
+            font-size:     small;
+        }
+
         // noinspection CssReplaceWithShorthandSafely
         .status-marker {
 
