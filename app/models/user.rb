@@ -248,6 +248,19 @@ class User < ApplicationRecord
     user
   end
 
+  # Return the account ID of *user*.
+  #
+  # @param [User, String, Integer] user
+  #
+  # @return [String]                  The :uid extracted or expressed by *user*
+  # @return [nil]                     If :uid could not be determined.
+  #
+  def self.find_uid(user)
+    user = User.find(user) if user.is_a?(Integer)
+    user = user.uid        if user.is_a?(User)
+    user
+  end
+
   # Get (or create) a database entry for the indicated user and update the
   # associated User object with additional information from the provider.
   #

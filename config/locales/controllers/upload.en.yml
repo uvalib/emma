@@ -79,7 +79,7 @@ en:
           id:                                'Database ID'
           user_id:                           'User ID'
           repository:                        'Repository'
-          repository_id:                     'Repository ID'
+          submission_id:                     'Submission ID'
           fmt:                               'Fmt'
           ext:                               'Ext'
           state:                             'Status'
@@ -144,7 +144,6 @@ en:
           # s_accessibilityAPI:              'Accessibility API'
 
           # === New bibliographic information fields (from :emma_data) ===
-          bib_subtitle:                      'Subtitle'
           bib_series:                        'Series'
           bib_seriesType:                    'Series Type'
           bib_seriesPosition:                'Series Position'
@@ -159,7 +158,33 @@ en:
           rem_remediation:                   'Remediated Aspects'
           rem_quality:                       'Text Quality'
           rem_status:                        'Remediation Status'
-          rem_image_count:                   'Number of Images'
+
+      # =======================================================================
+      # States
+      # =======================================================================
+
+      state_group:
+        create:
+          states:       [creating, validating, submitting, submitted]
+          label:        'Creating'
+        edit:
+          states:       [editing, replacing, modifying, modified]
+          label:        'Modifying'
+        remove:
+          states:       [removing, removed]
+          label:        'Removing'
+        review:
+          states:       [scheduling, assigning, holding, assigned, reviewing]
+          label:        'Reviewing'
+        submission:
+          states:       [staging, unretrieved, retrieved]
+          label:        'Submitting'
+        finalization:
+          states:       [indexing, indexed]
+          label:        'Indexing'
+        terminal:
+          states:       [suspended, failed, canceled, completed]
+          label:        'Complete'
 
       # =======================================================================
       # Pages
@@ -373,20 +398,20 @@ en:
 
       bulk_delete:
         label:          'Bulk Delete'
-        title:          'Remove EMMA submission by database or repository ID'
+        title:          'Remove EMMA submission by database or submission ID'
         tooltip:        'Delete multiple EMMA entries by identifier.'
         description:    |
-          Provide a comma-separated list of repository IDs to specify which
+          Provide a comma-separated list of submission IDs to specify which
           EMMA entries to delete.  Identifiers which are all decimal digits are
           treated as EMMA database record identifiers, which will be used to
-          lookup the record containing the repository ID.
+          lookup the record containing the submission ID.
         directions:     ~
         notes:          |
           An EMMA entry consists of three parts: (1) a record in the EMMA
           database, (2) an associated file in cloud storage, and (3) a matching
           entry in the Unified Index.  If an item identifier can be found in
           the EMMA database then all three parts can be removed.  However, if
-          the checkbox above is checked, then repository IDs which are not
+          the checkbox above is checked, then submission IDs which are not
           found in EMMA can still be removed from the index.
         submit:
           <<: *BULK_SUBMIT
@@ -398,3 +423,11 @@ en:
         cancel:
           <<: *BULK_CANCEL
         <<: *EXPERIMENTAL
+
+      cancel:
+        label:          'Cancel'
+        title:          'Cancel Submission'
+
+      check:
+        label:          'Check Status'
+        title:          'Check For An Update to Submission Status'

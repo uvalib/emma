@@ -15,25 +15,15 @@ module UploadHelper
 
   include Emma::Json
   include Emma::Unicode
-  include ModelHelper
   include I18nHelper
-
-  extend I18nHelper
+  include ModelHelper
+  include UploadWorkflow::Properties
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  UPLOAD_URL          = '/upload'                 # GET /upload
-  UPLOAD_CREATE_URL   = UPLOAD_URL                # POST /upload
-  UPLOAD_ENDPOINT_URL = "#{UPLOAD_URL}/endpoint"  # POST /upload/endpoint
-
-  UPLOAD_DRAG_TARGET_CSS = 'upload-drag_and_drop'
-  UPLOAD_PREVIEW_CSS     = 'upload-preview'
-
-  UPLOAD_PREVIEW_ENABLED = false  # TODO: upload preview ???
 
   # Configuration values for this model.
   #
@@ -95,19 +85,37 @@ module UploadHelper
   #
   UPLOAD_ANOTHER = 'another'
 
+  # Paths used by file-upload.js.
+  #
+  # @type [Hash]
+  #
+  UPLOAD_PATH = {
+    index:    (UPLOAD_URL = '/upload'), # GET /upload
+    create:   UPLOAD_URL,               # POST /upload
+    cancel:   "#{UPLOAD_URL}/cancel",   # POST /upload/cancel
+    endpoint: "#{UPLOAD_URL}/endpoint"  # POST /upload/endpoint
+  }.deep_freeze
+
+  # CSS styles
+  #
+  # @type [Hash]
+  #
+  UPLOAD_STYLE = {
+    drag_target: 'upload-drag_and_drop',
+    preview:     'upload-preview',
+  }.deep_freeze
+
+  # Display preview of Shrine uploads.  NOTE: Not currently enabled.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PREVIEW_ENABLED = false
+
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  # CSS class for the preview element.
-  #
-  # @return [String]
-  #
-  def upload_preview_css
-    UPLOAD_PREVIEW_CSS
-  end
 
   # Indicate whether preview is enabled.
   #
@@ -127,7 +135,7 @@ module UploadHelper
   #
   def upload_preview(force = false)
     return unless force || preview_enabled?
-    html_div('', class: UPLOAD_PREVIEW_CSS)
+    html_div('', class: UPLOAD_STYLE[:preview])
   end
 
   # upload_action_entry
@@ -406,7 +414,7 @@ module UploadHelper
       case value
         when :file_data then render_file_data(item) || '{}'
         when :emma_data then render_emma_data(item) || '{}'
-        else                 item[value]            || EN_DASH
+        else                 item[value]            || EMPTY_VALUE
       end
     else
       Field.for(item, value) || render_value(item, value)
@@ -634,39 +642,41 @@ module UploadHelper
   #
   def upload_form(item, label: nil, action: nil, **opt)
     action = (action || params[:action])&.to_sym
-    opt    = prepend_css_classes(opt, 'file-upload-form', action)
-    cancel = opt.delete(:cancel)
-    scroll_to_top_target!(opt)
+    opt, form_opt = partition_options(opt, :cancel)
+
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
-        opt[:url]      = create_upload_path
+        form_opt[:url]      = create_upload_path
       when :edit
-        opt[:url]      = update_upload_path
-        opt[:method] ||= :put
+        form_opt[:url]      = update_upload_path
+        form_opt[:method] ||= :put
     end
-    opt[:multipart]    = true
-    opt[:autocomplete] = 'off'
+    form_opt[:multipart]    = true
+    form_opt[:autocomplete] = 'off'
+
+    prepend_css_classes!(form_opt, 'file-upload-form', action.to_s)
+    scroll_to_top_target!(form_opt)
 
     html_div(class: "file-upload-container #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
-      form_with(model: item, **opt) do |f|
+      form_with(model: item, **form_opt) do |f|
         data_opt = { class: 'upload-hidden' }
 
         # Communicate :file_data through the form as a hidden field.
-        file_data = item&.file_data
+        file_data = item&.active_file_data || item&.file_data
         file_data = data_opt.merge!(id: 'upload_file_data', value: file_data)
         file_data = f.hidden_field(:file, file_data)
 
         # Hidden data fields.
-        emma_data = item&.emma_data
+        emma_data = item&.active_emma_data || item&.emma_data
         emma_data = data_opt.merge!(id: 'upload_emma_data', value: emma_data)
         emma_data = f.hidden_field(:emma_data, emma_data)
 
         # Button tray.
         tray = []
         tray << upload_submit_button(action: action, label: label)
-        tray << upload_cancel_button(action: action, url: cancel)
+        tray << upload_cancel_button(action: action, url: opt[:cancel])
         tray << f.file_field(:file)
         tray << upload_filename_display
         tray = html_div(class: 'button-tray') { tray }
@@ -674,8 +684,12 @@ module UploadHelper
         # Field display selections.
         tabs = upload_field_group
 
-        # Form buttons and display selection controls.
-        controls = html_div(class: 'controls') { tray << tabs }
+        # Parent entry input control.
+        parent_input = upload_parent_entry_select
+
+        # Control elements which are always visible at the top of the input
+        # form.
+        controls = html_div(class: 'controls') { tray << tabs << parent_input }
 
         # Form fields.
         fields = upload_field_container(item)
@@ -711,9 +725,10 @@ module UploadHelper
   #
   # @param [Hash] opt                 Passed to #button_tag except for:
   #
-  # @option opt [String, Symbol] :action    Default: `#params[:action]`.
+  # @option opt [String, Symbol] :action    Default: `params[:action]`.
   # @option opt [String]         :label     Default: based on :action.
-  # @option opt [String]         :url       Default: :back.
+  # @option opt [String]         :url       Default: `params[:cancel]` or
+  #                                           `request.referer`.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -725,14 +740,9 @@ module UploadHelper
     values = UPLOAD_ACTION_VALUES[action]
     label  = opt.delete(:label) || values[:cancel][:label]
     # Define the path for the cancel action.
-    opt[:'data-path'] = opt.delete(:url)
-    opt[:'data-path'] ||=
-      case action
-        when :new    then new_upload_path
-        when :delete then delete_select_upload_path
-        when :edit   then edit_select_upload_path
-        else              upload_index_path
-      end
+    opt[:'data-path'] = opt.delete(:url) || params[:cancel]
+    opt[:'data-path'] ||= (request.referer if local_request? && !same_request?)
+    opt[:'data-path'] ||= upload_index_path
     opt[:title] ||= values[:cancel][:tooltip]
     opt[:type]  ||= 'reset'
     button_tag(label, opt)
@@ -766,7 +776,7 @@ module UploadHelper
   #--
   # noinspection RailsI18nInspection
   #++
-  UPLOAD_FIELD_GROUP_VALUES =
+  UPLOAD_FIELD_GROUP =
     I18n.t('emma.upload.field_group').deep_symbolize_keys.deep_freeze
 
   # Control for filtering which fields are displayed.
@@ -775,7 +785,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #UPLOAD_FIELD_GROUP_VALUES
+  # @see #UPLOAD_FIELD_GROUP
   # @see fieldDisplayFilterSelect() in javascripts/feature/download.js
   #
   def upload_field_group(**opt)
@@ -783,7 +793,7 @@ module UploadHelper
     opt  = prepend_css_classes(opt, 'upload-field-group')
     opt[:role] = 'radiogroup'
     html_div(opt) do
-      UPLOAD_FIELD_GROUP_VALUES.map do |group, properties|
+      UPLOAD_FIELD_GROUP.map do |group, properties|
         enabled = properties[:enabled].to_s
         next if false?(enabled)
         next if (enabled == 'debug') && !session_debug?
@@ -803,6 +813,31 @@ module UploadHelper
         html_div(class: 'radio', title: tooltip) { input << label }
       end
     end
+  end
+
+  # Element for prompting for the EMMA index entry of the member repository
+  # item which was the basis for the remediated item which is being submitted.
+  #
+  # @param [Hash] opt                 Passed to #html_div for outer <div>.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see monitorSourceRepository() in javascripts/feature/file-upload.js
+  #
+  def upload_parent_entry_select(**opt)
+    opt    = prepend_css_classes(opt, 'parent-entry-select', 'hidden')
+    id     = 'parent-entry-search'
+    type   = :search
+    t_id   = opt[:'aria-labelledby'] = "#{id}-title"
+    title  =
+      "Please indicate the EMMA entry for the original repository item. " \
+      "If possible, enter the standard identifier (ISBN, ISSN, OCLC, etc.) " \
+      "or the full title of the original work." # TODO: I18n
+    title  = html_div(title, id: t_id, class: 'search-title')
+    input  = search_input(id, type)
+    submit = html_div(class: 'search-button') { search_button_label(type) }
+    cancel = html_div(class: 'search-cancel') { 'Cancel' } # TODO: I18n
+    html_div(**opt) { title << input << submit << cancel }
   end
 
   # Form fields are wrapped in an element for easier grid manipulation.
@@ -885,7 +920,7 @@ module UploadHelper
   def upload_menu_label(item)
     index = item.id.to_s.presence
     file  = item.filename.presence
-    name  = item.repository_id.presence
+    name  = item.submission_id.presence
     index = "&thinsp;&nbsp;#{index}" if index && (index.size == 1)
     index = "Entry #{index}"         if index # TODO: I18n
     file  = ERB::Util.h(file)        if file
@@ -899,55 +934,69 @@ module UploadHelper
 
   public
 
+  UPLOAD_DELETE_OPTIONS        = %i[force truncate emergency].freeze
+  UPLOAD_DELETE_FORM_OPTIONS   = [:cancel, *UPLOAD_DELETE_OPTIONS].freeze
+  UPLOAD_DELETE_SUBMIT_OPTIONS = [:label,  *UPLOAD_DELETE_OPTIONS].freeze
+
   # Generate a form with controls for deleting a file and its entry.
   #
   # @param [Array<String,Upload>] items
   # @param [String]               label   Label for the submit button.
-  # @param [Boolean]              force   @see #upload_delete_submit
   # @param [Hash]                 opt     Passed to 'file-upload-delete' except
   #                                         for:
   #
-  # @option opt [String] :cancel          URL for cancel button action
-  #                                         (default: :back).
+  # @option opt [Boolean] :force          Passed to #upload_delete_submit
+  # @option opt [Boolean] :truncate       Passed to #upload_delete_submit
+  # @option opt [Boolean] :emergency      Passed to #upload_delete_submit
+  # @option opt [String]  :cancel         Cancel button redirect URL passed to
+  #                                         #upload_delete_cancel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_form(*items, label: nil, force: nil, **opt)
+  def upload_delete_form(*items, label: nil, **opt)
+    opt, html_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
+    cancel = upload_delete_cancel(url: opt.delete(:cancel))
+    submit = upload_delete_submit(*items, **opt.merge!(label: label))
     html_div(class: 'file-upload-container delete') do
-      opt    = prepend_css_classes(opt, 'file-upload-delete')
-      submit = upload_delete_submit(*items, label: label, force: force)
-      cancel = upload_delete_cancel(url: opt.delete(:cancel))
-      html_div(opt) { submit << cancel }
+      prepend_css_classes!(html_opt, 'file-upload-delete')
+      html_div(html_opt) { submit << cancel }
     end
   end
 
-  # upload_delete_submit
+  # Submit button for the delete upload form.
   #
   # @param [Array<String,Upload>] items
-  # @param [Hash]                 opt     Passed to #make_link except for:
+  # @param [String]               label   Override label for the submit button.
+  # @param [Hash]                 opt     Passed to #button_to except for:
   #
-  # @option opt [String]  :label          Override link label.
-  # @option opt [Boolean] :force          If *true*, add 'force=true' to the
-  #                                         form submission URL.
+  # @option opt [Boolean] :force          If *true*, add 'force=true' to
+  #                                         the form submission URL.
+  # @option opt [Boolean] :truncate       If *true*, add 'truncate=true' to
+  #                                         the form submission URL.
+  # @option opt [Boolean] :emergency      If *true*, add 'emergency=true' to
+  #                                         the form submission URL.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_submit(*items, **opt)
-    opt, html_opt = partition_options(opt, :label, :force, :truncate)
-    action = (opt.delete(:action) || params[:action])&.to_sym
-    values = UPLOAD_ACTION_VALUES[action]
-    label  = opt.delete(:label) || values[:submit][:label]
-    ids    = Upload.compact_ids(*items).join(',').presence
-    url    = (destroy_upload_path(**opt.merge!(id: ids)) if ids.present?)
-    prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
+  def upload_delete_submit(*items, label: nil, **opt)
+    opt, html_opt = partition_options(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
+    opt[:force]     = force_delete     unless opt.key?(:force)
+    opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
+    opt[:emergency] = emergency_delete unless opt.key?(:emergency)
+    action  = (opt.delete(:action) || params[:action])&.to_sym
+    config  = UPLOAD_ACTION_VALUES.dig(action, :submit) || {}
+    label ||= config[:label]
+    ids     = Upload.compact_ids(*items).join(',').presence
+    url     = (destroy_upload_path(**opt.merge!(id: ids)) if ids.present?)
     append_css_classes!(html_opt, (url ? 'best-choice' : 'forbidden'))
-    html_opt[:title]  ||= values[:submit][:disabled][:tooltip]
+    prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
+    html_opt[:title]  ||= config[:disabled][:tooltip]
     html_opt[:role]   ||= 'button'
     html_opt[:method] ||= :delete
     button_to(label, url, **html_opt)
   end
 
-  # Upload upload_delete_cancel button.
+  # Cancel button for the delete upload form.
   #
   # @param [Hash] opt                 Passed to #upload_cancel_button
   #
@@ -985,17 +1034,14 @@ module UploadHelper
 
   public
 
-  # BULK_UPLOAD_PREFIX_LABEL # TODO: I18n
+  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
   #
-  # @type [String]
+  # @type [Hash{Symbol=>String}]
   #
-  BULK_UPLOAD_PREFIX_LABEL = 'Title prefix:'
-
-  # BULK_UPLOAD_BATCH_LABEL # TODO: I18n
-  #
-  # @type [String]
-  #
-  BULK_UPLOAD_BATCH_LABEL = 'Batch size:'
+  BULK_UPLOAD_OPTION_LABEL = {
+    prefix: 'Title prefix:',
+    batch:  'Batch size:'
+  }.freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -1004,31 +1050,33 @@ module UploadHelper
   # @param [String, Symbol] action    Either :new or :edit.
   # @param [Hash]           opt       Passed to #form_with except for:
   #
-  # @option opt [String] :cancel      URL for cancel button action (default:
-  #                                     :back).
+  # @option opt [String]  :prefix     String to prepend to each title.
+  # @option opt [Integer] :batch      Size of upload batches.
+  # @option opt [String]  :cancel     URL for cancel button action.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def bulk_upload_form(label: nil, action: nil, **opt)
     action = (action || params[:action])&.to_sym
-    opt    = prepend_css_classes(opt, 'file-upload-bulk', action)
-    cancel = opt.delete(:cancel)
+    opt, form_opt = partition_options(opt, :prefix, :batch, :cancel)
+    opt[:prefix] ||= title_prefix
+    opt[:batch]  ||= batch_size
 
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
-        opt[:url]      = bulk_create_upload_path
-        opt[:method] ||= :post
+        form_opt[:url]      = bulk_create_upload_path
+        form_opt[:method] ||= :post
       when :edit
-        opt[:url]      = bulk_update_upload_path
-        opt[:method] ||= :put
+        form_opt[:url]      = bulk_update_upload_path
+        form_opt[:method] ||= :put
     end
-    opt[:multipart]    = true
-    opt[:autocomplete] = 'off'
+    form_opt[:multipart]    = true
+    form_opt[:autocomplete] = 'off'
 
     html_div(class: "file-upload-container bulk #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
-      form_with(**opt) do |f|
+      form_with(**form_opt) do |f|
         lines = []
 
         # === Batch title prefix input
@@ -1036,38 +1084,44 @@ module UploadHelper
         lines <<
           if session_debug?
             html_div(class: 'line') do
-              f.label(url_param, BULK_UPLOAD_PREFIX_LABEL) <<
-                f.text_field(url_param, value: title_prefix.presence)
+              f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
+                f.text_field(url_param, value: opt[url_param].presence)
             end
-          elsif title_prefix.present?
-            hidden_url_parameter(nil, url_param, title_prefix)
+          elsif opt[url_param].present?
+            hidden_url_parameter(nil, url_param, opt[url_param])
           end
 
         # === Batch size control
         url_param = :batch
         lines <<
           html_div(class: 'line') do
-            f.label(url_param, BULK_UPLOAD_BATCH_LABEL) <<
-              f.number_field(url_param, min: 0, value: bulk_batch.presence)
+            f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
+              f.number_field(url_param, min: 0, value: opt[url_param].presence)
           end
 
         # === Form control panel
         lines <<
           html_div(class: 'form-controls') do
-            c_opt = { class: 'bulk' }
-            tray = []
-            tray << upload_submit_button(action: action, label: label, **c_opt)
-            tray << upload_cancel_button(action: action, url:  cancel, **c_opt)
-            tray << bulk_upload_file_select(f, :source, **c_opt)
-            tray << upload_filename_display(**c_opt)
-            prepend_css_classes!(c_opt, 'button-tray')
-            html_div(c_opt) { tray }
+            controls_opt = { class: 'bulk' }
+            button_opt   = controls_opt.merge(action: action)
+            submit  = upload_submit_button(label: label,        **button_opt)
+            cancel  = upload_cancel_button(url:   opt[:cancel], **button_opt)
+            input   = bulk_upload_file_select(f, :source, **controls_opt)
+            display = upload_filename_display(**controls_opt)
+            prepend_css_classes!(controls_opt, 'button-tray')
+            html_div(controls_opt) { submit << cancel << input << display }
           end
 
         safe_join(lines, "\n")
       end
     end
   end
+
+  # ===========================================================================
+  # :section: Bulk new/edit pages
+  # ===========================================================================
+
+  protected
 
   # bulk_upload_file_select
   #
@@ -1100,82 +1154,47 @@ module UploadHelper
 
   public
 
-  # BULK_DELETE_FORCE_LABEL # TODO: I18n
-  #
-  # @type [String]
-  #
-  BULK_DELETE_FORCE_LABEL =
-    'Attempt to remove index entries for items not in the database?'
-
-  # BULK_TRUNCATE_DELETE_LABEL # TODO: I18n
-  #
-  # @type [String]
-  #
-  BULK_TRUNCATE_DELETE_LABEL =
-    'Reset "uploads" id field to 1?' \
-    ' (Applies only when all records are being removed.)'
-
-  # BULK_DELETE_INPUT_LABEL # TODO: I18n
-  #
-  # @type [String]
-  #
-  BULK_DELETE_INPUT_LABEL = 'Items to delete:'
-
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
   #
-  # @param [String]         label     Label for the submit button.
-  # @param [Boolean]        force
   # @param [String,Array<String>,nil] ids
-  # @param [Hash]           opt       Passed to #form_with except for:
+  # @param [String]         label         Label for the submit button.
+  # @param [Hash]           opt           Passed to #form_with except for:
   #
-  # @option opt [String] :cancel      URL for cancel button action (default:
-  #                                     :back).
+  # @option opt [Boolean] :force          Force index delete option
+  # @option opt [Boolean] :truncate       Reset database ID option
+  # @option opt [Boolean] :emergency      Emergency force delete option
+  # @option opt [String]  :cancel         URL for cancel button action.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_form(label: nil, force: false, ids: nil, **opt)
+  def bulk_delete_form(label: nil, ids: nil, **opt)
     action = :bulk_delete
     ids    = Array.wrap(ids).compact.presence
-    opt    = prepend_css_classes(opt, 'file-upload-bulk', 'delete')
-    cancel = opt.delete(:cancel)
-    opt[:url]          = delete_select_upload_path
-    opt[:method]     ||= :get
-    opt[:autocomplete] = 'off'
-    opt[:local]        = true # Turns off "data-remote='true'".
+    opt, form_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
+
+    opt[:force]     = force_delete     unless opt.key?(:force)
+    opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
+    opt[:emergency] = emergency_delete unless opt.key?(:emergency)
+
+    prepend_css_classes!(form_opt, 'file-upload-bulk', 'delete')
+    form_opt[:url]          = delete_select_upload_path
+    form_opt[:method]     ||= :get
+    form_opt[:autocomplete] = 'off'
+    form_opt[:local]        = true # Turns off "data-remote='true'".
 
     html_div(class: 'file-upload-container bulk delete') do
       # @type [ActionView::Helpers::FormBuilder] f
-      form_with(**opt) do |f|
+      form_with(**form_opt) do |f|
         lines = []
 
-        # === Force index delete option
-        url_param = :force
-        lines <<
-          html_div(class: 'line') do
-            f.check_box(url_param, checked: force) <<
-              f.label(url_param, BULK_DELETE_FORCE_LABEL)
-          end
-
-        # === Reset database ID option
-        url_param = :truncate
-        lines <<
-          if session_debug?
-            html_div(class: 'line') do
-              f.check_box(url_param, checked: delete_truncate) <<
-                f.label(url_param, BULK_TRUNCATE_DELETE_LABEL)
-            end
-          else
-            hidden_url_parameter(nil, url_param, delete_truncate)
-          end
+        # === Options
+        lines << bulk_delete_option(f, opt.slice(:force))
+        lines << bulk_delete_option(f, opt.slice(:truncate),  debug_only: true)
+        lines << bulk_delete_option(f, opt.slice(:emergency), debug_only: true)
 
         # === Item selection input
-        url_param = :selected
-        lines <<
-          html_div(class: 'line') do
-            f.label(url_param, BULK_DELETE_INPUT_LABEL) <<
-              f.text_field(url_param, value: ids)
-          end
+        lines << bulk_delete_input(f, selected: ids)
 
         # === Form control panel
         lines <<
@@ -1183,7 +1202,7 @@ module UploadHelper
             html_div(class: 'button-tray') do
               tray = []
               tray << upload_submit_button(action: action, label: label)
-              tray << upload_cancel_button(action: action, url: cancel)
+              tray << upload_cancel_button(action: action, url: opt[:cancel])
               safe_join(tray)
             end
           end
@@ -1205,20 +1224,82 @@ module UploadHelper
     if items.present?
       result = IngestService.instance.get_records(*items)
       found  = result.records
-      rids   = found.map(&:emma_repositoryRecordId)
+      sids   = found.map(&:emma_repositoryRecordId)
       failed =
         items.reject do |item|
-          rid =
+          sid =
             case item
-              when Upload then item.repository_id
-              when Hash   then item[:repository_id] || item['repository_id']
+              when Upload then item.submission_id
+              when Hash   then item[:submission_id] || item['submission_id']
               else             item
             end
-          rids.include?(rid)
+          sids.include?(sid)
         end
     end
     return found, failed
   end
+
+  # ===========================================================================
+  # :section: Bulk delete page
+  # ===========================================================================
+
+  protected
+
+  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  BULK_DELETE_OPTION_LABEL = {
+    force:
+      'Attempt to remove index entries of items not in the database?',
+    truncate:
+      'Reset "uploads" id field to 1?' \
+      ' (Applies only when all records are being removed.)',
+    emergency:
+      'Attempt to remove index entries for bogus non-EMMA items?',
+  }.freeze
+
+  # bulk_delete_option
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Hash]                             param_and_value
+  # @param [Boolean]                          debug_only
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_delete_option(f, param_and_value, debug_only: false)
+    url_param, value = param_and_value.first
+    if debug_only && !session_debug?
+      hidden_url_parameter(nil, url_param, value)
+    else
+      label = f.label(url_param, BULK_DELETE_OPTION_LABEL[url_param])
+      check = f.check_box(url_param, checked: value)
+      html_div(class: 'line') { check << label }
+    end
+  end
+
+  # Labels for text fields associated with transmitted parameters. # TODO: I18n
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  BULK_DELETE_INPUT_LABEL = {
+    selected: 'Items to delete:'
+  }.freeze
+
+  # bulk_delete_input
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Hash]                             param_and_value
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_delete_input(f, param_and_value)
+    url_param, value = param_and_value.first
+    label = f.label(url_param, BULK_DELETE_INPUT_LABEL[url_param])
+    input = f.text_field(url_param, value: value)
+    html_div(class: 'line') { label << input }
+  end
+
 
 end
 

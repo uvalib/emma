@@ -155,21 +155,21 @@ module ArtifactHelper
     fmt_name = format.is_a?(Bs::Record::Format) ? format.label : item.label
     # noinspection RubyResolve
     if item.is_a?(Bs::Api::Record)
-      repo    = :bookshare
+      repo    = 'bookshare'
       type    = FormatType
       type    = PeriodicalFormatType if item.class.name.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= bs_download_path(bookshareId: item.identifier, fmt: format)
     else # if item.is_a?(Search::Api::Record)
-      repo    = item.emma_repository || Api::Common::DEFAULT_REPOSITORY
+      repo    = item.emma_repository || EmmaRepository.default
       format  = format&.to_s || item.dc_format
       lbl_key = "emma.source.#{repo}.download_fmt.#{format}"
       url   ||= item.record_download_url
       url   &&= bs_retrieval_path(url: url)
     end
     return if url.blank?
-    repo_name = Api::Common::REPOSITORY.dig(repo.to_sym, :name)
+    repo_name = EmmaRepository.pairs[repo]
     fmt_name  = I18n.t(lbl_key, default: fmt_name)
 
     # Initialize link options.

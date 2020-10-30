@@ -51,7 +51,7 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//records
   #
   def put_records(*records, **opt)
-    opt[:method] ||= __method__
+    opt[:meth] ||= __method__
     records = records.flat_map { |record| record_list(record) }
     api_send(:put, 'records', records, **opt)
     Ingest::Message::Response.new(response, error: exception)
@@ -95,7 +95,7 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordDeletes
   #
   def delete_records(*ids, **opt)
-    opt[:method] ||= __method__
+    opt[:meth] ||= __method__
     id_list = ids.flat_map { |id| identifier_list(id) }
     api_send(:post, 'recordDeletes', id_list, **opt)
     Ingest::Message::Response.new(response, error: exception)
@@ -138,7 +138,7 @@ module IngestService::Request::Records
   # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/paths//recordGets
   #
   def get_records(*ids, **opt)
-    opt[:method] ||= __method__
+    opt[:meth] ||= __method__
     id_list = ids.flat_map { |id| identifier_list(id) }
     api_send(:post, 'recordGets', id_list, **opt)
     Search::Message::SearchRecordList.new(response, error: exception)
@@ -162,7 +162,7 @@ module IngestService::Request::Records
   # @param [Array]       body         Passed to #api as :body.
   # @param [Hash]        opt          Passed to #api.
   #
-  # @option opt [Symbol] :meth        Calling method.
+  # @option opt [Symbol] :meth        Calling method for logging.
   #
   def api_send(verb, endpoint, body, **opt)
     body = Array.wrap(body).compact.uniq
@@ -171,7 +171,7 @@ module IngestService::Request::Records
       opt[:body]     = body
       api(verb, endpoint, **opt)
     else
-      meth = opt[:method] || __method__
+      meth = opt[:meth] || __method__
       Log.info { "#{meth}: no records" }
       @response  = nil
       @exception = IngestService::NoInputError.new
@@ -330,10 +330,7 @@ module IngestService::Request::Records
   # @param [String, nil] value
   #
   def allowed_record_id?(value)
-    return true if value.nil?
-    # noinspection RubyNilAnalysis
-    repo, rid, fmt = value.split('-')
-    repo.present? && rid.present? && !rid.match?(/^\d+$/) && fmt.present?
+    value.nil? || Upload.valid_record_id?(value, add_fmt: '*')
   end
 
 end

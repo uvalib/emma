@@ -33,13 +33,15 @@ Rails.application.routes.draw do
 
   # ===========================================================================
   # File upload operations
+  #
+  # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
-  get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
+  # === UploadWorkflow::Single
 
   get    '/upload/new_select',    redirect('/upload/new'),    as: 'new_select_upload'     # Only for consistency
   get    '/upload/new',           to: 'upload#new',           as: 'new_upload'
-  post   '/upload/create',        to: 'upload#create',        as: 'create_upload'
+  match  '/upload/create',        to: 'upload#create',        as: 'create_upload',        via: %i[post put patch]
 
   get    '/upload/edit_select',   to: 'upload#edit',          as: 'edit_select_upload',   defaults: { id: 'SELECT' }
   get    '/upload/edit/:id',      to: 'upload#edit',          as: 'edit_upload'
@@ -49,7 +51,7 @@ Rails.application.routes.draw do
   get    '/upload/delete/:id',    to: 'upload#delete',        as: 'delete_upload'
   delete '/upload/destroy/:id',   to: 'upload#destroy',       as: 'destroy_upload'
 
-  post   '/upload/endpoint',      to: 'upload#endpoint',      as: 'uploads'               # Invoked from file-upload.js
+  # === UploadWorkflow::Bulk
 
   get    '/upload/bulk_new',      to: 'upload#bulk_new',      as: 'bulk_new_upload'
   post   '/upload/bulk',          to: 'upload#bulk_create',   as: 'bulk_create_upload'
@@ -62,7 +64,16 @@ Rails.application.routes.draw do
 
   get    '/upload/bulk',          to: 'upload#bulk_index',    as: 'bulk_upload_index'
 
-  resources :upload
+  # === UploadWorkflow
+
+  post   '/upload/endpoint',      to: 'upload#endpoint',      as: 'uploads'               # Invoked from file-upload.js
+  get    '/upload/cancel',        to: 'upload#cancel',        as: 'upload_cancel'
+  get    '/upload/check/:id',     to: 'upload#check',         as: 'upload_check'
+
+  # === Display
+
+  get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
+  get    '/upload',               to: 'upload#index',         as: 'upload_index'
 
   # ===========================================================================
   # File download operations
@@ -134,6 +145,7 @@ Rails.application.routes.draw do
 
   # ===========================================================================
   # Metrics
+  #
   # NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
   # ===========================================================================
 

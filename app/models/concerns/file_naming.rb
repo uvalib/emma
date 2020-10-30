@@ -154,14 +154,15 @@ module FileNaming
 
   # Given a MIME type, return the associated upload format.
   #
-  # @param [String, ActiveStorage::Attachment] item
+  # @param [String, ActiveStorage::Attachment, nil] item
   #
   # @return [Symbol]
   # @return [nil]
   #
   def mime_to_fmt(item)
+    # noinspection RubyNilAnalysis
     mime = item.respond_to?(:content_type) ? item.content_type : item
-    FileNaming.mime_to_fmt[mime]&.first
+    FileNaming.mime_to_fmt[mime]&.first if mime.present?
   end
 
   # Map file format to (preferred) MIME type.

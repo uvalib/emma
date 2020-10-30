@@ -25,8 +25,6 @@ class Shrine
     # @param [Shrine::UploadedFile]    uploaded_file
     # @param [ActionDispatch::Request] request
     #
-    # @raise [UploadConcern::SubmitError]   If metadata was malformed.
-    #
     # @return [Array<(Integer, Hash, Array<String>)>]
     #
     # @see onFileUploadSuccess() in app/assets/javascripts/feature/download.js

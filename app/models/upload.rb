@@ -9,39 +9,14 @@ require 'down'
 
 # A file object uploaded from the client.
 #
-# @!attribute [r] file
-#   A de-serialized representation of the :file_data column for this model.
-#   @return [FileUploader::UploadedFile]
-#
-# @!attribute [r] file_attacher
-#   Inserted by Shrine::Plugins:Activerecord.
-#   @return [FileUploader::Attacher]
-#
-# @!attribute [r] file_path
-#   Bulk upload URL
-#   @return [String, nil]
-#
 class Upload < ApplicationRecord
 
   include ActiveModel::Validations
-
-  include Emma::Json
-  include Emma::Debug
-  include FileNaming
+  include Emma::Common
   include Model
 
-  # Non-functional hints for RubyMine.
-  # :nocov:
-  unless ONLY_FOR_DOCUMENTATION
-
-    # @return [FileUploader::UploadedFile]
-    attr_reader :file
-
-    # @return [FileUploader::Attacher]
-    attr_reader :file_attacher
-
-  end
-  # :nocov:
+  # Include modules from "app/models/upload/**.rb".
+  include_submodules(self)
 
   # ===========================================================================
   # :section:
@@ -49,74 +24,13 @@ class Upload < ApplicationRecord
 
   public
 
-  # The default repository for uploads.
+  # Control whether field validation should occur.
   #
-  # @type [String]
+  # NOTE: Not currently supported
   #
-  DEFAULT_REPO = Api::Common::DEFAULT_REPOSITORY.to_s.freeze
-
-  # Non decimal-digit character(s) leading all repository ID's.
+  # @type [Boolean]
   #
-  # This prefix serves to guarantee that repository ID's are distinct from
-  # database ID's (which are only decimal digits).
-  #
-  # @type [String]
-  #
-  REPO_ID_PREFIX = 'u'
-
-  # The maximum age (in seconds) allowed for download links which are meant to
-  # be valid only for a single time.
-  #
-  # This should be generous to allow for network delays.
-  #
-  # @type [Integer]
-  #
-  ONE_TIME_USE_EXPIRATION = 10
-
-  # The maximum age (in seconds) allowed for download links.
-  #
-  # This allows the link to be reused for a while, but not long enough to allow
-  # sharing of content URLs for distribution.
-  #
-  # @type [Integer]
-  #
-  DOWNLOAD_EXPIRATION = 1800
-
-  # Fallback URL base. TODO: ?
-  #
-  # @type [String]
-  #
-  BULK_BASE_URL = PRODUCTION_BASE_URL
-
-  # Default user for bulk uploads. # TODO: ?
-  #
-  # @type [String]
-  #
-  BULK_USER = 'emmadso@bookshare.org'
-
-  # File to use as a placeholder if no file was given for the upload.
-  #
-  # @type [String, FalseClass, NilClass]
-  #
-  BULK_PLACEHOLDER_FILE =
-    if application_deployed?
-      "#{BULK_BASE_URL}/placeholder.pdf"
-    else
-      'http://localhost:3000/placeholder.pdf'
-    end
-
-  # ===========================================================================
-  # :section: Fields
-  # ===========================================================================
-
-  # noinspection RubyResolve
-  include FileUploader::Attachment(:file)
-
-  # Bulk upload URL.
-  #
-  # @return [String, nil]
-  #
-  attr_reader :file_path
+  FIELD_VALIDATION = false
 
   # ===========================================================================
   # :section: Authentication
@@ -136,35 +50,17 @@ class Upload < ApplicationRecord
 
   validate on: %i[create] do
     $stderr.puts '*** START >>> AR create'
-    attached_file_valid? if file
-=begin # TODO: field validation
-    required_fields_valid?
-=end
+    attached_file_valid?
+    required_fields_valid? if FIELD_VALIDATION
     $stderr.puts "*** END   <<< AR create - errors = #{errors.values.inspect}"
   end
 
   validate on: %i[update] do
     $stderr.puts '*** START >>> AR update'
-    attached_file_valid? if file
-=begin # TODO: field validation
-    required_fields_valid?
-=end
+    attached_file_valid?
+    required_fields_valid? if FIELD_VALIDATION
     $stderr.puts "*** END   <<< AR update - errors = #{errors.values.inspect}"
   end
-
-=begin # TODO: field validation
-  validates_presence_of :user_id
-  validates_presence_of :repository
-  validates_presence_of :repository_id
-  validates_presence_of :fmt
-  validates_presence_of :ext
-  validates_presence_of :created_at
-  validates_presence_of :updated_at
-
-  validate(:file_data, on: %i[create update]) { attached_file_valid? }
-
-  validate(:emma_data, on: %i[create update]) { emma_data_valid? }
-=end
 
   # ===========================================================================
   # :section: Callbacks
@@ -175,30 +71,21 @@ class Upload < ApplicationRecord
   before_save       { note_cb(:before_save) }       if SHRINE_DEBUG
   before_create     { note_cb(:before_create) }     if SHRINE_DEBUG
   after_create      { note_cb(:after_create) }      if SHRINE_DEBUG
+  before_update     { note_cb(:before_update) }     if SHRINE_DEBUG
+  after_update      { note_cb(:after_update) }      if SHRINE_DEBUG
+  before_destroy    { note_cb(:before_destroy) }    if SHRINE_DEBUG
+  after_destroy     { note_cb(:after_destroy) }     if SHRINE_DEBUG
   after_save        { note_cb(:after_save) }        if SHRINE_DEBUG
+  before_commit     { note_cb(:before_commit) }     if SHRINE_DEBUG
   after_commit      { note_cb(:after_commit) }      if SHRINE_DEBUG
+  after_rollback    { note_cb(:after_rollback) }    if SHRINE_DEBUG
 
-  # :before_save # should be triggering:
-  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_before_save
-  #     Shrine::Attacher::InstanceMethods#save
-  #
-  # :after_commit, on: %i[create update] # should be triggering:
-  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_save
-  #     Shrine::Attacher::InstanceMethods#finalize
-  #       Shrine::Attacher::InstanceMethods#destroy_previous
-  #       Shrine::Attacher::InstanceMethods#promote_cached
-  #         Shrine::Attacher::InstanceMethods#promote
-  #     Shrine::Plugins::Activerecord::AttacherMethods#activerecord_persist
-  #       ActiveRecord::Persistence#save
-  #
-  # :after_commit, on: %i[destroy] # should be triggering:
-  #   Shrine::Plugins::Activerecord::AttacherMethods#activerecord_after_destroy
-  #     Shrine::Attacher::InstanceMethods#destroy_attached
-  #       Shrine::Attacher::InstanceMethods#destroy
+  before_save    :promote_cached_file
+  after_rollback :delete_cached_file, on: %i[create]
 
-  before_save :promote_file
-
-  after_rollback :delete_file, on: %i[create]
+  after_destroy do
+    delete_file
+  end
 
   # ===========================================================================
   # :section: ApplicationRecord overrides
@@ -216,22 +103,10 @@ class Upload < ApplicationRecord
   #
   def initialize(opt = nil, &block)
     __debug_args(binding)
+    opt = opt.attributes if opt.is_a?(Upload)
+    opt = opt.merge(initializing: true).except!(:reset) if opt.is_a?(Hash)
     super(opt, &block)
-    __debug_items(leader: 'new UPLOAD') do
-      {
-        id:               self[:id],
-        user_id:          self[:user_id],
-        repository:       self[:repository],
-        repository_id:    self[:repository_id],
-        fmt:              self[:fmt],
-        ext:              self[:ext],
-        state:            self[:state],
-        emma_data:        self[:emma_data],
-        file_data:        self[:file_data],
-        file:             (file             || '(NOT PRESENT)'),
-        file_attacher:    (file_attacher    || '(NOT PRESENT)')
-      }
-    end
+    __debug_items(leader: 'new UPLOAD') { self }
   end
 
   # ===========================================================================
@@ -240,23 +115,17 @@ class Upload < ApplicationRecord
 
   public
 
-  # Fields that used within the instance but are not persisted to the database.
+  # Mutually-exclusive modes of operation in #assign_attributes.
   #
   # @type [Array<Symbol>]
   #
-  LOCAL_FIELDS = %i[file_path].freeze
+  ASSIGN_MODES = %i[initializing finishing_edit reset].freeze
 
-  # Fields that are expected to be included in :emma_data.
+  # Non-field keys used to pass control information to #assign_attributes.
   #
   # @type [Array<Symbol>]
   #
-  INDEX_FIELDS = Search::Record::MetadataRecord.field_names.freeze
-
-  # Fields that are either Upload record attributes or :emma_data.
-  #
-  # @type [Array<Symbol>]
-  #
-  KNOWN_FIELDS = (field_names + INDEX_FIELDS + LOCAL_FIELDS).freeze
+  ASSIGN_CONTROL_OPTIONS = (ASSIGN_MODES + %i[base_url importer defer]).freeze
 
   # Update database fields, including the structured contents of the :emma_data
   # field.
@@ -265,20 +134,56 @@ class Upload < ApplicationRecord
   #
   # @option opt [Integer, String, User] :user_id
   # @option opt [String, Symbol]        :repository
-  # @option opt [String]                :repository_id
+  # @option opt [String]                :submission_id
   # @option opt [String, Symbol]        :fmt
   # @option opt [String]                :ext
   # @option opt [String, Symbol]        :state
   # @option opt [String, Hash]          :file_data
   # @option opt [String, Hash]          :emma_data
   #
-  # @option opt [String]         :base_url  To generate emma_retrievalLink.
-  # @option opt [Module, String] :importer  @see Import#translate_fields
-  # @option opt [Boolean]        :defer     If *true* and :file_path is
-  #                                           provided via *opt*, @file_path
-  #                                           will be set but the referenced
-  #                                           file will *not* be fetched
-  #                                           automatically via #upload_file.
+  # @option opt [String]         :base_url
+  # @option opt [Module, String] :importer
+  # @option opt [Boolean]        :defer
+  # @option opt [Boolean]        :initializing
+  # @option opt [Boolean]        :finishing_edit
+  # @option opt [Boolean]        :reset
+  #
+  # == Options
+  #
+  # :base_url
+  #
+  #   Supplied to give the base URL for constructing a retrieval link from a
+  #   submission ID (:emma_retrievalLink).
+  #
+  # :importer
+  #
+  #   Supplied to specify an import translation mechanism (typically for
+  #   bulk import). @see Import#translate_fields
+  #
+  # :defer
+  #
+  #   Used internally to indicate whether a file indicated by an imported
+  #   :file_path data field should be acquired immediately.  If *true* then
+  #   @file_path will be set but the referenced file will *not* be fetched
+  #   automatically via #upload_file
+  #
+  # == Mode Options
+  #
+  # :initializing
+  #
+  #   Indicates that the method is being executed from the initializer.
+  #
+  # :finishing_edit
+  #
+  #   Indicates that the method is being executed from #finishing_edit.
+  #   This accommodates the use-case of updating record values from the fields
+  #   used when editing an existing EMMA entry (:edit_file_data and/or
+  #   :edit_emma_data).
+  #
+  # :reset
+  #
+  #   Provided to indicate that user-supplied record attributes should be
+  #   wiped (while retaining values that were originally set by the system).
   #
   # @return [void]
   #
@@ -288,100 +193,184 @@ class Upload < ApplicationRecord
   def assign_attributes(opt)
     __debug_args(binding)
     opt = opt.attributes if opt.is_a?(Upload)
-    # noinspection RubyYardParamTypeMatch
-    local, fields = partition_options(opt, :base_url, :importer, :defer)
-    return if fields.blank?
+    control, fields = partition_options(opt, *ASSIGN_CONTROL_OPTIONS)
+    mode = ASSIGN_MODES.find { |m| control[m].present? }
+
+    # Handle the :reset case separately.  If any additional data was supplied
+    # it will be ignored.
+    if mode == :reset
+      log_ignored('reset: ignored options', fields) if fields.present?
+      if under_review?
+        nullify = %i[review_user review_success review_comment reviewed_at]
+      elsif edit_phase
+        nullify = %i[edit_user edit_file_data edit_emma_data edited_at]
+      else
+        nullify = DATA_COLUMNS
+      end
+      attr = nullify.map { |col| [col, nil] }.to_h
+      attr[:updated_at] = self[:created_at] if being_created?
+      delete_file unless under_review?
+      super(attr)
+      return
+    end
+
+    # In the general case, if no data was supplied then there's nothing to do.
+    return unless fields.present?
     fields.deep_symbolize_keys!
+    fetch_file = false
+    new_record = being_created? && (mode == :initializing)
 
     # If an importer was specified, apply it to transform imported key/value
     # pairs record attributes, :file_data values and/or :emma_data values.
-    importer = local[:importer] && Import.get_importer(local[:importer])
-    if importer.present?
-      known_fields, added_fields = partition_options(fields, *KNOWN_FIELDS)
-      __debug_items do # TODO: remove - debugging
-        {
-          "#{__method__} known_fields": known_fields,
-          "#{__method__} added_fields": added_fields,
-        }
-      end
-      fields = importer.translate_fields(added_fields).merge!(known_fields)
-      __debug_items do # TODO: remove - debugging
-        {
-          "#{__method__} fields": fields
-        }
-      end
-    end
+    importer = (control[:importer] if new_record)
+    fields   = import_transform(fields, control[:importer]) if importer
 
     # Database fields go into *attr*; the remainder is file and EMMA data.
     attr, data = partition_options(fields, *field_names)
-    now = DateTime.now
-    url = local[:base_url]
 
-    # Extract the path to the file to be uploaded (provided either via
-    # arguments or from bulk import data).
-    @file_path = data.delete(:file_path)
+    # For consistency, make sure that only the appropriate fields are being
+    # updated depending on the workflow state of the item.
+    allowed =
+      if being_created?
+        DATA_COLUMNS + %i[repository submission_id updated_at]
+      elsif being_modified? || (mode == :finishing_edit)
+        DATA_COLUMNS + %i[edit_user edited_at]
+      elsif being_removed?
+        %i[updated_at]
+      elsif under_review?
+        %i[review_user review_success review_comment reviewed_at user_id]
+      end
+    if new_record
+      allowed << :created_at
+      allowed << :id if self[:id].nil?
+    end
+    attr, rejected = partition_options(attr, *allowed)
+    log_ignored('rejected attributes', rejected) if rejected.present?
 
-    # Get value for :file_data as JSON.
-    fd = data.delete(:file) || attr[:file_data]
-    attr[:file_data] = fd.is_a?(Hash) ? fd.to_json : fd
-
-    __debug_items do
-      {
-        "#{__method__} file_data": attr[:file_data],
-        "#{__method__} emma_data": attr[:emma_data],
-      }
+    # For :user_id, normalize to a 'user' table reference.  If editing,
+    # ensure that :edit_user is a string, defaulting to the original
+    # submitter.
+    if under_review?
+      u = attr[:review_user] || attr[:user_id]
+      attr[:review_user] = User.find_uid(u)
+    elsif edit_phase
+      u = attr[:edit_user] || attr[:user_id] || self[:user_id]
+      attr[:edit_user] = User.find_uid(u)
+    else
+      u = attr[:user_id] || self[:user_id]
+      attr[:user_id] = User.find_id(u)
     end
 
-    # Build on :emma_data if present.
-    # noinspection RubyYardParamTypeMatch
-    ed = reject_blanks(json_parse(attr.delete(:emma_data)))
-    data.reverse_merge!(ed) if ed.present?
+    # Update the appropriate timestamp.
+    now    = DateTime.now
+    column = timestamp_column
+    utime  = attr[column]
+    utime  = utime.to_datetime                if utime.is_a?(Time)
+    utime  = DateTime.parse(utime) rescue nil if utime.is_a?(String)
+    attr[column] = utime || self[column] || now
 
-    # Determine value common to database attributes and EMMA metadata.
-    uid  = attr[:user_id]
-    repo = attr[:repository]    || data[:emma_repository]
-    rid  = attr[:repository_id] || data[:emma_repositoryRecordId]
-    fmt  = attr[:fmt]           || data[:dc_format]
-    ext  = attr[:ext]
-    utim = attr[:updated_at]
-    ctim = attr[:created_at]
-    mime = file&.mime_type
+    # New record defaults.
+    if new_record
+      ctime = attr[:created_at] || self[:created_at]
+      ctime = ctime.to_datetime                if ctime.is_a?(Time)
+      ctime = DateTime.parse(ctime) rescue nil if ctime.is_a?(String)
+      attr[:created_at]      = ctime || utime
+      attr[:submission_id] ||= generate_submission_id(attr[:created_at])
+    end
 
-    # Provide default values where needed.
-    uid    = User.find_id(uid) unless uid.is_a?(Integer)
-    repo ||= DEFAULT_REPO
-    rid  ||= self.class.generate_repository_id
-    fmt  ||= mime_to_fmt(mime)
-    ext  ||= file&.extension || fmt_to_ext(fmt)
-    utim ||= now
-    ctim ||= now
-    mime ||= fmt_to_mime(fmt)
+    # Portions that apply when item metadata is expected to change.  EMMA and
+    # file data should never change if the item is under review or if it is
+    # currently in the process of being submitted to a member repository.
 
-    # Update the :emma_data attribute directly now (and not via super),
-    # ensuring required metadata fields are given a value.
-    data[:dc_format]                 = FileFormat.metadata_fmt(fmt)
-    data[:emma_repository]           = repo
-    data[:emma_repositoryRecordId]   = rid
-    data[:emma_retrievalLink]      ||= self.class.make_retrieval_link(url, rid)
-    data[:emma_lastRemediationDate]          ||= utim
-    data[:emma_repositoryMetadataUpdateDate] ||= utim
-    set_emma_data(data)
+    if sealed? && (mode != :finishing_edit)
 
-    # Adjust format/extension if a format was specified manually.
-    file.mime_type ||= mime if file
+      log_ignored('ignored data parameters', data) if data.present?
 
-    # Ensure that required attributes are given a value.
-    attr[:user_id]       = uid
-    attr[:repository]    = repo
-    attr[:repository_id] = rid
-    attr[:fmt]           = fmt
-    attr[:ext]           = ext
-    attr[:updated_at]    = utim
-    attr[:created_at]    = ctim
+    else
+
+      # Extract the path to the file to be uploaded (provided either via
+      # arguments or from bulk import data).
+      if (fp = data.delete(:file_path))
+        @file_path = fp
+        fetch_file = !false?(control[:defer])
+      end
+
+      # Augment EMMA data fields supplied as method options with the contents
+      # of :emma_data if it was supplied.
+      if (ed = attr.delete(:emma_data))
+        __debug_items { { "#{__method__} emma_data": ed.inspect } }
+        # noinspection RubyYardParamTypeMatch
+        added_data = reject_blanks(json_parse(ed))
+        data.reverse_merge!(added_data) if added_data.present?
+      end
+
+      # Get value for :file_data as JSON.
+      fd = data.delete(:file)
+      fd = attr.delete(:file_data) || fd
+      fd = fd.to_json if fd.is_a?(Hash)
+      fd = fd.presence
+      __debug_items { { "#{__method__} file_data": fd.inspect } } if fd
+      case mode
+        when :finishing_edit
+          if fd && (fd != self[:file_data])
+            delete_file(field: :file_data)
+            attr[:file_data] = fd
+          end
+        when :initializing
+          attr[file_data_column] = fd unless edit_phase
+        else
+          attr[file_data_column] = fd if fd
+      end
+
+      # Augment supplied attribute values with supplied EMMA metadata.
+      if attr.key?(:repository) || self[:repository].present?
+        data[:emma_repository] = attr[:repository] || self[:repository]
+      elsif data[:emma_repository].present?
+        attr[:repository] = data[:emma_repository]
+      end
+      unless attr.key?(:fmt) || data[:dc_format].blank?
+        attr[:fmt] = data[:dc_format]
+      end
+      fields = %i[emma_lastRemediationDate emma_repositoryMetadataUpdateDate]
+      fields.each { |field| data[field] ||= utime if data.key?(field) }
+
+      # EMMA metadata defaults that are only appropriate for EMMA-native items.
+      if attr[:repository] == EmmaRepository.default
+        data[:emma_repositoryRecordId] ||= attr[:submission_id]
+        data[:emma_retrievalLink] ||=
+          begin
+            rid = data[:emma_repositoryRecordId] || self[:submission_id]
+            make_retrieval_link(rid, control[:base_url])
+          end
+      end
+
+      # Fill in missing file information.
+      fmt, ext = attr.values_at(:fmt, :ext)
+      mime   = edit_phase && edit_file&.mime_type || file&.mime_type
+      fmt  ||= mime_to_fmt(mime)
+      ext  ||= edit_phase && edit_file&.extension || file&.extension
+      ext  ||= fmt_to_ext(fmt)
+      mime ||= fmt_to_mime(fmt)
+      active_file.mime_type ||= mime                  if mime && active_file
+      data[:dc_format] = FileFormat.metadata_fmt(fmt) if fmt
+      attr[:fmt] = fmt                                if fmt
+      attr[:ext] = ext                                if ext
+
+      # Update :emma_data or :edit_emma_data, depending on the context.  When
+      # incorporating editing changes, :emma_data must be updated explicitly
+      # because #active_emma_data refers to :edit_emma_data.
+      case mode
+        when :initializing   then set_active_emma_data(data)
+        when :finishing_edit then modify_emma_data(data)
+        else                      modify_active_emma_data(data)
+      end
+
+    end
+
     super(attr)
 
     # Fetch the file source if named via :file_path and not deferred.
-    upload_file(@file_path) unless @file_path.blank? || local[:defer]
+    fetch_and_upload_file(@file_path) if fetch_file
 
   rescue => error # TODO: remove - testing
     Log.error { "#{__method__}: #{error.class}: #{error.message}"}
@@ -401,6 +390,78 @@ class Upload < ApplicationRecord
     value.is_a?(String) ? value.inspect : super
   end
 
+  # Formatted record contents.
+  #
+  # @param [Hash, nil] attr
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ActiveRecord::Core#inspect
+  #
+  def inspect(attr = nil)
+    attr ||= {
+      id:                 self[:id],
+      repository:         self[:repository],
+      submission_id:      self[:submission_id],
+
+      phase:              ('[[%s]]' % (self[:phase]&.upcase || '---')),
+      state:              self[:state],
+      edit_state:         self[:edit_state],
+
+      fmt:                self[:fmt],
+      ext:                self[:ext],
+
+      user_id:            self[:user_id],
+      edit_user:          self[:edit_user],
+      review_user:        self[:review_user],
+
+      created_at:         self[:created_at],
+      updated_at:         self[:updated_at],
+      edited_at:          self[:edited_at],
+      reviewed_at:        self[:reviewed_at],
+
+      review_success:     self[:review_success],
+      review_comment:     self[:review_comment],
+
+      emma_data:          self[:emma_data],
+      edit_emma_data:     self[:edit_emma_data],
+
+      file_data:          self[:file_data],
+      edit_file_data:     self[:edit_file_data],
+
+      file:               file.presence,
+      file_attacher:      file_attacher.class,
+      edit_file:          edit_file.presence,
+      edit_file_attacher: edit_file_attacher.class,
+    }
+    # noinspection RubyNilAnalysis
+    attr = attr.transform_values { |v| v.is_a?(String) ? v.truncate(1024) : v }
+    pretty_json(attr)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # log_ignored
+  #
+  # @param [String] label
+  # @param [Hash]   values
+  # @param [Symbol, nil] caller
+  #
+  def log_ignored(label, values, caller = nil)
+    Log.warn do
+      c = caller || calling_method(3)
+      p = workflow_phase || '-'
+      s = active_state   || '-'
+      "#{c}: [#{p}/#{s}] #{label}: #{values.inspect}"
+        .tap { |m| $stderr.puts "!!! #{m}" }
+    end
+  end
+
   # ===========================================================================
   # :section: Model overrides
   # ===========================================================================
@@ -416,237 +477,106 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: FileFormat overrides
-  # ===========================================================================
-
-  public
-
-  # parser
-  #
-  # @return [FileParser]
-  #
-  # This method overrides:
-  # @see FileFormat#parser
-  #
-  def parser
-    @parser ||=
-      begin
-        class_name = "#{fmt.to_s.camelize}Parser"
-        class_name.constantize.new(attached_file&.to_io)
-      rescue => error
-        # noinspection RubyScope
-        __debug  { "Upload.parser: #{class_name} not valid" }
-        Log.warn { "Upload.parser: #{error.message}" }
-      end
-  end
-
-  # format_fields
-  #
-  # @return [Hash{Symbol=>Proc,Symbol}]
-  #
-  # This method overrides:
-  # @see FileFormat#format_fields
-  #
-  def format_fields
-    parser&.format_fields || {}
-  end
-
-  # mapped_metadata_fields
-  #
-  # @return [Hash{Symbol=>Symbol}]
-  #
-  # This method overrides:
-  # @see FileFormat#mapped_metadata_fields
-  #
-  def mapped_metadata_fields
-    parser&.mapped_metadata_fields || {}
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
 
-  # Full name of the file.
+  # Indicate whether the record is an EMMA-native item.
   #
-  # @return [String, nil]
+  # @param [Upload, nil] item         Default: `self`.
   #
-  def filename
-    @filename ||= attached_file&.original_filename
-  end
-
-  # Return the attached file, loading it if necessary.
-  #
-  # @return [FileUploader::UploadedFile]
-  #
-  def attached_file
-    file_attacher.load_data(file_data) unless file_attacher.attached?
-    file
+  def emma_native?(item = nil)
+    self.class.emma_native?(item || self)
   end
 
   # ===========================================================================
-  # :section:
+  # :section: Class methods
   # ===========================================================================
 
   public
 
-  # Generate a URL to the uploaded file which can be used to download the file
-  # to the client browser.
+  # Indicate whether the record is an EMMA-native item.
   #
-  # @param [Hash] opt                 Passed to Shrine::UploadedFile#url.
+  # @param [Upload, Hash, String, #repository, #emma_repository] item
   #
-  # @return [String]
-  #
-  def download_url(**opt)
-    opt[:expires_in] ||= ONE_TIME_USE_EXPIRATION
-    attached_file.url(**opt)
+  def self.emma_native?(item)
+    repository_of(item) == EmmaRepository.default
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Acquire a file and upload it to storage.
+  # Extract the repository associated with the item.
   #
-  # @param [String] file_path
-  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
-  #                                     except for:
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
   #
-  # @option [Symbol] :meth            Calling method (for logging).
-  #
-  # @return [FileUploader::UploadedFile]
+  # @return [String]                  One of EmmaRepository#values.
+  # @return [nil]
   #
   # == Usage Notes
-  # This method is not necessary for an Upload instance which is persisted to
-  # the database because Shrine adds event handlers which cause the file to be
-  # copied to storage.  This method is allows this action for a "free-standing"
-  # Upload instance (without needing to execute #save in order to engage Shrine
-  # event handlers to copy the file to storage).
+  # Depending on the context, the caller may need to validate the result with
+  # EmmaRepository#valid?.
   #
-  def upload_file(file_path, **opt)
-    meth   = opt.delete(:meth) || __method__
-    result =
-      if file_path =~ /^https?:/
-        upload_remote_file(file_path, **opt)
-      else
-        upload_local_file(file_path, **opt)
+  def self.repository_of(item)
+    item = item.to_s if item.is_a?(Symbol)
+    if item && !item.is_a?(String)
+      %i[repository emma_repository].find do |key|
+        (repo = get_value(item, key)) and return repo
       end
-    Log.info do
-      name = result&.original_filename.inspect
-      size = result&.size      || 0
-      type = result&.mime_type || 'unknown MIME type'
-      "#{meth}: #{name} (#{size} bytes) #{type}"
+      item = get_value(item, :emma_recordId)
     end
-    result
+    item && item.strip.split('-').first.presence
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Options for Down#open.
+  # The full name of the indicated repository
   #
-  # @type [Hash]
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
   #
-  # @see Down::NetHttp#initialize
-  # @see Down::NetHttp#open
-  # @see Down::NetHttp#create_net_http
+  # @return [String]                  The name of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
   #
-  DOWN_OPEN_OPTIONS = { read_timeout: 60 }.deep_freeze
-
-  # Acquire a remote file and copy it to storage.
-  #
-  # @param [String] url
-  # @param [Hash]   opt     Passed to FileUploader::Attacher#attach except for:
-  #
-  # @option opt [Integer] :read_retry
-  #
-  # @return [FileUploader::UploadedFile]
-  #
-  def upload_remote_file(url, **opt)
-    # @type [Down::ChunkedIO] io
-    io = Down.open(url, **DOWN_OPEN_OPTIONS)
-    opt[:metadata] = opt[:metadata]&.dup || {}
-    opt[:metadata]['filename'] ||= File.basename(url)
-    file_attacher.attach(io, **opt)
-  rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
-    raise error
-  ensure
-    # noinspection RubyScope
-    io&.close
+  def self.repository_name(item)
+    repo = repository_of(item)
+    EmmaRepository.pairs[repo]
   end
 
-  # Copy a local file to storage.
+  # Extract the EMMA index entry identifier from the item.
   #
-  # @param [String] path
-  # @param [Hash]   opt               Passed to FileUploader::Attacher#attach
-  #
-  # @return [FileUploader::UploadedFile]
-  #
-  def upload_local_file(path, **opt)
-    File.open(path) do |io|
-      file_attacher.attach(io, **opt)
-    end
-  rescue => error
-    $stderr.puts "!!! #{__method__}: #{error.class}: #{error.message}"
-    raise error
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Present :emma_data as a structured object (if it is present).
-  #
-  # @return [Search::Record::MetadataRecord]
-  #
-  def emma_record
-    @emma_record ||= Search::Record::MetadataRecord.new(emma_metadata)
-  end
-
-  # Present :emma_data as a hash (if it is present).
-  #
-  # @return [Hash]
-  #
-  def emma_metadata
-    # noinspection RubyYardReturnMatch
-    @emma_metadata ||= self.class.parse_emma_data(emma_data)
-  end
-
-  # Set :emma_data.
-  #
-  # @param [Search::Record::MetadataRecord, Hash, String, nil] data
+  # @param [Upload, Hash, String, #emma_repository, #emma_recordId, *] item
   #
   # @return [String]
+  # @return [nil]
   #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def set_emma_data(data)
-    @emma_record   = nil # Force regeneration.
-    @emma_metadata = self.class.parse_emma_data(data)
-    self.emma_data = data.is_a?(String) ? data.dup : @emma_metadata.to_json
+  # == Usage Notes
+  # If *item* is a String, it is assumed to be good.  Depending on the context,
+  # the caller may need to validate the result with #valid_record_id?.
+  #
+  def self.record_id(item)
+    result   = (item.to_s if item.nil?)
+    result ||= (item.to_s.strip if item.is_a?(String) || item.is_a?(Symbol))
+    result ||= get_value(item, :emma_recordId)
+    result ||=
+      if (repo = get_value(item, :emma_repository))
+        rid = get_value(item, :emma_repositoryRecordId)
+        fmt = get_value(item, :dc_format)
+        parts = [repo, rid, fmt].compact
+        if parts.size == 3
+          (ver = (get_value(item, :emma_formatVersion))) and parts << ver
+        end
+        parts.join('-')
+      end
+    result.presence
   end
 
-  # Selectively modify :emma_data.
+  # Indicate whether *item* is or contains a valid EMMA index record ID.
   #
-  # @param [Hash] data
+  # @param [String, #emma_repository, #emma_recordId, *] item
+  # @param [String, Array<String>]                       add_repo
+  # @param [String, Array<String>]                       add_fmt
   #
-  # @return [String]
-  #
-  def modify_emma_data(data)
-    @emma_record   = nil # Force regeneration.
-    new_metadata   = self.class.parse_emma_data(data)
-    @emma_metadata = emma_metadata.merge(new_metadata)
-    self.emma_data = @emma_metadata.to_json
+  def self.valid_record_id?(item, add_repo: nil, add_fmt: nil)
+    repo, rid, fmt, _version, remainder = record_id(item).to_s.split('-')
+    rid.present? && remainder.nil? &&
+      (Array.wrap(add_repo).include?(repo) || EmmaRepository.valid?(repo)) &&
+      (Array.wrap(add_fmt).include?(fmt)   || DublinCoreFormat.valid?(fmt))
   end
 
   # ===========================================================================
@@ -655,89 +585,78 @@ class Upload < ApplicationRecord
 
   protected
 
-  # parse_emma_data
+  # Get the indicated value from an object accessed as either a Hash key or an
+  # instance method.
   #
-  # @param [Search::Record::MetadataRecord, String, Hash, nil] data
+  # The value of *default* is returned if *item* doesn't respond to *key*.
   #
-  # @return [Hash]
+  # @param [Upload, Hash, #repository, #emma_repository] item
+  # @param [Symbol, String]                              key
+  # @param [*, nil]                                      default
   #
-  #--
-  # noinspection RubyYardParamTypeMatch
-  #++
-  def self.parse_emma_data(data)
-    return {} if data.blank?
-    result = data
-    result = result.as_json if result.is_a?(Search::Record::MetadataRecord)
-    result = json_parse(result, no_raise: false)
-    reject_blanks(result).map { |k, v|
-      v = Array.wrap(v).reject { |x| x.blank? unless x.is_a?(FalseClass) }
-      prop  = Field.configuration(k)
-      array = prop[:array]
-      lines = (prop[:type] == 'textarea')
-      if lines || (prop[:type] == 'text') || prop[:type].blank?
-        join = lines ? "\n"    : ';'
-        sep  = lines ? /[|\n]/ : ';'
-        v = v.join(join).split(sep) if array
-        v = v.map(&:to_s).map(&:strip).reject(&:blank?)
-        v = v.join(join) unless array
-      elsif !array
-        v = v.first
-      end
-      [k, v] if v.present? || v.is_a?(FalseClass)
-    }.compact.sort.to_h
-  rescue => error
-    Log.error do
-      msg = [__method__, error.message]
-      msg << "for #{data.inspect}" if Log.debug?
-      msg.join(': ')
+  # @return [*]
+  #
+  def self.get_value(item, key, default: nil)
+    key = key.to_sym
+    if item.respond_to?(key)
+      item.send(key).presence
+    elsif item.is_a?(Upload) && item.emma_metadata.key?(key)
+      item.emma_metadata[key].presence
+    elsif item.is_a?(Hash) && item.key?(key.to_s)
+      item[key.to_s].presence
+    elsif item.is_a?(Hash) && item.key?(key)
+      item[key].presence
+    else
+      default
     end
   end
 
   # ===========================================================================
-  # :section: Class methods - records
+  # :section:
   # ===========================================================================
 
   public
 
   # Create a URL for use with :emma_retrievalLink.
   #
-  # @param [String, nil] base_url       Default: `#BULK_BASE_URL`.
-  # @param [String]      repository_id
+  # @param [String]      rid          EMMA repository record ID.
+  # @param [String, nil] base_url     Default: `#BULK_BASE_URL`.
   #
   # @return [String]
+  # @return [nil]                     If no repository ID was given.
   #
-  def self.make_retrieval_link(base_url, repository_id)
+  def make_retrieval_link(rid, base_url = nil)
+    self.class.make_retrieval_link(rid, base_url)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Create a URL for use with :emma_retrievalLink.
+  #
+  # @param [String]      rid          EMMA repository record ID.
+  # @param [String, nil] base_url     Default: `#BULK_BASE_URL`.
+  #
+  # @return [String]
+  # @return [nil]                     If no repository ID was given.
+  #
+  def self.make_retrieval_link(rid, base_url = nil)
     base_url ||= BULK_BASE_URL
-    File.join(base_url, 'download', repository_id).to_s
+    File.join(base_url, 'download', rid).to_s if rid.present?
   end
 
-  # Create a unique repository item identifier.
-  #
-  # @param [String] prefix            Character(s) leading the numeric portion.
-  #
-  # @return [String]
-  #
-  # @see #rid_counter
-  #
-  # == Implementation Notes
-  # The result is a (single-character) prefix followed by 8 hexadecimal digits
-  # which represent seconds into the epoch followed by a single random letter
-  # from 'g' to 'z', followed by two decimal digits from "00" to "99" based on
-  # a randomly initialized counter.  This arrangement allows bulk upload (which
-  # occurs on a single thread) to be able to generate unique IDs in rapid
-  # succession.
-  #
-  def self.generate_repository_id(prefix = REPO_ID_PREFIX)
-    prefix   = REPO_ID_PREFIX if prefix.is_a?(TrueClass)
-    prefix ||= ''
-    base_id  = Time.now.tv_sec
-    letter   = 0x67 + rand(20)
-    sprintf('%s%x%c%02d', prefix, base_id, letter, rid_counter)
-  end
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
 
-  # Get the Upload record by either :id or :repository_id.
+  public
+
+  # Get the Upload record by either :id or :submission_id.
   #
-  # @param [String, Symbol] identifier
+  # @param [String, Symbol, Integer, Hash, Upload] identifier
   #
   # @return [Upload, nil]
   #
@@ -745,7 +664,7 @@ class Upload < ApplicationRecord
     find_by(**id_term(identifier))
   end
 
-  # Get the Upload records specified by either :id or :repository_id.
+  # Get the Upload records specified by either :id or :submission_id.
   #
   # Additional constraints may be supplied via *opt*.  If no *identifiers* are
   # supplied then this method is essentially an invocation of #where which
@@ -757,199 +676,32 @@ class Upload < ApplicationRecord
   # @return [Array<Upload>]
   #
   def self.get_records(*identifiers, **opt)
-    ids  = []
-    rids = []
-    expand_ids(*identifiers).each do |identifier|
-      id_term(identifier)[:id] ? (ids << identifier) : (rids << identifier)
+    terms = expand_ids(*identifiers).map { |term| id_term(term) }
+    ids   = terms.map { |term| term[:id].presence }
+    ids   = (ids << opt.delete(:id)).uniq.compact.presence
+    sids  = terms.map { |term| term[:submission_id].presence }
+    sids  = (sids << opt.delete(:submission_id)).uniq.compact.presence
+    terms = []
+
+    if ids && sids
+      terms << sql_terms(id: ids, submission_id: sids, join: :or)
+    elsif ids
+      opt[:id] = ids
+    elsif sids
+      opt[:submission_id] = sids
     end
-    result =
-      if ids.present? && rids.present?
-        terms = sql_terms(id: ids, repository_id: rids, join: :or)
-        terms = sql_terms(opt, *terms, join: :and) if opt.present?
-        where(terms)
-      else
-        opt[:id]            = ids  if ids.present?
-        opt[:repository_id] = rids if rids.present?
-        where(**opt)               if opt.present?
-      end
+
+    u = USER_COLUMNS - %i[review_user]
+    terms << sql_terms(opt.extract!(*u), join: :or) if opt.slice(*u).size > 1
+
+    s = STATE_COLUMNS
+    terms << sql_terms(opt.extract!(*s), join: :or) if opt.slice(*s).size > 1
+
+    opt    = opt.presence
+    terms  = terms.presence
+    terms  = sql_terms(opt, *terms, join: :and) if terms && opt
+    result = (where(terms) if terms) || (where(**opt) if opt)
     Array.wrap(result&.records)
-  end
-
-  # Interpret an identifier as either an :id or :repository_id, generating a
-  # field/value pair for use with #find_by or #where.
-  #
-  # @param [String, Symbol] id
-  #
-  # @return [Hash{Symbol=>String}]    Result will have only one entry.
-  #
-  def self.id_term(id)
-    id          = id.to_s.strip
-    digits_only = id.remove(/\d/).empty?
-    digits_only ? { id: id } : { repository_id: id }
-  end
-
-  # The database ID of the first "upload" table record.
-  #
-  # @return [Integer]                 If 0 then the table is empty.
-  #
-  def self.minimum_id
-    Upload.minimum(:id).to_i
-  end
-
-  # The database ID of the last "upload" table record.
-  #
-  # @return [Integer]                 If 0 then the table is empty.
-  #
-  def self.maximum_id
-    Upload.maximum(:id).to_i
-  end
-
-  # Transform a mixture of ID representations into a set of one or more
-  # non-overlapping range representations.
-  #
-  # @param [Array<Upload, String, Integer, Array>] ids
-  # @param [Hash]                                  opt
-  #
-  # @option opt [Integer] :min_id     Default: `#minimum_id`
-  # @option opt [Integer] :max_id     Default: `#maximum_id`
-  #
-  # @return [Array<String>]
-  #
-  def self.compact_ids(*ids, **opt)
-    opt[:min_id] ||= minimum_id
-    opt[:max_id] ||= maximum_id
-    non_ids, ids = expand_ids(*ids, **opt).partition { |v| v.to_i.zero? }
-    non_ids.sort!.uniq!
-    ids.map! { |id| [id.to_i, opt[:min_id]].max }.sort!.uniq!
-    ids =
-      ids.chunk_while { |prev, this| (prev + 1) == this }.map do |range|
-        first = range.shift
-        last  = range.pop || first
-        (first == last) ? first.to_s : "#{first}-#{last}"
-      end
-    min, max = opt.values_at(:min_id, :max_id).map(&:to_s)
-    all = (ids == [max] if min == max)
-    all ||= (ids == [min, '$']) || (ids == [min, max])
-    all ||= ids.first&.match?(/^(0|1|#{min}|\*)?-(#{max}|\$)$/)
-    ids = %w(*) if all
-    ids + non_ids
-  end
-
-  # Transform a mixture of ID representations into a list of single IDs.
-  #
-  # Any parameter may be (or contain):
-  # - A single ID as a String or Integer
-  # - A set of IDs as a string of the form /\d+(,\d+)*/
-  # - A range of IDs as a string of the form /\d+-\d+/
-  # - A range of the form /-\d+/ is interpreted as /0-\d+/
-  #
-  # @param [Array<Upload, String, Integer, Array>] ids
-  # @param [Hash]                                  opt
-  #
-  # @option opt [Integer] :min_id     Default: `#minimum_id`
-  # @option opt [Integer] :max_id     Default: `#maximum_id`
-  #
-  # @return [Array<String>]
-  #
-  # == Examples
-  #
-  # @example Single
-  #   expand_ids('123') -> %w(123)
-  #
-  # @example Sequence
-  #   expand_ids('123,789') -> %w(123 789)
-  #
-  # @example Range
-  #   expand_ids('123-126') -> %w(123 124 125 126)
-  #
-  # @example Mixed
-  #   expand_ids('125,789-791,123-126') -> %w(125 789 790 791 123 124 126)
-  #
-  # @example Implicit range
-  #   expand_ids('-3')  -> %w(1 2 3)
-  #   expand_ids('*-3') -> %w(1 2 3)
-  #
-  # @example Open-ended range
-  #   expand_ids('3-')  -> %w(3 4 5 6)
-  #   expand_ids('3-*') -> %w(3 4 5 6)
-  #   expand_ids('3-$') -> %w(3 4 5 6)
-  #
-  # @example All records
-  #   expand_ids('*')   -> %w(1 2 3 4 5 6)
-  #   expand_ids('-$')  -> %w(1 2 3 4 5 6)
-  #   expand_ids('*-$') -> %w(1 2 3 4 5 6)
-  #   expand_ids('1-$') -> %w(1 2 3 4 5 6)
-  #
-  # @example Last record only
-  #   expand_ids('$')   -> %w(6)
-  #   expand_ids('$-$') -> %w(6)
-  #
-  def self.expand_ids(*ids, **opt)
-    opt[:min_id] ||= minimum_id
-    opt[:max_id] ||= maximum_id
-    ids.flatten.flat_map { |id|
-      id.is_a?(String) ? id.strip.split(/\s*,\s*/) : id
-    }.flat_map { |id| expand_id_range(id, **opt) }.compact.uniq
-  end
-
-  # A valid ID range term for interpolation into a Regexp.
-  #
-  # @type [String]
-  #
-  RANGE_TERM = '(\d+|\$|\*)'
-
-  # Interpret an ID string as a range of IDs if possible.
-  #
-  # The method supports a mixture of database IDs (which are comprised only of
-  # decimal digits) and repository IDs (which always start with a non-digit),
-  # however repository IDs cannot be part of ranges.
-  #
-  # @param [String, Integer, Upload] id
-  # @param [Hash]                    opt
-  #
-  # @option opt [Integer] :min_id     Default: `#minimum_id`
-  # @option opt [Integer] :max_id     Default: `#maximum_id`
-  #
-  # @return [Array<String>]
-  #
-  # @see #expand_ids
-  #
-  def self.expand_id_range(id, **opt)
-    # noinspection RubyCaseWithoutElseBlockInspection
-    min, max =
-      case id
-        when Upload                         then [id.id]
-        when Hash                           then [id[:id] || id['id']]
-        when Numeric, /^\d+$/, '$'          then [id]
-        when '*'                            then [1,  '$']
-        when /^-#{RANGE_TERM}/              then [1,  $1]
-        when /^#{RANGE_TERM}-$/             then [$1, '$']
-        when /#{RANGE_TERM}-#{RANGE_TERM}/  then [$1, $2]
-      end
-    min &&= opt[:max_id] ||= maximum_id if (min == '$')
-    min &&= [1, min.to_i].max
-    max &&= opt[:max_id] ||= maximum_id if (max == '$') || (max == '*')
-    max &&= [1, max.to_i].max
-    (max ? (min..max).to_a : [min || id].reject(&:blank?)).map(&:to_s)
-  end
-
-  # ===========================================================================
-  # :section: Class methods - records
-  # ===========================================================================
-
-  protected
-
-  # Counter for the trailing portion of the generated repository ID.
-  #
-  # This provides a per-thread value in the range 0..99 which can be used to
-  # differentiate repository IDs which are generated in rapid succession (e.g.,
-  # for bulk upload).
-  #
-  # @return [Integer]
-  #
-  def self.rid_counter
-    @rid_counter &&= (@rid_counter + 1) % 100
-    @rid_counter ||= rand(100) % 100
   end
 
   # ===========================================================================
@@ -957,15 +709,6 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   protected
-
-  # Indicate whether the attached file is valid.
-  #
-  def attached_file_valid?
-    file_attacher.validate
-    file_attacher.errors.each { |e|
-      errors.add(:file, :invalid, message: e)
-    }.empty?
-  end
 
   # Indicate whether all required fields have valid values.
   #
@@ -977,10 +720,10 @@ class Upload < ApplicationRecord
   # Indicate whether all required fields have valid values.
   #
   def emma_data_valid?
-    if emma_data.blank?
+    if active_emma_data.blank?
       errors.add(:emma_data, :missing)
     else
-      check_required(emma_metadata, Field::CONFIG[:emma_data])
+      check_required(active_emma_metadata, Field::CONFIG[:emma_data])
     end
     errors.empty?
   end
@@ -1029,84 +772,6 @@ class Upload < ApplicationRecord
           end
         end
       end
-    end
-  end
-
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  public
-
-  # Make a debug output note to mark when a callback has occurred.
-  #
-  # @param [Symbol] type
-  #
-  # @return [void]
-  #
-  # == Usage Notes
-  # EVENT                                 SHOULD BE CALLED AUTOMATICALLY:
-  # before_save:                          activerecord_before_save
-  # after_commit, on: %i[create update]   activerecord_after_save
-  # after_commit, on: %i[destroy]         activerecord_after_destroy
-  #
-  def note_cb(type)
-    __debug_line("*** UPLOAD CALLBACK #{type} ***")
-  end
-
-  # Finalize a file upload by promoting the :cache file to a :store file.
-  #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
-  #
-  # @return [void]
-  #
-  def promote_file(no_raise: false)
-    __debug_args(binding) { { file: file } }
-    file_attacher.attach_cached(file_data) unless file_attacher.attached?
-  rescue => error
-    log_exception(error, __method__)
-    raise error unless no_raise
-  end
-
-  # Finalize a deletion by the removing the file from :cache and/or :store.
-  #
-  # @param [Boolean] no_raise         If *true*, don't re-raise exceptions.
-  #
-  # @return [void]
-  #
-  def delete_file(no_raise: false)
-    __debug_args(binding) { { file: file } }
-    file_attacher.attach_cached(file_data) unless file_attacher.attached?
-    file_attacher.destroy
-  rescue => error
-    log_exception(error, __method__)
-    raise error unless no_raise
-  end
-
-  # ===========================================================================
-  # :section: Callbacks
-  # ===========================================================================
-
-  private
-
-  # Add a log message for an exception.
-  #
-  # @param [Exception] excp
-  # @param [Symbol]    method         Calling method.
-  #
-  # @return [nil]
-  #
-  def log_exception(excp, method = nil)
-    error = warning = nil
-    case excp
-      when Shrine::FileNotFound      then warning = 'FILE_NOT_FOUND'
-      when Shrine::InvalidFile       then warning = 'INVALID_FILE'
-      when Shrine::AttachmentChanged then warning = 'ATTACHMENT_CHANGED'
-      when Shrine::Error             then error   = 'unexpected Shrine error'
-      else                                error   = "#{excp.class} unexpected"
-    end
-    Log.add(error ? Log::ERROR : Log::WARN) do
-      "#{method || __method__}: #{excp.message} [#{error || warning}]"
     end
   end
 

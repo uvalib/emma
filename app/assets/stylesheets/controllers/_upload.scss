@@ -545,6 +545,10 @@ form.select-entry {
         &.required {
         }
 
+        &.sealed {
+            background: $input-sealed-bg;
+        }
+
         &.disabled {
 
             background: $input-disabled-bg;
@@ -567,6 +571,16 @@ form.select-entry {
             &.valid:not(.disabled) {
                 background: $focus-accent;
             }
+
+            &.valid.sealed {
+                background: $ro-focus-accent;
+            }
+        }
+
+        // De-emphasize this field to indicate that it is no longer required
+        // after "rem_complete" (Entire Document Remediated?) is set to "true".
+        &.field-PartsRemediated[data-required="false"] {
+            background: $input-sealed-bg;
         }
     }
 

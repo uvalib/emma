@@ -95,6 +95,7 @@ module Emma::Json
   #
   # @param [String, Hash, *] value
   # @param [Boolean] no_raise         If *false*, re-raise exceptions.
+  # @param [Boolean] align_values
   # @param [Boolean] ruby_keys        Remove surrounding quotes from keys.
   #
   # @raise [MultiJson::ParseError]    If *arg* failed to parse.
@@ -106,14 +107,28 @@ module Emma::Json
   # An HTML element can show the lines as they are generated if it has style
   # "white-space: pre;".
   #
-  def pretty_json(value, no_raise: true, ruby_keys: true)
+  def pretty_json(value, no_raise: true, align_values: true, ruby_keys: true)
     case value
       when String then value = json_parse(value, no_raise: false)
       when Hash   then value = value.deep_stringify_keys
       else             raise "#{value.class} unexpected"
     end
     result = MultiJson.dump(value, pretty: true)
-    result.gsub!(/^(\s*)"([^"]+?)":/, '\1\2:') if ruby_keys
+    max_key_size =
+      if align_values
+        result.gsub(/^\s*"/, '').gsub(/": .*$/, '').split("\n").map(&:size).max
+      end
+    if align_values || ruby_keys
+      result.gsub!(/^(\s*)"([^"]+?)":\s*(.*)$/) do
+        space = $1
+        key   = $2.to_s
+        val   = $3
+        align = (' ' * (max_key_size - key.size) if align_values)
+        key   = %Q("#{$2}") unless ruby_keys
+        val   = 'nil'       if ruby_keys && val.match?(/null,?/)
+        "#{space}#{key}: #{align}#{val}"
+      end
+    end
     result
   rescue => error
     Log.debug { "#{__method__}: #{error.class}: #{error.message}" }

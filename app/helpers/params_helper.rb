@@ -59,6 +59,18 @@ module ParamsHelper
     request.get? && !request_xhr? && !modal?
   end
 
+  # Indicate whether the current request originates from an application page.
+  #
+  def local_request?
+    request.referer.to_s.start_with?(root_url)
+  end
+
+  # Indicate whether the current request originates from an application page.
+  #
+  def same_request?
+    (request.referer == request.url) || (request.referer == request.fullpath)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

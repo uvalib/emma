@@ -165,11 +165,11 @@ module SearchHelper
   #++
   def source_record_link(item, **opt)
     url  = item.record_title_url
-    repo = url_repository(url) || item.emma_repository.presence&.to_sym
+    repo = url_repository(url) || item.emma_repository.presence
     if repo == EmmaRepository.default
       record_popup(item, **opt)
     elsif url.present?
-      repo = repo&.to_s&.titleize || 'source repository'       # TODO: I18n
+      repo = repo&.titleize || 'source repository'             # TODO: I18n
       opt[:title] ||= "View this item on the #{repo} website." # TODO: I18n
       rid = CGI.unescape(item.emma_repositoryRecordId)
       external_link(rid, url, **opt)
@@ -211,14 +211,14 @@ module SearchHelper
     # To account for the handful of "EMMA" items that are actually Bookshare
     # items from the "EMMA collection", change the reported repository based on
     # the nature of the URL.
-    repo = url_repository(url) || item.emma_repository.presence&.to_sym
+    repo = url_repository(url) || item.emma_repository.presence
 
     # Set up the tooltip to be shown before the item has been requested.
     html_opt[:title] ||=
       if permitted
         fmt     = item.dc_format.to_s.underscore.upcase.tr('_', ' ')
-        origin  = repo&.to_s&.titleize || 'the source repository' # TODO: I18n
-        "Retrieve the #{fmt} source from #{origin}." # TODO: I18n
+        origin  = repo&.titleize || 'the source repository' # TODO: I18n
+        "Retrieve the #{fmt} source from #{origin}."        # TODO: I18n
       else
         tip_key = (signed_in?) ? 'disallowed' : 'sign_in'
         tip_key = "emma.download.link.#{tip_key}.tooltip"
@@ -228,7 +228,7 @@ module SearchHelper
         I18n.t(tip_key, fmt: fmt, repo: origin, default: default)
       end
 
-    case repo
+    case repo&.to_sym
       when :emma
         emma_retrieval_link(item, label, url, **html_opt)
       when :bookshare
@@ -327,15 +327,10 @@ module SearchHelper
   def search_list_entry_number(item, opt = nil)
     db_id =
       if can?(:edit, Upload)
-        if item.respond_to?(:id)
-          item.id
-        elsif item.respond_to?(:emma_repositoryRecordId)
-          # noinspection RubyResolve
-          if item.emma_repository == EmmaRepository.default.to_s
-            rid = item.emma_repositoryRecordId
-            Upload.where(repository_id: rid).first&.id
+        Upload.id_for(item) ||
+          if (sid = Upload.sid_for(item))
+            Upload.where(submission_id: sid).first&.id
           end
-        end
       end
     list_entry_number(item, opt) do
       # noinspection RubyYardParamTypeMatch

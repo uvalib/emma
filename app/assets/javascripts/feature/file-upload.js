@@ -172,7 +172,6 @@ $(document).on('turbolinks:load', function() {
      *      s_accessMode:                       string[],
      *      s_accessModeSufficient:             string[],
      *      s_accessibilitySummary:             string,
-     *      bib_subtitle:                       string,
      *      bib_series:                         string,
      *      bib_seriesType:                     string,
      *      bib_seriesPosition:                 string,
@@ -185,7 +184,6 @@ $(document).on('turbolinks:load', function() {
      *      rem_remediation:                    string|string[],
      *      rem_quality:                        string|string[],
      *      rem_status:                         string,
-     *      rem_image_count:                    number,
      * }} EmmaData
      *
      * @see "en.emma.upload.record.emma_data"
@@ -200,7 +198,7 @@ $(document).on('turbolinks:load', function() {
      *      emma_data:      EmmaData,
      *      user_id:        number,
      *      repository:     string,
-     *      repository_id:  string,
+     *      submission_id:  string,
      *      fmt:            string,
      *      ext:            string,
      *      state:          string,
@@ -222,26 +220,74 @@ $(document).on('turbolinks:load', function() {
      */
 
     /**
-     * Response message list element for a single submission.
-     *
-     * @typedef {{
-     *      entry: UploadRecord
-     * }} UploadRecordMessageEntry
-     */
-
-    /**
      * JSON format of a response message containing a list of submissions.
      *
      * @typedef {{
      *      entries: {
-     *          list:       UploadRecordMessageEntry[],
+     *          list:       UploadRecord[],
      *          properties: {
      *              total:  number,
-     *              limit:  number,
+     *              limit:  number|null,
      *              links:  array|null
      *          }
      *      }
      * }} UploadRecordMessage
+     */
+
+    /**
+     * A single search result entry.
+     *
+     * @typedef {{
+     *      emma_recordId:                      string,
+     *      emma_titleId:                       string,
+     *      emma_repository:                    string,
+     *      emma_collection:                    string[],
+     *      emma_repositoryRecordId:            string,
+     *      emma_retrievalLink:                 string,
+     *      emma_webPageLink:                   string,
+     *      emma_lastRemediationDate:           string?,
+     *      emma_repositoryMetadataUpdateDate:  string?,
+     *      emma_lastRemediationNote:           string,
+     *      emma_formatVersion:                 string,
+     *      emma_formatFeature:                 string[]?,
+     *      dc_title:                           string,
+     *      dc_creator:                         string[]?,
+     *      dc_identifier:                      string[]?,
+     *      dc_relation:                        string[]?,
+     *      dc_publisher:                       string,
+     *      dc_language:                        string[],
+     *      dc_rights:                          string,
+     *      dc_provenance:                      string,
+     *      dc_description:                     string,
+     *      dc_format:                          string,
+     *      dc_type:                            string,
+     *      dc_subject:                         string[]?,
+     *      dcterms_dateAccepted:               string?,
+     *      dcterms_dateCopyright:              string,
+     *      s_accessibilityFeature:             string[]?,
+     *      s_accessibilityControl:             string[]?,
+     *      s_accessibilityHazard:              string[]?,
+     *      s_accessibilitySummary:             string?,
+     *      s_accessMode:                       string[]?,
+     *      s_accessModeSufficient:             string[]?
+     * }} SearchResultEntry
+     *
+     * @see "en.emma.search.fields"
+     */
+
+    /**
+     * JSON format of a response message containing a list of search results.
+     *
+     * @typedef {{
+     *      records: {
+     *          list:       SearchResultEntry[],
+     *          properties: {
+     *              total:  number,
+     *              limit:  number|null,
+     *              links:  array|null
+     *          }
+     *      }
+     * }} SearchResultMessage
      */
 
     /**
@@ -308,6 +354,14 @@ $(document).on('turbolinks:load', function() {
     const DEBOUNCE_DELAY = 500; // milliseconds
 
     /**
+     * The value used to denote that a database field has been intentionally
+     * left blank.
+     *
+     * @type {string}
+     */
+    const EMPTY_VALUE = Emma.Upload.Field.empty;
+
+    /**
      * Generic form selector.
      *
      * @constant
@@ -321,7 +375,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const DRAG_AND_DROP_SELECTOR = selector(Emma.Upload.css.drag_target);
+    const DRAG_AND_DROP_SELECTOR = selector(Emma.Upload.Style.drag_target);
 
     /**
      * Selector for thumbnail display of the selected file.
@@ -329,7 +383,7 @@ $(document).on('turbolinks:load', function() {
      * @constant
      * @type {string}
      */
-    const PREVIEW_SELECTOR = selector(Emma.Upload.css.preview);
+    const PREVIEW_SELECTOR = selector(Emma.Upload.Style.preview);
 
     /**
      * Selectors for input fields.
@@ -671,7 +725,7 @@ $(document).on('turbolinks:load', function() {
         let html = '';
         if (typeof entry !== 'object') {
             text = entry.toString();
-        } else if (isMissing(entry.repository_id)) {
+        } else if (isMissing(entry.submission_id)) {
             // A generic object.
             text = asString(entry, 512);
         } else {
@@ -682,7 +736,7 @@ $(document).on('turbolinks:load', function() {
             const pair  = {
                 time: secondsSince(start, time).toFixed(1),
                 id:   (entry.id            || '(missing id)'),
-                rid:  (entry.repository_id || '(missing repository_id)'),
+                sid:  (entry.submission_id || '(missing submission_id)'),
                 file: (file && `"${file}"` || '(missing filename)')
             };
             $.each(pair, function(k, v) {
@@ -755,13 +809,7 @@ $(document).on('turbolinks:load', function() {
                 /** @type {UploadRecordMessage} message */
                 const message = data.response   || data;
                 const entries = message.entries || {};
-                const list    = entries.list    || [];
-                const first   = list[0];
-                if ((typeof first === 'object') && isPresent(first.entry)) {
-                    records = list.map(function(v) { return v.entry; });
-                } else {
-                    records = list;
-                }
+                records       = entries.list    || [];
             }
         }
 
@@ -875,6 +923,9 @@ $(document).on('turbolinks:load', function() {
         // Ensure that required fields are indicated.
         initializeFormFields($form);
         monitorInputFields($form);
+
+        // Intercept the "Source Repository" menu selection.
+        monitorSourceRepository($form);
 
         // Set initial field filtering and setup field display filter controls.
         monitorFieldDisplayFilterButtons($form);
@@ -1142,7 +1193,7 @@ $(document).on('turbolinks:load', function() {
         }
         // noinspection JSUnresolvedVariable
         uppy.use(Uppy.XHRUpload, {
-            endpoint:   Emma.Upload.path.endpoint,
+            endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
             limit:     1,
             headers:   { 'X-CSRF-Token': Rails.csrfToken() }
@@ -1182,11 +1233,25 @@ $(document).on('turbolinks:load', function() {
          * This event occurs between the 'file-added' and 'upload-started'
          * events.
          *
+         * The current value of the submission's database ID applied to the
+         * upload endpoint URL in order to correlate the upload with the
+         * appropriate workflow.
+         *
          * @param {{id: string, fileIDs: string[]}} data
          */
         function onFileUploadStarting(data) {
             debug('Uppy:', 'upload', data);
             clearFlash();
+            const upload = uppy.getPlugin('XHRUpload');
+            const url    = upload.getOptions({}).endpoint;
+            const db_id  = dbId($form);
+            if (isMissing(url)) {
+                console.error('No endpoint for upload');
+            } else if (db_id) {
+                const new_url = makeUrl(url, { id: db_id });
+                // noinspection JSCheckFunctionSignatures
+                upload.setOptions({ endpoint: new_url });
+            }
         }
 
         /**
@@ -1236,7 +1301,7 @@ $(document).on('turbolinks:load', function() {
                 if (!emma_data.dc_format) {
                     const meta = file_data.metadata;
                     const mime = meta && meta.mime_type;
-                    const fmt  = Emma.Upload.mime.to_fmt[mime] || [];
+                    const fmt  = Emma.Upload.Mime.to_fmt[mime] || [];
                     if (fmt[0]) { emma_data.dc_format = fmt[0]; }
                 }
             }
@@ -1516,18 +1581,29 @@ $(document).on('turbolinks:load', function() {
      * Interpret the object keys as field names to locate the input elements
      * to update.
      *
+     * The field will not be updated if "sealed off" by the presence of the
+     * "sealed" CSS class.  This prevents the uploading of the file from
+     * modifying metadata which is under the control of the member repository
+     * specified via 'emma_repository'.
+     *
      * @param {object}   data
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function populateFormFields(data, form) {
         if (isPresent(data)) {
             let $form = formElement(form);
+            let count = 0;
             $.each(data, function(field, value) {
                 let $field = formField(field, $form);
-                updateInputField($field, value);
+                if (!$field.hasClass('sealed')) {
+                    updateInputField($field, value);
+                    count++;
+                }
             });
-            resolveRelatedFields();
-            validateForm($form);
+            if (count) {
+                resolveRelatedFields();
+                validateForm($form);
+            }
         }
     }
 
@@ -1555,11 +1631,15 @@ $(document).on('turbolinks:load', function() {
     function updateInputField(field, new_value, trim, init) {
         let $field = $(field);
 
+        // noinspection IfStatementWithTooManyBranchesJS
         if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, trim, init);
 
         } else if ($field.is('fieldset.menu.multi')) {
             updateFieldsetCheckboxes($field, new_value, init);
+
+        } else if ($field.is('select.menu.single')) {
+            updateMenu($field, new_value, init);
 
         } else if ($field.is('[type="checkbox"]')) {
             updateCheckboxInputField($field, new_value, init);
@@ -1576,10 +1656,10 @@ $(document).on('turbolinks:load', function() {
      * Update the input field collection and label for a <fieldset> and its
      * enclosed set of text inputs.
      *
-     * @param {Selector}        target
-     * @param {string|string[]} [new_value]
-     * @param {boolean}         [trim]      If *false*, don't trim white space.
-     * @param {boolean}         [init]      If *true*, in initialization phase.
+     * @param {Selector}             target
+     * @param {string|string[]|null} [new_value]
+     * @param {boolean}              [trim]     If *false*, keep white space.
+     * @param {boolean}              [init]     If *true*, initializing.
      *
      * @see "ModelHelper#render_form_input_multi"
      */
@@ -1591,8 +1671,8 @@ $(document).on('turbolinks:load', function() {
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
         let value, values;
-        if (Array.isArray(new_value)) {
-            values = compact(new_value);
+        if (Array.isArray(new_value) || (setting === null)) {
+            values = compact(new_value || []);
             $inputs.each(function(i) {
                 value = values[i];
                 if (init && !value) {
@@ -1644,9 +1724,9 @@ $(document).on('turbolinks:load', function() {
      * Update the input field collection and label for a <fieldset> and its
      * enclosed set of checkboxes.
      *
-     * @param {Selector}        target
-     * @param {string|string[]} [setting]
-     * @param {boolean}         [init]      If *true*, in initialization phase.
+     * @param {Selector}             target
+     * @param {string|string[]|null} [setting]
+     * @param {boolean}              [init]     If *true*, in initialization.
      *
      * @see "ModelHelper#render_form_menu_multi"
      */
@@ -1658,8 +1738,8 @@ $(document).on('turbolinks:load', function() {
         // If a value is provided, use it to define the state of the contained
         // checkboxes if it is an array, or to set a specific checkbox if it
         // is a string.
-        if (Array.isArray(setting)) {
-            const values = compact(setting);
+        if (Array.isArray(setting) || (setting === null)) {
+            const values = compact(setting || []);
             $checkboxes.each(function() {
                 const checked = values.includes(this.value);
                 setChecked(this, checked, init);
@@ -1723,6 +1803,29 @@ $(document).on('turbolinks:load', function() {
 
         // Update the enclosing fieldset.
         updateFieldsetCheckboxes($fieldset, undefined, init);
+    }
+
+    /**
+     * Update the input field and label for a <select>.
+     *
+     * For these types, the label is a sibling of the input element.
+     *
+     * @param {Selector}       target
+     * @param {string|null}    [new_value]
+     * @param {boolean}        [init]       If *true*, in initialization phase.
+     *
+     * @see "ModelHelper#render_form_menu_single"
+     */
+    function updateMenu(target, new_value, init) {
+        let $input = $(target);
+        let value  = new_value;
+        if (Array.isArray(value)) {
+            value = compact(value)[0];
+        } else if (value !== null) {
+            value = value || $input.val();
+        }
+        setValue($input, value, true, init);
+        updateFieldAndLabel($input, $input.val());
     }
 
     /**
@@ -2117,6 +2220,436 @@ $(document).on('turbolinks:load', function() {
     }
 
     // ========================================================================
+    // Functions - source repository
+    // ========================================================================
+
+    // noinspection FunctionWithMultipleReturnPointsJS
+    /**
+     * Monitor attempts to change to the "Source Repository" menu selection.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function monitorSourceRepository(form) {
+
+        const func = 'monitorSourceRepository:';
+        let $form  = formElement(form);
+        let $menu  = sourceRepositoryMenu($form);
+
+        // If editing a completed submission, prevent the selection from being
+        // updated.
+
+        if (isUpdateForm($form) && $menu.val()) {
+            const note = 'This cannot be changed for an existing EMMA entry'; // TODO: I18n
+            $menu.attr('title', note);
+            $menu.prop('disabled', true);
+            $menu.addClass('sealed');
+            return;
+        }
+
+        // Listen for a change to the "Source Repository" selection.  If the
+        // selection was cleared, or if the default repository was selected,
+        // then proceed to form validation.  If a member repository was
+        // selected, prompt for the original item.
+
+        handleEvent($menu, 'change', function() {
+            clearFlash();
+            hideParentEntrySelect($form);
+            const new_repo = $menu.val() || '';
+            if (!new_repo || (new_repo === Emma.Upload.Repo.default)) {
+                setSourceRepository(new_repo);
+            } else {
+                let $popup = showParentEntrySelect($form);
+                $popup.find('#parent-entry-search').focus();
+            }
+        });
+
+        // Set up click handler for the button within .parent-entry-select,
+        // the element that will be displayed to prompt for the original item
+        // on which this submission is based.
+
+        let $submit = parentEntrySelect($form).find('.search-button');
+        handleClickAndKeypress($submit, function() {
+            clearFlash();
+            hideParentEntrySelect($form);
+            const new_repo = $menu.val();
+            const query    = parentEntrySearchTerms($form);
+            const search   = { q: query, repository: new_repo };
+            fetchIndexEntries(search, useParentEntryMetadata, searchFailure);
+        });
+
+        // If the prompt is cancelled, silently restore the source repository
+        // selection to its previous setting.
+
+        let $cancel = parentEntrySelect($form).find('.search-cancel');
+        handleClickAndKeypress($cancel, function() {
+            clearFlash();
+            hideParentEntrySelect($form);
+            searchFailure();
+        });
+
+        // noinspection FunctionWithMultipleReturnPointsJS
+        /**
+         * Extract the title information from the search results.
+         *
+         * @param {SearchResultEntry[]} list
+         *
+         * @returns {void}
+         */
+        function useParentEntryMetadata(list) {
+
+            const new_repo = $menu.val();
+            let error;
+
+            // If there was an error, the source repository menu selection is
+            // restored to its previous setting.
+
+            if (isEmpty(list)) {
+                const query = parentEntrySearchTerms($form);
+                error = `${new_repo}: no match for "${query}"`;
+                console.warn(func, error);
+            } else if (!Array.isArray(list)) {
+                error = `${new_repo}: search error`;
+                console.error(func, `${new_repo}: arg is not an array`);
+            }
+            if (error) {
+                return searchFailure(error);
+            }
+
+            // Ideally, there should be only a single search result which
+            // matched the search terms.  If there are multiple results,
+            // ideally they are all just variations on the same title.
+
+            let parent = list.shift();
+            if (new_repo !== parent.emma_repository) {
+                error = 'PROBLEM: ';
+                error += `new_repo == "${new_repo}" but parent `;
+                error += `emma_repository == "${parent.emma_repository}"`;
+                console.warn(func, error);
+            }
+            if (isPresent(list)) {
+                const title_id = parent.emma_titleId;
+                list.forEach(function(entry) {
+                    if (entry.emma_titleId !== title_id) {
+                        error = `ambiguous: Title ID ${entry.emma_titleId}`;
+                        flashMessage(error);
+                        console.warn(func, `ambiguous: ${asString(entry)}`);
+                    }
+                });
+            }
+
+            // If control reaches here then the current selection is valid.
+
+            $menu.attr('data-previous-value', new_repo);
+
+            // Update form fields.
+            //
+            // Value        Field will be...
+            // -----------  --------------------------------------------------
+            // FROM_PARENT  assigned the value acquired from the parent record
+            // CLEARED      cleared of any value(s)
+            // AS_IS        kept as it is
+            // (other)      assigned that value
+            //
+            // The AS_IS choice is necessary for any remediation-related fields
+            // may have been extracted from the file if it was provided before
+            // the source repository was selected.
+
+            const FROM_PARENT  = true;
+            const CLEARED      = null;
+            const AS_IS        = '';
+            const repo_name    = Emma.Upload.Repo.name[new_repo];
+            const source_field = {
+                repository:                         new_repo,
+                emma_recordId:                      CLEARED,
+                emma_titleId:                       FROM_PARENT,
+                emma_repository:                    new_repo,
+                emma_collection:                    FROM_PARENT,
+                emma_repositoryRecordId:            FROM_PARENT,
+                emma_retrievalLink:                 CLEARED,
+                emma_webPageLink:                   CLEARED,
+                emma_lastRemediationDate:           AS_IS,
+                emma_repositoryMetadataUpdateDate:  AS_IS,
+                emma_lastRemediationNote:           AS_IS,
+                emma_formatVersion:                 AS_IS,
+                emma_formatFeature:                 AS_IS,
+                dc_title:                           FROM_PARENT,
+                dc_creator:                         FROM_PARENT,
+                dc_identifier:                      FROM_PARENT,
+                dc_relation:                        FROM_PARENT,
+                dc_publisher:                       FROM_PARENT,
+                dc_language:                        FROM_PARENT,
+                dc_rights:                          FROM_PARENT,
+                dc_provenance:                      FROM_PARENT,
+                dc_description:                     FROM_PARENT,
+                dc_format:                          AS_IS,
+                dc_type:                            AS_IS,
+                dc_subject:                         FROM_PARENT,
+                dcterms_dateAccepted:               CLEARED,
+                dcterms_dateCopyright:              FROM_PARENT,
+                s_accessibilityFeature:             AS_IS,
+                s_accessibilityControl:             AS_IS,
+                s_accessibilityHazard:              AS_IS,
+                s_accessibilityMode:                AS_IS,
+                s_accessibilityModeSufficient:      AS_IS,
+                s_accessibilitySummary:             AS_IS,
+                bib_series:                         FROM_PARENT,
+                bib_seriesType:                     FROM_PARENT,
+                bib_seriesPosition:                 FROM_PARENT,
+                bib_version:                        FROM_PARENT,
+                rem_source:                         repo_name,
+                rem_metadataSource:                 [repo_name],
+                rem_remediatedBy:                   AS_IS,
+                rem_complete:                       AS_IS,
+                rem_coverage:                       AS_IS,
+                rem_remediation:                    AS_IS,
+                rem_quality:                        AS_IS,
+                rem_status:                         AS_IS
+            };
+
+            let update = {};
+            $.each(source_field, function(field, value) {
+                if (typeof value === 'function') {
+                    update[field] = value(parent);
+                } else if (value === FROM_PARENT) {
+                    update[field] = parent[field] || EMPTY_VALUE;
+                } else {
+                    update[field] = value;
+                }
+            });
+            populateFormFields(update, $form);
+
+            // Seal off the specified fields by adding the "sealed" class in
+            // order to prevent populateFormFields() from modifying the them.
+            //
+            // This way, if the source repository is set before the file is
+            // uploaded then metadata extracted from the file will not
+            // contradict the title-level metadata supplied by the member
+            // repository.
+            //
+            // This doesn't prevent the user from updating the field, but the
+            // styling of the "sealed" class should hint that changing the
+            // field is not desirable (since the change is going to be ignored
+            // by the member repository anyway).
+
+            $.each(source_field, function(field, value) {
+                if (value === FROM_PARENT) {
+                    formField(field, $form).toggleClass('sealed', true);
+                }
+            });
+        }
+
+        /**
+         * The search failed.
+         *
+         * @param {string} [message]
+         */
+        function searchFailure(message) {
+            if (message) {
+                flashError(message);
+            }
+            setSourceRepository();
+        }
+
+        /**
+         * Force the current source repository setting.
+         *
+         * @param {string} [value]
+         */
+        function setSourceRepository(value) {
+            let new_repo;
+            if (notDefined(value)) {
+                new_repo = $menu.attr('data-previous-value') || '';
+            } else {
+                new_repo = value;
+                $menu.attr('data-previous-value', new_repo);
+            }
+            const set_repo = {
+                repository:      (new_repo || EMPTY_VALUE),
+                emma_repository: (new_repo || null)
+            };
+            console.log(func, (new_repo || 'cleared'));
+            populateFormFields(set_repo, $form);
+        }
+    }
+
+    // noinspection FunctionWithMultipleReturnPointsJS
+    /**
+     * Get EMMA index entries via search.
+     *
+     * @param {string|[string]|object} search
+     * @param {function(SearchResultEntry[])} callback
+     * @param {function}                      [error_callback]
+     */
+    function fetchIndexEntries(search, callback, error_callback) {
+        const func = 'fetchIndexEntries:';
+        let search_terms = {};
+
+        // Create a search URL from the given search term(s).
+        // noinspection IfStatementWithTooManyBranchesJS
+        if (isEmpty(search)) {
+            console.error(func, 'empty search terms');
+            return;
+        } else if (Array.isArray(search)) {
+            let terms = [];
+            search.forEach(function(term) {
+                const type = typeof(term);
+                if (type !== 'string') {
+                    console.warn(func, `cannot process ${type} search term`);
+                } else if (!term) {
+                    // Skip empty term.
+                } else if (term.match(/\s/)) {
+                    terms.push(`"${term}"`);
+                } else {
+                    terms.push(term);
+                }
+            });
+            search_terms['q'] = terms.join('+');
+        } else if (typeof search === 'object') {
+            $.extend(search_terms, search);
+        } else if (typeof search !== 'string') {
+            console.error(func, `cannot process ${typeof search} search`);
+            return;
+        } else if (search.match(/\s/)) {
+            search_terms['q'] = `"${search}"`;
+        } else {
+            search_terms['q'] = search;
+        }
+        const url = makeUrl('/search', search_terms);
+
+        debug(func, 'VIA', url);
+
+        /** @type {SearchResultEntry[]} records */
+        let records = undefined;
+        let error   = '';
+        const start = Date.now();
+
+        $.ajax({
+            url:      url,
+            type:     'GET',
+            dataType: 'json',
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
+        });
+
+        /**
+         * Extract the list of search result entries returned as JSON.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            // noinspection AssignmentResultUsedJS
+            if (isMissing(data)) {
+                error = 'no data';
+            } else if (typeof(data) !== 'object') {
+                error = `unexpected data type ${typeof data}`;
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                // noinspection JSValidateTypes
+                /** @type {SearchResultMessage} message */
+                const message = data.response   || data;
+                const entries = message.records || {};
+                records       = entries.list    || [];
+            }
+        }
+
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         message
+         */
+        function onError(xhr, status, message) {
+            error = `${status}: ${xhr.status} ${message}`;
+        }
+
+        // noinspection FunctionWithMultipleReturnPointsJS
+        /**
+         * Actions after the request is completed.  If there was no error, the
+         * search result list is passed to the callback function.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            debug(func, 'complete', secondsSince(start), 'sec.');
+            let message;
+            if (records) {
+                callback(records);
+            } else if (error) {
+                message = `${url}: ${error}`;
+                consoleWarn(func, message);
+            } else {
+                message = `${url}: unknown failure`;
+                consoleError(func, message);
+            }
+            if (message && error_callback) {
+                error_callback(message);
+            }
+        }
+    }
+
+    /**
+     * The menu which defines the intended repository for the submission.
+     *
+     * @param {Selector} [form]       Passed to {@link inputFields}.
+     *
+     * @returns {jQuery}
+     */
+    function sourceRepositoryMenu(form) {
+        return inputFields(form).filter('[data-field="emma_repository"]');
+    }
+
+    /**
+     * Search terms used to locate the parent EMMA entry.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {string|undefined}
+     */
+    function parentEntrySearchTerms(form) {
+        return parentEntrySelect(form).find('#parent-entry-search').val();
+    }
+
+    /**
+     * Selection control for identifying the EMMA entry which is the source of
+     * a new submission derived from member repository content.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function parentEntrySelect(form) {
+        return formElement(form).find('.parent-entry-select');
+    }
+
+    /**
+     * Display the source entry selection control.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function showParentEntrySelect(form) {
+        return parentEntrySelect(form).toggleClass('hidden', false);
+    }
+
+    /**
+     * Hide the source entry selection control.
+     *
+     * @param {Selector} [form]
+     *
+     * @returns {jQuery}
+     */
+    function hideParentEntrySelect(form) {
+        return parentEntrySelect(form).toggleClass('hidden', true);
+    }
+
+    // ========================================================================
     // Functions - form validation
     // ========================================================================
 
@@ -2276,23 +2809,22 @@ $(document).on('turbolinks:load', function() {
         } else {
             $button = $(event || this);
         }
-        let $form = formElement($button);
-        let url;
-        // noinspection AssignmentResultUsedJS
-        if (fileSelected($form) && !canSubmit($form)) {
-            url = window.location.href;
-        } else if ((url = $button.attr('data-path'))) {
-            const def_path  = Emma.Upload.path.index;
-            const def_url   = window.location.origin + def_path;
-            const base_path = window.location.pathname;
-            const base_url  = window.location.origin + base_path;
-            if ((url === base_path) || (url === base_url)) {
-                url = base_path;
-            } else if (url.startsWith(def_path) || url.startsWith(def_url)) {
-                url = def_path;
-            }
+        const data_path = $button.attr('data-path') || '';
+        const curr_path = window.location.pathname;
+        const curr_url  = window.location.origin + curr_path;
+        const back_here =
+            data_path.startsWith(curr_path) || data_path.startsWith(curr_url);
+        let $form   = formElement($button);
+        const db_id = dbId($form);
+        let reset, redirect;
+        if (back_here && fileSelected($form) && !canSubmit($form)) {
+            reset    = true;
+            redirect = makeUrl(data_path, { id: db_id });
+        } else {
+            redirect = data_path || Emma.Upload.Path.index;
         }
-        cancelAction(url);
+        const params = { id: db_id, redirect: redirect, reset: reset };
+        cancelAction(makeUrl(Emma.Upload.Path.cancel, params));
     }
 
     /**
@@ -2333,12 +2865,20 @@ $(document).on('turbolinks:load', function() {
         // debug('ajax:beforeSend', '-', 'arguments', Array.from(arguments));
         let $form = formElement();
 
-        // Disable empty database fields.
+        // Disable empty database fields so they are not transmitted back as
+        // form data.
         databaseInputFields($form).each(function() {
-            if (this.placeholder || (this.value === "\u2013")) { // EN_DASH
+            if (this.placeholder || (this.value === EMPTY_VALUE)) {
                 this.disabled = true;
             }
         });
+
+        // If the source repository control is disabled (when editing a
+        // completed submission), re-enable it so that it *is* transmitted.
+        let $repo = sourceRepositoryMenu($form);
+        if ($repo.prop('disabled')) {
+            $repo.prop('disabled', false);
+        }
     }
 
     /**
@@ -2840,6 +3380,21 @@ $(document).on('turbolinks:load', function() {
      */
     function formField(field, form) {
         return formElement(form).find(`[data-field="${field}"]`);
+    }
+
+    /**
+     * The database ID assigned to the current submission.
+     *
+     * @param {Selector} [form]       Passed to {@link formField}
+     *
+     * @returns {string|undefined}
+     */
+    function dbId(form) {
+        const db_id = formField('id', form).val();
+        if (!db_id) {
+            console.warn('No database record ID for upload');
+        }
+        return db_id;
     }
 
     /**

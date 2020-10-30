@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_15_122520) do
+ActiveRecord::Schema.define(version: 2020_10_19_225121) do
 
   create_table "artifacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "format"
@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 2020_01_15_122520) do
     t.text "emma_data"
     t.bigint "user_id"
     t.string "repository"
-    t.string "repository_id"
+    t.string "submission_id"
     t.string "fmt"
     t.string "ext"
     t.string "state"

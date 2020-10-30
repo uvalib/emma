@@ -251,11 +251,6 @@ module XmlBased
 
     include Emma::Debug
 
-    # Non-functional hints for RubyMine.
-    # :nocov:
-    include FileAttributes unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
-
     public
 
     # Display console output.

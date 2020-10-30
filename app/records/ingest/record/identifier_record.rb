@@ -47,7 +47,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
   #                                     be provided here as the value for the
   #                                     instance.
   #
-  # @raise [UploadConcern::SubmitError]   If metadata was malformed.
+  # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
   #
   def initialize(src, **opt)
     @serializer_type ||= DEFAULT_SERIALIZER_TYPE
@@ -58,7 +58,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
       # noinspection RubyNilAnalysis
       attr = reject_blanks(src.emma_metadata.slice(*field_names))
       attr[:emma_repository]         ||= src[:repository]
-      attr[:emma_repositoryRecordId] ||= src[:repository_id]
+      attr[:emma_repositoryRecordId] ||= src[:submission_id]
       attr[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
       initialize_attributes(attr)
     elsif src.is_a?(Hash)

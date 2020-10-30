@@ -131,7 +131,6 @@ $upload-section-gap-small: $upload-section-gap / 2;
         padding-right: 0.5rem;
     }
 
-
     // A label/radio button pair.
     .radio {
 
@@ -153,6 +152,53 @@ $upload-section-gap-small: $upload-section-gap / 2;
                 @extend %hover-bold;
             }
         }
+    }
+}
+
+// Control for identifying the source EMMA entry for new submissions which are
+// derived from member repository content.
+// noinspection SassScssResolvedByNameOnly
+.parent-entry-select {
+
+    display:       flex;
+    padding:       1rem;
+    background:    white;
+    border:        0.5rem solid $uva-accent-orange;
+    border-radius: 0.75rem;
+    flex-wrap:     wrap;
+    align-items:   center;
+    gap:           1rem;
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    $search-clear-inset: -1.5rem;
+
+    .search-title {
+        font-size: large;
+        flex:      1 1 auto;
+    }
+
+    .search-input {
+        flex: 1 1 auto;
+    }
+
+    .search-clear {
+        display: none;
+    }
+
+    .search-button,
+    .search-cancel {
+        margin-left: 0.5rem;
+        padding:     2px 6px;
+        background:  lightgray;
+        border:      1px solid gray;
+        flex:        0 0 auto;
+    }
+
+    .search-cancel {
+        @extend %button-hover;
     }
 }
 
@@ -337,6 +383,13 @@ $upload-section-gap-small: $upload-section-gap / 2;
             padding-right: 0.5rem;
             line-height:   1.25;
         }
+    }
+
+    .parent-entry-select {
+
+        @include grid-column-span;
+
+        // TODO: ???
     }
 
     //=========================================================================

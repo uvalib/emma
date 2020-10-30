@@ -14,12 +14,9 @@ __loading_begin(__FILE__)
 #   :FIELD_TRANSFORMS     Hash{Symbol=>Hash{Symbol=>Proc,Symbol}}
 #   :FIELD_ALWAYS_ARRAY   Array<Symbol>
 #
-# @see FileAttributes
-#
 module FileFormat
 
   include Emma::Unicode
-  include FileAttributes
 
   # ===========================================================================
   # :section:

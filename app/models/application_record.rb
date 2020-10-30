@@ -79,10 +79,10 @@ class ApplicationRecord < ActiveRecord::Base
     connector = connector.to_s.strip.upcase unless connector.nil?
     terms << other if other.present?
     result =
-      terms.map do |term|
-        term = sql_clauses(term, join: connector) if term.is_a?(Hash)
-        term.start_with?('(') ? term : "(#{term})"
-      end
+      terms.map { |term|
+        term = sql_clauses(term, join: connector)  if term.is_a?(Hash)
+        term.start_with?('(') ? term : "(#{term})" if term.present?
+      }.compact
     connector ? result.join(" #{connector} ") : result
   end
 

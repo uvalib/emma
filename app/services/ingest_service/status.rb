@@ -28,7 +28,7 @@ module IngestService::Status
   #
   # @type [Hash{Symbol=>*}]
   #
-  SAMPLE_REPOSITORY_ID_ACCESS= {
+  SAMPLE_RECORD_ID_ACCESS= {
     ids:      'emma-2931211-pdf',
     expected: ->(result) { result.records.size == 1 }
   }.freeze
@@ -48,8 +48,8 @@ module IngestService::Status
   # @return [Array<(FalseClass,String)>]
   #
   def active_status(with: nil, expect: nil)
-    with   ||= SAMPLE_REPOSITORY_ID_ACCESS[:ids]
-    expect ||= SAMPLE_REPOSITORY_ID_ACCESS[:expected]
+    with   ||= SAMPLE_RECORD_ID_ACCESS[:ids]
+    expect ||= SAMPLE_RECORD_ID_ACCESS[:expected]
     result   = IngestService.new.get_records(*with)
     active   = result.respond_to?(:records) && expect.(result)
     message  = result&.error_message

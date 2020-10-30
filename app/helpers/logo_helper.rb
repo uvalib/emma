@@ -34,7 +34,7 @@ module LogoHelper
     opt, html_opt = partition_options(opt, :source, :name, :logo)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
-    logo = Api::Common::REPOSITORY.dig(repo, :logo)
+    logo = repository_logo(repo)
     if logo.present?
       prepend_css_classes!(html_opt, 'repository', 'logo', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
@@ -76,38 +76,52 @@ module LogoHelper
 
   # normalize_repository
   #
-  # @param [Search::Api::Record, String, Symbol, nil] src
+  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
   #
-  # @return [Symbol]                  One of EmmaRepository#values.
+  # @return [String]                  One of EmmaRepository#values.
   # @return [nil]                     If *src* did not indicate a repository.
   #
   #--
   # noinspection RubyResolve, RubyNilAnalysis
   #++
   def normalize_repository(src)
-    return Api::Common::DEFAULT_REPOSITORY if src.blank?
-    src = src.emma_repository              if src.respond_to?(:emma_repository)
-    src = src.to_s.squish
-    Api::Common::REPOSITORY.find do |repo, config|
-      return repo if (repo.to_s == src) || src.casecmp(config[:name]).zero?
-    end
+    return EmmaRepository.default if src.blank?
+    src  = src.to_s               if src.is_a?(Symbol)
+    src  = src.squish             if src.is_a?(String)
+    repo = Upload.repository_of(src)
+    return repo if repo && EmmaRepository.valid?(repo) || !src.is_a?(String)
+    # Attempt a reverse lookup by repository name.
+    # noinspection RubyYardReturnMatch
+    EmmaRepository.pairs.first { |_repo, name| src.casecmp(name).zero? }&.first
   end
 
   # repository_name
   #
-  # @param [Search::Api::Record, String, Symbol, nil] src
+  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
   #
   # @return [String]                  The name of the associated repository.
   # @return [nil]                     If *src* did not indicate a repository.
   #
   def repository_name(src)
     repo = normalize_repository(src)
-    Api::Common::REPOSITORY.dig(repo, :name)
+    EmmaRepository.pairs[repo] if repo
+  end
+
+  # repository_logo
+  #
+  # @param [Search::Api::Record, Upload, String, Symbol, nil] src
+  #
+  # @return [String]                  The logo of the associated repository.
+  # @return [nil]                     If *src* did not indicate a repository.
+  #
+  def repository_logo(src)
+    repo = normalize_repository(src)
+    Api::Common::REPOSITORY.dig(repo.to_sym, :logo) if repo
   end
 
   # repository_tooltip
   #
-  # @param [Search::Api::Record, String, Symbol, nil] item
+  # @param [Search::Api::Record, Upload, String, Symbol, nil] item
   # @param [String]                                   name
   #
   # @return [String]

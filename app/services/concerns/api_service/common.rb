@@ -326,7 +326,7 @@ module ApiService::Common
   # @param [Array<String,ScalarType>] args  Path components of the API request.
   # @param [Hash]                     opt   API request parameters except for:
   #
-  # @option opt [Symbol]  :method         The calling method.
+  # @option opt [Symbol]  :meth           The calling method for logging.
   # @option opt [Boolean] :no_raise       If *true*, set @exception but do not
   #                                         raise it.
   # @option opt [Boolean] :no_exception   If *true*, neither set @exception nor
@@ -344,10 +344,10 @@ module ApiService::Common
     @verb   = verb.to_s.downcase.to_sym
 
     # Set internal options from parameters or service options.
-    opt, @params = partition_options(opt, :method, *SERVICE_OPTIONS)
+    opt, @params = partition_options(opt, :meth, *SERVICE_OPTIONS)
     no_exception = opt[:no_exception] || options[:no_exception]
     no_raise     = opt[:no_raise]     || options[:no_raise] || no_exception
-    method       = opt[:method]       || calling_method
+    meth         = opt[:meth]         || calling_method
 
     # Form the API path from arguments, build API call parameters (minus
     # internal options), prepare HTTP headers according to the HTTP method,
@@ -393,7 +393,7 @@ module ApiService::Common
     @exception = response_error(error)
 
   ensure
-    log_exception(error, method: method) if error
+    log_exception(error, meth: meth) if error
     __debug_line(leader: '<<<') do
       # noinspection RubyNilAnalysis
       resp = error.respond_to?(:response) && error.response || @response
@@ -902,21 +902,21 @@ module ApiService::Common
   # @param [Exception]              error
   # @param [Symbol, nil]            action
   # @param [Faraday::Response, nil] response
-  # @param [Symbol, String, nil]    method
+  # @param [Symbol, String, nil]    meth
   #
   # @return [void]
   #
-  def log_exception(error, action: @action, response: @response, method: nil)
+  def log_exception(error, action: @action, response: @response, meth: nil)
     message = error.message.inspect
     __debug_line(leader: '!!!') do
       [service_name] << action.inspect << message << error.class
     end
     Log.log(error.is_a?(Api::Error) ? Log::WARN : Log::ERROR) do
-      method ||= 'request'
-      status   = %i[http_status status].find { |m| error.respond_to?(m) }
-      status   = status && error.send(status)&.inspect || '???'
-      body     = response&.body
-      log = ["#{service_name.upcase} #{method}: #{message}"]
+      meth ||= 'request'
+      status = %i[http_status status].find { |m| error.respond_to?(m) }
+      status = status && error.send(status)&.inspect || '???'
+      body   = response&.body
+      log = ["#{service_name.upcase} #{meth}: #{message}"]
       log << "status #{status}"
       log << "body #{body}" if body.present?
       log.join('; ')

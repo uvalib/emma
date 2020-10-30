@@ -115,7 +115,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
   #                                     be provided here as the value for the
   #                                     instance.
   #
-  # @raise [UploadConcern::SubmitError]   If metadata was malformed.
+  # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
   #
   def initialize(src, **opt)
     if src.is_a?(Upload)
@@ -132,7 +132,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
       # === Required fields ===
       data[:emma_repository]         ||= src[:repository]
-      data[:emma_repositoryRecordId] ||= src[:repository_id]
+      data[:emma_repositoryRecordId] ||= src[:submission_id]
       data[:dc_title]                ||= MISSING_TITLE
       data[:dc_format]               ||= FileFormat.metadata_fmt(src[:fmt])
 
@@ -170,13 +170,14 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   # Produce a retrieval link for an item.
   #
-  # @param [String] repository_id
+  # @param [String] rid               An EMMA repository record ID.
   #
   # @return [String]
+  # @return [nil]                     If no repository ID was given or found.
   #
-  def make_retrieval_link(repository_id = nil)
-    repository_id ||= (emma_repositoryRecordId rescue nil)
-    Upload.make_retrieval_link(nil, repository_id)
+  def make_retrieval_link(rid = nil)
+    rid ||= (emma_repositoryRecordId rescue nil)
+    Upload.make_retrieval_link(rid)
   end
 
 end

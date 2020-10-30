@@ -676,24 +676,20 @@ function makeUrl(...parts) {
  * @param {string|Selector|Event} arg
  */
 function cancelAction(arg) {
-    let $button = undefined;
-    let url     = undefined;
-    if (typeof arg === 'object') {
+    let button;
+    if (notDefined(arg)) {
+        button = this;
+    } else if (typeof arg === 'object') {
         arg.stopPropagation();
-        $button = $(arg.target);
-    } else if (isMissing(arg)) {
-        $button = $(this);
-    } else if (arg.startsWith('http') || arg.startsWith('/')) {
-        url     = arg;
-    } else {
-        $button = $(arg);
+        button = arg.target;
+    } else if (arg && !arg.match(/^back$|^\/|^https?:|^javascript:/i)) {
+        button = arg;
     }
-    if (!url && isPresent($button)) {
-        // noinspection JSObjectNullOrUndefined
-        url = $button.attr('data-path');
-    }
-    if (!url && window.location.search && !window.history.length) {
-        url = window.location.pathname;
+    let url = button ? $(button).attr('data-path') : arg;
+    if ((url === 'back') || (url === 'BACK')) {
+        url = '';                       // Previous page.
+    } else if (!url && window.location.search && !window.history.length) {
+        url = window.location.pathname; // Current page with no URL parameters.
     }
     if (url === window.location.href) {
         window.location.reload();

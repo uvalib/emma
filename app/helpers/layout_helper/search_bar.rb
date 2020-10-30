@@ -11,6 +11,7 @@ module LayoutHelper::SearchBar
 
   include LayoutHelper::SearchControls
   include SearchTermsHelper
+  include I18nHelper
 
   # ===========================================================================
   # :section:
@@ -164,6 +165,7 @@ module LayoutHelper::SearchBar
   #
   def search_input_types(type = nil, **opt)
     type ||= search_input_target
+    # noinspection RubyYardReturnMatch
     i18n_lookup(type, 'search_type', **opt) || {}
   end
 
@@ -172,8 +174,6 @@ module LayoutHelper::SearchBar
   # ===========================================================================
 
   private
-
-  extend I18nHelper
 
   # A table of controllers and whether their pages should show search input in
   # the page heading.

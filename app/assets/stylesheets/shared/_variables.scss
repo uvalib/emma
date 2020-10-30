@@ -78,8 +78,10 @@ $selected-bg:       lighter($uva-accent-green,   75%);
 
 // Input field backgrounds.
 $input-error-bg:    lighter($uva-emergency-red, 90%);
+$input-sealed-bg:   $uva-light-gray;
 $input-readonly-bg: $uva-medium-gray;
 $input-disabled-bg: $input-readonly-bg;
+$input-sealed-fg:   $uva-text-gray;
 $input-readonly-fg: $uva-text-gray;
 $input-disabled-fg: $input-readonly-fg;
 
@@ -96,6 +98,7 @@ $panel-border:      lighter($uva-accent-orange, 50%);
 $panel-accent:      $uva-accent-orange;
 $button-accent:     lighter($uva-accent-teal,   35%);
 $focus-accent:      $button-accent;
+$ro-focus-accent:   lighter($uva-accent-teal,   70%);
 $text-focus:        darker($uva-accent-teal,    10%);
 
 //=============================================================================

@@ -63,6 +63,7 @@ module Field
       end
       [item, value]
     }.to_h.tap { |result|
+      result[:ignored]  = result[:max].present? && !result[:max].positive?
       result[:required] = result[:min].to_i.positive?
       result[:readonly] = result[:origin].to_s.remove('user').present?
       result[:array]    = (result[:max].to_i != 1)
@@ -196,10 +197,19 @@ module Field
       if field.is_a?(Symbol)
         @field = field
         @base  = Field.configuration(@field)[:type]
-        @range ||= src.emma_metadata[@field] if src.respond_to?(:emma_metadata)
+        @range ||=
+          if src.respond_to?(:active_emma_metadata)
+            src.active_emma_metadata[@field]
+          elsif src.respond_to?(:emma_metadata)
+            src.emma_metadata[@field]
+          end
         @range ||=
           begin
-            src = src.emma_record if src.respond_to?(:emma_record)
+            if src.respond_to?(:active_emma_record)
+              src = src.active_emma_record
+            elsif src.respond_to?(:emma_record)
+              src = src.emma_record
+            end
             src.send(@field) if src.respond_to?(@field)
           end
       end

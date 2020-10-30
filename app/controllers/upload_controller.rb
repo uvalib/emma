@@ -39,10 +39,15 @@ class UploadController < ApplicationController
   # :section: Callbacks
   # ===========================================================================
 
-  before_action :set_item_id,    only: %i[index show edit update delete destroy download]
-  before_action :set_url,        only: %i[retrieval]
-  before_action :set_member,     only: %i[retrieval]
-  before_action :index_redirect, only: %i[show]
+  before_action :set_identifiers, only: %i[index    show
+                                           create
+                                           edit     update
+                                           delete   destroy
+                                           cancel   check
+                                           endpoint download]
+  before_action :index_redirect,  only: %i[show]
+  before_action :set_url,         only: %i[retrieval]
+  before_action :set_member,      only: %i[retrieval]
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit]
@@ -53,22 +58,20 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload[?(id|repository_id|selected)=ITEM_SPEC]
+  # == GET /upload[?id={:id|SID|RANGE_LIST}]
+  # == GET /upload[?selected={:id|SID|RANGE_LIST}]
   # Display the current user's uploads.
   #
-  # If an item specification is given via the :id, :repository_id, or :selected
-  # option then the results will be limited to the matching upload(s).
+  # If an item specification is given by one of UploadConcern#IDENTIFIER_PARAMS
+  # then the results will be limited to the matching upload(s).
   # NOTE: Currently this is not limited only to the current user's uploads.
   #
-  # @see UploadConcern#find_records
+  # @see UploadConcern#find_or_match_records
   #
   def index
     __debug_route
     opt   = pagination_setup
-    @list = nil
-    @list ||= (find_records(@item_id)          if @item_id)
-    @list ||= (find_records(user_id: @user.id) if @user)
-    @list ||= []
+    @list = find_or_match_records
     self.page_items  = @list
     self.total_items = @list.size
     self.next_page   = next_page_path(@list, opt)
@@ -81,7 +84,8 @@ class UploadController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /upload/:id
+  # == GET /upload/{:id|SID}
+  # == GET /upload/show/{:id|SID}
   # Display a single upload.
   #
   # @raise [Net::HTTPBadRequest]
@@ -91,16 +95,19 @@ class UploadController < ApplicationController
   #
   def show
     __debug_route
-    @item = get_record(@item_id)
+    @item = get_record(@identifier)
     respond_to do |format|
       format.html
       format.json { render_json show_values }
       format.xml  { render_xml  show_values }
     end
   rescue SubmitError => error
-    unless application_deployed?
-      @host = PRODUCTION_BASE_URL
-      @item = proxy_get_record(@item_id, @host)
+    # As a convenience, if an index item is actually on another instance, fetch
+    # it from there to avoid a potentially confusing result.
+    [STAGING_BASE_URL, PRODUCTION_BASE_URL].find do |base_url|
+      next if base_url.start_with?(request.base_url)
+      @host = base_url
+      @item = proxy_get_record(@identifier, @host)
     end
     show_search_failure(error, upload_index_path) if @item.blank?
   rescue => error
@@ -110,13 +117,18 @@ class UploadController < ApplicationController
   # == GET /upload/new
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
-  # @see UploadConcern#new_record
-  # @see #create
+  # On the initial visit to the page, @db_id should be *nil*.  On subsequent
+  # visits (due to "Cancel" returning to this same page), @db_id will be
+  # included in order to reuse the the Upload record that was created at that
+  # time.
+  #
+  # @see UploadController#create
+  # @see UploadWorkflow::Single::Create::States#on_creating_entry
+  # @see app/assets/javascripts/feature/file-upload.js
   #
   def new
     __debug_route
-    @item = new_record(user_id: @user.id, base_url: request.base_url)
-    respond_with(@item)
+    @item = wf_single(rec: (@db_id || :unset), event: :create)
   rescue => error
     flash_now_failure(error)
   end
@@ -126,16 +138,14 @@ class UploadController < ApplicationController
   # the creation of a new EMMA entry.
   #
   # @raise [Net::HTTPConflict]
-  # @raise [UploadConcern::SubmitError]
+  # @raise [UploadWorkflow::SubmitError]
   #
-  # @see UploadConcern#upload_create
+  # @see UploadWorkflow::Single::Create::States#on_submitting_entry
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def create
     __debug_route
-    data = upload_post_parameters.merge!(user_id: @user.id)
-    @item, failed = upload_create(data)
-    fail(__method__, failed) if failed.present?
+    @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
@@ -144,17 +154,18 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/edit/:id
+  # == GET /upload/edit/SELECT
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
   # If :id is "SELECT" then a menu of editable items is presented.
   #
-  # @see UploadConcern#get_record
-  # @see #update
+  # @see UploadController#update
+  # @see UploadWorkflow::Single::Edit::States#on_editing_entry
   #
   def edit
     __debug_route
-    @item = (get_record(@item_id) unless show_menu?(@item_id))
+    @item = (wf_single(event: :edit) unless show_menu?(@identifier))
   rescue => error
     flash_now_failure(error)
   end
@@ -165,17 +176,14 @@ class UploadController < ApplicationController
   #
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
-  # @raise [UploadConcern::SubmitError]
+  # @raise [UploadWorkflow::SubmitError]
   #
-  # @see UploadConcern#upload_update
+  # @see UploadWorkflow::Single::Edit::States#on_modifying_entry
   #
   def update
     __debug_route
     __debug_request
-    data = upload_post_parameters.merge!(user_id: @user.id)
-    id   = data.delete(:id).to_s
-    @item, failed = upload_update(id, data)
-    fail(__method__, failed) if failed.present?
+    @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
     post_response(:conflict, error) # TODO: ?
@@ -183,7 +191,10 @@ class UploadController < ApplicationController
     post_response(error)
   end
 
-  # == GET /upload/delete/:id[?force=true]
+  # == GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
+  # == GET /upload/delete/SID[?force=true&truncate=true&emergency=true]
+  # == GET /upload/delete/RANGE_LIST[?force=true&truncate=true&emergency=true]
+  # == GET /upload/delete/SELECT[?force=true&truncate=true&emergency=true]
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
@@ -194,38 +205,41 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see Upload#expand_ids
-  # @see UploadConcern#get_record
-  # @see #destroy
+  # @see UploadController#destroy
+  # @see UploadWorkflow::Single::Remove::States#on_removing_entry
   #
   def delete
     __debug_route
-    ids = Upload.expand_ids(@item_id).presence or fail(:file_id)
-    ids.clear if show_menu?(ids)
-    @list = ids.map { |id| get_record(id, no_raise: force_delete) || id }
+    @list = []
+    unless show_menu?(@identifier)
+      @list = wf_single(rec: :unset, data: @identifier, event: :remove)
+    end
   rescue => error
     flash_now_failure(error)
   end
 
-  # == DELETE /upload/:id[?force=true]
-  # == DELETE /upload/ITEM_SPEC[?force=true]
+  # == DELETE /upload/:id[?force=true&truncate=true&emergency=true]
+  # == DELETE /upload/SID[?force=true&truncate=true&emergency=true]
+  # == DELETE /upload/RANGE_LIST[?force=true&truncate=true&emergency=true]
   # Finalize removal of an existing EMMA entry.
   #
   # @raise [Net::HTTPBadRequest]
   # @raise [Net::HTTPNotFound]
   #
-  # @see UploadConcern#upload_destroy
+  # @see UploadWorkflow::Single::Remove::States#on_removed_entry
   #
   #--
   # noinspection RubyScope
   #++
   def destroy
     __debug_route
-    back = delete_select_upload_path
-    succeeded, failed = bulk_upload_destroy(@item_id)
-    fail(__method__, failed) if failed.present?
-    fail(:file_id)           if succeeded.blank?
-    post_response(:found, succeeded, redirect: back)
+    back  = delete_select_upload_path
+    rec   = :unset
+    dat   = @identifier
+    opt   = { start_state: :removing, event: :submit, variant: :remove }
+    @list = wf_single(rec: rec, data: dat, **opt)
+    failure(:file_id) unless @list.present?
+    post_response(:found, @list, redirect: back)
   rescue SubmitError => error
     post_response(:conflict, error, redirect: back) # TODO: ?
   rescue => error
@@ -239,7 +253,7 @@ class UploadController < ApplicationController
   public
 
   # == GET /upload/bulk
-  # TODO: ???
+  # Currently a non-functional placeholder.
   #
   def bulk_index
     __debug_route
@@ -251,10 +265,12 @@ class UploadController < ApplicationController
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to submit.
   #
-  # @see #bulk_create
+  # @see UploadController#bulk_create
+  # @see UploadWorkflow::Bulk::Create::States#on_creating_entry
   #
   def bulk_new
     __debug_route
+    wf_bulk(rec: :unset, data: :unset, event: :create)
   rescue => error
     flash_now_failure(error)
   end
@@ -265,16 +281,13 @@ class UploadController < ApplicationController
   #
   # @raise [Net::HTTPConflict]
   #
-  # @see UploadConcern#bulk_upload_create
+  # @see UploadWorkflow::Bulk::Create::States#on_submitting_entry
   #
   def bulk_create
     __debug_route
     __debug_request
-    data = upload_bulk_post_parameters.presence or fail(__method__)
-    url  = request.base_url
-    succeeded, failed = bulk_upload_create(data, base_url: url, user: @user)
-    fail(__method__, failed) if failed.present?
-    post_response(:ok, succeeded, xhr: false)
+    @list = wf_bulk(start_state: :creating, event: :submit, variant: :create)
+    post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
@@ -285,10 +298,12 @@ class UploadController < ApplicationController
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to change.
   #
-  # @see UploadConcern#bulk_upload_update
+  # @see UploadController#bulk_update
+  # @see UploadWorkflow::Bulk::Edit::States#on_editing_entry
   #
   def bulk_edit
     __debug_route
+    wf_bulk(rec: :unset, data: :unset, event: :edit)
   rescue => error
     flash_now_failure(error)
   end
@@ -300,16 +315,13 @@ class UploadController < ApplicationController
   #
   # @raise [Net::HTTPConflict]
   #
-  # @see UploadConcern#bulk_upload_update
+  # @see UploadWorkflow::Bulk::Edit::States#on_modifying_entry
   #
   def bulk_update
     __debug_route
     __debug_request
-    data = upload_bulk_post_parameters.presence or fail(__method__)
-    url  = request.base_url
-    succeeded, failed = bulk_upload_update(data, base_url: url, user: @user)
-    fail(__method__, failed) if failed.present?
-    post_response(:ok, succeeded, xhr: false)
+    @list = wf_bulk(start_state: :editing, event: :submit, variant: :edit)
+    post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
@@ -317,14 +329,16 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/bulk_delete[?force=false]
-  # Select
+  # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
   # @raise [Net::HTTPConflict]
   #
-  # @see UploadConcern#bulk_upload_destroy
+  # @see UploadController#bulk_destroy
+  # @see UploadWorkflow::Bulk::Remove::States#on_removing_entry
   #
   def bulk_delete
     __debug_route
+    @list = wf_bulk(event: :remove)
   rescue => error
     flash_now_failure(error)
   end
@@ -333,15 +347,14 @@ class UploadController < ApplicationController
   #
   # @raise [Net::HTTPConflict]
   #
-  # @see UploadConcern#bulk_upload_destroy
+  # @see UploadWorkflow::Bulk::Remove::States#on_removed_entry
   #
   def bulk_destroy
     __debug_route
     __debug_request
-    data = upload_bulk_post_parameters.presence or fail(__method__)
-    succeeded, failed = bulk_upload_destroy(data)
-    fail(__method__, failed) if failed.present?
-    post_response(:found, succeeded, xhr: false)
+    @list = wf_bulk(start_state: :removing, event: :submit, variant: :remove)
+    failure(:file_id) unless @list.present?
+    post_response(:found, @list)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
   rescue => error
@@ -354,16 +367,60 @@ class UploadController < ApplicationController
 
   public
 
+  # == GET /upload/cancel?id=:id[&redirect=URL][&reset=true|false]
+  # Invoked to cancel the current submission form instead of submitting.
+  #
+  # @see UploadWorkflow::Single::States#on_canceled_entry
+  # @see UploadWorkflow::Bulk::States#on_canceled_entry
+  # @see cancelForm() in app/assets/javascripts/feature/file-upload.js
+  #
+  def cancel
+    __debug_route
+    @item = wf_single(event: :cancel)
+    redirect_to(params[:redirect] || upload_index_path)
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # == GET /upload/check/:id
+  # == GET /upload/check/SID
+  # Invoked to determine whether the workflow state of the indicated item can
+  # be advanced.
+  #
+  # @see UploadConcern#wf_single_check
+  #
+  def check
+    __debug_route
+    @list = wf_single_check
+    respond_to do |format|
+      format.html
+      format.json { render_json(messages: @list) }
+      format.xml  { render_xml( messages: @list) }
+    end
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # == POST /upload/endpoint
   # Invoked from 'Uppy.XHRUpload'.
   #
-  # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
+  # @see UploadWorkflow::Single::Create::States#on_validating_entry
+  # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
+  # @see UploadWorkflow::External#upload_file
   # @see app/assets/javascripts/feature/file-upload.js
   #
   def endpoint
     __debug_route
     __debug_request
-    stat, hdrs, body = FileUploader.upload_response(:cache, request.env)
+    rec = @db_id || @identifier
+    dat = { env: request.env }
+    stat, hdrs, body = wf_single(rec: rec, data: dat, event: :upload)
     self.status = stat        if stat.present?
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
@@ -372,6 +429,12 @@ class UploadController < ApplicationController
   rescue => error
     post_response(error, xhr: true)
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
 
   # == GET /download/:id
   # Download the file associated with an EMMA submission.
@@ -384,7 +447,7 @@ class UploadController < ApplicationController
   #
   def download
     __debug_route
-    @item = get_record(@item_id)
+    @item = get_record(@identifier)
     @link = @item.download_url
     respond_to do |format|
       format.html { redirect_to(@link) }
@@ -416,10 +479,10 @@ class UploadController < ApplicationController
   # Indicate whether URL parameters indicate that a menu should be shown rather
   # than operating on an explicit set of identifiers.
   #
-  # @param [String, Array<String>] id_params  Default: `@item_id`.
+  # @param [String, Array<String>, nil] id_params  Default: `@identifier`.
   #
   def show_menu?(id_params = nil)
-    Array.wrap(id_params || @item_id).include?('SELECT')
+    Array.wrap(id_params || @identifier).include?('SELECT')
   end
 
   # Display the failure on the screen -- immediately if modal, or after a
@@ -437,45 +500,11 @@ class UploadController < ApplicationController
     end
   end
 
-  # Get item data from the production service.
-  #
-  # @param [String] rid               Repository ID of the item.
-  # @param [String] host              Base URL of production service.
-  #
-  # @return [Upload]                  Object created from received data.
-  # @return [nil]                     Bad data and/or no object created.
-  #
-  def proxy_get_record(rid, host)
-    data = Faraday.get("#{host}/upload/#{rid}.json").body.presence
-    data &&= json_parse(data)
-    data &&= data[:entry]
-    new_record(data) if data.present?
-  end
-
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
   protected
-
-  # Extract the best-match URL parameter which represents an item identifier.
-  #
-  # The @item_id member variable contains the original item specification, if
-  # one was provided, and not the array of IDs represented by it.
-  #
-  # @return [String]                  Value of `params[:id]`.
-  # @return [nil]                     No :id, :selected, :repository_id found.
-  #
-  def set_item_id
-    # noinspection RubyYardReturnMatch
-    @item_id ||=
-      if (id = params[:selected] || params[:repository_id])
-        params[:id] = id if params.key?(:id)
-        id
-      else
-        params[:id]
-      end
-  end
 
   # Extract the URL parameter which indicates a remote URL path.
   #
@@ -495,7 +524,7 @@ class UploadController < ApplicationController
   def set_member
     @member ||= params[:forUser] || params[:member]
     @member ||=
-      if current_user&.uid == 'emmadso@bookshare.org'
+      if @user&.uid == 'emmadso@bookshare.org'
         nil # TODO: BookshareService::BOOKSHARE_TEST_MEMBER
       end
   end
@@ -503,8 +532,11 @@ class UploadController < ApplicationController
   # If the :show endpoint is given an :id which is actually a specification for
   # multiple items then there is a redirect to :index.
   #
+  # @return [void]
+  #
   def index_redirect
-    redirect_to action: :index, id: @item_id if @item_id.match?(/[^[:alnum:]]/)
+    return unless @identifier && @identifier.match?(/[^[:alnum:]]/)
+    redirect_to action: :index, selected: @identifier
   end
 
   # ===========================================================================
@@ -533,7 +565,8 @@ class UploadController < ApplicationController
     item = item.attributes.symbolize_keys if item.is_a?(Upload)
     data = item.extract!(:file_data).first.last
     item[:file_data] = safe_json_parse(data)
-    { entry: item }
+    # noinspection RubyYardReturnMatch
+    item
   end
 
   # Response values for de-serializing download information to JSON or XML.

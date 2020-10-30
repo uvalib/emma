@@ -7,14 +7,12 @@ __loading_begin(__FILE__)
 
 # Base class for file objects.
 #
-# @see FileAttributes
 # @see FileNaming
 # @see FileHandle
 #
 class FileObject
 
   include Emma::Debug
-  include FileAttributes
   include FileNaming
 
   # ===========================================================================
@@ -40,8 +38,6 @@ class FileObject
   #
   def initialize(handle, opt = nil)
     opt = opt&.symbolize_keys || {}
-    @repository    = opt[:repository]
-    @repository_id = opt[:repository_id]
     @fmt           = opt[:fmt] || self.class.fmt
     @ext           = opt[:ext] || self.class.file_extension
     @file_handle   = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
@@ -49,10 +45,22 @@ class FileObject
   end
 
   # ===========================================================================
-  # :section: FileAttributes overrides
+  # :section:
   # ===========================================================================
 
   public
+
+  # Format type of the file.
+  #
+  # @return [Symbol]                  One of FileFormat#TYPES.
+  #
+  attr_reader :fmt
+
+  # Filename extension.
+  #
+  # @return [String, nil]
+  #
+  attr_reader :ext
 
   # filename
   #
@@ -93,6 +101,8 @@ class FileObject
     public
 
     # File format defined for the subclass.
+    #
+    # @raise [NameError]              If the subclass does not define FILE_TYPE
     #
     # @return [Symbol]
     #

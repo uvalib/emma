@@ -577,11 +577,11 @@ module Api::Common
 
   # The default repository for uploads.
   #
-  # @type [Symbol]
+  # @type [String]
   #
   # @see "en.emma.source._default" in config/locales/source.en.yml
   #
-  DEFAULT_REPOSITORY = I18n.t('emma.source._default').to_sym
+  DEFAULT_REPOSITORY = I18n.t('emma.source._default').freeze
 
   # Values associated with each source repository.
   #

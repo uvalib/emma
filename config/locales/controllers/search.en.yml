@@ -74,7 +74,6 @@ en:
         # New bibliographic fields not in the index
         # =====================================================================
 
-        bib_subtitle:                       'Subtitle'
         bib_version:                        'Version'
         bib_series:                         'Series'
         bib_seriesType:                     'Series Type'
@@ -92,7 +91,6 @@ en:
         rem_remediation:                    'Remediated Aspects'
         rem_quality:                        'Text Quality'
         rem_status:                         'Remediation Status'
-        rem_image_count:                    'Number of Images'
 
       # =======================================================================
       # Pages

@@ -87,7 +87,7 @@ module PaginationConcern
       if on_first
         page_offset = 0
         first_page  = nil
-      elsif "#{request.referer}/".start_with?(root_url)
+      elsif local_request?
         :back
       end
 

@@ -1,0 +1,34 @@
+<%# app/views/upload/check.html.erb -%>
+<%-
+  # Fall-back page for a failed Upload check action.
+
+  title ||= t('emma.upload.check.title')
+  list  ||= @list
+  error ||= 'Invalid identifier' # TODO: I18n
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  item ||= error
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description %>
+
+<%- if list.blank? -%>
+
+  <p><%= error -%></p>
+
+<%- else -%>
+
+  <%- list.each do |item| -%>
+    <p><%= item -%></p>
+  <%- end -%>
+
+<%- end -%>

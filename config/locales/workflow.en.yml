@@ -1,0 +1,489 @@
+# config/locales/workflow.en.yml
+#
+# Workflows
+
+en:
+
+  emma:
+
+    workflow:
+
+      _example:
+        state_name:
+          label:          'STATE'     # Brief name of the state for labels.
+          name:           'Full name of the state'
+          desc:           'Long description of the state'
+          enabled:        true        # Give as *false* to disable state.
+          disabled:       false       # Give as *true* to disable state.
+          event:
+            event_name:
+              label:      'EVENT'     # Brief name of the state for labels.
+              name:       'Full name of the event'
+              desc:       'Long description of the state'
+              to:         other_state # Event causes a transition to this state
+              only:       'role'      # Single or array
+              except:     'role'      # Single or array
+              debug:      false       # *true* if only available when debugging
+              enabled:    true        # Give as *false* to disable event.
+              disabled:   false       # Give as *true* to disable event.
+
+      # =======================================================================
+      # State groups
+      # =======================================================================
+
+      _start_states:      &START_STATES
+
+        starting:         &STARTING_STATE
+          # This state should never show up in a record which was created by
+          # the EMMA interface because the workflows are set up to transition
+          # directly to the :creating, :editing, or :removing states.
+          label:          'STARTING'
+          event:          &STARTING_EVENTS
+            start:
+              to:         starting
+              only:       system
+              debug:      true
+            create:
+              to:         creating
+              role:       [user, administrator, system]
+             #role:       submitter
+            edit:
+              to:         editing
+              role:       [user, administrator, system]
+             #role:       submitter
+            remove:
+              to:         removing
+              role:       [user, administrator, system]
+             #role:       submitter
+
+      _create_states:     &CREATE_STATES # = Create new entry =
+
+        creating:         &CREATING_STATE
+          label:          'CREATING'
+          event:          &CREATING_EVENTS
+            cancel:
+              to:         canceled
+              role:       user
+            submit:
+              to:         submitting
+              role:       user
+            upload:
+              to:         validating
+              role:       user
+
+        validating:       &VALIDATING_STATE
+          label:          'VALIDATING'
+          event:          &VALIDATING_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            reject:
+              to:         creating
+              role:       system
+            cancel:
+              to:         canceled
+              role:       user
+            submit:
+              to:         submitting
+              role:       user
+
+        submitting:       &SUBMITTING_STATE
+          label:          'SUBMITTING'
+          event:          &SUBMITTING_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            reject:
+              to:         creating
+              role:       system
+            advance:
+              to:         submitted
+              role:       system
+
+        submitted:        &SUBMITTED_STATE
+          label:          'SUBMITTED'
+          event:          &SUBMITTED_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            schedule:
+              to:         scheduling
+              role:       system
+            advance:
+              to:         staging
+              role:       system
+
+      _edit_states:       &EDIT_STATES # = Modify existing entry =
+
+        editing:          &EDITING_STATE
+          label:          'EDITING'
+          event:          &EDITING_EVENTS
+            cancel:
+              to:         canceled
+              role:       user
+            submit:
+              to:         modifying
+              role:       user
+            upload:
+              to:         replacing
+              role:       user
+
+        replacing:        &REPLACING_STATE
+          label:          'REPLACING'
+          event:          &REPLACING_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            reject:
+              to:         editing
+              role:       system
+            cancel:
+              to:         canceled
+              role:       user
+            submit:
+              to:         modifying
+              role:       user
+
+        modifying:        &MODIFYING_STATE
+          label:          'MODIFYING'
+          event:          &MODIFYING_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            reject:
+              to:         editing
+              role:       system
+            advance:
+              to:         modified
+              role:       system
+
+        modified:         &MODIFIED_STATE
+          label:          'MODIFIED'
+          event:          &MODIFIED_EVENTS
+            <<:           *SUBMITTED_EVENTS
+
+      _remove_states:     &REMOVE_STATES # = Remove existing entry =
+
+        removing:         &REMOVING_STATE
+          label:          'REMOVING'
+          event:          &REMOVING_EVENTS
+            cancel:
+              to:         canceled
+              role:       user
+            submit:
+              to:         removed
+              role:       user
+
+        removed:          &REMOVED_STATE
+          label:          'REMOVED'
+          event:          &REMOVED_EVENTS
+            fail:
+              to:         failed
+              role:       system
+            advance:
+              to:         staging
+              role:       system
+
+      _review_states:     &REVIEW_STATES # Sub-sequence: Review
+
+        scheduling:       &SCHEDULING_STATE
+          label:          'SCHEDULING'
+          event:          &SCHEDULING_EVENTS
+            assign:
+              to:         assigned
+              role:       system
+            advance:
+              to:         assigning
+              role:       system
+
+        assigning:        &ASSIGNING_STATE
+          label:          'ASSIGNING'
+          event:          &ASSIGNING_EVENTS
+            hold:
+              to:         holding
+              role:       system
+            assign:
+              to:         assigned
+              role:       system
+            advance:
+              to:         assigned
+              role:       system
+
+        holding:          &HOLDING_STATE
+          label:          'HOLDING'
+          desc:           'Waiting for an available reviewer'
+          event:          &HOLDING_EVENTS
+            edit:
+              to:         editing
+              role:       user
+            cancel:
+              to:         canceled
+              role:       user
+            purge:
+              to:         purged
+              role:       admin
+            timeout:
+              to:         holding
+              role:       system
+            fail:
+              to:         failed
+              role:       system
+            advance:
+              to:         assigning
+              role:       system
+
+        assigned:         &ASSIGNED_STATE
+          label:          'ASSIGNED'
+          desc:           'Assigned for review'
+          event:          &ASSIGNED_EVENTS
+            edit:
+              to:         editing
+              role:       user
+            cancel:
+              to:         canceled
+              role:       user
+            purge:
+              to:         purged
+              role:       admin
+            review:
+              to:         reviewing
+              role:       system
+
+        reviewing:        &REVIEWING_STATE
+          label:          'REVIEWING'
+          event:          &REVIEWING_EVENTS
+            reject:
+              to:         rejected
+              role:       reviewer
+            approve:
+              to:         approved
+              role:       reviewer
+
+        rejected:         &REJECTED_STATE
+          label:          'RETURNED'
+          event:          &REJECTED_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            edit:
+              to:         editing
+              role:       user
+            cancel:
+              to:         canceled
+              role:       user
+
+        approved:         &APPROVED_STATE
+          label:          'APPROVED'
+          event:          &APPROVED_EVENTS
+            advance:
+              to:         staging
+              role:       system
+
+      _submit_states:     &SUBMIT_STATES # Sub-sequence: Submission
+
+        staging:          &STAGING_STATE
+          label:          'STAGING'
+          event:          &STAGING_EVENTS
+            index:
+              to:         indexing
+              role:       system
+            advance:
+              to:         unretrieved
+              role:       system
+
+        unretrieved:      &UNRETRIEVED_STATE
+          label:          'UNRETRIEVED'
+          desc:           'Waiting to be retrieved by the member repository'
+          event:          &UNRETRIEVED_EVENTS
+            fail:
+              to:         failed
+              role:       system
+            timeout:
+              to:         unretrieved
+              role:       system
+            advance:
+              to:         retrieved
+              role:       system
+
+        retrieved:        &RETRIEVED_STATE
+          label:          'RETRIEVED'
+          event:          &RETRIEVED_EVENTS
+            advance:
+              to:         indexing
+              role:       system
+
+      _index_states:      &INDEX_STATES # Sub-sequence: Finalization
+
+        indexing:         &INDEXING_STATE
+          label:          'INDEXING'
+          desc:           'Waiting to be included by the EMMA index service'
+          event:          &INDEXING_EVENTS
+            fail:
+              to:         failed
+              role:       system
+            timeout:
+              to:         indexing
+              role:       system
+            advance:
+              to:         indexed
+              role:       system
+
+        indexed:          &INDEXED_STATE
+          label:          'INDEXED'
+          event:          &INDEXED_EVENTS
+            advance:
+              to:         completed
+              role:       system
+
+      _terminal_states:   &TERMINAL_STATES # Sub-sequence: Termination
+
+        suspended:        &SUSPENDED_STATE
+          label:          'SUSPENDED'
+          event:          &SUSPENDED_EVENTS
+            purge:
+              to:         purged
+              role:       admin
+            reset:
+              to:         starting
+              role:       dev
+              debug:      true
+            resume:
+              to:         resuming
+              role:       dev
+
+        failed:           &FAILED_STATE
+          label:          'FAILED'
+          event:          &FAILED_EVENTS
+            <<:           *SUSPENDED_EVENTS
+
+        canceled:         &CANCELED_STATE
+          label:          'CANCELED'
+          event:          &CANCELED_EVENTS
+            <<:           *SUSPENDED_EVENTS
+
+        completed:        &COMPLETED_STATE
+          label:          'COMPLETED'
+          event:          &COMPLETED_EVENTS
+            <<:           *SUSPENDED_EVENTS
+            resume:
+              disabled:   true
+
+      # =======================================================================
+      # Shared workflow definition
+      # =======================================================================
+
+      _template:
+        state:            &COMMON_STATES
+          <<:             *START_STATES
+          <<:             *CREATE_STATES
+          <<:             *EDIT_STATES
+          <<:             *REMOVE_STATES
+          <<:             *SUBMIT_STATES
+          <<:             *INDEX_STATES
+          <<:             *TERMINAL_STATES
+
+      # =======================================================================
+      # Upload workflow
+      # =======================================================================
+
+      upload:
+        name:             'Upload Workflow'
+        state:
+          <<:             *COMMON_STATES
+          <<:             *REVIEW_STATES
+
+      # =======================================================================
+      # Single-item upload workflow
+      # =======================================================================
+
+      upload_single:
+        name:             'Single-Submission Workflow'
+        state:
+          <<:             *COMMON_STATES
+          <<:             *REVIEW_STATES
+
+      # =======================================================================
+      # Bulk upload workflow
+      # =======================================================================
+
+      upload_bulk:
+        name:             'Bulk-Submission Workflow'
+        state:
+          <<:             *COMMON_STATES
+
+          creating:
+            <<:           *CREATING_STATE
+            event:
+              <<:         *CREATING_EVENTS
+              upload:
+                disabled: true
+
+          validating:
+            disabled:     true
+
+          submitting:
+            <<:           *SUBMITTING_STATE
+            event:
+              <<:         *SUBMITTING_EVENTS
+              purge:
+                disabled: true
+              reject:
+                to:       failed
+                role:     system
+
+          submitted:
+            <<:           *SUBMITTED_STATE
+            event:
+              <<:         *SUBMITTED_EVENTS
+              purge:
+                disabled: true
+              schedule:
+                disabled: true
+
+          editing:
+            <<:           *EDITING_STATE
+            event:
+              <<:         *EDITING_EVENTS
+              upload:
+                disabled: true
+
+          replacing:
+            disabled:     true
+
+          modifying:
+            <<:           *MODIFYING_STATE
+            event:
+              <<:         *MODIFYING_EVENTS
+              purge:
+                disabled: true
+              reject:
+                to:       failed
+                role:     system
+
+          modified:
+            <<:           *MODIFIED_STATE
+            event:
+              <<:         *MODIFIED_EVENTS
+              purge:
+                disabled: true
+              schedule:
+                disabled: true
+
+          indexing:
+            <<:           *INDEXING_STATE
+            event:
+              <<:         *INDEXING_EVENTS
+              fail:
+                disabled: true
+              timeout:
+                disabled: true
+
+          suspended:
+            disabled:     true
+
+          canceled:
+            <<:           *CANCELED_STATE
+            event:
+              <<:         *CANCELED_EVENTS
+              resume:
+                disabled: true

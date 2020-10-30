@@ -1,0 +1,1592 @@
+# app/models/workflow.rb
+#
+# frozen_string_literal: true
+# warn_indent:           true
+
+__loading_begin(__FILE__)
+
+require 'workflow'
+
+# Base class for workflow types.
+#
+# NOTE: This is placed into the Workflow namespace set up by the workflow gem.
+#
+class Workflow::Base
+
+  include Workflow
+
+  # WORKFLOW_DEBUG
+  #
+  # @type [Boolean]
+  #
+  WORKFLOW_DEBUG = true?(ENV['WORKFLOW_DEBUG'])
+
+  # Even if workflow debugging is enabled, displaying transition hooks may be
+  # too noisy.
+  #
+  # @type [Boolean]
+  #
+  TRANSITION_DEBUG = WORKFLOW_DEBUG && false
+
+  # Engage a simulated submission record instead of the actual database to
+  # simplify trials at the command line or within IRB.
+  #
+  # @type [Boolean]
+  #
+  SIMULATION = WORKFLOW_DEBUG && false
+
+  # Root workflow configuration.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  CONFIGURATION = I18n.t('emma.workflow').deep_freeze
+
+  # The state which indicates that the item associated with the workflow has
+  # progressed to the the end.
+  #
+  # @type [Symbol]
+  #
+  FINAL_STATE = :completed
+
+end
+
+# =============================================================================
+# :section: Auxiliary
+# =============================================================================
+
+public
+
+module Workflow::Base::Roles
+
+  # The default "user" if none was given.
+  #
+  # @type [Symbol]
+  #
+  DEFAULT_ROLE = application_deployed? ? :system : :developer
+
+  # Workflow roles. # TODO: harmonize with existing roles
+  #
+  # @type [Hash{Symbol=>Array<Symbol>}]
+  #
+  ROLE = {
+    user:           %i[submitter],
+    submitter:      [],
+    reviewer:       [],
+    administrator:  %i[submitter reviewer],
+    system:         %i[submitter reviewer administrator],
+    developer:      %i[user submitter reviewer administrator system]
+  }.map { |primary, roles|
+    all = [primary]
+    if roles.present?
+      all += Array.wrap(roles).map { |r| r.to_sym if r.present? }.compact
+      all.uniq!
+    end
+    [primary, all]
+  }.to_h.deep_freeze
+
+  # @type [Boolean]
+  WORKFLOW_DEBUG = Workflow::Base::WORKFLOW_DEBUG
+
+  # ===========================================================================
+  # :section: Workflow event definition options
+  # ===========================================================================
+
+  public
+
+  IF_USER       = { if: ->(wf) { wf.user? } }
+  IF_SUBMITTER  = { if: ->(wf) { wf.submitter? } }
+  IF_REVIEWER   = { if: ->(wf) { wf.reviewer? } }
+  IF_ADMIN      = { if: ->(wf) { wf.administrator? } }
+  IF_SYSTEM     = { if: ->(wf) { wf.system? } }
+  IF_DEV        = { if: ->(wf) { wf.developer? } }
+
+  IF_SYS_DEBUG  = { if: ->(wf) { WORKFLOW_DEBUG && wf.system? } }
+  IF_DEV_DEBUG  = { if: ->(wf) { WORKFLOW_DEBUG && wf.developer? } }
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The current workflow user.
+  #
+  # @return [User,String]
+  #
+  def current_user
+    # noinspection RubyYardReturnMatch
+    @current_user ||= set_current_user
+  end
+
+  # The workflow role of the current workflow user.
+  #
+  # @return [Symbol]
+  #
+  def current_role
+    @current_role ||= set_current_role
+  end
+
+  # Set the workflow user.
+  #
+  # @param [User, String, Symbol, nil] user
+  #
+  # @return [User, String]
+  #
+  def set_current_user(user = nil)
+    set_current_role(user)
+    user = @current_role.to_s if user.nil? || user.is_a?(Symbol)
+    # noinspection RubyYardReturnMatch
+    @current_user = user
+  end
+
+  # Set the workflow user role.
+  #
+  # @param [User, String, Symbol, nil] role
+  #
+  # @return [Symbol]
+  #
+  def set_current_role(role = nil)
+    @current_role = get_role(role) || DEFAULT_ROLE
+  end
+
+  # Get the "workflow user" based on the provided identity.
+  #
+  # @param [User, String, Symbol, nil] user
+  #
+  # @return [Symbol, nil]
+  #
+  def get_role(user)
+    # noinspection RubyYardReturnMatch
+    return user if user.nil? || user.is_a?(Symbol)
+    # noinspection RubyNilAnalysis
+    user = user.uid if user.is_a?(User)
+    case user
+      when /^emmadso@/ then :developer # TODO: role mapping
+      else                  :user
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a submitter.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def user?(u = nil)
+    roles(u).include?(:user)
+  end
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a submitter.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def submitter?(u = nil)
+    roles(u).include?(:submitter)
+  end
+
+  # Indicate whether the instance is associated with a user acting in the
+  # capacity of a reviewer.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def reviewer?(u = nil)
+    roles(u).include?(:reviewer)
+  end
+
+  # Indicate whether the instance is associated with an administrator user or
+  # process.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def administrator?(u = nil)
+    roles(u).include?(:administrator)
+  end
+
+  # Indicate whether the instance is associated with the system process.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def system?(u = nil)
+    roles(u).include?(:system)
+  end
+
+  # Indicate whether the instance is associated with a developer.
+  #
+  # @param [User, String, Symbol, nil] u    @see Workflow::Base#roles
+  #
+  def developer?(u = nil)
+    roles(u).include?(:developer)
+  end
+
+  # The workflow role(s) for the given user.
+  #
+  # @param [User, String, Symbol, nil] u  Default: WorkflowRoles#current_user
+  #
+  # @return [Array<Symbol>]
+  #
+  # @see #ROLE
+  #
+  def roles(u = nil)
+    primary = u && get_role(u) || current_role
+    ROLE[primary] || Array.wrap(primary)
+  end
+
+end
+
+# Workflow::Base::Properties
+#
+module Workflow::Base::Properties
+
+  # URL parameters passed in through the constructor.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  attr_accessor :parameters
+
+end
+
+# =============================================================================
+# :section: Core
+# =============================================================================
+
+public
+
+# Workflow::Base::Data
+#
+module Workflow::Base::Data
+
+  include Workflow::Base::Properties
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Succeeded items.
+  #
+  # @return [Array]
+  #
+  attr_accessor :succeeded
+
+  # Failed items.
+  #
+  # @return [Array]
+  #
+  attr_accessor :failed
+
+  # The characteristic "return value" of the workflow after an event has been
+  # registered.
+  #
+  # @return [*]
+  #
+  attr_accessor :results
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # set_data
+  #
+  # @param [*, nil] data
+  #
+  # @return [*, nil]
+  #
+  def set_data(data)
+    reset_status
+    data
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # reset_status
+  #
+  # @return [void]
+  #
+  def reset_status(*)
+    @succeeded = []
+    @failed    = []
+    @results   = nil
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether data has been assigned.
+  #
+  def empty?
+    true
+  end
+
+  # Indicate whether data is valid and sufficient.
+  #
+  def complete?
+    true
+  end
+
+  # Indicate whether operation(s) have failed.
+  #
+  def failed?
+    (@failed ||= []).present?
+  end
+
+  # Indicate whether operation(s) have succeeded.
+  #
+  def succeeded?
+    (@succeeded ||= []).present?
+  end
+
+  # Indicate whether submission is permissible.
+  #
+  def ready?
+    succeeded? && !failed?
+  end
+
+end
+
+# Workflow::Base::Actions
+#
+module Workflow::Base::Actions
+  include Workflow::Base::Data
+end
+
+# Workflow::Base::Simulation
+#
+module Workflow::Base::Simulation
+
+  # Indicate whether simulation is in effect.
+  #
+  # @return [Boolean]
+  #
+  def simulating(*)
+    false
+  end
+
+  # Neutralize debugging methods when not debugging.
+  #
+  # @return [nil]
+  #
+  def __debug_sim(*)
+  end
+
+end
+
+#--
+# Workflow::Base::Simulation
+#++
+module Workflow::Base::Simulation
+
+  include Emma::Debug
+  include Workflow::Base::Data
+
+  # ===========================================================================
+  # :section: Classes
+  # ===========================================================================
+
+  public
+
+  # A representation of an external task which simulates processing by
+  # executing the check method until it returns false.
+  #
+  # Activation sequence is:
+  #   start   # "Starts" the task by reinitializing its counter
+  #   check   # Decrements the counter and returns *true* if still running.
+  #
+  class SimulatedTask
+
+    attr_reader :label
+    attr_reader :reps
+    attr_reader :counter
+    attr_reader :success
+    attr_reader :running
+    attr_reader :restartable
+
+    def initialize(
+      name: nil, result: true, reps: 3, started: nil, restart: nil
+    )
+      # noinspection RubyNilAnalysis
+      a =
+        case name
+          when Array  then name.dup
+          when String then name.strip.split(' ')
+          else             self.class.name.demodulize.underscore.split('_')
+        end
+      a.unshift('async') unless a.first.match?(/async/i)
+      a.push('task')     unless a.last.match?(/task/i)
+      @label       = a.join(' ')
+      @success     = result.present?
+      @reps        = [0, reps].max
+      @counter     = started ? @reps : 0
+      @restartable = restart.present?
+    end
+
+    def running?
+      @counter.positive?
+    end
+
+    def stopped?
+      !running?
+    end
+
+    def stop
+      @counter = 0
+    end
+
+    def start
+      @counter = @reps
+    end
+
+    def restart
+      start if restartable
+    end
+
+    def check
+      running? && (@counter -= 1) && running?
+    end
+
+    def to_s
+      @label
+    end
+
+    def self.inherited(subclass)
+      subclass.class_eval do
+        class << self
+
+          def instance
+            @instance ||= new
+          end
+
+          def to_s
+            instance.to_s
+          end
+
+          delegate_missing_to :instance
+
+        end
+      end
+    end
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether simulation is in effect.
+  #
+  # @param [Boolean, nil] status
+  #
+  # @return [Boolean]
+  #
+  #--
+  # noinspection RubyYardReturnMatch
+  #++
+  def simulating(status = nil)
+    @simulating = status unless status.nil?
+    @simulating = true   if @simulating.nil?
+    @simulating
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Output for simulated action.
+  #
+  # @param [Array] args             Passed to #__debug_line.
+  # @param [Proc]  block            Passed to #__debug_line.
+  #
+  # @return [nil]
+  #
+  def __debug_sim(*args, &block)
+    # noinspection RubyNilAnalysis
+    opt  = args.extract_options!.reverse_merge(leader: '   ')
+    meth = args.first.is_a?(Symbol) ? args.shift : calling_method
+    args.unshift(':%-20s' % meth)
+    __debug_line(*args, **opt, &block)
+  end
+
+end if Workflow::Base::SIMULATION
+
+# =============================================================================
+# :section: Event handlers
+# =============================================================================
+
+public
+
+# Methods invoked when the named event occurs.
+#
+# @!method start!
+# @!method start?
+# @!method create!
+# @!method create?
+# @!method edit!
+# @!method edit?
+# @!method remove!
+# @!method remove?
+# @!method cancel!
+# @!method cancel?
+# @!method submit!
+# @!method submit?
+# @!method upload!
+# @!method upload?
+# @!method abort!
+# @!method abort?
+#
+# @!method can_start?
+# @!method can_create?
+# @!method can_edit?
+# @!method can_remove?
+# @!method can_cancel?
+# @!method can_submit?
+# @!method can_upload?
+# @!method can_abort?
+#
+# @!method advance!
+# @!method advance?
+# @!method fail!
+# @!method fail?
+# @!method suspend!
+# @!method suspend?
+# @!method schedule!
+# @!method schedule?
+# @!method approve!
+# @!method approve?
+# @!method reject!
+# @!method reject?
+# @!method hold!
+# @!method hold?
+# @!method assign!
+# @!method assign?
+# @!method review!
+# @!method review?
+# @!method index!
+# @!method index?
+# @!method timeout!
+# @!method timeout?
+# @!method resume!
+# @!method resume?
+# @!method purge!
+# @!method purge?
+# @!method reset!
+# @!method reset?
+#
+# @!method can_advance?
+# @!method can_fail?
+# @!method can_suspend?
+# @!method can_schedule?
+# @!method can_approve?
+# @!method can_reject?
+# @!method can_hold?
+# @!method can_assign?
+# @!method can_review?
+# @!method can_index?
+# @!method can_timeout?
+# @!method can_resume?
+# @!method can_purge?
+# @!method can_reset?
+#
+# @see Workflow::ClassMethods#assign_workflow
+#
+module Workflow::Base::Events
+
+  # All defined workflow events.
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection LongLine
+  #++
+  EVENTS = [
+    :start,    # Only used when debugging.
+
+    # === Workflow events triggered by the user
+
+    :create,   # The user initiates submission of a new entry.
+    :edit,     # The user initiates modification of an existing entry.
+    :remove,   # The user initiates removal of an existing entry.
+    :cancel,   # The user chooses to cancel the submission process.
+    :submit,   # The user chooses to proceed to the next step.
+    :upload,   # The user supplies a file to upload. # TODO: new event
+    :abort,    # The user chooses to terminate the workflow.
+
+    # === Workflow events triggered by an entity other than the user
+
+    :advance,  # The system moves to the next workflow step.
+    :fail,     # The system has detected failure(s).
+    :suspend,  # The system has suspended the workflow due to problems.
+    :schedule, # The system has determined that the submission needs review.
+    :approve,  # The system or reviewer indicates that the submission is acceptable.
+    :reject,   # The system or reviewer indicates that the submission requires change(s).
+    :hold,     # The system is waiting for a reviewer.
+    :assign,   # The reviewer claims the submission for review or the system assigns a default reviewer.
+    :review,   # The reviewer initiates review of the submission.
+    :index,    # The system indicates the submission can be indexed directly.
+    :timeout,  # The member repository has not yet retrieved the submission.
+
+    # === Workflow meta-events
+
+    :resume,   # The system is returning to the previous workflow state.
+    :purge,    # The system is removing all data associated with the submission.
+    :reset,    # The system is resetting the workflow state.
+  ].freeze
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  EVENTS.each do |event|
+
+    # Override the method used to invoke the event to return *nil* if there
+    # are failures.
+    #
+    define_method("#{event}!") do |*args|
+      result = super(event, *args)
+      result unless failed?
+    end
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # event_number
+  #
+  # @param [Symbol, String, nil]  event
+  #
+  # @return [Integer]             On error, -1 is returned.
+  #
+  def event_number(event)
+    # noinspection RubyNilAnalysis, RubyYardReturnMatch
+    event && EVENTS.index(event.to_sym) || -1
+  end
+
+  # event_label
+  #
+  # @param [Symbol, String, nil]  event
+  # @param [String, Boolean, nil] number
+  #
+  # @return [String]
+  #
+  def event_label(event, number: true)
+    label  = '*%s*' % (event || 'MISSING')
+    number = '%02d' if number.is_a?(TrueClass)
+    number &&= number % event_number(event)
+    number ? "[#{number}] #{label}" : label
+  end
+
+end
+
+#--
+# Event debugging.
+#
+# @!method start
+# @!method create
+# @!method edit
+# @!method remove
+# @!method cancel
+# @!method submit
+# @!method upload
+# @!method abort
+#
+# @!method advance
+# @!method fail
+# @!method suspend
+# @!method schedule
+# @!method approve
+# @!method reject
+# @!method hold
+# @!method assign
+# @!method review
+# @!method index
+# @!method timeout
+# @!method resume
+# @!method purge
+# @!method reset
+#
+#++
+module Workflow::Base::Events
+
+  include Workflow::Base::Roles
+  include Emma::Debug
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  EVENTS.each do |event|
+
+    # Override the method used to invoke the event to provide additional
+    # debugging information beyond what :process_event! shows (but let it
+    # fail in order to raise an exception instead of returning *nil*).
+    #
+    define_method("#{event}!") do |*args|
+      if current_state.events.first_applicable(event, self).nil?
+        c = self.class.name
+        e = event.inspect
+        r = current_role.inspect
+        u = current_user.to_s.inspect
+        s = curr_state.inspect
+        m = "ERROR: #{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
+        __debug_event(event, "ERROR: #{m}")
+      end
+      result = super(event, *args)
+      result unless failed?
+    end
+
+    # The method which is called when the event is triggered.
+    #
+    define_method(event) do |*args|
+      __debug_event(event, *args)
+    end
+
+    protected event
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # __debug_event
+  #
+  # @param [Symbol, String] event
+  # @param [Array]          args
+  #
+  def __debug_event(event, *args)
+    line = 'WORKFLOW ***** EVENT ' + event_label(event)
+    __debug_line(line, *args, leader: "\n")
+  end
+
+end if Workflow::Base::WORKFLOW_DEBUG
+
+# Hooks executed on transition into and out of a state.
+#
+# @!method on_starting_entry
+# @!method on_starting_exit
+#
+# @!method on_creating_entry
+# @!method on_creating_exit
+# @!method on_validating_entry
+# @!method on_validating_exit
+# @!method on_submitting_entry
+# @!method on_submitting_exit
+# @!method on_submitted_entry
+# @!method on_submitted_exit
+#
+# @!method on_editing_entry
+# @!method on_editing_exit
+# @!method on_replacing_entry
+# @!method on_replacing_exit
+# @!method on_modifying_entry
+# @!method on_modifying_exit
+# @!method on_modified_entry
+# @!method on_modified_exit
+#
+# @!method on_removing_entry
+# @!method on_removing_exit
+# @!method on_removed_entry
+# @!method on_removed_exit
+#
+# @!method on_scheduling_entry
+# @!method on_scheduling_exit
+# @!method on_assigning_entry
+# @!method on_assigning_exit
+# @!method on_holding_entry
+# @!method on_holding_exit
+# @!method on_assigned_entry
+# @!method on_assigned_exit
+# @!method on_reviewing_entry
+# @!method on_reviewing_exit
+# @!method on_rejected_entry
+# @!method on_rejected_exit
+# @!method on_approved_entry
+# @!method on_approved_exit
+#
+# @!method on_staging_entry
+# @!method on_staging_exit
+# @!method on_unretrieved_entry
+# @!method on_unretrieved_exit
+# @!method on_retrieved_entry
+# @!method on_retrieved_exit
+#
+# @!method on_indexing_entry
+# @!method on_indexing_exit
+# @!method on_indexed_entry
+# @!method on_indexed_exit
+#
+# @!method on_suspended_entry
+# @!method on_suspended_exit
+# @!method on_failed_entry
+# @!method on_failed_exit
+# @!method on_canceled_entry
+# @!method on_canceled_exit
+# @!method on_completed_entry
+# @!method on_completed_exit
+#
+# @see Workflow::InstanceMethods#run_on_entry
+# @see Workflow::InstanceMethods#run_on_exit
+#
+module Workflow::Base::States
+
+  include Workflow::Base::Events
+  include Workflow::Base::Actions
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # All defined workflow states.
+  #
+  # @type [Array<Symbol>]
+  #
+  #--
+  # noinspection LongLine
+  #++
+  STATES = [
+    :starting,    # Initial workflow state.
+
+    # === "Create new entry" states
+
+    :creating,    # The user is presented with the form for submitting a new item.
+    :validating,  # The supplied file is being validated. # TODO: new state
+    :submitting,  # The submission is complete and ready to move into the submission queue.
+    :submitted,   # The submission is moving into the submission queue.
+
+    # === "Modify existing entry" states
+
+    :editing,     # The user is presented with the edit form pre-populated with previously-provided values.
+    :replacing,   # The supplied replacement file is being validated. # TODO: new state
+    :modifying,   # The modified submission is complete and ready to move into the submission queue.
+    :modified,    # The modified submission is moving into the submission queue.
+
+    # === "Remove existing entry" states
+
+    :removing,    # The user is presented with a request for confirmation that the item should be submitted for removal.
+    :removed,     # The removal request is created.
+
+    # === "Sub-sequence: Review" states
+
+    :scheduling,  # The submission is being scheduled for review.
+    :assigning,   # The submission is being assigned for review.
+    :holding,     # The system is waiting for a reviewer (or the review process is paused).
+    :assigned,    # The submission has been assigned for review.
+    :reviewing,   # The submission is under review.
+    :rejected,    # The submission has been rejected.
+    :approved,    # The submission has been approved.
+
+    # === "Sub-sequence: Submission" states
+
+    :staging,     # The submission request (submitted file plus generated request form) has been added to the staging area.
+    :unretrieved, # The submission request has not been retrieved by the member repository within a pre-determined maximum time span.
+    :retrieved,   # The submission request has been retrieved by the member repository and removed from the staging area.
+
+    # === "Sub-sequence: Finalization" states
+
+    :indexing,    # The submission is being added to the index.
+    :indexed,     # The submission is complete and present in the EMMA Unified Index.
+
+    # === Terminal states
+
+    :suspended,   # The system is pausing the workflow; it may be resumable.
+    :failed,      # The system is terminating the workflow.
+    :canceled,    # The user is choosing to terminate the workflow.
+    :completed,   # The workflow has been successfully completed.
+
+    # === Pseudo states
+
+    :resuming,    # Pseudo-state indicating the previous workflow state. # TODO: new
+    :purged,      # All data associated with the submission is being eliminated. # TODO: new
+
+  ].freeze
+
+  # States that will not assigned to @previous_state.
+  #
+  # @type [Array<Symbol>]
+  #
+  HIDDEN_STATE = %i[
+    starting
+    suspended
+    failed
+    canceled
+    completed
+    resuming
+    purged
+  ].freeze
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  protected
+
+  STATES.each do |state|
+
+    # Respond to entering into the specific state.
+    #
+    # @param [*] _state
+    # @param [Symbol] event
+    # @param [Array]  event_args
+    #
+    # @return [self]                  For chaining.
+    #
+    define_method("on_#{state}_entry") do |_state, event, *event_args|
+      __debug_entry(state, event, *event_args)
+      self
+    end
+
+    # Respond to leaving the specific state.
+    #
+    # @param [*] _state
+    # @param [Symbol] event
+    # @param [Array]  event_args
+    #
+    # @return [self]                  For chaining.
+    #
+    define_method("on_#{state}_exit") do |_state, event, *event_args|
+      __debug_exit(state, event, *event_args)
+      @prev_state = state unless HIDDEN_STATE.include?(state)
+      self
+    end
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # state_object
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  #
+  # @return [Workflow::State]
+  #
+  #--
+  # noinspection RubyNilAnalysis, RubyYardReturnMatch
+  #++
+  def state_object(state = nil)
+    state = state.to_sym       if state.is_a?(String)
+    state = spec.states[state] if state.is_a?(Symbol)
+    state || current_state
+  end
+
+  # state_number
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  #
+  # @return [Integer]             On error, -1 is returned.
+  #
+  def state_number(state)
+    # noinspection RubyNilAnalysis, RubyYardReturnMatch
+    state && STATES.index(state.to_sym)
+  end
+
+  # state_label
+  #
+  # @param [Symbol, String, Workflow::State, nil] state
+  # @param [String, Boolean, nil]                 number
+  #
+  # @return [String]
+  #
+  def state_label(state, number: true)
+    label  = state&.to_s || 'MISSING'
+    number = '%02d' if number.is_a?(TrueClass)
+    number &&= number % state_number(state)
+    number ? "#{label}(#{number})" : label
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # __debug_entry
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  def __debug_entry(state, _event = nil, *_event_args)
+    __debug_line do
+      state = state_object(state)
+      trans =
+        state.events.map { |evt, entry|
+          # noinspection RubyYardParamTypeMatch
+          event_label(evt, number: false) << '->' <<
+            entry.map { |e|
+              state_label(e.transitions_to, number: false)
+            }.join(',')
+        }.join('; ')
+      state = state_label(state)
+      "WORKFLOW >>>>> ENTER #{state} => [#{trans}]"
+    end
+  end
+
+  # __debug_exit
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  def __debug_exit(state, _event = nil, *_event_args)
+    __debug_line do
+      'WORKFLOW <<<<< LEAVE ' + state_label(state)
+    end
+  end
+
+end
+
+# Hooks executed during transitions.
+#
+# == Usage Notes
+# These are generally only of interest for detailed debugging because logic
+# associated with specific transitions is applied by defining the appropriate
+# "on_*_entry" method in WorkflowStates.
+#
+module Workflow::Base::Transitions
+end
+
+#--
+# Transition debugging.
+#++
+module Workflow::Base::Transitions
+
+  include Workflow::Base::States
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  # Generic state entry hook.
+  #
+  # @param [Workflow::State] state        State that is being entered.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  # @see Workflow::Specification#on_entry
+  #
+  def on_entry_hook(state, _event, *_event_args)
+    __debug_hook('ENTER >>> [GENERIC]', state.to_sym)
+  end
+
+  # Generic state exit hook.
+  #
+  # @param [Workflow::State] state        State that is being exited.
+  # @param [Symbol]          _event       Triggering event
+  # @param [Array]           _event_args
+  #
+  # @see Workflow::Specification#on_exit
+  #
+  def on_exit_hook(state, _event, *_event_args)
+    __debug_hook('<<< LEAVE [GENERIC]', state.to_sym)
+  end
+
+  # before_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#before_transition
+  #
+  def before_transition_hook(from, to, _event, *_event_args)
+    __debug_hook('>>>>>', from, to)
+  end
+
+  # on_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#on_transition
+  #
+  def on_transition_hook(from, to, _event, *_event_args)
+    __debug_hook('-----', from, to)
+  end
+
+  # after_transition_hook
+  #
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#after_transition
+  #
+  def after_transition_hook(from, to, _event, *_event_args)
+    __debug_hook('<<<<<', from, to)
+  end
+
+  # on_error_hook
+  #
+  # @param [Exception] error
+  # @param [Symbol]    from         Starting state
+  # @param [Symbol]    to           Ending state
+  # @param [Symbol]    _event       Triggering event
+  # @param [Array]     _event_args
+  #
+  # @see Workflow::Specification#on_error
+  #
+  def on_error_hook(error, from, to, _event, *_event_args)
+    __debug_hook("!!!!! ERROR #{error} for ", from, to)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # __debug_hook
+  #
+  # @param [String]      label
+  # @param [Symbol]      from     Starting state
+  # @param [Symbol, nil] to       Ending state
+  #
+  def __debug_hook(label, from, to = nil)
+    __debug_line do
+      line = "WORKFLOW       TRANS #{label}".rstrip
+      from = state_label(from)
+      to   = to ? " -> #{state_label(to)}" : ''
+      # noinspection RubyNilAnalysis
+      chars  = line.size + from.size + to.size
+      spaces = ' ' * [1, (80 - chars)].max
+      "#{line}#{spaces}#{from}#{to}"
+    end
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  # Enumerate over public methods defined by the module.
+  #
+  # @param [Proc] block
+  #
+  # @yield [handler, method]
+  # @yieldparam [Symbol] handler  Specification instance method to invoke.
+  # @yieldparam [Symbol] method   Module method to supply to handler.
+  #
+  def self.each_pair(&block)
+    public_instance_methods(false).map { |method|
+      handler = method.to_s.delete_suffix('_hook')
+      [handler, method].map(&:to_sym)
+    }.to_h.each_pair(&block)
+  end
+
+  # Redefine :workflow for a Workflow subclass in order to apply the methods
+  # defined here to the matching workflow transition handlers.
+  #
+  # @param [Workflow, *] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included(base)
+    return unless base.respond_to?(:workflow)
+    base.class_eval do
+      def self.workflow(&specification)
+        super(&specification)
+        Transitions.each_pair do |handler, method|
+          workflow_spec.instance_eval <<~HEREDOC
+            #{handler} do |*args|
+              #{method}(*args)
+            end
+          HEREDOC
+        end
+      end
+    end
+  end
+
+end if Workflow::Base::TRANSITION_DEBUG
+
+# =============================================================================
+# :section: Base for workflow classes
+# =============================================================================
+
+public
+
+# Common workflow aspects.
+#
+# @!attribute [rw] prev_state
+#   @return [Symbol, nil]
+#
+class Workflow::Base
+
+  include Workflow::Base::Roles
+  include Workflow::Base::Events
+  include Workflow::Base::States
+  include Workflow::Base::Transitions
+
+  # ===========================================================================
+  # :section: Workflow event definition options
+  # ===========================================================================
+
+  public
+
+  IF_DEBUG    = { if: ->(*)  { WORKFLOW_DEBUG } }
+  IF_COMPLETE = { if: ->(wf) { wf.user? && wf.complete? } }
+  IF_READY    = { if: ->(wf) { wf.user? && wf.ready? } }
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Last state before :suspended, :failed, :canceled, or :completed.
+  #
+  # @return [Symbol, nil]
+  #
+  attr_reader :prev_state
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Create a new instance.
+  #
+  # @param [*]    data
+  # @param [Hash] opt                 Passed to #initialize_state
+  #
+  # @option opt [User, String] :user
+  # @option opt [Boolean]      :no_sim
+  #
+  def initialize(data, **opt)
+    @parameters = opt[:params] || {}
+    simulating(false) if opt[:no_sim] # TODO: remove?
+    set_current_user(opt[:user])
+    initialize_state(data, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Set initial state.
+  #
+  # @param [*]    data
+  # @param [Hash] opt
+  #
+  # @option opt [Symbol, String] :start_state
+  # @option opt [Symbol, String] :init_event
+  #
+  # @return [void]
+  #
+  def initialize_state(data, **opt)
+    __debug("WORKFLOW initialize_state | curr_state = #{curr_state.inspect} | init_state = #{init_state.inspect} | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect}")
+    state = opt[:start_state].presence&.to_sym
+    state = nil if state == init_state
+    event = opt[:init_event].presence&.to_sym
+
+    reset_status
+
+    # Set initial state if specified.
+    if state
+      __debug("WORKFLOW initial state: #{state.inspect}")
+      persist_workflow_state(state)
+    end
+
+    # Apply initial event if specified.
+    if event
+      __debug("WORKFLOW initial event: #{event.inspect}")
+      event = "#{event}!" unless event.end_with?('!')
+      send(event, *Array.wrap(data.presence))
+    end
+
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Current workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def curr_state
+    current_state.to_sym
+  end
+
+  # Initial workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def init_state
+    spec.initial_state.to_sym
+  end
+
+  # Final (completed) workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def final_state
+    self.class.final_state
+  end
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  protected
+
+  # Get the current state of the workflow item.
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Workflow::InstanceMethods#load_workflow_state
+  #
+  def load_workflow_state
+    super.to_s
+  end
+
+  # Set the current state of the workflow item.
+  #
+  # @param [Symbol, String] new_value
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see Workflow::InstanceMethods#persist_workflow_state
+  #
+  def persist_workflow_state(new_value)
+    super(new_value.to_s)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # The table field associated with workflow state.
+  #
+  # @return [Symbol]
+  #
+  def workflow_column
+    self.class.workflow_column
+  end
+
+  # Return the workflow type.
+  #
+  # @return [Symbol]
+  #
+  def workflow_type
+    self.class.workflow_type
+  end
+
+  # The workflow phase is indicated by the variant type of the subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def workflow_phase
+    self.class.workflow_phase
+  end
+
+  # Return the variant workflow type or *nil* if the class is not a workflow
+  # variant subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def variant_type
+    self.class.variant_type
+  end
+
+  # ===========================================================================
+  # :section:  Workflow overrides
+  # ===========================================================================
+
+  public
+
+  # The table field associated with workflow state.
+  #
+  # @param [*] column_name            Ignored.
+  #
+  # @return [Symbol]
+  #
+  # This method overrides:
+  # @see Workflow::ClassMethods#workflow_column
+  #
+  def self.workflow_column(column_name = nil)
+    raise 'To be overridden by the workflow subclass'
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Workflow model configuration.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.configuration
+    CONFIGURATION[workflow_type] || {}
+  end
+
+  # Workflow state labels.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def self.state_label
+    (configuration[:state] || {}).map { |state, properties|
+      next if properties.blank?
+      next if true?(properties[:disabled]) || false?(properties[:enabled])
+      state_label = properties[:label] || state.to_s.upcase
+      [state, state_label]
+    }.compact.to_h
+  end
+
+  # Final (completed) workflow state name.
+  #
+  # @return [Symbol]
+  #
+  def self.final_state
+    FINAL_STATE
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Return the workflow type which is a key under 'en.emma.workflow'.
+  #
+  # @return [Symbol]
+  #
+  def self.workflow_type
+  end
+
+  # The workflow phase is indicated by the variant type of the subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.workflow_phase
+    variant_type
+  end
+
+  # Return the variant workflow type or *nil* if the class is not a workflow
+  # variant subclass.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.variant_type
+  end
+
+  # The default workflow variant type.
+  #
+  # @return [Symbol, nil]
+  #
+  def self.default_variant
+    :create
+  end
+
+  # Table of variant workflow types under this workflow base class.
+  #
+  # @return [Hash{Symbol=>Class<UploadWorkflow>}]
+  #
+  def self.variant_table
+    raise 'To be overridden by the workflow subclass'
+  end
+
+  # Variant workflow types under this workflow base class.
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.variant_types
+    variant_table.keys
+  end
+
+  # Indicate whether the value denotes a workflow variant.
+  #
+  # @param [Symbol, String, nil] value
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.variant?(value)
+    variant_types.include?(value&.to_sym)
+  end
+
+  # Generate a new instance of the appropriate workflow variant subclass
+  # (or the workflow base class if the variant could not be found).
+  #
+  # @param [*]    data
+  # @param [Hash] opt             Passed to #initialize except for:
+  #
+  # @option opt [Symbol,String] :variant
+  #
+  # @return [Workflow::Base]
+  #
+  def self.generate(data, **opt)
+    variant  = (opt.delete(:variant) || opt[:event])&.to_sym
+    subclass = variant_table[variant] || variant_table[default_variant] || self
+    subclass.new(data, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Neutralize debugging methods when not debugging.
+  unless WORKFLOW_DEBUG
+    protected_instance_methods.each do |m|
+      module_eval("def #{m}(*); end") if m.start_with?('__debug')
+    end
+  end
+
+end
+
+__loading_end(__FILE__)

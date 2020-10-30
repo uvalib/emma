@@ -30,7 +30,13 @@ BUILD_VERSION =
 #
 # @type [String]
 #
-PRODUCTION_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
+PRODUCTION_BASE_URL = 'https://emma.lib.virginia.edu'
+
+# For use by the application in desktop (non-deployed) testing.
+#
+# @type [String]
+#
+STAGING_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
 
 # =============================================================================
 # Support methods

@@ -37,6 +37,12 @@ module ModelHelper
   #
   NO_RESULTS = 'NONE FOUND' # TODO: I18n
 
+  # Field value used to explicitly indicate missing data.
+  #
+  # @type [String]
+  #
+  EMPTY_VALUE = EN_DASH
+
   # Creator field categories.
   #
   # @type [Array<Symbol>]
@@ -294,10 +300,10 @@ module ModelHelper
       yield(item).reverse_merge(pairs || {})
     elsif pairs.present?
       pairs
-    elsif item.is_a?(ActiveRecord::Base)
+    elsif item.is_a?(ApplicationRecord)
       pairs = item.attributes
       pairs.transform_keys! { |k| k.to_s.titleize.delete(' ').to_sym }
-      pairs.transform_values! { |v| v.nil? ? EN_DASH : v }
+      pairs.transform_values! { |v| v.nil? ? EMPTY_VALUE : v }
       # Convert :file_data and :emma_data into hashes and move to the end.
       if item.is_a?(Upload)
         data = pairs.extract!(:FileData, :EmmaData, :EMMAData)
@@ -334,7 +340,7 @@ module ModelHelper
     separator:  DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
-    if item.is_a?(ActiveRecord::Base)
+    if item.is_a?(ApplicationRecord)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
       pairs      = field_values(item, pairs, &block)
     elsif item.present?
@@ -814,7 +820,7 @@ module ModelHelper
     separator:  DEFAULT_ELEMENT_SEPARATOR,
     &block
   )
-    if item.is_a?(ActiveRecord::Base)
+    if item.is_a?(ApplicationRecord)
       opt, pairs = partition_options(pairs, :index, :row) # Discard :row
       pairs      = field_values(item, pairs, &block)
     elsif item.present?
@@ -885,10 +891,11 @@ module ModelHelper
     type = "field-#{base}"
     name = field&.to_s || base
     prop = Field.configuration(field)
+    return if prop[:ignored]
 
     # Pre-process value.
     render_method = placeholder = range = nil
-    if value == EN_DASH
+    if value == EMPTY_VALUE
       placeholder = value
       value = nil
     elsif value.is_a?(Field::Type)
@@ -961,6 +968,8 @@ module ModelHelper
   # @raise [StandardError]            If *range* is not an EnumType.
   #
   # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see updateMenu() in javascripts/feature/file-upload.js
   #
   def render_form_menu_single(name, value, range:, **opt)
     valid_range?(range, exception: true)

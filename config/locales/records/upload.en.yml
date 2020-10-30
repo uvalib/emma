@@ -85,8 +85,8 @@ en:
             <strong>TODO</strong>
           origin:       system
 
-        repository_id:
-          # FMW4: "Repository Item ID", Optional, Repeatable
+        submission_id:
+          # FMM5: "Transaction ID", Required, Repeatable
           # IA:   N/A
           # SR:   N/A
           # IR:   N/A
@@ -354,7 +354,6 @@ en:
             help_html:    |
               <strong>TODO</strong>
             type:         !ruby/symbol EmmaRepository
-            origin:       system
 
           emma_collection:
             # FMM5: *missing*

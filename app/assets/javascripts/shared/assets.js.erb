@@ -366,34 +366,29 @@ var Emma = (function() {
          * ====================================================================
          * feature/file-upload.js
          *
-         * - path.endpoint    Shrine's upload endpoint (the server route to which uploads are directed).
-         * - path.create      The POST endpoint for creating a database entry for the uploaded file.
-         * - css.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
-         * - css.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
-         * - mime.to_fmt      A table mapping MIME type to file format.
-         * - Status           Status marker label/tooltips.
-         * - Action           Form action label/tooltips for controller actions.
-         * - Filter           Form action label/tooltips for form field filter selections.
+         * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
+         * - Path.cancel        The endpoint for canceling a submission.
+         * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
+         * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
+         * - Style.preview      CSS class for the element used to hold an Uppy preview thumbnail image.
+         * - Action             Form action label/tooltips for controller actions.
+         * - Filter             Form action label/tooltips for form field filter selections.
+         * - Status             Status marker label/tooltips.
+         * - Mime.to_fmt        A table mapping MIME type to file format.
+         * - Field.empty        Blank field value indicator.
+         * - Repo.default       The name of the default repository.
          * ====================================================================
          *
          * @type {{
-         *    path: {
+         *    Path: {
          *        index:        string,
          *        create:       string,
+         *        cancel:       string,
          *        endpoint:     string,
          *    },
-         *    css: {
+         *    Style: {
          *        drag_target:  string,
          *        preview:      string,
-         *    },
-         *    mime: {
-         *        to_fmt:       object,
-         *    },
-         *    Status: {
-         *        required:     ElementProperties,
-         *        invalid:      ElementProperties,
-         *        valid:        ElementProperties,
-         *        disabled:     ElementProperties
          *    },
          *    Action: {
          *        new:          RouteActionProperties,
@@ -408,25 +403,33 @@ var Emma = (function() {
          *        filled:       FieldGroupProperties,
          *        invalid:      FieldGroupProperties,
          *        all:          FieldGroupProperties
+         *    },
+         *    Status: {
+         *        required:     ElementProperties,
+         *        invalid:      ElementProperties,
+         *        valid:        ElementProperties,
+         *        disabled:     ElementProperties
+         *    },
+         *    Mime: {
+         *        to_fmt:       object,
+         *    },
+         *    Field: {
+         *        empty:        string,
          *    }
          * }}
          */
         Upload: {
-            path: {
-                index:       "<%= UploadHelper::UPLOAD_URL %>",
-                create:      "<%= UploadHelper::UPLOAD_CREATE_URL %>",
-                endpoint:    "<%= UploadHelper::UPLOAD_ENDPOINT_URL %>"
-            },
-            css: {
-                drag_target: "<%= UploadHelper::UPLOAD_DRAG_TARGET_CSS %>",
-                preview:     "<%= UploadHelper::UPLOAD_PREVIEW_CSS %>"
-            },
-            mime: {
-                to_fmt:      o$('<%= FileNaming.mime_to_fmt.to_json %>')
-            },
-            Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
+            Path:   o$('<%= UploadHelper::UPLOAD_PATH.to_json %>'),
+            Style:  o$('<%= UploadHelper::UPLOAD_STYLE.to_json %>'),
             Action: o$('<%= UploadHelper::UPLOAD_ACTION_VALUES.to_json %>'),
-            Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP_VALUES.to_json %>')
+            Filter: o$('<%= UploadHelper::UPLOAD_FIELD_GROUP.to_json %>'),
+            Status: o$('<%= ModelHelper::STATUS_MARKER.to_json %>'),
+            Mime:   { to_fmt:  o$('<%= FileNaming.mime_to_fmt.to_json %>') },
+            Field:  { empty:   '<%= ModelHelper::EMPTY_VALUE %>' },
+            Repo:   {
+                name:    o$('<%= EmmaRepository.pairs.to_json %>'),
+                default: '<%= EmmaRepository.default %>'
+            }
         },
 
         /**

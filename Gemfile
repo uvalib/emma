@@ -90,6 +90,7 @@ gem 'shrine', '~> 3.0'
 # == Other
 gem 'iso-639'
 gem 'sanitize'
+gem 'workflow'
 
 # =============================================================================
 # Production

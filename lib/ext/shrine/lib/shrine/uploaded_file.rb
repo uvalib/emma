@@ -28,7 +28,7 @@ class Shrine
 
     # Bibliographic metadata and remediation information.
     #
-    # @raise [UploadConcern::SubmitError]   @see #extract_file_metadata
+    # @raise [UploadWorkflow::SubmitError]  @see #extract_file_metadata
     #
     # @return [Hash{Symbol=>*}]
     #
@@ -39,7 +39,7 @@ class Shrine
     # Parse the uploaded file to extract bibliographic metadata and remediation
     # information.
     #
-    # @raise [UploadConcern::SubmitError]   If metadata was malformed.
+    # @raise [UploadWorkflow::SubmitError]  If metadata was malformed.
     #
     # @return [Hash{Symbol=>*}]
     #
@@ -82,7 +82,7 @@ class Shrine
           elsif fmt.present?
             "Could not extract #{fmt.inspect} metadata"
           end
-        error = UploadConcern::SubmitError.new(msg)
+        error = UploadWorkflow::SubmitError.new(msg)
       end
       raise error
     end

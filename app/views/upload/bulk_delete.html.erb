@@ -5,7 +5,6 @@
   title ||= t('emma.upload.bulk_delete.title')
   logo  ||= repository_source_logo
   list  ||= @list
-  force ||= force_delete
   help  ||= nil # TODO: ???
 
   unless modal?
@@ -23,7 +22,7 @@
 <%= upload_description %>
 
 <%= upload_directions %>
-<%= bulk_delete_form(force: force, ids: list) %>
+<%= bulk_delete_form(ids: list) %>
 <%= bulk_upload_results %>
 
 <%= upload_notes %>
