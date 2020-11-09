@@ -786,7 +786,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_FIELD_GROUP
-  # @see fieldDisplayFilterSelect() in javascripts/feature/download.js
+  # @see fieldDisplayFilterSelect() in javascripts/feature/file-upload.js
   #
   def upload_field_group(**opt)
     name = UPLOAD_FIELD_GROUP_NAME

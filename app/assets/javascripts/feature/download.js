@@ -733,6 +733,7 @@ $(document).on('turbolinks:load', function() {
             if (!$element.hasClass(state)) {
                 $element = $link.parents(selector);
             }
+            // noinspection JSUnresolvedFunction
             $link = $element.first();
         }
         endRequesting($link, Emma.Download.failure.canceled);

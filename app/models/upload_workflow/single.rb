@@ -1891,7 +1891,7 @@ class UploadWorkflow::Single < UploadWorkflow
   # @param [String, Hash, Upload, nil] data
   # @param [Hash]                      opt
   #
-  # @option opt [String, Boolean] html
+  # @option opt [String, Boolean] :html
   #
   # @return [UploadWorkflow::Single]
   #

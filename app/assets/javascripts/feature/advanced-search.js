@@ -357,6 +357,7 @@ $(document).on('turbolinks:load', function() {
      */
     function setResetButton(opening) {
         const state = opening ? 'visible' : 'hidden';
+        // noinspection JSUnresolvedFunction
         $reset_button.each(function() {
             let $button = $(this);
             let manage  = $button.css('--manage-visibility');
@@ -533,6 +534,7 @@ $(document).on('turbolinks:load', function() {
     function setMenuParameters(new_type, new_value) {
         const type  = new_type  || searchType();
         const query = new_value || searchTerms();
+        // noinspection JSUnresolvedFunction
         $controls.each(function() {
             setHiddenParameters(this, type, query);
         });

@@ -13,7 +13,7 @@ class AwsS3Service < ApiService
 
   include AwsS3
 
-  # Include send/receive modules from "app/services/aws_3_service/**.rb".
+  # Include send/receive modules from "app/services/aws_s3_service/**.rb".
   include_submodules(self)
 
 end

@@ -222,13 +222,11 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
-      #event :create,    transitions_to: :creating,    **IF_SUBMITTER
-      #event :edit,      transitions_to: :editing,     **IF_SUBMITTER
       event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
     # =========================================================================
-    # = Bulk delete =
+    # = Bulk delete (en.emma.upload.state_group.remove)
     # =========================================================================
 
     state :removing do
@@ -242,7 +240,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Sub-sequence: Submission
+    # Submission sub-sequence (en.emma.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -261,12 +259,10 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Sub-sequence: Finalization
+    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
-      #event :fail,      transitions_to: :failed,      **IF_SYSTEM # TODO: remove - not applicable to bulk upload
-      #event :timeout,   transitions_to: :indexing,    **IF_SYSTEM # TODO: remove - not applicable to bulk upload
       event :advance,   transitions_to: :indexed,     **IF_SYSTEM
     end
 
@@ -275,7 +271,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Sub-sequence: Termination
+    # Terminal states (en.emma.upload.state_group.done)
     # =========================================================================
 
     state :failed do
@@ -287,7 +283,6 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     state :canceled do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
-      #event :resume,    transitions_to: :resuming,    **IF_DEV # TODO: remove? # TODO: remove - not applicable to bulk upload
     end
 
     state :completed do
@@ -296,7 +291,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Pseudo states
+    # Pseudo states (en.emma.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

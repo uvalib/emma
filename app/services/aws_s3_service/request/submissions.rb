@@ -180,13 +180,13 @@ module AwsS3Service::Request::Submissions
   # @overload api_operation(op, *items, **opt)
   #   @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>] items
   #   @param [Hash]               options
-  #   @option opt [String]        bucket  Override bucket implied by *items*
+  #   @option opt [String]        :bucket   Override bucket implied by *items*
   #
   # @overload api_operation(op, *sids, **opt)
   #   @param [Array<String>]      sids
   #   @param [Hash]               options
-  #   @option opt [String,Symbol] repo    Used to determine S3 bucket.
-  #   @option opt [String]        bucket  To specify S3 bucket.
+  #   @option opt [String,Symbol] :repo     Used to determine S3 bucket.
+  #   @option opt [String]        :bucket   To specify S3 bucket.
   #
   def api_operation(op, *items, **options)
     items = items.flatten
@@ -211,7 +211,7 @@ module AwsS3Service::Request::Submissions
   #
   # @option opt [Aws::S3::Client] client
   #
-  # @option opt [Symbol] meth         Calling method for logging
+  # @option opt [Symbol] :meth        Calling method for logging
   #
   # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
   #
@@ -334,7 +334,7 @@ module AwsS3Service::Request::Submissions
   # @param [AWS::S3::Object, String, StringIO, File] content
   # @param [Hash]                                    opt
   #
-  # @option opt [Symbol] meth         Calling method for logging
+  # @option opt [Symbol] :meth        Calling method for logging
   #
   # @return [String]                  Uploaded object key.
   # @return [nil]                     If the operation failed.
@@ -368,7 +368,7 @@ module AwsS3Service::Request::Submissions
   # @param [String]          key
   # @param [Hash]            opt      Passed to #get_object except for:
   #
-  # @option opt [Symbol] meth         Calling method for logging
+  # @option opt [Symbol] :meth        Calling method for logging
   #
   # @return [String]                  Content of requested file.
   # @return [nil]                     If the operation failed.
@@ -395,7 +395,7 @@ module AwsS3Service::Request::Submissions
   # @param [String]          key
   # @param [Hash]            opt      Passed to #get_object except for:
   #
-  # @option opt [Symbol] meth         Calling method for logging
+  # @option opt [Symbol] :meth        Calling method for logging
   #
   # @return [String]                  Removed object key.
   # @return [nil]                     If the operation failed.
@@ -422,7 +422,7 @@ module AwsS3Service::Request::Submissions
   # @param [String, nil]     filter   All objects if blank, missing, or '*'.
   # @param [Hash]            opt      Passed to #list_objects_v2 except for:
   #
-  # @option opt [Symbol] meth         Calling method for logging
+  # @option opt [Symbol] :meth        Calling method for logging
   #
   # @return [Array<Aws::S3::Object>]
   #

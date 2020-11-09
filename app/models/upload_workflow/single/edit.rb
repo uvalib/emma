@@ -388,13 +388,11 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
-      #event :create,    transitions_to: :creating,    **IF_SUBMITTER
       event :edit,      transitions_to: :editing,     **IF_SUBMITTER
-      #event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
     # =========================================================================
-    # = Modify existing entry =
+    # = Modify existing entry (en.emma.upload.state_group.edit)
     # =========================================================================
 
     state :editing do
@@ -423,7 +421,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Review
+    # Review sub-sequence (en.emma.upload.state_group.review)
     # =========================================================================
 
     state :scheduling do
@@ -469,7 +467,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Submission
+    # Submission sub-sequence (en.emma.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -488,7 +486,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Finalization
+    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -502,7 +500,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Termination
+    # Terminal states (en.emma.upload.state_group.done)
     # =========================================================================
 
     state :suspended do
@@ -530,7 +528,7 @@ class UploadWorkflow::Single::Edit < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Pseudo states
+    # Pseudo states (en.emma.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

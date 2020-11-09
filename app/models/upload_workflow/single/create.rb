@@ -358,12 +358,10 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
       event :create,    transitions_to: :creating,    **IF_SUBMITTER
-      #event :edit,      transitions_to: :editing,     **IF_SUBMITTER
-      #event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
     # =========================================================================
-    # = Create new entry =
+    # = Create new entry (en.emma.upload.state_group.create)
     # =========================================================================
 
     state :creating do
@@ -392,7 +390,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Review
+    # Review sub-sequence (en.emma.upload.state_group.review)
     # =========================================================================
 
     state :scheduling do
@@ -407,7 +405,6 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     state :holding do
-      #event :edit,      transitions_to: :editing,     **IF_USER
       event :edit,      transitions_to: :creating,     **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
       event :purge,     transitions_to: :purged,      **IF_ADMIN
@@ -417,7 +414,6 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     state :assigned do
-      #event :edit,      transitions_to: :editing,     **IF_USER
       event :edit,      transitions_to: :creating,     **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
       event :purge,     transitions_to: :purged,      **IF_SYSTEM
@@ -431,7 +427,6 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
 
     state :rejected do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      #event :edit,      transitions_to: :editing,     **IF_USER
       event :edit,      transitions_to: :creating,     **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
     end
@@ -441,7 +436,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Submission
+    # Submission sub-sequence (en.emma.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -460,7 +455,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Finalization
+    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -474,7 +469,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Termination
+    # Terminal states (en.emma.upload.state_group.done)
     # =========================================================================
 
     state :suspended do
@@ -501,7 +496,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Pseudo states
+    # Pseudo states (en.emma.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

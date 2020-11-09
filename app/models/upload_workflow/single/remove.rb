@@ -229,13 +229,11 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
-      #event :create,    transitions_to: :creating,    **IF_SUBMITTER
-      #event :edit,      transitions_to: :editing,     **IF_SUBMITTER
       event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
     # =========================================================================
-    # = Remove existing entry =
+    # = Remove existing entry (en.emma.upload.state_group.remove)
     # =========================================================================
 
     state :removing do
@@ -249,7 +247,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Submission
+    # Submission sub-sequence (en.emma.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -268,7 +266,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Finalization
+    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
@@ -282,7 +280,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Sub-sequence: Termination
+    # Terminal states (en.emma.upload.state_group.done)
     # =========================================================================
 
     state :suspended do
@@ -309,7 +307,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     end
 
     # =========================================================================
-    # Pseudo states
+    # Pseudo states (en.emma.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming

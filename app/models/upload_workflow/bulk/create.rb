@@ -253,34 +253,28 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
       event :create,    transitions_to: :creating,    **IF_SUBMITTER
-      #event :edit,      transitions_to: :editing,     **IF_SUBMITTER
-      #event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
     # =========================================================================
-    # = Bulk upload =
+    # = Bulk upload (en.emma.upload.state_group.create)
     # =========================================================================
 
     state :creating do
       event :cancel,    transitions_to: :canceled,    **IF_USER
       event :submit,    transitions_to: :submitting,  **IF_USER
-      #event :upload,    transitions_to: :validating,  **IF_USER # TODO: remove - not applicable to bulk upload
     end
 
     state :submitting do
-      #event :purge,     transitions_to: :purged,      **IF_ADMIN # TODO: remove - not applicable to bulk upload
-      event :reject,    transitions_to: :failed,      **IF_SYSTEM # NOTE: was to :creating
+      event :reject,    transitions_to: :failed,      **IF_SYSTEM
       event :advance,   transitions_to: :submitted,   **IF_SYSTEM
     end
 
     state :submitted do
-      #event :purge,     transitions_to: :purged,      **IF_ADMIN  # TODO: remove - not applicable to bulk upload
-      #event :schedule,  transitions_to: :scheduling,  **IF_SYSTEM # TODO: remove - not applicable to bulk upload
       event :advance,   transitions_to: :staging,     **IF_SYSTEM
     end
 
     # =========================================================================
-    # Sub-sequence: Submission
+    # Submission sub-sequence (en.emma.upload.state_group.submission)
     # =========================================================================
 
     state :staging do
@@ -299,12 +293,10 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Sub-sequence: Finalization
+    # Finalization sub-sequence (en.emma.upload.state_group.finalization)
     # =========================================================================
 
     state :indexing do
-      #event :fail,      transitions_to: :failed,      **IF_SYSTEM # TODO: remove - not applicable to bulk upload
-      #event :timeout,   transitions_to: :indexing,    **IF_SYSTEM # TODO: remove - not applicable to bulk upload
       event :advance,   transitions_to: :indexed,     **IF_SYSTEM
     end
 
@@ -313,7 +305,7 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Sub-sequence: Termination
+    # Terminal states (en.emma.upload.state_group.done)
     # =========================================================================
 
     state :failed do
@@ -325,7 +317,6 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     state :canceled do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
-      #event :resume,    transitions_to: :resuming,    **IF_DEV # TODO: remove? # TODO: remove - not applicable to bulk upload
     end
 
     state :completed do
@@ -334,7 +325,7 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     end
 
     # =========================================================================
-    # Pseudo states
+    # Pseudo states (en.emma.upload.state_group.pseudo)
     # =========================================================================
 
     state :resuming
