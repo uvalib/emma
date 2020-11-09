@@ -600,72 +600,9 @@ module UploadWorkflow::Bulk::Data
 end
 
 module UploadWorkflow::Bulk::Actions
-
   include UploadWorkflow::Actions
   include UploadWorkflow::Bulk::Data
   include UploadWorkflow::Bulk::Roles
-
-  # ===========================================================================
-  # :section: UploadWorkflow::Actions overrides
-  # ===========================================================================
-
-  public
-
-  # wf_validate_submission
-  #
-  # @param [Array] event_args
-  #
-  # @return [void]
-  #
-  # @see UploadWorkflow::Bulk::External#bulk_upload_create
-  # @see UploadWorkflow::Bulk::External#bulk_upload_edit
-  #
-  def wf_validate_submission(*event_args)
-    __debug_args(binding)
-    opt = event_args.extract_options!&.dup || {}
-    opt[:index] = false unless opt.key?(:index) # TODO: ???
-    opt[:user]     ||= current_user #@user
-    opt[:base_url] ||= nil #request.base_url
-    opt[:importer] ||= :ia_bulk
-    @succeeded, @failed =
-      if new_submission?
-        bulk_upload_create(event_args, **opt)
-      else
-        bulk_upload_edit(event_args, **opt)
-      end
-  end
-
-  # wf_finalize_submission
-  #
-  # @param [Array] event_args
-  #
-  # @return [void]
-  #
-  def wf_finalize_submission(*event_args)
-    __debug_args(binding)
-    # TODO: The entry is complete and ready to be staged
-  end
-
-  # wf_index_update
-  #
-  # @param [Array] _event_args        Ignored.
-  #
-  # @return [void]
-  #
-  # @see UploadWorkflow::Bulk::External#bulk_add_to_index
-  # @see UploadWorkflow::Bulk::External#bulk_update_in_index
-  #
-  def wf_index_update(*_event_args)
-    __debug_args(binding)
-    if entries.blank?
-      @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
-    elsif new_submission?
-      @succeeded, @failed, _ = bulk_add_to_index(*entries)
-    else
-      @succeeded, @failed, _ = bulk_update_in_index(*entries)
-    end
-  end
-
 end
 
 module UploadWorkflow::Bulk::Simulation

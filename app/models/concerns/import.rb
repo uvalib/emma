@@ -381,18 +381,19 @@ module Import
 
   # get_importer
   #
-  # @param [Module, String] mod
+  # @param [Module, String, Symbol] mod
   #
   # @return [Module, nil]
   #
   def self.get_importer(mod)
-    importer = mod
+    arg = mod
+    mod = mod.to_s if mod.is_a?(Symbol)
     if mod.is_a?(String)
       mod = "Import::#{mod.camelize}" unless mod.start_with?('Import::')
       mod = mod.safe_constantize
     end
     return mod if mod.is_a?(Module)
-    Log.error(__method__) { "#{importer}: invalid importer" }
+    Log.error(__method__) { "#{arg}: invalid importer" }
   end
 
   # ===========================================================================

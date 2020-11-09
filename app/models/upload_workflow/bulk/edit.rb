@@ -41,8 +41,55 @@ module UploadWorkflow::Bulk::Edit::Data
 end
 
 module UploadWorkflow::Bulk::Edit::Actions
+
   include UploadWorkflow::Bulk::Actions
   include UploadWorkflow::Bulk::Edit::Data
+
+  # ===========================================================================
+  # :section: UploadWorkflow::Actions overrides
+  # ===========================================================================
+
+  public
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_upload_edit
+  #
+  def wf_validate_submission(*event_args)
+    __debug_args(binding)
+    opt = event_args.extract_options!&.dup || {}
+    opt[:index]        = false unless opt.key?(:index)
+    opt[:user]       ||= current_user #@user
+    opt[:base_url]   ||= nil #request.base_url
+    opt[:importer]   ||= :ia_bulk
+    @succeeded, @failed = bulk_upload_edit(event_args, **opt)
+    @succeeded.each do |record|
+      record.set_phase(:edit)
+      record.set_state(:completed)
+    end
+  end
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_update_in_index
+  #
+  def wf_index_update(*_event_args)
+    __debug_args(binding)
+    if entries.blank?
+      @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
+    else
+      @succeeded, @failed, _ = bulk_update_in_index(*entries)
+    end
+  end
+
 end
 
 module UploadWorkflow::Bulk::Edit::Simulation

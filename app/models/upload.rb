@@ -264,10 +264,10 @@ class Upload < ApplicationRecord
     # Update the appropriate timestamp.
     now    = DateTime.now
     column = timestamp_column
-    utime  = attr[column]
+    utime  = attr[column] || self[column] || now
     utime  = utime.to_datetime                if utime.is_a?(Time)
     utime  = DateTime.parse(utime) rescue nil if utime.is_a?(String)
-    attr[column] = utime || self[column] || now
+    attr[column] = utime
 
     # New record defaults.
     if new_record

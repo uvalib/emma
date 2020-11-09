@@ -41,8 +41,56 @@ module UploadWorkflow::Bulk::Create::Data
 end
 
 module UploadWorkflow::Bulk::Create::Actions
+
   include UploadWorkflow::Bulk::Actions
   include UploadWorkflow::Bulk::Create::Data
+
+  # ===========================================================================
+  # :section: UploadWorkflow::Actions overrides
+  # ===========================================================================
+
+  public
+
+  # wf_validate_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_upload_create
+  #
+  def wf_validate_submission(*event_args)
+    __debug_args(binding)
+    opt = event_args.extract_options!&.dup || {}
+    opt[:index]        = false unless opt.key?(:index)
+    opt[:user]       ||= current_user #@user
+    opt[:base_url]   ||= nil #request.base_url
+    opt[:importer]   ||= :ia_bulk
+    opt[:repository] ||= EmmaRepository.default
+    @succeeded, @failed = bulk_upload_create(event_args, **opt)
+    @succeeded.each do |record|
+      record.set_phase(:create)
+      record.set_state(:completed)
+    end
+  end
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Bulk::External#bulk_add_to_index
+  #
+  def wf_index_update(*_event_args)
+    __debug_args(binding)
+    if entries.blank?
+      @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
+    else
+      @succeeded, @failed, _ = bulk_add_to_index(*entries)
+    end
+  end
+
 end
 
 module UploadWorkflow::Bulk::Create::Simulation

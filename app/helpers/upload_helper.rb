@@ -1076,6 +1076,7 @@ module UploadHelper
 
     html_div(class: "file-upload-container bulk #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
+      prepend_css_classes!(form_opt, "file-upload-bulk #{action}")
       form_with(**form_opt) do |f|
         lines = []
 
