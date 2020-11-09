@@ -15,7 +15,7 @@
 #
 SHRINE_CLOUD_STORAGE =
   ENV.fetch('SHRINE_CLOUD_STORAGE') {
-    (Rails.env.production? || application_deployed?) && rails_application?
+    (application_deployed? || !development_build?) && rails_application?
   }.then { |setting|
     true?(setting)
   }
@@ -69,83 +69,49 @@ end
 # Storage setup
 # =============================================================================
 
-storages = {
+# There are four distinct sets of S3 buckets -- three to provide a pickup
+# location for submission of remediated items back to member repositories
+# (defined in AwsS3Service::Common#S3_BUCKET) -- and the one for storage of
+# Shrine uploads, which is defined here.
+#
+# For desktop-testing, local storage based on subdirectories within the Rails
+# project is an option, but may be of limited use -- perhaps for unit testing.
+#
+# @see https://shrinerb.com/docs/storage/s3
+# @see https://shrinerb.com/docs/storage/file-system
+#
+Shrine.storages = {
+
   store: 'upload',                    # Storage for completed uploads.
   cache: 'upload_cache'               # Initial upload destination.
-}
 
-if SHRINE_CLOUD_STORAGE
+}.tap do |storages|
+  if SHRINE_CLOUD_STORAGE
 
-  # === AWS S3 storage ===
-  #
-  # There are four distinct S3 buckets -- one for EMMA repository storage and
-  # three to provide a pickup locations for remediated items derived from
-  # content acquired from the other repositories.
-  #
-  # "emma-storage-*"      === S3 bucket for EMMA local storage ===
-  #   "/upload/*"         Uploaded files.
-  #   "/upload_cache/*"   Files being uploaded.
-  #   "/repository/*"     Finalized "EMMA Repository" files.
-  #
-  # "emma-bs-queue-*"     === S3 bucket for Bookshare updates ===
-  #   "/upload/*"         Items queued for Bookshare.
-  #   "/upload_cache/*"   Staging for items to deliver to Bookshare.
-  #
-  # "emma-ht-queue-*"     === S3 bucket for HathiTrust updates ===
-  #   "/upload/*"         Items queued for HathiTrust.
-  #   "/upload_cache/*"   Staging for items to deliver to HathiTrust.
-  #
-  # "emma-ia-queue-*"     === S3 bucket for Internet Archive updates ===
-  #   "/upload/*"         Items queued for Internet Archive.
-  #   "/upload_cache/*"   Staging for items to deliver to Internet Archive.
-  #
-  # @see https://shrinerb.com/docs/storage/s3
+    # Prepend a distinguishing prefix for desktop development.
+    storages.transform_values! { |v| "rwl_#{v}" } unless application_deployed?
 
-  s3_buckets = {
-    bookshare:       'emma-bs-queue-staging',
-    hathiTrust:      'emma-ht-queue-staging',
-    internetArchive: 'emma-ia-queue-staging'
-  }
+    # S3 options are kept in encrypted credentials but can be overridden by
+    # environment variables.
+    s3_options = {
+      bucket:            AWS_BUCKET,
+      region:            AWS_REGION,
+      secret_access_key: AWS_SECRET_KEY,
+      access_key_id:     AWS_ACCESS_KEY_ID,
+    }.compact.reverse_merge(Rails.application.credentials.s3 || {})
 
-  # S3 options are kept in encrypted credentials but can be overridden by
-  # environment variables.
-  s3_options = {
-    bucket:            AWS_BUCKET,
-    region:            AWS_REGION,
-    secret_access_key: AWS_SECRET_KEY,
-    access_key_id:     AWS_ACCESS_KEY_ID,
-  }.compact.reverse_merge(Rails.application.credentials.s3 || {})
-
-  # Prepend a distinguishing prefix for desktop development.
-  storages.transform_values! { |v| "rwl_#{v}" } unless application_deployed?
-
-  Shrine.storages =
-    storages.transform_values do |subdir|
-      Shrine::Storage::S3.new(prefix: subdir, **s3_options)
+    storages.transform_values! do |prefix|
+      Shrine::Storage::S3.new(prefix: prefix, **s3_options)
     end
 
-  s3_buckets.each_pair do |repo, bucket|
-    s3_options[:bucket] = bucket
-    storages.each_pair do |name, subdir|
-      Shrine.storages[:"#{name}_#{repo}"] =
-        Shrine::Storage::S3.new(prefix: subdir, **s3_options)
-    end
-  end
+  else
 
-else
+    # File system location of the storage subdirectories.
+    storage_dir = ENV.fetch('STORAGE_DIR', 'storage')
 
-  # === Local storage ===
-  #
-  # Local storage is for desktop-testing use, based on subdirectories within
-  # the Rails project "/storage" directory.
-  #
-  # @see https://shrinerb.com/docs/storage/file-system
-
-  storage_dir = ENV.fetch('STORAGE_DIR', 'storage')
-
-  Shrine.storages =
-    storages.transform_values do |subdir|
+    storages.transform_values! do |subdir|
       Shrine::Storage::FileSystem.new("#{storage_dir}/#{subdir}")
     end
 
+  end
 end

@@ -26,18 +26,31 @@ module AwsS3Service::Common
 
   public
 
-  # TODO: from config/initializers/shrine.rb - should probably relocate
-
+  # There are two S3 buckets for each member repository used to queue
+  # submissions:
+  #
+  # "emma-bs-queue-production"  Submissions to Bookshare
+  # "emma-ht-queue-production"  Submissions to HathiTrust
+  # "emma-ia-queue-production"  Submissions to Internet Archive
+  # "emma-bs-queue-staging"     Test submissions to Bookshare
+  # "emma-ht-queue-staging"     Test submissions to HathiTrust
+  # "emma-ia-queue-staging"     Test submissions to Internet Archive
+  #
+  # @type [Hash{Symbol=>String}]
+  #
   S3_BUCKET = {
     bookshare:       'bs',
     hathiTrust:      'ht',
     internetArchive: 'ia',
   }.transform_values { |repo_marker|
-    production = Rails.env.production? && application_deployed?
-    target     = production ? 'production' : 'staging'
-    "emma-#{repo_marker}-queue-#{target}"
+    "emma-#{repo_marker}-queue-#{application_deployment}"
   }.deep_freeze
 
+  # S3 options are kept in encrypted credentials but can be overridden by
+  # environment variables.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
   S3_OPTIONS = {
     region:            AWS_REGION,
     secret_access_key: AWS_SECRET_KEY,

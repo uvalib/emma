@@ -214,9 +214,7 @@ AWS_REGION = ENV.fetch('AWS_REGION', 'us-east-1').freeze
 # @type [String]
 #
 AWS_BUCKET =
-  ENV.fetch('AWS_BUCKET') {
-    application_deployed? ? 'emma-storage-production' : 'emma-storage-staging'
-  }.freeze
+  ENV.fetch('AWS_BUCKET') { "emma-storage-#{application_deployment}" }.freeze
 
 # Amazon identity access key.
 #
@@ -262,7 +260,7 @@ if rails_application?
     :IA_SIG_COOKIE,
     :IA_USER_COOKIE,
   ]
-  if application_deployed? || !development?
+  if application_deployed? || !development_build?
     # == Amazon Web Services
     vars += %i[AWS_REGION AWS_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_KEY]
   end
