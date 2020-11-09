@@ -557,6 +557,7 @@ module UploadHelper
 
     # An element to hold a dynamic display following the group.
     note = html_div('&nbsp;'.html_safe, class: 'note', 'aria-hidden': true)
+    note = html_div(note, class: 'note-tray')
 
     # Include the group in a panel with accompanying label.
     outer_opt = { class: UPLOAD_GROUP_PANEL_CLASS }

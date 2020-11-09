@@ -145,7 +145,6 @@ $tray-pad: 1.5 * $icon-pad;
 
     @extend .list-2-column;
 
-    margin-top:    -1rem;
     margin-bottom: 1rem;
     align-content: flex-start;
 
@@ -210,6 +209,7 @@ $tray-pad: 1.5 * $icon-pad;
             .icon {
 
                 @extend %button-hover;
+
                 @include user-select(none);
 
                 padding:         0 $icon-pad;

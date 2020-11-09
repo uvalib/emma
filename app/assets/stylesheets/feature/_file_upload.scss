@@ -200,22 +200,41 @@ $upload-section-gap-small: $upload-section-gap / 2;
     margin:          2.75rem 0 0.5rem;
     color:           $control-text;
 
+    // Make up for missing .note-tray element.
+    @media #{$narrow-screen} {
+        margin-bottom: 2rem;
+    }
+
     // Note preceding the selection controls (screen-reader only).
     > label {
         @extend %sr-only;
     }
 
-    // Note following the selection controls.
-    > .note {
+    // Note following the selection controls which moves within a container
+    // that can be manipulated as a flex element within the panel.
+    > .note-tray {
 
-        margin:      0.75rem 0 0;
-        line-height: 1;
-        font-weight: bold;
+        display: inline-flex;
+        margin:  0.75rem 0 0;
 
-        // Don't allow showGroupNote() to move the text under the button for
-        // the handheld form factor.
+        // Don't allow showGroupNote() to move the text under the button
+        // for the handheld form factor.
         @media #{$narrow-screen} {
-            left: 0 !important;
+            display: none;
+        }
+
+        .note {
+
+            position:    absolute;
+            line-height: 1;
+            font-weight: bold;
+            flex:        0 1 auto;
+
+            // Don't allow showGroupNote() to move the text under the button
+            // for the handheld form factor.
+            @media #{$narrow-screen} {
+                margin-left: 0 !important;
+            }
         }
     }
 
@@ -241,6 +260,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
             @extend .uppy-FileInput-btn;
             @extend %button-hover;
+
             @include user-select(none);
 
             display:        flex;

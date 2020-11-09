@@ -57,7 +57,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $group_select_note = $group_select_panel.children('.note');
+    let $group_select_note = $group_select_panel.find('.note-tray .note');
 
     // ========================================================================
     // Variables - page filters
@@ -219,9 +219,9 @@ $(document).on('turbolinks:load', function() {
     function showGroupNote(ev) {
         let target   = (typeof ev === 'object') && ev.currentTarget || ev;
         let $target  = $(target);
-        const indent = $target.offset().left;
+        const indent = $target.position().left;
         const text   = $target.attr('data-note') || $target.attr('title');
-        $group_select_note.offset({ left: indent });
+        $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
         $group_select_note.css('visibility', 'visible');
     }
@@ -231,7 +231,6 @@ $(document).on('turbolinks:load', function() {
      * over or focused on.
      */
     function hideGroupNote() {
-        $group_select_note.offset({ left: 'auto' });
         $group_select_note.html('&nbsp;'); // Keep filled to maintain height.
         $group_select_note.css('visibility', 'hidden');
     }

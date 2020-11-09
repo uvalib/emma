@@ -116,6 +116,9 @@
 
     @extend %panel;
 
+    // noinspection SassScssResolvedByNameOnly
+    @include user-select(none);
+
     display:     inline-flex;
     padding:     0.25rem 0.5rem;
     align-items: baseline;
@@ -257,13 +260,17 @@ textarea:focus {
 
 // Include to "de-activate" an active element like a button or link.
 .disabled {
+
     @extend %disabled;
+
     cursor: default;
 }
 
 // Include to "de-activate" an active element because it is an invalid choice.
 .forbidden {
+
     @extend %disabled;
+
     cursor: not-allowed;
 }
 
