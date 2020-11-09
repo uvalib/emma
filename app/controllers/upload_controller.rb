@@ -60,6 +60,7 @@ class UploadController < ApplicationController
 
   # == GET /upload[?id={:id|SID|RANGE_LIST}]
   # == GET /upload[?selected={:id|SID|RANGE_LIST}]
+  # == GET /upload[?group=WORKFLOW_GROUP]
   # Display the current user's uploads.
   #
   # If an item specification is given by one of UploadConcern#IDENTIFIER_PARAMS

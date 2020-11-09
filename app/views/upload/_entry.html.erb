@@ -2,10 +2,12 @@
 <%-
   # Display an uploaded entry.
 
+  # @type [Model, nil] item
   item   ||= @item
   index  ||= nil
   return unless item || index
 
+  group  ||= (item.state_group if item.is_a?(Upload))
   offset ||= page_offset
   add    ||= {}
   level  ||= 2
@@ -13,8 +15,9 @@
   skip   ||= nil
 
   skip = [*skip, :thumbnail].uniq
-  add  = add.merge(index: index, row: row)
-  opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
+  opt  = { index: index, row: row, group: group }
+  add  = add.merge(opt)
+  opt.merge!(offset: offset, level: level, skip: skip)
 
 -%>
 

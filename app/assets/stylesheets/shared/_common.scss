@@ -170,9 +170,9 @@
     //padding:          10px 15px;
     font-family:        sans-serif;
     //font-size:        0.85em;
-    color:              $uppy-file-input-text;
+    color:              $control-text;
     background:         none;
-    border:             1px solid $uppy-file-input-text;
+    border:             1px solid $control-accent;
     border-radius:      8px;
     //cursor:           pointer;
     -webkit-appearance: none;
@@ -193,11 +193,10 @@
     }
 }
 
-// Embolden characters while maintaining the width of the text by reducing the
-// distance between the individual letters.
+// Embolden characters by adding a text shadow in order to avoid changing the
+// width of the text.
 %hover-bold {
-    font-weight:    bold;
-    letter-spacing: -0.04em;
+    text-shadow: 0 0 1px black;
 }
 
 // A pop-out effect for panels.

@@ -303,22 +303,35 @@ module PaginationHelper
 
   public
 
-  # Page count display.
+  # Page number display element.
+  #
+  # @param [Integer]   page
+  # @param [Hash, nil] opt            Options to .page-count wrapper element.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *count* is negative.
+  #
+  def page_number(page, opt = nil)
+    page     = page.to_i and return if page.negative?
+    pages    = get_page_number_label(count: page)&.upcase_first
+    html_opt = prepend_css_classes(opt, 'page-count')
+    html_div("#{pages} #{page}", html_opt)
+  end
+
+  # Page count display element.
   #
   # @param [Integer]   count
   # @param [Hash, nil] opt            Options to .search-count wrapper element.
   #
-  # @option opt [Symbol] :controller
-  # @option opt [Symbol] :action
-  #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *count* is negative.
   #
   def pagination_count(count, opt = nil)
-    opt   = prepend_css_classes(opt, 'search-count')
-    found = get_page_count_label(count: count)
-    count = number_with_delimiter(count)
-    # noinspection RubyYardParamTypeMatch
-    html_div("#{count} #{found}", opt)
+    count    = count.to_i and return if count.negative?
+    html_opt = prepend_css_classes(opt, 'search-count')
+    found    = get_page_count_label(count: count)
+    count    = number_with_delimiter(count)
+    html_div("#{count} #{found}", html_opt)
   end
 
   # Placeholder for an item that would have been a link if it had a path.
@@ -356,19 +369,32 @@ module PaginationHelper
 
   protected
 
+  # Page number label for the given controller/action.
+  #
+  # @param [Symbol]  controller       Default: `params[:controller]`.
+  # @param [Hash]    opt              Passed to #i18n_lookup.
+  #
+  # @return [String]                  The specified value.
+  # @return [nil]                     No non-empty value was found.
+  #
+  def get_page_number_label(controller: nil, **opt)
+    controller ||= request_parameters[:controller]
+    i18n_lookup(controller, 'pagination.page', **opt)
+  end
+
   # Page count label for the given controller/action.
   #
-  # @param [Hash] opt
+  # @param [Symbol]  controller       Default: `params[:controller]`.
+  # @param [Hash]    opt              Passed to #i18n_lookup; in particular:
   #
-  # @option opt [Symbol]  :controller
   # @option opt [Integer] :count
   #
   # @return [String]                  The specified value.
   # @return [nil]                     No non-empty value was found.
   #
-  def get_page_count_label(**opt)
-    controller = opt[:controller] || request_parameters[:controller]
-    i18n_lookup(controller, 'pagination.count')
+  def get_page_count_label(controller: nil, **opt)
+    controller ||= request_parameters[:controller]
+    i18n_lookup(controller, 'pagination.count', **opt)
   end
 
   # A pagination control link or a non-actionable placeholder if *path* is not

@@ -38,7 +38,10 @@ en:
       # =======================================================================
 
       pagination:
-        count:          'uploads found'
+        page:           'page'
+        count:
+          one:          'submission'
+          many:         'submissions'
 
       field_group:
         available:
@@ -164,27 +167,103 @@ en:
       # =======================================================================
 
       state_group:
+
+        # The radio button for a group is only shown if there are records on
+        # the page matching that group.  The groups are listed in priority
+        # order, so, for example, if there are any records in the :create
+        # state on the page then that will be the filter selected by default.
+
         create:
-          states:       [creating, validating, submitting, submitted]
           label:        'Creating'
+          tooltip:      'New EMMA entries in the process of being created'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - creating
+            - validating
+            - submitting
+            - submitted
+
         edit:
-          states:       [editing, replacing, modifying, modified]
           label:        'Modifying'
+          tooltip:      'Existing EMMA entries in the process of being modifying'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - editing
+            - replacing
+            - modifying
+            - modified
+
         remove:
-          states:       [removing, removed]
           label:        'Removing'
+          tooltip:      'Existing EMMA entries in the process of being deleted'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - removing
+            - removed
+
         review:
-          states:       [scheduling, assigning, holding, assigned, reviewing]
-          label:        'Reviewing'
+          label:        'Review'
+          tooltip:      'Submissions in the review process'
+          show:         'nonzero'
+          enabled:      false # TODO: reviews
+          states:
+            - scheduling
+            - assigning
+            - holding
+            - assigned
+            - reviewing
+            - rejected
+            - approved
+
         submission:
-          states:       [staging, unretrieved, retrieved]
           label:        'Submitting'
+          tooltip:      'Submissions being submitted to a member repository'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - staging
+            - unretrieved
+            - retrieved
+
         finalization:
-          states:       [indexing, indexed]
           label:        'Indexing'
-        terminal:
-          states:       [suspended, failed, canceled, completed]
+          tooltip:      'Submissions in the process of being added to the index'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - indexing
+            - indexed
+
+        done:
           label:        'Complete'
+          tooltip:      'Existing EMMA entries'
+          show:         'nonzero'
+          enabled:      true
+          states:
+            - suspended
+            - failed
+            - canceled
+            - completed
+
+        pseudo:
+          label:        'PSEUDO'
+          tooltip:      'Show "starting", "resuming" and "purged" pseudo-states'
+          show:         'debug'
+          enabled:      true
+          states:
+            - starting
+            - resuming
+            - purged
+
+        all:
+          label:        'ALL'
+          tooltip:      'All submissions in all states'
+          show:         'debug'
+          enabled:      true
+          states:       []
 
       # =======================================================================
       # Pages
@@ -229,11 +308,17 @@ en:
         label:          'Uploads'
         title:          'Your EMMA Uploads'
         tooltip:        'Review uploads of remediated content to EMMA.'
-        description:    |
-          This is a listing of all EMMA entries you have created.
-          With the buttons above, you may upload remediated content, remove an
-          item that you previously uploaded, or modify metadata or content for
-          an item was was previously uploaded.
+        description_html: |
+          <p>
+            This is a listing of all of your EMMA submissions.
+            With the buttons above, you may upload remediated content, remove
+            an item that you previously uploaded, or modify metadata or content
+            for an item was was previously uploaded.
+          <p/>
+          <p>
+            If you have submissions in different states of progress, use the
+            controls below to select which kind to view.
+          </p>
         fields:
           <<:           *UPLOAD_DATABASE_FIELDS
 

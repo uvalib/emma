@@ -915,10 +915,10 @@ $(document).on('turbolinks:load', function() {
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
         fieldDisplayFilterContainer($form).children().each(function() {
-            delegateClick(this);
+            delegateInputClick(this);
         });
         $form.find('.checkbox.single').each(function() {
-            delegateClick(this);
+            delegateInputClick(this);
         });
 
         // Ensure that required fields are indicated.
@@ -1019,37 +1019,6 @@ $(document).on('turbolinks:load', function() {
             'autocomplete':  'off',
             'data-lpignore': 'true' // LastPass requires this.
         });
-    }
-
-    /**
-     * Allow a click anywhere within the element holding a label/button pair
-     * to be delegated to the enclosed input.  This broadens the "click target"
-     * and allows clicks in the "void" between the input and the label to be
-     * accredited to the input that the user was trying to click.
-     *
-     * @param {Selector} element
-     */
-    function delegateClick(element) {
-
-        let $element = $(element);
-        handleClickAndKeypress($element, clickChildInput);
-
-        /**
-         * If the container receives a click event in an area not covering
-         * either the input or label element then it will be handled here and
-         * "converted" into a click on the input element.
-         *
-         * Events that would have gone to the input or label will not be
-         * impeded here (nor will the event bubbling up from the input).
-         *
-         * @param {jQuery.Event} event
-         */
-        function clickChildInput(event) {
-            if (event.target === event.currentTarget) {
-                event.stopPropagation();
-                $element.find('[type="radio"],[type="checkbox"]').click();
-            }
-        }
     }
 
     /**

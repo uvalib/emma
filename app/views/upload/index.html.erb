@@ -1,6 +1,6 @@
 <%# app/views/upload/index.html.erb -%>
 <%-
-  # A list of uploads by the current user.
+  # A list of submissions by the current user.
 
   title ||= t('emma.upload.index.title')
   list  ||= upload_list
@@ -9,26 +9,42 @@
   row   ||= 1
   help  ||= help_popup(:upload)
 
+  page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_terms, search = partition_options(terms, *page_opt)
+  page = (page_terms[:page]&.values&.first).to_i
+  page = nil unless page > 1
+
   unless modal?
-    set_page_title(title)
+    group = page_terms[:group]&.values&.first
+    group = Upload::WorkflowMethods.state_group_label(group) if group
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if page
+    set_page_title(t('emma.upload.index.label', default: title))
+    append_page_title('-', group)                    if group.present?
+    append_page_title('-', list_search_terms(terms)) if terms.present?
     set_page_description(title)
     set_page_robots(:noindex, :nofollow)
   end
 
-  applied_terms, top_controls, bottom_controls =
-    index_controls(terms, count: count, row: row)
-  row   += [applied_terms, top_controls].compact.size
   title += " (#{count})" if list.blank?
+
+  index_opt = { count: count, row: row }
+  index_opt[:page]  = page if page.present? # Show page if beyond the first.
+  index_opt[:count] = -1   if search.blank? # Don't show count normally.
+  top_controls, bottom_controls = index_controls(**index_opt)
+  row += 1 if top_controls
 
   template_opt = { list: list, count: count, row: row, skip: :title }
 
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
-<%= upload_description %>
 
-<div class="upload-list">
-  <%= applied_terms %>
+<%= upload_page_filter_options if session_debug? %>
+<%= upload_description %>
+<%= upload_state_group_select %>
+
+<div class="<%= UploadHelper::UPLOAD_LIST_CLASS -%>">
   <%= top_controls %>
   <%= render 'upload/list', template_opt %>
   <%= bottom_controls if list.present? %>

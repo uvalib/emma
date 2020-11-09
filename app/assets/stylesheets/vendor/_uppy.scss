@@ -29,7 +29,7 @@
     // noinspection SassScssResolvedByNameOnly
     &:not(.disabled):not(.forbidden):hover {
         background-color: $uva-accent-orange;
-        border-color:     $uppy-file-input-text;
+        border-color:     $uppy-file-input-accent;
         color:            white;
     }
 

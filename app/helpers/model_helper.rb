@@ -623,28 +623,47 @@ module ModelHelper
   #
   # @type [Array<Symbol>]
   #
-  ITEM_ENTRY_OPT = %i[index offset level row skip].freeze
+  ITEM_ENTRY_OPT = %i[index offset level row group skip].freeze
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Hash, nil] _terms         Passed to `#applied_search_terms`.
-  # @param [Integer]   count          Default: `#total_items`.
-  # @param [Integer]   row
+  # @param [Integer] count            Default: `#total_items`.
+  # @param [Integer] page
+  # @param [Integer] row
+  # @param [Hash]    opt              Passed to #page_filter.
   #
-  # @return [Array<ActiveSupport::SafeBuffer>]
+  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
   #
-  def index_controls(_terms, count: nil, row: 1)
-    page_controls = pagination_controls
-    result = []
-    result << nil # With Select2, applied search term display is redundant.
-    result <<
-      html_div(class: "pagination-top row-#{row + 1}") do
-        page_controls + pagination_count(count || total_items)
-      end
-    result <<
-      html_div(class: 'pagination-bottom') do
-        page_controls
-      end
+  def index_controls(count: nil, page: nil, row: nil, **opt)
+    count ||= total_items
+    page    = page.to_i
+    row     = (row || 1) + 1
+    links   = pagination_controls
+    counts  = []
+    counts << page_number(page)       if page > 1
+    counts << pagination_count(count) unless count.negative?
+    counts  = html_div(*counts, class: 'counts')
+    filter  = page_filter(**opt)
+    top = html_div(links, counts, filter, class: "pagination-top row-#{row}")
+    bot = html_div(links, class: 'pagination-bottom')
+    return top, bot
+  end
+
+  # An optional page filter control in line with the top pagination control.
+  #
+  # @param [Hash] opt                 Passed to model-specific method except:
+  #
+  # @option opt [String, Symbol] :model   Default: `params[:controller]`
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see UploadHelper#upload_page_filter
+  #
+  def page_filter(**opt)
+    model = opt.delete(:model) || params[:controller]
+    meth  = "#{model}_#{__method__}"
+    # noinspection RubyYardReturnMatch
+    respond_to?(meth) && send(meth, **opt) || ''.html_safe
   end
 
   # Render an element containing the ordinal position of an entry within a list
@@ -656,6 +675,7 @@ module ModelHelper
   # @option opt [Integer] :index      Required index number.
   # @option opt [Integer] :offset     Default: `#page_offset`.
   # @option opt [Integer] :level      Heading tag level (@see #html_tag).
+  # @option opt [String]  :group      Sets :'data-group' for outer <div>.
   # @option opt [Object]  :skip       Ignored.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -690,6 +710,7 @@ module ModelHelper
 
     # Wrap the container in the actual number grid element.
     outer_opt = { class: 'number' }
+    outer_opt[:'data-group'] = opt[:group] if opt[:group]
     append_css_classes!(outer_opt, "row-#{row}") if row
     html_div(container, outer_opt)
   end
@@ -711,7 +732,11 @@ module ModelHelper
     if item.nil?
       append_css_classes!(html_opt, 'empty')
     elsif item.respond_to?(:identifier)
-      html_opt[:id] = "#{model}-#{item.identifier}"
+      html_opt[:id]           = "#{model}-#{item.identifier}"
+    elsif item.is_a?(Upload)
+      html_opt[:id]           = "#{model}-#{item.submission_id}"
+      html_opt[:'data-group'] = item.state_group
+      pairs = { group: item.state_group }.merge!(pairs || {})
     end
     html_div(html_opt) do
       if item

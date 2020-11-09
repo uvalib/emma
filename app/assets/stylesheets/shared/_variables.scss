@@ -62,6 +62,7 @@ $uppy-hover-text:          #1b5dab;
 $uppy-shadow:              rgb(34, 117, 215);
 $uppy-border:              $uppy-light-gray;
 $uppy-file-input:          #14457f;
+$uppy-file-input-accent:   $uppy-file-input;
 $uppy-file-input-text:     $uppy-file-input;
 $uppy-file-input-bg:       none;
 $uppy-file-input-text-rev: $uppy-white;
@@ -85,6 +86,10 @@ $input-sealed-fg:   $uva-text-gray;
 $input-readonly-fg: $uva-text-gray;
 $input-disabled-fg: $input-readonly-fg;
 
+// Control colors.
+$control-text:      $uppy-file-input-text;
+$control-accent:    $control-text;
+
 // Flash backgrounds.
 $alert-bg:          $failure-bg;
 $notice-bg:         $success-bg;
@@ -92,6 +97,7 @@ $failure-bg:        $alert-bg;
 $success-bg:        $notice-bg;
 
 // Other colors.
+$debug-bg:          lighter($debug-fg,          75%);
 $header-bg:         $uva-blue;
 $panel-bg:          lighter($uva-accent-orange, 90%);
 $panel-border:      lighter($uva-accent-orange, 50%);

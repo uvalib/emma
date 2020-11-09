@@ -272,6 +272,26 @@ module UploadConcern
       end
     end
 
+    # Limit by workflow status group.
+    group = opt.delete(:group)
+    group = group.split(/\s*,\s*/) if group.is_a?(String)
+    group = Array.wrap(group).reject(&:blank?)
+    if group.present?
+      group.map!(&:downcase).map!(&:to_sym)
+      if group.include?(:all)
+        %i[state edit_state].each { |k| opt.delete(k) }
+      else
+        states =
+          group.flat_map { |g|
+            Upload::STATE_GROUP.dig(g, :states)
+          }.compact.map(&:to_s)
+        %i[state edit_state].each do |k|
+          opt[k] = (Array.wrap(opt[k]) + states).uniq
+          opt.delete(k) if opt[k].empty?
+        end
+      end
+    end
+
     Upload.get_records(*items, **opt)
   end
 

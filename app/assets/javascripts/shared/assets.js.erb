@@ -140,7 +140,7 @@ var Emma = (function() {
         }
     }
 
-    // noinspection FunctionNamingConventionJS, FunctionWithMultipleReturnPointsJS
+    // noinspection FunctionNamingConventionJS
     /**
      * Interpret a string as an Array definition.
      *
@@ -150,11 +150,21 @@ var Emma = (function() {
      * @returns {Array}
      */
     function a$(arg, separator) {
-        switch (typeof arg) {
-            case 'object': return Object.values(arg);
-            case 'string': return arg.split(separator || ',');
-            default:       return [];
-        }
+      let result = [];
+      if (Array.isArray(arg)) {
+          result = arg;
+      } else if (typeof arg === 'object') {
+          result = Object.values(arg);
+      } else if (typeof arg === 'string') {
+          let string = arg.trim();
+          if (string.startsWith('[')) {
+              result = JSON.parse(string);
+          } else {
+              let array = string.split(separator || ',');
+              result = array.map(function(element) { return element.trim(); });
+          }
+      }
+      return result;
     }
 
     // noinspection FunctionNamingConventionJS, FunctionWithMultipleReturnPointsJS
@@ -431,6 +441,50 @@ var Emma = (function() {
                 name:    o$('<%= EmmaRepository.pairs.to_json %>'),
                 default: '<%= EmmaRepository.default %>'
             }
+        },
+
+        /**
+         * ====================================================================
+         * feature/records.js
+         *
+         * - GroupPanel     Selection for type of Upload records to show.
+         * - PageFilter     Upload records filter radio button panel.
+         * - FilterOptions  Debug-only filter option panel.
+         * - List           Container for a listing of Upload records.
+         * - StateGroup     Workflow state groups.
+         * ====================================================================
+         *
+         * @type {{
+         *    GroupPanel:     object,
+         *    PageFilter:     object,
+         *    FilterOptions:  object,
+         *    List:           object,
+         *    StateGroup:     string[]
+         * }}
+         */
+        Record: {
+            GroupPanel: {
+                class:  '<%= UploadHelper::UPLOAD_GROUP_PANEL_CLASS %>',
+                Control: {
+                    class: '<%= UploadHelper::UPLOAD_GROUP_CONTROL_CLASS %>'
+                }
+            },
+            PageFilter: {
+                class:  '<%= UploadHelper::UPLOAD_PAGE_FILTER_CLASS %>',
+                Control: {
+                    class: '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>'
+                }
+            },
+            FilterOptions: {
+                class:  '<%= UploadHelper::UPLOAD_FILTER_OPTIONS_CLASS %>',
+                Control: {
+                    class: '<%= UploadHelper::UPLOAD_FILTER_CONTROL_CLASS %>'
+                }
+            },
+            List: {
+                class: '<%= UploadHelper::UPLOAD_LIST_CLASS %>',
+            },
+            StateGroup: a$('<%= UploadHelper::UPLOAD_STATE_GROUP.keys.to_json %>'),
         },
 
         /**

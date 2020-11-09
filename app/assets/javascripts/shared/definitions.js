@@ -528,24 +528,27 @@ function urlFrom(arg) {
 /**
  * Make an object out of a URL parameter string.
  *
- * @param {string} str
+ * @param {string|object} item
  *
  * @returns {object}
  */
-function asParams(str) {
+function asParams(item) {
+    const func = 'asParams';
     let result = {};
-    if (typeof str === 'string') {
-        str.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
+    if (typeof item === 'string') {
+        item.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
             let parts = pair.split('=');
             const k   = parts.shift();
             if (k) {
                 result[k] = parts.join('=');
             }
         });
-    } else if (typeof str === 'object') {
-        result = str;
+    } else if (typeof item !== 'object') {
+        console.error(`${func}: cannot handle ${typeof item}: ${item}`);
+    } else if (isDefined(item.search)) {
+        result = item.search; // E.g., `window.location`.
     } else {
-        console.error(`asParams: cannot handle ${typeof str}: ${str}`);
+        result = item;
     }
     return result;
 }
@@ -780,6 +783,24 @@ function handleClickAndKeypress($element, func) {
     return handleEvent($element, 'click', func).each(handleKeypressAsClick);
 }
 
+/**
+ * Set hover and focus event handlers.
+ *
+ * @param {jQuery}                 $element
+ * @param {function(jQuery.Event)} funcEnter    Event handler for 'enter'.
+ * @param {function(jQuery.Event)} [funcLeave]  Event handler for 'leave'.
+ */
+function handleHoverAndFocus($element, funcEnter, funcLeave) {
+    if (funcEnter) {
+        handleEvent($element, 'mouseenter', funcEnter);
+        handleEvent($element, 'focus',      funcEnter);
+    }
+    if (funcLeave) {
+        handleEvent($element, 'mouseleave', funcLeave);
+        handleEvent($element, 'blur',       funcLeave);
+    }
+}
+
 // ============================================================================
 // Functions - Accessibility
 // ============================================================================
@@ -926,6 +947,38 @@ function handleKeypressAsClick(selector, direct, match, except) {
             }
         }
     }
+}
+
+// noinspection FunctionWithMultipleReturnPointsJS
+/**
+ * Allow a click anywhere within the element holding a label/button pair
+ * to be delegated to the enclosed input.  This broadens the "click target"
+ * and allows clicks in the "void" between the input and the label to be
+ * associated with the input element that the user intended to click.
+ *
+ * @param {Selector} element
+ */
+function delegateInputClick(element) {
+
+    const func   = 'delegateInputClick';
+    let $element = $(element);
+    let $input   = $element.find('[type="radio"],[type="checkbox"]');
+    const count  = $input.length;
+
+    if (count < 1) {
+        console.error(`${func}: no targets within:`);
+        console.log(element);
+        return;
+    } else if (count > 1) {
+        console.warn(`${func}: ${count} targets`);
+    }
+
+    handleClickAndKeypress($element, function(event) {
+        if (event.target !== $input[0]) {
+            event.preventDefault();
+            $input.click();
+        }
+    });
 }
 
 /**

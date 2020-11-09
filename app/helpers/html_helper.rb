@@ -261,10 +261,11 @@ module HtmlHelper
 
   # Indicate whether the HTML options include any of the given CSS classes.
   #
-  # @param [Hash, nil]     html_opt   The target options hash.
-  # @param [Array<String>] classes    CSS classes to find.
+  # @param [Hash, nil]            html_opt  The target options hash.
+  # @param [Array<String,Symbol>] classes   CSS classes to find.
   #
   def has_class?(html_opt, *classes)
+    classes     = classes.flatten.map(&:to_s)
     opt_classes = html_opt&.dig(:class) || []
     opt_classes = opt_classes.to_s.split(' ') unless opt_classes.is_a?(Array)
     opt_classes.any? { |c| classes.include?(c) }
@@ -272,10 +273,10 @@ module HtmlHelper
 
   # Merge values from one or more options hashes.
   #
-  # @param [Hash, nil]   html_opt     The target options hash.
-  # @param [Array<Hash>] args         Options hash(es) to merge into *opt*.
+  # @param [Hash, nil]       html_opt   The target options hash.
+  # @param [Array<Hash,nil>] args       Options hash(es) to merge into *opt*.
   #
-  # @return [Hash]                    A new hash.
+  # @return [Hash]                      A new hash.
   #
   # @see #merge_html_options!
   #
@@ -286,10 +287,10 @@ module HtmlHelper
 
   # Merge values from one or more hashes into an options hash.
   #
-  # @param [Hash]        html_opt     The target options hash.
-  # @param [Array<Hash,nil>] args         Options hash(es) to merge into *opt*.
+  # @param [Hash]            html_opt   The target options hash.
+  # @param [Array<Hash,nil>] args       Options hash(es) to merge into *opt*.
   #
-  # @return [Hash]                    The modified *opt* hash.
+  # @return [Hash]                      The modified *opt* hash.
   #
   # @see #append_css_classes!
   #
@@ -303,24 +304,24 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are appended to the existing `opt[:class]` value.
   #
-  # @param [Hash, String, nil]   html_opt     The target options hash.
-  # @param [Array<String,Array>] classes      CSS class names.
-  # @param [Proc]                block        Passed to #append_css_classes!.
+  # @param [Hash, String, nil]          html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
+  # @param [Proc]                       block   Passed to #append_css_classes!.
   #
-  # @return [Hash]                            A new hash with :class set.
+  # @return [Hash]                              A new hash with :class set.
   #
   # == Variations
   #
   # @overload append_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]           html_opt   The target options hash.
-  #   @param [Array<String,Array>] classes    CSS class names.
-  #   @param [Proc]                block      Passed to #append_css_classes!.
-  #   @return [Hash]                          A new hash with :class set.
+  #   @param [Hash, nil]                  html_opt
+  #   @param [Array<String,Symbol,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
   #
   # @overload append_css_classes(*classes, &block)
-  #   @param [Array<String,Array>] classes    CSS class names.
-  #   @param [Proc]                block      Passed to #append_css_classes!.
-  #   @return [Hash]                          A new hash with :class set.
+  #   @param [Array<String,Symbol,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
   #
   def append_css_classes(html_opt, *classes, &block)
     if html_opt.nil?
@@ -336,11 +337,11 @@ module HtmlHelper
   # If CSS class name(s) are provided, append them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash]                html_opt   The target options hash.
-  # @param [Array<String,Array>] classes    CSS class names.
-  # @param [Proc]                block      Passed to #css_classes.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
+  # @param [Proc]                       block     Passed to #css_classes.
   #
-  # @return [Hash]                          The modified *opt* hash.
+  # @return [Hash]                                The modified *opt* hash.
   #
   # Compare with:
   # @see #prepend_css_classes!
@@ -355,24 +356,24 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are prepended to the existing `opt[:class]` value.
   #
-  # @param [Hash, String, nil]   html_opt     The target options hash.
-  # @param [Array<String,Array>] classes      CSS class names.
-  # @param [Proc]                block        Passed to #prepend_css_classes!.
+  # @param [Hash, String, nil]          html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
+  # @param [Proc]                       block   Passed to #prepend_css_classes!
   #
-  # @return [Hash]                            A new hash with :class set.
+  # @return [Hash]                              A new hash with :class set.
   #
   # == Variations
   #
   # @overload prepend_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]           html_opt   The target options hash.
-  #   @param [Array<String,Array>] classes    CSS class names.
-  #   @param [Proc]                block      Passed to #append_css_classes!.
-  #   @return [Hash]                          A new hash with :class set.
+  #   @param [Hash, nil]                  html_opt
+  #   @param [Array<String,Symbol,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
   #
   # @overload prepend_css_classes(*classes, &block)
-  #   @param [Array<String,Array>] classes    CSS class names.
-  #   @param [Proc]                block      Passed to #append_css_classes!.
-  #   @return [Hash]                          A new hash with :class set.
+  #   @param [Array<String,Symbol,Array>] classes
+  #   @param [Proc]                       block
+  #   @return [Hash]
   #
   def prepend_css_classes(html_opt, *classes, &block)
     if html_opt.nil?
@@ -388,11 +389,11 @@ module HtmlHelper
   # If CSS class name(s) are provided, prepend them to the existing
   # `opt[:class]` value.
   #
-  # @param [Hash]                html_opt   The target options hash.
-  # @param [Array<String,Array>] classes    CSS class names.
-  # @param [Proc]                block      Passed to #css_classes.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
+  # @param [Proc]                       block     Passed to #css_classes.
   #
-  # @return [Hash]                          The modified *opt* hash.
+  # @return [Hash]                                The modified *opt* hash.
   #
   # Compare with:
   # @see #append_css_classes!
@@ -407,10 +408,10 @@ module HtmlHelper
   # If CSS class name(s) are provided, return a copy of *opt* where the names
   # are eliminated from the existing `opt[:class]` value.
   #
-  # @param [Hash]                html_opt   The target options hash.
-  # @param [Array<String,Array>] classes    CSS class names.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
   #
-  # @return [Hash]                          A new hash with :class set.
+  # @return [Hash]                                A new hash with :class set.
   #
   def remove_css_classes(html_opt, *classes)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
@@ -420,10 +421,10 @@ module HtmlHelper
 
   # Eliminate the named CSS classes from the existing `opt[:class]` value.
   #
-  # @param [Hash]                html_opt   The target options hash.
-  # @param [Array<String,Array>] classes    CSS class names.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   CSS class names.
   #
-  # @return [Hash]                          The modified *opt* hash.
+  # @return [Hash]                                The modified *opt* hash.
   #
   def remove_css_classes!(html_opt, *classes)
     current = html_opt[:class].to_s.split(' ')
@@ -439,7 +440,7 @@ module HtmlHelper
   # Combine arrays and space-delimited strings to produce a space-delimited
   # string of CSS class names for use inline.
   #
-  # @param [Array<String,Array>] classes
+  # @param [Array<String,Symbol,Array>] classes
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -454,7 +455,7 @@ module HtmlHelper
   # Combine arrays and space-delimited strings to produce set of unique CSS
   # class names.
   #
-  # @param [Array<String,Array>] classes
+  # @param [Array<String,Symbol,Array>] classes
   #
   # @return [Array<String>]
   #
@@ -487,9 +488,9 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt   The target options hash.
-  # @param [Array<String>] classes    Additional CSS classes.
-  # @param [Hash]          opt        Passed to #append_grid_cell_classes!.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   Additional CSS classes.
+  # @param [Hash]                       opt       To #append_grid_cell_classes!
   #
   # @return [Hash]                    A new hash.
   #
@@ -501,11 +502,11 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash]          html_opt   The target options hash.
-  # @param [Array<String>] classes    Additional CSS classes.
-  # @param [Hash]          opt        Passed to #grid_cell_classes.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   Additional CSS classes.
+  # @param [Hash]                       opt       Passed to #grid_cell_classes.
   #
-  # @return [Hash]                    The modified *html_opt* hash.
+  # @return [Hash]                                The modified *html_opt* hash.
   #
   def append_grid_cell_classes!(html_opt, *classes, **opt)
     classes = grid_cell_classes(*classes, **opt)
@@ -514,11 +515,11 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt
-  # @param [Array<String>] classes
-  # @param [Hash]          opt        Passed to #prepend_grid_cell_classes!.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   Additional CSS classes.
+  # @param [Hash]                       opt     To #prepend_grid_cell_classes!.
   #
-  # @return [Hash]                    A new hash.
+  # @return [Hash]                              A new hash.
   #
   def prepend_grid_cell_classes(html_opt, *classes, **opt)
     Log.debug { "#{__method__}: nil html_opt from #{caller}" } if html_opt.nil?
@@ -528,11 +529,11 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Hash, nil]     html_opt   The target options hash.
-  # @param [Array<String>] classes    Additional CSS classes.
-  # @param [Hash]          opt        Passed to #grid_cell_classes.
+  # @param [Hash]                       html_opt  The target options hash.
+  # @param [Array<String,Symbol,Array>] classes   Additional CSS classes.
+  # @param [Hash]                       opt       Passed to #grid_cell_classes.
   #
-  # @return [Hash]                    The modified *html_opt* hash.
+  # @return [Hash]                                The modified *html_opt* hash.
   #
   def prepend_grid_cell_classes!(html_opt, *classes, **opt)
     classes = grid_cell_classes(*classes, **opt)
@@ -541,8 +542,8 @@ module HtmlHelper
 
   # Add CSS classes which indicate the position of the control within the grid.
   #
-  # @param [Array<String>] classes
-  # @param [Hash]          opt
+  # @param [Array<String,Symbol,Array>] classes
+  # @param [Hash]                       opt       Internal options:
   #
   # @option opt [String]  :class
   # @option opt [Integer] :row        Grid row (wide screen).
@@ -564,7 +565,7 @@ module HtmlHelper
     classes << 'row-last'   if row == opt[:row_max].to_i
     classes << 'col-last'   if col == opt[:col_max].to_i
     classes << 'sr-only'    if opt[:sr_only]
-    classes.compact.uniq
+    classes.flatten.compact.map(&:to_s).uniq
   end
 
   # Render a table of values.

@@ -93,6 +93,7 @@ module TitleHelper
       alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
       row  = positive(opt[:row])
       html_opt[:id] = "container-img-#{id}"
+      html_opt[:'data-group'] = opt[:group] if opt[:group].present?
       html_opt[:'data-turbolinks-permanent'] = true
       # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
       image_element(url, link: link, alt: alt, row: row, **html_opt)
@@ -117,6 +118,7 @@ module TitleHelper
   def cover_image(item, link: false, **opt)
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_css_classes!(html_opt, 'cover-image')
+    html_opt[:'data-group'] = opt[:group] if opt[:group].present?
     url = item.respond_to?(:cover_image) && item.cover_image
     if url.present?
       id   = item.identifier

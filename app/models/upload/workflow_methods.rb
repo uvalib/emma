@@ -348,6 +348,13 @@ module Upload::WorkflowMethods
     state_group == :finalization
   end
 
+  # Indicate whether this record is involved in a workflow step related to
+  # ingest into the EMMA Unified Index.
+  #
+  def completed?
+    state_group == :done
+  end
+
   # Indicate whether this record is involved in a workflow step which leads
   # to a change in the associated EMMA index entry.
   #
@@ -383,7 +390,34 @@ module Upload::WorkflowMethods
   #
   def state_group(target_state = nil)
     target_state ||= active_state
-    REVERSE_STATE_GROUP[target_state] || :create
+    Upload::WorkflowMethods.state_group(target_state)
+  end
+
+  # ===========================================================================
+  # :section: Module methods
+  # ===========================================================================
+
+  public
+
+  # Return the group of the given state.
+  #
+  # @param [String, Symbol, nil] target_state
+  #
+  # @return [Symbol]  Defaults to :create if *target_state* is invalid.
+  #
+  def self.state_group(target_state)
+    REVERSE_STATE_GROUP[target_state&.to_sym] || :create
+  end
+
+  # Return the group of the given state.
+  #
+  # @param [String, Symbol, nil] group
+  #
+  # @return [String]
+  # @return [nil]                     If *group* is invalid.
+  #
+  def self.state_group_label(group)
+    STATE_GROUP.dig(group&.to_sym, :label)
   end
 
   # ===========================================================================

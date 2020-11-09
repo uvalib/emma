@@ -41,9 +41,19 @@ $upload-section-gap-small: $upload-section-gap / 2;
         // noinspection SassScssResolvedByNameOnly
         @extend %block-shadow;
 
-        padding:       0 1rem;
+        padding:       1rem;
         border:        1px solid black;
         border-radius: 0.5rem;
+
+        > :first-child {
+            margin-top:  0;
+            padding-top: 0;
+        }
+
+        > :last-child {
+            margin-bottom:  0;
+            padding-bottom: 0;
+        }
     }
 
     // Text preceding the main control section of the page.
@@ -111,11 +121,9 @@ $upload-section-gap-small: $upload-section-gap / 2;
     }
 }
 
-// Control for filtering which upload form fields are displayed.
-.upload-field-group {
-
-    // noinspection SassScssResolvedByNameOnly
-    @include user-select(none);
+// Template for a panel of radio buttons.
+// noinspection SassScssResolvedByNameOnly
+%upload-radio-group {
 
     display:         flex;
     flex-direction:  row;
@@ -126,32 +134,232 @@ $upload-section-gap-small: $upload-section-gap / 2;
     border:          1px solid gray;
     border-radius:   0.25rem;
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$not-narrow-screen} {
         padding-right: 0.5rem;
     }
 
-    // A label/radio button pair.
-    .radio {
+    //=========================================================================
+    // Elements
+    //=========================================================================
 
-        display:    block;
-        margin:     0.25rem;
-        word-break: keep-all;
+    > * {
+        display:     inline-flex;
+        align-items: baseline;
+        margin:      0.25rem;
+        word-break:  keep-all;
+        border:      0.25rem solid transparent;
+        flex:        1 1 auto;
+
+        @media #{$medium-width} {
+            flex-basis: 25%;
+        }
+
+        @media #{$narrow-screen} {
+            margin:     0;
+            flex-basis: 33%;
+        }
+    }
+
+    // A label/radio button pair.
+    .control {
 
         input[type="radio"] {
             margin-right: 0;
         }
 
         label {
+
+            @include user-select(none);
+
             padding-left: 0.5rem;
+
+            @media #{$not-wide-screen} {
+                padding-left: 0.375rem;
+            }
         }
 
-        // noinspection SassScssResolvedByNameOnly
-        &:hover {
+        &:not(.disabled):hover {
             label {
                 @extend %hover-bold;
             }
         }
+    }
+}
+
+// Control for filtering which upload form fields are displayed.
+.upload-field-group {
+    @extend %upload-radio-group;
+}
+
+// Controls for selecting the workflow state group.
+// noinspection SassScssResolvedByNameOnly
+.upload-select-group-panel {
+
+    display:         flex;
+    flex-direction:  column;
+    margin:          2.75rem 0 0.5rem;
+    color:           $control-text;
+
+    // Note preceding the selection controls (screen-reader only).
+    > label {
+        @extend %sr-only;
+    }
+
+    // Note following the selection controls.
+    > .note {
+
+        margin:      0.75rem 0 0;
+        line-height: 1;
+        font-weight: bold;
+
+        // Don't allow showGroupNote() to move the text under the button for
+        // the handheld form factor.
+        @media #{$narrow-screen} {
+            left: 0 !important;
+        }
+    }
+
+    .upload-select-group {
+
+        display: grid;
+        gap:     0.5rem;
+
+        @media #{$wide-screen} {
+            grid-template-columns: repeat(9, 1fr);
+        }
+
+        @media #{$medium-width} {
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        @media #{$narrow-screen} {
+            grid-template-columns: repeat(3, 1fr);
+            gap:                   0.25rem;
+        }
+
+        .control {
+
+            @extend .uppy-FileInput-btn;
+            @extend %button-hover;
+            @include user-select(none);
+
+            display:        flex;
+            flex-direction: column;
+            padding:        0.375rem 0.875rem;
+            line-height:    1.375;
+            text-align:     center;
+            font-size:      medium;
+            font-weight:    bold;
+
+            @media #{$narrow-screen} {
+                padding:   0.5rem 0;
+                font-size: smaller;
+            }
+
+            &.current {
+                border-width: 3px;
+                border-color: inherit;
+            }
+
+            &.disabled {
+                background: $input-sealed-bg;
+                cursor:     default;
+            }
+
+            &:not(.disabled):not(.forbidden):hover,
+            &:not(.disabled):not(.forbidden):focus {
+
+                color:            inherit;
+                background-color: inherit;
+                text-decoration:  none;
+
+                // noinspection CssBrowserCompatibilityForProperties
+                .label {
+                    text-decoration:          underline;
+                    text-decoration-skip-ink: none;
+                    text-underline-position:  under;
+                }
+
+                .count {
+                    // TODO: ???
+                }
+            }
+
+            &.disabled:hover, &.forbidden:hover,
+            &.disabled:focus, &.forbidden:focus {
+                text-decoration: none;
+                box-shadow:      none;
+                background:      $input-sealed-bg;
+            }
+
+            .label {
+                @include user-select(none);
+            }
+        }
+    }
+}
+
+// Controls for filtering which records are displayed on the current page of
+// the index listing.
+.upload-page-filter-panel {
+
+    max-width: inherit;
+
+    > label {
+        display:       inline-block;
+        margin-bottom: 0.5rem;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    .upload-filter-group {
+
+        @extend %upload-radio-group;
+
+        width:     max-content;
+        max-width: inherit;
+
+        @media #{$narrow-screen} {
+            width: 100%;
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        .prefix {
+            @media #{$not-wide-screen} {
+                margin-bottom: 0;
+                flex-basis:    100%;
+            }
+        }
+
+        .control {
+            // TODO: ???
+        }
+    }
+}
+
+// Debug-only control for enabling state groups.
+// noinspection SassScssResolvedByNameOnly
+.upload-filter-options-panel {
+
+    @extend %upload-radio-group;
+
+    margin:     2rem 0;
+    padding:    0.25rem;
+    background: $debug-bg;
+
+    justify-content: flex-start;
+
+    @media #{$medium-width} {
+        margin-top:    1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    @media #{$narrow-screen} {
+        margin-top:    1.5rem;
+        margin-left:   0.125rem;
+        margin-right:  0.25rem;
     }
 }
 

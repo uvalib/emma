@@ -223,6 +223,12 @@ $upload-entry-gap: 2rem;
             margin-right: 0.25rem;
         }
     }
+
+    .no-records {
+        @media #{$not-narrow-screen} {
+            margin-bottom: $upload-entry-gap / 2;
+        }
+    }
 }
 
 //=============================================================================
@@ -389,7 +395,7 @@ form.select-entry {
             margin: 0 0.675rem;
         }
 
-        &:hover {
+        &:not(.disabled):hover {
 
             background: whitesmoke;
 

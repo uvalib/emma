@@ -446,6 +446,320 @@ module UploadHelper
 
   public
 
+  # Groupings of states related by theme.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see config/locales/controllers/upload.en.yml
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  UPLOAD_STATE_GROUP =
+    Upload::WorkflowMethods::STATE_GROUP.transform_values do |entry|
+      entry.map { |key, value|
+        if %i[enabled show].include?(key)
+          if value.nil? || true?(value)
+            value = true
+          elsif false?(value)
+            value = false
+          elsif value == 'nonzero'
+            value =
+              ->(list, group = nil) {
+                list &&= list.select { |r| r.state_group == group } if group
+                list.present?
+              }
+          end
+        end
+        [key, value]
+      }.to_h
+    end
+
+  # CSS class for the upload state selection panel.
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_PANEL_CLASS = 'upload-select-group-panel'
+
+  # CSS class for the state group controls container.
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_CLASS = 'upload-select-group'
+
+  # CSS class for a control within the upload state selection panel.
+  #
+  # @type [String]
+  #
+  UPLOAD_GROUP_CONTROL_CLASS = 'control'
+
+  # Select Upload records based on workflow state group.
+  #
+  # @param [Hash]          counts     A table of group names associated with
+  #                                     their overall totals (default:
+  #                                     @group_counts).
+  # @param [Hash]          opt        Passed to inner #html_div except for:
+  #
+  # @option opt [String]        :curr_path    Default: `request.fullpath`
+  # @option opt [String,Symbol] :curr_group   Default from `request_parameters`
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see #UPLOAD_STATE_GROUP
+  # @see filterPageDisplay() in javascripts/feature/records.js
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper#page_filter.
+  #
+  def upload_state_group_select(counts: nil, **opt)
+    curr_path  = opt.delete(:curr_path)  || request.fullpath
+    curr_group = opt.delete(:curr_group) || request_parameters[:group] || :all
+    curr_group = curr_group.to_sym if curr_group.is_a?(String)
+    counts ||= @group_counts || {}
+
+    # Create buttons for each state group that has entries.
+    buttons =
+      UPLOAD_STATE_GROUP.map do |group, properties|
+        all     = (group == :all)
+        count   = counts[group] || 0
+        enabled = all || count.positive?
+        next unless enabled || session_debug?
+
+        label = properties[:label] || group
+        label = html_span(label, class: 'label')
+        label << html_span("(#{count})", class: 'count')
+
+        base  = upload_index_path
+        url   = all ? base : upload_index_path(group: group)
+
+        link_opt = {
+          class:        UPLOAD_GROUP_CONTROL_CLASS,
+          title:        properties[:tooltip],
+          'data-group': group
+        }
+        prepend_css_classes!(link_opt, 'uppy-FileInput-btn')
+        append_css_classes!(link_opt, 'current')  if group == curr_group
+        append_css_classes!(link_opt, 'disabled') if url   == curr_path
+        append_css_classes!(link_opt, 'hidden')   unless enabled
+        make_link(label, url, link_opt)
+      end
+
+    # Wrap the controls in a group.
+    opt = prepend_css_classes(opt, UPLOAD_GROUP_CLASS)
+    opt[:id]   = css_randomize(UPLOAD_GROUP_CLASS)
+    opt[:role] = 'nav'
+    group = html_div(buttons, opt)
+
+    # A label preceding the group (screen-reader only).
+    label = 'Select records based on their submission state:' # TODO: I18n
+    label = html_tag(:label, label, class: 'prefix', for: opt[:id])
+
+    # An element to hold a dynamic display following the group.
+    note = html_div('&nbsp;'.html_safe, class: 'note', 'aria-hidden': true)
+
+    # Include the group in a panel with accompanying label.
+    outer_opt = { class: UPLOAD_GROUP_PANEL_CLASS }
+    html_div(**outer_opt) do
+      label << group << note
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Control whether in-page filtering is allowed.
+  #
+  # @type [Boolean]
+  #
+  UPLOAD_PAGE_FILTERING = false
+
+  # CSS class for the state group page filter panel.
+  #
+  # @type [String]
+  #
+  UPLOAD_PAGE_FILTER_CLASS = 'upload-page-filter-panel'
+
+  # CSS class for the state group controls container.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_GROUP_CLASS = 'upload-filter-group'
+
+  # CSS class for a control within the state group controls container.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_CONTROL_CLASS = 'control'
+
+  # Control for filtering which records are displayed.
+  #
+  # @param [Array<Upload>] list       Default: `#upload_list`.
+  # @param [Hash]          counts     A table of group names associated with
+  #                                     their overall totals (default:
+  #                                     @group_counts).
+  # @param [Hash]          opt        Passed to inner #html_div.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                       If #UPLOAD_PAGE_FILTERING is false.
+  #
+  # @see #UPLOAD_STATE_GROUP
+  # @see filterPageDisplay() in javascripts/feature/records.js
+  #
+  # == Usage Notes
+  # This is invoked from ModelHelper#page_filter.
+  #
+  def upload_page_filter(*list, counts: nil, **opt)
+    return unless UPLOAD_PAGE_FILTERING
+    name     = __method__.to_s
+    counts ||= @group_counts || {}
+    list     = upload_list if list.blank?
+    table    = list.group_by(&:state_group)
+
+    # Create radio button controls for each state group that has entries.
+    controls =
+      UPLOAD_STATE_GROUP.map do |group, properties|
+        items   = table[group]  || []
+        all     = (group == :all)
+        count   = counts[group] || (all ? list.size : items.size)
+        enabled = all || count.positive?
+        # noinspection RubyYardParamTypeMatch
+        enabled ||= active_state_group?(nil, properties, items)
+        next unless enabled || session_debug?
+
+        input_id = "#{name}-#{group}"
+        label_id = "label-#{input_id}"
+        tooltip  = properties[:tooltip]
+        selected = true?(properties[:default])
+
+        i_opt = { role: 'radio', 'aria-labelledby': label_id }
+        input = radio_button_tag(name, group, selected, i_opt)
+
+        l_opt = { id: label_id }
+        label = ERB::Util.h(properties[:label] || group.to_s)
+        label = "#{label}&thinsp;(#{count})".html_safe if count
+        label = label_tag(input_id, label, l_opt)
+
+        html_opt = {
+          class:        UPLOAD_FILTER_CONTROL_CLASS,
+          title:        tooltip,
+          'data-group': group
+        }
+        append_css_classes!(html_opt, 'hidden') unless enabled
+        html_div(**html_opt) { input << label }
+      end
+
+    # Text before the radio buttons:
+    prefix = 'On this page:' # TODO: I18n
+    prefix = html_span(prefix, class: 'prefix', 'aria-hidden': true)
+    controls.unshift(prefix)
+
+    # Wrap the controls in a group.
+    opt = prepend_css_classes(opt, UPLOAD_FILTER_GROUP_CLASS)
+    opt[:id]   = css_randomize(UPLOAD_FILTER_GROUP_CLASS)
+    opt[:role] = 'radiogroup'
+    group = html_div(controls, opt)
+
+    # A label for the group (screen-reader only).
+    label = 'Choose the upload submission state to display:' # TODO: I18n
+    label = html_tag(:label, label, for: opt[:id])
+
+    # Include the group in a panel with accompanying label.
+    outer_opt = { class: UPLOAD_PAGE_FILTER_CLASS }
+    append_css_classes!(outer_opt, 'hidden') if controls.size <= 1
+    html_div(**outer_opt) do
+      label << group
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # CSS class for the debug-only panel of checkboxes to control filter
+  # visibility.
+  #
+  # @type [String]
+  #
+  UPLOAD_FILTER_OPTIONS_CLASS = 'upload-filter-options-panel'
+
+  # Control the selection of filters displayed by #upload_page_filter.
+  #
+  # @param [Array<Upload>] list       Default: `#upload_list`.
+  # @param [Hash]          opt        Passed to #html_div for outer <div>.
+  #
+  # @option opt [Array] :records      List of upload records for display.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see filterOptionToggle() in javascripts/feature/records.js
+  #
+  def upload_page_filter_options(*list, **opt)
+    name     = __method__.to_s
+    counts ||= @group_counts || {}
+    list     = upload_list if list.blank? && counts.blank?
+    opt      = prepend_css_classes(opt, UPLOAD_FILTER_OPTIONS_CLASS)
+    html_div(opt) do
+      groups = { ALL_FILTERS: { label: 'Show all filters', checked: false } }
+      groups.merge!(UPLOAD_STATE_GROUP)
+      groups.map do |group, properties|
+        cb_name  = "[#{name}][]"
+        cb_value = group
+        checked  = properties[:checked]
+        checked  = counts[group]&.positive?                     if checked.nil?
+        checked  = active_state_group?(group, properties, list) if checked.nil?
+        cb_opt   = {
+          id:      "#{name}-#{cb_value}",
+          label:   %Q(Show "#{properties[:label]}"),
+          class:   UPLOAD_FILTER_CONTROL_CLASS,
+          checked: checked,
+          role:    'option'
+        }
+        render_check_box(cb_name, cb_value, **cb_opt)
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  protected
+
+  # Indicate whether the state group described by *properties* should be an
+  # active state group selection.
+  #
+  # @param [Symbol, nil]        group
+  # @param [Hash, nil]          properties
+  # @param [Array<Upload>, nil] list
+  #
+  def active_state_group?(group, properties, list)
+    return true if properties.blank?
+    %i[enabled show].all? do |k|
+      case (v = properties[k])
+        when 'debug' then session_debug?
+        when Proc    then v.call(list, group)
+        else              v
+      end
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # CSS class for the containing of a listing of Upload records.
+  #
+  # @type [String]
+  #
+  UPLOAD_LIST_CLASS = 'upload-list'
+
   # Render a single entry for use within a list of items.
   #
   # @param [Upload] item
@@ -471,6 +785,24 @@ module UploadHelper
     list_entry_number(item, opt) do
       upload_entry_icons(item)
     end
+  end
+
+  # Text for #upload_no_fields_row. # TODO: I18n
+  #
+  # @type [String]
+  #
+  UPLOAD_NO_RECORDS = 'NO RECORDS'
+
+  # Hidden row that is shown only when no field rows are being displayed.
+  #
+  # @param [Hash] opt                 Passed to created elements.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def upload_no_records_row(**opt)
+    html_opt = prepend_css_classes(opt, 'no-records')
+    # noinspection RubyYardReturnMatch
+    html_div('', html_opt) << html_div(UPLOAD_NO_RECORDS, html_opt)
   end
 
   # ===========================================================================
