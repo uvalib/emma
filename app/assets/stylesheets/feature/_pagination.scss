@@ -11,7 +11,11 @@
 
     @extend %control-group;
 
-    width: min-content;
+    width:         min-content;
+    height:        min-content;
+    padding-left:  0.625rem;
+    padding-right: 0.625rem;
+    border-radius: 0.75rem;
 
     > * {
 

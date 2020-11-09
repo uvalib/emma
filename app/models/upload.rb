@@ -649,62 +649,6 @@ class Upload < ApplicationRecord
   end
 
   # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
-  # Get the Upload record by either :id or :submission_id.
-  #
-  # @param [String, Symbol, Integer, Hash, Upload] identifier
-  #
-  # @return [Upload, nil]
-  #
-  def self.get_record(identifier)
-    find_by(**id_term(identifier))
-  end
-
-  # Get the Upload records specified by either :id or :submission_id.
-  #
-  # Additional constraints may be supplied via *opt*.  If no *identifiers* are
-  # supplied then this method is essentially an invocation of #where which
-  # returns the matching records.
-  #
-  # @param [Array<Upload, String, Integer, Array>] ids  @see #expand_ids
-  # @param [Hash]                                  opt  Passed to #where.
-  #
-  # @return [Array<Upload>]
-  #
-  def self.get_records(*identifiers, **opt)
-    terms = expand_ids(*identifiers).map { |term| id_term(term) }
-    ids   = terms.map { |term| term[:id].presence }
-    ids   = (ids << opt.delete(:id)).uniq.compact.presence
-    sids  = terms.map { |term| term[:submission_id].presence }
-    sids  = (sids << opt.delete(:submission_id)).uniq.compact.presence
-    terms = []
-
-    if ids && sids
-      terms << sql_terms(id: ids, submission_id: sids, join: :or)
-    elsif ids
-      opt[:id] = ids
-    elsif sids
-      opt[:submission_id] = sids
-    end
-
-    u = USER_COLUMNS - %i[review_user]
-    terms << sql_terms(opt.extract!(*u), join: :or) if opt.slice(*u).size > 1
-
-    s = STATE_COLUMNS
-    terms << sql_terms(opt.extract!(*s), join: :or) if opt.slice(*s).size > 1
-
-    opt    = opt.presence
-    terms  = terms.presence
-    terms  = sql_terms(opt, *terms, join: :and) if terms && opt
-    result = (where(terms) if terms) || (where(**opt) if opt)
-    Array.wrap(result&.records)
-  end
-
-  # ===========================================================================
   # :section: Validations
   # ===========================================================================
 

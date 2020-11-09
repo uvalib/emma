@@ -14,7 +14,8 @@
 
     @include grid-column-span;
 
-    margin: $results-entry-gap-y 0;
+    max-width: inherit;
+    margin:    $results-entry-gap-y 0;
 
     @media #{$narrow-screen} {
         margin: calc(2 * #{$results-entry-gap-y}) 0;
@@ -36,7 +37,7 @@
 // A total count of the number of search results.
 .search-count {
     display: inline-block;
-    margin:  0.5rem 0 0 0.5rem;
+    margin:  0 0 0 0.75rem;
 }
 
 //=============================================================================

@@ -40,12 +40,18 @@ module UploadConcern
 
   public
 
+  # URL parameters involved in pagination.
+  #
+  # @type [Array<Symbol>]
+  #
+  PAGE_PARAMS = %i[page start offset limit].freeze
+
   # POST/PUT/PATCH parameters from the upload form that are not relevant to the
   # create/update of an Upload instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_UPLOAD_FORM_PARAMETERS = %i[limit field-group cancel].sort.freeze
+  IGNORED_UPLOAD_FORM_PARAMS = (%i[field-group cancel] + PAGE_PARAMS).freeze
 
   # ===========================================================================
   # :section: Parameters
@@ -69,7 +75,7 @@ module UploadConcern
   #
   def get_upload_params(p = nil)
     prm = url_parameters(p)
-    prm.except!(*IGNORED_UPLOAD_FORM_PARAMETERS)
+    prm.except!(*IGNORED_UPLOAD_FORM_PARAMS)
     prm.deep_symbolize_keys!
     reject_blanks(prm)
   end
@@ -209,33 +215,26 @@ module UploadConcern
   # Locate and filter records.
   #
   # @param [Array<String,Array>] items  Default: `@identifier`.
-  # @param [Hash]                opt    Default: `#upload_params`.
+  # @param [Hash]                opt    Passed to Upload#search_records;
+  #                                       default: `#upload_params` if no
+  #                                       *items* are given.
   #
-  # @return [Array<Upload>]
+  # @return [Hash]
   #
-  # @see UploadController#match_records
+  # @see Upload#search_records
   #
   def find_or_match_records(*items, **opt)
     items = items.flatten.compact
     items << @identifier if items.blank? && @identifier.present?
-    if items.present?
-      Upload.get_records(*items)
-    else
-      opt = upload_params if opt.blank?
-      match_records(**opt)
-    end
-  end
 
-  # Locate and filter records.
-  #
-  # @param [Array<String,Array>] items
-  # @param [Hash]                opt    Database WHERE predicates.
-  #
-  # @return [Array<Upload>]
-  #
-  # @see Upload#get_records
-  #
-  def match_records(*items, **opt)
+    # If neither items nor field queries were given, use request parameters.
+    if items.blank? && (opt[:groups] != :only)
+      option_keys = Upload::SEARCH_RECORDS_OPTIONS - %i[offset limit]
+      opt = upload_params.merge(opt) if opt.except(*option_keys).blank?
+    end
+    opt[:limit] ||= 20 # TODO: Default page size for Upload index.
+    opt[:page]  ||= 0  # Start at the first page by default.
+
     # Disallow experimental database WHERE predicates unless privileged.
     admin = true # TODO: delete
     #admin = can?(:manage, Upload) # TODO: restore
@@ -292,7 +291,14 @@ module UploadConcern
       end
     end
 
-    Upload.get_records(*items, **opt)
+    Upload.search_records(*items, **opt)
+
+  rescue RangeError => e
+
+    # Re-cast as a SubmitError so that UploadController#index redirects to
+    # the main index page instead of the root page.
+    raise UploadWorkflow::SubmitError, e.message
+
   end
 
   # Return with the specified record or *nil* if one could not be found.

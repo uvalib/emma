@@ -114,9 +114,8 @@ module Emma::Common
   # parameter after the '?' -- this is a concession to Bookshare URLs like
   # "myReadingLists/%{id}?delete".
   #
-  # @param [Array] args               URL path components, except:
-  #
-  # @option args.last [Hash]          URL options to include in the result.
+  # @param [Array] args               URL path components, except for args[-1]
+  #                                     which is passed as #url_query options.
   #
   # @return [String]
   #
@@ -149,13 +148,17 @@ module Emma::Common
   #                                           multi-element array values
   #                                           (default: *true*).
   #
+  # @option args.last [Boolean] :replace    If *true*, subsequence key values
+  #                                           replace previous ones; if *false*
+  #                                           then values are accumulated as
+  #                                           arrays (default: *false*).
+  #
   # @return [String]
   #
   # @see #build_query_options
   #
   def url_query(*args)
-    # noinspection RubyNilAnalysis
-    opt = args.extract_options!.reverse_merge(minimize: true, decorate: true)
+    opt = { decorate: true }.merge!(args.extract_options!)
     build_query_options(*args, opt).flat_map { |k, v|
       v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
     }.compact.join('&')
@@ -172,13 +175,22 @@ module Emma::Common
   # @option args.last [Boolean] :decorate   If *true*, modify keys for multi-
   #                                           element values (default: *false*)
   #
+  # @option args.last [Boolean] :replace    If *true*, subsequence key values
+  #                                           replace previous ones; if *false*
+  #                                           then values are accumulated as
+  #                                           arrays (default: *false*).
+  #
   # @return [Hash{String=>String}]
   #
   def build_query_options(*args)
-    # noinspection RubyNilAnalysis
-    opt = args.extract_options!.reverse_merge(minimize: true, decorate: false)
+    opt = {
+      minimize: true,
+      decorate: false,
+      replace:  false
+    }.merge!(args.extract_options!)
     minimize = opt.delete(:minimize)
     decorate = opt.delete(:decorate)
+    replace  = opt.delete(:replace)
     args << opt if opt.present?
     result = {}
     args.each do |arg|
@@ -191,9 +203,18 @@ module Emma::Common
         k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
         k = CGI.unescape(k.to_s).delete_suffix('[]')
         v = Array.wrap(v).reject(&:blank?).map { |s| CGI.unescape(s.to_s) }
-        res[k] = res[k] ? res[k].rmerge!(v) : v if k.present? && v.present?
+        next if k.blank? || v.blank?
+        if replace || !res[k]
+          res[k] = v
+        else
+          res[k].rmerge!(v)
+        end
       end
-      result.rmerge!(res)
+      if replace
+        result.merge!(res)
+      else
+        result.rmerge!(res)
+      end
     end
     result.map { |k, v|
       v = v.sort.uniq

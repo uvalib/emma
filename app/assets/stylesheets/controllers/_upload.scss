@@ -209,9 +209,87 @@ $upload-entry-gap: 2rem;
 
     @include grid-row-gap($upload-entry-gap);
 
-    //.applied-search-terms,
     .pagination-top {
-        margin-bottom: $upload-entry-gap / 2;
+
+        display:        flex;
+        flex-wrap:      wrap;
+        flex-direction: row;
+        margin-bottom:  $upload-entry-gap / 2;
+
+        @media #{$not-narrow-screen} {
+            align-items: center;
+            max-width:   inherit;
+        }
+
+        @media #{$narrow-screen} {
+            flex-direction: column;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .pagination {
+            flex: 0 0 auto;
+        }
+
+        .counts {
+
+            flex: 0 1 auto;
+
+            @media #{$not-narrow-screen} {
+                margin-left: 1rem;
+            }
+
+            @media #{$medium-width} {
+                flex-basis: 50%; // Push .upload-page-filter-panel to next row.
+            }
+
+            @media #{$narrow-screen} {
+                margin: 0.75rem 0;
+            }
+
+            .page-count {
+                display:     inline-block;
+                padding:     0.25rem 0.375rem;
+                font-weight: bold;
+                color:       $control-text;
+                border:      1px solid gray;
+            }
+
+            .search-count {
+                display: inline-block;
+                margin:  0;
+            }
+
+            .page-count + .search-count,
+            .search-count + .page-count {
+                margin-left: 0.5rem;
+            }
+        }
+
+        .upload-page-filter-panel {
+
+            flex: 1 1 auto;
+
+            @media #{$wide-screen} {
+                margin-top:    -0.5rem;
+                margin-bottom: -0.5rem;
+                margin-left:   2.5rem;
+            }
+
+            @media #{$medium-width} {
+                margin-top:    1rem;
+            }
+
+            @media #{$narrow-screen} {
+                margin-bottom: -0.5rem;
+            }
+
+            > label {
+                @extend %sr-only;
+            }
+        }
     }
 
     .number {

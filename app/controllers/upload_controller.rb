@@ -71,16 +71,27 @@ class UploadController < ApplicationController
   #
   def index
     __debug_route
-    opt   = pagination_setup
-    @list = find_or_match_records
+    opt    = url_parameters
+    all    = opt[:group].nil? || (opt[:group].to_sym == :all)
+    result = find_or_match_records(groups: all, **opt)
+    first, last, page, @list = result.values_at(:first, :last, :page, :list)
     self.page_items  = @list
-    self.total_items = @list.size
-    self.next_page   = next_page_path(@list, opt)
+    self.page_size   = result[:limit]
+    self.page_offset = result[:offset]
+    self.total_items = result[:total]
+    self.next_page   = (url_for(opt.merge(page: (page + 1))) unless last)
+    self.prev_page   = (url_for(opt.merge(page: (page - 1))) unless first)
+    self.first_page  = (url_for(opt.except(*PAGE_PARAMS))    unless first)
+    self.prev_page   = first_page if page == 2
+    result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
+    @group_counts    = result[:groups]
     respond_to do |format|
       format.html
       format.json { render_json index_values }
       format.xml  { render_xml  index_values }
     end
+  rescue SubmitError => error
+    show_search_failure(error, upload_index_path)
   rescue => error
     show_search_failure(error, root_path)
   end
