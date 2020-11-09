@@ -231,6 +231,67 @@ $upload-entry-gap: 2rem;
     }
 }
 
+// noinspection SassScssResolvedByNameOnly
+.check-status-popup {
+
+    @extend .popup-container;
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$medium-width} {
+        top: 0;
+    }
+
+    .control.icon {
+
+        padding:      1px 5px;
+        background:   transparent;
+        border-color: transparent;
+
+        .symbol {
+            text-shadow: 0 0 0.5rem $uva-accent-orange;
+        }
+    }
+
+    // The panel displaying content which is hidden until activated.
+    // noinspection SassScssResolvedByNameOnly
+    .popup-panel {
+
+        @media #{$wide-screen} {
+            min-height: unset;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        // The "X" located in the upper-right corner of the panel's "frame".
+        .closer.icon {
+
+            position:    absolute;
+            top:         -1.5rem;
+            right:       0.75rem;
+            line-height: 1.5;
+            font-size:   medium;
+            font-weight: bold;
+            color:       white;
+            background:  $uva-accent-orange; // For color contrast checkers.
+            cursor:      pointer;
+
+            &:hover {
+                background-color: unset;
+                box-shadow:       unset;
+            }
+        }
+    }
+}
+
+// Style the appearance of the contents of the check status popup.
+body.upload-check.modal {
+    .heading {
+        font-size: large;
+    }
+}
+
 //=============================================================================
 // Upload show page
 //=============================================================================

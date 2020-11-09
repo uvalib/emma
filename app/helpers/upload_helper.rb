@@ -17,6 +17,7 @@ module UploadHelper
   include Emma::Unicode
   include I18nHelper
   include ModelHelper
+  include PopupHelper
   include UploadWorkflow::Properties
 
   # ===========================================================================
@@ -816,13 +817,21 @@ module UploadHelper
   # @type [Hash{Symbol=>Hash}]
   #
   UPLOAD_ICONS = {
+    check: {
+      icon:    BANG,
+      tip:     'Check for an update to the status of this submission', # TODO: I18n
+      path:    :check_upload_path,
+      enabled: ->(item) { item.in_process? },
+    },
     edit: {
-      icon: DELTA,
-      tip:  'Modify this EMMA entry' # TODO: I18n
+      icon:    DELTA,
+      tip:     'Modify this EMMA entry', # TODO: I18n
+      enabled: true,
     },
     delete: {
-      icon: HEAVY_X,
-      tip:  'Delete this EMMA entry' # TODO: I18n
+      icon:    HEAVY_X,
+      tip:     'Delete this EMMA entry', # TODO: I18n
+      enabled: true,
     }
   }.deep_freeze
 
@@ -845,7 +854,7 @@ module UploadHelper
       UPLOAD_ICONS.map { |operation, properties|
         next unless can?(operation, Upload)
         action_opt = properties.merge(opt)
-        action_opt[:id] ||= (item.id if item.respond_to?(:id))
+        action_opt[:item] ||= (item if item.is_a?(Model))
         upload_action_icon(operation, **action_opt)
       }.compact
     html_span(class: 'icon-tray') { icons } if icons.present?
@@ -862,24 +871,83 @@ module UploadHelper
   # @param [Symbol] op                    One of #UPLOAD_ICONS.keys.
   # @param [Hash]   opt                   Passed to #make_link except for:
   #
-  # @option opt [String] :id
-  # @option opt [String] :path
-  # @option opt [String] :icon
-  # @option opt [String] :tip
+  # @option opt [Upload]        :item
+  # @option opt [String]        :id
+  # @option opt [String, Proc]  :path
+  # @option opt [String]        :icon
+  # @option opt [String]        :tip
+  # @option opt [Boolean, Proc] :enabled
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
+  # noinspection RubyNilAnalysis
   def upload_action_icon(op, **opt)
-    id   = opt.delete(:id)
-    path = opt.delete(:path) || (send("#{op}_upload_path", id: id) if id)
+    item = opt.delete(:item)
+    id   = opt.delete(:id) || (item.id if item.respond_to?(:id))
+    case (enabled = opt.delete(:enabled))
+      when nil         then # Enabled if not specified otherwise.
+      when true, false then return unless enabled
+      when Proc        then return unless enabled.call(item)
+      else                  return unless true?(enabled)
+    end
+    case (path = opt.delete(:path))
+      when Symbol then # deferred
+      when Proc   then path = path.call(item)
+      else             path ||= (send("#{op}_upload_path", id: id) if id)
+    end
     return if path.blank?
     icon = opt.delete(:icon) || STAR
     tip  = opt.delete(:tip)
-    opt  = prepend_css_classes(opt, 'icon', op.to_s)
     opt[:title] ||= tip
     # noinspection RubyYardParamTypeMatch
-    make_link(icon, path, **opt)
+    if op == :check
+      opt[:icon] ||= icon
+      check_status_popup(item, path, **opt)
+    else
+      opt = prepend_css_classes(opt, 'icon', op.to_s)
+      make_link(icon, path, **opt)
+    end
+  end
+
+  # Create a container with the repository ID displayed as a link but acting as
+  # a popup toggle button and a popup panel which is initially hidden.
+  #
+  # @param [Upload]         item
+  # @param [String, Symbol] path
+  # @param [Hash]           opt         Passed to #popup_container except for:
+  #
+  # @option opt [Hash] :attr            Options for deferred content.
+  # @option opt [Hash] :placeholder     Options for transient placeholder.
+  #
+  # @see togglePopup() in app/assets/javascripts/feature/popup.js
+  #
+  #--
+  # noinspection RubyResolve
+  #++
+  def check_status_popup(item, path, **opt)
+    icon   = opt.delete(:icon)
+    opt    = append_css_classes(opt, 'check-status-popup')
+    ph_opt = opt.delete(:placeholder)
+    attr   = opt.delete(:attr)&.dup || {}
+    id     = item.id
+    css_id = opt[:'data-iframe'] || attr[:id] || "popup-frame-#{id}"
+    path   = send(path, id: id, modal: true) if path.is_a?(Symbol)
+
+    opt[:'data-iframe'] = attr[:id] = css_id
+    opt[:title]   ||= 'Check the status of this submission' # TODO: I18n
+    opt[:control] ||= {}
+    opt[:control][:icon] ||= icon
+    opt[:panel]  = append_css_classes(opt[:panel], 'refetch z-order-capture')
+    opt[:resize] = false unless opt.key?(:resize)
+
+    popup_container(**opt) do
+      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+      ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
+      ph_opt[:'data-path'] = path
+      ph_opt[:'data-attr'] = attr.to_json
+      html_div(ph_txt, **ph_opt)
+    end
   end
 
   # ===========================================================================

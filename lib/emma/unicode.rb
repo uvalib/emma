@@ -9,6 +9,41 @@ __loading_begin(__FILE__)
 #
 module Emma::Unicode
 
+  def self.included(base)
+    base.send(:extend, self)
+  end
+
+  extend self
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Produce a single character.
+  #
+  # @param [String, Integer] v
+  #
+  # @return [String]
+  #
+  def char(v)
+    v.is_a?(Integer) ? v.chr(Encoding::UTF_8) : v.chr
+  end
+
+  # Pad a character with thin spaces.
+  #
+  # @param [String, Integer]      v
+  # @param [String, Integer, nil] pad     Default: #THIN_SPACE
+  # @param [String, Integer, nil] left    Default: *pad*
+  # @param [String, Integer, nil] right   Default: *l_pad*
+  #
+  def pad_char(v, pad: nil, left: nil, right: nil)
+    left  ||= pad || THIN_SPACE
+    right ||= pad || left
+    [left, v, right].map { |c| char(c) }.join
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -17,6 +52,7 @@ module Emma::Unicode
 
   EN_SPACE      = "\u2002" # EN SPACE
   EM_SPACE      = "\u2003" # EM SPACE
+  THIN_SPACE    = "\u2009" # THIN SPACE
   EN_DASH       = "\u2013" # EN DASH
   EM_DASH       = "\u2014" # EM DASH
   TRIANGLE      = "\u25B2" # BLACK UP-POINTING TRIANGLE
@@ -27,6 +63,7 @@ module Emma::Unicode
   CHECK_MARK    = "\u2714" # HEAVY CHECK MARK
   HEAVY_X       = "\u2716" # HEAVY MULTIPLICATION X
   QUESTION      = "\u2754" # WHITE QUESTION MARK ORNAMENT
+  BANG          = "\u2755" # WHITE EXCLAMATION MARK ORNAMENT
 
 end
 

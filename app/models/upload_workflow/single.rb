@@ -477,7 +477,7 @@ module UploadWorkflow::Single::Actions
       end
     note = note.upcase_first
     note = ERB::Util.h(note) if html
-    if html # TODO: testing - remove
+    if html && false # TODO: testing - remove
       args  = event_args
       parts = {}
       parts['event_args'] = ERB::Util.h(args.inspect) if args.present?

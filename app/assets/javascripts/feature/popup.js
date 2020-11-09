@@ -163,10 +163,11 @@ $(document).on('turbolinks:load', function() {
             // If the <iframe> exists and contains a different page than the
             // original then remove it in order to re-fetch the original the
             // next time it is opened.
+            const refetch       = $popup.hasClass('refetch');
             const expected_page = $popup.data('page');
             const content       = $iframe[0] && $iframe[0].contentDocument;
             const current_page  = content    && content.location.pathname;
-            if (expected_page === current_page) {
+            if (!refetch && (expected_page === current_page)) {
                 debug(func, 'CLOSING', current_page);
             } else {
                 debug(func, 'CLOSING', '-', 'REMOVING', current_page);

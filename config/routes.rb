@@ -67,8 +67,8 @@ Rails.application.routes.draw do
   # === UploadWorkflow
 
   post   '/upload/endpoint',      to: 'upload#endpoint',      as: 'uploads'               # Invoked from file-upload.js
-  get    '/upload/cancel',        to: 'upload#cancel',        as: 'upload_cancel'
-  get    '/upload/check/:id',     to: 'upload#check',         as: 'upload_check'
+  get    '/upload/cancel',        to: 'upload#cancel',        as: 'cancel_upload'
+  get    '/upload/check/:id',     to: 'upload#check',         as: 'check_upload'
 
   # === Display
 
