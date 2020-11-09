@@ -31,6 +31,14 @@ module RepositoryHelper
   #++
   HT_URL_PARAMS = 'urlappend=%3Bsignon=swle:wayf'
 
+  # Internet Archive items that don't require EMMA login.
+  #
+  # @type [Array<String,Regexp>]
+  #
+  IA_DIRECT_LINK_PATTERNS = [
+    # /[_.]daisy\.zip$/, # Currently all IA downloads are proxied.
+  ].freeze
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -165,7 +173,8 @@ module RepositoryHelper
   # @see IaDownloadConcern#render_ia_download
   #
   def ia_retrieval_link(_item, label, url, **opt)
-    url = retrieval_path(url: url) unless url.end_with?('daisy.zip')
+    direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }
+    url    = retrieval_path(url: url) unless direct
     download_link(label, url, **opt)
   end
 
