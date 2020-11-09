@@ -414,6 +414,26 @@ function selector(...args) {
     return result.join('').trim();
 }
 
+// noinspection FunctionWithMultipleReturnPointsJS
+/**
+ * Return an identifying selector for an element -- based on the element ID if
+ * it has one.
+ *
+ * @param {jQuery|HTMLElement} element
+ *
+ * @returns {string}
+ */
+function elementSelector(element) {
+    let e = $(element)[0];
+    if (e.id) {
+        return `#${e.id}`;
+    } else if (e.className) {
+        return e.localName + '.' + e.className.replace(/\s+/g, '.');
+    } else {
+        return e.localName;
+    }
+}
+
 // ============================================================================
 // Functions - HTML
 // ============================================================================

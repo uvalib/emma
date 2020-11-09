@@ -210,6 +210,7 @@ $tray-pad: 1.5 * $icon-pad;
             .icon {
 
                 @extend %button-hover;
+                @include user-select(none);
 
                 padding:         0 $icon-pad;
                 margin-left:     -$icon-pad;

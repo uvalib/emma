@@ -915,10 +915,12 @@ module ModelHelper
     disabled = prop[:readonly] if disabled.nil?
     required = prop[:required] if required.nil?
 
-    # Create a help icon control if applicable.
+    # Create a help icon control if applicable.  (The associated popup panel
+    # require some special handling to get it to appear above other elements
+    # that are in different stacking contexts.)
     help =
       if field == :emma_repository
-        help_popup(:upload, :repository)
+        help_popup(:upload, :repository, panel: { class: 'z-order-capture' })
       end
 
     # Create status marker icon.

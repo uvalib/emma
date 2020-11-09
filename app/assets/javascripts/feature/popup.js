@@ -30,19 +30,40 @@ $(document).on('turbolinks:load', function() {
      */
     const DEBUGGING = false;
 
-    /** @const {string} */ const BUTTON_CLASS      = Emma.Popup.button.class;
-    /** @const {string} */ const PANEL_CLASS       = Emma.Popup.panel.class;
-    /** @const {string} */ const CLOSER_CLASS      = Emma.Popup.closer.class;
-    /** @const {string} */ const CONTROLS_CLASS    = Emma.Popup.controls.class;
-    /** @const {string} */ const DEFERRED_CLASS    = Emma.Popup.deferred.class;
-    /** @const {string} */ const HIDDEN_MARKER     = Emma.Popup.hidden.class;
-    /** @const {string} */ const COMPLETE_MARKER   = 'complete';
-    /** @const {string} */ const BUTTON_SELECTOR   = selector(BUTTON_CLASS);
-    /** @const {string} */ const PANEL_SELECTOR    = selector(PANEL_CLASS);
-    /** @const {string} */ const CLOSER_SELECTOR   = selector(CLOSER_CLASS);
-    /** @const {string} */ const CONTROLS_SELECTOR = selector(CONTROLS_CLASS);
-    /** @const {string} */ const DEFERRED_SELECTOR = selector(DEFERRED_CLASS);
-    /** @const {string} */ const HIDDEN_SELECTOR   = selector(HIDDEN_MARKER);
+    /** @const {string} */ const BUTTON_CLASS    = Emma.Popup.button.class;
+    /** @const {string} */ const PANEL_CLASS     = Emma.Popup.panel.class;
+    /** @const {string} */ const CLOSER_CLASS    = Emma.Popup.closer.class;
+    /** @const {string} */ const DEFERRED_CLASS  = Emma.Popup.deferred.class;
+    /** @const {string} */ const HIDDEN_MARKER   = Emma.Popup.hidden.class;
+    /** @const {string} */ const COMPLETE_MARKER = 'complete';
+    /** @const {string} */ const BUTTON          = selector(BUTTON_CLASS);
+    /** @const {string} */ const PANEL           = selector(PANEL_CLASS);
+    /** @const {string} */ const CLOSER          = selector(CLOSER_CLASS);
+    /** @const {string} */ const DEFERRED        = selector(DEFERRED_CLASS);
+    /** @const {string} */ const HIDDEN          = selector(HIDDEN_MARKER);
+
+    // ========================================================================
+    // Constants - z-order
+    // ========================================================================
+
+    /**
+     * The property assigned to a popup which is overtaking z-order on the page
+     * by neutralizing the z-index for elements outside its stacking context.
+     * This property holds the set of elements which have been affected.
+     *
+     * @const
+     * @type {string}
+     */
+    const Z_CAPTURES_PROP = 'z-captured-elements';
+
+    /**
+     * The property assigned to an element whose z-index has been neutralized
+     * which holds the original z-index value to be restored.
+     *
+     * @const
+     * @type {string}
+     */
+    const Z_RESTORE_PROP = 'current-z-index';
 
     // ========================================================================
     // Variables
@@ -53,21 +74,21 @@ $(document).on('turbolinks:load', function() {
      *
      * @type {jQuery}
      */
-    let $all_popups = $popup_containers.children(PANEL_SELECTOR);
+    let $all_popups = $popup_containers.children(PANEL);
 
     /**
      * All popup close buttons.
      *
      * @type {jQuery}
      */
-    let $popup_closers = $popup_containers.find(CLOSER_SELECTOR);
+    let $popup_closers = $popup_containers.find(CLOSER);
 
     /**
      * All popup control buttons on the page.
      *
      * @type {jQuery}
      */
-    let $popup_buttons = $popup_containers.children(BUTTON_SELECTOR);
+    let $popup_buttons = $popup_containers.children(BUTTON);
 
     // ========================================================================
     // Event handlers
@@ -101,7 +122,7 @@ $(document).on('turbolinks:load', function() {
         let $target      = $(target || this);
         let $popup       = findPopup($target);
         let $iframe      = $popup.children('iframe');
-        let $placeholder = $popup.children(DEFERRED_SELECTOR);
+        let $placeholder = $popup.children(DEFERRED);
 
         // Include the ID of the iframe for logging.
         if (DEBUGGING) {
@@ -128,13 +149,14 @@ $(document).on('turbolinks:load', function() {
             // anchor.
             debug(func, 'RE-OPENING');
             showPopup($popup);
+            scrollIntoView($popup);
             scrollFrameDocument($iframe, $popup.data('topic'));
 
         } else if (opening) {
             // Fetch deferred content when the popup is unhidden the first time
             // (or after being deleted below after closing).
             debug(func, 'LOADING');
-            $popup.removeClass(HIDDEN_MARKER);
+            showPopup($popup);
             $placeholder.each(fetchContent);
 
         } else if (complete) {
@@ -152,11 +174,11 @@ $(document).on('turbolinks:load', function() {
                 $iframe.remove();
                 $popup.removeClass(COMPLETE_MARKER);
             }
-            $popup.addClass(HIDDEN_MARKER);
+            hidePopup($popup);
 
         } else {
             consoleWarn(func, 'CLOSING', '-', 'INCOMPLETE POPUP');
-            $popup.addClass(HIDDEN_MARKER);
+            hidePopup($popup);
         }
     }
 
@@ -173,12 +195,12 @@ $(document).on('turbolinks:load', function() {
         if ($target.hasClass(PANEL_CLASS)) {
             $popup  = $target;
         } else if ($target.hasClass(BUTTON_CLASS)) {
-            $popup  = $target.siblings(PANEL_SELECTOR);
+            $popup  = $target.siblings(PANEL);
         } else if ($target.hasClass(POPUP_CLASS)) {
-            $popup  = $target.children(PANEL_SELECTOR);
+            $popup  = $target.children(PANEL);
         } else {
             $target = $target.parents(POPUP_SELECTOR);
-            $popup  = $target.children(PANEL_SELECTOR);
+            $popup  = $target.children(PANEL);
         }
         return $popup;
     }
@@ -189,7 +211,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function findOpenPopups() {
-        return $all_popups.not(HIDDEN_SELECTOR);
+        return $all_popups.not(HIDDEN);
     }
 
     // noinspection FunctionWithMultipleReturnPointsJS
@@ -203,7 +225,7 @@ $(document).on('turbolinks:load', function() {
 
         const func       = 'fetchContent:';
         let $placeholder = $(placeholder || this);
-        let $popup       = $placeholder.parents(PANEL_SELECTOR).first();
+        let $popup       = $placeholder.parents(PANEL).first();
         const source_url = $placeholder.data('path');
 
         // Validate parameters and return if there is missing information.
@@ -289,6 +311,7 @@ $(document).on('turbolinks:load', function() {
                 // Make sure the associated popup element is displayed and
                 // scrolled into position.
                 showPopup($popup);
+                scrollIntoView($popup);
                 scrollFrameDocument($content, topic);
             }
         }
@@ -358,24 +381,29 @@ $(document).on('turbolinks:load', function() {
     /**
      * Open the indicated popup element.
      *
-     * @param {Selector} [popup]      Default: *this*.
+     * @param {Selector} popup
      */
     function showPopup(popup) {
-        let $popup = $(popup || this);
+        let $popup = $(popup);
         debugPopups('showPopup', $popup);
+        if ($popup.hasClass('z-order-capture')) {
+            zOrderCapture($popup);
+        }
         $popup.removeClass(HIDDEN_MARKER);
-        scrollIntoView($popup);
     }
 
     /**
      * Close the indicated popup element.
      *
-     * @param {Selector} [popup]      Default: *this*.
+     * @param {Selector} popup
      */
     function hidePopup(popup) {
-        let $popup = $(popup || this);
+        let $popup = $(popup);
         debugPopups('hidePopup', $popup);
         $popup.addClass(HIDDEN_MARKER);
+        if ($popup.hasClass('z-order-capture')) {
+            zOrderRelease($popup);
+        }
     }
 
     /**
@@ -387,6 +415,60 @@ $(document).on('turbolinks:load', function() {
         debug('hideAllOpenPopups');
         let $popups = popups ? $(popups) : findOpenPopups();
         $popups.each(function() { togglePopup(this); });
+    }
+
+    // ========================================================================
+    // Functions - z-order
+    // ========================================================================
+
+    // noinspection FunctionWithMultipleReturnPointsJS
+    /**
+     * Cheat working out the proper stacking context hierarchy by causing all
+     * elements with a non-zero z-index to be neutralized.
+     *
+     * The function returns early if it has already been run for this popup.
+     *
+     * @param {Selector} by_popup
+     */
+    function zOrderCapture(by_popup) {
+        let $popup = $(by_popup);
+        if ($popup.prop(Z_CAPTURES_PROP)) {
+            return;
+        }
+        let z_captures = [];
+        $('*:visible').not($popup).each(function() {
+            let $this = $(this);
+            const z   = $this.css('z-index');
+            if (z > 0) {
+                debug(`CAPTURE z-index = ${z} from ${elementSelector(this)}`);
+                $this.prop(Z_RESTORE_PROP, z);
+                $this.css('z-index', -1);
+                z_captures.push($this);
+            }
+        });
+        if (isEmpty(z_captures)) {
+            z_captures = false;
+        }
+        $popup.prop(Z_CAPTURES_PROP, z_captures);
+    }
+
+    /**
+     * Reverses the effect of {@link zOrderCapture} by restoring the original
+     * z-index to the affected elements.
+     *
+     * @param {Selector} by_popup
+     */
+    function zOrderRelease(by_popup) {
+        let $popup     = $(by_popup);
+        let z_captures = $popup.prop(Z_CAPTURES_PROP);
+        if (isPresent(z_captures)) {
+            z_captures.forEach(function($e) {
+                const z = $e.prop(Z_RESTORE_PROP);
+                $e.css('z-index', z);
+                debug(`RELEASE z-index = ${z} to ${elementSelector($e)}`);
+            });
+        }
+        $popup.prop(Z_CAPTURES_PROP, false);
     }
 
     // ========================================================================
@@ -408,7 +490,7 @@ $(document).on('turbolinks:load', function() {
         if (key === 'Escape') {
             // debug('> ESC pressed outside of popup controls or panels');
             let $target = $(event.target || this);
-            let $popup  = findPopup($target).not(HIDDEN_SELECTOR);
+            let $popup  = findPopup($target).not(HIDDEN);
             let $popups = isMissing($popup) && findOpenPopups();
             if (isPresent($popup)) {
                 debug('> ESC pressed in window; closing single open popup');
