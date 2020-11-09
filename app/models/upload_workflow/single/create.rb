@@ -97,10 +97,10 @@ public
 
 module UploadWorkflow::Single::Create::Events
   include UploadWorkflow::Single::Events
+  include UploadWorkflow::Single::Create::Simulation
 end
 
 module UploadWorkflow::Single::Create::Events
-  include UploadWorkflow::Single::Create::Simulation
 end if UploadWorkflow::Single::Create::WORKFLOW_DEBUG
 
 module UploadWorkflow::Single::Create::States

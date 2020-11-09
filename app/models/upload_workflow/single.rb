@@ -954,14 +954,13 @@ public
 
 module UploadWorkflow::Single::Events
   include UploadWorkflow::Events
+  include UploadWorkflow::Single::Simulation
 end
 
 #--
 # Event debugging.
 #++
 module UploadWorkflow::Single::Events
-
-  include UploadWorkflow::Single::Simulation
 
   # ===========================================================================
   # :section: UploadWorkflow::Events overrides

@@ -48,30 +48,8 @@ module UploadWorkflow::Single::Remove::Data
 end
 
 module UploadWorkflow::Single::Remove::Actions
-
   include UploadWorkflow::Single::Actions
   include UploadWorkflow::Single::Remove::Data
-
-  # ===========================================================================
-  # :section: UploadWorkflow::Actions overrides
-  # ===========================================================================
-
-  public
-
-  # wf_index_update
-  #
-  # @param [Array] _event_args        Ignored.
-  #
-  # @return [void]
-  #
-  # @see UploadWorkflow::Single::External#add_to_index
-  # @see UploadWorkflow::Single::External#update_in_index
-  #
-  def wf_index_update(*_event_args)
-    __debug_args(binding)
-    # NOTE: Index updates already occurred in #wf_remove_items.
-  end
-
 end
 
 module UploadWorkflow::Single::Remove::Simulation
@@ -89,10 +67,10 @@ public
 
 module UploadWorkflow::Single::Remove::Events
   include UploadWorkflow::Single::Events
+  include UploadWorkflow::Single::Remove::Simulation
 end
 
 module UploadWorkflow::Single::Remove::Events
-  include UploadWorkflow::Single::Remove::Simulation
 end if UploadWorkflow::Single::Remove::WORKFLOW_DEBUG
 
 module UploadWorkflow::Single::Remove::States

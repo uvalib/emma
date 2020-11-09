@@ -60,10 +60,10 @@ public
 
 module UploadWorkflow::Bulk::Remove::Events
   include UploadWorkflow::Bulk::Events
+  include UploadWorkflow::Bulk::Remove::Simulation
 end
 
 module UploadWorkflow::Bulk::Remove::Events
-  include UploadWorkflow::Bulk::Remove::Simulation
 end if UploadWorkflow::Bulk::Remove::WORKFLOW_DEBUG
 
 module UploadWorkflow::Bulk::Remove::States
@@ -277,12 +277,6 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     # =========================================================================
     # Sub-sequence: Termination
     # =========================================================================
-
-    state :suspended do
-      event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
-      event :resume,    transitions_to: :resuming,    **IF_DEV
-    end if false # TODO: remove - not applicable to bulk upload
 
     state :failed do
       event :purge,     transitions_to: :purged,      **IF_ADMIN

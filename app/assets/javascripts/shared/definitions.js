@@ -550,11 +550,11 @@ function urlParameters(path) {
  * @returns {string}
  */
 function makeUrl(...parts) {
-    let func   = 'makeUrl:';
+    const func = 'makeUrl';
     let path   = [];
     let params = {};
     let path_starter;
-    let starter_index;
+    let starter_index = 0;
 
     // Accumulate path parts and param parts.
     parts.forEach(processPart);
@@ -566,7 +566,6 @@ function makeUrl(...parts) {
      * NOTE: Return value is ignored.
      */
     function processPart(arg) {
-        console.log(func, `processPart: arg = ${asString(arg)}`);
         let part, starter, preserve;
         if (typeof arg === 'string') {
             part = arg.trim();

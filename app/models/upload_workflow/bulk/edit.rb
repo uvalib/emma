@@ -60,10 +60,10 @@ public
 
 module UploadWorkflow::Bulk::Edit::Events
   include UploadWorkflow::Bulk::Events
+  include UploadWorkflow::Bulk::Edit::Simulation
 end
 
 module UploadWorkflow::Bulk::Edit::Events
-  include UploadWorkflow::Bulk::Edit::Simulation
 end if UploadWorkflow::Bulk::Edit::WORKFLOW_DEBUG
 
 module UploadWorkflow::Bulk::Edit::States
@@ -221,13 +221,6 @@ class UploadWorkflow::Bulk::Edit < UploadWorkflow::Bulk
       #event :upload,    transitions_to: :replacing,   **IF_USER # TODO: remove - not applicable to bulk upload
     end
 
-    state :replacing do
-      event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :reject,    transitions_to: :editing,     **IF_SYSTEM
-      event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :advance,   transitions_to: :modifying,   **IF_SYSTEM
-    end if false # TODO: remove - not applicable to bulk upload
-
     state :modifying do
       #event :purge,     transitions_to: :purged,      **IF_ADMIN # TODO: remove - not applicable to bulk upload
       event :reject,    transitions_to: :failed,      **IF_SYSTEM # NOTE: was to :editing
@@ -276,12 +269,6 @@ class UploadWorkflow::Bulk::Edit < UploadWorkflow::Bulk
     # =========================================================================
     # Sub-sequence: Termination
     # =========================================================================
-
-    state :suspended do
-      event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :reset,     transitions_to: :starting,    **IF_DEV_DEBUG
-      event :resume,    transitions_to: :resuming,    **IF_DEV
-    end if false # TODO: remove - not applicable to bulk upload
 
     state :failed do
       event :purge,     transitions_to: :purged,      **IF_ADMIN

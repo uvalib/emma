@@ -1672,7 +1672,7 @@ $(document).on('turbolinks:load', function() {
         // If multiple values are provided, they are treated as a complete
         // replacement for the existing set of values.
         let value, values;
-        if (Array.isArray(new_value) || (setting === null)) {
+        if (Array.isArray(new_value) || (new_value === null)) {
             values = compact(new_value || []);
             $inputs.each(function(i) {
                 value = values[i];

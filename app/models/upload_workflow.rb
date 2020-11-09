@@ -1812,14 +1812,13 @@ public
 #
 module UploadWorkflow::Events
   include Workflow::Base::Events
+  include UploadWorkflow::Simulation
 end
 
 #--
 # Event debugging.
 #++
 module UploadWorkflow::Events
-
-  include UploadWorkflow::Simulation
 
   # ===========================================================================
   # :section: Workflow::Base overrides - Events

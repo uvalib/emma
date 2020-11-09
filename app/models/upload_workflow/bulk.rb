@@ -691,14 +691,13 @@ public
 
 module UploadWorkflow::Bulk::Events
   include UploadWorkflow::Events
+  include UploadWorkflow::Bulk::Simulation
 end
 
 #--
 # Event debugging.
 #++
 module UploadWorkflow::Bulk::Events
-
-  include UploadWorkflow::Bulk::Simulation
 
   # ===========================================================================
   # :section: UploadWorkflow::Events overrides

@@ -127,10 +127,10 @@ public
 
 module UploadWorkflow::Single::Edit::Events
   include UploadWorkflow::Single::Events
+  include UploadWorkflow::Single::Edit::Simulation
 end
 
 module UploadWorkflow::Single::Edit::Events
-  include UploadWorkflow::Single::Edit::Simulation
 end if UploadWorkflow::Single::Edit::WORKFLOW_DEBUG
 
 module UploadWorkflow::Single::Edit::States
