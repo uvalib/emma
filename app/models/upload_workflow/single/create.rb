@@ -372,21 +372,21 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
 
     state :validating do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :reject,    transitions_to: :creating,    **IF_SYSTEM
+      event :reject,    transitions_to: :creating
       event :cancel,    transitions_to: :canceled,    **IF_USER
       event :submit,    transitions_to: :submitting,  **IF_USER
     end
 
     state :submitting do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :reject,    transitions_to: :creating,    **IF_SYSTEM
-      event :advance,   transitions_to: :submitted,   **IF_SYSTEM
+      event :reject,    transitions_to: :creating
+      event :advance,   transitions_to: :submitted
     end
 
     state :submitted do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :schedule,  transitions_to: :scheduling,  **IF_SYSTEM
-      event :advance,   transitions_to: :staging,     **IF_SYSTEM
+      event :schedule,  transitions_to: :scheduling
+      event :advance,   transitions_to: :staging
     end
 
     # =========================================================================
@@ -394,29 +394,29 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     # =========================================================================
 
     state :scheduling do
-      event :assign,    transitions_to: :assigned,    **IF_SYSTEM
-      event :advance,   transitions_to: :assigning,   **IF_SYSTEM
+      event :assign,    transitions_to: :assigned
+      event :advance,   transitions_to: :assigning
     end
 
     state :assigning do
-      event :hold,      transitions_to: :holding,     **IF_SYSTEM
-      event :assign,    transitions_to: :assigned,    **IF_SYSTEM
-      event :advance,   transitions_to: :assigned,    **IF_SYSTEM
+      event :hold,      transitions_to: :holding
+      event :assign,    transitions_to: :assigned
+      event :advance,   transitions_to: :assigned
     end
 
     state :holding do
-      event :edit,      transitions_to: :creating,     **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :timeout,   transitions_to: :holding,     **IF_SYSTEM
-      event :fail,      transitions_to: :failed,      **IF_SYSTEM
-      event :advance,   transitions_to: :assigning,   **IF_SYSTEM
+      event :timeout,   transitions_to: :holding
+      event :fail,      transitions_to: :failed
+      event :advance,   transitions_to: :assigning
     end
 
     state :assigned do
-      event :edit,      transitions_to: :creating,     **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :purge,     transitions_to: :purged,      **IF_SYSTEM
+      event :purge,     transitions_to: :purged
       event :review,    transitions_to: :reviewing,   **IF_REVIEWER
     end
 
@@ -427,12 +427,12 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
 
     state :rejected do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :edit,      transitions_to: :creating,     **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_USER
       event :cancel,    transitions_to: :canceled,    **IF_USER
     end
 
     state :approved do
-      event :advance,   transitions_to: :staging,     **IF_SYSTEM
+      event :advance,   transitions_to: :staging
     end
 
     # =========================================================================
@@ -440,18 +440,18 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     # =========================================================================
 
     state :staging do
-      event :index,     transitions_to: :indexing,    **IF_SYSTEM
-      event :advance,   transitions_to: :unretrieved, **IF_SYSTEM
+      event :index,     transitions_to: :indexing
+      event :advance,   transitions_to: :unretrieved
     end
 
     state :unretrieved do
-      event :fail,      transitions_to: :failed,      **IF_SYSTEM
-      event :timeout,   transitions_to: :unretrieved, **IF_SYSTEM
-      event :advance,   transitions_to: :retrieved,   **IF_SYSTEM
+      event :fail,      transitions_to: :failed
+      event :timeout,   transitions_to: :unretrieved
+      event :advance,   transitions_to: :retrieved
     end
 
     state :retrieved do
-      event :advance,   transitions_to: :indexing,    **IF_SYSTEM
+      event :advance,   transitions_to: :indexing
     end
 
     # =========================================================================
@@ -459,13 +459,13 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     # =========================================================================
 
     state :indexing do
-      event :fail,      transitions_to: :failed,      **IF_SYSTEM
-      event :timeout,   transitions_to: :indexing,    **IF_SYSTEM
-      event :advance,   transitions_to: :indexed,     **IF_SYSTEM
+      event :fail,      transitions_to: :failed
+      event :timeout,   transitions_to: :indexing
+      event :advance,   transitions_to: :indexed
     end
 
     state :indexed do
-      event :advance,   transitions_to: :completed,   **IF_SYSTEM
+      event :advance,   transitions_to: :completed
     end
 
     # =========================================================================

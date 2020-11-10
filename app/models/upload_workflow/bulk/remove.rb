@@ -235,8 +235,8 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     end
 
     state :removed do
-      event :fail,      transitions_to: :failed,      **IF_SYSTEM
-      event :advance,   transitions_to: :staging,     **IF_SYSTEM
+      event :fail,      transitions_to: :failed
+      event :advance,   transitions_to: :staging
     end
 
     # =========================================================================
@@ -244,18 +244,18 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     # =========================================================================
 
     state :staging do
-      event :index,     transitions_to: :indexing,    **IF_SYSTEM
-      event :advance,   transitions_to: :unretrieved, **IF_SYSTEM
+      event :index,     transitions_to: :indexing
+      event :advance,   transitions_to: :unretrieved
     end
 
     state :unretrieved do
-      event :fail,      transitions_to: :failed,      **IF_SYSTEM
-      event :timeout,   transitions_to: :unretrieved, **IF_SYSTEM
-      event :advance,   transitions_to: :retrieved,   **IF_SYSTEM
+      event :fail,      transitions_to: :failed
+      event :timeout,   transitions_to: :unretrieved
+      event :advance,   transitions_to: :retrieved
     end
 
     state :retrieved do
-      event :advance,   transitions_to: :indexing,    **IF_SYSTEM
+      event :advance,   transitions_to: :indexing
     end
 
     # =========================================================================
@@ -263,11 +263,11 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     # =========================================================================
 
     state :indexing do
-      event :advance,   transitions_to: :indexed,     **IF_SYSTEM
+      event :advance,   transitions_to: :indexed
     end
 
     state :indexed do
-      event :advance,   transitions_to: :completed,   **IF_SYSTEM
+      event :advance,   transitions_to: :completed
     end
 
     # =========================================================================
