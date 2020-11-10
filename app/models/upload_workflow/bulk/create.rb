@@ -68,10 +68,6 @@ module UploadWorkflow::Bulk::Create::Actions
     opt[:importer]   ||= :ia_bulk
     opt[:repository] ||= EmmaRepository.default
     @succeeded, @failed = bulk_upload_create(event_args, **opt)
-    @succeeded.each do |record|
-      record.set_phase(:create)
-      record.set_state(:completed)
-    end
   end
 
   # wf_index_update
@@ -84,10 +80,10 @@ module UploadWorkflow::Bulk::Create::Actions
   #
   def wf_index_update(*_event_args)
     __debug_args(binding)
-    if entries.blank?
+    if succeeded.blank?
       @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
     else
-      @succeeded, @failed, _ = bulk_add_to_index(*entries)
+      @succeeded, @failed, _ = bulk_add_to_index(*succeeded)
     end
   end
 
@@ -196,6 +192,7 @@ module UploadWorkflow::Bulk::Create::States
     # Verify validity of the submission.
     unless simulating
       wf_validate_submission(*event_args)
+      wf_set_records_state
     end
 
     valid = ready?

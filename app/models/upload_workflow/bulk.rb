@@ -123,8 +123,6 @@ module UploadWorkflow::Bulk::External
     records, failed = bulk_db_update(records, atomic: atomic)
     return [], failed if atomic && failed.present? || records.blank?
 
-    # TODO: Route to workflow if item[:emma_repository:] != :emma
-
     # Update the index with the modified submissions.
     return records, failed unless index && records.present?
     succeeded, rejected, _ = update_in_index(*records, atomic: atomic)
@@ -594,15 +592,45 @@ module UploadWorkflow::Bulk::Data
   # Indicate whether submission can happen.
   #
   def ready?
-    super && complete?
+    super || complete?
   end
 
 end
 
 module UploadWorkflow::Bulk::Actions
+
   include UploadWorkflow::Actions
   include UploadWorkflow::Bulk::Data
   include UploadWorkflow::Bulk::Roles
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Set the workflow phase and state for all Upload records associated with
+  # the bulk action.
+  #
+  # @param [Array<Upload>]       items    Default: `#succeeded`.
+  # @param [String, Symbol, nil] phase    Default: `#workflow_phase`.
+  # @param [String, Symbol, nil] state    Default: `#current_state`.
+  #
+  # @return [void]
+  #
+  def wf_set_records_state(*items, state: nil, phase: nil)
+    items = succeeded if items.blank?
+    items = items.select { |item| item.is_a?(Upload) }
+    return if items.blank?
+    phase ||= workflow_phase
+    state ||= current_state
+    items.each do |item|
+      next unless item.is_a?(Upload)
+      item.set_phase(phase) if phase
+      item.set_state(state) if state
+    end
+  end
+
 end
 
 module UploadWorkflow::Bulk::Simulation
@@ -844,6 +872,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_indexing_entry(state, event, *event_args)
     super
+    wf_set_records_state
 
     if simulating
 
@@ -901,6 +930,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_indexed_entry(state, event, *event_args)
     super
+    wf_set_records_state
 
     __debug_sim('SYSTEM notifies the user that the submission is complete.')
 
@@ -926,6 +956,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_failed_entry(state, event, *event_args)
     super
+    wf_set_records_state
 
     __debug_sim("[prev_state == #{prev_state.inspect}]")
     __debug_sim('SYSTEM has terminated the workflow.')
@@ -946,6 +977,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_canceled_entry(state, event, *event_args)
     super
+    wf_set_records_state
 
     __debug_sim("[prev_state == #{prev_state.inspect}]")
     __debug_sim('USER has terminated the workflow.')
@@ -966,6 +998,7 @@ module UploadWorkflow::Bulk::States
   #
   def on_completed_entry(state, event, *event_args)
     super
+    wf_set_records_state
 
     __debug_sim("[prev_state == #{prev_state.inspect}]")
     __debug_sim('The submission has been completed successfully.')

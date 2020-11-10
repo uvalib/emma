@@ -67,10 +67,6 @@ module UploadWorkflow::Bulk::Edit::Actions
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
     @succeeded, @failed = bulk_upload_edit(event_args, **opt)
-    @succeeded.each do |record|
-      record.set_phase(:edit)
-      record.set_state(:completed)
-    end
   end
 
   # wf_index_update
@@ -83,10 +79,10 @@ module UploadWorkflow::Bulk::Edit::Actions
   #
   def wf_index_update(*_event_args)
     __debug_args(binding)
-    if entries.blank?
+    if succeeded.blank?
       @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
     else
-      @succeeded, @failed, _ = bulk_update_in_index(*entries)
+      @succeeded, @failed, _ = bulk_update_in_index(*succeeded)
     end
   end
 
@@ -197,6 +193,7 @@ module UploadWorkflow::Bulk::Edit::States
     # Verify validity of the submission.
     unless simulating
       wf_validate_submission(*event_args)
+      wf_set_records_state
     end
 
     valid = ready?
