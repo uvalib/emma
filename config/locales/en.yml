@@ -297,7 +297,9 @@ en:
 
       page_size:        100
       separator:        '&nbsp;|&nbsp;'
-      count:            'items found'
+      count:
+        one:            'item found'
+        many:           'items found'
 
       start_over:
         label:          'START'
@@ -430,7 +432,9 @@ en:
 
       pagination:
         <<:             *PAGINATION
-        count:          '%{items} found'
+        count:
+          one:          '%{item} found'
+          many:         '%{items} found'
 
       # =======================================================================
       # Pages
