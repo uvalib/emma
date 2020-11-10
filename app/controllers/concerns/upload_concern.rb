@@ -46,12 +46,18 @@ module UploadConcern
   #
   PAGE_PARAMS = %i[page start offset limit].freeze
 
+  # URL parameters involved in form submission.
+  #
+  # @type [Array<Symbol>]
+  #
+  FORM_PARAMS = %i[selected field-group cancel].freeze
+
   # POST/PUT/PATCH parameters from the upload form that are not relevant to the
   # create/update of an Upload instance.
   #
   # @type [Array<Symbol>]
   #
-  IGNORED_UPLOAD_FORM_PARAMS = (%i[field-group cancel] + PAGE_PARAMS).freeze
+  IGNORED_UPLOAD_FORM_PARAMS = (PAGE_PARAMS + FORM_PARAMS).freeze
 
   # ===========================================================================
   # :section: Parameters

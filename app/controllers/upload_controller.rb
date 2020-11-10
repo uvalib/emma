@@ -71,7 +71,7 @@ class UploadController < ApplicationController
   #
   def index
     __debug_route
-    opt    = url_parameters
+    opt    = url_parameters.except!(*FORM_PARAMS)
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_records(groups: all, **opt)
     first, last, page, @list = result.values_at(:first, :last, :page, :list)

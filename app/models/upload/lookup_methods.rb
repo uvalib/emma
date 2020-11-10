@@ -64,20 +64,20 @@ module Upload::LookupMethods
   #   :pages    An array of arrays where each element has the IDs for that page
   #   :list     An array of matching Upload records.
   #
-  # @type [Hash{Symbol=>nil}]
+  # @type [Hash{Symbol=>*}]
   #
   SEARCH_RECORDS_TEMPLATE = {
-    offset: nil,
-    limit:  nil,
-    page:   nil,
-    first:  nil,
-    last:   nil,
-    total:  nil,
-    min_id: nil,
-    max_id: nil,
-    groups: nil,
-    pages:  nil,
-    list:   nil,
+    offset: 0,
+    limit:  0,
+    page:   0,
+    first:  true,
+    last:   true,
+    total:  0,
+    min_id: 0,
+    max_id: 0,
+    groups: {},
+    pages:  [],
+    list:   [],
   }.freeze
 
   # Local options consumed by #search_records.
@@ -111,51 +111,64 @@ module Upload::LookupMethods
   def search_records(*identifiers, **opt)
     local_opt, opt = partition_options(opt, *SEARCH_RECORDS_OPTIONS)
     result = SEARCH_RECORDS_TEMPLATE.dup
-    all    = get_relation(*identifiers, **opt)
 
-    if local_opt[:groups] == :only
-
-      result[:groups] = group_by_state(all)
-
-    else
-
-      # noinspection RailsParamDefResolve
-      all_ids = all.pluck(:id)
-      page    = local_opt[:page]&.to_i
-      offset  = local_opt[:offset]
-      limit   = positive(local_opt[:limit])
-      pg_size = limit || 10 # TODO: fall-back page size for grouping
-      pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
-
-      if page
-        if page > 1
-          ids_on_page = pages[page - 2]
-          raise RangeError, "Page #{page} is invalid" if ids_on_page.nil?
-          offset = ids_on_page.last
-        else
-          page   = 1
-          offset = nil
-        end
-        result[:page]   = page
-        result[:first]  = (page == 1)
-        result[:last]   = (page >= pages.size)
-        result[:limit]  = limit = pg_size
-        result[:offset] = ((page - 1) * pg_size)
-      else
-        result[:limit]  = limit
-        result[:offset] = offset
-      end
-
-      opt.merge!(limit: limit, offset: offset)
-
-      result[:total]  = all_ids.size
-      result[:min_id] = all_ids.first
-      result[:max_id] = all_ids.last
-      result[:pages]  = pages               if local_opt[:pages]
-      result[:groups] = group_by_state(all) if local_opt[:groups]
-      result[:list]   = get_relation(*identifiers, **opt).records
-
+    # Handle the case where a range has been specified which resolves to an
+    # empty set of identifiers.  Otherwise, #get_relation will treat this case
+    # identically to one where no identifiers where specified to limit results.
+    if identifiers.present?
+      identifiers = expand_ids(*identifiers)
+      return result if identifiers.blank?
     end
+
+    # Start by looking at results for all matches (without :limit or :offset).
+    all = get_relation(*identifiers, **opt)
+
+    # Handle the case where only a :groups summary is expected.
+    if local_opt[:groups] == :only
+      result[:groups] = group_by_state(all)
+      return result
+    end
+
+    # noinspection RailsParamDefResolve
+    all_ids = all.pluck(:id)
+    page    = local_opt[:page]&.to_i
+    offset  = local_opt[:offset]
+    limit   = positive(local_opt[:limit])
+    pg_size = limit || 10 # TODO: fall-back page size for grouping
+    pages   = all_ids.in_groups_of(pg_size).to_a.map(&:compact)
+
+    if page
+      if page > 1
+        ids_on_page = pages[page - 2]
+        raise RangeError, "Page #{page} is invalid" if ids_on_page.nil?
+        offset = ids_on_page.last
+      else
+        page   = 1
+        offset = nil
+      end
+      result[:page]   = page
+      result[:first]  = (page == 1)
+      result[:last]   = (page >= pages.size)
+      result[:limit]  = limit = pg_size
+      result[:offset] = ((page - 1) * pg_size)
+    else
+      result[:limit]  = limit
+      result[:offset] = offset
+    end
+
+    result[:total]  = all_ids.size
+    result[:min_id] = all_ids.first
+    result[:max_id] = all_ids.last
+
+    # Include the array of arrays of database IDs if requested.
+    result[:pages] = pages if local_opt[:pages]
+
+    # Generate a :groups summary if requested.
+    result[:groups] = group_by_state(all) if local_opt[:groups]
+
+    # Finally, get the specific set of results.
+    opt.merge!(limit: limit, offset: offset)
+    result[:list] = get_relation(*identifiers, **opt).records
 
     result
   end
