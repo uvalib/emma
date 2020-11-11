@@ -185,6 +185,16 @@ class User < ApplicationRecord
 
   protected
 
+  # Current EMMA test Bookshare accounts.
+  #
+  # @type [Hash{String=>Symbol}]
+  #
+  TEST_USERS = {
+    'emmadso@bookshare.org'        => :dso,
+    'emmacollection@bookshare.org' => :collection,
+    'emmamembership@bookshare.org' => :membership
+  }.freeze
+
   # assign_default_role
   #
   # @return [void]
@@ -196,13 +206,7 @@ class User < ApplicationRecord
   #
   def assign_default_role
     return if self.roles.present?
-    # noinspection RubyCaseWithoutElseBlockInspection
-    prototype_user =
-      case self.uid
-        when 'emmadso@bookshare.org'        then :dso        # NOTE: tmp test user
-        when 'emmacollection@bookshare.org' then :collection # NOTE: tmp test user
-        when 'emmamembership@bookshare.org' then :membership # NOTE: tmp test user
-      end
+    prototype_user = id.to_i.zero? ? :anonymous : TEST_USERS[uid]
     add_roles(prototype_user)
   end
 
