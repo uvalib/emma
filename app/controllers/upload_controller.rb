@@ -299,6 +299,7 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :creating, event: :submit, variant: :create)
+    wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
@@ -333,6 +334,7 @@ class UploadController < ApplicationController
     __debug_route
     __debug_request
     @list = wf_bulk(start_state: :editing, event: :submit, variant: :edit)
+    wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?
@@ -366,6 +368,7 @@ class UploadController < ApplicationController
     __debug_request
     @list = wf_bulk(start_state: :removing, event: :submit, variant: :remove)
     failure(:file_id) unless @list.present?
+    wf_check_partial_failure
     post_response(:found, @list)
   rescue SubmitError => error
     post_response(:conflict, error, xhr: false) # TODO: ?

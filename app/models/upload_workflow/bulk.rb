@@ -613,21 +613,17 @@ module UploadWorkflow::Bulk::Actions
   # the bulk action.
   #
   # @param [Array<Upload>]       items    Default: `#succeeded`.
-  # @param [String, Symbol, nil] phase    Default: `#workflow_phase`.
   # @param [String, Symbol, nil] state    Default: `#current_state`.
   #
   # @return [void]
   #
-  def wf_set_records_state(*items, state: nil, phase: nil)
+  def wf_set_records_state(*items, state: nil)
     items = succeeded if items.blank?
-    items = items.select { |item| item.is_a?(Upload) }
-    return if items.blank?
-    phase ||= workflow_phase
-    state ||= current_state
     items.each do |item|
       next unless item.is_a?(Upload)
-      item.set_phase(phase) if phase
-      item.set_state(state) if state
+      state ||= current_state
+      item.set_phase(workflow_phase)
+      item.set_state(state, workflow_column)
     end
   end
 

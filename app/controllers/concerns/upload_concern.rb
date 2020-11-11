@@ -435,6 +435,17 @@ module UploadConcern
     @workflow.results
   end
 
+  # Produce flash error messages for failures that did not abort the workflow
+  # step but did affect the outcome (e.g. for bulk uploads where some of the
+  # original files could not be acquired).
+  #
+  # @param [Workflow] wf
+  #
+  def wf_check_partial_failure(wf = @workflow)
+    return if (problems = wf.failed).blank?
+    post_response(nil, problems, redirect: false, xhr: false)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -444,8 +455,8 @@ module UploadConcern
   # Generate a response to a POST.
   #
   # @param [Symbol, Integer, Exception] status
-  # @param [String, Exception]          item
-  # @param [String]                     redirect
+  # @param [Exception, String, Array]   item
+  # @param [String, FalseClass]         redirect
   # @param [Boolean]                    xhr       Override `request.xhr?`.
   # @param [Symbol]                     meth      Calling method.
   #
@@ -454,8 +465,8 @@ module UploadConcern
   # == Variations
   #
   # @overload post_response(status, item = nil, redirect: nil, xhr: nil)
-  #   @param [Symbol, Integer]   status
-  #   @param [String, Exception] item
+  #   @param [Symbol, Integer]          status
+  #   @param [Exception, String, Array] item
   #
   # @overload post_response(except, redirect: nil, xhr: nil)
   #   @param [Exception] except
@@ -484,10 +495,10 @@ module UploadConcern
       else
         flash_failure(*message, **opt)
       end
-      if redirect
-        redirect_to(redirect)
-      else
-        redirect_back(fallback_location: upload_index_path)
+      case redirect
+        when false  then # no redirect
+        when String then redirect_to(redirect)
+        else             redirect_back(fallback_location: upload_index_path)
       end
     end
   end

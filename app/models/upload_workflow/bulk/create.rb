@@ -67,7 +67,8 @@ module UploadWorkflow::Bulk::Create::Actions
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
     opt[:repository] ||= EmmaRepository.default
-    @succeeded, @failed = bulk_upload_create(event_args, **opt)
+    @succeeded, failures = bulk_upload_create(event_args, **opt)
+    @failed += failures
   end
 
   # wf_index_update
@@ -81,10 +82,11 @@ module UploadWorkflow::Bulk::Create::Actions
   def wf_index_update(*_event_args)
     __debug_args(binding)
     if succeeded.blank?
-      @failed << 'NO ENTRIES - INTERNAL WORKFLOW ERROR'
+      failures = "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
     else
-      @succeeded, @failed, _ = bulk_add_to_index(*succeeded)
+      @succeeded, failures, _ = bulk_add_to_index(*succeeded)
     end
+    @failed += Array.wrap(failures)
   end
 
 end

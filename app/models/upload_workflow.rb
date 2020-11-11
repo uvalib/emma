@@ -1729,7 +1729,8 @@ module UploadWorkflow::Actions
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:emergency] = emergency_delete unless opt.key?(:emergency)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
-    @succeeded, @failed = batch_upload_remove(event_args, **opt)
+    @succeeded, failures = batch_upload_remove(event_args, **opt)
+    @failed += failures
   end
 
   # wf_cancel_submission
