@@ -822,7 +822,7 @@ module UploadHelper
       icon:    BANG,
       tip:     'Check for an update to the status of this submission', # TODO: I18n
       path:    :check_upload_path,
-      enabled: ->(item) { item.in_process? },
+      enabled: ->(item) { item.in_process? if item.respond_to?(:in_process?) },
     },
     edit: {
       icon:    DELTA,

@@ -6,14 +6,7 @@
 __loading_begin(__FILE__)
 
 class UploadWorkflow::Single::Create < UploadWorkflow::Single
-
-  # The 'uploads' table field associated with the workflow state for new
-  # entries.
-  #
-  # @type [Symbol]
-  #
-  STATE_COLUMN = Upload::PRIMARY_STATE_COLUMN
-
+  include UploadWorkflow::Create
 end
 
 # =============================================================================
@@ -78,6 +71,40 @@ module UploadWorkflow::Single::Create::Actions
         repository_create(record.repository, *record, **opt)
     end
     super
+  end
+
+  # wf_cancel_submission
+  #
+  # @param [Array] event_args
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::Actions#wf_remove_items
+  #
+  def wf_cancel_submission(*event_args)
+    __debug_args(binding)
+    opt = event_args.extract_options!&.except(:redirect) || {}
+    opt.reverse_merge!(index: false, force: false)
+    wf_remove_items(*event_args, opt)
+  end
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#add_to_index
+  #
+  def wf_index_update(*_event_args)
+    super
+    if record.emma_native?
+      @succeeded, @failed, _ = add_to_index(*record)
+    else
+      sid  = record.submission_id.inspect
+      repo = Upload.repository_name(record)
+      @succeeded << "Request #{sid} submitted to #{repo}" # TODO: I18n
+    end
   end
 
 end
@@ -357,6 +384,7 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :create,    transitions_to: :creating,    **IF_SUBMITTER
     end
 
@@ -365,16 +393,16 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     # =========================================================================
 
     state :creating do
-      event :cancel,    transitions_to: :canceled,    **IF_USER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :submit,    transitions_to: :submitting,  **IF_COMPLETE
-      event :upload,    transitions_to: :validating,  **IF_USER
+      event :upload,    transitions_to: :validating,  **IF_SUBMITTER
     end
 
     state :validating do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :reject,    transitions_to: :creating
-      event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :submit,    transitions_to: :submitting,  **IF_USER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
+      event :submit,    transitions_to: :submitting,  **IF_SUBMITTER
     end
 
     state :submitting do
@@ -405,8 +433,8 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     state :holding do
-      event :edit,      transitions_to: :creating,    **IF_USER
-      event :cancel,    transitions_to: :canceled,    **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_SUBMITTER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :purge,     transitions_to: :purged,      **IF_ADMIN
       event :timeout,   transitions_to: :holding
       event :fail,      transitions_to: :failed
@@ -414,8 +442,8 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
     end
 
     state :assigned do
-      event :edit,      transitions_to: :creating,    **IF_USER
-      event :cancel,    transitions_to: :canceled,    **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_SUBMITTER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :purge,     transitions_to: :purged
       event :review,    transitions_to: :reviewing,   **IF_REVIEWER
     end
@@ -427,8 +455,8 @@ class UploadWorkflow::Single::Create < UploadWorkflow::Single
 
     state :rejected do
       event :purge,     transitions_to: :purged,      **IF_ADMIN
-      event :edit,      transitions_to: :creating,    **IF_USER
-      event :cancel,    transitions_to: :canceled,    **IF_USER
+      event :edit,      transitions_to: :creating,    **IF_SUBMITTER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
     end
 
     state :approved do

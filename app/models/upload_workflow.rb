@@ -12,6 +12,51 @@ class UploadWorkflow < Workflow::Base
 end
 
 # =============================================================================
+# :section: Mixins
+# =============================================================================
+
+public
+
+# Common elements of workflows associated with the creation of new entries.
+#
+module UploadWorkflow::Create
+
+  # The 'uploads' table field associated with the workflow state for new
+  # entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN = Upload::PRIMARY_STATE_COLUMN
+
+end
+
+# Common elements of workflows associated with the change of existing entries.
+#
+module UploadWorkflow::Edit
+
+  # The 'uploads' table field associated with workflow state for workflows
+  # involving modification of existing entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN = Upload::SECONDARY_STATE_COLUMN
+
+end
+
+# Common elements of workflows associated with the removal of existing entries.
+#
+module UploadWorkflow::Remove
+
+  # The 'uploads' table field associated with workflow state for workflows
+  # involving modification of existing entries.
+  #
+  # @type [Symbol]
+  #
+  STATE_COLUMN = Upload::SECONDARY_STATE_COLUMN
+
+end
+
+# =============================================================================
 # :section: Auxiliary
 # =============================================================================
 
@@ -1107,7 +1152,7 @@ module UploadWorkflow::External
   # @return [Array<Upload>]
   #
   def find_records(*items, **opt)
-    collect_records(*items, **opt).first
+    collect_records(*items, **opt).first || []
   end
 
   # Create a new free-standing (un-persisted) Upload instance.
@@ -1136,8 +1181,11 @@ module UploadWorkflow::External
   # Upload objects.
   #
   # @param [Array<Upload,String,Array>] items   @see Upload#expand_ids
+  # @param [Boolean]                    all     If *true*, empty *items* is OK.
   # @param [Boolean]                    force   See Usage Notes
   # @param [Hash]                       opt     Passed to Upload#get_records.
+  #
+  # @raise [StandardException] If *all* is *true* and *items* were supplied.
   #
   # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
   # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
@@ -1147,15 +1195,14 @@ module UploadWorkflow::External
   # the returned list of items may contain a mixture of Upload and String
   # elements.
   #
-  def collect_records(*items, force: false, **opt)
-    failed = []
-    opt    = items.pop if items.last.is_a?(Hash) && opt.blank?
+  def collect_records(*items, all: false, force: false, **opt)
+    raise 'If :all is true then no items are allowed'  if all && items.present?
+    opt = items.pop if items.last.is_a?(Hash) && opt.blank?
+    Log.warn { "#{__method__}: no criteria supplied" } if all && opt.blank?
     items  = items.flatten.compact
-    if items.blank?
-      # Searching for non-identifier criteria (e.g. { user: @user }).
-      items = Upload.get_records(**opt)
-    else
-      # Searching for identifier criteria (possibly modified by other criteria).
+    failed = []
+    if items.present?
+      # Searching by identifier (possibly modified by other criteria).
       items =
         items.flat_map { |item|
           item.is_a?(Upload) ? item : Upload.expand_ids(item) if item.present?
@@ -1170,6 +1217,9 @@ module UploadWorkflow::External
         items.map! { |item| !item.is_a?(Upload) && found[item] || item }
         items, failed = items.partition { |i| i.is_a?(Upload) } unless force
       end
+    elsif all
+      # Searching for non-identifier criteria (e.g. { user: @user }).
+      items = Upload.get_records(**opt)
     end
     return items, failed
   end
@@ -1630,11 +1680,11 @@ module UploadWorkflow::Actions
 
   # wf_index_update
   #
-  # @param [Array] event_args
+  # @param [Array] _event_args        Ignored.
   #
   # @return [void]
   #
-  def wf_index_update(*event_args)
+  def wf_index_update(*_event_args)
     __debug_args(binding)
   end
 
@@ -1692,9 +1742,6 @@ module UploadWorkflow::Actions
   #
   def wf_cancel_submission(*event_args)
     __debug_args(binding)
-    opt = event_args.extract_options!&.except(:redirect) || {}
-    event_args << opt.reverse_merge!(index: false, force: false)
-    wf_remove_items(*event_args)
   end
 
 end

@@ -277,7 +277,7 @@ module UploadWorkflow::Bulk::External
   def bulk_db_delete(ids, atomic: true, **)
     __debug_args("UPLOAD #{__method__}", binding)
     db_action = ->() {
-      collect_records(*ids, force: false).first.each(&:delete_file)
+      find_records(*ids, force: false).each(&:delete_file)
       Upload.delete(ids)
     }
     success = false

@@ -355,13 +355,6 @@ module UploadWorkflow::Single::Actions
   #
   def wf_cancel_submission(*event_args)
     __debug_args(binding)
-    opt = event_args.extract_options!&.except(:redirect) || {}
-    if true?(opt[:reset])
-      reset_record(opt)
-      persist_workflow_state(nil)
-    else
-      super(*event_args, opt)
-    end
   end
 
   # wf_index_update
@@ -370,27 +363,9 @@ module UploadWorkflow::Single::Actions
   #
   # @return [void]
   #
-  # @see UploadWorkflow::Single::External#add_to_index
-  # @see UploadWorkflow::Single::External#update_in_index
-  #
   def wf_index_update(*_event_args)
     __debug_args(binding)
     assert_record_present
-    if record.emma_native?
-      if record.new_submission?
-        @succeeded, @failed, _ = add_to_index(*record)
-      else
-        @succeeded, @failed, _ = update_in_index(*record)
-      end
-    else
-      sid  = record.submission_id.inspect
-      repo = Upload.repository_name(record)
-      if record.new_submission?
-        @succeeded << "Request #{sid} submitted to #{repo}" # TODO: I18n
-      else
-        @succeeded << "Change request #{sid} submitted to #{repo}" # TODO: I18n
-      end
-    end
   end
 
   # ===========================================================================

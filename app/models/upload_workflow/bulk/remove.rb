@@ -6,7 +6,7 @@
 __loading_begin(__FILE__)
 
 class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
-  # Initial declaration to establish the namespace.
+  include UploadWorkflow::Remove
 end
 
 # =============================================================================
@@ -222,6 +222,7 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
@@ -230,8 +231,8 @@ class UploadWorkflow::Bulk::Remove < UploadWorkflow::Bulk
     # =========================================================================
 
     state :removing do
-      event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :submit,    transitions_to: :removed,     **IF_USER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
+      event :submit,    transitions_to: :removed,     **IF_SUBMITTER
     end
 
     state :removed do

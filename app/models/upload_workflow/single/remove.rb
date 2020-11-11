@@ -6,14 +6,7 @@
 __loading_begin(__FILE__)
 
 class UploadWorkflow::Single::Remove < UploadWorkflow::Single
-
-  # The 'uploads' table field associated with workflow state for workflows
-  # involving modification of existing entries.
-  #
-  # @type [Symbol]
-  #
-  STATE_COLUMN = Upload::SECONDARY_STATE_COLUMN
-
+  include UploadWorkflow::Remove
 end
 
 # =============================================================================
@@ -48,8 +41,35 @@ module UploadWorkflow::Single::Remove::Data
 end
 
 module UploadWorkflow::Single::Remove::Actions
+
   include UploadWorkflow::Single::Actions
   include UploadWorkflow::Single::Remove::Data
+
+  # ===========================================================================
+  # :section: UploadWorkflow::Actions overrides
+  # ===========================================================================
+
+  public
+
+  # wf_index_update
+  #
+  # @param [Array] _event_args        Ignored.
+  #
+  # @return [void]
+  #
+  # @see UploadWorkflow::Single::External#remove_from_index
+  #
+  def wf_index_update(*_event_args)
+    super
+    if record.emma_native?
+      @succeeded, @failed, _ = remove_from_index(*record)
+    else
+      sid  = record.submission_id.inspect
+      repo = Upload.repository_name(record)
+      @succeeded << "Removal request #{sid} submitted to #{repo}" # TODO: I18n
+    end
+  end
+
 end
 
 module UploadWorkflow::Single::Remove::Simulation
@@ -229,6 +249,7 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :remove,    transitions_to: :removing,    **IF_SUBMITTER
     end
 
@@ -237,8 +258,8 @@ class UploadWorkflow::Single::Remove < UploadWorkflow::Single
     # =========================================================================
 
     state :removing do
-      event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :submit,    transitions_to: :removed,     **IF_USER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
+      event :submit,    transitions_to: :removed,     **IF_SUBMITTER
     end
 
     state :removed do

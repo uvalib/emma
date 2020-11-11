@@ -6,7 +6,7 @@
 __loading_begin(__FILE__)
 
 class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
-  # Initial declaration to establish the namespace.
+  include UploadWorkflow::Create
 end
 
 # =============================================================================
@@ -249,6 +249,7 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
 
     state :starting do
       event :start,     transitions_to: :starting,    **IF_SYS_DEBUG
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
       event :create,    transitions_to: :creating,    **IF_SUBMITTER
     end
 
@@ -257,8 +258,8 @@ class UploadWorkflow::Bulk::Create < UploadWorkflow::Bulk
     # =========================================================================
 
     state :creating do
-      event :cancel,    transitions_to: :canceled,    **IF_USER
-      event :submit,    transitions_to: :submitting,  **IF_USER
+      event :cancel,    transitions_to: :canceled,    **IF_SUBMITTER
+      event :submit,    transitions_to: :submitting,  **IF_SUBMITTER
     end
 
     state :submitting do
