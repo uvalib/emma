@@ -150,7 +150,7 @@
             flex:    0 1 auto;
 
             @media #{$not-narrow-screen} {
-                margin-left: 1rem;
+                margin: auto 0 auto 1rem;
             }
 
             @media #{$narrow-screen} {
@@ -323,6 +323,9 @@
     @extend %help-styles;
     @extend %help-elements;
 
+    max-width:  unset;
+    min-width:  4in;
+    width:      50vw;
     margin-top: $results-entry-gap-y;
 
     //=========================================================================
