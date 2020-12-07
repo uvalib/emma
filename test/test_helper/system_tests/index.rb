@@ -57,7 +57,7 @@ module TestHelper::SystemTests::Index
       index ||= (page * size) + 1
       (page  <= 0)    ? assert_first_page : assert_not_first_page
       (index <= size) ? assert_first_page : assert_not_first_page
-      assert_selector 'h2.number', text: index.to_s
+      # assert_selector 'h2.number', text: index.to_s # TODO: Page number?
     end
 
     # For search results, *terms* will at least be an empty hash.
@@ -70,16 +70,25 @@ module TestHelper::SystemTests::Index
   # Generate a string for search terms as they would appear in the <title>
   # element.
   #
-  # @param [Hash]
+  # @param [Hash] terms               Except:
+  #
+  # @option terms [Boolean] :label    Default: *true*.
+  # @option terms [Boolean] :quote    Default: *true*
   #
   # @return [String]
   #
   def title_terms(**terms)
+    show_type   = !terms.key?(:label) || terms.delete(:label)
+    quote_value = !terms.key?(:quote) || terms.delete(:quote)
     terms.map { |k, v|
-      n = v.is_a?(Enumerable) ? v.size : 1
-      k = inflection(k.to_s.capitalize, n)
+      k =
+        if show_type && !SearchTermsHelper::QUERY_PARAMETERS.include?(k)
+          n = v.is_a?(Enumerable) ? v.size : 1
+          inflection(k.to_s.capitalize, n)
+        end
       v = strip_quotes(v)
-      "#{k}: #{quote(v)}"
+      v = quote(v) if quote_value
+      [k, v].compact.join(': ')
     }.join('; ')
   end
 
@@ -89,7 +98,13 @@ module TestHelper::SystemTests::Index
   #
   # @return [void]
   #
+  # NOTE: The active search terms are no longer displayed on the page.
+  #
+  #--
+  # noinspection RubyDeadCode
+  #++
   def assert_search_terms(**terms)
+    return # TODO: test on header facet selections
     terms.each_value do |value|
       assert_selector VALUE_SELECTOR, text: value
     end

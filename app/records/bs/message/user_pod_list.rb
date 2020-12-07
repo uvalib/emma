@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::UserPod>] disabilities
 # @attr [Array<Bs::Record::Link>]    links
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_pod_list
+# @see https://apidocs.bookshare.org/membership/index.html#_user_pod_list
 #
 class Bs::Message::UserPodList < Bs::Api::Message
 

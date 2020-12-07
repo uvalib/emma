@@ -188,12 +188,12 @@ module SearchTermsHelper
       term_list = term_list.except(:separator).presence
     end
     term_list ||= search_terms
-    term_list.map { |field, search_term|
-      next if search_term.blank?
-      if search_term.query?
-        array_string(search_term.names, quote: true)
+    term_list.map { |_field, term|
+      next if term.blank?
+      if term.query?
+        array_string(term.names, quote: true)
       else
-        "#{field}: " + array_string(search_term.values)
+        "#{term.label}: " + array_string(term.values, quote: true)
       end
     }.compact.join(separator)
   end

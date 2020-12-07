@@ -7,6 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Record::TitleMetadataSummary
 #
+# @attr [Array<AllowsType>]              allows
 # @attr [Array<Bs::Record::Name>]        arrangers         *deprecated*
 # @attr [Array<Bs::Record::Name>]        authors           *deprecated*
 # @attr [Boolean]                        available
@@ -16,6 +17,7 @@ __loading_begin(__FILE__)
 # @attr [Array<ContentWarning>]          contentWarnings
 # @attr [Array<Bs::Record::Contributor>] contributors
 # @attr [IsoYear]                        copyrightDate
+# @attr [Array<Bs::Record::Format>]      externalFormats
 # @attr [Array<Bs::Record::Format>]      formats
 # @attr [String]                         instruments
 # @attr [String]                         isbn13
@@ -66,6 +68,7 @@ class Bs::Record::TitleMetadataSummary < Bs::Api::Record
   include Bs::Shared::TitleMethods
 
   schema do
+    has_many  :allows,            AllowsType
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :authors,           Bs::Record::Name          # NOTE: deprecated
     has_one   :available,         Boolean
@@ -75,6 +78,7 @@ class Bs::Record::TitleMetadataSummary < Bs::Api::Record
     has_many  :contentWarnings,   ContentWarning
     has_many  :contributors,      Bs::Record::Contributor
     has_one   :copyrightDate,     IsoYear
+    has_many  :externalFormats,   Bs::Record::Format
     has_many  :formats,           Bs::Record::Format
     has_one   :instruments
     has_one   :isbn13

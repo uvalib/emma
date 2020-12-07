@@ -99,6 +99,7 @@ module ApiExplorerConcern
       resourceId:     '???',      # TODO: ???
       readingListId:  '325853',
       subscriptionId: '???',      # TODO: ???
+      messageId:      '???',      # TODO: ???
       organization:   'emma',     # TODO: ???
       format:         FormatType.default,
       limit:          5,
@@ -108,18 +109,18 @@ module ApiExplorerConcern
     #
     # @type [Array<String,Regexp>]
     #
-    TOPICS = (
-      %w(
-        UserAccount
-        MembershipUserAccounts
-        ActiveTitles
-        MembershipActiveTitles
-        AssignedTitles
-        ReadingLists
-        Titles
-        Periodicals
-      ) << /Organization/
-    ).freeze
+    TOPICS = [
+      'UserAccount',
+      'MembershipUserAccounts',
+      'ActiveTitles',
+      'MembershipActiveTitles',
+      'AssignedTitles',
+      'ReadingLists',
+      'Titles',
+      'Periodicals',
+      /Message/,
+      /Organization/
+    ].freeze
 
     # Each method to be run in the trial.
     #
@@ -195,8 +196,13 @@ module ApiExplorerConcern
       # noinspection RubyNilAnalysis
       methods.map { |method, opts|
         param = opts.to_s.remove(/[{}]/).gsub(/:(.+?)=>/, '\1: ')
-        value = service.send(method, **opts)
-        error = (value.exception if value.respond_to?(:exception))
+        value = service.send(method, **opts) rescue nil
+        error =
+          if value.nil?
+            "missing method - #{method.inspect}"
+          elsif value.respond_to?(:exception)
+            value.exception
+          end
         trial = {
           endpoint:   service.latest_endpoint,
           parameters: ("(#{param})" if param.present?),

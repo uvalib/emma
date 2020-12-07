@@ -49,6 +49,8 @@ class MetricsController < ApplicationController
   #
   # * A *summary* is a metric...
   #
+  # NOTE: This is out of date.
+  #
   def test
     value = rand(0..100)
 
@@ -56,11 +58,11 @@ class MetricsController < ApplicationController
     Counter[:test_send].increment(by: (2 * value), labels: { service: 'POST' })
 
     Gauge[:test_gauge].set(value, labels: { route: :gauge })
-    Gauge[:test_gauge2].set(value)
+    Gauge[:test_gauge2].set(value, labels: { route: :gauge })
     g =
       REGISTRY.get(:test_gauge3) ||
       REGISTRY.gauge(:test_gauge3, docstring: 'A third gauge')
-    g.set(18, labels: { bb: 'second label' })
+    g.set(18)
 
     Histogram[:test_histogram].observe(value / 16)
     Histogram[:test_histogram].observe(value / 4)

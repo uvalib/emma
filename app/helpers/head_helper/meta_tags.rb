@@ -164,7 +164,7 @@ module HeadHelper::MetaTags
 
   # @type [Array<Symbol>]
   EMIT_META_TAG_OPTIONS =
-    %i[content_separator list_separator pair_separator sanitize].freeze
+    %i[content_separator list_separator pair_separator sanitize quote].freeze
 
   # Generate a <meta> tag with special handling for :robots.
   #
@@ -173,9 +173,10 @@ module HeadHelper::MetaTags
   # @param [Hash]                  opt        Passed to #tag except for:
   #
   # @option opt [String]  :content_separator  Def.: #META_TAG_CONTENT_SEPARATOR
-  # @option opt [String]  :list_separator     Passed to #array_string.
-  # @option opt [String]  :pair_separator     Passed to #array_string.
-  # @option opt [Boolean] :sanitize           Passed to #array_string.
+  # @option opt [String]  :list_separator     Passed to #normalized_list.
+  # @option opt [String]  :pair_separator     Passed to #normalized_list.
+  # @option opt [Boolean] :sanitize           Passed to #normalized_list.
+  # @option opt [Boolean] :quote              Passed to #normalized_list.
   #
   # @return [ActiveSupport::SafeBuffer]       If valid.
   # @return [nil]                             If the tag would be a "no-op".

@@ -97,7 +97,7 @@ en:
       # =======================================================================
 
       index:
-        label:          'Records'
+        label:          'Search'
         title:          'EMMA Unified Search'
         tooltip:        'Find more metadata records with %{terms}.'
         fields:

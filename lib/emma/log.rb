@@ -73,14 +73,12 @@ module Emma::Log
       args.compact!
       message = []
       message << args.shift if args.first.is_a?(Symbol)
-      if args.first.is_a?(Exception)
-        e = args.shift
-        if [YAML::SyntaxError].include?(e)
-          note = (" - #{args.shift}" if args.present?)
-          args.prepend("#{e.class}: #{e.message}#{note}")
-        else
-          args.append("#{e.message} [#{e.class}]")
-        end
+      error = (args.shift if args.first.is_a?(Exception))
+      if error.is_a?(YAML::SyntaxError)
+        note = (" - #{args.shift}" if args.present?)
+        args.prepend("#{error.class}: #{error.message}#{note}")
+      elsif error
+        args.append("#{error.message} [#{error.class}]")
       end
       message += args if args.present?
       logger.add(severity, message.join(': '))

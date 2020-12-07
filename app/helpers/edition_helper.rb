@@ -67,8 +67,11 @@ module EditionHelper
   #
   def edition_link(item, **opt)
     local, opt = partition_options(opt, :editionId, :edition)
-    eid = local.values.first
-    opt[:path]    = "#edition-#{eid}" # TODO: edition show page?
+    if (eid = local.values.first).present?
+      opt[:path]    = "#edition-#{eid}" # TODO: edition show page?
+    else
+      opt[:no_link] = true
+    end
     opt[:tooltip] = EDITION_SHOW_TOOLTIP
     item_link(item, **opt)
   end

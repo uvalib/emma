@@ -49,6 +49,7 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_title_count(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', 'count', **opt)
     response&.body&.presence&.to_i || exception
   end
@@ -77,6 +78,7 @@ module BookshareService::Request::Titles
   # This request can be made without an Authorization header.
   #
   def get_title(bookshareId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, **opt)
     Bs::Message::TitleMetadataDetail.new(response, error: exception)
   end
@@ -132,28 +134,28 @@ module BookshareService::Request::Titles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                       :title
-  # @option opt [String, Array<String>]        :author
-  # @option opt [String, Array<String>]        :narrator
-  # @option opt [String, Array<String>]        :composer
-  # @option opt [String]                       :keyword
-  # @option opt [String]                       :isbn
-  # @option opt [String, Array<String>]        :categories
-  # @option opt [IsoLanguage]                  :language
-  # @option opt [String]                       :country
-  # @option opt [FormatType]                   :format
-  # @option opt [NarratorType]                 :narratorType
-  # @option opt [BrailleType]                  :brailleType
-  # @option opt [Integer]                      :readingAge
-  # @option opt [ContentWarning,Array<ContentWarning>] :excludedContentWarnings
-  # @option opt [ContentWarning,Array<ContentWarning>] :includedContentWarnings
-  # @option opt [String]                       :externalIdentifierCode
-  # @option opt [IsoDuration]                  :maxDuration
-  # @option opt [TitleContentType]             :titleContentType
-  # @option opt [String]                       :start
-  # @option opt [Integer]                      :limit
-  # @option opt [TitleSortOrder]               :sortOrder
-  # @option opt [Direction]                    :direction
+  # @option opt [String]                :title
+  # @option opt [String, Array<String>] :author
+  # @option opt [String, Array<String>] :narrator
+  # @option opt [String, Array<String>] :composer
+  # @option opt [String]                :keyword
+  # @option opt [String]                :isbn
+  # @option opt [String, Array<String>] :categories
+  # @option opt [IsoLanguage]           :language
+  # @option opt [String]                :country
+  # @option opt [FormatType]            :format
+  # @option opt [NarratorType]          :narratorType
+  # @option opt [BrailleType]           :brailleType
+  # @option opt [Integer]               :readingAge
+  # @option opt [Array<ContentWarning>] :excludedContentWarnings
+  # @option opt [Array<ContentWarning>] :includedContentWarnings
+  # @option opt [String]                :externalIdentifierCode
+  # @option opt [IsoDuration]           :maxDuration
+  # @option opt [TitleContentType]      :titleContentType
+  # @option opt [String]                :start
+  # @option opt [Integer]               :limit
+  # @option opt [TitleSortOrder]        :sortOrder
+  # @option opt [Direction]             :direction
   #
   # @return [Bs::Message::TitleMetadataSummaryList]
   #
@@ -280,11 +282,14 @@ module BookshareService::Request::Titles
   # @param [String]     resourceId
   # @param [Hash]       opt           Passed to #api.
   #
+  # @option opt [String] :size        *REQUIRED*
+  #
   # @return [Bs::Message::StatusModel]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-title-file-resource
   #
   def get_title_resource_file(bookshareId:, format:, resourceId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'titles', bookshareId, format, 'resources', resourceId, **opt)
     Bs::Message::StatusModel.new(response, error: exception)
   end
@@ -294,6 +299,7 @@ module BookshareService::Request::Titles
           bookshareId: String,
           format:      FormatType,
           resourceId:  String,
+          size:        String,
         },
         reference_id:  '_get-title-file-resource'
       }

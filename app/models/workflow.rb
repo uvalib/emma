@@ -163,10 +163,8 @@ module Workflow::Base::Roles
     return user if user.nil? || user.is_a?(Symbol)
     # noinspection RubyNilAnalysis
     user = user.uid if user.is_a?(User)
-    case user
-      when /^emmadso@/ then :developer # TODO: role mapping
-      else                  :user
-    end
+    # TODO: role mapping
+    (user == BookshareService::BOOKSHARE_TEST_ACCOUNT) ? :developer : :user
   end
 
   # ===========================================================================

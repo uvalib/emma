@@ -41,10 +41,16 @@ module BookshareService::Common
   #
   DEFAULT_USER = 'anonymous'
 
-  # The identifier (:userAccountId) for the test member "Placeholder Member".
-  # (Only usable by "emmadso@bookshare.org".)
+  # The account used for testing.
   #
-  # @type [String, nil]
+  # @type [String]
+  #
+  BOOKSHARE_TEST_ACCOUNT = 'emmadso@bookshare.org'
+
+  # The identifier (:userAccountId) for the test member "Placeholder Member".
+  # (Only usable by #BOOKSHARE_TEST_ACCOUNT)
+  #
+  # @type [String]
   #
   #--
   # noinspection SpellCheckingInspection, LongLine

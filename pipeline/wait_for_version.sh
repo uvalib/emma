@@ -4,7 +4,7 @@
 
 #set -x
 
-# validate input paremeters
+# validate input parameters
 if [ $# -ne 3 ]; then
    echo "use: $(basename $0) <endpoint> <expected version> <timeout (in seconds)>"
    exit 1
@@ -58,7 +58,7 @@ while true; do
    # check for timeout
    NOW_TIME=$(date +%s)
    if [ $NOW_TIME -ge $END_TIME ]; then
-      echo "ERROR: timed out waiting for correct version to be reportd"
+      echo "ERROR: timed out waiting for correct version to be reported"
       exit 1
    fi
 

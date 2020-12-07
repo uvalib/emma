@@ -200,7 +200,7 @@ class ApiService
       # == Variations
       #
       # @overload api_methods(arg)
-      #   @param [Hash] arg
+      #   @param [Hash, nil] arg
       #   @option arg [Boolean] :synthetic  Default: false.
       #   @return [Hash{Symbol=>Hash}]      Properties of all methods.
       #

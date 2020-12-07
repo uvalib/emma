@@ -16,7 +16,7 @@ __loading_begin(__FILE__)
 # @attr [Boolean]       signedByLegalGuardian
 # @attr [String]        username
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_signed_agreement
+# @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement
 #
 # NOTE: This duplicates:
 # @see Bs::Record::UserSignedAgreement
@@ -25,6 +25,8 @@ __loading_begin(__FILE__)
 # noinspection DuplicatedCode
 #++
 class Bs::Message::UserSignedAgreement < Bs::Api::Message
+
+  include Bs::Shared::AgreementMethods
 
   schema do
     has_one   :agreementId
@@ -35,42 +37,6 @@ class Bs::Message::UserSignedAgreement < Bs::Api::Message
     has_one   :recordingUser
     has_one   :signedByLegalGuardian, Boolean
     has_one   :username
-  end
-
-  # ===========================================================================
-  # :section: Object overrides
-  # ===========================================================================
-
-  public
-
-  # Convert object to string.
-  #
-  # @return [String]
-  #
-  def to_s
-    label
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # A label for the item.
-  #
-  # @return [String]
-  #
-  def label
-    identifier
-  end
-
-  # Return the unique identifier for the represented item.
-  #
-  # @return [String]
-  #
-  def identifier
-    agreementId.to_s
   end
 
 end

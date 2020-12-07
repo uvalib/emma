@@ -166,7 +166,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
         opt = options.merge(format: fmt)
 
         if fmt == :html
-          url = download_url(url_opt)
+          url = bs_download_url(url_opt)
           if able
             opt[:xhr]    = true
             opt[:format] = nil  # Defer format check until after the send.
@@ -175,7 +175,7 @@ class ArtifactControllerTest < ActionDispatch::IntegrationTest
             opt[:expect] = :redirect
           end
         else
-          url = download_url(url_opt.merge(format: fmt))
+          url = bs_download_url(url_opt.merge(format: fmt))
           opt[:expect] = able ? :success : :unauthorized
         end
 

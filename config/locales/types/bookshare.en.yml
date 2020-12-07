@@ -100,6 +100,12 @@ en:
           nonspecific:              'Non-specific'
           _default:                 nonspecific
 
+        ExternalFormatType:
+          MUSIC_BRAILLE:            'Music Braille'
+          HARDCOPY_BRAILLE:         'Hardcopy Braille'
+          PRINT_BRAILLE:            'Print Braille'
+          FEELIX_KIT:               'Feelix Kit'
+
         FormatType:
           DAISY:                    'DAISY with Images'
           DAISY_AUDIO:              'DAISY Audio'
@@ -123,6 +129,34 @@ en:
           otherNonBinary:           'Other/Non-binary'
           _default:                 otherNonBinary
 
+        LexileCode:
+          AD:                       'Adult Directed'
+          NC:                       'Non-Conforming'
+          HL:                       'High-Low'
+          IG:                       'Illustrated Guide'
+          GN:                       'Graphic Novel'
+          BR:                       'Beginning Reader'
+          NP:                       'Non-Prose'
+
+        MessagePriority:
+          high:                     'High'
+          medium:                   'Medium'
+          low:                      'Low'
+
+        MessageType:
+          information:              'Information'
+          system:                   'System'
+
+        MetricType:
+          page:                     'Page'
+          chapter:                  'Chapter'
+          paragraph:                'Paragraph'
+
+        MusicScoreType:
+          fullScore:                'Full Score'
+          openScore:                'Open Score'
+          singleLine:               'Single LIne'
+
         NarratorType:
           tts:                      'TTS'
           human:                    'Human'
@@ -141,6 +175,11 @@ en:
           missing:                  'Missing'
           _default:                 active
 
+        BsRightsType:
+          publicDomain:             'Public Domain'
+          creativeCommons:          'Creative Commons'
+          copyright:                'Copyright'
+
         RoleType: # NOTE: Compare with Roles#BOOKSHARE_ROLES
           individual:               'Individual'
           volunteer:                'Volunteer'
@@ -153,6 +192,12 @@ en:
           magazine:                 'Magazine'
           journal:                  'Journal'
           _default:                 journal
+
+        ScanQuality:
+          publisher:                'Publisher'
+          excellent:                'Excellent'
+          good:                     'Good'
+          fair:                     'Fair'
 
         SiteType:
           bookshare:                'Bookshare'
@@ -184,6 +229,10 @@ en:
           dateAdded:                'Date Added'
           copyrightDate:            'Copyright Date'
           _default:                 title
+
+        TitleStatus:
+          withdrawn:                'Withdrawn'
+          available:                'Available'
 
         # =====================================================================
         # Account
@@ -285,12 +334,16 @@ en:
           _default:                 title
 
         # =====================================================================
-        # From catalog.bookshare.org (not in the API)
+        # Messages
         # =====================================================================
 
-        ScanQuality:
-          excellent:                'Excellent'
-          good:                     'Good'
+        MessageSortOrder:
+          dateCreated:              'Date'
+          _default:                 dateCreated
+
+        # =====================================================================
+        # From catalog.bookshare.org (not in the API)
+        # =====================================================================
 
         BrailleCode:
           ebae:                     'English Braille American Edition'

@@ -11,7 +11,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::Link>]                links
 # @attr [Array<Bs::Record::UserSignedAgreement>] signedAgreements
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_signed_agreement_list
+# @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement_list
 #
 class Bs::Message::UserSignedAgreementList < Bs::Api::Message
 

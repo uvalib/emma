@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [String] description
 # @attr [String] name
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription_type
+# @see https://apidocs.bookshare.org/membership/index.html#_user_subscription_type
 #
 class Bs::Record::UserSubscriptionType < Bs::Api::Record
 

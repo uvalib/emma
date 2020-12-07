@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 module Roles
 
-  # Bookshare user types as documented in API section 1.8 (User Types).
+  # Bookshare user types as documented in API section 1.9 (User Types).
   #
   # NOTE: This is only for documentation at this time.
   # TODO: Harmonize with EMMA_ROLES.
@@ -21,22 +21,22 @@ module Roles
   # brackets).
   #
   # === Individual Member
-  # [1.8] [Users] who have a personal subscription to the Bookshare service,
+  # [1.9] [Users] who have a personal subscription to the Bookshare service,
   #         and are able to get books on their own behalf.
-  # [1.8] [May] also be, simultaneously, organization members who get some
+  # [1.9] [May] also be, simultaneously, organization members who get some
   #         benefits from organization membership, such as use of the
   #         organization’s subscription.
   #
   # [2.3] Reading lists can be created[/modified] by individual members.
   #
   # === Organization Sponsor
-  # [1.8] [Users] who represent members of an organization, such as a school or
+  # [1.9] [Users] who represent members of an organization, such as a school or
   #         a library, who only get books for others on their behalf.
-  # [1.8] For example, a teacher at a school will have the role of sponsor, and
+  # [1.9] For example, a teacher at a school will have the role of sponsor, and
   #         will get books on behalf of their students.
-  # [1.8] A sponsor may be responsible for a few members or hundreds of
+  # [1.9] A sponsor may be responsible for a few members or hundreds of
   #         members, and an organization may have a few or many sponsors.
-  # [1.8] Many of the resources specifically designed for sponsors will be
+  # [1.9] Many of the resources specifically designed for sponsors will be
   #         described in the "Organization" section.
   #
   # [2.3] Reading lists can be created[/modified] by sponsors.
@@ -48,11 +48,11 @@ module Roles
   #         to add, update and remove individual members [to the organization].
   #
   # === Organization Member
-  # [1.8] [Users] who also represent members of an organization, but are often
+  # [1.9] [Users] who also represent members of an organization, but are often
   #         minors or users who don’t regularly use the service themselves.
-  # [1.8] [May] have *usernames* with which they can authenticate and interact
+  # [1.9] [May] have *usernames* with which they can authenticate and interact
   #         with the system, or they may not.
-  # [1.8] [Typically] limited in what titles they can get on their own, which
+  # [1.9] [Typically] limited in what titles they can get on their own, which
   #         will be reflected in the presence or absence of download links when
   #         they search for titles.
   #
@@ -60,11 +60,11 @@ module Roles
   #         it.
   #
   # === Collection Assistant
-  # [1.8] [Administrative] users who have the right to manage elements of the
+  # [1.9] [Administrative] users who have the right to manage elements of the
   #         collection, either adding and removing titles, or updating the
   #         metadata of titles.
-  # [1.8] [Will] have visibility to those titles that belong to their site.
-  # [1.8] The resources specifically designed for these users are described in
+  # [1.9] [Will] have visibility to those titles that belong to their site.
+  # [1.9] The resources specifically designed for these users are described in
   #         the resource sections that begin with "Collection Assistant".
   #
   # [2.8] [Manage] the collection, either by adding or removing *titles*, or by
@@ -79,13 +79,13 @@ module Roles
   # [2.9] [Restricted] to the periodicals that are associated with their site.
   #
   # === Membership Assistant
-  # [1.8] [Administrative] users who have the right to manage user accounts,
+  # [1.9] [Administrative] users who have the right to manage user accounts,
   #         either updating aspects such as subscriptions or proof of
   #         disability, creating new users, or looking up information about
   #         users.
-  # [1.8] [Will] have visibility to those user accounts that belong to their
+  # [1.9] [Will] have visibility to those user accounts that belong to their
   #         site.
-  # [1.8] The resources specifically designed for these users are described in
+  # [1.9] The resources specifically designed for these users are described in
   #         the resource sections that begin with "Membership Assistant".
   #
   # [2.6] [Will] access to see and modify the information about [...] users;
@@ -97,7 +97,7 @@ module Roles
   #         members who are associated with the Assistant’s site.
   #
   # === Administrator
-  # [1.8] [Administrative] users who have the abilities of both
+  # [1.9] [Administrative] users who have the abilities of both
   #         "Collection Assistants" and "Membership Assistants", and whose
   #         visibility lets them manage users or collections that belong to any
   #         site.
@@ -115,21 +115,21 @@ module Roles
   # [2.10] Perform as a "Membership Assistant" for all individuals.
   #
   # === Volunteer
-  # [1.8] These are users who help to add new items to the collection, but with
+  # [1.9] These are users who help to add new items to the collection, but with
   #         fewer rights than "Collection Assistants".
-  # [1.8] They can submit and proofread scanned titles, but are not approved
+  # [1.9] They can submit and proofread scanned titles, but are not approved
   #         members so @note cannot download other titles.
-  # [1.8] NOTE: The API does not yet have resources supporting Volunteer users.
+  # [1.9] NOTE: The API does not yet have resources supporting Volunteer users.
   #
   # === Guest
-  # [1.8] These are unauthenticated users, meaning that requests are made
+  # [1.9] These are unauthenticated users, meaning that requests are made
   #         without an OAuth token.
-  # [1.8] [Allowed] to do things like search the collection and download, but
+  # [1.9] [Allowed] to do things like search the collection and download, but
   #         the resources that will return with a download link will be limited
   #         to those that are either @note in the public domain,
   #         or @note have a Creative Commons license.
   #
-  # [1.9] [Will] have their view of the collection limited to that defined by
+  # [1.10] [Will] have their view of the collection limited to that defined by
   #         the site associated with the API key.
   #
   BOOKSHARE_USER_TYPES = {
@@ -143,7 +143,8 @@ module Roles
     'Guest':                'unauthenticated users',
   }.freeze
 
-  # Bookshare roles as documented in API section 2.10.3 (Create a user account)
+  # Bookshare roles as documented in Membership Management API section 2.1.3
+  # (Create a user account).
   #
   # It's not clear how these map on to #BOOKSHARE_USER_TYPES but they have been
   # included as :RoleType in Bs::ENUMERATIONS.
@@ -176,11 +177,11 @@ module Roles
   #                         "Administrator" user.
   #
   BOOKSHARE_ROLES = {
-    individual:          'API section 1.8',
-    volunteer:           'API section 1.8',
+    individual:          'API section 1.9',
+    volunteer:           'API section 1.9',
     trustedVolunteer:    '???',
-    collectionAssistant: 'API sections 1.8, 2.8, 2.9',
-    membershipAssistant: 'API sections 1.8, 2.6, 2.10',
+    collectionAssistant: 'API sections 1.9, 2.8, 2.9',
+    membershipAssistant: 'API sections 1.9, 2.6, 2.10',
   }.freeze
 
   # Current EMMA roles.

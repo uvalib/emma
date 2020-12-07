@@ -521,29 +521,6 @@ class UploadController < ApplicationController
 
   protected
 
-  # Extract the URL parameter which indicates a remote URL path.
-  #
-  # @return [String]                  Value of `params[:url]`.
-  # @return [nil]                     No :url found.
-  #
-  def set_url
-    # noinspection RubyYardReturnMatch
-    @url ||= params[:url]
-  end
-
-  # Extract the URL parameter which indicates a Bookshare member.
-  #
-  # @return [String]                  Value of `params[:member]`.
-  # @return [nil]                     No :member, :forUser found.
-  #
-  def set_member
-    @member ||= params[:forUser] || params[:member]
-    @member ||=
-      if @user&.uid == 'emmadso@bookshare.org'
-        nil # TODO: BookshareService::BOOKSHARE_TEST_MEMBER
-      end
-  end
-
   # If the :show endpoint is given an :id which is actually a specification for
   # multiple items then there is a redirect to :index.
   #
@@ -577,8 +554,8 @@ class UploadController < ApplicationController
   # @return [Hash{Symbol=>*}]
   #
   def show_values(item = @item, **)
-    item = item.attributes.symbolize_keys if item.is_a?(Upload)
-    data = item.extract!(:file_data).first.last
+    item = item.is_a?(Upload) ? item.attributes.symbolize_keys : item.dup
+    data = item.extract!(:file_data).first&.last
     item[:file_data] = safe_json_parse(data)
     # noinspection RubyYardReturnMatch
     item

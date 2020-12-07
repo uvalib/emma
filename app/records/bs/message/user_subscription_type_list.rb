@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::Link>]                 links
 # @attr [Array<Bs::Record::UserSubscriptionType>] userSubscriptionTypes
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription_type_list
+# @see https://apidocs.bookshare.org/membership/index.html#_user_subscription_type_list
 #
 class Bs::Message::UserSubscriptionTypeList < Bs::Api::Message
 

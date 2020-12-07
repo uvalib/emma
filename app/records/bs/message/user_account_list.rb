@@ -9,12 +9,11 @@ __loading_begin(__FILE__)
 #
 # @attr [Array<AllowsType>]              allows
 # @attr [Array<Bs::Record::Link>]        links
+# @attr [String]                         next
 # @attr [Integer]                        totalResults
 # @attr [Array<Bs::Record::UserAccount>] userAccounts
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account_list
-#
-# NOTE: If this is a sequence then why no :next member?
 #
 class Bs::Message::UserAccountList < Bs::Api::Message
 
@@ -23,6 +22,7 @@ class Bs::Message::UserAccountList < Bs::Api::Message
   schema do
     has_many  :allows,       AllowsType
     has_many  :links,        Bs::Record::Link
+    has_one   :next
     has_one   :totalResults, Integer
     has_many  :userAccounts, Bs::Record::UserAccount
   end

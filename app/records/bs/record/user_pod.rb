@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [DisabilityType] disabilityType
 # @attr [String]         proofSource
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_pod
+# @see https://apidocs.bookshare.org/membership/index.html#_user_pod
 #
 class Bs::Record::UserPod < Bs::Api::Record
 

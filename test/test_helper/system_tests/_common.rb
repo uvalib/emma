@@ -14,8 +14,8 @@ module TestHelper::SystemTests::Common
   PROPERTY = {
     category: {
       index: {
-        title:          'Categories',
-        heading:        'Category Index',
+        title:          I18n.t('emma.category.index.label'),
+        heading:        I18n.t('emma.category.index.title'),
         count:          'categories found',
         body_class:     '.category-index',
         entry_class:    '.category-list-entry',
@@ -23,8 +23,8 @@ module TestHelper::SystemTests::Common
     },
     title: {
       index: {
-        title:          'Titles',
-        heading:        'Catalog Titles Index',
+        title:          I18n.t('emma.title.index.label'),
+        heading:        I18n.t('emma.title.index.title'),
         count:          'titles found',
         body_class:     '.title-index',
         entry_class:    '.title-list-entry',
@@ -36,8 +36,8 @@ module TestHelper::SystemTests::Common
     },
     periodical: {
       index: {
-        title:          'Periodicals',
-        heading:        'Periodicals Index',
+        title:          I18n.t('emma.periodical.index.label'),
+        heading:        I18n.t('emma.periodical.index.title'),
         count:          'periodicals found',
         body_class:     '.periodical-index',
         entry_class:    '.periodical-list-entry',
@@ -49,8 +49,8 @@ module TestHelper::SystemTests::Common
     },
     member: {
       index: {
-        title:          'Members',
-        heading:        'Members Index',
+        title:          I18n.t('emma.member.index.label'),
+        heading:        I18n.t('emma.member.index.title'),
         count:          'members found',
         body_class:     '.member-index',
         entry_class:    '.member-list-entry',
@@ -62,9 +62,9 @@ module TestHelper::SystemTests::Common
     },
     reading_list: {
       index: {
-        title:          'Lists',
-        heading:        'Reading Lists',
-        count:          'reading lists found',
+        title:          I18n.t('emma.reading_list.index.label'),
+        heading:        I18n.t('emma.reading_list.index.title'),
+        count:          'lists found',
         body_class:     '.reading_list-index',
         entry_class:    '.reading_list-list-entry',
       },

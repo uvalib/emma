@@ -81,6 +81,30 @@ module BookshareConcern
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Return a member associated with the given user.
+  #
+  # @param [User, String] for_user    Default: `#current_user`.
+  # @param [String]       _name       Member name (future).
+  #
+  # @return [String]
+  #
+  def get_member(for_user = nil, _name = nil)
+    for_user ||= current_user
+    for_user = User.find_by(email: for_user) if for_user.is_a?(String)
+    case for_user&.uid
+      when BookshareService::BOOKSHARE_TEST_ACCOUNT
+        BookshareService::BOOKSHARE_TEST_MEMBER
+      else
+        # TODO: Member lookup
+    end
+  end
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
@@ -103,7 +127,7 @@ module BookshareConcern
   #
   def set_series_id
     # noinspection RubyYardReturnMatch
-    @series_id = params[:seriesId] || params[:series]
+    @series_id = params[:seriesId] || params[:series] || params[:id]
   end
 
   # Extract the URL parameter which specifies a journal/periodical edition.
@@ -142,11 +166,7 @@ module BookshareConcern
   # @return [nil]                     No :member, :forUser found.
   #
   def set_member
-    @member = params[:forUser] || params[:member]
-    @member ||=
-      if current_user&.uid == 'emmadso@bookshare.org'
-        nil # TODO: BookshareService::BOOKSHARE_TEST_MEMBER
-      end
+    @member = params[:forUser] || params[:member] || get_member
   end
 
   # Extract the URL parameter which indicates a remote URL path.

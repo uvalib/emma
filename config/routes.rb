@@ -112,8 +112,8 @@ Rails.application.routes.draw do
   # Artifact operations
   # ===========================================================================
 
-  get '/artifact/retrieval', to: 'artifact#retrieval', as: 'bs_retrieval'
-  get '/artifact/:id/:fmt',  to: 'artifact#download',  as: 'bs_download'
+  get '/artifact/retrieval',          to: 'artifact#retrieval', as: 'bs_retrieval'
+  get '/artifact/:bookshareId/:fmt',  to: 'artifact#download',  as: 'bs_download'
 
   resources :artifact, except: %i[index]
 
@@ -205,6 +205,8 @@ unless ONLY_FOR_DOCUMENTATION
   def edit_password_url(*);                       end
   def edition_index_path(*);                      end
   def edition_index_url(*);                       end
+  def home_path(*);                               end
+  def home_url(*);                                end
   def member_index_path(*);                       end
   def member_index_url(*);                        end
   def metrics_test_path(*);                       end

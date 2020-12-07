@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [Timeframe] name
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_download_timeframe
+# @see https://apidocs.bookshare.org/membership/index.html#_download_timeframe
 #
 class Bs::Record::DownloadTimeframe < Bs::Api::Record
 

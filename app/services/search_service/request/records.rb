@@ -132,8 +132,9 @@ module SearchService::Request::Records
   # NOTE: This is theoretical -- the endpoint is not yet defined
   #
   def get_record(titleId:, **opt)
-    prm = encode_parameters(titleId: titleId)
-    api(:get, 'search', **prm, **opt)
+    opt.merge!(titleId: titleId)
+    opt = get_parameters(__method__, **opt)
+    api(:get, 'search', **opt)
     Search::Message::SearchRecord.new(response, error: exception)
   end
     .tap do |method|

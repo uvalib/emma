@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [Boolean]                             adultContent
 # @attr [Boolean]                             allowRecommend
+# @attr [Array<AllowsType>]                   allows
 # @attr [Array<Bs::Record::Name>]             arrangers            *deprecated*
 # @attr [Array<Bs::Record::ArtifactMetadata>] artifacts
 # @attr [Array<Bs::Record::Name>]             authors              *deprecated*
@@ -18,14 +19,16 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::Name>]             composers            *deprecated*
 # @attr [Array<ContentWarning>]               contentWarnings
 # @attr [Array<Bs::Record::Contributor>]      contributors
-# @attr [String]                              copyright
+# @attr [String]                              copyright            *deprecated*
 # @attr [IsoYear]                             copyrightDate
+# @attr [String]                              copyrightHolder
 # @attr [Array<String>]                       countries
 # @attr [String]                              edition
 # @attr [String]                              externalCategoryCode
+# @attr [Array<Bs::Record::Format>]           externalFormats
 # @attr [Array<Bs::Record::Format>]           formats
 # @attr [Array<Bs::Record::Grade>]            grades
-# @attr [Boolean]                             hasChordSymbols
+# @attr [String]                              hasChordSymbols      *Boolean*
 # @attr [String]                              instruments
 # @attr [String]                              isbn13
 # @attr [String]                              key
@@ -56,7 +59,7 @@ __loading_begin(__FILE__)
 # @attr [String]                              titleContentType
 # @attr [Array<Bs::Record::Name>]             translators          *deprecated*
 # @attr [Bs::Record::UsageRestriction]        usageRestriction
-# @attr [String]                       vocalParts
+# @attr [String]                              vocalParts
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_detail
 #
@@ -89,6 +92,7 @@ class Bs::Message::TitleMetadataDetail < Bs::Api::Message
   schema do
     has_one   :adultContent,         Boolean
     has_one   :allowRecommend,       Boolean
+    has_many  :allows,               AllowsType
     has_many  :arrangers,            Bs::Record::Name       # NOTE: deprecated
     has_many  :artifacts,            Bs::Record::ArtifactMetadata
     has_many  :authors,              Bs::Record::Name       # NOTE: deprecated
@@ -98,14 +102,16 @@ class Bs::Message::TitleMetadataDetail < Bs::Api::Message
     has_many  :composers,            Bs::Record::Name       # NOTE: deprecated
     has_many  :contentWarnings,      ContentWarning
     has_many  :contributors,         Bs::Record::Contributor
-    has_one   :copyright
+    has_one   :copyright                                    # NOTE: deprecated
     has_one   :copyrightDate,        IsoYear
+    has_one   :copyrightHolder
     has_many  :countries
     has_one   :edition
     has_one   :externalCategoryCode
+    has_many  :externalFormats,      Bs::Record::Format
     has_many  :formats,              Bs::Record::Format
     has_many  :grades,               Bs::Record::Grade
-    has_one   :hasChordSymbols,      Boolean
+    has_one   :hasChordSymbols,      String                 # NOTE: Boolean
     has_one   :instruments
     has_one   :isbn13
     has_one   :key

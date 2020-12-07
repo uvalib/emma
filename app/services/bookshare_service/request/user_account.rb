@@ -49,6 +49,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_me
   #
   def get_user_identity(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'me', **opt)
     Bs::Message::UserIdentity.new(response, error: exception)
   end
@@ -70,6 +71,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-summary
   #
   def get_my_account(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', **opt)
     Bs::Message::MyAccountSummary.new(response, error: exception)
   end
@@ -128,6 +130,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myaccount-preferences
   #
   def get_my_preferences(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'preferences', **opt)
     Bs::Message::MyAccountPreferences.new(response, error: exception)
   end
@@ -199,6 +202,7 @@ module BookshareService::Request::UserAccount
   # @see https://apidocs.bookshare.org/reference/index.html#_get-my-recommendation-profile
   #
   def get_my_recommendation_profile(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'myaccount', 'recommendationProfile', **opt)
     Bs::Message::RecommendationProfile.new(response, error: exception)
   end
@@ -216,16 +220,16 @@ module BookshareService::Request::UserAccount
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [Boolean]      :includeGlobalCollection   Default: *false*
-  # @option opt [NarratorType] :narratorType
-  # @option opt [Gender]       :narratorGender
-  # @option opt [Integer]      :readingAge
-  # @option opt [ContentWarning,Array<ContentWarning>] :excludedContentWarnings
-  # @option opt [ContentWarning,Array<ContentWarning>] :includedContentWarnings
-  # @option opt [String, Array<String>]                :excludedCategories
-  # @option opt [String, Array<String>]                :includedCategories
-  # @option opt [String, Array<String>]                :excludedAuthors
-  # @option opt [String, Array<String>]                :includedAuthors
+  # @option opt [Boolean]               :includeGlobalCollection  Def: *false*.
+  # @option opt [NarratorType]          :narratorType
+  # @option opt [Gender]                :narratorGender
+  # @option opt [Integer]               :readingAge
+  # @option opt [Array<ContentWarning>] :excludedContentWarnings
+  # @option opt [Array<ContentWarning>] :includedContentWarnings
+  # @option opt [String, Array<String>] :excludedCategories
+  # @option opt [String, Array<String>] :includedCategories
+  # @option opt [String, Array<String>] :excludedAuthors
+  # @option opt [String, Array<String>] :includedAuthors
   #
   # @return [Bs::Message::RecommendationProfile]
   #

@@ -7,13 +7,16 @@ __loading_begin(__FILE__)
 
 # Bs::Record::TitleDownload
 #
-# @attr [Array<Bs::Record::Name>] authors          *deprecated*
+# @attr [Array<Bs::Record::Name>] authors               *deprecated*
 # @attr [IsoDate]                 dateDownloaded
+# @attr [IsoDate]                 dateRequested
+# @attr [Bs::Record::StatusModel] downloadStatus
 # @attr [String]                  downloadedBy
 # @attr [String]                  downloadedFor
 # @attr [Bs::Record::Format]      format
 # @attr [Array<Bs::Record::Link>] links
-# @attr [Bs::Record::StatusModel] status
+# @attr [Bs::Record::StatusModel] packagingStatus
+# @attr [Bs::Record::StatusModel] status                *deprecated*
 # @attr [String]                  title
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_download
@@ -25,13 +28,16 @@ class Bs::Record::TitleDownload < Bs::Api::Record
   include Bs::Shared::TitleMethods
 
   schema do
-    has_many  :authors,        Bs::Record::Name             # NOTE: deprecated
-    has_one   :dateDownloaded, IsoDate
+    has_many  :authors,         Bs::Record::Name        # NOTE: deprecated
+    has_one   :dateDownloaded,  IsoDate
+    has_one   :dateRequested,   IsoDate
+    has_one   :downloadStatus,  Bs::Record::StatusModel
     has_one   :downloadedBy
     has_one   :downloadedFor
-    has_one   :format,         Bs::Record::Format
-    has_many  :links,          Bs::Record::Link
-    has_one   :status,         Bs::Record::StatusModel
+    has_one   :format,          Bs::Record::Format
+    has_many  :links,           Bs::Record::Link
+    has_one   :packagingStatus, Bs::Record::StatusModel
+    has_one   :status,          Bs::Record::StatusModel # NOTE: deprecated
     has_one   :title
   end
 

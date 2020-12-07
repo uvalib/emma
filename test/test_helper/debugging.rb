@@ -32,6 +32,7 @@ module TestHelper::Debugging
   #
   def run_test(test_name, **opt)
     error  = nil
+    prime_tests
     format = opt.delete(:format)
     format = nil if html?(format)
     opt[:part] = ["[#{format.to_s.upcase}]", opt[:part]].join(' - ') if format
@@ -42,6 +43,25 @@ module TestHelper::Debugging
   ensure
     show_test_end(test_name, **opt)
     raise error if error
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Make sure that "Sign in as" is visible on the sign-in page by ensuring that
+  # the interface is in "debug mode".
+  #
+  # @return [void]
+  #
+  def prime_tests
+    @tests_primed ||=
+      if (meth = %i[visit get].find { |m| respond_to?(m) })
+        send(meth, root_url(debug: true))
+        true
+      end
   end
 
   # Produce the top frame of debug output for a test.

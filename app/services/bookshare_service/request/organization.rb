@@ -72,7 +72,8 @@ module BookshareService::Request::Organization
   # NOTE: This is not a real Bookshare API call.
   #
   def get_my_organization_member(user:, **opt)
-    opt = get_parameters(__method__, **opt)&.merge!(limit: :max)
+    opt = get_parameters(__method__, **opt)
+    opt[:limit] ||= :max
     username = name_of(user)
     # noinspection RubyResolve, RubyNilAnalysis
     acct_id =
@@ -109,15 +110,15 @@ module BookshareService::Request::Organization
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                  :firstName      *REQUIRED*
-  # @option opt [String]                  :lastName       *REQUIRED*
-  # @option opt [String]                  :dateOfBirth    *REQUIRED*
-  # @option opt [String]                  :grade          *REQUIRED*
+  # @option opt [String]                  :firstName                *REQUIRED*
+  # @option opt [String]                  :lastName                 *REQUIRED*
+  # @option opt [String]                  :dateOfBirth              *REQUIRED*
+  # @option opt [String]                  :grade                    *REQUIRED*
   # @option opt [String]                  :username
   # @option opt [String]                  :password
-  # @option opt [DisabilityType]          :disabilityType *REQUIRED*
-  # @option opt [ProofOfDisabilitySource] :proofSource    *REQUIRED*
-  # @option opt [DisabilityPlan, Array<DisabilityPlan>] :disabilityPlan
+  # @option opt [DisabilityType]          :disabilityType           *REQUIRED*
+  # @option opt [ProofOfDisabilitySource] :proofSource              *REQUIRED*
+  # @option opt [Array<DisabilityPlan>]   :disabilityPlan
   #
   # @return [Bs::Message::UserAccount]
   #

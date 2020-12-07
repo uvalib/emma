@@ -56,7 +56,7 @@ module ExplorerHelper
   #
   def api_explorer(method, path, **opt)
     method = method&.downcase&.to_sym || :get
-    path   = URI.escape(path.to_s)
+    path   = url_escape(path)
     data   = bs_api.api(method, path, **opt.merge(no_raise: true))
     data &&= data.body.presence
     {

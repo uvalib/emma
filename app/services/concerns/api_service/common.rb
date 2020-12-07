@@ -619,7 +619,7 @@ module ApiService::Common
     response = connection.send(verb, action, params, headers)
     raise empty_response_error(response) if response.nil?
     case response.status
-      when 202
+      when 202, 204
         # No response body expected.
         action = nil
       when 200..299
@@ -661,12 +661,14 @@ module ApiService::Common
   # @param [Boolean] check_opt        Check for extra optional keys.
   # @param [Hash]    opt
   #
+  # @raise [RuntimeError]             Errors and #RAISE_ON_INVALID_PARAMS true.
+  #
   # @return [Hash]                    Just the API parameters from *opt*.
-  # @return [nil]                     If *method* is not an API method.
   #
   def get_parameters(method, check_req: true, check_opt: false, **opt)
     properties     = api_methods(method)
-    return invalid_params(method, 'unregistered API method') if properties.nil?
+    errors         = properties ? [] : ['unregistered API method']
+    properties   ||= {}
     multi          = Array.wrap(properties[:multi])
     required_keys  = required_parameters(method)
     optional_keys  = optional_parameters(method)
@@ -675,14 +677,15 @@ module ApiService::Common
     specified_keys += SERVICE_OPTIONS
 
     # Validate the keys provided.
-    errors = []
     if check_req && (missing_keys = required_keys - opt.keys).present?
-      error = +'missing API ' << 'parameter'.pluralize(missing_keys.size)
-      errors.push(error << ' ' << missing_keys.join(', '))
+      parameters = 'parameter'.pluralize(missing_keys.size)
+      keys       = missing_keys.join(', ')
+      errors << "missing API #{parameters} #{keys}"
     end
     if check_opt && (extra_keys = opt.keys - specified_keys).present?
-      error = +'invalid API ' << 'parameter'.pluralize(extra_keys.size)
-      errors.push(error << ' ' << extra_keys.join(', '))
+      parameters = 'parameter'.pluralize(extra_keys.size)
+      keys       = extra_keys.join(', ')
+      errors << "invalid API #{parameters} #{keys}"
     end
     invalid_params(method, *errors) if errors.present?
 

@@ -745,23 +745,22 @@ module OmniAuth
       #++
       def callback_phase
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
-        # noinspection RubyUnusedLocalVariable
-        result = error = nil
+        result = nil
         params = request.params.reject { |_, v| v.blank? }
-        error  = params['error_reason'] || params['error']
+        e_type = params['error_reason'] || params['error']
 
         # Raise an exception if the response indicated an error.
-        if error
+        if e_type
           description = params['error_description'] || params['error_reason']
-          raise CallbackError.new(error, description, params['error_uri'])
+          raise CallbackError.new(e_type, description, params['error_uri'])
         end
 
         # Raise an exception if the returned state doesn't match.
         # noinspection RubyResolve
         unless options.provider_ignores_state
           unless params['state'] == session.delete('omniauth.state')
-            error = :csrf_detected
-            raise CallbackError.new(error, 'CSRF detected')
+            e_type = :csrf_detected
+            raise CallbackError.new(e_type, 'CSRF detected')
           end
         end
 
@@ -792,21 +791,22 @@ module OmniAuth
 
       rescue ::OAuth2::Error, CallbackError => error
         __debug_line(dbg) { ['INVALID', error.class, error.message] }
-        error ||= :invalid_credentials
+        e_type ||= :invalid_credentials
 
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => error
         __debug_line(dbg) { ['TIMEOUT', error.class, error.message] }
-        error = :timeout
+        e_type = :timeout
 
       rescue ::SocketError => error
         __debug_line(dbg) { ['CONNECT', error.class, error.message] }
-        error = :failed_to_connect
+        e_type = :failed_to_connect
 
       rescue => error
         __debug_line(dbg) { ['EXCEPTION', error.class, error.message] }
+        e_type = :unexpected_error
 
       ensure
-        fail!(error, error) if error
+        fail!(e_type, error) if e_type || error
         return result
       end
 

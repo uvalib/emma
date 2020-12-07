@@ -182,7 +182,7 @@ module PeriodicalHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def latest_edition_link(item, **opt)
-    opt[:edition] = item.latestEdition.identifier
+    opt[:edition] = item.latestEdition&.identifier
     opt[:label] ||= opt[:edition]
     edition_link(item, **opt)
   end

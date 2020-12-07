@@ -93,6 +93,7 @@ module BookshareService::Request::Periodicals
   # noinspection LongLine
   #++
   def get_periodical(seriesId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'periodicals', seriesId, **opt)
     Bs::Message::PeriodicalSeriesMetadataSummary.new(response, error: exception)
   end
@@ -159,7 +160,7 @@ module BookshareService::Request::Periodicals
     opt[:limit]    = :max
     periodical = get_periodical_editions(**opt)
     # noinspection RubyYardReturnMatch
-    periodical.periodicalEditions.find { |pe| editionId == pe.editionId }
+    periodical.periodicalEditions&.find { |pe| editionId == pe.editionId }
   end
     .tap do |method|
       add_api method => {
@@ -227,11 +228,10 @@ module BookshareService::Request::Periodicals
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource-list
   #
-  #--
-  # noinspection LongLine
-  #++
   def get_periodical_resource_files(seriesId:, editionId:, format:, **opt)
-    api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', **opt)
+    opt  = get_parameters(__method__, **opt)
+    path = [seriesId, 'editions', editionId, format, 'resources']
+    api(:get, 'periodicals', *path, **opt)
     Bs::Message::TitleFileResourceList.new(response, error: exception)
   end
     .tap do |method|
@@ -258,15 +258,18 @@ module BookshareService::Request::Periodicals
   # @param [String]     resourceId
   # @param [Hash]       opt           Passed to #api.
   #
+  # @option opt [String] :size        *REQUIRED*
+  #
   # @return [Bs::Message::StatusModel]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_get-periodical-title-file-resource
   #
-  #--
-  # noinspection LongLine
-  #++
-  def get_periodical_resource_file(seriesId:, editionId:, format:, resourceId:, **opt)
-    api(:get, 'periodicals', seriesId, 'editions', editionId, format, 'resources', resourceId, **opt)
+  def get_periodical_resource_file(
+    seriesId:, editionId:, format:, resourceId:, **opt
+  )
+    opt  = get_parameters(__method__, **opt)
+    path = [seriesId, 'editions', editionId, format, 'resources', resourceId]
+    api(:get, 'periodicals', *path, **opt)
     Bs::Message::StatusModel.new(response, error: exception)
   end
     .tap do |method|
@@ -276,6 +279,7 @@ module BookshareService::Request::Periodicals
           editionId:   String,
           format:      FormatType,
           resourceId:  String,
+          size:        String,
         },
         reference_id:  '_get-periodical-title-file-resource'
       }
@@ -299,6 +303,7 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_get-myperiodicals
   #
   def get_my_periodicals(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'myPeriodicals', **opt)
     Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
   end
@@ -322,8 +327,9 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_subscribe-myperiodicals
   #
   def subscribe_my_periodical(seriesId:, format:, **opt)
-    prm = encode_parameters(seriesId: seriesId, format: format)
-    api(:post, 'myPeriodicals', **prm, **opt)
+    opt.merge!(seriesId: seriesId, format: format)
+    opt = get_parameters(__method__, **opt)
+    api(:post, 'myPeriodicals', **opt)
     Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
   end
     .tap do |method|
@@ -349,6 +355,7 @@ module BookshareService::Request::Periodicals
   # @see https://apidocs.bookshare.org/reference/index.html#_unsubscribe-myperiodicals
   #
   def unsubscribe_my_periodical(seriesId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:delete, 'myPeriodicals', seriesId, **opt)
     Bs::Message::PeriodicalSubscriptionList.new(response, error: exception)
   end

@@ -19,7 +19,7 @@ __loading_begin(__FILE__)
 # @attr [String]                  subscriptionType
 # @attr [String]                  webSite
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_organization
+# @see https://apidocs.bookshare.org/membership/index.html#_organization
 #
 # NOTE: This duplicates:
 # @see Bs::Record::Organization

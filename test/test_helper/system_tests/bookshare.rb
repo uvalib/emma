@@ -18,17 +18,36 @@ module TestHelper::SystemTests::Bookshare
 
   public
 
-  # The web page containing Bookshare API documentation.
+  # The host containing Bookshare API documentation web pages:
   #
   # @type [String]
   #
-  APIDOC_URL = 'https://apidocs.bookshare.org/reference/index.html'
+  APIDOC_URL = 'https://apidocs.bookshare.org'
+
+  # The web pages containing Bookshare API documentation.
+  #
+  # * API v2 General Reference      "#{APIDOC_URL}/reference/index.html"
+  # * API v2 Membership Management  "#{APIDOC_URL}/membership/index.html"
+  # * API v2 Collection Management  "#{APIDOC_URL}/catalog/index.html"
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  APIDOC =
+    %i[reference membership catalog].map { |section|
+      [section, "#{APIDOC_URL}/#{section}/index.html"]
+    }.deep_freeze
 
   # Namespaces of API classes.
   #
   # @type [Array<Class>]
   #
   API_NAMESPACES = [Bs::Record, Bs::Message].freeze
+
+  # This enumeration is inappropriately documented along with the records.
+  #
+  # @type [Array<String>]
+  #
+  API_ENUMS_DOCUMENTED_AS_RECORDS = %w(ContentWarning)
 
   # A mapping of documentation element ID to request method name.
   #
@@ -70,13 +89,16 @@ module TestHelper::SystemTests::Bookshare
   #
   # @type [Hash{String=>String}]
   #
-  API_TYPE_MAPPING = {
+  API_TYPE_MAP = {
     AllowsType:           'String',
     DisabilityType:       'String',
     FormatType:           'String',
     IsoDuration:          'String',
+    LexileCode:           'String',
     PeriodicalFormatType: 'String',
     SiteType:             'String',
+    BsSeriesType:         'enum (newspaper, magazine, journal)',
+    IsoDate:              'string (date-time)',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.freeze
 
   # @type [String, Integer]
@@ -94,15 +116,15 @@ module TestHelper::SystemTests::Bookshare
   # Acquires the contents of Bookshare API documentation to be used across
   # all tests in including test case class.
   #
-  # @param [String, nil] url          Default: #APIDOC_URL
+  # @return [Array<Capybara::Session>]
   #
-  # @return [Capybara::Session]
-  #
-  def bookshare_apidoc(url = nil)
+  def bookshare_apidoc
     # noinspection RubyClassVariableUsageInspection
     @@bookshare_apidoc ||=
-      Capybara::Session.new(:selenium).tap do |session|
-        session.visit(url || APIDOC_URL)
+      APIDOC.map do |_section, url|
+        Capybara::Session.new(:selenium).tap do |session|
+          session.visit(url)
+        end
       end
   end
 
@@ -409,9 +431,12 @@ module TestHelper::SystemTests::Bookshare
     header &&= "*** Missing #{header} ***\n"
     indent   = ' ' * indent if indent.is_a?(Integer)
     width  ||= missing.keys.sort_by(&:size).last&.size || ''
-    format   = "#{indent}%-#{width}s#{separator}#{APIDOC_URL}#%s"
+    format   = "#{indent}%-#{width}s#{separator}#{APIDOC_URL}/%s/index.html#%s"
     show_section(header, output: false) {
-      missing.map { |item, id| sprintf(format, item, id) }
+      missing.map do |item, id|
+        page, id = id.is_a?(Array) ? id : ['*', id]
+        sprintf(format, item, page, id)
+      end
     }.join("\n")
   end
 
@@ -542,7 +567,7 @@ module TestHelper::SystemTests::Bookshare
   #
   # @return [void]
   #
-  def show_problem_fields(fields, **opt)
+  def show_problems(fields, **opt)
     show_subsection('PROBLEMS:', fields, **opt)
   end
 

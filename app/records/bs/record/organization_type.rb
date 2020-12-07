@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 # @attr [String] description
 # @attr [String] name
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_organization_type
+# @see https://apidocs.bookshare.org/membership/index.html#_organization_type
 #
 class Bs::Record::OrganizationType < Bs::Api::Record
 

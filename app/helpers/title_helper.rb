@@ -126,7 +126,7 @@ module TitleHelper
       link = nil                if link.is_a?(FalseClass)
       alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
       # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
-      image_element(url, link: link, alt: alt, **opt)
+      image_element(url, link: link, alt: alt, **html_opt)
     else
       placeholder_element(comment: 'no cover image', **html_opt)
     end

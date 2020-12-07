@@ -79,10 +79,10 @@ module BookshareService::Request::AssignedTitles
   #--
   # noinspection LongLine
   #++
-  def get_assigned_titles(user: @user, **opt)
-    userIdentifier = name_of(user)
-    opt = get_parameters(__method__, **opt)
-    api(:get, 'assignedTitles', userIdentifier, **opt)
+  def get_assigned_titles(user: nil, **opt)
+    opt    = get_parameters(__method__, **opt)
+    userId = opt.delete(:userIdentifier) || name_of(user || @user)
+    api(:get, 'assignedTitles', userId, **opt)
     Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
   end
     .tap do |method|
@@ -120,10 +120,11 @@ module BookshareService::Request::AssignedTitles
   #--
   # noinspection LongLine
   #++
-  def create_assigned_title(user: @user, bookshareId:, **opt)
-    userIdentifier = name_of(user)
-    opt[:bookshareId] = bookshareId
-    api(:post, 'assignedTitles', userIdentifier, **opt)
+  def create_assigned_title(user: nil, bookshareId:, **opt)
+    opt.merge!(bookshareId: bookshareId)
+    opt    = get_parameters(__method__, **opt)
+    userId = opt.delete(:userIdentifier) || name_of(user || @user)
+    api(:post, 'assignedTitles', userId, **opt)
     Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
   end
     .tap do |method|
@@ -156,10 +157,10 @@ module BookshareService::Request::AssignedTitles
   #--
   # noinspection LongLine
   #++
-  def remove_assigned_title(user: @user, bookshareId:, **opt)
-    userIdentifier = name_of(user)
-    opt[:bookshareId] = bookshareId
-    api(:delete, 'assignedTitles', userIdentifier, **opt)
+  def remove_assigned_title(user: nil, bookshareId:, **opt)
+    opt    = get_parameters(__method__, **opt)
+    userId = opt.delete(:userIdentifier) || name_of(user || @user)
+    api(:delete, 'assignedTitles', userId, bookshareId, **opt)
     Bs::Message::AssignedTitleMetadataSummaryList.new(response, error: exception)
   end
     .tap do |method|

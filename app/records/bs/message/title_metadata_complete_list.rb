@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::TitleMetadataComplete>] titles
 # @attr [Integer]                                  totalResults
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_complete_list
+# @see https://apidocs.bookshare.org/catalog/index.html#_title_metadata_complete_list
 #
 class Bs::Message::TitleMetadataCompleteList < Bs::Api::Message
 

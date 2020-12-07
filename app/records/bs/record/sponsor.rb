@@ -20,7 +20,7 @@ __loading_begin(__FILE__)
 # @attr [SiteType]                site
 # @attr [String]                  title
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_sponsor
+# @see https://apidocs.bookshare.org/membership/index.html#_sponsor
 #
 class Bs::Record::Sponsor < Bs::Api::Record
 

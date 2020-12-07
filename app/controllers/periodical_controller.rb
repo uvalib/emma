@@ -71,8 +71,8 @@ class PeriodicalController < ApplicationController
   def show
     __debug_route
     @item = bs_api.get_periodical(seriesId: @series_id)
-    @list = bs_api.get_periodical_editions(seriesId: @series_id, no_raise: true)
-    self.page_items  = @list.periodicalEditions
+    @list = bs_api.get_periodical_editions(seriesId: @series_id)
+    self.page_items  = @list.periodicalEditions || []
     self.total_items = @list.totalResults
     respond_to do |format|
       format.html

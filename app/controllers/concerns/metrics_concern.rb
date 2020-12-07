@@ -33,15 +33,16 @@ module MetricsConcern
   #
   # @param [Symbol]                     type
   # @param [Hash{Symbol=>String,Array}] hash
+  # @param [Hash]                       opt   Passed to Registry method.
   #
   # @return [Hash{Symbol=>Prometheus::Client::Metric}]
   #
-  def self.metrics(type, hash)
+  def self.metrics(type, hash, **opt)
     hash.map { |name, docstring|
       if REGISTRY.exist?(name)
         Log.warn { "#{name}: metric already registered" }
       else
-        [name, REGISTRY.send(type, name, docstring: docstring)]
+        [name, REGISTRY.send(type, name, **opt.merge(docstring: docstring))]
       end
     }.compact.to_h
   end
@@ -65,7 +66,7 @@ module MetricsConcern
     test_recv: 'Data acquisition requests',   # TODO: testing - remove
     test_send: 'Data modification requests',  # TODO: testing - remove
     # TODO: counter metrics...
-  })
+  }, labels: %i[service])
 
   # Prometheus gauge metrics.
   #
@@ -80,7 +81,7 @@ module MetricsConcern
     test_gauge:  'A simple gauge that rands between 1 and 100 inclusive', # TODO: testing - remove
     test_gauge2: 'A second gauge', # TODO: testing - remove
     # TODO: gauge metrics...
-  })
+  }, labels: %i[route])
 
   # Prometheus histogram metrics.
   #

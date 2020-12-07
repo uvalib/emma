@@ -149,7 +149,7 @@ en:
         contentWarnings:      'Content Warnings'
         submitter:            'Submitter'
         proofreader:          'Proofreader'
-        lastUpdatedDate:      'Last Updated Date'
+        lastUpdated:          'Last Updated Date'
         withdrawalDate:       'Withdrawal Date'
         allowRecommend:       'Allow Recommend'
         available:            'Available'

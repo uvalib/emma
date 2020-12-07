@@ -14,7 +14,7 @@ __loading_begin(__FILE__)
 # @attr [Integer]                             totalResults
 # @attr [Array<Bs::Record::UserSubscription>] userSubscriptions
 #
-# @see https://apidocs.bookshare.org/reference/index.html#_user_subscription_list
+# @see https://apidocs.bookshare.org/membership/index.html#_user_subscription_list
 #
 class Bs::Message::UserSubscriptionList < Bs::Api::Message
 

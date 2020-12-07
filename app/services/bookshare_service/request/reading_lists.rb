@@ -71,7 +71,7 @@ module BookshareService::Request::ReadingLists
   #
   # @param [String] name
   # @param [Access] access
-  # @param [Hash]   opt               Passed to #api.
+  # @param [Hash] opt                 Passed to #api.
   #
   # @option opt [String] :description
   #
@@ -80,8 +80,8 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-create
   #
   def create_my_reading_list(name:, access:, **opt)
+    opt.merge!(name: name, access: access)
     opt = get_parameters(__method__, **opt)
-    opt&.merge!(name: name, access: access)
     api(:post, 'mylists', **opt)
     Bs::Message::ReadingList.new(response, error: exception)
   end
@@ -103,16 +103,18 @@ module BookshareService::Request::ReadingLists
   # == 2.3.7. Subscribe to or unsubscribe from a reading list
   # Subscribe to a reading list (that the user does not own).
   #
-  # @param [String]  readingListId
-  # @param [Boolean] enabled          Default: true
-  # @param [Hash]    opt              Passed to #api.
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [Boolean] :enabled    Default: *true*.
   #
   # @return [Bs::Message::ReadingListUserView]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def subscribe_my_reading_list(readingListId:, enabled: true, **opt)
-    opt[:enabled] = enabled
+  def subscribe_my_reading_list(readingListId:, **opt)
+    opt.reverse_merge!(enabled: true)
+    opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     Bs::Message::ReadingListUserView.new(response, error: exception)
   end
@@ -131,16 +133,18 @@ module BookshareService::Request::ReadingLists
   # == 2.3.7. Subscribe to or unsubscribe from a reading list
   # Unsubscribe from a reading list (that the user does not own).
   #
-  # @param [String]  readingListId
-  # @param [Boolean] enabled          Default: false
-  # @param [Hash]    opt              Passed to #api.
+  # @param [String] readingListId
+  # @param [Hash]   opt               Passed to #api.
+  #
+  # @option opt [Boolean] :enabled    Default: *false*.
   #
   # @return [Bs::Message::ReadingListUserView]
   #
   # @see https://apidocs.bookshare.org/reference/index.html#_put-readinglist-subscription
   #
-  def unsubscribe_my_reading_list(readingListId:, enabled: false, **opt)
-    opt[:enabled] = enabled
+  def unsubscribe_my_reading_list(readingListId:, **opt)
+    opt.reverse_merge!(enabled: false)
+    opt = get_parameters(__method__, **opt)
     api(:put, 'mylists', readingListId, 'subscription', **opt)
     Bs::Message::ReadingListUserView.new(response, error: exception)
   end
@@ -185,7 +189,7 @@ module BookshareService::Request::ReadingLists
           sortOrder:  MyReadingListSortOrder,
           direction:  Direction,
         },
-        reference_id: 'get_all_reading_lists', # TODO: ???
+        reference_id: '_get-all-reading-lists', # TODO: ???
       }
     end
 
@@ -300,7 +304,8 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_post-readinglist-title
   #
   def create_reading_list_title(readingListId:, bookshareId:, **opt)
-    opt[:bookshareId] = bookshareId
+    opt.merge!(bookshareId: bookshareId)
+    opt = get_parameters(__method__, **opt)
     api(:post, 'lists', readingListId, 'titles', **opt)
     Bs::Message::ReadingListTitlesList.new(response, error: exception)
   end
@@ -328,6 +333,7 @@ module BookshareService::Request::ReadingLists
   # @see https://apidocs.bookshare.org/reference/index.html#_delete-readinglist-title
   #
   def remove_reading_list_title(readingListId:, bookshareId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:delete, 'lists', readingListId, 'titles', bookshareId, **opt)
     Bs::Message::ReadingListTitlesList.new(response, error: exception)
   end

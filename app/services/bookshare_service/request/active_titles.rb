@@ -78,8 +78,9 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-add
   #
   def add_my_active_book(bookshareId:, format:, **opt)
-    prm = encode_parameters(bookshareId: bookshareId, format: format)
-    api(:post, 'myActiveBooks', **prm, **opt)
+    opt.merge!(bookshareId: bookshareId, format: format)
+    opt = get_parameters(__method__, **opt)
+    api(:post, 'myActiveBooks', **opt)
     Bs::Message::ActiveBookList.new(response, error: exception)
   end
     .tap do |method|
@@ -105,6 +106,7 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-books-remove
   #
   def remove_my_active_book(activeTitleId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:delete, 'myActiveBooks', activeTitleId, **opt)
     Bs::Message::ActiveBookList.new(response, error: exception)
   end
@@ -170,8 +172,9 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-add
   #
   def add_my_active_periodical(bookshareId:, format:, **opt)
-    prm = encode_parameters(bookshareId: bookshareId, format: format)
-    api(:post, 'myActivePeriodicals', **prm, **opt)
+    opt.merge!(bookshareId: bookshareId, format: format)
+    opt = get_parameters(__method__, **opt)
+    api(:post, 'myActivePeriodicals', **opt)
     Bs::Message::ActivePeriodicalList.new(response, error: exception)
   end
     .tap do |method|
@@ -197,6 +200,7 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-periodicals-remove
   #
   def remove_my_active_periodical(activeTitleId:, **opt)
+    opt = get_parameters(__method__, **opt)
     api(:delete, 'myActivePeriodicals', activeTitleId, **opt)
     Bs::Message::ActivePeriodicalList.new(response, error: exception)
   end
@@ -228,6 +232,7 @@ module BookshareService::Request::ActiveTitles
   # @see https://apidocs.bookshare.org/reference/index.html#_my-active-book-profile-get
   #
   def get_my_active_books_profile(**opt)
+    opt = get_parameters(__method__, **opt)
     api(:get, 'myActiveBooksProfile', **opt)
     Bs::Message::ActiveBookProfile.new(response, error: exception)
   end

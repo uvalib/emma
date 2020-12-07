@@ -7,17 +7,17 @@ __loading_begin(__FILE__)
 
 # Ingest::Record::IngestionRecord
 #
-# @attr [EmmaRepository]                emma_repository              *REQUIRED*
+# @attr [EmmaRepository]                emma_repository             *REQUIRED*
 # @attr [Array<String>]                 emma_collection
-# @attr [String]                        emma_repositoryRecordId      *REQUIRED*
-# @attr [String]                        emma_retrievalLink           *REQUIRED*
+# @attr [String]                        emma_repositoryRecordId     *REQUIRED*
+# @attr [String]                        emma_retrievalLink          *REQUIRED*
 # @attr [String]                        emma_webPageLink
 # @attr [IsoDate]                       emma_lastRemediationDate
 # @attr [IsoDate]                       emma_repositoryMetadataUpdateDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
 # @attr [Array<FormatFeature>]          emma_formatFeature
-# @attr [String]                        dc_title                     *REQUIRED*
+# @attr [String]                        dc_title                    *REQUIRED*
 # @attr [Array<String>]                 dc_creator
 # @attr [Array<PublicationIdentifier>]  dc_identifier
 # @attr [String]                        dc_publisher
@@ -26,7 +26,7 @@ __loading_begin(__FILE__)
 # @attr [Rights]                        dc_rights
 # @attr [Provenance]                    dc_provenance
 # @attr [String]                        dc_description
-# @attr [DublinCoreFormat]              dc_format                    *REQUIRED*
+# @attr [DublinCoreFormat]              dc_format                   *REQUIRED*
 # @attr [DcmiType]                      dc_type
 # @attr [Array<String>]                 dc_subject
 # @attr [IsoDate]                       dcterms_dateAccepted
