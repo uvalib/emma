@@ -312,7 +312,6 @@ en:
           name:                     'Name'
           owner:                    'Owner'
           dateUpdated:              'Date Updated'
-          count:                    'Title Count' # NOTE: undocumented
           _default:                 name
 
         ReadingListSortOrder:
