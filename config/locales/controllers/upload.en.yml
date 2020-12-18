@@ -20,15 +20,71 @@ en:
       tooltip:          'Submit new items or review past uploads'
 
       # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:
+        action:         'admin'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 
+      search_type:
+        prefix:
+          name:         'Prefix'
+          label:        'Limit by object key prefix:'
+          placeholder:  'Object key prefix...'
+
       search_bar:
-        enabled:        false
+        enabled:        [admin]
+        label:          'Prefix Filter'
 
       search_controls:
-        _self:
-          enabled:      false
+
+        enabled:        [admin]
+
+        after:
+          label:        'After'
+          tooltip:      'Include only objects modified this date or later'
+          values:       !ruby/symbol Date
+
+        before:
+          label:        'Before'
+          tooltip:      'Include only objects modified before this date'
+          values:       !ruby/symbol Date
+
+        deployment:
+          label:        'Deployment'
+          tooltip:      'Limit by EMMA deployment'
+          placeholder:  '(all)'
+          values:       !ruby/symbol Deployment
+
+        prefix_limit:
+          label:        'Limit'
+          tooltip:      'Specify initial number of entries per object key'
+          placeholder:  '(none)'
+          default:      10
+          menu:
+            None:       -1
+            10:         10
+            50:         50
+            100:        100
+
+        repository:
+          tooltip:      'Limit by member repository queue'
+          placeholder:  '(all)'
+
+        sort:
+          tooltip:      'Specify the ordering of each S3 bucket table'
+          values:       [key, size, last_modified]
+          default:      last_modified
+          reverse:
+            enabled:    true
+
+        layout:
+          - [repository, deployment, sort, prefix_limit]
+          - [after,      before,     ~,    ~]
 
       page_controls:
         label:          'Upload Actions'
@@ -516,3 +572,7 @@ en:
       check:
         label:          'Check Status'
         title:          'Checking for an update to submission status...'
+
+      admin:
+        label:          'Admin'
+        title:          'Upload Submission Administration'

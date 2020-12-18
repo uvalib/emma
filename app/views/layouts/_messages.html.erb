@@ -5,7 +5,7 @@
   messages =
     %i[alert notice].flat_map { |type|
       [flash.now[type], flash[type]].flatten.reject(&:blank?).uniq.map { |msg|
-        html_tag(:div, msg.html_safe, class: type.to_s, role: 'alert')
+        html_div(msg.html_safe, class: type.to_s, role: 'alert')
       }
     }.presence
   messages &&= messages.unshift(nil).push(nil) # For leading/trailing newlines

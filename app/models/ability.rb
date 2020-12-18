@@ -39,6 +39,7 @@ class Ability
   # @type [Hash{Symbol, Array<Symbol>}]
   #
   LOCAL_ACTION_ALIAS = {
+    admin:       %i[manage],          # NOTE: only used for upload/admin
     list:        %i[index],
     delete:      %i[destroy],
     history:     %i[manage],          # NOTE: only used for Title and Member

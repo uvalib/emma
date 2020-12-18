@@ -18,8 +18,7 @@
   heading =
     if (level == 1) && !skip.include?(:title)
       title ||= 'Account Details' # TODO: I18n
-      tag = "h#{level + 1}"
-      html_tag(tag, title, class: 'account list-heading')
+      html_tag((level + 1), title, class: 'account list-heading')
     end
 
 -%>

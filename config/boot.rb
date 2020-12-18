@@ -86,19 +86,20 @@ end
 
 # The deployment type.  Desktop development should use 'staging' resources.
 #
-# @return [String]
+# @return [Symbol]
 #
 # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/production/environment.vars
 # @see https://gitlab.com/uvalib/terraform-infrastructure/-/blob/master/emma.lib.virginia.edu/ecs-tasks/staging/environment.vars
 #
 def application_deployment
-  ENV['DEPLOYMENT'] || (application_deployed? ? 'production' : 'staging')
+  ENV['DEPLOYMENT']&.downcase&.to_sym ||
+    (application_deployed? ? :production : :staging)
 end
 
 # Indicate whether this is the production service instance.
 #
 def production_deployment?
-  application_deployment == 'production'
+  application_deployment == :production
 end
 
 # Indicate whether this is a development-build instance.

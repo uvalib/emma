@@ -584,11 +584,11 @@ form.select-entry {
             }
         }
 
-        //=====================================================================
-        // These specific limits are currently being used in lieu of the
-        // scripting required to limit the growth of checkbox lists beyond
-        // their height of their actual content.
-        //=====================================================================
+        /**
+         * NOTE: These specific limits are currently being used in lieu of
+         * the scripting required to limit the growth of checkbox lists beyond
+         * their height of their actual content.
+         */
 
         $max-heights: (
             #field-FileFormatFeature:     17rem,
@@ -749,5 +749,115 @@ form.select-entry {
         &.inactive {
             display: none;
         }
+    }
+}
+
+//=============================================================================
+// Upload admin page
+//=============================================================================
+
+// noinspection SassScssResolvedByNameOnly
+$aws-bucket-color:          $uva-blue;
+$aws-bucket-padding:        0.5rem;
+$upload-admin-section-gap:  4rem;
+$upload-admin-column-space: 0.75rem;
+
+.admin-section {
+    margin-top: $upload-admin-section-gap;
+}
+
+.aws-bucket-hdg {
+    display:         flex;
+    margin-top:      $upload-admin-section-gap;
+    justify-content: space-between;
+}
+
+.aws-bucket {
+    display:     grid;
+    padding:     0 0 $aws-bucket-padding;
+    text-indent: 0.5rem;
+    font-size:   12pt;
+    font-family: Courier, monospace;
+    border:      2px solid $aws-bucket-color;
+    border-radius: 0.25rem;
+}
+
+.aws-object {
+
+    display:    grid;
+    padding:    0 $aws-bucket-padding;
+    column-gap: $upload-admin-column-space;
+    grid-template-columns:
+        [prefix] 0.25fr
+        [key]    1.00fr
+        [size]   0.25fr
+        [date]   0.50fr;
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$medium-width} {
+        grid-template-columns:
+            [prefix] 0.25fr
+            [key]    0.50fr
+            [size]   0.25fr
+            [date]   0.50fr;
+    }
+
+    // noinspection SassScssResolvedByNameOnly
+    @media #{$narrow-screen} {
+        grid-template-columns: 1fr;
+        margin-bottom:         1rem;
+        padding-bottom:        $upload-admin-column-space;
+        border-bottom:         1px solid lightgray;
+    }
+
+    > * {
+        overflow:      hidden;
+        text-overflow: ellipsis;
+    }
+
+    .placeholder {
+        grid-column: 1/-1;
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+.aws-bucket {
+    @media #{$narrow-screen} {
+        .placeholder {
+            padding-top:   $upload-admin-column-space;
+        }
+        :last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+    }
+}
+
+.column-headings {
+    padding-top:    $aws-bucket-padding;
+    padding-bottom: 0.25rem;
+    margin-bottom:  $upload-admin-column-space;
+    font-weight:    bold;
+    color:          white;
+    background:     $aws-bucket-color;
+    border-bottom:  2px solid $aws-bucket-color;
+}
+
+.first-prefix {
+    margin-top: $upload-admin-column-space;
+}
+
+// noinspection SassScssResolvedByNameOnly
+.aws-link {
+    @include link-button(lightgray);
+    @extend %control-button;
+}
+
+body.upload-admin {
+    h2 {
+        font-size: xx-large;
+    }
+    h3 {
+        font-size: x-large;
     }
 }

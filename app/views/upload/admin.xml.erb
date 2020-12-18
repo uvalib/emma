@@ -1,0 +1,9 @@
+<%# app/views/upload/admin.xml.erb -%>
+<%-
+  # Upload submission administration values in XML.
+  s3_opt = url_parameters.slice(:prefix, :prefix_limit, :after, :before, :sort)
+  s3_opt[:erb] = true
+-%>
+<buckets>
+  <%= xml_s3_bucket_table(@object_table, **s3_opt) %>
+</buckets>

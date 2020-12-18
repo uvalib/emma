@@ -164,7 +164,7 @@ module ArtifactHelper
     else # if item.is_a?(Search::Api::Record)
       repo    = item.emma_repository || EmmaRepository.default
       format  = format&.to_s || item.dc_format
-      lbl_key = "emma.source.#{repo}.download_fmt.#{format}"
+      lbl_key = "emma.repository.#{repo}.download_fmt.#{format}"
       url   ||= item.record_download_url
       url   &&= bs_retrieval_path(url: url)
     end

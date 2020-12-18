@@ -37,6 +37,8 @@ Rails.application.routes.draw do
   # NOTE: Avoid "resources :upload" because :action can get turned into :id.
   # ===========================================================================
 
+  get    '/upload/admin',         to: 'upload#admin',         as: 'admin_upload'
+
   # === UploadWorkflow::Single
 
   get    '/upload/new_select',    redirect('/upload/new'),    as: 'new_select_upload'     # Only for consistency

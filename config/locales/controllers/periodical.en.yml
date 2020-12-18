@@ -20,6 +20,13 @@ en:
       tooltip:          'Search for Bookshare periodicals.'
 
       # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:
+        action:         'index'
+
+      # =======================================================================
       # Layout
       # =======================================================================
 
@@ -33,20 +40,20 @@ en:
         label:          'Periodical Search'
 
       search_controls:
+
         format:
           values:       !ruby/symbol PeriodicalFormatType
           multiple:     false
+
         size:
           tooltip:      'Specify the number of search results per page'
-          values:
-            - 10
-            - 25
-            - 50
-            - 100
+          values:       [10, 25, 50, 100]
+
         sort:
           values:       !ruby/symbol PeriodicalSortOrder
           reverse:
             enabled:    true
+
         layout:
           - [sort,     size,     format]
           - [language, category        ]

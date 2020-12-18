@@ -149,11 +149,11 @@ module Emma::Debug
     args << "#{label} #{exception.class}"
     args << "ERROR: #{exception.message}"
     args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
-    %i[bs search ingest].each do |service|
-      meth  = :"#{service}_api_error_message"
-      error = (send(meth) if respond_to?(meth))
-      args << "#{meth} = #{error.inspect}" if error.present?
-    end
+    args +=
+      ApiService.table.map { |service, instance|
+        error = instance.error_message
+        "#{service} ERROR: #{error.inspect}" if error.present?
+      }.compact
     __debug_line(*args, opt, &block)
     Log.error { exception.full_message(order: :top) } if trace
   end

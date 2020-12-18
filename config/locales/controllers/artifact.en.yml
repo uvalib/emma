@@ -20,8 +20,10 @@ en:
       # =======================================================================
 
       search_controls:
+
         format:
           multiple:     false
+
         sort:
           reverse:
             enabled:    true

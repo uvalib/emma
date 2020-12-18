@@ -5,9 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Generic API methods.
-#
-# TODO: Transitional; may go away.
+# Methods for any API service(s) that have been activated.
 #
 module ApiConcern
 
@@ -17,7 +15,22 @@ module ApiConcern
     __included(base, 'ApiConcern')
   end
 
-  include BookshareConcern
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Find or create the instance of the requested service.
+  #
+  # @param [Class] service
+  #
+  # @return [ApiService]
+  #
+  def api_service(service)
+    service = service.class unless service.is_a?(Class)
+    ApiService.table[service] || api_update(service).values.first
+  end
 
   # ===========================================================================
   # :section:
@@ -25,60 +38,85 @@ module ApiConcern
 
   public
 
-  # Access the Bookshare API service.
+  # Update all active API service(s).
   #
-  # @return [BookshareService]
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  # @param [Hash]         opt
   #
-  def api
-    bs_api
+  # @return [Hash{Class=>ApiService}]
+  #
+  def api_update(*only, **opt)
+    opt[:user] = current_user if !opt.key?(:user) && current_user.present?
+    opt[:no_raise] = true     if !opt.key?(:no_raise) && Rails.env.test?
+    services = only.presence || api_active_table.keys
+    services.each { |srv| srv.update(**opt) }
+    api_active_table(*only)
   end
 
-  # Update the Bookshare API service.
+  # Remove all active API service(s).
   #
-  # @param [Hash] opt
-  #
-  # @return [BookshareService]
-  #
-  def api_update(**opt)
-    bs_api_update(**opt)
-  end
-
-  # Remove the Bookshare API service.
+  # @param [Array<Class>] only        If given, limit to those service(s).
   #
   # @return [nil]
   #
-  def api_clear
-    bs_api_clear
+  def api_clear(*only)
+    api_active_table(*only).keys.each(&:clear) and nil
   end
 
-  # Indicate whether the Bookshare API service has been activated.
+  # Indicate whether any API service has been activated.
   #
-  def api_active?
-    bs_api_active?
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  def api_active?(*only)
+    api_active_table(*only).present?
   end
 
-  # Indicate whether the latest Bookshare API request generated an exception.
+  # Indicate whether any API request generated an exception.
   #
-  def api_error?
-    bs_api_error?
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  def api_error?(*only)
+    api_active_table(*only).values.any?(&:error?)
   end
 
-  # Get the current Bookshare API exception message.
+  # Get the current API exception message(s).
   #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>String}]     Multiple services with error messages.
   # @return [String]                  Current service error message.
   # @return [nil]                     No service error or service not active.
   #
-  def api_error_message
-    bs_api_error_message
+  def api_error_message(*only)
+    table = api_active_table(*only).transform_values(&:error_message).compact
+    # noinspection RubyYardReturnMatch
+    (table.size == 1) ? table.values.first : table.presence
   end
 
   # Get the current Bookshare API exception.
   #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>Exception}]  Multiple services with exceptions.
   # @return [Exception]               Current service exception.
   # @return [nil]                     No exception or service not active.
   #
-  def api_exception
-    bs_api_exception
+  def api_exception(*only)
+    table = api_active_table(*only).transform_values(&:exception).compact
+    # noinspection RubyYardReturnMatch
+    (table.size == 1) ? table.values.first : table.presence
+  end
+
+  # The ApiService.table with any blank entries removed.
+  #
+  # @param [Array<Class>] only        If given, limit to those service(s).
+  #
+  # @return [Hash{Class=>ApiService}]
+  #
+  def api_active_table(*only)
+    ApiService.table.compact.tap do |result|
+      result.keep_if { |service, _| only.include?(service) } if only.present?
+    end
   end
 
 end

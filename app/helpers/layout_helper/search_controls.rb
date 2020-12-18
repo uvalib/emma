@@ -31,36 +31,6 @@ module LayoutHelper::SearchControls
 
     public
 
-    # Generate the fully-realized configurations for all search controls
-    # associated with a given controller.
-    #
-    # @param [Symbol] controller
-    #
-    # @return [Hash{Symbol=>Hash}]
-    #
-    def search_controls_configs(controller)
-      configs = SEARCH_CONTROLS_CONFIG.deep_dup
-      %W(generic #{controller}.generic #{controller}).each do |section|
-        cfg = I18n.t("emma.#{section}.search_controls", default: nil)
-        configs.deep_merge!(cfg) if cfg.present?
-      end
-      configs = {} unless configs[:enabled] || configs.dig(:_self, :enabled)
-      configs.map { |menu_name, config|
-        next if menu_name.to_s.start_with?('_')
-        unless menu_name == :layout
-          config = search_menu_config(menu_name, config)
-          values = config[:values]
-          values = I18n.t(values)             if values.is_a?(String)
-          values = EnumType.pairs_for(values) if values.is_a?(Symbol)
-          values = values.pairs               if values.is_a?(EnumType)
-          values = values.map(&:to_s)         if values.is_a?(Array)
-          config[:values] = values
-          config[:menu]   = make_menu(menu_name, config).presence
-        end
-        [menu_name, config]
-      }.compact.to_h
-    end
-
     # Get the search menu configuration for the current context.
     #
     # @param [Symbol, String] menu_name
@@ -76,14 +46,14 @@ module LayoutHelper::SearchControls
         cfg[:url_parameter] = (cfg[:url_parameter] || menu_name)&.to_sym
         if (reverse = cfg[:reverse])
           reverse[:suffix] &&= reverse[:suffix].sub(/^([^_])/, '_\1')
-          reverse[:except] &&= Array.wrap(reverse[:except]).map(&:to_sym)
+          reverse[:except] &&= Array.wrap(reverse[:except])
         end
-        list = cfg[:values]
-        list = I18n.t(list)             if list.is_a?(String)
-        list = EnumType.pairs_for(list) if list.is_a?(Symbol)
-        list = list.pairs               if list.is_a?(EnumType)
-        list = list.map(&:to_s)         if list.is_a?(Array)
-        cfg[:values] = list.presence
+        values = cfg[:values] || cfg[:menu]&.values
+        values = I18n.t(values)             if values.is_a?(String)
+        values = EnumType.pairs_for(values) if values.is_a?(Symbol)
+        values = values.pairs               if values.is_a?(EnumType)
+        values = values.map(&:to_s)         if values.is_a?(Array)
+        cfg[:values] = values.presence
       end
     end
 
@@ -132,63 +102,38 @@ module LayoutHelper::SearchControls
     #   @param [Array<Array>]  menu_pairs
     #
     def make_menu(menu_name, values, **opt)
-      config = nil
-      values =
-        if values.is_a?(Hash)
-          config = values
-          if config[:menu].present?
-            config[:menu]
-          elsif config[:values].is_a?(Hash)
-            config[:values].invert.to_a
-          elsif config[:values].is_a?(Array)
-            config[:values]
+      config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
+      pairs   = config[:menu]
+      pairs ||=
+        case values
+          when Hash
+            (v = values[:values]).is_a?(Hash) ? v.invert : v
+          when Array
+            values
+          when String
+            path = values
+            path = "emma.#{path}" unless path.start_with?('emma.')
+            I18n.t(path, default: {}).invert
+          when Symbol
+            EnumType.pairs_for(values)&.invert
           else
-            []
-          end
-
-        elsif values.is_a?(String)
-          path = values
-          path = "emma.#{path}" unless path.start_with?('emma.')
-          I18n.t(path).invert
-
-        elsif values.is_a?(Symbol)
-          EnumType.pairs_for(values)&.invert.to_a
-
-        elsif values.respond_to?(:pairs) && (pairs = value.pairs).present?
-          pairs.invert.to_a
-
-        elsif values.respond_to?(:values) && (list = values.values).present?
-          Array.wrap(list)
-
-        else
-          Array.wrap(values)
-
+            v   = (values.pairs.presence  if values.respond_to?(:pairs))
+            v ||= (values.values.presence if values.respond_to?(:values))
+            v ||= values
+            v.is_a?(Hash) ? v.invert : v
         end
-      pairs = values.compact.uniq
 
       # Transform a simple list of values into label/value pairs.
-      unless pairs.first.is_a?(Array)
+      if pairs.is_a?(Hash)
+        pairs = pairs.transform_values(&:to_s).to_a
+      else
+        pairs = Array.wrap(pairs).compact
+        pairs.uniq!
         pairs.map! { |v| [make_menu_label(menu_name, v, **opt), v.to_s] }
       end
 
       # Dynamically create reverse selections for the :sort menu if needed.
-      config ||= current_menu_config(menu_name)
-      reverse  = config[:reverse]
-      if reverse && !false?(reverse[:enabled])
-        except = Array.wrap(reverse[:except]).map(&:to_s)
-        pairs.flat_map do |pair|
-          label, value = pair
-          if except.include?(value)
-            [pair]
-          else
-            label = sprintf(reverse[:label], sort: label)
-            value = descending_sort(value, reverse[:suffix])
-            [pair, [label, value]]
-          end
-        end
-      else
-        pairs
-      end
+      add_reverse_pairs(pairs, config)
     end
 
     # Format a menu label.
@@ -224,6 +169,35 @@ module LayoutHelper::SearchControls
       end
       format = nil if format == :none
       format ? label.send(format) : label
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    protected
+
+    # Create reverse sort entries.
+    #
+    # @param [Array<Array<String,*>>] pairs
+    # @param [Hash]                   config
+    #
+    # @return [Array<Array<String,String>>]
+    #
+    def add_reverse_pairs(pairs, config)
+      config = config[:reverse] if config.is_a?(Hash) && config.key?(:reverse)
+      return pairs unless config.is_a?(Hash) && true?(config[:enabled])
+      except = Array.wrap(config[:except])
+      pairs.flat_map do |fwd_pair|
+        label, value = fwd_pair = fwd_pair.map(&:to_s)
+        rev_pair =
+          unless except.include?(value)
+            rev_label = sprintf(config[:label], sort: label)
+            rev_value = descending_sort(value, config[:suffix])
+            [rev_label, rev_value]
+          end
+        [fwd_pair, rev_pair].compact
+      end
     end
 
     # =========================================================================
@@ -288,7 +262,7 @@ module LayoutHelper::SearchControls
   #--
   # noinspection RailsI18nInspection
   #++
-  SEARCH_CONTROLS_CONFIG = I18n.t('emma.search_controls').deep_freeze
+  SEARCH_CONTROLS_ROOT = I18n.t('emma.search_controls').deep_freeze
 
   # The value 'emma.search_controls._default' contains each of the properties
   # that can be expressed for a menu.  If a property there has a non-nil
@@ -296,7 +270,7 @@ module LayoutHelper::SearchControls
   #
   # @type [Hash{Symbol=>*}]
   #
-  SEARCH_MENU_DEFAULT = SEARCH_CONTROLS_CONFIG[:_default].compact.deep_freeze
+  SEARCH_MENU_DEFAULT = SEARCH_CONTROLS_ROOT[:_default].compact.deep_freeze
 
   # Properties for the "filter reset" button.
   #
@@ -305,25 +279,17 @@ module LayoutHelper::SearchControls
   # @see #reset_menu
   #
   SEARCH_RESET_CONTROL =
-    SEARCH_MENU_DEFAULT.merge(SEARCH_CONTROLS_CONFIG[:_reset]).deep_freeze
-
-  # Base search control configurations.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  SEARCH_MENU_BASE_CONFIG =
-    SEARCH_CONTROLS_CONFIG
-      .reject { |name, _| (name == :layout) || name.to_s.start_with?('_') }
-      .deep_freeze
+    SEARCH_MENU_DEFAULT.merge(SEARCH_CONTROLS_ROOT[:_reset]).deep_freeze
 
   # The names and base properties of all of the search control menus.
   #
   # @type [Hash]
   #
   SEARCH_MENU_BASE =
-    SEARCH_MENU_BASE_CONFIG.map { |menu_name, menu_config|
+    SEARCH_CONTROLS_ROOT.map { |menu_name, menu_config|
+      next if menu_name.start_with?('_') || !menu_config.is_a?(Hash)
       [menu_name, search_menu_config(menu_name, menu_config)]
-    }.to_h.deep_freeze
+    }.compact.to_h.deep_freeze
 
   # URL parameters for all search control menus.
   #
@@ -339,15 +305,39 @@ module LayoutHelper::SearchControls
   #
   REVERSE_SORT_SUFFIX = SEARCH_MENU_BASE.dig(:sort, :reverse, :suffix)
 
-  # Search controls configurations for each controller configured to display
-  # them.
+  # Search controls configurations for each controller where they are enabled.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  SEARCH_CONTROLS_CONFIG =
+    ApplicationHelper::APP_CONTROLLERS.map { |controller|
+      control_configs = SEARCH_CONTROLS_ROOT.deep_dup
+      %W(generic #{controller} #{controller}.generic).each do |section|
+        section_cfg = I18n.t("emma.#{section}.search_controls", default: nil)
+        control_configs.deep_merge!(section_cfg) if section_cfg.present?
+      end
+      enabled = control_configs[:enabled]
+      enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
+      [controller, control_configs] if (control_configs[:enabled] = enabled)
+    }.compact.to_h.deep_freeze
+
+  # Search control menu configurations for each controller configured to
+  # display them.
   #
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_MENU_MAP =
-    ApplicationHelper::APP_CONTROLLERS.map { |controller|
-      [controller, search_controls_configs(controller)]
-    }.compact.to_h.deep_freeze
+    SEARCH_CONTROLS_CONFIG.transform_values { |control_configs|
+      control_configs.map { |menu_name, menu_config|
+        next if %i[enabled expanded].include?(menu_name)
+        next if menu_name.start_with?('_')
+        if menu_config.is_a?(Hash)
+          menu_config = search_menu_config(menu_name, menu_config)
+          menu_config[:menu] = make_menu(menu_name, menu_config).presence
+        end
+        [menu_name, menu_config]
+      }.compact.to_h
+    }.deep_freeze
 
   # Per-controller tables of the menu configurations associated with each
   # :url_parameter value.
@@ -355,28 +345,27 @@ module LayoutHelper::SearchControls
   # @type [Hash{Symbol=>Hash}]
   #
   SEARCH_PARAMETER_MENU_MAP =
-    SEARCH_MENU_MAP.map { |controller, controller_config|
+    SEARCH_MENU_MAP.map { |controller, menu_configs|
       periodicals = %i[periodical edition].include?(controller)
-      controller_config =
-        controller_config.map { |menu_name, config|
+      search_param_menu_configs =
+        menu_configs.map { |menu_name, menu_config|
           # noinspection RubyCaseWithoutElseBlockInspection
           case menu_name
             when :layout            then next
             when :format            then next if periodicals
             when :periodical_format then next unless periodicals
           end
-          url_param = config[:url_parameter]&.to_sym
-          [url_param, config] if url_param.present?
+          url_param = menu_config[:url_parameter]&.to_sym
+          [url_param, menu_config] if url_param.present?
         }.compact.to_h
-      [controller, controller_config]
+      [controller, search_param_menu_configs]
     }.to_h.deep_freeze
 
   # Indicate whether the search control panel starts in the open state.
   #
   # @type [Boolean]
   #
-  SEARCH_CONTROLS_INITIALLY_OPEN =
-    SEARCH_CONTROLS_CONFIG.dig(:_self, :open).present?
+  SEARCH_CONTROLS_INITIALLY_OPEN = SEARCH_CONTROLS_ROOT[:expanded].present?
 
   # ===========================================================================
   # :section:
@@ -430,8 +419,11 @@ module LayoutHelper::SearchControls
   # @param [Hash, nil] p              Default: `#request_parameters`.
   #
   def show_search_controls?(p = nil)
-    type = search_target(p)
-    SEARCH_MENU_MAP[type].present?
+    p     ||= request_parameters
+    type    = search_target(p)
+    enabled = SEARCH_CONTROLS_CONFIG.dig(type, :enabled)
+    enabled = enabled.include?(p[:action].to_s) if enabled.is_a?(Array)
+    enabled
   end
 
   # One or more rows of controls.
@@ -512,7 +504,7 @@ module LayoutHelper::SearchControls
   # Perform a search specifying a collation order for the results.
   # (Default: `#params[:sortOrder]`.)
   #
-  # @param [Hash] opt                 Passed to #menu_container.
+  # @param [Hash] opt                   Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
@@ -537,7 +529,7 @@ module LayoutHelper::SearchControls
 
   # Perform a search specifying a results page size.  (Default: `#page_size`.)
   #
-  # @param [Hash] opt                 Passed to #menu_container.
+  # @param [Hash] opt                   Passed to #menu_container.
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
   # @return [nil]                       Menu is not available in this context.
@@ -554,6 +546,46 @@ module LayoutHelper::SearchControls
     opt[:selected] = opt[:selected].first if opt[:selected].is_a?(Array)
     opt[:selected] = opt[:selected].to_i
     opt.delete(:selected) if opt[:selected].zero?
+    menu_container(menu_name, **opt)
+  end
+
+  # Specify initial number of entries per object key.
+  #
+  # @param [Hash] opt                   Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  # @see #search_controls
+  #
+  def prefix_limit_menu(**opt)
+    menu_name = :prefix_limit
+    config    = current_menu_config(menu_name, **opt)
+    params    = request_parameters
+    opt[:selected] ||= params[config[:url_parameter]]
+    opt[:selected] = opt[:selected].first if opt[:selected].is_a?(Array)
+    opt[:selected] = opt[:selected].to_i
+    opt.delete(:selected) if opt[:selected].zero?
+    menu_container(menu_name, **opt)
+  end
+
+  # Filter on deployment.
+  #
+  # @param [Hash] opt                 Passed to #menu_container.
+  #
+  # @return [ActiveSupport::SafeBuffer] An HTML element.
+  # @return [nil]                       Menu is not available in this context.
+  #
+  # @see #search_controls
+  #
+  def deployment_menu(**opt)
+    menu_name = :deployment
+    config    = current_menu_config(menu_name, **opt)
+    params    = request_parameters
+    opt[:selected] ||= params[config[:url_parameter]]
+    opt[:selected] ||= application_deployment
+    opt[:selected] = opt[:selected].first if opt[:selected].is_a?(Array)
+    opt.delete(:selected) if opt[:selected].blank?
     menu_container(menu_name, **opt)
   end
 
@@ -705,6 +737,143 @@ module LayoutHelper::SearchControls
   #
   def menu_tooltip(menu_name, **opt)
     current_menu_config(menu_name, **opt)[:tooltip]
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Date selection for the end of a date range.
+  #
+  # @param [Hash] opt                   Passed to #date_menu.
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
+  # @return [nil]                       If menu is not available.
+  #
+  def before_menu(**opt)
+    date_container(:before, **opt)
+  end
+
+  # Date selection for the beginning of a date range.
+  #
+  # @param [Hash] opt                   Passed to #date_menu.
+  #
+  # @return [ActiveSupport::SafeBuffer] HTML label and control elements.
+  # @return [nil]                       If menu is not available.
+  #
+  def after_menu(**opt)
+    date_container(:after, **opt)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  private
+
+  # A date control preceded by a label (if provided).
+  #
+  # @param [String, Symbol] name          Control name.
+  # @param [Hash]           opt           Passed to #date_control except for:
+  #
+  # @option opt [String] :label           Label text override.
+  #
+  # @return [ActiveSupport::SafeBuffer]   HTML label and control elements.
+  # @return [nil]                         If menu is not available.
+  #
+  def date_container(name, **opt)
+    opt[:config] ||= current_menu_config(name, **opt)
+    opt[:title]  ||= date_tooltip(name, **opt)
+    l_id  = "#{name}_label"
+    ctrl  = date_control(name, **opt.merge(label_id: l_id)) or return
+    label = date_label(name, **opt.merge(id: l_id))
+    # noinspection RubyYardReturnMatch
+    label << ctrl
+  end
+
+  # A date selection element.
+  #
+  # If *selected* is not specified `#SEARCH_MENU[name][:url_parameter]` is
+  # used to extract a value from `#request_parameters`.
+  #
+  # If no option is currently selected, an initial "null" selection is
+  # prepended.
+  #
+  # @param [String, Symbol] name        Control name.
+  # @param [Hash]           opt         Passed to #search_form except for
+  #                                       :label_id and #MENU_OPTS:
+  #
+  # @option opt [Date, String]   :selected  Initial value.
+  # @option opt [String, Symbol] :type      Passed to #search_form.
+  # @option opt [String, Symbol] :label_id  ID of associated label element.
+  #
+  # @return [ActiveSupport::SafeBuffer]     HTML menu element.
+  # @return [nil]                           If menu is not available.
+  #
+  # @see HtmlHelper#grid_cell_classes
+  #
+  def date_control(name, **opt)
+    opt, html_opt = partition_options(opt, :label_id, *MENU_OPTS)
+    type      = search_target(opt[:type]) or return
+    label_id  = opt.delete(:label_id)
+    config    = opt.delete(:config) || current_menu_config(name, type: type)
+    url_param = config[:url_parameter]
+    default   = config[:default]
+
+    # Get the initial value for the field.
+    value = opt.delete(:selected) || request_parameters[url_param] || default
+
+    # Add CSS classes which indicate the position of the control.
+    prepend_grid_cell_classes!(html_opt, 'date-control', **opt)
+    search_form(url_param, type, **html_opt) do
+      date_opt = { onchange: 'this.form.submit();' }
+      date_opt[:'aria-labelledby'] = label_id if label_id.present?
+      date_field_tag(url_param, value, reject_blanks(date_opt))
+    end
+  end
+
+  # A label associated with a dropdown menu element.
+  #
+  # @param [String, Symbol] name          Control name.
+  # @param [Hash]           opt           Passed to #label_tag except for
+  #                                         #MENU_OPTS:
+  #
+  # @option opt [String] :label           Label text override.
+  #
+  # @return [ActiveSupport::SafeBuffer]   Empty if no label was configured or
+  #                                         provided.
+  #
+  # @see HtmlHelper#prepend_grid_cell_classes!
+  #
+  def date_label(name, **opt)
+    opt, html_opt = partition_options(opt, *MENU_OPTS)
+    config = opt.delete(:config) || current_menu_config(name, **opt)
+    label  = opt[:label] || config[:label]
+    return ''.html_safe if label.blank?
+
+    if html_opt.delete(:sr_only) || false?(config[:label_visible])
+      opt[:sr_only] = true
+    else
+      label = non_breaking(label)
+    end
+    opt.delete(:col_max) # Labels shouldn't have the 'col-last' CSS class.
+    prepend_grid_cell_classes!(html_opt, 'date-label', **opt)
+    label_tag(config[:url_parameter], label, html_opt)
+  end
+
+  # date_tooltip
+  #
+  # @param [String, Symbol] name        Control name.
+  # @param [Hash]           opt         Passed to #current_menu_config.
+  #
+  # @return [String]                    Tooltip text.
+  # @return [nil]                       If no tooltip was defined.
+  #
+  def date_tooltip(name, **opt)
+    config = opt.delete(:config) || current_menu_config(name, **opt)
+    config[:tooltip]
   end
 
   # ===========================================================================

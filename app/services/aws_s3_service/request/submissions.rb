@@ -209,9 +209,8 @@ module AwsS3Service::Request::Submissions
   # @param [Boolean] atomic
   # @param [Hash]    opt              Passed to Aws::S3::Client#initialize or:
   #
-  # @option opt [Aws::S3::Client] client
-  #
-  # @option opt [Symbol] :meth        Calling method for logging
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
   #
   # @return [Array<AwsS3::Message::SubmissionPackage>]  Submitted records.
   #
@@ -222,14 +221,13 @@ module AwsS3Service::Request::Submissions
   #
   def api_create(*records, bucket: nil, atomic: true, **opt)
     raise 'no records' if records.blank?
-    meth   = opt.delete(:meth) || calling_method
-    client = opt.delete(:client)
-    client ||= Aws::S3::Client.new(opt.reverse_merge!(S3_OPTIONS))
+    opt[:meth]   ||= calling_method
+    opt[:client] ||= s3_client(**opt.except(:meth))
     records.map { |record|
       # @type [AwsS3::Message::SubmissionPackage] record
       bkt = bucket || bucket_for(record)
-      pkg = api_put_file(client, bkt, record.key, record.to_xml, meth: meth)
-      obj = api_put_file(client, bkt, record.file_key, record.file, meth: meth)
+      pkg = api_put_file(bkt, record.key, record.to_xml, **opt)
+      obj = api_put_file(bkt, record.file_key, record.file, **opt)
       if pkg && obj
         record
       elsif atomic
@@ -246,7 +244,8 @@ module AwsS3Service::Request::Submissions
   # @param [Boolean]       atomic
   # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
   #
-  # @option opt [Aws::S3::Client] client
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
   #
   # @return [Hash{String=>String}]    Mapping of object key to related content.
   #
@@ -255,12 +254,11 @@ module AwsS3Service::Request::Submissions
   def api_get(*sids, bucket:, atomic: true, **opt)
     raise 'no AWS S3 bucket'  if bucket.blank?
     raise 'no submission IDs' if sids.blank?
-    meth   = opt.delete(:meth) || calling_method
-    client = opt.delete(:client)
-    client ||= Aws::S3::Client.new(opt.reverse_merge!(S3_OPTIONS))
+    opt[:meth]   ||= calling_method
+    opt[:client] ||= s3_client(**opt.except(:meth))
     sids.flat_map { |sid|
-      api_list_object_keys(client, bucket, sid, meth: meth).map do |key|
-        content = api_get_file(client, bucket, key, meth: meth)
+      api_list_object_keys(bucket, sid, **opt).map do |key|
+        content = api_get_file(bucket, key, **opt)
         return [] if atomic && content.blank?
         [key, content]
       end
@@ -274,7 +272,8 @@ module AwsS3Service::Request::Submissions
   # @param [Boolean]       atomic
   # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
   #
-  # @option opt [Aws::S3::Client] client
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
   #
   # @return [Array<String>]           Object keys of deleted files.
   #
@@ -283,12 +282,11 @@ module AwsS3Service::Request::Submissions
   def api_delete(*sids, bucket:, atomic: true, **opt)
     raise 'no AWS S3 bucket'  if bucket.blank?
     raise 'no submission IDs' if sids.blank?
-    meth   = opt.delete(:meth) || calling_method
-    client = opt.delete(:client)
-    client ||= Aws::S3::Client.new(opt.reverse_merge!(S3_OPTIONS))
+    opt[:meth]   ||= calling_method
+    opt[:client] ||= s3_client(**opt.except(:meth))
     sids.flat_map { |sid|
-      api_list_object_keys(client, bucket, sid, meth: meth).map do |key|
-        api_delete_file(client, bucket, key, meth: meth).tap do |result|
+      api_list_object_keys(bucket, sid, **opt).map do |key|
+        api_delete_file(bucket, key, **opt).tap do |result|
           return [] if atomic && result.blank?
         end
       end
@@ -301,7 +299,8 @@ module AwsS3Service::Request::Submissions
   # @param [String]        bucket
   # @param [Hash]          opt        Passed to Aws::S3::Client#initialize or:
   #
-  # @option opt [Aws::S3::Client] client
+  # @option opt [Aws::S3::Client] :client
+  # @option opt [Symbol]          :meth     Calling method for logging
   #
   # @return [Hash{String=>Array}]     Mapping of IDs and related object keys.
   #
@@ -312,169 +311,11 @@ module AwsS3Service::Request::Submissions
     raise 'no AWS S3 bucket'  if bucket.blank?
     raise 'no submission IDs' if sids.blank?
     opt.delete(:atomic) # Not used in this method.
-    meth   = opt.delete(:meth) || calling_method
-    client = opt.delete(:client)
-    client ||= Aws::S3::Client.new(opt.reverse_merge!(S3_OPTIONS))
+    opt[:meth]   ||= calling_method
+    opt[:client] ||= s3_client(**opt.except(:meth))
     sids.map { |sid|
-      [sid, api_list_objects(client, bucket, sid, meth: meth).map(&:key)]
+      [sid, api_list_objects(bucket, sid, **opt).map(&:key)]
     }.to_h
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Upload an individual file to an AWS S3 bucket.
-  #
-  # @param [Aws::S3::Client]                         client
-  # @param [String]                                  bucket
-  # @param [String]                                  key
-  # @param [AWS::S3::Object, String, StringIO, File] content
-  # @param [Hash]                                    opt
-  #
-  # @option opt [Symbol] :meth        Calling method for logging
-  #
-  # @return [String]                  Uploaded object key.
-  # @return [nil]                     If the operation failed.
-  #
-  #--
-  # noinspection RubyScope
-  #++
-  def api_put_file(client, bucket, key, content, **opt)
-    # @type [Types::CopyObjectOutput, Types::PutObjectOutput] response
-    meth     = opt.delete(:meth) || calling_method
-    params   = { bucket: bucket, key: key }
-    response =
-      if content.is_a?(Aws::S3::Object)
-        params[:copy_source] = "#{content.bucket_name}/#{content.key}"
-        client.copy_object(params, opt)
-      else
-        params[:body] = content.is_a?(String) ? StringIO.new(content) : content
-        client.put_object(params, opt)
-      end
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
-    key
-  rescue StandardError => e
-    @exception = e
-    Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
-  end
-
-  # Download a single file from an AWS S3 bucket.
-  #
-  # @param [Aws::S3::Client] client
-  # @param [String]          bucket
-  # @param [String]          key
-  # @param [Hash]            opt      Passed to #get_object except for:
-  #
-  # @option opt [Symbol] :meth        Calling method for logging
-  #
-  # @return [String]                  Content of requested file.
-  # @return [nil]                     If the operation failed.
-  #
-  #--
-  # noinspection RubyScope
-  #++
-  def api_get_file(client, bucket, key, **opt)
-    # @type [Aws::S3::Types::GetObjectOutput] response
-    meth     = opt.delete(:meth) || calling_method
-    params   = { bucket: bucket, key: key }
-    response = client.get_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
-    response.body.read
-  rescue StandardError => e
-    @exception = e
-    Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
-  end
-
-  # Remove a single file from an AWS S3 bucket.
-  #
-  # @param [Aws::S3::Client] client
-  # @param [String]          bucket
-  # @param [String]          key
-  # @param [Hash]            opt      Passed to #get_object except for:
-  #
-  # @option opt [Symbol] :meth        Calling method for logging
-  #
-  # @return [String]                  Removed object key.
-  # @return [nil]                     If the operation failed.
-  #
-  #--
-  # noinspection RubyScope
-  #++
-  def api_delete_file(client, bucket, key, **opt)
-    # @type [Aws::S3::Types::DeleteObjectOutput] response
-    meth     = opt.delete(:meth) || calling_method
-    params   = { bucket: bucket, key: key }
-    response = client.delete_object(params, opt)
-    Log.debug { "#{meth}: AWS S3 response: #{response.inspect} "}
-    key
-  rescue StandardError => e
-    @exception = e
-    Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
-  end
-
-  # List files (object keys) in an AWS S3 bucket.
-  #
-  # @param [Aws::S3::Client] client
-  # @param [String]          bucket
-  # @param [String, nil]     filter   All objects if blank, missing, or '*'.
-  # @param [Hash]            opt      Passed to #list_objects_v2 except for:
-  #
-  # @option opt [Symbol] :meth        Calling method for logging
-  #
-  # @return [Array<Aws::S3::Object>]
-  #
-  #--
-  # noinspection RubyScope, RubyNilAnalysis
-  #++
-  def api_list_objects(client, bucket, filter = nil, **opt)
-    __debug_args(binding)
-    # @type [Aws::S3::Types::ListObjectsV2Output] response
-    meth   = opt.delete(:meth) || calling_method
-    params = { bucket: bucket }
-    filter =
-      case filter.presence
-        when nil     then nil # No filter means list all objects in the bucket.
-        when '*'     then nil # An explicit request for all objects.
-        when /\.$/   then filter
-        when /\.\*$/ then filter.delete_suffix('*')
-        else              "#{filter}."
-      end
-    response = client.list_objects_v2(params, **opt)
-    result = Array.wrap(response.contents)
-    result = result.select { |obj| obj.key.start_with?(filter) } if filter
-    result
-  rescue StandardError => e
-    @exception = e
-    Log.warn { "#{meth}: AWS S3 failure: #{e.class}: #{e.message}" }
-    []
-  end
-
-  # Lookup matching AWS S3 object keys if "filter" appears to be a pattern and
-  # not a specific filename and extension.
-  #
-  # @param [Aws::S3::Client] client
-  # @param [String]          bucket
-  # @param [String, nil]     filter
-  # @param [Hash]            opt      Passed to #api_list_objects
-  #
-  # @return [Array<String>]
-  #
-  # == Usage Notes
-  # This should only be used when transforming a list of key name patterns into
-  # actual key names -- use #api_list_objects directly when checking on the
-  # presence of the files themselves.
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def api_list_object_keys(client, bucket, filter = nil, **opt)
-    unless filter.blank? || (filter == '*') || filter.match?(/\.\*?$/)
-      return [filter] if filter.remove(%r{^.*/}).include?('.')
-    end
-    api_list_objects(client, bucket, filter, **opt).map(&:key)
   end
 
 end

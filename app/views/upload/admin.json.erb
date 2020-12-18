@@ -1,0 +1,9 @@
+<%# app/views/upload/admin.json.erb -%>
+<%-
+  # Upload submission administration values in JSON.
+  s3_opt = url_parameters.slice(:prefix, :prefix_limit, :after, :before, :sort)
+  s3_opt[:erb] = true
+-%>
+{
+  "buckets": { <%= json_s3_bucket_table(@object_table, **s3_opt) %> }
+}

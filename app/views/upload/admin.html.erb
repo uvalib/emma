@@ -1,0 +1,23 @@
+<%# app/views/upload/admin.html.erb -%>
+<%-
+  # Upload submission administration.
+
+  title ||= t('emma.upload.admin.title')
+  help  ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  s3_opt = url_parameters.slice(:prefix, :prefix_limit, :after, :before, :sort)
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description %>
+
+<h2 class="admin-section">AWS S3 buckets</h2>
+<%= html_s3_bucket_table(@object_table, **s3_opt) %>

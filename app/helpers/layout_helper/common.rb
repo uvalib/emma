@@ -156,7 +156,9 @@ module LayoutHelper::Common
   # @return [String]
   #
   def search_target_path(type, **opt)
-    url_for(opt.merge(controller: "/#{type}", action: :index, only_path: true))
+    controller = "/#{type}"
+    action     = SEARCH_CONTROLLERS[type]
+    url_for(opt.merge(controller: controller, action: action, only_path: true))
   rescue ActionController::UrlGenerationError
     search_target_path(DEFAULT_SEARCH_CONTROLLER, **opt)
   end

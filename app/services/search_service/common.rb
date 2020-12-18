@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 #
 module SearchService::Common
 
-  include ApiService::Common
-
   # Include the shared data structure which holds the definition of the API
   # requests and parameters.
   #
@@ -20,37 +18,8 @@ module SearchService::Common
     base.send(:include, SearchService::Definition)
   end
 
-  # ===========================================================================
-  # :section: ApiService::Common overrides
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # @see #SEARCH_BASE_URL
-  #
-  def base_url
-    @base_url ||= SEARCH_BASE_URL
-  end
-
-  # An API key is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  def api_key
-    nil
-  end
-
-  # API version is not a part of search URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    # SEARCH_API_VERSION
-  end
+  include ApiService::Common
+  include SearchService::Properties
 
   # ===========================================================================
   # :section: ApiService::Common overrides

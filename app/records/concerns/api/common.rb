@@ -570,6 +570,32 @@ public
 module Api::Common
 
   # ===========================================================================
+  # Common configuration values - Deployments
+  # ===========================================================================
+
+  public
+
+  # Values associated with each deployment type.
+  #
+  # @type [Hash{Symbol=>Hash}]
+  #
+  # @see "en.emma.application.deployment" in config/locales/en.yml
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  DEPLOYMENT = I18n.t('emma.application.deployment').deep_freeze
+
+  # Table of deployment names.
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  # @see #DEPLOYMENT
+  #
+  DEPLOYMENT_MAP =
+    DEPLOYMENT.transform_values { |config| config[:name] }.deep_freeze
+
+  # ===========================================================================
   # Common configuration values - EmmaRepository
   # ===========================================================================
 
@@ -579,21 +605,23 @@ module Api::Common
   #
   # @type [String]
   #
-  # @see "en.emma.source._default" in config/locales/source.en.yml
+  # @see "en.emma.repository._default" in config/locales/repository.en.yml
   #
-  DEFAULT_REPOSITORY = I18n.t('emma.source._default').freeze
+  DEFAULT_REPOSITORY = I18n.t('emma.repository._default').freeze
 
   # Values associated with each source repository.
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see "en.emma.source" in config/locales/source.en.yml
+  # @see "en.emma.repository" in config/locales/repository.en.yml
   #
   #--
   # noinspection RailsI18nInspection
   #++
   REPOSITORY =
-    I18n.t('emma.source').reject { |k, _| k.to_s.start_with?('_') }.deep_freeze
+    I18n.t('emma.repository').reject { |k, _|
+      k.to_s.start_with?('_')
+    }.deep_freeze
 
   # Table of repository names.
   #
@@ -678,6 +706,7 @@ module Api::Common
   # :section:
   # ===========================================================================
 
+  EnumType.add_enumerations(Deployment:     DEPLOYMENT_MAP)
   EnumType.add_enumerations(EmmaRepository: REPOSITORY_MAP)
   EnumType.add_enumerations(CategoriesType: CATEGORY_MAP)
   EnumType.add_enumerations(LanguageType:   LANGUAGE_MAP)
@@ -690,6 +719,9 @@ end
 # =============================================================================
 
 public
+
+# @see Api::Common#DEPLOYMENT_MAP
+class Deployment < EnumType; end
 
 # @see Api::Common#REPOSITORY_MAP
 class EmmaRepository < EnumType; end

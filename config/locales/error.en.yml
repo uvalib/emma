@@ -43,6 +43,12 @@ en:
         redirection:    'Missing HTTP redirect location from %{service}'
         redirect_limit: 'Too many HTTP redirects from %{service}'
 
+      aws_s3:
+
+        # @see AwsS3Service::Error.error_subclass
+
+        _name:          'AWS S3 interface'
+
       bookshare:
 
         # @see BookshareService::Error.error_subclass
@@ -58,11 +64,11 @@ en:
         reading_list:   '%{Service} reading list request error'
         organization:   '%{Service} organization request error'
 
-      search:
+      ia_download:
 
-        # @see SearchService::Error.error_subclass
+        # @see IaDownloadService::Error.error_subclass
 
-        _name:          'EMMA Unified Search service'
+        _name:          'Internet Archive download service'
 
       ingest:
 
@@ -70,11 +76,11 @@ en:
 
         _name:          'Bookshare Federated Ingest service'
 
-      ia_download:
+      search:
 
-        # @see IaDownloadService::Error.error_subclass
+        # @see SearchService::Error.error_subclass
 
-        _name:          'Internet Archive download service'
+        _name:          'EMMA Unified Search service'
 
       upload:
 

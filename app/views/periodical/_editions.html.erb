@@ -10,7 +10,7 @@
 
   element_id = 'edition-list'
 
-  skip_nav_append('Periodical Editions' => element_id) unless modal? # TODO: I18n
+  skip_nav_append('Periodical Editions' => element_id) # TODO: I18n
 
   role = ('role="complementary"'.html_safe if level > 1)
   opt  = {

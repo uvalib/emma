@@ -475,10 +475,12 @@
             }
         }
 
-        // NOTE: This is tuned to account for the varying types of fields
-        // across the records displayed in search.  Without some adjustment,
-        // the grid of each record aligns only to the widest label that it
-        // happens to be displaying.
+        /**
+         * NOTE: This is tuned to account for the varying types of fields
+         * across the records displayed in search.  Without some adjustment,
+         * the grid of each record aligns only to the widest label that it
+         * happens to be displaying.
+         */
         @media #{$wide-screen} {
             grid-template-columns: [label] minmax(auto, 0.1375fr) [value] 1fr;
         }

@@ -19,6 +19,18 @@ module LayoutHelper::SearchBar
 
   public
 
+  # A table of controllers and whether their pages should show search input in
+  # the page heading.
+  #
+  # @type [Hash{Symbol=>Boolean,Array<String>}]
+  #
+  SEARCH_INPUT_ENABLED =
+    ApplicationHelper::APP_CONTROLLERS.map { |controller|
+      enabled = i18n_lookup(controller, 'search_bar.enabled', mode: false)
+      enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
+      [controller, enabled]
+    }.to_h.deep_freeze
+
   # The icon used within the search bar to clear the current search.
   #
   # @type [String]
@@ -33,10 +45,14 @@ module LayoutHelper::SearchBar
 
   # Indicate whether it is appropriate to show the search bar.
   #
-  # @param [Symbol, String, nil] type   Default: `#search_input_target`
+  # @param [Hash, nil] p              Default: `#request_parameters`.
   #
-  def show_search_bar?(type = nil)
-    search_input_target(type).present?
+  def show_search_bar?(p = nil)
+    p     ||= request_parameters
+    type    = search_target(p)
+    enabled = SEARCH_INPUT_ENABLED[type]
+    enabled = enabled.include?(p[:action].to_s) if enabled.is_a?(Array)
+    enabled
   end
 
   # Indicate whether it is appropriate to show the search input menu.
@@ -174,17 +190,6 @@ module LayoutHelper::SearchBar
   # ===========================================================================
 
   private
-
-  # A table of controllers and whether their pages should show search input in
-  # the page heading.
-  #
-  # @type [Hash{Symbol=>Boolean}]
-  #
-  SEARCH_INPUT_ENABLED =
-    SEARCH_MENU_MAP.keys.map { |type|
-      enabled = i18n_lookup(type, 'search_bar.enabled', mode: false)
-      [type, enabled.present?]
-    }.to_h
 
   # search_input_target
   #

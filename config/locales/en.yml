@@ -10,6 +10,12 @@ en:
       name:             'EMMA'
       tagline:          'Educational Materials Made Accessible'
 
+      deployment:
+        production:
+          name:         'Production'
+        staging:
+          name:         'Staging'
+
       controllers:
 
         # Controllers that supply interactive content (that is, those
@@ -27,23 +33,6 @@ en:
         - 'search'
         - 'title'
         - 'upload'
-
-      search_controllers:
-
-        # The subset of en.emma.application.controllers that provide their own
-        # search capability; this drives how searches from the search box and
-        # advanced search controls are handled.
-        #
-        # @see ParamsConcern#search_redirect
-        #
-        # NOTE: The default search controller should be listed first.
-
-        - 'search'
-        - 'edition'
-        - 'member'
-        - 'periodical'
-        - 'reading_list'
-        - 'title'
 
     # =========================================================================
     # HTML page head
@@ -142,8 +131,11 @@ en:
 
     search_bar:
       label:            'Search'
+      enabled:          true
+
       button:
         label:          'Search'
+
       advanced:
         <<:             *PANEL_TOGGLE
         tooltip:        'Show additional search filters'
@@ -153,129 +145,127 @@ en:
 
     search_controls:
 
-      _self:
-        enabled:        true
-        open:           true        # False/missing => collapsed initially.
+      enabled:          true
+      expanded:         true        # False/missing => collapsed initially.
 
       _default:
+        url_parameter:  ~           # URL parameter for the control value.
         label:          ~           # Displayed before the control.
         label_visible:  true        # If *false* label is 'sr-only'.
+        tooltip:        ~           # Displayed hovering over control or label.
         placeholder:    '(any)'     # Displayed if the control value is unset.
-        url_parameter:  ~           # URL parameter for the control value.
-        menu_format:    'titleize'  # Transform for values into menu labels.
-        multiple:       false       # Allow multiple selections.
         values:         ~           # Hard-wired menu values.
         default:        ~           # Hard-wired default menu value selection.
-        tooltip:        ~           # Displayed hovering over control or label.
+        multiple:       false       # Allow multiple selections.
         menu:           ~           # Hard-wired label/value pairs.
+        menu_format:    'titleize'  # Transform for values into menu labels.
 
       _reset:
         label:          'Reset'
         tooltip:        'Clear all search filters'
 
       a11y_feature:
-        label:          'Accessibility'
         url_parameter:  'accessibilityFeature'
-        multiple:       true
+        label:          'Accessibility'
         tooltip:        'Limit by accessibility feature'
         values:         !ruby/symbol A11yFeature
+        multiple:       true
 
       braille:
-        label:          'Braille'
         url_parameter:  'brailleType'
+        label:          'Braille'
         tooltip:        'Limit by Braille type'
         values:         !ruby/symbol BrailleType
 
       category:
-        label:          'Category'
         url_parameter:  'categories'
+        label:          'Category'
         tooltip:        'Limit by Bookshare category'
         values:         !ruby/symbol CategoriesType
 
       content_type:
-        label:          'Content Type'
         url_parameter:  'titleContentType'
+        label:          'Content Type'
         tooltip:        'Limit by type of source material'
         values:         !ruby/symbol TitleContentType
 
       country:
-        label:          'Country'
         url_parameter:  'country'
+        label:          'Country'
         tooltip:        'Limit by regional permissions'
         menu_format:    'upcase'
 
       format:
-        label:          'Format'
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
+        label:          'Format'
         tooltip:        'Limit by remediated content type'
         values:         !ruby/symbol DublinCoreFormat
         multiple:       true
 
       format_feature:
-        label:          'Feature'
         url_parameter:  'formatFeature'
-        multiple:       true
+        label:          'Feature'
         tooltip:        'Limit by format feature'
         values:         !ruby/symbol FormatFeature
+        multiple:       true
 
       language:
-        label:          'Language'
         url_parameter:  'language'
+        label:          'Language'
         tooltip:        'Limit by language of source material'
         values:         !ruby/symbol LanguageType
 
       narrator:
-        label:          'Narrator'
         url_parameter:  'narratorType'
+        label:          'Narrator'
         tooltip:        'Limit by audio narrator type'
         values:         !ruby/symbol NarratorType
 
       periodical_format:
-        label:          'Format'
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
+        label:          'Format'
         tooltip:        'Limit by remediated content type'
         values:         !ruby/symbol PeriodicalFormatType
 
       repository:
-        label:          'Repository'
         url_parameter:  'repository'
+        label:          'Repository'
         tooltip:        'Limit by record originator'
         values:         !ruby/symbol EmmaRepository
 
       size:
-        label:          'Page Size'
         url_parameter:  'limit'
-        multiple:       false
+        label:          'Page Size'
         tooltip:        "Specify the number of search results per page.\nNOTE: The EMMA Unified Index does not yet support this capability."
         placeholder:    ~
-        menu_format:    'none'
-        values:
-          - 100
+        values:         [100]
         default:        ~ # Use emma.*.pagination.page_size
+        multiple:       false
+        menu_format:    'none'
 
       sort:
-        label:          'Sort By'
         url_parameter:  'sort'
-        multiple:       false
+        label:          'Sort By'
         tooltip:        'Specify the order in which results are presented'
         placeholder:    ~
-        default:        'relevance'
+        values:         !ruby/symbol SearchSort # NOTE: Override per-controller
+        default:        relevance
+        multiple:       false
         reverse:
           enabled:      false
           label:        '%{sort} (rev)'
           suffix:       'rev'
           except:       [relevance]
-        values:         !ruby/symbol SearchSort # NOTE: Override per-controller
 
       warnings_exc:
-        label:          'Without'
         url_parameter:  'excludedContentWarnings'
+        label:          'Without'
         tooltip:        'Limit by excluded content warnings'
         values:         !ruby/symbol ContentWarning
 
       warnings_inc:
-        label:          'Warnings'
         url_parameter:  'includedContentWarnings'
+        label:          'Warnings'
         tooltip:        'Limit by included content warnings'
         values:         !ruby/symbol ContentWarning
 
@@ -413,7 +403,6 @@ en:
       # =======================================================================
 
       search_bar:
-        enabled:        true
         label:          '%{Item} Search'
 
       search_controls:

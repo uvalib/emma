@@ -433,7 +433,8 @@ $search-button-width:    6rem;
 
     // @see LayoutHelper#menu_label
     // noinspection SassScssResolvedByNameOnly
-    .menu-label {
+    .menu-label,
+    .date-label {
         font-size:  large;
 
         @media #{$not-narrow-screen} {
@@ -442,24 +443,26 @@ $search-button-width:    6rem;
     }
 
     // @see LayoutHelper#menu_control
-    .menu-control {
+    .menu-control,
+    .date-control {
 
         @extend %header-control-interior;
 
-        // After Select2 initializes, multi-select <select> elements will be
-        // visually hidden in favor of the replacement that Select2 manages.
-        // Since there is a noticeable span of time between the initial page
-        // load and the completion of the Select2 initialization, these styles
-        // are applied to the <select> element to keep it from flashing into
-        // existence in a jarring way.
-        //
-        // If there is only one row of buttons in the control then this will
-        // have the effect of the selections disappearing briefly.
-        //
-        // Unfortunately, if there is more than one row of buttons, then the
-        // control will obviously shrink in size until Select2 can create the
-        // replacement control.
-        //
+        /**
+         * After Select2 initializes, multi-select <select> elements will be
+         * visually hidden in favor of the replacement that Select2 manages.
+         * Since there is a noticeable span of time between the initial page
+         * load and the completion of the Select2 initialization, these styles
+         * are applied to the <select> element to keep it from flashing into
+         * existence in a jarring way.
+         *
+         * If there is only one row of buttons in the control then this will
+         * have the effect of the selections disappearing briefly.
+         *
+         * Unfortunately, if there is more than one row of buttons, then the
+         * control will obviously shrink in size until Select2 can create the
+         * replacement control.
+         */
         // noinspection SassScssResolvedByNameOnly
         select[multiple]:not(.select2-hidden-accessible) {
 
@@ -471,11 +474,12 @@ $search-button-width:    6rem;
             border-radius:  4px;
             pointer-events: none;
 
-            // On Chrome with 500 search results, it takes quite a while to get
-            // to the point where Select2 creates its replacements for the
-            // native <select> elements.  This is required so that the original
-            // is obscured until that point.
-            //
+            /**
+             * On Chrome with 500 search results, it takes quite a while to get
+             * to the point where Select2 creates its replacements for the
+             * native <select> elements.  This is required so that the original
+             * is obscured until that point.
+             */
             // noinspection CssOverwrittenProperties
             option:before {
                 display:        block;
@@ -714,7 +718,7 @@ $search-button-width:    6rem;
         }
 
         @media #{$not-narrow-screen} {
-            $column: [label] max-content [menu] minmax(25%, 1fr);
+            $column: [label] max-content [menu] minmax(10%, 1fr);
             @include grid-column-classes($max-columns, $column, $columns-map);
         }
 
@@ -780,7 +784,8 @@ $search-button-width:    6rem;
         }
 
         // The label to the left of a .menu-control.
-        .menu-label {
+        .menu-label,
+        .date-label {
 
             @extend %grid-cell;
 
@@ -795,7 +800,8 @@ $search-button-width:    6rem;
         }
 
         // A dropdown menu (paired with a .menu-label to the left).
-        .menu-control {
+        .menu-control,
+        .date-control {
 
             @extend %grid-cell;
 
@@ -803,8 +809,14 @@ $search-button-width:    6rem;
             margin-right: calc(3 * #{$gap-x});
 
             select {
-                width:  100%;
                 height: 2rem;
+                width:  100%;
+            }
+
+            input[type="date"] {
+                height:      1.75rem;
+                width:       97.5%;
+                font-family: inherit;
             }
         }
 

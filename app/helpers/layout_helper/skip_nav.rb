@@ -58,9 +58,9 @@ module LayoutHelper::SkipNav
   # @yieldreturn [String, Array<String>]
   #
   def skip_nav_append(*entries)
-    entries  = @skip_nav + entries if @skip_nav.present?
-    entries += Array.wrap(yield)   if block_given?
-    skip_nav_set(*entries)
+    return skip_nav if modal?
+    block = block_given? && yield || []
+    skip_nav_set(*skip_nav, *entries, *block)
   end
 
   # Add entries to the beginning of the "skip navigation" menu.
@@ -73,9 +73,9 @@ module LayoutHelper::SkipNav
   # @yieldreturn [String, Array<String>]
   #
   def skip_nav_prepend(*entries)
-    entries += Array.wrap(yield) if block_given?
-    entries += @skip_nav         if @skip_nav.present?
-    skip_nav_set(*entries)
+    return skip_nav if modal?
+    block = block_given? && yield || []
+    skip_nav_set(*entries, *block, *skip_nav)
   end
 
   # ===========================================================================

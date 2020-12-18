@@ -1,4 +1,4 @@
-# config/locales/source.en.yml
+# config/locales/repository.en.yml
 #
 # Source repositories
 
@@ -6,7 +6,7 @@ en:
 
   emma:
 
-    source:
+    repository:
 
       _default: emma
 
@@ -31,6 +31,7 @@ en:
       emma:
         <<:             *REPOSITORY_TEMPLATE
         name:           'EMMA'
+        symbol:         ~
         logo:           'EMMA-logo-UVAbg.png'
         title_path:     '/upload'
         download_path:  ~ # Use `request.base_url`.
@@ -39,6 +40,7 @@ en:
       bookshare:
         <<:             *REPOSITORY_TEMPLATE
         name:           'Bookshare'
+        symbol:         'bs'
         logo:           'wide-Bookshare_logo.png'
         title_path:     'https://www.bookshare.org/browse/book'
         download_path:  'https://www.bookshare.org/bookHistory/download/book'
@@ -59,6 +61,7 @@ en:
       hathiTrust:
         <<:             *REPOSITORY_TEMPLATE  # TODO: HT download formats
         name:           'HathiTrust'
+        symbol:         'ht'
         logo:           'wide-HathiTrust_logo.png'
         title_path:     'https://catalog.hathitrust.org/Record'
         download_path:  'https://babel.hathitrust.org/cgi/imgsrv/download'
@@ -67,6 +70,7 @@ en:
       internetArchive:
         <<:             *REPOSITORY_TEMPLATE  # TODO: IA download formats
         name:           'Internet Archive'
+        symbol:         'ia'
         logo:           'wide-Internet_Archive_logo.png'
         title_path:     'https://archive.org/details'
         download_path:  'https://archive.org/download'

@@ -255,7 +255,7 @@ module SessionConcern
     yield
   rescue => error
     __debug_exception('UNHANDLED EXCEPTION', error, trace: true)
-    flash_now_alert(api_error_message) if api_error?
+    flash_now_alert(*api_error_message) if api_error?
   ensure
     last_operation_update
     raise error if error

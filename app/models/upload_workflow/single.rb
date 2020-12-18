@@ -488,7 +488,7 @@ module UploadWorkflow::Single::Actions
   #
   def wf_check_retrieved
     sid  = record.submission_id
-    data = AwsS3Service.instance.list_records(record).values_at(sid).flatten
+    data = aws_api.list_records(record).values_at(sid).flatten
 
     # Advance workflow state if the test passes.
     done = data.blank?
@@ -513,7 +513,7 @@ module UploadWorkflow::Single::Actions
   def wf_check_indexed
     sid  = record.submission_id
     rid  = record.emma_metadata[:emma_recordId]
-    data = IngestService.instance.get_records(rid)
+    data = ingest_api.get_records(rid)
 
     # Advance workflow state if the test passes.
     done = data.present?

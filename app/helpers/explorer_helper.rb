@@ -65,7 +65,7 @@ module ExplorerHelper
       opt:       opt.presence || '',
       url:       api_explorer_url(path, **opt),
       result:    data&.force_encoding('UTF-8'),
-      exception: bs_api_exception,
+      exception: api_exception,
     }.compact
   end
 

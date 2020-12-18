@@ -153,15 +153,15 @@ module FlashHelper
     # @see #render_part
     #
     def render(**opt)
-      columns =
+      opt = prepend_css_classes(opt, 'line').merge!(separator: ' ')
+      html_div(opt) do
         if @parts.size > 1
           n = 0
           @parts.map { |part| render_part(part, (n += 1), last: @parts.size) }
         else
           @parts.map { |part| first_part(part, html: true) }
         end
-      opt = prepend_css_classes(opt, 'line')
-      html_div(safe_join(columns, ' '), opt)
+      end
     end
 
     # render_part

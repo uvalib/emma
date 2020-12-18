@@ -796,6 +796,24 @@ module UploadWorkflow::External
   # ===========================================================================
 
   public
+  
+  # Current AWS API service instance.
+  # 
+  # @return [AwsS3Service]
+  # 
+  def aws_api
+    # noinspection RubyYardReturnMatch
+    AwsS3Service.instance
+  end
+
+  # Current Ingest API service instance.
+  # 
+  # @return [IngestService]
+  # 
+  def ingest_api
+    # noinspection RubyYardReturnMatch
+    IngestService.instance
+  end
 
   # Indicate whether the item represents an EMMA repository entry (as opposed
   # to a member repository entry).
@@ -1384,7 +1402,7 @@ module UploadWorkflow::External
     succeeded = failed = rollback = []
     items = normalize_index_items(*items, meth: __method__)
     if items.present?
-      result = IngestService.instance.put_records(*items)
+      result = ingest_api.put_records(*items)
       errors = result.errors
       if errors.blank?
         succeeded = items
@@ -1411,7 +1429,7 @@ module UploadWorkflow::External
     succeeded = failed = []
     items = normalize_index_items(*items, meth: __method__)
     if items.present?
-      result = IngestService.instance.delete_records(*items)
+      result = ingest_api.delete_records(*items)
       errors = result.errors
       if errors.blank?
         succeeded = items
@@ -1487,7 +1505,7 @@ module UploadWorkflow::External
     elsif !repo_create
       failed << 'Repository submissions are disabled'
     else
-      result = AwsS3Service.instance.creation_request(*data, **opt)
+      result = aws_api.creation_request(*data, **opt)
       if result # TODO: process result
         succeeded = data
       else
@@ -1515,7 +1533,7 @@ module UploadWorkflow::External
     elsif !repo_edit
       failed << 'Repository modification requests are disabled'
     else
-      result = AwsS3Service.instance.modification_request(*data, **opt)
+      result = aws_api.modification_request(*data, **opt)
       if result # TODO: process result
         succeeded = data
       else
@@ -1547,7 +1565,7 @@ module UploadWorkflow::External
     elsif !repo_remove
       failed << 'Repository removal requests are disabled'
     else
-      result = AwsS3Service.instance.removal_request(*data, **opt)
+      result = aws_api.removal_request(*data, **opt)
       if result # TODO: process result
         succeeded = data
       else

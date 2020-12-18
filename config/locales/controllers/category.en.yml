@@ -23,13 +23,11 @@ en:
         enabled:        false
 
       search_controls:
+
         size:
-          tooltip:      'Specify the number of search results per page'
-          values:
-            - 10
-            - 25
-            - 50
-            - 100
+          tooltip:      'Specify the number of categories per page'
+          values:       [10, 25, 50, 100]
+
         layout:
           - [size, ~, ~, ~]
 

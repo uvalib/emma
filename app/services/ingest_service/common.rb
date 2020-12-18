@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 #
 module IngestService::Common
 
-  include ApiService::Common
-
   # Include the shared data structure which holds the definition of the API
   # requests and parameters.
   #
@@ -20,39 +18,8 @@ module IngestService::Common
     base.send(:include, IngestService::Definition)
   end
 
-  # ===========================================================================
-  # :section: ApiService::Common overrides
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # @see #INGEST_BASE_URL
-  #
-  def base_url
-    @base_url ||= INGEST_BASE_URL
-  end
-
-  # Federated Ingest API key.
-  #
-  # @return [String]
-  #
-  # @see #INGEST_API_KEY
-  #
-  def api_key
-    INGEST_API_KEY
-  end
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  def api_version
-    # INGEST_API_VERSION
-  end
+  include ApiService::Common
+  include IngestService::Properties
 
   # ===========================================================================
   # :section: ApiService::Common overrides

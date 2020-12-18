@@ -9,8 +9,6 @@ __loading_begin(__FILE__)
 #
 module BookshareService::Common
 
-  include ApiService::Common
-
   # Include the shared data structure which holds the definition of the API
   # requests and parameters.
   #
@@ -20,81 +18,9 @@ module BookshareService::Common
     base.send(:include, BookshareService::Definition)
   end
 
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
+  include ApiService::Common
+  include BookshareService::Properties
 
-  public
-
-  # Maximum accepted value for a :limit parameter.
-  #
-  # @type [Integer]
-  #
-  # == Implementation Notes
-  # Determined experimentally.
-  #
-  MAX_LIMIT = 100
-
-  # For use in example.
-  #
-  # @type [String]
-  #
-  DEFAULT_USER = 'anonymous'
-
-  # The account used for testing.
-  #
-  # @type [String]
-  #
-  BOOKSHARE_TEST_ACCOUNT = 'emmadso@bookshare.org'
-
-  # The identifier (:userAccountId) for the test member "Placeholder Member".
-  # (Only usable by #BOOKSHARE_TEST_ACCOUNT)
-  #
-  # @type [String]
-  #
-  #--
-  # noinspection SpellCheckingInspection, LongLine
-  #++
-  BOOKSHARE_TEST_MEMBER = 'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
-  # Rails.root.join('test/fixtures/members.yml').yield_self { |path|
-  #   YAML.load_file(path)&.deep_symbolize_keys! || {}
-  # }.dig(:Placeholder_Member, :user_id)
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  # @see #BOOKSHARE_BASE_URL
-  #
-  def base_url
-    @base_url ||= BOOKSHARE_BASE_URL
-  end
-
-  # Bookshare API key.
-  #
-  # @return [String]
-  #
-  # @see #BOOKSHARE_API_KEY
-  #
-  def api_key
-    BOOKSHARE_API_KEY
-  end
-
-  # API version is not a part of request URLs.
-  #
-  # @return [nil]
-  #
-  # @see #BOOKSHARE_API_VERSION
-  #
-  def api_version
-    BOOKSHARE_API_VERSION
-  end
 
   # ===========================================================================
   # :section: Authentication

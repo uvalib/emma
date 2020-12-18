@@ -170,7 +170,7 @@ module RepositoryHelper
   #
   # == Implementation Notes
   # Encrypted DAISY files are handled differently; for an explanation:
-  # @see IaDownloadConcern#render_ia_download
+  # @see IaDownloadConcern#ia_download_response
   #
   def ia_retrieval_link(_item, label, url, **opt)
     direct = IA_DIRECT_LINK_PATTERNS.any? { |pattern| url.match?(pattern) }

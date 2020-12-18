@@ -1,0 +1,29 @@
+# config/locales/service.en.yml
+#
+# API services
+
+en:
+
+  emma:
+
+    service:
+
+      aws_s3:
+        name:           'AWS S3 interface'
+
+      bookshare:
+        name:           'Bookshare service'
+        max_limit:      100
+        default_user:   'anonymous'
+        test_account:   'emmadso@bookshare.org'
+        test_member:    'AP5xvS_OBOox69jMyt_sdVqCgX-OhnuC8oAFynfN3lJIyM56O86KRMdaYcP5MvZD1DmTtFOSGOj7'
+
+      ia_download:
+        name:           'Internet Archive download service'
+        max_redirects:  10
+
+      ingest:
+        name:           'Bookshare Federated Ingest service'
+
+      search:
+        name:           'EMMA Unified Search service'

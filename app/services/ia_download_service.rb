@@ -14,6 +14,18 @@ class IaDownloadService < ApiService
   # Include send/receive modules from "app/services/ia_download_service/**.rb".
   include_submodules(self)
 
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  unless ONLY_FOR_DOCUMENTATION
+    # @!method instance
+    #   @return [IaDownloadService]
+    # @!method update
+    #   @return [IaDownloadService]
+    class << self
+    end
+  end
+  # :nocov:
+
   # ===========================================================================
   # :section: ApiService overrides
   # ===========================================================================

@@ -71,8 +71,8 @@ end
 
 # There are four distinct sets of S3 buckets -- three to provide a pickup
 # location for submission of remediated items back to member repositories
-# (defined in AwsS3Service::Common#S3_BUCKET) -- and the one for storage of
-# Shrine uploads, which is defined here.
+# (defined in AwsS3Service#S3_BUCKET) -- and the one for storage of Shrine
+# uploads, which is defined here.
 #
 # For desktop-testing, local storage based on subdirectories within the Rails
 # project is an option, but may be of limited use -- perhaps for unit testing.

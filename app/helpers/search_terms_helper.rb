@@ -76,20 +76,23 @@ module SearchTermsHelper
 
   # Controllers which supply their own search capabilities.
   #
-  # @type [Array<Symbol>]
+  # @type [Hash{Symbol=>String}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
   SEARCH_CONTROLLERS =
-    I18n.t('emma.application.search_controllers').map(&:to_sym).freeze
+    ApplicationHelper::APP_CONTROLLERS.map { |controller|
+      action = I18n.t("emma.#{controller}.search.action", default: nil)
+      [controller, action] if action
+    }.compact.to_h.deep_freeze
 
   # The search controller that should be used on any pages whose controllers
   # do not provide their own search capability.
   #
   # @type [Symbol]
   #
-  DEFAULT_SEARCH_CONTROLLER = SEARCH_CONTROLLERS.first
+  DEFAULT_SEARCH_CONTROLLER = :search
 
   # ===========================================================================
   # :section:

@@ -59,6 +59,8 @@ module HtmlHelper
   # @param [Symbol, String, Integer, nil] tag
   # @param [Array]                        args
   #
+  # @option args.last [String] :separator
+  #
   # @yield Additional content
   # @yieldreturn [String, Array]
   #
@@ -85,11 +87,12 @@ module HtmlHelper
     level &&= [level, 6].min
     tag = "h#{level}" if level
     tag = 'div'       if tag.blank? || tag.is_a?(Integer)
-    options = args.extract_options!
-    content = args.flatten
-    content += Array.wrap(yield) if block_given?
+    options   = args.last.is_a?(Hash) ? args.pop.dup : {}
+    separator = options.delete(:separator) || "\n"
+    content   = args.flatten
+    content  += Array.wrap(yield) if block_given?
     content.reject!(&:blank?)
-    content_tag(tag, safe_join(content, "\n"), options)
+    content_tag(tag, safe_join(content, separator), options)
   end
 
   # An "empty" element that can be used as a placeholder.

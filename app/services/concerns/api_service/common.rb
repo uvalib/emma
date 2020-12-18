@@ -23,99 +23,7 @@ module ApiService::Common
 
   include Emma::Common
   include Emma::Debug
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Control whether information requests are ever cached. # TODO: ???
-  #
-  # @type [Boolean]
-  #
-  CACHING = false
-
-  # Control whether parameter validation errors cause a RuntimeError.
-  #
-  # @type [Boolean]
-  #
-  RAISE_ON_INVALID_PARAMS = Rails.env.test?
-
-  # Maximum length of redirection chain.
-  #
-  # @type [Integer]
-  #
-  MAX_REDIRECTS = 2
-
-  # Options consumed by #api (and not passed on as URL query options).
-  #
-  # @type [Array<Symbol>]
-  #
-  SERVICE_OPTIONS = %i[no_raise no_exception no_redirect].freeze
-
-  # Original request parameters which should not be passed on to the API.
-  #
-  # @type [Array<Symbol>]
-  #
-  IGNORED_PARAMETERS = (ParamsHelper::IGNORED_PARAMETERS + %i[offset]).freeze
-
-  # HTTP methods used by the API.
-  #
-  # @type [Array<Symbol>]
-  #
-  # == Usage Notes
-  # Compare with AllowsType#values.
-  #
-  HTTP_METHODS =
-    %w(GET PUT POST DELETE)
-      .map { |w| [w.to_sym, w.downcase.to_sym] }.flatten.deep_freeze
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # The name of the service for logging.
-  #
-  # @return [String]
-  #
-  def service_name
-    @service_name ||= self.class.name.underscore.delete_suffix('_service')
-  end
-
-  # The URL for the API connection.
-  #
-  # @return [String]
-  #
-  def base_url
-    @base_url ||= raise "#{__method__} must be defined by the subclass"
-  end
-
-  # The URL for the API connection as a URI.
-  #
-  # @return [URI::Generic]
-  #
-  def base_uri
-    @base_uri ||= URI.parse(base_url)
-  end
-
-  # API key (if applicable).
-  #
-  # @return [String, nil]
-  #
-  def api_key
-    raise "#{__method__} must be defined by the subclass"
-  end
-
-  # API version (if applicable).
-  #
-  # @return [String, nil]
-  #
-  def api_version
-    raise "#{__method__} must be defined by the subclass"
-  end
+  include ApiService::Properties
 
   # ===========================================================================
   # :section:
@@ -208,14 +116,6 @@ module ApiService::Common
     opt.delete(:api_key) unless opt.delete(:complete)
     opt = url_query(opt).presence
     [@action, opt].compact.join('?')
-  end
-
-  # Maximum length of redirection chain.
-  #
-  # @type [Integer]
-  #
-  def max_redirects
-    MAX_REDIRECTS
   end
 
   # ===========================================================================

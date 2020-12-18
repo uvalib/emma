@@ -14,6 +14,7 @@ class UploadController < ApplicationController
   include SessionConcern
   include PaginationConcern
   include SerializationConcern
+  include AwsConcern
   include UploadConcern
   include IaDownloadConcern
 
@@ -508,6 +509,27 @@ class UploadController < ApplicationController
   # :section:
   # ===========================================================================
 
+  public
+
+  # == GET /upload/admin[?{deploy|deployment}={'production'|'staging'}]
+  # == GET /upload/admin[?{repo|repository}={'emma'|'ia'}]
+  #
+  # Upload submission administration.
+  #
+  def admin
+    __debug_route
+    opt           = url_parameters
+    @repo         = repositories(opt)
+    @deploy       = deployments(opt)
+    @object_table = get_object_table(@repo, @deploy, **opt)
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Indicate whether URL parameters indicate that a menu should be shown rather
@@ -587,7 +609,7 @@ class UploadController < ApplicationController
   # @return [Hash{Symbol=>String}]
   #
   def download_values(url = @link)
-    { url: url}
+    { url: url }
   end
 
 end
