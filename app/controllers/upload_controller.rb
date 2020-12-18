@@ -61,6 +61,7 @@ class UploadController < ApplicationController
   # == GET /upload[?id={:id|SID|RANGE_LIST}]
   # == GET /upload[?selected={:id|SID|RANGE_LIST}]
   # == GET /upload[?group=WORKFLOW_GROUP]
+  #
   # Display the current user's uploads.
   #
   # If an item specification is given by one of UploadConcern#IDENTIFIER_PARAMS
@@ -98,6 +99,7 @@ class UploadController < ApplicationController
 
   # == GET /upload/{:id|SID}
   # == GET /upload/show/{:id|SID}
+  #
   # Display a single upload.
   #
   # @raise [Net::HTTPBadRequest]
@@ -127,6 +129,7 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/new
+  #
   # Initiate creation of a new EMMA entry by prompting to upload a file.
   #
   # On the initial visit to the page, @db_id should be *nil*.  On subsequent
@@ -146,6 +149,7 @@ class UploadController < ApplicationController
   end
 
   # == POST /upload
+  #
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
   #
@@ -167,6 +171,7 @@ class UploadController < ApplicationController
 
   # == GET /upload/edit/:id
   # == GET /upload/edit/SELECT
+  #
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
   #
@@ -184,6 +189,7 @@ class UploadController < ApplicationController
 
   # == PUT   /upload/:id
   # == PATCH /upload/:id
+  #
   # Finalize modification of an existing EMMA entry.
   #
   # @raise [Net::HTTPBadRequest]
@@ -207,6 +213,7 @@ class UploadController < ApplicationController
   # == GET /upload/delete/SID[?force=true&truncate=true&emergency=true]
   # == GET /upload/delete/RANGE_LIST[?force=true&truncate=true&emergency=true]
   # == GET /upload/delete/SELECT[?force=true&truncate=true&emergency=true]
+  #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
   # If :id is "SELECT" then a menu of deletable items is presented.
@@ -233,6 +240,7 @@ class UploadController < ApplicationController
   # == DELETE /upload/:id[?force=true&truncate=true&emergency=true]
   # == DELETE /upload/SID[?force=true&truncate=true&emergency=true]
   # == DELETE /upload/RANGE_LIST[?force=true&truncate=true&emergency=true]
+  #
   # Finalize removal of an existing EMMA entry.
   #
   # @raise [Net::HTTPBadRequest]
@@ -265,6 +273,7 @@ class UploadController < ApplicationController
   public
 
   # == GET /upload/bulk
+  #
   # Currently a non-functional placeholder.
   #
   def bulk_index
@@ -274,6 +283,7 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/bulk_new[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to submit.
   #
@@ -288,6 +298,7 @@ class UploadController < ApplicationController
   end
 
   # == POST /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
   # Create the specified Upload entries, download and store the associated
   # files, and post the new entries to the Federated Ingest API.
   #
@@ -308,6 +319,7 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/bulk_edit[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
   # Display a form prompting for a bulk upload file in either CSV or JSON
   # format containing an entry for each entry to change.
   #
@@ -322,6 +334,7 @@ class UploadController < ApplicationController
   end
 
   # == PUT /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  #
   # Modify or create the specified Upload entries, download and store the
   # associated files (if changed), and post the new/modified entries to the
   # Federated Ingest API.
@@ -343,6 +356,7 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/bulk_delete[?force=false]
+  #
   # Specify entries to delete by :id, SID, or RANGE_LIST.
   #
   # @raise [Net::HTTPConflict]
@@ -383,6 +397,7 @@ class UploadController < ApplicationController
   public
 
   # == GET /upload/cancel?id=:id[&redirect=URL][&reset=true|false]
+  #
   # Invoked to cancel the current submission form instead of submitting.
   #
   # @see UploadWorkflow::Single::States#on_canceled_entry
@@ -399,6 +414,7 @@ class UploadController < ApplicationController
 
   # == GET /upload/check/:id
   # == GET /upload/check/SID
+  #
   # Invoked to determine whether the workflow state of the indicated item can
   # be advanced.
   #
@@ -423,6 +439,7 @@ class UploadController < ApplicationController
   public
 
   # == POST /upload/endpoint
+  #
   # Invoked from 'Uppy.XHRUpload'.
   #
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
@@ -452,6 +469,7 @@ class UploadController < ApplicationController
   public
 
   # == GET /download/:id
+  #
   # Download the file associated with an EMMA submission.
   #
   # @raise [Net::HTTPBadRequest]
@@ -472,12 +490,13 @@ class UploadController < ApplicationController
   end
 
   # == GET /retrieval?url=URL[&member=BS_ACCOUNT_ID]
+  #
   # Retrieve a file from a member repository.
   #
   def retrieval
     __debug_route
     if ia_link?(@url)
-      render_ia_download(@url)
+      ia_download_response(@url)
     elsif bs_link?(@url)
       redirect_to bs_retrieval_path(url: @url, forUser: @member)
     else

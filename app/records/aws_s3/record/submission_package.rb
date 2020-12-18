@@ -158,7 +158,7 @@ class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record
   # @param [AwsS3::Record::SubmissionPackage, Upload, Hash] src
   # @param [Hash]                                           opt
   #
-  # @option opt [Aws::S3::Object] file    Override file for submission.
+  # @option opt [Aws::S3::Object] :file   Override file for submission.
   #
   #--
   # noinspection RubyYardParamTypeMatch

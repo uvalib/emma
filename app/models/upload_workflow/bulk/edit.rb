@@ -33,6 +33,7 @@ public
 module UploadWorkflow::Bulk::Edit::External
   include UploadWorkflow::Bulk::External
   include UploadWorkflow::Bulk::Edit::Properties
+  include UploadWorkflow::Bulk::Edit::Events
 end
 
 module UploadWorkflow::Bulk::Edit::Data

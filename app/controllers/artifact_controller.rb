@@ -57,6 +57,7 @@ class ArtifactController < ApplicationController
 
 =begin # TODO: all artifacts? Probably not...
   # == GET /artifact
+  #
   # List all artifacts.
   #
   def index
@@ -76,6 +77,7 @@ class ArtifactController < ApplicationController
 
   # == GET /artifact/:id?fmt=:fmt
   # == GET /artifact/:bookshareId?fmt=:fmt
+  #
   # Get metadata for an existing artifact.
   #
   def show
@@ -91,6 +93,7 @@ class ArtifactController < ApplicationController
 
   # == GET /artifact/new[?id=:id]
   # == GET /artifact/new[?bookshareId=:bookshareId]
+  #
   # Add metadata for a new artifact.
   #
   def new
@@ -99,6 +102,7 @@ class ArtifactController < ApplicationController
 
   # == POST /artifact/:id
   # == POST /artifact/:bookshareId
+  #
   # Upload a new artifact.
   #
   def create
@@ -107,6 +111,7 @@ class ArtifactController < ApplicationController
 
   # == GET /artifact/:id/edit
   # == GET /artifact/:bookshareId/edit
+  #
   # Modify metadata of an existing artifact entry.
   #
   def edit
@@ -117,6 +122,7 @@ class ArtifactController < ApplicationController
   # == PUT   /artifact/:bookshareId
   # == PATCH /artifact/:id
   # == PATCH /artifact/:bookshareId
+  #
   # Upload a replacement for an existing artifact.
   #
   def update
@@ -125,6 +131,7 @@ class ArtifactController < ApplicationController
 
   # == DELETE /artifact/:id
   # == DELETE /artifact/:bookshareId
+  #
   # Remove an existing artifact entry.
   #
   def destroy
@@ -135,23 +142,25 @@ class ArtifactController < ApplicationController
   # == GET /artifact/:id/:fmt?forUser=BS_ACCOUNT_ID
   # == GET /artifact/:bookshareId/:fmt?member=BS_ACCOUNT_ID
   # == GET /artifact/:bookshareId/:fmt?forUser=BS_ACCOUNT_ID
+  #
   # Download an artifact of the indicated Bookshare format type.
   #
   def download
     __debug_route
     opt = { bookshareId: @bookshare_id, format: @format, forUser: @member }
-    render_bs_download(:download_title, **opt)
+    bs_download_response(:download_title, **opt)
   end
 
   # == GET /artifact/retrieval?url=URL&forUser=BS_ACCOUNT_ID
   # == GET /artifact/retrieval?url=URL&member=BS_ACCOUNT_ID
+  #
   # Retrieve a Bookshare artifact from an absolute URL (as found in EMMA
   # Unified Search results).
   #
   def retrieval
     __debug_route
     opt = { url: @url, forUser: @member }
-    render_bs_download(:get_retrieval, **opt)
+    bs_download_response(:get_retrieval, **opt)
   end
 
   # ===========================================================================

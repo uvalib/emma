@@ -18,6 +18,7 @@ module IngestService::Request::Records
   public
 
   # == PUT /records
+  # 
   # EMMA Federated Ingestion.
   #
   # Inserts or updates one or more metadataRecords in the search index. For

@@ -31,7 +31,7 @@ module BsDownloadConcern
   #
   # @return [void]
   #
-  def render_bs_download(method, **opt)
+  def bs_download_response(method, **opt)
     # @type [Search::Message::RetrievalResult, Bs::Message::StatusModel] res
     res = bs_api.send(method, **opt.merge!(no_raise: true, no_redirect: true))
     @exception = res.exception

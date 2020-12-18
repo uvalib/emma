@@ -100,7 +100,7 @@ module IaDownloadConcern
   #
   # @return [void]
   #
-  def render_ia_download(url, **opt)
+  def ia_download_response(url, **opt)
     name, type, data = ia_download_api.download(url, **opt)
     send_data(data, type: type, filename: name) if data.present?
   end

@@ -789,7 +789,7 @@ public
 module UploadWorkflow::External
 
   include UploadWorkflow::Properties
-  include Upload::IdentifierMethods
+  include UploadWorkflow::Events
 
   # ===========================================================================
   # :section:

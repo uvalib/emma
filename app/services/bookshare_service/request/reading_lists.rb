@@ -159,6 +159,7 @@ module BookshareService::Request::ReadingLists
     end
 
   # == GET /v2/lists
+  # 
   # Get all reading lists.
   #
   # Whereas "/v2/mylists" only works for "emmadso@bookshare.org", this call
@@ -194,6 +195,7 @@ module BookshareService::Request::ReadingLists
     end
 
   # == GET /v2/lists/{readingListId}
+  # 
   # Get metadata for an existing reading list.
   #
   # @param [String] readingListId

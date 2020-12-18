@@ -21,6 +21,7 @@ module SearchService::Request::Records
   public
 
   # == GET /search
+  # 
   # EMMA Unified Search
   #
   # === Search Types

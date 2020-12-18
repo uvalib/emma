@@ -33,6 +33,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # == GET  /users/auth/bookshare
   # == POST /users/auth/bookshare
+  # 
   # Initiate authentication with the remote service.
   #
   def passthru
@@ -43,6 +44,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # == GET  /users/auth/bookshare/callback
   # == POST /users/auth/bookshare/callback
+  # 
   # Callback from the Bookshare auth service to finalize authentication.
   #
   def bookshare
@@ -65,6 +67,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   # == GET /users/auth/bookshare/failure
+  # 
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #

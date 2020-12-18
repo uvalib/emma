@@ -62,6 +62,7 @@ module BookshareService::Request::Organization
     end
 
   # == GET /v2/myOrganization/members/{userIdentifier}
+  # 
   # Get a member of the current (sponsor) user's organization.
   #
   # @param [User, String, nil] user

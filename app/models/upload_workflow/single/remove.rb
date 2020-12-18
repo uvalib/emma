@@ -33,6 +33,7 @@ public
 module UploadWorkflow::Single::Remove::External
   include UploadWorkflow::Single::External
   include UploadWorkflow::Single::Remove::Properties
+  include UploadWorkflow::Single::Remove::Events
 end
 
 module UploadWorkflow::Single::Remove::Data

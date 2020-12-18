@@ -34,6 +34,7 @@ module UploadWorkflow::Bulk::External
 
   include UploadWorkflow::External
   include UploadWorkflow::Bulk::Properties
+  include UploadWorkflow::Bulk::Events
 
   # ===========================================================================
   # :section:

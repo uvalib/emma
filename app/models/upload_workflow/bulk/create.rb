@@ -33,6 +33,7 @@ public
 module UploadWorkflow::Bulk::Create::External
   include UploadWorkflow::Bulk::External
   include UploadWorkflow::Bulk::Create::Properties
+  include UploadWorkflow::Bulk::Create::Events
 end
 
 module UploadWorkflow::Bulk::Create::Data

@@ -377,19 +377,6 @@ class Upload < ApplicationRecord
     raise error
   end
 
-  # Allow :file_data and :emma_data to be seen fully when inspecting.
-  #
-  # @param [*] value                  Attribute value.
-  #
-  # @return [String]
-  #
-  # This method overrides:
-  # @see ActiveRecord::AttributeMethods#format_for_inspect
-  #
-  def format_for_inspect(value)
-    value.is_a?(String) ? value.inspect : super
-  end
-
   # Formatted record contents.
   #
   # @param [Hash, nil] attr
@@ -438,6 +425,35 @@ class Upload < ApplicationRecord
     # noinspection RubyNilAnalysis
     attr = attr.transform_values { |v| v.is_a?(String) ? v.truncate(1024) : v }
     pretty_json(attr)
+  end
+
+  # ===========================================================================
+  # :section: ActiveRecord overrides
+  # ===========================================================================
+
+  private
+
+  # Allow :file_data and :emma_data to be seen fully when inspecting.
+  #
+  # @param [Symbol, String] name      Attribute name.
+  # @param [*] value                  Attribute value.
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # @see ActiveRecord::AttributeMethods#format_for_inspect
+  #
+  def format_for_inspect(name, value)
+    if value.nil?
+      value.inspect
+    else
+      inspected_value =
+        case value
+          when Date, Time then %Q("#{value.to_s(:inspect)}")
+          else                 value.inspect
+        end
+      inspection_filter.filter_param(name, inspected_value)
+    end
   end
 
   # ===========================================================================

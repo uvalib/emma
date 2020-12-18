@@ -33,6 +33,7 @@ public
 module UploadWorkflow::Bulk::Remove::External
   include UploadWorkflow::Bulk::External
   include UploadWorkflow::Bulk::Remove::Properties
+  include UploadWorkflow::Bulk::Remove::Events
 end
 
 module UploadWorkflow::Bulk::Remove::Data

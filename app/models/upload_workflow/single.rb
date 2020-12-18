@@ -33,6 +33,7 @@ public
 module UploadWorkflow::Single::External
   include UploadWorkflow::External
   include UploadWorkflow::Single::Properties
+  include UploadWorkflow::Single::Events
 end
 
 module UploadWorkflow::Single::Data

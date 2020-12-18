@@ -52,6 +52,7 @@ class HomeController < ApplicationController
   public
 
   # == GET /home
+  # 
   # The main application page.
   #
   # == Implementation Notes
@@ -68,6 +69,7 @@ class HomeController < ApplicationController
   end
 
   # == GET /home/welcome
+  # 
   # The main application page for anonymous users.
   #
   def welcome
@@ -75,6 +77,7 @@ class HomeController < ApplicationController
   end
 
   # == GET /home/dashboard
+  # 
   # The main application page for authenticated users.
   #
   def dashboard

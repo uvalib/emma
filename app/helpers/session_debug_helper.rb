@@ -1,4 +1,4 @@
-# app/helpers/session_helper.rb
+# app/helpers/session_debug_helper.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -7,10 +7,10 @@ __loading_begin(__FILE__)
 
 # Support methods related to `#session`.
 #
-module SessionHelper
+module SessionDebugHelper
 
   def self.included(base)
-    __included(base, '[SessionHelper]')
+    __included(base, '[SessionDebugHelper]')
   end
 
   include ParamsHelper
@@ -25,11 +25,9 @@ module SessionHelper
   # Indicate whether on-screen debugging is applicable.
   #
   def session_debug?
-    if application_deployed?
-      true?(session['debug'])
-    else
-      !false?(session['debug'])
-    end
+    on_by_default   = !application_deployed?
+    current_setting = session['debug']
+    on_by_default ? !false?(current_setting) : true?(current_setting)
   end
 
   # ===========================================================================
@@ -52,18 +50,17 @@ module SessionHelper
   #
   def session_debug(**opt)
     pairs =
-      session.to_hash.except(*SESSION_SKIP_KEYS)
-        .transform_values do |v|
-          if compressed_value?(v)
-            v = decompress_value(v)
-            h(v.inspect) << html_span('[compressed]', class: 'note')
-          else
-            v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
-          end
+      session.to_hash.except!(*SESSION_SKIP_KEYS).transform_values! do |v|
+        if compressed_value?(v)
+          v = decompress_value(v)
+          h(v.inspect) << html_span('[compressed]', class: 'note')
+        else
+          v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
+        end
       end
-    pairs = { SESSION: 'DEBUG' }.merge(pairs)
+    table = { SESSION: 'DEBUG' }.merge(pairs)
     opt   = prepend_css_classes(opt, 'session-debug-table')
-    grid_table(pairs, **opt)
+    grid_table(table, **opt)
   end
 
 end

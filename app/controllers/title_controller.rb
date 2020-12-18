@@ -49,6 +49,7 @@ class TitleController < ApplicationController
   public
 
   # == GET /title
+  # 
   # List all catalog titles.
   #
   def index
@@ -86,6 +87,7 @@ class TitleController < ApplicationController
   end
 
   # == GET /title/:id
+  # 
   # Display details of an existing catalog title.
   #
   def show
@@ -99,6 +101,7 @@ class TitleController < ApplicationController
   end
 
   # == GET /title/new[?id=:id]
+  # 
   # Add metadata for a new catalog title.
   #
   def new
@@ -106,6 +109,7 @@ class TitleController < ApplicationController
   end
 
   # == POST /title/:id
+  # 
   # Create an entry for a new catalog title.
   #
   def create
@@ -113,6 +117,7 @@ class TitleController < ApplicationController
   end
 
   # == GET /title/:id/edit
+  # 
   # Modify metadata of an existing catalog title entry.
   #
   def edit
@@ -121,6 +126,7 @@ class TitleController < ApplicationController
 
   # == PUT   /title/:id
   # == PATCH /title/:id
+  # 
   # Update the entry for an existing catalog title.
   #
   def update
@@ -128,6 +134,7 @@ class TitleController < ApplicationController
   end
 
   # == DELETE /title/:id
+  # 
   # Remove an existing catalog title entry.
   #
   def destroy
@@ -135,6 +142,7 @@ class TitleController < ApplicationController
   end
 
   # == GET /title/:id/history
+  # 
   # Show processing history for this catalog title.
   #
   def history

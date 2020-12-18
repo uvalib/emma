@@ -144,6 +144,7 @@ module BookshareService::Request::Periodicals
     end
 
   # == GET /v2/periodicals/{seriesId}/editions/{editionId}
+  # 
   # Get the metadata of an existing periodical edition.
   #
   # @param [String] seriesId

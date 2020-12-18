@@ -48,6 +48,7 @@ class SearchController < ApplicationController
   public
 
   # == GET /search
+  # 
   # Perform a search through the EMMA Unified Search API.
   #
   def index
@@ -75,6 +76,7 @@ class SearchController < ApplicationController
   end
 
   # == GET /search/:id
+  # 
   # Display details of an existing catalog title.
   #
   def show
@@ -88,6 +90,7 @@ class SearchController < ApplicationController
   end
 
   # == GET /search/advanced
+  # 
   # Present the advanced search form.
   #
   def advanced
@@ -96,6 +99,7 @@ class SearchController < ApplicationController
 
   # == GET /search/api?...
   # == GET /search/direct?...
+  # 
   # Perform a search directly through the EMMA Unified Search API.
   #
   def direct
@@ -112,6 +116,7 @@ class SearchController < ApplicationController
   end
 
   # == GET /search/example
+  # 
   # Perform an example (fake) search simulating the EMMA Unified Search API.
   #
   def example

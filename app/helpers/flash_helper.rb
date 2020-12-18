@@ -173,6 +173,8 @@ module FlashHelper
     # @option [Integer] :first        Index of the first column (default: 1).
     # @option [Integer] :last         Index of the last column.
     #
+    # @return [ActiveSupport::SafeBuffer]
+    #
     # @see #first_part
     # @see #last_part
     #

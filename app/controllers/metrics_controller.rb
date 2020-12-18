@@ -36,6 +36,7 @@ class MetricsController < ApplicationController
   public
 
   # == GET /metrics/test
+  # 
   # A temporary endpoint to test various Prometheus metrics.
   #
   # * A *counter* is a metric for a quantity that accumulates a numerical

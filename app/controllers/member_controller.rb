@@ -53,6 +53,7 @@ class MemberController < ApplicationController
   public
 
   # == GET /member
+  # 
   # List all organization members.
   #
   def index
@@ -70,6 +71,7 @@ class MemberController < ApplicationController
   end
 
   # == GET /member/:id
+  # 
   # Display details of an existing organization member.
   #
   def show
@@ -83,6 +85,7 @@ class MemberController < ApplicationController
   end
 
   # == GET /member/new[?id=:id]
+  # 
   # Add metadata for a new organization member.
   #
   def new
@@ -90,6 +93,7 @@ class MemberController < ApplicationController
   end
 
   # == POST /member/:id
+  # 
   # Create an entry for a new organization member.
   #
   def create
@@ -97,6 +101,7 @@ class MemberController < ApplicationController
   end
 
   # == GET /member/:id/edit
+  # 
   # Modify metadata of an existing organization member entry.
   #
   def edit
@@ -105,6 +110,7 @@ class MemberController < ApplicationController
 
   # == PUT   /member/:id
   # == PATCH /member/:id
+  # 
   # Update the entry for an existing organization member.
   #
   def update
@@ -112,6 +118,7 @@ class MemberController < ApplicationController
   end
 
   # == DELETE /member/:id
+  # 
   # Remove an existing organization member entry.
   #
   def destroy

@@ -51,6 +51,7 @@ class CategoryController < ApplicationController
   public
 
   # == GET /category
+  # 
   # List all categories.
   #
   def index

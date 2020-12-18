@@ -7,8 +7,6 @@
 # Global constants
 # =============================================================================
 
-public
-
 # The time that the application was started.
 #
 # @type [Time]
@@ -41,8 +39,6 @@ STAGING_BASE_URL = 'https://emmadev.internal.lib.virginia.edu'
 # =============================================================================
 # Support methods
 # =============================================================================
-
-public
 
 # Text values which represent *true*.
 #
@@ -79,8 +75,6 @@ end
 # =============================================================================
 # Global properties
 # =============================================================================
-
-public
 
 # Indicate whether this is a deployed instance.
 #

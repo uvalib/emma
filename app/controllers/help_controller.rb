@@ -47,6 +47,7 @@ class HelpController < ApplicationController
   public
 
   # == GET /help
+  # 
   # The main help page.
   #
   def index
@@ -62,6 +63,7 @@ class HelpController < ApplicationController
 
   # == GET /help/:topic
   # == GET /help?topic=:topic
+  # 
   # The topic help page.
   #
   def show
