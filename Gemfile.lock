@@ -67,7 +67,7 @@ GEM
     archive-zip (0.12.0)
       io-like (~> 0.3.0)
     aws-eventstream (1.1.0)
-    aws-partitions (1.409.0)
+    aws-partitions (1.410.0)
     aws-sdk-core (3.110.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -126,7 +126,7 @@ GEM
     faraday (1.1.0)
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
-    ffi (1.13.1)
+    ffi (1.14.0)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
     hashery (2.1.2)

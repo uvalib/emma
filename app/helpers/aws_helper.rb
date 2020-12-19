@@ -22,15 +22,19 @@ module AwsHelper
 
   public
 
-  S3_EMPTY_BUCKET     = 'EMPTY' # TODO: I18n
-  S3_PREFIX_LIMIT     = 10
-  S3_OBJECT_VALUES    = %i[key size last_modified].freeze
+  S3_EMPTY_BUCKET  = 'EMPTY' # TODO: I18n
+  S3_PREFIX_LIMIT  = 10
+  S3_OBJECT_VALUES = %i[key size last_modified].freeze
 
-  S3_BUCKET_PRIMARY_SORT   = { prefix: true }.freeze
-  S3_BUCKET_SECONDARY_SORT = { last_modified: false }.freeze
+  AWS_CONSOLE_URL  = 'https://console.aws.amazon.com'
+  AWS_BUCKET_URL   = "#{AWS_CONSOLE_URL}/s3/buckets"
 
-  AWS_CONSOLE_URL = 'https://console.aws.amazon.com'
-  AWS_BUCKET_URL  = "#{AWS_CONSOLE_URL}/s3/buckets"
+  AWS_SORT_OPT     = %i[sort sortOrder direction].freeze
+  AWS_FILTER_OPT   = %i[after before prefix prefix_limit].freeze
+  AWS_RENDER_OPT   = %i[heading html object].freeze
+
+  S3_BUCKET_PRIMARY_SORT = :prefix
+  S3_BUCKET_DEFAULT_SORT = I18n.t('emma.upload.search_controls.sort.default')
 
   # ===========================================================================
   # :section:
@@ -82,7 +86,10 @@ module AwsHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def html_s3_bucket_table(table, **opt)
-    _, render_opt = partition_options(opt, :erb, :html)
+    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    opt.except!(:erb, :html)
+    render_opt = s3_bucket_params if render_opt.blank?
+    render_opt.merge!(opt)
     table.map { |bucket, objects|
       render_s3_bucket(bucket, objects, **render_opt)
     }.join("\n").html_safe
@@ -101,13 +108,15 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def json_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_options(opt, :erb, :html)
-    render_opt[:html] = false
+    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    for_erb    = opt.delete(:erb)
+    render_opt = s3_bucket_params if render_opt.blank?
+    render_opt.merge!(opt).merge!(html: false)
     result =
       table.map { |bucket, objects|
         [bucket, render_s3_bucket(bucket, objects, **render_opt)]
       }.to_h.to_json
-    opt[:erb] ? result.delete_prefix('{').delete_suffix('}').html_safe : result
+    for_erb ? result.delete_prefix('{').delete_suffix('}').html_safe : result
   end
 
   # Render a table of S3 buckets and objects as JSON.
@@ -123,8 +132,10 @@ module AwsHelper
   # @return [String]                      Otherwise.
   #
   def xml_s3_bucket_table(table, **opt)
-    opt, render_opt = partition_options(opt, :erb, :html)
-    render_opt[:html] = false
+    opt, render_opt = partition_options(opt, :erb, *AWS_RENDER_OPT)
+    for_erb    = opt.delete(:erb)
+    render_opt = s3_bucket_params if render_opt.blank?
+    render_opt.merge!(opt).merge!(html: false)
     result =
       table.map do |bucket, objects|
         html_tag(:bucket, name: bucket) do
@@ -135,7 +146,23 @@ module AwsHelper
           end
         end
       end
-    opt[:erb] ? safe_join(result, "\n") : result.join("\n")
+    for_erb ? safe_join(result, "\n") : result.join("\n")
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # URL parameters which modify the behavior of #render_s3_bucket.
+  #
+  # @param [Hash, nil] opt            Default: `#url_parameters`.
+  #
+  # @return [Hash]
+  #
+  def s3_bucket_params(opt = nil)
+    (opt || url_parameters).slice(*AWS_SORT_OPT, *AWS_FILTER_OPT)
   end
 
   # ===========================================================================
@@ -143,6 +170,8 @@ module AwsHelper
   # ===========================================================================
 
   public
+
+  AWS_BUCKET_OPT = (AWS_SORT_OPT + AWS_FILTER_OPT + AWS_RENDER_OPT).freeze
 
   # Show the contents of an S3 bucket.
   #
@@ -164,17 +193,17 @@ module AwsHelper
   # @return [Array<Hash>]                           If *html* is false.
   #
   def render_s3_bucket(bucket, objects, **opt)
-    sort    = opt.delete(:sort)
-    after   = opt.delete(:after)&.to_datetime
-    before  = opt.delete(:before)&.to_datetime
-    prefix  = opt.delete(:prefix)&.to_s
+    opt, html_opt = partition_options(opt, *AWS_BUCKET_OPT)
+    after   = opt[:after]&.to_datetime
+    before  = opt[:before]&.to_datetime
+    prefix  = opt[:prefix]&.to_s
     prefix  = "#{prefix}/" if prefix && !prefix.end_with?('/')
-    limit   = opt.delete(:prefix_limit)&.to_i
+    limit   = opt[:prefix_limit]&.to_i
     limit   = S3_PREFIX_LIMIT if limit.nil? || limit.is_a?(TrueClass)
     limit   = nil if limit.is_a?(Numeric) && limit.negative?
-    title   = opt.delete(:heading)
-    html    = !false?(opt.delete(:html))
-    obj_opt = (opt.delete(:object) || {}).merge(html: html)
+    title   = opt[:heading]
+    html    = !false?(opt[:html])
+    obj_opt = (opt[:object] || {}).merge(html: html)
     parts   = []
 
     # Generate a heading if a bucket (name) was provided.
@@ -192,17 +221,23 @@ module AwsHelper
 
     # Transform object instances into value hashes and eliminate non-matches.
     objects.map! { |obj| s3_object_values(obj) }
-    objects.reject! { |obj|
+    objects.reject! do |obj|
       m = obj[:last_modified]
       (m.nil? || (m < after)  if after)  ||
       (m.nil? || (m > before) if before) ||
       (obj[:prefix] != prefix if prefix)
-    }
+    end
     objects.compact!
 
-    # Transform the object instances into a sorted array of value hashes
+    # Transform the object instances into a sorted array of value hashes.
     # noinspection RubyYardParamTypeMatch
-    sort_objects!(objects, sort)
+    if opt[:sortOrder] || opt[:direction]
+      sort_order = opt[:sortOrder] || opt[:sort]
+      direction  = opt[:direction] || is_reverse?(sort_order)
+      sort_objects!(objects, sort_order => direction)
+    else
+      sort_objects!(objects, opt[:sort])
+    end
 
     # Prepare for per-prefix limits.
     total = {}
@@ -256,7 +291,7 @@ module AwsHelper
     objects.unshift(column_headings)
 
     # Generate the table of objects.
-    html_opt = prepend_css_classes(opt, 'aws-bucket')
+    prepend_css_classes!(html_opt, 'aws-bucket')
     parts << html_div(objects, html_opt)
 
     safe_join(parts, "\n")
@@ -434,32 +469,41 @@ module AwsHelper
   # Sort an array of hashes based on the sort keys and their direction (forward
   # sort if *true*; reverse sort if *false).
   #
-  # @param [Array<Hash>]                          array
-  # @param [Array<Symbol>, Hash{Symbol=>Boolean}] sort_keys
+  # @param [Array<Hash>]                                 array
+  # @param [Array<Symbol>, Hash{Symbol=>String,Boolean}] sort_keys
   #
   # @return [Array<Hash>]
   #
   def sort_objects!(array, sort_keys = nil)
-    # noinspection RubyNilAnalysis
-    sort_keys =
-      case sort_keys
-        when nil  then {}
-        when Hash then sort_keys.symbolize_keys
-        else
-          Array.wrap(sort_keys).compact.map { |name|
-            name      = name.to_s
-            key       = name.delete_suffix('_rev')
-            ascending = (name == key)
-            [key.to_sym, ascending]
-          }.to_h
-      end
-    sort_keys = S3_BUCKET_SECONDARY_SORT if sort_keys.blank?
-    sort_keys = S3_BUCKET_PRIMARY_SORT.merge(sort_keys)
+    primary_sort = transform_sort_keys(S3_BUCKET_PRIMARY_SORT)
+    sort_keys    = transform_sort_keys(sort_keys || S3_BUCKET_DEFAULT_SORT)
+    sort_keys    = primary_sort.merge(sort_keys)
     array.sort! do |a, b|
       sort_keys.find do |key, ascending|
         comparison = ascending ? (a[key] <=> b[key]) : (b[key] <=> a[key])
         break comparison if comparison&.nonzero?
       end || 0
+    end
+  end
+
+  # Normalize sort keys.
+  #
+  # @param [Symbol, Array<Symbol>, Hash{Symbol=>String,Boolean}] sort_keys
+  #
+  # @return [Hash{Symbol=>Boolean}]
+  #
+  def transform_sort_keys(sort_keys)
+    if sort_keys.is_a?(Hash)
+      sort_keys.compact.map { |name, dir|
+        ascending = !dir.is_a?(FalseClass) && !dir.to_s.casecmp('desc').zero?
+        [name.to_sym, ascending]
+      }.to_h
+    else
+      Array.wrap(sort_keys).compact.map { |name|
+        name      = name.is_a?(String) ? name.dup : name.to_s
+        ascending = !name.delete_suffix!('_rev')
+        [name.to_sym, ascending]
+      }.to_h
     end
   end
 

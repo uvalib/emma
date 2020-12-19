@@ -11,8 +11,6 @@
     set_page_robots(:noindex, :nofollow)
   end
 
-  s3_opt = url_parameters.slice(:prefix, :prefix_limit, :after, :before, :sort)
-
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
@@ -20,4 +18,4 @@
 <%= page_description %>
 
 <h2 class="admin-section">AWS S3 buckets</h2>
-<%= html_s3_bucket_table(@object_table, **s3_opt) %>
+<%= html_s3_bucket_table(@object_table) %>

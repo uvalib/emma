@@ -66,7 +66,7 @@ module SearchTermsHelper
   #
   # @type [Array<Symbol>]
   #
-  SEARCH_KEYS = %i[keyword sort limit language]
+  SEARCH_KEYS = %i[keyword sort limit language prefix]
 
   # URL parameters related to search sort menu settings.
   #

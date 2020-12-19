@@ -882,12 +882,6 @@ module LayoutHelper::SearchControls
 
   protected
 
-  # URL parameters for #reset_menu.
-  #
-  # @type [Array<Symbol>]
-  #
-  RESET_PARAMETERS = (SEARCH_PARAMETERS - %i[sort limit]).freeze
-
   # The controls for resetting filter menu selections to their default state.
   #
   # @param [Hash] opt                 Passed to #menu_spacer and #reset_button.
@@ -911,18 +905,32 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #SEARCH_RESET_CONTROL
-  # @see #RESET_PARAMETERS
+  # @see #reset_parameters
   # @see HtmlHelper#grid_cell_classes
   #
   def reset_button(**opt)
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
     label = opt[:label] || SEARCH_RESET_CONTROL[:label]
     label = non_breaking(label)
-    url   = opt[:url] || request_parameters.except(*RESET_PARAMETERS)
+    url   = opt[:url] || reset_parameters
     url   = url_for(url) if url.is_a?(Hash)
     prepend_grid_cell_classes!(html_opt, 'reset', 'menu-button', **opt)
     html_opt[:title] ||= SEARCH_RESET_CONTROL[:tooltip]
     link_to(label, url, **html_opt)
+  end
+
+  # URL parameters that should be cleared for the current search type.
+  #
+  # @param [Hash] opt                 Default: `#request_parameters`.
+  #
+  # @return [Hash]
+  #
+  def reset_parameters(opt = nil)
+    opt ||= request_parameters
+    type  = search_target(opt[:controller])
+    keys  = SEARCH_PARAMETER_MENU_MAP[type].keys
+    keys -= SearchTermsHelper::SEARCH_KEYS
+    opt.except(*keys)
   end
 
   # A button to reset all filter menu selections to their default state.
@@ -974,7 +982,7 @@ module LayoutHelper::SearchControls
   # @return [Array<Array<(String,*)>>]  The possibly-modified *menu*.
   #
   def sort_entries!(menu)
-    menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl }
+    menu.sort_by! { |lbl, val| val.is_a?(Integer) ? ('%09d' % val) : lbl.to_s }
   end
 
   # ===========================================================================

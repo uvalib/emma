@@ -49,6 +49,7 @@ class UploadController < ApplicationController
   before_action :index_redirect,  only: %i[show]
   before_action :set_url,         only: %i[retrieval]
   before_action :set_member,      only: %i[retrieval]
+  before_action :resolve_sort,    only: %i[admin]
 
   respond_to :html
   respond_to :json, :xml, except: %i[edit]
@@ -519,8 +520,8 @@ class UploadController < ApplicationController
   def admin
     __debug_route
     opt           = url_parameters
-    @repo         = repositories(opt)
-    @deploy       = deployments(opt)
+    @repo         = repositories(**opt)
+    @deploy       = deployments(default: application_deployment, **opt)
     @object_table = get_object_table(@repo, @deploy, **opt)
   rescue => error
     flash_now_failure(error)

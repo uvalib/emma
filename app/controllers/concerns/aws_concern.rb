@@ -25,6 +25,22 @@ module AwsConcern
 
   public
 
+  REPOSITORY_PARAMS = %i[repo   repository].freeze
+  DEPLOYMENT_PARAMS = %i[deploy deployment].freeze
+
+  NON_AWS_PARAMS = [
+    *REPOSITORY_PARAMS,
+    *DEPLOYMENT_PARAMS,
+    *AwsHelper::AWS_SORT_OPT,
+    *AwsHelper::AWS_FILTER_OPT,
+  ].freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Access the AWS S3 API service.
   #
   # @return [AwsS3Service]
@@ -40,55 +56,54 @@ module AwsConcern
 
   public
 
-  REPOSITORY_PARAMS = %i[repo   repository].freeze
-  DEPLOYMENT_PARAMS = %i[deploy deployment].freeze
-  S3_OBJECT_PARAMS  = %i[prefix prefix_limit sort before after].freeze
-
   # repositories
   #
   # If :emma is included it will be moved to the end of the list.
   #
-  # @param [Hash] opt
+  # @param [String, Symbol, Array, nil] default   Default: '*'
+  # @param [Hash]                       opt       Default: `#url_parameters`.
   #
   # @return [Array<Symbol>]
   #
-  def repositories(opt = nil)
-    opt ||= url_parameters
+  def repositories(default: nil, **opt)
+    opt    = url_parameters if opt.blank?
     emma   = EmmaRepository.default.to_sym
     values = param_values(opt, *REPOSITORY_PARAMS)
+    values = values.presence || Array.wrap(default).compact.presence || %w(*)
     values.map! do |v|
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case v
+      case v.to_s.downcase
         when 'bs', /bookshare/         then :bookshare
         when 'ia', /internet.*archive/ then :internetArchive
         when 'ht', /hathi.*trust/      then :hathiTrust
         when emma.to_s                 then emma
+        else                                '*'
       end
     end
-    values.compact!
-    values = EmmaRepository.values.map(&:to_sym) if values.blank?
+    values = EmmaRepository.values.map(&:to_sym) if values.include?('*')
     values << emma if values.delete(emma)
     values
   end
 
   # deployments
   #
-  # @param [Hash] opt
+  # @param [String, Symbol, Array, nil] default   Default: '*'
+  # @param [Hash]                       opt       Default: `#url_parameters`.
   #
   # @return [Array<Symbol>]
   #
-  def deployments(opt = nil)
-    opt ||= url_parameters
+  def deployments(default: nil, **opt)
+    opt    = url_parameters if opt.blank?
     values = param_values(opt, *DEPLOYMENT_PARAMS)
+    values = values.presence || Array.wrap(default).compact.presence || %w(*)
     values.map! do |v|
-      if v.include?('prod')
-        :production
-      elsif v.include?('stag') || v.include?('dev')
-        :staging
+      case v.to_s.downcase
+        when /prod/        then :production
+        when /stag/, /dev/ then :staging
+        else                    '*'
       end
     end
-    values.compact!
-    values.presence || Deployment.values.map(&:to_sym)
+    values = Deployment.values.map(&:to_sym) if values.include?('*')
+    values
   end
 
   # ===========================================================================
@@ -117,7 +132,7 @@ module AwsConcern
   def aws_params(opt = nil)
     opt = url_parameters if opt.blank?
     opt[:service] ||= AwsS3Service.instance
-    opt.except!(*REPOSITORY_PARAMS, *DEPLOYMENT_PARAMS, *S3_OBJECT_PARAMS)
+    opt.except!(*NON_AWS_PARAMS)
   end
 
   # ===========================================================================
