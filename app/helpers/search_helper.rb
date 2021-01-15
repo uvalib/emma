@@ -276,7 +276,7 @@ module SearchHelper
   # noinspection RubyResolve
   #++
   def record_popup(item, **opt)
-    opt    = append_css_classes(opt, 'record-popup')
+    append_css_classes!(opt, 'record-popup')
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     rid    = item.emma_repositoryRecordId
@@ -291,7 +291,7 @@ module SearchHelper
       ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
       ph_opt[:'data-path'] = show_upload_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json
-      html_div(ph_txt, **ph_opt)
+      html_div(ph_txt, ph_opt)
     end
   end
 

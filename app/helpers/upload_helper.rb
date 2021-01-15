@@ -650,7 +650,7 @@ module UploadHelper
           'data-group': group
         }
         append_css_classes!(html_opt, 'hidden') unless enabled
-        html_div(**html_opt) { input << label }
+        html_div(html_opt) { input << label }
       end
 
     # Text before the radio buttons:
@@ -802,9 +802,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_no_records_row(**opt)
-    html_opt = prepend_css_classes(opt, 'no-records')
+    prepend_css_classes!(opt, 'no-records')
     # noinspection RubyYardReturnMatch
-    html_div('', html_opt) << html_div(UPLOAD_NO_RECORDS, html_opt)
+    html_div('', opt) << html_div(UPLOAD_NO_RECORDS, opt)
   end
 
   # ===========================================================================
@@ -858,7 +858,7 @@ module UploadHelper
         action_opt[:item] ||= (item if item.is_a?(Model))
         upload_action_icon(operation, **action_opt)
       }.compact
-    html_span(class: 'icon-tray') { icons } if icons.present?
+    html_span(icons, class: 'icon-tray') if icons.present?
   end
 
   # ===========================================================================
@@ -906,7 +906,7 @@ module UploadHelper
       opt[:icon] ||= icon
       check_status_popup(item, path, **opt)
     else
-      opt = prepend_css_classes(opt, 'icon', op.to_s)
+      prepend_css_classes!(opt, 'icon', op)
       make_link(icon, path, **opt)
     end
   end
@@ -927,8 +927,8 @@ module UploadHelper
   # noinspection RubyResolve
   #++
   def check_status_popup(item, path, **opt)
+    append_css_classes!(opt, 'check-status-popup')
     icon   = opt.delete(:icon)
-    opt    = append_css_classes(opt, 'check-status-popup')
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = item.id
@@ -947,7 +947,7 @@ module UploadHelper
       ph_txt = ph_opt.delete(:text) || 'Checking...' # TODO: I18n
       ph_opt[:'data-path'] = path
       ph_opt[:'data-attr'] = attr.to_json
-      html_div(ph_txt, **ph_opt)
+      html_div(ph_txt, ph_opt)
     end
   end
 
@@ -1157,7 +1157,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_filename_display(leader: nil, **opt)
-    opt = prepend_css_classes(opt, 'uploaded-filename')
+    prepend_css_classes!(opt, 'uploaded-filename')
     leader ||= 'Selected file:' # TODO: I18n
     html_div(opt) do
       html_span(leader, class: 'leader') << html_span('', class: 'filename')
@@ -1226,7 +1226,7 @@ module UploadHelper
   # @see monitorSourceRepository() in javascripts/feature/file-upload.js
   #
   def upload_parent_entry_select(**opt)
-    opt    = prepend_css_classes(opt, 'parent-entry-select', 'hidden')
+    prepend_css_classes!(opt, 'parent-entry-select', 'hidden')
     id     = 'parent-entry-search'
     type   = :search
     t_id   = opt[:'aria-labelledby'] = "#{id}-title"
@@ -1249,7 +1249,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_field_container(item, **opt)
-    opt = prepend_css_classes(opt, 'upload-fields')
+    prepend_css_classes!(opt, 'upload-fields')
     html_div(opt) do
       upload_form_fields(item) << upload_no_fields_row
     end
@@ -1425,8 +1425,8 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def bulk_upload_results(**opt)
-    opt = prepend_css_classes(opt, 'file-upload-results', 'hidden')
-    html_div(**opt)
+    prepend_css_classes!(opt, 'file-upload-results', 'hidden')
+    html_div(opt)
   end
 
   # ===========================================================================
@@ -1701,7 +1701,6 @@ module UploadHelper
     input = f.text_field(url_param, value: value)
     html_div(class: 'line') { label << input }
   end
-
 
 end
 

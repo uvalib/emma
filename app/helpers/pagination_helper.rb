@@ -351,7 +351,7 @@ module PaginationHelper
     sep: PAGINATION_SEPARATOR,
     **opt
   )
-    opt = prepend_css_classes(opt, 'pagination')
+    prepend_css_classes!(opt, 'pagination')
     html_tag(:nav, opt) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
@@ -417,7 +417,7 @@ module PaginationHelper
     if link
       link_to(label, path, opt)
     else
-      html_span(label, append_css_classes(opt, 'disabled'))
+      html_span(label, append_css_classes!(opt, 'disabled'))
     end
   end
 

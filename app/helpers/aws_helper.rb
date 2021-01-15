@@ -67,9 +67,9 @@ module AwsHelper
     label  = opt.delete(:label) || 'AWS' # TODO: I18n
     region = opt.delete(:region)
     url    = s3_bucket_url(bucket, region: region)
-    html_opt = prepend_css_classes(opt, 'aws-link')
-    html_opt[:title] ||= 'Go to the AWS S3 console page for this bucket'
-    external_link(label, url, **html_opt)
+    opt[:title] ||= 'Go to the AWS S3 console page for this bucket'
+    prepend_css_classes!(opt, 'aws-link')
+    external_link(label, url, **opt)
   end
 
   # ===========================================================================
@@ -214,7 +214,7 @@ module AwsHelper
       parts <<
         html_tag(:h3, class: 'aws-bucket-hdg', id: "##{name}") do
           # noinspection RubyYardParamTypeMatch
-          html_span(*title) << s3_bucket_link(name)
+          html_span(title) << s3_bucket_link(name)
         end
       skip_nav_append(title => name)
     end
@@ -306,7 +306,7 @@ module AwsHelper
   #
   def render_s3_object_headings(**opt)
     headings = s3_object_values(nil)
-    opt      = append_css_classes(opt, 'column-headings')
+    prepend_css_classes!(opt, 'column-headings')
     render_s3_object(headings, **opt)
   end
 
@@ -354,10 +354,10 @@ module AwsHelper
       end
 
     # Render an element containing the column values.
-    html_opt = prepend_css_classes(opt, 'aws-object')
-    html_opt[:'data-row'] = row                   if row
-    append_css_classes!(html_opt, 'first-prefix') if section
-    html_div(entries, html_opt)
+    prepend_css_classes!(opt, 'aws-object')
+    append_css_classes!(opt, 'first-prefix') if section
+    opt[:'data-row'] = row                   if row
+    html_div(entries, opt)
   end
 
   # Show an S3 object placeholder indicating an empty S3 bucket.
@@ -373,7 +373,8 @@ module AwsHelper
     html    = !false?(html)
     label ||= S3_EMPTY_BUCKET
     if html && !label.is_a?(ActiveSupport::SafeBuffer)
-      label = html_tag(:em, html_tag(:strong, label), **opt)
+      label = html_tag(:strong, label)
+      label = html_tag(:em, label, opt)
     end
     entry = { placeholder: label }
     render_s3_object(entry, html: html)

@@ -99,11 +99,10 @@ module UserConcern
     end
 
     # Return no data unless main account information is valid.
-    unless item.error?
-      pref = nil if pref&.error?
-      hist = nil if hist&.error?
-      return item, pref, hist
-    end
+    item = nil if item.error?
+    pref = nil unless item && pref && !pref.error?
+    hist = nil unless item && hist && !hist.error?
+    return item, pref, hist
   end
 
   # ===========================================================================

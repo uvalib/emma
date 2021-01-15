@@ -101,7 +101,7 @@ module LayoutHelper::SearchBar
     id   ||= search_input_field(type)
     return unless id && type
     skip_nav_append(search_bar_label(type) => id)
-    opt = prepend_css_classes(opt, 'search-input-bar')
+    prepend_css_classes!(opt, 'search-input-bar')
     # noinspection RubyYardParamTypeMatch
     search_form(id, type, **opt) do
       search_input(id, type) + search_button(type)
@@ -227,7 +227,7 @@ module LayoutHelper::SearchBar
     # Input field element.
     value ||= request_parameters[id]
     value = '' if value == NULL_SEARCH
-    opt = prepend_css_classes(opt, 'search-input')
+    prepend_css_classes!(opt, 'search-input')
     opt[:'aria-labelledby'] = label_id
     opt[:placeholder] ||= search_input_placeholder(type)
     input = search_field_tag(id, value, opt)
@@ -251,7 +251,7 @@ module LayoutHelper::SearchBar
   def search_button(type, label: nil, **opt)
     type  ||= search_input_target
     label ||= search_button_label(type)
-    opt = prepend_css_classes(opt, 'search-button')
+    prepend_css_classes!(opt, 'search-button')
     submit_tag(label, opt)
   end
 
@@ -278,7 +278,7 @@ module LayoutHelper::SearchBar
   # @see HtmlHelper#icon_button
   #
   def clear_search_button(**opt)
-    opt = prepend_css_classes(opt, 'search-clear')
+    prepend_css_classes!(opt, 'search-clear')
     opt[:role]  ||= 'button'
     opt[:title] ||= 'Clear search terms' # TODO: I18n
     opt[:icon]  ||= CLEAR_SEARCH_ICON

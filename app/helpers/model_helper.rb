@@ -1093,7 +1093,7 @@ module ModelHelper
   # @see updateFieldsetInputs() in javascripts/feature/file-upload.js
   #
   def render_form_input_multi(name, value, **opt)
-    opt = append_css_classes(opt, 'input', 'multi')
+    append_css_classes!(opt, 'input', 'multi')
     render_field_item(name, value, **opt)
   end
 
@@ -1108,7 +1108,7 @@ module ModelHelper
   # @see updateTextInputField() in javascripts/feature/file-upload.js
   #
   def render_form_input(name, value, **opt)
-    opt = append_css_classes(opt, 'input', 'single')
+    append_css_classes!(opt, 'input', 'single')
     render_field_item(name, value, **opt)
   end
 
@@ -1239,9 +1239,8 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def status_marker(status: nil, label: nil, **opt)
-    opt = prepend_css_classes(opt, 'status-marker')
     status = Array.wrap(status).compact
-    append_css_classes!(opt, *status) if status.present?
+    prepend_css_classes!(opt, 'status-marker', *status)
     icon, tip =
       %i[required disabled invalid valid].find { |state|
         next unless status.include?(state) && (entry = STATUS_MARKER[state])

@@ -66,9 +66,9 @@ module PopupHelper
     control_opt[:'aria-haspopup'] ||= 'dialog'
     text = control_opt.delete(:text).presence
     append_css_classes!(control_opt, (text ? 'text' : 'icon'))
-    control =
+    popup_control =
       if text
-        html_span(text, **control_opt)
+        html_span(text, control_opt)
       else
         icon_button(**control_opt)
       end
@@ -81,7 +81,7 @@ module PopupHelper
     closer_opt[:title]        ||= 'Close this popup' # TODO: I18n
     closer_opt[:'aria-label'] ||= closer_opt[:title]
     closer     = closer_opt.delete(:icon) || 'X' # TODO: I18n
-    closer     = html_span(**closer_opt) { closer }
+    closer     = html_span(closer, closer_opt)
 
     # Popup panel contents supplied by the block.
     content = Array.wrap(yield)
@@ -93,18 +93,18 @@ module PopupHelper
     close_opt[:'aria-label'] ||= close_opt[:title]
     close    = close_opt.delete(:label) || 'Close' # TODO: I18n
     close    = button_tag(close, close_opt)
-    controls = html_div(class: POPUP_CONTROLS_CLASS) { close }
+    controls = html_div(close, class: POPUP_CONTROLS_CLASS)
 
     # The popup panel element starts hidden initially.
     panel_css = [POPUP_PANEL_CLASS, resize, left, hidden]
     panel_opt = prepend_css_classes(opt.delete(:panel), *panel_css)
     panel_opt[:role] ||= 'dialog'
     panel_opt[:'aria-modal'] = true unless panel_opt.key?(:'aria-modal')
-    panel = html_div(**panel_opt) { closer << content << controls }
+    popup_panel = html_div(panel_opt) { closer << content << controls }
 
     # The hidden panel is a sibling of the popup button:
-    opt = prepend_css_classes(opt, 'popup-container')
-    html_span(opt) { control << panel }
+    prepend_css_classes!(opt, 'popup-container')
+    html_span(opt) { popup_control << popup_panel }
   end
 
 end

@@ -34,7 +34,7 @@ module LayoutHelper::Footer
   # @return [ActiveSupport::SafeBuffer]
   #
   def footer_table(**opt)
-    opt = prepend_css_classes(opt, 'footer-table')
+    prepend_css_classes!(opt, 'footer-table')
     opt[:wrap]    = true unless opt.key?(:wrap)
     opt[:col_max] = 2    unless opt.key?(:col_max)
     grid_table(FOOTER_TABLE, **opt)

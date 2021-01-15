@@ -69,7 +69,7 @@ module LayoutHelper::Logo
   # @return [ActiveSupport::SafeBuffer]
   #
   def logo_element(mode: :image, **opt)
-    opt = prepend_css_classes(opt, 'logo')
+    prepend_css_classes!(opt, 'logo')
     alt = opt.delete(:alt)
     opt[:'data-turbolinks-permanent'] = true
     html_div(opt) do

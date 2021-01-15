@@ -111,7 +111,7 @@ module HtmlHelper
     tag     = opt.delete(:tag) || :div
     comment = opt.delete(:comment)
     opt[:'aria-hidden'] = true
-    html_tag(tag, **opt) do
+    html_tag(tag, opt) do
       "<!-- #{comment} -->".html_safe if comment.present?
     end
   end
@@ -233,7 +233,7 @@ module HtmlHelper
   # @see #external_link
   #
   def download_link(label, path, **opt, &block)
-    opt = prepend_css_classes(opt, 'download')
+    prepend_css_classes!(opt, 'download')
     external_link(label, path, **opt, &block)
   end
 
@@ -298,8 +298,8 @@ module HtmlHelper
   # @see #append_css_classes!
   #
   def merge_html_options!(html_opt, *args)
-    args.select! { |arg| arg.is_a?(Hash) }
-    classes = args.map { |arg| arg.delete(:class) }
+    args    = args.map { |a| a[:class] ? a.dup : a if a.is_a?(Hash) }.compact
+    classes = args.map { |a| a.delete(:class) }.compact
     append_css_classes!(html_opt, *classes)
     html_opt.merge!(*args)
   end
@@ -590,7 +590,7 @@ module HtmlHelper
     opt[:col]     ||= 0
     opt[:row_max] ||= pairs.size
     opt[:col_max] ||= 1
-    html_div(**html_opt) do
+    html_div(html_opt) do
       pairs.map do |key, value|
         opt[:col] = 0  if opt[:col] == opt[:col_max]
         opt[:row] += 1 if opt[:col].zero?
@@ -600,7 +600,7 @@ module HtmlHelper
         v_opt = prepend_css_classes(r_opt, 'value')
         if wrap
           prepend_css_classes!(r_opt, 'entry')
-          html_div(**r_opt) do
+          html_div(r_opt) do
             key = html_div(k_opt) { ERB::Util.h(key) << ':' }
             key << '&nbsp;'.html_safe << html_div(value, v_opt)
           end

@@ -153,7 +153,7 @@ module FlashHelper
     # @see #render_part
     #
     def render(**opt)
-      opt = prepend_css_classes(opt, 'line').merge!(separator: ' ')
+      prepend_css_classes!(opt, 'line').merge!(separator: ' ')
       html_div(opt) do
         if @parts.size > 1
           n = 0
@@ -190,7 +190,7 @@ module FlashHelper
       elsif position == last
         part = last_part(part, html: true)
       end
-      opt = prepend_css_classes(opt, classes)
+      prepend_css_classes!(opt, classes)
       html_div(part, opt)
     end
 

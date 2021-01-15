@@ -59,7 +59,7 @@ module SessionDebugHelper
         end
       end
     table = { SESSION: 'DEBUG' }.merge(pairs)
-    opt   = prepend_css_classes(opt, 'session-debug-table')
+    prepend_css_classes!(opt, 'session-debug-table')
     grid_table(table, **opt)
   end
 

@@ -85,7 +85,7 @@ module ImageHelper
         image_tag(url, alt: alt)
       end
     row = positive(row)
-    opt = append_css_classes(opt, "row-#{row}") if row
+    append_css_classes!(opt, "row-#{row}") if row
     if link.present?
       opt, link_opt = partition_options(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
@@ -107,7 +107,7 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def image_placeholder(url, image: nil, **opt)
-    opt  = prepend_css_classes(opt, PLACEHOLDER_IMAGE_CLASS)
+    prepend_css_classes!(opt, PLACEHOLDER_IMAGE_CLASS)
     data = { path: url, 'turbolinks-track': false }
     data[:alt] = opt[:alt] if opt[:alt]
     opt[:data] = opt[:data]&.merge(data) || data

@@ -461,7 +461,7 @@ module LayoutHelper::SearchControls
     end
     grid_rows.compact!
     return if grid_rows.blank?
-    opt = prepend_css_classes(opt, 'search-controls', "columns-#{max_columns}")
+    prepend_css_classes!(opt, 'search-controls', "columns-#{max_columns}")
     append_css_classes!(opt, 'open') if SEARCH_CONTROLS_INITIALLY_OPEN
     html_div(opt) { grid_rows }
   end
@@ -480,7 +480,7 @@ module LayoutHelper::SearchControls
       label = ADV_SEARCH_OPENER_LABEL
       tip   = ADV_SEARCH_OPENER_TIP
     end
-    opt = prepend_css_classes(opt, 'advanced-search-toggle')
+    prepend_css_classes!(opt, 'advanced-search-toggle')
     opt[:title] ||= tip
     opt[:type]  ||= 'button'
     button_tag(label, opt)
@@ -889,7 +889,7 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   #
   def reset_menu(**opt)
-    opt = append_css_classes(opt, 'reset')
+    append_css_classes!(opt, 'reset')
     # noinspection RubyYardReturnMatch
     menu_spacer(**opt) << reset_button(**opt)
   end

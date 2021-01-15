@@ -79,6 +79,12 @@ module HelpHelper
 
     }.compact.to_h.deep_freeze
 
+  # Default text to display while help is loading asynchronously. # TODO: I18n
+  #
+  # @type [String]
+  #
+  HELP_PLACEHOLDER = 'Loading help topic...'
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -98,7 +104,7 @@ module HelpHelper
   # @see togglePopup() in app/assets/javascripts/feature/popup.js
   #
   def help_popup(topic, sub_topic = nil, **opt)
-    opt    = append_css_classes(opt, 'help-popup')
+    append_css_classes!(opt, 'help-popup')
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     id     = opt[:'data-iframe'] || attr[:id] || css_randomize("help-#{topic}")
@@ -109,11 +115,11 @@ module HelpHelper
 
     popup_container(**opt) do
       ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
-      ph_txt = ph_opt.delete(:text) || 'Loading help topic...' # TODO: I18n
+      ph_txt = ph_opt.delete(:text) || HELP_PLACEHOLDER
       ph_opt[:'data-path']  = help_path(id: topic, modal: true)
       ph_opt[:'data-attr']  = attr.to_json
       ph_opt[:'data-topic'] = "#{topic}_#{sub_topic}_help" if sub_topic
-      html_div(ph_txt, **ph_opt)
+      html_div(ph_txt, ph_opt)
     end
   end
 
@@ -205,9 +211,9 @@ module HelpHelper
     outer_tag = opt[:tag] || :ul
     inner_opt = opt[:inner]&.dup || {}
     inner_tag = inner_opt.delete(:tag).presence || :li
-    html_tag(outer_tag, **outer_opt) do
+    html_tag(outer_tag, outer_opt) do
       help_links(*topics, type: link_type).map do |title, path|
-        html_tag(inner_tag, **inner_opt) { link_to(title, path) }
+        html_tag(inner_tag, inner_opt) { link_to(title, path) }
       end
     end
   end
@@ -226,7 +232,7 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_element(*content, **opt)
-    html_div(**opt) { help_paragraphs(*content) }
+    html_div(opt) { help_paragraphs(*content) }
   end
 
   # Transform help content parts into an array of HTML entries.
@@ -269,8 +275,8 @@ module HelpHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def help_span(label, **opt)
-    html_opt = append_css_classes(opt, 'for-help')
-    html_span(label, html_opt)
+    append_css_classes!(opt, 'for-help')
+    html_span(label, opt)
   end
 
   # Render a help link within help text.
@@ -302,7 +308,7 @@ module HelpHelper
   # @return [nil]                         No content and *wrap* is false.
   #
   def help_section(item: nil, wrap: true, **opt)
-    opt = append_css_classes(opt, 'help-section')
+    append_css_classes!(opt, 'help-section')
     help_container(item: item, wrap: wrap, **opt)
   end
 
@@ -336,13 +342,12 @@ module HelpHelper
     content = HELP_ENTRY.dig(topic, :content)
     content ||= (render(partial) if partial_exists?(partial))
     return content unless wrap
-    lvl = opt.delete(:level)
     row = opt.delete(:row)
     row &&= "row-#{row}"
-    mod = ('modal' if modal?)
-    opt = prepend_css_classes(opt, 'help-container', row, mod)
-    opt[:role] = 'article' if lvl == 1
-    html_div(content, **opt)
+    modal = ('modal' if modal?)
+    opt[:role] = 'article' if opt.delete(:level) == 1
+    prepend_css_classes!(opt, 'help-container', row, modal)
+    html_div(content, opt)
   end
 
 end

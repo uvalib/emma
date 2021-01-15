@@ -173,7 +173,7 @@ module ArtifactHelper
     fmt_name  = I18n.t(lbl_key, default: fmt_name)
 
     # Initialize link options.
-    opt = append_css_classes(opt, 'link')
+    append_css_classes!(opt, 'link')
     opt[:label] ||= fmt_name
     opt[:path]    = url
 
@@ -279,7 +279,7 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_progress(image: nil, **opt)
-    opt = prepend_css_classes(opt, DOWNLOAD_PROGRESS_CLASS)
+    prepend_css_classes!(opt, DOWNLOAD_PROGRESS_CLASS)
     opt[:title] ||= DOWNLOAD_PROGRESS_TIP
     opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
     opt[:role]  ||= 'button'
@@ -297,7 +297,7 @@ module ArtifactHelper
   # @see appendFailureMessage() in app/assets/javascripts/feature/download.js
   #
   def download_failure(**opt)
-    opt = prepend_css_classes(opt, DOWNLOAD_FAILURE_CLASS)
+    prepend_css_classes!(opt, DOWNLOAD_FAILURE_CLASS)
     html_span('', opt)
   end
 
@@ -312,7 +312,7 @@ module ArtifactHelper
   def download_button(label: nil, fmt: nil, **opt)
     label ||= DOWNLOAD_BUTTON_LABEL
     fmt = format_label(fmt)
-    opt = prepend_css_classes(opt, DOWNLOAD_BUTTON_CLASS)
+    prepend_css_classes!(opt, DOWNLOAD_BUTTON_CLASS)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
     # noinspection RubyYardParamTypeMatch
