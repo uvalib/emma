@@ -5,16 +5,21 @@
 
 __loading_begin(__FILE__)
 
+require 'search'
+
 # Namespace for classes that manage the representation of data fields involved
 # in search, ingest or upload.
 #
 module Field
 
+  SYNTHETIC_KEYS       = %i[field ignored required readonly array type].freeze
+  SYNTHETIC_PROPERTIES = SYNTHETIC_KEYS.map { |k| [k, true] }.to_h.freeze
+
   # ===========================================================================
   # :section: Configuration
   # ===========================================================================
 
-  protected
+  public
 
   # Return an enumeration type expressed or implied by *value*.
   #
@@ -24,50 +29,71 @@ module Field
   # @return [nil]   If *value* could not be cast a subclass of EnumType.
   #
   def self.enum_type(value)
-    value = value.strip.downcase if value.is_a?(String)
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case value
-      when 'boolean' then TrueFalse
-      when :boolean  then TrueFalse
-      when Symbol    then value.to_s.safe_constantize
-      when Class     then value if value < EnumType
+    if value.is_a?(Class)
+      value if value < EnumType
+    elsif value.to_s.strip.casecmp?('boolean')
+      TrueFalse
+    elsif value.is_a?(Symbol)
+      value.to_s.safe_constantize
     end
   end
 
   # field_configuration
   #
-  # @param [Hash] entry
+  # @param [Symbol]       field
+  # @param [Hash, String] entry
   #
   # @option entry [Integer, nil]   :min
   # @option entry [Integer, nil]   :max
   # @option entry [String]         :label
   # @option entry [String]         :tooltip
-  # @option entry [String]         :placeholder
-  # @option entry [Symbol, String] :type
+  # @option entry [String, Array]  :help          Help popup topic/subtopic.
+  # @option entry [String]         :notes         Inline notes.
+  # @option entry [String]         :notes_html    Inline HTML notes.
+  # @option entry [String]         :placeholder   Input area placeholder text.
+  # @option entry [Symbol, String] :type          See Usage Notes [1]
   # @option entry [String]         :origin
   #
   # @return [Hash]
   #
-  def self.field_configuration(entry)
+  # == Usage Notes
+  # The :type indicates the type of HTML input element, either directly or
+  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
+  # subclass which gives the range of values for a <select> element or the set
+  # of checkboxes to create within a <fieldset> element.  Any other value
+  # indicates <textarea> or the <input> type attribute to use.
+  #
+  #--
+  # noinspection RubyNilAnalysis, RubyCaseWithoutElseBlockInspection
+  #++
+  def self.field_configuration(field, entry)
+    return unless entry.is_a?(Hash)
     entry.map { |item, value|
-      if value.is_a?(Hash)
-        # Sub-field under :file_data or :emma_data.
-        value = send(__method__, value)
-      else
-        # noinspection RubyCaseWithoutElseBlockInspection
-        case item
-          when :min, :max then value = value&.to_i
-          when :origin    then value = value.to_s.presence
-          when :type      then value = enum_type(value) || value
-        end
+      case item
+        when :min, :max then value = value&.to_i
+        when :help      then value = Array.wrap(value).map(&:to_sym)
+        when :type      then value = enum_type(value) || value.to_s
+        when /_html$/   then value = value.to_s.strip.html_safe
+        else
+          # Sub-field under :file_data or :emma_data.
+          value = send(__method__, item, value) if value.is_a?(Hash)
       end
+      value = value.reject(&:blank?) if value.is_a?(Array)
+      value = value.strip if value.is_a?(String) && !value.html_safe?
       [item, value]
-    }.to_h.tap { |result|
-      result[:ignored]  = result[:max].present? && !result[:max].positive?
-      result[:required] = result[:min].to_i.positive?
-      result[:readonly] = result[:origin].to_s.remove('user').present?
-      result[:array]    = (result[:max].to_i != 1)
-      result[:type]   ||= result[:array] ? 'textarea' : 'text'
+    }.to_h.tap { |h|
+      set = SYNTHETIC_PROPERTIES
+      set = set.slice(:field) if h[:type] == 'json'
+      if set[:array]
+        h[:array]   = (h.key?(:max) && h[:max].nil?)
+        h[:array] ||= (h[:max].present? && h[:max] > 1)
+        h[:array] ||= (h[:min].present? && h[:min] > 1)
+      end
+      h[:ignored]  = h[:max].present? && !h[:max].positive?   if set[:ignored]
+      h[:required] = h[:min].to_i.positive?                   if set[:required]
+      h[:readonly] = h[:origin].to_s.remove('user').present?  if set[:readonly]
+      h[:type]   ||= h[:array] ? 'textarea' : 'text'          if set[:type]
+      h[:field]  ||= field                                    if set[:field]
     }
   end
 

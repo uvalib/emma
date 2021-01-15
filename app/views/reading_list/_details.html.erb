@@ -5,7 +5,7 @@
   item  ||= nil or return
   list  ||= nil
   count ||= nil
-  add   ||= {}
+  add   ||= nil
   level ||= 1
   skip  ||= nil
 
@@ -16,6 +16,6 @@
 -%>
 
 <div <%= role -%> class="reading_list-container">
-  <%= reading_list_details(item, add) %>
+  <%= reading_list_details(item, pairs: add) %>
   <%= render('reading_list/titles', opt) unless skip.include?(:titles) %>
 </div>

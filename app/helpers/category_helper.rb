@@ -83,14 +83,13 @@ module CategoryHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def category_details(item, opt = nil)
-    pairs = CATEGORY_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :category, pairs)
+  def category_details(item, pairs: nil, **opt)
+    opt[:model] = :category
+    opt[:pairs] = CATEGORY_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -102,17 +101,14 @@ module CategoryHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def category_list_entry(item, opt = nil)
-    pairs = CATEGORY_INDEX_FIELDS
-    opt ||= {}
-    item_list_entry(item, :category, row: opt[:row]) do
-      # noinspection RubyResolve
-      pairs.merge(category_link(item) => "(#{item.titleCount})").merge(opt)
-    end
+  def category_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :category
+    opt[:pairs] = CATEGORY_INDEX_FIELDS.merge(pairs || {})
+    opt[:pairs].reverse_merge!(category_link(item) => "(#{item.titleCount})")
+    item_list_entry(item, **opt)
   end
 
 end

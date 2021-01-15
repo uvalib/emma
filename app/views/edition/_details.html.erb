@@ -3,7 +3,7 @@
   # A periodical Edition metadata listing.
 
   item  ||= nil or return
-  add   ||= {}
+  add   ||= nil
   level ||= 1
 
   role = ('role="article"'.html_safe if level == 1)
@@ -11,5 +11,5 @@
 -%>
 
 <div <%= role -%> class="edition-container">
-  <%= edition_details(item, add) %>
+  <%= edition_details(item, pairs: add) %>
 </div>

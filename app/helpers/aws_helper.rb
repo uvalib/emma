@@ -496,7 +496,7 @@ module AwsHelper
   def transform_sort_keys(sort_keys)
     if sort_keys.is_a?(Hash)
       sort_keys.compact.map { |name, dir|
-        ascending = !dir.is_a?(FalseClass) && !dir.to_s.casecmp('desc').zero?
+        ascending = !dir.is_a?(FalseClass) && !dir.to_s.casecmp?('desc')
         [name.to_sym, ascending]
       }.to_h
     else

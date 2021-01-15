@@ -85,14 +85,13 @@ module EditionHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def edition_details(item, opt = nil)
-    pairs = EDITION_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :edition, pairs)
+  def edition_details(item, pairs: nil, **opt)
+    opt[:model] = :edition
+    opt[:pairs] = EDITION_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -104,13 +103,13 @@ module EditionHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def edition_list_entry(item, opt = nil)
-    pairs = EDITION_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :edition, pairs)
+  def edition_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :edition
+    opt[:pairs] = EDITION_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
 end

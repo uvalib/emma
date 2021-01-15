@@ -197,20 +197,21 @@ module PeriodicalHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Object]          value
+  # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
   # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
-  def periodical_render_value(item, value)
+  def periodical_render_value(item, value, **opt)
     case field_category(value)
-      when :title         then periodical_link(item)
-      when :latestEdition then latest_edition_link(item)
-      when :category      then periodical_category_links(item)
-      when :language      then periodical_language_links(item)
-      when :country       then periodical_country_links(item)
-      else                     render_value(item, value)
+      when :title         then periodical_link(item, **opt)
+      when :latestEdition then latest_edition_link(item, **opt)
+      when :category      then periodical_category_links(item, **opt)
+      when :language      then periodical_language_links(item, **opt)
+      when :country       then periodical_country_links(item, **opt)
+      else                     render_value(item, value, **opt)
     end
   end
 
@@ -223,14 +224,13 @@ module PeriodicalHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def periodical_details(item, opt = nil)
-    pairs = PERIODICAL_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :periodical, pairs)
+  def periodical_details(item, pairs: nil, **opt)
+    opt[:model] = :periodical
+    opt[:pairs] = PERIODICAL_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -242,13 +242,13 @@ module PeriodicalHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def periodical_list_entry(item, opt = nil)
-    pairs = PERIODICAL_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :periodical, pairs)
+  def periodical_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :periodical
+    opt[:pairs] = PERIODICAL_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
 end

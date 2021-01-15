@@ -81,31 +81,26 @@ module MemberHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def member_details(item, opt = nil)
-    pairs = MEMBER_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :member, pairs)
+  def member_details(item, pairs: nil, **opt)
+    opt[:model] = :member
+    opt[:pairs] = MEMBER_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # Render a listing of member preferences.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #render_field_values.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see #render_field_values
-  #
-  def member_preferences_values(item, opt = nil)
-    pairs = MEMBER_PREFERENCES_FIELDS
-    opt ||= {}
-    render_field_values(item, model: :member, row_offset: opt[:row]) do
-      pairs.merge(opt)
-    end
+  def member_preferences_values(item, pairs: nil, **opt)
+    opt[:model]      = :member
+    opt[:pairs]      = MEMBER_PREFERENCES_FIELDS.merge(pairs || {})
+    opt[:row_offset] = opt.delete(:row) || opt[:row_offset]
+    render_field_values(item, **opt)
   end
 
   # ===========================================================================
@@ -150,21 +145,22 @@ module MemberHelper
   # Render of list of member activity entries.
   #
   # @param [Bs::Api::Record, Array<Bs::Record::TitleDownload>] item
-  # @param [String] id                Control ID (@see #member_history_control)
-  # @param [Hash]   opt               Additional field mappings.
+  # @param [String]    id             Control ID (@see #member_history_control)
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see #render_field_values
-  #
-  def member_history(item, id:, **opt)
-    item  = item.titleDownloads if item.respond_to?(:titleDownloads)
-    pairs = MEMBER_HISTORY_FIELDS.merge(opt).merge!(index: 0)
+  def member_history(item, id:, pairs: nil, **opt)
+    item = item.titleDownloads if item.respond_to?(:titleDownloads)
+    opt[:model]   = :member
+    opt[:pairs]   = MEMBER_HISTORY_FIELDS.merge(pairs || {})
+    opt[:index] ||= 0
     html_div(id: id, class: MEMBER_HISTORY_CSS_CLASS) do
       Array.wrap(item).map do |entry|
-        pairs[:index] += 1
-        html_div(class: "history-entry row-#{pairs[:index]}") do
-          render_field_values(entry, model: :member, pairs: pairs)
+        opt[:index] += 1
+        html_div(class: "history-entry row-#{opt[:index]}") do
+          render_field_values(entry, **opt)
         end
       end
     end
@@ -179,13 +175,13 @@ module MemberHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def member_list_entry(item, opt = nil)
-    pairs = MEMBER_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :member, pairs)
+  def member_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :member
+    opt[:pairs] = MEMBER_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
 end

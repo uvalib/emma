@@ -92,7 +92,7 @@ module LogoHelper
     return repo if repo && EmmaRepository.valid?(repo) || !src.is_a?(String)
     # Attempt a reverse lookup by repository name.
     # noinspection RubyYardReturnMatch
-    EmmaRepository.pairs.first { |_repo, name| src.casecmp(name).zero? }&.first
+    EmmaRepository.pairs.first { |_repo, name| src.casecmp?(name) }&.first
   end
 
   # repository_name

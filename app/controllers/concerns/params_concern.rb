@@ -156,7 +156,7 @@ module ParamsConcern
         session['debug'] = false
       end
 
-    elsif debug.to_s.downcase == 'reset'
+    elsif debug.to_s.casecmp?('reset')
       Log.info("#{__method__}: debug=#{debug.inspect} -> RESET")
       session.delete('debug')
 
@@ -190,11 +190,11 @@ module ParamsConcern
   def resolve_sort
     changed = false
 
-    if params[:controller].to_s.downcase == 'search'
+    if params[:controller].to_s.casecmp?('search')
 
       # Relevance is the default sort but the Unified Search API doesn't
       # actually accept it as a sort type.
-      if params[:sort].to_s.casecmp('relevance').zero?
+      if params[:sort].to_s.casecmp?('relevance')
         params.delete(:sort)
         changed = true
       end
@@ -230,7 +230,7 @@ module ParamsConcern
   # @return [void]
   #
   def initialize_menus
-    return if params[:controller].to_s.downcase == 'upload'
+    return if params[:controller].to_s.casecmp?('upload')
     ss = session_section
     SEARCH_KEYS.each do |key|
       ss_value = ss[key.to_s]

@@ -147,17 +147,18 @@ module ReadingListHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Object]          value
+  # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
   # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
-  def reading_list_render_value(item, value)
+  def reading_list_render_value(item, value, **opt)
     case field_category(value)
-      when :name, :label then reading_list_link(item)
-      when :subscription then reading_list_subscriptions(item)
-      else                    render_value(item, value)
+      when :name, :label then reading_list_link(item, **opt)
+      when :subscription then reading_list_subscriptions(item, **opt)
+      else                    render_value(item, value, **opt)
     end
   end
 
@@ -170,14 +171,13 @@ module ReadingListHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def reading_list_details(item, opt = nil)
-    pairs = READING_LIST_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :reading_list, pairs)
+  def reading_list_details(item, pairs: nil, **opt)
+    opt[:model] = :reading_list
+    opt[:pairs] = READING_LIST_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -189,13 +189,13 @@ module ReadingListHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def reading_list_list_entry(item, opt = nil)
-    pairs = READING_LIST_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :reading_list, pairs)
+  def reading_list_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :reading_list
+    opt[:pairs] = READING_LIST_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
 end

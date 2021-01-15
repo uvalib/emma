@@ -86,6 +86,7 @@ module SearchHelper
   #
   # @param [Search::Api::Record] item
   # @param [Object]              value
+  # @param [Hash]                opt    Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
   # @return [nil]     If *value* was nil or *item* resolved to nil.
@@ -95,12 +96,12 @@ module SearchHelper
   #--
   # noinspection RubyYardParamTypeMatch
   #++
-  def search_render_value(item, value)
+  def search_render_value(item, value, **opt)
     case value
-      when :dc_title                then title_and_source_logo(item)
-      when :emma_repositoryRecordId then source_record_link(item)
-      when :emma_retrievalLink      then source_retrieval_link(item)
-      else                               upload_render_value(item, value)
+      when :dc_title                then title_and_source_logo(item, **opt)
+      when :emma_repositoryRecordId then source_record_link(item, **opt)
+      when :emma_retrievalLink      then source_retrieval_link(item, **opt)
+      else                               upload_render_value(item, value, **opt)
     end
   end
 
@@ -108,43 +109,47 @@ module SearchHelper
   # repository.
   #
   # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #html_div for title.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
-  # noinspection RubyResolve
+  # noinspection RubyResolve, RubyYardReturnMatch
   #++
-  def title_and_source_logo(item)
+  def title_and_source_logo(item, **opt)
     title  = item.full_title
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
     logo   = repository_source_logo(source)
     if logo.present?
-      # noinspection RubyYardReturnMatch
-      html_div(title, class: "title #{source}".strip) << logo
+      prepend_css_classes!(opt, 'title', source)
+      title = html_div(title, opt)
+      title << logo
     else
-      title_and_source(item)
+      title_and_source(item, **opt)
     end
   end
 
   # Display title of the associated work along with the source repository.
   #
   # @param [Search::Api::Record] item
+  # @param [Hash]                opt    Passed to #html_div for title.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   #--
-  # noinspection RubyResolve
+  # noinspection RubyResolve, RubyYardReturnMatch
   #++
-  def title_and_source(item)
+  def title_and_source(item, **opt)
     title  = item.full_title
     source = item.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
     name   = source&.titleize || 'LOGO'
     logo   = name && repository_source(item, source: source, name: name)
     if logo.present?
-      # noinspection RubyYardReturnMatch
-      html_div(title, class: "title #{source}".strip) << logo
+      prepend_css_classes!(opt, 'title', *source)
+      title = html_div(title, opt)
+      title << logo
     else
       ERB::Util.h(title)
     end
@@ -251,14 +256,13 @@ module SearchHelper
   # Render an item metadata listing.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def search_item_details(item, opt = nil)
-    pairs = SEARCH_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :search, pairs)
+  def search_item_details(item, pairs: nil, **opt)
+    opt[:model] = :search
+    opt[:pairs] = SEARCH_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # Create a container with the repository ID displayed as a link but acting as
@@ -303,28 +307,25 @@ module SearchHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def search_list_entry(item, opt = nil)
-    pairs = SEARCH_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :search, pairs)
+  def search_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :search
+    opt[:pairs] = SEARCH_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
   # Include edit and delete controls below the entry number.
   #
   # @param [Model] item
-  # @param [Hash]  opt
+  # @param [Hash]  opt                Passed to #list_entry_number.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see ModelHelper#list_entry_number
   # @see UploadHelper#upload_edit_icon
   # @see UploadHelper#upload_delete_icon
   #
-  def search_list_entry_number(item, opt = nil)
+  def search_list_entry_number(item, **opt)
     db_id =
       if can?(:edit, Upload)
         Upload.id_for(item) ||
@@ -332,7 +333,7 @@ module SearchHelper
             Upload.where(submission_id: sid).first&.id
           end
       end
-    list_entry_number(item, opt) do
+    list_entry_number(item, **opt) do
       # noinspection RubyYardParamTypeMatch
       upload_entry_icons(item, id: db_id) if db_id.present?
     end

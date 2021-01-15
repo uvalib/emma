@@ -4,7 +4,7 @@
 
   item  ||= nil or return
   image ||= nil
-  add   ||= {}
+  add   ||= nil
   level ||= 1
   skip  ||= nil
 
@@ -14,6 +14,6 @@
 -%>
 
 <div <%= role -%> class="upload-container">
-  <%= upload_details(item, add) %>
+  <%= upload_details(item, pairs: add) %>
   <%= image || cover_image(item) unless skip.include?(:cover_image) %>
 </div>

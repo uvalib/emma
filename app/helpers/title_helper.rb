@@ -314,16 +314,17 @@ module TitleHelper
   #
   # @param [Bs::Api::Record] item
   # @param [Object]          value
+  # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
   # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
   # @see ModelHelper#render_value
   #
-  def title_render_value(item, value)
+  def title_render_value(item, value, **opt)
     case field_category(value)
       when :title then title_link(item)
-      else             render_value(item, value)
+      else             render_value(item, value, **opt)
     end
   end
 
@@ -336,14 +337,13 @@ module TitleHelper
   # Render an item metadata listing.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt          Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def title_details(item, opt = nil)
-    pairs = TITLE_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :title, pairs)
+  def title_details(item, pairs: nil, **opt)
+    opt[:model] = :title
+    opt[:pairs] = TITLE_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -355,13 +355,13 @@ module TitleHelper
   # Render a single entry for use within a list of items.
   #
   # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def title_list_entry(item, opt = nil)
-    pairs = TITLE_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :title, pairs)
+  def title_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :title
+    opt[:pairs] = TITLE_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
 end

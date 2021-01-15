@@ -290,7 +290,7 @@ module Import
     key = hash_key(val).to_s
     # noinspection RubyYardReturnMatch
     type.pairs.find do |name, label|
-      return name if name.casecmp(key).zero? || label.casecmp(val).zero?
+      return name if name.casecmp?(key) || label.casecmp?(val)
     end
   end
 

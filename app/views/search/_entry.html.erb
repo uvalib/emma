@@ -7,18 +7,17 @@
   return unless item || index
 
   offset ||= page_offset
-  add    ||= {}
+  add    ||= nil
   level  ||= 2
   row    ||= 1
   skip   ||= nil
 
   # skip = Array.wrap(skip)
   skip = [*skip, :thumbnail].uniq
-  add  = add.merge(index: index, row: row)
-  opt  = { index: index, offset: offset, level: level, row: row, skip: skip }
+  opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
 
 -%>
 
-<%= search_list_entry_number(item, opt) unless skip.include?(:number) %>
-<%= thumbnail(item, **opt, link: true)  unless skip.include?(:thumbnail) %>
-<%= search_list_entry(item, add) %>
+<%= search_list_entry_number(item, **opt) unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true)    unless skip.include?(:thumbnail) %>
+<%= search_list_entry(item, pairs: add, index: index, row: row) %>

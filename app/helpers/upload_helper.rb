@@ -339,7 +339,8 @@ module UploadHelper
 
   # Render the contents of the :file_data field.
   #
-  # @param [String, Hash, Upload] value
+  # @param [String, Hash, Upload, nil] value
+  # @param [Hash]                      opt    Passed to #render_json_data
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *value* did not have valid JSON.
@@ -347,16 +348,17 @@ module UploadHelper
   #--
   # noinspection RubyYardParamTypeMatch
   #++
-  def render_file_data(value)
+  def render_file_data(value, **opt)
     item  = (value if value.is_a?(Upload))
     value = item.file_data if item
     pairs = json_parse(value)
-    render_json_data(item, pairs) if pairs
+    render_json_data(item, pairs, **opt)
   end
 
   # Render the contents of the :emma_data field.
   #
-  # @param [String, Hash, Upload] value
+  # @param [String, Hash, Upload, nil] value
+  # @param [Hash]                      opt    Passed to #render_json_data
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *value* did not have valid JSON.
@@ -364,31 +366,36 @@ module UploadHelper
   #--
   # noinspection RubyYardParamTypeMatch
   #++
-  def render_emma_data(value)
+  def render_emma_data(value, **opt)
     item  = (value if value.is_a?(Upload))
     value = item.emma_data if item
-    pairs = json_parse(value) or return
-    pairs.transform_keys! { |k| SEARCH_RECORD_LABELS[k] || k }
-    render_json_data(item, pairs)
+    pairs = json_parse(value)
+    pairs&.transform_keys! { |k| SEARCH_RECORD_LABELS[k] || k }
+    render_json_data(item, pairs, **opt)
   end
 
   # Render hierarchical data.
   #
-  # @param [Model, nil]   item
-  # @param [String, Hash] value
+  # @param [Model, nil]        item
+  # @param [String, Hash, nil] value
+  # @param [Hash]              opt        Passed to #render_field_values
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *value* was not valid JSON.
   #
-  def render_json_data(item, value)
-    return unless (pairs = json_parse(value))
-    pairs.each_pair do |k, v|
-      pairs[k] = render_json_data(item, v) if v.is_a?(Hash)
-    end
-    html_div(class: 'data-list') do
-      # noinspection RubyYardParamTypeMatch
-      render_field_values(item, model: :upload, pairs: pairs)
-    end
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def render_json_data(item, value, **opt)
+    return unless item
+    pairs = json_parse(value)
+    pairs &&=
+      pairs.transform_values! do |v|
+        v.is_a?(Hash) ? render_json_data(item, v, **opt) : v
+      end
+    pairs &&= render_field_values(item, model: :upload, pairs: pairs, **opt)
+    pairs ||= render_empty_value(EMPTY_VALUE)
+    html_div(pairs, class: 'data-list')
   end
 
   # ===========================================================================
@@ -401,6 +408,7 @@ module UploadHelper
   #
   # @param [Upload] item
   # @param [*]      value
+  # @param [Hash]   opt               Passed to the render method.
   #
   # @return [Field::Type]
   # @return [String]
@@ -408,17 +416,17 @@ module UploadHelper
   #
   # @see ModelHelper#render_value
   #
-  def upload_render_value(item, value)
+  def upload_render_value(item, value, **opt)
     if !value.is_a?(Symbol)
-      render_value(item, value)
+      render_value(item, value, **opt)
     elsif item.is_a?(Upload) && item.field_names.include?(value)
       case value
-        when :file_data then render_file_data(item) || '{}'
-        when :emma_data then render_emma_data(item) || '{}'
-        else                 item[value]            || EMPTY_VALUE
+        when :file_data then render_file_data(item, **opt)
+        when :emma_data then render_emma_data(item, **opt)
+        else                 item[value] || EMPTY_VALUE
       end
     else
-      Field.for(item, value) || render_value(item, value)
+      Field.for(item, value) || render_value(item, value, **opt)
     end
   end
 
@@ -431,14 +439,13 @@ module UploadHelper
   # Render upload attributes.
   #
   # @param [Upload] item
-  # @param [Hash]   opt               Additional field mappings.
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_details.
   #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If *item* is blank.
-  #
-  def upload_details(item, opt = nil)
-    pairs = UPLOAD_SHOW_FIELDS.merge(opt || {})
-    item_details(item, :upload, pairs)
+  def upload_details(item, pairs: nil, **opt)
+    opt[:model] = :upload
+    opt[:pairs] = UPLOAD_SHOW_FIELDS.merge(pairs || {})
+    item_details(item, **opt)
   end
 
   # ===========================================================================
@@ -764,27 +771,23 @@ module UploadHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Additional field mappings.
+  # @param [Bs::Api::Record] item
+  # @param [Hash, nil]       pairs    Additional field mappings.
+  # @param [Hash]            opt      Passed to #item_list_entry.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def upload_list_entry(item, opt = nil)
-    pairs = UPLOAD_INDEX_FIELDS.merge(opt || {})
-    item_list_entry(item, :upload, pairs)
+  def upload_list_entry(item, pairs: nil, **opt)
+    opt[:model] = :upload
+    opt[:pairs] = UPLOAD_INDEX_FIELDS.merge(pairs || {})
+    item_list_entry(item, **opt)
   end
 
   # Include control icons below the entry number.
   #
-  # @param [Upload]    item
-  # @param [Hash, nil] opt
+  # @param [Upload] item
+  # @param [Hash]   opt               Passed to #list_entry_number.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  # @see ModelHelper#list_entry_number
-  #
-  def upload_list_entry_number(item, opt = nil)
-    list_entry_number(item, opt) do
+  def upload_list_entry_number(item, **opt)
+    list_entry_number(item, **opt) do
       upload_entry_icons(item)
     end
   end
@@ -1004,13 +1007,14 @@ module UploadHelper
 
   # Render pre-populated form fields.
   #
-  # @param [Upload] item
-  # @param [Hash]   opt               Additional field mappings.
+  # @param [Upload]    item
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #render_form_fields.
   #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def upload_form_fields(item, **opt)
-    form_fields(item, :upload, UPLOAD_FORM_FIELDS.merge(opt))
+  def upload_form_fields(item, pairs: nil, **opt)
+    opt[:model] = :upload
+    opt[:pairs] = UPLOAD_FORM_FIELDS.merge(pairs || {})
+    render_form_fields(item, **opt)
   end
 
   # ===========================================================================

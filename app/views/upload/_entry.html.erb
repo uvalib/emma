@@ -9,18 +9,17 @@
 
   group  ||= (item.state_group if item.is_a?(Upload))
   offset ||= page_offset
-  add    ||= {}
+  add    ||= nil
   level  ||= 2
   row    ||= 1
   skip   ||= nil
 
   skip = [*skip, :thumbnail].uniq
-  opt  = { index: index, row: row, group: group }
-  add  = add.merge(opt)
-  opt.merge!(offset: offset, level: level, skip: skip)
+  opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
+  opt.merge!(group: group) if group
 
 -%>
 
-<%= upload_list_entry_number(item, opt) unless skip.include?(:number) %>
-<%= thumbnail(item, **opt, link: true)  unless skip.include?(:thumbnail) %>
-<%= upload_list_entry(item, add) %>
+<%= upload_list_entry_number(item, **opt) unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true)    unless skip.include?(:thumbnail) %>
+<%= upload_list_entry(item, pairs: add, index: index, row: row, group: group)%>

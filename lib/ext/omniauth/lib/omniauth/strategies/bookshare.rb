@@ -319,7 +319,7 @@ module OmniAuth
 
 =begin
       def on_path?(path)
-        current_path.casecmp(path).zero?
+        current_path.casecmp?(path)
       end
 =end
 

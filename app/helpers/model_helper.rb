@@ -321,13 +321,15 @@ module ModelHelper
   # Render field/value pairs.
   #
   # @param [Model]               item
-  # @param [String, Symbol, nil] model
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
   # @param [Hash, nil]           pairs        Except for #render_pair options.
   # @param [Integer, nil]        row_offset   Def: 0.
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
   # @param [Proc]                block        Passed to #field_values.
   #
-  # @option pairs [Integer] :index            Offset to make unique element IDs
+  # @option opt [Integer] :index              Offset to make unique element IDs
   #                                             passed to #render_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -335,22 +337,21 @@ module ModelHelper
   def render_field_values(
     item,
     model:      nil,
+    action:     nil,
     pairs:      nil,
     row_offset: nil,
     separator:  DEFAULT_ELEMENT_SEPARATOR,
+    **opt,
     &block
   )
-    if item.is_a?(ApplicationRecord)
-      opt, pairs = partition_options(pairs, :index, :row) # Discard :row
-      pairs      = field_values(item, pairs, &block)
-    elsif item.present?
-      pairs      = field_values(item, pairs, &block)
-      opt, pairs = partition_options(pairs, :index, :row) # Discard :row
-    else
-      return ''.html_safe
-    end
-    cfg = nil
-    opt[:row] = row_offset || 0
+    return ''.html_safe unless item
+    pairs = field_values(item, pairs, &block)
+    model  = (model  || params[:controller])&.to_sym
+    action = (action || params[:action])&.to_sym
+
+    opt[:row]   = row_offset || 0
+    opt[:model] = model
+
     # noinspection RubyNilAnalysis
     # @type [Symbol]                 label
     # @type [Symbol, String, Number] value
@@ -370,7 +371,7 @@ module ModelHelper
         end
       opt[:row] += 1
       opt[:field] = field
-      value = render_value(item, value, model: model)
+      value = render_value(item, value, model: model, index: opt[:index])
       render_pair(label, value, **opt) if value
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -380,10 +381,11 @@ module ModelHelper
   # @param [String, Symbol, nil] label
   # @param [Object, nil]         value
   # @param [Symbol, nil]         field
+  # @param [Symbol, nil]         model      Default: `params[:controller]`
   # @param [Integer, nil]        index      Offset to make unique element IDs.
   # @param [Integer, nil]        row        Display row.
-  # @param [String, nil]         separator  Inserted between elements if
-  #                                           *value* is an array.
+  # @param [String, nil]         separator  Between parts if *value* is array.
+  # @param [Hash]                opt        Passed to each #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
   # @return [nil]                           If *value* is blank.
@@ -395,7 +397,16 @@ module ModelHelper
   #--
   # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
   #++
-  def render_pair(label, value, field: nil, index: nil, row: nil, separator: nil)
+  def render_pair(
+    label,
+    value,
+    field:     nil,
+    model:     nil,
+    index:     nil,
+    row:       1,
+    separator: nil,
+    **opt
+  )
     return if value.blank?
     prop = Field.configuration(field)
     rng  = html_id(label || 'None')
@@ -479,14 +490,15 @@ module ModelHelper
   # @param [Object, nil]         value
   # @param [String, Symbol, nil] model  If provided, a model-specific method
   #                                       will be invoked instead.
+  # @param [Hash]                opt    Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
   # @return [nil]     If *value* was nil or *item* resolved to nil.
   #
-  def render_value(item, value, model: nil)
+  def render_value(item, value, model: nil, **opt)
     # noinspection RubyAssignmentExpressionInConditionalInspection
     if model && respond_to?(model_method = "#{model}_render_value")
-      send(model_method, item, value)
+      send(model_method, item, value, **opt)
     elsif value.is_a?(Symbol)
       case field_category(value)
         when :author      then author_links(item)
@@ -669,14 +681,13 @@ module ModelHelper
   # Render an element containing the ordinal position of an entry within a list
   # based on the provided *offset* and *index*.
   #
-  # @param [Model]     item
-  # @param [Hash, nil] opt            Passed to #html_tag except for:
-  #
-  # @option opt [Integer] :index      Required index number.
-  # @option opt [Integer] :offset     Default: `#page_offset`.
-  # @option opt [Integer] :level      Heading tag level (@see #html_tag).
-  # @option opt [String]  :group      Sets :'data-group' for outer <div>.
-  # @option opt [Object]  :skip       Ignored.
+  # @param [Model]        item
+  # @param [Integer]      index       Index number.
+  # @param [Integer, nil] offset      Default: `#page_offset`.
+  # @param [Integer, nil] level       Heading tag level (@see #html_tag).
+  # @param [String, nil]  group       Sets :'data-group' for outer <div>.
+  # @param [Integer, nil] row
+  # @param [Hash]         opt         Passed to inner #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -685,12 +696,20 @@ module ModelHelper
   # @yieldparam  [Integer] offset     The effective page offset.
   # @yieldreturn [Array<ActiveSupport::SafeBuffer>]
   #
-  def list_entry_number(item, opt = nil)
-    opt, html_opt = partition_options(opt, *ITEM_ENTRY_OPT)
-    return unless item && opt[:index]
-    index  = non_negative(opt[:index])
-    row    = positive(opt[:row])
-    offset = opt[:offset]&.to_i || page_offset
+  def list_entry_number(
+    item,
+    index:,
+    offset: nil,
+    level:  nil,
+    group:  nil,
+    row:    nil,
+    **opt
+  )
+    return unless item && index
+    opt.except!(*ITEM_ENTRY_OPT)
+    index  = non_negative(index)
+    row    = positive(row)
+    offset = offset&.to_i || page_offset
     parts  = []
 
     # Label visible only to screen-readers:
@@ -705,12 +724,12 @@ module ModelHelper
     parts += Array.wrap(yield(index, offset)) if block_given?
 
     # Wrap parts in a container for group positioning:
-    prepend_css_classes!(html_opt, 'container')
-    container = html_tag(opt[:level], html_opt) { parts }
+    inner_opt = prepend_css_classes(opt, 'container')
+    container = html_tag(level, parts, inner_opt)
 
     # Wrap the container in the actual number grid element.
     outer_opt = { class: 'number' }
-    outer_opt[:'data-group'] = opt[:group] if opt[:group]
+    outer_opt[:'data-group'] = group             if group
     append_css_classes!(outer_opt, "row-#{row}") if row
     html_div(container, outer_opt)
   end
@@ -720,27 +739,26 @@ module ModelHelper
   # @param [Model]          item
   # @param [String, Symbol] model
   # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Hash]           opt           Passed to #render_field_values.
   # @param [Proc]           block         Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def item_list_entry(item, model, pairs = nil, &block)
+  def item_list_entry(item, model:, pairs: nil, **opt, &block)
+    row = positive(opt[:row])
     html_opt = { class: "#{model}-list-entry" }
-    # noinspection RubyYardParamTypeMatch
-    row = positive(pairs && pairs[:row])
     append_css_classes!(html_opt, "row-#{row}") if row
     if item.nil?
       append_css_classes!(html_opt, 'empty')
+    elsif item.is_a?(Upload)
+      html_opt[:'data-group'] = opt[:group] = item.state_group
+      html_opt[:id]           = "#{model}-#{item.submission_id}"
     elsif item.respond_to?(:identifier)
       html_opt[:id]           = "#{model}-#{item.identifier}"
-    elsif item.is_a?(Upload)
-      html_opt[:id]           = "#{model}-#{item.submission_id}"
-      html_opt[:'data-group'] = item.state_group
-      pairs = { group: item.state_group }.merge!(pairs || {})
     end
     html_div(html_opt) do
       if item
-        render_field_values(item, model: model, pairs: pairs, &block)
+        render_field_values(item, model: model, pairs: pairs, **opt, &block)
       else
         render_empty_value
       end
@@ -758,12 +776,13 @@ module ModelHelper
   # @param [Model]          item
   # @param [String, Symbol] model
   # @param [Hash, nil]      pairs         Label/value pairs.
+  # @param [Hash]           opt           Passed to #render_field_values.
   # @param [Proc]           block         Passed to #render_field_values.
   #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
-  def item_details(item, model, pairs = nil, &block)
+  def item_details(item, model:, pairs: nil, **opt, &block)
     return if item.blank?
     html_div(class: "#{model}-details") do
       render_field_values(item, model: model, pairs: pairs, &block)
@@ -807,29 +826,18 @@ module ModelHelper
 
   public
 
-  # Render pre-populated form fields.
-  #
-  # @param [Model]               item
-  # @param [String, Symbol, nil] model
-  # @param [Hash, nil]           pairs  Label/value pairs.
-  # @param [Proc]                block  Passed to #render_form_fields.
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def form_fields(item, model, pairs = nil, &block)
-    render_form_fields(item, model: model, pairs: pairs, &block)
-  end
-
   # Render field/value pairs.
   #
   # @param [Model]               item
-  # @param [String, Symbol, nil] model
+  # @param [String, Symbol, nil] model        Default: `params[:controller]`.
+  # @param [String, Symbol, nil] action       Default: `params[:action]`.
   # @param [Hash, nil]           pairs        Except #render_form_pair options.
   # @param [Integer, nil]        row_offset   Def: 0.
   # @param [String, nil]         separator    Def: #DEFAULT_ELEMENT_SEPARATOR.
+  # @param [Hash]                opt
   # @param [Proc]                block        Passed to #field_values.
   #
-  # @option pairs [Integer] :index            Offset to make unique element IDs
+  # @option opt [Integer] :index              Offset to make unique element IDs
   #                                             passed to #render_form_pair.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -840,22 +848,21 @@ module ModelHelper
   def render_form_fields(
     item,
     model:      nil,
+    action:     nil,
     pairs:      nil,
     row_offset: nil,
     separator:  DEFAULT_ELEMENT_SEPARATOR,
+    **opt,
     &block
   )
-    if item.is_a?(ApplicationRecord)
-      opt, pairs = partition_options(pairs, :index, :row) # Discard :row
-      pairs      = field_values(item, pairs, &block)
-    elsif item.present?
-      pairs      = field_values(item, pairs, &block)
-      opt, pairs = partition_options(pairs, :index, :row) # Discard :row
-    else
-      return ''.html_safe
-    end
-    cfg = nil
-    opt[:row] = row_offset || 0
+    return ''.html_safe unless item
+    pairs = field_values(item, pairs, &block)
+    model  = (model  || params[:controller])&.to_sym
+    action = (action || params[:action])&.to_sym
+
+    opt[:row]   = row_offset || 0
+    opt[:model] = model
+
     # noinspection RubyNilAnalysis
     # @type [Symbol]                 label
     # @type [Symbol, String, Number] value
@@ -878,7 +885,7 @@ module ModelHelper
       opt[:field]    = field
       opt[:disabled] = readonly_form_field?(field, model) if field
       opt[:required] = required_form_field?(field, model) if field
-      value = render_value(item, value, model: model)
+      value = render_value(item, value, model: model, index: opt[:index])
       render_form_pair(label, value, **opt)
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -888,10 +895,12 @@ module ModelHelper
   # @param [String, Symbol] label
   # @param [Object, nil]    value
   # @param [Symbol]         field       For 'data-field' attribute.
+  # @param [Symbol, String] model       Default: `params[:controller]`
   # @param [Integer]        index       Offset for making unique element IDs.
   # @param [Integer]        row         Display row.
   # @param [Boolean]        disabled
   # @param [Boolean]        required    For 'data-required' attribute.
+  # @param [Hash]                opt
   #
   # @return [ActiveSupport::SafeBuffer] HTML label and value elements.
   # @return [nil]                       If *value* is blank.
@@ -906,10 +915,12 @@ module ModelHelper
     label,
     value,
     field:    nil,
+    model:    nil,
     index:    nil,
     row:      1,
     disabled: nil,
-    required: nil
+    required: nil,
+    **opt
   )
     # Pre-process label to derive names and identifiers.
     base = html_id(label || 'None')

@@ -4,7 +4,7 @@
 
   item  ||= nil or return
   image ||= nil
-  add   ||= {}
+  add   ||= nil
   level ||= 1
   skip  ||= nil
 
@@ -22,6 +22,6 @@
 -%>
 
 <div <%= role -%> class="title-container">
-  <%= title_details(item, add) %>
+  <%= title_details(item, pairs: add) %>
   <%= image || cover_image(item) unless skip.include?(:cover_image) %>
 </div>

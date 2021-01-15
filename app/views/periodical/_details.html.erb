@@ -5,7 +5,7 @@
   item  ||= nil or return
   list  ||= nil
   count ||= nil
-  add   ||= {}
+  add   ||= nil
   level ||= 1
   skip  ||= nil
 
@@ -23,6 +23,6 @@
 -%>
 
 <div <%= role -%> class="periodical-container">
-  <%= periodical_details(item, add) %>
+  <%= periodical_details(item, pairs: add) %>
   <%= render('periodical/editions', opt) unless skip.include?(:editions) %>
 </div>
