@@ -29,7 +29,7 @@ module Search::Shared::LinkMethods
   # URL of the associated work on the web site of the original repository.
   #
   # If :emma_webPageLink is provided, that value is used.  Otherwise, a URL is
-  # manufactured from "en.emma.repository.*.title_path".
+  # manufactured from 'en.emma.repository.*.title_path'.
   #
   # @raise [StandardError]            If #REPOSITORY entry is invalid.
   #

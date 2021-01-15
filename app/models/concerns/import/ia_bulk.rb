@@ -23,7 +23,11 @@ module Import::IaBulk
 
   # Import schema.
   #
-  # @type [Hash{Symbol=>Symbol,Array<(Symbol,(Symbol,Proc))>}]
+  # @type [
+  #   Hash{Symbol=>Symbol},
+  #   Hash{Symbol=>(Symbol,Symbol)},
+  #   Hash{Symbol=>(Symbol,Proc)}
+  # ]
   #
   # == Notes
   #
@@ -169,7 +173,7 @@ module Import::IaBulk
   # @param [Symbol] _k                The name of the field being imported.
   # @param [*]      v
   #
-  # @return [Array<(Array<Symbol>,Array)>]
+  # @return [(Array<Symbol>,Array)]
   #
   def translate_formats(_k, v)
     key    = hash_key(v)

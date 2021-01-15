@@ -5,7 +5,7 @@
   title ||= t('emma.upload.bulk_delete.title')
   logo  ||= repository_source_logo
   list  ||= @list
-  help  ||= nil # TODO: ???
+  help  ||= nil # help_popup(:upload, :bulk_delete) # TODO: ???
 
   unless modal?
     set_page_title(title)

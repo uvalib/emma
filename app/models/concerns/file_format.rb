@@ -161,7 +161,7 @@ module FileFormat
   # @yieldparam [Symbol, Proc, Array] accessor
   # @yieldparam [String]              label
   # @yieldparam [Array<String>]       value
-  # @yieldreturn [Array<(String,Array)>]  label, value
+  # @yieldreturn [(String,Array)] Pass back label/value pair.
   #
   def format_metadata(info)
     return {} if info.blank?

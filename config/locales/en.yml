@@ -74,7 +74,7 @@ en:
 
       controllers:
 
-        # The subset of en.emma.controllers which may be represented in the
+        # The subset of 'en.emma.controllers' which may be represented in the
         # navbar, in the order in which they would be displayed.
 
         - 'search'
@@ -90,7 +90,7 @@ en:
 
       primary:
 
-        # The subset of en.emma.nav_bar.controllers which are always displayed.
+        # The subset of 'nav_bar.controllers' which are always displayed.
         # Non-primary entries will only be displayed if the current URL
         # includes that controller.
 
@@ -240,7 +240,7 @@ en:
         tooltip:        "Specify the number of search results per page.\nNOTE: The EMMA Unified Index does not yet support this capability."
         placeholder:    ~
         values:         [100]
-        default:        ~ # Use emma.*.pagination.page_size
+        default:        ~ # Use 'en.emma.*.pagination.page_size'
         multiple:       false
         menu_format:    'none'
 

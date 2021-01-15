@@ -24,7 +24,7 @@ module Upload::IdentifierMethods
   # @type [String]
   SID_PREFIX = 'u'
 
-  # @type [Array<(Integer,Integer)>]
+  # @type [(Integer,Integer)]
   SID_LETTERS = ('g'..'z').minmax.map(&:ord).deep_freeze
 
   # @type [Integer]

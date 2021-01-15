@@ -76,7 +76,7 @@ en:
           # SR:   equivalent to emma_repository
           # IR:   equivalent to emma_repository
           # NOTE: Should have the same value as:
-          # NOTE:   en.emma.upload.record.emma_data.emma_repository
+          # NOTE:   'en.emma.upload.record.emma_data.emma_repository'
           min:          1
           max:          1
           label:        'Repository'

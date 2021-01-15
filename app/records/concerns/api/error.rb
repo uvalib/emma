@@ -225,7 +225,7 @@ class Api::Error < RuntimeError
     # @return [nil]                   If *allow_nil* is set to *true* and no
     #                                   default message is defined.
     #
-    # @see en.emma.error.api in config/locales/error.en.yml
+    # @see 'en.emma.error.api' in config/locales/error.en.yml
     #
     def default_message(source: nil, type: nil, allow_nil: false)
       source ||= service

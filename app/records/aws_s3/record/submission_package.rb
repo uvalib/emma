@@ -59,8 +59,8 @@ __loading_begin(__FILE__)
 # @attr [Array<TextQuality>]            rem_quality
 # @attr [RemediationStatus]             rem_status
 #
-# @see "en.emma.upload.record.emma_data" (config/locales/records/upload.en.yml)
-# @see "en.emma.search.fields" (config/locales/controllers/search.en.yml)
+# @see 'en.emma.upload.record.emma_data' (config/locales/records/upload.en.yml)
+# @see 'en.emma.search.record' (config/locales/records/search.en.yml)
 # @see EmmaData in app/assets/javascripts/feature/file-upload.js
 #
 class AwsS3::Record::SubmissionPackage < AwsS3::Api::Record

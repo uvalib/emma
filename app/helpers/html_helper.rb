@@ -61,10 +61,10 @@ module HtmlHelper
   #
   # @option args.last [String] :separator
   #
+  # @return [ActiveSupport::SafeBuffer]
+  #
   # @yield Additional content
   # @yieldreturn [String, Array]
-  #
-  # @return [ActiveSupport::SafeBuffer]
   #
   # @see ActionView::Helpers::TagHelper#content_tag
   #
@@ -304,8 +304,8 @@ module HtmlHelper
     html_opt.merge!(*args)
   end
 
-  # If CSS class name(s) are provided, return a copy of *opt* where the names
-  # are appended to the existing `opt[:class]` value.
+  # Return a copy of *html_opt* where the classes are appended to the current
+  # `html_opt[:class]` value.
   #
   # @param [Hash, String, nil]          html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.
@@ -337,8 +337,8 @@ module HtmlHelper
     append_css_classes!(html_opt, *classes, &block)
   end
 
-  # If CSS class name(s) are provided, append them to the existing
-  # `opt[:class]` value.
+  # Replace `html_opt[:class]` with a new string containing the original
+  # classes followed by the added classes.
   #
   # @param [Hash]                       html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.
@@ -356,8 +356,8 @@ module HtmlHelper
     html_opt.merge!(class: result)
   end
 
-  # If CSS class name(s) are provided, return a copy of *opt* where the names
-  # are prepended to the existing `opt[:class]` value.
+  # Return a copy of *html_opt* where the classes are prepended to the current
+  # `html_opt[:class]` value.
   #
   # @param [Hash, String, nil]          html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.
@@ -389,8 +389,8 @@ module HtmlHelper
     prepend_css_classes!(html_opt, *classes, &block)
   end
 
-  # If CSS class name(s) are provided, prepend them to the existing
-  # `opt[:class]` value.
+  # Replace `html_opt[:class]` with a new string containing the added classes
+  # followed by the original classes.
   #
   # @param [Hash]                       html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.
@@ -408,8 +408,8 @@ module HtmlHelper
     html_opt.merge!(class: result)
   end
 
-  # If CSS class name(s) are provided, return a copy of *opt* where the names
-  # are eliminated from the existing `opt[:class]` value.
+  # Return a copy of *html_opt* where the classes are eliminated from the
+  # `html_opt[:class]` value.
   #
   # @param [Hash]                       html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.
@@ -422,7 +422,8 @@ module HtmlHelper
     remove_css_classes!(html_opt, *classes)
   end
 
-  # Eliminate the named CSS classes from the existing `opt[:class]` value.
+  # Replace `html_opt[:class]` with a new string that includes none of the
+  # named classes.  If no classes remain, :class is removed from *html_opt*.
   #
   # @param [Hash]                       html_opt  The target options hash.
   # @param [Array<String,Symbol,Array>] classes   CSS class names.

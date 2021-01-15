@@ -203,7 +203,7 @@ class Shrine
       # @param [*]    object
       # @param [Hash] params
       #
-      # @return [Array<(Array,Integer)>]
+      # @return [(Array,Integer)]
       #
       # This method overrides:
       # @see Shrine::Storage::S3#get_object

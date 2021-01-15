@@ -632,7 +632,7 @@ module ModelHelper
   # @param [Integer] row
   # @param [Hash]    opt              Passed to #page_filter.
   #
-  # @return [Array<(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)>]
+  # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
   def index_controls(count: nil, page: nil, row: nil, **opt)
     count ||= total_items

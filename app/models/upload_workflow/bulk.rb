@@ -50,7 +50,7 @@ module UploadWorkflow::Bulk::External
   # @param [Hash]               opt     Passed to #bulk_upload_file via
   #                                       #batch_upload_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see #bulk_upload_file
   # @see #bulk_db_insert
@@ -94,7 +94,7 @@ module UploadWorkflow::Bulk::External
   # @param [Hash]               opt     Passed to #bulk_upload_file via
   #                                       #batch_upload_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see #bulk_upload_file
   # @see #bulk_db_update
@@ -137,7 +137,7 @@ module UploadWorkflow::Bulk::External
   # @param [Boolean] atomic           If *false*, do not stop on failure.
   # @param [Hash]    opt              Passed to #batch_upload_remove.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   # == Implementation Notes
   # For the time being, this does not use #bulk_db_delete because the speed
@@ -170,7 +170,7 @@ module UploadWorkflow::Bulk::External
   # @option opt [Hash] :bulk              Info to support bulk upload
   #                                         reporting and error messages.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see UploadWorkflow::External#new_record
   # @see Upload#promote_file
@@ -223,7 +223,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<Upload>] records
   # @param [Hash]          opt        Passed to #bulk_db_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see ActiveRecord::Persistence::ClassMethods#insert_all
   #
@@ -245,7 +245,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<Upload>] records
   # @param [Hash]          opt        Passed to #bulk_db_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see ActiveRecord::Persistence::ClassMethods#upsert_all
   #
@@ -263,7 +263,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<String>] ids
   # @param [Boolean]       atomic     If *false*, allow partial changes.
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   # @see ActiveRecord::Persistence::ClassMethods#delete
   #
@@ -332,7 +332,7 @@ module UploadWorkflow::Bulk::External
   # @param [Boolean]       atomic     If *false*, allow partial changes.
   # @param [Integer]       size       Default: #BULK_DB_BATCH_SIZE
   #
-  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  # @return [(Array<Upload>,Array<Upload>)]   Succeeded/failed records.
   #
   # @see #bulk_db_operation_batches
   # @see #bulk_db_operation_batch
@@ -372,7 +372,7 @@ module UploadWorkflow::Bulk::External
   # @param [Array<Upload>] records
   # @param [Integer]       size
   #
-  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  # @return [(Array<Upload>,Array<Upload>)]   Succeeded/failed records.
   #
   def bulk_db_operation_batches(op, records, size: BULK_DB_BATCH_SIZE)
     succeeded = []
@@ -396,7 +396,7 @@ module UploadWorkflow::Bulk::External
   # @param [Integer]       from       For logging; default: 0.
   # @param [Integer]       to         For logging; default: tail of *records*.
   #
-  # @return [Array<(Array<Upload>,Array<Upload>)>]  Succeeded/failed records.
+  # @return [(Array<Upload>,Array<Upload>)]   Succeeded/failed records.
   #
   # == Implementation Notes
   # The 'failed' portion of the method return will always be empty if using
@@ -433,6 +433,7 @@ module UploadWorkflow::Bulk::External
   # @return [Array<ErrorEntry>]
   #
   def db_failed_format!(items, message, position = 0)
+    # noinspection RubyYardReturnMatch
     items.map! do |item|
       db_failed_format(item, message, (position += 1))
     end
@@ -465,8 +466,8 @@ module UploadWorkflow::Bulk::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         messages, and records to roll back.
+  # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
   #
   def bulk_add_to_index(*items, atomic: true, **opt)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
@@ -480,8 +481,8 @@ module UploadWorkflow::Bulk::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         messages, and records to roll back.
+  # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
   #
   def bulk_update_in_index(*items, **opt)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
@@ -495,7 +496,7 @@ module UploadWorkflow::Bulk::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#delete_records
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]   Succeeded items and failed item messages.
   #
   def bulk_remove_from_index(*items, **opt)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)

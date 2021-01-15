@@ -92,8 +92,8 @@ module XmlBased
   #
   # @param [Nokogiri::XML::Element] element
   #
-  # @return [Array<(Symbol,String)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [(Symbol,String)]
+  # @return [(Symbol,nil)]
   #
   def parse_element(element)
     return unless element.element?
@@ -138,8 +138,8 @@ module XmlBased
   #
   # @param [Nokogiri::XML::Element]
   #
-  # @return [Array<(Symbol,String)>]
-  # @return [Array<(Symbol,nil)>]
+  # @return [(Symbol,String)]
+  # @return [(Symbol,nil)]
   # @return [nil]
   #
   def parse_meta(elem)
@@ -155,8 +155,8 @@ module XmlBased
   #
   # @param [Nokogiri::XML::Element]
   #
-  # @return [Array<(String,String)>]
-  # @return [Array<(String,nil)>]
+  # @return [(Symbol,String)]
+  # @return [(Symbol,nil)]
   #
   def get_properties(elem)
     name  = elem.respond_to?(:name) ? elem.name : elem.class.name

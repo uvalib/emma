@@ -247,7 +247,7 @@ module HealthConcern
 
   # Health status of the MySQL service.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def mysql_status(*)
     healthy = ActiveRecord::Base.connection_pool.with_connection(&:active?)
@@ -257,7 +257,7 @@ module HealthConcern
 
   # Health status of the Redis service.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def redis_status(*)
     healthy = true # TODO: Redis health status
@@ -267,7 +267,7 @@ module HealthConcern
 
   # Health status of AWS storage.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def storage_status(*)
     healthy = true # TODO: AWS health status
@@ -277,7 +277,7 @@ module HealthConcern
 
   # Health status of the Unified Search service.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def search_status(*)
     SearchService.active_status
@@ -285,7 +285,7 @@ module HealthConcern
 
   # Health status of the Bookshare API service.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def bookshare_status(*)
     BookshareService.active_status
@@ -293,7 +293,7 @@ module HealthConcern
 
   # Health status of the ingest service.
   #
-  # @return [Array<(Boolean,String)>]
+  # @return [(Boolean,String)]
   #
   def ingest_status(*)
     IngestService.active_status

@@ -171,7 +171,7 @@ module HelpHelper
   #
   # @param [Array<Symbol,Array>] topics   Default: `#help_topics`.
   # @param [Symbol, nil]         type     Type of links; default: :anchor.
-  # @param [Hash]                opt      Passed to path helper.
+  # @param [Hash]                opt      Passed to route helper.
   #
   # @return [Array<Array<(String,String)>>]
   #

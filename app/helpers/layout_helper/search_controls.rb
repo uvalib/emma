@@ -264,9 +264,9 @@ module LayoutHelper::SearchControls
   #++
   SEARCH_CONTROLS_ROOT = I18n.t('emma.search_controls').deep_freeze
 
-  # The value 'emma.search_controls._default' contains each of the properties
-  # that can be expressed for a menu.  If a property there has a non-nil
-  # value, then that value is used as the default for that property.
+  # The value 'en.emma.search_controls._default' contains each of the
+  # properties that can be expressed for a menu.  If a property there has a
+  # non-nil value, then that value is used as the default for that property.
   #
   # @type [Hash{Symbol=>*}]
   #
@@ -434,7 +434,7 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no controls were found for *type*.
   #
-  # @see en.emma.search_controls in config/locales/en.yml
+  # @see 'en.emma.search_controls' in config/locales/en.yml
   #
   def search_controls(type: nil, **opt)
     type = search_target(type)

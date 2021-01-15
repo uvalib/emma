@@ -226,7 +226,7 @@ module OmniAuth
 =begin
       # Responds to an OPTIONS request.
       #
-      # @return [Array<(Integer, Hash, Array<String>)>]
+      # @return [(Integer, Hash, Array<String>)]
       #
       def options_call
         OmniAuth.config.before_options_phase&.call(env)
@@ -238,7 +238,7 @@ module OmniAuth
 
       # Performs the steps necessary to run the request phase of a strategy.
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       def request_call
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
@@ -333,7 +333,7 @@ module OmniAuth
       # This is called in lieu of the normal request process in the event that
       # OmniAuth has been configured to be in test mode.
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       def mock_call!(*)
         if on_request_path? && OmniAuth.config.allowed_method?(request)
@@ -349,7 +349,7 @@ module OmniAuth
 =begin
       # mock_request_call
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       def mock_request_call
         __debug((dbg = "OMNIAUTH-BOOKSHARE #{__method__}"))
@@ -381,7 +381,7 @@ module OmniAuth
 =begin
       # mock_callback_call
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       def mock_callback_call
         setup_phase
@@ -695,7 +695,7 @@ module OmniAuth
 
       # request_phase
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       # @see ::OAuth2::ClientExt#request
       #
@@ -738,7 +738,7 @@ module OmniAuth
       # @raise [Errno::ETIMEDOUT]
       # @raise [SocketError]
       #
-      # @return [Array<(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)>]
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       #--
       # noinspection RubyScope

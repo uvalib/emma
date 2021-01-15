@@ -25,8 +25,8 @@ module IaDownloadService::Request::Records
   # @param [String] url
   # @param [Hash]   opt
   #
-  # @return [Array<(String,String,String)>]
-  # @return [Array<(String,String,nil)>]
+  # @return [(String,String,String)]
+  # @return [(String,String,nil)]
   #
   def download(url, **opt)
     api(:get, url, **opt)

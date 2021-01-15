@@ -82,7 +82,7 @@ module UploadWorkflow::Errors
 
   # Error types and messages.
   #
-  # @type [Hash{Symbol=>Array<(String,Class)>}]
+  # @type [Hash{Symbol=>(String,Class)}]
   #
   #--
   # noinspection RailsI18nInspection
@@ -796,20 +796,20 @@ module UploadWorkflow::External
   # ===========================================================================
 
   public
-  
+
   # Current AWS API service instance.
-  # 
+  #
   # @return [AwsS3Service]
-  # 
+  #
   def aws_api
     # noinspection RubyYardReturnMatch
     AwsS3Service.instance
   end
 
   # Current Ingest API service instance.
-  # 
+  #
   # @return [IngestService]
-  # 
+  #
   def ingest_api
     # noinspection RubyYardReturnMatch
     IngestService.instance
@@ -842,8 +842,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #add_to_index.
   # @param [Hash]    data             @see Upload#assign_attributes.
   #
-  # @return [Array<(Upload,Array)>]   Record and error messages.
-  # @return [Array<(nil,Array)>]      No record; error message.
+  # @return [(Upload,Array>]          Record and error messages.
+  # @return [(nil,Array)]             No record; error message.
   #
   # @see #db_insert
   # @see #add_to_index
@@ -872,8 +872,8 @@ module UploadWorkflow::External
   # @param [Boolean] atomic           Passed to #update_in_index.
   # @param [Hash]    data             @see Upload#assign_attributes
   #
-  # @return [Array<(Upload,Array)>]   Record and error messages.
-  # @return [Array<(nil,Array)>]      No record; error message.
+  # @return [(Upload,Array>]          Record and error messages.
+  # @return [(nil,Array)]             No record; error message.
   #
   # @see #db_update
   # @see #update_in_index
@@ -911,7 +911,7 @@ module UploadWorkflow::External
   #                                               even if the related database
   #                                               entries do not exist.
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   # @see #remove_from_index
   #
@@ -1003,7 +1003,7 @@ module UploadWorkflow::External
   # @param [Hash]    opt              Passed to #upload_remove via
   #                                     #batch_upload_operation.
   #
-  # @return [Array<(Array,Array)>]  Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   # @see UploadWorkflow::External#upload_remove
   #
@@ -1060,7 +1060,7 @@ module UploadWorkflow::External
   # @param [Integer, Boolean]                  size     Default: #BATCH_SIZE.
   # @param [Hash]                              opt
   #
-  # @return [Array<(Array,Array)>]  Succeeded records and failed item messages.
+  # @return [(Array,Array)]   Succeeded records and failed item messages.
   #
   def batch_upload_operation(op, entries, size: nil, **opt)
     __debug_args((dbg = "UPLOAD #{op}"), binding)
@@ -1205,8 +1205,8 @@ module UploadWorkflow::External
   #
   # @raise [StandardException] If *all* is *true* and *items* were supplied.
   #
-  # @return [Array<(Array<Upload>,Array)>]      Upload records and failed ids.
-  # @return [Array<(Array<Upload,String>,[])>]  If *force* is *true*.
+  # @return [(Array<Upload>,Array)]       Upload records and failed ids.
+  # @return [(Array<Upload,String>,[])]   If *force* is *true*.
   #
   # == Usage Notes
   # If *force* is true, the returned list of failed records will be empty but
@@ -1270,7 +1270,7 @@ module UploadWorkflow::External
   #
   # @option opt [Rack::Request::Env] :env
   #
-  # @return [Array<(Integer, Hash{String=>*}, Array<String>)>]
+  # @return [(Integer, Hash{String=>*}, Array<String>)]
   #
   # @see Shrine::Plugins::UploadEndpoint::ClassMethods#upload_response
   #
@@ -1365,8 +1365,8 @@ module UploadWorkflow::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         messages, and records to roll back.
+  # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
   #
   def add_to_index(*items, atomic: true, **)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
@@ -1394,8 +1394,8 @@ module UploadWorkflow::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
-  # @return [Array<(Array,Array,Array)>]  Succeeded records, failed item
-  #                                         messages, and records to roll back.
+  # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
   #
   def update_in_index(*items, **)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
@@ -1422,7 +1422,7 @@ module UploadWorkflow::External
   #
   # @raise [StandardError] @see IngestService::Request::Records#delete_records
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   def remove_from_index(*items, **)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
@@ -1493,7 +1493,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] data
   # @param [Hash]          opt
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   def repository_create(repo, *data, **opt)
     succeeded = []
@@ -1521,7 +1521,7 @@ module UploadWorkflow::External
   # @param [Array<Upload>] data
   # @param [Hash]          opt
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   def repository_edit(repo, *data, **opt)
     succeeded = []
@@ -1549,7 +1549,7 @@ module UploadWorkflow::External
   # @param [Array<String,Upload>] data
   # @param [Hash]                 opt
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   def repository_remove(repo, *data, **opt)
     succeeded = []
@@ -1586,19 +1586,19 @@ module UploadWorkflow::External
   # @param [Hash, Array] items
   # @param [Hash]        opt          Passed to #repository_remove.
   #
-  # @return [Array<(Array,Array)>]    Succeeded items and failed item messages.
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
   # == Variations
   #
   # @overload batch_repository_remove(requests, **opt)
   #   @param [Hash{Symbol=>Array}]            requests
   #   @param [Hash]                           opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [(Array,Array)]
   #
   # @overload batch_repository_remove(items, **opt)
   #   @param [Array<String,#emma_recordId,*>] items
   #   @param [Hash]                           opt
-  #   @return [Array<(Array,Array)>]
+  #   @return [(Array,Array)]
   #
   def batch_repository_remove(items, **opt)
     succeeded = []

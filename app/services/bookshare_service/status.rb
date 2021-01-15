@@ -23,8 +23,8 @@ module BookshareService::Status
 
   # Indicate whether the service is operational.
   #
-  # @return [Array<(TrueClass,nil)>]
-  # @return [Array<(FalseClass,String)>]
+  # @return [(TrueClass,nil)]
+  # @return [(FalseClass,String)]
   #
   def active_status(*)
     result = BookshareService.new.get_title_count

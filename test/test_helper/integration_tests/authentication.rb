@@ -102,10 +102,10 @@ module TestHelper::IntegrationTests::Authentication
   # @param [String, Symbol, User, nil] user
   # @param [Hash]                      opt    Passed to #run_test.
   #
+  # @return [void]
+  #
   # @yield Test code to run while signed-on as *user*.
   # @yieldreturn [void]
-  #
-  # @return [void]
   #
   def as_user(user, **opt)
     user = find_user(user)

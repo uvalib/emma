@@ -63,9 +63,9 @@ module UploadWorkflow::Single::Data
   # The characteristic "return value" of the workflow after an event has been
   # registered.
   #
-  # @return [Array<(Integer,Hash,Array<String>)>] For :validating, :replacing
-  # @return [Array<Upload,String>]                For :removing, :removed
-  # @return [Upload, nil]                         For all other states
+  # @return [(Integer,Hash,Array<String>)]  For :validating, :replacing
+  # @return [Array<Upload,String>]          For :removing, :removed
+  # @return [Upload, nil]                   For all other states
   #
   def results
     @results ||= record

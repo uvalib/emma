@@ -6,7 +6,7 @@
   title ||= t('emma.upload.show.title', name: item&.filename)
   host  ||= @host
   image ||= nil
-  help  ||= nil # TODO: ???
+  help  ||= nil # help_popup(:upload, :show) # TODO: ???
 
   title = "#{host} - #{title}" if host.present?
 

@@ -43,12 +43,12 @@ module UserConcern
   #
   # @param [String] id                If *nil*, assumes the current user.
   #
-  # @return [Array<(
+  # @return [(
   #   Bs::Message::MyAccountSummary,
   #   Bs::Message::MyAccountPreferences,
   #   Bs::Message::TitleDownloadList
-  # )>]
-  # @return [nil]
+  # )]
+  # @return [(nil,nil,nil)]
   #
   def get_account_details(id: nil)
     error = []

@@ -23,7 +23,7 @@ module Search::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see "en.emma.search.type" in config/locales/types/search.en.yml
+  # @see 'en.emma.search.type' in config/locales/types/search.en.yml
   #
   #--
   # noinspection RailsI18nInspection

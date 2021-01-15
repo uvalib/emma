@@ -694,7 +694,7 @@ class Upload < ApplicationRecord
 
   private
 
-  # check_required
+  # Compare the source fields against configured requirements.
   #
   # @param [Upload, Hash] source
   # @param [Hash]         required_fields

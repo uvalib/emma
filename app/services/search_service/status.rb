@@ -41,8 +41,8 @@ module SearchService::Status
   # @param [Hash] with
   # @param [Proc] expect
   #
-  # @return [Array<(TrueClass,nil)>]
-  # @return [Array<(FalseClass,String)>]
+  # @return [(TrueClass,nil)]
+  # @return [(FalseClass,String)]
   #
   def active_status(with: nil, expect: nil)
     with   ||= SAMPLE_ISBN_SEARCH[:parameters]

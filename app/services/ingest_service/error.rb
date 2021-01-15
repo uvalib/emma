@@ -157,21 +157,21 @@ end
 # noinspection LongLine, DuplicatedCode
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
-  class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.auth"            || "en.emma.error.api.auth"
-  class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.comm"            || "en.emma.error.api.comm"
-  class IngestService::SessionError       < ApiService::SessionError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.session"         || "en.emma.error.api.session"
-  class IngestService::ConnectError       < ApiService::ConnectError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.connect"         || "en.emma.error.api.connect"
-  class IngestService::TimeoutError       < ApiService::TimeoutError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.timeout"         || "en.emma.error.api.timeout"
-  class IngestService::XmitError          < ApiService::XmitError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.xmit"            || "en.emma.error.api.xmit"
-  class IngestService::RecvError          < ApiService::RecvError;          include IngestService::Error::Methods; end # "en.emma.error.ingest.recv"            || "en.emma.error.api.recv"
-  class IngestService::ParseError         < ApiService::ParseError;         include IngestService::Error::Methods; end # "en.emma.error.ingest.parse"           || "en.emma.error.api.parse"
-  class IngestService::RequestError       < ApiService::RequestError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.request"         || "en.emma.error.api.request"
-  class IngestService::NoInputError       < ApiService::NoInputError;       include IngestService::Error::Methods; end # "en.emma.error.ingest.no_input"        || "en.emma.error.api.no_input"
-  class IngestService::ResponseError      < ApiService::ResponseError;      include IngestService::Error::Methods; end # "en.emma.error.ingest.response"        || "en.emma.error.api.response"
-  class IngestService::EmptyResultError   < ApiService::EmptyResultError;   include IngestService::Error::Methods; end # "en.emma.error.ingest.empty_result"    || "en.emma.error.api.empty_result"
-  class IngestService::HtmlResultError    < ApiService::HtmlResultError;    include IngestService::Error::Methods; end # "en.emma.error.ingest.html_result"     || "en.emma.error.api.html_result"
-  class IngestService::RedirectionError   < ApiService::RedirectionError;   include IngestService::Error::Methods; end # "en.emma.error.ingest.redirection"     || "en.emma.error.api.redirection"
-  class IngestService::RedirectLimitError < ApiService::RedirectLimitError; include IngestService::Error::Methods; end # "en.emma.error.ingest.redirect_limit"  || "en.emma.error.api.redirect_limit"
+  class IngestService::AuthError          < ApiService::AuthError;          include IngestService::Error::Methods; end # 'en.emma.error.ingest.auth'            || 'en.emma.error.api.auth'
+  class IngestService::CommError          < ApiService::CommError;          include IngestService::Error::Methods; end # 'en.emma.error.ingest.comm'            || 'en.emma.error.api.comm'
+  class IngestService::SessionError       < ApiService::SessionError;       include IngestService::Error::Methods; end # 'en.emma.error.ingest.session'         || 'en.emma.error.api.session'
+  class IngestService::ConnectError       < ApiService::ConnectError;       include IngestService::Error::Methods; end # 'en.emma.error.ingest.connect'         || 'en.emma.error.api.connect'
+  class IngestService::TimeoutError       < ApiService::TimeoutError;       include IngestService::Error::Methods; end # 'en.emma.error.ingest.timeout'         || 'en.emma.error.api.timeout'
+  class IngestService::XmitError          < ApiService::XmitError;          include IngestService::Error::Methods; end # 'en.emma.error.ingest.xmit'            || 'en.emma.error.api.xmit'
+  class IngestService::RecvError          < ApiService::RecvError;          include IngestService::Error::Methods; end # 'en.emma.error.ingest.recv'            || 'en.emma.error.api.recv'
+  class IngestService::ParseError         < ApiService::ParseError;         include IngestService::Error::Methods; end # 'en.emma.error.ingest.parse'           || 'en.emma.error.api.parse'
+  class IngestService::RequestError       < ApiService::RequestError;       include IngestService::Error::Methods; end # 'en.emma.error.ingest.request'         || 'en.emma.error.api.request'
+  class IngestService::NoInputError       < ApiService::NoInputError;       include IngestService::Error::Methods; end # 'en.emma.error.ingest.no_input'        || 'en.emma.error.api.no_input'
+  class IngestService::ResponseError      < ApiService::ResponseError;      include IngestService::Error::Methods; end # 'en.emma.error.ingest.response'        || 'en.emma.error.api.response'
+  class IngestService::EmptyResultError   < ApiService::EmptyResultError;   include IngestService::Error::Methods; end # 'en.emma.error.ingest.empty_result'    || 'en.emma.error.api.empty_result'
+  class IngestService::HtmlResultError    < ApiService::HtmlResultError;    include IngestService::Error::Methods; end # 'en.emma.error.ingest.html_result'     || 'en.emma.error.api.html_result'
+  class IngestService::RedirectionError   < ApiService::RedirectionError;   include IngestService::Error::Methods; end # 'en.emma.error.ingest.redirection'     || 'en.emma.error.api.redirection'
+  class IngestService::RedirectLimitError < ApiService::RedirectLimitError; include IngestService::Error::Methods; end # 'en.emma.error.ingest.redirect_limit'  || 'en.emma.error.api.redirect_limit'
 end
 # :nocov:
 

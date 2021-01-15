@@ -37,7 +37,7 @@ en:
           publisher:                'Publisher'
           volunteer:                'Volunteer'
 
-        DublinCoreFormat: # NOTE: identical to 'emma.format'
+        DublinCoreFormat: # NOTE: identical to 'en.emma.format'
           brf:                      'BRF'
           daisy:                    'DAISY'
           daisyAudio:               'DAISY Audio'

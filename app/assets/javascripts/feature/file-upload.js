@@ -133,7 +133,7 @@ $(document).on('turbolinks:load', function() {
      *      }
      * }} FileData
      *
-     * @see "en.emma.upload.record.file_data"
+     * @see 'en.emma.upload.record.file_data'
      */
 
     /**
@@ -186,8 +186,8 @@ $(document).on('turbolinks:load', function() {
      *      rem_status:                         string,
      * }} EmmaData
      *
-     * @see "en.emma.upload.record.emma_data"
-     * @see "AwsS3::Record::SubmissionPackage"
+     * @see 'en.emma.upload.record.emma_data'
+     * @see 'AwsS3::Record::SubmissionPackage'
      */
 
     /**
@@ -217,7 +217,7 @@ $(document).on('turbolinks:load', function() {
      *      reviewed_at:    string
      * }} UploadRecord
      *
-     * @see "en.emma.upload.record"
+     * @see 'en.emma.upload.record'
      */
 
     /**
@@ -273,7 +273,7 @@ $(document).on('turbolinks:load', function() {
      *      s_accessModeSufficient:             string[]?
      * }} SearchResultEntry
      *
-     * @see "en.emma.search.fields"
+     * @see 'en.emma.search.record'
      */
 
     /**
@@ -661,7 +661,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Setup the element which shows intermediate results during a bulk upload.
+     * Display new entries that have appeared since the last check.
      */
     function checkBulkUploadResults() {
 
@@ -1320,7 +1320,8 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * This event occurs a thumbnail of an uploaded image is available.
+         * This event occurs when a thumbnail of an uploaded image is
+         * available.
          *
          * @param {Uppy.UppyFile} file
          * @param {string}        image
@@ -1875,7 +1876,9 @@ $(document).on('turbolinks:load', function() {
 
     // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS, OverlyComplexFunctionJS
     /**
-     * updateRelatedField
+     * Use {@link FIELD_RELATIONSHIP} to determine whether the state of the
+     * indicated field should change the state of other field(s) with which it
+     * has a relationship.
      *
      * @param {string|jQuery}       name
      * @param {string|Relationship} [other_name]
@@ -2687,7 +2690,7 @@ $(document).on('turbolinks:load', function() {
         }
 
         /**
-         * Update a single input field and its label.
+         * Update a single input field then revalidate the form.
          *
          * @param {jQuery.Event} event
          * @param {string|null}  [value]  Default: current element value.
@@ -3368,7 +3371,7 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * The control button container
+     * The control button container.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
      *

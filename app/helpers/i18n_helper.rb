@@ -67,9 +67,6 @@ module I18nHelper
   # @param [String, Symbol, nil] controller
   # @param [String, Symbol, nil] action
   #
-  # args[0] controller
-  # args[1] action
-  #
   # @return [Array<Symbol>]
   #
   def i18n_lookup_order(controller = nil, action = nil)
@@ -85,10 +82,10 @@ module I18nHelper
   end
 
   # Find the best match from config/locales for the given partial path, first
-  # looking under "emma.#{controller}", then under "emma.generic".
+  # looking under "en.emma.#{controller}", then under 'en.emma.generic'.
   #
   # @param [String, Symbol, nil] controller
-  # @param [String]              partial_path I18n tree below *controller*.
+  # @param [String, Array]       partial_path I18n tree below *controller*.
   # @param [Array<String>]       defaults     Prepended to I18n :default.
   # @param [Hash]                opt          Passed to #i18n_interpolations
   #                                             except for:
@@ -97,7 +94,7 @@ module I18nHelper
   # @option opt [Boolean]                 :one
   # @option opt [Boolean]                 :many
   #
-  # @return [String]                          The specified value.
+  # @return [*]                               The specified value.
   # @return [nil]                             No non-empty value was found.
   #
   def i18n_lookup(controller, partial_path, *defaults, **opt)
@@ -207,7 +204,7 @@ module I18nHelper
   #
   # == Implementation Notes
   # This method does not have an embedded fallback value -- it assumes that
-  # some form of "emma.generic.unit" will be found if there is no definition
+  # some form of 'emma.generic.unit' will be found if there is no definition
   # for the given controller.
   #
   #--

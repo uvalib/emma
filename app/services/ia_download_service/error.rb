@@ -105,21 +105,21 @@ end
 # noinspection LongLine, DuplicatedCode
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
-  class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.auth"           || "en.emma.error.api.auth"
-  class IaDownloadService::CommError          < ApiService::CommError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.comm"           || "en.emma.error.api.comm"
-  class IaDownloadService::SessionError       < ApiService::SessionError;       include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.session"        || "en.emma.error.api.session"
-  class IaDownloadService::ConnectError       < ApiService::ConnectError;       include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.connect"        || "en.emma.error.api.connect"
-  class IaDownloadService::TimeoutError       < ApiService::TimeoutError;       include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.timeout"        || "en.emma.error.api.timeout"
-  class IaDownloadService::XmitError          < ApiService::XmitError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.xmit"           || "en.emma.error.api.xmit"
-  class IaDownloadService::RecvError          < ApiService::RecvError;          include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.recv"           || "en.emma.error.api.recv"
-  class IaDownloadService::ParseError         < ApiService::ParseError;         include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.parse"          || "en.emma.error.api.parse"
-  class IaDownloadService::RequestError       < ApiService::RequestError;       include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.request"        || "en.emma.error.api.request"
-  class IaDownloadService::NoInputError       < ApiService::NoInputError;       include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.no_input"       || "en.emma.error.api.no_input"
-  class IaDownloadService::ResponseError      < ApiService::ResponseError;      include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.response"       || "en.emma.error.api.response"
-  class IaDownloadService::EmptyResultError   < ApiService::EmptyResultError;   include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.empty_result"   || "en.emma.error.api.empty_result"
-  class IaDownloadService::HtmlResultError    < ApiService::HtmlResultError;    include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.html_result"    || "en.emma.error.api.html_result"
-  class IaDownloadService::RedirectionError   < ApiService::RedirectionError;   include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.redirection"    || "en.emma.error.api.redirection"
-  class IaDownloadService::RedirectLimitError < ApiService::RedirectLimitError; include IaDownloadService::Error::Methods; end # "en.emma.error.ia_download.redirect_limit" || "en.emma.error.api.redirect_limit"
+  class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.auth'           || 'en.emma.error.api.auth'
+  class IaDownloadService::CommError          < ApiService::CommError;          include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.comm'           || 'en.emma.error.api.comm'
+  class IaDownloadService::SessionError       < ApiService::SessionError;       include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.session'        || 'en.emma.error.api.session'
+  class IaDownloadService::ConnectError       < ApiService::ConnectError;       include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.connect'        || 'en.emma.error.api.connect'
+  class IaDownloadService::TimeoutError       < ApiService::TimeoutError;       include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.timeout'        || 'en.emma.error.api.timeout'
+  class IaDownloadService::XmitError          < ApiService::XmitError;          include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.xmit'           || 'en.emma.error.api.xmit'
+  class IaDownloadService::RecvError          < ApiService::RecvError;          include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.recv'           || 'en.emma.error.api.recv'
+  class IaDownloadService::ParseError         < ApiService::ParseError;         include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.parse'          || 'en.emma.error.api.parse'
+  class IaDownloadService::RequestError       < ApiService::RequestError;       include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.request'        || 'en.emma.error.api.request'
+  class IaDownloadService::NoInputError       < ApiService::NoInputError;       include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.no_input'       || 'en.emma.error.api.no_input'
+  class IaDownloadService::ResponseError      < ApiService::ResponseError;      include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.response'       || 'en.emma.error.api.response'
+  class IaDownloadService::EmptyResultError   < ApiService::EmptyResultError;   include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.empty_result'   || 'en.emma.error.api.empty_result'
+  class IaDownloadService::HtmlResultError    < ApiService::HtmlResultError;    include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.html_result'    || 'en.emma.error.api.html_result'
+  class IaDownloadService::RedirectionError   < ApiService::RedirectionError;   include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.redirection'    || 'en.emma.error.api.redirection'
+  class IaDownloadService::RedirectLimitError < ApiService::RedirectLimitError; include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.redirect_limit' || 'en.emma.error.api.redirect_limit'
 end
 # :nocov:
 

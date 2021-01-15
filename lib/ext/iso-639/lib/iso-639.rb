@@ -12,7 +12,7 @@ class ISO_639
   # Entries for ISO 639-2 language codes plus a subset of ISO 639-3 codes for
   # languages that are present in Bookshare.
   #
-  # @type [Array<(String,String,String,String,String)>]
+  # @type [(String,String,String,String,String)]
   #
   ISO_639_2 = (
     [

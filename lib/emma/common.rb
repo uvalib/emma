@@ -237,7 +237,7 @@ module Emma::Common
   # @param [ActionController::Parameters, Hash, nil] hash
   # @param [Array<Symbol>]                           keys
   #
-  # @return [Array<(Hash, Hash)>]   Matching hash followed by remainder hash.
+  # @return [(Hash, Hash)]            Matching hash followed by remainder hash.
   #
   #--
   # noinspection RubyNilAnalysis
@@ -605,7 +605,7 @@ module Emma::Common
   #
   # If *text* is already HTML-ready it is returned directly.
   #
-  # @param [String, Symbol]       text
+  # @param [String, Symbol, nil]  text
   # @param [Integer, Symbol, nil] count       Passed to #inflection.
   # @param [Boolean]              breakable   If *false* replace spaces with
   #                                             '&nbsp;' so that the result is

@@ -23,7 +23,7 @@ module Bs::Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see "en.emma.bookshare.type" in config/locales/types/bookshare.en.yml
+  # @see 'en.emma.bookshare.type' in config/locales/types/bookshare.en.yml
   #
   #--
   # noinspection RailsI18nInspection

@@ -76,10 +76,10 @@ module Representable
       # @param [Symbol, NilClass, *] mode
       # @param [Array]               args
       #
+      # @return [nil]
+      #
       # @yield To supply additional items to show.
       # @yieldreturn [Array]
-      #
-      # @return [nil]
       #
       # @see #__output
       #

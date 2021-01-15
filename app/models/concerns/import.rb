@@ -149,11 +149,11 @@ module Import
   #
   # @param [*] v
   #
+  # @return [Array]
+  #
   # @yield [element] Allow replacement of each array element.
   # @yieldparam [String] element
   # @yieldreturn [String] The replacement element.
-  #
-  # @return [Array]
   #
   def array_value(v, &block)
     array = Array.wrap(values(v)).reject(&:blank?)
@@ -307,7 +307,7 @@ module Import
   # @param [Symbol] k                 Imported field being skipped.
   # @param [*]      v
   #
-  # @return [Array<(nil,nil)>]
+  # @return [(nil,nil)]
   #
   def skip(k = nil, v = nil)
     __debug_import(__method__, k, v)
@@ -320,8 +320,8 @@ module Import
   # @param [*]              v
   # @param [String, nil]    prefix
   #
-  # @return [Array<(Symbol,*)>]
-  # @return [Array<(Symbol,Array)>]
+  # @return [(Symbol,*)]
+  # @return [(Symbol,Array)]
   #
   def default(k, v, prefix = name_prefix)
     __debug_import(__method__, k, v)
@@ -354,7 +354,7 @@ module Import
   # @param [Symbol, String] k         Import field name.
   # @param [*]              v         Import field value.
   #
-  # @return [Array<(Symbol,*)>]
+  # @return [(Symbol,*)]
   #
   def resolve(k, v)
     k     = k.to_sym
