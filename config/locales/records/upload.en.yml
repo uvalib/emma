@@ -49,9 +49,9 @@ en:
           min:          1
           max:          1
           label:        'Database ID'
-          tooltip:      'Upload table record identifier'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Upload database table record identifier.'
+          notes_html:   |
+            <em>TODO</em>
           type:         number
           origin:       system
 
@@ -65,9 +65,9 @@ en:
           min:          1
           max:          1
           label:        'User ID'
-          tooltip:      'The EMMA user who uploaded the file'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'The EMMA user who uploaded the file.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         repository:
@@ -80,9 +80,9 @@ en:
           min:          1
           max:          1
           label:        'Repository'
-          tooltip:      'Source repository of the uploaded file'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Source repository of the uploaded file.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         submission_id:
@@ -99,8 +99,8 @@ en:
             For EMMA-native repository entries, this is equivalent to the
             "Repository Record ID".  For entries derived from member repository
             items, this is the "tracking number" of the request.
-          help_html:    |
-            <strong>TODO</strong>
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         fmt:
@@ -111,9 +111,9 @@ en:
           min:          1
           max:          1
           label:        'Format'
-          tooltip:      'EMMA file format associated with the uploaded file'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'EMMA file format associated with the uploaded file.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       file_data
 
         ext:
@@ -124,9 +124,9 @@ en:
           min:          1
           max:          1
           label:        'Extension'
-          tooltip:      'File extension of the uploaded file'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'File extension of the uploaded file.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       file_data
 
         state:
@@ -137,9 +137,9 @@ en:
           min:          0
           max:          1
           label:        'Status'
-          tooltip:      'Status of the upload submission'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Workflow state of the upload submission.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         created_at:
@@ -150,9 +150,9 @@ en:
           min:          1
           max:          1
           label:        'First Upload'
-          tooltip:      'Date of first upload'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Date of first upload.'
+          notes_html:   |
+            <em>TODO</em>
           type:         time
           origin:       system
 
@@ -164,9 +164,9 @@ en:
           min:          1
           max:          1
           label:        'Current Upload'
-          tooltip:      'Date of current upload'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Date of current upload.'
+          notes_html:   |
+            <em>TODO</em>
           type:         time
           origin:       system
 
@@ -182,9 +182,9 @@ en:
           min:          0
           max:          1
           label:        'File Data'
-          tooltip:      'Uploaded file metadata'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Uploaded file metadata.'
+          notes_html:   |
+            <em>TODO</em>
           type:         json
           origin:       system
 
@@ -200,9 +200,9 @@ en:
             min:          1
             max:          1
             label:        'Stored File'
-            tooltip:      'Filename of the stored copy of the file'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Filename of the stored copy of the file.'
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           storage:
@@ -213,9 +213,9 @@ en:
             min:          1
             max:          1
             label:        'Storage'
-            tooltip:      'Storage "bucket" - either "cache" or "storage"'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Storage "bucket" - either "cache" or "storage".'
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           metadata:
@@ -226,9 +226,10 @@ en:
             min:          1
             max:          1
             label:        'File Metadata'
-            tooltip:      'Information about the file that was stored'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Information about the file that was stored.'
+            notes_html:   |
+              <em>TODO</em>
+            type:         json
             origin:       system
 
             filename:
@@ -239,9 +240,9 @@ en:
               min:          1
               max:          1
               label:        'Filename'
-              tooltip:      'The name of the original file'
-              help_html:    |
-                <strong>TODO</strong>
+              tooltip:      'The name of the original file.'
+              notes_html:   |
+                <em>TODO</em>
               origin:       system
 
             size:
@@ -255,9 +256,9 @@ en:
               min:          1
               max:          1
               label:        'Size'
-              tooltip:      'The size of the original file in bytes'
-              help_html:    |
-                <strong>TODO</strong>
+              tooltip:      'The size of the original file in bytes.'
+              notes_html:   |
+                <em>TODO</em>
               type:         number
               origin:       system
 
@@ -269,9 +270,9 @@ en:
               min:          1
               max:          1
               label:        'MIME Type'
-              tooltip:      'The nature of the original file'
-              help_html:    |
-                <strong>TODO</strong>
+              tooltip:      'The nature of the original file.'
+              notes_html:   |
+                <em>TODO</em>
               origin:       system
 
         # =====================================================================
@@ -289,9 +290,9 @@ en:
           min:          0
           max:          1
           label:        'EMMA Data'
-          tooltip:      'Retrieved EMMA metadata'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Retrieved EMMA metadata.'
+          notes_html:   |
+            <em>TODO</em>
           type:         json
           origin:       system
 
@@ -310,9 +311,9 @@ en:
             min:          0
             max:          1
             label:        'EMMA Record ID'
-            tooltip:      'Identifier generated for the specific submission'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Identifier generated for the specific submission.'
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           emma_titleId:
@@ -326,9 +327,9 @@ en:
             min:          0
             max:          1
             label:        'EMMA Title ID'
-            tooltip:      'Identifier assigned by the Unified Search index'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Identifier assigned by the Unified Search index.'
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           # ===================================================================
@@ -351,8 +352,8 @@ en:
               The source repository entry associated with the remediated
               content file.  Select "EMMA" if the file was not based on content
               from any of the other listed repositories.
-            help_html:    |
-              <strong>TODO</strong>
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol EmmaRepository
 
           emma_collection:
@@ -365,9 +366,9 @@ en:
             label:        'Repository Collection'
             tooltip:      |
               The source repository collection of the entry associated with the
-              remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           emma_repositoryRecordId:
@@ -384,11 +385,10 @@ en:
             label:        'Repository Record ID'
             tooltip:      |
               The source repository identifier for the entry associated with
-              the remediated content file.
-              For EMMA repository entries, this is equivalent to the
-              "Submission ID".
-            help_html:    |
-              <strong>TODO</strong>
+              the remediated content file.  For EMMA repository entries, this
+              is equivalent to the "Submission ID".
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           emma_retrievalLink:
@@ -404,9 +404,9 @@ en:
             label:        'Download Link'
             tooltip:      |
               Source repository URL to retrieve a copy of the remediated
-              content file
-            help_html:    |
-              <strong>TODO</strong>
+              content file.
+            notes_html:   |
+              <em>TODO</em>
             origin:       system
 
           emma_webPageLink:
@@ -421,9 +421,9 @@ en:
             label:        'Details Link'
             tooltip:      |
               The source repository web page describing the creative work
-              represented by the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              represented by the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             type:         url
             origin:       system
 
@@ -437,9 +437,9 @@ en:
             max:          1
             label:        'Remediation Date'
             tooltip:      |
-              Date of the most recent change to the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              Date of the most recent change to the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             type:         date
             origin:       system
 
@@ -453,9 +453,9 @@ en:
             label:        'Entry Update'
             tooltip:      |
               Date of the most recent change to the source repository entry for
-              the item
-            help_html:    |
-              <strong>TODO</strong>
+              the item.
+            notes_html:   |
+              <em>TODO</em>
             type:         date
             origin:       system
 
@@ -469,9 +469,9 @@ en:
             min:          1
             max:          1
             label:        'Remediation Note'
-            tooltip:      'Description of remediation for this file'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Description of remediation(s) for this file.'
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter description'
             type:         textarea
 
@@ -483,9 +483,9 @@ en:
             min:          0
             max:          1
             label:        'Format Version'
-            tooltip:      'Format version of remediated content file'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Format version of remediated content file.'
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter format version'
 
           emma_formatFeature:
@@ -498,9 +498,9 @@ en:
             min:          0
             max:          ~
             label:        'Format Feature'
-            tooltip:      'Format features of remediated content file'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Format features of remediated content file.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol FormatFeature
 
           # ===================================================================
@@ -517,9 +517,9 @@ en:
             label:        'Title'
             tooltip:      |
               Title of the creative work represented by the remediated content
-              file
-            help_html:    |
-              <strong>TODO</strong>
+              file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter title of work'
 
           dc_creator:
@@ -532,12 +532,11 @@ en:
             label:        'Author/Creator'
             tooltip:      |
               Author/editor/creator of the creative work represented by the
-              remediated content file
-            help_html:    |
+              remediated content file.
+            notes:        |
               Include authors, editors, translators, etc. of the creative work
-              itself.
-              Do not include names involved in the creation of the remediated
-              file.
+              itself.  Do not include names involved in the creation of the
+              remediated file.
             placeholder:  'Enter author(s) of the work'
 
           dc_identifier:
@@ -550,9 +549,9 @@ en:
             label:        'Identifier'
             tooltip:      |
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) for the
-              creative work represented by the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              creative work represented by the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter ISBN/etc for the work'
 
           dc_publisher:
@@ -566,8 +565,8 @@ en:
             label:        'Publisher'
             tooltip:      |
               Publisher/producer of the creative work represented by the
-              remediated content file
-            help_html:    |
+              remediated content file.
+            notes:        |
               Do not include names associated with the generation or production
               of the remediated file.
             placeholder:  'Enter publisher of the work'
@@ -583,12 +582,12 @@ en:
             tooltip:      |
               Standard identifier (e.g., ISBN, OCN [OCLC Number], etc.) of a
               related edition of the creative work represented by the
-              remediated content file
-            help_html:    |
-              Include identifiers for related versions or printings.
-              Do not include identifiers for similar works --
-              only of publications that are essentially variations of the same
-              creative work title.
+              remediated content file.
+            notes:        |
+              Include identifiers for related versions or printings.  Do not
+              include identifiers for similar works -- only of identifiers of
+              publications that are essentially variations of the same creative
+              work title.
             placeholder:  'ISBN/etc for a related edition of the work'
 
           dc_language:
@@ -601,9 +600,9 @@ en:
             label:        'Language'
             tooltip:      |
               Language(s) of the creative work represented by the remediated
-              content file
-            help_html:    |
-              <strong>TODO</strong>
+              content file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Language of the work'
             type:         !ruby/symbol LanguageType
 
@@ -619,9 +618,9 @@ en:
             label:        'Rights'
             tooltip:      |
               Reproduction rights for the creative work represented by the
-              remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol Rights
 
           dc_provenance:
@@ -634,9 +633,9 @@ en:
             min:          0
             max:          1
             label:        'Provenance'
-            tooltip:      'Originator of the remediated content file'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Originator of the remediated content file.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol Provenance
 
           dc_description:
@@ -649,9 +648,9 @@ en:
             label:        'Description'
             tooltip:      |
               Description/synopsis/abstract of the creative work represented by
-              the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Description/synopsis/abstract of the work'
             type:         textarea
 
@@ -665,9 +664,9 @@ en:
             label:        'Format'
             tooltip:      |
               Original format of the creative work represented by the
-              remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol DublinCoreFormat
 
           dc_type:
@@ -680,9 +679,9 @@ en:
             label:        'Type'
             tooltip:      |
               Original type of creative work represented by the remediated
-              content file
-            help_html:    |
-              <strong>TODO</strong>
+              content file.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol DcmiType
 
           dc_subject:
@@ -695,9 +694,9 @@ en:
             label:        'Subject'
             tooltip:      |
               Subject/keyword characterizing the creative work represented by
-              the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter keyword/subject term'
 
           dcterms_dateAccepted:
@@ -710,9 +709,9 @@ en:
             label:        'Date Accepted'
             tooltip:      |
               Date in which the remediated content file was added to its
-              repository
-            help_html:    |
-              <strong>TODO</strong>
+              repository.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter date file added to repository'
             type:         date
 
@@ -729,9 +728,9 @@ en:
             label:        'Copyright Date'
             tooltip:      |
               Copyright (or publication) date of the creative work represented
-              by the remediated content file
-            help_html:    |
-              <strong>TODO</strong>
+              by the remediated content file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter date of the creative work'
 
           # ===================================================================
@@ -747,9 +746,9 @@ en:
             min:          0
             max:          ~
             label:        'Accessibility Features'
-            tooltip:      'Accessibility features of the remediated content'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Accessibility features of the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol A11yFeature
 
           s_accessibilityControl:
@@ -760,9 +759,9 @@ en:
             min:          0
             max:          ~
             label:        'Accessibility Controls'
-            tooltip:      'Accessibility controls of the remediated content'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Accessibility controls of the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol A11yControl
 
           s_accessibilityHazard:
@@ -774,9 +773,9 @@ en:
             min:          0
             max:          ~
             label:        'Accessibility Hazards'
-            tooltip:      'Accessibility hazards of the remediated content'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Accessibility hazards of the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol A11yHazard
 
           s_accessMode:
@@ -788,9 +787,9 @@ en:
             min:          0
             max:          ~
             label:        'Access Mode'
-            tooltip:      'Access mode for the remediated content'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Access mode for the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol A11yAccessMode
 
           s_accessModeSufficient:
@@ -802,9 +801,9 @@ en:
             min:          0
             max:          ~
             label:        'Sufficient Mode'
-            tooltip:      'Access mode sufficient for the remediated content'
-            help_html:    |
-              <strong>TODO</strong>
+            tooltip:      'Access mode sufficient for the remediated content.'
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol A11ySufficient
 
           s_accessibilitySummary:
@@ -816,10 +815,10 @@ en:
             min:          0
             max:          1
             label:        'Accessibility Summary'
-            tooltip:      'Accessibility summary for the remediated content'
+            tooltip:      'Accessibility summary for the remediated content.'
             placeholder:  'Enter accessibility details'
-            help_html:    |
-              <strong>TODO</strong>
+            notes_html:   |
+              <em>TODO</em>
             type:         textarea
 
           s_accessibilityAPI:
@@ -832,8 +831,8 @@ en:
             max:          0
             label:        'Accessibility API'
             tooltip:      'Unused'
-            help_html:    |
-              <strong>This field is unused</strong>
+            notes_html:   |
+              <em>This field is unused</em>
             type:         !ruby/symbol A11yAPI
             origin:       system
 
@@ -850,10 +849,11 @@ en:
             max:          1
             label:        'Series'
             tooltip:      |
-              NEW bibliographic metadata field
-              (FMM5: "Series Name"; IA: missing)
-            help_html:    |
-              <strong>TODO</strong>
+              For an article or paper, the name of the journal or periodical
+              in which it published; for book content, the name of the series
+              to which the book belongs (if applicable).
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Journal name or publication series (if applicable)'
 
           bib_seriesType:
@@ -867,10 +867,9 @@ en:
             max:          1
             label:        'Series Type'
             tooltip:      |
-              NEW bibliographic metadata field
-              (FMM5: "Series Type"; IA: "series_type")
-            help_html:    |
-              <strong>TODO</strong>
+              The type of publication from which the content was extracted.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol SeriesType
 
           bib_seriesPosition:
@@ -882,10 +881,11 @@ en:
             max:          1
             label:        'Series Position'
             tooltip:      |
-              NEW bibliographic metadata field
-              (FMM5: "Series Position"; IA: "volume")
-            help_html:    |
-              <strong>TODO</strong>
+              For an article, the volume/issue/number of the journal or
+              periodical; for book content, the volume number or other
+              description of position within a series of books (if applicable).
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Journal volume/issue/number'
 
           bib_version:
@@ -900,10 +900,10 @@ en:
             max:          1
             label:        'Version'
             tooltip:      |
-              NEW bibliographic metadata field
-              (FMM5: "Version"; IA: "version")
-            help_html:    |
-              <strong>TODO</strong>
+              For book content, the edition or version of the book
+              (if applicable).
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter edition, version, etc.'
 
           # ===================================================================
@@ -920,10 +920,9 @@ en:
             max:          1
             label:        'Source of File'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Provider of source"; IA: "contributor")
-            help_html:    |
-              <strong>TODO</strong>
+              The origin of the content on which the remediated file was based.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter source of original content'
 
           rem_metadataSource:
@@ -936,10 +935,10 @@ en:
             max:          ~
             label:        'Source of Metadata'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Metadata Source"; IA: "metadata_source")
-            help_html:    |
-              <strong>TODO</strong>
+              The origin of the metadata for the original creative work on
+              which the remediated file was based.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter source of metadata'
 
           rem_remediatedBy:
@@ -953,10 +952,9 @@ en:
             max:          ~
             label:        'Remediated By'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Remediated By"; IA: "remediated_by")
-            help_html:    |
-              <strong>TODO</strong>
+              The origin of the remediated file.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Enter source of remediated file'
 
           rem_complete:
@@ -968,10 +966,11 @@ en:
             max:          1
             label:        'Entire Document Remediated?'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Portion?"; IA: "portion")
-            help_html:    |
-              <strong>TODO</strong>
+              True if the submission is a presentation of the entire original
+              work; false if the submission only covers certain sections or
+              chapters, or contains gaps or omissions.
+            notes_html:   |
+              <em>TODO</em>
             type:         boolean
 
           rem_coverage:
@@ -984,10 +983,10 @@ en:
             max:          ~
             label:        'Part(s) Remediated'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Portion Description"; IA: "portion_description")
-            help_html:    |
-              <strong>TODO</strong>
+              For a submission which does not present the entire original
+              work, describe the part(s) which are covered by the submission.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Describe the part(s) that have been remediated'
 
           rem_remediation:
@@ -1000,10 +999,10 @@ en:
             max:          ~
             label:        'Remediated Aspects'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Remediated Aspects"; IA: "remediated_aspects")
-            help_html:    |
-              <strong>TODO</strong>
+              A description of the remediations that are provided in this
+              submission.
+            notes_html:   |
+              <em>TODO</em>
             placeholder:  'Describe remediation(s)'
             type:         textarea
 
@@ -1017,10 +1016,10 @@ en:
             max:          ~
             label:        'Text Quality'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Text Quality"; IA: "text_quality")
-            help_html:    |
-              <strong>TODO</strong>
+              One or more indicators of the quality of the original scan on
+              which the submission was based.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol TextQuality
 
           rem_status:
@@ -1032,10 +1031,9 @@ en:
             max:          1
             label:        'Remediation Status'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: "Remediation Status"; IA: "remediation_status")
-            help_html:    |
-              <strong>TODO</strong>
+              The remediation status of submitted file.
+            notes_html:   |
+              <em>TODO</em>
             type:         !ruby/symbol RemediationStatus
 
           rem_image_count:
@@ -1049,10 +1047,9 @@ en:
             max:          0
             label:        'Number of Images'
             tooltip:      |
-              NEW remediation metadata field
-              (FMM5: N/A; IA: "imagecount")
-            help_html:    |
-              <strong>TODO</strong>
+              The number of scanned page images.
+            notes_html:   |
+              <em>TODO</em>
             type:         number
 
         # =====================================================================
@@ -1067,9 +1064,9 @@ en:
           min:          0
           max:          1
           label:        'Phase'
-          tooltip:      'Submission phase'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Submission workflow phase.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         edit_state:
@@ -1080,9 +1077,9 @@ en:
           min:          0
           max:          1
           label:        'Edit Status'
-          tooltip:      'Status of modification to the submission'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Status of modification to the submission.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         edit_user:
@@ -1093,9 +1090,9 @@ en:
           min:          0
           max:          1
           label:        'Edit User'
-          tooltip:      'The EMMA user who is modifying the submission'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'The EMMA user who is modifying the submission.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         edit_file_data:
@@ -1106,9 +1103,9 @@ en:
           min:          0
           max:          1
           label:        'Modified File data'
-          tooltip:      'Modified uploaded file metadata'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Modified uploaded file metadata.'
+          notes_html:   |
+            <em>TODO</em>
           type:         json
           origin:       system
 
@@ -1120,9 +1117,9 @@ en:
           min:          0
           max:          1
           label:        'Modified EMMA data'
-          tooltip:      'Modified EMMA metadata'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Modified EMMA metadata.'
+          notes_html:   |
+            <em>TODO</em>
           type:         json
           origin:       system
 
@@ -1135,9 +1132,9 @@ en:
           max:          1
           type:         time
           label:        'Modification Date'
-          tooltip:      'Date of last modification'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Date of last modification.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         review_user:
@@ -1148,9 +1145,9 @@ en:
           min:          0
           max:          1
           label:        'Reviewer'
-          tooltip:      'The EMMA user who will review the submission'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'The EMMA user who will review the submission.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         review_success:
@@ -1161,9 +1158,9 @@ en:
           min:          0
           max:          1
           label:        'Review Passed'
-          tooltip:      'Whether the submission has passed review'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Whether the submission has passed review.'
+          notes_html:   |
+            <em>TODO</em>
           type:         boolean
           origin:       system
 
@@ -1175,9 +1172,9 @@ en:
           min:          0
           max:          1
           label:        'Review Comments'
-          tooltip:      'Comments made by the reviewer'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Comments made by the reviewer.'
+          notes_html:   |
+            <em>TODO</em>
           origin:       system
 
         reviewed_at:
@@ -1188,8 +1185,8 @@ en:
           min:          0
           max:          1
           label:        'Review Date'
-          tooltip:      'Date of last review'
-          help_html:    |
-            <strong>TODO</strong>
+          tooltip:      'Date of last review.'
+          notes_html:   |
+            <em>TODO</em>
           type:         time
           origin:       system

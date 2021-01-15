@@ -112,7 +112,8 @@ en:
         name:           'ISBN / ISSN / etc.'
         label:          'Standard identifier:'
         tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
-        placeholder:    'Enter a standard identifier...'
+        placeholder:    'Enter an identifier or title...'
+
       title:
         name:           'Title'
         label:          'Title terms:'

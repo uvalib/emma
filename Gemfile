@@ -92,6 +92,10 @@ gem 'iso-639'
 gem 'sanitize'
 gem 'workflow'
 
+# == Temporary
+# NOTE: The current version of Devise cannot handle OmniAuth 2.0.0.
+gem 'omniauth', '~> 1.9'
+
 # =============================================================================
 # Production
 # =============================================================================

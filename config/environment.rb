@@ -260,7 +260,7 @@ if rails_application?
     :IA_SIG_COOKIE,
     :IA_USER_COOKIE,
   ]
-  if application_deployed? || !development_build?
+  if false # if application_deployed? || !development_build?
     # == Amazon Web Services
     vars += %i[AWS_REGION AWS_BUCKET AWS_ACCESS_KEY_ID AWS_SECRET_KEY]
   end
