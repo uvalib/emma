@@ -187,6 +187,7 @@ class ApiService::Error < Api::Error
           end
           msg.remove(/\\"/)
         }.reject(&:blank?).presence
+      desc ||= json['message'].presence
       desc ||= json.values.flat_map { |v| v if v.is_a?(Array) }.compact
       Array.wrap(desc.presence || body)
     end

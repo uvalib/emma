@@ -5,6 +5,8 @@
 
 __loading_begin(__FILE__)
 
+require 'net/http/status'
+
 # Base exception for API errors.
 #
 class Api::Error < RuntimeError
@@ -52,6 +54,7 @@ class Api::Error < RuntimeError
         when Integer           then @http_status = arg
         when String            then @messages << arg
         when Array             then @messages += arg
+        when Hash              then # @messages += messages_from(arg)
         when true              then # Use default error message.
         when nil               then # Ignore silently.
         else Log.warn { "Api::Error#initialize: #{arg.inspect} ignored" }
@@ -59,24 +62,29 @@ class Api::Error < RuntimeError
     end
     # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
     case @cause
+      when nil
+        # Ignore
       when Api::Error
-        @messages     += @cause.messages
         @http_status ||= @cause.http_status
         @response    ||= @cause.response
+        @messages     += @cause.messages
         @cause         = @cause.cause
       when Faraday::Error
-        @messages     += faraday_error(*@cause.message)
         @http_status ||= @cause.response&.dig(:status)
+        @messages     += faraday_error(*@cause.message)
         @cause         = @cause.wrapped_exception
       when Exception
-        @messages     += Array.wrap(@cause.message)
         @http_status ||= @response&.status
+        @messages     += Array.wrap(@cause.message)
+      else
+        Log.warn { "Api::Error#initialize: @cause #{@cause.class} unexpected" }
     end
     @messages.reject!(&:blank?)
     @messages.uniq!
     @messages << (default || default_message) if @messages.empty?
     super(@messages.first)
-  rescue
+  rescue => e
+    Log.error { "Api::Error#initialize: #{e.class}: #{e.message}" }
     super('ERROR')
   end
 
@@ -154,12 +162,45 @@ class Api::Error < RuntimeError
   #
   # @return [Array<String>]
   #
+  # == Usage Notes
+  # As a side-effect, if @http_status is nil and HTTP status can be determined,
+  # then @http_status will be set here.
+  #
   def faraday_error(*messages)
     messages.map do |m|
-      m.sub(/status (\d+)/) do |s|
-        description = Net::HTTP::STATUS_CODES[$1.to_i]
+      m.to_s.sub(/status (\d+)/) do |s|
+        code = $1.to_i
+        @http_status ||= (code if code.positive?)
+        description = Net::HTTP::STATUS_CODES[code]
         description ? "#{s} (#{description})" : s
       end
+    end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Error message-related keys within a Hash.
+  #
+  # @param [Array<Symbol,String>]
+  #
+  MESSAGE_KEYS = %i[message messages].flat_map { |k| [k, k.to_s] }.freeze
+
+  # Extract error messages.
+  #
+  # @param [Hash] value
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # The result may contain nils, blanks and/or duplicates.
+  #
+  def messages_from(value)
+    value.values_at(*MESSAGE_KEYS).flat_map do |m|
+      Array.wrap(m).reject(&:blank?).compact.map(&:to_s).presence if m
     end
   end
 
