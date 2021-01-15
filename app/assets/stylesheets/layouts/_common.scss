@@ -16,83 +16,27 @@ html.modal {
 // noinspection SassScssResolvedByNameOnly
 body {
 
-    margin:      0;
-    padding:     0;
-    font-family: $font-normal;
+    display:        flex;
+    flex-direction: column;
+    min-height:     100vh;
+    margin:         0;
+    padding:        0;
+    font-family:    $font-normal;
 
     @media #{$narrow-screen} {
         font-size: large;
     }
-}
 
-// The <main> content area of the page.
-//
-// noinspection SassScssResolvedByNameOnly
-.layout-content {
-
-    margin:     $page-padding;
-    min-height: 75vh;
-    max-width:  100%;
-    position:   relative;
-
-    // Give a little extra clearance for the scroll bar.
-    @media #{$medium-width} {
-        padding-right: calc(1.5 * #{$page-padding-x});
+    // The <header> and <footer> areas of the page.
+    .layout-header,
+    .layout-footer {
+        flex: 0 0 auto;
     }
 
-    // If the skip-nav menu grows large enough, on certain screens (ones with
-    // out search controls) it may extend below the header even when it should
-    // be hidden because it has "z-order: -1".  The <body> element can't be
-    // given a z-order, but extending the coverage of this element bridges the
-    // gap so that the long tail of the skip-nav menu is covered by its shadow.
-    box-shadow: 0 0 0 $page-padding white;
-}
-
-// For the heading at the top of the content area.
-//
-// noinspection SassScssResolvedByNameOnly
-.heading {
-
-    display:     flex;
-    align-items: center;
-    margin:      calc(1.5 * #{$page-padding}) auto;
-    word-break:  break-all;
-    font-size:   xx-large;
-
-    @media #{$wide-screen} {
-        margin-bottom: calc(#{$page-padding} / 2);
-    }
-
-    @media #{$narrow-screen} {
-        margin-top: calc(2 * #{$page-padding});
-    }
-}
-
-// For enclosing the actual heading in a line with other items.
-//
-// noinspection SassScssResolvedByNameOnly
-.heading.container {
-
-    display:   flex;
-    flex-wrap: wrap;
-    gap:       $flex-gap-y $flex-gap-x;
-
-    > * {
-        margin: auto 0;
-        flex:   0 0 auto;
-    }
-
-    .heading {
-        word-break: break-word;
-        flex:       1 1 auto;
-    }
-
-    @media #{$narrow-screen} {
-
-        flex-wrap: nowrap;
-
-        > * {
-            margin-top: 0;
-        }
+    // The <main> content area of the page.
+    //
+    // noinspection SassScssResolvedByNameOnly
+    .layout-content {
+        flex: 1 1 auto;
     }
 }

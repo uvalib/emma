@@ -220,7 +220,7 @@ $(document).on('turbolinks:load', function() {
         let target   = (typeof ev === 'object') && ev.currentTarget || ev;
         let $target  = $(target);
         const indent = $target.position().left;
-        const text   = $target.attr('data-note') || $target.attr('title');
+        const text   = $target.attr('aria-label') || $target.attr('title');
         $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
         $group_select_note.css('visibility', 'visible');

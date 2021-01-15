@@ -70,10 +70,29 @@
     .periodical-details {}
 
     .edition-list {
+
         // Move the column up a bit so that the baseline of the heading matches
         // the baseline of the text on the left-hand side.
         @media #{$wide-screen} {
             margin-top: -0.75rem;
+        }
+
+        .edition-list-entry {
+            .value.field-Formats {
+
+                display:         inline-flex;
+                flex-direction:  row;
+                justify-content: space-between;
+
+                @media #{$narrow-screen} {
+
+                    flex-direction: column;
+
+                    .artifact {
+                        margin-top: 0.5rem;
+                    }
+                }
+            }
         }
     }
 }

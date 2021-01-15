@@ -145,7 +145,7 @@ $tray-pad: 1.5 * $icon-pad;
 
     @extend .list-2-column;
 
-    margin-bottom: 1rem;
+    margin:        $results-entry-gap-y 0;
     align-content: flex-start;
 
     //=========================================================================

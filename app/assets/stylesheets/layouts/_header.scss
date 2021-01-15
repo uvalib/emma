@@ -71,11 +71,15 @@ $search-button-width:    6rem;
 
 // noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
 %header-control-panel {
+
     padding:        0.5rem;
-    padding-bottom: 0.25rem;
     padding-right:  0;
     border:         0.125rem dotted white;
     border-radius:  0.75rem;
+
+    @media #{$not-narrow-screen} {
+        padding-bottom: 0.25rem;
+    }
 }
 
 // For controls with a white background within the header.
@@ -198,13 +202,8 @@ $search-button-width:    6rem;
 
         .help-popup {
 
-            @media #{$not-narrow-screen} {
-                margin-left: calc(#{$flex-gap-y} / 2);
-            }
-
             @media #{$narrow-screen} {
-                margin-top:   calc(2 * #{$flex-gap-y});
-                margin-right: calc(2 * #{$flex-gap-x});
+                margin-top: calc(2 * #{$flex-gap-y});
             }
 
             .popup-panel {
@@ -549,14 +548,14 @@ $search-button-width:    6rem;
             display:      flex;
             flex-wrap:    nowrap;
             margin:       $gap-y 0;
-            margin-right: calc(2 * #{$gap-x});
+            margin-right: calc(4 * #{$gap-x});
             flex:         1 1 auto;
 
             @media #{$narrow-screen} {
 
+                margin:          calc(2 * #{$gap-y}) 0;
                 flex-wrap:       wrap;
                 justify-content: flex-end;
-                margin-right:    0;
 
                 * {
                     font-size: larger;
@@ -583,21 +582,25 @@ $search-button-width:    6rem;
 
             .search-clear {
 
-                position:         relative;
-                left:             -2.75rem;
-                margin:           auto 0;
-                padding:          0 0.375rem;
-                color:            $uva-text-gray;
-                background-color: white;
-                border-color:     transparent;
+                position:          relative;
+                margin:            auto 0;
+                padding:           0 0.25rem;
+                color:             $uva-text-gray;
+                background-color:  white;
+                border-color:      transparent;
 
-                @media #{$not-narrow-screen} {
+                @media #{$wide-screen} {
+                    left:         -2.75rem;
+                }
+
+                @media #{$medium-width} {
+                    left:         -2.25rem;
                     margin-right: $search-clear-inset;
                 }
 
                 @media #{$narrow-screen} {
                     top:          -0.125rem;
-                    left:         -2.5rem;
+                    left:         -2.25rem;
                     margin-right: -2.25rem;
                     margin-left:  0.25rem;
                 }
@@ -614,15 +617,20 @@ $search-button-width:    6rem;
 
             .search-button {
 
-                margin:       auto 0;
-                margin-left:  calc(2 * #{$search-clear-inset} - #{$gap-x});
-                margin-right: calc(-1 * #{$search-clear-inset});
-                flex:         0 0 auto;
+                margin: auto 0;
+                flex:   0 0 auto;
+
+                @media #{$wide-screen} {
+                    margin-left:  calc( 3 * #{$search-clear-inset});
+                }
+
+                @media #{$medium-width} {
+                    margin-left:  calc(2 *  #{$search-clear-inset});
+                }
 
                 @media #{$narrow-screen} {
                     margin-top:   0;
-                    margin-left:  $gap-x;
-                    margin-right: 0;
+                    margin-left:  calc(2 * #{$gap-x});
                 }
             }
         }
@@ -633,19 +641,8 @@ $search-button-width:    6rem;
         // noinspection CssReplaceWithShorthandSafely
         .advanced-search-toggle {
 
-            margin:      auto 0;
-            margin-left: $gap-x;
-            flex:        0 0 auto;
-
-            @media #{$not-wide-screen} {
-                margin-top:    $gap-y;
-                margin-bottom: $gap-y;
-                margin-left:   $gap-x;
-            }
-
-            @media #{$narrow-screen} {
-                margin-left: 0;
-            }
+            margin: auto 0;
+            flex:   0 0 auto;
 
             @media #{$wide-screen} {
                 display: none;
@@ -736,7 +733,7 @@ $search-button-width:    6rem;
         // When the advanced search grid is closed, each affected grid cell is
         // flattened to an invisible element which continues to contribute to
         // the layout of grid columns but takes up no vertical space.
-        %hidden-grid-cell {
+        @mixin hidden-grid-cell {
             &, & * {
                 height:        0;
                 margin-top:    0;
@@ -830,8 +827,16 @@ $search-button-width:    6rem;
         // button).
         &:not(.open) {
             > * {
-                &:not(.row-first), &.reset {
-                    @extend %hidden-grid-cell;
+
+                &.reset,
+                &:not(.row-first) {
+                    @include hidden-grid-cell;
+                }
+
+                @media #{$narrow-screen} {
+                    &:not(.col-first) {
+                        @include hidden-grid-cell;
+                    }
                 }
             }
         }

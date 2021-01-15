@@ -37,20 +37,6 @@ module MemberHelper
 
   public
 
-  # Current page of member results.
-  #
-  # @return [Array<Bs::Record::UserAccount>]
-  #
-  def member_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

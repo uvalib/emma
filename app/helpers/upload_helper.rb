@@ -525,6 +525,11 @@ module UploadHelper
     curr_group = curr_group.to_sym if curr_group.is_a?(String)
     counts ||= @group_counts || {}
 
+    # A label preceding the group of buttons (screen-reader only).
+    p_id   = "label-#{UPLOAD_GROUP_CLASS}"
+    prefix = 'Select records based on their submission state:' # TODO: I18n
+    prefix = html_div(prefix, id: p_id, class: 'sr-only')
+
     # Create buttons for each state group that has entries.
     buttons =
       UPLOAD_STATE_GROUP.map do |group, properties|
@@ -542,7 +547,7 @@ module UploadHelper
 
         link_opt = {
           class:        UPLOAD_GROUP_CONTROL_CLASS,
-          title:        properties[:tooltip],
+          'aria-label': properties[:tooltip],
           'data-group': group
         }
         prepend_css_classes!(link_opt, 'uppy-FileInput-btn')
@@ -553,23 +558,20 @@ module UploadHelper
       end
 
     # Wrap the controls in a group.
-    opt = prepend_css_classes(opt, UPLOAD_GROUP_CLASS)
-    opt[:id]   = css_randomize(UPLOAD_GROUP_CLASS)
-    opt[:role] = 'nav'
-    group = html_div(buttons, opt)
+    prepend_css_classes!(opt, UPLOAD_GROUP_CLASS)
+    opt[:role]              = 'navigation'
+    opt[:'aria-labelledby'] = p_id
+    group = html_div(*buttons, opt)
 
-    # A label preceding the group (screen-reader only).
-    label = 'Select records based on their submission state:' # TODO: I18n
-    label = html_tag(:label, label, class: 'prefix', for: opt[:id])
-
-    # An element to hold a dynamic display following the group.
+    # An element following the group to hold a dynamic description of the group
+    # button currently hovered/focused.  (@see javascripts/feature/records.js)
     note = html_div('&nbsp;'.html_safe, class: 'note', 'aria-hidden': true)
-    note = html_div(note, class: 'note-tray')
+    note = html_div(note, class: 'note-tray', 'aria-hidden': true)
 
-    # Include the group in a panel with accompanying label.
+    # Include the group and note area in a panel.
     outer_opt = { class: UPLOAD_GROUP_PANEL_CLASS }
-    html_div(**outer_opt) do
-      label << group << note
+    html_div(outer_opt) do
+      prefix << group << note
     end
   end
 
@@ -605,7 +607,7 @@ module UploadHelper
 
   # Control for filtering which records are displayed.
   #
-  # @param [Array<Upload>] list       Default: `#upload_list`.
+  # @param [Array<Upload>] list       Default: `#page_items`.
   # @param [Hash]          counts     A table of group names associated with
   #                                     their overall totals (default:
   #                                     @group_counts).
@@ -624,7 +626,7 @@ module UploadHelper
     return unless UPLOAD_PAGE_FILTERING
     name     = __method__.to_s
     counts ||= @group_counts || {}
-    list     = upload_list if list.blank?
+    list     = page_items if list.blank?
     table    = list.group_by(&:state_group)
 
     # Create radio button controls for each state group that has entries.
@@ -643,7 +645,7 @@ module UploadHelper
         tooltip  = properties[:tooltip]
         selected = true?(properties[:default])
 
-        i_opt = { role: 'radio', 'aria-labelledby': label_id }
+        i_opt = { role: 'radio' }
         input = radio_button_tag(name, group, selected, i_opt)
 
         l_opt = { id: label_id }
@@ -666,20 +668,20 @@ module UploadHelper
     controls.unshift(prefix)
 
     # Wrap the controls in a group.
-    opt = prepend_css_classes(opt, UPLOAD_FILTER_GROUP_CLASS)
-    opt[:id]   = css_randomize(UPLOAD_FILTER_GROUP_CLASS)
+    prepend_css_classes!(opt, UPLOAD_FILTER_GROUP_CLASS)
     opt[:role] = 'radiogroup'
     group = html_div(controls, opt)
 
     # A label for the group (screen-reader only).
-    label = 'Choose the upload submission state to display:' # TODO: I18n
-    label = html_tag(:label, label, for: opt[:id])
+    legend = 'Choose the upload submission state to display:' # TODO: I18n
+    legend = html_tag(:legend, legend, class: 'sr-only')
 
     # Include the group in a panel with accompanying label.
     outer_opt = { class: UPLOAD_PAGE_FILTER_CLASS }
     append_css_classes!(outer_opt, 'hidden') if controls.size <= 1
-    html_div(**outer_opt) do
-      label << group
+    # noinspection RubyYardReturnMatch
+    field_set_tag(nil, outer_opt) do
+      legend << group
     end
   end
 
@@ -698,7 +700,7 @@ module UploadHelper
 
   # Control the selection of filters displayed by #upload_page_filter.
   #
-  # @param [Array<Upload>] list       Default: `#upload_list`.
+  # @param [Array<Upload>] list       Default: `#page_items`.
   # @param [Hash]          opt        Passed to #html_div for outer <div>.
   #
   # @option opt [Array] :records      List of upload records for display.
@@ -710,27 +712,31 @@ module UploadHelper
   def upload_page_filter_options(*list, **opt)
     name     = __method__.to_s
     counts ||= @group_counts || {}
-    list     = upload_list if list.blank? && counts.blank?
-    opt      = prepend_css_classes(opt, UPLOAD_FILTER_OPTIONS_CLASS)
-    html_div(opt) do
-      groups = { ALL_FILTERS: { label: 'Show all filters', checked: false } }
-      groups.merge!(UPLOAD_STATE_GROUP)
+    list     = page_items if list.blank? && counts.blank?
+
+    # A label preceding the group (screen-reader only).
+    legend = 'Select/de-select state groups to show' # TODO: I18n
+    legend = html_tag(:legend, legend, class: 'sr-only')
+
+    # Checkboxes.
+    cb_opt = { class: UPLOAD_FILTER_CONTROL_CLASS }
+    groups = { ALL_FILTERS: { label: 'Show all filters', checked: false } }
+    groups.merge!(UPLOAD_STATE_GROUP)
+    checkboxes =
       groups.map do |group, properties|
         cb_name  = "[#{name}][]"
         cb_value = group
         checked  = properties[:checked]
         checked  = counts[group]&.positive?                     if checked.nil?
         checked  = active_state_group?(group, properties, list) if checked.nil?
-        cb_opt   = {
-          id:      "#{name}-#{cb_value}",
-          label:   %Q(Show "#{properties[:label]}"),
-          class:   UPLOAD_FILTER_CONTROL_CLASS,
-          checked: checked,
-          role:    'option'
-        }
+        cb_opt[:checked] = checked
+        cb_opt[:label]   = %Q(Show "#{properties[:label]}") # TODO: I18n
+        cb_opt[:id]      = "#{name}-#{cb_value}"
         render_check_box(cb_name, cb_value, **cb_opt)
       end
-    end
+
+    prepend_css_classes!(opt, UPLOAD_FILTER_OPTIONS_CLASS)
+    html_tag(:fieldset, legend, *checkboxes, opt)
   end
 
   # ===========================================================================
@@ -1032,6 +1038,17 @@ module UploadHelper
       [action, i18n_button_values(:upload, action)]
     }.to_h.deep_freeze
 
+  # Screen-reader-only label for file input.  (This is to satisfy accessibility
+  # checkers which don't ignore the file input which is made invisible in favor
+  # of the Uppy file input control).
+  #
+  # @type [String]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  FILE_LABEL = I18n.t('emma.upload.new.select.label').freeze
+
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
   #
@@ -1081,7 +1098,8 @@ module UploadHelper
         # Button tray.
         tray = []
         tray << upload_submit_button(action: action, label: label)
-        tray << upload_cancel_button(action: action, url: opt[:cancel])
+        tray << upload_cancel_button(action: action, url: cancel)
+        tray << f.label(:file, FILE_LABEL, class: 'sr-only', id: 'fi_label')
         tray << f.file_field(:file)
         tray << upload_filename_display
         tray = html_div(class: 'button-tray') { tray }
@@ -1195,29 +1213,32 @@ module UploadHelper
   #
   def upload_field_group(**opt)
     name = UPLOAD_FIELD_GROUP_NAME
-    opt  = prepend_css_classes(opt, 'upload-field-group')
-    opt[:role] = 'radiogroup'
-    html_div(opt) do
+
+    # A label for the group (screen-reader only).
+    legend = 'Filter input fields by state:' # TODO: I18n
+    legend = html_tag(:legend, legend, class: 'sr-only')
+
+    # Radio button controls.
+    controls =
       UPLOAD_FIELD_GROUP.map do |group, properties|
         enabled = properties[:enabled].to_s
         next if false?(enabled)
         next if (enabled == 'debug') && !session_debug?
 
-        input_id = "#{name}_#{group}"
-        label_id = "label-#{input_id}"
         tooltip  = properties[:tooltip]
         selected = true?(properties[:default])
 
-        i_opt = { role: 'radio', 'aria-labelledby': label_id }
-        input = radio_button_tag(name, group, selected, i_opt)
+        input = radio_button_tag(name, group, selected, role: 'radio')
 
-        l_opt = { id: label_id }
         label = properties[:label] || group.to_s
-        label = label_tag(input_id, label, l_opt)
+        label = label_tag("#{name}_#{group}", label)
 
         html_div(class: 'radio', title: tooltip) { input << label }
       end
-    end
+
+    prepend_css_classes!(opt, 'upload-field-group')
+    opt[:role] = 'radiogroup'
+    html_tag(:fieldset, legend, *controls, opt)
   end
 
   # Element for prompting for the EMMA index entry of the member repository
@@ -1233,16 +1254,28 @@ module UploadHelper
     prepend_css_classes!(opt, 'parent-entry-select', 'hidden')
     id     = 'parent-entry-search'
     type   = :search
+    b_opt  = { role: 'button', tabindex: 0 }
+
+    # Directions.
     t_id   = opt[:'aria-labelledby'] = "#{id}-title"
     title  =
       "Please indicate the EMMA entry for the original repository item. " \
       "If possible, enter the standard identifier (ISBN, ISSN, OCLC, etc.) " \
       "or the full title of the original work." # TODO: I18n
     title  = html_div(title, id: t_id, class: 'search-title')
+
+    # Text input.
     input  = search_input(id, type)
-    submit = html_div(class: 'search-button') { search_button_label(type) }
-    cancel = html_div(class: 'search-cancel') { 'Cancel' } # TODO: I18n
-    html_div(**opt) { title << input << submit << cancel }
+
+    # Submit button.
+    submit = search_button_label(type)
+    submit = html_div(submit, b_opt.merge(class: 'search-button'))
+
+    # Cancel button.
+    cancel = 'Cancel' # TODO: I18n
+    cancel = html_div(cancel, b_opt.merge(class: 'search-cancel'))
+
+    html_div(opt) { title << input << submit << cancel }
   end
 
   # Form fields are wrapped in an element for easier grid manipulation.

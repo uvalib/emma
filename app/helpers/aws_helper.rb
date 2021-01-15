@@ -263,7 +263,7 @@ module AwsHelper
         more = link_to(more, '#') if html # TODO: JavaScript
         obj  = { prefix: more }
       end
-      render_s3_object(obj, section: start, row: count, **obj_opt)
+      render_s3_object_row(obj, section: start, row: count, **obj_opt)
     end
     objects.compact!
 
@@ -308,6 +308,18 @@ module AwsHelper
     headings = s3_object_values(nil)
     prepend_css_classes!(opt, 'column-headings')
     render_s3_object(headings, **opt)
+  end
+
+  # Show an S3 object table row.
+  #
+  # @param [Hash] opt                         Passed to #render_s3_object
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Hash]                            If *html* is false.
+  #
+  def render_s3_object_row(obj, **opt)
+    prepend_css_classes!(opt, 'row')
+    render_s3_object(obj, **opt)
   end
 
   # Show the contents of an S3 object.

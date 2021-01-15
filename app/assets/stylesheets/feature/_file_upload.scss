@@ -142,7 +142,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
     // Elements
     //=========================================================================
 
-    > * {
+    > :not(legend) {
         display:     inline-flex;
         align-items: baseline;
         margin:      0.25rem;
@@ -365,7 +365,7 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     @extend %upload-radio-group;
 
-    margin:     2rem 0;
+    margin:     $page-padding 0;
     padding:    0.25rem;
     background: $debug-bg;
 
@@ -389,14 +389,15 @@ $upload-section-gap-small: $upload-section-gap / 2;
 // noinspection SassScssResolvedByNameOnly
 .parent-entry-select {
 
-    display:       flex;
-    padding:       1rem;
-    background:    white;
-    border:        0.5rem solid $uva-accent-orange;
-    border-radius: 0.75rem;
-    flex-wrap:     wrap;
-    align-items:   center;
-    gap:           1rem;
+    display:         flex;
+    padding:         1rem;
+    background:      white;
+    border:          0.5rem solid $uva-accent-orange;
+    border-radius:   0.75rem;
+    flex-wrap:       wrap;
+    align-items:     center;
+    gap:             1rem;
+    justify-content: space-around;
 
     //=========================================================================
     // Elements
@@ -410,7 +411,15 @@ $upload-section-gap-small: $upload-section-gap / 2;
     }
 
     .search-input {
-        flex: 1 1 auto;
+
+        line-height: 1.5;
+        flex:        1 1 auto;
+
+        @media #{$narrow-screen} {
+            margin-bottom: 0.5rem;
+            line-height:   2;
+            flex:          1 1 100%;
+        }
     }
 
     .search-clear {
@@ -419,17 +428,20 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     .search-button,
     .search-cancel {
-        margin-left: 0.5rem;
-        padding:     2px 6px;
-        background:  lightgray;
-        border:      1px solid gray;
-        flex:        0 0 auto;
-    }
 
-    .search-cancel {
+        @extend .uppy-FileInput-btn;
         @extend %button-hover;
+
+        flex: 0 0 auto;
+
+        &:focus {
+            @extend %focus;
+        }
     }
 }
+
+$form-gap:        1.5rem;
+$form-gap-narrow: $form-gap / 3;
 
 // Form containing and metadata field inputs and file upload controls.
 //
@@ -438,9 +450,6 @@ $upload-section-gap-small: $upload-section-gap / 2;
 .file-upload-delete,
 .file-upload-bulk {
 
-    $form-gap:        1.5rem;
-    $form-gap-narrow: $form-gap / 3;
-
     display: grid;
 
     grid-template-columns:
@@ -448,7 +457,8 @@ $upload-section-gap-small: $upload-section-gap / 2;
     gap: $form-gap;
 
     @media #{$narrow-screen} {
-        gap: $form-gap-narrow;
+        margin-right: 0.25rem;
+        gap:          $form-gap-narrow;
     }
 
     // Uploader for a new EMMA entry.
@@ -679,6 +689,8 @@ $upload-section-gap-small: $upload-section-gap / 2;
 // noinspection SassScssResolvedByNameOnly
 .file-upload-bulk {
 
+    gap: $form-gap;
+
     &.delete {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -695,7 +707,12 @@ $upload-section-gap-small: $upload-section-gap / 2;
     }
 
     .form-controls {
+
         display: grid;
+
+        @media #{$narrow-screen} {
+            margin-top: 1.5rem;
+        }
     }
 
     label {
@@ -704,7 +721,12 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     input[type="text"],
     input[type="number"] {
+
         flex: 0 1 33%;
+
+        @media #{$narrow-screen} {
+            flex: 1 1 auto;
+        }
     }
 
     .uppy-FileInput-container {
@@ -754,11 +776,6 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     grid-template-columns: 1fr;
     gap:                   1rem;
-
-    @media #{$narrow-screen} {
-        margin-right:          0.25rem; // Scrollbar clearance.
-        grid-template-columns: 1fr;
-    }
 
     //=========================================================================
     // Elements
@@ -857,8 +874,13 @@ $upload-section-gap-small: $upload-section-gap / 2;
 
     // No status bar for bulk upload so extra white space is needed above.
     .file-upload-bulk {
-        margin-top:    2rem;
-        margin-bottom: -$bulk-vertical-adjust;
+
+        margin-top: 2rem;
+
+        // noinspection SassScssResolvedByNameOnly
+        @media #{$wide-screen} {
+            margin-bottom: -$bulk-vertical-adjust;
+        }
     }
 
     & + .file-upload-results {

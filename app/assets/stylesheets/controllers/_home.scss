@@ -43,17 +43,15 @@ body.home-main,
 body.home-welcome,
 body.home-dashboard {
 
+    // noinspection SassScssResolvedByNameOnly
     .sign-in {
-        margin-top:    2rem;
-        margin-bottom: 2rem;
-        font-weight:   bold;
-    }
 
-    .sign-in + .ability-debug {
-        // noinspection SassScssResolvedByNameOnly
-        @media #{$wide-screen} {
-            margin-top: 50vh;
+        margin-top:    $page-padding;
+        margin-bottom: $page-padding;
+        font-weight:   bold;
+
+        @media #{$not-wide-screen} {
+            margin-top: calc(2 * #{$page-padding});
         }
     }
-
 }

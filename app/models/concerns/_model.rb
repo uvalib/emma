@@ -33,6 +33,14 @@ module Model
     }.compact.to_h
   end
 
+  # A unique identifier for this model instance.
+  #
+  # @return [String]
+  #
+  def identifier
+    (respond_to?(:id) ? id : object_id).to_s
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

@@ -109,20 +109,6 @@ module ArtifactHelper
 
   public
 
-  # Current page of artifact results.
-  #
-  # @return [Array]
-  #
-  def artifact_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Create an element containing a link to download the given item.
   #
   # @param [Api::Record]                     item

@@ -61,5 +61,5 @@ en:
         text_html:      |
           Your EMMA account information is managed by Bookshare.
           To modify, visit the Bookshare
-          <a href="https://www.bookshare.org/myAccount" target="_blank">My Account</a>
+          <a href="https://www.bookshare.org/myAccount" target="_blank" rel="noopener">My Account</a>
           page.

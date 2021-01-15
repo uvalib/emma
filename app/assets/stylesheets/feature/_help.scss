@@ -22,3 +22,8 @@
         // TODO: ??? .help-popup .popup-panel
     }
 }
+
+// Keep popup within the bounds of 100vh on short pages.
+body.index .layout-content .help-popup .popup-panel {
+    min-height: 45vh;
+}

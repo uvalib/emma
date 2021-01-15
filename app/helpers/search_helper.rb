@@ -43,20 +43,6 @@ module SearchHelper
 
   public
 
-  # Current page of record search results.
-  #
-  # @return [Array<Search::Record::MetadataRecord>]
-  #
-  def search_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

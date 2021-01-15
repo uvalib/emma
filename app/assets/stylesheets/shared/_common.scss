@@ -82,6 +82,12 @@
     color:            white;
     background-color: $header-bg;
 
+    @media #{$not-wide-screen} {
+        padding-top:    calc(2 * #{$page-padding-y});
+        padding-bottom: calc(2 * #{$page-padding-y});
+        padding-right:  calc(#{$page-padding-x} + #{$scroll-easement});
+    }
+
     * {
         margin: auto 0;
         color:  white;
@@ -244,6 +250,14 @@ textarea:focus {
     border: 0;
 }
 
+// Allow <fieldset> to be used like <div> by eliminating browser-defined
+// styling.
+fieldset {
+    margin:  unset;
+    padding: unset;
+    border:  none;
+}
+
 //=============================================================================
 // Classes for composition
 //=============================================================================
@@ -318,8 +332,8 @@ textarea:focus {
 
     @media #{$narrow-screen} {
 
-        padding-bottom: 1rem;
-        flex-wrap:      wrap;
+        margin-bottom: $page-padding;
+        flex-wrap:     wrap;
 
         .list-heading {
             margin-bottom: 1rem;

@@ -36,20 +36,6 @@ module PeriodicalHelper
 
   public
 
-  # Current page of periodical results.
-  #
-  # @return [Array<PeriodicalSeriesMetadataSummary>]
-  #
-  def periodical_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

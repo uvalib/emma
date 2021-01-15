@@ -35,20 +35,6 @@ module EditionHelper
 
   public
 
-  # Current page of edition results.
-  #
-  # @return [Array<Bs::Record::UserAccount>]
-  #
-  def edition_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

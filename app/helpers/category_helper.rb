@@ -35,20 +35,6 @@ module CategoryHelper
 
   public
 
-  # Current page of category results.
-  #
-  # @return [Array<Bs::Record::CategorySummary>]
-  #
-  def category_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

@@ -14,15 +14,27 @@
     @include grid-column-span;
 
     max-width: inherit;
-    margin:    $results-entry-gap-y 0 calc(2 * #{$results-entry-gap-y});
-
-    @media #{$narrow-screen} {
-        margin: calc(2 * #{$results-entry-gap-y}) 0;
-    }
+    margin:    0;
 }
 
+// noinspection SassScssResolvedByNameOnly
+.pagination-top {
+    margin-top:    $results-entry-gap-y;
+    margin-bottom: calc(2 * #{$results-entry-gap-y});
+}
+
+// noinspection SassScssResolvedByNameOnly
 .pagination-bottom {
-    margin-top: 0;
+    margin-top:    $results-entry-gap-y;
+    margin-bottom: 0;
+}
+
+// noinspection SassScssResolvedByNameOnly
+@media #{$narrow-screen} {
+    .pagination-top,
+    .pagination-bottom {
+        margin-top: calc(2 * #{$results-entry-gap-y});
+    }
 }
 
 .counts {

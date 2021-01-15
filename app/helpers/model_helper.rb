@@ -456,12 +456,12 @@ module ModelHelper
 
     # Label and label HTML options.
     l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
-    label = prop[:label] || label || labelize(field)
-    if help.present?
-      already_html = label.is_a?(ActiveSupport::SafeBuffer)
-      label = html_span(label, class: 'text') unless already_html
-      label += help
+    label = prop[:label] || label
+    unless label.is_a?(ActiveSupport::SafeBuffer)
+      label ||= labelize(field)
+      label = html_span(label, class: 'text')
     end
+    label += help if help.present?
     label = html_div(label, l_opt)
 
     # Value and value HTML options.
@@ -968,33 +968,38 @@ module ModelHelper
     marker = status_marker(status: status, label: label)
 
     # Option settings for both label and value.
-    opt = { class: css_classes("row-#{row}", type, *status) }
+    prepend_css_classes!(opt, "row-#{row}", type, *status)
+    l_id = "label-#{base}"
+    v_id = index ? "#{type}-#{index}" : type
+    fieldset = false # (render_method == :render_form_menu_multi)
 
     # Label for input element.
     l_opt = append_css_classes(opt, 'label')
-    l_opt[:id]      = "label-#{base}"
-    l_opt[:for]     = name
+    l_opt[:id]      = l_id
+    l_opt[:for]     = v_id
     l_opt[:title] ||= prop[:tooltip] if prop[:tooltip]
-    label = prop[:label] || label
-    label = label ? ERB::Util.h(label) : labelize(name)
-    if help.present?
-      label = html_span(label, class: 'text')
-      label = html_span { label << help }
-    end
-    label = label_tag(name, l_opt) { label << marker }
+    label  = prop[:label] || label
+    wrap   = !label.is_a?(ActiveSupport::SafeBuffer)
+    label  = label ? ERB::Util.h(label) : labelize(name)
+    legend = (label.dup if fieldset)
+    label  = html_span(label, class: 'text') if wrap
+    label  = html_span { label << help }     if help
+    label << marker
+    label  = fieldset ? html_div(label, l_opt) : label_tag(name, label, l_opt)
 
     # Input element pre-populated with value.
     v_opt = append_css_classes(opt, 'value')
-    v_opt[:id]                = index ? "#{type}-#{index}" : type
+    v_opt[:id]                = v_id
     v_opt[:name]              = name
     v_opt[:title]             = 'System-generated; not modifiable.' if disabled # TODO: I18n
     v_opt[:readonly]          = true        if disabled # Not :disabled.
     v_opt[:placeholder]       = placeholder if placeholder
     v_opt[:'data-field']      = field       if field
     v_opt[:'data-required']   = true        if required
-    v_opt[:'aria-labelledby'] = l_opt[:id]
+    v_opt[:'aria-labelledby'] = l_id
     v_opt[:base]              = base
     v_opt[:range]             = range       if range
+    v_opt[:legend]            = legend      if legend
     value = send(render_method, name, value, **v_opt)
 
     # noinspection RubyYardReturnMatch
@@ -1067,27 +1072,29 @@ module ModelHelper
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
 
+    # Checkbox elements.
     selected = Array.wrap(value).compact.presence
-
-    field_opt = html_opt.merge(role: 'listbox', name: name, multiple: true)
-    field_opt[:disabled] = true if opt[:readonly]
-    # noinspection RubyYardReturnMatch
-    field_set_tag(nil, field_opt) do
-      div_opt = html_opt.except(:'data-field', :'data-required')
-      div_opt[:id]       = opt[:id]
-      div_opt[:tabindex] = -1
-      html_div(div_opt) do
-        cb_opt = { role: 'option' }
-        range.pairs.map do |item_value, item_label|
-          cb_name          = "[#{field}][]"
-          cb_value         = item_value
-          cb_opt[:id]      = "#{field}_#{item_value}"
-          cb_opt[:checked] = selected&.include?(item_value)
-          cb_opt[:label]   = item_label
-          render_check_box(cb_name, cb_value, **cb_opt)
-        end
+    cb_opt   = { role: 'option' }
+    checkboxes =
+      range.pairs.map do |item_value, item_label|
+        cb_name          = "[#{field}][]"
+        cb_value         = item_value
+        cb_opt[:id]      = "#{field}_#{item_value}"
+        cb_opt[:role]    = 'option'
+        cb_opt[:label]   = item_label
+        cb_opt[:checked] = selected&.include?(item_value)
+        render_check_box(cb_name, cb_value, **cb_opt)
       end
-    end
+
+    # Grouped checkboxes (Chrome problem with styling <fieldset>).
+    gr_opt = html_opt.except(:'data-field', :'data-required')
+    gr_opt.merge!(role: 'listbox', multiple: true)
+    gr_opt[:tabindex] = -1
+    group = html_div(*checkboxes, gr_opt)
+
+    field_opt = html_opt.merge(id: opt[:id], name: name)
+    field_opt[:disabled] = true if opt[:readonly]
+    html_div(field_opt) { group }
   end
 
   # Multiple single-line inputs.
@@ -1267,6 +1274,8 @@ module ModelHelper
       end
       opt[:'data-title'] = tip
       opt[:title] ||= tip
+    else
+      opt[:'aria-hidden'] = true
     end
     html_span(icon, opt)
   end

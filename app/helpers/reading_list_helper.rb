@@ -79,20 +79,6 @@ module ReadingListHelper
 
   public
 
-  # Current page of reading list results.
-  #
-  # @return [Array<Bs::Record::ReadingListUserView>]
-  #
-  def reading_list_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

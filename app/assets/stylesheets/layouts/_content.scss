@@ -1,0 +1,84 @@
+// app/assets/stylesheets/layouts/_content.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Main content area.
+//=============================================================================
+
+// The <main> content area of the page.
+//
+// noinspection SassScssResolvedByNameOnly
+.layout-content {
+
+    margin:    $page-padding-y $page-padding-x;
+    max-width: 100%;
+    position:  relative;
+
+    // Give a little extra clearance for the scroll bar.
+    @media #{$not-wide-screen} {
+        margin-right: calc(#{$page-padding-x} + #{$scroll-easement} );
+    }
+
+    // If the skip-nav menu grows large enough, on certain screens (ones with
+    // out search controls) it may extend below the header even when it should
+    // be hidden because it has "z-order: -1".  The <body> element can't be
+    // given a z-order, but extending the coverage of this element bridges the
+    // gap so that the long tail of the skip-nav menu is covered by its shadow.
+    box-shadow: 0 0 0 $page-padding white;
+}
+
+// For the heading at the top of the content area.
+//
+// noinspection SassScssResolvedByNameOnly
+.heading {
+
+    display:     flex;
+    align-items: center;
+    margin:      $page-padding 0;
+    word-break:  break-all;
+    font-size:   xx-large;
+
+    @media #{$not-wide-screen} {
+        margin:     calc(2 * #{$page-padding}) auto;
+        word-break: break-word;
+    }
+}
+
+// For enclosing the actual heading in a line with other items.
+//
+// noinspection SassScssResolvedByNameOnly
+.heading.container {
+
+    display: grid;
+    gap:     $flex-gap-y $flex-gap-x;
+    grid-template-columns: [text] 1fr [logo] auto;
+
+    > * {
+        margin: auto 0;
+    }
+
+    .heading {
+        word-break: break-word;
+    }
+
+    @media #{$wide-screen} {
+        margin-top:    0;
+        margin-bottom: 0;
+    }
+
+    @media #{$narrow-screen} {
+
+        grid-template-columns: 1fr;
+
+        > .heading {
+            margin-top: 0;
+        }
+
+        > .repository {
+            margin-top:   $flex-gap-y;
+            margin-left:  auto;
+            margin-right: auto;
+        }
+    }
+}

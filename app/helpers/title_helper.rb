@@ -36,20 +36,6 @@ module TitleHelper
 
   public
 
-  # Current page of title results.
-  #
-  # @return [Array<Bs::Record::TitleMetadataSummary>]
-  #
-  def title_list
-    page_items
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
   # Default link tooltip.
   #
   # @type [String]

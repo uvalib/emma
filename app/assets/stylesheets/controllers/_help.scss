@@ -3,6 +3,20 @@
 // @use 'feature/model'; // TODO: SASS 4.0
 
 //=============================================================================
+// Mixins
+//=============================================================================
+
+@mixin help-interior {
+    > * {
+        margin:  1rem 0;
+        padding: 0;
+
+        &:first-child { margin-top:    0; }
+        &:last-child  { margin-bottom: 0; }
+    }
+}
+
+//=============================================================================
 // Placeholder classes
 //=============================================================================
 
@@ -13,29 +27,22 @@
 // noinspection SassScssResolvedByNameOnly
 %help-layout {
     @media #{$wide-screen} {
-        max-width: 50%;
+        max-width: 50vw;
     }
-}
-
-%help-interior {
-    > * {
-        margin:  1rem 0;
-        padding: 0;
-
-        &:first-child { margin-top:    0; }
-        &:last-child  { margin-bottom: 0; }
+    @media #{$medium-width} {
+        max-width: 75vw;
     }
 }
 
 // noinspection SassScssResolvedByNameOnly
 %help-styles {
 
-    @extend %help-interior;
+    @include help-interior;
 
     nav,
     section {
 
-        @extend %help-interior;
+        @include help-interior;
 
         margin: 3rem 0 0;
     }
@@ -57,8 +64,7 @@
             margin-left: 0;
 
             > li {
-                margin-left:         0.1875rem;
-                list-style-position: outside;
+                margin-left: 0.1875rem;
             }
         }
     }
@@ -70,28 +76,37 @@
     h5 { margin-top: 2rem; font-size: 1.10em; }
     h6 { margin-top: 2rem; font-size: 1.05em; }
 
-    a {
-        @media #{$narrow-screen} {
-            display:    inline;
-            word-break: break-all;
-        }
-
-        &:focus {
-            outline-color:  $text-focus;
-        }
+    a:focus {
+        outline-color: $text-focus;
     }
 
     p {
         @extend %help-text;
 
-        a:focus {
-            outline-offset: 0.5px;
+        a {
+            display: inline;
+
+            &:focus {
+                outline-offset: 0.5px;
+            }
         }
     }
 
     li {
+
         line-height:         1.5;
         list-style-position: inside;
+
+        @media #{$narrow-screen} {
+
+            margin-bottom: $flex-gap-y;
+
+            a {
+                display: inline-block;
+                margin:  0 -0.25rem 0 -0.5rem;
+                border:  0.125rem solid transparent;
+            }
+        }
     }
 
     img {
@@ -176,40 +191,43 @@
     // Container for elements to be arranged side-by-side.
     .columns {
 
-        @extend %help-interior;
+        @include help-interior;
 
-        display:        flex;
-        flex-direction: row;
+        @media #{$not-narrow-screen} {
 
-        @media #{$narrow-screen} {
-            flex-direction: column;
-        }
+            display:        flex;
+            flex-direction: row;
 
-        > * {
-
-            @extend %help-interior;
-
-            margin-top:    0.5rem;
-            margin-bottom: 0.5rem;
+            @media #{$narrow-screen} {
+                flex-direction: column;
+            }
 
             > * {
+
+                @include help-interior;
+
                 margin-top:    0.5rem;
                 margin-bottom: 0.5rem;
+
+                > * {
+                    margin-top:    0.5rem;
+                    margin-bottom: 0.5rem;
+                }
             }
-        }
 
-        img {
+            img {
 
-            flex:          1 0 auto;
-            margin-bottom: auto !important;
+                flex:          1 0 auto;
+                margin-bottom: auto !important;
 
-            @media #{$not-narrow-screen} {
-                max-width: 50%; // Chrome needs this; other browsers don't.
+                @media #{$not-narrow-screen} {
+                    max-width: 50%; // Chrome needs this; other browsers don't.
+                }
             }
-        }
 
-        * + img {
-            margin-top: 0;
+            * + img {
+                margin-top: 0;
+            }
         }
     }
 
@@ -220,13 +238,19 @@
 
         margin: $results-entry-gap-y $results-entry-gap-x;
 
+        @media #{$narrow-screen} {
+            grid-template-columns: [label] 1fr [value] 2fr;
+        }
+
         //=====================================================================
         // Components
         //=====================================================================
 
         // Menu selection.
         .label {
-            // TODO: ??? %help-elements .choices .label
+            @media #{$narrow-screen} {
+                word-break: keep-all;
+            }
         }
 
         // Description of menu selection.
@@ -270,6 +294,14 @@
 
     margin:  1rem 0;
     padding: 0.5rem 1rem;
+
+    @media #{$wide-screen} {
+        max-width: 50%;
+    }
+
+    @media #{$medium-width} {
+        max-width: 75%;
+    }
 }
 
 //=============================================================================
@@ -291,7 +323,7 @@
 
     @extend %help-panel;
 
-    margin: 3rem 0 0;
+    margin: 3rem 0;
 }
 
 //=============================================================================
@@ -323,9 +355,6 @@
     @extend %help-styles;
     @extend %help-elements;
 
-    max-width:  unset;
-    min-width:  4in;
-    width:      50vw;
     margin-top: $results-entry-gap-y;
 
     //=========================================================================

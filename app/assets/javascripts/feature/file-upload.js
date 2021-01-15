@@ -914,7 +914,8 @@ $(document).on('turbolinks:load', function() {
 
         // Broaden click targets for radio buttons and checkboxes that are
         // paired with labels.
-        fieldDisplayFilterContainer($form).children().each(function() {
+        let $filter_panel = fieldDisplayFilterContainer($form);
+        $filter_panel.children('.radio, .control').each(function() {
             delegateInputClick(this);
         });
         $form.find('.checkbox.single').each(function() {
@@ -930,7 +931,6 @@ $(document).on('turbolinks:load', function() {
 
         // Set initial field filtering and setup field display filter controls.
         monitorFieldDisplayFilterButtons($form);
-        normalizeLabelColumnWidth($form);
         fieldDisplayFilterSelect($form);
 
         // Intercept form submission so that it can be handled via AJAX in
@@ -956,7 +956,9 @@ $(document).on('turbolinks:load', function() {
         $element.insertBefore(uploadedFilenameDisplay($form));
 
         // This hidden element is inappropriately part of the tab order.
-        $element.find('.uppy-FileInput-input').attr('tabindex', -1);
+        let $uppy_file_input = $element.find('.uppy-FileInput-input');
+        $uppy_file_input.attr('tabindex', -1);
+        $uppy_file_input.attr('aria-labelledby', 'fi_label');
 
         // Set the tooltip for the file select button.
         $element.find('button,label').attr('title', fileSelectTooltip($form));
@@ -1046,39 +1048,6 @@ $(document).on('turbolinks:load', function() {
         });
         resolveRelatedFields();
         disableSubmit($form);
-    }
-
-    /**
-     * The container element for all input fields and their labels.
-     *
-     * @param {Selector} [form]       Passed to {@link fieldContainer}.
-     */
-    function normalizeLabelColumnWidth(form) {
-
-        let $container = fieldContainer(form);
-
-        // Find the widest label.
-        let max_width = 0;
-        $container.children('label').each(function() {
-            max_width = Math.max(max_width, $(this).width());
-        });
-        let column_width = `${max_width}px`;
-
-        // Replace the first column definition.
-        const columns = $container.css('grid-template-columns') || '';
-        let parts     = columns.trim().split(/\s+/);
-        const first   = parts.shift();
-        if (first.startsWith('repeat')) {
-            const count = first.replace(/(repeat\()(\d+)(,.*)/, '$2') || 1;
-            if (count > 1) {
-                column_width += ' ' + RegExp.$1 + (count - 1) + RegExp.$3;
-            }
-        }
-        let new_columns = column_width;
-        if (isPresent(parts)) {
-            new_columns += ' ' + parts.join(' ');
-        }
-        $container.css('grid-template-columns', new_columns);
     }
 
     // ========================================================================
@@ -1603,13 +1572,13 @@ $(document).on('turbolinks:load', function() {
         let $field = $(field);
 
         // noinspection IfStatementWithTooManyBranchesJS
-        if ($field.is('fieldset.input.multi')) {
+        if ($field.is('.input.multi[data-field]')) {
             updateFieldsetInputs($field, new_value, trim, init);
 
-        } else if ($field.is('fieldset.menu.multi')) {
+        } else if ($field.is('.menu.multi[data-field]')) {
             updateFieldsetCheckboxes($field, new_value, init);
 
-        } else if ($field.is('select.menu.single')) {
+        } else if ($field.is('.menu.single[data-field]')) {
             updateMenu($field, new_value, init);
 
         } else if ($field.is('[type="checkbox"]')) {
@@ -1997,8 +1966,8 @@ $(document).on('turbolinks:load', function() {
      */
     function updateFieldAndLabel(target, values) {
         let $input  = $(target);
-        const name  = $input.attr('name');
-        let $label  = $input.siblings(`label[for="${name}"]`);
+        const id    = $input.attr('id');
+        let $label  = $input.siblings(`label[for="${id}"]`);
         // noinspection JSCheckFunctionSignatures
         let $status = $label.find('.status-marker');
         const parts = [$input, $label, $status];
@@ -3094,7 +3063,7 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link fieldDisplayOnly}.
      */
     function fieldDisplayInvalid(form) {
-        fieldDisplayOnly('.invalid', form);
+        fieldDisplayOnly('.invalid:not(.disabled)', form);
     }
 
     /**
