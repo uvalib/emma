@@ -52,7 +52,7 @@ class HomeController < ApplicationController
   public
 
   # == GET /home
-  # 
+  #
   # The main application page.
   #
   # == Implementation Notes
@@ -61,15 +61,17 @@ class HomeController < ApplicationController
   #
   def main
     __debug_route
-    if current_user
-      redirect_to dashboard_path
-    else
+    if !current_user
       redirect_to welcome_path
+    elsif can?(:manage, User)
+      redirect_to account_index_path
+    else
+      redirect_to dashboard_path
     end
   end
 
   # == GET /home/welcome
-  # 
+  #
   # The main application page for anonymous users.
   #
   def welcome
@@ -77,7 +79,7 @@ class HomeController < ApplicationController
   end
 
   # == GET /home/dashboard
-  # 
+  #
   # The main application page for authenticated users.
   #
   def dashboard

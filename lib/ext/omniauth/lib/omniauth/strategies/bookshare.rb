@@ -1046,13 +1046,21 @@ module OmniAuth
       # @type [Hash{String=>String}]
       #
       CONFIGURED_AUTH =
-        safe_json_parse(BOOKSHARE_TEST_USERS, default: {}).deep_freeze
+        reject_blanks(safe_json_parse(BOOKSHARE_TEST_USERS)).tap { |entries|
+          if entries.present? && rails_application?
+            users  = entries.keys
+            tokens = entries.values.map { |v| { access_token: v } }
+            User.update(users, tokens)
+          end
+        }.deep_freeze
 
       # Table of user names/tokens acquired for use in non-production deploys.
       #
       # Token are taken from the User table entries that have an :access_token
       # value.  If BOOKSHARE_TEST_USERS is supplied, it is used to prime (or
       # update) database table.
+      #
+      # @param [Boolean] refresh      If *true*, re-read the database.
       #
       # @return [Hash{String=>Hash}]
       #
@@ -1062,17 +1070,15 @@ module OmniAuth
       # #stored_auth_update will change both the value returned by this method
       # and the associated User table entry.
       #
-      def self.stored_auth
+      #--
+      # noinspection RubyClassVariableUsageInspection
+      #++
+      def self.stored_auth(refresh = false)
+        @@stored_auth = nil if refresh
         @@stored_auth ||=
-          begin
-            if (entries = CONFIGURED_AUTH).present?
-              tokens = entries.values.map { |v| { access_token: v } }
-              User.update(entries.keys, tokens)
-            end
-            User.where.not(access_token: nil).map { |u|
-              [u.email, stored_auth_entry(u.access_token)]
-            }.to_h
-          end
+          User.where.not(access_token: nil).map { |u|
+            [u.email, stored_auth_entry(u.access_token)]
+          }.to_h
       end
 
       # Add or update a user name/token entry.

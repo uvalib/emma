@@ -1,0 +1,24 @@
+<%# app/views/account/new.html.erb -%>
+<%-
+  # Create a new local EMMA user account.
+
+  item  ||= @item
+  title ||= t('emma.account.new.title')
+  help  ||= nil # help_popup(:account, :new) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_description_section %>
+
+<%= page_directions_section %>
+<%= account_form(item, action: :new) %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

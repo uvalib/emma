@@ -43,6 +43,8 @@ en:
             label:      'Sign in with copied auth token'
             submit:     'Go'
 
+      # =======================================================================
+
       passwords:
 
         new:
@@ -54,6 +56,8 @@ en:
           password:     'New password'
           confirm:      'Confirm new password'
           submit:       'Change my password'
+
+      # =======================================================================
 
       registrations:
 
@@ -72,6 +76,8 @@ en:
           label:        'Cancel my account'
           link:         'Unhappy? %{button}'
 
+      # =======================================================================
+
       confirmations:
 
         new:
@@ -79,12 +85,16 @@ en:
           label:        "Didn't receive confirmation instructions?"
           submit:       'Resend confirmation instructions'
 
+      # =======================================================================
+
       unlocks:
 
         new:
           title:        'Resend unlock instructions'
           label:        "Didn't receive unlock instructions?"
           submit:       'Resend unlock instructions'
+
+      # =======================================================================
 
       omniauth_callbacks:
 

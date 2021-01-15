@@ -1,0 +1,11 @@
+<%# app/views/account/_details.html.erb -%>
+<%-
+  # Local EMMA user account details.
+
+  user    ||= @item
+  add     ||= nil
+  columns ||= nil
+
+-%>
+
+<%= account_details(user, pairs: add, columns: columns) %>

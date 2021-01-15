@@ -98,8 +98,8 @@ module ApplicationHelper
   # @return [nil]
   #
   def page_description(controller: nil, action: nil, **opt)
-    text = page_description_text(controller: controller, action: action)
-    html_div(prepend_css_classes(opt, 'panel')) { text } if text.present?
+    text = page_text(controller: controller, action: action)
+    html_div(text, prepend_css_classes!(opt, 'panel')) if text.present?
   end
 
   # Get the configured page description.
@@ -112,15 +112,17 @@ module ApplicationHelper
   # @return [String]
   # @return [nil]
   #
-  def page_description_text(controller: nil, action: nil, type: nil)
-    controller ||= params[:controller]
-    action     ||= params[:action]
-    entry = I18n.t("emma.#{controller}.#{action}", default: {})
-    types = type || %i[description text]
-    Array.wrap(types).find do |t|
+  def page_text(controller: nil, action: nil, type: nil)
+    controller = (controller || params[:controller])&.to_sym
+    action     = (action     || params[:action])&.to_sym
+    entry = CONTROLLER_CONFIGURATION.dig(controller, action) || {}
+    types = Array.wrap(type).compact.map(&:to_sym)
+    types = %i[description text] if types.blank? || types == %i[description]
+    # noinspection RubyYardReturnMatch
+    types.find do |t|
       html  = "#{t}_html".to_sym
       plain = t.to_sym
-      text  = entry[html]&.html_safe || entry[plain]
+      text  = entry[html]&.strip&.presence&.html_safe || entry[plain]&.strip
       return text if text.present?
     end
   end

@@ -1,0 +1,261 @@
+# config/locales/controllers/account.en.yml
+#
+# User account controller pages
+
+en:
+
+  emma:
+
+    account:
+
+      unit:
+        brief:          'user'
+        long:           'user account'
+      label:            'Users'
+      title:            'User Accounts'
+      tooltip:          'Show the local user account database table.'
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:           # TODO: ?
+        action:         index
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+
+        like:
+          name:         'Filter'
+          label:        'Filter by account:'
+          placeholder:  'Partial email or name...'
+
+      search_bar:
+        enabled:        [index]
+        label:          'Account Filter'
+
+      search_controls:
+        enabled:        [index]
+
+        layout:
+          - [sort, size, ~, ~]
+
+      page_controls:
+        label:
+          one:          'Manage this account:'
+          many:         'Local Account Actions:'
+
+      # =======================================================================
+      # Controls
+      # =======================================================================
+
+      action_links:
+
+        new:
+          action:       new
+          label:        'Create %{article} new local user account'
+          article:      'a'
+
+        edit:
+          action:       edit_select
+          label:        'Modify %{article} existing user account'
+          article:      'an'
+
+        delete:
+          action:       delete_select
+          label:        'Remove %{article} existing user account'
+          article:      'an'
+
+        back:
+          action:       index
+          label:        'View all user accounts'
+
+      # =======================================================================
+      # Messages
+      # =======================================================================
+
+      messages:
+        success:        'User account was successfully %s.'
+        failure:        'Failed to %s user account.'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      generic:
+        label:          'Accounts'
+        title:          'Accounts'
+        tooltip:        '(A brief description of this operation.)'
+        description:    '(A more detailed description of this operation.)'
+        directions:     '(Brief guidance for using the operation form.)'
+        notes:          '(A more detailed description of this operation.)'
+
+        submit:         &GENERIC_SUBMIT
+          label:        'Submit'
+          enabled:
+            tooltip:    'Proceed with this action'
+          disabled:
+            tooltip:    'Conditions have not yet been met to proceed'
+        cancel:         &GENERIC_CANCEL
+          label:        'CANCEL'
+          enabled:
+            tooltip:    'Do nothing and return to the previous screen.'
+          disabled:
+            tooltip:    'Not able to cancel at this point'
+
+        warning:
+          experimental: &EXPERIMENTAL
+            directions_html: |
+              <span style="color:red">
+                WARNING: This is an experimental feature and not intended for
+                general use
+              </span>
+        success:        'Operation successful %{file}'
+        failure:        'Could not proceed: %{error}'
+
+      # =======================================================================
+
+      index:
+        label:          'List All'
+        title:          'EMMA User Accounts'
+        tooltip:        'List user accounts maintained in the local database.'
+        description:    |
+          This is a listing of the EMMA user account database.
+        notes:          |
+          All normal users have an EMMA local account which correlates with
+          exactly one Bookshare account.  However, certain EMMA internal
+          accounts which do not require access to Bookshare resources may not
+          relate to any Bookshare account.  Conversely, some EMMA adminstrative
+          accounts may be associated with one or more Bookshare test accounts.
+
+        display_fields: # @see 'en.emma.account.record'
+          - !ruby/symbol all
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+
+      # =======================================================================
+
+      show:
+        label:          'Account'
+        title:          'EMMA User Account details for %{name}'
+        tooltip:        'User account details from the local database.'
+
+        display_fields: # @see 'en.emma.account.record'
+          - !ruby/symbol all
+
+        page_controls:
+          - edit
+          - delete
+          - index
+
+      # =======================================================================
+
+      new:              &ACCOUNT_NEW
+        label:          'Create'
+        title:          'Create EMMA User Account'
+        tooltip:        'Create a new user account in the local database.'
+
+        page_controls:
+          - index
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Create'
+          enabled:
+            tooltip:    'Create the new local EMMA user account'
+          disabled:
+            tooltip:    'Required information is still needed'
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Do not create this entry (or start over)'
+
+        success:        'Created EMMA entry for: %{file}'
+        failure:        'Could not create entry: %{error}'
+
+        <<: *EXPERIMENTAL
+
+      # =======================================================================
+
+      edit:             &ACCOUNT_EDIT
+        label:          'Change'
+        title:          'Modify EMMA User Account'
+        tooltip:        'Modify an existing user account in the local database.'
+
+        page_controls:
+          - delete
+          - index
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Update'
+          enabled:
+            tooltip:    'Modify this local EMMA user account'
+          disabled:
+            tooltip:    'No valid changes have been made yet'
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Discard these changes.'
+
+        success:        'Updated EMMA entry for %{file}'
+        failure:        'Could not update EMMA entry: %{error}'
+
+        <<: *EXPERIMENTAL
+
+      # =======================================================================
+
+      delete:           &ACCOUNT_DELETE
+        label:          'Remove'
+        title:          'Remove EMMA User Account'
+        tooltip:        'Delete an existing user account from the local database.'
+
+        page_controls:
+          - edit
+          - index
+
+        submit:
+          <<:           *GENERIC_SUBMIT
+          label:        'Delete'
+          enabled:
+            tooltip:    'Remove this local EMMA user account.'
+        cancel:
+          <<:           *GENERIC_CANCEL
+          enabled:
+            tooltip:    'Keep this local EMMA user account.'
+
+        success:        'Removed EMMA entry for %{file}'
+        failure:        'Could not remove EMMA entry: %{error}'
+
+        <<: *EXPERIMENTAL
+
+      # =======================================================================
+
+      new_select:
+        <<: *ACCOUNT_NEW
+
+      # =======================================================================
+
+      edit_select:
+        <<: *ACCOUNT_EDIT
+
+        page_controls:
+          - index
+          - delete_select
+
+      # =======================================================================
+
+      delete_select:
+        <<: *ACCOUNT_DELETE
+
+        page_controls:
+          - index
+          - edit_select
+
+      # =======================================================================

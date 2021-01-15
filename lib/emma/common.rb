@@ -632,15 +632,19 @@ module Emma::Common
   # Transform a string into a value safe for use as an HTML ID (or class name).
   #
   # @param [String, Symbol] text
+  # @param [Boolean]        camelize    If *false* leave as underscored.
   #
   # @return [String]
   #
-  def html_id(text)
+  def html_id(text, camelize: true)
     # noinspection RubyYardParamTypeMatch
     text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
     text = text.to_s.gsub(/[^[:graph:]]/, '_')
     text = text.tr('_', ' ').remove(/[[:punct:]]/).squish.tr(' ', '_')
-    text.underscore.camelize
+    text = text.underscore
+    text = text.camelize if camelize
+    # noinspection RubyYardReturnMatch
+    text
   end
 
   # ===========================================================================

@@ -1,0 +1,36 @@
+<%# app/views/account/index.html.erb -%>
+<%-
+  # A list of local EMMA user accounts.
+
+  title ||= t('emma.account.index.title')
+  # @type [Array<User>] list
+  list  ||= @list
+  count ||= total_items
+  terms ||= search_terms
+  help  ||= nil # help_popup(:account) # TODO: ???
+
+  page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
+  page_terms, search = partition_options(terms, *page_opt)
+  page = (page_terms[:page]&.values&.first).to_i
+  page = nil unless page > 1
+
+  unless modal?
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if page
+    set_page_title(t('emma.account.index.label', default: title))
+    append_page_title('-', list_search_terms(terms)) if terms.present?
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+  title += " (#{count})" if list.blank?
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_description_section %>
+
+<%= account_table(list) %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

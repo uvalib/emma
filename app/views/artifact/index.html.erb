@@ -27,13 +27,15 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
-<%= page_description %>
+<%= page_description_section %>
 
 <div class="artifact-list">
   <%= top_controls %>
   <%= render 'artifact/list', template_opt %>
   <%= bottom_controls if list.present? %>
 </div>
+
+<%= page_notes_section %>
 
 <%-
   abort 'artifact/index - This is not expected to be used'

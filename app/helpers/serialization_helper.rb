@@ -61,6 +61,16 @@ module SerializationHelper
     (fmt == 'xml') || (respond_to?(:request) && request.format.xml?)
   end
 
+  # Indicate whether the request originated from an HTML page.
+  #
+  # NOTE: This is probably insufficient.
+  #
+  def posting_html?
+    return false unless respond_to?(:request) && !request.get?
+    # noinspection RubyResolve
+    request.format.html? || (request.format.js? && !!request.xhr?)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================

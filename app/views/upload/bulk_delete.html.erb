@@ -19,11 +19,11 @@
   <h1 class="heading"><%= title -%><%= help -%></h1>
   <%= logo %>
 </div>
-<%= upload_description %>
+<%= page_description_section %>
 
-<%= upload_directions %>
+<%= page_directions_section %>
 <%= bulk_delete_form(ids: list) %>
 <%= bulk_upload_results %>
 
-<%= upload_notes %>
-<%= upload_action_list unless modal? %>
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

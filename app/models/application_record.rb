@@ -11,9 +11,6 @@ class ApplicationRecord < ActiveRecord::Base
 
   self.abstract_class = true
 
-  # Serialize hashes as JSON rather than YAML (the default).
-  serialize :preferences, JSON
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -26,6 +23,23 @@ class ApplicationRecord < ActiveRecord::Base
   #
   def match?(other)
     self.class.match?(self, other)
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Find records with fields containing matches on the given search terms.
+  #
+  # @param [Array<Hash,String>]  terms
+  # @param [Hash]                opt    Passed to #sql_match.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def self.matching(*terms, **opt)
+    where(sql_match(*terms, **opt))
   end
 
   # ===========================================================================
@@ -79,6 +93,8 @@ class ApplicationRecord < ActiveRecord::Base
   def self.sql_terms(*terms, join: :and, connector: join, **other)
     connector = connector.to_s.strip.upcase unless connector.nil?
     terms << other if other.present?
+    terms.flatten!
+    terms.compact!
     result =
       terms.map { |term|
         term = sql_clauses(term, join: connector)  if term.is_a?(Hash)
@@ -146,6 +162,88 @@ class ApplicationRecord < ActiveRecord::Base
     v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
     v = Array.wrap(v).map { |s| "'#{s}'" }.join(',')
     v.include?(',') ? "#{k} IN (#{v})" : "#{k} = #{v}"
+  end
+
+  # Translate hash keys/values into SQL LIKE statements.
+  #
+  # @param [Array<Hash,String>]  terms
+  # @param [String, Symbol, nil] connector  Either :or or :and; default: :and.
+  # @param [String, Symbol, nil] join       Alias for :connector.
+  # @param [Hash]                opt        Passed to #merge_match_terms.
+  #
+  # @return [String]  SQL expression.
+  # @return [Array]   SQL clauses if *connector* is set to *nil*.
+  #
+  def self.sql_match(*terms, join: :or, connector: join, **opt)
+    connector = connector.to_s.strip.upcase unless connector.nil?
+    opt[:fields] &&= Array.wrap(opt[:fields]).compact.map(&:to_sym).presence
+    opt[:fields] ||= field_names
+    result =
+      merge_match_terms(*terms, **opt).flat_map do |field, matches|
+        matches.map do |string|
+          string = "%#{string}%" unless string.match?(/[^\\][%_]/)
+          "(#{field} LIKE '#{string}')"
+        end
+      end
+    connector ? result.join(" #{connector} ") : result
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Accumulate match pairs.
+  #
+  # @param [String, Array, Hash] term
+  # @param [Hash]                opt    Passed to #merge_match_terms!
+  #
+  def self.merge_match_terms(*term, **opt)
+    merge_match_terms!({}, *term, **opt)
+  end
+
+  # Accumulate match pairs.
+  #
+  # @param [Hash]                dst
+  # @param [String, Array, Hash] terms
+  # @param [Array<Symbol>]       fields     Limit fields to match.
+  # @param [Boolean]             sanitize   If *false* do not escape '%', '_'.
+  #
+  # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
+  #
+  def self.merge_match_terms!(dst, *terms, fields: nil, sanitize: true, **)
+    fields ||= field_names
+    terms.flatten!
+    terms.compact!
+    terms.each do |term|
+      term = term.deep_dup                     if term.is_a?(Hash)
+      term = fields.map { |f| [f, term] }.to_h unless term.is_a?(Hash)
+      term.transform_values! do |v|
+        v = Array.wrap(v).reject(&:blank?)
+        v.map! { |s| sanitize_sql_like(s) } if sanitize
+        v.presence
+      end
+      term.compact!
+      dst.rmerge!(term)
+    end
+    dst
+  end
+
+  # Make a string safe to use within an SQL LIKE statement.
+  #
+  # @param [String] string
+  # @param [String] escape_character
+  #
+  # @return [String]
+  #
+  # This method overrides:
+  # ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
+  #
+  def self.sanitize_sql_like(string, escape_character = '\\')
+    string.gsub(/(^|.)([%_])/) do |s|
+      ($1 == escape_character) ? s : [$1, escape_character, $2].compact.join
+    end
   end
 
 end

@@ -21,10 +21,10 @@
 -%>
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
-<%= upload_description %>
+<%= page_description_section %>
 
 <%= render 'upload/details', template_opt %>
 <%= upload_preview %>
 
-<%= upload_notes %>
-<%= upload_action_list unless modal? || cannot?(:edit, Upload) %>
+<%= page_notes_section %>
+<%= page_action_list unless modal? || cannot?(:edit, Upload) %>

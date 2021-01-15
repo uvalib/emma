@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::NavBar
 
   include LayoutHelper::Common
+  include LinkHelper
 
   # ===========================================================================
   # :section:
@@ -107,8 +108,8 @@ module LayoutHelper::NavBar
     curr_path  += '?' + url_query(curr_params) if curr_params.present?
     html_div(class: 'links') do
       first = true
-      NAV_BAR_CONTROLLERS.map do |c|
-        if c == :home
+      NAV_BAR_CONTROLLERS.map do |controller|
+        if controller == :home
           # Special entry for the dashboard/welcome screen.
           path   = dashboard_path
           label  = DASHBOARD_LABEL
@@ -116,12 +117,12 @@ module LayoutHelper::NavBar
           hidden = !current_user
         else
           # Entry for the main page of the given controller.
-          path   = send("#{c}_index_path")
-          label  = CONTROLLER_LABEL[c]
-          tip    = CONTROLLER_TOOLTIP[c]
+          path   = get_path_for(controller)
+          label  = CONTROLLER_LABEL[controller]
+          tip    = CONTROLLER_TOOLTIP[controller]
           hidden = false
         end
-        primary  = PRIMARY_CONTROLLERS.include?(c)
+        primary  = PRIMARY_CONTROLLERS.include?(controller)
         current  = (path == curr_path)
         base     = (path == base_path)
         active   = current || base

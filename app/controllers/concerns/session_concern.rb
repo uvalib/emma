@@ -55,6 +55,9 @@ module SessionConcern
       if rendering_html?
         flash_now_alert(exception) if flash.now[:alert].blank?
         render
+      elsif posting_html?
+        flash_alert(exception)
+        redirect_back(fallback_location: root_path)
       end
     end
 

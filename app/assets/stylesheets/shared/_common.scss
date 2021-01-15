@@ -118,6 +118,34 @@
     border-radius:    0.625rem;
 }
 
+// Definitions for elements within a %panel.
+%panel-interior {
+
+    > * {
+
+        margin-top: 0.5rem;
+
+        &:first-child {
+            margin-top:     0;
+            padding-top:    0;
+        }
+
+        &:last-child {
+            margin-bottom:  0;
+            padding-bottom: 0;
+        }
+    }
+
+    > br {
+
+        margin-top: 0.25rem;
+
+        &:first-child {
+            margin-top: 0.25rem;
+        }
+    }
+}
+
 // A grouping of related controls into a single element.
 %control-group {
 

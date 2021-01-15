@@ -20,7 +20,7 @@ en:
       # =======================================================================
 
       search:
-        action:         'index'
+        action:         index
 
       # =======================================================================
       # Layout
@@ -45,6 +45,11 @@ en:
 
         layout:
           - [sort, size, ~, ~]
+
+      page_controls:
+        label:
+          one:          'Manage this member:'
+          many:         'Member Actions:'
 
       # =======================================================================
       # Controls
@@ -76,6 +81,11 @@ en:
           - member_link
           - roles
 
+        page_controls:
+          - new
+
+      # =======================================================================
+
       show:
         label:          'Member'
         title:          'Bookshare Member'
@@ -101,17 +111,35 @@ en:
           - roles
           - links
 
+        page_controls:
+          - edit
+          - delete
+
+      # =======================================================================
+
       new:
         title:          'Add Bookshare Member'
         tooltip:        'Create an entry for a new Bookshare organization member.'
+
+      # =======================================================================
 
       edit:
         title:          'Modify Bookshare Member'
         tooltip:        'Make changes to this Bookshare organization member.'
 
+        page_controls:
+          - delete
+
+      # =======================================================================
+
       delete:
         title:          'Remove Bookshare Member'
         tooltip:        'Remove this Bookshare member from the organization.'
+
+        page_controls:
+          - edit
+
+      # =======================================================================
 
       history:
         title:          'Bookshare Member History'
@@ -126,7 +154,18 @@ en:
           - downloadedBy
           - downloadedFor
 
+        page_controls:
+          - edit
+          - delete
+
+      # =======================================================================
+
       preferences:
+
+        page_controls:
+          - edit
+          - delete
+
         label:          'Preferences'
         title:          'Bookshare Member Preferences'
         tooltip:        'View preference settings for this Bookshare member.'

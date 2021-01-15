@@ -1,0 +1,23 @@
+<%# app/views/account/show.html.erb -%>
+<%-
+  # Show details of a local EMMA user account.
+
+  item  ||= @item
+  title ||= t('emma.account.show.title', name: item&.uid)
+  help  ||= nil # help_popup(:account, :show) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_description_section %>
+
+<%= render 'details', user: item %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

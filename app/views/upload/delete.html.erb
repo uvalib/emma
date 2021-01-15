@@ -32,12 +32,12 @@
   <h1 class="heading"><%= title -%><%= help -%></h1>
   <%= logo %>
 </div>
-<%= upload_description %>
+<%= page_description_section %>
 
 <%- if list.blank? -%>
 
-  <%= render 'upload/select_entry' %>
-  <%= upload_notes %>
+  <%= upload_items_menu %>
+  <%= page_notes_section %>
 
 <%- else -%>
 
@@ -45,10 +45,10 @@
     <%= render 'upload/selected', item: item, row: idx, force: force %>
   <%- end -%>
 
-  <%= upload_directions %>
+  <%= page_directions_section %>
   <%= upload_delete_form(*records, force: force) %>
   <%= upload_preview %>
 
 <%- end -%>
 
-<%= upload_action_list unless modal? %>
+<%= page_action_list unless modal? %>

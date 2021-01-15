@@ -27,10 +27,12 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
-<%= page_description %>
+<%= page_description_section %>
 
 <div class="member-list">
   <%= top_controls %>
   <%= render 'member/list', template_opt %>
   <%= bottom_controls if list.present? %>
 </div>
+
+<%= page_notes_section %>

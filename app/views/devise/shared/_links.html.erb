@@ -36,7 +36,7 @@
 
   if session_debug?
     links +=
-      OmniAuth::Strategies::Bookshare.stored_auth.keys.map { |id|
+      OmniAuth::Strategies::Bookshare.stored_auth(true).keys.map { |id|
         user  = html_tag(:strong, id)
         label = get_sessions_label(:sign_in_as, user: user).html_safe
         path  = sign_in_as_path(id: id)

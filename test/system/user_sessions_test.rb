@@ -18,14 +18,14 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # Start on the main page.
       visit root_url
-      click_link class: 'bookshare-login'
+      click_on class: 'bookshare-login'
 
       # On sign-in page '/users/sign_in' (#new_user_session_path).
       show_url
       assert_title 'Sign in'
       assert_selector 'h1', text: 'Sign in'
       assert_link href: user_bookshare_omniauth_authorize_path
-      click_link "Sign in as #{find_user(TEST_USER)}"
+      click_on "Sign in as #{find_user(TEST_USER)}"
 
       # On dashboard page '/dashboard' (#dashboard_path).
       show_url
@@ -45,7 +45,7 @@ class UserSessionsTest < ApplicationSystemTestCase
 
       # Go to a new page.
       visit_index :title
-      click_link class: 'bookshare-logout'
+      click_on class: 'bookshare-logout'
       assert_flash notice: 'Signed out'
 
     end

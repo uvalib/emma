@@ -20,19 +20,19 @@
   <h1 class="heading"><%= title -%><%= help -%></h1>
   <%= logo %>
 </div>
-<%= upload_description %>
+<%= page_description_section %>
 
 <%- if item.blank? -%>
 
-  <%= render 'upload/select_entry' %>
-  <%= upload_notes %>
+  <%= upload_items_menu %>
+  <%= page_notes_section %>
 
 <%- else -%>
 
-  <%= upload_directions %>
+  <%= page_directions_section %>
   <%= upload_form(item, action: :edit) %>
   <%= upload_preview %>
 
 <%- end -%>
 
-<%= upload_action_list unless modal? %>
+<%= page_action_list unless modal? %>

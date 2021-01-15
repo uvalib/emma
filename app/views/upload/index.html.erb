@@ -41,7 +41,7 @@
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
 <%= upload_page_filter_options if session_debug? %>
-<%= upload_description %>
+<%= page_description_section %>
 <%= upload_state_group_select %>
 
 <div class="<%= UploadHelper::UPLOAD_LIST_CLASS -%>">
@@ -50,5 +50,5 @@
   <%= bottom_controls if list.present? %>
 </div>
 
-<%= upload_notes %>
-<%= upload_action_list unless modal? %>
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

@@ -11,6 +11,13 @@ en:
       tooltip:          'EMMA system documentation.'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_controls:
+        enabled:        false
+
+      # =======================================================================
       # Topics
       #
       # In order to make use of the common "_template" definitions, each topic

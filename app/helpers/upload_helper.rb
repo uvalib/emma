@@ -17,6 +17,7 @@ module UploadHelper
   include Emma::Unicode
   include ConfigurationHelper
   include I18nHelper
+  include LinkHelper
   include ModelHelper
   include PopupHelper
   include UploadWorkflow::Properties
@@ -56,28 +57,6 @@ module UploadHelper
   #
   SEARCH_RECORD_LABELS =
     SEARCH_RECORD_FIELDS.transform_values { |v| v[:label] }.invert.deep_freeze
-
-  # Linkage information for upload actions.
-  #
-  # @type [Hash{Symbol=>Hash}]
-  #
-  UPLOAD_ACTIONS = {
-    new: {
-      label: 'Upload %s new file',       article: 'a',  action: 'new'
-    },
-    edit: {
-      label: 'Modify %s existing entry', article: 'an', action: 'edit_select'
-    },
-    delete: {
-      label: 'Remove %s existing entry', article: 'an', action: 'delete_select'
-    }
-  }.deep_freeze
-
-  # TODO: I18n
-  #
-  # @type [String]
-  #
-  UPLOAD_ANOTHER = 'another'
 
   # Paths used by file-upload.js.
   #
@@ -130,173 +109,6 @@ module UploadHelper
   def upload_preview(force = false)
     return unless force || preview_enabled?
     html_div('', class: UPLOAD_STYLE[:preview])
-  end
-
-  # upload_action_entry
-  #
-  # @param [String, Symbol, nil] action   The target action.
-  # @param [String, Symbol, nil] current  The current `params[:action]`.
-  #
-  # @return [Hash{Symbol=>String}]
-  #
-  def upload_action_entry(action = nil, current: nil)
-    current ||= params[:action]
-    action  ||= current
-    entry = UPLOAD_ACTIONS[action&.to_sym]
-    return {} if entry.blank?
-    article = (action == current) ? UPLOAD_ANOTHER : entry[:article]
-    entry.merge(article: article)
-  end
-
-  # upload_action_link
-  #
-  # @param [String, Symbol, nil] action   The target action.
-  # @param [String, Symbol, nil] current  The current `params[:action]`.
-  # @param [String, nil]         label    Override #UPLOAD_ACTIONS label.
-  # @param [String, nil]         path     Override #UPLOAD_ACTIONS action.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML link element.
-  # @return [nil]                         If *action* not configured.
-  #
-  def upload_action_link(action = nil, current: nil, label: nil, path: nil)
-    entry = upload_action_entry(action, current: current)
-    return if entry.blank?
-    path  ||= { action: entry[:action] }
-    label ||= entry[:label]
-    label  %= entry[:article]
-    html_tag(:li, class: 'file-upload-action') do
-      link_to_action(label, path: path)
-    end
-  end
-
-  # List upload actions.  If the current action is provided, the associated
-  # action link will be appear at the top of the list.
-  #
-  # @param [String, Symbol] current   Default: `params[:action]`
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def upload_action_list(current: params[:action]&.to_sym)
-    links =
-      %i[new edit delete].map { |action|
-        upload_action_link(action, current: current)
-      }.compact
-    if (first = links.index { |link| link.include?(UPLOAD_ANOTHER) })
-      links.prepend(links.delete_at(first))
-    end
-    html_tag(:ul, class: 'file-upload-actions') { links }
-  end
-
-  # Supply an element containing a description for the current action context.
-  #
-  # @param [Symbol, String, nil] text     Specification of the text to display:
-  #                                         Symbol: I18n lookup path
-  #                                         String: literal text
-  #                                         nil:    Locate the text for the
-  #                                                   current action.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def upload_description(text = nil)
-    opt = { item: :description }
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case text
-      when Symbol then opt[:path] = text
-      when String then opt[:text] = text
-    end
-    upload_text_element(**opt)
-  end
-
-  # Supply an element containing directions for the current action context.
-  #
-  # @param [Symbol, String, nil] text     Specification of the text to display:
-  #                                         Symbol: I18n lookup path
-  #                                         String: literal text
-  #                                         nil:    Locate the text for the
-  #                                                   current action.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def upload_directions(text = nil)
-    opt = { item: :directions, tag: :h2 }
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case text
-      when Symbol then opt[:path] = text
-      when String then opt[:text] = text
-    end
-    upload_text_element(**opt)
-  end
-
-  # Supply an element containing additional notes for the current action.
-  #
-  # @param [Symbol, String, nil] text     Specification of the text to display:
-  #                                         Symbol: I18n lookup path
-  #                                         String: literal text
-  #                                         nil:    Locate the text for the
-  #                                                   current action.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def upload_notes(text = nil)
-    opt = { item: :notes }
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case text
-      when Symbol then opt[:path] = text
-      when String then opt[:text] = text
-    end
-    upload_text_element(**opt)
-  end
-
-  # Supply an element containing configured text for the current action.
-  #
-  # @param [String, Symbol] item          Default: 'text'.
-  # @param [String]         text          Override text to display.
-  # @param [String, Symbol] path          Override I18n path to use.
-  # @param [String, Symbol] controller    Default: `params[:controller]`.
-  # @param [String, Symbol] action        Default: `params[:action]`.
-  # @param [String, Symbol] tag           Tag for the internal text block.
-  # @param [Hash]           opt           Passed to #html_div.
-  #
-  # @return [ActiveSupport::SafeBuffer]   An HTML element.
-  # @return [nil]                         If no text was provided or defined.
-  #
-  def upload_text_element(
-    item:       nil,
-    text:       nil,
-    path:       nil,
-    controller: nil,
-    action:     nil,
-    tag:        :p,
-    **opt
-  )
-    type = item&.to_s&.delete_suffix('_html') || 'text'
-    text ||=
-      page_description_text(controller: controller, action: action, type: type)
-    return if text.blank?
-    unless text.html_safe?
-      text = ERB::Util.h(text)
-      text = html_tag(tag, text) unless tag.nil?
-    end
-    opt = append_css_classes(opt, 'file-upload-text')
-    append_css_classes!(opt, type) unless type == 'text'
-    html_div(text, opt)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Current uploads.
-  #
-  # @return [Array<Upload>]
-  #
-  def upload_list
-    page_items
   end
 
   # ===========================================================================
@@ -897,7 +709,7 @@ module UploadHelper
     case (path = opt.delete(:path))
       when Symbol then # deferred
       when Proc   then path = path.call(item)
-      else             path ||= (send("#{op}_upload_path", id: id) if id)
+      else             path ||= (get_path_for(:upload, op, id: id) if id)
     end
     return if path.blank?
     icon = opt.delete(:icon) || STAR
@@ -1022,26 +834,26 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_form(item, label: nil, action: nil, **opt)
-    action = (action || params[:action])&.to_sym
-    opt, form_opt = partition_options(opt, :cancel)
+    action ||= params[:action]
+    cancel   = opt.delete(:cancel)
 
     # noinspection RubyCaseWithoutElseBlockInspection
     case action
       when :new
-        form_opt[:url]      = create_upload_path
+        opt[:url]      = create_upload_path
       when :edit
-        form_opt[:url]      = update_upload_path
-        form_opt[:method] ||= :put
+        opt[:url]      = update_upload_path
+        opt[:method] ||= :put
     end
-    form_opt[:multipart]    = true
-    form_opt[:autocomplete] = 'off'
+    opt[:multipart]    = true
+    opt[:autocomplete] = 'off'
 
-    prepend_css_classes!(form_opt, 'file-upload-form', action.to_s)
-    scroll_to_top_target!(form_opt)
+    prepend_css_classes!(opt, 'file-upload-form', action)
+    scroll_to_top_target!(opt)
 
     html_div(class: "file-upload-container #{action}") do
       # @type [ActionView::Helpers::FormBuilder] f
-      form_with(model: item, **form_opt) do |f|
+      form_with(model: item, **opt) do |f|
         data_opt = { class: 'upload-hidden' }
 
         # Communicate :file_data through the form as a hidden field.
@@ -1084,23 +896,15 @@ module UploadHelper
 
   # Upload submit button.
   #
-  # @param [Hash] opt                 Passed to #submit_tag except for:
-  #
-  # @option opt [String, Symbol] :action    Default: `#params[:action]`.
-  # @option opt [String]         :label     Default: based on :action.
+  # @param [Hash] opt                 Passed to #form_submit_button.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see submitButton() in app/assets/javascripts/feature/download.js
   #
   def upload_submit_button(**opt)
-    opt    = prepend_css_classes(opt, 'submit-button', 'uppy-FileInput-btn')
-    action = (opt.delete(:action) || params[:action])&.to_sym
-    values = UPLOAD_ACTION_VALUES[action]
-    label  = opt.delete(:label) || values[:submit][:label]
-    opt[:title] ||= values[:submit][:disabled][:tooltip]
-    # noinspection RubyYardReturnMatch
-    submit_tag(label, opt)
+    opt[:config] ||= UPLOAD_ACTION_VALUES
+    form_submit_button(**opt)
   end
 
   # Upload cancel button.
@@ -1117,18 +921,19 @@ module UploadHelper
   # @see cancelButton() in app/assets/javascripts/feature/download.js
   #
   def upload_cancel_button(**opt)
-    opt    = prepend_css_classes(opt, 'cancel-button', 'uppy-FileInput-btn')
-    action = (opt.delete(:action) || params[:action])&.to_sym
-    values = UPLOAD_ACTION_VALUES[action]
-    label  = opt.delete(:label) || values[:cancel][:label]
-    # Define the path for the cancel action.
-    opt[:'data-path'] = opt.delete(:url) || params[:cancel]
+    url = opt.delete(:url)
+    opt[:'data-path'] ||= url || params[:cancel]
     opt[:'data-path'] ||= (request.referer if local_request? && !same_request?)
-    opt[:'data-path'] ||= upload_index_path
-    opt[:title] ||= values[:cancel][:tooltip]
-    opt[:type]  ||= 'reset'
-    button_tag(label, opt)
+    opt[:model]       ||= :upload
+    opt[:config]      ||= UPLOAD_ACTION_VALUES
+    form_cancel_button(**opt)
   end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  public
 
   # Element for displaying the name of the file that was uploaded.
   #
@@ -1251,6 +1056,12 @@ module UploadHelper
     end
   end
 
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
+  protected
+
   # Text for #upload_no_fields_row. # TODO: I18n
   #
   # @type [String]
@@ -1281,48 +1092,18 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def upload_items_menu(action: nil, user: nil, prompt: nil, **opt)
-    action ||= params[:action]
-    user   ||= @user
-    user     = user.id if user.is_a?(User)
-    prompt ||= 'Select an EMMA entry' # TODO: I18n
-
-    path  = upload_action_entry(action)[:action] || action
-    path  = send("#{path}_upload_path")
-
-    items = user ? Upload.where(user_id: user) : Upload.all
-    menu  = Array.wrap(items).map { |item| [upload_menu_label(item), item.id] }
-    menu  = options_for_select(menu)
-    select_opt = { prompt: prompt, onchange: 'this.form.submit();' }
-
-    html_opt = prepend_css_classes(opt, 'select-entry', 'menu-control')
-    html_opt[:method] ||= :get
-    # noinspection RubyYardReturnMatch
-    form_tag(path, html_opt) do
-      select_tag(:selected, menu, select_opt)
-    end
-  end
-
-  # ===========================================================================
-  # :section: Item forms (edit/delete pages)
-  # ===========================================================================
-
-  protected
-
-  # upload_menu_label
-  #
-  # @param [Upload] item
-  #
-  # @return [ActiveSupport::SafeBuffer]
-  #
-  def upload_menu_label(item)
-    index = item.id.to_s.presence
-    file  = item.filename.presence
-    name  = item.submission_id.presence
-    index = "&thinsp;&nbsp;#{index}" if index && (index.size == 1)
-    index = "Entry #{index}"         if index # TODO: I18n
-    file  = ERB::Util.h(file)        if file
-    name  = (name && file) ? "#{name} (#{file})" : (name || file)
-    [index, name].join(' - ').html_safe
+    opt[:action] = action if action
+    opt[:user]   = user || @user
+    opt[:prompt] = prompt if prompt
+    opt[:model]  = Upload
+    opt[:controller] ||= :upload
+    opt[:prompt] ||=
+      if user
+        'Select an EMMA entry you created' # TODO: I18n
+      else
+        'Select an existing EMMA entry' # TODO: I18n
+      end
+    page_items_menu(**opt)
   end
 
   # ===========================================================================
@@ -1333,7 +1114,7 @@ module UploadHelper
 
   UPLOAD_DELETE_OPTIONS        = %i[force truncate emergency].freeze
   UPLOAD_DELETE_FORM_OPTIONS   = [:cancel, *UPLOAD_DELETE_OPTIONS].freeze
-  UPLOAD_DELETE_SUBMIT_OPTIONS = [:label,  *UPLOAD_DELETE_OPTIONS].freeze
+  UPLOAD_DELETE_SUBMIT_OPTIONS = UPLOAD_DELETE_OPTIONS
 
   # Generate a form with controls for deleting a file and its entry.
   #
@@ -1342,11 +1123,11 @@ module UploadHelper
   # @param [Hash]                 opt     Passed to 'file-upload-delete' except
   #                                         for:
   #
+  # @option opt [String]  :cancel         Cancel button redirect URL passed to
+  #                                         #upload_delete_cancel.
   # @option opt [Boolean] :force          Passed to #upload_delete_submit
   # @option opt [Boolean] :truncate       Passed to #upload_delete_submit
   # @option opt [Boolean] :emergency      Passed to #upload_delete_submit
-  # @option opt [String]  :cancel         Cancel button redirect URL passed to
-  #                                         #upload_delete_cancel.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1363,34 +1144,32 @@ module UploadHelper
   # Submit button for the delete upload form.
   #
   # @param [Array<String,Upload>] items
-  # @param [String]               label   Override label for the submit button.
-  # @param [Hash]                 opt     Passed to #button_to except for:
+  # @param [Hash]                 opt     Passed to #delete_submit_button
+  #                                         except for:
   #
-  # @option opt [Boolean] :force          If *true*, add 'force=true' to
-  #                                         the form submission URL.
-  # @option opt [Boolean] :truncate       If *true*, add 'truncate=true' to
-  #                                         the form submission URL.
-  # @option opt [Boolean] :emergency      If *true*, add 'emergency=true' to
-  #                                         the form submission URL.
+  # @option opt [String, Symbol] :action      Default: `#params[:action]`.
+  #
+  # @option opt [Boolean]        :force       If *true*, add 'force=true'
+  #                                             to the form submission URL.
+  # @option opt [Boolean]        :truncate    If *true*, add 'truncate=true'
+  #                                             to the form submission URL.
+  # @option opt [Boolean]        :emergency   If *true*, add 'emergency=true'
+  #                                             to the form submission URL.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def upload_delete_submit(*items, label: nil, **opt)
-    opt, html_opt = partition_options(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
-    opt[:force]     = force_delete     unless opt.key?(:force)
-    opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
-    opt[:emergency] = emergency_delete unless opt.key?(:emergency)
-    action  = (opt.delete(:action) || params[:action])&.to_sym
-    config  = UPLOAD_ACTION_VALUES.dig(action, :submit) || {}
-    label ||= config[:label]
-    ids     = Upload.compact_ids(*items).join(',').presence
-    url     = (destroy_upload_path(**opt.merge!(id: ids)) if ids.present?)
-    append_css_classes!(html_opt, (url ? 'best-choice' : 'forbidden'))
-    prepend_css_classes!(html_opt, 'submit-button', 'uppy-FileInput-btn')
-    html_opt[:title]  ||= config[:disabled][:tooltip]
-    html_opt[:role]   ||= 'button'
-    html_opt[:method] ||= :delete
-    button_to(label, url, **html_opt)
+  def upload_delete_submit(*items, **opt)
+    p_opt, opt = partition_options(opt, *UPLOAD_DELETE_SUBMIT_OPTIONS)
+    ids = Upload.compact_ids(*items).join(',')
+    url =
+      if ids.present?
+        p_opt[:id]        = ids
+        p_opt[:force]     = force_delete     unless p_opt.key?(:force)
+        p_opt[:truncate]  = truncate_delete  unless p_opt.key?(:truncate)
+        p_opt[:emergency] = emergency_delete unless p_opt.key?(:emergency)
+        destroy_upload_path(**p_opt)
+      end
+    delete_submit_button(config: UPLOAD_ACTION_VALUES, url: url, **opt)
   end
 
   # Cancel button for the delete upload form.

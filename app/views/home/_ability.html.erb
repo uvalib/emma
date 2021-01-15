@@ -4,7 +4,7 @@
 
   user      = current_user&.to_s&.presence || 'guest'
   actions   = Ability::ACTION_ALIAS.keys + %i[index show new edit destroy]
-  models    = [Upload, Artifact]
+  models    = [User, Upload, Artifact]
   models   += [Title, Periodical, Edition, Member, ReadingList]
   panel_css = 'ability-list'
   panel_id  = css_randomize(panel_css)

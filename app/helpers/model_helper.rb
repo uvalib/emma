@@ -451,14 +451,12 @@ module ModelHelper
     end
 
     # Option settings for both label and value.
-    status = []
-    if prop[:array]
-      status << 'array'
-    elsif prop[:type] == 'textarea'
-      status << 'textbox'
-    end
-    row ||= 0
-    opt   = { class: css_classes("row-#{row}", type, *status) }
+    status   = ('array'     if prop[:array])
+    status ||= ('textbox'   if prop[:type] == 'textarea')
+    status ||= ('numeric'   if prop[:type] == 'number')
+    status ||= ('hierarchy' if prop[:type] == 'json')
+    status ||= (prop[:type] if prop[:type].is_a?(String))
+    prepend_css_classes!(opt, "row-#{row}", type, status)
 
     # Label and label HTML options.
     l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
@@ -772,6 +770,286 @@ module ModelHelper
   end
 
   # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  public
+
+  # Make the heading row stick to the top of the table when scrolling.
+  #
+  # @type [Boolean]
+  #
+  # @see .grid-table.sticky-head in stylesheets/shared/controls/_table.scss
+  #
+  STICKY_HEAD = true
+
+  # Give the heading row a background.
+  #
+  # @type [Boolean]
+  #
+  # @see .grid-table.dark-head in stylesheets/shared/controls/_table.scss
+  #
+  DARK_HEAD = true
+
+  # Options used by some or all of the methods involved in rendering items in
+  # a tabular form.
+  #
+  # @type [Array<Symbol>]
+  #
+  ITEM_TABLE_OPTIONS = [
+    ITEM_TABLE_FIELD_OPT = %i[columns],
+    ITEM_TABLE_HEAD_OPT  = %i[sticky dark],
+    ITEM_TABLE_ENTRY_OPT = %i[inner_tag outer_tag],
+    ITEM_TABLE_ROW_OPT   = %i[row col],
+    ITEM_TABLE_TABLE_OPT = %i[model thead tbody tfoot],
+  ].flatten.freeze
+
+  # Render model items as a table.
+  #
+  # @param [Model, Array<Model>] list
+  # @param [Hash]                opt    Passed to outer #html_tag except:
+  #
+  # @option opt [Symbol, String]            :model
+  # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated <thead>.
+  # @option opt [ActiveSupport::SafeBuffer] :tbody  Pre-generated <tbody>.
+  # @option opt [ActiveSupport::SafeBuffer] :tfoot  Pre-generated <tfoot>.
+  # @option opt [*] #ITEM_TABLE_OPTIONS             Passed to render methods.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @yield [list, **opt] Allows the caller to define the table contents.
+  # @yieldparam  [Hash]         parts   Accumulated :thead/:tbody/:tfoot parts.
+  # @yieldparam  [Array<Model>] list    Normalized item list.
+  # @yieldparam  [Hash]         opt     Updated options.
+  # @yieldreturn [void] Block should update *parts*.
+  #
+  # @see #STICKY_HEAD
+  # @see #DARK_HEAD
+  #
+  def item_table(list, **opt)
+    opt, html_opt = partition_options(opt, *ITEM_TABLE_OPTIONS)
+    opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
+    model = opt.delete(:model)&.to_s || 'item'
+
+    parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h
+    yield(parts, list, **opt) if block_given?
+    parts[:thead] ||= item_table_headings(list, **opt)
+    parts[:tbody] ||= item_table_entries(list, **opt)
+    count = parts[:thead].scan(/<th[>\s]/).size
+
+    prepend_css_classes!(html_opt, "#{model}-table")
+    append_css_classes!(html_opt, "columns-#{count}") if count.positive?
+    append_css_classes!(html_opt, 'sticky-head')      if opt[:sticky]
+    append_css_classes!(html_opt, 'dark-head')        if opt[:dark]
+    html_tag(:table, html_opt) do
+      parts.map { |tag, content| html_tag(tag, content) if content }
+    end
+  end
+
+  # Render one or more entries for use within a <tbody>.
+  #
+  # @param [Model, Array<Model>] list
+  # @param [String, nil]         separator
+  # @param [Integer, nil]        row        Current row (prior to first entry).
+  # @param [Hash]                opt        Passed to #item_table_entry
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If :separator is *nil*.
+  #
+  # @yield [item, **opt] Allows the caller to define the item table entry.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Row-specific options.
+  # @yieldreturn [ActiveSupport::SafeBuffer]
+  #
+  def item_table_entries(list, separator: "\n", row: 0, **opt)
+    rows      = Array.wrap(list).dup
+    first_row = row + 1
+    last_row  = row + rows.size
+    rows.map! do |item|
+      row += 1
+      row_opt = opt.merge(row: row)
+      append_css_classes!(row_opt, 'row-first') if row == first_row
+      append_css_classes!(row_opt, 'row-last')  if row == last_row
+      if block_given?
+        yield(item, **row_opt)
+      else
+        item_table_entry(item, **row_opt)
+      end
+    end
+    rows.compact!
+    separator ? safe_join(rows, separator) : rows
+  end
+
+  # Render a single entry for use within a table of items.
+  #
+  # @param [Model]                                     item
+  # @param [Integer]                                   row
+  # @param [Integer]                                   col
+  # @param [Symbol, String]                            outer_tag
+  # @param [Symbol, String]                            inner_tag
+  # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [Hash]                                      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
+  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  #
+  # @yield [item, **opt] Allows the caller to generate the item columns.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Field generation options.
+  # @yieldreturn [Hash{Symbol=>*}] Same as #item_field_values return type.
+  #
+  def item_table_entry(
+    item,
+    row:        1,
+    col:        1,
+    outer_tag:  :tr,
+    inner_tag:  :td,
+    columns:    nil,
+    **opt
+  )
+    opt.except!(*ITEM_TABLE_OPTIONS)
+    pairs =
+      if block_given?
+        yield(item, columns: columns)
+      else
+        item_field_values(item, columns: columns)
+      end
+    fields =
+      if inner_tag
+        first_col = col
+        last_col  = pairs.size + col - 1
+        pairs.map do |field, value|
+          # noinspection RubyYardParamTypeMatch
+          row_opt = item_rc_options(field, row, col, opt)
+          append_css_classes!(row_opt, 'col-first') if col == first_col
+          append_css_classes!(row_opt, 'col-last')  if col == last_col
+          col += 1
+          html_tag(inner_tag, value, row_opt)
+        end
+      else
+        pairs.values.compact.map { |value| ERB::Util.h(value) }
+      end
+    fields = html_tag(outer_tag, fields) if outer_tag
+    fields
+  end
+
+  # Render column headings for a table of model items.
+  #
+  # @param [Model, Array<Model>]                       item
+  # @param [Integer]                                   row
+  # @param [Integer]                                   col
+  # @param [Symbol, String]                            outer_tag
+  # @param [Symbol, String]                            inner_tag
+  # @param [Boolean]                                   dark
+  # @param [Symbol, String, Array<Symbol,String>, nil] columns
+  # @param [Hash]                                      opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  # @return [Array<ActiveSupport::SafeBuffer>]  If nil :outer_tag.
+  # @return [Array<String>]                     If nil :inner_tag, :outer_tag.
+  #
+  # @yield [item, **opt] Allows the caller to generate the item columns.
+  # @yieldparam  [Model] item         Single item instance.
+  # @yieldparam  [Hash]  opt          Field generation options.
+  # @yieldreturn [ActiveSupport::SafeBuffer]
+  #
+  # @see #DARK_HEAD
+  #
+  def item_table_headings(
+    item,
+    row:        1,
+    col:        1,
+    outer_tag:  :tr,
+    inner_tag:  :th,
+    dark:       DARK_HEAD,
+    columns:    nil,
+    **opt
+  )
+    opt.except!(*ITEM_TABLE_OPTIONS)
+
+    first  = Array.wrap(item).first
+    fields =
+      if block_given?
+        yield(first, columns: columns)
+      else
+        item_field_values(first, columns: columns)
+      end
+    fields = fields.dup  if fields.is_a?(Array)
+    fields = fields.keys if fields.is_a?(Hash)
+    fields = Array.wrap(fields)
+
+    if inner_tag
+      first_col = col
+      last_col  = fields.size + col - 1
+      fields.map! do |field|
+        row_opt = item_rc_options(field, row, col, opt)
+        append_css_classes!(row_opt, 'col-first') if col == first_col
+        append_css_classes!(row_opt, 'col-last')  if col == last_col
+        col += 1
+        html_tag(inner_tag, row_opt) { labelize(field) }
+      end
+    else
+      fields.map! { |field| labelize(field) unless field.nil? }.compact!
+    end
+
+    if outer_tag
+      fields = html_tag(outer_tag, fields)
+      fields = html_tag(outer_tag, '', class: 'spanner') << fields if dark
+    end
+    fields
+  end
+
+  # ===========================================================================
+  # :section: Item list (index page) support
+  # ===========================================================================
+
+  protected
+
+  # Specified field selections from the given model instance.
+  #
+  # @param [Model, nil]                                item
+  # @param [String, Symbol, Array<String,Symbol>, nil] columns
+  # @param [String, Symbol, Array<String,Symbol>, nil] default
+  # @param [String, Regexp, Array<String,Regexp>, nil] filter
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def item_field_values(item, columns: nil, default: nil, filter: nil, **)
+    return {} unless item.respond_to?(:attributes)
+    columns = Array.wrap(columns || default).compact.map(&:to_s)
+    columns = nil if columns == %w(all)
+    pairs   = item.attributes.dup
+    pairs.keep_if { |field, _| columns.include?(field) } if columns.present?
+    Array.wrap(filter).each do |pattern|
+      has = pattern.is_a?(Regexp) ? :match? : :include?
+      pairs.delete_if { |field, _| field.to_s.send(has, pattern) }
+    end
+    pairs.transform_keys!(&:to_sym)
+  end
+
+  # Setup row/column HTML options.
+  #
+  # @param [Symbol, String] field
+  # @param [Integer, nil]   row
+  # @param [Integer, nil]   col
+  # @param [Hash, nil]      opt
+  #
+  # @return [Hash]
+  #
+  def item_rc_options(field, row = nil, col = nil, opt = nil)
+    field = html_id(field, camelize: false)
+    prepend_css_classes(opt, field).tap do |html_opt|
+      append_css_classes!(html_opt, "row-#{row}") if row
+      append_css_classes!(html_opt, "col-#{col}") if col
+      html_opt[:id] ||= [field, row, col].compact.join('-')
+    end
+  end
+
+  # ===========================================================================
   # :section: Item details (show page) support
   # ===========================================================================
 
@@ -785,13 +1063,16 @@ module ModelHelper
   # @param [Hash]           opt           Passed to #render_field_values.
   # @param [Proc]           block         Passed to #render_field_values.
   #
+  # @option opt [String] :class           Passed to outer #html_div.
+  #
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If *item* is blank.
   #
   def item_details(item, model:, pairs: nil, **opt, &block)
     return if item.blank?
-    html_div(class: "#{model}-details") do
-      render_field_values(item, model: model, pairs: pairs, &block)
+    # noinspection RubyYardParamTypeMatch
+    html_div(class: css_classes("#{model}-details", opt.delete(:class))) do
+      render_field_values(item, model: model, pairs: pairs, **opt, &block)
     end
   end
 
@@ -1141,6 +1422,61 @@ module ModelHelper
   # :section: Item forms (new/edit/delete pages)
   # ===========================================================================
 
+  public
+
+  # Form submit button.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [Hash] opt                     Passed to #submit_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_submit_button(config:, action: nil, label: nil, **opt)
+    action ||= params[:action]
+    config   = config.dig(action&.to_sym, :submit) || {}
+    label  ||= config[:label]
+
+    prepend_css_classes!(opt, 'submit-button', 'uppy-FileInput-btn')
+    opt[:title] ||= config.dig(:disabled, :tooltip)
+    # noinspection RubyYardReturnMatch
+    submit_tag(label, opt)
+  end
+
+  # Form cancel button.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [String, Hash, nil]   url      Default: `history.back()`.
+  # @param [Hash] opt                     Passed to #button_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def form_cancel_button(config:, action: nil, label: nil, url: nil, **opt)
+    action ||= params[:action]
+    config = config.dig(action&.to_sym, :cancel) || {}
+    label  ||= config[:label]
+
+    prepend_css_classes!(opt, 'cancel-button', 'uppy-FileInput-btn')
+    opt[:title] ||= config[:tooltip]
+    opt[:type]  ||= 'reset'
+
+    if opt[:'data-path'].present?
+      button_tag(label, opt)
+    else
+      url ||= (request.referer if local_request? && !same_request?)
+      url ||= 'javascript:history.back();'
+      # noinspection RubyYardParamTypeMatch
+      make_link(label, url, **opt)
+    end
+  end
+
+  # ===========================================================================
+  # :section: Item forms (new/edit/delete pages)
+  # ===========================================================================
+
   protected
 
   # Mapping of actual type to the appropriate field type indicator.
@@ -1335,6 +1671,35 @@ module ModelHelper
 
     opt
 
+  end
+
+  # ===========================================================================
+  # :section: Item forms (delete pages)
+  # ===========================================================================
+
+  public
+
+  # Submit button for the delete model form.
+  #
+  # @param [Hash]                config   Button info for model actions.
+  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, nil]         label    Override button label.
+  # @param [String, Hash, nil]   url
+  # @param [Hash]                opt      Passed to #button_tag.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def delete_submit_button(config:, action: nil, label: nil, url: nil, **opt)
+    action ||= params[:action] || :delete
+    config   = config.dig(action&.to_sym, :submit) || {}
+    label  ||= config[:label]
+
+    prepend_css_classes!(opt, 'submit-button', 'uppy-FileInput-btn')
+    append_css_classes!(opt, (url ? 'best-choice' : 'forbidden'))
+    opt[:title]  ||= config.dig(:disabled, :tooltip)
+    opt[:role]   ||= 'button'
+    opt[:method] ||= :delete
+    button_to(label, url, opt)
   end
 
 end

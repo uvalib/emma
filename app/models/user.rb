@@ -91,6 +91,8 @@ __loading_begin(__FILE__)
 #
 class User < ApplicationRecord
 
+  include Model
+
   has_many :members
   has_many :reading_lists
 
@@ -180,6 +182,28 @@ class User < ApplicationRecord
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # menu_label
+  #
+  # @param [User, nil] item           Default: self.
+  #
+  # @return [String, nil]
+  #
+  # @see LinkHelper#page_menu_label
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def menu_label(item = nil)
+    item ||= self
+    item.uid.presence
+  end
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
@@ -190,7 +214,8 @@ class User < ApplicationRecord
   # @type [Hash{String=>Symbol}]
   #
   TEST_USERS = {
-    'emmadso@bookshare.org'        => :dso,
+    #'emmadso@bookshare.org'        => :dso, # TODO: restore
+    'emmadso@bookshare.org'        => :admin, # TODO: remove after admin accounts are available
     'emmacollection@bookshare.org' => :collection,
     'emmamembership@bookshare.org' => :membership
   }.freeze

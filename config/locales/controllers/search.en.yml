@@ -24,7 +24,7 @@ en:
       # =======================================================================
 
       search:
-        action:         'index'
+        action:         index
 
       # =======================================================================
       # Layout
@@ -32,8 +32,8 @@ en:
 
       page_controls:
         label:
-          one:          'Manage this metadata record'
-          many:         'Record Actions'
+          one:          'Manage this record:'
+          many:         'Record Actions:'
 
       # =======================================================================
       # Fields
@@ -71,6 +71,8 @@ en:
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
 
+      # =======================================================================
+
       show:
         label:          'Record'
         title:          'EMMA Index Record'
@@ -78,6 +80,8 @@ en:
 
         display_fields: # @see 'en.emma.search.record'
           - !ruby/symbol all
+
+      # =======================================================================
 
       advanced:
         label:          'Advanced'

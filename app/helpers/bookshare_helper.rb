@@ -247,44 +247,6 @@ module BookshareHelper
 
   public
 
-  # Create a link element to an application action target.
-  #
-  # @param [String, nil]    label         Label passed to #make_link.
-  # @param [Hash]           link_opt      Options passed to #make_link.
-  # @param [Hash, Array]    path          Default: params :controller/:action.
-  # @param [Hash]           path_opt      Path options.
-  #
-  # @return [ActiveSupport::SafeBuffer]   HTML link element.
-  # @return [nil]                         A valid URL could not be determined.
-  #
-  def link_to_action(label, link_opt: nil, path: nil, **path_opt)
-    path ||= {}
-    path = [path[:controller], path[:action]] unless path.is_a?(Array)
-    controller, action = path
-    controller = (controller || params[:controller])&.to_s
-    action     = (action     || params[:action])&.to_sym
-    method =
-      case action
-        when :index then "#{controller}_index_path"
-        when :show  then "#{controller}_path"
-        else             "#{action}_#{controller}_path"
-      end
-    if (path = (send(method, **path_opt) if respond_to?(method))).blank?
-      Log.warn { "#{__method__}: invalid path helper #{method.inspect}" }
-      return
-    end
-    label ||= i18n_lookup(controller, "#{action}.label") || path
-    html_opt = prepend_css_classes(link_opt, 'control')
-    html_opt[:method] ||= :delete  if %i[delete destroy].include?(action)
-    html_opt[:title]  ||= i18n_lookup(controller, "#{action}.tooltip")
-    # noinspection RubyYardParamTypeMatch
-    if path.match?(/^https?:/)
-      external_link(label, path, **html_opt)
-    else
-      make_link(label, path, **html_opt)
-    end
-  end
-
   # A direct link to a Bookshare page to open in a new browser tab.
   #
   # @param [Bs::Api::Record, String] item

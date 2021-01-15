@@ -20,7 +20,7 @@ en:
       # =======================================================================
 
       search:
-        action:         'index'
+        action:         index
 
       # =======================================================================
       # Layout
@@ -48,8 +48,8 @@ en:
 
       page_controls:
         label:
-          one:          'Manage this reading list'
-          many:         'Reading List Actions'
+          one:          'Manage this list:'
+          many:         'Reading List Actions:'
 
       # =======================================================================
       # Controls
@@ -82,6 +82,11 @@ en:
           - description
           - dateUpdated
 
+        page_controls:
+          - new
+
+      # =======================================================================
+
       show:
         label:          'List'
         title:          'Bookshare Reading List'
@@ -90,19 +95,41 @@ en:
         display_fields: # @see 'en.emma.reading_list.record'
           - !ruby/symbol all
 
+        page_controls:
+          - edit
+          - delete
+
+      # =======================================================================
+
       new:
         title:          'Add Reading List'
         tooltip:        'Create a new Bookshare reading list.'
 
+      # =======================================================================
+
       edit:
         title:          'Modify Reading List'
         tooltip:        'Make changes to this Bookshare reading list.'
+
+        page_controls:
+          - delete
+
+      # =======================================================================
 
       delete:
         label:          'Delete'
         title:          'Delete Reading List'
         tooltip:        'Delete this Bookshare reading list.'
 
+        page_controls:
+          - edit
+
+      # =======================================================================
+
       history:
         title:          'Reading List History'
         tooltip:        'View modifications for this Bookshare reading list.'
+
+        page_controls:
+          - edit
+          - delete

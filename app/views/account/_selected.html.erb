@@ -1,0 +1,35 @@
+<%# app/views/account/_selected.html.erb -%>
+<%-
+  # Display the selected item in an expandable panel.
+
+  item ||= nil or return
+  row  ||= 0
+
+  toggle = panel_id = panel_css = nil
+  if item.is_a?(User)
+    heading   = "Selected item #{item.id} record details:" # TODO: I18n
+    panel_css = 'selected-details'
+    panel_id  = css_randomize(panel_css)
+    toggle    = toggle_button(id: panel_id)
+    panel_css = "#{panel_css} row-#{row}"
+  else
+    name      = html_span(item, class: 'item')
+    heading   = "Item #{name} is not in the database".html_safe # TODO: I18n
+  end
+
+-%>
+
+<div class="selected-item">
+
+  <div class="toggle-panel-title">
+    <h2 class="selected-header"><%= heading -%></h2>
+    <%= toggle %>
+  </div>
+
+  <%- if toggle -%>
+    <div id="<%= panel_id -%>" class="<%= panel_css -%>">
+      <%= render 'account/entry', item: item, skip: :number %>
+    </div>
+  <%- end -%>
+
+</div>

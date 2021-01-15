@@ -865,14 +865,12 @@ $search-button-width:    6rem;
     // Elements
     //=========================================================================
 
-    // @see app/views/*/page_controls/*.html.erb
     .label {
         display:   block;
         margin:    0;
         font-size: larger;
     }
 
-    // @see app/views/*/page_controls/*.html.erb
     .controls {
         display:        flex;
         flex-direction: row;

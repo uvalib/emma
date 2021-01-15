@@ -89,7 +89,8 @@ en:
           label:        'Less ▲'
           tooltip:      'See less'
 
-    search_type:
+    search_type:        &SEARCH_TYPE
+
       identifier:
         name:           'ISBN / ISSN / etc.'
         label:          'Standard identifier:'
@@ -101,18 +102,20 @@ en:
         label:          'Title terms:'
         tooltip:        'Search for one or more terms matching the title of a work'
         placeholder:    'Enter title terms...'
+
       creator:
         name:           'Creator'
         label:          'Creator terms:'
         tooltip:        'Search for one or more terms matching the name of the author or creator of a work'
         placeholder:    'Enter author/creator terms...'
+
       q:
         name:           'Keyword'
         label:          'Search terms:'
         tooltip:        'Search for one or more keywords matching anywhere in the description of entries'
         placeholder:    'Enter search terms...'
 
-    search_bar:
+    search_bar:         &SEARCH_BAR
       label:            'Search'
       enabled:          true
 
@@ -126,8 +129,7 @@ en:
           <<:           *PANEL_OPEN_TOGGLE
           tooltip:      'Hide additional search filters'
 
-    search_controls:
-
+    search_controls:    &SEARCH_CONTROLS
       enabled:          true
       expanded:         true        # False/missing => collapsed initially.
 
@@ -252,19 +254,12 @@ en:
         tooltip:        'Limit by included content warnings'
         values:         !ruby/symbol ContentWarning
 
-    page_controls:
+    page_controls:      &PAGE_CONTROLS
       label:            'Actions'
 
     # =========================================================================
     # Controls
     # =========================================================================
-
-    link:
-      back:
-        label:          'Back'
-
-    confirmation:
-      label:            'Are you sure?'
 
     pagination:         &PAGINATION
 
@@ -361,6 +356,17 @@ en:
         label:        'Download'
         tooltip:      'Click here to retrieve the %{fmt} file.'
 
+    action_links:       &ACTION_LINKS
+      back:
+        label:          'Back'
+
+    # =========================================================================
+    # Messages
+    # =========================================================================
+
+    messages:           &MESSAGES
+      confirmation:     'Are you sure?'
+
     # =========================================================================
     # Generic (parameterized) page definitions
     # =========================================================================
@@ -385,18 +391,24 @@ en:
       # Layout
       # =======================================================================
 
+      search_type:
+        <<:             *SEARCH_TYPE
+
       search_bar:
+        <<:             *SEARCH_BAR
         label:          '%{Item} Search'
 
       search_controls:
+        <<:             *SEARCH_CONTROLS
         layout:
           - [sort,   size,           repository  ]
           - [format, format_feature, a11y_feature]
 
       page_controls:
+        <<:             *PAGE_CONTROLS
         label:
-          one:          'Manage this %{item}'
-          many:         '%{Item} Actions'
+          one:          'Manage this %{item}:'
+          many:         '%{Item} Actions:'
 
       # =======================================================================
       # Controls
@@ -407,6 +419,16 @@ en:
         count:
           one:          '%{item} found'
           many:         '%{items} found'
+
+      action_links:
+        <<:             *ACTION_LINKS
+
+      # =======================================================================
+      # Messages
+      # =======================================================================
+
+      messages:
+        <<:             *MESSAGES
 
       # =======================================================================
       # Pages

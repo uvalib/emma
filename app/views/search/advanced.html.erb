@@ -15,6 +15,9 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
-<%= page_description(action: :advanced) %>
+<%= page_description_section(action: :advanced) %>
 
+<%= page_directions_section(action: :advanced) %>
 <%= render 'search/form' %>
+
+<%= page_notes_section(action: :advanced) %>

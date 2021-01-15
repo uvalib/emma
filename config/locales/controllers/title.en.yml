@@ -24,13 +24,14 @@ en:
       # =======================================================================
 
       search:
-        action:         'index'
+        action:         index
 
       # =======================================================================
       # Layout
       # =======================================================================
 
       search_type:
+
         keyword:
           name:         'Keyword'
           label:        'Catalog search terms:'
@@ -62,8 +63,8 @@ en:
 
       page_controls:
         label:
-          one:          'Manage this catalog entry'
-          many:         'Catalog Actions'
+          one:          'Manage this entry:'
+          many:         'Catalog Actions:'
 
       # =======================================================================
       # Controls
@@ -96,6 +97,8 @@ en:
           - authors
           - year
 
+      # =======================================================================
+
       show:
         label:          'Title'
         title:          'Bookshare Catalog Title'
@@ -104,18 +107,26 @@ en:
         display_fields: # @see 'en.emma.title.record'
           - !ruby/symbol all
 
+      # =======================================================================
+
       new:
         label:          'Add'
         title:          'Add Catalog Title'
         tooltip:        'Create an entry for a new Bookshare catalog title.'
 
+      # =======================================================================
+
       edit:
         title:          'Modify Catalog Title'
         tooltip:        'Make changes to this Bookshare catalog title.'
 
+      # =======================================================================
+
       delete:
         title:          'Remove Catalog Title'
         tooltip:        'Remove this title from the Bookshare catalog.'
+
+      # =======================================================================
 
       history:
         title:          'Catalog Title History'

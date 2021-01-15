@@ -18,6 +18,13 @@ en:
       title:            'EMMA Test Application'
 
       # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_controls:
+        enabled:        false
+
+      # =======================================================================
       # Pages
       # =======================================================================
 
@@ -54,6 +61,8 @@ en:
             .
           </p>
 
+      # =======================================================================
+
       dashboard:
         label:          'Account'
         title:          'EMMA Account Dashboard'
@@ -63,3 +72,9 @@ en:
           To modify, visit the Bookshare
           <a href="https://www.bookshare.org/myAccount" target="_blank" rel="noopener">My Account</a>
           page.
+
+        page_controls:
+          - [account, new]
+          - [account, edit_select]
+          - [account, delete_select]
+          - [account, index]

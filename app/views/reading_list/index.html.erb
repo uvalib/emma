@@ -27,10 +27,12 @@
 
 <h1 class="heading"><%= title -%><%= help -%></h1>
 
-<%= page_description %>
+<%= page_description_section %>
 
 <div class="reading_list-list">
   <%= top_controls %>
   <%= render 'reading_list/list', template_opt %>
   <%= bottom_controls if list.present? %>
 </div>
+
+<%= page_notes_section %>

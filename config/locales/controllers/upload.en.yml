@@ -24,13 +24,14 @@ en:
       # =======================================================================
 
       search:
-        action:         'admin'
+        action:         admin
 
       # =======================================================================
       # Layout
       # =======================================================================
 
       search_type:
+
         prefix:
           name:         'Prefix'
           label:        'Limit by object key prefix:'
@@ -101,6 +102,27 @@ en:
         count:
           one:          'submission'
           many:         'submissions'
+
+      action_links:
+
+        new:
+          action:       new
+          label:        'Upload %{article} new file'
+          article:      'a'
+
+        edit:
+          action:       edit_select
+          label:        'Modify %{article} existing entry'
+          article:      'an'
+
+        delete:
+          action:       delete_select
+          label:        'Remove %{article} existing entry'
+          article:      'an'
+
+        back:
+          action:       index
+          label:        'View all entries'
 
       field_group:
         available:
@@ -302,15 +324,7 @@ en:
         description:    '(A more detailed description of this operation.)'
         directions:     '(Brief guidance for using the operation form.)'
         notes:          '(A more detailed description of this operation.)'
-        success:        'Operation successful %{file}'
-        failure:        'Could not proceed: %{error}'
-        warning:
-          experimental: &EXPERIMENTAL
-            directions_html: |
-              <span style="color:red">
-                WARNING: This is an experimental feature and not intended for
-                general use
-              </span>
+
         submit:         &GENERIC_SUBMIT
           label:        'Submit'
           enabled:
@@ -329,6 +343,16 @@ en:
             tooltip:    'Choose a file from your workstation.'
           disabled:
             tooltip:    'Cancel this upload before selecting a different file'
+
+        warning:
+          experimental: &EXPERIMENTAL
+            directions_html: |
+              <span style="color:red">
+                WARNING: This is an experimental feature and not intended for
+                general use
+              </span>
+        success:        'Operation successful %{file}'
+        failure:        'Could not proceed: %{error}'
 
       index:
         label:          'Uploads'
@@ -349,6 +373,15 @@ en:
         display_fields: # @see 'en.emma.upload.record'
           - !ruby/symbol all
 
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
+
       show:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
@@ -358,6 +391,11 @@ en:
           - !ruby/symbol all
           - fmt:        'Fmt'
           - ext:        'Ext'
+
+        page_controls:
+          - edit
+          - delete
+          - admin
 
       new:              &UPLOAD_NEW
         label:          'Create'
@@ -373,23 +411,28 @@ en:
         directions:     |
           Choose a file to upload and provide any information about the entry
           that could not be determined from the contents of the file:
+
+        page_controls:
+          - admin
+
         submit:
-          <<: *GENERIC_SUBMIT
+          <<:           *GENERIC_SUBMIT
           label:        'Upload'
           enabled:
             tooltip:    'Create the new EMMA entry'
           disabled:
             tooltip:    'Required information is still needed'
         cancel:
-          <<: *GENERIC_CANCEL
+          <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Do not create this entry (or start over)'
         select:
-          <<: *GENERIC_SELECT
+          <<:           *GENERIC_SELECT
           enabled:
             tooltip:    'As many fields as possible will be filled-in by information extracted from your file.'
-        failure:        'Could not create entry: %{error}'
+
         success:        'Created EMMA entry for: %{file}'
+        failure:        'Could not create entry: %{error}'
 
       edit:             &UPLOAD_EDIT
         label:          'Change'
@@ -403,24 +446,30 @@ en:
         directions:     |
           Provide an update version of your file, or modify fields that need to
           be corrected:
+
+        page_controls:
+          - delete
+          - admin
+
         submit:
-          <<: *GENERIC_SUBMIT
+          <<:           *GENERIC_SUBMIT
           label:        'Update'
           enabled:
             tooltip:    'Modify this EMMA entry'
           disabled:
             tooltip:    'No valid changes have been made yet'
         cancel:
-          <<: *GENERIC_CANCEL
+          <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Discard these changes.'
         select:
-          <<: *GENERIC_SELECT
+          <<:           *GENERIC_SELECT
           label:        'Replacement file'
           enabled:
             tooltip:    'Provide an updated version of this file.'
-        failure:        'Could not update EMMA entry: %{error}'
+
         success:        'Updated EMMA entry for %{file}'
+        failure:        'Could not update EMMA entry: %{error}'
 
       delete:           &UPLOAD_DELETE
         label:          'Remove'
@@ -438,17 +487,23 @@ en:
           originating member repository and cannot be deleted here.  If there
           is a compelling reason to omit an item from the EMMA search index,
           please contact an EMMA administrator.
+
+        page_controls:
+          - edit
+          - admin
+
         submit:
-          <<: *GENERIC_SUBMIT
+          <<:           *GENERIC_SUBMIT
           label:        'Delete'
           enabled:
             tooltip:    'Remove this entry from EMMA.'
         cancel:
-          <<: *GENERIC_CANCEL
+          <<:           *GENERIC_CANCEL
           enabled:
             tooltip:    'Keep this EMMA entry.'
-        failure:        'Could not remove EMMA entry: %{error}'
+
         success:        'Removed EMMA entry for %{file}'
+        failure:        'Could not remove EMMA entry: %{error}'
 
       new_select:
         <<: *UPLOAD_NEW
@@ -456,14 +511,31 @@ en:
       edit_select:
         <<: *UPLOAD_EDIT
 
+        page_controls:
+          - delete_select
+          - admin
+
       delete_select:
         <<: *UPLOAD_DELETE
+
+        page_controls:
+          - edit_select
+          - admin
 
       bulk_index:
         label:          'Bulk Uploads'
         title:          'Bulk Upload Information'
         tooltip:        'Bulk upload status information'
         description:    'TODO: ???'
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
 
       bulk_new:         &UPLOAD_BULK_NEW
         label:          'Bulk Upload'
@@ -475,8 +547,16 @@ en:
           be used to create new EMMA entries.
         directions:     ~
         notes:          'Some bulk upload notes...'
-        success:        'Created EMMA entry for: %{files}'
-        failure:        'Could not create entries: %{error}'
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
+
         submit:         &BULK_SUBMIT
           <<: *GENERIC_SUBMIT
           label:        'Begin'
@@ -488,6 +568,10 @@ en:
           <<: *GENERIC_CANCEL
         select:         &BULK_SELECT
           <<: *GENERIC_SELECT
+
+        success:        'Created EMMA entry for: %{files}'
+        failure:        'Could not create entries: %{error}'
+
         <<: *EXPERIMENTAL
 
       bulk_edit:
@@ -501,14 +585,26 @@ en:
           to be used to update existing EMMA entries.
         directions:     ~
         notes:          'Some bulk upload notes...'
-        success:        'Modified EMMA entries: %{files}'
-        failure:        'Could not modify entries: %{error}'
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
+
         submit:
           <<: *BULK_SUBMIT
         cancel:
           <<: *BULK_CANCEL
         select:
           <<: *BULK_SELECT
+
+        success:        'Modified EMMA entries: %{files}'
+        failure:        'Could not modify entries: %{error}'
+
         <<: *EXPERIMENTAL
 
       bulk_delete:
@@ -528,6 +624,16 @@ en:
           the EMMA database then all three parts can be removed.  However, if
           the checkbox above is checked, then submission IDs which are not
           found in EMMA can still be removed from the index.
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete
+          - admin
+
         submit:
           <<: *BULK_SUBMIT
           label:        'Continue'
@@ -537,16 +643,31 @@ en:
             tooltip:    'Required information is still needed'
         cancel:
           <<: *BULK_CANCEL
+
         <<: *EXPERIMENTAL
 
       cancel:
         label:          'Cancel'
         title:          'Cancel Submission'
 
+        page_controls:
+          - admin
+
       check:
         label:          'Check Status'
         title:          'Checking for an update to submission status...'
 
+        page_controls:
+          - admin
+
       admin:
         label:          'Admin'
         title:          'Upload Submission Administration'
+
+        page_controls:
+          - new
+          - edit_select
+          - delete_select
+          - bulk_new
+          - bulk_edit
+          - bulk_delete

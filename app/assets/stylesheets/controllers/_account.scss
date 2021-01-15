@@ -1,0 +1,83 @@
+// app/assets/stylesheets/controllers/_account.scss
+
+// @use 'feature/model'; // TODO: SASS 4.0
+
+//=============================================================================
+// Account index page
+//=============================================================================
+
+// Local EMMA user account metadata label/value pairs for index listings.
+.account-list-entry {
+    @extend .item-list-entry-panel;
+}
+
+// Zero or more .account-list-entry elements.
+.account-list {
+    @extend .item-list;
+}
+
+// Grid table of local EMMA user accounts.
+//
+// noinspection SassScssResolvedByNameOnly
+.account-table {
+
+    @extend .grid-table;
+
+    td.actions {
+        .icon {
+            text-decoration: none;
+        }
+    }
+}
+
+//=============================================================================
+// Account show page
+//=============================================================================
+
+// Account metadata values.
+.account-details {
+    @extend .account-list-entry; // INSTEAD OF @extend .item-details;
+}
+
+// Container for an .account-details.
+.account-container {
+    @extend .item-container;
+}
+
+//=============================================================================
+// Account new/edit/delete pages
+//=============================================================================
+
+.account-fields {
+    @extend .upload-fields;
+}
+
+// noinspection SassScssResolvedByNameOnly
+.account-form,
+.account-delete-form {
+
+    @extend .file-upload-form;
+
+    @media #{$not-wide-screen} {
+        margin-top: 1.5rem;
+    }
+}
+
+// noinspection SassScssResolvedByNameOnly
+.account-form-container {
+
+    display:       grid;
+    margin-top:    $page-padding;
+
+    @media #{$wide-screen} {
+        width: 50vw;
+    }
+
+    .account-form {
+        margin-top: $page-padding;
+    }
+
+    .account-delete-form {
+        margin-top: 0;
+    }
+}

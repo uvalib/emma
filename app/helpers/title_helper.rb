@@ -44,8 +44,8 @@ module TitleHelper
 
   # Create a link to the details show page for the given item.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt      Passed to #item_link.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -57,10 +57,10 @@ module TitleHelper
 
   # Thumbnail element for the given catalog title.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Boolean, String] link         If *true* make the image a link to
+  # @param [Bs::Api::Record, Model] item
+  # @param [Boolean, String]        link  If *true* make the image a link to
   #                                         the show page for the item.
-  # @param [Hash]            opt          Passed to #image_element.
+  # @param [Hash]                   opt   Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
   #
@@ -90,10 +90,10 @@ module TitleHelper
 
   # Cover image element for the given catalog title.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Boolean, String] link         If *true* make the image a link to
+  # @param [Bs::Api::Record, Model] item
+  # @param [Boolean, String]        link  If *true* make the image a link to
   #                                         the show page for the item.
-  # @param [Hash]            opt          Passed to #image_element.
+  # @param [Hash]                   opt   Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -120,8 +120,8 @@ module TitleHelper
 
   # Item categories as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -136,8 +136,8 @@ module TitleHelper
 
   # Item author(s) as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -149,8 +149,8 @@ module TitleHelper
 
   # Item editor(s) as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -163,8 +163,8 @@ module TitleHelper
 
   # Item composer(s) as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -177,8 +177,8 @@ module TitleHelper
 
   # Item narrator(s) as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -191,8 +191,8 @@ module TitleHelper
 
   # Item creator(s) as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -205,8 +205,8 @@ module TitleHelper
 
   # Item formats as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -222,8 +222,8 @@ module TitleHelper
 
   # Item languages as search links.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -243,8 +243,8 @@ module TitleHelper
   # Although an invalid country code will result in no results, all valid
   # country codes result in the same results.
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #title_search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #title_search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.
@@ -264,8 +264,8 @@ module TitleHelper
   # Items in returned in two separately sorted groups: actionable links (<a>
   # elements) followed by items which are not linkable (<span> elements).
   #
-  # @param [Bs::Api::Record] item
-  # @param [Hash]            opt        Passed to #search_links.
+  # @param [Bs::Api::Record, Model] item
+  # @param [Hash]                   opt   Passed to #search_links.
   #
   # @return [ActiveSupport::SafeBuffer] HTML link element(s).
   # @return [nil]                       If access method unsupported by *item*.

@@ -25,7 +25,7 @@ module TestHelper::SystemTests::Authentication
   def sign_in_as(user)
     user = find_user(user) unless user.is_a?(String)
     visit new_user_session_url
-    click_link "Sign in as #{user}"
+    click_on "Sign in as #{user}"
     assert_flash notice: 'Signed in'
   end
 

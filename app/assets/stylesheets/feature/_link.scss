@@ -1,0 +1,95 @@
+// app/assets/stylesheets/feature/_link.scss
+
+// @use 'shared/common'; // TODO: SASS 4.0
+
+//=============================================================================
+// Common page text sections
+//=============================================================================
+
+$page-section-gap:       3rem;
+$page-section-gap-small: $page-section-gap / 2;
+
+// Text sections on pages.
+//
+// noinspection SassScssResolvedByNameOnly
+.page-text-section {
+
+    margin: $page-padding 0;
+
+    @media #{$wide-screen} {
+        width: 50%;
+    }
+
+    // Space between consecutive text sections.
+    & + & {
+
+        margin-top: $page-section-gap;
+
+        @media #{$narrow-screen} {
+            margin-top: $page-section-gap-small;
+        }
+    }
+
+    //=========================================================================
+    // Enclosed element styles
+    //=========================================================================
+
+    h1, h2, h3 { font-size: large; }
+
+    //=========================================================================
+    // Variants
+    //=========================================================================
+
+    // Text following the header on the page.
+    &.description {
+        @extend .panel;
+    }
+
+    // Text preceding the main control section of the page.
+    &.directions {
+        font-weight: bold;
+    }
+
+    // Text following the main control section of the page.
+    &.notes {
+
+        @extend .description;
+
+        margin: $page-section-gap 0;
+
+        @media #{$narrow-screen} {
+            margin: $page-section-gap-small 0;
+        }
+    }
+}
+
+// List of upload actions (new, edit, delete).
+ul.page-actions {
+
+    margin-top: 3rem;
+    padding:    0.5rem 0 0;
+    border-top: 2px solid gray;
+
+    li.page-action {
+
+        margin-top:          0.5rem;
+        list-style-position: inside;
+
+        // noinspection SassScssResolvedByNameOnly
+        .control:focus {
+            outline-color:   $text-focus;
+            outline-offset:  2.5px;
+        }
+
+        // noinspection SassScssResolvedByNameOnly
+        @media #{$narrow-screen} {
+
+            margin-top: 0.75rem;
+
+            .control {
+                margin: -0.25rem;
+                border: 0.25rem solid transparent;
+            }
+        }
+    }
+}

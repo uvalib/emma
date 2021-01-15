@@ -10,6 +10,7 @@
 .panel {
 
     @extend %panel;
+    @extend %panel-interior;
     @extend %block-shadow;
 
     @include width-fit-content;
@@ -25,17 +26,6 @@
 
     @media #{$narrow-screen} {
         max-width: 90%;
-    }
-
-    > * {
-        margin-top: 0.5rem;
-        &:first-child { margin-top:    0; }
-        &:last-child  { margin-bottom: 0; }
-    }
-
-    > br {
-        margin-top: 0.25rem;
-        &:first-child { margin-top: 0.25rem; }
     }
 }
 

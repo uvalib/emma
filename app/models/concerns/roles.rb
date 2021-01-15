@@ -203,23 +203,11 @@ module Roles
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
   PROTOTYPE = {
-    dso: %i[
-      catalog_searcher
-      artifact_downloader
-      artifact_submitter
-      membership_viewer
-      membership_manager
-    ],
-    collection: %i[
-      catalog_searcher
-      catalog_curator
-    ],
-    membership: %i[
-      catalog_searcher
-      membership_viewer
-      membership_manager
-    ],
-    anonymous: %i[catalog_searcher],
+    admin:      EMMA_ROLES,
+    dso:        (EMMA_ROLES - %i[administrator]),
+    membership: %i[catalog_searcher membership_viewer membership_manager],
+    collection: %i[catalog_searcher catalog_curator],
+    anonymous:  %i[catalog_searcher],
   }.deep_freeze
 
   # The name of the default set of roles for a new user.

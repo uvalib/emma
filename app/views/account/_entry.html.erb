@@ -1,0 +1,23 @@
+<%# app/views/account/_entry.html.erb -%>
+<%-
+  # Display a local EMMA user account entry.
+
+  # @type [User, nil] item
+  item   ||= @item
+  index  ||= nil
+  return unless item || index
+
+  offset ||= page_offset
+  add    ||= nil
+  level  ||= 2
+  row    ||= 1
+  skip   ||= nil
+
+  skip = [*skip, :thumbnail].uniq
+  opt  = { index: index, row: row, offset: offset, level: level, skip: skip }
+
+-%>
+
+<%= list_entry_number(item, **opt)     unless skip.include?(:number) %>
+<%= thumbnail(item, **opt, link: true) unless skip.include?(:thumbnail) %>
+<%= account_list_entry(item, pairs: add, index: index, row: row) %>

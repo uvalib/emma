@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 module LayoutHelper::PageControls
 
   include LayoutHelper::Common
+  include LinkHelper
 
   # ===========================================================================
   # :section:
@@ -30,39 +31,72 @@ module LayoutHelper::PageControls
   # Render the appropriate partial to insert page controls if they are defined
   # for the current controller/action.
   #
-  # @param [Hash] prm                 Default: `#request_parameters`.
-  # @param [Hash] locals              Passed to `#render`.
+  # @param [Hash] opt
+  #
+  # @option opt [String, Symbol] :controller    Default: `params[:controller]`.
+  # @option opt [String, Symbol] :action        Default: `params[:action]`.
+  # @option opt [String]         :label_id
   #
   # @return [ActiveSupport::SafeBuffer] An HTML element.
-  # @return [nil]                       If no page_controls partials found.
+  # @return [nil]                       If no page_controls configured.
   #
-  def render_page_controls(prm: nil, **locals)
-    prm    ||= request_parameters
-    partial  = prm[:action].to_s
-    partial  = Ability::ACTION_ALIAS[partial.to_sym]&.first&.to_s || partial
-    partial  = "#{prm[:controller]}/page_controls/#{partial}"
-    controls = partial_exists?(partial) && render(partial, locals)
-    html_div(controls, class: 'page-controls') if controls.present?
+  def render_page_controls(**opt)
+    opt        = request_parameters.merge(opt)
+    controller = opt[:controller].to_sym
+    action     = opt[:action].to_sym
+    id         = opt[:selected] || opt[:id]
+
+    select  = (id == 'SELECT') && %i[new edit delete].include?(action)
+    route   = select ? "#{action}_select" : action
+    actions = config_lookup("#{route}.page_controls", controller: controller)
+    actions &&= page_control_actions(controller, *actions)
+    return if actions.blank?
+
+    anchor   = "#{action}-page-controls"
+    label_id = opt[:label_id] || css_randomize(anchor)
+
+    skip_nav_prepend(controller => anchor)
+
+    l_opt = { class: 'label', id: label_id }
+    label = html_div(l_opt) { page_controls_label(**opt) }
+
+    c_opt    = { class: 'controls', 'aria-labelledby': label_id, id: anchor }
+    controls = html_div(c_opt) { page_controls(*actions, id: id) }
+
+    html_div(class: 'page-controls') { label << controls }
   end
 
   # Generate a list of controller/action pairs that the current user is able to
   # perform.
   #
+  # If an action is given by an array, the first element is interpreted as a
+  # controller.  If not the controller for *model* is assumed.
+  #
   # @param [Class,Symbol,String] model
-  # @param [Array<Symbol>]       actions
+  # @param [Array<Symbol,Array>] actions
   #
   # @return [Array<Array<(Symbol,Symbol)>>]   Controller/action pairs.
   # @return [nil]                             No authorized actions were found.
   #
   def page_control_actions(model, *actions)
-    if model.is_a?(Class)
-      controller = model.to_s.underscore
-    else
-      controller = model.to_sym
-      model      = model.to_s.camelize.safe_constantize
-    end
+    controller = nil
     actions.map { |action|
-      [controller, action] if (action = action&.to_sym) && can?(action, model)
+      next if action.blank?
+      if action.is_a?(Array)
+        ctrlr, action = action.map(&:to_sym)
+        resource = ctrlr.to_s.camelize.safe_constantize
+      else
+        unless controller
+          if model.is_a?(Class)
+            controller = model.to_s.underscore
+          else
+            controller = model.to_sym
+            model      = model.to_s.camelize.safe_constantize
+          end
+        end
+        ctrlr, action, resource = [controller, action.to_sym, model]
+      end
+      [ctrlr, action] if can?(action, resource)
     }.compact.presence
   end
 
@@ -72,15 +106,28 @@ module LayoutHelper::PageControls
   # @param [Array<Array<(Symbol,Symbol)>>] pairs
   # @param [Hash]                          path_opt
   #
-  # @return [ActiveSupport::SafeBuffer]   HTML link element(s).
-  # @return [nil]                         No valid links could be produced.
+  # @return [ActiveSupport::SafeBuffer]
   #
   def page_controls(*pairs, **path_opt)
     html_opt = { class: 'control' }
     html_opt[:method] = path_opt.delete(:method) if path_opt.key?(:method)
+    path_opt[:link_opt] = html_opt
+    item_id = path_opt.delete(:id)
+    select  = (item_id == 'SELECT')
     pairs.map { |path|
-      link_to_action(nil, link_opt: html_opt, path: path, **path_opt)
-    }.compact.join("\n").html_safe.presence
+      opt = path_opt
+      if item_id
+        controller, action = path
+        if %i[new edit delete].include?(action&.to_sym)
+          if select
+            path = [controller, "#{action}_select"]
+          else
+            opt = opt.merge(id: item_id, ids: [item_id])
+          end
+        end
+      end
+      link_to_action(nil, path: path, **opt)
+    }.compact.join("\n").html_safe
   end
 
   # page_controls_label

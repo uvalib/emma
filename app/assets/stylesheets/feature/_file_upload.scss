@@ -7,91 +7,6 @@
 // File uploader pages.
 //=============================================================================
 
-$upload-section-gap:       3rem;
-$upload-section-gap-small: $upload-section-gap / 2;
-
-// Text sections on upload pages.
-.file-upload-text {
-
-    margin: 1rem 0;
-
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$wide-screen} {
-        width: 50%;
-    }
-
-    // Space between consecutive text sections.
-    & + & {
-
-        margin-top: $upload-section-gap;
-
-        // noinspection SassScssResolvedByNameOnly
-        @media #{$narrow-screen} {
-            margin-top: $upload-section-gap-small;
-        }
-    }
-
-    //=========================================================================
-    // Variants
-    //=========================================================================
-
-    // Text following the header on the page.
-    &.description {
-
-        // noinspection SassScssResolvedByNameOnly
-        @extend %block-shadow;
-
-        padding:       1rem;
-        border:        1px solid black;
-        border-radius: 0.5rem;
-
-        > :first-child {
-            margin-top:  0;
-            padding-top: 0;
-        }
-
-        > :last-child {
-            margin-bottom:  0;
-            padding-bottom: 0;
-        }
-    }
-
-    // Text preceding the main control section of the page.
-    &.directions {
-        text-decoration: underline;
-        font-weight:     bold;
-    }
-
-    // Text following the main control section of the page.
-    &.notes {
-
-        @extend .description;
-
-        margin: $upload-section-gap 0;
-
-        // noinspection SassScssResolvedByNameOnly
-        @media #{$narrow-screen} {
-            margin: $upload-section-gap-small 0;
-        }
-    }
-
-    // Make a little extra room for the scrollbar.
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$narrow-screen} {
-        &.description,
-        &.directions,
-        &.notes {
-            margin-right: 0.25rem;
-        }
-    }
-
-    //=========================================================================
-    // Enclosed element styles
-    //=========================================================================
-
-    h1, h2, h3 { font-size: large; }
-}
-
 // Display for the selected filename.
 //
 // This is hidden until a file has been uploaded and displayUploadedFilename()
@@ -763,7 +678,7 @@ $form-gap-narrow: $form-gap / 3;
     $status-bar-is-white-space: true;
 
     display:       grid;
-    margin-top:    2rem;
+    margin-top:    $page-padding;
     margin-bottom: 1.5rem;
 
     @if $status-bar-is-white-space {
@@ -886,25 +801,5 @@ $form-gap-narrow: $form-gap / 3;
     & + .file-upload-results {
         width:      47.75vw;
         margin-top: 2 * $bulk-vertical-adjust;
-    }
-}
-
-// List of upload actions (new, edit, delete).
-ul.file-upload-actions {
-
-    margin-top: 3rem;
-    padding:    0.5rem 0 0;
-    border-top: 2px solid gray;
-
-    li.file-upload-action {
-
-        margin-top:          0.5rem;
-        list-style-position: inside;
-
-        // noinspection SassScssResolvedByNameOnly
-        .control:focus {
-            outline-color:   $text-focus;
-            outline-offset:  2.5px;
-        }
     }
 }

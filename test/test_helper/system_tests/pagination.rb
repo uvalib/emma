@@ -64,7 +64,7 @@ module TestHelper::SystemTests::Pagination
   # @yieldreturn [void]
   #
   def visit_next_page(model, **opt)
-    click_link NEXT_LABEL, match: :first
+    click_on NEXT_LABEL, match: :first
     if block_given?
       yield
     else
@@ -84,7 +84,7 @@ module TestHelper::SystemTests::Pagination
   # @yieldreturn [void]
   #
   def visit_prev_page(model, **opt)
-    click_link PREV_LABEL, match: :first
+    click_on PREV_LABEL, match: :first
     if block_given?
       yield
     else

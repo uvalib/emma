@@ -4,6 +4,7 @@
 // @use 'shared/common';         // TODO: SASS 4.0
 // @use 'shared/controls/grids'; // TODO: SASS 4.0
 // @use 'shared/controls/lists'; // TODO: SASS 4.0
+// @use 'shared/controls/table'; // TODO: SASS 4.0
 
 //=============================================================================
 // Definitions
@@ -24,6 +25,9 @@ $icon-pad: 4px;
 
 // Padding for control icon holder (.number .container .icon-tray).
 $tray-pad: 1.5 * $icon-pad;
+
+// For .item-list-entry-panel and derivatives.
+$data-list-border-color: none;
 
 //=============================================================================
 // Item metadata
@@ -231,6 +235,193 @@ $tray-pad: 1.5 * $icon-pad;
             }
         }
     }
+}
+
+// Model entry fields for index listings.
+//
+// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+.item-list-entry-panel {
+
+    $item-padding:           0.5rem;
+    $value-separation:       2px;
+    $max-columns:            20;
+
+    @extend .item-list-entry;
+
+    padding:        $item-padding;
+    padding-bottom: 2 * $item-padding;
+    border:         2px solid black;
+    border-radius:  0.5rem;
+    background:     lighter($uva-accent-yellow, 95%);
+
+    gap: 0 2rem;
+
+    // Special-case listing when no records are found.
+    &.empty {
+        margin-top:  0;
+        padding-top: 0;
+        border:      none;
+        background:  inherit;
+    }
+
+    // List data items in horizontal columns when there is enough room.
+    @media #{$wide-screen} {
+
+        @include grid-column-classes($max-columns, auto);
+
+        grid-template-columns: repeat($max-columns, auto);
+
+        > .label { grid-row-start: 1; }
+        > .value { grid-row-start: 2; }
+    }
+
+    // Revert to one data item label/value per line with less room.
+    @media #{$medium-width} {
+        grid-template-columns: [label] minmax(10%,auto) [value] 1fr;
+    }
+
+    // Each label and value on a separate line on narrow screens.
+    @media #{$narrow-screen} {
+
+        grid-template-columns: 1fr;
+
+        padding-bottom: 0;
+    }
+
+    //=========================================================================
+    // Components
+    //=========================================================================
+
+    .label {
+
+        // Don't show the help icons when displaying the upload record.
+        .help-popup {
+            display: none;
+        }
+
+        // Make data values easier to distinguish from labels in single-column
+        // display if they are not already clear.
+        @media #{$narrow-screen} {
+
+            .text {
+                padding-bottom: $value-separation;
+                border-bottom:  2px solid lightgray;
+            }
+
+            &.array,
+            &.textbox {
+                .text {
+                    border-bottom: none;
+                }
+            }
+        }
+    }
+
+    .value {
+        @media #{$narrow-screen} {
+            padding-top: $value-separation;
+        }
+    }
+
+    // Display multi-line fields inside a box.
+    // @see ModelHelper#render_pair
+    .value.textbox {
+
+        @include width-fit-content;
+
+        padding:       0 0.25rem;
+        white-space:   pre-wrap;
+        border:        1px solid darkgray;
+        border-radius: 0.125rem;
+    }
+
+    // Display fields with multiple values horizontally.
+    // @see ModelHelper#render_pair
+    .value.array {
+
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        margin-bottom:  0;
+
+        > * {
+            margin-right:  0.5rem;
+            margin-bottom: 0.5rem;
+            padding:       0 0.25rem;
+            padding-top:   0.0625rem;
+            border:        1px solid blue;
+            border-radius: 0.125rem;
+        }
+
+        @media #{$narrow-screen} {
+
+            flex-direction: column;
+            margin-bottom:  0.5rem;
+            border-top:     none;
+
+            &:last-of-type {
+                margin-bottom: 0;
+            }
+
+            > * {
+                margin-right: 0;
+            }
+        }
+    }
+
+    // Hierarchical display for data items containing JSON.
+    .data-list {
+
+        @extend .item-list;
+
+        $wide-margin:   2rem;
+        $medium-margin: 1rem;
+        $narrow-margin: 0.5rem;
+
+        margin:  0 $wide-margin;
+        padding: $item-padding;
+
+        @media #{$medium-width} {
+            margin: 0 $medium-margin;
+        }
+
+        @media #{$narrow-screen} {
+
+            margin: 0 $narrow-margin;
+
+            grid-template-columns: 1fr;
+        }
+
+        @if not $data-list-border-color == none {
+            border:         2px solid $data-list-border-color;
+            border-radius:  0.5rem;
+        }
+
+        // Adjustment for a hierarchical element which is itself a hierarchy.
+        .data-list {
+
+            margin-top:   1.75rem;
+            margin-left:  -4rem;
+            margin-right: $wide-margin;
+
+            @media #{$medium-width} {
+                margin-right: $medium-margin * 1.25;
+            }
+
+            @media #{$narrow-screen} {
+                margin-top:   $narrow-margin / 2;
+                margin-left:  $narrow-margin;
+                margin-right: $narrow-margin;
+            }
+        }
+    }
+}
+
+// Metadata in tabular form.
+//
+// noinspection SassScssResolvedByNameOnly
+.item-table {
+    @extend .grid-table;
 }
 
 //=============================================================================

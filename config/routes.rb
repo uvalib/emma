@@ -180,12 +180,24 @@ Rails.application.routes.draw do
     get '/users/sign_in_as', to: 'user/sessions#sign_in_as', as: 'sign_in_as'
   end
 
+  # ===========================================================================
+  # Local account operations
+  # ===========================================================================
+
+  get '/account/new_select',    redirect('/account/new'), as: 'new_select_account'     # Only for consistency
+  get '/account/edit_select',   to: 'account#edit',       as: 'edit_select_account',   defaults: { id: 'SELECT' }
+  get '/account/delete_select', to: 'account#delete',     as: 'delete_select_account', defaults: { id: 'SELECT' }
+
+  resources :account
+
 end
 
 # Non-functional hints for RubyMine type checking.
 # noinspection RubyInstanceMethodNamingConvention
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  def account_index_path(*);                      end
+  def account_index_url(*);                       end
   def api_index_path(*);                          end
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end
@@ -202,6 +214,8 @@ unless ONLY_FOR_DOCUMENTATION
   def dashboard_url(*);                           end
   def destroy_user_session_path(*);               end
   def destroy_user_session_url(*);                end
+  def edit_account_path(*);                       end
+  def edit_account_url(*);                        end
   def edit_password_path(*);                      end
   def edit_password_url(*);                       end
   def edition_index_path(*);                      end
@@ -212,6 +226,8 @@ unless ONLY_FOR_DOCUMENTATION
   def member_index_url(*);                        end
   def metrics_test_path(*);                       end
   def metrics_test_url(*);                        end
+  def new_account_path(*);                        end
+  def new_account_url(*);                         end
   def new_user_session_path(*);                   end
   def new_user_session_url(*);                    end
   def password_path(*);                           end

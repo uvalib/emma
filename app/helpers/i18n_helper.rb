@@ -10,8 +10,11 @@ __loading_begin(__FILE__)
 module I18nHelper
 
   def self.included(base)
+
     __included(base, '[I18nHelper]')
+
     base.send(:extend, self)
+
   end
 
   include Emma::Common
