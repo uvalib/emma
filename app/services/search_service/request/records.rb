@@ -21,7 +21,7 @@ module SearchService::Request::Records
   public
 
   # == GET /search
-  # 
+  #
   # EMMA Unified Search
   #
   # === Search Types
@@ -145,23 +145,6 @@ module SearchService::Request::Records
         }
       }
     end
-
-  # ===========================================================================
-  # :section: TODO: remove - testing
-  # ===========================================================================
-
-  public
-
-  # Return fake records.
-  #
-  # @param [Hash] opt                 Passed to SearchRecordList#initialize.
-  #
-  # @return [Search::Message::SearchRecordList]
-  #
-  def get_example_records(**opt) # TODO: remove - testing
-    opt[:example] ||= :search
-    Search::Message::SearchRecordList.new(nil, opt)
-  end
 
 end
 

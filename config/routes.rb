@@ -27,7 +27,6 @@ Rails.application.routes.draw do
   get '/search/advanced', to: 'search#advanced', as: 'advanced_search'
   get '/search/api',      to: 'search#direct'
   get '/search/direct',   to: 'search#direct'
-  get '/search/example',  to: 'search#example'
 
   resources :search, only: %i[index show]
 
