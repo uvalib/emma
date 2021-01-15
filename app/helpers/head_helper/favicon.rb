@@ -18,7 +18,7 @@ module HeadHelper::Favicon
   private
 
   # @type [String]
-  DEFAULT_PAGE_FAVICON = I18n.t('emma.head.favicon.asset').freeze
+  DEFAULT_PAGE_FAVICON = HEAD_CONFIG.dig(:favicon, :asset)
 
   # ===========================================================================
   # :section:

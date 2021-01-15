@@ -76,7 +76,7 @@ module TitleHelper
       id   = item.identifier
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)
-      alt  = opt[:alt] || i18n_lookup(nil, 'thumbnail.image.alt', item: id)
+      alt  = opt[:alt] || config_lookup('thumbnail.image.alt', item: id)
       row  = positive(opt[:row])
       html_opt[:id] = "container-img-#{id}"
       html_opt[:'data-group'] = opt[:group] if opt[:group].present?
@@ -110,7 +110,7 @@ module TitleHelper
       id   = item.identifier
       link = title_path(id: id) if link.is_a?(TrueClass)
       link = nil                if link.is_a?(FalseClass)
-      alt  = opt[:alt] || i18n_lookup(nil, 'cover.image.alt', item: id)
+      alt  = opt[:alt] || config_lookup('cover.image.alt', item: id)
       # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
       image_element(url, link: link, alt: alt, **html_opt)
     else

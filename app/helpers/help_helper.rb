@@ -25,6 +25,15 @@ module HelpHelper
 
   public
 
+  # Configuration for help pages properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  HELP_CONFIG = I18n.t('emma.help', default: {}).deep_freeze
+
   # Help topics and values.
   #
   # Content (if present) is normalize to an array of HTML-safe sections.  If
@@ -35,14 +44,12 @@ module HelpHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   HELP_ENTRY =
-    I18n.t('emma.help.topic').map { |topic, entry|
+    HELP_CONFIG[:topic].map { |topic, entry|
 
       # Skip "_template" entry.
-      next if topic.to_s.start_with?('_')
+      next if topic.start_with?('_')
+      entry = entry.deep_dup
 
       # Initialize naming definitions.
       entry[:topic] ||= topic.to_s.downcase

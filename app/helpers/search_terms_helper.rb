@@ -82,10 +82,9 @@ module SearchTermsHelper
   # noinspection RailsI18nInspection
   #++
   SEARCH_CONTROLLERS =
-    ApplicationHelper::APP_CONTROLLERS.map { |controller|
-      action = I18n.t("emma.#{controller}.search.action", default: nil)
-      [controller, action] if action
-    }.compact.to_h.deep_freeze
+    ApplicationHelper::CONTROLLER_CONFIGURATION.transform_values { |config|
+      config.dig(:search, :action).presence
+    }.compact.deep_freeze
 
   # The search controller that should be used on any pages whose controllers
   # do not provide their own search capability.

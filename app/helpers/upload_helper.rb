@@ -15,6 +15,7 @@ module UploadHelper
 
   include Emma::Json
   include Emma::Unicode
+  include ConfigurationHelper
   include I18nHelper
   include ModelHelper
   include PopupHelper
@@ -1035,7 +1036,7 @@ module UploadHelper
   #
   UPLOAD_ACTION_VALUES =
     %i[new edit delete bulk_new bulk_edit bulk_delete].map { |action|
-      [action, i18n_button_values(:upload, action)]
+      [action, config_button_values(:upload, action)]
     }.to_h.deep_freeze
 
   # Screen-reader-only label for file input.  (This is to satisfy accessibility

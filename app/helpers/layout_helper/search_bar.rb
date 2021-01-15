@@ -11,6 +11,7 @@ module LayoutHelper::SearchBar
 
   include LayoutHelper::SearchControls
   include SearchTermsHelper
+  include ConfigurationHelper
   include I18nHelper
 
   # ===========================================================================
@@ -26,8 +27,9 @@ module LayoutHelper::SearchBar
   #
   SEARCH_INPUT_ENABLED =
     ApplicationHelper::APP_CONTROLLERS.map { |controller|
-      enabled = i18n_lookup(controller, 'search_bar.enabled', mode: false)
-      enabled = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
+      look_opt = { controller: controller, mode: false }
+      enabled  = config_lookup('search_bar.enabled', **look_opt)
+      enabled  = enabled.is_a?(Array) ? enabled.map(&:to_s) : true?(enabled)
       [controller, enabled]
     }.to_h.deep_freeze
 
@@ -111,20 +113,20 @@ module LayoutHelper::SearchBar
   # search_bar_label
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
-  def search_bar_label(type, **opt)
+  def search_bar_label(type = nil, **opt)
     type ||= search_input_target or return
-    i18n_lookup(type, 'search_bar.label', **opt)
+    config_lookup('search_bar.label', controller: type, **opt)
   end
 
   # The URL parameter to which search terms should be applied.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
@@ -137,7 +139,7 @@ module LayoutHelper::SearchBar
   # Screen-reader-only label for the input field.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
@@ -150,7 +152,7 @@ module LayoutHelper::SearchBar
   # Placeholder text displayed in the search input box.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
@@ -163,7 +165,7 @@ module LayoutHelper::SearchBar
   # Properties of the default search input type.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [Hash{Symbol=>Symbol,String}]
   #
@@ -175,14 +177,13 @@ module LayoutHelper::SearchBar
   # All defined input types.
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [Hash{Symbol=>Hash}]
   #
   def search_input_types(type = nil, **opt)
     type ||= search_input_target
-    # noinspection RubyYardReturnMatch
-    i18n_lookup(type, 'search_type', **opt) || {}
+    config_lookup('search_type', controller: type, **opt) || {}
   end
 
   # ===========================================================================
@@ -258,14 +259,14 @@ module LayoutHelper::SearchBar
   # search_button_label
   #
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [Hash]                opt    Passed to #i18n_lookup.
+  # @param [Hash]                opt    Passed to #config_lookup.
   #
   # @return [String]                    The specified value.
   # @return [nil]                       No non-empty value was found.
   #
   def search_button_label(type, **opt)
     type ||= search_input_target
-    i18n_lookup(type, 'search_bar.button.label', **opt)
+    config_lookup('search_bar.button.label', controller: type, **opt)
   end
 
   # clear_search_button

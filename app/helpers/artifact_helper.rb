@@ -21,17 +21,26 @@ module ArtifactHelper
 
   public
 
+  # Configuration for Bookshare download control properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  DOWNLOAD_CONFIG = I18n.t('emma.download', default: {}).deep_freeze
+
   # Default link tooltip.
   #
   # @type [String]
   #
-  DOWNLOAD_TOOLTIP = I18n.t('emma.download.tooltip').freeze
+  DOWNLOAD_TOOLTIP = DOWNLOAD_CONFIG[:tooltip]
 
   # Default completed link tooltip.
   #
   # @type [String]
   #
-  DOWNLOAD_COMPLETE_TIP = I18n.t('emma.download.complete.tooltip').freeze
+  DOWNLOAD_COMPLETE_TIP = DOWNLOAD_CONFIG.dig(:complete, :tooltip)
 
   # Artifact download progress indicator element CSS class.
   #
@@ -43,27 +52,21 @@ module ArtifactHelper
   #
   # @type [String]
   #
-  DOWNLOAD_PROGRESS_TIP = I18n.t('emma.download.progress.tooltip').freeze
+  DOWNLOAD_PROGRESS_TIP = DOWNLOAD_CONFIG.dig(:progress, :tooltip)
 
   # Artifact download progress indicator relative asset path.
   #
   # @type [String]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   DOWNLOAD_PROGRESS_ASSET =
-    I18n.t(
-      'emma.download.progress.image.asset',
-      default: ImageHelper::PLACEHOLDER_IMAGE_ASSET
-    ).freeze
+    DOWNLOAD_CONFIG.dig(:progress, :image, :asset) ||
+      ImageHelper::PLACEHOLDER_IMAGE_ASSET
 
   # Artifact download progress indicator alt text.
   #
   # @type [String]
   #
-  DOWNLOAD_PROGRESS_ALT_TEXT =
-    I18n.t('emma.download.progress.image.alt').freeze
+  DOWNLOAD_PROGRESS_ALT_TEXT = DOWNLOAD_CONFIG.dig(:progress, :image, :alt)
 
   # Artifact download failure message element CSS class.
   #
@@ -77,11 +80,11 @@ module ArtifactHelper
   #
   DOWNLOAD_BUTTON_CLASS = 'button'
 
-  # Artifact download button tooltip.
+  # Artifact download button label.
   #
   # @type [String]
   #
-  DOWNLOAD_BUTTON_LABEL = I18n.t('emma.download.button.label').freeze
+  DOWNLOAD_BUTTON_LABEL = DOWNLOAD_CONFIG.dig(:button, :label)
 
   # Generic reference to format type for label construction.
   #

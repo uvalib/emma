@@ -17,6 +17,15 @@ module LayoutHelper::NavBar
 
   private
 
+  # Configuration for nav bar properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  NAV_BAR_CONFIG = I18n.t('emma.nav_bar', default: {}).deep_freeze
+
   # The controllers included on the nav bar.
   #
   # @type [Array<Symbol>]
@@ -24,7 +33,7 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset ApplicationHelper#APP_CONTROLLERS.
   #
-  NAV_BAR_CONTROLLERS = I18n.t('emma.nav_bar.controllers').map(&:to_sym).freeze
+  NAV_BAR_CONTROLLERS = NAV_BAR_CONFIG[:controllers].map(&:to_sym).freeze
 
   # The important nav bar entries.
   #
@@ -33,19 +42,28 @@ module LayoutHelper::NavBar
   # == Implementation Notes
   # Should contain some or all of superset #PRIMARY_CONTROLLERS.
   #
-  PRIMARY_CONTROLLERS = I18n.t('emma.nav_bar.primary').map(&:to_sym).freeze
+  PRIMARY_CONTROLLERS = NAV_BAR_CONFIG[:primary].map(&:to_sym).freeze
+
+  # Configuration for dashboard page properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  DASHBOARD_CONFIG = I18n.t('emma.home.dashboard', default: {}).deep_freeze
 
   # Default dashboard link label.
   #
   # @type [String]
   #
-  DASHBOARD_LABEL = I18n.t('emma.home.dashboard.label').freeze
+  DASHBOARD_LABEL = DASHBOARD_CONFIG[:label]
 
   # Default dashboard link tooltip.
   #
   # @type [String]
   #
-  DASHBOARD_TOOLTIP = I18n.t('emma.home.dashboard.tooltip', default: '').freeze
+  DASHBOARD_TOOLTIP = DASHBOARD_CONFIG[:tooltip]
 
   # Controller link labels.
   #
@@ -121,7 +139,8 @@ module LayoutHelper::NavBar
         separator = html_span('|', class: css_classes(*classes, *sep_css))
 
         # The link (inactive if already on the associated page).
-        tip  += "\n" + '(Current page)' if disabled # TODO: I18n
+        tip &&= "#{tip}\n"       if disabled
+        tip  += '(Current_page)' if disabled # TODO: I18n
         opt   = { class: css_classes(*classes), title: tip }
         link  = disabled ? html_span(label, opt) : link_to(label, path, opt)
         first = false unless hidden

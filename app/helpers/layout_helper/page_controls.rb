@@ -85,15 +85,22 @@ module LayoutHelper::PageControls
 
   # page_controls_label
   #
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
-  # @param [Hash]                opt          Passed to #i18n_lookup.
+  # @param [Hash] opt                 Passed to #config_lookup.
   #
-  # @return [String]                          The specified value.
-  # @return [nil]                             No non-empty value was found.
+  # @return [String]
   #
-  def page_controls_label(controller: nil, **opt)
-    controller ||= request_parameters[:controller]
-    i18n_lookup(controller, 'page_controls.label', **opt)
+  def page_controls_label(**opt)
+    opt      = request_parameters.merge(opt)
+    selected = opt.delete(:selected)
+    id       = opt.delete(:id)
+    if opt.slice(:mode, :one, :many).blank?
+      if selected
+        opt[:one] = true
+      elsif (id == 'SELECT') || opt[:action]&.end_with?('_select')
+        opt[:many] = true
+      end
+    end
+    config_lookup('page_controls.label', **opt)
   end
 
 end

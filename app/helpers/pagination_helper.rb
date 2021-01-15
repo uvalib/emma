@@ -15,6 +15,7 @@ module PaginationHelper
 
   include HtmlHelper
   include ParamsHelper
+  include ConfigurationHelper
 
   # ===========================================================================
   # :section:
@@ -22,11 +23,20 @@ module PaginationHelper
 
   public
 
+  # Configuration for pagination control properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  PAGINATION_CONFIG = I18n.t('emma.pagination', default: {}).deep_freeze
+
   # Separator between pagination controls.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PAGINATION_SEPARATOR = I18n.t('emma.pagination.separator').html_safe.freeze
+  PAGINATION_SEPARATOR = PAGINATION_CONFIG[:separator].html_safe.freeze
 
   # Properties for the "start over" pagination control.
   #
@@ -35,46 +45,31 @@ module PaginationHelper
   # == Usage Notes
   # To link to the base search without any search terms (a.k.a. "null search").
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  START_OVER = I18n.t('emma.pagination.start_over').symbolize_keys.deep_freeze
+  START_OVER = PAGINATION_CONFIG[:start_over]
 
   # Properties for the "first page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  FIRST_PAGE = I18n.t('emma.pagination.first_page').symbolize_keys.deep_freeze
+  FIRST_PAGE = PAGINATION_CONFIG[:first_page]
 
   # Properties for the "last page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  LAST_PAGE = I18n.t('emma.pagination.last_page').symbolize_keys.deep_freeze
+  LAST_PAGE = PAGINATION_CONFIG[:last_page]
 
   # Properties for the "previous page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  PREV_PAGE = I18n.t('emma.pagination.prev_page').symbolize_keys.deep_freeze
+  PREV_PAGE = PAGINATION_CONFIG[:prev_page]
 
   # Properties for the "next page" pagination control.
   #
   # @type [Hash{Symbol=>String}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  NEXT_PAGE = I18n.t('emma.pagination.next_page').symbolize_keys.deep_freeze
+  NEXT_PAGE = PAGINATION_CONFIG[:next_page]
 
   # ===========================================================================
   # :section:
@@ -372,20 +367,20 @@ module PaginationHelper
   # Page number label for the given controller/action.
   #
   # @param [Symbol]  controller       Default: `params[:controller]`.
-  # @param [Hash]    opt              Passed to #i18n_lookup.
+  # @param [Hash]    opt              Passed to #config_lookup.
   #
   # @return [String]                  The specified value.
   # @return [nil]                     No non-empty value was found.
   #
   def get_page_number_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]
-    i18n_lookup(controller, 'pagination.page', **opt)
+    config_lookup('pagination.page', controller: controller, **opt)
   end
 
   # Page count label for the given controller/action.
   #
   # @param [Symbol]  controller       Default: `params[:controller]`.
-  # @param [Hash]    opt              Passed to #i18n_lookup; in particular:
+  # @param [Hash]    opt              Passed to #config_lookup; in particular:
   #
   # @option opt [Integer] :count
   #
@@ -394,7 +389,7 @@ module PaginationHelper
   #
   def get_page_count_label(controller: nil, **opt)
     controller ||= request_parameters[:controller]
-    i18n_lookup(controller, 'pagination.count', **opt)
+    config_lookup('pagination.count', controller: controller, **opt)
   end
 
   # A pagination control link or a non-actionable placeholder if *path* is not

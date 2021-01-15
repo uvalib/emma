@@ -15,6 +15,21 @@ module HeadHelper::Common
   # :section:
   # ===========================================================================
 
+  public
+
+  # Configuration for <head> properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  HEAD_CONFIG = I18n.t('emma.head', default: {}).deep_freeze
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
   protected
 
   # Include common options for "<link>" and "<script>" tags.

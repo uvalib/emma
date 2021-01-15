@@ -18,7 +18,7 @@ module HeadHelper::Stylesheets
   private
 
   # @type [Array<String>]
-  DEFAULT_PAGE_STYLESHEETS = I18n.t('emma.head.stylesheets').deep_freeze
+  DEFAULT_PAGE_STYLESHEETS = HEAD_CONFIG[:stylesheets]
 
   # ===========================================================================
   # :section:

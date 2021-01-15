@@ -18,7 +18,7 @@ module HeadHelper::Scripts
   private
 
   # @type [Array<String>]
-  DEFAULT_PAGE_JAVASCRIPTS = I18n.t('emma.head.javascripts').deep_freeze
+  DEFAULT_PAGE_JAVASCRIPTS = HEAD_CONFIG[:javascripts]
 
   # ===========================================================================
   # :section:

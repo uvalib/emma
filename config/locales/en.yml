@@ -16,24 +16,6 @@ en:
         staging:
           name:         'Staging'
 
-      controllers:
-
-        # Controllers that supply interactive content (that is, those
-        # controllers with a subdirectory in app/views).
-
-        - 'api'
-        - 'artifact'
-        - 'category'
-        - 'edition'
-        - 'help'
-        - 'home'
-        - 'member'
-        - 'periodical'
-        - 'reading_list'
-        - 'search'
-        - 'title'
-        - 'upload'
-
     # =========================================================================
     # HTML page head
     # =========================================================================

@@ -21,31 +21,40 @@ module LayoutHelper::Common
 
   public
 
+  # Configuration for panel properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  PANEL_CONFIG = I18n.t('emma.panel', default: {}).deep_freeze
+
   # Label for button to open a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_OPENER_LABEL =
-    non_breaking(I18n.t('emma.panel.control.label')).html_safe.freeze
+    non_breaking(PANEL_CONFIG.dig(:control, :label)).html_safe.freeze
 
   # Tooltip for button to open a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_OPENER_TIP = I18n.t('emma.panel.control.tooltip').freeze
+  PANEL_OPENER_TIP = PANEL_CONFIG.dig(:control, :tooltip)
 
   # Label for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
   PANEL_CLOSER_LABEL =
-    non_breaking(I18n.t('emma.panel.control.open.label')).html_safe.freeze
+    non_breaking(PANEL_CONFIG.dig(:control, :open, :label)).html_safe.freeze
 
   # Tooltip for button to close a collapsible panel.
   #
   # @type [ActiveSupport::SafeBuffer]
   #
-  PANEL_CLOSER_TIP = I18n.t('emma.panel.control.open.tooltip').freeze
+  PANEL_CLOSER_TIP = PANEL_CONFIG.dig(:control, :open, :tooltip)
 
   # ===========================================================================
   # :section:

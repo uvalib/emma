@@ -22,17 +22,34 @@ module ApplicationHelper
 
   public
 
-  # The name of this application for display purposes.
+  # Raw configuration entries for each controller that supplies content (i.e.,
+  # those controllers with a subdirectory in app/view) plus 'en.emma.generic'.
   #
-  # @type [String]
+  # @type [Hash{Symbol=>*}]
   #
-  APP_NAME = I18n.t('emma.application.name').freeze
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  CONTROLLER_CONFIGURATION =
+    I18n.t('emma').select { |_, config|
+      next unless config.is_a?(Hash)
+      config[:index].is_a?(Hash) || config[:welcome].is_a?(Hash)
+    }.deep_freeze
+
+  # Configuration for application properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  APP_CONFIG = I18n.t('emma.application', default: {}).deep_freeze
 
   # The controllers for the application.
   #
   # @type [Array<Symbol>]
   #
-  APP_CONTROLLERS = I18n.t('emma.application.controllers').map(&:to_sym).freeze
+  APP_CONTROLLERS = CONTROLLER_CONFIGURATION.except(:generic).keys.freeze
 
   # ===========================================================================
   # :section:
@@ -45,7 +62,7 @@ module ApplicationHelper
   # @return [String]
   #
   def app_name
-    APP_NAME
+    APP_CONFIG[:name]
   end
 
   # Indicate whether a view template partial exists.

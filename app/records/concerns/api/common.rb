@@ -601,13 +601,22 @@ module Api::Common
 
   public
 
+  # Member repository configurations.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  REPOSITORY_CONFIG = I18n.t('emma.repository', default: {}).deep_freeze
+
   # The default repository for uploads.
   #
   # @type [String]
   #
   # @see 'en.emma.repository._default' in config/locales/repository.en.yml
   #
-  DEFAULT_REPOSITORY = I18n.t('emma.repository._default').freeze
+  DEFAULT_REPOSITORY = REPOSITORY_CONFIG[:_default]
 
   # Values associated with each source repository.
   #
@@ -615,13 +624,8 @@ module Api::Common
   #
   # @see 'en.emma.repository' in config/locales/repository.en.yml
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
   REPOSITORY =
-    I18n.t('emma.repository').reject { |k, _|
-      k.to_s.start_with?('_')
-    }.deep_freeze
+    REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze
 
   # Table of repository names.
   #
@@ -666,16 +670,22 @@ module Api::Common
 
   public
 
+  # Language configuration.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  LANGUAGE_CONFIG = I18n.t('emma.language', default: {}).deep_freeze
+
   # All language codes and labels.
   #
   # @type [Hash{Symbol=>String}]
   #
   # @see 'en.emma.language.list' in config/locale/types.en.yml
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  LANGUAGE = I18n.t('emma.language.list', default: {}).deep_freeze
+  LANGUAGE = LANGUAGE_CONFIG[:list] || {}.freeze
 
   # Languages that appear first in the list.
   #
@@ -683,8 +693,7 @@ module Api::Common
   #
   # @see 'en.emma.language.primary' in config/locale/types.en.yml
   #
-  PRIMARY_LANGUAGES =
-    I18n.t('emma.language.primary', default: []).map(&:to_sym).freeze
+  PRIMARY_LANGUAGES = (LANGUAGE_CONFIG[:primary]&.map(&:to_sym) || []).freeze
 
   # Language codes and labels in preferred order.
   #

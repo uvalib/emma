@@ -21,7 +21,7 @@ module HeadHelper::PageTitle
   #
   # @type [String]
   #
-  PAGE_TITLE_PREFIX = I18n.t('emma.head.title.prefix').freeze
+  PAGE_TITLE_PREFIX = HEAD_CONFIG.dig(:title, :prefix)
 
   # String prepended to all page titles.
   #
@@ -33,7 +33,7 @@ module HeadHelper::PageTitle
   #
   # @type [String]
   #
-  PAGE_TITLE_SUFFIX = I18n.t('emma.head.title.suffix').freeze
+  PAGE_TITLE_SUFFIX = HEAD_CONFIG.dig(:title, :suffix)
 
   # String appended to all page titles.
   #

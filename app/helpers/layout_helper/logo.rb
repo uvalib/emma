@@ -17,33 +17,32 @@ module LayoutHelper::Logo
 
   private
 
-  # Text logo.
+  # Configuration for logo properties.
   #
-  # @type [String]
+  # @type [Hash{Symbol=>*}]
   #
   #--
   # noinspection RailsI18nInspection
   #++
-  LOGO_TEXT =
-    I18n.t('emma.logo.text.label', default: ApplicationHelper::APP_NAME).freeze
+  LOGO_CONFIG = I18n.t('emma.logo', default: {}).deep_freeze
+
+  # Text logo.
+  #
+  # @type [String]
+  #
+  LOGO_TEXT = LOGO_CONFIG.dig(:text, :label)
 
   # Logo image relative asset path.
   #
   # @type [String]
   #
-  LOGO_ASSET = I18n.t('emma.logo.image.asset').freeze
+  LOGO_ASSET = LOGO_CONFIG.dig(:image, :asset)
 
   # Logo image alt text.
   #
   # @type [String]
   #
-  LOGO_ALT_TEXT = I18n.t('emma.logo.image.alt').freeze
-
-  # Logo tagline.
-  #
-  # @type [String]
-  #
-  LOGO_TAGLINE = I18n.t('emma.application.tagline', default: '').freeze
+  LOGO_ALT_TEXT = LOGO_CONFIG.dig(:image, :alt)
 
   # ===========================================================================
   # :section:
@@ -56,7 +55,7 @@ module LayoutHelper::Logo
   # @return [String]
   #
   def logo_tagline
-    LOGO_TAGLINE
+    ApplicationHelper::APP_CONFIG[:tagline]
   end
 
   # The application logo.

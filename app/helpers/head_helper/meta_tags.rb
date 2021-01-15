@@ -37,7 +37,7 @@ module HeadHelper::MetaTags
   # @type [Hash{Symbol=>String}]
   #
   META_TAG_PREFIX = {
-    description: I18n.t('emma.head.description.prefix').freeze
+    description: HEAD_CONFIG.dig(:description, :prefix)
   }.freeze
 
   # Strings to append to the respective meta tags.

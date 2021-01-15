@@ -19,17 +19,26 @@ module SessionsHelper
 
   public
 
+  # Configuration for login session properties.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  #--
+  # noinspection RailsI18nInspection
+  #++
+  SESSIONS_CONFIG = I18n.t('emma.user.sessions', default: {}).deep_freeze
+
   # Default sign-in tooltip.
   #
   # @type [String]
   #
-  SIGN_IN_TOOLTIP = I18n.t('emma.user.sessions.new.tooltip').freeze
+  SIGN_IN_TOOLTIP = SESSIONS_CONFIG.dig(:new, :tooltip)
 
   # Default sign-out tooltip.
   #
   # @type [String]
   #
-  SIGN_OUT_TOOLTIP = I18n.t('emma.user.sessions.destroy.tooltip').freeze
+  SIGN_OUT_TOOLTIP = SESSIONS_CONFIG.dig(:destroy, :tooltip)
 
   # ===========================================================================
   # :section:
