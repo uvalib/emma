@@ -29,27 +29,6 @@ en:
             enabled:    true
 
       # =======================================================================
-      # Fields
-      # =======================================================================
-
-      fields:                    &ARTIFACT_FIELDS
-        fmt:                     'Format'
-        brailleType:             'Braille Type'
-        brailleCode:             'Braille Code'
-        brailleGrade:            'Braille Grade'
-        brailleMusicScoreLayout: 'Braille Music Score Layout'
-        duration:                'Duration'
-        numberOfVolumes:         'Number Of Volumes'
-        dateAdded:               'Date Added'
-        narrator:                'Narrator'
-        transcriber:             'Transcriber'
-        producer:                'Producer'
-        supplier:                'Supplier'
-        externalIdentifierCode:  'External Identifier Code'
-        globalBookServiceId:     'Global Book Service ID'
-        fundingSource:           'Funding Source'
-
-      # =======================================================================
       # Pages
       # =======================================================================
 
@@ -57,16 +36,18 @@ en:
         label:          'Artifacts'
         title:          'Artifacts Index'
         tooltip:        'List Bookshare artifacts.'
-        fields:
-          fmt:          'Format'
-          dateAdded:    'Date Added'
+
+        display_fields: # @see 'en.emma.artifact.record'
+          - fmt
+          - dateAdded
 
       show:
         label:          'Artifact'
         title:          'Artifact Metadata'
         tooltip:        'See details about this Bookshare artifact.'
-        fields:
-          <<:           *ARTIFACT_FIELDS
+
+        display_fields: # @see 'en.emma.artifact.record'
+          - !ruby/symbol all
 
       new:
         label:          'Upload'

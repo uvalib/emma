@@ -57,25 +57,11 @@ en:
       # Fields
       # =======================================================================
 
-      fields:                     &MEMBER_FIELDS
-        name:                     'Name'
-        username:                 'Username'
-        emailAddress:             'Email Address'
-        phoneNumber:              'Phone Number'
-        address:                  'Address'
-        dateOfBirth:              'Date of Birth'
-        language:                 'Language'
-        subscriptionStatus:       'Subscription Status'
-        hasAgreement:             'Has Agreement'
-        proofOfDisabilityStatus:  'Proof of Disability'
-        canDownload:              'Can Download'
-        allowAdultContent:        'Allow Adult Content'
-        deleted:                  'Deleted'
-        locked:                   'Locked'
-        guardian:                 'Guardian'
-        site:                     'Site'
-        roles:                    'Roles'
-        links:                    'Links'
+      display_fields:
+
+        member_link:
+          cond:
+            only:       [index]
 
       # =======================================================================
       # Pages
@@ -85,16 +71,35 @@ en:
         label:          'Members'
         title:          'Bookshare Members'
         tooltip:        'Show Bookshare organization members.'
-        fields:
-          member_link:  'Name'
-          roles:        'Roles'
+
+        display_fields: # @see 'en.emma.member.record'
+          - member_link
+          - roles
 
       show:
         label:          'Member'
         title:          'Bookshare Member'
         tooltip:        'See details about this Bookshare member.'
-        fields:
-          <<:           *MEMBER_FIELDS
+
+        display_fields: # @see 'en.emma.member.record'
+          - name
+          - username
+          - emailAddress
+          - phoneNumber
+          - address
+          - dateOfBirth
+          - language
+          - subscriptionStatus
+          - hasAgreement
+          - proofOfDisabilityStatus
+          - canDownload
+          - allowAdultContent
+          - deleted
+          - locked
+          - guardian
+          - site
+          - roles
+          - links
 
       new:
         title:          'Add Bookshare Member'
@@ -111,24 +116,26 @@ en:
       history:
         title:          'Bookshare Member History'
         tooltip:        'View modifications for this Bookshare organization member.'
-        fields:
-          dateDownloaded: 'Date Downloaded'
-          title:          'Title'
-          authors:        'Authors'
-          fmt:            'Format'
-          status:         'Status'
-          downloadedBy:   'Downloaded By'
-          downloadedFor:  'Downloaded For'
+
+        display_fields: # @see 'en.emma.member.record'
+          - dateDownloaded
+          - title
+          - authors
+          - fmt
+          - status
+          - downloadedBy
+          - downloadedFor
 
       preferences:
         label:          'Preferences'
         title:          'Bookshare Member Preferences'
         tooltip:        'View preference settings for this Bookshare member.'
-        fields:
-          allowAdultContent:    'Allow Adult Content'
-          showAllBooks:         'Show All Books'
-          useUeb:               'Use UEB'
-          brailleFormat:        'Preferred Braille Format'
-          brailleCellLineWidth: 'Braille Cell Line Width'
-          fmt:                  'Preferred Download Format'
-          language:             'Preferred Language'
+
+        display_fields: # @see 'en.emma.member.record'
+          - allowAdultContent
+          - showAllBooks
+          - useUeb
+          - brailleFormat
+          - brailleCellLineWidth
+          - preferred_fmt
+          - preferred_language

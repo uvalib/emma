@@ -1,0 +1,58 @@
+# config/locales/records/artifact.en.yml
+#
+# Artifact model fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+
+en:
+
+  emma:
+
+    artifact:
+
+      record:
+
+        fmt:
+          label:                  'Format'
+
+        brailleType:
+          label:                  'Braille Type'
+
+        brailleCode:
+          label:                  'Braille Code'
+
+        brailleGrade:
+          label:                  'Braille Grade'
+
+        brailleMusicScoreLayout:
+          label:                  'Braille Music Score Layout'
+
+        duration:
+          label:                  'Duration'
+
+        numberOfVolumes:
+          label:                  'Number Of Volumes'
+
+        dateAdded:
+          label:                  'Date Added'
+
+        narrator:
+          label:                  'Narrator'
+
+        transcriber:
+          label:                  'Transcriber'
+
+        producer:
+          label:                  'Producer'
+
+        supplier:
+          label:                  'Supplier'
+
+        externalIdentifierCode:
+          label:                  'External Identifier Code'
+
+        globalBookServiceId:
+          label:                  'Global Book Service ID'
+
+        fundingSource:
+          label:                  'Funding Source'

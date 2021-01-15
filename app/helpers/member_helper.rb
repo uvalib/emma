@@ -25,11 +25,11 @@ module MemberHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  MEMBER_CONFIGURATION      = Model.configuration('emma.member').deep_freeze
-  MEMBER_INDEX_FIELDS       = MEMBER_CONFIGURATION.dig(:index,       :fields)
-  MEMBER_SHOW_FIELDS        = MEMBER_CONFIGURATION.dig(:show,        :fields)
-  MEMBER_HISTORY_FIELDS     = MEMBER_CONFIGURATION.dig(:history,     :fields)
-  MEMBER_PREFERENCES_FIELDS = MEMBER_CONFIGURATION.dig(:preferences, :fields)
+  MEMBER_FIELDS             = Model.configured_fields(:member).deep_freeze
+  MEMBER_INDEX_FIELDS       = MEMBER_FIELDS[:index]       || {}
+  MEMBER_SHOW_FIELDS        = MEMBER_FIELDS[:show]        || {}
+  MEMBER_HISTORY_FIELDS     = MEMBER_FIELDS[:history]     || {}
+  MEMBER_PREFERENCES_FIELDS = MEMBER_FIELDS[:preferences] || {}
 
   # ===========================================================================
   # :section:

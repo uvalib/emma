@@ -1,0 +1,257 @@
+# config/locales/records/title.en.yml
+#
+# Title model fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+
+en:
+
+  emma:
+
+    title:
+
+      record:
+
+        # =====================================================================
+        # Title information
+        # =====================================================================
+
+        title:
+          label:              'Title'
+
+        # =====================================================================
+        # Series title information
+        # =====================================================================
+
+        edition:
+          label:              'Edition'
+
+        seriesTitle:
+          label:              'Series Title'
+
+        seriesSubtitle:
+          label:              'Series Subtitle'
+
+        seriesNumber:
+          label:              'Series Number'
+
+        # =====================================================================
+        # Music title information
+        # =====================================================================
+
+        opus:
+          label:              'Opus'
+
+        movementTitle:
+          label:              'Movement Title'
+
+        movementNumber:
+          label:              'Movement Number'
+
+        musicScoreType:
+          label:              'Music Score Type'
+
+        # =====================================================================
+        # Additional title information
+        # =====================================================================
+
+        titleContentType:
+          label:              'Title Content Type'
+
+        titleSource:
+          label:              'Title Source'
+
+        # =====================================================================
+        # Authors/Contributors
+        # =====================================================================
+
+        authors:
+          label:              'Authors'
+
+        editors:
+          label:              'Editors'
+
+        composers:
+          label:              'Composers'
+
+        lyricists:
+          label:              'Lyricists'
+
+        arrangers:
+          label:              'Arrangers'
+
+        translators:
+          label:              'Translators'
+
+        # =====================================================================
+        # Description
+        # =====================================================================
+
+        year:
+          label:              'Year'
+
+        contents:
+          label:              'Synopsis'
+
+        languages:
+          label:              'Languages'
+
+        categories:
+          label:              'Categories'
+
+        countries:
+          label:              'Countries'
+
+        # =====================================================================
+        # Audience
+        # =====================================================================
+
+        adultContent:
+          label:              'AdultContent'
+
+        grades:
+          label:              'GradeLevel'
+
+        readingAgeMinimum:
+          label:              'Min Reading Age'
+
+        readingAgeMaximum:
+          label:              'Max Reading Age'
+
+        # =====================================================================
+        # Identifiers
+        # =====================================================================
+
+        isbn:
+          label:              'ISBN'
+
+        related_isbns:
+          label:              'Related ISBNs'
+
+        externalCategoryCode:
+          label:              'External Category Code'
+
+        # =====================================================================
+        # Text information
+        # =====================================================================
+
+        numImages:
+          label:              'Images'
+
+        numPages:
+          label:              'Pages'
+
+        # =====================================================================
+        # Music information
+        # =====================================================================
+
+        musicLayout:
+          label:              'Music Layout'
+
+        key:
+          label:              'Key'
+
+        instruments:
+          label:              'Instruments'
+
+        vocalParts:
+          label:              'Vocal Parts'
+
+        hasChordSymbols:
+          label:              'Has Chord Symbols'
+
+        # =====================================================================
+        # Publisher/provider information
+        # =====================================================================
+
+        publisher:
+          label:              'Publisher'
+
+        publishDate:
+          label:              'PublishDate'
+
+        # =====================================================================
+        # Rights
+        # =====================================================================
+
+        usageRestriction:
+          label:              'Usage Restriction'
+
+        copyright:
+          label:              'Copyright'
+
+        copyrightDate:
+          label:              'Copyright Date'
+
+        # =====================================================================
+        # Other
+        # =====================================================================
+
+        notes:
+          label:              'Notes'
+
+        # =====================================================================
+        # Assignment information
+        # =====================================================================
+
+        assignedBy:
+          label:              'Assigned By'
+
+        dateAdded:
+          label:              'Date Added'
+
+        dateDownloaded:
+          label:              'Date Downloaded'
+
+        marrakeshAvailable:
+          label:              'Marrakesh Available'
+
+        # =====================================================================
+        # Bookshare information
+        # =====================================================================
+
+        bookshareId:
+          label:              'Bookshare ID'
+
+        site:
+          label:              'Site'
+
+        replacementId:
+          label:              'Replacement ID'
+
+        contentWarnings:
+          label:              'Content Warnings'
+
+        submitter:
+          label:              'Submitter'
+
+        proofreader:
+          label:              'Proofreader'
+
+        lastUpdated:
+          label:              'Last Updated Date'
+
+        withdrawalDate:
+          label:              'Withdrawal Date'
+
+        allowRecommend:
+          label:              'Allow Recommend'
+
+        available:
+          label:              'Available'
+
+        # =====================================================================
+        # Item instances
+        # =====================================================================
+
+        dtbookSize:
+          label:              'DtBook Size'
+
+        artifact_list:
+          label:              'Artifacts'
+
+        download_links:
+          label:              'Formats'
+
+        links:
+          label:              'Links'

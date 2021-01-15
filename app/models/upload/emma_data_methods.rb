@@ -268,7 +268,7 @@ module Upload::EmmaDataMethods
     # noinspection RubyNilAnalysis
     result.map { |k, v|
       v     = Array.wrap(v)
-      prop  = Field.configuration(k)
+      prop  = Field.configuration_for(k, :upload)
       array = prop[:array]
       lines = (prop[:type] == 'textarea')
       if lines || (prop[:type] == 'text') || prop[:type].blank?

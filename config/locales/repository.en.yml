@@ -15,7 +15,7 @@ en:
         title_path:     '' # Base URL to source pages for title-level entries.
         download_path:  '' # Base URL for artifact downloads.
         download_url:   '' # URL template for artifact downloads.
-        download_fmt:    &EMMA_FORMATS
+        download_fmt:
           brf:          'brf'
           daisy:        'daisy'
           daisyAudio:   'daisyAudio'

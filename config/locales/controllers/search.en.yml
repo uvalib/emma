@@ -43,61 +43,21 @@ en:
       #     displayed for emma_repositoryRecordId; @see #record_title_url.
       # =======================================================================
 
-      fields:                               &SEARCH_FIELDS
-        dc_type:                            'Type'
-        dc_format:                          'Format'
-        dc_creator:                         'Creator'
-        dc_language:                        'Language'
-        dc_description:                     'Description'
-        dc_publisher:                       'Publisher'
-        dc_subject:                         'Subject'
-        dc_rights:                          'Rights'
-        dc_provenance:                      'Provenance'
-        dc_identifier:                      'Identifier'
-        dc_relation:                        'Related'
-        dcterms_dateCopyright:              'Copyright Date'
-        dcterms_dateAccepted:               'Entry Created'
-        emma_repositoryMetadataUpdateDate:  'Entry Updated'
-        emma_recordId:                      'EMMA Record ID'
-        emma_titleId:                       'EMMA Title ID'
-        emma_repository:                    'Repository'
-        emma_collection:                    'Collection'
-        emma_lastRemediationDate:           'Last Update'
-        emma_lastRemediationNote:           'Update Note'
-        emma_formatVersion:                 'Format Version'
-        emma_formatFeature:                 'Format Feature'
-        s_accessibilityFeature:             'Accessibility Feature'
-        s_accessibilityControl:             'Accessibility Control'
-        s_accessibilityHazard:              'Accessibility Hazard'
-        s_accessMode:                       'Access Mode'
-        s_accessModeSufficient:             'Sufficient Mode'
-        s_accessibilityAPI:                 'Accessibility API'
-        s_accessibilitySummary:             'Accessibility Summary'
-        # emma_webPageLink:                 'Details Link' # NOTE [1]
-        emma_repositoryRecordId:            'Repository Record ID'
-        emma_retrievalLink:                 'Retrieval Link'
+      display_fields:
 
-        # =====================================================================
-        # New bibliographic fields not in the index
-        # =====================================================================
+        dc_title:
+          cond:
+            only:     [index]
 
-        bib_version:                        'Version'
-        bib_series:                         'Series'
-        bib_seriesType:                     'Series Type'
-        bib_seriesPosition:                 'Series Position'
+        emma_retrievalLink:
+          help:       [download, emma]
 
-        # =====================================================================
-        # New remediation fields not in the index
-        # =====================================================================
-
-        rem_source:                         'Source of File'
-        rem_metadataSource:                 'Source of Metadata'
-        rem_remediatedBy:                   'Remediated By'
-        rem_complete:                       'Entire Document Remediated?'
-        rem_coverage:                       'Part(s) Remediated'
-        rem_remediation:                    'Remediated Aspects'
-        rem_quality:                        'Text Quality'
-        rem_status:                         'Remediation Status'
+        emma_webPageLink:
+          # NOTE: If emma_webPageLink is present it is used as the URL for
+          # the link displayed for emma_repositoryRecordId.
+          # (@see #record_title_url)
+          cond:
+            only:     []
 
       # =======================================================================
       # Pages
@@ -107,16 +67,17 @@ en:
         label:          'Search'
         title:          'EMMA Unified Search'
         tooltip:        'Find more metadata records with %{terms}.'
-        fields:
-          dc_title:     'Title'
-          <<:           *SEARCH_FIELDS
+
+        display_fields: # @see 'en.emma.search.record'
+          - !ruby/symbol all
 
       show:
         label:          'Record'
         title:          'EMMA Index Record'
         tooltip:        'See details about this metadata record.'
-        fields:
-          <<:           *SEARCH_FIELDS
+
+        display_fields: # @see 'en.emma.search.record'
+          - !ruby/symbol all
 
       advanced:
         label:          'Advanced'
@@ -130,5 +91,6 @@ en:
             There are also several filters, whose behavior is documented in
             Help (the "question mark" button next to the title).
           </p>
-        fields:
-          <<:           *SEARCH_FIELDS
+
+        display_fields: # @see 'en.emma.search.record'
+          - !ruby/symbol all

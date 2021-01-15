@@ -39,12 +39,6 @@ en:
         page_size:      25
 
       # =======================================================================
-      # Fields
-      # =======================================================================
-
-      fields:           &CATEGORY_FIELDS {}
-
-      # =======================================================================
       # Pages
       # =======================================================================
 
@@ -52,12 +46,8 @@ en:
         label:          'Categories'
         title:          'Bookshare Category Index'
         tooltip:        'Get a Bookshare category listing.'
-        fields:
-          <<:           *CATEGORY_FIELDS
 
       show:
         label:          'Category'
         title:          'Bookshare Category'
         tooltip:        'See Bookshare items in this category.'
-        fields:
-          <<:           *CATEGORY_FIELDS

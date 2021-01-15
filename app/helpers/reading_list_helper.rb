@@ -26,10 +26,10 @@ module ReadingListHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  READING_LIST_CONFIGURATION =
-    Model.configuration('emma.reading_list').deep_freeze
-  READING_LIST_INDEX_FIELDS  = READING_LIST_CONFIGURATION.dig(:index, :fields)
-  READING_LIST_SHOW_FIELDS   = READING_LIST_CONFIGURATION.dig(:show,  :fields)
+  READING_LIST_FIELDS =
+    Model.configured_fields(:reading_list).deep_freeze
+  READING_LIST_INDEX_FIELDS = READING_LIST_FIELDS[:index] || {}
+  READING_LIST_SHOW_FIELDS  = READING_LIST_FIELDS[:show]  || {}
 
   # ===========================================================================
   # :section:

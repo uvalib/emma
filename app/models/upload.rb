@@ -670,10 +670,18 @@ class Upload < ApplicationRecord
 
   protected
 
+  # Configured requirements for Upload fields.
+  #
+  # @return [Hash{Symbol=>Hash}]
+  #
+  def upload_fields
+    Model.configured_fields(:upload)[:all]
+  end
+
   # Indicate whether all required fields have valid values.
   #
   def required_fields_valid?
-    check_required(self, Field::CONFIG)
+    check_required(self, upload_fields)
     errors.empty?
   end
 
@@ -683,7 +691,7 @@ class Upload < ApplicationRecord
     if active_emma_data.blank?
       errors.add(:emma_data, :missing)
     else
-      check_required(active_emma_metadata, Field::CONFIG[:emma_data])
+      check_required(active_emma_metadata, upload_fields[:emma_data])
     end
     errors.empty?
   end

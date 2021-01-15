@@ -62,18 +62,11 @@ en:
       # Fields
       # =======================================================================
 
-      fields:           &READING_LIST_FIELDS
-        description:    'Description'
-        access:         'Access'
-        owner:          'Owner'
-        assignedBy:     'Assigned By'
-        subscription:   'Subscription'
-        dateUpdated:    'Date Updated'
-        readingListId:  'Reading List ID'
-        memberCount:    'Member Count'
-        titleCount:     'Title Count'
-        allows:         'Allows'
-        links:          'Links'
+      display_fields:
+
+        name:
+          cond:
+            only:       [index]
 
       # =======================================================================
       # Pages
@@ -83,17 +76,19 @@ en:
         label:          'Lists'
         title:          'Bookshare Reading Lists'
         tooltip:        'Bookshare reading lists to which you have access.'
-        fields:
-          name:         'Name'
-          description:  'Description'
-          dateUpdated:  'Date Updated'
+
+        display_fields: # @see 'en.emma.reading_list.record'
+          - name
+          - description
+          - dateUpdated
 
       show:
         label:          'List'
         title:          'Bookshare Reading List'
         tooltip:        'See details about this Bookshare reading list.'
-        fields:
-          <<:           *READING_LIST_FIELDS
+
+        display_fields: # @see 'en.emma.reading_list.record'
+          - !ruby/symbol all
 
       new:
         title:          'Add Reading List'

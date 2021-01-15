@@ -2,6 +2,12 @@
 #
 # Upload record fields ("uploads" in db/schema.rb).
 #
+# The fields under 'en.emma.upload.record.emma_data' correspond to the fields
+# fields in 'en.emma.search.record', however there is no direct functional
+# relationship, so the two sets of fields are distinct.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+#
 # MIN MAX INTERPRETATION
 # --- --- ---------------------------------------------------------------------
 # 0   0   Unprocessed field.
@@ -11,8 +17,6 @@
 # 1   1   Required single-valued field.
 # 1   ~   Required multi-valued field.
 # N   M   Multivalued field requiring between N and M values, inclusive.
-#
-# NOTE: Labels in 'emma.upload.fields' take precedence over labels found here.
 
 en:
 

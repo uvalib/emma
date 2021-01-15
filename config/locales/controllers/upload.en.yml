@@ -41,7 +41,6 @@ en:
         label:          'Prefix Filter'
 
       search_controls:
-
         enabled:        [admin]
 
         after:
@@ -135,92 +134,59 @@ en:
       # Fields
       # =======================================================================
 
-      fields:
+      display_fields:
 
-        database:                            &UPLOAD_DATABASE_FIELDS
+        emma_data:
+          cond:
+            only:       [index, show]
 
-          id:                                'Database ID'
-          user_id:                           'User ID'
-          repository:                        'Repository'
-          submission_id:                     'Submission ID'
-          fmt:                               'Fmt'
-          ext:                               'Ext'
-          state:                             'Status'
-          created_at:                        'First Upload'
-          updated_at:                        'Current Upload'
-          file_data:                         'File Data'
-          emma_data:                         'EMMA Data'
+          # === emma_data JSON keys - Repository information ===
 
-          # === Upload table fields not yet displayed via 'show' ===
-          # phase:                           '[phase]'
-          # edit_state:                      '[edit_state]'
-          # edit_user:                       '[edit_user]'
-          # edit_file_data:                  '[edit_file_data]'
-          # edit_emma_data:                  '[edit_emma_data]'
-          # edited_at:                       '[edited_at]'
-          # review_user:                     '[review_user]'
-          # review_success:                  '[review_success]'
-          # review_comment:                  '[review_comment]'
-          # reviewed_at:                     '[reviewed_at]'
+          emma_repository:
+            help:       [upload, repository]
 
-        form:                                &UPLOAD_FORM_FIELDS
+        # === Database record fields supporting submission workflow ===
+        # (Upload table fields not yet displayed via 'index' or 'show'.)
 
-          # === Unified Index information (from :emma_data) ===
-          emma_recordId:                     'EMMA Record ID'
-          emma_titleId:                      'EMMA Title ID'
+        phase:
+          cond:
+            only:       !ruby/symbol none
 
-          # === Repository information ===
-          emma_repository:                   'Source Repository'
-          emma_collection:                   'Repository Collection'
-          emma_repositoryRecordId:           'Repository Record'
-          emma_retrievalLink:                'Download Link'
-          emma_webPageLink:                  'Details Link'
-          emma_lastRemediationDate:          'File Update'
-          emma_repositoryMetadataUpdateDate: 'Entry Update'
-          emma_lastRemediationNote:          'Remediation Note'
-          emma_formatVersion:                'File Format Version'
-          emma_formatFeature:                'File Format Feature'
+        edit_state:
+          cond:
+            only:       !ruby/symbol none
 
-          # === Bibliographic information (from :emma_data) ===
-          dc_title:                          'Title'
-          dc_creator:                        'Creator'
-          dc_identifier:                     'Identifier'
-          dc_publisher:                      'Publisher'
-          dc_relation:                       'Relation'
-          dc_language:                       'Language'
-          dc_rights:                         'Rights'
-          dc_provenance:                     'Provenance'
-          dc_description:                    'Description'
-          dc_format:                         'Format'
-          dc_type:                           'Type'
-          dc_subject:                        'Subject'
-          dcterms_dateAccepted:              'Date Accepted'
-          dcterms_dateCopyright:             'Copyright Date'
+        edit_user:
+          cond:
+            only:       !ruby/symbol none
 
-          # === Remediation information (from :emma_data) ===
-          s_accessibilityFeature:            'Accessibility Features'
-          s_accessibilityControl:            'Accessibility Controls'
-          s_accessibilityHazard:             'Accessibility Hazards'
-          s_accessibilitySummary:            'Accessibility Summary'
-          s_accessMode:                      'Access Mode'
-          s_accessModeSufficient:            'Access Mode Sufficient'
-          # s_accessibilityAPI:              'Accessibility API'
+        edit_file_data:
+          cond:
+            only:       !ruby/symbol none
 
-          # === New bibliographic information fields (from :emma_data) ===
-          bib_series:                        'Series'
-          bib_seriesType:                    'Series Type'
-          bib_seriesPosition:                'Series Position'
-          bib_version:                       'Version'
+        edit_emma_data:
+          cond:
+            only:       !ruby/symbol none
 
-          # === New remediation information (from :emma_data) ===
-          rem_source:                        'Source of File'
-          rem_metadataSource:                'Source of Metadata'
-          rem_remediatedBy:                  'Remediated By'
-          rem_complete:                      'Entire Document Remediated?'
-          rem_coverage:                      'Part(s) Remediated'
-          rem_remediation:                   'Remediated Aspects'
-          rem_quality:                       'Text Quality'
-          rem_status:                        'Remediation Status'
+        edited_at:
+          cond:
+            only:       !ruby/symbol none
+
+        review_user:
+          cond:
+            only:       !ruby/symbol none
+
+        review_success:
+          cond:
+            only:       !ruby/symbol none
+
+        review_comment:
+          cond:
+            only:       !ruby/symbol none
+
+        reviewed_at:
+          cond:
+            only:       !ruby/symbol none
 
       # =======================================================================
       # States
@@ -379,15 +345,19 @@ en:
             If you have submissions in different states of progress, use the
             controls below to select which kind to view.
           </p>
-        fields:
-          <<:           *UPLOAD_DATABASE_FIELDS
+
+        display_fields: # @see 'en.emma.upload.record'
+          - !ruby/symbol all
 
       show:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
         tooltip:        'See details about this upload.'
-        fields:
-          <<:           *UPLOAD_DATABASE_FIELDS
+
+        display_fields: # @see 'en.emma.upload.record'
+          - !ruby/symbol all
+          - fmt:        'Fmt'
+          - ext:        'Ext'
 
       new:              &UPLOAD_NEW
         label:          'Create'

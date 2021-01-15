@@ -1,0 +1,205 @@
+# config/locales/records/search.en.yml
+#
+# Search model fields.
+#
+# The fields under 'en.emma.upload.record.emma_data' correspond to the fields
+# fields in 'en.emma.search.record', however there is no direct functional
+# relationship, so the two sets of fields are distinct.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+
+en:
+
+  emma:
+
+    search:
+
+      record:
+
+        dc_title:
+          label:                            'Title'
+          max:                              1
+
+        dc_type:
+          label:                            'Type'
+          max:                              1
+
+        dc_format:
+          label:                            'Format'
+          max:                              1
+
+        dc_creator:
+          label:                            'Creator'
+          max:                              ~
+
+        dc_language:
+          label:                            'Language'
+          max:                              ~
+
+        dc_description:
+          label:                            'Description'
+          max:                              1
+
+        dc_publisher:
+          label:                            'Publisher'
+          max:                              1
+
+        dc_subject:
+          label:                            'Subject'
+          max:                              ~
+
+        dc_rights:
+          label:                            'Rights'
+          max:                              1
+
+        dc_provenance:
+          label:                            'Provenance'
+          max:                              1
+
+        dc_identifier:
+          label:                            'Identifier'
+          max:                              ~
+
+        dc_relation:
+          label:                            'Related'
+          max:                              ~
+
+        dcterms_dateCopyright:
+          label:                            'Copyright Date'
+          max:                              1
+
+        dcterms_dateAccepted:
+          label:                            'Entry Created'
+          max:                              1
+
+        emma_repositoryMetadataUpdateDate:
+          label:                            'Entry Updated'
+          max:                              1
+
+        emma_recordId:
+          label:                            'EMMA Record ID'
+          max:                              1
+
+        emma_titleId:
+          label:                            'EMMA Title ID'
+          max:                              1
+
+        emma_repository:
+          label:                            'Repository'
+          max:                              1
+
+        emma_collection:
+          label:                            'Collection'
+          max:                              ~
+
+        emma_lastRemediationDate:
+          label:                            'Last Update'
+          max:                              1
+
+        emma_lastRemediationNote:
+          label:                            'Update Note'
+          max:                              1
+
+        emma_formatVersion:
+          label:                            'Format Version'
+          max:                              1
+
+        emma_formatFeature:
+          label:                            'Format Feature'
+          max:                              ~
+
+        s_accessibilityFeature:
+          label:                            'Accessibility Feature'
+          max:                              ~
+
+        s_accessibilityControl:
+          label:                            'Accessibility Control'
+          max:                              ~
+
+        s_accessibilityHazard:
+          label:                            'Accessibility Hazard'
+          max:                              ~
+
+        s_accessMode:
+          label:                            'Access Mode'
+          max:                              ~
+
+        s_accessModeSufficient:
+          label:                            'Sufficient Mode'
+          max:                              ~
+
+        s_accessibilityAPI:
+          label:                            'Accessibility API'
+          max:                              0
+
+        s_accessibilitySummary:
+          label:                            'Accessibility Summary'
+          max:                              1
+
+        emma_webPageLink:
+          label:                            'Details Link'
+          max:                              1
+
+        emma_repositoryRecordId:
+          label:                            'Repository Record ID'
+          max:                              1
+
+        emma_retrievalLink:
+          label:                            'Retrieval Link'
+          max:                              1
+
+        # =====================================================================
+        # New bibliographic fields not in the index
+        # =====================================================================
+
+        bib_version:
+          label:                            'Version'
+          max:                              1
+
+        bib_series:
+          label:                            'Series'
+          max:                              1
+
+        bib_seriesType:
+          label:                            'Series Type'
+          max:                              1
+
+        bib_seriesPosition:
+          label:                            'Series Position'
+          max:                              1
+
+        # =====================================================================
+        # New remediation fields not in the index
+        # =====================================================================
+
+        rem_source:
+          label:                            'Source of File'
+          max:                              1
+
+        rem_metadataSource:
+          label:                            'Source of Metadata'
+          max:                              ~
+
+        rem_remediatedBy:
+          label:                            'Remediated By'
+          max:                              ~
+
+        rem_complete:
+          label:                            'Entire Document Remediated?'
+          max:                              1
+
+        rem_coverage:
+          label:                            'Part(s) Remediated'
+          max:                              ~
+
+        rem_remediation:
+          label:                            'Remediated Aspects'
+          max:                              ~
+
+        rem_quality:
+          label:                            'Text Quality'
+          max:                              ~
+
+        rem_status:
+          label:                            'Remediation Status'
+          max:                              1

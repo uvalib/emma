@@ -1,0 +1,119 @@
+# config/locales/records/member.en.yml
+#
+# Member model fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+
+en:
+
+  emma:
+
+    member:
+
+      record:
+
+        member_link:
+          label:                  'Name'
+
+        name:
+          label:                  'Name'
+
+        username:
+          label:                  'Username'
+
+        emailAddress:
+          label:                  'Email Address'
+
+        phoneNumber:
+          label:                  'Phone Number'
+
+        address:
+          label:                  'Address'
+
+        dateOfBirth:
+          label:                  'Date of Birth'
+
+        language:
+          label:                  'Language'
+
+        subscriptionStatus:
+          label:                  'Subscription Status'
+
+        hasAgreement:
+          label:                  'Has Agreement'
+
+        proofOfDisabilityStatus:
+          label:                  'Proof of Disability'
+
+        canDownload:
+          label:                  'Can Download'
+
+        allowAdultContent:
+          label:                  'Allow Adult Content'
+
+        deleted:
+          label:                  'Deleted'
+
+        locked:
+          label:                  'Locked'
+
+        guardian:
+          label:                  'Guardian'
+
+        site:
+          label:                  'Site'
+
+        roles:
+          label:                  'Roles'
+
+        links:
+          label:                  'Links'
+
+        # =====================================================================
+        # History
+        # =====================================================================
+
+        dateDownloaded:
+          label:                  'Date Downloaded'
+
+        title:
+          label:                  'Title'
+
+        authors:
+          label:                  'Authors'
+
+        fmt:
+          label:                  'Format'
+
+        status:
+          label:                  'Status'
+
+        downloadedBy:
+          label:                  'Downloaded By'
+
+        downloadedFor:
+          label:                  'Downloaded For'
+
+        # =====================================================================
+        # Preferences
+        # =====================================================================
+
+        showAllBooks:
+          label:                  'Show All Books'
+
+        useUeb:
+          label:                  'Use UEB'
+
+        brailleFormat:
+          label:                  'Preferred Braille Format'
+
+        brailleCellLineWidth:
+          label:                  'Braille Cell Line Width'
+
+        preferred_fmt:
+          field:                  fmt
+          label:                  'Preferred Download Format'
+
+        preferred_language:
+          field:                  language
+          label:                  'Preferred Language'

@@ -26,9 +26,9 @@ module PeriodicalHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  PERIODICAL_CONFIGURATION = Model.configuration('emma.periodical').deep_freeze
-  PERIODICAL_INDEX_FIELDS  = PERIODICAL_CONFIGURATION.dig(:index, :fields)
-  PERIODICAL_SHOW_FIELDS   = PERIODICAL_CONFIGURATION.dig(:show,  :fields)
+  PERIODICAL_FIELDS       = Model.configured_fields(:periodical).deep_freeze
+  PERIODICAL_INDEX_FIELDS = PERIODICAL_FIELDS[:index] || {}
+  PERIODICAL_SHOW_FIELDS  = PERIODICAL_FIELDS[:show]  || {}
 
   # ===========================================================================
   # :section:

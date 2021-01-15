@@ -97,33 +97,262 @@ module Field
     }
   end
 
+  # Configuration properties for a field within a given model/controller.
+  #
+  # @param [Symbol, String, nil]       field
+  # @param [Symbol, String, Hash, nil] model
+  # @param [Symbol, String, nil]       action
+  # @param [Symbol, String]            def_model
+  # @param [Array<nil,Symbol>]         sub_sections
+  #
+  # @return [Hash]
+  #
+  def self.configuration_for(
+    field,
+    model         = nil,
+    action        = nil,
+    def_model:    :upload,
+    sub_sections: nil
+  )
+    return {} if (field = field&.to_sym).blank?
+    # noinspection RubyYardParamTypeMatch
+    model_cfg =
+      model.is_a?(Hash) ? model : Model.configured_fields(model || def_model)
+    sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
+    [action, :all].find do |section|
+      next unless (section = section&.to_sym)
+      next unless (section_cfg = model_cfg[section]).is_a?(Hash)
+      sub_sections.find do |sub_sec|
+        sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
+        next unless sub_section_cfg.is_a?(Hash)
+        field_cfg = sub_section_cfg[field]
+        return field_cfg if field_cfg.is_a?(Hash)
+      end
+    end
+    {}
+  end
+
+  # Find the field whose configuration entry has a matching label.
+  #
+  # @param [String, Symbol]            label
+  # @param [Symbol, String, Hash, nil] model
+  # @param [Symbol, String, nil]       action
+  # @param [Symbol, String]            def_model
+  # @param [Array<nil,Symbol>]         sub_sections
+  #
+  # @return [Hash]
+  #
+  def self.configuration_for_label(
+    label,
+    model         = nil,
+    action        = nil,
+    def_model:    :upload,
+    sub_sections: nil
+  )
+    return {} if (label = label.to_s).blank?
+    # noinspection RubyYardParamTypeMatch
+    model_cfg =
+      model.is_a?(Hash) ? model : Model.configured_fields(model || def_model)
+    sub_sections ||= [nil, :emma_data, :file_data, [:file_data, :metadata]]
+    # noinspection RubyYardReturnMatch
+    [action, :all].find do |section|
+      next unless (section = section&.to_sym)
+      next unless (section_cfg = model_cfg[section]).is_a?(Hash)
+      sub_sections.find do |sub_sec|
+        sub_section_cfg = sub_sec ? section_cfg.dig(*sub_sec) : section_cfg
+        next unless sub_section_cfg.is_a?(Hash)
+        sub_section_cfg.find do |_, fld_cfg|
+          return fld_cfg if fld_cfg.is_a?(Hash) && (fld_cfg[:label] == label)
+        end
+      end
+    end
+    {}
+  end
+
   # ===========================================================================
   # :section: Configuration
   # ===========================================================================
 
   public
 
-  # Field property configuration values.
+  # Normalize entry values.
   #
-  # @type [Hash{Symbol=>Hash}]
+  # @param [Hash]        entry        Passed to #normalize
+  # @param [Symbol, nil] field        Passed to #normalize
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  CONFIG =
-    I18n.t('emma.upload.record').transform_values { |field|
-      field_configuration(field)
-    }.deep_freeze
+  def self.normalize!(entry, field = nil)
+    field ||= entry&.dig(:field)
+    entry.replace(normalize(entry, field))
+  end
 
-  # Configuration properties for the given field.
+  # Ensure that field entry values are cleaned up and have the expected type.
   #
-  # @param [Symbol, String, nil] field
+  # @param [Hash, String] entry
+  # @param [Symbol, nil]  field
+  #
+  # @option entry [Integer, nil]   :min
+  # @option entry [Integer, nil]   :max
+  # @option entry [String]         :label
+  # @option entry [String]         :tooltip
+  # @option entry [String, Array]  :help          Help popup topic/subtopic.
+  # @option entry [String]         :notes         Inline notes.
+  # @option entry [String]         :notes_html    Inline HTML notes.
+  # @option entry [String]         :placeholder   Input area placeholder text.
+  # @option entry [Symbol, String] :type          See Usage Notes [1]
+  # @option entry [String]         :origin
   #
   # @return [Hash]
   #
-  def self.configuration(field)
-    f = field&.to_sym
-    CONFIG[f] || CONFIG.dig(:emma_data, f) || CONFIG.dig(:file_data, f) || {}
+  # == Usage Notes
+  # The :type indicates the type of HTML input element, either directly or
+  # indirectly.  If the value is a Symbol it is interpreted as an EnumType
+  # subclass which gives the range of values for a <select> element or the set
+  # of checkboxes to create within a <fieldset> element.  Any other value
+  # indicates <textarea> or the <input> type attribute to use.
+  #
+  #--
+  # noinspection RubyCaseWithoutElseBlockInspection, RubyYardParamTypeMatch
+  #++
+  def self.normalize(entry, field = nil)
+    entry = field                                  if entry.nil?
+    entry = entry.to_s.titleize                    if entry.is_a?(Symbol)
+    entry = { label: entry }                       unless entry.is_a?(Hash)
+    entry = { field: field&.to_sym }.merge!(entry) unless entry.key?(:field)
+    entry.map { |item, value|
+      case item
+        when :min, :max then value = value&.to_i
+        when :help      then value = Array.wrap(value).map(&:to_sym)
+        when :type      then value = enum_type(value) || value.to_s
+        when /_html$/   then value = value.to_s.strip.html_safe
+        when :cond      then value = normalize_conditions(value)
+      end
+      case value
+        when Hash   then value = normalize(value, item) unless item == :cond
+        when Array  then value = value.reject(&:blank?)
+        when String then value = value.strip unless value.html_safe?
+      end
+      [item, value]
+    }.to_h
+  end
+
+  # Generate derived fields for an entry.
+  #
+  # @param [Hash{Symbol=>*}] entry
+  # @param [Symbol, nil]     field
+  #
+  # @return [Hash{Symbol=>*}] entry
+  #
+  def self.finalize!(entry, field = nil)
+    e   = entry
+    set = SYNTHETIC_PROPERTIES
+    set = set.slice(:field)  if e[:type] == 'json'
+    set = set.except(:field) if field.blank?
+    min = e[:min].to_i
+    max = e[:max].to_i
+    ary = e.key?(:max) && e[:max].nil?
+
+    e.key?(:max) && (e[:max].nil? || (max > 1))
+
+    e[:ignored]  = e[:max].present? && !max.positive?       if set[:ignored]
+    e[:required] = e[:min].present? && min.positive?        if set[:required]
+    e[:readonly] = e[:origin].to_s.remove('user').present?  if set[:readonly]
+    e[:array]    = ary || (max > 1)                         if set[:array]
+    e[:type]   ||= e[:array] ? 'textarea' : 'text'          if set[:type]
+    e[:field]  ||= field                                    if set[:field]
+
+    # Sub-fields under :file_data or :emma_data.
+    e.each_pair do |k, v|
+      e[k] = finalize!(v, k) if v.is_a?(Hash) && (k != :cond)
+    end
+
+    reorder!(e)
+  end
+
+  # Indicate whether the field configuration should be unused.
+  #
+  # @param [Hash]                entry
+  # @param [Symbol, String, nil] action
+  #
+  def self.unused?(entry, action = nil)
+    action = action&.to_sym
+    e, o   = (entry&.dig(:cond) || entry || {}).values_at(:except, :only)
+    unused   = (o == [])
+    unused ||= (o && (action && !o.include?(action) || o.include?(:none)))
+    unused ||= (e && (action && e.include?(action)  || e.include?(:all)))
+    unused || false
+  end
+
+  # ===========================================================================
+  # :section: Configuration
+  # ===========================================================================
+
+  protected
+
+  # Regenerate an entry with the fields in an order more helpful for logging.
+  #
+  # @param [Hash] entry               Passed to #reorder.
+  #
+  # @return [Hash]                    The modified *entry*.
+  #
+  def self.reorder!(entry)
+    entry.replace(reorder(entry))
+  end
+
+  # Generate a copy of an entry with the fields in an order more helpful for
+  # logging.
+  #
+  # @param [Hash] entry
+  #
+  # @return [Hash]                    A modified copy of *entry*.
+  #
+  def self.reorder(entry)
+    src = entry.dup
+    dst = {}
+    %i[field label type].each { |k| dst[k] = src.delete(k) if src.key?(k) }
+    src.keys.each    { |k| dst[k] = src.delete(k) unless src[k].is_a?(Hash) }
+    %i[actions].each { |k| dst[k] = src.delete(k) if src.key?(k) }
+    src.keys.each    { |k| dst[k] = reorder(src[k]) }
+    dst
+  end
+
+  # Normalize :except and :only values.
+  #
+  # @param [Hash] entry
+  #
+  # @return [Hash]
+  #
+  def self.normalize_conditions(entry)
+    result       = { except: nil, only: nil }
+    conditions   = entry&.dig(:cond) || entry&.slice(*result.keys) || {}
+    except, only = conditions.values_at(*result.keys)
+    result[:only] ||=
+      unless only.nil?
+        disable = (only == []) || (only = symbol_array(only)).include?(:none)
+        result[:except] = %i[all] if disable
+        disable ? %i[none] : (only - %i[all]).presence
+      end
+    result[:except] ||=
+      unless except.nil?
+        disable = (except = symbol_array(except)).include?(:all)
+        disable ? %i[all] : (except - %i[none]).presence
+      end
+    result
+  end
+
+  # ===========================================================================
+  # :section: Configuration
+  # ===========================================================================
+
+  private
+
+  # Cast *item* as an array of Symbols.
+  #
+  # @param [String, Symbol, Array] item
+  #
+  # @return [Array<Symbol>]
+  #
+  def self.symbol_array(item)
+    Array.wrap(item).compact.map(&:to_sym)
   end
 
   # ===========================================================================
@@ -134,27 +363,28 @@ module Field
 
   # Generate an appropriate field subclass instance if possible.
   #
-  # @param [Upload] item
-  # @param [Symbol] field
+  # @param [Upload]              item
+  # @param [Symbol]              field
+  # @param [Symbol, String, nil] model
   #
   # @return [Field::Type]             Instance based on *item* and *field*.
   # @return [nil]                     If *field* is not valid.
   #
-  def self.for(item, field)
-    return if (cfg = configuration(field)).blank?
+  def self.for(item, field, model = nil)
+    return if (cfg = configuration_for(field, model)).blank?
     array = cfg[:array]
     range = cfg[:type]
     range = nil unless range.is_a?(Class) && (range < EnumType)
     if range && array
-      Field::MultiSelect.new(item, field)
+      Field::MultiSelect.new(item, field, model)
     elsif range == TrueFalse
-      Field::Binary.new(item, field)
+      Field::Binary.new(item, field, model)
     elsif range
-      Field::Select.new(item, field)
+      Field::Select.new(item, field, model)
     elsif array
-      Field::Collection.new(item, field)
+      Field::Collection.new(item, field, model)
     else
-      Field::Single.new(item, field)
+      Field::Single.new(item, field, model)
     end
   end
 
@@ -213,16 +443,17 @@ module Field
 
     # Initialize a new instance.
     #
-    # @param [Symbol, Object] src
-    # @param [Symbol]         field
-    # @param [*]              value
+    # @param [Symbol, Object]      src
+    # @param [Symbol, nil]         field
+    # @param [Symbol, String, nil] model
+    # @param [*]                   value
     #
-    def initialize(src, field = nil, value = nil)
+    def initialize(src, field = nil, model = nil, value = nil)
       @base  = src
       @field = @range = nil
       if field.is_a?(Symbol)
         @field = field
-        @base  = Field.configuration(@field)[:type]
+        @base  = Field.configuration_for(@field, model)[:type]
         @range ||=
           if src.respond_to?(:active_emma_metadata)
             src.active_emma_metadata[@field]

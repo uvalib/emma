@@ -1,0 +1,31 @@
+# config/locales/records/edition.en.yml
+#
+# Edition model fields.
+#
+# NOTE: The order here defines the order for "display_fields: !ruby/symbol all"
+
+en:
+
+  emma:
+
+    edition:
+
+      record:
+
+        editionId:
+          label:          'Edition ID'
+
+        editionName:
+          label:          'Edition Name'
+
+        publicationDate:
+          label:          'Publication Date'
+
+        expirationDate:
+          label:          'Expiration Date'
+
+        download_links:
+          label:          'Formats'
+
+        links:
+          label:          'Links'

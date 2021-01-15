@@ -928,7 +928,7 @@ module LayoutHelper::SearchControls
   def reset_parameters(opt = nil)
     opt ||= request_parameters
     type  = search_target(opt[:controller])
-    keys  = SEARCH_PARAMETER_MENU_MAP[type].keys
+    keys  = SEARCH_PARAMETER_MENU_MAP[type]&.keys || []
     keys -= SearchTermsHelper::SEARCH_KEYS
     opt.except(*keys)
   end

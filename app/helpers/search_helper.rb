@@ -33,9 +33,9 @@ module SearchHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  SEARCH_CONFIGURATION = Model.configuration('emma.search').deep_freeze
-  SEARCH_INDEX_FIELDS  = SEARCH_CONFIGURATION.dig(:index, :fields)
-  SEARCH_SHOW_FIELDS   = SEARCH_CONFIGURATION.dig(:show,  :fields)
+  SEARCH_FIELDS       = Model.configured_fields(:search).deep_freeze
+  SEARCH_INDEX_FIELDS = SEARCH_FIELDS[:index] || {}
+  SEARCH_SHOW_FIELDS  = SEARCH_FIELDS[:show]  || {}
 
   # ===========================================================================
   # :section:

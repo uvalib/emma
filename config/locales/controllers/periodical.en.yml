@@ -70,29 +70,11 @@ en:
       # Fields
       # =======================================================================
 
-      fields:                 &PERIODICAL_FIELDS
+      display_fields:
 
-        # === Description ===
-        year:                 'Year'
-        languages:            'Languages'
-        description:          'Description'
-        categories:           'Categories'
-        countries:            'Countries'
-
-        # === Identifiers ===
-        issn:                 'ISSN'
-        externalCategoryCode: 'External Category Code'
-
-        # === Publisher/provider information ===
-        publisher:            'Publisher'
-
-        # === Item instances ===
-        latestEdition:        'Latest Edition'
-        editionCount:         'Editions'
-
-        # === Bookshare information ===
-        seriesId:             'Series ID'
-        links:                'Links'
+        title:
+          cond:
+            only:       [index]
 
       # =======================================================================
       # Pages
@@ -102,17 +84,19 @@ en:
         label:          'Periodicals'
         title:          'Bookshare Periodicals'
         tooltip:        'Find more Bookshare periodicals with %{terms}.'
-        fields:
-          title:        'Title'
-          categories:   'Categories'
-          languages:    'Languages'
+
+        display_fields: # @see 'en.emma.periodical.record'
+          - title
+          - categories
+          - languages
 
       show:
         label:          'Periodical'
         title:          'Bookshare Periodical'
         tooltip:        'See details about this Bookshare periodical.'
-        fields:
-          <<:           *PERIODICAL_FIELDS
+
+        display_fields: # @see 'en.emma.periodical.record'
+          - !ruby/symbol all
 
       new:
         title:          'Add Periodical'

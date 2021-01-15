@@ -302,13 +302,13 @@ module ModelHelper
       pairs
     elsif item.is_a?(ApplicationRecord)
       pairs = item.attributes
-      pairs.transform_keys! { |k| k.to_s.titleize.delete(' ').to_sym }
+      pairs.symbolize_keys!
       pairs.transform_values! { |v| v.nil? ? EMPTY_VALUE : v }
       # Convert :file_data and :emma_data into hashes and move to the end.
       if item.is_a?(Upload)
-        data = pairs.extract!(:FileData, :EmmaData, :EMMAData)
-        pairs[:FileData] = json_parse(data[:FileData])
-        pairs[:EmmaData] = json_parse(data[:EmmaData] || data[:EMMAData])
+        data = pairs.extract!(:file_data, :emma_data)
+        pairs[:file_data] = json_parse(data[:file_data])
+        pairs[:emma_data] = json_parse(data[:emma_data])
       end
       pairs
     elsif item.is_a?(Api::Record)
@@ -353,23 +353,24 @@ module ModelHelper
     opt[:model] = model
 
     # noinspection RubyNilAnalysis
-    # @type [Symbol]                 label
-    # @type [Symbol, String, Number] value
     pairs.map { |label, value|
-      field =
-        if value.is_a?(Symbol)
-          value
-        elsif model
-          # noinspection RubyYardParamTypeMatch
-          cfg ||= Model.configuration(model)
-          if cfg.present?
-            cfg.dig(params[:action], :fields, label) ||
-              cfg.dig(:fields, :database, label) ||
-              cfg.dig(:fields, :form, label) ||
-              cfg.dig(:fields, label)
-          end
-        end
-      opt[:row] += 1
+      field = lbl = val = nil
+      if value.is_a?(Symbol)
+        field = value
+      elsif label.is_a?(Symbol) && value.is_a?(Hash)
+        field = label
+        lbl   = value[:label]
+        val   = field
+      elsif label.is_a?(Symbol)
+        field = label
+        lbl   = Field.configuration_for(field, model, action)[:label]
+      elsif model
+        field = Field.configuration_for_label(label, model, action)[:field]
+      end
+      # @type [String] label
+      label       = lbl || label || labelize(field)
+      value       = val || value
+      opt[:row]  += 1
       opt[:field] = field
       value = render_value(item, value, model: model, index: opt[:index])
       render_pair(label, value, **opt) if value
@@ -408,7 +409,8 @@ module ModelHelper
     **opt
   )
     return if value.blank?
-    prop = Field.configuration(field)
+    model ||= params[:controller]
+    prop = Field.configuration_for(field, model)
     rng  = html_id(label || 'None')
     type = "field-#{rng}"
     v_id = type.dup
@@ -427,9 +429,9 @@ module ModelHelper
 
     # Pre-process value(s).
     if prop[:array]
-      idx   = 0
+      v_idx = 0
       value = Array.wrap(value)
-      value = value.map { |v| html_div(v, class: "item-#{idx += 1}") }
+      value = value.map { |v| html_div(v, class: "item-#{v_idx += 1}") }
       value = safe_join(value, separator)
     elsif value.is_a?(Array)
       separator ||= "<br/>\n".html_safe
@@ -437,12 +439,16 @@ module ModelHelper
     end
 
     # Create a help icon control if applicable.
-    help =
+    if (help = prop[:help]).present?
+      replace = topic = nil
       if field == :emma_retrievalLink
-        url  = extract_url(value)
-        repo = url_repository(url, default: !application_deployed?)
-        help_popup(:download, repo)
+        url     = extract_url(value)
+        topic   = url_repository(url, default: !application_deployed?)
+        replace = help.is_a?(Array) && (help.size > 1)
       end
+      help = replace ? (help[0...-1] << topic) : [*help, topic] if topic
+      help = help_popup(*help)
+    end
 
     # Option settings for both label and value.
     status = []
@@ -799,25 +805,25 @@ module ModelHelper
   # disabled.
   #
   # @param [Symbol, String]      field
-  # @param [Symbol, String, nil] model
+  # @param [Symbol, String, nil] model  Default: `params[:controller]`
   #
   # @see UploadHelper#upload_readonly_form_field?
   #
-  def readonly_form_field?(field, model)
-    model_method = "#{model}_#{__method__}"
-    model.present? && respond_to?(model_method) && send(model_method, field)
+  def readonly_form_field?(field, model = nil)
+    model ||= params[:controller]
+    Field.configuration_for(field, model)[:readonly].present?
   end
 
   # Indicate whether the given field value is required for validation.
   #
   # @param [Symbol, String]      field
-  # @param [Symbol, String, nil] model
+  # @param [Symbol, String, nil] model  Default: `params[:controller]`
   #
   # @see UploadHelper#upload_required_form_field?
   #
-  def required_form_field?(field, model)
-    model_method = "#{model}_#{__method__}"
-    model.present? && respond_to?(model_method) && send(model_method, field)
+  def required_form_field?(field, model = nil)
+    model ||= params[:controller]
+    Field.configuration_for(field, model)[:required].present?
   end
 
   # ===========================================================================
@@ -864,25 +870,27 @@ module ModelHelper
     opt[:model] = model
 
     # noinspection RubyNilAnalysis
-    # @type [Symbol]                 label
-    # @type [Symbol, String, Number] value
     pairs.map { |label, value|
-      # @type [Symbol, String] field
-      field =
-        if value.is_a?(Symbol)
-          value
-        elsif model
-          # noinspection RubyYardParamTypeMatch
-          cfg ||= Model.configuration(model)
-          if cfg.present?
-            cfg.dig(params[:action], :fields, label) ||
-              cfg.dig(:fields, :database, label) ||
-              cfg.dig(:fields, :form, label) ||
-              cfg.dig(:fields, label)
-          end
-        end
-      opt[:row] += 1
-      opt[:field]    = field
+      field = lbl = val = nil
+      if value.is_a?(Symbol)
+        field = value
+      elsif (label == :file_data) || (label == :emma_data)
+        next
+      elsif label.is_a?(Symbol) && value.is_a?(Hash)
+        field = label
+        lbl   = value[:label]
+        val   = field
+      elsif label.is_a?(Symbol)
+        field = label
+        lbl   = Field.configuration_for(field, model, action)[:label]
+      elsif model
+        field = Field.configuration_for_label(label, model, action)[:field]
+      end
+      # @type [String] label
+      label       = lbl || label || labelize(field)
+      value       = val || value
+      opt[:field] = field
+      opt[:row]  += 1
       opt[:disabled] = readonly_form_field?(field, model) if field
       opt[:required] = required_form_field?(field, model) if field
       value = render_value(item, value, model: model, index: opt[:index])
@@ -926,7 +934,8 @@ module ModelHelper
     base = html_id(label || 'None')
     type = "field-#{base}"
     name = field&.to_s || base
-    prop = Field.configuration(field)
+    model ||= params[:controller]
+    prop = Field.configuration_for(field, model)
     return if prop[:ignored]
 
     # Pre-process value.
@@ -954,10 +963,8 @@ module ModelHelper
     # Create a help icon control if applicable.  (The associated popup panel
     # require some special handling to get it to appear above other elements
     # that are in different stacking contexts.)
-    help =
-      if field == :emma_repository
-        help_popup(:upload, :repository, panel: { class: 'z-order-capture' })
-      end
+    help = prop[:help].presence
+    help &&= help_popup(*help, panel: { class: 'z-order-capture' })
 
     # Create status marker icon.
     status = []
@@ -1170,17 +1177,22 @@ module ModelHelper
   #
   # @param [String] name
   # @param [*]      value
-  # @param [Hash]   opt
+  # @param [Hash]   opt               Passed to render method except for:
+  #
+  # @option opt [String]         :base
+  # @option opt [String]         :name
+  # @option opt [Symbol, String] :model   Default: `params[:controller]`
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_field_item(name, value, **opt)
     normalize_attributes!(opt)
-    opt, html_opt = partition_options(opt, :base, :name)
+    opt, html_opt = partition_options(opt, :base, :name, :model)
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
     value = Array.wrap(value).reject(&:blank?)
-    type  = Field.configuration(field)[:type]
+    model = opt[:model] || params[:controller]
+    type  = Field.configuration_for(field, model)[:type]
     type  = type.to_sym if type.is_a?(String)
     type  = RENDER_FIELD_TYPE[value.first.class] unless type.is_a?(Symbol)
     type  = REPLACE_FIELD_TYPE[type] || type || :text

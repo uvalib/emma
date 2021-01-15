@@ -31,39 +31,31 @@ module UploadHelper
   #
   # @type {Hash{Symbol=>Hash}}
   #
-  UPLOAD_CONFIGURATION = Model.configuration('emma.upload').deep_freeze
-  UPLOAD_INDEX_FIELDS  = UPLOAD_CONFIGURATION.dig(:index, :fields)
-  UPLOAD_SHOW_FIELDS   = UPLOAD_CONFIGURATION.dig(:show,  :fields)
+  UPLOAD_FIELDS       = Model.configured_fields(:upload).deep_freeze
+  UPLOAD_INDEX_FIELDS = UPLOAD_FIELDS[:index] || {}
+  UPLOAD_SHOW_FIELDS  = UPLOAD_FIELDS[:show]  || {}
 
   # Mapping of label keys to fields from `Upload#attributes`.
   #
-  # @type [Hash{Symbol=>Symbol}]
+  # @type [Hash{Symbol=>Hash}]
   #
-  UPLOAD_DATABASE_FIELDS = UPLOAD_CONFIGURATION.dig(:fields, :database)
-
-  # Reverse mapping of database field to the label configured for it.
-  #
-  # @type [Hash{Symbol=>String,Symbol}]
-  #
-  UPLOAD_DATABASE_LABELS = UPLOAD_DATABASE_FIELDS.invert.deep_freeze
-=begin # TODO: use when configuration is transitioned...
-  UPLOAD_DATABASE_LABELS = UPLOAD_DATABASE_FIELDS
-=end
+  UPLOAD_DATABASE_FIELDS = UPLOAD_FIELDS[:all]
 
   # Mapping of label keys to fields from Search::Record::MetadataRecord.
   #
-  # @type [Hash{Symbol=>Symbol}]
+  # @type [Hash{Symbol=>Hash}]
   #
-  SEARCH_RECORD_FIELDS = UPLOAD_CONFIGURATION.dig(:fields, :form)
+  SEARCH_RECORD_FIELDS =
+    UPLOAD_DATABASE_FIELDS[:emma_data]
+      .select { |k, v| v.is_a?(Hash) unless k == :cond }
+      .deep_freeze
 
   # Reverse mapping of EMMA search record field to the label configured for it.
   #
-  # @type [Hash{Symbol=>String,Symbol}]
+  # @type [Hash{String=>Symbol}]
   #
-  SEARCH_RECORD_LABELS = SEARCH_RECORD_FIELDS.invert.deep_freeze
-=begin # TODO: use when configuration is transitioned...
-  SEARCH_RECORD_LABELS = SEARCH_RECORD_FIELDS
-=end
+  SEARCH_RECORD_LABELS =
+    SEARCH_RECORD_FIELDS.transform_values { |v| v[:label] }.invert.deep_freeze
 
   # Linkage information for upload actions.
   #
@@ -967,50 +959,16 @@ module UploadHelper
 
   public
 
-  # Indicate whether the given field value produces an <input> that should be
-  # disabled.
-  #
-  # @param [Symbol, String] field
-  #
-  # @see ModelHelper#readonly_form_field?
-  #
-  def upload_readonly_form_field?(field)
-    Field.configuration(field)[:readonly].present?
-  end
-
-  # Indicate whether the given field value is required for validation.
-  #
-  # @param [Symbol, String] field
-  #
-  # @see ModelHelper#required_form_field?
-  #
-  def upload_required_form_field?(field)
-    Field.configuration(field)[:required].present?
-  end
-
-  # ===========================================================================
-  # :section: Item forms (new/edit/delete pages)
-  # ===========================================================================
-
-  public
-
   # Mapping of label keys to database fields and fields from
   # Search::Record::MetadataRecord.
   #
-  # @type [Hash{Symbol=>Symbol}]
+  # @type [Hash{Symbol=>Hash}]
   #
   UPLOAD_FORM_FIELDS =
     UPLOAD_DATABASE_FIELDS
       .reject { |_, v| %i[file_data emma_data].include?(v) }
       .merge(SEARCH_RECORD_FIELDS)
-      .freeze
-=begin # TODO: use when configuration is transitioned...
-  UPLOAD_FORM_FIELDS =
-    UPLOAD_DATABASE_FIELDS
-      .except(:file_data, :emma_data)
-      .merge(SEARCH_RECORD_FIELDS)
       .deep_freeze
-=end
 
   # Render pre-populated form fields.
   #
