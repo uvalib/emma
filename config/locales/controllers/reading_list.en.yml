@@ -77,13 +77,13 @@ en:
         title:          'Bookshare Reading Lists'
         tooltip:        'Bookshare reading lists to which you have access.'
 
+        page_controls:
+          - new
+
         display_fields: # @see 'en.emma.reading_list.record'
           - name
           - description
           - dateUpdated
-
-        page_controls:
-          - new
 
       # =======================================================================
 
@@ -92,12 +92,12 @@ en:
         title:          'Bookshare Reading List'
         tooltip:        'See details about this Bookshare reading list.'
 
-        display_fields: # @see 'en.emma.reading_list.record'
-          - !ruby/symbol all
-
         page_controls:
           - edit
           - delete
+
+        display_fields: # @see 'en.emma.reading_list.record'
+          - !ruby/symbol all
 
       # =======================================================================
 

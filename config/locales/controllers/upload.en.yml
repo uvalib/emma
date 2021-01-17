@@ -370,9 +370,6 @@ en:
             controls below to select which kind to view.
           </p>
 
-        display_fields: # @see 'en.emma.upload.record'
-          - !ruby/symbol all
-
         page_controls:
           - new
           - edit_select
@@ -382,20 +379,23 @@ en:
           - bulk_delete
           - admin
 
+        display_fields: # @see 'en.emma.upload.record'
+          - !ruby/symbol all
+
       show:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
         tooltip:        'See details about this upload.'
 
-        display_fields: # @see 'en.emma.upload.record'
-          - !ruby/symbol all
-          - fmt:        'Fmt'
-          - ext:        'Ext'
-
         page_controls:
           - edit
           - delete
           - admin
+
+        display_fields: # @see 'en.emma.upload.record'
+          - !ruby/symbol all
+          - fmt:        'Fmt'
+          - ext:        'Ext'
 
       new:              &UPLOAD_NEW
         label:          'Create'

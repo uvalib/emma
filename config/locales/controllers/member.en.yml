@@ -77,12 +77,12 @@ en:
         title:          'Bookshare Members'
         tooltip:        'Show Bookshare organization members.'
 
+        page_controls:
+          - new
+
         display_fields: # @see 'en.emma.member.record'
           - member_link
           - roles
-
-        page_controls:
-          - new
 
       # =======================================================================
 
@@ -90,6 +90,10 @@ en:
         label:          'Member'
         title:          'Bookshare Member'
         tooltip:        'See details about this Bookshare member.'
+
+        page_controls:
+          - edit
+          - delete
 
         display_fields: # @see 'en.emma.member.record'
           - name
@@ -110,10 +114,6 @@ en:
           - site
           - roles
           - links
-
-        page_controls:
-          - edit
-          - delete
 
       # =======================================================================
 
@@ -145,6 +145,10 @@ en:
         title:          'Bookshare Member History'
         tooltip:        'View modifications for this Bookshare organization member.'
 
+        page_controls:
+          - edit
+          - delete
+
         display_fields: # @see 'en.emma.member.record'
           - dateDownloaded
           - title
@@ -154,21 +158,17 @@ en:
           - downloadedBy
           - downloadedFor
 
-        page_controls:
-          - edit
-          - delete
-
       # =======================================================================
 
       preferences:
 
-        page_controls:
-          - edit
-          - delete
-
         label:          'Preferences'
         title:          'Bookshare Member Preferences'
         tooltip:        'View preference settings for this Bookshare member.'
+
+        page_controls:
+          - edit
+          - delete
 
         display_fields: # @see 'en.emma.member.record'
           - allowAdultContent

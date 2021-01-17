@@ -131,13 +131,13 @@ en:
           relate to any Bookshare account.  Conversely, some EMMA adminstrative
           accounts may be associated with one or more Bookshare test accounts.
 
-        display_fields: # @see 'en.emma.account.record'
-          - !ruby/symbol all
-
         page_controls:
           - new
           - edit_select
           - delete_select
+
+        display_fields: # @see 'en.emma.account.record'
+          - !ruby/symbol all
 
       # =======================================================================
 
@@ -146,13 +146,13 @@ en:
         title:          'EMMA User Account details for %{name}'
         tooltip:        'User account details from the local database.'
 
-        display_fields: # @see 'en.emma.account.record'
-          - !ruby/symbol all
-
         page_controls:
           - edit
           - delete
           - index
+
+        display_fields: # @see 'en.emma.account.record'
+          - !ruby/symbol all
 
       # =======================================================================
 
@@ -246,8 +246,8 @@ en:
         <<: *ACCOUNT_EDIT
 
         page_controls:
-          - index
           - delete_select
+          - index
 
       # =======================================================================
 
@@ -255,7 +255,7 @@ en:
         <<: *ACCOUNT_DELETE
 
         page_controls:
-          - index
           - edit_select
+          - index
 
       # =======================================================================
