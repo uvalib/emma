@@ -909,7 +909,6 @@ $(document).on('turbolinks:load', function() {
 
         // Prevent password managers from incorrectly interpreting any of the
         // fields as something that might pertain to user information.
-        turnOffAutocomplete($form);
         inputFields($form).each(function() { turnOffAutocomplete(this); });
 
         // Broaden click targets for radio buttons and checkboxes that are
@@ -1017,10 +1016,13 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} element
      */
     function turnOffAutocomplete(element) {
-        $(element).attr({
-            'autocomplete':  'off',
-            'data-lpignore': 'true' // LastPass requires this.
-        });
+        let $element = $(element);
+        if ($element[0] instanceof HTMLInputElement) {
+            $(element).attr({
+                'autocomplete':  'off',
+                'data-lpignore': 'true' // LastPass requires this.
+            });
+        }
     }
 
     /**
@@ -1572,13 +1574,13 @@ $(document).on('turbolinks:load', function() {
         let $field = $(field);
 
         // noinspection IfStatementWithTooManyBranchesJS
-        if ($field.is('.input.multi[data-field]')) {
+        if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, trim, init);
 
-        } else if ($field.is('.menu.multi[data-field]')) {
+        } else if ($field.is('.menu.multi')) {
             updateFieldsetCheckboxes($field, new_value, init);
 
-        } else if ($field.is('.menu.single[data-field]')) {
+        } else if ($field.is('.menu.single')) {
             updateMenu($field, new_value, init);
 
         } else if ($field.is('[type="checkbox"]')) {
@@ -1720,7 +1722,7 @@ $(document).on('turbolinks:load', function() {
     function updateCheckboxInputField(target, setting, init) {
         const func     = 'updateCheckboxInputField:';
         let $input     = $(target);
-        let $fieldset  = $input.parents('fieldset').first();
+        let $fieldset  = $input.parents('[data-field]').first();
         const checkbox = $input[0];
         let checked    = undefined;
         if (notDefined(setting)) {

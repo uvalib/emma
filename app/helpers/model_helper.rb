@@ -1368,7 +1368,6 @@ module ModelHelper
         cb_name          = "[#{field}][]"
         cb_value         = item_value
         cb_opt[:id]      = "#{field}_#{item_value}"
-        cb_opt[:role]    = 'option'
         cb_opt[:label]   = item_label
         cb_opt[:checked] = selected&.include?(item_value)
         render_check_box(cb_name, cb_value, **cb_opt)
@@ -1376,7 +1375,7 @@ module ModelHelper
 
     # Grouped checkboxes (Chrome problem with styling <fieldset>).
     gr_opt = html_opt.except(:'data-field', :'data-required')
-    gr_opt.merge!(role: 'listbox', multiple: true)
+    gr_opt.merge!(role: 'listbox', multiple: true, name: name)
     gr_opt[:tabindex] = -1
     group = html_div(*checkboxes, gr_opt)
 
