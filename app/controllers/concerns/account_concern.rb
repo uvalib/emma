@@ -34,14 +34,17 @@ module AccountConcern
 
   public
 
-  # Only allow a list of trusted parameters through.
+  # Only allow a list of trusted parameters through. # TODO: strong params
   #
   # @return [Hash]
   #
   def user_params
+=begin
     params.require(:user).permit!
     # noinspection RubyYardReturnMatch
     params.fetch(:user, {})
+=end
+    url_parameters.slice(*User.field_names)
   end
 
   # ===========================================================================

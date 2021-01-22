@@ -52,7 +52,7 @@ class AccountController < ApplicationController
     @list  = search ? match_accounts(search) : User.all
   end
 
-  # == GET /account/:id
+  # == GET /account/show/:id
   #
   # Display details of an existing user account.
   #
@@ -89,8 +89,8 @@ class AccountController < ApplicationController
     end
   end
 
-  # == GET /account/:id/edit
-  # == GET /account/SELECT/edit
+  # == GET /account/edit/:id
+  # == GET /account/edit/SELECT
   #
   # Display a form for modification of an existing user account.
   #
@@ -100,8 +100,8 @@ class AccountController < ApplicationController
     @item = (User.find(selected) if selected.present?)
   end
 
-  # == PUT   /account/:id
-  # == PATCH /account/:id
+  # == PUT   /account/update/:id
+  # == PATCH /account/update/:id
   #
   # Update an existing user account.
   #
@@ -136,7 +136,7 @@ class AccountController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == DELETE /account/:id
+  # == DELETE /destroy/:id
   #
   # Remove an existing user account.
   #

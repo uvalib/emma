@@ -59,7 +59,7 @@ module LinkHelper
     look_opt     = { controller: controller }
     label      ||= config_lookup("#{action}.label", **look_opt) || path
     html_opt = prepend_css_classes(link_opt, 'control')
-    html_opt[:method] ||= :delete  if %i[delete destroy].include?(action)
+    html_opt[:method] ||= :delete if action == :destroy
     html_opt[:title]  ||= config_lookup("#{action}.tooltip", **look_opt)
     # noinspection RubyYardParamTypeMatch
     if path.match?(/^https?:/)

@@ -122,7 +122,7 @@ module LayoutHelper::PageControls
           if select
             path = [controller, "#{action}_select"]
           else
-            opt = opt.merge(id: item_id, ids: [item_id])
+            opt = opt.merge(id: item_id)
           end
         end
       end

@@ -48,7 +48,7 @@ module AccountHelper
     prepend_css_classes!(opt, 'button')
     opt[:role]  ||= 'button'
     opt[:label] ||= 'Show' # TODO: ?
-    opt[:path]  ||= account_path(item)
+    opt[:path]  ||= show_account_path(item)
     item_link(item, **opt)
   end
 
@@ -280,7 +280,7 @@ module AccountHelper
       when :new
         opt[:url]      = new_account_path
       when :edit
-        opt[:url]      = edit_account_path
+        opt[:url]      = update_account_path
         opt[:method] ||= :put
     end
     opt[:multipart]    = true
@@ -427,7 +427,7 @@ module AccountHelper
     min = User.minimum(:id).to_i
     max = User.maximum(:id).to_i
     ids = Upload.compact_ids(*items, min_id: min, max_id: max).join(',')
-    url = (account_path(id: ids, method: :delete) if ids.present?)
+    url = (destroy_account_path(id: ids) if ids.present?)
     delete_submit_button(config: ACCOUNT_ACTION_VALUES, url: url, **opt)
   end
 

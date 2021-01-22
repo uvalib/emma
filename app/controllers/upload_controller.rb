@@ -99,7 +99,6 @@ class UploadController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /upload/{:id|SID}
   # == GET /upload/show/{:id|SID}
   #
   # Display a single upload.
@@ -189,8 +188,8 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == PUT   /upload/:id
-  # == PATCH /upload/:id
+  # == PUT   /upload/update/:id
+  # == PATCH /upload/update/:id
   #
   # Finalize modification of an existing EMMA entry.
   #
@@ -212,9 +211,9 @@ class UploadController < ApplicationController
   end
 
   # == GET /upload/delete/:id[?force=true&truncate=true&emergency=true]
-  # == GET /upload/delete/SID[?force=true&truncate=true&emergency=true]
-  # == GET /upload/delete/RANGE_LIST[?force=true&truncate=true&emergency=true]
-  # == GET /upload/delete/SELECT[?force=true&truncate=true&emergency=true]
+  # == GET /upload/delete/SID[?...]
+  # == GET /upload/delete/RANGE_LIST[?...]
+  # == GET /upload/delete/SELECT[?...]
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
@@ -239,9 +238,9 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == DELETE /upload/:id[?force=true&truncate=true&emergency=true]
-  # == DELETE /upload/SID[?force=true&truncate=true&emergency=true]
-  # == DELETE /upload/RANGE_LIST[?force=true&truncate=true&emergency=true]
+  # == DELETE /upload/destroy/:id[?force=true&truncate=true&emergency=true]
+  # == DELETE /upload/destroy/SID[?...]
+  # == DELETE /upload/destroy/RANGE_LIST[?...]
   #
   # Finalize removal of an existing EMMA entry.
   #

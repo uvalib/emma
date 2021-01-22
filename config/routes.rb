@@ -184,11 +184,20 @@ Rails.application.routes.draw do
   # Local account operations
   # ===========================================================================
 
-  get '/account/new_select',    redirect('/account/new'), as: 'new_select_account'     # Only for consistency
-  get '/account/edit_select',   to: 'account#edit',       as: 'edit_select_account',   defaults: { id: 'SELECT' }
-  get '/account/delete_select', to: 'account#delete',     as: 'delete_select_account', defaults: { id: 'SELECT' }
+  get    '/account/new_select',    redirect('/account/new'), as: 'new_select_account'     # Only for consistency
+  get    '/account/new',           to: 'account#new',        as: 'new_account'
+  match  '/account/create',        to: 'account#create',     as: 'create_account',        via: %i[post put patch]
 
-  resources :account
+  get    '/account/edit_select',   to: 'account#edit',       as: 'edit_select_account',   defaults: { id: 'SELECT' }
+  get    '/account/edit/:id',      to: 'account#edit',       as: 'edit_account'
+  match  '/account/update/:id',    to: 'account#update',     as: 'update_account',        via: %i[put patch]
+
+  get    '/account/delete_select', to: 'account#delete',     as: 'delete_select_account', defaults: { id: 'SELECT' }
+  get    '/account/delete/:id',    to: 'account#delete',     as: 'delete_account'
+  delete '/account/destroy/:id',   to: 'account#destroy',    as: 'destroy_account'
+
+  get    '/account/show/:id',      to: 'account#show',       as: 'show_account'
+  get    '/account',               to: 'account#index',      as: 'account_index'
 
 end
 
@@ -196,8 +205,6 @@ end
 # noinspection RubyInstanceMethodNamingConvention
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
-  def account_index_path(*);                      end
-  def account_index_url(*);                       end
   def api_index_path(*);                          end
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end
@@ -214,8 +221,6 @@ unless ONLY_FOR_DOCUMENTATION
   def dashboard_url(*);                           end
   def destroy_user_session_path(*);               end
   def destroy_user_session_url(*);                end
-  def edit_account_path(*);                       end
-  def edit_account_url(*);                        end
   def edit_password_path(*);                      end
   def edit_password_url(*);                       end
   def edition_index_path(*);                      end
@@ -226,8 +231,6 @@ unless ONLY_FOR_DOCUMENTATION
   def member_index_url(*);                        end
   def metrics_test_path(*);                       end
   def metrics_test_url(*);                        end
-  def new_account_path(*);                        end
-  def new_account_url(*);                         end
   def new_user_session_path(*);                   end
   def new_user_session_url(*);                    end
   def password_path(*);                           end
@@ -252,8 +255,6 @@ unless ONLY_FOR_DOCUMENTATION
   def unlock_url(*);                              end
   def upload_index_path(*);                       end
   def upload_index_url(*);                        end
-  def upload_path(*);                             end
-  def upload_url(*);                              end
   def user_bookshare_omniauth_authorize_path(*);  end
   def user_bookshare_omniauth_authorize_url(*);   end
   def version_health_path(*);                     end
