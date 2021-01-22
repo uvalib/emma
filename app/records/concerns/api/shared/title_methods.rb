@@ -1,4 +1,4 @@
-# app/records/concerns/title_methods.rb
+# app/records/concerns/api/shared/title_methods.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
@@ -9,7 +9,7 @@ require 'sanitize'
 
 # Methods mixed in to record elements related to catalog titles.
 #
-module TitleMethods
+module Api::Shared::TitleMethods
 
   # ===========================================================================
   # :section: Object overrides

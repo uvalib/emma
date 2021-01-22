@@ -91,6 +91,7 @@ __loading_begin(__FILE__)
 #
 class User < ApplicationRecord
 
+  include Emma::Common
   include Model
 
   has_many :members

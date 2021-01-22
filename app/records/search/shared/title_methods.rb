@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 #
 module Search::Shared::TitleMethods
 
-  include ::TitleMethods
+  include Api::Shared::TitleMethods
   include Search::Shared::LinkMethods
 
   # ===========================================================================

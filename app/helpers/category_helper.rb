@@ -92,8 +92,9 @@ module CategoryHelper
   #
   def category_list_entry(item, pairs: nil, **opt)
     opt[:model] = :category
-    opt[:pairs] = CATEGORY_INDEX_FIELDS.merge(pairs || {})
-    opt[:pairs].reverse_merge!(category_link(item) => "(#{item.titleCount})")
+    opt[:pairs] = item ? { category_link(item) => "(#{item.titleCount})" } : {}
+    opt[:pairs].merge!(CATEGORY_INDEX_FIELDS)
+    opt[:pairs].merge!(pairs) if pairs.present?
     item_list_entry(item, **opt)
   end
 

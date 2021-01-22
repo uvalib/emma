@@ -374,7 +374,8 @@ module UploadConcern
     opt[:params]  ||= workflow_parameters
     opt[:no_sim]    = true if UploadWorkflow::Single::SIMULATION # TODO: remove
     @workflow = UploadWorkflow::Single.generate(rec, **opt)
-    @workflow.send("#{event}!", data) or failure(from, @workflow.failed)
+    @workflow.send("#{event}!", data)
+    failure(from, @workflow.failures) if @workflow.failures?
     @workflow.results
   end
 
@@ -430,7 +431,8 @@ module UploadConcern
     opt[:params]  ||= workflow_parameters
     opt[:no_sim]    = true if UploadWorkflow::Bulk::SIMULATION # TODO: remove
     @workflow = UploadWorkflow::Bulk.generate(rec, **opt)
-    @workflow.send("#{event}!", *data) or failure(from, @workflow.failed)
+    @workflow.send("#{event}!", *data)
+    failure(from, @workflow.failures) if @workflow.failures?
     # noinspection RubyYardReturnMatch
     @workflow.results
   end

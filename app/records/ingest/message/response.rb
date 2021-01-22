@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 #
 class Ingest::Message::Response < Ingest::Api::Message
 
+  include Api::Shared::ErrorTable
   include Emma::Json
 
   schema do
@@ -32,47 +33,9 @@ class Ingest::Message::Response < Ingest::Api::Message
     # noinspection RubyScope
     create_message_wrapper(opt) do |opt|
       super(src, **opt)
-      if exception
-        ex  = exception
-        err = ex.respond_to?(:messages) ? ex.messages : Array.wrap(ex.message)
-        self.messages += err
-        self.messages.uniq!
-        @errors = make_error_table(err)
-      end
+      # noinspection RubyYardParamTypeMatch
+      initialize_error_table(messages, exception)
     end
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # errors
-  #
-  # @return [Hash{Integer=>String}]
-  #
-  def errors
-    @errors ||= make_error_table
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # make_error_tables
-  #
-  # @param [Array<String>, nil] entries   Default: `#messages`.
-  #
-  # @return [Hash{Integer=>String}]
-  #
-  def make_error_table(entries = nil)
-    Array.wrap(entries || messages).map { |entry|
-      identifier, message = entry.split(' - ', 2)
-      [identifier, message] if message.present?
-    }.compact.to_h
   end
 
   # ===========================================================================

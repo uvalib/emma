@@ -63,12 +63,14 @@ module TitleHelper
   # @param [Hash]                   opt   Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
+  # @return [nil]                         If *item* is nil.
   #
   # == Usage Notes
   # If *item* does not contain a thumbnail, the method returns a "blank" HTML
   # element.
   #
   def thumbnail(item, link: false, **opt)
+    return unless item
     opt, html_opt = partition_options(opt, :alt, *ITEM_ENTRY_OPT)
     prepend_css_classes!(html_opt, 'thumbnail')
     url = item.respond_to?(:thumbnail_image) && item.thumbnail_image

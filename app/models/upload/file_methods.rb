@@ -223,6 +223,7 @@ module Upload::FileMethods
   #
   def delete_file(no_raise: true, field: nil)
     __debug_args(binding)
+    return if destroyed?
     if field.nil? && active_attached_file
       active_file_attacher.destroy
       active_file_attacher.set(nil)

@@ -185,7 +185,7 @@ module UploadWorkflow::Errors
     # @param [Array<String>, String, nil] msg
     #
     def initialize(msg = nil)
-      msg ||= 'unknown' # TODO: I18n
+      msg ||= UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE
       @messages = Array.wrap(msg)
       super(@messages.first)
     end
@@ -197,6 +197,16 @@ module UploadWorkflow::Errors
   # ===========================================================================
 
   public
+
+  # Exceptions which are more likely to indicate unexpected exceptions (i.e.,
+  # programming problems) and not operational exceptions due to external API
+  # failures.
+  #
+  # @type [Array<Class>]
+  #
+  INTERNAL_EXCEPTION = [
+    NoMethodError
+  ].freeze
 
   # Raise an exception.
   #
@@ -215,7 +225,16 @@ module UploadWorkflow::Errors
   #
   def failure(problem, value = nil)
     __debug_args("UPLOAD #{__method__}", binding)
-    err = nil
+
+    # If any failure is actually a internally error, re-raise it now so that
+    # it will result in a stack trace when it is caught and processed.
+    value = Array.wrap(value)
+    INTERNAL_EXCEPTION.each do |e|
+      raise problem if problem.is_a?(e)
+      value.each { |v| raise v if v.is_a?(e) }
+    end
+    value = value.first if value.size <= 1
+
     case problem
       when Symbol              then msg, err = UPLOAD_ERROR[problem]
       when ActiveModel::Errors then msg = problem.full_messages
@@ -223,11 +242,9 @@ module UploadWorkflow::Errors
       when Exception           then msg = problem.message
       else                          msg = problem
     end
-    err ||= SubmitError
-    intp  = msg.is_a?(String) && msg.include?('%') # Should interpolate value?
     msg ||= DEFAULT_ERROR_MESSAGE
     msg   = msg.join('; ') if msg.is_a?(Array)
-    value = value.first    if value.is_a?(Array) && (value.size <= 1)
+    intp  = msg.is_a?(String) && msg.include?('%') # Should interpolate value?
     case value
       when String
         msg = ERB::Util.h(msg) if (html = value.html_safe?)
@@ -237,10 +254,12 @@ module UploadWorkflow::Errors
         # noinspection RubyNilAnalysis
         cnt = "(#{value.size})"
         msg = intp ? (msg % cnt) : "#{msg}: #{cnt}"
-        msg = [msg] + value.map { |v| ErrorEntry[v] }
+        msg = ["#{msg}:", *value.map { |v| ErrorEntry[v] }]
       else
-        msg = [msg, ErrorEntry[value]]
+        msg = ["#{msg}:", ErrorEntry[value]]
     end
+    err ||= SubmitError
+
     raise err, msg
   end
 
@@ -398,6 +417,21 @@ module UploadWorkflow::Properties
     MAX_BATCH_SIZE
   ].min
 
+  # URL parameter names and default values.
+  #
+  # @type [Hash{Symbol=>*}]
+  #
+  WF_URL_PARAMETER = {
+    prefix:       TITLE_PREFIX,
+    force:        FORCE_DELETE_DEFAULT,
+    emergency:    EMERGENCY_DELETE_DEFAULT,
+    truncate:     TRUNCATE_DELETE_DEFAULT,
+    repo_create:  REPO_CREATE_DEFAULT,
+    repo_edit:    REPO_EDIT_DEFAULT,
+    repo_remove:  REPO_REMOVE_DEFAULT,
+    batch:        BATCH_SIZE
+  }.freeze
+
   # ===========================================================================
   # :section: Property values
   # ===========================================================================
@@ -415,7 +449,14 @@ module UploadWorkflow::Properties
   # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
   #
   def title_prefix
-    UploadWorkflow::Properties.title_prefix(parameters)
+    value = parameters[:prefix]
+    if value.nil? || true?(value)
+      TITLE_PREFIX
+    elsif false?(value)
+      false
+    else
+      value.to_s
+    end
   end
 
   # Force deletions of Unified Index entries regardless of whether the item is
@@ -426,7 +467,7 @@ module UploadWorkflow::Properties
   # @see #FORCE_DELETE_DEFAULT
   #
   def force_delete
-    UploadWorkflow::Properties.force_delete(parameters)
+    parameter_setting(:force)
   end
 
   # Force deletions of Unified Index entries even if the record ID does not
@@ -435,10 +476,10 @@ module UploadWorkflow::Properties
   #
   # @return [Boolean]
   #
-  # @see #FORCE_DELETE_DEFAULT
+  # @see #EMERGENCY_DELETE_DEFAULT
   #
   def emergency_delete
-    UploadWorkflow::Properties.emergency_delete(parameters)
+    parameter_setting(:emergency)
   end
 
   # If all "uploads" records are removed, reset the next ID to 1.
@@ -448,7 +489,7 @@ module UploadWorkflow::Properties
   # @see #TRUNCATE_DELETE_DEFAULT
   #
   def truncate_delete
-    UploadWorkflow::Properties.truncate_delete(parameters)
+    parameter_setting(:truncate)
   end
 
   # Permit the "creation" of member repository items via a request to be queued
@@ -459,7 +500,8 @@ module UploadWorkflow::Properties
   # @see #REPO_CREATE_DEFAULT
   #
   def repo_create
-    UploadWorkflow::Properties.repo_create(parameters)
+    #parameter_setting(:repo_create, params)
+    REPO_CREATE_DEFAULT # TODO: conditionally accept based on user
   end
 
   # Permit the "update" of member repository items via a request to be queued
@@ -470,7 +512,8 @@ module UploadWorkflow::Properties
   # @see #REPO_EDIT_DEFAULT
   #
   def repo_edit
-    UploadWorkflow::Properties.repo_edit(parameters)
+    #parameter_setting(:repo_edit, params)
+    REPO_EDIT_DEFAULT # TODO: conditionally accept based on user
   end
 
   # Permit the "removal" of member repository items via a request to be queued
@@ -481,7 +524,8 @@ module UploadWorkflow::Properties
   # @see #REPO_REMOVE_DEFAULT
   #
   def repo_remove
-    UploadWorkflow::Properties.repo_remove(parameters)
+    #parameter_setting(:repo_remove, params)
+    REPO_REMOVE_DEFAULT # TODO: conditionally accept based on user
   end
 
   # Handle bulk uploads in batches.
@@ -495,249 +539,8 @@ module UploadWorkflow::Properties
   # @see #set_bulk_batch
   #
   def batch_size
+    value = parameters[:batch]
     # noinspection RubyYardReturnMatch
-    UploadWorkflow::Properties.batch_size(parameters)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # This provides URL parameters in either the context of the controller (via
-  # UploadConcern) or in the context of the workflow instance (through the
-  # parameters saved from the :params initializer option).
-  #
-  # @return [Hash, nil]
-  #
-  def parameters
-    respond_to?(:upload_params) ? upload_params : super
-  end
-
-  # ===========================================================================
-  # :section: Property values
-  # ===========================================================================
-
-  public
-
-  # A string added to the start of each title.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean, String] :prefix  URL parameter name.
-  #
-  # @return [String]                  Value to prepend to title.
-  # @return [FalseClass]              No prefix should be used.
-  #
-  # @see #TITLE_PREFIX
-  #
-  # == Usage Notes
-  # The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.
-  #
-  def self.title_prefix(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@title_prefix) && !@title_prefix.nil?
-      @title_prefix
-    elsif params
-      value = params&.dig(:prefix)
-      @title_prefix =
-        if value.nil? || true?(value)
-          TITLE_PREFIX
-        elsif false?(value)
-          false
-        else
-          value.to_s
-        end
-    end
-=end
-    value = params&.dig(:prefix)
-    if value.nil? || true?(value)
-      TITLE_PREFIX
-    elsif false?(value)
-      false
-    else
-      value.to_s
-    end
-  end
-
-  # Force deletions of Unified Index entries regardless of whether the item is
-  # in the "uploads" table.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :force   URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #FORCE_DELETE_DEFAULT
-  #
-  def self.force_delete(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@force_delete) && !@force_delete.nil?
-      @force_delete
-    elsif params
-      @force_delete =
-        parameter_setting(params&.dig(:force), FORCE_DELETE_DEFAULT)
-    end
-=end
-    parameter_setting(params&.dig(:force), FORCE_DELETE_DEFAULT)
-  end
-
-  # Force deletions of Unified Index entries even if the record ID does not
-  # begin with "emma-".  (This is to support development during which sometimes
-  # fake member repository entries get into the index.)
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :force   URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #EMERGENCY_DELETE_DEFAULT
-  #
-  def self.emergency_delete(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@emergency_delete) && !@emergency_delete.nil?
-      @emergency_delete
-    elsif params
-      @emergency_delete =
-        parameter_setting(params&.dig(:emergency), EMERGENCY_DELETE_DEFAULT)
-    end
-=end
-    parameter_setting(params&.dig(:emergency), EMERGENCY_DELETE_DEFAULT)
-  end
-
-  # If all "uploads" records are removed, reset the next ID to 1.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :truncate  URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #TRUNCATE_DELETE_DEFAULT
-  #
-  def self.truncate_delete(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@truncate_delete) && !@truncate_delete.nil?
-      @truncate_delete
-    elsif params
-      @truncate_delete =
-        parameter_setting(params&.dig(:truncate), TRUNCATE_DELETE_DEFAULT)
-    end
-=end
-    parameter_setting(params&.dig(:truncate), TRUNCATE_DELETE_DEFAULT)
-  end
-
-  # Permit the "creation" of member repository items via a request to be queued
-  # to the appropriate member repository.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :repo_create   URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #REPO_CREATE_DEFAULT
-  #
-  def self.repo_create(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@repo_create) && !@repo_create.nil?
-      @repo_create
-    elsif params
-      @repo_create =
-        REPO_CREATE_DEFAULT # TODO: conditionally accept based on user
-        #parameter_setting(params&.dig(:repo_create), REPO_CREATE_DEFAULT)
-    end
-=end
-    REPO_CREATE_DEFAULT # TODO: conditionally accept based on user
-    #parameter_setting(params&.dig(:repo_create), REPO_CREATE_DEFAULT)
-  end
-
-  # Permit the "update" of member repository items via a request to be queued
-  # to the appropriate member repository.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :repo_edit   URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #REPO_EDIT_DEFAULT
-  #
-  def self.repo_edit(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@repo_edit) && !@repo_edit.nil?
-      @repo_edit
-    elsif params
-      @repo_edit =
-        REPO_EDIT_DEFAULT # TODO: conditionally accept based on user
-        #parameter_setting(params&.dig(:repo_edit), REPO_EDIT_DEFAULT)
-    end
-=end
-    REPO_EDIT_DEFAULT # TODO: conditionally accept based on user
-    #parameter_setting(params&.dig(:repo_edit), REPO_EDIT_DEFAULT)
-  end
-
-  # Permit the "removal" of member repository items via a request to be queued
-  # to the appropriate member repository.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean] :repo_remove   URL parameter name.
-  #
-  # @return [Boolean]
-  #
-  # @see #REPO_REMOVE_DEFAULT
-  #
-  def self.repo_remove(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@repo_remove) && !@repo_remove.nil?
-      @repo_remove
-    elsif params
-      @repo_remove =
-        REPO_REMOVE_DEFAULT # TODO: conditionally accept based on user
-        #parameter_setting(params&.dig(:repo_remove), REPO_REMOVE_DEFAULT)
-    end
-=end
-    REPO_REMOVE_DEFAULT # TODO: conditionally accept based on user
-    #parameter_setting(params&.dig(:repo_remove), REPO_REMOVE_DEFAULT)
-  end
-
-  # Set or disable bulk operation batching.
-  #
-  # @param [Hash, nil] params
-  #
-  # @option params [Boolean, String] :batch  URL parameter name.
-  #
-  # @return [Integer]                 Bulk batch size.
-  # @return [FalseClass]              Bulk operations should not be batched.
-  #
-  # @see #BATCH_SIZE
-  # @see #MAX_BATCH_SIZE
-  #
-  def self.batch_size(params)
-=begin # TODO: better way to manage global settings overridable by URL params
-    if defined?(@batch_size) && !@batch_size.nil?
-      @batch_size
-    elsif params
-      value = params&.dig(:batch)
-      @batch_size =
-        if value.blank?
-          BATCH_SIZE
-        elsif false?(value)
-          false
-        elsif true?(value)
-          (value.to_s == '1') ? 1 : BATCH_SIZE
-        elsif value.to_i.positive?
-          [value.to_i, MAX_BATCH_SIZE].min
-        else
-          BATCH_SIZE
-        end
-    end
-=end
-    value = params&.dig(:batch)
     if value.blank?
       BATCH_SIZE
     elsif false?(value)
@@ -757,18 +560,37 @@ module UploadWorkflow::Properties
 
   protected
 
-  # Pass a literal Boolean value or interpret a boolean-valued URL parameter
-  # based on its stated default value.
+  # This provides URL parameters in either the context of the controller (via
+  # UploadConcern) or in the context of the workflow instance (through the
+  # parameters saved from the :params initializer option).
   #
-  # If *default* is *false* then *true* is returned only if *value* is "true".
-  # If *default* is *true* then *false* is returned only if *value* is "false".
+  # @return [Hash, nil]
   #
-  # @param [String, Boolean, nil]  value      Parameter value from `#params`.
-  # @param [Boolean]               default    Default parameter value.
+  def parameters
+    respond_to?(:upload_params) && upload_params || super || {}
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Extract the named URL parameter from *params*.
+  #
+  # @param [Symbol]    key            URL parameter name.
+  # @param [Hash, nil] params         Default: `#parameters`.
   #
   # @return [Boolean]
   #
-  def self.parameter_setting(value, default)
+  # == Implementation Notes
+  # If *default* is *false* then *true* is returned only if *value* is "true".
+  # If *default* is *true* then *false* is returned only if *value* is "false".
+  #
+  def parameter_setting(key, params = nil)
+    params ||= parameters
+    value    = params&.dig(key)
+    default  = WF_URL_PARAMETER[key]
     case value
       when true, false then value
       when nil         then default
@@ -1377,9 +1199,9 @@ module UploadWorkflow::External
       # they were missing information and need to be re-submitted anyway.
       removed, kept = upload_remove(*rollback, atomic: false)
       if removed.present?
-        Log.info { "#{__method__}: rolled back: #{removed}" }
-        removed_sids = removed.map(&:submission_id)
-        rollback.reject! { |item| removed_sids.include?(item.submission_id) }
+        sids = removed.map(&:submission_id)
+        Log.info { "#{__method__}: removed: #{sids}" }
+        rollback.reject! { |item| sids.include?(item.submission_id) }
       end
       succeeded = [] if atomic
       failed += kept if kept.present?
@@ -1391,27 +1213,23 @@ module UploadWorkflow::External
   # Add/modify the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload>] items
+  # @param [Boolean]       atomic
   #
   # @raise [StandardError] @see IngestService::Request::Records#put_records
   #
   # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
   #                                     and records to roll back.
   #
-  def update_in_index(*items, **)
+  def update_in_index(*items, atomic: true, **)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
-    succeeded = failed = rollback = []
     items = normalize_index_items(*items, meth: __method__)
-    if items.present?
-      result = ingest_api.put_records(*items)
-      errors = result.errors
-      if errors.blank?
-        succeeded = items
-      else
-        rollback  = errors.transform_keys! { |n| items[n.to_i-1] }.keys.dup
-        sids      = errors.transform_keys! { |item| Upload.sid_for(item) }.keys
-        succeeded = items.reject { |item| sids.include?(item.submission_id) }
-        failed    = errors.map { |sid, msg| ErrorEntry.new(sid, msg) }
-      end
+    return [], [], [] if items.blank?
+
+    result = ingest_api.put_records(*items)
+    succeeded, failed, rollback = process_ingest_errors(result, *items)
+    if atomic && failed.present?
+      succeeded = []
+      rollback  = items
     end
     return succeeded, failed, rollback
   end
@@ -1419,26 +1237,20 @@ module UploadWorkflow::External
   # Remove the indicated items from the EMMA Unified Index.
   #
   # @param [Array<Upload, String>] items
+  # @param [Boolean]               atomic
   #
   # @raise [StandardError] @see IngestService::Request::Records#delete_records
   #
   # @return [(Array,Array)]           Succeeded items and failed item messages.
   #
-  def remove_from_index(*items, **)
+  def remove_from_index(*items, atomic: true, **)
     __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
-    succeeded = failed = []
     items = normalize_index_items(*items, meth: __method__)
-    if items.present?
-      result = ingest_api.delete_records(*items)
-      errors = result.errors
-      if errors.blank?
-        succeeded = items
-      else
-        sids      = errors.keys
-        succeeded = items.reject { |item| sids.include?(Upload.sid_for(item)) }
-        failed    = errors.map { |sid, msg| ErrorEntry.new(sid, msg) }
-      end
-    end
+    return [], [] if items.blank?
+
+    result = ingest_api.delete_records(*items)
+    succeeded, failed, _ = process_ingest_errors(result, *items)
+    succeeded = [] if atomic && failed.present?
     return succeeded, failed
   end
 
@@ -1462,6 +1274,70 @@ module UploadWorkflow::External
   # ===========================================================================
 
   protected
+
+  # Error key prefix which indicates a general (non-item-specific) error
+  # message entry.
+  #
+  # @type [String]
+  #
+  GENERAL_ERROR_TAG = Api::Shared::ErrorTable::GENERAL_ERROR_TAG
+
+  # Interpret error message(s) generated by Federated Ingest to determine which
+  # item(s) failed.
+  #
+  # @param [Ingest::Message::Response, Hash{String,Integer=>String}] result
+  # @param [Array<Upload, String>]                                   items
+  #
+  # @return [(Array,Array,Array)]     Succeeded records, failed item messages,
+  #                                     and records to roll back.
+  #
+  # @see Api::Shared::ErrorTable#make_error_table
+  #
+  # == Implementation Notes
+  # It's not clear whether there would ever be situations where there was a mix
+  # of errors by index, errors by submission ID, and/or general errors, but
+  # this method was written to be able to cope with the possibility.
+  #
+  def process_ingest_errors(result, *items)
+    # If there were no errors then indicate that all items succeeded.
+    errors = result.is_a?(Ingest::Message::Response) ? result.errors : result
+    return items, [], [] if errors.blank?
+
+    # Otherwise, all items will be assumed to have failed.
+    rollback  = items
+    sids      = []
+    failed    = []
+    succeeded = []
+
+    # Errors associated with the position of the item in the request.
+    by_index = errors.select { |k| k.is_a?(Integer) }
+    if by_index.present?
+      by_index.transform_keys! { |idx| Upload.sid_for(items[idx-1]) }
+      sids   += by_index.keys
+      failed += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
+      errors.except!(*by_index.keys)
+    end
+
+    # Errors associated with item submission ID.
+    by_sid = errors.reject { |k| k.start_with?(GENERAL_ERROR_TAG) }
+    if by_sid.present?
+      sids   += by_sid.keys
+      failed += by_sid.map { |sid, msg| ErrorEntry.new(sid, msg) }
+      errors.except!(*by_sid.keys)
+    end
+
+    # Remaining (general) errors indicate that there was a problem with the
+    # request and that all items have failed.
+    if errors.present?
+      failed += errors.values.map { |msg| ErrorEntry.new(msg) }
+    elsif sids.present?
+      sids = sids.map { |v| Upload.sid_for(v) }.uniq
+      rollback, succeeded =
+        items.partition { |itm| sids.include?(itm.submission_id) }
+    end
+
+    return succeeded, failed, rollback
+  end
 
   # Return a flatten array of items.
   #
@@ -1487,7 +1363,19 @@ module UploadWorkflow::External
 
   public
 
-  # TODO: submit new item to member repository
+  # Failure messages for member repository requests. # TODO: I18n
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  REPO_FAILURE = {
+    no_repo:    'No repository given',
+    no_items:   'No items given',
+    no_create:  'Repository submissions are disabled',
+    no_edit:    'Repository modification requests are disabled',
+    no_remove:  'Repository removal requests are disabled',
+  }.deep_freeze
+
+  # Submit a new item to member repository
   #
   # @param [String]        repo
   # @param [Array<Upload>] data
@@ -1499,18 +1387,14 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     if repo.blank?
-      failed << 'No repository given'
+      failed << REPO_FAILURE[:no_repo]
     elsif data.blank?
-      failed << 'No items given'
+      failed << REPO_FAILURE[:no_items]
     elsif !repo_create
-      failed << 'Repository submissions are disabled'
+      failed << REPO_FAILURE[:no_create]
     else
       result = aws_api.creation_request(*data, **opt)
-      if result # TODO: process result
-        succeeded = data
-      else
-        failed = ['FAILED - TBD']
-      end
+      succeeded, failed = process_aws_errors(result, *data)
     end
     return succeeded, failed
   end
@@ -1527,18 +1411,14 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     if repo.blank?
-      failed << 'No repository given'
+      failed << REPO_FAILURE[:no_repo]
     elsif data.blank?
-      failed << 'No items given'
+      failed << REPO_FAILURE[:no_items]
     elsif !repo_edit
-      failed << 'Repository modification requests are disabled'
+      failed << REPO_FAILURE[:no_edit]
     else
       result = aws_api.modification_request(*data, **opt)
-      if result # TODO: process result
-        succeeded = data
-      else
-        failed = ['FAILED - TBD']
-      end
+      succeeded, failed = process_aws_errors(result, *data)
     end
     return succeeded, failed
   end
@@ -1555,24 +1435,44 @@ module UploadWorkflow::External
     succeeded = []
     failed    = []
     if repo.blank?
-      failed << 'No repository given'
+      failed << REPO_FAILURE[:no_repo]
     elsif data.blank?
-      failed << 'No items given'
+      failed << REPO_FAILURE[:no_items]
     elsif opt[:emergency]
       # Emergency override for deleting bogus entries creating during
       # testing/development.
       succeeded, failed = remove_from_index(*data)
     elsif !repo_remove
-      failed << 'Repository removal requests are disabled'
+      failed << REPO_FAILURE[:no_remove]
     else
       result = aws_api.removal_request(*data, **opt)
-      if result # TODO: process result
-        succeeded = data
-      else
-        failed = ['FAILED - TBD']
-      end
+      succeeded, failed = process_aws_errors(result, *data)
     end
     return succeeded, failed
+  end
+
+  # ===========================================================================
+  # :section: Member repository requests
+  # ===========================================================================
+
+  protected
+
+  # Interpret error message(s) generated by AWS S3.
+  #
+  # @param [AwsS3::Message::Response, Hash{String,Integer=>String}] result
+  # @param [Array<String, Upload>]                                  data
+  #
+  # @return [(Array,Array)]           Succeeded items and failed item messages.
+  #
+  # @see Api::Shared::ErrorTable#make_error_table
+  #
+  def process_aws_errors(result, *data)
+    errors = result.is_a?(AwsS3::Message::Response) ? result.errors : result
+    if errors.blank?
+      return data, []
+    else
+      return [], errors.values.map { |msg| ErrorEntry.new(msg) }
+    end
   end
 
   # ===========================================================================
@@ -1722,13 +1622,14 @@ module UploadWorkflow::Actions
     emma_items, repo_items = items.partition { |item| emma_item?(item) }
 
     # EMMA items and/or EMMA submission ID's.
-    @succeeded += emma_items.map { |i| get_record(i, no_raise: force) || i }
+    opt = { no_raise: force }
+    self.succeeded += emma_items.map { |item| get_record(item, **opt) || item }
 
     if repo_items.present?
       if force && repo_remove
-        @succeeded += repo_items.map { |item| Upload.record_id(item) }
+        self.succeeded += repo_items.map { |item| Upload.record_id(item) }
       else
-        @failed += repo_items
+        self.failures  += repo_items
       end
     end
   end
@@ -1747,8 +1648,9 @@ module UploadWorkflow::Actions
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:emergency] = emergency_delete unless opt.key?(:emergency)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
-    @succeeded, failures = batch_upload_remove(event_args, **opt)
-    @failed += failures
+    s, f = batch_upload_remove(event_args, **opt)
+    self.succeeded = s
+    self.failures += f
   end
 
   # wf_cancel_submission
@@ -1756,8 +1658,6 @@ module UploadWorkflow::Actions
   # @param [Array] event_args
   #
   # @return [void]
-  #
-  # @see #wf_remove_items
   #
   def wf_cancel_submission(*event_args)
     __debug_args(binding)

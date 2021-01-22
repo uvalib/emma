@@ -16,7 +16,7 @@ __loading_begin(__FILE__)
 #
 module Bs::Shared::TitleMethods
 
-  include ::TitleMethods
+  include Api::Shared::TitleMethods
   include Bs::Shared::LinkMethods
 
   # ===========================================================================

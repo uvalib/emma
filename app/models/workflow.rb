@@ -280,7 +280,7 @@ module Workflow::Base::Data
   #
   # @return [Array]
   #
-  attr_accessor :failed
+  attr_accessor :failures
 
   # The characteristic "return value" of the workflow after an event has been
   # registered.
@@ -317,9 +317,9 @@ module Workflow::Base::Data
   # @return [void]
   #
   def reset_status(*)
-    @succeeded = []
-    @failed    = []
-    @results   = nil
+    self.succeeded = []
+    self.failures  = []
+    self.results   = nil
   end
 
   # ===========================================================================
@@ -342,20 +342,20 @@ module Workflow::Base::Data
 
   # Indicate whether operation(s) have failed.
   #
-  def failed?
-    (@failed ||= []).present?
+  def failures?
+    failures.present?
   end
 
   # Indicate whether operation(s) have succeeded.
   #
   def succeeded?
-    (@succeeded ||= []).present?
+    succeeded.present?
   end
 
   # Indicate whether submission is permissible.
   #
   def ready?
-    succeeded? && !failed?
+    succeeded? && !failures?
   end
 
 end
@@ -660,24 +660,6 @@ module Workflow::Base::Events
   ].freeze
 
   # ===========================================================================
-  # :section: Workflow overrides
-  # ===========================================================================
-
-  public
-
-  EVENTS.each do |event|
-
-    # Override the method used to invoke the event to return *nil* if there
-    # are failures.
-    #
-    define_method("#{event}!") do |*args|
-      result = super(event, *args)
-      result unless failed?
-    end
-
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -706,6 +688,44 @@ module Workflow::Base::Events
     number = '%02d' if number.is_a?(TrueClass)
     number &&= number % event_number(event)
     number ? "[#{number}] #{label}" : label
+  end
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  # Override :workflow for a Workflow subclass in order to redefine the
+  # workflow event methods.
+  #
+  # @param [Workflow, *] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included(base)
+    return unless base.respond_to?(:workflow)
+    base.class_eval do
+
+      def self.workflow(&specification)
+        super(&specification)
+        EVENTS.each do |event|
+
+          # Override the method used to invoke the event to return *nil* if
+          # there are failures.
+          #
+          define_method("#{event}!") do |*args|
+            result = process_event!(event, *args)
+            result unless failures?
+          rescue => error
+            self.failures << error unless failures?
+            Log.warn { "#{event}!: #{error.class} #{error.message}" }
+          end
+
+        end
+      end
+
+    end
   end
 
 end
@@ -744,42 +764,6 @@ module Workflow::Base::Events
   include Emma::Debug
 
   # ===========================================================================
-  # :section: Workflow overrides
-  # ===========================================================================
-
-  public
-
-  EVENTS.each do |event|
-
-    # Override the method used to invoke the event to provide additional
-    # debugging information beyond what :process_event! shows (but let it
-    # fail in order to raise an exception instead of returning *nil*).
-    #
-    define_method("#{event}!") do |*args|
-      if current_state.events.first_applicable(event, self).nil?
-        c = self.class.name
-        e = event.inspect
-        r = current_role.inspect
-        u = current_user.to_s.inspect
-        s = curr_state.inspect
-        m = "ERROR: #{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
-        __debug_event(event, "ERROR: #{m}")
-      end
-      result = super(event, *args)
-      result unless failed?
-    end
-
-    # The method which is called when the event is triggered.
-    #
-    define_method(event) do |*args|
-      __debug_event(event, *args)
-    end
-
-    protected event
-
-  end
-
-  # ===========================================================================
   # :section:
   # ===========================================================================
 
@@ -793,6 +777,62 @@ module Workflow::Base::Events
   def __debug_event(event, *args)
     line = 'WORKFLOW ***** EVENT ' + event_label(event)
     __debug_line(line, *args, leader: "\n")
+  end
+
+  # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  # Override :workflow for a Workflow subclass in order to redefine the
+  # workflow event methods.
+  #
+  # @param [Workflow, *] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included(base)
+    return unless base.respond_to?(:workflow)
+    base.class_eval do
+
+      def self.workflow(&specification)
+        super(&specification)
+        EVENTS.each do |event|
+
+          # Override the method used to invoke the event to provide additional
+          # debugging information beyond what :process_event! shows (but let it
+          # fail in order to raise an exception instead of returning *nil*).
+          #
+          define_method("#{event}!") do |*args|
+            if current_state.events.first_applicable(event, self).nil?
+              c = self.class.name
+              e = event.inspect
+              r = current_role.inspect
+              u = current_user.to_s.inspect
+              s = curr_state.inspect
+              m = "ERROR: #{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
+              __debug_event(event, "ERROR: #{m}")
+            end
+            result = process_event!(event, *args)
+            result unless failures?
+          rescue => error
+            self.failures << error unless failures?
+            Log.warn { "#{event}!: #{error.class} #{error.message}" }
+          end
+
+          # The method which is called when the event is triggered.
+          #
+          define_method(event) do |*args|
+            __debug_event(event, *args)
+          end
+
+          protected event
+
+        end
+      end
+
+    end
   end
 
 end if Workflow::Base::WORKFLOW_DEBUG
@@ -860,6 +900,9 @@ end if Workflow::Base::WORKFLOW_DEBUG
 # @!method on_canceled_exit
 # @!method on_completed_entry
 # @!method on_completed_exit
+#
+# @!method on_purged_entry
+# @!method on_purged_exit
 #
 # @see Workflow::InstanceMethods#run_on_entry
 # @see Workflow::InstanceMethods#run_on_exit

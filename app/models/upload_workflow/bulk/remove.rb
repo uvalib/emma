@@ -175,7 +175,7 @@ module UploadWorkflow::Bulk::Remove::States
           opt  = 'index: false'
           "@succeeded, @failed = bulk_upload_remove(#{args}, #{opt})"
         end
-        @succeeded += submission.items
+        self.succeeded += submission.items
         ok = ready?
       else
         ok = true # TODO: Simulate member repository delete request?

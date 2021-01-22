@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Methods mixed in to record elements related to catalog titles.
 #
 module Ingest::Shared::TitleMethods
-  include ::TitleMethods
+  include Api::Shared::TitleMethods
 end
 
 __loading_end(__FILE__)

@@ -81,11 +81,12 @@ module UploadWorkflow::Single::Edit::Actions
     assert_record_present
     record.finish_editing
     if record.emma_native?
-      @succeeded = record
+      self.succeeded = [record]
     else
       opt = event_args.last.is_a?(Hash) ? event_args.last : {}
-      @succeeded, @failed =
-        repository_edit(record.repository, *record, **opt)
+      s, f = repository_edit(record.repository, *record, **opt)
+      self.succeeded = s
+      self.failures += f
     end
     super
   end
@@ -115,11 +116,13 @@ module UploadWorkflow::Single::Edit::Actions
   def wf_index_update(*_event_args)
     super
     if record.emma_native?
-      @succeeded, @failed, _ = update_in_index(*record)
+      s, f, _ = update_in_index(*record)
+      self.succeeded = s
+      self.failures += f
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
-      @succeeded << "Change request #{sid} submitted to #{repo}" # TODO: I18n
+      self.succeeded << "Change request #{sid} submitted to #{repo}" # TODO: I18n
     end
   end
 
@@ -242,9 +245,9 @@ module UploadWorkflow::Single::Edit::States
       __debug_sim("[edit_invalid_file: #{submission.invalid_file}]")
       submission.file_valid = !submission.invalid_file
       if submission.file_valid
-        @succeeded << submission.id
+        self.succeeded << submission.id
       else
-        @failed << 'invalid file'
+        self.failures  << 'invalid file'
       end
     end
 
@@ -289,19 +292,19 @@ module UploadWorkflow::Single::Edit::States
     # Verify validity of the submission. # TODO: simulation - remove
     if simulating
       # From UploadController#update:
-      # @item, @failed = upload_edit(**data)
+      # @item, failed = upload_edit(**data)
       __debug_sim('CODE') do
         args = "data=#{submission.data.inspect}"
         opt  = 'index: false'
-        "@item, @failed = upload_edit(#{args}, #{opt})"
+        "@item, failed = upload_edit(#{args}, #{opt})"
       end
       bad = nil
       if (db_fail = submission.db_failure)
-        @failed << 'DB create failed'
+        self.failures  << 'DB create failed'
       elsif (bad = !(submission.metadata_valid = !submission.invalid_entry))
-        @failed << 'bad metadata'
+        self.failures  << 'bad metadata'
       else
-        @succeeded << submission.id
+        self.succeeded << submission.id
       end
       if db_fail
         __debug_sim('[edit_db_failure: true]')

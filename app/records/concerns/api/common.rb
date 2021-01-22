@@ -722,6 +722,11 @@ module Api::Common
 
 end
 
+# Establish the Api::Shared namespace.
+#
+module Api::Shared
+end
+
 # =============================================================================
 # Generate top-level classes associated with each enumeration entry so that
 # they can be referenced without prepending a namespace.

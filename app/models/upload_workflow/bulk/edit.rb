@@ -67,8 +67,9 @@ module UploadWorkflow::Bulk::Edit::Actions
     opt[:user]       ||= current_user #@user
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
-    @succeeded, failures = bulk_upload_edit(event_args, **opt)
-    @failed += failures
+    s, f = bulk_upload_edit(event_args, **opt)
+    self.succeeded = s
+    self.failures += f
   end
 
   # wf_index_update
@@ -82,11 +83,12 @@ module UploadWorkflow::Bulk::Edit::Actions
   def wf_index_update(*_event_args)
     __debug_args(binding)
     if succeeded.blank?
-      failures = "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
+      self.failures << "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
     else
-      @succeeded, failures, _ = bulk_update_in_index(*succeeded)
+      s, f, _ = bulk_update_in_index(*succeeded)
+      self.succeeded = s
+      self.failures += f
     end
-    @failed += Array.wrap(failures)
   end
 
 end
@@ -174,11 +176,11 @@ module UploadWorkflow::Bulk::Edit::States
       end
       bad = nil
       if (db_fail = submission.db_failure)
-        @failed << 'DB create failed'
+        self.failures  << 'DB create failed'
       elsif (bad = !(submission.metadata_valid = !submission.invalid_entry))
-        @failed << 'bad metadata'
+        self.failures  << 'bad metadata'
       else
-        @succeeded << submission.id
+        self.succeeded << submission.id
       end
       if db_fail
         __debug_sim('[edit_db_failure: true]')

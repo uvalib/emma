@@ -83,7 +83,9 @@ module UploadWorkflow::Single::Data
   #++
   def set_data(data)
     data = super
+
     @existing = nil
+    failed    = []
 
     # The semantics depend on whether a record has already been created or not.
     if @record
@@ -94,6 +96,7 @@ module UploadWorkflow::Single::Data
         Log.debug { "#{__method__}: nil ignored for existing record" }
       elsif !data.is_a?(Upload) && !data.is_a?(Hash)
         Log.warn { "#{__method__}: #{data.class} invalid for existing record" }
+        failed << "INTERNAL ERROR: data class #{data.class}" # TODO: I18n
       else
         opt = record_data(data)
         @record.update(opt)
@@ -108,34 +111,43 @@ module UploadWorkflow::Single::Data
 
       elsif data.is_a?(Hash)
         opt = record_data(data)
-        @record, @failed = upload_edit(**opt)
-        @existing = true if @record
-        unless @record
-          @record, @failed = upload_create(**opt)
+        @record, failed = upload_edit(**opt)
+        if @record
+          @existing = true
+        else
+          @record, failed = upload_create(**opt)
           @existing = false if @record
         end
 
       elsif data.present?
-        opt = { (digits_only?(data) ? :id : :submission_id) => data }
-        @record, @failed = upload_edit(**opt)
+        attribute = digits_only?(data) ? :id : :submission_id
+        @record, failed = upload_edit(attribute => data)
         @existing = true if @record
 
       else
         Log.warn { "#{__method__}: not created: no identifier provided" }
       end
-      return unless @record
 
     end
+
+    self.failures += failed if failed.present?
+
+    return unless @record
 
     # Ensure that the record indicates the appropriate workflow phase.
     set_workflow_phase(workflow_phase, @record)
 
-    # TODO: still needed?
+    # Until a record is persisted, the workflow state is held in the variable
+    # defined in the Workflow module.
     if @workflow_state
-      unless get_workflow_state(@record) == @workflow_state
-        set_workflow_state(@workflow_state, @record)
+      persisted = get_workflow_state(@record)
+      unless @workflow_state == persisted
+        Log.debug do
+          "updating workflow state from '#{persisted}' to '#{@workflow_state}'"
+        end
+        persisted = set_workflow_state(@workflow_state, @record)
       end
-      @workflow_state = nil
+      @workflow_state = nil if persisted
     end
 
     @record
@@ -309,7 +321,7 @@ module UploadWorkflow::Single::Actions
     __debug_args(binding)
     data = event_args.extract_options!.presence || event_args.first
     set_record(data)
-    @succeeded << record.id unless failed?
+    self.succeeded << record.id unless failures?
   end
 
   # wf_list_items
@@ -321,7 +333,7 @@ module UploadWorkflow::Single::Actions
   def wf_list_items(*event_args)
     __debug_args(binding)
     super
-    @results = @succeeded
+    self.results = succeeded
   end
 
   # wf_remove_items
@@ -335,7 +347,7 @@ module UploadWorkflow::Single::Actions
     opt = event_args.extract_options!
     event_args << record if event_args.empty?
     super(*event_args, opt)
-    @results = @succeeded
+    self.results = succeeded
   end
 
   # wf_finalize_submission
@@ -389,26 +401,25 @@ module UploadWorkflow::Single::Actions
     opt[:meth] ||= calling_method
 
     # The return from Shrine will be the results of the workflow step.
-    stat, _hdrs, body = @results = upload_file(**opt)
+    stat, _hdrs, body = self.results = upload_file(**opt)
 
     # Update status arrays accordingly.
     data = nil
     if stat.nil?
-      @failed << 'missing env data'
+      self.failures  << 'missing env data'
     elsif stat != 200
-      @failed << 'invalid file'
+      self.failures  << 'invalid file'
     elsif !record
-      @succeeded << 'no record' # TODO: should this be a failure?
+      self.succeeded << 'no record' # TODO: should this be a failure?
     elsif (data = json_parse(body.first)&.except(:emma_data)&.to_json)
-      @succeeded << record.id
+      self.succeeded << record.id
     else
-      @failed << 'invalid file_data'
+      self.failures  << 'invalid file_data'
     end
 
-    # Ensure that the record is updated now instead of waiting for the
-    # file data to be returned when the form is submitted in case the
-    # submission is cancelled and the uploaded file needs to be removed
-    # from storage.
+    # Ensure that the record is updated now instead of waiting for the file
+    # data to be returned when the form is submitted in case the submission is
+    # canceled and the uploaded file needs to be removed from storage.
     record.update_column(record.file_data_column, data) if data
   end
 
@@ -470,7 +481,7 @@ module UploadWorkflow::Single::Actions
         note << "<br/><br/>#{label} = #{value}".html_safe
       end
     end
-    @results = @succeeded = Array.wrap(note)
+    self.results = self.succeeded = Array.wrap(note)
   end
 
   # ===========================================================================

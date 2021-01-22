@@ -320,7 +320,7 @@ module ModelHelper
 
   # Render field/value pairs.
   #
-  # @param [Model]               item
+  # @param [Model, nil]          item
   # @param [String, Symbol, nil] model        Default: `params[:controller]`.
   # @param [String, Symbol, nil] action       Default: `params[:action]`.
   # @param [Hash, nil]           pairs        Except for #render_pair options.
@@ -372,6 +372,7 @@ module ModelHelper
       value       = val || value
       opt[:row]  += 1
       opt[:field] = field
+      # noinspection RubyYardParamTypeMatch
       value = render_value(item, value, model: model, index: opt[:index])
       render_pair(label, value, **opt) if value
     }.compact.unshift(nil).join(separator).html_safe
@@ -694,6 +695,7 @@ module ModelHelper
   # @param [Hash]         opt         Passed to inner #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
+  # @return [nil]                         If *item* or *index* is nil.
   #
   # @yield [index,offset] To supply additional parts within .number element.
   # @yieldparam  [Integer] index      The effective index number.
@@ -740,7 +742,7 @@ module ModelHelper
 
   # Render a single entry for use within a list of items.
   #
-  # @param [Model]          item
+  # @param [Model, nil]     item
   # @param [String, Symbol] model
   # @param [Hash, nil]      pairs         Label/value pairs.
   # @param [Hash]           opt           Passed to #render_field_values.
@@ -748,6 +750,9 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def item_list_entry(item, model:, pairs: nil, **opt, &block)
     row = positive(opt[:row])
     html_opt = { class: "#{model}-list-entry" }

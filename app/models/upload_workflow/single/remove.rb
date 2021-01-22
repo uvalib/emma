@@ -63,11 +63,13 @@ module UploadWorkflow::Single::Remove::Actions
   def wf_index_update(*_event_args)
     super
     if record.emma_native?
-      @succeeded, @failed, _ = remove_from_index(*record)
+      s, f, _ = remove_from_index(*record)
+      self.succeeded = s
+      self.failures += f
     else
       sid  = record.submission_id.inspect
       repo = Upload.repository_name(record)
-      @succeeded << "Removal request #{sid} submitted to #{repo}" # TODO: I18n
+      self.succeeded << "Removal request #{sid} submitted to #{repo}" # TODO: I18n
     end
   end
 
@@ -196,13 +198,13 @@ module UploadWorkflow::Single::Remove::States
     if simulating
       if emma_items
         # From UploadController#destroy:
-        # @succeeded, @failed = bulk_upload_remove(items)
+        # succeeded, failed = bulk_upload_remove(items)
         __debug_sim('CODE') do
           args = "items=#{submission.items.inspect}"
           opt  = 'index: false'
-          "@succeeded, @failed = bulk_upload_remove(#{args}, #{opt})"
+          "succeeded, failed = bulk_upload_remove(#{args}, #{opt})"
         end
-        @succeeded += submission.items
+        self.succeeded += submission.items
         ok = ready?
       else
         ok = true # TODO: Simulate member repository delete request?
