@@ -322,6 +322,7 @@ en:
       # %{button}     Label of a button.
 
       label:          'Download'
+      title:          'Download'
       tooltip:        'Get a copy of the item in this format.'
 
       complete:

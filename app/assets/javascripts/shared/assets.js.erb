@@ -377,7 +377,12 @@ var Emma = (function() {
          * ====================================================================
          * feature/file-upload.js
          *
+         * - Path.index         The endpoint for listing submissions.
+         * - Path.new           The new entry creation form.
+         * - Path.edit          The existing entry modification form.
          * - Path.create        The POST endpoint for creating a database entry for the uploaded file.
+         * - Path.renew         The POST endpoint for generating a fresh database entry.
+         * - Path.reedit        The POST endpoint for re-starting an edit workflow on an existing database entry.
          * - Path.cancel        The endpoint for canceling a submission.
          * - Path.endpoint      Shrine's upload endpoint (the server route to which uploads are directed).
          * - Style.drag_target  CSS class for the element used to hold an Uppy drag-and-drop target.
@@ -393,7 +398,11 @@ var Emma = (function() {
          * @type {{
          *    Path: {
          *        index:        string,
+         *        new:          string,
+         *        edit:         string,
          *        create:       string,
+         *        renew:        string,
+         *        reedit:       string,
          *        cancel:       string,
          *        endpoint:     string,
          *    },

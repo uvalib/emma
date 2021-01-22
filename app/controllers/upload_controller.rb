@@ -165,7 +165,7 @@ class UploadController < ApplicationController
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
-    post_response(:conflict, error) # TODO: ?
+    post_response(:conflict, error)
   rescue => error
     post_response(error)
   end
@@ -205,7 +205,7 @@ class UploadController < ApplicationController
     @item = wf_single(event: :submit)
     post_response(:ok, @item, redirect: upload_index_path)
   rescue SubmitError => error
-    post_response(:conflict, error) # TODO: ?
+    post_response(:conflict, error)
   rescue => error
     post_response(error)
   end
@@ -262,7 +262,7 @@ class UploadController < ApplicationController
     failure(:file_id) unless @list.present?
     post_response(:found, @list, redirect: back)
   rescue SubmitError => error
-    post_response(:conflict, error, redirect: back) # TODO: ?
+    post_response(:conflict, error, redirect: back)
   rescue => error
     post_response(:not_found, error, redirect: back)
   end
@@ -314,7 +314,7 @@ class UploadController < ApplicationController
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
-    post_response(:conflict, error, xhr: false) # TODO: ?
+    post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -351,7 +351,7 @@ class UploadController < ApplicationController
     wf_check_partial_failure
     post_response(:ok, @list, xhr: false)
   rescue SubmitError => error
-    post_response(:conflict, error, xhr: false) # TODO: ?
+    post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -386,7 +386,7 @@ class UploadController < ApplicationController
     wf_check_partial_failure
     post_response(:found, @list)
   rescue SubmitError => error
-    post_response(:conflict, error, xhr: false) # TODO: ?
+    post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
   end
@@ -397,9 +397,48 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/cancel?id=:id[&redirect=URL][&reset=true|false]
+  # == POST /upload/renew
+  #
+  # Invoked to re-create a database entry that had been canceled.
+  #
+  def renew
+    __debug_route
+    @item = wf_single(rec: :unset, event: :create)
+    respond_to do |format|
+      format.html
+      format.json { render json: @item }
+      format.xml  { render xml:  @item }
+    end
+  rescue => error
+    post_response(error)
+  end
+
+  # == POST /upload/reedit?id=:id
+  #
+  # Invoked to re-start editing a database entry.
+  #
+  def reedit
+    __debug_route
+    @item = wf_single(event: :edit)
+    respond_to do |format|
+      format.html
+      format.json { render json: @item }
+      format.xml  { render xml:  @item }
+    end
+  rescue => error
+    post_response(error)
+  end
+
+  # == GET  /upload/cancel?id=:id[&redirect=URL][&reset=bool][&fields=...]
+  # == POST /upload/cancel?id=:id[&fields=...]
   #
   # Invoked to cancel the current submission form instead of submitting.
+  #
+  # * If invoked via :get, a :redirect is expected.
+  # * If invoked via :post, only a status is returned.
+  #
+  # Either way, the identified Upload record is deleted if it was in the
+  # :create phase.  If it was in the :edit phase, its fields are reset
   #
   # @see UploadWorkflow::Single::States#on_canceled_entry
   # @see UploadWorkflow::Bulk::States#on_canceled_entry
@@ -408,9 +447,17 @@ class UploadController < ApplicationController
   def cancel
     __debug_route
     @item = wf_single(event: :cancel)
-    redirect_to(params[:redirect] || upload_index_path)
+    if request.get?
+      redirect_to(params[:redirect] || upload_index_path)
+    else
+      post_response(:ok)
+    end
   rescue => error
-    flash_now_failure(error)
+    if request.get?
+      flash_now_failure(error)
+    else
+      post_response(error)
+    end
   end
 
   # == GET /upload/check/:id
@@ -458,7 +505,7 @@ class UploadController < ApplicationController
     self.headers.merge!(hdrs) if hdrs.present?
     self.response_body = body if body.present?
   rescue SubmitError => error
-    post_response(:conflict, error, xhr: true) # TODO: ?
+    post_response(:conflict, error, xhr: true)
   rescue => error
     post_response(error, xhr: true)
   end

@@ -1711,8 +1711,9 @@ class UploadWorkflow::Single < UploadWorkflow
   def initialize(data, **opt)
     __debug("WORKFLOW initialize UploadWorkflow::Single | opt[:start_state] = #{opt[:start_state].inspect} | opt[:init_event] = #{opt[:init_event].inspect} | data = #{data.class}")
     opt[:user] ||= (User.find_id(data[:user_id]) if data.is_a?(Hash))
+    data.set_revert_data                         if data.is_a?(Upload)
     if (data &&= set_record(data))
-      opt[:start_state] ||= get_workflow_state&.to_sym || :starting
+      opt[:start_state] ||= get_workflow_state.presence&.to_sym || :starting
       data = nil
     end
     super(data, **opt)

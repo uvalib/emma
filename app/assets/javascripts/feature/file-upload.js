@@ -435,6 +435,20 @@ $(document).on('turbolinks:load', function() {
         }
     });
 
+    /**
+     * State of the page.
+     *
+     * SUBMITTED: The submit button has been activated.
+     * CANCELED:  The cancel button has been activated.
+     *
+     * @constant
+     * @type {{SUBMITTED: string, CANCELED: string}}
+     */
+    const FORM_STATE = deepFreeze({
+        SUBMITTED: 'submitted',
+        CANCELED:  'canceled'
+    });
+
     // ========================================================================
     // Constants - Bulk operations
     // ========================================================================
@@ -482,8 +496,24 @@ $(document).on('turbolinks:load', function() {
     $file_upload_form.each(function() {
         let $form = $(this);
         if (!isUppyInitialized($form)) {
+
             initializeUppy($form);
-            initializeUploadForm($form);
+
+            // noinspection JSDeprecatedSymbols
+            switch (performance.navigation.type) {
+                case PerformanceNavigation.TYPE_BACK_FORWARD:
+                    debugSection('HISTORY BACK/FORWARD');
+                    refreshRecord($form);
+                    break;
+                case PerformanceNavigation.TYPE_RELOAD:
+                    debugSection('PAGE REFRESH');
+                    // TODO: this causes a junk record to be created for /new.
+                    refreshRecord($form);
+                    break;
+                default:
+                    initializeUploadForm($form);
+                    break;
+            }
         }
     });
 
@@ -771,9 +801,9 @@ $(document).on('turbolinks:load', function() {
         let range;
         if (min && max) { range = `${min}-${max}`; }
         else if (max)   { range = `1-${max}`; }
-        else if (min)   { range = min; }
+        else if (min)   { range = `${min}`; }
         else            { range = '*'; }
-        const url = `/upload.json?selected=${range}`;
+        const url = makeUrl('/upload.json', { selected: range });
 
         debug(func, 'VIA', url);
 
@@ -849,56 +879,110 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Initialize Uppy file uploader.
+     * Call the server endpoint to acquire replacement Upload field values for
+     * the form.
      *
-     * @param {Selector} form
+     * If this is a create form, then a new Upload record is generated to make
+     * up for the fact that previously clicking away from the page resulted in
+     * the original partial Upload record being deleted.
+     *
+     * If this is an update form, then the appropriate field values are
+     * generated to put the Upload record in the initial workflow edit state.
+     *
+     * In either case, {@link initializeUploadForm} is called with the new
+     * fields to complete page initialization.
+     *
+     * @param {Selector} [form]       Passed to {@link formElement}.
      */
-    function initializeUppy(form) {
+    function refreshRecord(form) {
 
-        /** @type {UppyFeatureSettings} feature */
-        let feature    = $.extend({}, FEATURES);
-        let $form      = $(form);
-        let $container = $form.parent();
-
-        // Get targets for these features; disable the feature if its target is
-        // not present.
-        if (feature.drag_and_drop) {
-            feature.drag_and_drop = $container.find(DRAG_AND_DROP_SELECTOR)[0];
-        }
-        if (feature.image_preview) {
-            feature.image_preview = $container.find(PREVIEW_SELECTOR)[0];
+        const func = 'refreshRecord';
+        let $form  = formElement(form);
+        let url;
+        if (isCreateForm($form)) {
+            url = Emma.Upload.Path.renew;
+        } else {
+            url = makeUrl(Emma.Upload.Path.reedit, { id: dbId($form) });
         }
 
-        // === Initialization ===
+        /** @type {UploadRecord} record */
+        let record  = undefined;
+        let error   = '';
+        const start = Date.now();
 
-        let uppy = buildUppy($form, feature);
+        $.ajax({
+            url:      url,
+            type:     'POST',
+            dataType: 'json',
+            headers:  { 'X-CSRF-Token': Rails.csrfToken() },
+            async:    false,
+            success:  onSuccess,
+            error:    onError,
+            complete: onComplete
+        });
 
-        // Events for these features are also applicable to Uppy.Dashboard.
-        if (feature.dashboard) {
-            feature.replace_input = true;
-            feature.drag_and_drop = true;
-            feature.progress_bar  = true;
-            feature.status_bar    = true;
+        /**
+         * Extract the replacement Upload fields returned as JSON.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onSuccess(data, status, xhr) {
+            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            // noinspection AssignmentResultUsedJS
+            if (isMissing(data)) {
+                error = 'no data';
+            } else if (typeof(data) !== 'object') {
+                error = `unexpected data type ${typeof data}`;
+            } else {
+                // The actual data may be inside '{ "response" : { ... } }'.
+                // noinspection ReuseOfLocalVariableJS
+                record = data.response || data;
+            }
         }
 
-        // === Event handlers ===
+        /**
+         * Accumulate the status failure message.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         message
+         */
+        function onError(xhr, status, message) {
+            error = `${status}: ${xhr.status} ${message}`;
+        }
 
-        setupHandlers(uppy, $form, feature);
-
-        if (feature.popup_messages) { setupMessages(uppy,  feature); }
-        if (feature.debugging)      { setupDebugging(uppy, feature); }
-
-        // === Display cleanup ===
-
-        if (feature.replace_input) { initializeFileSelectContainer($form); }
+        /**
+         * Actions after the request is completed.  If valid record data was
+         * acquired it will be used in place of the field values that are
+         * currently in the DOM tree.  If not, the initialize method is still
+         * called (just without replacement values).  It remains to be seen
+         * whether this is better than indicating a failure.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         */
+        function onComplete(xhr, status) {
+            debug(func, 'complete', secondsSince(start), 'sec.');
+            if (record) {
+                debug(func, 'data from server:', record);
+            } else if (error) {
+                consoleWarn(func, `${url}:`, error);
+            } else {
+                consoleError(func, `${url}:`, 'unknown failure');
+            }
+            initializeUploadForm($form, record);
+        }
     }
 
     /**
      * Initialize form display and event handlers.
      *
-     * @param {Selector} form
+     * @param {Selector}      form
+     * @param {string|object} [start_data]  Replacement data.
      */
-    function initializeUploadForm(form) {
+    function initializeUploadForm(form, start_data) {
 
         let $form = $(form);
 
@@ -922,7 +1006,7 @@ $(document).on('turbolinks:load', function() {
         });
 
         // Ensure that required fields are indicated.
-        initializeFormFields($form);
+        initializeFormFields($form, start_data);
         monitorInputFields($form);
 
         // Intercept the "Source Repository" menu selection.
@@ -935,6 +1019,19 @@ $(document).on('turbolinks:load', function() {
         // Intercept form submission so that it can be handled via AJAX in
         // order to retrieve information sent back from the server via headers.
         monitorRequestResponse($form);
+
+        // Cancel the current submission if the the user leaves the page before
+        // submitting...
+        handleEvent($(document), 'turbolinks:click ', function() {
+            // ... via a link.
+            debugSection('turbolinks:click EVENT');
+            abortSubmission($form);
+        });
+        handleEvent($(window), 'beforeunload', function() {
+            // ... via history.back() or history.forward().
+            debugSection('window beforeunload EVENT');
+            abortSubmission($form);
+        });
     }
 
     /**
@@ -990,7 +1087,7 @@ $(document).on('turbolinks:load', function() {
         const tooltip = cancelTooltip($form);
         const label   = cancelLabel($form);
         let $button   = cancelButton($form).attr('title', tooltip).text(label);
-        handleClickAndKeypress($button, cancelForm);
+        handleClickAndKeypress($button, cancelSubmission);
     }
 
     /**
@@ -1029,27 +1126,41 @@ $(document).on('turbolinks:load', function() {
      * Initialize each form field then update any fields associated with
      * server-provided metadata.
      *
-     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {Selector}      [form]        Default: {@link formElement}.
+     * @param {string|object} [start_data]  Replacement data.
      */
-    function initializeFormFields(form) {
+    function initializeFormFields(form, start_data) {
+
         const func = 'initializeFormFields:';
         let $form  = formElement(form);
-        let data   = emmaDataElement($form).val();
-        if (data) {
-            try {
-                data = JSON.parse(data);
-            }
-            catch (err) {
-                consoleWarn(func, err, '-', 'data:', data);
-                data = undefined;
-            }
+
+        let data = {};
+        if (start_data) {
+            extractData(start_data);
+        } else {
+            extractData(emmaDataElement($form).val());
+            extractData(revertDataElement($form).val());
         }
-        data = data || {};
+
         formFields($form).each(function() {
             initializeInputField(this, data);
         });
         resolveRelatedFields();
         disableSubmit($form);
+        clearFormState($form);
+
+        /**
+         * Transform data supplied through an element value and merge in into
+         * the initialization data object.
+         *
+         * @param {string|object} value
+         */
+        function extractData(value) {
+            const result = fromJSON(value, func);
+            if (result) {
+                $.extend(data, result);
+            }
+        }
     }
 
     // ========================================================================
@@ -1066,6 +1177,51 @@ $(document).on('turbolinks:load', function() {
     function isUppyInitialized(container) {
         let $container = formContainer(container);
         return isPresent($container.find('.uppy-Root'));
+    }
+
+    /**
+     * Initialize Uppy file uploader.
+     *
+     * @param {Selector} form
+     */
+    function initializeUppy(form) {
+
+        /** @type {UppyFeatureSettings} feature */
+        let feature    = $.extend({}, FEATURES);
+        let $form      = $(form);
+        let $container = $form.parent();
+
+        // Get targets for these features; disable the feature if its target is
+        // not present.
+        if (feature.drag_and_drop) {
+            feature.drag_and_drop = $container.find(DRAG_AND_DROP_SELECTOR)[0];
+        }
+        if (feature.image_preview) {
+            feature.image_preview = $container.find(PREVIEW_SELECTOR)[0];
+        }
+
+        // === Initialization ===
+
+        let uppy = buildUppy($form, feature);
+
+        // Events for these features are also applicable to Uppy.Dashboard.
+        if (feature.dashboard) {
+            feature.replace_input = true;
+            feature.drag_and_drop = true;
+            feature.progress_bar  = true;
+            feature.status_bar    = true;
+        }
+
+        // === Event handlers ===
+
+        setupHandlers(uppy, $form, feature);
+
+        if (feature.popup_messages) { setupMessages(uppy,  feature); }
+        if (feature.debugging)      { setupDebugging(uppy, feature); }
+
+        // === Display cleanup ===
+
+        if (feature.replace_input) { initializeFileSelectContainer($form); }
     }
 
     /**
@@ -1630,7 +1786,10 @@ $(document).on('turbolinks:load', function() {
                 setOriginalValue(this);
             });
             if (new_value) {
-                value = new_value.trim();
+                value = new_value;
+                if ((trim !== false) && (typeof value === 'string')) {
+                    value = value.trim();
+                }
                 let index = -1;
                 // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
                 $inputs.each(function(i) {
@@ -1649,7 +1808,7 @@ $(document).on('turbolinks:load', function() {
                     }
                 });
                 if (index >= 0) {
-                    setValue($inputs[index], new_value, trim, init);
+                    setValue($inputs[index], value, trim, init);
                 }
             }
         }
@@ -2038,7 +2197,7 @@ $(document).on('turbolinks:load', function() {
     function setValue(target, new_value, trim, init) {
         let $item = $(target);
         let value = new_value || '';
-        if (trim !== false) {
+        if ((trim !== false) && value && (typeof value === 'string')) {
             value = value.trim();
         }
         if (init) {
@@ -2221,7 +2380,7 @@ $(document).on('turbolinks:load', function() {
             fetchIndexEntries(search, useParentEntryMetadata, searchFailure);
         });
 
-        // If the prompt is cancelled, silently restore the source repository
+        // If the prompt is canceled, silently restore the source repository
         // selection to its previous setting.
 
         let $cancel = parentEntrySelect($form).find('.search-cancel');
@@ -2606,6 +2765,7 @@ $(document).on('turbolinks:load', function() {
 
         let $form   = formElement(form);
         let $fields = inputFields($form);
+
         handleEvent($fields, 'change', onChange);
         handleEvent($fields, 'cut',    debounce(onCut));
         handleEvent($fields, 'paste',  debounce(onPaste));
@@ -2672,6 +2832,7 @@ $(document).on('turbolinks:load', function() {
             updateInputField($field, value, trim);
             updateRelatedField($field);
             validateForm($form);
+            clearFormState($form);
         }
     }
 
@@ -2741,34 +2902,122 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
 
     /**
-     * Cancel the current action.
+     * Get data to send to revert a canceled edit.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {object|undefined}
+     */
+    function revertEditData(form) {
+        const func = 'revertEditData';
+        const data = revertDataElement(form).val();
+        return (data && (data !== '{}')) ? fromJSON(data, func) : undefined;
+    }
+
+    /**
+     * Actively cancel the current action.
+     *
+     * The Upload record is restored to its original state (non-existence in
+     * the case of the create form).
+     *
+     * For the upload form, the
      *
      * @param {jQuery.Event} [event]
      */
-    function cancelForm(event) {
-        let $button;
-        if (typeof event === 'object') {
-            event.stopPropagation();
-            $button = $(event.target);
-        } else {
-            $button = $(event || this);
-        }
-        const data_path = $button.attr('data-path') || '';
-        const curr_path = window.location.pathname;
-        const curr_url  = window.location.origin + curr_path;
-        const back_here =
-            data_path.startsWith(curr_path) || data_path.startsWith(curr_url);
+    function cancelSubmission(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        let $button = $(event.target);
         let $form   = formElement($button);
-        const db_id = dbId($form);
-        let reset, redirect;
-        if (back_here && fileSelected($form) && !canSubmit($form)) {
-            reset    = true;
-            redirect = makeUrl(data_path, { id: db_id });
-        } else {
-            redirect = data_path || Emma.Upload.Path.index;
+        if (!formState($form)) {
+            let fields = undefined;
+            if (isUpdateForm($form)) {
+                fields = revertEditData($form);
+            }
+            setFormCanceled($form);
+            cancelCurrent($form, $button.attr('data-path'), fields);
         }
-        const params = { id: db_id, redirect: redirect, reset: reset };
+    }
+
+    /**
+     * Cancel the current action.
+     *
+     * @param {Selector}      [form]        Default: {@link formElement}.
+     * @param {string}        [redirect]
+     * @param {string|object} [fields]
+     */
+    function cancelCurrent(form, redirect, fields) {
+        let $form   = formElement(form);
+        const db_id = dbId($form);
+        let params  = { id: db_id, redirect: Emma.Upload.Path.index };
+        if (redirect) {
+            const curr_path = window.location.pathname;
+            const curr_url  = window.location.origin + curr_path;
+            const back_here =
+                redirect.startsWith(curr_path) ||
+                redirect.startsWith(curr_url);
+            if (back_here && fileSelected($form) && !canSubmit($form)) {
+                params.reset    = true;
+                params.redirect = makeUrl(redirect, { id: db_id });
+            } else {
+                params.redirect = redirect;
+            }
+        }
+        if (fields) {
+            /** @type {string} data */
+            let data = fields;
+            if (typeof data !== 'string') {
+                data = JSON.stringify(data);
+            }
+            params.revert = encodeURIComponent(data);
+        }
         cancelAction(makeUrl(Emma.Upload.Path.cancel, params));
+    }
+
+    /**
+     * Abandon the current action (by moving through history or clicking on
+     * another link).
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     */
+    function abortSubmission(form) {
+        let $form   = formElement(form);
+        const state = formState($form);
+        if (!state) {
+            // Neither Submit nor Cancel have been invoked yet.
+            let fields = undefined;
+            if (isUpdateForm($form)) {
+                fields = revertEditData($form);
+            }
+            setFormCanceled($form);
+            abortCurrent($form, fields);
+        }
+    }
+
+    /**
+     * Inform the server that the submission should be canceled.
+     *
+     * @param {Selector}      [form]        Default: {@link formElement}.
+     * @param {string|object} [fields]
+     */
+    function abortCurrent(form, fields) {
+        let $form   = formElement(form);
+        const db_id = dbId($form);
+        let params  = { id: db_id };
+        if (fields) {
+            /** @type {string} */
+            let data = fields;
+            if (typeof data !== 'string') {
+                data = JSON.stringify(data);
+            }
+            params.revert = encodeURIComponent(data);
+        }
+        $.ajax({
+            url:     makeUrl(Emma.Upload.Path.cancel, params),
+            type:    'POST',
+            headers: { 'X-CSRF-Token': Rails.csrfToken() },
+            async:   false
+        });
     }
 
     /**
@@ -2777,160 +3026,157 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Default: {@link formElement}.
      */
     function monitorRequestResponse(form) {
-        const event_handlers = {
-            'ajax:before':     beforeAjax,
-            'ajax:beforeSend': beforeAjaxFormSubmission,
-            'ajax:stopped':    onAjaxStopped,
-            'ajax:success':    onAjaxFormSubmissionSuccess,
-            'ajax:error':      onAjaxFormSubmissionError,
-            'ajax:complete':   onAjaxFormSubmissionComplete
-        };
+
         let $form = formElement(form);
-        $.each(event_handlers, function(type, handler) {
-            handleEvent($form, type, handler);
-        });
-    }
 
-    /**
-     * Before the XHR request is generated.
-     *
-     * @param {object} arg
-     */
-    function beforeAjax(arg) {
-        // debug('ajax:before', '-', 'arguments', Array.from(arguments));
-    }
+        handleEvent($form, 'ajax:before',     beforeAjax);
+        handleEvent($form, 'ajax:beforeSend', beforeAjaxFormSubmission);
+        handleEvent($form, 'ajax:stopped',    onAjaxStopped);
+        handleEvent($form, 'ajax:success',    onAjaxFormSubmissionSuccess);
+        handleEvent($form, 'ajax:error',      onAjaxFormSubmissionError);
+        handleEvent($form, 'ajax:complete',   onAjaxFormSubmissionComplete);
 
-    /**
-     * Pre-process form fields before the form is actually submitted.
-     *
-     * @param {object} arg
-     */
-    function beforeAjaxFormSubmission(arg) {
-        // debug('ajax:beforeSend', '-', 'arguments', Array.from(arguments));
-        let $form = formElement();
+        /**
+         * Before the XHR request is generated.
+         *
+         * @param {object} arg
+         */
+        function beforeAjax(arg) {
+            // debug('ajax:before - arguments', Array.from(arguments));
+        }
 
-        // Disable empty database fields so they are not transmitted back as
-        // form data.
-        databaseInputFields($form).each(function() {
-            if (this.placeholder || (this.value === EMPTY_VALUE)) {
-                this.disabled = true;
+        /**
+         * Pre-process form fields before the form is actually submitted.
+         *
+         * @param {object} arg
+         */
+        function beforeAjaxFormSubmission(arg) {
+            // debug('ajax:beforeSend - arguments', Array.from(arguments));
+
+            // Disable empty database fields so they are not transmitted back
+            // as form data.
+            databaseInputFields($form).each(function() {
+                if (this.placeholder || (this.value === EMPTY_VALUE)) {
+                    this.disabled = true;
+                }
+            });
+
+            // If the source repository control is disabled (when editing a
+            // completed submission), re-enable it so that it *is* transmitted.
+            let $repo = sourceRepositoryMenu($form);
+            if ($repo.prop('disabled')) {
+                $repo.prop('disabled', false);
             }
-        });
-
-        // If the source repository control is disabled (when editing a
-        // completed submission), re-enable it so that it *is* transmitted.
-        let $repo = sourceRepositoryMenu($form);
-        if ($repo.prop('disabled')) {
-            $repo.prop('disabled', false);
         }
-    }
 
-    /**
-     * Called if "ajax:before" or 'ajax:beforeSend' rejects the request.
-     *
-     * @param {object} arg
-     */
-    function onAjaxStopped(arg) {
-        debug('ajax:stopped', '-', 'arguments', Array.from(arguments));
-    }
-
-    /**
-     * Process rails-ujs 'ajax:success' event data.
-     *
-     * @param {object} arg
-     */
-    function onAjaxFormSubmissionSuccess(arg) {
-        // debug('ajax:success', '-', 'arguments', Array.from(arguments));
-        const data  = arg.data;
-        const event = arg.originalEvent || {};
-        // noinspection JSUnusedLocalSymbols
-        const [_resp, _status_text, xhr] = event.detail || [];
-        const status = xhr.status;
-        onCreateSuccess(data, status, xhr);
-    }
-
-    /**
-     * Process rails-ujs 'ajax:error' event data.
-     *
-     * @param {object} arg
-     */
-    function onAjaxFormSubmissionError(arg) {
-        // debug('ajax:error', '-', 'arguments', Array.from(arguments));
-        const error = arg.data;
-        const event = arg.originalEvent || {};
-        // noinspection JSUnusedLocalSymbols
-        const [_resp, _status_text, xhr] = event.detail || [];
-        const status = xhr.status;
-        consoleError('ajax:error', status, 'error', error, 'xhr', xhr);
-        onCreateError(xhr, status, error);
-    }
-
-    /**
-     * Process rails-ujs 'ajax:complete' event data.
-     *
-     * @param {object} arg
-     */
-    function onAjaxFormSubmissionComplete(arg) {
-        // debug('ajax:complete - arguments', Array.from(arguments));
-        onCreateComplete();
-    }
-
-    /**
-     * When called this indicates that Shrine has validated the uploaded file
-     * and has created an Upload record which references it.
-     *
-     * @param {object}         data
-     * @param {string}         status
-     * @param {XMLHttpRequest} xhr
-     */
-    function onCreateSuccess(data, status, xhr) {
-        const func  = 'onCreateSuccess:';
-        const flash = compact(extractFlashMessage(xhr));
-        const entry = (flash.length > 1) ? 'entries' : 'entry';
-        let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
-        if (isPresent(flash)) {
-            message += ' for: ' + flash.join(', ');
+        /**
+         * Called if "ajax:before" or 'ajax:beforeSend' rejects the request.
+         *
+         * @param {object} arg
+         */
+        function onAjaxStopped(arg) {
+            debug('ajax:stopped - arguments', Array.from(arguments));
         }
-        debug(func, message);
-        showFlashMessage(message);
-    }
 
-    /**
-     * When called this indicates that there was problem (e.g. a validation
-     * error) which has prevented the creation of an Upload record.  This also
-     * indicates that the previously-uploaded file has been removed from
-     * storage.
-     *
-     * @param {XMLHttpRequest} xhr
-     * @param {string}         status
-     * @param {string}         error
-     */
-    function onCreateError(xhr, status, error) {
-        const func  = 'onCreateError:';
-        const flash = compact(extractFlashMessage(xhr));
-        let message = `EMMA entry not ${termActionOccurred()}:`; // TODO: I18n
-        if (flash.length > 1) {
-            message += "\n" + flash.join("\n");
-        } else if (flash.length === 1) {
-            message += ' ' + flash[0];
-        } else {
-            message += ` ${status}: ${error}`;
+        /**
+         * Process rails-ujs 'ajax:success' event data.
+         *
+         * @param {object} arg
+         */
+        function onAjaxFormSubmissionSuccess(arg) {
+            // debug('ajax:success - arguments', Array.from(arguments));
+            const data  = arg.data;
+            const event = arg.originalEvent || {};
+            // noinspection JSUnusedLocalSymbols
+            const [_resp, _status_text, xhr] = event.detail || [];
+            const status = xhr.status;
+            onCreateSuccess(data, status, xhr);
         }
-        consoleWarn(func, message);
-        showFlashError(message);
-    }
 
-    /**
-     * Called at the end of the submission response.
-     *
-     * @param {XMLHttpRequest} [xhr]
-     * @param {string}         [status]
-     */
-    function onCreateComplete(xhr, status) {
-        // Restore empty database fields.
-        databaseInputFields().each(function() {
-            this.disabled = false;
-        });
+        /**
+         * Process rails-ujs 'ajax:error' event data.
+         *
+         * @param {object} arg
+         */
+        function onAjaxFormSubmissionError(arg) {
+            // debug('ajax:error - arguments', Array.from(arguments));
+            const error = arg.data;
+            const event = arg.originalEvent || {};
+            // noinspection JSUnusedLocalSymbols
+            const [_resp, _status_text, xhr] = event.detail || [];
+            const status = xhr.status;
+            consoleError('ajax:error', status, 'error', error, 'xhr', xhr);
+            onCreateError(xhr, status, error);
+        }
+
+        /**
+         * Process rails-ujs 'ajax:complete' event data.
+         *
+         * @param {object} arg
+         */
+        function onAjaxFormSubmissionComplete(arg) {
+            // debug('ajax:complete - arguments', Array.from(arguments));
+            onCreateComplete();
+        }
+
+        /**
+         * When called this indicates that Shrine has validated the uploaded
+         * file and has created an Upload record which references it.
+         *
+         * @param {object}         data
+         * @param {string}         status
+         * @param {XMLHttpRequest} xhr
+         */
+        function onCreateSuccess(data, status, xhr) {
+            const func  = 'onCreateSuccess:';
+            const flash = compact(extractFlashMessage(xhr));
+            const entry = (flash.length > 1) ? 'entries' : 'entry';
+            let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
+            if (isPresent(flash)) {
+                message += ' for: ' + flash.join(', ');
+            }
+            debug(func, message);
+            showFlashMessage(message);
+            setFormSubmitted($form);
+        }
+
+        /**
+         * When called this indicates that there was problem (e.g. a validation
+         * error) which has prevented the creation of an Upload record.  This
+         * also indicates that the previously-uploaded file has been removed
+         * from storage.
+         *
+         * @param {XMLHttpRequest} xhr
+         * @param {string}         status
+         * @param {string}         error
+         */
+        function onCreateError(xhr, status, error) {
+            const func      = 'onCreateError:';
+            const flash     = compact(extractFlashMessage(xhr));
+            const processed = termActionOccurred($form);
+            let message     = `EMMA entry not ${processed}:`; // TODO: I18n
+            if (flash.length > 1) {
+                message += "\n" + flash.join("\n");
+            } else if (flash.length === 1) {
+                message += ' ' + flash[0];
+            } else {
+                message += ` ${status}: ${error}`;
+            }
+            consoleWarn(func, message);
+            showFlashError(message);
+        }
+
+        /**
+         * Restore empty database fields at the end of the submission response.
+         *
+         * @param {XMLHttpRequest} [xhr]
+         * @param {string}         [status]
+         */
+        function onCreateComplete(xhr, status) {
+            databaseInputFields($form).each(function() {
+                this.disabled = false;
+            });
+        }
     }
 
     // ========================================================================
@@ -3282,6 +3528,18 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The hidden element with information supporting reversion of the record
+     * when canceling/aborting a modification submission.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {jQuery}
+     */
+    function revertDataElement(form) {
+        return formElement(form).find('#revert_data');
+    }
+
+    /**
      * The hidden element with metadata information supplied by the server.
      *
      * @param {Selector} [form]       Default: {@link formElement}.
@@ -3498,7 +3756,7 @@ $(document).on('turbolinks:load', function() {
     /**
      * Indicate whether the form can be canceled.
      *
-     * @param {Selector} [form]       Passed to {@link submitButton}.
+     * @param {Selector} [form]       Passed to {@link cancelButton}.
      *
      * @returns {boolean}
      */
@@ -3527,6 +3785,73 @@ $(document).on('turbolinks:load', function() {
      */
     function fileSelected(form) {
         return uploadedFilenameDisplay(form).css('display') !== 'none';
+    }
+
+    /**
+     * Mark the form submission state as submitted.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [submitted]  If *true* or undefined then mark the form
+     *                                  as submitted; if *false* then mark the
+     *                                  form as unsubmitted.
+     */
+    function setFormSubmitted(form, submitted) {
+        const value = (submitted === false) ? undefined : FORM_STATE.SUBMITTED;
+        setFormState(form, value);
+    }
+
+    /**
+     * Mark the form submission state as canceled.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {boolean}  [canceled]  If *true* or undefined then mark the form
+     *                                  as submitted; if *false* then mark the
+     *                                  form as unsubmitted.
+     */
+    function setFormCanceled(form, canceled) {
+        const value = (canceled === false) ? undefined : FORM_STATE.CANCELED;
+        setFormState(form, value);
+    }
+
+    /**
+     * The state of form submission.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     *
+     * @returns {string|undefined}
+     */
+    function formState(form) {
+        const attr = 'form-state';
+        return formElement(form).data(attr);
+    }
+
+    /**
+     * Clear the form submission state.
+     *
+     * @param {Selector} [form]       Default: passed to {@link setFormState}.
+     */
+    function clearFormState(form) {
+        setFormState(form, undefined);
+    }
+
+    /**
+     * Mark the form submission state.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
+     * @param {*}        [state]      If missing, clears the state.
+     *
+     * @returns {string|undefined}
+     */
+    function setFormState(form, state) {
+        const attr  = 'form-state';
+        let $form   = formElement(form);
+        const value = isDefined(state) ? state.toString() : undefined;
+        if (isDefined(value)) {
+            $form.data(attr, value);
+        } else {
+            $form.removeData(attr);
+        }
+        return value;
     }
 
     // ========================================================================
@@ -3795,6 +4120,15 @@ $(document).on('turbolinks:load', function() {
      */
     function debug(...args) {
         if (DEBUGGING) { consoleLog(...args); }
+    }
+
+    /**
+     * Emit a console message if debugging.
+     *
+     * @param {...*} args
+     */
+    function debugSection(...args) {
+        if (DEBUGGING) { consoleWarn('>>>>>', ...args, '<<<<<'); }
     }
 
 });

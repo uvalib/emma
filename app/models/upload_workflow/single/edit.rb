@@ -91,7 +91,13 @@ module UploadWorkflow::Single::Edit::Actions
     super
   end
 
-  # wf_cancel_submission
+  # Canceling an edit requires reverting data fields to their original values
+  # which depends on whether the original record was in the :create phase or
+  # in the :edit phase (that is, editing a previously edited record).
+  #
+  # The original field values are supplied to the client form in a hidden
+  # 'revert_data' field, which is supplied back to the workflow via the :revert
+  # URL parameter when canceling.
   #
   # @param [Array] event_args
   #
@@ -101,8 +107,15 @@ module UploadWorkflow::Single::Edit::Actions
     __debug_args(binding)
     opt = event_args.extract_options!&.except(:redirect) || {}
     reset_record(opt)
-    set_workflow_phase(:create)
-    set_workflow_state(:completed)
+    if (revert_data = opt[:revert])
+      final_phase = revert_data[:phase]
+      final_state = revert_data[:state]
+      set_workflow_phase(final_phase) if final_phase
+      set_workflow_state(final_state) if final_state
+      unless final_phase == workflow_column.to_s
+        record.set_state(nil, workflow_column)
+      end
+    end
   end
 
   # wf_index_update

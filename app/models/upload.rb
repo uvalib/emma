@@ -196,19 +196,21 @@ class Upload < ApplicationRecord
     control, fields = partition_options(opt, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
 
-    # Handle the :reset case separately.  If any additional data was supplied
-    # it will be ignored.
+    # Handle the :reset case separately.  If any of the fields to reset are
+    # supplied, those values are used here.  If any additional data was
+    # supplied it will be ignored.
     if mode == :reset
-      log_ignored('reset: ignored options', fields) if fields.present?
-      if under_review?
-        nullify = %i[review_user review_success review_comment reviewed_at]
-      elsif edit_phase
-        nullify = %i[edit_user edit_file_data edit_emma_data edited_at]
-      else
-        nullify = DATA_COLUMNS
-      end
-      attr = nullify.map { |col| [col, nil] }.to_h
+      reset_columns =
+        if under_review?
+          %i[review_user review_success review_comment reviewed_at]
+        elsif edit_phase
+          %i[edit_user edit_file_data edit_emma_data edited_at]
+        else
+          DATA_COLUMNS
+        end
+      attr = reset_columns.map { |col| [col, fields.delete(col)] }.to_h
       attr[:updated_at] = self[:created_at] if being_created?
+      log_ignored('reset: ignored options', fields) if fields.present?
       delete_file unless under_review?
       super(attr)
       return

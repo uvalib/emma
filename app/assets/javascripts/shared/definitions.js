@@ -114,6 +114,30 @@ function asString(item, limit) {
     return left + result + right;
 }
 
+/**
+ * Generate an object from JSON (used in place of `JSON.parse`).
+ *
+ * @param {*}      item
+ * @param {string} [caller]           For log messages.
+ *
+ * @returns {object|undefined}
+ */
+function fromJSON(item, caller) {
+    const func = caller || 'fromJSON';
+    let result = undefined;
+    if (typeof item == 'object') {
+        result = item;
+    } else if (typeof item === 'string') {
+        try {
+            result = JSON.parse(item);
+        }
+        catch (err) {
+            consoleWarn(func, err, '-', 'item:', item);
+        }
+    }
+    return result;
+}
+
 // noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Generate a copy of the item without blank elements.
@@ -313,6 +337,17 @@ function isMissing(item) {
  */
 function isPresent(item) {
     return notEmpty(item);
+}
+
+/**
+ * Indicate whether the item is an Event or jQuery.Event.
+ *
+ * @param {*} item
+ *
+ * @returns {boolean}
+ */
+function isEvent(item) {
+    return (item instanceof Event) || (item instanceof jQuery.Event);
 }
 
 /**
@@ -703,6 +738,7 @@ function cancelAction(arg) {
         button = this;
     } else if (typeof arg === 'object') {
         arg.stopPropagation();
+        arg.preventDefault();
         button = arg.target;
     } else if (arg && !arg.match(/^back$|^\/|^https?:|^javascript:/i)) {
         button = arg;
@@ -1017,4 +1053,32 @@ function isInternetExplorer() {
     // noinspection PlatformDetectionJS
     const ua = navigator.userAgent || '';
     return ua.includes('MSIE ') || ua.includes('Trident/');
+}
+
+// ============================================================================
+// Functions - Turbolinks
+// ============================================================================
+
+const DEBUG_TURBOLINKS = true;
+
+// noinspection ES6ConvertVarToLetConst
+/*var $document = $(document);*/
+
+if (DEBUG_TURBOLINKS) {
+    [
+        'click',
+        'before-visit',
+        'visit',
+        'request-start',
+        'request-end',
+        'before-cache',
+        'before-render',
+        'render',
+        'load',
+    ].forEach(function(name) {
+        const event_name = `turbolinks:${name}`;
+        handleEvent($(document), event_name, function() {
+            console.warn(`========== ${event_name} ==========`);
+        });
+    });
 }

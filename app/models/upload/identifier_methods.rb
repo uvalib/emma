@@ -13,6 +13,8 @@ module Upload::IdentifierMethods
     base.send(:extend, self)
   end
 
+  include Emma::Common
+
   extend self
 
   # ===========================================================================

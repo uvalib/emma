@@ -64,7 +64,11 @@ module UploadHelper
   #
   UPLOAD_PATH = {
     index:    (UPLOAD_URL = '/upload'), # GET /upload
+    new:      "#{UPLOAD_URL}/new",      # GET /upload/new
+    edit:     "#{UPLOAD_URL}/edit",     # GET /upload/edit
     create:   UPLOAD_URL,               # POST /upload
+    renew:    "#{UPLOAD_URL}/renew",    # POST /upload/renew
+    reedit:   "#{UPLOAD_URL}/reedit",   # POST /upload/reedit
     cancel:   "#{UPLOAD_URL}/cancel",   # POST /upload/cancel
     endpoint: "#{UPLOAD_URL}/endpoint"  # POST /upload/endpoint
   }.deep_freeze
@@ -778,7 +782,7 @@ module UploadHelper
   #
   UPLOAD_FORM_FIELDS =
     UPLOAD_DATABASE_FIELDS
-      .reject { |_, v| %i[file_data emma_data].include?(v) }
+      .except(:file_data, :emma_data)
       .merge(SEARCH_RECORD_FIELDS)
       .deep_freeze
 
@@ -856,6 +860,11 @@ module UploadHelper
       form_with(model: item, **opt) do |f|
         data_opt = { class: 'upload-hidden' }
 
+        # Extra information to support reverting the record when canceled.
+        revert_data = item&.get_revert_data&.to_json
+        revert_data = data_opt.merge!(id: 'revert_data', value: revert_data)
+        revert_data = f.hidden_field(:revert_data, revert_data)
+
         # Communicate :file_data through the form as a hidden field.
         file_data = item&.active_file_data || item&.file_data
         file_data = data_opt.merge!(id: 'upload_file_data', value: file_data)
@@ -889,7 +898,8 @@ module UploadHelper
         fields = upload_field_container(item)
 
         # All form sections.
-        [emma_data, file_data, controls, fields].compact.join("\n").html_safe
+        sections = [emma_data, file_data, revert_data, controls, fields]
+        safe_join(sections, "\n")
       end
     end
   end

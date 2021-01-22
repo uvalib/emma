@@ -1,25 +1,7 @@
 <%# app/views/upload/retrieval.html.erb -%>
 <%-
   # Fall-back page for a failed Upload retrieval action.
-
-  title ||= t('emma.download.label')
-  error ||= 'No URL provided' # TODO: I18n
-  help  ||= nil
-
-  unless modal?
-    set_page_title(title)
-    set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
-  end
-
-  error &&= t('emma.download.error.server')
-
+  title ||= t('emma.download.title', default: :'emma.download.label')
+  error ||= t('emma.download.error.server')
 -%>
-
-<h1 class="heading"><%= title -%><%= help -%></h1>
-
-<%= page_description_section %>
-
-<p><%= error -%></p>
-
-<%= page_notes_section %>
+<%= render 'upload/fallback', title: title, error: error %>

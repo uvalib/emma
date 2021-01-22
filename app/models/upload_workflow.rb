@@ -2029,7 +2029,7 @@ class UploadWorkflow < Workflow::Base
           #
           def self.workflow_column(*)
             @workflow_state_column_name ||=
-              safe_const_get(:STATE_COLUMN, false) || super
+              safe_const_get(:STATE_COLUMN) || super
           end
 
           # Return the variant subclass type.

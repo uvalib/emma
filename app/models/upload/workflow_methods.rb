@@ -121,12 +121,21 @@ module Upload::WorkflowMethods
 
   public
 
+  # The database column currently associated with the workflow phase of the
+  # record.
+  #
+  # @return [Symbol]
+  #
+  def phase_column
+    WORKFLOW_PHASE_COLUMN
+  end
+
   # Current workflow phase of the record.
   #
   # @return [Symbol, nil]
   #
   def workflow_phase
-    self[WORKFLOW_PHASE_COLUMN]&.to_sym
+    self[phase_column]&.to_sym
   end
 
   # Indicate whether this record is currently being used in an Edit workflow.
@@ -181,7 +190,7 @@ module Upload::WorkflowMethods
   # @return [Symbol]  If the field was *nil* it will come back as :''.
   #
   def get_phase
-    dynamic_get_field(WORKFLOW_PHASE_COLUMN).to_s.to_sym
+    dynamic_get_field(phase_column).to_s.to_sym
   end
 
   # Set the current real-time value of the record's workflow phase.
@@ -201,7 +210,7 @@ module Upload::WorkflowMethods
       "Upload##{__method__}: #{old_phase.inspect} -> #{new_phase.inspect}"
     end
     unless new_phase == old_phase
-      dynamic_set_field(new_phase.presence, WORKFLOW_PHASE_COLUMN)
+      dynamic_set_field(new_phase.presence, phase_column)
     end
     new_phase.to_sym
   end
@@ -481,6 +490,41 @@ module Upload::WorkflowMethods
       Log.debug { "##{__method__}: update with edit data: #{opt.inspect}" }
       update(opt.merge!(finishing_edit: true))
     end
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Extra information communicated to the Upload form to support reverting
+  # the record when backing out of edit changes.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  attr_accessor :revert_data
+
+  # @type [Array<Symbol>]
+  REVERT_DATA_FIELDS = [
+    REVERT_FIELDS      = %i[phase state updated_at].freeze,
+    REVERT_EDIT_FIELDS = %i[edit_user edit_state edited_at].freeze,
+  ].flatten.uniq.freeze
+
+  # Set @revert_data.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def set_revert_data
+    @revert_data = fields.slice(*REVERT_DATA_FIELDS).compact
+  end
+
+  # Safely get @revert_data.
+  #
+  # @return [Hash{Symbol=>*}]
+  #
+  def get_revert_data
+    @revert_data || {}
   end
 
 end

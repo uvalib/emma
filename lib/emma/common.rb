@@ -92,7 +92,7 @@ module Emma::Common
 
   # Indicate whether the given string value contains only decimal digits.
   #
-  # @param [String, Symbol, Numeric, nil] value
+  # @param [*] value
   #
   def digits_only?(value)
     return true  if value.is_a?(Integer)

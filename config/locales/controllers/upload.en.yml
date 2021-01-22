@@ -354,6 +354,8 @@ en:
         success:        'Operation successful %{file}'
         failure:        'Could not proceed: %{error}'
 
+      # =======================================================================
+
       index:
         label:          'Uploads'
         title:          'Your EMMA Uploads'
@@ -382,6 +384,8 @@ en:
         display_fields: # @see 'en.emma.upload.record'
           - !ruby/symbol all
 
+      # =======================================================================
+
       show:
         label:          'Upload'
         title:          'Uploaded file "%{name}"'
@@ -396,6 +400,8 @@ en:
           - !ruby/symbol all
           - fmt:        'Fmt'
           - ext:        'Ext'
+
+      # =======================================================================
 
       new:              &UPLOAD_NEW
         label:          'Create'
@@ -434,6 +440,8 @@ en:
         success:        'Created EMMA entry for: %{file}'
         failure:        'Could not create entry: %{error}'
 
+      # =======================================================================
+
       edit:             &UPLOAD_EDIT
         label:          'Change'
         title:          'Modify Your EMMA Submission'
@@ -471,6 +479,8 @@ en:
         success:        'Updated EMMA entry for %{file}'
         failure:        'Could not update EMMA entry: %{error}'
 
+      # =======================================================================
+
       delete:           &UPLOAD_DELETE
         label:          'Remove'
         title:          'Remove Your EMMA Submission'
@@ -505,8 +515,12 @@ en:
         success:        'Removed EMMA entry for %{file}'
         failure:        'Could not remove EMMA entry: %{error}'
 
+      # =======================================================================
+
       new_select:
         <<: *UPLOAD_NEW
+
+      # =======================================================================
 
       edit_select:
         <<: *UPLOAD_EDIT
@@ -515,12 +529,16 @@ en:
           - delete_select
           - admin
 
+      # =======================================================================
+
       delete_select:
         <<: *UPLOAD_DELETE
 
         page_controls:
           - edit_select
           - admin
+
+      # =======================================================================
 
       bulk_index:
         label:          'Bulk Uploads'
@@ -536,6 +554,8 @@ en:
           - bulk_edit
           - bulk_delete
           - admin
+
+      # =======================================================================
 
       bulk_new:         &UPLOAD_BULK_NEW
         label:          'Bulk Upload'
@@ -574,6 +594,8 @@ en:
 
         <<: *EXPERIMENTAL
 
+      # =======================================================================
+
       bulk_edit:
         <<: *UPLOAD_BULK_NEW
         label:          'Bulk Edit'
@@ -606,6 +628,8 @@ en:
         failure:        'Could not modify entries: %{error}'
 
         <<: *EXPERIMENTAL
+
+      # =======================================================================
 
       bulk_delete:
         label:          'Bulk Delete'
@@ -646,6 +670,8 @@ en:
 
         <<: *EXPERIMENTAL
 
+      # =======================================================================
+
       cancel:
         label:          'Cancel'
         title:          'Cancel Submission'
@@ -653,12 +679,48 @@ en:
         page_controls:
           - admin
 
+      # =======================================================================
+
+      renew:
+
+        #
+        label:          'Renew'
+        title:          'Renew Record'
+        description:    |
+          If you are seeing this page, this indicates a failure of the system
+          to refresh the form for creating a new Upload record.  Please inform
+          an administrator that you encountered this page.
+
+        page_controls:
+          - admin
+
+        failure:        'Could not renew Upload record %{id}'
+
+      # =======================================================================
+
+      reedit:
+        label:          'Re-edit'
+        title:          'Re-edit Record'
+        description:    |
+          If you are seeing this page, this indicates a failure of the system
+          to refresh the form for updating a new Upload record.  Please inform
+          an administrator that you encountered this page.
+
+        page_controls:
+          - admin
+
+        failure:        'Could not reedit Upload record %{id}'
+
+      # =======================================================================
+
       check:
         label:          'Check Status'
         title:          'Checking for an update to submission status...'
 
         page_controls:
           - admin
+
+      # =======================================================================
 
       admin:
         label:          'Admin'

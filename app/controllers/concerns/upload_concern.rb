@@ -103,10 +103,11 @@ module UploadConcern
   #
   def upload_post_parameters(p = nil)
     prm  = p ? get_upload_params(p) : upload_params
-    data = prm.delete(:upload) || {}
+    data = safe_json_parse(prm.delete(:upload), default: {})
     file = data[:file]
     prm[:file_data] = file unless file.blank? || (file == '{}')
     prm[:base_url]  = request.base_url
+    prm[:revert]  &&= safe_json_parse(prm[:revert])
     @upload_params  = reject_blanks(prm)
   end
 
@@ -129,10 +130,10 @@ module UploadConcern
   # @return [Hash]
   #
   def workflow_parameters
-    upload_post_parameters.tap { |result|
-      result[:id]        = @db_id    if @db_id
-      result[:user_id]   = @user.id  if @user
-    }.except(:selected)
+    result = { id: @db_id, user_id: @user&.id }
+    result.compact!
+    result.merge!(upload_post_parameters)
+    result.except!(:selected)
   end
 
   # ===========================================================================
@@ -490,7 +491,11 @@ module UploadConcern
     opt = { meth: meth, status: status }
     xhr = request_xhr? if xhr.nil?
     if xhr && !redirect
-      head status, 'X-Flash-Message': flash_xhr(*message, **opt)
+      if message.present?
+        head status, 'X-Flash-Message': flash_xhr(*message, **opt)
+      else
+        head status
+      end
     else
       if %i[ok found].include?(status) || (200..399).include?(status)
         flash_success(*message, **opt)

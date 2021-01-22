@@ -1,0 +1,28 @@
+<%# app/views/upload/_fallback.html.erb -%>
+<%-
+  # Fall-back error page for a failed Upload action.
+
+  item   ||= @item || params[:id]
+  item     = item.id if item.respond_to?(:id)
+  action ||= params[:action]
+  title  ||= t("emma.upload.#{action}.title", default: nil)
+  title  ||= t("emma.upload.#{action}.label", default: :'emma.upload.label')
+  error  ||= t("emma.upload.#{action}.failure", id: item, default: nil)
+  error  ||= "ERROR record #{item}"
+  help   ||= nil
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(title)
+    set_page_robots(:noindex, :nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+
+<%= page_description_section %>
+
+<p><%= error -%></p>
+
+<%= page_notes_section %>
