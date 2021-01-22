@@ -27,6 +27,38 @@ module IngestService::Common
 
   protected
 
+  # The ingest service actually takes its API key via headers.
+  #
+  # @param [Hash, nil] params         Default: @params.
+  #
+  # @return [Hash]                    New API parameters.
+  #
+  def api_options(params = nil)
+    super.except!(:api_key)
+  end
+
+  # Add API key header.
+  #
+  # @param [Hash, nil]         params   Default: @params.
+  # @param [Hash, nil]         headers  Default: {}.
+  # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
+  #
+  # @return [(String,Hash)]           Message body plus headers for GET.
+  # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
+  #
+  def api_headers(params = nil, headers = nil, body = nil)
+    params, headers, body = super
+    # noinspection RubyNilAnalysis
+    headers = headers.merge('X-API-Key' => api_key)
+    return params, headers, body
+  end
+
+  # ===========================================================================
+  # :section: ApiService::Common overrides
+  # ===========================================================================
+
+  protected
+
   # Send an API request.
   #
   # @param [Symbol]            verb

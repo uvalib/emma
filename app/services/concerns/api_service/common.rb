@@ -386,13 +386,16 @@ module ApiService::Common
   # Determine whether the HTTP method indicates a write rather than a read and
   # prepare the HTTP headers accordingly.
   #
-  # @param [Hash]         params      Default: @params.
-  # @param [Hash]         headers     Default: {}.
-  # @param [String, Hash] body        Default: *nil* unless `#update_request?`
+  # @param [Hash, nil]         params   Default: @params.
+  # @param [Hash, nil]         headers  Default: {}.
+  # @param [String, Hash, nil] body     Default: nil unless `#update_request?`.
   #
   # @return [(String,Hash)]           Message body plus headers for GET.
   # @return [(Hash,Hash)]             Query plus headers for PUT, POST, PATCH.
   #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
   def api_headers(params = nil, headers = nil, body = nil)
     params  ||= @params
     headers ||= {}
