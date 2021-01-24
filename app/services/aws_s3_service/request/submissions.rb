@@ -177,16 +177,18 @@ module AwsS3Service::Request::Submissions
   #
   # == Variations
   #
-  # @overload api_operation(op, *items, **opt)
+  # @overload api_operation(op, *items, **options)
+  #   @param [Symbol]                                                 op
   #   @param [Array<AwsS3::Message::SubmissionPackage, Upload, Hash>] items
-  #   @param [Hash]               options
-  #   @option opt [String]        :bucket   Override bucket implied by *items*
+  #   @param [Hash]                                                   options
+  #   @option options [String] :bucket  Override bucket implied by *items*
   #
-  # @overload api_operation(op, *sids, **opt)
-  #   @param [Array<String>]      sids
-  #   @param [Hash]               options
-  #   @option opt [String,Symbol] :repo     Used to determine S3 bucket.
-  #   @option opt [String]        :bucket   To specify S3 bucket.
+  # @overload api_operation(op, *sids, **options)
+  #   @param [Symbol]        op
+  #   @param [Array<String>] sids
+  #   @param [Hash]          options
+  #   @option options [String,Symbol] :repo     Used to determine S3 bucket.
+  #   @option options [String]        :bucket   To specify S3 bucket.
   #
   def api_operation(op, *items, **options)
     items = items.flatten

@@ -39,8 +39,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
 #
-# NOTE: This duplicates:
-# @see Bs::Message::TitleMetadataSummary
+# @note This duplicates Bs::Message::TitleMetadataSummary
 #
 # == Implementation Notes
 # Similar to Bs::Record::AssignedTitleMetadataSummary, but without fields:

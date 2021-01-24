@@ -55,7 +55,7 @@ class User::SessionsController < Devise::SessionsController
   public
 
   # == GET /users/sign_in
-  # 
+  #
   # Prompt the user for login credentials.
   #
   def new
@@ -64,7 +64,7 @@ class User::SessionsController < Devise::SessionsController
   end
 
   # == POST /users/sign_in
-  # 
+  #
   # Begin login session.
   #
   def create
@@ -77,7 +77,7 @@ class User::SessionsController < Devise::SessionsController
   end
 
   # == DELETE /users/sign_out
-  # 
+  #
   # End login session.
   #
   def destroy
@@ -96,8 +96,8 @@ class User::SessionsController < Devise::SessionsController
   public
 
   # == GET /users/sign_in_as?uid=NAME&token=AUTH_TOKEN
-  # == GET /users/sign_in_as?auth={OmniAuth::AuthHash}
-  # 
+  # == GET /users/sign_in_as?auth=(OmniAuth::AuthHash)
+  #
   # Sign in using information supplied outside of the OAuth2 flow.
   #
   # == Usage Notes

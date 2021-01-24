@@ -207,6 +207,8 @@ end
 # noinspection RubyInstanceMethodNamingConvention
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  def account_index_path(*);                      end
+  def account_index_url(*);                       end
   def api_index_path(*);                          end
   def api_index_url(*);                           end
   def artifact_index_path(*);                     end

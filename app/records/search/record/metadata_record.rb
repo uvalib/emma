@@ -48,7 +48,7 @@ __loading_begin(__FILE__)
 # @see Search::Message::SearchRecord
 #
 # @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/MetadataRecord
-# @see 'en.emma.upload.record.emma_data' in config/locales/records/upload.en.yml
+# @see file:config/locales/records/upload.en.yml en.emma.upload.record.emma_data
 #
 #--
 # noinspection DuplicatedCode

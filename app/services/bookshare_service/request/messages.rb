@@ -55,7 +55,7 @@ module BookshareService::Request::Messages
       }
     end
 
-  # == GET /v2/myMessages/{messageId}
+  # == GET /v2/myMessages/(messageId)
   #
   # == 2.8.2. Get a message of mine
   # Request a message that the user is able to see. This could be specific to
@@ -82,7 +82,7 @@ module BookshareService::Request::Messages
     }
   end
 
-  # == PUT /v2/myMessages/{messageId}
+  # == PUT /v2/myMessages/(messageId)
   #
   # == 2.8.3. Mark message as read
   # As an individual member, mark a message of mine as read or unread.

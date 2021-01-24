@@ -154,7 +154,7 @@ module SessionConcern
   #
   # @param [Time]   time              Default: `Time.now`.
   # @param [String] path              Default: `request.path`.
-  # @param [Hash]   req_params        Default: `#params`.
+  # @param [Hash]   req_params        Default: `params`.
   #
   # @return [Hash{String=>*}]
   #

@@ -60,8 +60,8 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload[?id={:id|SID|RANGE_LIST}]
-  # == GET /upload[?selected={:id|SID|RANGE_LIST}]
+  # == GET /upload[?id=(:id|SID|RANGE_LIST)]
+  # == GET /upload[?selected=(:id|SID|RANGE_LIST)]
   # == GET /upload[?group=WORKFLOW_GROUP]
   #
   # Display the current user's uploads.
@@ -99,7 +99,7 @@ class UploadController < ApplicationController
     show_search_failure(error, root_path)
   end
 
-  # == GET /upload/show/{:id|SID}
+  # == GET /upload/show/(:id|SID)
   #
   # Display a single upload.
   #
@@ -140,7 +140,7 @@ class UploadController < ApplicationController
   #
   # @see UploadController#create
   # @see UploadWorkflow::Single::Create::States#on_creating_entry
-  # @see app/assets/javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js
   #
   def new
     __debug_route
@@ -158,7 +158,7 @@ class UploadController < ApplicationController
   # @raise [UploadWorkflow::SubmitError]
   #
   # @see UploadWorkflow::Single::Create::States#on_submitting_entry
-  # @see app/assets/javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js
   #
   def create
     __debug_route
@@ -493,7 +493,7 @@ class UploadController < ApplicationController
   # @see UploadWorkflow::Single::Create::States#on_validating_entry
   # @see UploadWorkflow::Single::Edit::States#on_replacing_entry
   # @see UploadWorkflow::External#upload_file
-  # @see app/assets/javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js
   #
   def endpoint
     __debug_route
@@ -558,8 +558,8 @@ class UploadController < ApplicationController
 
   public
 
-  # == GET /upload/admin[?{deploy|deployment}={'production'|'staging'}]
-  # == GET /upload/admin[?{repo|repository}={'emma'|'ia'}]
+  # == GET /upload/admin[?(deploy|deployment)=('production'|'staging')]
+  # == GET /upload/admin[?(repo|repository)=('emma'|'ia')]
   #
   # Upload submission administration.
   #

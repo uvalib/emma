@@ -65,7 +65,7 @@ module ConfigurationHelper
   end
 
   # Find the best match from config/locales for the given partial path, first
-  # looking under "en.emma.#{controller}", then under 'en.emma.generic'.
+  # looking under "en.emma.(controller)", then under 'en.emma.generic'.
   #
   # @param [String, Array]       path         Partial I18n path.
   # @param [*, nil]              default      Returned on failure.
@@ -84,22 +84,22 @@ module ConfigurationHelper
   #
   # @example Simple path - [:button, :label]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.#{controller}.#{action}.button.label"
-  #   * "en.emma.#{controller}.generic.button.label"
-  #   * "en.emma.#{controller}.button.label"
-  #   * "en.emma.generic.#{action}.button.label"
+  #   * "en.emma.(controller).(action).button.label"
+  #   * "en.emma.(controller).generic.button.label"
+  #   * "en.emma.(controller).button.label"
+  #   * "en.emma.generic.(action).button.label"
   #   * "en.emma.generic.button.label"
   #
   # @example Branching path - [[:button1, :button2], :label]
   # Returns the most specific configuration match from the list:
-  #   * "en.emma.#{controller}.#{action}.button1.label"
-  #   * "en.emma.#{controller}.#{action}.button2.label"
-  #   * "en.emma.#{controller}.generic.button1.label"
-  #   * "en.emma.#{controller}.generic.button2.label"
-  #   * "en.emma.#{controller}.button1.label"
-  #   * "en.emma.#{controller}.button2.label"
-  #   * "en.emma.generic.#{action}.button1.label"
-  #   * "en.emma.generic.#{action}.button2.label"
+  #   * "en.emma.(controller).(action).button1.label"
+  #   * "en.emma.(controller).(action).button2.label"
+  #   * "en.emma.(controller).generic.button1.label"
+  #   * "en.emma.(controller).generic.button2.label"
+  #   * "en.emma.(controller).button1.label"
+  #   * "en.emma.(controller).button2.label"
+  #   * "en.emma.generic.(action).button1.label"
+  #   * "en.emma.generic.(action).button2.label"
   #   * "en.emma.generic.button1.label"
   #   * "en.emma.generic.button2.label"
   #

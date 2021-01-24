@@ -27,7 +27,7 @@ module BookshareService::Request::CollectionPeriodicals
 
   public
 
-  # == PUT /v2/periodicals/{seriesId}
+  # == PUT /v2/periodicals/(seriesId)
   #
   # == 2.2.1. Update periodical series metadata
   # Update the series metadata for an existing Bookshare periodical.
@@ -79,7 +79,7 @@ module BookshareService::Request::CollectionPeriodicals
       }
     end
 
-  # == PUT /v2/periodicals/{seriesId}/editions/{editionId}
+  # == PUT /v2/periodicals/(seriesId)/editions/(editionId)
   #
   # == 2.2.2. Update periodical edition metadata
   # Update the metadata of an existing periodical edition.
@@ -117,7 +117,7 @@ module BookshareService::Request::CollectionPeriodicals
       }
     end
 
-  # == DELETE /v2/periodicals/{seriesId}/editions/{editionId}
+  # == DELETE /v2/periodicals/(seriesId)/editions/(editionId)
   #
   # == 2.2.3. Withdraw a periodical edition
   # Withdraw a periodical edition.

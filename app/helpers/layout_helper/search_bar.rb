@@ -194,7 +194,7 @@ module LayoutHelper::SearchBar
 
   # search_input_target
   #
-  # @param [Symbol, String, nil] type   Default: `#params[:controller]`.
+  # @param [Symbol, String, nil] type   Default: `params[:controller]`.
   #
   # @return [Symbol]                    The controller used for searching.
   # @return [nil]                       If search input should not be enabled.
@@ -209,7 +209,7 @@ module LayoutHelper::SearchBar
   #
   # @param [Symbol, String, nil] id     Default: `#search_input_field(type)`
   # @param [Symbol, String, nil] type   Default: `#search_input_target`
-  # @param [String, nil]         value  Default: `#params[id]`.
+  # @param [String, nil]         value  Default: `params[id]`.
   # @param [Hash]                opt    Passed to #form_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -275,7 +275,7 @@ module LayoutHelper::SearchBar
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see clearSearch() in app/assets/javascripts/feature/advanced-search.js
+  # @see file:app/assets/javascripts/feature/advanced-search.js clearSearch()
   # @see HtmlHelper#icon_button
   #
   def clear_search_button(**opt)

@@ -3,7 +3,7 @@
 # ActiveStorage configuration.
 #
 # NOTE: Not used by the Shrine gem.
-# @see config/initializers/shrine.rb
+# @see file:config/initializers/shrine.rb
 
 test:
   service: Disk

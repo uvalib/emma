@@ -35,15 +35,16 @@ class ReadingList < ApplicationRecord
 
   # Indicate whether the reading list includes the indicated title or artifact.
   #
-  # @param [String, Title, Artifact]
+  # @param [String, Title, Artifact] item
   #
   def include?(item)
+    # noinspection RubyYardParamTypeMatch
     has_title?(item) || has_artifact?(item)
   end
 
   # Indicate whether the reading list includes the indicated title.
   #
-  # @param [String, Title]
+  # @param [String, Title] item
   #
   def has_title?(item)
     if item.is_a?(String)
@@ -55,7 +56,7 @@ class ReadingList < ApplicationRecord
 
   # Indicate whether the reading list includes the indicated artifact.
   #
-  # @param [String, Artifact]
+  # @param [String, Artifact] item
   #
   def has_artifact?(item)
     if item.is_a?(String)

@@ -1,6 +1,6 @@
 # test/fixtures/members.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
 # For existing members:
 # @see https://www.bookshare.org/orgAccountMembers

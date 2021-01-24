@@ -33,12 +33,14 @@ module Emma::Csv
   # == Variations
   #
   # @overload csv_parse(path, no_raise:, **opt)
-  #   @param [String]                 path  Local file path.
-  #   @param [Hash]                   opt   Passed to CSV#foreach.
+  #   @param [String]                 path      Local file path.
+  #   @param [Boolean]                no_raise
+  #   @param [Hash]                   opt       Passed to CSV#foreach.
   #
   # @overload csv_parse(io, no_raise:, **opt)
-  #   @param [IO, StringIO, IO::Like] io    IO-like object.
-  #   @param [Hash]                   opt   Passed to CSV#parse.
+  #   @param [IO, StringIO, IO::Like] io        IO-like object.
+  #   @param [Boolean]                no_raise
+  #   @param [Hash]                   opt       Passed to CSV#parse.
   #
   # == Implementation Notes
   # This addresses an observed issue with CSV#parse not enforcing UTF-8

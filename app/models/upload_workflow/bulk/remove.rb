@@ -50,9 +50,6 @@ module UploadWorkflow::Bulk::Remove::Simulation
   include UploadWorkflow::Bulk::Simulation
 end
 
-module UploadWorkflow::Bulk::Remove::Simulation
-end if UploadWorkflow::Bulk::Remove::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -63,9 +60,6 @@ module UploadWorkflow::Bulk::Remove::Events
   include UploadWorkflow::Bulk::Events
   include UploadWorkflow::Bulk::Remove::Simulation
 end
-
-module UploadWorkflow::Bulk::Remove::Events
-end if UploadWorkflow::Bulk::Remove::WORKFLOW_DEBUG
 
 module UploadWorkflow::Bulk::Remove::States
 

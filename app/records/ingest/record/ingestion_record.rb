@@ -43,7 +43,7 @@ __loading_begin(__FILE__)
 # @see Search::Record::MetadataCommonRecord
 #
 # @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IngestionRecord
-# @see 'en.emma.upload.record.emma_data' in config/locales/records/upload.en.yml
+# @see file:config/locales/records/upload.en.yml en.emma.upload.record.emma_data
 #
 #--
 # noinspection DuplicatedCode
@@ -150,7 +150,7 @@ class Ingest::Record::IngestionRecord < Ingest::Api::Record
 
   protected
 
-  # Produce standard identifiers of the form "#{prefix}:#{value}".
+  # Produce standard identifiers of the form "(prefix):(value)".
   #
   # @param [ActiveRecord::Associations::CollectionAssociation, Array<String,PublicationIdentifier>] ids
   #

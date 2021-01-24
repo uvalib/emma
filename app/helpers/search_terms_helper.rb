@@ -101,7 +101,7 @@ module SearchTermsHelper
 
   # The current type of search (as indicated by the current controller).
   #
-  # @param [Hash, Symbol, String, nil] type   Default: `#params[:controller]`.
+  # @param [Hash, Symbol, String, nil] type   Default: `params[:controller]`.
   #
   # @return [Symbol]                    The controller used for searching.
   # @return [nil]                       If searching should not be enabled.

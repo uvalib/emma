@@ -1,0 +1,4 @@
+--tag type:Type
+--hide-tag type
+--exclude lib/ext/
+--exclude lib/sim/

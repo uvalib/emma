@@ -579,7 +579,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see 'en.emma.application.deployment' in config/locales/en.yml
+  # @see file:config/locales/en.yml en.emma.application.deployment
   #
   #--
   # noinspection RailsI18nInspection
@@ -622,7 +622,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see 'en.emma.repository' in config/locales/repository.en.yml
+  # @see file:config/locales/repository.en.yml en.emma.repository
   #
   REPOSITORY =
     REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze
@@ -683,7 +683,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see 'en.emma.language.list' in config/locale/types.en.yml
+  # @see file:config/locales/types.en.yml en.emma.language.list
   #
   LANGUAGE = LANGUAGE_CONFIG[:list] || {}.freeze
 
@@ -691,7 +691,7 @@ module Api::Common
   #
   # @type [Array<Symbol>]
   #
-  # @see 'en.emma.language.primary' in config/locale/types.en.yml
+  # @see file:config/locales/types.en.yml en.emma.language.primary
   #
   PRIMARY_LANGUAGES = (LANGUAGE_CONFIG[:primary]&.map(&:to_sym) || []).freeze
 

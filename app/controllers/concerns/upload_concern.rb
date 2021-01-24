@@ -31,6 +31,8 @@ module UploadConcern
   # :section: Initialization
   # ===========================================================================
 
+  public
+
   MIME_REGISTRATION =
     FileNaming.format_classes.values.each(&:register_mime_types)
 
@@ -467,11 +469,11 @@ module UploadConcern
   #
   # == Variations
   #
-  # @overload post_response(status, item = nil, redirect: nil, xhr: nil)
+  # @overload post_response(status, item, **)
   #   @param [Symbol, Integer]          status
   #   @param [Exception, String, Array] item
   #
-  # @overload post_response(except, redirect: nil, xhr: nil)
+  # @overload post_response(except, **)
   #   @param [Exception] except
   #
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)

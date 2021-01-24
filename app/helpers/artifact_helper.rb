@@ -116,30 +116,13 @@ module ArtifactHelper
   #
   # @param [Api::Record]                     item
   # @param [String, Bs::Record::Format, nil] format
-  # @param [Hash]                            opt      Passed to #item_link
-  #                                                     except for:
-  #
-  # @option opt [String] :url                         Def: derived from *item*.
+  # @param [String, nil]                     url      Def: derived from *item*.
+  # @param [Hash]                            opt      Passed to #item_link.
   #
   # @return [ActiveSupport::SafeBuffer]   The HTML link element.
   # @return [nil]                         No link URL was provided or found.
   #
-  # == Variations
-  #
-  # @overload artifact_link(item, format, **opt)
-  #   @param [Bs::Api::Record]            item
-  #   @param [String, Bs::Record::Format] format
-  #   @param [Hash]                       opt     Passed to #item_link.
-  #   @return [ActiveSupport::SafeBuffer]
-  #
-  # @overload artifact_link(item, format, **opt)
-  #   @param [Search::Api::Record]        item
-  #   @param [String, nil]                format
-  #   @param [Hash]                       opt     Passed to #item_link.
-  #   @return [ActiveSupport::SafeBuffer, nil]
-  #
-  def artifact_link(item, format, **opt)
-    url      = opt.delete(:url)
+  def artifact_link(item, format, url: nil, **opt)
     # noinspection RubyNilAnalysis
     fmt_name = format.is_a?(Bs::Record::Format) ? format.label : item.label
     # noinspection RubyResolve
@@ -283,7 +266,7 @@ module ArtifactHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see appendFailureMessage() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js appendFailureMessage()
   #
   def download_failure(**opt)
     prepend_css_classes!(opt, DOWNLOAD_FAILURE_CLASS)

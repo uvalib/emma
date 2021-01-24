@@ -28,7 +28,7 @@ module FileFormat
   #
   # @type [Array<Symbol>]
   #
-  # @see config/locales/types.en.yml
+  # @see file:config/locales/types.en.yml
   #
   #--
   # noinspection RailsI18nInspection

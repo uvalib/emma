@@ -70,7 +70,7 @@ module ApplicationHelper
   # @param [String] path
   # @param [Array]  prefixes          Default: [params[:controller]].
   #
-  # @option prefixes.last [Hash]      Hash values to use in place of `#params`.
+  # @option prefixes.last [Hash]      Hash values to use in place of `params`.
   #
   def partial_exists?(path, *prefixes)
     return if path.blank?

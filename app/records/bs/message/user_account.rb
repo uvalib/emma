@@ -28,8 +28,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
-# NOTE: This duplicates:
-# @see Bs::Record::UserAccount
+# @note This duplicates Bs::Record::UserAccount
 #
 # == Implementation Notes
 # Similar to Bs::Message::MyAccountSummary, but adds the following fields:

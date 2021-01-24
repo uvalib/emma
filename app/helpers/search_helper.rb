@@ -260,7 +260,7 @@ module SearchHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see togglePopup() in app/assets/javascripts/feature/popup.js
+  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
   #
   #--
   # noinspection RubyResolve

@@ -1,6 +1,6 @@
 # test/fixtures/titles.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
 # For existing titles:
 # @see https://www.bookshare.org/browse/book/:bookshareId

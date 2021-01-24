@@ -28,7 +28,7 @@ module I18nHelper
 
   # The descriptions of a model managed by a controller.
   #
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
   # @param [Hash]                opt          Passed to #i18n_interpolations.
   #
   # @return [Hash]
@@ -40,7 +40,7 @@ module I18nHelper
 
   # The applicable description of a model managed by a controller.
   #
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
   # @param [Hash]                opt          Passed to #i18n_interpolations
   #                                             except for:
   #
@@ -85,7 +85,7 @@ module I18nHelper
   end
 
   # Find the best match from config/locales for the given partial path, first
-  # looking under "en.emma.#{controller}", then under 'en.emma.generic'.
+  # looking under "en.emma.(controller)", then under 'en.emma.generic'.
   #
   # @param [String, Symbol, nil] controller
   # @param [String, Array]       partial_path I18n tree below *controller*.

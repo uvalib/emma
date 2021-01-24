@@ -75,7 +75,7 @@ module LayoutHelper::Common
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see app/assets/javascripts/feature/panel.js
+  # @see file:app/assets/javascripts/feature/panel.js
   #
   def toggle_button(id:, label: nil, selector: nil, **opt)
     prepend_css_classes!(opt, 'toggle')

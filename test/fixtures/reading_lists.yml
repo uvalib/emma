@@ -1,6 +1,6 @@
 # test/fixtures/reading_lists.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
 # For existing reading lists:
 # @see https://www.bookshare.org/myReadingLists

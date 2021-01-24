@@ -79,9 +79,6 @@ module UploadWorkflow::Single::Remove::Simulation
   include UploadWorkflow::Single::Simulation
 end
 
-module UploadWorkflow::Single::Remove::Simulation
-end if UploadWorkflow::Single::Remove::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -92,9 +89,6 @@ module UploadWorkflow::Single::Remove::Events
   include UploadWorkflow::Single::Events
   include UploadWorkflow::Single::Remove::Simulation
 end
-
-module UploadWorkflow::Single::Remove::Events
-end if UploadWorkflow::Single::Remove::WORKFLOW_DEBUG
 
 module UploadWorkflow::Single::Remove::States
 

@@ -185,7 +185,7 @@ class Api::Error < RuntimeError
 
   # Error message-related keys within a Hash.
   #
-  # @param [Array<Symbol,String>]
+  # @type [Array<Symbol,String>]
   #
   MESSAGE_KEYS = %i[message messages].flat_map { |k| [k, k.to_s] }.freeze
 
@@ -266,7 +266,7 @@ class Api::Error < RuntimeError
     # @return [nil]                   If *allow_nil* is set to *true* and no
     #                                   default message is defined.
     #
-    # @see 'en.emma.error.api' in config/locales/error.en.yml
+    # @see file:config/locales/error.en.yml en.emma.error.api
     #
     def default_message(source: nil, type: nil, allow_nil: false)
       source ||= service

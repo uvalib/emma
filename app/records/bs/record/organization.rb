@@ -21,8 +21,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_organization
 #
-# NOTE: This duplicates:
-# @see Bs::Message::Organization
+# @note This duplicates Bs::Message::Organization
 #
 #--
 # noinspection DuplicatedCode

@@ -40,11 +40,11 @@ module IngestService::Request::Records
   #
   # @overload put_records(list, **opt)
   #   @param [Ingest::Message::IngestionRecordList] list
-  #   @param [Hash]                                 opt       Passed to #api.
+  #   @param [Hash]                                 opt
   #
   # @overload put_records(*records, **opt)
   #   @param [Array<::Api::Record>]                 records
-  #   @param [Hash]                                 opt       Passed to #api.
+  #   @param [Hash]                                 opt
   #
   # == HTTP response codes
   #
@@ -84,12 +84,15 @@ module IngestService::Request::Records
   #
   # @overload delete_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
+  #   @param [Hash]                                  opt
   #
   # @overload delete_records(*records, **opt)
   #   @param [Array<::Api::Record>] records
+  #   @param [Hash]                 opt
   #
   # @overload delete_records(*ids, **opt)
   #   @param [Array<String>] ids
+  #   @param [Hash]          opt
   #
   # === HTTP response codes
   #
@@ -129,12 +132,15 @@ module IngestService::Request::Records
   #
   # @overload get_records(list, **opt)
   #   @param [Ingest::Message::IdentifierRecordList] list
+  #   @param [Hash]                                  opt
   #
   # @overload get_records(*records, **opt)
   #   @param [Array<::Api::Record>] records
+  #   @param [Hash]                 opt
   #
   # @overload get_records(*ids, **opt)
   #   @param [Array<String>] ids
+  #   @param [Hash]          opt
   #
   # === HTTP response codes
   #
@@ -196,8 +202,8 @@ module IngestService::Request::Records
   # @overload record_list(record)
   #   @param [Ingest::Record::IngestionRecord] record
   #
-  # @overload record_list(record)
-  #   @param [::Api::Record, Upload, Hash] record
+  # @overload record_list(item)
+  #   @param [::Api::Record, Upload, Hash] item
   #
   def record_list(record)
     result =
@@ -228,11 +234,11 @@ module IngestService::Request::Records
   # @overload identifier_list(record)
   #   @param [Ingest::Record::IdentifierRecord] record
   #
-  # @overload identifier_list(record)
-  #   @param [::Api::Record, Upload, Hash] record
+  # @overload identifier_list(item)
+  #   @param [::Api::Record, Upload, Hash] item
   #
   # @overload identifier_list(id)
-  #   @param [String] item
+  #   @param [String] id
   #
   def identifier_list(item)
     # noinspection RubyYardParamTypeMatch

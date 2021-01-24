@@ -62,7 +62,7 @@ module LayoutHelper::Scroll
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see scrollToTop() in app/assets/javascripts/feature/scroll.js
+  # @see file:app/assets/javascripts/feature/scroll.js scrollToTop()
   #
   def scroll_to_top_button(**opt)
     opt   = merge_html_options(SCROLL_TOP, opt, { class: 'hidden' })

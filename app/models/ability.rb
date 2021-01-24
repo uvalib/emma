@@ -23,7 +23,7 @@ class Ability
   # This does not include the :manage action (which is an implicit alias for
   # "all actions").
   #
-  # @type [Hash{Symbol, Array<Symbol>}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
   # @see CanCan::Ability::Actions#default_alias_actions
   # @see CanCan::Rule#matches_action?
@@ -36,7 +36,7 @@ class Ability
 
   # Locally-defined aliases.
   #
-  # @type [Hash{Symbol, Array<Symbol>}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
   LOCAL_ACTION_ALIAS = {
     admin:       %i[manage],          # NOTE: only used for upload/admin
@@ -58,7 +58,7 @@ class Ability
   # :edit     (alias :update)
   # :destroy  (alias :delete)
   #
-  # @type [Hash{Symbol, Array<Symbol>}]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
   ACTION_ALIAS = LOCAL_ACTION_ALIAS.merge(PREDEFINED_ACTION_ALIAS).freeze
 

@@ -10,7 +10,7 @@ require 'marcel/mime_type'
 
 # Generic MIME type methods.
 #
-# @see config/initializers/mime_types.rb
+# @see file:config/initializers/mime_types.rb
 #
 module Emma::Mime
 

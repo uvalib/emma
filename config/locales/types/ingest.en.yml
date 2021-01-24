@@ -12,4 +12,4 @@ en:
 
       type:
 
-        # @see config/locales/types/search.en.yml
+        # @see file:config/locales/types/search.en.yml

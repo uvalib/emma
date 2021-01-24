@@ -59,12 +59,12 @@ module BookshareService::Request::AssignedTitles
       }
     end
 
-  # == GET /v2/assignedTitles/{userIdentifier}
+  # == GET /v2/assignedTitles/(userIdentifier)
   #
   # == 2.4.2. Get titles assigned to an organization member
   # Get a list of titles assigned to the specified organization member.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]            :start
@@ -103,13 +103,13 @@ module BookshareService::Request::AssignedTitles
       }
     end
 
-  # == POST /v2/assignedTitles/{userIdentifier}
+  # == POST /v2/assignedTitles/(userIdentifier)
   #
   # == 2.4.3. Assign a title to an organization member
   # As a sponsor or Membership Assistant, assign a specific title to a
   # particular organization member.
   #
-  # @param [User, String, nil] user         Default: @user
+  # @param [User, String, nil] user         Default: `@user`.
   # @param [String]            bookshareId
   # @param [Hash]              opt          Passed to #api.
   #
@@ -140,13 +140,13 @@ module BookshareService::Request::AssignedTitles
       }
     end
 
-  # == DELETE /v2/assignedTitles/{userIdentifier}/{bookshareId}
+  # == DELETE /v2/assignedTitles/(userIdentifier)/(bookshareId)
   #
   # == 2.4.4. Un-assign a title for an organization member
   # As a sponsor or Membership Assistant, un-assign a specific title for a
   # particular organization member.
   #
-  # @param [User, String, nil] user         Default: @user
+  # @param [User, String, nil] user         Default: `@user`.
   # @param [String]            bookshareId
   # @param [Hash]              opt          Passed to #api.
   #

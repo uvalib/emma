@@ -1,6 +1,6 @@
 # test/fixtures/users.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
 # NOTE: Extract saved access tokens from the production database User table
 # and supply them via environment variables (as indicated below).

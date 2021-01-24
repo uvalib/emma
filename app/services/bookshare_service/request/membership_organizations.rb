@@ -23,7 +23,7 @@ module BookshareService::Request::MembershipOrganizations
 
   public
 
-  # == GET /v2/organizations/{organizationId}
+  # == GET /v2/organizations/(organizationId)
   #
   # == 2.2.2. Get organization information
   # Get details about the specified organization.
@@ -115,7 +115,7 @@ module BookshareService::Request::MembershipOrganizations
       }
     end
 
-  # == GET /v2/organizations/{organizationId}/members
+  # == GET /v2/organizations/(organizationId)/members
   #
   # == 2.2.3. Get a list of members in an organization
   # Get a list of members of the given organization.
@@ -156,7 +156,7 @@ module BookshareService::Request::MembershipOrganizations
       }
     end
 
-  # == POST /v2/organizations/{organizationId}/members
+  # == POST /v2/organizations/(organizationId)/members
   #
   # == 2.2.4. Create a user for an organization
   # Create a new organization user account.

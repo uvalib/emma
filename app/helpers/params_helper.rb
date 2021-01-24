@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Support methods related to `#params` and `#session`.
+# Support methods related to `params` and `session`.
 #
 module ParamsHelper
 
@@ -96,7 +96,7 @@ module ParamsHelper
 
   # All request parameters (including :controller and :action) as a Hash.
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
   #
   # @return [Hash{Symbol=>String}]
   #
@@ -113,7 +113,7 @@ module ParamsHelper
   # The meaningful request URL parameters as a Hash (not including :controller
   # or :action).
   #
-  # @param [ActionController::Parameters, Hash, nil] p   Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
   #
   # @return [Hash{Symbol=>String}]
   #
@@ -168,7 +168,7 @@ module ParamsHelper
   # Get a reference to `session[section]`.
   #
   # @param [String, Symbol, nil] section
-  # @param [Hash, nil]           p        Default: `#params`.
+  # @param [Hash, nil]           p        Default: `params`.
   #
   # @return [Hash]
   #

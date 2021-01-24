@@ -312,12 +312,12 @@ module AccountHelper
   #
   # @param [Hash] opt                 Passed to #submit_tag except for:
   #
-  # @option opt [String, Symbol] :action    Default: `#params[:action]`.
+  # @option opt [String, Symbol] :action    Default: `params[:action]`.
   # @option opt [String]         :label     Default: based on :action.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see submitButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js submitButton()
   #
   def account_submit_button(**opt)
     opt[:config] ||= ACCOUNT_ACTION_VALUES
@@ -371,8 +371,8 @@ module AccountHelper
 
   # Generate a menu of local EMMA user account entries.
   #
-  # @param [Symbol, String] action    Default: `#params[:action]`
-  # @param [User, String]   user      Default: @user
+  # @param [Symbol, String] action    Default: `params[:action]`
+  # @param [User, String]   user      Default: '@user'
   # @param [String]         prompt
   # @param [Hash]           opt       Passed to #form_tag.
   #
@@ -437,7 +437,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelAction() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js cancelAction()
   #
   def account_delete_cancel(**opt)
     opt[:action] ||= :delete

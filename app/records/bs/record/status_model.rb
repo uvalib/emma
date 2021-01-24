@@ -12,8 +12,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_status_model
 #
-# NOTE: This duplicates:
-# @see Bs::Message::StatusModel
+# @note This duplicates Bs::Message::StatusModel
 #
 class Bs::Record::StatusModel < Bs::Api::Record
 

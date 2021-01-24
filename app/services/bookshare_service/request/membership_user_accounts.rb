@@ -26,13 +26,13 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}
+  # == GET /v2/accounts/(userIdentifier)
   #
   # == 2.1.1. Look up user account
   # Get details about the specified user account.  (Membership Assistants are
   # only allowed to search for users associated with the same Site as them.)
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::UserAccount]
@@ -58,12 +58,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}
+  # == PUT /v2/accounts/(userIdentifier)
   #
   # == 2.1.2. Update a user account
   # Update an existing user account.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]      :firstName
@@ -192,12 +192,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}/password
+  # == PUT /v2/accounts/(userIdentifier)/password
   #
   # == 2.1.16. Update user password
   # Update the password for an existing user.
   #
-  # @param [User, String, nil] user       Default: @user
+  # @param [User, String, nil] user       Default: `@user`.
   # @param [String]            password
   # @param [Hash]              opt        Passed to #api.
   #
@@ -232,12 +232,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/subscriptions
+  # == GET /v2/accounts/(userIdentifier)/subscriptions
   #
   # == 2.1.4. Get subscriptions
   # Get the list of membership subscriptions for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::UserSubscriptionList]
@@ -263,12 +263,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/subscriptions
+  # == POST /v2/accounts/(userIdentifier)/subscriptions
   #
   # == 2.1.5. Create a subscription
   # Create a new membership subscription for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [IsoDay]    :startDate                              *REQUIRED*
@@ -309,12 +309,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == GET /v2/accounts/{userIdentifier}/subscriptions/{subscriptionId}
+  # == GET /v2/accounts/(userIdentifier)/subscriptions/(subscriptionId)
   #
   # == 2.1.6. Get single subscription
   # Get the specified membership subscription for an existing user.
   #
-  # @param [User, String, nil] user             Default: @user
+  # @param [User, String, nil] user             Default: `@user`.
   # @param [String]            subscriptionId
   # @param [Hash]              opt              Passed to #api.
   #
@@ -342,12 +342,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}/subscriptions/{subscriptionId}
+  # == PUT /v2/accounts/(userIdentifier)/subscriptions/(subscriptionId)
   #
   # == 2.1.7. Update a subscription
   # Update an existing membership subscription for an existing user.
   #
-  # @param [User, String, nil] user             Default: @user
+  # @param [User, String, nil] user             Default: `@user`.
   # @param [String]            subscriptionId
   # @param [Hash]              opt              Passed to #api.
   #
@@ -420,12 +420,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/pod
+  # == GET /v2/accounts/(userIdentifier)/pod
   #
   # == 2.1.9. Get proof of disability
   # Get the list of disabilities for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::UserPodList]
@@ -451,12 +451,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/pod
+  # == POST /v2/accounts/(userIdentifier)/pod
   #
   # == 2.1.10. Create a proof of disability
   # Create a new record of a disability for an existing user.
   #
-  # @param [User, String, nil]       user             Default: @user
+  # @param [User, String, nil]       user             Default: `@user`.
   # @param [DisabilityType]          disabilityType
   # @param [ProofOfDisabilitySource] proofSource
   # @param [Hash]                    opt              Passed to #api.
@@ -487,12 +487,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}/pod/{disabilityType}
+  # == PUT /v2/accounts/(userIdentifier)/pod/(disabilityType)
   #
   # == 2.1.11. Update a proof of disability
   # Update the proof source for a disability for an existing user.
   #
-  # @param [User, String, nil]       user             Default: @user
+  # @param [User, String, nil]       user             Default: `@user`.
   # @param [DisabilityType]          disabilityType
   # @param [ProofOfDisabilitySource] proofSource
   # @param [Hash]                    opt              Passed to #api.
@@ -523,12 +523,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == DELETE /v2/accounts/{userIdentifier}/pod/{disabilityType}
+  # == DELETE /v2/accounts/(userIdentifier)/pod/(userIdentifier)
   #
   # == 2.1.12. Remove a proof of disability
   # Remove a proof of disability for an existing user.
   #
-  # @param [User, String, nil] user             Default: @user
+  # @param [User, String, nil] user             Default: `@user`.
   # @param [DisabilityType]    disabilityType
   # @param [Hash]              opt              Passed to #api.
   #
@@ -562,12 +562,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/agreements
+  # == GET /v2/accounts/(userIdentifier)/agreements
   #
   # == 2.1.13. Get a list of signed agreements
   # Get the list of signed agreements for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::UserSignedAgreementList]
@@ -593,12 +593,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/agreements
+  # == POST /v2/accounts/(userIdentifier)/agreements
   #
   # == 2.1.14. Create a new signed agreement
   # Create a new signed agreement record for an existing user
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [AgreementType] :agreementType                      *REQUIRED*
@@ -635,12 +635,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/agreements/{id}/expired
+  # == POST /v2/accounts/(userIdentifier)/agreements/(id)/expired
   #
   # == 2.1.15. Expire a signed agreement
   # Expire a signed agreement.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [String]            id     Agreement ID
   # @param [Hash]              opt    Passed to #api.
   #
@@ -674,12 +674,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/recommendationProfile
+  # == GET /v2/accounts/(userIdentifier)/recommendationProfile
   #
   # == 2.1.17. Get recommendation profile
   # Get property choices that guide title recommendations for the given user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::RecommendationProfile]
@@ -705,13 +705,13 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}/recommendationProfile
+  # == PUT /v2/accounts/(userIdentifier)/recommendationProfile
   #
   # == 2.1.18. Update recommendation profile
   # Update property choices that guide title recommendations for the given
   # user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [Boolean]      :includeGlobalCollection   Default: *false*
@@ -771,12 +771,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/preferences
+  # == GET /v2/accounts/(userIdentifier)/preferences
   #
   # == 2.1.19. Get user account preferences
   # Get the account preferences associated with the given user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::MyAccountPreferences]
@@ -802,12 +802,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == PUT /v2/accounts/{userIdentifier}/preferences
+  # == PUT /v2/accounts/(userIdentifier)/preferences
   #
   # == 2.1.20. Update user account preferences
   # Update the account preferences associated with the given user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [Boolean]       :allowAdultContent
@@ -859,12 +859,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/periodicals
+  # == GET /v2/accounts/(userIdentifier)/periodicals
   #
   # == 2.1.21. Get periodical subscriptions of a user
   # Get the list of periodical subscriptions for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @return [Bs::Message::PeriodicalSubscriptionList]
@@ -890,12 +890,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/periodicals
+  # == POST /v2/accounts/(userIdentifier)/periodicals
   #
   # == 2.1.22. Subscribe to a periodical series for a user
   # Subscribe to a periodical series for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]               :seriesId                    *REQUIRED*
@@ -926,12 +926,12 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == DELETE /v2/accounts/{userIdentifier}/periodicals/{seriesId}
+  # == DELETE /v2/accounts/(userIdentifier)/periodicals/(seriesId)
   #
   # == 2.1.23. Unsubscribe from a periodical series for a user
   # Unsubscribe from a periodical series for an existing user.
   #
-  # @param [User, String, nil] user       Default: @user
+  # @param [User, String, nil] user       Default: `@user`.
   # @param [String]            seriesId
   # @param [Hash]              opt        Passed to #api.
   #
@@ -965,12 +965,12 @@ module BookshareService::Request::MembershipUserAccounts
 
   public
 
-  # == GET /v2/accounts/{userIdentifier}/lists
+  # == GET /v2/accounts/(userIdentifier)/lists
   #
   # == 2.1.24. Get reading lists for a given user
   # Get the list of periodical subscriptions for an existing user.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String]                 :start
@@ -1007,13 +1007,13 @@ module BookshareService::Request::MembershipUserAccounts
       }
     end
 
-  # == POST /v2/accounts/{userIdentifier}/lists
+  # == POST /v2/accounts/(userIdentifier)/lists
   #
   # == 2.1.25. Create a reading list for a given user
   # Create an empty reading list that will be owned by the given user, with the
   # properties provided.
   #
-  # @param [User, String, nil] user   Default: @user
+  # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
   # @option opt [String] :name                                      *REQUIRED*

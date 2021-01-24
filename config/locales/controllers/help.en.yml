@@ -48,7 +48,7 @@ en:
           Topic:        'Sign-in'
           title:        'Signing in to EMMA'
           intro:        'Information on EMMA authentication.'
-          content:      ~ # @see app/views/help/topic/_sign_in.html.erb
+          content:      ~ # @see file:app/views/help/topic/_sign_in.html.erb
 
         search:
           <<:           *TOPIC_TEMPLATE
@@ -56,7 +56,7 @@ en:
           Topic:        'Search'
           title:        'Searching in EMMA'
           tooltip:      'Help with searching in EMMA.'
-          content:      ~ # @see app/views/help/topic/_search.html.erb
+          content:      ~ # @see file:app/views/help/topic/_search.html.erb
 
         download:
           <<:           *TOPIC_TEMPLATE
@@ -64,7 +64,7 @@ en:
           Topic:        'Download'
           title:        'Downloading from EMMA'
           tooltip:      'Help with downloading files from EMMA.'
-          content:      ~ # @see app/views/help/topic/_download.html.erb
+          content:      ~ # @see file:app/views/help/topic/_download.html.erb
 
         upload:
           <<:           *TOPIC_TEMPLATE
@@ -72,7 +72,7 @@ en:
           Topic:        'Upload'
           title:        'Uploading to EMMA'
           tooltip:      'Help with uploading files to EMMA.'
-          content:      ~ # @see app/views/help/topic/_upload.html.erb
+          content:      ~ # @see file:app/views/help/topic/_upload.html.erb
 
       # =======================================================================
       # Illustrations

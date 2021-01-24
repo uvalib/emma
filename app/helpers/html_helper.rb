@@ -315,8 +315,8 @@ module HtmlHelper
   #
   # == Variations
   #
-  # @overload append_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]                  html_opt
+  # @overload append_css_classes(html_opt, *classes, &block)
+  #   @param [Hash, String]               html_opt
   #   @param [Array<String,Symbol,Array>] classes
   #   @param [Proc]                       block
   #   @return [Hash]
@@ -367,8 +367,8 @@ module HtmlHelper
   #
   # == Variations
   #
-  # @overload prepend_css_classes(opt, *classes, &block)
-  #   @param [Hash, nil]                  html_opt
+  # @overload prepend_css_classes(html_opt, *classes, &block)
+  #   @param [Hash, String]               html_opt
   #   @param [Array<String,Symbol,Array>] classes
   #   @param [Proc]                       block
   #   @return [Hash]

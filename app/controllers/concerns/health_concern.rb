@@ -27,7 +27,7 @@ module HealthConcern
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/controllers/health.en.yml
+  # @see file:config/locales/controllers/health.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -183,7 +183,7 @@ module HealthConcern
 
   # Get the health status of one or more subsystems.
   #
-  # @param [Array<String|Symbol>] subsystem   Default: `HEALTH_CHECK.keys`
+  # @param [Array<String,Symbol>] subsystem   Default: `HEALTH_CHECK.keys`
   #
   # @return [Hash{Symbol=>HealthStatus}]
   #
@@ -192,6 +192,7 @@ module HealthConcern
   def get_health_status(*subsystem)
     subsystem = subsystem.flatten.reject(&:blank?).map(&:to_sym).presence
     entries   = subsystem&.map { |ss| [ss, nil] }&.to_h || HEALTH_CHECK
+    # noinspection RubyYardParamTypeMatch
     entries.map { |type, entry| [type, status_report(type, entry)] }.to_h
   end
 

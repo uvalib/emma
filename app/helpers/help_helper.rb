@@ -108,7 +108,7 @@ module HelpHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see togglePopup() in app/assets/javascripts/feature/popup.js
+  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
   #
   def help_popup(topic, sub_topic = nil, **opt)
     append_css_classes!(opt, 'help-popup')

@@ -108,7 +108,7 @@ module BookshareService::Request::MembershipMessages
       }
     end
 
-  # == PUT /v2/messages/{messageId}
+  # == PUT /v2/messages/(messageId)
   #
   # == 2.4.3. Update a message
   # As a membership assistant, update a message.
@@ -138,7 +138,7 @@ module BookshareService::Request::MembershipMessages
       }
     end
 
-  # == DELETE /v2/messages/{messageId}
+  # == DELETE /v2/messages/(messageId)
   #
   # == 2.4.4. Expire a message
   # As a membership assistant, expire a message.

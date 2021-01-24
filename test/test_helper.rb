@@ -10,7 +10,7 @@ require 'rails/test_help'
 require 'webdrivers'
 
 # =============================================================================
-# Test control values (@see lib/tasks/test_application.rb)
+# Test control values (@see file:lib/tasks/test_application.rb
 # =============================================================================
 
 public

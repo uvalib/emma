@@ -28,7 +28,7 @@ class Periodical < ApplicationRecord
 
   # Indicate whether the periodical includes the indicated artifact.
   #
-  # @param [String, Artifact]
+  # @param [String, Artifact] item
   #
   def include?(item)
     has_artifact?(item)
@@ -36,7 +36,7 @@ class Periodical < ApplicationRecord
 
   # Indicate whether the periodical includes the indicated artifact.
   #
-  # @param [String, Artifact]
+  # @param [String, Artifact] item
   #
   def has_artifact?(item)
     if item.is_a?(String)

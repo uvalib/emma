@@ -112,7 +112,7 @@ module Emma::Common
   # The result will have query parameters in sorted order.  Query parameters
   # are assumed to have the form "key=value" with the exception of the first
   # parameter after the '?' -- this is a concession to Bookshare URLs like
-  # "myReadingLists/%{id}?delete".
+  # "myReadingLists/(id)?delete".
   #
   # @param [Array] args               URL path components, except for args[-1]
   #                                     which is passed as #url_query options.
@@ -277,12 +277,12 @@ module Emma::Common
   #
   # == Variations
   #
-  # @overload remove_blanks(item)
-  #   @param [Hash] item
+  # @overload remove_blanks(hash)
+  #   @param [Hash] hash
   #   @return [Hash, nil]
   #
-  # @overload remove_blanks(item)
-  #   @param [Array] item
+  # @overload remove_blanks(array)
+  #   @param [Array] array
   #   @return [Array, nil]
   #
   # @overload remove_blanks(item)
@@ -320,8 +320,12 @@ module Emma::Common
   #
   # == Variations
   #
-  # @overload calling_method(call_stack = nil)
-  #   @param [Array<String>] call_stack   Default: `#caller(2)`.
+  # @overload calling_method()
+  #   Using *call_stack* defaulting to `#caller(2)`.
+  #   @return [String]
+  #
+  # @overload calling_method(call_stack)
+  #   @param [Array<String>] call_stack
   #   @return [String]
   #
   # @overload calling_method(depth)

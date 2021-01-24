@@ -185,11 +185,13 @@ module BookshareHelper
   #
   # == Variations
   #
-  # @overload bookshare_url(path, **path_opt)
-  #   @param [String, nil] path       Full or partial URL.
+  # @overload bookshare_url(url, **path_opt)
+  #   @param [String, nil] url        Full or partial URL.
+  #   @param [Hash]        path_opt
   #
-  # @overload bookshare_url(path, **path_opt)
-  #   @param [Hash]        path       Controller/action.
+  # @overload bookshare_url(hash, **path_opt)
+  #   @param [Hash]        hash       Controller/action.
+  #   @param [Hash]        path_opt
   #
   #--
   # noinspection RubyNilAnalysis
@@ -264,6 +266,7 @@ module BookshareHelper
   # @overload bookshare_link(item, path, **path_opt)
   #   @param [String] item            Link label.
   #   @param [String] path            Passed as #bookshare_url *path* parameter
+  #   @param [Hash]   path_opt
   #
   def bookshare_link(item, path: nil, **path_opt)
     if item.is_a?(Bs::Api::Record)
@@ -297,8 +300,8 @@ module BookshareHelper
   #   @param [String, Symbol] name
   #   @return [String]
   #
-  # @overload bookshare_user(name)
-  #   @param [Array<String,Symbol>] name
+  # @overload bookshare_user(names)
+  #   @param [Array<String,Symbol>] names
   #   @return [Array<String>]
   #
   def bookshare_user(name)

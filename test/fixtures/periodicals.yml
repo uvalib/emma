@@ -1,10 +1,10 @@
 # test/fixtures/periodicals.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 #
 # For existing periodicals:
-# @see https://emmadev.internal.lib.virginia.edu/periodical
-# @see https://emmadev.internal.lib.virginia.edu/periodical/:seriesId
+# @see https://emma.lib.virginia.edu/periodical
+# @see https://emma.lib.virginia.edu/periodical/:seriesId
 
 # =============================================================================
 # Current existing periodicals of interest

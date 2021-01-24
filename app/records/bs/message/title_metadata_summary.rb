@@ -37,8 +37,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
 #
-# NOTE: This duplicates:
-# @see Bs::Record::TitleMetadataSummary
+# @note This duplicates Bs::Record::TitleMetadataSummary
 #
 #--
 # noinspection DuplicatedCode

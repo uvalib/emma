@@ -1431,7 +1431,7 @@ module ModelHelper
   # Form submit button.
   #
   # @param [Hash]                config   Button info for model actions.
-  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
   # @param [String, nil]         label    Override button label.
   # @param [Hash] opt                     Passed to #submit_tag.
   #
@@ -1451,7 +1451,7 @@ module ModelHelper
   # Form cancel button.
   #
   # @param [Hash]                config   Button info for model actions.
-  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url      Default: `history.back()`.
   # @param [Hash] opt                     Passed to #button_tag.
@@ -1686,7 +1686,7 @@ module ModelHelper
   # Submit button for the delete model form.
   #
   # @param [Hash]                config   Button info for model actions.
-  # @param [String, Symbol, nil] action   Default: `#params[:action]`.
+  # @param [String, Symbol, nil] action   Default: `params[:action]`.
   # @param [String, nil]         label    Override button label.
   # @param [String, Hash, nil]   url
   # @param [Hash]                opt      Passed to #button_tag.

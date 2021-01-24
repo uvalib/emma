@@ -3,6 +3,9 @@
 # frozen_string_literal: true
 # warn_indent:           true
 
+# Only needed when running "yard server".
+require_relative 'boot.rb' if $0.end_with?('/yard')
+
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
 # Any libraries that use thread pools should be configured to match

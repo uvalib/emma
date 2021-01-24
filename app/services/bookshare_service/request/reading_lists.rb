@@ -98,7 +98,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == PUT /v2/mylists/{readingListId}/subscription
+  # == PUT /v2/mylists/(readingListId)/subscription
   #
   # == 2.3.7. Subscribe to or unsubscribe from a reading list
   # Subscribe to a reading list (that the user does not own).
@@ -128,7 +128,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == PUT /v2/mylists/{readingListId}/subscription
+  # == PUT /v2/mylists/(readingListId)/subscription
   #
   # == 2.3.7. Subscribe to or unsubscribe from a reading list
   # Unsubscribe from a reading list (that the user does not own).
@@ -159,7 +159,7 @@ module BookshareService::Request::ReadingLists
     end
 
   # == GET /v2/lists
-  # 
+  #
   # Get all reading lists.
   #
   # Whereas "/v2/mylists" only works for "emmadso@bookshare.org", this call
@@ -194,8 +194,8 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == GET /v2/lists/{readingListId}
-  # 
+  # == GET /v2/lists/(readingListId)
+  #
   # Get metadata for an existing reading list.
   #
   # @param [String] readingListId
@@ -220,7 +220,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == PUT /v2/lists/{readingListId}
+  # == PUT /v2/lists/(readingListId)
   #
   # == 2.3.3. Edit reading list metadata
   # Edit the metadata of an existing reading list.
@@ -255,7 +255,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == GET /v2/lists/{readingListId}/titles
+  # == GET /v2/lists/(readingListId)/titles
   #
   # == 2.3.4. Get reading list titles
   # Get a listing of the Bookshare titles in the specified reading list.
@@ -292,7 +292,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == POST /v2/lists/{readingListId}/titles
+  # == POST /v2/lists/(readingListId)/titles
   #
   # == 2.3.5. Add a title to a reading list
   # Add a Bookshare title to the specified reading list.
@@ -321,7 +321,7 @@ module BookshareService::Request::ReadingLists
       }
     end
 
-  # == DELETE /v2/lists/{readingListId}/titles/{bookshareId}
+  # == DELETE /v2/lists/(readingListId)/titles/(bookshareId)
   #
   # == 2.3.6. Remove a title from a reading list
   # Remove a title from the specified reading list.

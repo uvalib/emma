@@ -117,9 +117,6 @@ module UploadWorkflow::Single::Create::Simulation
   include UploadWorkflow::Single::Simulation
 end
 
-module UploadWorkflow::Single::Create::Simulation
-end if UploadWorkflow::Single::Create::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -130,9 +127,6 @@ module UploadWorkflow::Single::Create::Events
   include UploadWorkflow::Single::Events
   include UploadWorkflow::Single::Create::Simulation
 end
-
-module UploadWorkflow::Single::Create::Events
-end if UploadWorkflow::Single::Create::WORKFLOW_DEBUG
 
 module UploadWorkflow::Single::Create::States
 

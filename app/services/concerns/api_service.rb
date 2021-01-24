@@ -9,8 +9,8 @@ require 'middleware'
 
 # Send/receive messages to/from a remote service.
 #
-# @see lib/emma/config.rb
-# @see config/initializers/devise.rb
+# @see file:lib/emma/config.rb
+# @see file:config/initializers/devise.rb
 #
 class ApiService
 

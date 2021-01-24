@@ -22,8 +22,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_reading_list_user_view
 #
-# NOTE: This duplicates:
-# @see Bs::Message::ReadingListUserView
+# @note This duplicates Bs::Message::ReadingListUserView
 #
 #--
 # noinspection DuplicatedCode

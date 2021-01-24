@@ -199,7 +199,7 @@ module ApiService::Common
   # The current OAuth2 access bearer token.
   #
   # @return [String]
-  # @return [nil]                     If there is no @user.
+  # @return [nil]                     If there is no '@user'.
   #
   def access_token
     @user&.access_token
@@ -208,7 +208,7 @@ module ApiService::Common
   # The current OAuth2 refresher token.
   #
   # @return [String]
-  # @return [nil]                     If there is no @user.
+  # @return [nil]                     If there is no '@user'.
   #
   def refresh_token
     @user&.refresh_token

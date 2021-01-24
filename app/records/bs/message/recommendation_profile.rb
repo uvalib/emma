@@ -22,8 +22,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_recommendation_profile
 #
-# NOTE: This duplicates:
-# @see Bs::Record::RecommendationProfile
+# @note This duplicates Bs::Record::RecommendationProfile
 #
 #--
 # noinspection DuplicatedCode

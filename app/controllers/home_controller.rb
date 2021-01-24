@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Home pages.
 #
-# @see app/views/home
+# @see file:app/views/home
 #
 # == Usage Notes
 # The endpoints implemented by this controller do not require authentication of

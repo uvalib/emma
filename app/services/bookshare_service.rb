@@ -13,8 +13,8 @@ require 'bs'
 # Bookshare uses OAuth2, which is handled in this application by Devise and
 # OmniAuth.
 #
-# @see lib/emma/config.rb
-# @see config/initializers/devise.rb
+# @see file:lib/emma/config.rb
+# @see file:config/initializers/devise.rb
 #
 class BookshareService < ApiService
 

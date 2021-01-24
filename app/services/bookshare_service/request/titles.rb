@@ -60,7 +60,7 @@ module BookshareService::Request::Titles
       }
     end
 
-  # == GET /v2/titles/{bookshareId}
+  # == GET /v2/titles/(bookshareId)
   #
   # == 2.1.2. Get title metadata
   # Get metadata for the specified Bookshare title.
@@ -92,7 +92,7 @@ module BookshareService::Request::Titles
       }
     end
 
-  # == GET /v2/titles/{bookshareId}/{format}
+  # == GET /v2/titles/(bookshareId)/(format)
   #
   # == 2.1.3. Download a title
   # Request download of Bookshare artifact (a title in a specific format).
@@ -207,7 +207,7 @@ module BookshareService::Request::Titles
       }
     end
 
-  # == GET /v2/titles/{bookshareId}?format={format}
+  # == GET /v2/titles/(bookshareId)?format=(format)
   #
   # Get the metadata of an existing artifact.
   #
@@ -241,7 +241,7 @@ module BookshareService::Request::Titles
 
   public
 
-  # == GET /v2/titles/{bookshareId}/{format}/resources
+  # == GET /v2/titles/(bookshareId)/(format)/resources
   #
   # == 2.1.4. Get a list of title file resources
   #
@@ -273,7 +273,7 @@ module BookshareService::Request::Titles
       }
     end
 
-  # == GET /v2/titles/{bookshareId}/{format}/resources/{resourceId}
+  # == GET /v2/titles/(bookshareId)/(format)/resources/(resourceId)
   #
   # == 2.1.5. Download a title file resource
   #

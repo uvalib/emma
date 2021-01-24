@@ -43,7 +43,7 @@ module PaginationConcern
 
   # Pagination setup.
   #
-  # @param [ActionController::Parameters, Hash, nil] opt  Default: `#params`.
+  # @param [ActionController::Parameters, Hash, nil] opt  Default: `params`.
   #
   # @option opt [Symbol] :controller
   #

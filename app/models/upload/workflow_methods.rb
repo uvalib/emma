@@ -52,7 +52,7 @@ module Upload::WorkflowMethods
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/controllers/upload.en.yml
+  # @see file:config/locales/controllers/upload.en.yml
   #
   #--
   # noinspection RailsI18nInspection

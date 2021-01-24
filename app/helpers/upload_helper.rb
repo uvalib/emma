@@ -267,7 +267,7 @@ module UploadHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see config/locales/controllers/upload.en.yml
+  # @see file:config/locales/controllers/upload.en.yml
   #
   #--
   # noinspection RailsI18nInspection
@@ -323,7 +323,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see filterPageDisplay() in javascripts/feature/records.js
+  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
@@ -426,7 +426,7 @@ module UploadHelper
   # @return [nil]                       If #UPLOAD_PAGE_FILTERING is false.
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see filterPageDisplay() in javascripts/feature/records.js
+  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
@@ -739,7 +739,7 @@ module UploadHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see togglePopup() in app/assets/javascripts/feature/popup.js
+  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
   #
   #--
   # noinspection RubyResolve
@@ -928,7 +928,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js cancelButton()
   #
   def upload_cancel_button(**opt)
     url = opt.delete(:url)
@@ -1022,7 +1022,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see monitorSourceRepository() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js monitorSourceRepository()
   #
   def upload_parent_entry_select(**opt)
     prepend_css_classes!(opt, 'parent-entry-select', 'hidden')
@@ -1094,8 +1094,8 @@ module UploadHelper
 
   # Generate a menu of existing EMMA entries (uploaded items).
   #
-  # @param [Symbol, String] action    Default: `#params[:action]`
-  # @param [User, String]   user      Default: @user
+  # @param [Symbol, String] action    Default: `params[:action]`
+  # @param [User, String]   user      Default: `@user`
   # @param [String]         prompt
   # @param [Hash]           opt       Passed to #form_tag.
   #
@@ -1157,7 +1157,7 @@ module UploadHelper
   # @param [Hash]                 opt     Passed to #delete_submit_button
   #                                         except for:
   #
-  # @option opt [String, Symbol] :action      Default: `#params[:action]`.
+  # @option opt [String, Symbol] :action      Default: `params[:action]`.
   #
   # @option opt [Boolean]        :force       If *true*, add 'force=true'
   #                                             to the form submission URL.

@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # ApiController
 #
 # @see ApiExplorerConcern
-# @see app/views/api/**
+# @see file:app/views/api/**
 #
 class ApiController < ApplicationController
 
@@ -48,7 +48,7 @@ class ApiController < ApplicationController
   public
 
   # == GET /api
-  # 
+  #
   # The main API test page.
   #
   def index
@@ -63,7 +63,7 @@ class ApiController < ApplicationController
 
   # == GET /api/v2/API_PATH[?API_OPTIONS]
   # == GET /api/v2/API_PATH[?user=API_USER]
-  # 
+  #
   # Direct access to the API guarded by authentication.  If the session is
   # authenticated the endpoint will be (implicitly) contacted as that user.
   # A configured user (one with a fixed OAuth2 token) may be specified in the
@@ -91,10 +91,10 @@ class ApiController < ApplicationController
   end
 
   # == GET /api/image[?url=...]
-  # 
+  #
   # Get an image.
   #
-  # @see app/assets/javascripts/feature/images.js
+  # @see file:app/assets/javascripts/feature/images.js
   #
   # == Usage Notes
   # This provides JavaScript with a way of asynchronously getting images

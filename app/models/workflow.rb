@@ -59,6 +59,10 @@ end
 
 public
 
+# Workflow::Base::Roles
+#
+# @todo Harmonize with existing roles
+#
 module Workflow::Base::Roles
 
   # The default "user" if none was given.
@@ -387,147 +391,6 @@ module Workflow::Base::Simulation
 
 end
 
-#--
-# Workflow::Base::Simulation
-#++
-module Workflow::Base::Simulation
-
-  include Emma::Debug
-  include Workflow::Base::Data
-
-  # ===========================================================================
-  # :section: Classes
-  # ===========================================================================
-
-  public
-
-  # A representation of an external task which simulates processing by
-  # executing the check method until it returns false.
-  #
-  # Activation sequence is:
-  #   start   # "Starts" the task by reinitializing its counter
-  #   check   # Decrements the counter and returns *true* if still running.
-  #
-  class SimulatedTask
-
-    attr_reader :label
-    attr_reader :reps
-    attr_reader :counter
-    attr_reader :success
-    attr_reader :running
-    attr_reader :restartable
-
-    def initialize(
-      name: nil, result: true, reps: 3, started: nil, restart: nil
-    )
-      # noinspection RubyNilAnalysis
-      a =
-        case name
-          when Array  then name.dup
-          when String then name.strip.split(' ')
-          else             self.class.name.demodulize.underscore.split('_')
-        end
-      a.unshift('async') unless a.first.match?(/async/i)
-      a.push('task')     unless a.last.match?(/task/i)
-      @label       = a.join(' ')
-      @success     = result.present?
-      @reps        = [0, reps].max
-      @counter     = started ? @reps : 0
-      @restartable = restart.present?
-    end
-
-    def running?
-      @counter.positive?
-    end
-
-    def stopped?
-      !running?
-    end
-
-    def stop
-      @counter = 0
-    end
-
-    def start
-      @counter = @reps
-    end
-
-    def restart
-      start if restartable
-    end
-
-    def check
-      running? && (@counter -= 1) && running?
-    end
-
-    def to_s
-      @label
-    end
-
-    def self.inherited(subclass)
-      subclass.class_eval do
-        class << self
-
-          def instance
-            @instance ||= new
-          end
-
-          def to_s
-            instance.to_s
-          end
-
-          delegate_missing_to :instance
-
-        end
-      end
-    end
-
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Indicate whether simulation is in effect.
-  #
-  # @param [Boolean, nil] status
-  #
-  # @return [Boolean]
-  #
-  #--
-  # noinspection RubyYardReturnMatch
-  #++
-  def simulating(status = nil)
-    @simulating = status unless status.nil?
-    @simulating = true   if @simulating.nil?
-    @simulating
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Output for simulated action.
-  #
-  # @param [Array] args             Passed to #__debug_line.
-  # @param [Proc]  block            Passed to #__debug_line.
-  #
-  # @return [nil]
-  #
-  def __debug_sim(*args, &block)
-    # noinspection RubyNilAnalysis
-    opt  = args.extract_options!.reverse_merge(leader: '   ')
-    meth = args.first.is_a?(Symbol) ? args.shift : calling_method
-    args.unshift(':%-20s' % meth)
-    __debug_line(*args, **opt, &block)
-  end
-
-end if Workflow::Base::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -691,151 +554,124 @@ module Workflow::Base::Events
   end
 
   # ===========================================================================
-  # :section: Workflow overrides
+  # :section: Workflow debugging
   # ===========================================================================
 
-  public
+  if Workflow::Base::WORKFLOW_DEBUG
 
-  # Override :workflow for a Workflow subclass in order to redefine the
-  # workflow event methods.
-  #
-  # @param [Workflow, *] base
-  #
-  # @see Workflow::ClassMethods#workflow
-  #
-  def self.included(base)
-    return unless base.respond_to?(:workflow)
-    base.class_eval do
+    include Workflow::Base::Roles
+    include Emma::Debug
 
-      def self.workflow(&specification)
-        super(&specification)
-        EVENTS.each do |event|
+    # =========================================================================
+    # :section:
+    # =========================================================================
 
-          # Override the method used to invoke the event to return *nil* if
-          # there are failures.
-          #
-          define_method("#{event}!") do |*args|
-            result = process_event!(event, *args)
-            result unless failures?
-          rescue => error
-            self.failures << error unless failures?
-            Log.warn { "#{event}!: #{error.class} #{error.message}" }
-          end
+    protected
 
-        end
-      end
-
+    # __debug_event
+    #
+    # @param [Symbol, String] event
+    # @param [Array]          args
+    #
+    def __debug_event(event, *args)
+      line = 'WORKFLOW ***** EVENT ' + event_label(event)
+      __debug_line(line, *args, leader: "\n")
     end
+
+    # =========================================================================
+    # :section: Workflow overrides
+    # =========================================================================
+
+    public
+
+    # Override :workflow for a Workflow subclass in order to redefine the
+    # workflow event methods.
+    #
+    # @param [Workflow, *] base
+    #
+    # @see Workflow::ClassMethods#workflow
+    #
+    def self.included(base)
+      return unless base.respond_to?(:workflow)
+      base.class_eval do
+
+        def self.workflow(&specification)
+          super(&specification)
+          EVENTS.each do |event|
+
+            # Override the method used to invoke the event to provide
+            # additional debugging information beyond what :process_event!
+            # shows (but let it fail in order to raise an exception instead of
+            # returning *nil*).
+            #
+            define_method("#{event}!") do |*args|
+              if current_state.events.first_applicable(event, self).nil?
+                c = self.class.name
+                e = event.inspect
+                r = current_role.inspect
+                u = current_user.to_s.inspect
+                s = curr_state.inspect
+                m = "#{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
+                __debug_event(event, "ERROR: #{m}")
+              end
+              result = process_event!(event, *args)
+              result unless failures?
+            rescue => error
+              self.failures << error unless failures?
+              Log.warn { "#{event}!: #{error.class} #{error.message}" }
+            end
+
+            # The method which is called when the event is triggered.
+            #
+            define_method(event) do |*args|
+              __debug_event(event, *args)
+            end
+
+            protected event
+
+          end
+        end
+
+      end
+    end
+
+  else
+
+    # Override :workflow for a Workflow subclass in order to redefine the
+    # workflow event methods.
+    #
+    # @param [Workflow, *] base
+    #
+    # @see Workflow::ClassMethods#workflow
+    #
+    def self.included(base)
+      return unless base.respond_to?(:workflow)
+      base.class_eval do
+
+        def self.workflow(&specification)
+          super(&specification)
+          EVENTS.each do |event|
+
+            # Override the method used to invoke the event to return *nil* if
+            # there are failures.
+            #
+            define_method("#{event}!") do |*args|
+              result = process_event!(event, *args)
+              result unless failures?
+            rescue => error
+              self.failures << error unless failures?
+              Log.warn { "#{event}!: #{error.class} #{error.message}" }
+            end
+
+          end
+        end
+
+      end
+    end
+
   end
 
 end
-
-#--
-# Event debugging.
-#
-# @!method start
-# @!method create
-# @!method edit
-# @!method remove
-# @!method cancel
-# @!method submit
-# @!method upload
-# @!method abort
-#
-# @!method advance
-# @!method fail
-# @!method suspend
-# @!method schedule
-# @!method approve
-# @!method reject
-# @!method hold
-# @!method assign
-# @!method review
-# @!method index
-# @!method timeout
-# @!method resume
-# @!method purge
-# @!method reset
-#
-#++
-module Workflow::Base::Events
-
-  include Workflow::Base::Roles
-  include Emma::Debug
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # __debug_event
-  #
-  # @param [Symbol, String] event
-  # @param [Array]          args
-  #
-  def __debug_event(event, *args)
-    line = 'WORKFLOW ***** EVENT ' + event_label(event)
-    __debug_line(line, *args, leader: "\n")
-  end
-
-  # ===========================================================================
-  # :section: Workflow overrides
-  # ===========================================================================
-
-  public
-
-  # Override :workflow for a Workflow subclass in order to redefine the
-  # workflow event methods.
-  #
-  # @param [Workflow, *] base
-  #
-  # @see Workflow::ClassMethods#workflow
-  #
-  def self.included(base)
-    return unless base.respond_to?(:workflow)
-    base.class_eval do
-
-      def self.workflow(&specification)
-        super(&specification)
-        EVENTS.each do |event|
-
-          # Override the method used to invoke the event to provide additional
-          # debugging information beyond what :process_event! shows (but let it
-          # fail in order to raise an exception instead of returning *nil*).
-          #
-          define_method("#{event}!") do |*args|
-            if current_state.events.first_applicable(event, self).nil?
-              c = self.class.name
-              e = event.inspect
-              r = current_role.inspect
-              u = current_user.to_s.inspect
-              s = curr_state.inspect
-              m = "ERROR: #{c} event #{e} not valid for #{u} (#{r}) in state #{s}"
-              __debug_event(event, "ERROR: #{m}")
-            end
-            result = process_event!(event, *args)
-            result unless failures?
-          rescue => error
-            self.failures << error unless failures?
-            Log.warn { "#{event}!: #{error.class} #{error.message}" }
-          end
-
-          # The method which is called when the event is triggered.
-          #
-          define_method(event) do |*args|
-            __debug_event(event, *args)
-          end
-
-          protected event
-
-        end
-      end
-
-    end
-  end
-
-end if Workflow::Base::WORKFLOW_DEBUG
 
 # Hooks executed on transition into and out of a state.
 #
@@ -1131,171 +967,15 @@ end
 module Workflow::Base::Transitions
 end
 
-#--
-# Transition debugging.
-#++
-module Workflow::Base::Transitions
-
-  include Workflow::Base::States
-
-  # ===========================================================================
-  # :section: Workflow overrides
-  # ===========================================================================
-
-  public
-
-  # Generic state entry hook.
-  #
-  # @param [Workflow::State] state        State that is being entered.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
-  #
-  # @see Workflow::Specification#on_entry
-  #
-  def on_entry_hook(state, _event, *_event_args)
-    __debug_hook('ENTER >>> [GENERIC]', state.to_sym)
-  end
-
-  # Generic state exit hook.
-  #
-  # @param [Workflow::State] state        State that is being exited.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
-  #
-  # @see Workflow::Specification#on_exit
-  #
-  def on_exit_hook(state, _event, *_event_args)
-    __debug_hook('<<< LEAVE [GENERIC]', state.to_sym)
-  end
-
-  # before_transition_hook
-  #
-  # @param [Symbol]    from         Starting state
-  # @param [Symbol]    to           Ending state
-  # @param [Symbol]    _event       Triggering event
-  # @param [Array]     _event_args
-  #
-  # @see Workflow::Specification#before_transition
-  #
-  def before_transition_hook(from, to, _event, *_event_args)
-    __debug_hook('>>>>>', from, to)
-  end
-
-  # on_transition_hook
-  #
-  # @param [Symbol]    from         Starting state
-  # @param [Symbol]    to           Ending state
-  # @param [Symbol]    _event       Triggering event
-  # @param [Array]     _event_args
-  #
-  # @see Workflow::Specification#on_transition
-  #
-  def on_transition_hook(from, to, _event, *_event_args)
-    __debug_hook('-----', from, to)
-  end
-
-  # after_transition_hook
-  #
-  # @param [Symbol]    from         Starting state
-  # @param [Symbol]    to           Ending state
-  # @param [Symbol]    _event       Triggering event
-  # @param [Array]     _event_args
-  #
-  # @see Workflow::Specification#after_transition
-  #
-  def after_transition_hook(from, to, _event, *_event_args)
-    __debug_hook('<<<<<', from, to)
-  end
-
-  # on_error_hook
-  #
-  # @param [Exception] error
-  # @param [Symbol]    from         Starting state
-  # @param [Symbol]    to           Ending state
-  # @param [Symbol]    _event       Triggering event
-  # @param [Array]     _event_args
-  #
-  # @see Workflow::Specification#on_error
-  #
-  def on_error_hook(error, from, to, _event, *_event_args)
-    __debug_hook("!!!!! ERROR #{error} for ", from, to)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # __debug_hook
-  #
-  # @param [String]      label
-  # @param [Symbol]      from     Starting state
-  # @param [Symbol, nil] to       Ending state
-  #
-  def __debug_hook(label, from, to = nil)
-    __debug_line do
-      line = "WORKFLOW       TRANS #{label}".rstrip
-      from = state_label(from)
-      to   = to ? " -> #{state_label(to)}" : ''
-      # noinspection RubyNilAnalysis
-      chars  = line.size + from.size + to.size
-      spaces = ' ' * [1, (80 - chars)].max
-      "#{line}#{spaces}#{from}#{to}"
-    end
-  end
-
-  # ===========================================================================
-  # :section: Module methods
-  # ===========================================================================
-
-  public
-
-  # Enumerate over public methods defined by the module.
-  #
-  # @param [Proc] block
-  #
-  # @yield [handler, method]
-  # @yieldparam [Symbol] handler  Specification instance method to invoke.
-  # @yieldparam [Symbol] method   Module method to supply to handler.
-  #
-  def self.each_pair(&block)
-    public_instance_methods(false).map { |method|
-      handler = method.to_s.delete_suffix('_hook')
-      [handler, method].map(&:to_sym)
-    }.to_h.each_pair(&block)
-  end
-
-  # Redefine :workflow for a Workflow subclass in order to apply the methods
-  # defined here to the matching workflow transition handlers.
-  #
-  # @param [Workflow, *] base
-  #
-  # @see Workflow::ClassMethods#workflow
-  #
-  def self.included(base)
-    return unless base.respond_to?(:workflow)
-    base.class_eval do
-      def self.workflow(&specification)
-        super(&specification)
-        Transitions.each_pair do |handler, method|
-          workflow_spec.instance_eval <<~HEREDOC
-            #{handler} do |*args|
-              #{method}(*args)
-            end
-          HEREDOC
-        end
-      end
-    end
-  end
-
-end if Workflow::Base::TRANSITION_DEBUG
-
 # =============================================================================
 # :section: Base for workflow classes
 # =============================================================================
 
 public
+
+if Workflow::Base::SIMULATION
+  require_relative '../../lib/sim/models/workflow'
+end
 
 # Common workflow aspects.
 #

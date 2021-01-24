@@ -28,8 +28,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
-# NOTE: This duplicates:
-# @see Bs::Message::UserAccount
+# @note This duplicates Bs::Message::UserAccount
 #
 #--
 # noinspection DuplicatedCode

@@ -255,7 +255,7 @@ module BookshareService::Request::CollectionTitles
       }
     end
 
-  # == PUT /v2/titles/{bookshareId}
+  # == PUT /v2/titles/(bookshareId)
   #
   # == 2.1.2. Update title metadata
   # Update a title’s metadata. This includes title, author, ISBN and other
@@ -434,7 +434,7 @@ module BookshareService::Request::CollectionTitles
       }
     end
 
-  # == GET /v2/titles/{bookshareId}/history
+  # == GET /v2/titles/(bookshareId)/history
   #
   # == 2.1.3. Get a list of title history events
   #

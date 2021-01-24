@@ -1,6 +1,6 @@
 # test/fixtures/artifacts.yml
 #
-# @see http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# @see https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 # =============================================================================
 # One artifact for each unique format type.

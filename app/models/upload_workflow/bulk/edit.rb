@@ -97,9 +97,6 @@ module UploadWorkflow::Bulk::Edit::Simulation
   include UploadWorkflow::Bulk::Simulation
 end
 
-module UploadWorkflow::Bulk::Edit::Simulation
-end if UploadWorkflow::Bulk::Edit::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -110,9 +107,6 @@ module UploadWorkflow::Bulk::Edit::Events
   include UploadWorkflow::Bulk::Events
   include UploadWorkflow::Bulk::Edit::Simulation
 end
-
-module UploadWorkflow::Bulk::Edit::Events
-end if UploadWorkflow::Bulk::Edit::WORKFLOW_DEBUG
 
 module UploadWorkflow::Bulk::Edit::States
 

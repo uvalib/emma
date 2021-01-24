@@ -339,12 +339,12 @@ module Api::Shared::TitleMethods
   # Reduce a string for comparison with another by eliminating characters to
   # ignore for comparison.
   #
-  # @param [String]
+  # @param [String] value
   #
   # @return [String]
   #
-  def significant(string)
-    string.to_s.remove(/[[:space:][:punct:]]/).downcase
+  def significant(value)
+    value.to_s.remove(/[[:space:][:punct:]]/).downcase
   end
 
 end

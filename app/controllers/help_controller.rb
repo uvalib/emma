@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Help pages.
 #
-# @see app/views/help
+# @see file:app/views/help
 #
 class HelpController < ApplicationController
 
@@ -47,7 +47,7 @@ class HelpController < ApplicationController
   public
 
   # == GET /help
-  # 
+  #
   # The main help page.
   #
   def index
@@ -63,7 +63,7 @@ class HelpController < ApplicationController
 
   # == GET /help/:topic
   # == GET /help?topic=:topic
-  # 
+  #
   # The topic help page.
   #
   def show

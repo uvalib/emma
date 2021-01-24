@@ -83,23 +83,28 @@ module LayoutHelper::SearchControls
     #
     # @overload make_menu(menu_name, entries, **opt)
     #   @param [Symbol]        menu_name
-    #   @param [Hash]          values       Configuration information.
+    #   @param [Hash]          entries      Configuration information.
+    #   @param [Hash]          opt
     #
     # @overload make_menu(menu_name, i18n_scope, **opt)
     #   @param [Symbol]        menu_name
     #   @param [String]        i18n_scope
+    #   @param [Hash]          opt
     #
-    # @overload make_menu(menu_name, i18n_scope, **opt)
+    # @overload make_menu(menu_name, enum_type, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Symbol]        enum_type    Passed to EnumType.pairs_for.
+    #   @param [Hash]          opt
     #
     # @overload make_menu(menu_name, enum_class, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Class]         enum_class
+    #   @param [Hash]          opt
     #
     # @overload make_menu(menu_name, menu_pairs, **opt)
     #   @param [Symbol]        menu_name
     #   @param [Array<Array>]  menu_pairs
+    #   @param [Hash]          opt
     #
     def make_menu(menu_name, values, **opt)
       config  = values.is_a?(Hash) ? values : current_menu_config(menu_name)
@@ -107,7 +112,7 @@ module LayoutHelper::SearchControls
       pairs ||=
         case values
           when Hash
-            (v = values[:values]).is_a?(Hash) ? v.invert : v
+            (val = values[:values]).is_a?(Hash) ? val.invert : val
           when Array
             values
           when String
@@ -117,10 +122,10 @@ module LayoutHelper::SearchControls
           when Symbol
             EnumType.pairs_for(values)&.invert
           else
-            v   = (values.pairs.presence  if values.respond_to?(:pairs))
-            v ||= (values.values.presence if values.respond_to?(:values))
-            v ||= values
-            v.is_a?(Hash) ? v.invert : v
+            val   = (values.pairs.presence  if values.respond_to?(:pairs))
+            val ||= (values.values.presence if values.respond_to?(:values))
+            val ||= values
+            val.is_a?(Hash) ? val.invert : val
         end
 
       # Transform a simple list of values into label/value pairs.
@@ -434,7 +439,7 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]   An HTML element.
   # @return [nil]                         If no controls were found for *type*.
   #
-  # @see 'en.emma.search_controls' in config/locales/en.yml
+  # @see file:config/locales/en.yml en.emma.search_controls
   #
   def search_controls(type: nil, **opt)
     type = search_target(type)
@@ -502,7 +507,7 @@ module LayoutHelper::SearchControls
   MENU_OPTS = [:type, :label, :selected, *GRID_OPTS].freeze
 
   # Perform a search specifying a collation order for the results.
-  # (Default: `#params[:sortOrder]`.)
+  # (Default: `params[:sortOrder]`.)
   #
   # @param [Hash] opt                   Passed to #menu_container.
   #

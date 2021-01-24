@@ -153,7 +153,7 @@ module LinkHelper
 
   # Action links configured for the controller.
   #
-  # @param [String, Symbol, nil] controller   Default: `#params[:controller]`.
+  # @param [String, Symbol, nil] controller   Default: `params[:controller]`.
   # @param [String, Symbol, nil] action       Default: *nil*.
   # @param [Hash]                opt          Passed to #config_lookup.
   #
@@ -167,8 +167,8 @@ module LinkHelper
 
   # Generate a menu of database item entries.
   #
-  # @param [Symbol, String, nil] controller   Default: `#params[:controller]`
-  # @param [Symbol, String, nil] action       Default: `#params[:action]`
+  # @param [Symbol, String, nil] controller   Default: `params[:controller]`
+  # @param [Symbol, String, nil] action       Default: `params[:action]`
   # @param [Class]               model
   # @param [User, String, nil]   user         Default: `current_user`
   # @param [String, nil]         prompt

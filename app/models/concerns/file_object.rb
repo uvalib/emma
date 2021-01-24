@@ -24,24 +24,26 @@ class FileObject
   # Create a new instance.
   #
   # @param [String, FileHandle, IO, StringIO, Tempfile, IO::Like] handle
-  # @param [Hash]                                                 opt
+  # @param [Symbol, String, nil] fmt  Override `self.class.fmt`.
+  # @param [String, nil]         ext  Override `self.class.file_extension`.
   #
   # == Variations
   #
-  # @overload initialize(path, opt = nil)
-  #   @param [String] path
-  #   @param [Hash]   opt
+  # @overload initialize(path, fmt: nil, ext: nil)
+  #   @param [String]              path
+  #   @param [Symbol, String, nil] fmt
+  #   @param [String, nil]         ext
   #
-  # @overload initialize(handle, opt = nil)
+  # @overload initialize(handle, fmt: nil, ext: nil)
   #   @param [FileHandle, IO, StringIO, Tempfile, IO::Like] handle
-  #   @param [Hash]                                         opt
+  #   @param [Symbol, String, nil] fmt
+  #   @param [String, nil]         ext
   #
-  def initialize(handle, opt = nil)
-    opt = opt&.symbolize_keys || {}
-    @fmt           = opt[:fmt] || self.class.fmt
-    @ext           = opt[:ext] || self.class.file_extension
-    @file_handle   = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
-    @filename      = (@file_handle.path if @file_handle.respond_to?(:path))
+  def initialize(handle, fmt: nil, ext: nil)
+    @fmt         = fmt || self.class.fmt
+    @ext         = ext || self.class.file_extension
+    @file_handle = handle.is_a?(FileHandle) ? handle : FileHandle.new(handle)
+    @filename    = (@file_handle.path if @file_handle.respond_to?(:path))
   end
 
   # ===========================================================================

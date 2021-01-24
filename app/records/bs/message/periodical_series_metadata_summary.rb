@@ -23,8 +23,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary
 #
-# NOTE: This duplicates:
-# @see Bs::Record::PeriodicalSeriesMetadataSummary
+# @note This duplicates Bs::Record::PeriodicalSeriesMetadataSummary
 #
 #--
 # noinspection RubyClassModuleNamingConvention, DuplicatedCode

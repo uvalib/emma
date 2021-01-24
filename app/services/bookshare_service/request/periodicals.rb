@@ -74,7 +74,7 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == GET /v2/periodicals/{seriesId}
+  # == GET /v2/periodicals/(seriesId)
   #
   # == 2.2.3. Get periodical series metadata
   # Get metadata for the specified Bookshare periodical.
@@ -107,7 +107,7 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == GET /v2/periodicals/{seriesId}/editions
+  # == GET /v2/periodicals/(seriesId)/editions
   #
   # == 2.2.2. Get periodical editions
   # Get a list of editions for the specified Bookshare periodical.
@@ -143,8 +143,8 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == GET /v2/periodicals/{seriesId}/editions/{editionId}
-  # 
+  # == GET /v2/periodicals/(seriesId)/editions/(editionId)
+  #
   # Get the metadata of an existing periodical edition.
   #
   # @param [String] seriesId
@@ -173,7 +173,7 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}
+  # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)
   #
   # == 2.2.4. Download a periodical edition
   # Download an artifact of the specified edition of a Bookshare periodical.
@@ -216,7 +216,7 @@ module BookshareService::Request::Periodicals
 
   public
 
-  # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}/resources
+  # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)/resources
   #
   # == 2.2.5. Get a list of title file resources for a periodical
   #
@@ -249,7 +249,7 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == GET /v2/periodicals/{seriesId}/editions/{editionId}/{format}/resources/{resourceId}
+  # == GET /v2/periodicals/(seriesId)/editions/(editionId)/(format)/resources/(resourceId)
   #
   # == 2.2.6. Download a title file resource for a periodical
   #
@@ -343,7 +343,7 @@ module BookshareService::Request::Periodicals
       }
     end
 
-  # == DELETE /v2/myPeriodicals/{seriesId}
+  # == DELETE /v2/myPeriodicals/(seriesId)
   #
   # == 2.2.9. Unsubscribe from a periodical series
   # Remove a periodical subscription for the authenticated user.

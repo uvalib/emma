@@ -16,8 +16,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_edition
 #
-# NOTE: This duplicates:
-# @see Bs::Record::PeriodicalEdition
+# @note This duplicates Bs::Record::PeriodicalEdition
 #
 #--
 # noinspection DuplicatedCode

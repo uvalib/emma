@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Model for the representation of a DSO member.
 #
 # == Usage Notes
-# @see https://www.bookshare.org/orgAccountMembers:
+# @see https://www.bookshare.org/orgAccountMembers
 # Members are students or clients who have a qualifying reading barrier.
 #
 # @see https://www.bookshare.org/cms/help-center/what-individual-membership-account

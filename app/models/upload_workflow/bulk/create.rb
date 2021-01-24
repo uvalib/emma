@@ -64,7 +64,7 @@ module UploadWorkflow::Bulk::Create::Actions
     __debug_args(binding)
     opt = event_args.extract_options!&.dup || {}
     opt[:index]        = false unless opt.key?(:index)
-    opt[:user]       ||= current_user #@user
+    opt[:user]       ||= current_user
     opt[:base_url]   ||= nil #request.base_url
     opt[:importer]   ||= :ia_bulk
     opt[:repository] ||= EmmaRepository.default
@@ -98,9 +98,6 @@ module UploadWorkflow::Bulk::Create::Simulation
   include UploadWorkflow::Bulk::Simulation
 end
 
-module UploadWorkflow::Bulk::Create::Simulation
-end if UploadWorkflow::Bulk::Create::SIMULATION
-
 # =============================================================================
 # :section: Event handlers
 # =============================================================================
@@ -111,9 +108,6 @@ module UploadWorkflow::Bulk::Create::Events
   include UploadWorkflow::Bulk::Events
   include UploadWorkflow::Bulk::Create::Simulation
 end
-
-module UploadWorkflow::Bulk::Create::Events
-end if UploadWorkflow::Bulk::Create::WORKFLOW_DEBUG
 
 module UploadWorkflow::Bulk::Create::States
 

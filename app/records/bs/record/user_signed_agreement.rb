@@ -18,8 +18,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement
 #
-# NOTE: This duplicates:
-# @see Bs::Message::UserSignedAgreement
+# @note This duplicates Bs::Message::UserSignedAgreement
 #
 #--
 # noinspection DuplicatedCode

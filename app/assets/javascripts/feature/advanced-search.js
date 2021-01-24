@@ -353,7 +353,7 @@ $(document).on('turbolinks:load', function() {
      *
      * @param {boolean} opening
      *
-     * @see ".search-bar-container.menu-button.reset in shared/_header.scss"
+     * @see file:app/assets/stylesheets/shared/_header.scss .search-bar-container.menu-button.reset
      */
     function setResetButton(opening) {
         const state = opening ? 'visible' : 'hidden';
@@ -628,7 +628,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {object}
      *
      * @see https://select2.org/i18n
-     * @see ../../../node_modules/select2/src/js/select2/i18n/en.js
+     * @see file:../../../node_modules/select2/src/js/select2/i18n/en.js
      */
     function select2Language() {
         const text = { // TODO: I18n

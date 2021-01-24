@@ -94,10 +94,10 @@ module OmniAuth
       #
       # E.g.:
       #
-      # {
+      # !{
       #   username: 'john@smith.com',
       #   links: [],
-      #   name: {
+      #   !{
       #     firstName: 'John',
       #     lastName:  'Smith',
       #     middle:    nil,

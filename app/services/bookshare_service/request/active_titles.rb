@@ -93,7 +93,7 @@ module BookshareService::Request::ActiveTitles
       }
     end
 
-  # == DELETE /v2/myActiveBooks/{activeTitleId}
+  # == DELETE /v2/myActiveBooks/(activeTitleId)
   #
   # == 2.5.3. Remove an active book
   # Remove one of the entries from my list of active books.
@@ -187,7 +187,7 @@ module BookshareService::Request::ActiveTitles
       }
     end
 
-  # == DELETE /v2/myActivePeriodicals/{activeTitleId}
+  # == DELETE /v2/myActivePeriodicals/(activeTitleId)
   #
   # == 2.5.6. Remove an active periodical
   # Remove one of the entries from my list of active periodicals.

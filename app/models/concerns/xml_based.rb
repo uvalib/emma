@@ -136,7 +136,7 @@ module XmlBased
 
   # Extract information from a single <meta> element.
   #
-  # @param [Nokogiri::XML::Element]
+  # @param [Nokogiri::XML::Element] elem
   #
   # @return [(Symbol,String)]
   # @return [(Symbol,nil)]
@@ -153,7 +153,7 @@ module XmlBased
 
   # Return element values as a hash.
   #
-  # @param [Nokogiri::XML::Element]
+  # @param [Nokogiri::XML::Element] elem
   #
   # @return [(Symbol,String)]
   # @return [(Symbol,nil)]
@@ -166,7 +166,7 @@ module XmlBased
 
   # Return element attributes as a hash.
   #
-  # @param [Nokogiri::XML::Element]
+  # @param [Nokogiri::XML::Element] elem
   #
   # @return [Hash{Symbol=>String}]
   #
