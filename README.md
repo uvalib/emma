@@ -1,24 +1,12 @@
-# README
+# EMMA
+> Education Materials Made Accessible
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+The [EMMA application][emma] supports academic DSOs (disability services
+offices) by providing an interface to search for accessibility-remediated
+content offered by member repositories Bookshare, Internet Archive, and
+HathiTrust, as well as remediated materials uploaded directly to the EMMA
+repository by participating DSOs.
 
-Things you may want to cover:
+<!--========================================================================-->
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+[emma]:     https://emma.lib.virginia.edu
