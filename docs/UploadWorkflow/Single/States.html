@@ -1,0 +1,3826 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: UploadWorkflow::Single::States
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "UploadWorkflow::Single::States";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Single.html" title="UploadWorkflow::Single (class)">Single</a></span></span>
+     &raquo; 
+    <span class="title">States</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: UploadWorkflow::Single::States
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Actions.html" title="UploadWorkflow::Single::Actions (module)">Actions</a></span>, <span class='object_link'><a href="Events.html" title="UploadWorkflow::Single::Events (module)">Events</a></span>, <span class='object_link'><a href="../States.html" title="UploadWorkflow::States (module)">UploadWorkflow::States</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../Single.html" title="UploadWorkflow::Single (class)">UploadWorkflow::Single</a></span>, <span class='object_link'><a href="Create/States.html" title="UploadWorkflow::Single::Create::States (module)">Create::States</a></span>, <span class='object_link'><a href="Edit/States.html" title="UploadWorkflow::Single::Edit::States (module)">Edit::States</a></span>, <span class='object_link'><a href="Remove/States.html" title="UploadWorkflow::Single::Remove::States (module)">Remove::States</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload_workflow/single.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Overridden state transition methods specific to single-item upload workflows.</p>
+
+<p>– noinspection RubyTooManyMethodsInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#DEFAULT_ERROR_MESSAGE-constant" title="UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE (constant)">Errors::DEFAULT_ERROR_MESSAGE</a></span>, <span class='object_link'><a href="../Errors.html#INTERNAL_EXCEPTION-constant" title="UploadWorkflow::Errors::INTERNAL_EXCEPTION (constant)">Errors::INTERNAL_EXCEPTION</a></span>, <span class='object_link'><a href="../Errors.html#UPLOAD_ERROR-constant" title="UploadWorkflow::Errors::UPLOAD_ERROR (constant)">Errors::UPLOAD_ERROR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#DEFAULT_LABEL-constant" title="UploadWorkflow::Errors::RenderMethods::DEFAULT_LABEL (constant)">Errors::RenderMethods::DEFAULT_LABEL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">Properties::BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#BATCH_SIZE_DEFAULT-constant" title="UploadWorkflow::Properties::BATCH_SIZE_DEFAULT (constant)">Properties::BATCH_SIZE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#DEV_TITLE_PREFIX-constant" title="UploadWorkflow::Properties::DEV_TITLE_PREFIX (constant)">Properties::DEV_TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#EMERGENCY_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::EMERGENCY_DELETE_DEFAULT (constant)">Properties::EMERGENCY_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#FORCE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::FORCE_DELETE_DEFAULT (constant)">Properties::FORCE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#INGEST_MAX_SIZE-constant" title="UploadWorkflow::Properties::INGEST_MAX_SIZE (constant)">Properties::INGEST_MAX_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">Properties::MAX_BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#REPO_CREATE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_CREATE_DEFAULT (constant)">Properties::REPO_CREATE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_EDIT_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_EDIT_DEFAULT (constant)">Properties::REPO_EDIT_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_REMOVE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_REMOVE_DEFAULT (constant)">Properties::REPO_REMOVE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#THROTTLE_PAUSE-constant" title="UploadWorkflow::Properties::THROTTLE_PAUSE (constant)">Properties::THROTTLE_PAUSE</a></span>, <span class='object_link'><a href="../Properties.html#TITLE_PREFIX-constant" title="UploadWorkflow::Properties::TITLE_PREFIX (constant)">Properties::TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#TRUNCATE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::TRUNCATE_DELETE_DEFAULT (constant)">Properties::TRUNCATE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#WF_URL_PARAMETER-constant" title="UploadWorkflow::Properties::WF_URL_PARAMETER (constant)">Properties::WF_URL_PARAMETER</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#DISABLE_UPLOAD_INDEX_UPDATE-constant" title="UploadWorkflow::External::DISABLE_UPLOAD_INDEX_UPDATE (constant)">External::DISABLE_UPLOAD_INDEX_UPDATE</a></span>, <span class='object_link'><a href="../External.html#REPO_FAILURE-constant" title="UploadWorkflow::External::REPO_FAILURE (constant)">External::REPO_FAILURE</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Single::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#record-instance_method" title="UploadWorkflow::Single::Data#record (method)">#record</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Simulation.html" title="UploadWorkflow::Single::Simulation (module)">Simulation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Simulation.html#submission-instance_method" title="UploadWorkflow::Single::Simulation#submission (method)">#submission</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_approved_entry-instance_method" title="#on_approved_entry (instance method)">#<strong>on_approved_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :approved state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_assigned_entry-instance_method" title="#on_assigned_entry (instance method)">#<strong>on_assigned_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :assigned state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_assigned_exit-instance_method" title="#on_assigned_exit (instance method)">#<strong>on_assigned_exit</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>When leaving the :assigned state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_assigning_entry-instance_method" title="#on_assigning_entry (instance method)">#<strong>on_assigning_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :assigning state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_canceled_entry-instance_method" title="#on_canceled_entry (instance method)">#<strong>on_canceled_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :canceled state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_completed_entry-instance_method" title="#on_completed_entry (instance method)">#<strong>on_completed_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :completed state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_failed_entry-instance_method" title="#on_failed_entry (instance method)">#<strong>on_failed_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :failed state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_holding_entry-instance_method" title="#on_holding_entry (instance method)">#<strong>on_holding_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :holding state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_indexed_entry-instance_method" title="#on_indexed_entry (instance method)">#<strong>on_indexed_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :indexed state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_indexing_entry-instance_method" title="#on_indexing_entry (instance method)">#<strong>on_indexing_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :indexing state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_purged_entry-instance_method" title="#on_purged_entry (instance method)">#<strong>on_purged_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :purged state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_rejected_entry-instance_method" title="#on_rejected_entry (instance method)">#<strong>on_rejected_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :rejected state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_resuming_entry-instance_method" title="#on_resuming_entry (instance method)">#<strong>on_resuming_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :resuming state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_retrieved_entry-instance_method" title="#on_retrieved_entry (instance method)">#<strong>on_retrieved_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :retrieved state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_reviewing_entry-instance_method" title="#on_reviewing_entry (instance method)">#<strong>on_reviewing_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :reviewing state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_scheduling_entry-instance_method" title="#on_scheduling_entry (instance method)">#<strong>on_scheduling_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :scheduling state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_staging_entry-instance_method" title="#on_staging_entry (instance method)">#<strong>on_staging_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :staging state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_starting_entry-instance_method" title="#on_starting_entry (instance method)">#<strong>on_starting_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :starting state.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_starting_exit-instance_method" title="#on_starting_exit (instance method)">#<strong>on_starting_exit</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Set the record &#39;phase&#39; when leaving the :starting state.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_suspended_entry-instance_method" title="#on_suspended_entry (instance method)">#<strong>on_suspended_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :suspended state:.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#on_unretrieved_entry-instance_method" title="#on_unretrieved_entry (instance method)">#<strong>on_unretrieved_entry</strong>(state, event, *event_args)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upon entering the :unretrieved state:.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Actions.html" title="UploadWorkflow::Single::Actions (module)">Actions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Actions.html#wf_cancel_submission-instance_method" title="UploadWorkflow::Single::Actions#wf_cancel_submission (method)">#wf_cancel_submission</a></span>, <span class='object_link'><a href="Actions.html#wf_check_status-instance_method" title="UploadWorkflow::Single::Actions#wf_check_status (method)">#wf_check_status</a></span>, <span class='object_link'><a href="Actions.html#wf_finalize_submission-instance_method" title="UploadWorkflow::Single::Actions#wf_finalize_submission (method)">#wf_finalize_submission</a></span>, <span class='object_link'><a href="Actions.html#wf_index_update-instance_method" title="UploadWorkflow::Single::Actions#wf_index_update (method)">#wf_index_update</a></span>, <span class='object_link'><a href="Actions.html#wf_list_items-instance_method" title="UploadWorkflow::Single::Actions#wf_list_items (method)">#wf_list_items</a></span>, <span class='object_link'><a href="Actions.html#wf_remove_items-instance_method" title="UploadWorkflow::Single::Actions#wf_remove_items (method)">#wf_remove_items</a></span>, <span class='object_link'><a href="Actions.html#wf_start_submission-instance_method" title="UploadWorkflow::Single::Actions#wf_start_submission (method)">#wf_start_submission</a></span>, <span class='object_link'><a href="Actions.html#wf_upload_file-instance_method" title="UploadWorkflow::Single::Actions#wf_upload_file (method)">#wf_upload_file</a></span>, <span class='object_link'><a href="Actions.html#wf_validate_submission-instance_method" title="UploadWorkflow::Single::Actions#wf_validate_submission (method)">#wf_validate_submission</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Json.html#json_parse-instance_method" title="Emma::Json#json_parse (method)">#json_parse</a></span>, <span class='object_link'><a href="../../Emma/Json.html#pretty_json-instance_method" title="Emma::Json#pretty_json (method)">#pretty_json</a></span>, <span class='object_link'><a href="../../Emma/Json.html#safe_json_parse-instance_method" title="Emma::Json#safe_json_parse (method)">#safe_json_parse</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Single::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#complete%3F-instance_method" title="UploadWorkflow::Single::Data#complete? (method)">#complete?</a></span>, <span class='object_link'><a href="Data.html#create_record-instance_method" title="UploadWorkflow::Single::Data#create_record (method)">#create_record</a></span>, <span class='object_link'><a href="Data.html#empty%3F-instance_method" title="UploadWorkflow::Single::Data#empty? (method)">#empty?</a></span>, <span class='object_link'><a href="Data.html#existing_record-instance_method" title="UploadWorkflow::Single::Data#existing_record (method)">#existing_record</a></span>, <span class='object_link'><a href="Data.html#file_valid%3F-instance_method" title="UploadWorkflow::Single::Data#file_valid? (method)">#file_valid?</a></span>, <span class='object_link'><a href="Data.html#metadata_valid%3F-instance_method" title="UploadWorkflow::Single::Data#metadata_valid? (method)">#metadata_valid?</a></span>, <span class='object_link'><a href="Data.html#reset_record-instance_method" title="UploadWorkflow::Single::Data#reset_record (method)">#reset_record</a></span>, <span class='object_link'><a href="Data.html#results-instance_method" title="UploadWorkflow::Single::Data#results (method)">#results</a></span>, <span class='object_link'><a href="Data.html#set_data-instance_method" title="UploadWorkflow::Single::Data#set_data (method)">#set_data</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Simulation.html" title="UploadWorkflow::Single::Simulation (module)">Simulation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Simulation.html#set_submission-instance_method" title="UploadWorkflow::Single::Simulation#set_submission (method)">#set_submission</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#failure-instance_method" title="UploadWorkflow::Errors#failure (method)">#failure</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#make_label-instance_method" title="UploadWorkflow::Errors::RenderMethods#make_label (method)">#make_label</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#batch_size-instance_method" title="UploadWorkflow::Properties#batch_size (method)">#batch_size</a></span>, <span class='object_link'><a href="../Properties.html#emergency_delete-instance_method" title="UploadWorkflow::Properties#emergency_delete (method)">#emergency_delete</a></span>, <span class='object_link'><a href="../Properties.html#force_delete-instance_method" title="UploadWorkflow::Properties#force_delete (method)">#force_delete</a></span>, <span class='object_link'><a href="../Properties.html#repo_create-instance_method" title="UploadWorkflow::Properties#repo_create (method)">#repo_create</a></span>, <span class='object_link'><a href="../Properties.html#repo_edit-instance_method" title="UploadWorkflow::Properties#repo_edit (method)">#repo_edit</a></span>, <span class='object_link'><a href="../Properties.html#repo_remove-instance_method" title="UploadWorkflow::Properties#repo_remove (method)">#repo_remove</a></span>, <span class='object_link'><a href="../Properties.html#title_prefix-instance_method" title="UploadWorkflow::Properties#title_prefix (method)">#title_prefix</a></span>, <span class='object_link'><a href="../Properties.html#truncate_delete-instance_method" title="UploadWorkflow::Properties#truncate_delete (method)">#truncate_delete</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#add_to_index-instance_method" title="UploadWorkflow::External#add_to_index (method)">#add_to_index</a></span>, <span class='object_link'><a href="../External.html#aws_api-instance_method" title="UploadWorkflow::External#aws_api (method)">#aws_api</a></span>, <span class='object_link'><a href="../External.html#batch_repository_remove-instance_method" title="UploadWorkflow::External#batch_repository_remove (method)">#batch_repository_remove</a></span>, <span class='object_link'><a href="../External.html#batch_repository_request-instance_method" title="UploadWorkflow::External#batch_repository_request (method)">#batch_repository_request</a></span>, <span class='object_link'><a href="../External.html#db_delete-instance_method" title="UploadWorkflow::External#db_delete (method)">#db_delete</a></span>, <span class='object_link'><a href="../External.html#db_insert-instance_method" title="UploadWorkflow::External#db_insert (method)">#db_insert</a></span>, <span class='object_link'><a href="../External.html#db_update-instance_method" title="UploadWorkflow::External#db_update (method)">#db_update</a></span>, <span class='object_link'><a href="../External.html#emma_item%3F-instance_method" title="UploadWorkflow::External#emma_item? (method)">#emma_item?</a></span>, <span class='object_link'><a href="../External.html#find_records-instance_method" title="UploadWorkflow::External#find_records (method)">#find_records</a></span>, <span class='object_link'><a href="../External.html#get_record-instance_method" title="UploadWorkflow::External#get_record (method)">#get_record</a></span>, <span class='object_link'><a href="../External.html#identifier-instance_method" title="UploadWorkflow::External#identifier (method)">#identifier</a></span>, <span class='object_link'><a href="../External.html#identifiers-instance_method" title="UploadWorkflow::External#identifiers (method)">#identifiers</a></span>, <span class='object_link'><a href="../External.html#ingest_api-instance_method" title="UploadWorkflow::External#ingest_api (method)">#ingest_api</a></span>, <span class='object_link'><a href="../External.html#new_record-instance_method" title="UploadWorkflow::External#new_record (method)">#new_record</a></span>, <span class='object_link'><a href="../External.html#remove_from_index-instance_method" title="UploadWorkflow::External#remove_from_index (method)">#remove_from_index</a></span>, <span class='object_link'><a href="../External.html#repository_create-instance_method" title="UploadWorkflow::External#repository_create (method)">#repository_create</a></span>, <span class='object_link'><a href="../External.html#repository_edit-instance_method" title="UploadWorkflow::External#repository_edit (method)">#repository_edit</a></span>, <span class='object_link'><a href="../External.html#repository_remove-instance_method" title="UploadWorkflow::External#repository_remove (method)">#repository_remove</a></span>, <span class='object_link'><a href="../External.html#skip_index_ingest-instance_method" title="UploadWorkflow::External#skip_index_ingest (method)">#skip_index_ingest</a></span>, <span class='object_link'><a href="../External.html#update_in_index-instance_method" title="UploadWorkflow::External#update_in_index (method)">#update_in_index</a></span>, <span class='object_link'><a href="../External.html#upload_create-instance_method" title="UploadWorkflow::External#upload_create (method)">#upload_create</a></span>, <span class='object_link'><a href="../External.html#upload_edit-instance_method" title="UploadWorkflow::External#upload_edit (method)">#upload_edit</a></span>, <span class='object_link'><a href="../External.html#upload_remove-instance_method" title="UploadWorkflow::External#upload_remove (method)">#upload_remove</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Actions.html" title="UploadWorkflow::Actions (module)">Actions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Actions.html#wf_cancel_submission-instance_method" title="UploadWorkflow::Actions#wf_cancel_submission (method)">#wf_cancel_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_finalize_submission-instance_method" title="UploadWorkflow::Actions#wf_finalize_submission (method)">#wf_finalize_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_index_update-instance_method" title="UploadWorkflow::Actions#wf_index_update (method)">#wf_index_update</a></span>, <span class='object_link'><a href="../Actions.html#wf_list_items-instance_method" title="UploadWorkflow::Actions#wf_list_items (method)">#wf_list_items</a></span>, <span class='object_link'><a href="../Actions.html#wf_remove_items-instance_method" title="UploadWorkflow::Actions#wf_remove_items (method)">#wf_remove_items</a></span>, <span class='object_link'><a href="../Actions.html#wf_start_submission-instance_method" title="UploadWorkflow::Actions#wf_start_submission (method)">#wf_start_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_validate_submission-instance_method" title="UploadWorkflow::Actions#wf_validate_submission (method)">#wf_validate_submission</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="on_approved_entry-instance_method">
+  
+    #<strong>on_approved_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :approved state:</p>
+
+<p>The submission has been approved.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+940
+941
+942
+943
+944
+945
+946
+947</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 940</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_approved_entry'>on_approved_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies user of approval.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :staging
+</span>  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_assigned_entry-instance_method">
+  
+    #<strong>on_assigned_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :assigned state:</p>
+
+<p>The submission has been assigned for review.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+814
+815
+816
+817
+818
+819
+820
+821
+822
+823
+824
+825
+826
+827
+828
+829
+830
+831
+832
+833
+834
+835
+836
+837
+838
+839
+840
+841
+842
+843
+844</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 814</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_assigned_entry'>on_assigned_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='comment'># Determine whether the system should perform an automated review.
+</span>  <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='kw'>false</span> <span class='comment'># TODO: auto-review?
+</span>
+  <span class='comment'># Determine whether the system should perform an automated review.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[auto_review: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_review'>auto_review</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_review'>auto_review</span> <span class='comment'># TODO: remove
+</span>  <span class='kw'>end</span>
+
+  <span class='comment'># Determine whether the system should perform an automated review.
+</span>  <span class='kw'>unless</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_auto_reviewable?'>auto_reviewable?</span> <span class='kw'>if</span> <span class='id identifier rubyid_record'>record</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># TODO: simulation - remove
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_auto_review'>auto_review</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM is performing an automated review.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Waiting for reviewer to begin review.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>REVIEWER must `review!` to advance...</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># If the submission is to be reviewed by a human then it remains in this
+</span>  <span class='comment'># state until a review claims it (i.e. starts a review).
+</span>  <span class='id identifier rubyid_review!'>review!</span> <span class='kw'>if</span> <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='comment'># NOTE: =&gt; :reviewing
+</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_assigned_exit-instance_method">
+  
+    #<strong>on_assigned_exit</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>When leaving the :assigned state:</p>
+
+<p>The submission was assigned for review.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being exited.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+856
+857
+858
+859
+860
+861
+862
+863
+864
+865
+866</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 856</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_assigned_exit'>on_assigned_exit</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:review</span>
+    <span class='id identifier rubyid_changed'>changed</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>withdrawn</span><span class='tstring_end'>&#39;</span></span>
+    <span class='id identifier rubyid_changed'>changed</span> <span class='op'>+=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> pending edits</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:cancel</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Reviewer(s) notified the submission was </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_changed'>changed</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_assigning_entry-instance_method">
+  
+    #<strong>on_assigning_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :assigning state:</p>
+
+<p>The submission is being assigned for review.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+738
+739
+740
+741
+742
+743
+744
+745
+746
+747
+748
+749
+750
+751</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 726</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_assigning_entry'>on_assigning_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='comment'># Determine availability of appropriate reviewer(s).
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[no_reviewers: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_no_reviewers'>no_reviewers</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_can_proceed'>can_proceed</span> <span class='op'>=</span> <span class='op'>!</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_no_reviewers'>no_reviewers</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_can_proceed'>can_proceed</span> <span class='op'>=</span> <span class='kw'>true</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># TODO: simulation - remove
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_can_proceed'>can_proceed</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies the pool of available reviewer(s).</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM determined there are no reviewers available.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Automatically transition to the next state based on submission status.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_can_proceed'>can_proceed</span>
+    <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :assigned
+</span>  <span class='kw'>else</span>
+    <span class='id identifier rubyid_hold!'>hold!</span>    <span class='comment'># NOTE: =&gt; :holding
+</span>  <span class='kw'>end</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_canceled_entry-instance_method">
+  
+    #<strong>on_canceled_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :canceled state:</p>
+
+<p>The user is choosing to terminate the workflow.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1218
+1219
+1220
+1221
+1222
+1223
+1224
+1225
+1226
+1227
+1228
+1229
+1230
+1231
+1232
+1233
+1234
+1235</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1218</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_canceled_entry'>on_canceled_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>USER has terminated the workflow.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[prev_state == </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_prev_state'>prev_state</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Associated data will persist until this entry is pruned.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The submission record will be removed.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid_wf_cancel_submission'>wf_cancel_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_completed_entry-instance_method">
+  
+    #<strong>on_completed_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :completed state:</p>
+
+<p>The user is choosing to terminate the workflow.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1247
+1248
+1249
+1250
+1251
+1252
+1253
+1254
+1255</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1247</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_completed_entry'>on_completed_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[prev_state == </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_prev_state'>prev_state</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The submission has been completed successfully.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_halt'>halt</span> <span class='kw'>unless</span> <span class='const'>Workflow</span><span class='op'>::</span><span class='const'>Base</span><span class='op'>::</span><span class='const'>WORKFLOW_DEBUG</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_failed_entry-instance_method">
+  
+    #<strong>on_failed_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :failed state:</p>
+
+<p>The system is terminating the workflow.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1198
+1199
+1200
+1201
+1202
+1203
+1204
+1205
+1206</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1198</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_failed_entry'>on_failed_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[prev_state == </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_prev_state'>prev_state</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM has terminated the workflow.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Associated data will persist until this entry is pruned.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_holding_entry-instance_method">
+  
+    #<strong>on_holding_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :holding state:</p>
+
+<p>The system is waiting for a reviewer (or the review process is paused).</p>
+
+<p>The submission will remain in this state until the reviewer&#39;s action causes the state to advance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+766
+767
+768
+769
+770
+771
+772
+773
+774
+775
+776
+777
+778
+779
+780
+781
+782
+783
+784
+785
+786
+787
+788
+789
+790
+791
+792
+793
+794
+795
+796
+797
+798
+799
+800
+801
+802</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 766</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_holding_entry'>on_holding_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+
+    <span class='id identifier rubyid_task'>task</span> <span class='op'>=</span> <span class='const'>ReviewerTask</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:hold</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Start </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> to check for an available reviewer.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_start'>start</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_check'>check</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is checking...</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :holding
+</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_success'>success</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> has found a reviewer.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :assigning
+</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> still has NOT found a reviewer.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies the user of submission status.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies administrator of possible problem.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_restart'>restart</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is restarting.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :holding
+</span>      <span class='kw'>else</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is terminated.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_fail!'>fail!</span>    <span class='comment'># NOTE: =&gt; :failed
+</span>      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_indexed_entry-instance_method">
+  
+    #<strong>on_indexed_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :indexed state:</p>
+
+<p>The submission is complete and present in the EMMA Unified Index.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1153
+1154
+1155
+1156
+1157
+1158
+1159
+1160</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1153</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_indexed_entry'>on_indexed_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies the user that the submission is complete.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :completed
+</span>  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_indexing_entry-instance_method">
+  
+    #<strong>on_indexing_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :indexing state:</p>
+
+<p>For an EMMA-native submission, the item is being added to the index.</p>
+
+<p>For a member repository submission, the record&#39;s workflow will remain in this state until a separate action (external process or manual check via the web interface) determines that the entry has appeared in the index.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1094
+1095
+1096
+1097
+1098
+1099
+1100
+1101
+1102
+1103
+1104
+1105
+1106
+1107
+1108
+1109
+1110
+1111
+1112
+1113
+1114
+1115
+1116
+1117
+1118
+1119
+1120
+1121
+1122
+1123
+1124
+1125
+1126
+1127
+1128
+1129
+1130
+1131
+1132
+1133
+1134
+1135
+1136
+1137
+1138
+1139
+1140
+1141</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1094</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_indexing_entry'>on_indexing_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+
+    <span class='id identifier rubyid_task'>task</span> <span class='op'>=</span> <span class='const'>IndexTask</span>
+
+    <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:timeout</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Start </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> to check for the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_start'>start</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_check'>check</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is checking...</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :indexing
+</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_success'>success</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> has detected the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :indexed
+</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> still has NOT detected the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies the user of submission status.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies an agent of the member repository.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_restart'>restart</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is restarting.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :indexing
+</span>      <span class='kw'>else</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is terminated.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_fail!'>fail!</span>    <span class='comment'># NOTE: =&gt; :failed
+</span>      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid_wf_index_update'>wf_index_update</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_emma_item?'>emma_item?</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_ready?'>ready?</span>
+        <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :indexed
+</span>      <span class='kw'>else</span>
+        <span class='id identifier rubyid_fail!'>fail!</span>    <span class='comment'># NOTE: =&gt; :failed
+</span>      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_purged_entry-instance_method">
+  
+    #<strong>on_purged_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :purged state:</p>
+
+<p>All data associated with the submission is being eliminated.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1290
+1291
+1292
+1293
+1294
+1295
+1296
+1297
+1298
+1299
+1300
+1301
+1302
+1303
+1304</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1290</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_purged_entry'>on_purged_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The submission entry is being purged.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Shrine cache item is being removed from AWS S3.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># TODO: remove Shrine cache item from AWS S3.
+</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Database entry is being removed.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='comment'># TODO: delete &#39;upload&#39; table record, OR mark as purged:
+</span>  <span class='id identifier rubyid_set_workflow_phase'>set_workflow_phase</span><span class='lparen'>(</span><span class='symbol'>:purge</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_halt'>halt</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_rejected_entry-instance_method">
+  
+    #<strong>on_rejected_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :rejected state:</p>
+
+<p>The submission has been rejected.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+921
+922
+923
+924
+925
+926
+927
+928</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 921</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_rejected_entry'>on_rejected_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>System notifies user of rejection.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>USER must `edit!` or `cancel!` to advance...</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_resuming_entry-instance_method">
+  
+    #<strong>on_resuming_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :resuming state:</p>
+
+<p>Pseudo-state indicating the previous workflow state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1273
+1274
+1275
+1276
+1277
+1278</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1273</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_resuming_entry'>on_resuming_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+  <span class='id identifier rubyid_persist_workflow_state'>persist_workflow_state</span><span class='lparen'>(</span><span class='id identifier rubyid_prev_state'>prev_state</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_entry'>__debug_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_current_state'>current_state</span><span class='rparen'>)</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_retrieved_entry-instance_method">
+  
+    #<strong>on_retrieved_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :retrieved state:</p>
+
+<p>The submission request has been retrieved by the member repository and removed from the staging area.</p>
+
+<h2 id="label-Implementation+Notes">Implementation Notes</h2>
+
+<p>This method automatically transitions to :indexing, but that&#39;s only because there&#39;s no defined “signal” (from the perspective of the EMMA web service) to indicate that</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1064
+1065
+1066
+1067
+1068
+1069
+1070
+1071
+1072</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1064</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_retrieved_entry'>on_retrieved_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The submission has been received by the member repository.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM ensures the staging area is consistent.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :indexing
+</span>  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_reviewing_entry-instance_method">
+  
+    #<strong>on_reviewing_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :reviewing state:</p>
+
+<p>The submission is under review.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+878
+879
+880
+881
+882
+883
+884
+885
+886
+887
+888
+889
+890
+891
+892
+893
+894
+895
+896
+897
+898
+899
+900
+901
+902
+903
+904
+905
+906
+907
+908
+909</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 878</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_reviewing_entry'>on_reviewing_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_simulating'>simulating</span> <span class='op'>||</span> <span class='op'>!</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_review'>auto_review</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_review: false]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Waiting for reviewer evaluation.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>REVIEWER must `approve!` or `reject!` to advance...</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_approve'>auto_approve</span> <span class='comment'># TODO: remove
+</span>    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_review:  true]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_approve: true]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM review approves the submission.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_approve!'>approve!</span> <span class='comment'># NOTE: =&gt; :approved
+</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_reject'>auto_reject</span> <span class='comment'># TODO: remove
+</span>    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_review: true]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_reject: true]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM review rejects the submission.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_reject!'>reject!</span> <span class='comment'># NOTE: =&gt; :rejected
+</span>
+  <span class='kw'>else</span> <span class='comment'># TODO: remove
+</span>    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_review:  true]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_approve: false]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[auto_reject:  false]</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM must `approve!` or `reject!` to advance...</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_scheduling_entry-instance_method">
+  
+    #<strong>on_scheduling_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :scheduling state:</p>
+
+<p>The submission is being scheduled for review.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 684</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_scheduling_entry'>on_scheduling_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='comment'># TODO: simulation - remove
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[auto_review: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_review'>auto_review</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_auto_review'>auto_review</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Determine whether the system should perform an automated review.
+</span>  <span class='kw'>unless</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid_auto_review'>auto_review</span> <span class='op'>=</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_auto_reviewable?'>auto_reviewable?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># TODO: simulation - remove
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_auto_review'>auto_review</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM will perform an automated review.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM will determine a pool of reviewer(s).</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Automatically transition to the next state based on submission status.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_auto_review'>auto_review</span>
+    <span class='id identifier rubyid_assign!'>assign!</span>  <span class='comment'># NOTE: =&gt; :assigned
+</span>  <span class='kw'>else</span>
+    <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :assigning
+</span>  <span class='kw'>end</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_staging_entry-instance_method">
+  
+    #<strong>on_staging_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :staging state:</p>
+
+<p>The submission request (submitted file plus generated request form) has been added to the staging area.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+966
+967
+968
+969
+970
+971
+972
+973
+974
+975
+976
+977
+978
+979
+980
+981
+982
+983
+984
+985
+986
+987
+988
+989
+990
+991
+992
+993
+994
+995</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 966</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_staging_entry'>on_staging_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='comment'># Determine whether this is destined for a member repository.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[emma_items: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_emma_item'>emma_item</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_emma_items'>emma_items</span> <span class='op'>=</span> <span class='id identifier rubyid_submission'>submission</span><span class='period'>.</span><span class='id identifier rubyid_emma_item'>emma_item</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_emma_items'>emma_items</span> <span class='op'>=</span> <span class='id identifier rubyid_emma_item?'>emma_item?</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_simulating'>simulating</span>
+    <span class='id identifier rubyid_wf_finalize_submission'>wf_finalize_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># TODO: simulation - remove
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_emma_items'>emma_items</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM determines this is an EMMA-native submission.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM moves the submission into the repo staging area.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Automatically transition to the next state based on submission status.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_emma_items'>emma_items</span>
+    <span class='id identifier rubyid_index!'>index!</span>   <span class='comment'># NOTE: =&gt; :indexing
+</span>  <span class='kw'>else</span>
+    <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :unretrieved
+</span>  <span class='kw'>end</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_starting_entry-instance_method">
+  
+    #<strong>on_starting_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :starting state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+635
+636
+637
+638
+639
+640
+641</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 635</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_starting_entry'>on_starting_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>The workflow is starting.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_starting_exit-instance_method">
+  
+    #<strong>on_starting_exit</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Set the record &#39;phase&#39; when leaving the :starting state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being exited.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 651</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_starting_exit'>on_starting_exit</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:start</span>
+
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Using workflow </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>with workflow_phase: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_workflow_phase'>workflow_phase</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>with variant_type:   </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_variant_type'>variant_type</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>with record:         </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_set_workflow_phase'>set_workflow_phase</span><span class='lparen'>(</span><span class='id identifier rubyid_workflow_phase'>workflow_phase</span><span class='rparen'>)</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_suspended_entry-instance_method">
+  
+    #<strong>on_suspended_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :suspended state:</p>
+
+<p>The system is pausing the workflow; it may be resumable.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1178
+1179
+1180
+1181
+1182
+1183
+1184
+1185
+1186</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1178</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_suspended_entry'>on_suspended_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>[prev_state == </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_prev_state'>prev_state</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'>]</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Submission suspended until admin takes further action TBD.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Associated data will persist indefinitely.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="on_unretrieved_entry-instance_method">
+  
+    #<strong>on_unretrieved_entry</strong>(state, event, *event_args)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upon entering the :unretrieved state:</p>
+
+<p>For a member repository submission, the record&#39;s workflow will remain in this state until a separate action (external process or manual check via the web interface) determines that the submission has been retrieved and advances the state.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>state</span>
+      
+      
+        <span class='type'>(<tt>Workflow::State</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>State that is being entered.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Triggering event</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Return <strong>self</strong> for chaining.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+1010
+1011
+1012
+1013
+1014
+1015
+1016
+1017
+1018
+1019
+1020
+1021
+1022
+1023
+1024
+1025
+1026
+1027
+1028
+1029
+1030
+1031
+1032
+1033
+1034
+1035
+1036
+1037
+1038
+1039
+1040
+1041
+1042
+1043
+1044
+1045
+1046</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 1010</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_on_unretrieved_entry'>on_unretrieved_entry</span><span class='lparen'>(</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_event'>event</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_simulating'>simulating</span>
+
+    <span class='id identifier rubyid_task'>task</span> <span class='op'>=</span> <span class='const'>RetrievalTask</span>
+
+    <span class='kw'>unless</span> <span class='id identifier rubyid_event'>event</span> <span class='op'>==</span> <span class='symbol'>:timeout</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Start </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> to check for the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_start'>start</span>
+    <span class='kw'>end</span>
+
+    <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_check'>check</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is checking...</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :unretrieved
+</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_success'>success</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> has detected the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_advance!'>advance!</span> <span class='comment'># NOTE: =&gt; :retrieved
+</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> still has NOT detected the submission.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies the user of submission status.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>SYSTEM notifies an agent of the member repository.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_task'>task</span><span class='period'>.</span><span class='id identifier rubyid_restart'>restart</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is restarting.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_timeout!'>timeout!</span> <span class='comment'># NOTE: =&gt; :unretrieved
+</span>      <span class='kw'>else</span>
+        <span class='id identifier rubyid___debug_sim'>__debug_sim</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_task'>task</span><span class='embexpr_end'>}</span><span class='tstring_content'> is terminated.</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_fail!'>fail!</span>    <span class='comment'># NOTE: =&gt; :failed
+</span>      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:50 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

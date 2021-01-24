@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: UploadWorkflow::Bulk::Remove
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "UploadWorkflow::Bulk::Remove";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Bulk.html" title="UploadWorkflow::Bulk (class)">Bulk</a></span></span>
+     &raquo; 
+    <span class="title">Remove</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: UploadWorkflow::Bulk::Remove
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="../Bulk.html" title="UploadWorkflow::Bulk (class)">UploadWorkflow::Bulk</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Workflow::Base</li>
+          
+            <li class="next"><span class='object_link'><a href="../../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></li>
+          
+            <li class="next"><span class='object_link'><a href="../Bulk.html" title="UploadWorkflow::Bulk (class)">UploadWorkflow::Bulk</a></span></li>
+          
+            <li class="next">UploadWorkflow::Bulk::Remove</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Remove/Events.html" title="UploadWorkflow::Bulk::Remove::Events (module)">Events</a></span>, <span class='object_link'><a href="Remove/States.html" title="UploadWorkflow::Bulk::Remove::States (module)">States</a></span>, Transitions, <span class='object_link'><a href="../Remove.html" title="UploadWorkflow::Remove (module)">Remove</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload_workflow/bulk/remove.rb<span class="defines">,<br />
+  app/models/upload_workflow/bulk/remove.rb</span>
+</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Bulk removal workflow.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Remove/Actions.html" title="UploadWorkflow::Bulk::Remove::Actions (module)">Actions</a></span>, <span class='object_link'><a href="Remove/Data.html" title="UploadWorkflow::Bulk::Remove::Data (module)">Data</a></span>, <span class='object_link'><a href="Remove/Errors.html" title="UploadWorkflow::Bulk::Remove::Errors (module)">Errors</a></span>, <span class='object_link'><a href="Remove/Events.html" title="UploadWorkflow::Bulk::Remove::Events (module)">Events</a></span>, <span class='object_link'><a href="Remove/External.html" title="UploadWorkflow::Bulk::Remove::External (module)">External</a></span>, <span class='object_link'><a href="Remove/Properties.html" title="UploadWorkflow::Bulk::Remove::Properties (module)">Properties</a></span>, <span class='object_link'><a href="Remove/Simulation.html" title="UploadWorkflow::Bulk::Remove::Simulation (module)">Simulation</a></span>, <span class='object_link'><a href="Remove/States.html" title="UploadWorkflow::Bulk::Remove::States (module)">States</a></span>
+    
+  
+    
+  
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#DEFAULT_ERROR_MESSAGE-constant" title="UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE (constant)">Errors::DEFAULT_ERROR_MESSAGE</a></span>, <span class='object_link'><a href="../Errors.html#INTERNAL_EXCEPTION-constant" title="UploadWorkflow::Errors::INTERNAL_EXCEPTION (constant)">Errors::INTERNAL_EXCEPTION</a></span>, <span class='object_link'><a href="../Errors.html#UPLOAD_ERROR-constant" title="UploadWorkflow::Errors::UPLOAD_ERROR (constant)">Errors::UPLOAD_ERROR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#DEFAULT_LABEL-constant" title="UploadWorkflow::Errors::RenderMethods::DEFAULT_LABEL (constant)">Errors::RenderMethods::DEFAULT_LABEL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">Properties::BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#BATCH_SIZE_DEFAULT-constant" title="UploadWorkflow::Properties::BATCH_SIZE_DEFAULT (constant)">Properties::BATCH_SIZE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#DEV_TITLE_PREFIX-constant" title="UploadWorkflow::Properties::DEV_TITLE_PREFIX (constant)">Properties::DEV_TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#EMERGENCY_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::EMERGENCY_DELETE_DEFAULT (constant)">Properties::EMERGENCY_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#FORCE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::FORCE_DELETE_DEFAULT (constant)">Properties::FORCE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#INGEST_MAX_SIZE-constant" title="UploadWorkflow::Properties::INGEST_MAX_SIZE (constant)">Properties::INGEST_MAX_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">Properties::MAX_BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#REPO_CREATE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_CREATE_DEFAULT (constant)">Properties::REPO_CREATE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_EDIT_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_EDIT_DEFAULT (constant)">Properties::REPO_EDIT_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_REMOVE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_REMOVE_DEFAULT (constant)">Properties::REPO_REMOVE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#THROTTLE_PAUSE-constant" title="UploadWorkflow::Properties::THROTTLE_PAUSE (constant)">Properties::THROTTLE_PAUSE</a></span>, <span class='object_link'><a href="../Properties.html#TITLE_PREFIX-constant" title="UploadWorkflow::Properties::TITLE_PREFIX (constant)">Properties::TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#TRUNCATE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::TRUNCATE_DELETE_DEFAULT (constant)">Properties::TRUNCATE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#WF_URL_PARAMETER-constant" title="UploadWorkflow::Properties::WF_URL_PARAMETER (constant)">Properties::WF_URL_PARAMETER</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#DISABLE_UPLOAD_INDEX_UPDATE-constant" title="UploadWorkflow::External::DISABLE_UPLOAD_INDEX_UPDATE (constant)">External::DISABLE_UPLOAD_INDEX_UPDATE</a></span>, <span class='object_link'><a href="../External.html#REPO_FAILURE-constant" title="UploadWorkflow::External::REPO_FAILURE (constant)">External::REPO_FAILURE</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Remove.html" title="UploadWorkflow::Remove (module)">Remove</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Remove.html#STATE_COLUMN-constant" title="UploadWorkflow::Remove::STATE_COLUMN (constant)">Remove::STATE_COLUMN</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Simulation.html" title="UploadWorkflow::Bulk::Simulation (module)">Simulation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Simulation.html#record-instance_method" title="UploadWorkflow::Bulk::Simulation#record (method)">#record</a></span>, <span class='object_link'><a href="Simulation.html#submission-instance_method" title="UploadWorkflow::Bulk::Simulation#submission (method)">#submission</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Bulk::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#control_file-instance_method" title="UploadWorkflow::Bulk::Data#control_file (method)">#control_file</a></span>, <span class='object_link'><a href="Data.html#entries-instance_method" title="UploadWorkflow::Bulk::Data#entries (method)">#entries</a></span></p>
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  <h2>Method Summary</h2>
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Remove/States.html" title="UploadWorkflow::Bulk::Remove::States (module)">States</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Remove/States.html#on_removed_entry-instance_method" title="UploadWorkflow::Bulk::Remove::States#on_removed_entry (method)">#on_removed_entry</a></span>, <span class='object_link'><a href="Remove/States.html#on_removing_entry-instance_method" title="UploadWorkflow::Bulk::Remove::States#on_removing_entry (method)">#on_removing_entry</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#failure-instance_method" title="UploadWorkflow::Errors#failure (method)">#failure</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#make_label-instance_method" title="UploadWorkflow::Errors::RenderMethods#make_label (method)">#make_label</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#batch_size-instance_method" title="UploadWorkflow::Properties#batch_size (method)">#batch_size</a></span>, <span class='object_link'><a href="../Properties.html#emergency_delete-instance_method" title="UploadWorkflow::Properties#emergency_delete (method)">#emergency_delete</a></span>, <span class='object_link'><a href="../Properties.html#force_delete-instance_method" title="UploadWorkflow::Properties#force_delete (method)">#force_delete</a></span>, <span class='object_link'><a href="../Properties.html#repo_create-instance_method" title="UploadWorkflow::Properties#repo_create (method)">#repo_create</a></span>, <span class='object_link'><a href="../Properties.html#repo_edit-instance_method" title="UploadWorkflow::Properties#repo_edit (method)">#repo_edit</a></span>, <span class='object_link'><a href="../Properties.html#repo_remove-instance_method" title="UploadWorkflow::Properties#repo_remove (method)">#repo_remove</a></span>, <span class='object_link'><a href="../Properties.html#title_prefix-instance_method" title="UploadWorkflow::Properties#title_prefix (method)">#title_prefix</a></span>, <span class='object_link'><a href="../Properties.html#truncate_delete-instance_method" title="UploadWorkflow::Properties#truncate_delete (method)">#truncate_delete</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="External.html" title="UploadWorkflow::Bulk::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="External.html#bulk_add_to_index-instance_method" title="UploadWorkflow::Bulk::External#bulk_add_to_index (method)">#bulk_add_to_index</a></span>, <span class='object_link'><a href="External.html#bulk_db_delete-instance_method" title="UploadWorkflow::Bulk::External#bulk_db_delete (method)">#bulk_db_delete</a></span>, <span class='object_link'><a href="External.html#bulk_db_insert-instance_method" title="UploadWorkflow::Bulk::External#bulk_db_insert (method)">#bulk_db_insert</a></span>, <span class='object_link'><a href="External.html#bulk_db_update-instance_method" title="UploadWorkflow::Bulk::External#bulk_db_update (method)">#bulk_db_update</a></span>, <span class='object_link'><a href="External.html#bulk_remove_from_index-instance_method" title="UploadWorkflow::Bulk::External#bulk_remove_from_index (method)">#bulk_remove_from_index</a></span>, <span class='object_link'><a href="External.html#bulk_update_in_index-instance_method" title="UploadWorkflow::Bulk::External#bulk_update_in_index (method)">#bulk_update_in_index</a></span>, <span class='object_link'><a href="External.html#bulk_upload_create-instance_method" title="UploadWorkflow::Bulk::External#bulk_upload_create (method)">#bulk_upload_create</a></span>, <span class='object_link'><a href="External.html#bulk_upload_edit-instance_method" title="UploadWorkflow::Bulk::External#bulk_upload_edit (method)">#bulk_upload_edit</a></span>, <span class='object_link'><a href="External.html#bulk_upload_remove-instance_method" title="UploadWorkflow::Bulk::External#bulk_upload_remove (method)">#bulk_upload_remove</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#add_to_index-instance_method" title="UploadWorkflow::External#add_to_index (method)">#add_to_index</a></span>, <span class='object_link'><a href="../External.html#aws_api-instance_method" title="UploadWorkflow::External#aws_api (method)">#aws_api</a></span>, <span class='object_link'><a href="../External.html#batch_repository_remove-instance_method" title="UploadWorkflow::External#batch_repository_remove (method)">#batch_repository_remove</a></span>, <span class='object_link'><a href="../External.html#batch_repository_request-instance_method" title="UploadWorkflow::External#batch_repository_request (method)">#batch_repository_request</a></span>, <span class='object_link'><a href="../External.html#db_delete-instance_method" title="UploadWorkflow::External#db_delete (method)">#db_delete</a></span>, <span class='object_link'><a href="../External.html#db_insert-instance_method" title="UploadWorkflow::External#db_insert (method)">#db_insert</a></span>, <span class='object_link'><a href="../External.html#db_update-instance_method" title="UploadWorkflow::External#db_update (method)">#db_update</a></span>, <span class='object_link'><a href="../External.html#emma_item%3F-instance_method" title="UploadWorkflow::External#emma_item? (method)">#emma_item?</a></span>, <span class='object_link'><a href="../External.html#find_records-instance_method" title="UploadWorkflow::External#find_records (method)">#find_records</a></span>, <span class='object_link'><a href="../External.html#get_record-instance_method" title="UploadWorkflow::External#get_record (method)">#get_record</a></span>, <span class='object_link'><a href="../External.html#identifier-instance_method" title="UploadWorkflow::External#identifier (method)">#identifier</a></span>, <span class='object_link'><a href="../External.html#identifiers-instance_method" title="UploadWorkflow::External#identifiers (method)">#identifiers</a></span>, <span class='object_link'><a href="../External.html#ingest_api-instance_method" title="UploadWorkflow::External#ingest_api (method)">#ingest_api</a></span>, <span class='object_link'><a href="../External.html#new_record-instance_method" title="UploadWorkflow::External#new_record (method)">#new_record</a></span>, <span class='object_link'><a href="../External.html#remove_from_index-instance_method" title="UploadWorkflow::External#remove_from_index (method)">#remove_from_index</a></span>, <span class='object_link'><a href="../External.html#repository_create-instance_method" title="UploadWorkflow::External#repository_create (method)">#repository_create</a></span>, <span class='object_link'><a href="../External.html#repository_edit-instance_method" title="UploadWorkflow::External#repository_edit (method)">#repository_edit</a></span>, <span class='object_link'><a href="../External.html#repository_remove-instance_method" title="UploadWorkflow::External#repository_remove (method)">#repository_remove</a></span>, <span class='object_link'><a href="../External.html#skip_index_ingest-instance_method" title="UploadWorkflow::External#skip_index_ingest (method)">#skip_index_ingest</a></span>, <span class='object_link'><a href="../External.html#update_in_index-instance_method" title="UploadWorkflow::External#update_in_index (method)">#update_in_index</a></span>, <span class='object_link'><a href="../External.html#upload_create-instance_method" title="UploadWorkflow::External#upload_create (method)">#upload_create</a></span>, <span class='object_link'><a href="../External.html#upload_edit-instance_method" title="UploadWorkflow::External#upload_edit (method)">#upload_edit</a></span>, <span class='object_link'><a href="../External.html#upload_remove-instance_method" title="UploadWorkflow::External#upload_remove (method)">#upload_remove</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Bulk::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#complete%3F-instance_method" title="UploadWorkflow::Bulk::Data#complete? (method)">#complete?</a></span>, <span class='object_link'><a href="Data.html#empty%3F-instance_method" title="UploadWorkflow::Bulk::Data#empty? (method)">#empty?</a></span>, <span class='object_link'><a href="Data.html#ready%3F-instance_method" title="UploadWorkflow::Bulk::Data#ready? (method)">#ready?</a></span>, <span class='object_link'><a href="Data.html#results-instance_method" title="UploadWorkflow::Bulk::Data#results (method)">#results</a></span>, <span class='object_link'><a href="Data.html#set_data-instance_method" title="UploadWorkflow::Bulk::Data#set_data (method)">#set_data</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Actions.html" title="UploadWorkflow::Bulk::Actions (module)">Actions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Actions.html#wf_set_records_state-instance_method" title="UploadWorkflow::Bulk::Actions#wf_set_records_state (method)">#wf_set_records_state</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Actions.html" title="UploadWorkflow::Actions (module)">Actions</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Actions.html#wf_cancel_submission-instance_method" title="UploadWorkflow::Actions#wf_cancel_submission (method)">#wf_cancel_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_finalize_submission-instance_method" title="UploadWorkflow::Actions#wf_finalize_submission (method)">#wf_finalize_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_index_update-instance_method" title="UploadWorkflow::Actions#wf_index_update (method)">#wf_index_update</a></span>, <span class='object_link'><a href="../Actions.html#wf_list_items-instance_method" title="UploadWorkflow::Actions#wf_list_items (method)">#wf_list_items</a></span>, <span class='object_link'><a href="../Actions.html#wf_remove_items-instance_method" title="UploadWorkflow::Actions#wf_remove_items (method)">#wf_remove_items</a></span>, <span class='object_link'><a href="../Actions.html#wf_start_submission-instance_method" title="UploadWorkflow::Actions#wf_start_submission (method)">#wf_start_submission</a></span>, <span class='object_link'><a href="../Actions.html#wf_validate_submission-instance_method" title="UploadWorkflow::Actions#wf_validate_submission (method)">#wf_validate_submission</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="States.html" title="UploadWorkflow::Bulk::States (module)">States</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="States.html#on_canceled_entry-instance_method" title="UploadWorkflow::Bulk::States#on_canceled_entry (method)">#on_canceled_entry</a></span>, <span class='object_link'><a href="States.html#on_completed_entry-instance_method" title="UploadWorkflow::Bulk::States#on_completed_entry (method)">#on_completed_entry</a></span>, <span class='object_link'><a href="States.html#on_failed_entry-instance_method" title="UploadWorkflow::Bulk::States#on_failed_entry (method)">#on_failed_entry</a></span>, <span class='object_link'><a href="States.html#on_indexed_entry-instance_method" title="UploadWorkflow::Bulk::States#on_indexed_entry (method)">#on_indexed_entry</a></span>, <span class='object_link'><a href="States.html#on_indexing_entry-instance_method" title="UploadWorkflow::Bulk::States#on_indexing_entry (method)">#on_indexing_entry</a></span>, <span class='object_link'><a href="States.html#on_purged_entry-instance_method" title="UploadWorkflow::Bulk::States#on_purged_entry (method)">#on_purged_entry</a></span>, <span class='object_link'><a href="States.html#on_resuming_entry-instance_method" title="UploadWorkflow::Bulk::States#on_resuming_entry (method)">#on_resuming_entry</a></span>, <span class='object_link'><a href="States.html#on_retrieved_entry-instance_method" title="UploadWorkflow::Bulk::States#on_retrieved_entry (method)">#on_retrieved_entry</a></span>, <span class='object_link'><a href="States.html#on_staging_entry-instance_method" title="UploadWorkflow::Bulk::States#on_staging_entry (method)">#on_staging_entry</a></span>, <span class='object_link'><a href="States.html#on_unretrieved_entry-instance_method" title="UploadWorkflow::Bulk::States#on_unretrieved_entry (method)">#on_unretrieved_entry</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="../Bulk.html" title="UploadWorkflow::Bulk (class)">UploadWorkflow::Bulk</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Bulk.html#initialize-instance_method" title="UploadWorkflow::Bulk#initialize (method)">#initialize</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="../../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../UploadWorkflow.html#existing_entry%3F-instance_method" title="UploadWorkflow#existing_entry? (method)">#existing_entry?</a></span>, <span class='object_link'><a href="../../UploadWorkflow.html#new_submission%3F-instance_method" title="UploadWorkflow#new_submission? (method)">#new_submission?</a></span>, <span class='object_link'><a href="../../UploadWorkflow.html#workflow_column-class_method" title="UploadWorkflow.workflow_column (method)">workflow_column</a></span>, <span class='object_link'><a href="../../UploadWorkflow.html#workflow_type-class_method" title="UploadWorkflow.workflow_type (method)">workflow_type</a></span></p>
+
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <p class="notice">This class inherits a constructor from <span class='object_link'><a href="../Bulk.html#initialize-instance_method" title="UploadWorkflow::Bulk#initialize (method)">UploadWorkflow::Bulk</a></span></p>
+  
+</div>
+
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:19:26 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

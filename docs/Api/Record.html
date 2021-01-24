@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Api::Record
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Api::Record";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (R)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Api.html" title="Api (module)">Api</a></span></span>
+     &raquo; 
+    <span class="title">Record</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Api::Record
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Api::Record</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Common.html" title="Api::Common (module)">Common</a></span>, <span class='object_link'><a href="Record/Associations.html" title="Api::Record::Associations (module)">Associations</a></span>, <span class='object_link'><a href="Record/Schema.html" title="Api::Record::Schema (module)">Schema</a></span>, <span class='object_link'><a href="Schema.html" title="Api::Schema (module)">Schema</a></span>, <span class='object_link'><a href="../Model.html" title="Model (module)">Model</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/records/concerns/api/record.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The base class for objects that interact with the Bookshare API, either to be initialized through de-serialized data received from the API or to be serialized into data to be sent to the API.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="../AwsS3/Api/Record.html" title="AwsS3::Api::Record (class)">AwsS3::Api::Record</a></span>, <span class='object_link'><a href="../Bs/Api/Record.html" title="Bs::Api::Record (class)">Bs::Api::Record</a></span>, <span class='object_link'><a href="../Ingest/Api/Record.html" title="Ingest::Api::Record (class)">Ingest::Api::Record</a></span>, <span class='object_link'><a href="../Search/Api/Record.html" title="Search::Api::Record (class)">Search::Api::Record</a></span></p>
+</div>
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Record/Associations.html" title="Api::Record::Associations (module)">Associations</a></span>, <span class='object_link'><a href="Record/Schema.html" title="Api::Record::Schema (module)">Schema</a></span>
+    
+  
+    
+  
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Schema.html" title="Api::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">Schema::DEFAULT_SERIALIZER_TYPE</a></span>, <span class='object_link'><a href="Schema.html#ELEMENT_NAMING_MODES-constant" title="Api::Schema::ELEMENT_NAMING_MODES (constant)">Schema::ELEMENT_NAMING_MODES</a></span>, <span class='object_link'><a href="Schema.html#SCALAR_DEFAULTS-constant" title="Api::Schema::SCALAR_DEFAULTS (constant)">Schema::SCALAR_DEFAULTS</a></span>, <span class='object_link'><a href="Schema.html#SCALAR_TYPES-constant" title="Api::Schema::SCALAR_TYPES (constant)">Schema::SCALAR_TYPES</a></span>, <span class='object_link'><a href="Schema.html#SERIALIZER_TYPES-constant" title="Api::Schema::SERIALIZER_TYPES (constant)">Schema::SERIALIZER_TYPES</a></span>, <span class='object_link'><a href="Schema.html#TYPE_OPTION_KEYS-constant" title="Api::Schema::TYPE_OPTION_KEYS (constant)">Schema::TYPE_OPTION_KEYS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Common.html" title="Api::Common (module)">Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Common.html#CATEGORY-constant" title="Api::Common::CATEGORY (constant)">Common::CATEGORY</a></span>, <span class='object_link'><a href="Common.html#CATEGORY_MAP-constant" title="Api::Common::CATEGORY_MAP (constant)">Common::CATEGORY_MAP</a></span>, <span class='object_link'><a href="Common.html#DEFAULT_REPOSITORY-constant" title="Api::Common::DEFAULT_REPOSITORY (constant)">Common::DEFAULT_REPOSITORY</a></span>, <span class='object_link'><a href="Common.html#DEPLOYMENT-constant" title="Api::Common::DEPLOYMENT (constant)">Common::DEPLOYMENT</a></span>, <span class='object_link'><a href="Common.html#DEPLOYMENT_MAP-constant" title="Api::Common::DEPLOYMENT_MAP (constant)">Common::DEPLOYMENT_MAP</a></span>, <span class='object_link'><a href="Common.html#LANGUAGE-constant" title="Api::Common::LANGUAGE (constant)">Common::LANGUAGE</a></span>, <span class='object_link'><a href="Common.html#LANGUAGE_CONFIG-constant" title="Api::Common::LANGUAGE_CONFIG (constant)">Common::LANGUAGE_CONFIG</a></span>, <span class='object_link'><a href="Common.html#LANGUAGE_MAP-constant" title="Api::Common::LANGUAGE_MAP (constant)">Common::LANGUAGE_MAP</a></span>, <span class='object_link'><a href="Common.html#PRIMARY_LANGUAGES-constant" title="Api::Common::PRIMARY_LANGUAGES (constant)">Common::PRIMARY_LANGUAGES</a></span>, <span class='object_link'><a href="Common.html#REPOSITORY-constant" title="Api::Common::REPOSITORY (constant)">Common::REPOSITORY</a></span>, <span class='object_link'><a href="Common.html#REPOSITORY_CONFIG-constant" title="Api::Common::REPOSITORY_CONFIG (constant)">Common::REPOSITORY_CONFIG</a></span>, <span class='object_link'><a href="Common.html#REPOSITORY_MAP-constant" title="Api::Common::REPOSITORY_MAP (constant)">Common::REPOSITORY_MAP</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#exception-instance_method" title="#exception (instance method)">#<strong>exception</strong>  &#x21d2; Exception<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serializer_type-instance_method" title="#serializer_type (instance method)">#<strong>serializer_type</strong>  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#default_data-instance_method" title="#default_data (instance method)">#<strong>default_data</strong>  &#x21d2; Hash{Symbol=&gt;BasicObject} </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Default data used to initialize an instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deserialize-instance_method" title="#deserialize (instance method)">#<strong>deserialize</strong>(data, type = nil)  &#x21d2; Api::Record<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Load data elements from the supplied data.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#error%3F-instance_method" title="#error? (instance method)">#<strong>error?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this is an instance created as part of a placeholder generated due to a failure to acquire valid data from the source.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#error_message-instance_method" title="#error_message (instance method)">#<strong>error_message</strong>  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Returns <strong>nil</strong> unless this instance is an error placeholder.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#field_definitions-instance_method" title="#field_definitions (instance method)">#<strong>field_definitions</strong>  &#x21d2; Array&lt;Hash&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The field definitions in the schema for this record.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#field_names-instance_method" title="#field_names (instance method)">#<strong>field_names</strong>  &#x21d2; Array&lt;Symbol&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The fields defined in the schema for this record.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(src, format: nil, wrap: nil, error: nil)  &#x21d2; Record </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize a new instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inspect-instance_method" title="#inspect (instance method)">#<strong>inspect</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>inspect.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serialize-instance_method" title="#serialize (instance method)">#<strong>serialize</strong>(type, **opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize data elements to the indicated format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serializer-instance_method" title="#serializer (instance method)">#<strong>serializer</strong>(type = nil)  &#x21d2; Api::Serializer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A serializer instance of the currently-selected type.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_hash-instance_method" title="#to_hash (instance method)">#<strong>to_hash</strong>(symbolize_keys: nil, **opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize the record instance into a Hash.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_json-instance_method" title="#to_json (instance method)">#<strong>to_json</strong>(**opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize the record instance into JSON format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#to_xml-instance_method" title="#to_xml (instance method)">#<strong>to_xml</strong>(**opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize the record instance into XML format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#update-instance_method" title="#update (instance method)">#<strong>update</strong>(hash)  &#x21d2; self </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Update record fields from a hash of values.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#valid%3F-instance_method" title="#valid? (instance method)">#<strong>valid?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this is a valid data instance.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Schema.html" title="Api::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Schema.html#assert_serializer_type-instance_method" title="Api::Schema#assert_serializer_type (method)">#assert_serializer_type</a></span>, <span class='object_link'><a href="Schema.html#enumeration_default-instance_method" title="Api::Schema#enumeration_default (method)">#enumeration_default</a></span>, <span class='object_link'><a href="Schema.html#enumeration_defaults-instance_method" title="Api::Schema#enumeration_defaults (method)">#enumeration_defaults</a></span>, <span class='object_link'><a href="Schema.html#enumeration_types-instance_method" title="Api::Schema#enumeration_types (method)">#enumeration_types</a></span>, <span class='object_link'><a href="Schema.html#extract_type_option-instance_method" title="Api::Schema#extract_type_option (method)">#extract_type_option</a></span>, <span class='object_link'><a href="Schema.html#extract_type_option!-instance_method" title="Api::Schema#extract_type_option! (method)">#extract_type_option!</a></span>, <span class='object_link'><a href="Schema.html#format_of-instance_method" title="Api::Schema#format_of (method)">#format_of</a></span>, <span class='object_link'><a href="Schema.html#scalar_default-instance_method" title="Api::Schema#scalar_default (method)">#scalar_default</a></span>, <span class='object_link'><a href="Schema.html#scalar_defaults-instance_method" title="Api::Schema#scalar_defaults (method)">#scalar_defaults</a></span>, <span class='object_link'><a href="Schema.html#scalar_type%3F-instance_method" title="Api::Schema#scalar_type? (method)">#scalar_type?</a></span>, <span class='object_link'><a href="Schema.html#scalar_types-instance_method" title="Api::Schema#scalar_types (method)">#scalar_types</a></span>, <span class='object_link'><a href="Schema.html#serializer_base-instance_method" title="Api::Schema#serializer_base (method)">#serializer_base</a></span>, <span class='object_link'><a href="Schema.html#serializer_name-instance_method" title="Api::Schema#serializer_name (method)">#serializer_name</a></span>, <span class='object_link'><a href="Schema.html#service_name-instance_method" title="Api::Schema#service_name (method)">#service_name</a></span>, <span class='object_link'><a href="Schema.html#type_options-instance_method" title="Api::Schema#type_options (method)">#type_options</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Model.html" title="Model (module)">Model</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Model.html#configured_fields-class_method" title="Model.configured_fields (method)">configured_fields</a></span>, <span class='object_link'><a href="../Model.html#configured_fields_table-class_method" title="Model.configured_fields_table (method)">configured_fields_table</a></span>, <span class='object_link'><a href="../Model.html#fields-instance_method" title="Model#fields (method)">#fields</a></span>, <span class='object_link'><a href="../Model.html#identifier-instance_method" title="Model#identifier (method)">#identifier</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(src, format: nil, wrap: nil, error: nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Api::Record (class)">Record</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize a new instance.</p>
+
+<h2 id="label-Notes">Notes</h2>
+<dl class="rdoc-list label-list"><dt>1
+<dd>
+<p>One of Api::Schema#SERIALIZER_TYPES.  If not provided it will be determined heuristically from <strong>data</strong>, with #DEFAULT_SERIALIZER_TYPE as a fall-back.</p>
+</dd><dt>2
+<dd>
+<p>A strategy for wrapping the data prior to de-serialization.  If <strong>true</strong> then all types are wrapped as determined by #wrap_outer.  If a Hash, then each key-value pair gives the format template to use or <strong>true</strong> to use the template supplied by #wrap_outer.</p>
+</dd><dt>3
+<dd>
+<p>If an error indication is present, the instance is initialized to defaults and <strong>data</strong> is ignored.</p>
+</dd></dl>
+
+<p>– noinspection RubyYardParamTypeMatch ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>src</span>
+      
+      
+        <span class='type'>(<tt>Faraday::Response</tt>, <tt><span class='object_link'><a href="" title="Api::Record (class)">Api::Record</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>format</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Note [1]</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>wrap</span>
+      
+      
+        <span class='type'>(<tt>TrueClass</tt>, <tt>Hash{Symbol=&gt;String,true}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Note [2]</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>error</span>
+      
+      
+        <span class='type'>(<tt>Exception</tt>, <tt>String</tt>, <tt>TrueClass</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Note [3]</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 56</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_src'>src</span><span class='comma'>,</span> <span class='label'>format:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>wrap:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>error:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='rparen'>)</span>
+  <span class='ivar'>@serializer_type</span> <span class='op'>=</span> <span class='id identifier rubyid_format'>format</span>
+  <span class='id identifier rubyid_assert_serializer_type'>assert_serializer_type</span><span class='lparen'>(</span><span class='ivar'>@serializer_type</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='ivar'>@serializer_type</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='id identifier rubyid_error'>error</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Api.html" title="Api (module)">Api</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Error.html" title="Api::Error (class)">Error</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Error.html#initialize-instance_method" title="Api::Error#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_error'>error</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_error'>error</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Exception</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='ivar'>@exception</span>
+    <span class='ivar'>@serializer_type</span> <span class='op'>=</span> <span class='symbol'>:hash</span>
+    <span class='id identifier rubyid_initialize_attributes'>initialize_attributes</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_src'>src</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Api.html" title="Api (module)">Api</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="" title="Api::Record (class)">Record</a></span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_initialize_attributes'>initialize_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_src'>src</span><span class='rparen'>)</span>
+  <span class='kw'>elsif</span> <span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_src'>src</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Faraday</span><span class='op'>::</span><span class='const'>Response</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_src'>src</span><span class='op'>&amp;.</span><span class='id identifier rubyid_body'>body</span> <span class='op'>:</span> <span class='id identifier rubyid_src'>src</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='ivar'>@serializer_type</span> <span class='op'>||=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_format_of'>format_of</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">DEFAULT_SERIALIZER_TYPE</a></span></span>
+    <span class='id identifier rubyid_wrap'>wrap</span> <span class='op'>=</span> <span class='id identifier rubyid_wrap'>wrap</span><span class='lbracket'>[</span><span class='ivar'>@serializer_type</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_wrap'>wrap</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_wrap_outer'>wrap_outer</span><span class='lparen'>(</span><span class='label'>data:</span> <span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='label'>template:</span> <span class='id identifier rubyid_wrap'>wrap</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_wrap'>wrap</span>
+    <span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='ivar'>@serializer_type</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">DEFAULT_SERIALIZER_TYPE</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="exception-instance_method">
+  
+    #<strong>exception</strong>  &#x21d2; <tt>Exception</tt><sup>?</sup>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Exception</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_exception'>exception</span>
+  <span class='ivar'>@exception</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="serializer_type-instance_method">
+  
+    #<strong>serializer_type</strong>  &#x21d2; <tt>Symbol</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serializer_type'>serializer_type</span>
+  <span class='ivar'>@serializer_type</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="default_data-instance_method">
+  
+    #<strong>default_data</strong>  &#x21d2; <tt>Hash{Symbol=&gt;BasicObject}</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Default data used to initialize an instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;BasicObject}</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Api::Record::Associations#property_defaults</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+207
+208
+209</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 207</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_default_data'>default_data</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_property_defaults'>property_defaults</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="deserialize-instance_method">
+  
+    #<strong>deserialize</strong>(data, type = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Api::Record (class)">Api::Record</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Load data elements from the supplied data.</p>
+
+<p>(If the data is a String, it must already be in the form required by the serializer.)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>data</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>type</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: #serializer_type</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Api::Record (class)">Api::Record</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Serializer.html#deserialize-instance_method" title="Api::Serializer#deserialize (method)">Serializer#deserialize</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_serializer'>serializer</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="error?-instance_method">
+  
+    #<strong>error?</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this is an instance created as part of a placeholder generated due to a failure to acquire valid data from the source.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+185
+186
+187</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 185</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_error?'>error?</span>
+  <span class='id identifier rubyid_exception'>exception</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="error_message-instance_method">
+  
+    #<strong>error_message</strong>  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns <strong>nil</strong> unless this instance is an error placeholder.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If there is no exception.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+178
+179
+180</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 178</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_error_message'>error_message</span>
+  <span class='id identifier rubyid_exception'>exception</span><span class='op'>&amp;.</span><span class='id identifier rubyid_message'>message</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="field_definitions-instance_method">
+  
+    #<strong>field_definitions</strong>  &#x21d2; <tt>Array&lt;Hash&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The field definitions in the schema for this record.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Hash&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+215
+216
+217
+218
+219
+220
+221
+222
+223</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 215</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_field_definitions'>field_definitions</span>
+  <span class='id identifier rubyid_serializer'>serializer</span><span class='period'>.</span><span class='id identifier rubyid_representable_map'>representable_map</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='op'>|</span>
+    <span class='lbrace'>{</span>
+      <span class='label'>name:</span>       <span class='id identifier rubyid_field'>field</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>collection:</span> <span class='id identifier rubyid_field'>field</span><span class='lbracket'>[</span><span class='symbol'>:collection</span><span class='rbracket'>]</span><span class='comma'>,</span>
+      <span class='label'>type:</span>       <span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='lbracket'>[</span><span class='symbol'>:class</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_field'>field</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="field_names-instance_method">
+  
+    #<strong>field_names</strong>  &#x21d2; <tt>Array&lt;Symbol&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The fields defined in the schema for this record.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+252
+253
+254</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 252</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_field_names'>field_names</span>
+  <span class='id identifier rubyid_field_definitions'>field_definitions</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='op'>|</span> <span class='id identifier rubyid_field'>field</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_sort'>sort</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inspect-instance_method">
+  
+    #<strong>inspect</strong>  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>inspect</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+266
+267
+268
+269
+270
+271
+272</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 266</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span>
+  <span class='id identifier rubyid_items'>items</span> <span class='op'>=</span>
+    <span class='id identifier rubyid_instance_variables'>instance_variables</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_variable'>variable</span><span class='op'>|</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>%s=%s</span><span class='tstring_end'>&#39;</span></span> <span class='op'>%</span> <span class='lbracket'>[</span><span class='id identifier rubyid_variable'>variable</span><span class='comma'>,</span> <span class='id identifier rubyid_instance_variable_get'>instance_variable_get</span><span class='lparen'>(</span><span class='id identifier rubyid_variable'>variable</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>#&lt;%s:\n%s\n&gt;</span><span class='tstring_end'>&quot;</span></span> <span class='op'>%</span> <span class='lbracket'>[</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span> <span class='id identifier rubyid_items'>items</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>,\n</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serialize-instance_method">
+  
+    #<strong>serialize</strong>(type, **opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize data elements to the indicated format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>type</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: #serializer_type</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to Api::Serializer#serialize</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Serializer.html#serialize-instance_method" title="Api::Serializer#serialize (method)">Serializer#serialize</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+124
+125
+126</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 124</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_serializer'>serializer</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serializer-instance_method">
+  
+    #<strong>serializer</strong>(type = nil)  &#x21d2; <tt><span class='object_link'><a href="Serializer.html" title="Api::Serializer (class)">Api::Serializer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A serializer instance of the currently-selected type.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>type</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: #serializer_type</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Serializer.html" title="Api::Serializer (class)">Api::Serializer</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Record/Schema/ClassMethods.html#serializers-instance_method" title="Api::Record::Schema::ClassMethods#serializers (method)">Api::Record::Schema::ClassMethods#serializers</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+89
+90
+91
+92
+93
+94
+95
+96</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 89</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serializer'>serializer</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_type'>type</span> <span class='op'>||=</span> <span class='id identifier rubyid_serializer_type'>serializer_type</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='id identifier rubyid_serializer_type'>serializer_type</span>
+    <span class='ivar'>@serializer</span> <span class='op'>||=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_serializers'>serializers</span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_serializers'>serializers</span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_hash-instance_method">
+  
+    #<strong>to_hash</strong>(symbolize_keys: nil, **opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize the record instance into a Hash.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>symbolize_keys</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #serialize.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Serializer/Hash.html#serialize-instance_method" title="Api::Serializer::Hash#serialize (method)">Serializer::Hash#serialize</a></span></li>
+    
+      <li>Serializer::Hash::Schema#SYMBOLIZE_KEYS</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+162
+163
+164
+165</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 162</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_hash'>to_hash</span><span class='lparen'>(</span><span class='label'>symbolize_keys:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:symbolize_keys</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span> <span class='kw'>unless</span> <span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='symbol'>:hash</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_json-instance_method">
+  
+    #<strong>to_json</strong>(**opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize the record instance into JSON format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #serialize.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Serializer/Json.html#serialize-instance_method" title="Api::Serializer::Json#serialize (method)">Serializer::Json#serialize</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+136
+137
+138</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 136</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_json'>to_json</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='symbol'>:json</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="to_xml-instance_method">
+  
+    #<strong>to_xml</strong>(**opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize the record instance into XML format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #serialize.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Serializer/Xml.html#serialize-instance_method" title="Api::Serializer::Xml#serialize (method)">Serializer::Xml#serialize</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+148
+149
+150</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 148</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_to_xml'>to_xml</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='symbol'>:xml</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="update-instance_method">
+  
+    #<strong>update</strong>(hash)  &#x21d2; <tt>self</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Update record fields from a hash of values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>hash</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>self</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+237
+238
+239
+240</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 237</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span><span class='rparen'>)</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each_pair'>each_pair</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>=</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'>=</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>self</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="valid?-instance_method">
+  
+    #<strong>valid?</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this is a valid data instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+191
+192
+193</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/record.rb', line 191</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_valid?'>valid?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_error?'>error?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:18:48 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

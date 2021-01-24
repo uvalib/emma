@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Shrine::UploadedFileDebug
+
+    &mdash; Documentation by YARD 0.9.26
+
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Shrine::UploadedFileDebug";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+
+    <a href="../_index.html">Index (U)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Shrine.html" title="Shrine (class)">Shrine</a></span></span>
+     &raquo;
+    <span class="title">UploadedFileDebug</span>
+
+</div>
+
+        <div id="search">
+
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Shrine::UploadedFileDebug
+
+
+
+</h1>
+<div class="box_info">
+
+
+
+
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="UploadedFileDebug/DebugMethods.html" title="Shrine::UploadedFileDebug::DebugMethods (module)">DebugMethods</a></span></dd>
+  </dl>
+
+
+
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="UploadedFileDebug/DebugMethods.html" title="Shrine::UploadedFileDebug::DebugMethods (module)">DebugMethods</a></span>, <span class='object_link'><a href="UploadedFileExt.html" title="Shrine::UploadedFileExt (module)">UploadedFileExt</a></span></dd>
+  </dl>
+
+
+
+
+
+
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/ext/shrine/lib/shrine/uploaded_file.rb</dd>
+  </dl>
+
+</div>
+
+<h2>Defined Under Namespace</h2>
+<p class="children">
+
+
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="UploadedFileDebug/DebugMethods.html" title="Shrine::UploadedFileDebug::DebugMethods (module)">DebugMethods</a></span>
+
+
+
+
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+
+
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../FileNaming.html" title="FileNaming (module)">FileNaming</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../FileNaming.html#STRICT_FORMATS-constant" title="FileNaming::STRICT_FORMATS (constant)">FileNaming::STRICT_FORMATS</a></span></p>
+
+
+
+
+
+
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#close-instance_method" title="#close (instance method)">#<strong>close</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>close.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#delete-instance_method" title="#delete (instance method)">#<strong>delete</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>delete.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#download-instance_method" title="#download (instance method)">#<strong>download</strong>(**options)  &#x21d2; Tempfile, * </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>download.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#extract_file_metadata-instance_method" title="#extract_file_metadata (instance method)">#<strong>extract_file_metadata</strong>  &#x21d2; Hash{Symbol=&gt;*} </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>extract_file_metadata.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(data)  &#x21d2; Object </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>initialize.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#open-instance_method" title="#open (instance method)">#<strong>open</strong>(**options)  &#x21d2; IO, * </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>open.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#read-instance_method" title="#read (instance method)">#<strong>read</strong>(*args)  &#x21d2; String </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>read.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#replace-instance_method" title="#replace (instance method)">#<strong>replace</strong>(io, **options)  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>replace.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#rewind-instance_method" title="#rewind (instance method)">#<strong>rewind</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>rewind.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#stream-instance_method" title="#stream (instance method)">#<strong>stream</strong>(destination, **options)  &#x21d2; Tempfile </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>stream.</p>
+</div></span>
+
+</li>
+
+
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="UploadedFileDebug/DebugMethods.html" title="Shrine::UploadedFileDebug::DebugMethods (module)">DebugMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="UploadedFileDebug/DebugMethods.html#__debug_upload-instance_method" title="Shrine::UploadedFileDebug::DebugMethods#__debug_upload (method)">__debug_upload</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="UploadedFileExt.html" title="Shrine::UploadedFileExt (module)">UploadedFileExt</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="UploadedFileExt.html#emma_metadata-instance_method" title="Shrine::UploadedFileExt#emma_metadata (method)">#emma_metadata</a></span></p>
+
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../FileNaming.html" title="FileNaming (module)">FileNaming</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../FileNaming.html#ext_to_fmt-class_method" title="FileNaming.ext_to_fmt (method)">ext_to_fmt</a></span>, <span class='object_link'><a href="../FileNaming.html#ext_to_fmt-instance_method" title="FileNaming#ext_to_fmt (method)">#ext_to_fmt</a></span>, <span class='object_link'><a href="../FileNaming.html#file_extensions-class_method" title="FileNaming.file_extensions (method)">file_extensions</a></span>, <span class='object_link'><a href="../FileNaming.html#fmt_to_ext-instance_method" title="FileNaming#fmt_to_ext (method)">#fmt_to_ext</a></span>, <span class='object_link'><a href="../FileNaming.html#fmt_to_mime-instance_method" title="FileNaming#fmt_to_mime (method)">#fmt_to_mime</a></span>, <span class='object_link'><a href="../FileNaming.html#format_class-class_method" title="FileNaming.format_class (method)">format_class</a></span>, <span class='object_link'><a href="../FileNaming.html#format_class_instance-class_method" title="FileNaming.format_class_instance (method)">format_class_instance</a></span>, <span class='object_link'><a href="../FileNaming.html#format_classes-class_method" title="FileNaming.format_classes (method)">format_classes</a></span>, <span class='object_link'><a href="../FileNaming.html#mime_to_fmt-class_method" title="FileNaming.mime_to_fmt (method)">mime_to_fmt</a></span>, <span class='object_link'><a href="../FileNaming.html#mime_to_fmt-instance_method" title="FileNaming#mime_to_fmt (method)">#mime_to_fmt</a></span>, <span class='object_link'><a href="../FileNaming.html#mime_types-class_method" title="FileNaming.mime_types (method)">mime_types</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ZipArchive.html" title="ZipArchive (module)">ZipArchive</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ZipArchive.html#find_zip_path-instance_method" title="ZipArchive#find_zip_path (method)">#find_zip_path</a></span>, <span class='object_link'><a href="../ZipArchive.html#get_archive_entry-instance_method" title="ZipArchive#get_archive_entry (method)">#get_archive_entry</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Mime.html" title="Emma::Mime (module)">Emma::Mime</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Mime.html#ext_to_mime-instance_method" title="Emma::Mime#ext_to_mime (method)">#ext_to_mime</a></span>, <span class='object_link'><a href="../Emma/Mime.html#known_extension%3F-instance_method" title="Emma::Mime#known_extension? (method)">#known_extension?</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+
+      <div class="method_details first">
+  <h3 class="signature first" id="close-instance_method">
+
+    #<strong>close</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>close</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+178
+179
+180
+181</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 178</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_close'>close</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="delete-instance_method">
+
+    #<strong>delete</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>delete</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+199
+200
+201
+202</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 199</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="download-instance_method">
+
+    #<strong>download</strong>(**options)  &#x21d2; <tt>Tempfile</tt>, <tt>*</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>download</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Tempfile</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+
+        <span class='type'>(<tt>*</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>Return from block if block given.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+134
+135
+136
+137</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 134</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="extract_file_metadata-instance_method">
+
+    #<strong>extract_file_metadata</strong>  &#x21d2; <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>{Symbol=&gt;*}</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>extract_file_metadata</p>
+
+<p>This method overrides:</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span>{Symbol=&gt;*}</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+
+      <li><span class='object_link'><a href="UploadedFileExt.html#extract_file_metadata-instance_method" title="Shrine::UploadedFileExt#extract_file_metadata (method)">Shrine::UploadedFileExt#extract_file_metadata</a></span></li>
+
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+217
+218
+219
+220</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 217</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_extract_file_metadata'>extract_file_metadata</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="initialize-instance_method">
+
+    #<strong>initialize</strong>(data)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>initialize</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>data</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+109
+110
+111
+112</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 109</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NEW</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_data'>data</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>data:</span> <span class='id identifier rubyid_data'>data</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="open-instance_method">
+
+    #<strong>open</strong>(**options)  &#x21d2; <tt>IO</tt>, <tt>*</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>open</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>IO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+
+        <span class='type'>(<tt>*</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>Return from block if block given.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+121
+122
+123
+124
+125</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 121</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_open'>open</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="read-instance_method">
+
+    #<strong>read</strong>(*args)  &#x21d2; <tt>String</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>read</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>args</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Array.html" title="Array (class)">Array</a></span></tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>Passed to IO#read.</p>
+</div>
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>String</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+160
+161
+162
+163</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 160</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_read'>read</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="replace-instance_method">
+
+    #<strong>replace</strong>(io, **options)  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>replace</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>io</span>
+
+
+        <span class='type'>(<tt>IO</tt>, <tt>StringIO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+190
+191
+192
+193</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 190</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_replace'>replace</span><span class='lparen'>(</span><span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>io:</span> <span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="rewind-instance_method">
+
+    #<strong>rewind</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>rewind</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+169
+170
+171
+172</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 169</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rewind'>rewind</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="stream-instance_method">
+
+    #<strong>stream</strong>(destination, **options)  &#x21d2; <tt>Tempfile</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>stream</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>destination</span>
+
+
+        <span class='type'>(<tt>String</tt>, <tt>IO</tt>, <tt>StringIO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Tempfile</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+146
+147
+148
+149
+150
+151
+152</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/uploaded_file.rb', line 146</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_stream'>stream</span><span class='lparen'>(</span><span class='id identifier rubyid_destination'>destination</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_upload'>__debug_upload</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='lbrace'>{</span> <span class='label'>destination:</span> <span class='id identifier rubyid_destination'>destination</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sat Jan 23 11:12:59 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

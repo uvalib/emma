@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: UploadWorkflow::Properties
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "UploadWorkflow::Properties";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (P)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></span>
+     &raquo; 
+    <span class="title">Properties</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: UploadWorkflow::Properties
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span>, Workflow::Base::Properties</dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../UploadConcern.html" title="UploadConcern (module)">UploadConcern</a></span>, <span class='object_link'><a href="../UploadHelper.html" title="UploadHelper (module)">UploadHelper</a></span>, <span class='object_link'><a href="Bulk/Properties.html" title="UploadWorkflow::Bulk::Properties (module)">Bulk::Properties</a></span>, <span class='object_link'><a href="External.html" title="UploadWorkflow::External (module)">External</a></span>, <span class='object_link'><a href="Single/Properties.html" title="UploadWorkflow::Single::Properties (module)">Single::Properties</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload_workflow.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Workflow properties that can be set via URL parameters.</p>
+
+<p>– noinspection RubyClassVariableUsageInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="INGEST_MAX_SIZE-constant" class="">INGEST_MAX_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The Federated Ingest API cannot accept more than 1000 items; this puts a hard upper-bound on batch sizes and the size of input values that certain methods can accept.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>1000</span></pre></dd>
+      
+        <dt id="DEV_TITLE_PREFIX-constant" class="">DEV_TITLE_PREFIX =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>A string added to the start of each title created on a non-production instance to help distinguish it from other index results.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>RWL</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="TITLE_PREFIX-constant" class="">TITLE_PREFIX =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>A string added to the start of each title.</p>
+
+<p>This should normally be <strong>nil</strong>.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#title_prefix-instance_method" title="UploadWorkflow::Properties#title_prefix (method)">#title_prefix</a></span></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#DEV_TITLE_PREFIX-constant" title="UploadWorkflow::Properties::DEV_TITLE_PREFIX (constant)">DEV_TITLE_PREFIX</a></span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_application_deployed?'>application_deployed?</span><span class='rparen'>)</span></pre></dd>
+      
+        <dt id="THROTTLE_PAUSE-constant" class="">THROTTLE_PAUSE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>A fractional number of seconds to pause between iterations.</p>
+
+<p>If <strong>false</strong> or <strong>nil</strong> then throttling will not occur.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='float'>0.01</span></pre></dd>
+      
+        <dt id="FORCE_DELETE_DEFAULT-constant" class="">FORCE_DELETE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Force deletions of Unified Index entries regardless of whether the item is in the “uploads” table.</p>
+
+<p>When <strong>false</strong>, items that cannot be found in the “uploads” table are treated as failures.</p>
+
+<p>When <strong>true</strong>, items identified by submission ID will be included in the argument list to #remove_from_index unconditionally.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#force_delete-instance_method" title="UploadWorkflow::Properties#force_delete (method)">#force_delete</a></span></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>true</span></pre></dd>
+      
+        <dt id="EMERGENCY_DELETE_DEFAULT-constant" class="">EMERGENCY_DELETE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Force deletions of Unified Index entries even if the record ID does not begin with “emma-”.  (This is to support development during which sometimes fake member repository entries get into the index.)</p>
+
+<p>When <strong>false</strong>, only items with :emma_repositoryRecordId values beginning with “emma-” will be submitted to Federated Search Ingest.  All other will result in generating a request for consideration by the member repository.</p>
+
+<p>When <strong>true</strong>, all items will be submitted to Federated Search Ingest.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#emergency_delete-instance_method" title="UploadWorkflow::Properties#emergency_delete (method)">#emergency_delete</a></span></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>false</span></pre></dd>
+      
+        <dt id="TRUNCATE_DELETE_DEFAULT-constant" class="">TRUNCATE_DELETE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>For the special case of deleting all records (effectively wiping the database) this controls whether the next available ID should be set to 1.</p>
+
+<p>Otherwise, the next record after removing all records will have an &#39;id&#39; which is 1 greater than the last record prior to the deletion.</p>
+
+<p>When <strong>false</strong>, do not truncate the “uploads” table.</p>
+
+<p>When <strong>true</strong>, truncate the “uploads” table, resetting the initial ID to 1.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>true</span></pre></dd>
+      
+        <dt id="REPO_CREATE_DEFAULT-constant" class="">REPO_CREATE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “creation” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>true</span></pre></dd>
+      
+        <dt id="REPO_EDIT_DEFAULT-constant" class="">REPO_EDIT_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “update” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>false</span></pre></dd>
+      
+        <dt id="REPO_REMOVE_DEFAULT-constant" class="">REPO_REMOVE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “removal” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>false</span></pre></dd>
+      
+        <dt id="BATCH_SIZE_DEFAULT-constant" class="">BATCH_SIZE_DEFAULT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Default size for batching.</p>
+
+<p>If <strong>false</strong> or <strong>nil</strong> then no batching will occur.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#BATCH_SIZE</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='int'>10</span></pre></dd>
+      
+        <dt id="MAX_BATCH_SIZE-constant" class="">MAX_BATCH_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Batches larger than this number are not permitted.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#INGEST_MAX_SIZE-constant" title="UploadWorkflow::Properties::INGEST_MAX_SIZE (constant)">INGEST_MAX_SIZE</a></span></span> <span class='op'>-</span> <span class='int'>1</span></pre></dd>
+      
+        <dt id="BATCH_SIZE-constant" class="">BATCH_SIZE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Break sets of submissions into chunks of this size.</p>
+
+<p>This is the value returned by #batch_size unless a different size was explicitly given via the :batch URL parameter.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#set_bulk_batch</li>
+    
+      <li>#MAX_BATCH_SIZE</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbracket'>[</span>
+  <span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>BATCH_SIZE</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="#BATCH_SIZE_DEFAULT-constant" title="UploadWorkflow::Properties::BATCH_SIZE_DEFAULT (constant)">BATCH_SIZE_DEFAULT</a></span></span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">MAX_BATCH_SIZE</a></span></span><span class='rparen'>)</span><span class='comma'>,</span>
+  <span class='const'><span class='object_link'><a href="#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">MAX_BATCH_SIZE</a></span></span>
+<span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span></pre></dd>
+      
+        <dt id="WF_URL_PARAMETER-constant" class="">WF_URL_PARAMETER =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>URL parameter names and default values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>prefix:</span>       <span class='const'><span class='object_link'><a href="#TITLE_PREFIX-constant" title="UploadWorkflow::Properties::TITLE_PREFIX (constant)">TITLE_PREFIX</a></span></span><span class='comma'>,</span>
+  <span class='label'>force:</span>        <span class='const'><span class='object_link'><a href="#FORCE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::FORCE_DELETE_DEFAULT (constant)">FORCE_DELETE_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>emergency:</span>    <span class='const'><span class='object_link'><a href="#EMERGENCY_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::EMERGENCY_DELETE_DEFAULT (constant)">EMERGENCY_DELETE_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>truncate:</span>     <span class='const'><span class='object_link'><a href="#TRUNCATE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::TRUNCATE_DELETE_DEFAULT (constant)">TRUNCATE_DELETE_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>repo_create:</span>  <span class='const'><span class='object_link'><a href="#REPO_CREATE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_CREATE_DEFAULT (constant)">REPO_CREATE_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>repo_edit:</span>    <span class='const'><span class='object_link'><a href="#REPO_EDIT_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_EDIT_DEFAULT (constant)">REPO_EDIT_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>repo_remove:</span>  <span class='const'><span class='object_link'><a href="#REPO_REMOVE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_REMOVE_DEFAULT (constant)">REPO_REMOVE_DEFAULT</a></span></span><span class='comma'>,</span>
+  <span class='label'>batch:</span>        <span class='const'><span class='object_link'><a href="#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">BATCH_SIZE</a></span></span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Errors.html#DEFAULT_ERROR_MESSAGE-constant" title="UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE (constant)">Errors::DEFAULT_ERROR_MESSAGE</a></span>, <span class='object_link'><a href="Errors.html#INTERNAL_EXCEPTION-constant" title="UploadWorkflow::Errors::INTERNAL_EXCEPTION (constant)">Errors::INTERNAL_EXCEPTION</a></span>, <span class='object_link'><a href="Errors.html#UPLOAD_ERROR-constant" title="UploadWorkflow::Errors::UPLOAD_ERROR (constant)">Errors::UPLOAD_ERROR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Errors/RenderMethods.html#DEFAULT_LABEL-constant" title="UploadWorkflow::Errors::RenderMethods::DEFAULT_LABEL (constant)">Errors::RenderMethods::DEFAULT_LABEL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#batch_size-instance_method" title="#batch_size (instance method)">#<strong>batch_size</strong>  &#x21d2; Integer, FalseClass </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Handle bulk uploads in batches.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#emergency_delete-instance_method" title="#emergency_delete (instance method)">#<strong>emergency_delete</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Force deletions of Unified Index entries even if the record ID does not begin with “emma-”.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#force_delete-instance_method" title="#force_delete (instance method)">#<strong>force_delete</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Force deletions of Unified Index entries regardless of whether the item is in the “uploads” table.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#repo_create-instance_method" title="#repo_create (instance method)">#<strong>repo_create</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Permit the “creation” of member repository items via a request to be queued to the appropriate member repository.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#repo_edit-instance_method" title="#repo_edit (instance method)">#<strong>repo_edit</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Permit the “update” of member repository items via a request to be queued to the appropriate member repository.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#repo_remove-instance_method" title="#repo_remove (instance method)">#<strong>repo_remove</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Permit the “removal” of member repository items via a request to be queued to the appropriate member repository.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#title_prefix-instance_method" title="#title_prefix (instance method)">#<strong>title_prefix</strong>  &#x21d2; String, FalseClass </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A string added to the start of each title.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#truncate_delete-instance_method" title="#truncate_delete (instance method)">#<strong>truncate_delete</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>If all “uploads” records are removed, reset the next ID to 1.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Errors.html#failure-instance_method" title="UploadWorkflow::Errors#failure (method)">#failure</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Errors/RenderMethods.html#make_label-instance_method" title="UploadWorkflow::Errors::RenderMethods#make_label (method)">#make_label</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="batch_size-instance_method">
+  
+    #<strong>batch_size</strong>  &#x21d2; <tt>Integer</tt>, <tt>FalseClass</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Handle bulk uploads in batches.</p>
+
+<p>If this is disabled, the method returns <strong>false</strong>; otherwise it returns the batch size.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Bulk batch size.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>FalseClass</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Bulk operations should not be batched.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#set_bulk_batch</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551
+552
+553
+554
+555
+556</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 542</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_batch_size'>batch_size</span>
+  <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_parameters'>parameters</span><span class='lbracket'>[</span><span class='symbol'>:batch</span><span class='rbracket'>]</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='const'><span class='object_link'><a href="#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">BATCH_SIZE</a></span></span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>false</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>1</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='int'>1</span> <span class='op'>:</span> <span class='const'><span class='object_link'><a href="#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">BATCH_SIZE</a></span></span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='period'>.</span><span class='id identifier rubyid_positive?'>positive?</span>
+    <span class='lbracket'>[</span><span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">MAX_BATCH_SIZE</a></span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_min'>min</span>
+  <span class='kw'>else</span>
+    <span class='const'><span class='object_link'><a href="#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">BATCH_SIZE</a></span></span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="emergency_delete-instance_method">
+  
+    #<strong>emergency_delete</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Force deletions of Unified Index entries even if the record ID does not begin with “emma-”.  (This is to support development during which sometimes fake member repository entries get into the index.)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#EMERGENCY_DELETE_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+482
+483
+484</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 482</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_emergency_delete'>emergency_delete</span>
+  <span class='id identifier rubyid_parameter_setting'>parameter_setting</span><span class='lparen'>(</span><span class='symbol'>:emergency</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="force_delete-instance_method">
+  
+    #<strong>force_delete</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Force deletions of Unified Index entries regardless of whether the item is in the “uploads” table.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#FORCE_DELETE_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+470
+471
+472</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 470</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_force_delete'>force_delete</span>
+  <span class='id identifier rubyid_parameter_setting'>parameter_setting</span><span class='lparen'>(</span><span class='symbol'>:force</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="repo_create-instance_method">
+  
+    #<strong>repo_create</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “creation” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#REPO_CREATE_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+503
+504
+505
+506</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 503</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_repo_create'>repo_create</span>
+  <span class='comment'>#parameter_setting(:repo_create, params)
+</span>  <span class='const'><span class='object_link'><a href="#REPO_CREATE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_CREATE_DEFAULT (constant)">REPO_CREATE_DEFAULT</a></span></span> <span class='comment'># TODO: conditionally accept based on user
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="repo_edit-instance_method">
+  
+    #<strong>repo_edit</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “update” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#REPO_EDIT_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+515
+516
+517
+518</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 515</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_repo_edit'>repo_edit</span>
+  <span class='comment'>#parameter_setting(:repo_edit, params)
+</span>  <span class='const'><span class='object_link'><a href="#REPO_EDIT_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_EDIT_DEFAULT (constant)">REPO_EDIT_DEFAULT</a></span></span> <span class='comment'># TODO: conditionally accept based on user
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="repo_remove-instance_method">
+  
+    #<strong>repo_remove</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Permit the “removal” of member repository items via a request to be queued to the appropriate member repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#REPO_REMOVE_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+527
+528
+529
+530</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 527</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_repo_remove'>repo_remove</span>
+  <span class='comment'>#parameter_setting(:repo_remove, params)
+</span>  <span class='const'><span class='object_link'><a href="#REPO_REMOVE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_REMOVE_DEFAULT (constant)">REPO_REMOVE_DEFAULT</a></span></span> <span class='comment'># TODO: conditionally accept based on user
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="title_prefix-instance_method">
+  
+    #<strong>title_prefix</strong>  &#x21d2; <tt>String</tt>, <tt>FalseClass</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A string added to the start of each title.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>The prefix cannot match any of #TRUE_VALUES or #FALSE_VALUES.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Value to prepend to title.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>FalseClass</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>No prefix should be used.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#TITLE_PREFIX</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 452</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_title_prefix'>title_prefix</span>
+  <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_parameters'>parameters</span><span class='lbracket'>[</span><span class='symbol'>:prefix</span><span class='rbracket'>]</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="#TITLE_PREFIX-constant" title="UploadWorkflow::Properties::TITLE_PREFIX (constant)">TITLE_PREFIX</a></span></span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+    <span class='kw'>false</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="truncate_delete-instance_method">
+  
+    #<strong>truncate_delete</strong>  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>If all “uploads” records are removed, reset the next ID to 1.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#TRUNCATE_DELETE_DEFAULT</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+492
+493
+494</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 492</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_truncate_delete'>truncate_delete</span>
+  <span class='id identifier rubyid_parameter_setting'>parameter_setting</span><span class='lparen'>(</span><span class='symbol'>:truncate</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:15:44 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

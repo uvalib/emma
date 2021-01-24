@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Upload
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Upload";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (U)</a> &raquo;
+    
+    
+    <span class="title">Upload</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Upload
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="ApplicationRecord.html" title="ApplicationRecord (class)">ApplicationRecord</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">ActiveRecord::Base</li>
+          
+            <li class="next"><span class='object_link'><a href="ApplicationRecord.html" title="ApplicationRecord (class)">ApplicationRecord</a></span></li>
+          
+            <li class="next">Upload</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>ActiveModel::Validations, <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span>, <span class='object_link'><a href="Model.html" title="Model (module)">Model</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>A file object uploaded from the client.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Upload/BulkMethods.html" title="Upload::BulkMethods (module)">BulkMethods</a></span>, <span class='object_link'><a href="Upload/EmmaDataMethods.html" title="Upload::EmmaDataMethods (module)">EmmaDataMethods</a></span>, <span class='object_link'><a href="Upload/FileMethods.html" title="Upload::FileMethods (module)">FileMethods</a></span>, <span class='object_link'><a href="Upload/IdentifierMethods.html" title="Upload::IdentifierMethods (module)">IdentifierMethods</a></span>, <span class='object_link'><a href="Upload/LookupMethods.html" title="Upload::LookupMethods (module)">LookupMethods</a></span>, <span class='object_link'><a href="Upload/RenderMethods.html" title="Upload::RenderMethods (module)">RenderMethods</a></span>, <span class='object_link'><a href="Upload/WorkflowMethods.html" title="Upload::WorkflowMethods (module)">WorkflowMethods</a></span>
+    
+  
+    
+  
+</p>
+
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="FIELD_VALIDATION-constant" class="">FIELD_VALIDATION =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Control whether field validation should occur.</p>
+
+<p>NOTE: Not currently supported</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='kw'>false</span></pre></dd>
+      
+        <dt id="ASSIGN_MODES-constant" class="">ASSIGN_MODES =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Mutually-exclusive modes of operation in #assign_attributes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='tstring_content'>initializing</span><span class='words_sep'> </span><span class='tstring_content'>finishing_edit</span><span class='words_sep'> </span><span class='tstring_content'>reset</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="ASSIGN_CONTROL_OPTIONS-constant" class="">ASSIGN_CONTROL_OPTIONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Non-field keys used to pass control information to #assign_attributes.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#ASSIGN_MODES-constant" title="Upload::ASSIGN_MODES (constant)">ASSIGN_MODES</a></span></span> <span class='op'>+</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>base_url</span><span class='words_sep'> </span><span class='tstring_content'>importer</span><span class='words_sep'> </span><span class='tstring_content'>defer</span><span class='tstring_end'>]</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#emma_native%3F-class_method" title="emma_native? (class method)">.<strong>emma_native?</strong>(item)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the record is an EMMA-native item.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#make_retrieval_link-class_method" title="make_retrieval_link (class method)">.<strong>make_retrieval_link</strong>(rid, base_url = nil)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Create a URL for use with :emma_retrievalLink.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#record_id-class_method" title="record_id (class method)">.<strong>record_id</strong>(item)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Extract the EMMA index entry identifier from the item.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#repository_name-class_method" title="repository_name (class method)">.<strong>repository_name</strong>(item)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The full name of the indicated repository.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#repository_of-class_method" title="repository_of (class method)">.<strong>repository_of</strong>(item)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Extract the repository associated with the item.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#valid_record_id%3F-class_method" title="valid_record_id? (class method)">.<strong>valid_record_id?</strong>(item, add_repo: nil, add_fmt: nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether <strong>item</strong> is or contains a valid EMMA index record ID.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#assign_attributes-instance_method" title="#assign_attributes (instance method)">#<strong>assign_attributes</strong>(opt)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Update database fields, including the structured contents of the :emma_data field.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#emma_native%3F-instance_method" title="#emma_native? (instance method)">#<strong>emma_native?</strong>(item = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the record is an EMMA-native item.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#field_names-instance_method" title="#field_names (instance method)">#<strong>field_names</strong>  &#x21d2; Array&lt;Symbol&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The fields defined in the schema for this record.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(opt = nil, &amp;block)  &#x21d2; Upload </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Create a new instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inspect-instance_method" title="#inspect (instance method)">#<strong>inspect</strong>(attr = nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Formatted record contents.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#make_retrieval_link-instance_method" title="#make_retrieval_link (instance method)">#<strong>make_retrieval_link</strong>(rid, base_url = nil)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Create a URL for use with :emma_retrievalLink.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Model.html" title="Model (module)">Model</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Model.html#configured_fields-class_method" title="Model.configured_fields (method)">configured_fields</a></span>, <span class='object_link'><a href="Model.html#configured_fields_table-class_method" title="Model.configured_fields_table (method)">configured_fields_table</a></span>, <span class='object_link'><a href="Model.html#fields-instance_method" title="Model#fields (method)">#fields</a></span>, <span class='object_link'><a href="Model.html#identifier-instance_method" title="Model#identifier (method)">#identifier</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods inherited from <span class='object_link'><a href="ApplicationRecord.html" title="ApplicationRecord (class)">ApplicationRecord</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ApplicationRecord.html#field_names-class_method" title="ApplicationRecord.field_names (method)">field_names</a></span>, <span class='object_link'><a href="ApplicationRecord.html#match%3F-instance_method" title="ApplicationRecord#match? (method)">#match?</a></span>, <span class='object_link'><a href="ApplicationRecord.html#match%3F-class_method" title="ApplicationRecord.match? (method)">match?</a></span>, <span class='object_link'><a href="ApplicationRecord.html#matching-class_method" title="ApplicationRecord.matching (method)">matching</a></span>, <span class='object_link'><a href="ApplicationRecord.html#sql_clause-class_method" title="ApplicationRecord.sql_clause (method)">sql_clause</a></span>, <span class='object_link'><a href="ApplicationRecord.html#sql_clauses-class_method" title="ApplicationRecord.sql_clauses (method)">sql_clauses</a></span>, <span class='object_link'><a href="ApplicationRecord.html#sql_match-class_method" title="ApplicationRecord.sql_match (method)">sql_match</a></span>, <span class='object_link'><a href="ApplicationRecord.html#sql_terms-class_method" title="ApplicationRecord.sql_terms (method)">sql_terms</a></span></p>
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(opt = nil, &amp;block)  &#x21d2; <tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Create a new instance.</p>
+
+<p>This method overrides:</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #assign_attributes via super.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>block</span>
+      
+      
+        <span class='type'>(<tt>Proc</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to super.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>ActiveRecord::Core#initialize</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+104
+105
+106
+107
+108
+109
+110</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 104</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='kw'>if</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>initializing:</span> <span class='kw'>true</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_except!'>except!</span><span class='lparen'>(</span><span class='symbol'>:reset</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_items'>__debug_items</span><span class='lparen'>(</span><span class='label'>leader:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>new UPLOAD</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='kw'>self</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="emma_native?-class_method">
+  
+    .<strong>emma_native?</strong>(item)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the record is an EMMA-native item.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>#repository</tt>, <tt>#emma_repository</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+521
+522
+523</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 521</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_emma_native?'>emma_native?</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_repository_of'>repository_of</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default'><span class='object_link'><a href="EnumType.html#default-class_method" title="EnumType.default (method)">default</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="make_retrieval_link-class_method">
+  
+    .<strong>make_retrieval_link</strong>(rid, base_url = nil)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Create a URL for use with :emma_retrievalLink.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>rid</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>EMMA repository record ID.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>base_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#BULK_BASE_URL`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If no repository ID was given.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+664
+665
+666
+667</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 664</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_make_retrieval_link'>make_retrieval_link</span><span class='lparen'>(</span><span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_base_url'>base_url</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_base_url'>base_url</span> <span class='op'>||=</span> <span class='const'>BULK_BASE_URL</span>
+  <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_base_url'>base_url</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>download</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_rid'>rid</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_rid'>rid</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="record_id-class_method">
+  
+    .<strong>record_id</strong>(item)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Extract the EMMA index entry identifier from the item.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>If <strong>item</strong> is a String, it is assumed to be good.  Depending on the context, the caller may need to validate the result with #valid_record_id?.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>#emma_repository</tt>, <tt>#emma_recordId</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+570
+571
+572
+573
+574
+575
+576
+577
+578
+579
+580
+581
+582
+583
+584
+585</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 570</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_record_id'>record_id</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span>   <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Symbol</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>||=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:emma_recordId</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>||=</span>
+    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_repo'>repo</span> <span class='op'>=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:emma_repository</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_rid'>rid</span> <span class='op'>=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:emma_repositoryRecordId</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:dc_format</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_parts'>parts</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='id identifier rubyid_repo'>repo</span><span class='comma'>,</span> <span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_fmt'>fmt</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>==</span> <span class='int'>3</span>
+        <span class='lparen'>(</span><span class='id identifier rubyid_ver'>ver</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:emma_formatVersion</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>and</span> <span class='id identifier rubyid_parts'>parts</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_ver'>ver</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="repository_name-class_method">
+  
+    .<strong>repository_name</strong>(item)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The full name of the indicated repository</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>#emma_repository</tt>, <tt>#emma_recordId</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The name of the associated repository.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>src</strong> did not indicate a repository.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+554
+555
+556
+557</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 554</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_repository_name'>repository_name</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_repo'>repo</span> <span class='op'>=</span> <span class='id identifier rubyid_repository_of'>repository_of</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='period'>.</span><span class='id identifier rubyid_pairs'><span class='object_link'><a href="EnumType.html#pairs-class_method" title="EnumType.pairs (method)">pairs</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_repo'>repo</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="repository_of-class_method">
+  
+    .<strong>repository_of</strong>(item)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Extract the repository associated with the item.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>Depending on the context, the caller may need to validate the result with EmmaRepository#valid?.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>#emma_repository</tt>, <tt>#emma_recordId</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>One of EmmaRepository#values.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 536</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_repository_of'>repository_of</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Symbol</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+    <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>repository</span><span class='words_sep'> </span><span class='tstring_content'>emma_repository</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
+      <span class='lparen'>(</span><span class='id identifier rubyid_repo'>repo</span> <span class='op'>=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>and</span> <span class='kw'>return</span> <span class='id identifier rubyid_repo'>repo</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='id identifier rubyid_get_value'>get_value</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='symbol'>:emma_recordId</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_item'>item</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="valid_record_id?-class_method">
+  
+    .<strong>valid_record_id?</strong>(item, add_repo: nil, add_fmt: nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether <strong>item</strong> is or contains a valid EMMA index record ID.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>#emma_repository</tt>, <tt>#emma_recordId</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>add_repo</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>add_fmt</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+593
+594
+595
+596
+597
+598</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 593</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_valid_record_id?'>valid_record_id?</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='label'>add_repo:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>add_fmt:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_repo'>repo</span><span class='comma'>,</span> <span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_fmt'>fmt</span><span class='comma'>,</span> <span class='id identifier rubyid__version'>_version</span><span class='comma'>,</span> <span class='id identifier rubyid_remainder'>remainder</span> <span class='op'>=</span> <span class='id identifier rubyid_record_id'>record_id</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>-</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_rid'>rid</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_remainder'>remainder</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span>
+    <span class='lparen'>(</span><span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_add_repo'>add_repo</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_repo'>repo</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='period'>.</span><span class='id identifier rubyid_valid?'><span class='object_link'><a href="EnumType.html#valid%3F-class_method" title="EnumType.valid? (method)">valid?</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_repo'>repo</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
+    <span class='lparen'>(</span><span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_add_fmt'>add_fmt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span><span class='rparen'>)</span>   <span class='op'>||</span> <span class='const'><span class='object_link'><a href="DublinCoreFormat.html" title="DublinCoreFormat (class)">DublinCoreFormat</a></span></span><span class='period'>.</span><span class='id identifier rubyid_valid?'><span class='object_link'><a href="EnumType.html#valid%3F-class_method" title="EnumType.valid? (method)">valid?</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="assign_attributes-instance_method">
+  
+    #<strong>assign_attributes</strong>(opt)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Update database fields, including the structured contents of the :emma_data field.</p>
+
+<h2 id="label-Options">Options</h2>
+
+<p>:base_url</p>
+
+<pre class="code ruby"><code class="ruby">Supplied to give the base URL for constructing a retrieval link from a
+submission ID (:emma_retrievalLink).
+</code></pre>
+
+<p>:importer</p>
+
+<pre class="code ruby"><code class="ruby">Supplied to specify an import translation mechanism (typically for
+bulk import). @see Import#translate_fields
+</code></pre>
+
+<p>:defer</p>
+
+<pre class="code ruby"><code class="ruby">Used internally to indicate whether a file indicated by an imported
+:file_path data field should be acquired immediately.  If *true* then
+@file_path will be set but the referenced file will *not* be fetched
+automatically via #upload_file
+</code></pre>
+
+<h2 id="label-Mode+Options">Mode Options</h2>
+
+<p>:initializing</p>
+
+<pre class="code ruby"><code class="ruby">Indicates that the method is being executed from the initializer.
+</code></pre>
+
+<p>:finishing_edit</p>
+
+<pre class="code ruby"><code class="ruby">Indicates that the method is being executed from #finishing_edit.
+This accommodates the use-case of updating record values from the fields
+used when editing an existing EMMA entry (:edit_file_data and/or
+:edit_emma_data).
+</code></pre>
+
+<p>:reset</p>
+
+<pre class="code ruby"><code class="ruby">Provided to indicate that user-supplied record attributes should be
+wiped (while retaining values that were originally set by the system).
+</code></pre>
+
+<p>This method overrides:</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:user_id</span>
+          <span class="type">(<tt>Integer</tt>, <tt>String</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:repository</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:submission_id</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:fmt</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:ext</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:state</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:file_data</span>
+          <span class="type">(<tt>String</tt>, <tt>Hash</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:emma_data</span>
+          <span class="type">(<tt>String</tt>, <tt>Hash</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:base_url</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:importer</span>
+          <span class="type">(<tt>Module</tt>, <tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:defer</span>
+          <span class="type">(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:initializing</span>
+          <span class="type">(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:finishing_edit</span>
+          <span class="type">(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:reset</span>
+          <span class="type">(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>ActiveModel::AttributeAssignment#assign_attributes</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 193</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_assign_attributes'>assign_attributes</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_attributes'>attributes</span> <span class='kw'>if</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_control'>control</span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>*</span><span class='const'><span class='object_link'><a href="#ASSIGN_CONTROL_OPTIONS-constant" title="Upload::ASSIGN_CONTROL_OPTIONS (constant)">ASSIGN_CONTROL_OPTIONS</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_mode'>mode</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#ASSIGN_MODES-constant" title="Upload::ASSIGN_MODES (constant)">ASSIGN_MODES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_control'>control</span><span class='lbracket'>[</span><span class='id identifier rubyid_m'>m</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='rbrace'>}</span>
+
+  <span class='comment'># Handle the :reset case separately.  If any of the fields to reset are
+</span>  <span class='comment'># supplied, those values are used here.  If any additional data was
+</span>  <span class='comment'># supplied it will be ignored.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_mode'>mode</span> <span class='op'>==</span> <span class='symbol'>:reset</span>
+    <span class='id identifier rubyid_reset_columns'>reset_columns</span> <span class='op'>=</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_under_review?'>under_review?</span>
+        <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>review_user</span><span class='words_sep'> </span><span class='tstring_content'>review_success</span><span class='words_sep'> </span><span class='tstring_content'>review_comment</span><span class='words_sep'> </span><span class='tstring_content'>reviewed_at</span><span class='tstring_end'>]</span></span>
+      <span class='kw'>elsif</span> <span class='id identifier rubyid_edit_phase'>edit_phase</span>
+        <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>edit_user</span><span class='words_sep'> </span><span class='tstring_content'>edit_file_data</span><span class='words_sep'> </span><span class='tstring_content'>edit_emma_data</span><span class='words_sep'> </span><span class='tstring_content'>edited_at</span><span class='tstring_end'>]</span></span>
+      <span class='kw'>else</span>
+        <span class='const'>DATA_COLUMNS</span>
+      <span class='kw'>end</span>
+    <span class='id identifier rubyid_attr'>attr</span> <span class='op'>=</span> <span class='id identifier rubyid_reset_columns'>reset_columns</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_col'>col</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_col'>col</span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='id identifier rubyid_col'>col</span><span class='rparen'>)</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:updated_at</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_being_created?'>being_created?</span>
+    <span class='id identifier rubyid_log_ignored'>log_ignored</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>reset: ignored options</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_delete_file'>delete_file</span> <span class='kw'>unless</span> <span class='id identifier rubyid_under_review?'>under_review?</span>
+    <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+    <span class='kw'>return</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># In the general case, if no data was supplied then there&#39;s nothing to do.
+</span>  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys!'>deep_symbolize_keys!</span>
+  <span class='id identifier rubyid_fetch_file'>fetch_file</span> <span class='op'>=</span> <span class='kw'>false</span>
+  <span class='id identifier rubyid_new_record'>new_record</span> <span class='op'>=</span> <span class='id identifier rubyid_being_created?'>being_created?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>==</span> <span class='symbol'>:initializing</span><span class='rparen'>)</span>
+
+  <span class='comment'># If an importer was specified, apply it to transform imported key/value
+</span>  <span class='comment'># pairs record attributes, :file_data values and/or :emma_data values.
+</span>  <span class='id identifier rubyid_importer'>importer</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_control'>control</span><span class='lbracket'>[</span><span class='symbol'>:importer</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_new_record'>new_record</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_fields'>fields</span>   <span class='op'>=</span> <span class='id identifier rubyid_import_transform'>import_transform</span><span class='lparen'>(</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='id identifier rubyid_control'>control</span><span class='lbracket'>[</span><span class='symbol'>:importer</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_importer'>importer</span>
+
+  <span class='comment'># Database fields go into *attr*; the remainder is file and EMMA data.
+</span>  <span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_field_names'>field_names</span><span class='rparen'>)</span>
+
+  <span class='comment'># For consistency, make sure that only the appropriate fields are being
+</span>  <span class='comment'># updated depending on the workflow state of the item.
+</span>  <span class='id identifier rubyid_allowed'>allowed</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_being_created?'>being_created?</span>
+      <span class='const'>DATA_COLUMNS</span> <span class='op'>+</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>repository</span><span class='words_sep'> </span><span class='tstring_content'>submission_id</span><span class='words_sep'> </span><span class='tstring_content'>updated_at</span><span class='tstring_end'>]</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_being_modified?'>being_modified?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>==</span> <span class='symbol'>:finishing_edit</span><span class='rparen'>)</span>
+      <span class='const'>DATA_COLUMNS</span> <span class='op'>+</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>edit_user</span><span class='words_sep'> </span><span class='tstring_content'>edited_at</span><span class='tstring_end'>]</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_being_removed?'>being_removed?</span>
+      <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>updated_at</span><span class='tstring_end'>]</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_under_review?'>under_review?</span>
+      <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>review_user</span><span class='words_sep'> </span><span class='tstring_content'>review_success</span><span class='words_sep'> </span><span class='tstring_content'>review_comment</span><span class='words_sep'> </span><span class='tstring_content'>reviewed_at</span><span class='words_sep'> </span><span class='tstring_content'>user_id</span><span class='tstring_end'>]</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_new_record'>new_record</span>
+    <span class='id identifier rubyid_allowed'>allowed</span> <span class='op'>&lt;&lt;</span> <span class='symbol'>:created_at</span>
+    <span class='id identifier rubyid_allowed'>allowed</span> <span class='op'>&lt;&lt;</span> <span class='symbol'>:id</span> <span class='kw'>if</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='id identifier rubyid_rejected'>rejected</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_allowed'>allowed</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_log_ignored'>log_ignored</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>rejected attributes</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_rejected'>rejected</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_rejected'>rejected</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='comment'># For :user_id, normalize to a &#39;user&#39; table reference.  If editing,
+</span>  <span class='comment'># ensure that :edit_user is a string, defaulting to the original
+</span>  <span class='comment'># submitter.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_under_review?'>under_review?</span>
+    <span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:review_user</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:review_user</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_uid'><span class='object_link'><a href="User.html#find_uid-class_method" title="User.find_uid (method)">find_uid</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_u'>u</span><span class='rparen'>)</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_edit_phase'>edit_phase</span>
+    <span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:edit_user</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:edit_user</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_uid'><span class='object_link'><a href="User.html#find_uid-class_method" title="User.find_uid (method)">find_uid</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_u'>u</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_u'>u</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find_id'><span class='object_link'><a href="User.html#find_id-class_method" title="User.find_id (method)">find_id</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_u'>u</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Update the appropriate timestamp.
+</span>  <span class='id identifier rubyid_now'>now</span>    <span class='op'>=</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span>
+  <span class='id identifier rubyid_column'>column</span> <span class='op'>=</span> <span class='id identifier rubyid_timestamp_column'>timestamp_column</span>
+  <span class='id identifier rubyid_utime'>utime</span>  <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='id identifier rubyid_column'>column</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='id identifier rubyid_column'>column</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_now'>now</span>
+  <span class='id identifier rubyid_utime'>utime</span>  <span class='op'>=</span> <span class='id identifier rubyid_utime'>utime</span><span class='period'>.</span><span class='id identifier rubyid_to_datetime'>to_datetime</span>                <span class='kw'>if</span> <span class='id identifier rubyid_utime'>utime</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Time</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_utime'>utime</span>  <span class='op'>=</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_utime'>utime</span><span class='rparen'>)</span> <span class='kw'>rescue</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_utime'>utime</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='id identifier rubyid_column'>column</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_utime'>utime</span>
+
+  <span class='comment'># New record defaults.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_new_record'>new_record</span>
+    <span class='id identifier rubyid_ctime'>ctime</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_ctime'>ctime</span> <span class='op'>=</span> <span class='id identifier rubyid_ctime'>ctime</span><span class='period'>.</span><span class='id identifier rubyid_to_datetime'>to_datetime</span>                <span class='kw'>if</span> <span class='id identifier rubyid_ctime'>ctime</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Time</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_ctime'>ctime</span> <span class='op'>=</span> <span class='const'>DateTime</span><span class='period'>.</span><span class='id identifier rubyid_parse'>parse</span><span class='lparen'>(</span><span class='id identifier rubyid_ctime'>ctime</span><span class='rparen'>)</span> <span class='kw'>rescue</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_ctime'>ctime</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span>      <span class='op'>=</span> <span class='id identifier rubyid_ctime'>ctime</span> <span class='op'>||</span> <span class='id identifier rubyid_utime'>utime</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_generate_submission_id'>generate_submission_id</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Portions that apply when item metadata is expected to change.  EMMA and
+</span>  <span class='comment'># file data should never change if the item is under review or if it is
+</span>  <span class='comment'># currently in the process of being submitted to a member repository.
+</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_sealed?'>sealed?</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_mode'>mode</span> <span class='op'>!=</span> <span class='symbol'>:finishing_edit</span><span class='rparen'>)</span>
+
+    <span class='id identifier rubyid_log_ignored'>log_ignored</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ignored data parameters</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='kw'>else</span>
+
+    <span class='comment'># Extract the path to the file to be uploaded (provided either via
+</span>    <span class='comment'># arguments or from bulk import data).
+</span>    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_fp'>fp</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:file_path</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='ivar'>@file_path</span> <span class='op'>=</span> <span class='id identifier rubyid_fp'>fp</span>
+      <span class='id identifier rubyid_fetch_file'>fetch_file</span> <span class='op'>=</span> <span class='op'>!</span><span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_control'>control</span><span class='lbracket'>[</span><span class='symbol'>:defer</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Augment EMMA data fields supplied as method options with the contents
+</span>    <span class='comment'># of :emma_data if it was supplied.
+</span>    <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_ed'>ed</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:emma_data</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid___debug_items'>__debug_items</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> emma_data</span><span class='label_end'>&quot;:</span> <span class='id identifier rubyid_ed'>ed</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+      <span class='comment'># noinspection RubyYardParamTypeMatch
+</span>      <span class='id identifier rubyid_added_data'>added_data</span> <span class='op'>=</span> <span class='id identifier rubyid_reject_blanks'>reject_blanks</span><span class='lparen'>(</span><span class='id identifier rubyid_json_parse'>json_parse</span><span class='lparen'>(</span><span class='id identifier rubyid_ed'>ed</span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_reverse_merge!'>reverse_merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_added_data'>added_data</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_added_data'>added_data</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Get value for :file_data as JSON.
+</span>    <span class='id identifier rubyid_fd'>fd</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:file</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_fd'>fd</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:file_data</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_fd'>fd</span>
+    <span class='id identifier rubyid_fd'>fd</span> <span class='op'>=</span> <span class='id identifier rubyid_fd'>fd</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span> <span class='kw'>if</span> <span class='id identifier rubyid_fd'>fd</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_fd'>fd</span> <span class='op'>=</span> <span class='id identifier rubyid_fd'>fd</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+    <span class='id identifier rubyid___debug_items'>__debug_items</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'> file_data</span><span class='label_end'>&quot;:</span> <span class='id identifier rubyid_fd'>fd</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_fd'>fd</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_mode'>mode</span>
+      <span class='kw'>when</span> <span class='symbol'>:finishing_edit</span>
+        <span class='kw'>if</span> <span class='id identifier rubyid_fd'>fd</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_fd'>fd</span> <span class='op'>!=</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:file_data</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_delete_file'>delete_file</span><span class='lparen'>(</span><span class='label'>field:</span> <span class='symbol'>:file_data</span><span class='rparen'>)</span>
+          <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:file_data</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_fd'>fd</span>
+        <span class='kw'>end</span>
+      <span class='kw'>when</span> <span class='symbol'>:initializing</span>
+        <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='id identifier rubyid_file_data_column'>file_data_column</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_fd'>fd</span> <span class='kw'>unless</span> <span class='id identifier rubyid_edit_phase'>edit_phase</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='id identifier rubyid_file_data_column'>file_data_column</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_fd'>fd</span> <span class='kw'>if</span> <span class='id identifier rubyid_fd'>fd</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Augment supplied attribute values with supplied EMMA metadata.
+</span>    <span class='kw'>if</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:repository</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_repository</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_repository</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_repository</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+    <span class='kw'>unless</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:fmt</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:dc_format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+      <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:fmt</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:dc_format</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_fields'>fields</span> <span class='op'>=</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>emma_lastRemediationDate</span><span class='words_sep'> </span><span class='tstring_content'>emma_repositoryMetadataUpdateDate</span><span class='tstring_end'>]</span></span>
+    <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='op'>|</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='id identifier rubyid_field'>field</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_utime'>utime</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+
+    <span class='comment'># EMMA metadata defaults that are only appropriate for EMMA-native items.
+</span>    <span class='kw'>if</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='period'>.</span><span class='id identifier rubyid_default'><span class='object_link'><a href="EnumType.html#default-class_method" title="EnumType.default (method)">default</a></span></span>
+      <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_repositoryRecordId</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_retrievalLink</span><span class='rbracket'>]</span> <span class='op'>||=</span>
+        <span class='kw'>begin</span>
+          <span class='id identifier rubyid_rid'>rid</span> <span class='op'>=</span> <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:emma_repositoryRecordId</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span>
+          <span class='id identifier rubyid_make_retrieval_link'>make_retrieval_link</span><span class='lparen'>(</span><span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_control'>control</span><span class='lbracket'>[</span><span class='symbol'>:base_url</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+        <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Fill in missing file information.
+</span>    <span class='id identifier rubyid_fmt'>fmt</span><span class='comma'>,</span> <span class='id identifier rubyid_ext'>ext</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_values_at'>values_at</span><span class='lparen'>(</span><span class='symbol'>:fmt</span><span class='comma'>,</span> <span class='symbol'>:ext</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_mime'>mime</span>   <span class='op'>=</span> <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_edit_file'>edit_file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_mime_type'>mime_type</span> <span class='op'>||</span> <span class='id identifier rubyid_file'>file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_mime_type'>mime_type</span>
+    <span class='id identifier rubyid_fmt'>fmt</span>  <span class='op'>||=</span> <span class='id identifier rubyid_mime_to_fmt'>mime_to_fmt</span><span class='lparen'>(</span><span class='id identifier rubyid_mime'>mime</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_ext'>ext</span>  <span class='op'>||=</span> <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_edit_file'>edit_file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_extension'>extension</span> <span class='op'>||</span> <span class='id identifier rubyid_file'>file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_extension'>extension</span>
+    <span class='id identifier rubyid_ext'>ext</span>  <span class='op'>||=</span> <span class='id identifier rubyid_fmt_to_ext'>fmt_to_ext</span><span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_mime'>mime</span> <span class='op'>||=</span> <span class='id identifier rubyid_fmt_to_mime'>fmt_to_mime</span><span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_active_file'>active_file</span><span class='period'>.</span><span class='id identifier rubyid_mime_type'>mime_type</span> <span class='op'>||=</span> <span class='id identifier rubyid_mime'>mime</span>                  <span class='kw'>if</span> <span class='id identifier rubyid_mime'>mime</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_active_file'>active_file</span>
+    <span class='id identifier rubyid_data'>data</span><span class='lbracket'>[</span><span class='symbol'>:dc_format</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="FileFormat.html" title="FileFormat (module)">FileFormat</a></span></span><span class='period'>.</span><span class='id identifier rubyid_metadata_fmt'><span class='object_link'><a href="FileFormat.html#metadata_fmt-class_method" title="FileFormat.metadata_fmt (method)">metadata_fmt</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fmt'>fmt</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:fmt</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_fmt'>fmt</span>                                <span class='kw'>if</span> <span class='id identifier rubyid_fmt'>fmt</span>
+    <span class='id identifier rubyid_attr'>attr</span><span class='lbracket'>[</span><span class='symbol'>:ext</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_ext'>ext</span>                                <span class='kw'>if</span> <span class='id identifier rubyid_ext'>ext</span>
+
+    <span class='comment'># Update :emma_data or :edit_emma_data, depending on the context.  When
+</span>    <span class='comment'># incorporating editing changes, :emma_data must be updated explicitly
+</span>    <span class='comment'># because #active_emma_data refers to :edit_emma_data.
+</span>    <span class='kw'>case</span> <span class='id identifier rubyid_mode'>mode</span>
+      <span class='kw'>when</span> <span class='symbol'>:initializing</span>   <span class='kw'>then</span> <span class='id identifier rubyid_set_active_emma_data'>set_active_emma_data</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+      <span class='kw'>when</span> <span class='symbol'>:finishing_edit</span> <span class='kw'>then</span> <span class='id identifier rubyid_modify_emma_data'>modify_emma_data</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+      <span class='kw'>else</span>                      <span class='id identifier rubyid_modify_active_emma_data'>modify_active_emma_data</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+
+  <span class='comment'># Fetch the file source if named via :file_path and not deferred.
+</span>  <span class='id identifier rubyid_fetch_and_upload_file'>fetch_and_upload_file</span><span class='lparen'>(</span><span class='ivar'>@file_path</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_fetch_file'>fetch_file</span>
+
+<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_error'>error</span> <span class='comment'># TODO: remove - testing
+</span>  <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_error'>error</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="emma_native?-instance_method">
+  
+    #<strong>emma_native?</strong>(item = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the record is an EMMA-native item.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="Upload (class)">Upload</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `self`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+507
+508
+509</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 507</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_emma_native?'>emma_native?</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_emma_native?'>emma_native?</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span> <span class='op'>||</span> <span class='kw'>self</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="field_names-instance_method">
+  
+    #<strong>field_names</strong>  &#x21d2; <tt>Array&lt;Symbol&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The fields defined in the schema for this record.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+493
+494
+495</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 493</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_field_names'>field_names</span>
+  <span class='id identifier rubyid_attribute_names'>attribute_names</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inspect-instance_method">
+  
+    #<strong>inspect</strong>(attr = nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Formatted record contents.</p>
+
+<p>This method overrides:</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>attr</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>ActiveRecord::Core#inspect</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428
+429
+430</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 391</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_inspect'>inspect</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_attr'>attr</span> <span class='op'>||=</span> <span class='lbrace'>{</span>
+    <span class='label'>id:</span>                 <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>repository:</span>         <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:repository</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>submission_id:</span>      <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>phase:</span>              <span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>[[%s]]</span><span class='tstring_end'>&#39;</span></span> <span class='op'>%</span> <span class='lparen'>(</span><span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:phase</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_upcase'>upcase</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>---</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span><span class='comma'>,</span>
+    <span class='label'>state:</span>              <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:state</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>edit_state:</span>         <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:edit_state</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>fmt:</span>                <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:fmt</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>ext:</span>                <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:ext</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>user_id:</span>            <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:user_id</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>edit_user:</span>          <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:edit_user</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>review_user:</span>        <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:review_user</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>created_at:</span>         <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:created_at</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>updated_at:</span>         <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:updated_at</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>edited_at:</span>          <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:edited_at</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>reviewed_at:</span>        <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:reviewed_at</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>review_success:</span>     <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:review_success</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>review_comment:</span>     <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:review_comment</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>emma_data:</span>          <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:emma_data</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>edit_emma_data:</span>     <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:edit_emma_data</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>file_data:</span>          <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:file_data</span><span class='rbracket'>]</span><span class='comma'>,</span>
+    <span class='label'>edit_file_data:</span>     <span class='kw'>self</span><span class='lbracket'>[</span><span class='symbol'>:edit_file_data</span><span class='rbracket'>]</span><span class='comma'>,</span>
+
+    <span class='label'>file:</span>               <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='comma'>,</span>
+    <span class='label'>file_attacher:</span>      <span class='id identifier rubyid_file_attacher'>file_attacher</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span>
+    <span class='label'>edit_file:</span>          <span class='id identifier rubyid_edit_file'>edit_file</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span><span class='comma'>,</span>
+    <span class='label'>edit_file_attacher:</span> <span class='id identifier rubyid_edit_file_attacher'>edit_file_attacher</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='comma'>,</span>
+  <span class='rbrace'>}</span>
+  <span class='comment'># noinspection RubyNilAnalysis
+</span>  <span class='id identifier rubyid_attr'>attr</span> <span class='op'>=</span> <span class='id identifier rubyid_attr'>attr</span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_truncate'>truncate</span><span class='lparen'>(</span><span class='int'>1024</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_pretty_json'>pretty_json</span><span class='lparen'>(</span><span class='id identifier rubyid_attr'>attr</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="make_retrieval_link-instance_method">
+  
+    #<strong>make_retrieval_link</strong>(rid, base_url = nil)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Create a URL for use with :emma_retrievalLink.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>rid</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>EMMA repository record ID.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>base_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#BULK_BASE_URL`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If no repository ID was given.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+646
+647
+648</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload.rb', line 646</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_make_retrieval_link'>make_retrieval_link</span><span class='lparen'>(</span><span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_base_url'>base_url</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_make_retrieval_link'>make_retrieval_link</span><span class='lparen'>(</span><span class='id identifier rubyid_rid'>rid</span><span class='comma'>,</span> <span class='id identifier rubyid_base_url'>base_url</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:18:34 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: UploadWorkflow::Single::Actions
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "UploadWorkflow::Single::Actions";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../UploadWorkflow.html" title="UploadWorkflow (class)">UploadWorkflow</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Single.html" title="UploadWorkflow::Single (class)">Single</a></span></span>
+     &raquo; 
+    <span class="title">Actions</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: UploadWorkflow::Single::Actions
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../../Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span>, <span class='object_link'><a href="../Actions.html" title="UploadWorkflow::Actions (module)">Actions</a></span>, <span class='object_link'><a href="Data.html" title="UploadWorkflow::Single::Data (module)">Data</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Create/Actions.html" title="UploadWorkflow::Single::Create::Actions (module)">Create::Actions</a></span>, <span class='object_link'><a href="Edit/Actions.html" title="UploadWorkflow::Single::Edit::Actions (module)">Edit::Actions</a></span>, <span class='object_link'><a href="Remove/Actions.html" title="UploadWorkflow::Single::Remove::Actions (module)">Remove::Actions</a></span>, <span class='object_link'><a href="States.html" title="UploadWorkflow::Single::States (module)">States</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload_workflow/single.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>New and overridden action methods specific to single-item upload workflows.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#DEFAULT_ERROR_MESSAGE-constant" title="UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE (constant)">Errors::DEFAULT_ERROR_MESSAGE</a></span>, <span class='object_link'><a href="../Errors.html#INTERNAL_EXCEPTION-constant" title="UploadWorkflow::Errors::INTERNAL_EXCEPTION (constant)">Errors::INTERNAL_EXCEPTION</a></span>, <span class='object_link'><a href="../Errors.html#UPLOAD_ERROR-constant" title="UploadWorkflow::Errors::UPLOAD_ERROR (constant)">Errors::UPLOAD_ERROR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#DEFAULT_LABEL-constant" title="UploadWorkflow::Errors::RenderMethods::DEFAULT_LABEL (constant)">Errors::RenderMethods::DEFAULT_LABEL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#BATCH_SIZE-constant" title="UploadWorkflow::Properties::BATCH_SIZE (constant)">Properties::BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#BATCH_SIZE_DEFAULT-constant" title="UploadWorkflow::Properties::BATCH_SIZE_DEFAULT (constant)">Properties::BATCH_SIZE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#DEV_TITLE_PREFIX-constant" title="UploadWorkflow::Properties::DEV_TITLE_PREFIX (constant)">Properties::DEV_TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#EMERGENCY_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::EMERGENCY_DELETE_DEFAULT (constant)">Properties::EMERGENCY_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#FORCE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::FORCE_DELETE_DEFAULT (constant)">Properties::FORCE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#INGEST_MAX_SIZE-constant" title="UploadWorkflow::Properties::INGEST_MAX_SIZE (constant)">Properties::INGEST_MAX_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#MAX_BATCH_SIZE-constant" title="UploadWorkflow::Properties::MAX_BATCH_SIZE (constant)">Properties::MAX_BATCH_SIZE</a></span>, <span class='object_link'><a href="../Properties.html#REPO_CREATE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_CREATE_DEFAULT (constant)">Properties::REPO_CREATE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_EDIT_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_EDIT_DEFAULT (constant)">Properties::REPO_EDIT_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#REPO_REMOVE_DEFAULT-constant" title="UploadWorkflow::Properties::REPO_REMOVE_DEFAULT (constant)">Properties::REPO_REMOVE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#THROTTLE_PAUSE-constant" title="UploadWorkflow::Properties::THROTTLE_PAUSE (constant)">Properties::THROTTLE_PAUSE</a></span>, <span class='object_link'><a href="../Properties.html#TITLE_PREFIX-constant" title="UploadWorkflow::Properties::TITLE_PREFIX (constant)">Properties::TITLE_PREFIX</a></span>, <span class='object_link'><a href="../Properties.html#TRUNCATE_DELETE_DEFAULT-constant" title="UploadWorkflow::Properties::TRUNCATE_DELETE_DEFAULT (constant)">Properties::TRUNCATE_DELETE_DEFAULT</a></span>, <span class='object_link'><a href="../Properties.html#WF_URL_PARAMETER-constant" title="UploadWorkflow::Properties::WF_URL_PARAMETER (constant)">Properties::WF_URL_PARAMETER</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#DISABLE_UPLOAD_INDEX_UPDATE-constant" title="UploadWorkflow::External::DISABLE_UPLOAD_INDEX_UPDATE (constant)">External::DISABLE_UPLOAD_INDEX_UPDATE</a></span>, <span class='object_link'><a href="../External.html#REPO_FAILURE-constant" title="UploadWorkflow::External::REPO_FAILURE (constant)">External::REPO_FAILURE</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Single::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#record-instance_method" title="UploadWorkflow::Single::Data#record (method)">#record</a></span></p>
+
+  
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="Simulation.html" title="UploadWorkflow::Single::Simulation (module)">Simulation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Simulation.html#submission-instance_method" title="UploadWorkflow::Single::Simulation#submission (method)">#submission</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_cancel_submission-instance_method" title="#wf_cancel_submission (instance method)">#<strong>wf_cancel_submission</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_cancel_submission.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_check_status-instance_method" title="#wf_check_status (instance method)">#<strong>wf_check_status</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Check workflow status to see whether it should advance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_finalize_submission-instance_method" title="#wf_finalize_submission (instance method)">#<strong>wf_finalize_submission</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_finalize_submission.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_index_update-instance_method" title="#wf_index_update (instance method)">#<strong>wf_index_update</strong>(*_event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_index_update.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_list_items-instance_method" title="#wf_list_items (instance method)">#<strong>wf_list_items</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_list_items.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_remove_items-instance_method" title="#wf_remove_items (instance method)">#<strong>wf_remove_items</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_remove_items.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_start_submission-instance_method" title="#wf_start_submission (instance method)">#<strong>wf_start_submission</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_start_submission.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_upload_file-instance_method" title="#wf_upload_file (instance method)">#<strong>wf_upload_file</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upload file via Shrine and update failed/succeeded arrays.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#wf_validate_submission-instance_method" title="#wf_validate_submission (instance method)">#<strong>wf_validate_submission</strong>(*event_args)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>wf_validate_submission.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Json.html#json_parse-instance_method" title="Emma::Json#json_parse (method)">#json_parse</a></span>, <span class='object_link'><a href="../../Emma/Json.html#pretty_json-instance_method" title="Emma::Json#pretty_json (method)">#pretty_json</a></span>, <span class='object_link'><a href="../../Emma/Json.html#safe_json_parse-instance_method" title="Emma::Json#safe_json_parse (method)">#safe_json_parse</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Data.html" title="UploadWorkflow::Single::Data (module)">Data</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Data.html#complete%3F-instance_method" title="UploadWorkflow::Single::Data#complete? (method)">#complete?</a></span>, <span class='object_link'><a href="Data.html#create_record-instance_method" title="UploadWorkflow::Single::Data#create_record (method)">#create_record</a></span>, <span class='object_link'><a href="Data.html#empty%3F-instance_method" title="UploadWorkflow::Single::Data#empty? (method)">#empty?</a></span>, <span class='object_link'><a href="Data.html#existing_record-instance_method" title="UploadWorkflow::Single::Data#existing_record (method)">#existing_record</a></span>, <span class='object_link'><a href="Data.html#file_valid%3F-instance_method" title="UploadWorkflow::Single::Data#file_valid? (method)">#file_valid?</a></span>, <span class='object_link'><a href="Data.html#metadata_valid%3F-instance_method" title="UploadWorkflow::Single::Data#metadata_valid? (method)">#metadata_valid?</a></span>, <span class='object_link'><a href="Data.html#reset_record-instance_method" title="UploadWorkflow::Single::Data#reset_record (method)">#reset_record</a></span>, <span class='object_link'><a href="Data.html#results-instance_method" title="UploadWorkflow::Single::Data#results (method)">#results</a></span>, <span class='object_link'><a href="Data.html#set_data-instance_method" title="UploadWorkflow::Single::Data#set_data (method)">#set_data</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Simulation.html" title="UploadWorkflow::Single::Simulation (module)">Simulation</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Simulation.html#set_submission-instance_method" title="UploadWorkflow::Single::Simulation#set_submission (method)">#set_submission</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors.html" title="UploadWorkflow::Errors (module)">Errors</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors.html#failure-instance_method" title="UploadWorkflow::Errors#failure (method)">#failure</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Errors/RenderMethods.html" title="UploadWorkflow::Errors::RenderMethods (module)">Errors::RenderMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Errors/RenderMethods.html#make_label-instance_method" title="UploadWorkflow::Errors::RenderMethods#make_label (method)">#make_label</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Properties.html" title="UploadWorkflow::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Properties.html#batch_size-instance_method" title="UploadWorkflow::Properties#batch_size (method)">#batch_size</a></span>, <span class='object_link'><a href="../Properties.html#emergency_delete-instance_method" title="UploadWorkflow::Properties#emergency_delete (method)">#emergency_delete</a></span>, <span class='object_link'><a href="../Properties.html#force_delete-instance_method" title="UploadWorkflow::Properties#force_delete (method)">#force_delete</a></span>, <span class='object_link'><a href="../Properties.html#repo_create-instance_method" title="UploadWorkflow::Properties#repo_create (method)">#repo_create</a></span>, <span class='object_link'><a href="../Properties.html#repo_edit-instance_method" title="UploadWorkflow::Properties#repo_edit (method)">#repo_edit</a></span>, <span class='object_link'><a href="../Properties.html#repo_remove-instance_method" title="UploadWorkflow::Properties#repo_remove (method)">#repo_remove</a></span>, <span class='object_link'><a href="../Properties.html#title_prefix-instance_method" title="UploadWorkflow::Properties#title_prefix (method)">#title_prefix</a></span>, <span class='object_link'><a href="../Properties.html#truncate_delete-instance_method" title="UploadWorkflow::Properties#truncate_delete (method)">#truncate_delete</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../External.html" title="UploadWorkflow::External (module)">External</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../External.html#add_to_index-instance_method" title="UploadWorkflow::External#add_to_index (method)">#add_to_index</a></span>, <span class='object_link'><a href="../External.html#aws_api-instance_method" title="UploadWorkflow::External#aws_api (method)">#aws_api</a></span>, <span class='object_link'><a href="../External.html#batch_repository_remove-instance_method" title="UploadWorkflow::External#batch_repository_remove (method)">#batch_repository_remove</a></span>, <span class='object_link'><a href="../External.html#batch_repository_request-instance_method" title="UploadWorkflow::External#batch_repository_request (method)">#batch_repository_request</a></span>, <span class='object_link'><a href="../External.html#db_delete-instance_method" title="UploadWorkflow::External#db_delete (method)">#db_delete</a></span>, <span class='object_link'><a href="../External.html#db_insert-instance_method" title="UploadWorkflow::External#db_insert (method)">#db_insert</a></span>, <span class='object_link'><a href="../External.html#db_update-instance_method" title="UploadWorkflow::External#db_update (method)">#db_update</a></span>, <span class='object_link'><a href="../External.html#emma_item%3F-instance_method" title="UploadWorkflow::External#emma_item? (method)">#emma_item?</a></span>, <span class='object_link'><a href="../External.html#find_records-instance_method" title="UploadWorkflow::External#find_records (method)">#find_records</a></span>, <span class='object_link'><a href="../External.html#get_record-instance_method" title="UploadWorkflow::External#get_record (method)">#get_record</a></span>, <span class='object_link'><a href="../External.html#identifier-instance_method" title="UploadWorkflow::External#identifier (method)">#identifier</a></span>, <span class='object_link'><a href="../External.html#identifiers-instance_method" title="UploadWorkflow::External#identifiers (method)">#identifiers</a></span>, <span class='object_link'><a href="../External.html#ingest_api-instance_method" title="UploadWorkflow::External#ingest_api (method)">#ingest_api</a></span>, <span class='object_link'><a href="../External.html#new_record-instance_method" title="UploadWorkflow::External#new_record (method)">#new_record</a></span>, <span class='object_link'><a href="../External.html#remove_from_index-instance_method" title="UploadWorkflow::External#remove_from_index (method)">#remove_from_index</a></span>, <span class='object_link'><a href="../External.html#repository_create-instance_method" title="UploadWorkflow::External#repository_create (method)">#repository_create</a></span>, <span class='object_link'><a href="../External.html#repository_edit-instance_method" title="UploadWorkflow::External#repository_edit (method)">#repository_edit</a></span>, <span class='object_link'><a href="../External.html#repository_remove-instance_method" title="UploadWorkflow::External#repository_remove (method)">#repository_remove</a></span>, <span class='object_link'><a href="../External.html#skip_index_ingest-instance_method" title="UploadWorkflow::External#skip_index_ingest (method)">#skip_index_ingest</a></span>, <span class='object_link'><a href="../External.html#update_in_index-instance_method" title="UploadWorkflow::External#update_in_index (method)">#update_in_index</a></span>, <span class='object_link'><a href="../External.html#upload_create-instance_method" title="UploadWorkflow::External#upload_create (method)">#upload_create</a></span>, <span class='object_link'><a href="../External.html#upload_edit-instance_method" title="UploadWorkflow::External#upload_edit (method)">#upload_edit</a></span>, <span class='object_link'><a href="../External.html#upload_remove-instance_method" title="UploadWorkflow::External#upload_remove (method)">#upload_remove</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="wf_cancel_submission-instance_method">
+  
+    #<strong>wf_cancel_submission</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_cancel_submission</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+373
+374
+375</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 373</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_cancel_submission'>wf_cancel_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_check_status-instance_method">
+  
+    #<strong>wf_check_status</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Check workflow status to see whether it should advance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 436</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_check_status'>wf_check_status</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span>  <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span>
+  <span class='id identifier rubyid_html'>html</span> <span class='op'>=</span> <span class='op'>!</span><span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:html</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user'>user</span> <span class='op'>=</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_active_user'>active_user</span>
+  <span class='id identifier rubyid_repo'>repo</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../../Upload.html" title="Upload (class)">Upload</a></span></span><span class='period'>.</span><span class='id identifier rubyid_repository_name'><span class='object_link'><a href="../../Upload.html#repository_name-class_method" title="Upload.repository_name (method)">repository_name</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_sid'>sid</span>  <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>submission </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_submission_id'>submission_id</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_sub'>sub</span>  <span class='op'>=</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_emma_native?'>emma_native?</span> <span class='op'>?</span> <span class='id identifier rubyid_sid'>sid</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_repo'>repo</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sid'>sid</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_note'>note</span> <span class='op'>=</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_curr_state'>curr_state</span>
+      <span class='kw'>when</span> <span class='symbol'>:starting</span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> - non-existent submission</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:creating</span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being created by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:validating</span>  <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being created by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:submitting</span>  <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being created by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:submitted</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being created by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:editing</span>     <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being modified by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:replacing</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being modified by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:modifying</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being modified by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:modified</span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being modified by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:removing</span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being removed</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:removed</span>     <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being removed</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:scheduling</span>  <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is under review</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:assigning</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is under review</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:holding</span>     <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is under review</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:assigned</span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is under review</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:reviewing</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being reviewed by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_user'>user</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:staging</span>     <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being submitted</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:unretrieved</span> <span class='kw'>then</span> <span class='id identifier rubyid_wf_check_retrieved'>wf_check_retrieved</span>
+      <span class='kw'>when</span> <span class='symbol'>:retrieved</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sid'>sid</span><span class='embexpr_end'>}</span><span class='tstring_content'> has been retrieved by </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_repo'>repo</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:indexing</span>    <span class='kw'>then</span> <span class='id identifier rubyid_wf_check_indexed'>wf_check_indexed</span>
+      <span class='kw'>when</span> <span class='symbol'>:indexed</span>     <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is being indexed</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>when</span> <span class='symbol'>:completed</span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_sub'>sub</span><span class='embexpr_end'>}</span><span class='tstring_content'> is complete</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>else</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Unexpected submission state: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_curr_state'>curr_state</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='id identifier rubyid_note'>note</span> <span class='op'>=</span> <span class='id identifier rubyid_note'>note</span><span class='period'>.</span><span class='id identifier rubyid_upcase_first'>upcase_first</span>
+  <span class='id identifier rubyid_note'>note</span> <span class='op'>=</span> <span class='const'>ERB</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_h'>h</span><span class='lparen'>(</span><span class='id identifier rubyid_note'>note</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_html'>html</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_html'>html</span> <span class='op'>&amp;&amp;</span> <span class='kw'>false</span> <span class='comment'># TODO: testing - remove
+</span>    <span class='id identifier rubyid_args'>args</span>  <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span>
+    <span class='id identifier rubyid_parts'>parts</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+    <span class='id identifier rubyid_parts'>parts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>event_args</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>ERB</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_h'>h</span><span class='lparen'>(</span><span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_parts'>parts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>options</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>    <span class='op'>=</span> <span class='const'>ERB</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_h'>h</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='rparen'>)</span>  <span class='kw'>if</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_parts'>parts</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>record</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='op'>=</span>
+      <span class='const'>ERB</span><span class='op'>::</span><span class='const'>Util</span><span class='period'>.</span><span class='id identifier rubyid_h'>h</span><span class='lparen'>(</span><span class='id identifier rubyid_pretty_json'>pretty_json</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_rec'>rec</span><span class='op'>|</span>
+        <span class='id identifier rubyid_rec'>rec</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>:( +)</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span> <span class='op'>+</span> <span class='backref'>$1</span><span class='period'>.</span><span class='id identifier rubyid_gsub'>gsub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'> </span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&amp;nbsp;&amp;nbsp;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_rec'>rec</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&amp;nbsp;&amp;nbsp;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_rec'>rec</span><span class='period'>.</span><span class='id identifier rubyid_gsub!'>gsub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\n</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&lt;br/&gt;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_rec'>rec</span><span class='period'>.</span><span class='id identifier rubyid_sub!'>sub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\A&amp;nbsp;&amp;nbsp;</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_rec'>rec</span><span class='period'>.</span><span class='id identifier rubyid_sub!'>sub!</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>(&amp;nbsp;)*}&lt;br\/&gt;\z</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>}</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_html_safe'>html_safe</span>
+    <span class='id identifier rubyid_parts'>parts</span><span class='period'>.</span><span class='id identifier rubyid_each_pair'>each_pair</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+      <span class='id identifier rubyid_note'>note</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;br/&gt;&lt;br/&gt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_label'>label</span><span class='embexpr_end'>}</span><span class='tstring_content'> = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='period'>.</span><span class='id identifier rubyid_html_safe'>html_safe</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_succeeded'>succeeded</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_note'>note</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_finalize_submission-instance_method">
+  
+    #<strong>wf_finalize_submission</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_finalize_submission</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+363
+364
+365</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 363</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_finalize_submission'>wf_finalize_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_index_update-instance_method">
+  
+    #<strong>wf_index_update</strong>(*_event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_index_update</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>_event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Ignored.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+383
+384
+385
+386</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 383</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_index_update'>wf_index_update</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid__event_args'>_event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_assert_record_present'>assert_record_present</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_list_items-instance_method">
+  
+    #<strong>wf_list_items</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_list_items</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+337
+338
+339
+340
+341</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 337</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_list_items'>wf_list_items</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='id identifier rubyid_succeeded'>succeeded</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_remove_items-instance_method">
+  
+    #<strong>wf_remove_items</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_remove_items</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+349
+350
+351
+352
+353
+354
+355</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 349</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_remove_items'>wf_remove_items</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span>
+  <span class='id identifier rubyid_event_args'>event_args</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_record'>record</span> <span class='kw'>if</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='id identifier rubyid_succeeded'>succeeded</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_start_submission-instance_method">
+  
+    #<strong>wf_start_submission</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_start_submission</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Data.html#set_record-instance_method" title="UploadWorkflow::Single::Data#set_record (method)">Data#set_record</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+306
+307
+308
+309
+310
+311
+312
+313
+314</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 306</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_start_submission'>wf_start_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_existing_record'>existing_record</span>
+    <span class='kw'>when</span> <span class='kw'>false</span> <span class='kw'>then</span> <span class='id identifier rubyid_set_record'>set_record</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='kw'>true</span>  <span class='kw'>then</span> <span class='id identifier rubyid_reset_record'>reset_record</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>            <span class='id identifier rubyid_create_record'>create_record</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_upload_file-instance_method">
+  
+    #<strong>wf_upload_file</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Upload file via Shrine and update failed/succeeded arrays.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>External#upload_file</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422
+423
+424
+425
+426
+427
+428</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 402</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_upload_file'>wf_upload_file</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:meth</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_calling_method'>calling_method</span>
+
+  <span class='comment'># The return from Shrine will be the results of the workflow step.
+</span>  <span class='id identifier rubyid_stat'>stat</span><span class='comma'>,</span> <span class='id identifier rubyid__hdrs'>_hdrs</span><span class='comma'>,</span> <span class='id identifier rubyid_body'>body</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_results'>results</span> <span class='op'>=</span> <span class='id identifier rubyid_upload_file'>upload_file</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+
+  <span class='comment'># Update status arrays accordingly.
+</span>  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_stat'>stat</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_failures'>failures</span>  <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>missing env data</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_stat'>stat</span> <span class='op'>!=</span> <span class='int'>200</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_failures'>failures</span>  <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid file</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>elsif</span> <span class='op'>!</span><span class='id identifier rubyid_record'>record</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_succeeded'>succeeded</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>no record</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: should this be a failure?
+</span>  <span class='kw'>elsif</span> <span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_json_parse'>json_parse</span><span class='lparen'>(</span><span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='symbol'>:emma_data</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='rparen'>)</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_succeeded'>succeeded</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span>
+  <span class='kw'>else</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_failures'>failures</span>  <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>invalid file_data</span><span class='tstring_end'>&#39;</span></span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Ensure that the record is updated now instead of waiting for the file
+</span>  <span class='comment'># data to be returned when the form is submitted in case the submission is
+</span>  <span class='comment'># canceled and the uploaded file needs to be removed from storage.
+</span>  <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_update_column'>update_column</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_file_data_column'>file_data_column</span><span class='comma'>,</span> <span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_data'>data</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="wf_validate_submission-instance_method">
+  
+    #<strong>wf_validate_submission</strong>(*event_args)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>wf_validate_submission</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>event_args</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="Data.html#set_record-instance_method" title="UploadWorkflow::Single::Data#set_record (method)">Data#set_record</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+324
+325
+326
+327
+328
+329</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow/single.rb', line 324</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_wf_validate_submission'>wf_validate_submission</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_event_args'>event_args</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_data'>data</span> <span class='op'>=</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_event_args'>event_args</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='id identifier rubyid_set_record'>set_record</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_succeeded'>succeeded</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_record'>record</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span> <span class='kw'>unless</span> <span class='id identifier rubyid_failures?'>failures?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:34 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

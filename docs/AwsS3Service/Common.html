@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: AwsS3Service::Common
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "AwsS3Service::Common";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../AwsS3Service.html" title="AwsS3Service (class)">AwsS3Service</a></span></span>
+     &raquo; 
+    <span class="title">Common</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: AwsS3Service::Common
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="../ApiService/Common.html" title="ApiService::Common (module)">ApiService::Common</a></span>, <span class='object_link'><a href="Properties.html" title="AwsS3Service::Properties (module)">Properties</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Request/Submissions.html" title="AwsS3Service::Request::Submissions (module)">Request::Submissions</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/services/aws_s3_service/common.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>AwsS3Service::Common</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Properties.html" title="AwsS3Service::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Properties.html#AWS_S3_CONFIG-constant" title="AwsS3Service::Properties::AWS_S3_CONFIG (constant)">Properties::AWS_S3_CONFIG</a></span>, <span class='object_link'><a href="Properties.html#MEMBER_REPOSITORIES-constant" title="AwsS3Service::Properties::MEMBER_REPOSITORIES (constant)">Properties::MEMBER_REPOSITORIES</a></span>, <span class='object_link'><a href="Properties.html#S3_BUCKET-constant" title="AwsS3Service::Properties::S3_BUCKET (constant)">Properties::S3_BUCKET</a></span>, <span class='object_link'><a href="Properties.html#S3_OPTIONS-constant" title="AwsS3Service::Properties::S3_OPTIONS (constant)">Properties::S3_OPTIONS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../ApiService/Properties.html" title="ApiService::Properties (module)">ApiService::Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ApiService/Properties.html#CACHING-constant" title="ApiService::Properties::CACHING (constant)">ApiService::Properties::CACHING</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#HTTP_METHODS-constant" title="ApiService::Properties::HTTP_METHODS (constant)">ApiService::Properties::HTTP_METHODS</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#IGNORED_PARAMETERS-constant" title="ApiService::Properties::IGNORED_PARAMETERS (constant)">ApiService::Properties::IGNORED_PARAMETERS</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#MAX_REDIRECTS-constant" title="ApiService::Properties::MAX_REDIRECTS (constant)">ApiService::Properties::MAX_REDIRECTS</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#RAISE_ON_INVALID_PARAMS-constant" title="ApiService::Properties::RAISE_ON_INVALID_PARAMS (constant)">ApiService::Properties::RAISE_ON_INVALID_PARAMS</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#SERVICE_OPTIONS-constant" title="ApiService::Properties::SERVICE_OPTIONS (constant)">ApiService::Properties::SERVICE_OPTIONS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ParamsHelper.html#COMPRESSION_MARKER-constant" title="ParamsHelper::COMPRESSION_MARKER (constant)">ParamsHelper::COMPRESSION_MARKER</a></span>, <span class='object_link'><a href="../ParamsHelper.html#IGNORED_PARAMETERS-constant" title="ParamsHelper::IGNORED_PARAMETERS (constant)">ParamsHelper::IGNORED_PARAMETERS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="../ApiService/Common.html" title="ApiService::Common (module)">ApiService::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ApiService/Common.html#action-instance_method" title="ApiService::Common#action (method)">#action</a></span>, <span class='object_link'><a href="../ApiService/Common.html#exception-instance_method" title="ApiService::Common#exception (method)">#exception</a></span>, <span class='object_link'><a href="../ApiService/Common.html#params-instance_method" title="ApiService::Common#params (method)">#params</a></span>, <span class='object_link'><a href="../ApiService/Common.html#response-instance_method" title="ApiService::Common#response (method)">#response</a></span>, <span class='object_link'><a href="../ApiService/Common.html#user-instance_method" title="ApiService::Common#user (method)">#user</a></span>, <span class='object_link'><a href="../ApiService/Common.html#verb-instance_method" title="ApiService::Common#verb (method)">#verb</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_delete_file-instance_method" title="#api_delete_file (instance method)">#<strong>api_delete_file</strong>(bucket, key, **opt)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Remove a single file from an AWS S3 bucket.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_get_file-instance_method" title="#api_get_file (instance method)">#<strong>api_get_file</strong>(bucket, key, **opt)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Download a single file from an AWS S3 bucket.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_list_object_keys-instance_method" title="#api_list_object_keys (instance method)">#<strong>api_list_object_keys</strong>(bucket, filter = nil, **opt)  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Lookup matching AWS S3 object keys if “filter” appears to be a pattern and not a specific filename and extension.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_list_objects-instance_method" title="#api_list_objects (instance method)">#<strong>api_list_objects</strong>(bucket, filter = nil, **opt)  &#x21d2; Array&lt;Aws::S3::Object&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>List files (object keys) in an AWS S3 bucket.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#api_put_file-instance_method" title="#api_put_file (instance method)">#<strong>api_put_file</strong>(bucket, key, content, **opt)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Upload an individual file to an AWS S3 bucket.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#bucket_for-instance_method" title="#bucket_for (instance method)">#<strong>bucket_for</strong>(item, deployment = nil)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The AWS S3 bucket associated with the item.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#s3_bucket-instance_method" title="#s3_bucket (instance method)">#<strong>s3_bucket</strong>(bucket, **opt)  &#x21d2; Aws::S3::Bucket </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get an S3 bucket instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#s3_client-instance_method" title="#s3_client (instance method)">#<strong>s3_client</strong>(**opt)  &#x21d2; Aws::S3::Client </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get an S3 client instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#s3_resource-instance_method" title="#s3_resource (instance method)">#<strong>s3_resource</strong>(**opt)  &#x21d2; Aws::S3::Resource </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get an S3 resource instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#submission_id-instance_method" title="#submission_id (instance method)">#<strong>submission_id</strong>(item)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate an array of submission package identifiers (AWS S3 object keys).</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Properties.html" title="AwsS3Service::Properties (module)">Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Properties.html#api_key-instance_method" title="AwsS3Service::Properties#api_key (method)">#api_key</a></span>, <span class='object_link'><a href="Properties.html#api_version-instance_method" title="AwsS3Service::Properties#api_version (method)">#api_version</a></span>, <span class='object_link'><a href="Properties.html#base_uri-instance_method" title="AwsS3Service::Properties#base_uri (method)">#base_uri</a></span>, <span class='object_link'><a href="Properties.html#base_url-instance_method" title="AwsS3Service::Properties#base_url (method)">#base_url</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ApiService/Properties.html" title="ApiService::Properties (module)">ApiService::Properties</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ApiService/Properties.html#api_key-instance_method" title="ApiService::Properties#api_key (method)">#api_key</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#api_version-instance_method" title="ApiService::Properties#api_version (method)">#api_version</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#base_uri-instance_method" title="ApiService::Properties#base_uri (method)">#base_uri</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#base_url-instance_method" title="ApiService::Properties#base_url (method)">#base_url</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#max_redirects-instance_method" title="ApiService::Properties#max_redirects (method)">#max_redirects</a></span>, <span class='object_link'><a href="../ApiService/Properties.html#service_name-instance_method" title="ApiService::Properties#service_name (method)">#service_name</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../I18nHelper.html" title="I18nHelper (module)">I18nHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../I18nHelper.html#erb_interpolate-instance_method" title="I18nHelper#erb_interpolate (method)">#erb_interpolate</a></span>, <span class='object_link'><a href="../I18nHelper.html#i18n_button_values-instance_method" title="I18nHelper#i18n_button_values (method)">#i18n_button_values</a></span>, <span class='object_link'><a href="../I18nHelper.html#i18n_erb-instance_method" title="I18nHelper#i18n_erb (method)">#i18n_erb</a></span>, <span class='object_link'><a href="../I18nHelper.html#i18n_lookup-instance_method" title="I18nHelper#i18n_lookup (method)">#i18n_lookup</a></span>, <span class='object_link'><a href="../I18nHelper.html#i18n_lookup_order-instance_method" title="I18nHelper#i18n_lookup_order (method)">#i18n_lookup_order</a></span>, <span class='object_link'><a href="../I18nHelper.html#unit_of-instance_method" title="I18nHelper#unit_of (method)">#unit_of</a></span>, <span class='object_link'><a href="../I18nHelper.html#units_of-instance_method" title="I18nHelper#units_of (method)">#units_of</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ParamsHelper.html#compress_value-instance_method" title="ParamsHelper#compress_value (method)">#compress_value</a></span>, <span class='object_link'><a href="../ParamsHelper.html#compressed_value%3F-instance_method" title="ParamsHelper#compressed_value? (method)">#compressed_value?</a></span>, <span class='object_link'><a href="../ParamsHelper.html#decompress_value-instance_method" title="ParamsHelper#decompress_value (method)">#decompress_value</a></span>, <span class='object_link'><a href="../ParamsHelper.html#local_request%3F-instance_method" title="ParamsHelper#local_request? (method)">#local_request?</a></span>, <span class='object_link'><a href="../ParamsHelper.html#request_parameter_count-instance_method" title="ParamsHelper#request_parameter_count (method)">#request_parameter_count</a></span>, <span class='object_link'><a href="../ParamsHelper.html#request_parameters-instance_method" title="ParamsHelper#request_parameters (method)">#request_parameters</a></span>, <span class='object_link'><a href="../ParamsHelper.html#request_path-instance_method" title="ParamsHelper#request_path (method)">#request_path</a></span>, <span class='object_link'><a href="../ParamsHelper.html#request_xhr%3F-instance_method" title="ParamsHelper#request_xhr? (method)">#request_xhr?</a></span>, <span class='object_link'><a href="../ParamsHelper.html#route_request%3F-instance_method" title="ParamsHelper#route_request? (method)">#route_request?</a></span>, <span class='object_link'><a href="../ParamsHelper.html#same_request%3F-instance_method" title="ParamsHelper#same_request? (method)">#same_request?</a></span>, <span class='object_link'><a href="../ParamsHelper.html#session_section-instance_method" title="ParamsHelper#session_section (method)">#session_section</a></span>, <span class='object_link'><a href="../ParamsHelper.html#url_parameters-instance_method" title="ParamsHelper#url_parameters (method)">#url_parameters</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../ApiService/Common.html" title="ApiService::Common (module)">ApiService::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../ApiService/Common.html#api-instance_method" title="ApiService::Common#api (method)">#api</a></span>, <span class='object_link'><a href="../ApiService/Common.html#discard_exception-instance_method" title="ApiService::Common#discard_exception (method)">#discard_exception</a></span>, <span class='object_link'><a href="../ApiService/Common.html#error%3F-instance_method" title="ApiService::Common#error? (method)">#error?</a></span>, <span class='object_link'><a href="../ApiService/Common.html#error_message-instance_method" title="ApiService::Common#error_message (method)">#error_message</a></span>, <span class='object_link'><a href="../ApiService/Common.html#latest_endpoint-instance_method" title="ApiService::Common#latest_endpoint (method)">#latest_endpoint</a></span>, <span class='object_link'><a href="../ApiService/Common.html#name_of-instance_method" title="ApiService::Common#name_of (method)">#name_of</a></span>, <span class='object_link'><a href="../ApiService/Common.html#request_type-instance_method" title="ApiService::Common#request_type (method)">#request_type</a></span>, <span class='object_link'><a href="../ApiService/Common.html#update_request%3F-instance_method" title="ApiService::Common#update_request? (method)">#update_request?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="api_delete_file-instance_method">
+  
+    #<strong>api_delete_file</strong>(bucket, key, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Remove a single file from an AWS S3 bucket.</p>
+
+<p>– noinspection RubyScope ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bucket</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #get_object except for:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:meth</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Calling method for logging</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:client</span>
+          <span class="type">(<tt>Aws::S3::Client</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Removed object key.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the operation failed.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 188</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_delete_file'>api_delete_file</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:client</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_client'>client</span> <span class='kw'>if</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Bucket</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_meth'>meth</span>     <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:meth</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_calling_method'>calling_method</span>
+  <span class='id identifier rubyid_params'>params</span>   <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>bucket:</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='label'>key:</span> <span class='id identifier rubyid_key'>key</span> <span class='rbrace'>}</span>
+  <span class='comment'># @type [Aws::S3::Types::DeleteObjectOutput] response
+</span>  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_delete_object'>delete_object</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 response: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_key'>key</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 failure: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_get_file-instance_method">
+  
+    #<strong>api_get_file</strong>(bucket, key, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Download a single file from an AWS S3 bucket.</p>
+
+<p>– noinspection RubyScope ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bucket</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #get_object except for:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:meth</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Calling method for logging</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:client</span>
+          <span class="type">(<tt>Aws::S3::Client</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Content of requested file.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the operation failed.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 158</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_get_file'>api_get_file</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:client</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_client'>client</span> <span class='kw'>if</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Bucket</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_meth'>meth</span>     <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:meth</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_calling_method'>calling_method</span>
+  <span class='id identifier rubyid_params'>params</span>   <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>bucket:</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='label'>key:</span> <span class='id identifier rubyid_key'>key</span> <span class='rbrace'>}</span>
+  <span class='comment'># @type [Aws::S3::Types::GetObjectOutput] response
+</span>  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_get_object'>get_object</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 response: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_body'>body</span><span class='period'>.</span><span class='id identifier rubyid_read'>read</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 failure: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_list_object_keys-instance_method">
+  
+    #<strong>api_list_object_keys</strong>(bucket, filter = nil, **opt)  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Lookup matching AWS S3 object keys if “filter” appears to be a pattern and not a specific filename and extension.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>This should only be used when transforming a list of key name patterns into actual key names – use #api_list_objects directly when checking on the presence of the files themselves.</p>
+
+<p>– noinspection RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bucket</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>filter</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #api_list_objects.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+260
+261
+262
+263
+264
+265</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 260</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_list_object_keys'>api_list_object_keys</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_filter'>filter</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_filter'>filter</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_filter'>filter</span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\.\*?$</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='lbracket'>[</span><span class='id identifier rubyid_filter'>filter</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_filter'>filter</span><span class='period'>.</span><span class='id identifier rubyid_remove'>remove</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>%r{</span><span class='tstring_content'>^.*/</span><span class='regexp_end'>}</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_api_list_objects'>api_list_objects</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_filter'>filter</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:key</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_list_objects-instance_method">
+  
+    #<strong>api_list_objects</strong>(bucket, filter = nil, **opt)  &#x21d2; <tt>Array&lt;Aws::S3::Object&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>List files (object keys) in an AWS S3 bucket.</p>
+
+<p>– noinspection RubyScope, RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bucket</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>filter</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>All objects if blank, missing, or &#39;*&#39;.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #list_objects_v2 except for:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:meth</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Calling method for logging</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:client</span>
+          <span class="type">(<tt>Aws::S3::Client</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;Aws::S3::Object&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 217</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_list_objects'>api_list_objects</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_filter'>filter</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:client</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_client'>client</span> <span class='kw'>if</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Bucket</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_meth'>meth</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:meth</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_calling_method'>calling_method</span>
+  <span class='id identifier rubyid_params'>params</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>bucket:</span> <span class='id identifier rubyid_bucket'>bucket</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_filter'>filter</span> <span class='op'>=</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_filter'>filter</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+      <span class='kw'>when</span> <span class='kw'>nil</span>     <span class='kw'>then</span> <span class='kw'>nil</span> <span class='comment'># No filter means list all objects in the bucket.
+</span>      <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span>     <span class='kw'>then</span> <span class='kw'>nil</span> <span class='comment'># An explicit request for all objects.
+</span>      <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\.$</span><span class='regexp_end'>/</span></span>   <span class='kw'>then</span> <span class='id identifier rubyid_filter'>filter</span>
+      <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\.\*$</span><span class='regexp_end'>/</span></span> <span class='kw'>then</span> <span class='id identifier rubyid_filter'>filter</span><span class='period'>.</span><span class='id identifier rubyid_delete_suffix'>delete_suffix</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='kw'>else</span>              <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_filter'>filter</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='comment'># @type [Aws::S3::Types::ListObjectsV2Output] response
+</span>  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_list_objects_v2'>list_objects_v2</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_contents'>contents</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_obj'>obj</span><span class='op'>|</span> <span class='id identifier rubyid_obj'>obj</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='id identifier rubyid_filter'>filter</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_filter'>filter</span>
+  <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 failure: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='lbracket'>[</span><span class='rbracket'>]</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="api_put_file-instance_method">
+  
+    #<strong>api_put_file</strong>(bucket, key, content, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Upload an individual file to an AWS S3 bucket.</p>
+
+<p>– noinspection RubyScope ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>bucket</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>key</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>content</span>
+      
+      
+        <span class='type'>(<tt>AWS::S3::Object</tt>, <tt>String</tt>, <tt>StringIO</tt>, <tt>File</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:meth</span>
+          <span class="type">(<tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Calling method for logging</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:client</span>
+          <span class="type">(<tt>Aws::S3::Client</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Uploaded object key.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If the operation failed.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 121</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_api_put_file'>api_put_file</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_content'>content</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:client</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_client'>client</span> <span class='kw'>if</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Bucket</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_client'>client</span> <span class='op'>||=</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_meth'>meth</span>     <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:meth</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_calling_method'>calling_method</span>
+  <span class='id identifier rubyid_params'>params</span>   <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>bucket:</span> <span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='label'>key:</span> <span class='id identifier rubyid_key'>key</span> <span class='rbrace'>}</span>
+  <span class='comment'># @type [Types::CopyObjectOutput, Types::PutObjectOutput] response
+</span>  <span class='id identifier rubyid_response'>response</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Object</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:copy_source</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_bucket_name'>bucket_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_copy_object'>copy_object</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:body</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_content'>content</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='const'>StringIO</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_content'>content</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_content'>content</span>
+      <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_put_object'>put_object</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 response: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_key'>key</span>
+<span class='kw'>rescue</span> <span class='const'>StandardError</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='ivar'>@exception</span> <span class='op'>=</span> <span class='id identifier rubyid_e'>e</span>
+  <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_meth'>meth</span><span class='embexpr_end'>}</span><span class='tstring_content'>: AWS S3 failure: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_e'>e</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="bucket_for-instance_method">
+  
+    #<strong>bucket_for</strong>(item, deployment = nil)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The AWS S3 bucket associated with the item.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../AwsS3/Message/SubmissionPackage.html" title="AwsS3::Message::SubmissionPackage (class)">AwsS3::Message::SubmissionPackage</a></span></tt>, <tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>, <tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>deployment</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Def: `#application_deployment`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42
+43
+44</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_bucket_for'>bucket_for</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='id identifier rubyid_deployment'>deployment</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_repository'>repository</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></span><span class='period'>.</span><span class='id identifier rubyid_repository_of'><span class='object_link'><a href="../Upload.html#repository_of-class_method" title="Upload.repository_of (method)">repository_of</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+  <span class='id identifier rubyid_deployment'>deployment</span> <span class='op'>=</span> <span class='id identifier rubyid_deployment'>deployment</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='op'>||</span> <span class='id identifier rubyid_application_deployment'>application_deployment</span>
+  <span class='const'><span class='object_link'><a href="Properties.html#S3_BUCKET-constant" title="AwsS3Service::Properties::S3_BUCKET (constant)">S3_BUCKET</a></span></span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='id identifier rubyid_repository'>repository</span><span class='comma'>,</span> <span class='id identifier rubyid_deployment'>deployment</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="../EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='period'>.</span><span class='id identifier rubyid_valid?'><span class='object_link'><a href="../EnumType.html#valid%3F-class_method" title="EnumType.valid? (method)">valid?</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_repository'>repository</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="s3_bucket-instance_method">
+  
+    #<strong>s3_bucket</strong>(bucket, **opt)  &#x21d2; <tt>Aws::S3::Bucket</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get an S3 bucket instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Aws::S3::Bucket</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+95
+96
+97</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 95</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_s3_bucket'>s3_bucket</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_s3_resource'>s3_resource</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_bucket'>bucket</span><span class='lparen'>(</span><span class='id identifier rubyid_bucket'>bucket</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="s3_client-instance_method">
+  
+    #<strong>s3_client</strong>(**opt)  &#x21d2; <tt>Aws::S3::Client</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get an S3 client instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to Aws::S3::Client#initialize</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Aws::S3::Client</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+78
+79
+80</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 78</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Client</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Properties.html#S3_OPTIONS-constant" title="AwsS3Service::Properties::S3_OPTIONS (constant)">S3_OPTIONS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="s3_resource-instance_method">
+  
+    #<strong>s3_resource</strong>(**opt)  &#x21d2; <tt>Aws::S3::Resource</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get an S3 resource instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Aws::S3::Resource</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+86
+87
+88
+89</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 86</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_s3_resource'>s3_resource</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:client</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_s3_client'>s3_client</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='const'>Aws</span><span class='op'>::</span><span class='const'>S3</span><span class='op'>::</span><span class='const'>Resource</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="Properties.html#S3_OPTIONS-constant" title="AwsS3Service::Properties::S3_OPTIONS (constant)">S3_OPTIONS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="submission_id-instance_method">
+  
+    #<strong>submission_id</strong>(item)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate an array of submission package identifiers (AWS S3 object keys).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../AwsS3/Message/SubmissionPackage.html" title="AwsS3::Message::SubmissionPackage (class)">AwsS3::Message::SubmissionPackage</a></span></tt>, <tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>, <tt>Hash</tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/aws_s3_service/common.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_submission_id'>submission_id</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>case</span> <span class='id identifier rubyid_item'>item</span>
+    <span class='kw'>when</span> <span class='const'><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../AwsS3.html" title="AwsS3 (module)">AwsS3</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../AwsS3/Message.html" title="AwsS3::Message (module)">Message</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../AwsS3/Message/SubmissionPackage.html" title="AwsS3::Message::SubmissionPackage (class)">SubmissionPackage</a></span></span>
+      <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_submission_id'>submission_id</span>
+    <span class='kw'>when</span> <span class='const'>Hash</span>
+      <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>submission_id</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+    <span class='kw'>when</span> <span class='const'>String</span>
+      <span class='id identifier rubyid_item'>item</span>
+    <span class='kw'>else</span>
+      <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: unexpected: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:51 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

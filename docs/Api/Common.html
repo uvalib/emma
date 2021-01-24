@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Api::Common
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Api::Common";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (C)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Api.html" title="Api (module)">Api</a></span></span>
+     &raquo; 
+    <span class="title">Common</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Api::Common
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="Record.html" title="Api::Record (class)">Record</a></span>, <span class='object_link'><a href="../AwsS3/Api/Common.html" title="AwsS3::Api::Common (module)">AwsS3::Api::Common</a></span>, <span class='object_link'><a href="../Bs/Api/Common.html" title="Bs::Api::Common (module)">Bs::Api::Common</a></span>, <span class='object_link'><a href="../Search/Api/Common.html" title="Search::Api::Common (module)">Search::Api::Common</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/records/concerns/api/common.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Shared values and methods.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="DEPLOYMENT-constant" class="">DEPLOYMENT =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Values associated with each deployment type.</p>
+
+<p>– noinspection RailsI18nInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="../file.en.html" title="en.emma.application.deployment">en.emma.application.deployment</a></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emma.application.deployment</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="DEPLOYMENT_MAP-constant" class="">DEPLOYMENT_MAP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Table of deployment names.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#DEPLOYMENT</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#DEPLOYMENT-constant" title="Api::Common::DEPLOYMENT (constant)">DEPLOYMENT</a></span></span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="REPOSITORY_CONFIG-constant" class="">REPOSITORY_CONFIG =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Member repository configurations.</p>
+
+<p>– noinspection RailsI18nInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emma.repository</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="DEFAULT_REPOSITORY-constant" class="">DEFAULT_REPOSITORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The default repository for uploads.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>in config/locales/repository.en.yml</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#REPOSITORY_CONFIG-constant" title="Api::Common::REPOSITORY_CONFIG (constant)">REPOSITORY_CONFIG</a></span></span><span class='lbracket'>[</span><span class='symbol'>:_default</span><span class='rbracket'>]</span></pre></dd>
+      
+        <dt id="REPOSITORY-constant" class="">REPOSITORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Values associated with each source repository.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="../file.repository.en.html" title="en.emma.repository">en.emma.repository</a></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#REPOSITORY_CONFIG-constant" title="Api::Common::REPOSITORY_CONFIG (constant)">REPOSITORY_CONFIG</a></span></span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="REPOSITORY_MAP-constant" class="">REPOSITORY_MAP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Table of repository names.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#REPOSITORY</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#REPOSITORY-constant" title="Api::Common::REPOSITORY (constant)">REPOSITORY</a></span></span>
+<span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_config'>config</span><span class='op'>|</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:name</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+<span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='label'>_default:</span> <span class='const'><span class='object_link'><a href="#DEFAULT_REPOSITORY-constant" title="Api::Common::DEFAULT_REPOSITORY (constant)">DEFAULT_REPOSITORY</a></span></span><span class='rparen'>)</span>
+<span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="CATEGORY-constant" class="">CATEGORY =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Bookshare category codes and names.</p>
+
+<p>– noinspection RailsI18nInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>in config/locale/types.en.yml</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emma.categories</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="CATEGORY_MAP-constant" class="">CATEGORY_MAP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Table of Bookshare category names.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#CATEGORY</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#CATEGORY-constant" title="Api::Common::CATEGORY (constant)">CATEGORY</a></span></span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="LANGUAGE_CONFIG-constant" class="">LANGUAGE_CONFIG =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Language configuration.</p>
+
+<p>– noinspection RailsI18nInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>emma.language</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>default:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+        <dt id="LANGUAGE-constant" class="">LANGUAGE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>All language codes and labels.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="../file.types.en.html" title="en.emma.language.list">en.emma.language.list</a></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#LANGUAGE_CONFIG-constant" title="Api::Common::LANGUAGE_CONFIG (constant)">LANGUAGE_CONFIG</a></span></span><span class='lbracket'>[</span><span class='symbol'>:list</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="PRIMARY_LANGUAGES-constant" class="">PRIMARY_LANGUAGES =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Languages that appear first in the list.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="../file.types.en.html" title="en.emma.language.primary">en.emma.language.primary</a></li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#LANGUAGE_CONFIG-constant" title="Api::Common::LANGUAGE_CONFIG (constant)">LANGUAGE_CONFIG</a></span></span><span class='lbracket'>[</span><span class='symbol'>:primary</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="LANGUAGE_MAP-constant" class="">LANGUAGE_MAP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Language codes and labels in preferred order.</p>
+
+<p>– noinspection RailsI18nInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>#PRIMARY_LANGUAGES</li>
+    
+      <li>#LANGUAGE</li>
+    
+  </ul>
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="#PRIMARY_LANGUAGES-constant" title="Api::Common::PRIMARY_LANGUAGES (constant)">PRIMARY_LANGUAGES</a></span></span>
+<span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="#LANGUAGE-constant" title="Api::Common::LANGUAGE (constant)">LANGUAGE</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+<span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#LANGUAGE-constant" title="Api::Common::LANGUAGE (constant)">LANGUAGE</a></span></span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='op'>*</span><span class='const'><span class='object_link'><a href="#PRIMARY_LANGUAGES-constant" title="Api::Common::PRIMARY_LANGUAGES (constant)">PRIMARY_LANGUAGES</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+
+
+
+
+
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:22 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

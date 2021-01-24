@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Bs::Shared::LinkMethods
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Bs::Shared::LinkMethods";
+  relpath = '../../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../../Bs.html" title="Bs (module)">Bs</a></span></span> &raquo; <span class='title'><span class='object_link'><a href="../Shared.html" title="Bs::Shared (module)">Shared</a></span></span>
+     &raquo; 
+    <span class="title">LinkMethods</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Bs::Shared::LinkMethods
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="../Message/ActiveBookList.html" title="Bs::Message::ActiveBookList (class)">Message::ActiveBookList</a></span>, <span class='object_link'><a href="../Message/ActiveBookProfile.html" title="Bs::Message::ActiveBookProfile (class)">Message::ActiveBookProfile</a></span>, <span class='object_link'><a href="../Message/ActivePeriodicalList.html" title="Bs::Message::ActivePeriodicalList (class)">Message::ActivePeriodicalList</a></span>, <span class='object_link'><a href="../Message/AssignedTitleMetadataSummaryList.html" title="Bs::Message::AssignedTitleMetadataSummaryList (class)">Message::AssignedTitleMetadataSummaryList</a></span>, <span class='object_link'><a href="../Message/CategoriesList.html" title="Bs::Message::CategoriesList (class)">Message::CategoriesList</a></span>, <span class='object_link'><a href="../Message/MyAccountPreferences.html" title="Bs::Message::MyAccountPreferences (class)">Message::MyAccountPreferences</a></span>, <span class='object_link'><a href="../Message/MyAccountSummary.html" title="Bs::Message::MyAccountSummary (class)">Message::MyAccountSummary</a></span>, <span class='object_link'><a href="../Message/Organization.html" title="Bs::Message::Organization (class)">Message::Organization</a></span>, <span class='object_link'><a href="../Message/OrganizationTypeList.html" title="Bs::Message::OrganizationTypeList (class)">Message::OrganizationTypeList</a></span>, <span class='object_link'><a href="../Message/PeriodicalEdition.html" title="Bs::Message::PeriodicalEdition (class)">Message::PeriodicalEdition</a></span>, <span class='object_link'><a href="../Message/PeriodicalEditionList.html" title="Bs::Message::PeriodicalEditionList (class)">Message::PeriodicalEditionList</a></span>, <span class='object_link'><a href="../Message/PeriodicalSeriesMetadataSummary.html" title="Bs::Message::PeriodicalSeriesMetadataSummary (class)">Message::PeriodicalSeriesMetadataSummary</a></span>, <span class='object_link'><a href="../Message/PeriodicalSeriesMetadataSummaryList.html" title="Bs::Message::PeriodicalSeriesMetadataSummaryList (class)">Message::PeriodicalSeriesMetadataSummaryList</a></span>, <span class='object_link'><a href="../Message/PeriodicalSubscriptionList.html" title="Bs::Message::PeriodicalSubscriptionList (class)">Message::PeriodicalSubscriptionList</a></span>, <span class='object_link'><a href="../Message/ReadingList.html" title="Bs::Message::ReadingList (class)">Message::ReadingList</a></span>, <span class='object_link'><a href="../Message/ReadingListList.html" title="Bs::Message::ReadingListList (class)">Message::ReadingListList</a></span>, <span class='object_link'><a href="../Message/ReadingListTitlesList.html" title="Bs::Message::ReadingListTitlesList (class)">Message::ReadingListTitlesList</a></span>, <span class='object_link'><a href="../Message/ReadingListUserView.html" title="Bs::Message::ReadingListUserView (class)">Message::ReadingListUserView</a></span>, <span class='object_link'><a href="../Message/RecommendationProfile.html" title="Bs::Message::RecommendationProfile (class)">Message::RecommendationProfile</a></span>, <span class='object_link'><a href="../Message/TitleDownloadList.html" title="Bs::Message::TitleDownloadList (class)">Message::TitleDownloadList</a></span>, <span class='object_link'><a href="../Message/TitleFileResourceList.html" title="Bs::Message::TitleFileResourceList (class)">Message::TitleFileResourceList</a></span>, <span class='object_link'><a href="../Message/TitleMetadataCompleteList.html" title="Bs::Message::TitleMetadataCompleteList (class)">Message::TitleMetadataCompleteList</a></span>, <span class='object_link'><a href="../Message/TitleMetadataDetail.html" title="Bs::Message::TitleMetadataDetail (class)">Message::TitleMetadataDetail</a></span>, <span class='object_link'><a href="../Message/TitleMetadataSummary.html" title="Bs::Message::TitleMetadataSummary (class)">Message::TitleMetadataSummary</a></span>, <span class='object_link'><a href="../Message/TitleMetadataSummaryList.html" title="Bs::Message::TitleMetadataSummaryList (class)">Message::TitleMetadataSummaryList</a></span>, <span class='object_link'><a href="../Message/UserAccount.html" title="Bs::Message::UserAccount (class)">Message::UserAccount</a></span>, <span class='object_link'><a href="../Message/UserAccountList.html" title="Bs::Message::UserAccountList (class)">Message::UserAccountList</a></span>, <span class='object_link'><a href="../Message/UserIdentity.html" title="Bs::Message::UserIdentity (class)">Message::UserIdentity</a></span>, <span class='object_link'><a href="../Message/UserMessage.html" title="Bs::Message::UserMessage (class)">Message::UserMessage</a></span>, <span class='object_link'><a href="../Message/UserMessageDetail.html" title="Bs::Message::UserMessageDetail (class)">Message::UserMessageDetail</a></span>, <span class='object_link'><a href="../Message/UserMessageDetailList.html" title="Bs::Message::UserMessageDetailList (class)">Message::UserMessageDetailList</a></span>, <span class='object_link'><a href="../Message/UserMessageList.html" title="Bs::Message::UserMessageList (class)">Message::UserMessageList</a></span>, <span class='object_link'><a href="../Message/UserPodList.html" title="Bs::Message::UserPodList (class)">Message::UserPodList</a></span>, <span class='object_link'><a href="../Message/UserSignedAgreementList.html" title="Bs::Message::UserSignedAgreementList (class)">Message::UserSignedAgreementList</a></span>, <span class='object_link'><a href="../Message/UserSubscription.html" title="Bs::Message::UserSubscription (class)">Message::UserSubscription</a></span>, <span class='object_link'><a href="../Message/UserSubscriptionList.html" title="Bs::Message::UserSubscriptionList (class)">Message::UserSubscriptionList</a></span>, <span class='object_link'><a href="../Message/UserSubscriptionTypeList.html" title="Bs::Message::UserSubscriptionTypeList (class)">Message::UserSubscriptionTypeList</a></span>, <span class='object_link'><a href="../Record/ActiveBook.html" title="Bs::Record::ActiveBook (class)">Record::ActiveBook</a></span>, <span class='object_link'><a href="../Record/ActiveBookPreferences.html" title="Bs::Record::ActiveBookPreferences (class)">Record::ActiveBookPreferences</a></span>, <span class='object_link'><a href="../Record/ActivePeriodical.html" title="Bs::Record::ActivePeriodical (class)">Record::ActivePeriodical</a></span>, <span class='object_link'><a href="../Record/AssignedTitleMetadataSummary.html" title="Bs::Record::AssignedTitleMetadataSummary (class)">Record::AssignedTitleMetadataSummary</a></span>, <span class='object_link'><a href="../Record/Category.html" title="Bs::Record::Category (class)">Record::Category</a></span>, <span class='object_link'><a href="../Record/CategorySummary.html" title="Bs::Record::CategorySummary (class)">Record::CategorySummary</a></span>, <span class='object_link'><a href="../Record/Contributor.html" title="Bs::Record::Contributor (class)">Record::Contributor</a></span>, <span class='object_link'><a href="../Record/ContributorName.html" title="Bs::Record::ContributorName (class)">Record::ContributorName</a></span>, <span class='object_link'><a href="../Record/Grade.html" title="Bs::Record::Grade (class)">Record::Grade</a></span>, <span class='object_link'><a href="../Record/Name.html" title="Bs::Record::Name (class)">Record::Name</a></span>, <span class='object_link'><a href="../Record/Organization.html" title="Bs::Record::Organization (class)">Record::Organization</a></span>, <span class='object_link'><a href="../Record/PeriodicalEdition.html" title="Bs::Record::PeriodicalEdition (class)">Record::PeriodicalEdition</a></span>, <span class='object_link'><a href="../Record/PeriodicalSeriesMetadataSummary.html" title="Bs::Record::PeriodicalSeriesMetadataSummary (class)">Record::PeriodicalSeriesMetadataSummary</a></span>, <span class='object_link'><a href="../Record/PeriodicalSubscription.html" title="Bs::Record::PeriodicalSubscription (class)">Record::PeriodicalSubscription</a></span>, <span class='object_link'><a href="../Record/ReadingListSubscription.html" title="Bs::Record::ReadingListSubscription (class)">Record::ReadingListSubscription</a></span>, <span class='object_link'><a href="../Record/ReadingListTitle.html" title="Bs::Record::ReadingListTitle (class)">Record::ReadingListTitle</a></span>, <span class='object_link'><a href="../Record/ReadingListUserView.html" title="Bs::Record::ReadingListUserView (class)">Record::ReadingListUserView</a></span>, <span class='object_link'><a href="../Record/RecommendationProfile.html" title="Bs::Record::RecommendationProfile (class)">Record::RecommendationProfile</a></span>, <span class='object_link'><a href="../Record/Sponsor.html" title="Bs::Record::Sponsor (class)">Record::Sponsor</a></span>, <span class='object_link'><a href="../Record/TitleDownload.html" title="Bs::Record::TitleDownload (class)">Record::TitleDownload</a></span>, <span class='object_link'><a href="../Record/TitleFileResource.html" title="Bs::Record::TitleFileResource (class)">Record::TitleFileResource</a></span>, <span class='object_link'><a href="../Record/TitleMetadataComplete.html" title="Bs::Record::TitleMetadataComplete (class)">Record::TitleMetadataComplete</a></span>, <span class='object_link'><a href="../Record/TitleMetadataSummary.html" title="Bs::Record::TitleMetadataSummary (class)">Record::TitleMetadataSummary</a></span>, <span class='object_link'><a href="../Record/UserAccount.html" title="Bs::Record::UserAccount (class)">Record::UserAccount</a></span>, <span class='object_link'><a href="../Record/UserMessage.html" title="Bs::Record::UserMessage (class)">Record::UserMessage</a></span>, <span class='object_link'><a href="../Record/UserMessageDetail.html" title="Bs::Record::UserMessageDetail (class)">Record::UserMessageDetail</a></span>, <span class='object_link'><a href="../Record/UserSubscription.html" title="Bs::Record::UserSubscription (class)">Record::UserSubscription</a></span>, <span class='object_link'><a href="TitleMethods.html" title="Bs::Shared::TitleMethods (module)">TitleMethods</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/records/bs/shared/link_methods.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Methods mixed in to record elements with links.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_link-instance_method" title="#get_link (instance method)">#<strong>get_link</strong>(rel_name)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Return the indicated link if present.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#record_links-instance_method" title="#record_links (instance method)">#<strong>record_links</strong>(**opt)  &#x21d2; Array&lt;String&gt;<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Return the links present in the record.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="get_link-instance_method">
+  
+    #<strong>get_link</strong>(rel_name)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Return the indicated link if present.</p>
+
+<p>If <strong>rel_name</strong> is an array, the first matching <strong>href</strong> will be returned.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>rel_name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>, <tt>Array</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>rel_name</strong> is not valid or present.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+27
+28
+29
+30
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/bs/shared/link_methods.rb', line 27</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_link'>get_link</span><span class='lparen'>(</span><span class='id identifier rubyid_rel_name'>rel_name</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:links</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_array'>array</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_links'>links</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+  <span class='id identifier rubyid_keys'>keys</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_rel_name'>rel_name</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span>
+  <span class='id identifier rubyid_array'>array</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_link'>link</span><span class='op'>|</span>
+    <span class='kw'>break</span> <span class='id identifier rubyid_link'>link</span><span class='period'>.</span><span class='id identifier rubyid_href'>href</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='kw'>if</span> <span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_link'>link</span><span class='period'>.</span><span class='id identifier rubyid_rel'>rel</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="record_links-instance_method">
+  
+    #<strong>record_links</strong>(**opt)  &#x21d2; <tt>Array&lt;String&gt;</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Return the links present in the record.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:only</span>
+          <span class="type">(<tt>Symbol</tt>, <tt>String</tt>, <tt>Array</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Limit to these rel name(s).</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:except</span>
+          <span class="type">(<tt>Symbol</tt>, <tt>String</tt>, <tt>Array</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Exclude these rel name(s).</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:self</span>
+          <span class="type">(<tt><span class='object_link'><a href="../../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Unless this is <strong>true</strong>, &#39;self&#39; links will be excluded.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If links are not valid or present.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/bs/shared/link_methods.rb', line 47</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_record_links'>record_links</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:links</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_array'>array</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_links'>links</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+  <span class='id identifier rubyid_keys'>keys</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:only</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_except'>except</span> <span class='op'>=</span>
+    <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:except</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_a'>a</span><span class='op'>|</span>
+      <span class='id identifier rubyid_a'>a</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>self</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:self</span><span class='rbracket'>]</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_array'>array</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_link'>link</span><span class='op'>|</span>
+    <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_keys'>keys</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_link'>link</span><span class='period'>.</span><span class='id identifier rubyid_rel'>rel</span><span class='rparen'>)</span>
+    <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_except'>except</span><span class='op'>&amp;.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_link'>link</span><span class='period'>.</span><span class='id identifier rubyid_rel'>rel</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_link'>link</span><span class='period'>.</span><span class='id identifier rubyid_href'>href</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:51 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: Api::Serializer
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Api::Serializer";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (S)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Api.html" title="Api (module)">Api</a></span></span>
+     &raquo; 
+    <span class="title">Serializer</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: Api::Serializer
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Representable::Decorator</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Representable::Decorator</li>
+          
+            <li class="next">Api::Serializer</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Serializer/Associations.html" title="Api::Serializer::Associations (module)">Associations</a></span>, <span class='object_link'><a href="Serializer/Schema.html" title="Api::Serializer::Schema (module)">Schema</a></span>, <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span>, <span class='object_link'><a href="../Emma/Time.html" title="Emma::Time (module)">Emma::Time</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/records/concerns/api/serializer.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>The base class for serialization/de-serialization of objects derived from Api::Record.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="Serializer/Hash.html" title="Api::Serializer::Hash (class)">Hash</a></span>, <span class='object_link'><a href="Serializer/Json.html" title="Api::Serializer::Json (class)">Json</a></span>, <span class='object_link'><a href="Serializer/Xml.html" title="Api::Serializer::Xml (class)">Xml</a></span>, <span class='object_link'><a href="../AwsS3/Api/Serializer.html" title="AwsS3::Api::Serializer (class)">AwsS3::Api::Serializer</a></span>, <span class='object_link'><a href="../Bs/Api/Serializer.html" title="Bs::Api::Serializer (class)">Bs::Api::Serializer</a></span>, <span class='object_link'><a href="../Ingest/Api/Serializer.html" title="Ingest::Api::Serializer (class)">Ingest::Api::Serializer</a></span>, <span class='object_link'><a href="../Search/Api/Serializer.html" title="Search::Api::Serializer (class)">Search::Api::Serializer</a></span></p>
+</div>
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="Serializer/Associations.html" title="Api::Serializer::Associations (module)">Associations</a></span>, <span class='object_link'><a href="Serializer/Schema.html" title="Api::Serializer::Schema (module)">Schema</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="Serializer/Hash.html" title="Api::Serializer::Hash (class)">Hash</a></span>, <span class='object_link'><a href="Serializer/Json.html" title="Api::Serializer::Json (class)">Json</a></span>, <span class='object_link'><a href="Serializer/Xml.html" title="Api::Serializer::Xml (class)">Xml</a></span>
+    
+  
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Time.html" title="Emma::Time (module)">Emma::Time</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Time.html#HOUR-constant" title="Emma::Time::HOUR (constant)">Emma::Time::HOUR</a></span>, <span class='object_link'><a href="../Emma/Time.html#HOURS-constant" title="Emma::Time::HOURS (constant)">Emma::Time::HOURS</a></span>, <span class='object_link'><a href="../Emma/Time.html#HOURS_PER_SECOND-constant" title="Emma::Time::HOURS_PER_SECOND (constant)">Emma::Time::HOURS_PER_SECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#MICROSECOND-constant" title="Emma::Time::MICROSECOND (constant)">Emma::Time::MICROSECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#MICROSECONDS-constant" title="Emma::Time::MICROSECONDS (constant)">Emma::Time::MICROSECONDS</a></span>, <span class='object_link'><a href="../Emma/Time.html#MICROSECONDS_PER_SECOND-constant" title="Emma::Time::MICROSECONDS_PER_SECOND (constant)">Emma::Time::MICROSECONDS_PER_SECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#MILLISECOND-constant" title="Emma::Time::MILLISECOND (constant)">Emma::Time::MILLISECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#MILLISECONDS-constant" title="Emma::Time::MILLISECONDS (constant)">Emma::Time::MILLISECONDS</a></span>, <span class='object_link'><a href="../Emma/Time.html#MILLISECONDS_PER_SECOND-constant" title="Emma::Time::MILLISECONDS_PER_SECOND (constant)">Emma::Time::MILLISECONDS_PER_SECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#MINUTE-constant" title="Emma::Time::MINUTE (constant)">Emma::Time::MINUTE</a></span>, <span class='object_link'><a href="../Emma/Time.html#MINUTES-constant" title="Emma::Time::MINUTES (constant)">Emma::Time::MINUTES</a></span>, <span class='object_link'><a href="../Emma/Time.html#MINUTES_PER_SECOND-constant" title="Emma::Time::MINUTES_PER_SECOND (constant)">Emma::Time::MINUTES_PER_SECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECOND-constant" title="Emma::Time::SECOND (constant)">Emma::Time::SECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS-constant" title="Emma::Time::SECONDS (constant)">Emma::Time::SECONDS</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS_PER_HOUR-constant" title="Emma::Time::SECONDS_PER_HOUR (constant)">Emma::Time::SECONDS_PER_HOUR</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS_PER_MICROSECOND-constant" title="Emma::Time::SECONDS_PER_MICROSECOND (constant)">Emma::Time::SECONDS_PER_MICROSECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS_PER_MILLISECOND-constant" title="Emma::Time::SECONDS_PER_MILLISECOND (constant)">Emma::Time::SECONDS_PER_MILLISECOND</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS_PER_MINUTE-constant" title="Emma::Time::SECONDS_PER_MINUTE (constant)">Emma::Time::SECONDS_PER_MINUTE</a></span>, <span class='object_link'><a href="../Emma/Time.html#SECONDS_PER_SECOND-constant" title="Emma::Time::SECONDS_PER_SECOND (constant)">Emma::Time::SECONDS_PER_SECOND</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Serializer/Schema.html" title="Api::Serializer::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Serializer/Schema.html#DEFAULT_ATTRIBUTE_PARSE_NAMING-constant" title="Api::Serializer::Schema::DEFAULT_ATTRIBUTE_PARSE_NAMING (constant)">Schema::DEFAULT_ATTRIBUTE_PARSE_NAMING</a></span>, <span class='object_link'><a href="Serializer/Schema.html#DEFAULT_ATTRIBUTE_RENDER_NAMING-constant" title="Api::Serializer::Schema::DEFAULT_ATTRIBUTE_RENDER_NAMING (constant)">Schema::DEFAULT_ATTRIBUTE_RENDER_NAMING</a></span>, <span class='object_link'><a href="Serializer/Schema.html#DEFAULT_ELEMENT_PARSE_NAMING-constant" title="Api::Serializer::Schema::DEFAULT_ELEMENT_PARSE_NAMING (constant)">Schema::DEFAULT_ELEMENT_PARSE_NAMING</a></span>, <span class='object_link'><a href="Serializer/Schema.html#DEFAULT_ELEMENT_RENDER_NAMING-constant" title="Api::Serializer::Schema::DEFAULT_ELEMENT_RENDER_NAMING (constant)">Schema::DEFAULT_ELEMENT_RENDER_NAMING</a></span>, <span class='object_link'><a href="Serializer/Schema.html#DEFAULT_RENDER_EMPTY-constant" title="Api::Serializer::Schema::DEFAULT_RENDER_EMPTY (constant)">Schema::DEFAULT_RENDER_EMPTY</a></span>, <span class='object_link'><a href="Serializer/Schema.html#DEFAULT_RENDER_NIL-constant" title="Api::Serializer::Schema::DEFAULT_RENDER_NIL (constant)">Schema::DEFAULT_RENDER_NIL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Schema.html" title="Api::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">Api::Schema::DEFAULT_SERIALIZER_TYPE</a></span>, <span class='object_link'><a href="Schema.html#ELEMENT_NAMING_MODES-constant" title="Api::Schema::ELEMENT_NAMING_MODES (constant)">Api::Schema::ELEMENT_NAMING_MODES</a></span>, <span class='object_link'><a href="Schema.html#SCALAR_DEFAULTS-constant" title="Api::Schema::SCALAR_DEFAULTS (constant)">Api::Schema::SCALAR_DEFAULTS</a></span>, <span class='object_link'><a href="Schema.html#SCALAR_TYPES-constant" title="Api::Schema::SCALAR_TYPES (constant)">Api::Schema::SCALAR_TYPES</a></span>, <span class='object_link'><a href="Schema.html#SERIALIZER_TYPES-constant" title="Api::Schema::SERIALIZER_TYPES (constant)">Api::Schema::SERIALIZER_TYPES</a></span>, <span class='object_link'><a href="Schema.html#TYPE_OPTION_KEYS-constant" title="Api::Schema::TYPE_OPTION_KEYS (constant)">Api::Schema::TYPE_OPTION_KEYS</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#log_timing-instance_method" title="#log_timing (instance method)">#<strong>log_timing</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#source_data-instance_method" title="#source_data (instance method)">#<strong>source_data</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#deserialize-instance_method" title="#deserialize (instance method)">#<strong>deserialize</strong>(data, method: nil)  &#x21d2; Api::Record<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Load data elements from the supplied data.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(represented = nil)  &#x21d2; Serializer </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize a new instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serialize-instance_method" title="#serialize (instance method)">#<strong>serialize</strong>(method: nil, **opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Render data elements in serialized format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#serializer_type-instance_method" title="#serializer_type (instance method)">#<strong>serializer_type</strong>  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Type of serializer (based on the name of descendent class if not set explicitly).</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Time.html" title="Emma::Time (module)">Emma::Time</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Time.html#time_span-instance_method" title="Emma::Time#time_span (method)">#time_span</a></span>, <span class='object_link'><a href="../Emma/Time.html#timestamp-instance_method" title="Emma::Time#timestamp (method)">#timestamp</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Serializer/Schema.html" title="Api::Serializer::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Serializer/Schema.html#attribute_parse_name-instance_method" title="Api::Serializer::Schema#attribute_parse_name (method)">#attribute_parse_name</a></span>, <span class='object_link'><a href="Serializer/Schema.html#attribute_parse_naming-instance_method" title="Api::Serializer::Schema#attribute_parse_naming (method)">#attribute_parse_naming</a></span>, <span class='object_link'><a href="Serializer/Schema.html#attribute_render_name-instance_method" title="Api::Serializer::Schema#attribute_render_name (method)">#attribute_render_name</a></span>, <span class='object_link'><a href="Serializer/Schema.html#attribute_render_naming-instance_method" title="Api::Serializer::Schema#attribute_render_naming (method)">#attribute_render_naming</a></span>, <span class='object_link'><a href="Serializer/Schema.html#element_name-instance_method" title="Api::Serializer::Schema#element_name (method)">#element_name</a></span>, <span class='object_link'><a href="Serializer/Schema.html#element_parse_name-instance_method" title="Api::Serializer::Schema#element_parse_name (method)">#element_parse_name</a></span>, <span class='object_link'><a href="Serializer/Schema.html#element_parse_naming-instance_method" title="Api::Serializer::Schema#element_parse_naming (method)">#element_parse_naming</a></span>, <span class='object_link'><a href="Serializer/Schema.html#element_render_name-instance_method" title="Api::Serializer::Schema#element_render_name (method)">#element_render_name</a></span>, <span class='object_link'><a href="Serializer/Schema.html#element_render_naming-instance_method" title="Api::Serializer::Schema#element_render_naming (method)">#element_render_naming</a></span>, <span class='object_link'><a href="Serializer/Schema.html#render_empty%3F-instance_method" title="Api::Serializer::Schema#render_empty? (method)">#render_empty?</a></span>, <span class='object_link'><a href="Serializer/Schema.html#render_nil%3F-instance_method" title="Api::Serializer::Schema#render_nil? (method)">#render_nil?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Schema.html" title="Api::Schema (module)">Schema</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Schema.html#assert_serializer_type-instance_method" title="Api::Schema#assert_serializer_type (method)">#assert_serializer_type</a></span>, <span class='object_link'><a href="Schema.html#enumeration_default-instance_method" title="Api::Schema#enumeration_default (method)">#enumeration_default</a></span>, <span class='object_link'><a href="Schema.html#enumeration_defaults-instance_method" title="Api::Schema#enumeration_defaults (method)">#enumeration_defaults</a></span>, <span class='object_link'><a href="Schema.html#enumeration_types-instance_method" title="Api::Schema#enumeration_types (method)">#enumeration_types</a></span>, <span class='object_link'><a href="Schema.html#extract_type_option-instance_method" title="Api::Schema#extract_type_option (method)">#extract_type_option</a></span>, <span class='object_link'><a href="Schema.html#extract_type_option!-instance_method" title="Api::Schema#extract_type_option! (method)">#extract_type_option!</a></span>, <span class='object_link'><a href="Schema.html#format_of-instance_method" title="Api::Schema#format_of (method)">#format_of</a></span>, <span class='object_link'><a href="Schema.html#scalar_default-instance_method" title="Api::Schema#scalar_default (method)">#scalar_default</a></span>, <span class='object_link'><a href="Schema.html#scalar_defaults-instance_method" title="Api::Schema#scalar_defaults (method)">#scalar_defaults</a></span>, <span class='object_link'><a href="Schema.html#scalar_type%3F-instance_method" title="Api::Schema#scalar_type? (method)">#scalar_type?</a></span>, <span class='object_link'><a href="Schema.html#scalar_types-instance_method" title="Api::Schema#scalar_types (method)">#scalar_types</a></span>, <span class='object_link'><a href="Schema.html#serializer_base-instance_method" title="Api::Schema#serializer_base (method)">#serializer_base</a></span>, <span class='object_link'><a href="Schema.html#serializer_name-instance_method" title="Api::Schema#serializer_name (method)">#serializer_name</a></span>, <span class='object_link'><a href="Schema.html#service_name-instance_method" title="Api::Schema#service_name (method)">#service_name</a></span>, <span class='object_link'><a href="Schema.html#type_options-instance_method" title="Api::Schema#type_options (method)">#type_options</a></span></p>
+
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(represented = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="Api::Serializer (class)">Serializer</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize a new instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>represented</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Record.html" title="Api::Record (class)">Api::Record</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_represented'>represented</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id="log_timing=-instance_method"></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="log_timing-instance_method">
+  
+    #<strong>log_timing</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+29
+30
+31</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 29</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_log_timing'>log_timing</span>
+  <span class='ivar'>@log_timing</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="source_data-instance_method">
+  
+    #<strong>source_data</strong>  &#x21d2; <tt>Object</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+26
+27
+28</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 26</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_source_data'>source_data</span>
+  <span class='ivar'>@source_data</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="deserialize-instance_method">
+  
+    #<strong>deserialize</strong>(data, method: nil)  &#x21d2; <tt><span class='object_link'><a href="Record.html" title="Api::Record (class)">Api::Record</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Load data elements from the supplied data.</p>
+
+<p>If <strong>data</strong> is a String, it is assumed that it is already in the form required by the derived serializer class.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>The derived class must override this to pass in :method via the arguments to `super`.</p>
+
+<p>– noinspection RubyScope, RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>data</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>::Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>Proc</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Record.html" title="Api::Record (class)">Api::Record</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Propagated if raised by <strong>method</strong>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 115</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_deserialize'>deserialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='label'>method:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_set_source_data'>set_source_data</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug'><span class='object_link'><a href="../top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&gt;&gt;&gt; </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> deserialize </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_method'>method</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_error'>error</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='id identifier rubyid_timestamp'>timestamp</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_method'>method</span>
+    <span class='kw'>when</span> <span class='const'>Symbol</span> <span class='kw'>then</span> <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='id identifier rubyid_source_data'>source_data</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='const'>Proc</span>   <span class='kw'>then</span> <span class='id identifier rubyid_method'>method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='id identifier rubyid_source_data'>source_data</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>             <span class='id identifier rubyid_abort'>abort</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: subclass must supply method</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_error'>error</span>
+  <span class='comment'># noinspection RubyYardParamTypeMatch
+</span>  <span class='id identifier rubyid___debug_exception'>__debug_exception</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_error'>error</span><span class='rparen'>)</span>
+<span class='kw'>ensure</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_log_timing'>log_timing</span>
+    <span class='id identifier rubyid_elapsed_time'>elapsed_time</span> <span class='op'>=</span> <span class='id identifier rubyid_time_span'>time_span</span><span class='lparen'>(</span><span class='id identifier rubyid_start_time'>start_time</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug'><span class='object_link'><a href="../top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span>  <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--- </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> de-serialized in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_elapsed_time'>elapsed_time</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+    <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> parsed in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_elapsed_time'>elapsed_time</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_error'>error</span> <span class='kw'>if</span> <span class='id identifier rubyid_error'>error</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serialize-instance_method">
+  
+    #<strong>serialize</strong>(method: nil, **opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Render data elements in serialized format.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>This method must be overridden by the derived class to pass in :method.</p>
+
+<p>– noinspection RubyScope, RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>method</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>Proc</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Serializer/Hash.html" title="Api::Serializer::Hash (class)">Hash</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Options argument for <strong>method</strong>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Exception</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Propagated if raised by <strong>method</strong>.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 74</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serialize'>serialize</span><span class='lparen'>(</span><span class='label'>method:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug'><span class='object_link'><a href="../top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&gt;&gt;&gt; </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> serialize </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_method'>method</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_error'>error</span> <span class='op'>=</span> <span class='kw'>nil</span>
+  <span class='id identifier rubyid_start_time'>start_time</span> <span class='op'>=</span> <span class='id identifier rubyid_timestamp'>timestamp</span>
+  <span class='kw'>case</span> <span class='id identifier rubyid_method'>method</span>
+    <span class='kw'>when</span> <span class='const'>Symbol</span> <span class='kw'>then</span> <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_method'>method</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+    <span class='kw'>when</span> <span class='const'>Proc</span>   <span class='kw'>then</span> <span class='id identifier rubyid_method'>method</span><span class='period'>.</span><span class='id identifier rubyid_call'>call</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>             <span class='id identifier rubyid_abort'>abort</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: subclass must supply method</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
+<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_error'>error</span>
+  <span class='comment'># noinspection RubyYardParamTypeMatch
+</span>  <span class='id identifier rubyid___debug_exception'>__debug_exception</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_error'>error</span><span class='rparen'>)</span>
+<span class='kw'>ensure</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_log_timing'>log_timing</span>
+    <span class='id identifier rubyid_elapsed_time'>elapsed_time</span> <span class='op'>=</span> <span class='id identifier rubyid_time_span'>time_span</span><span class='lparen'>(</span><span class='id identifier rubyid_start_time'>start_time</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid___debug'><span class='object_link'><a href="../top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span>  <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>--- </span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> serialized in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_elapsed_time'>elapsed_time</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+    <span class='const'><span class='object_link'><a href="../top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> rendered in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_elapsed_time'>elapsed_time</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_error'>error</span> <span class='kw'>if</span> <span class='id identifier rubyid_error'>error</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="serializer_type-instance_method">
+  
+    #<strong>serializer_type</strong>  &#x21d2; <tt>Symbol</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Type of serializer (based on the name of descendent class if not set explicitly).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Api::Schema#SERIALIZER_TYPES</li>
+    
+      <li>Api::Schema#DEFAULT_SERIALIZER_TYPE</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+53
+54
+55
+56
+57</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/concerns/api/serializer.rb', line 53</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_serializer_type'>serializer_type</span>
+  <span class='const'><span class='object_link'><a href="Schema.html#SERIALIZER_TYPES-constant" title="Api::Schema::SERIALIZER_TYPES (constant)">SERIALIZER_TYPES</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_type'>type</span><span class='op'>|</span>
+    <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span> <span class='op'>=~</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>::</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_type'>type</span><span class='embexpr_end'>}</span><span class='regexp_end'>/i</span></span>
+  <span class='rbrace'>}</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">DEFAULT_SERIALIZER_TYPE</a></span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:19:15 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

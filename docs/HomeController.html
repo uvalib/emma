@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: HomeController
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "HomeController";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (H)</a> &raquo;
+    
+    
+    <span class="title">HomeController</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: HomeController
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName"><span class='object_link'><a href="ApplicationController.html" title="ApplicationController (class)">ApplicationController</a></span></span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">ActionController::Base</li>
+          
+            <li class="next"><span class='object_link'><a href="ApplicationController.html" title="ApplicationController (class)">ApplicationController</a></span></li>
+          
+            <li class="next">HomeController</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd>AbstractController::Callbacks, <span class='object_link'><a href="ParamsConcern.html" title="ParamsConcern (module)">ParamsConcern</a></span>, <span class='object_link'><a href="SerializationConcern.html" title="SerializationConcern (module)">SerializationConcern</a></span>, <span class='object_link'><a href="SessionConcern.html" title="SessionConcern (module)">SessionConcern</a></span>, <span class='object_link'><a href="UserConcern.html" title="UserConcern (module)">UserConcern</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/controllers/home_controller.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Handle “/home” pages.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>The endpoints implemented by this controller do not require authentication of the requester because the methods/views react according to the identity associated with the current session.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="file.home.html" title="home">home</a></li>
+    
+  </ul>
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="PaginationHelper.html" title="PaginationHelper (module)">PaginationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="PaginationHelper.html#FIRST_PAGE-constant" title="PaginationHelper::FIRST_PAGE (constant)">PaginationHelper::FIRST_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#LAST_PAGE-constant" title="PaginationHelper::LAST_PAGE (constant)">PaginationHelper::LAST_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#NEXT_PAGE-constant" title="PaginationHelper::NEXT_PAGE (constant)">PaginationHelper::NEXT_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#PAGINATION_CONFIG-constant" title="PaginationHelper::PAGINATION_CONFIG (constant)">PaginationHelper::PAGINATION_CONFIG</a></span>, <span class='object_link'><a href="PaginationHelper.html#PAGINATION_SEPARATOR-constant" title="PaginationHelper::PAGINATION_SEPARATOR (constant)">PaginationHelper::PAGINATION_SEPARATOR</a></span>, <span class='object_link'><a href="PaginationHelper.html#PREV_PAGE-constant" title="PaginationHelper::PREV_PAGE (constant)">PaginationHelper::PREV_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#START_OVER-constant" title="PaginationHelper::START_OVER (constant)">PaginationHelper::START_OVER</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ConfigurationHelper.html#CONFIG_ITEM_KEYS-constant" title="ConfigurationHelper::CONFIG_ITEM_KEYS (constant)">ConfigurationHelper::CONFIG_ITEM_KEYS</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#CONFIG_STATE_KEYS-constant" title="ConfigurationHelper::CONFIG_STATE_KEYS (constant)">ConfigurationHelper::CONFIG_STATE_KEYS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#COMPRESSION_MARKER-constant" title="ParamsHelper::COMPRESSION_MARKER (constant)">ParamsHelper::COMPRESSION_MARKER</a></span>, <span class='object_link'><a href="ParamsHelper.html#IGNORED_PARAMETERS-constant" title="ParamsHelper::IGNORED_PARAMETERS (constant)">ParamsHelper::IGNORED_PARAMETERS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#GRID_OPTS-constant" title="HtmlHelper::GRID_OPTS (constant)">HtmlHelper::GRID_OPTS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HEX_RAND_DEFAULT_DIGITS-constant" title="HtmlHelper::HEX_RAND_DEFAULT_DIGITS (constant)">HtmlHelper::HEX_RAND_DEFAULT_DIGITS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_MAX_LENGTH-constant" title="HtmlHelper::HTML_TRUNCATE_MAX_LENGTH (constant)">HtmlHelper::HTML_TRUNCATE_MAX_LENGTH</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_OMISSION-constant" title="HtmlHelper::HTML_TRUNCATE_OMISSION (constant)">HtmlHelper::HTML_TRUNCATE_OMISSION</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_SEPARATOR-constant" title="HtmlHelper::HTML_TRUNCATE_SEPARATOR (constant)">HtmlHelper::HTML_TRUNCATE_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#BANG-constant" title="Emma::Unicode::BANG (constant)">Emma::Unicode::BANG</a></span>, <span class='object_link'><a href="Emma/Unicode.html#BLACK_CIRCLE-constant" title="Emma::Unicode::BLACK_CIRCLE (constant)">Emma::Unicode::BLACK_CIRCLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#CHECK_MARK-constant" title="Emma::Unicode::CHECK_MARK (constant)">Emma::Unicode::CHECK_MARK</a></span>, <span class='object_link'><a href="Emma/Unicode.html#DELTA-constant" title="Emma::Unicode::DELTA (constant)">Emma::Unicode::DELTA</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_DASH-constant" title="Emma::Unicode::EM_DASH (constant)">Emma::Unicode::EM_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_SPACE-constant" title="Emma::Unicode::EM_SPACE (constant)">Emma::Unicode::EM_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_DASH-constant" title="Emma::Unicode::EN_DASH (constant)">Emma::Unicode::EN_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_SPACE-constant" title="Emma::Unicode::EN_SPACE (constant)">Emma::Unicode::EN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">Emma::Unicode::HEAVY_X</a></span>, <span class='object_link'><a href="Emma/Unicode.html#QUESTION-constant" title="Emma::Unicode::QUESTION (constant)">Emma::Unicode::QUESTION</a></span>, <span class='object_link'><a href="Emma/Unicode.html#STAR-constant" title="Emma::Unicode::STAR (constant)">Emma::Unicode::STAR</a></span>, <span class='object_link'><a href="Emma/Unicode.html#THIN_SPACE-constant" title="Emma::Unicode::THIN_SPACE (constant)">Emma::Unicode::THIN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#TRIANGLE-constant" title="Emma::Unicode::TRIANGLE (constant)">Emma::Unicode::TRIANGLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#WARNING_SIGN-constant" title="Emma::Unicode::WARNING_SIGN (constant)">Emma::Unicode::WARNING_SIGN</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="SessionConcern.html" title="SessionConcern (module)">SessionConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SessionConcern.html#PRESERVE_SESSION_KEYS-constant" title="SessionConcern::PRESERVE_SESSION_KEYS (constant)">SessionConcern::PRESERVE_SESSION_KEYS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchTermsHelper.html#DEFAULT_SEARCH_CONTROLLER-constant" title="SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER (constant)">SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#LIST_SEARCH_SEPARATOR-constant" title="SearchTermsHelper::LIST_SEARCH_SEPARATOR (constant)">SearchTermsHelper::LIST_SEARCH_SEPARATOR</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#NON_SEARCH_KEYS-constant" title="SearchTermsHelper::NON_SEARCH_KEYS (constant)">SearchTermsHelper::NON_SEARCH_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">SearchTermsHelper::NULL_SEARCH</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#QUERY_PARAMETERS-constant" title="SearchTermsHelper::QUERY_PARAMETERS (constant)">SearchTermsHelper::QUERY_PARAMETERS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_CONTROLLERS-constant" title="SearchTermsHelper::SEARCH_CONTROLLERS (constant)">SearchTermsHelper::SEARCH_CONTROLLERS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_KEYS-constant" title="SearchTermsHelper::SEARCH_KEYS (constant)">SearchTermsHelper::SEARCH_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_SORT_KEYS-constant" title="SearchTermsHelper::SEARCH_SORT_KEYS (constant)">SearchTermsHelper::SEARCH_SORT_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_TYPE-constant" title="SearchTermsHelper::SEARCH_TYPE (constant)">SearchTermsHelper::SEARCH_TYPE</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="MetricsConcern.html" title="MetricsConcern (module)">MetricsConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="MetricsConcern.html#Counter-constant" title="MetricsConcern::Counter (constant)">MetricsConcern::Counter</a></span>, <span class='object_link'><a href="MetricsConcern.html#Gauge-constant" title="MetricsConcern::Gauge (constant)">MetricsConcern::Gauge</a></span>, <span class='object_link'><a href="MetricsConcern.html#Histogram-constant" title="MetricsConcern::Histogram (constant)">MetricsConcern::Histogram</a></span>, <span class='object_link'><a href="MetricsConcern.html#Summary-constant" title="MetricsConcern::Summary (constant)">MetricsConcern::Summary</a></span></p>
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#dashboard-instance_method" title="#dashboard (instance method)">#<strong>dashboard</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<h2 id="label-GET+-2Fhome-2Fdashboard.">GET /home/dashboard.</h2>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#main-instance_method" title="#main (instance method)">#<strong>main</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<h2 id="label-GET+-2Fhome.">GET /home.</h2>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#welcome-instance_method" title="#welcome (instance method)">#<strong>welcome</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<h2 id="label-GET+-2Fhome-2Fwelcome.">GET /home/welcome.</h2>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SerializationConcern.html" title="SerializationConcern (module)">SerializationConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SerializationConcern.html#index_values-instance_method" title="SerializationConcern#index_values (method)">#index_values</a></span>, <span class='object_link'><a href="SerializationConcern.html#render_json-instance_method" title="SerializationConcern#render_json (method)">#render_json</a></span>, <span class='object_link'><a href="SerializationConcern.html#render_xml-instance_method" title="SerializationConcern#render_xml (method)">#render_xml</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ApiConcern.html" title="ApiConcern (module)">ApiConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ApiConcern.html#api_active%3F-instance_method" title="ApiConcern#api_active? (method)">#api_active?</a></span>, <span class='object_link'><a href="ApiConcern.html#api_active_table-instance_method" title="ApiConcern#api_active_table (method)">#api_active_table</a></span>, <span class='object_link'><a href="ApiConcern.html#api_clear-instance_method" title="ApiConcern#api_clear (method)">#api_clear</a></span>, <span class='object_link'><a href="ApiConcern.html#api_error%3F-instance_method" title="ApiConcern#api_error? (method)">#api_error?</a></span>, <span class='object_link'><a href="ApiConcern.html#api_error_message-instance_method" title="ApiConcern#api_error_message (method)">#api_error_message</a></span>, <span class='object_link'><a href="ApiConcern.html#api_exception-instance_method" title="ApiConcern#api_exception (method)">#api_exception</a></span>, <span class='object_link'><a href="ApiConcern.html#api_service-instance_method" title="ApiConcern#api_service (method)">#api_service</a></span>, <span class='object_link'><a href="ApiConcern.html#api_update-instance_method" title="ApiConcern#api_update (method)">#api_update</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SerializationHelper.html" title="SerializationHelper (module)">SerializationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SerializationHelper.html#make_json-instance_method" title="SerializationHelper#make_json (method)">#make_json</a></span>, <span class='object_link'><a href="SerializationHelper.html#make_xml-instance_method" title="SerializationHelper#make_xml (method)">#make_xml</a></span>, <span class='object_link'><a href="SerializationHelper.html#posting_html%3F-instance_method" title="SerializationHelper#posting_html? (method)">#posting_html?</a></span>, <span class='object_link'><a href="SerializationHelper.html#rendering_html%3F-instance_method" title="SerializationHelper#rendering_html? (method)">#rendering_html?</a></span>, <span class='object_link'><a href="SerializationHelper.html#rendering_json%3F-instance_method" title="SerializationHelper#rendering_json? (method)">#rendering_json?</a></span>, <span class='object_link'><a href="SerializationHelper.html#rendering_non_html%3F-instance_method" title="SerializationHelper#rendering_non_html? (method)">#rendering_non_html?</a></span>, <span class='object_link'><a href="SerializationHelper.html#rendering_xml%3F-instance_method" title="SerializationHelper#rendering_xml? (method)">#rendering_xml?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="PaginationHelper.html" title="PaginationHelper (module)">PaginationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="PaginationHelper.html#default_page_size-instance_method" title="PaginationHelper#default_page_size (method)">#default_page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#first_page-instance_method" title="PaginationHelper#first_page (method)">#first_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#first_page=-instance_method" title="PaginationHelper#first_page= (method)">#first_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#get_page_size-instance_method" title="PaginationHelper#get_page_size (method)">#get_page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#last_page-instance_method" title="PaginationHelper#last_page (method)">#last_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#last_page=-instance_method" title="PaginationHelper#last_page= (method)">#last_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#next_page-instance_method" title="PaginationHelper#next_page (method)">#next_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#next_page=-instance_method" title="PaginationHelper#next_page= (method)">#next_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_items-instance_method" title="PaginationHelper#page_items (method)">#page_items</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_items=-instance_method" title="PaginationHelper#page_items= (method)">#page_items=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_number-instance_method" title="PaginationHelper#page_number (method)">#page_number</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_offset-instance_method" title="PaginationHelper#page_offset (method)">#page_offset</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_offset=-instance_method" title="PaginationHelper#page_offset= (method)">#page_offset=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_size-instance_method" title="PaginationHelper#page_size (method)">#page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_size=-instance_method" title="PaginationHelper#page_size= (method)">#page_size=</a></span>, <span class='object_link'><a href="PaginationHelper.html#pagination_controls-instance_method" title="PaginationHelper#pagination_controls (method)">#pagination_controls</a></span>, <span class='object_link'><a href="PaginationHelper.html#pagination_count-instance_method" title="PaginationHelper#pagination_count (method)">#pagination_count</a></span>, <span class='object_link'><a href="PaginationHelper.html#prev_page-instance_method" title="PaginationHelper#prev_page (method)">#prev_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#prev_page=-instance_method" title="PaginationHelper#prev_page= (method)">#prev_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#total_items-instance_method" title="PaginationHelper#total_items (method)">#total_items</a></span>, <span class='object_link'><a href="PaginationHelper.html#total_items=-instance_method" title="PaginationHelper#total_items= (method)">#total_items=</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ConfigurationHelper.html#config_button_values-instance_method" title="ConfigurationHelper#config_button_values (method)">#config_button_values</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#config_lookup-instance_method" title="ConfigurationHelper#config_lookup (method)">#config_lookup</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#config_lookup_order-instance_method" title="ConfigurationHelper#config_lookup_order (method)">#config_lookup_order</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#controller_configuration-instance_method" title="ConfigurationHelper#controller_configuration (method)">#controller_configuration</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#compress_value-instance_method" title="ParamsHelper#compress_value (method)">#compress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#compressed_value%3F-instance_method" title="ParamsHelper#compressed_value? (method)">#compressed_value?</a></span>, <span class='object_link'><a href="ParamsHelper.html#decompress_value-instance_method" title="ParamsHelper#decompress_value (method)">#decompress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#local_request%3F-instance_method" title="ParamsHelper#local_request? (method)">#local_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameter_count-instance_method" title="ParamsHelper#request_parameter_count (method)">#request_parameter_count</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameters-instance_method" title="ParamsHelper#request_parameters (method)">#request_parameters</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_path-instance_method" title="ParamsHelper#request_path (method)">#request_path</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_xhr%3F-instance_method" title="ParamsHelper#request_xhr? (method)">#request_xhr?</a></span>, <span class='object_link'><a href="ParamsHelper.html#route_request%3F-instance_method" title="ParamsHelper#route_request? (method)">#route_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#same_request%3F-instance_method" title="ParamsHelper#same_request? (method)">#same_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#session_section-instance_method" title="ParamsHelper#session_section (method)">#session_section</a></span>, <span class='object_link'><a href="ParamsHelper.html#url_parameters-instance_method" title="ParamsHelper#url_parameters (method)">#url_parameters</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#append_css_classes-instance_method" title="HtmlHelper#append_css_classes (method)">#append_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_css_classes!-instance_method" title="HtmlHelper#append_css_classes! (method)">#append_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes-instance_method" title="HtmlHelper#append_grid_cell_classes (method)">#append_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes!-instance_method" title="HtmlHelper#append_grid_cell_classes! (method)">#append_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_class_array-instance_method" title="HtmlHelper#css_class_array (method)">#css_class_array</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_classes-instance_method" title="HtmlHelper#css_classes (method)">#css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_randomize-instance_method" title="HtmlHelper#css_randomize (method)">#css_randomize</a></span>, <span class='object_link'><a href="HtmlHelper.html#download_link-instance_method" title="HtmlHelper#download_link (method)">#download_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#external_link-instance_method" title="HtmlHelper#external_link (method)">#external_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#extract_url-instance_method" title="HtmlHelper#extract_url (method)">#extract_url</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_cell_classes-instance_method" title="HtmlHelper#grid_cell_classes (method)">#grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_table-instance_method" title="HtmlHelper#grid_table (method)">#grid_table</a></span>, <span class='object_link'><a href="HtmlHelper.html#has_class%3F-instance_method" title="HtmlHelper#has_class? (method)">#has_class?</a></span>, <span class='object_link'><a href="HtmlHelper.html#hex_rand-instance_method" title="HtmlHelper#hex_rand (method)">#hex_rand</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_div-instance_method" title="HtmlHelper#html_div (method)">#html_div</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_span-instance_method" title="HtmlHelper#html_span (method)">#html_span</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_tag-instance_method" title="HtmlHelper#html_tag (method)">#html_tag</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_truncate-class_method" title="HtmlHelper.html_truncate (method)">html_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">#icon_button</a></span>, <span class='object_link'><a href="HtmlHelper.html#make_link-instance_method" title="HtmlHelper#make_link (method)">#make_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options-instance_method" title="HtmlHelper#merge_html_options (method)">#merge_html_options</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options!-instance_method" title="HtmlHelper#merge_html_options! (method)">#merge_html_options!</a></span>, <span class='object_link'><a href="HtmlHelper.html#placeholder_element-instance_method" title="HtmlHelper#placeholder_element (method)">#placeholder_element</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes-instance_method" title="HtmlHelper#prepend_css_classes (method)">#prepend_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes!-instance_method" title="HtmlHelper#prepend_css_classes! (method)">#prepend_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes-instance_method" title="HtmlHelper#prepend_grid_cell_classes (method)">#prepend_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes!-instance_method" title="HtmlHelper#prepend_grid_cell_classes! (method)">#prepend_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes-instance_method" title="HtmlHelper#remove_css_classes (method)">#remove_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes!-instance_method" title="HtmlHelper#remove_css_classes! (method)">#remove_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#safe_truncate-instance_method" title="HtmlHelper#safe_truncate (method)">#safe_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#xml_truncate-class_method" title="HtmlHelper.xml_truncate (method)">xml_truncate</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#char-instance_method" title="Emma::Unicode#char (method)">#char</a></span>, <span class='object_link'><a href="Emma/Unicode.html#pad_char-instance_method" title="Emma::Unicode#pad_char (method)">#pad_char</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SessionConcern.html" title="SessionConcern (module)">SessionConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SessionConcern.html#last_operation-instance_method" title="SessionConcern#last_operation (method)">#last_operation</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_time-instance_method" title="SessionConcern#last_operation_time (method)">#last_operation_time</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_update-instance_method" title="SessionConcern#last_operation_update (method)">#last_operation_update</a></span>, <span class='object_link'><a href="SessionConcern.html#session_keys-instance_method" title="SessionConcern#session_keys (method)">#session_keys</a></span>, <span class='object_link'><a href="SessionConcern.html#session_updatable%3F-instance_method" title="SessionConcern#session_updatable? (method)">#session_updatable?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ParamsConcern.html" title="ParamsConcern (module)">ParamsConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsConcern.html#will_redirect-instance_method" title="ParamsConcern#will_redirect (method)">#will_redirect</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchTermsHelper.html#list_search_terms-instance_method" title="SearchTermsHelper#list_search_terms (method)">#list_search_terms</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_menu_pairs-instance_method" title="SearchTermsHelper#search_menu_pairs (method)">#search_menu_pairs</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_parameters-instance_method" title="SearchTermsHelper#search_parameters (method)">#search_parameters</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_target-instance_method" title="SearchTermsHelper#search_target (method)">#search_target</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_terms-instance_method" title="SearchTermsHelper#search_terms (method)">#search_terms</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Json.html#json_parse-instance_method" title="Emma::Json#json_parse (method)">#json_parse</a></span>, <span class='object_link'><a href="Emma/Json.html#pretty_json-instance_method" title="Emma::Json#pretty_json (method)">#pretty_json</a></span>, <span class='object_link'><a href="Emma/Json.html#safe_json_parse-instance_method" title="Emma::Json#safe_json_parse (method)">#safe_json_parse</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="UserConcern.html" title="UserConcern (module)">UserConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="UserConcern.html#authenticate_user!-instance_method" title="UserConcern#authenticate_user! (method)">#authenticate_user!</a></span>, <span class='object_link'><a href="UserConcern.html#get_account_details-instance_method" title="UserConcern#get_account_details (method)">#get_account_details</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="BookshareConcern.html" title="BookshareConcern (module)">BookshareConcern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="BookshareConcern.html#bs_api-instance_method" title="BookshareConcern#bs_api (method)">#bs_api</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="dashboard-instance_method">
+  
+    #<strong>dashboard</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-GET+-2Fhome-2Fdashboard">GET /home/dashboard</h2>
+
+<p>The main application page for authenticated users.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/home_controller.rb', line 85</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_dashboard'>dashboard</span>
+  <span class='id identifier rubyid___debug_route'>__debug_route</span>
+  <span class='ivar'>@item</span><span class='comma'>,</span> <span class='ivar'>@preferences</span><span class='comma'>,</span> <span class='ivar'>@history</span> <span class='op'>=</span> <span class='id identifier rubyid_get_account_details'>get_account_details</span>
+  <span class='id identifier rubyid_response'>response</span><span class='period'>.</span><span class='id identifier rubyid_status'>status</span> <span class='op'>=</span>
+    <span class='kw'>case</span> <span class='id identifier rubyid_flash'>flash</span><span class='period'>.</span><span class='id identifier rubyid_now'>now</span><span class='lbracket'>[</span><span class='symbol'>:alert</span><span class='rbracket'>]</span>
+      <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='kw'>nil</span>             <span class='kw'>then</span> <span class='int'>200</span> <span class='comment'># OK
+</span>      <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>already signed in</span><span class='regexp_end'>/</span></span> <span class='kw'>then</span> <span class='int'>403</span> <span class='comment'># Forbidden
+</span>      <span class='kw'>else</span>                          <span class='int'>401</span> <span class='comment'># Unauthorized
+</span>    <span class='kw'>end</span>
+  <span class='id identifier rubyid_respond_to'>respond_to</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_format'>format</span><span class='op'>|</span>
+    <span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_html'>html</span>
+    <span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_json'>json</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_render_json'>render_json</span> <span class='id identifier rubyid_show_values'>show_values</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_xml'>xml</span>  <span class='lbrace'>{</span> <span class='id identifier rubyid_render_xml'>render_xml</span>  <span class='id identifier rubyid_show_values'>show_values</span><span class='lparen'>(</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>as:</span> <span class='symbol'>:array</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="main-instance_method">
+  
+    #<strong>main</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-GET+-2Fhome">GET /home</h2>
+
+<p>The main application page.</p>
+
+<h2 id="label-Implementation+Notes">Implementation Notes</h2>
+
+<p>There is no app/views/home/main.html.erb; this method renders the user dashboard for an authenticated session or the welcome screen otherwise.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/home_controller.rb', line 62</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_main'>main</span>
+  <span class='id identifier rubyid___debug_route'>__debug_route</span>
+  <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_current_user'>current_user</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_welcome_path'>welcome_path</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_can?'>can?</span><span class='lparen'>(</span><span class='symbol'>:manage</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_account_index_path'>account_index_path</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_dashboard_path'>dashboard_path</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="welcome-instance_method">
+  
+    #<strong>welcome</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<h2 id="label-GET+-2Fhome-2Fwelcome">GET /home/welcome</h2>
+
+<p>The main application page for anonymous users.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+77
+78
+79</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/home_controller.rb', line 77</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_welcome'>welcome</span>
+  <span class='id identifier rubyid___debug_route'>__debug_route</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:18:45 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

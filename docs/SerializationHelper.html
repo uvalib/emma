@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: SerializationHelper
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "SerializationHelper";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (S)</a> &raquo;
+    
+    
+    <span class="title">SerializationHelper</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: SerializationHelper
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="PaginationHelper.html" title="PaginationHelper (module)">PaginationHelper</a></span>, <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="BsDownloadConcern.html" title="BsDownloadConcern (module)">BsDownloadConcern</a></span>, <span class='object_link'><a href="IaDownloadConcern.html" title="IaDownloadConcern (module)">IaDownloadConcern</a></span>, <span class='object_link'><a href="SerializationConcern.html" title="SerializationConcern (module)">SerializationConcern</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/helpers/serialization_helper.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>View helper methods supporting non-HTML rendering.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="PaginationHelper.html" title="PaginationHelper (module)">PaginationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="PaginationHelper.html#FIRST_PAGE-constant" title="PaginationHelper::FIRST_PAGE (constant)">PaginationHelper::FIRST_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#LAST_PAGE-constant" title="PaginationHelper::LAST_PAGE (constant)">PaginationHelper::LAST_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#NEXT_PAGE-constant" title="PaginationHelper::NEXT_PAGE (constant)">PaginationHelper::NEXT_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#PAGINATION_CONFIG-constant" title="PaginationHelper::PAGINATION_CONFIG (constant)">PaginationHelper::PAGINATION_CONFIG</a></span>, <span class='object_link'><a href="PaginationHelper.html#PAGINATION_SEPARATOR-constant" title="PaginationHelper::PAGINATION_SEPARATOR (constant)">PaginationHelper::PAGINATION_SEPARATOR</a></span>, <span class='object_link'><a href="PaginationHelper.html#PREV_PAGE-constant" title="PaginationHelper::PREV_PAGE (constant)">PaginationHelper::PREV_PAGE</a></span>, <span class='object_link'><a href="PaginationHelper.html#START_OVER-constant" title="PaginationHelper::START_OVER (constant)">PaginationHelper::START_OVER</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ConfigurationHelper.html#CONFIG_ITEM_KEYS-constant" title="ConfigurationHelper::CONFIG_ITEM_KEYS (constant)">ConfigurationHelper::CONFIG_ITEM_KEYS</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#CONFIG_STATE_KEYS-constant" title="ConfigurationHelper::CONFIG_STATE_KEYS (constant)">ConfigurationHelper::CONFIG_STATE_KEYS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#COMPRESSION_MARKER-constant" title="ParamsHelper::COMPRESSION_MARKER (constant)">ParamsHelper::COMPRESSION_MARKER</a></span>, <span class='object_link'><a href="ParamsHelper.html#IGNORED_PARAMETERS-constant" title="ParamsHelper::IGNORED_PARAMETERS (constant)">ParamsHelper::IGNORED_PARAMETERS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#GRID_OPTS-constant" title="HtmlHelper::GRID_OPTS (constant)">HtmlHelper::GRID_OPTS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HEX_RAND_DEFAULT_DIGITS-constant" title="HtmlHelper::HEX_RAND_DEFAULT_DIGITS (constant)">HtmlHelper::HEX_RAND_DEFAULT_DIGITS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_MAX_LENGTH-constant" title="HtmlHelper::HTML_TRUNCATE_MAX_LENGTH (constant)">HtmlHelper::HTML_TRUNCATE_MAX_LENGTH</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_OMISSION-constant" title="HtmlHelper::HTML_TRUNCATE_OMISSION (constant)">HtmlHelper::HTML_TRUNCATE_OMISSION</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_SEPARATOR-constant" title="HtmlHelper::HTML_TRUNCATE_SEPARATOR (constant)">HtmlHelper::HTML_TRUNCATE_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#BANG-constant" title="Emma::Unicode::BANG (constant)">Emma::Unicode::BANG</a></span>, <span class='object_link'><a href="Emma/Unicode.html#BLACK_CIRCLE-constant" title="Emma::Unicode::BLACK_CIRCLE (constant)">Emma::Unicode::BLACK_CIRCLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#CHECK_MARK-constant" title="Emma::Unicode::CHECK_MARK (constant)">Emma::Unicode::CHECK_MARK</a></span>, <span class='object_link'><a href="Emma/Unicode.html#DELTA-constant" title="Emma::Unicode::DELTA (constant)">Emma::Unicode::DELTA</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_DASH-constant" title="Emma::Unicode::EM_DASH (constant)">Emma::Unicode::EM_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_SPACE-constant" title="Emma::Unicode::EM_SPACE (constant)">Emma::Unicode::EM_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_DASH-constant" title="Emma::Unicode::EN_DASH (constant)">Emma::Unicode::EN_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_SPACE-constant" title="Emma::Unicode::EN_SPACE (constant)">Emma::Unicode::EN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">Emma::Unicode::HEAVY_X</a></span>, <span class='object_link'><a href="Emma/Unicode.html#QUESTION-constant" title="Emma::Unicode::QUESTION (constant)">Emma::Unicode::QUESTION</a></span>, <span class='object_link'><a href="Emma/Unicode.html#STAR-constant" title="Emma::Unicode::STAR (constant)">Emma::Unicode::STAR</a></span>, <span class='object_link'><a href="Emma/Unicode.html#THIN_SPACE-constant" title="Emma::Unicode::THIN_SPACE (constant)">Emma::Unicode::THIN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#TRIANGLE-constant" title="Emma::Unicode::TRIANGLE (constant)">Emma::Unicode::TRIANGLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#WARNING_SIGN-constant" title="Emma::Unicode::WARNING_SIGN (constant)">Emma::Unicode::WARNING_SIGN</a></span></p>
+
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#make_json-instance_method" title="#make_json (instance method)">#<strong>make_json</strong>(item, **opt)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize an item to JSON format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#make_xml-instance_method" title="#make_xml (instance method)">#<strong>make_xml</strong>(item, separator: &quot;\n&quot;, name: nil, serializer: nil)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Serialize an item to XML format.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#posting_html%3F-instance_method" title="#posting_html? (instance method)">#<strong>posting_html?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the request originated from an HTML page.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rendering_html%3F-instance_method" title="#rendering_html? (instance method)">#<strong>rendering_html?</strong>(p = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the ultimate target format is HTML.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rendering_json%3F-instance_method" title="#rendering_json? (instance method)">#<strong>rendering_json?</strong>(p = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the ultimate target format is JSON.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rendering_non_html%3F-instance_method" title="#rendering_non_html? (instance method)">#<strong>rendering_non_html?</strong>(p = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the ultimate target format is something other than HTML.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#rendering_xml%3F-instance_method" title="#rendering_xml? (instance method)">#<strong>rendering_xml?</strong>(p = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the ultimate target format is XML.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="PaginationHelper.html" title="PaginationHelper (module)">PaginationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="PaginationHelper.html#default_page_size-instance_method" title="PaginationHelper#default_page_size (method)">#default_page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#first_page-instance_method" title="PaginationHelper#first_page (method)">#first_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#first_page=-instance_method" title="PaginationHelper#first_page= (method)">#first_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#get_page_size-instance_method" title="PaginationHelper#get_page_size (method)">#get_page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#last_page-instance_method" title="PaginationHelper#last_page (method)">#last_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#last_page=-instance_method" title="PaginationHelper#last_page= (method)">#last_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#next_page-instance_method" title="PaginationHelper#next_page (method)">#next_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#next_page=-instance_method" title="PaginationHelper#next_page= (method)">#next_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_items-instance_method" title="PaginationHelper#page_items (method)">#page_items</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_items=-instance_method" title="PaginationHelper#page_items= (method)">#page_items=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_number-instance_method" title="PaginationHelper#page_number (method)">#page_number</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_offset-instance_method" title="PaginationHelper#page_offset (method)">#page_offset</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_offset=-instance_method" title="PaginationHelper#page_offset= (method)">#page_offset=</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_size-instance_method" title="PaginationHelper#page_size (method)">#page_size</a></span>, <span class='object_link'><a href="PaginationHelper.html#page_size=-instance_method" title="PaginationHelper#page_size= (method)">#page_size=</a></span>, <span class='object_link'><a href="PaginationHelper.html#pagination_controls-instance_method" title="PaginationHelper#pagination_controls (method)">#pagination_controls</a></span>, <span class='object_link'><a href="PaginationHelper.html#pagination_count-instance_method" title="PaginationHelper#pagination_count (method)">#pagination_count</a></span>, <span class='object_link'><a href="PaginationHelper.html#prev_page-instance_method" title="PaginationHelper#prev_page (method)">#prev_page</a></span>, <span class='object_link'><a href="PaginationHelper.html#prev_page=-instance_method" title="PaginationHelper#prev_page= (method)">#prev_page=</a></span>, <span class='object_link'><a href="PaginationHelper.html#total_items-instance_method" title="PaginationHelper#total_items (method)">#total_items</a></span>, <span class='object_link'><a href="PaginationHelper.html#total_items=-instance_method" title="PaginationHelper#total_items= (method)">#total_items=</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ConfigurationHelper.html#config_button_values-instance_method" title="ConfigurationHelper#config_button_values (method)">#config_button_values</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#config_lookup-instance_method" title="ConfigurationHelper#config_lookup (method)">#config_lookup</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#config_lookup_order-instance_method" title="ConfigurationHelper#config_lookup_order (method)">#config_lookup_order</a></span>, <span class='object_link'><a href="ConfigurationHelper.html#controller_configuration-instance_method" title="ConfigurationHelper#controller_configuration (method)">#controller_configuration</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#compress_value-instance_method" title="ParamsHelper#compress_value (method)">#compress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#compressed_value%3F-instance_method" title="ParamsHelper#compressed_value? (method)">#compressed_value?</a></span>, <span class='object_link'><a href="ParamsHelper.html#decompress_value-instance_method" title="ParamsHelper#decompress_value (method)">#decompress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#local_request%3F-instance_method" title="ParamsHelper#local_request? (method)">#local_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameter_count-instance_method" title="ParamsHelper#request_parameter_count (method)">#request_parameter_count</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameters-instance_method" title="ParamsHelper#request_parameters (method)">#request_parameters</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_path-instance_method" title="ParamsHelper#request_path (method)">#request_path</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_xhr%3F-instance_method" title="ParamsHelper#request_xhr? (method)">#request_xhr?</a></span>, <span class='object_link'><a href="ParamsHelper.html#route_request%3F-instance_method" title="ParamsHelper#route_request? (method)">#route_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#same_request%3F-instance_method" title="ParamsHelper#same_request? (method)">#same_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#session_section-instance_method" title="ParamsHelper#session_section (method)">#session_section</a></span>, <span class='object_link'><a href="ParamsHelper.html#url_parameters-instance_method" title="ParamsHelper#url_parameters (method)">#url_parameters</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#append_css_classes-instance_method" title="HtmlHelper#append_css_classes (method)">#append_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_css_classes!-instance_method" title="HtmlHelper#append_css_classes! (method)">#append_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes-instance_method" title="HtmlHelper#append_grid_cell_classes (method)">#append_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes!-instance_method" title="HtmlHelper#append_grid_cell_classes! (method)">#append_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_class_array-instance_method" title="HtmlHelper#css_class_array (method)">#css_class_array</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_classes-instance_method" title="HtmlHelper#css_classes (method)">#css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_randomize-instance_method" title="HtmlHelper#css_randomize (method)">#css_randomize</a></span>, <span class='object_link'><a href="HtmlHelper.html#download_link-instance_method" title="HtmlHelper#download_link (method)">#download_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#external_link-instance_method" title="HtmlHelper#external_link (method)">#external_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#extract_url-instance_method" title="HtmlHelper#extract_url (method)">#extract_url</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_cell_classes-instance_method" title="HtmlHelper#grid_cell_classes (method)">#grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_table-instance_method" title="HtmlHelper#grid_table (method)">#grid_table</a></span>, <span class='object_link'><a href="HtmlHelper.html#has_class%3F-instance_method" title="HtmlHelper#has_class? (method)">#has_class?</a></span>, <span class='object_link'><a href="HtmlHelper.html#hex_rand-instance_method" title="HtmlHelper#hex_rand (method)">#hex_rand</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_div-instance_method" title="HtmlHelper#html_div (method)">#html_div</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_span-instance_method" title="HtmlHelper#html_span (method)">#html_span</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_tag-instance_method" title="HtmlHelper#html_tag (method)">#html_tag</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_truncate-class_method" title="HtmlHelper.html_truncate (method)">html_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">#icon_button</a></span>, <span class='object_link'><a href="HtmlHelper.html#make_link-instance_method" title="HtmlHelper#make_link (method)">#make_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options-instance_method" title="HtmlHelper#merge_html_options (method)">#merge_html_options</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options!-instance_method" title="HtmlHelper#merge_html_options! (method)">#merge_html_options!</a></span>, <span class='object_link'><a href="HtmlHelper.html#placeholder_element-instance_method" title="HtmlHelper#placeholder_element (method)">#placeholder_element</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes-instance_method" title="HtmlHelper#prepend_css_classes (method)">#prepend_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes!-instance_method" title="HtmlHelper#prepend_css_classes! (method)">#prepend_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes-instance_method" title="HtmlHelper#prepend_grid_cell_classes (method)">#prepend_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes!-instance_method" title="HtmlHelper#prepend_grid_cell_classes! (method)">#prepend_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes-instance_method" title="HtmlHelper#remove_css_classes (method)">#remove_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes!-instance_method" title="HtmlHelper#remove_css_classes! (method)">#remove_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#safe_truncate-instance_method" title="HtmlHelper#safe_truncate (method)">#safe_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#xml_truncate-class_method" title="HtmlHelper.xml_truncate (method)">xml_truncate</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#char-instance_method" title="Emma::Unicode#char (method)">#char</a></span>, <span class='object_link'><a href="Emma/Unicode.html#pad_char-instance_method" title="Emma::Unicode#pad_char (method)">#pad_char</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="make_json-instance_method">
+  
+    #<strong>make_json</strong>(item, **opt)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize an item to JSON format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt>Object</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #to_json.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_make_json'>make_json</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_json'>to_json</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="make_xml-instance_method">
+  
+    #<strong>make_xml</strong>(item, separator: &quot;\n&quot;, name: nil, serializer: nil)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Serialize an item to XML format.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>item</span>
+      
+      
+        <span class='type'>(<tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>separator</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>&quot;\n&quot;</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Node name if item.respond_to?(:to_xml).</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>serializer</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="Api/Serializer.html" title="Api::Serializer (class)">Api::Serializer</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>XML serialization of <strong>item</strong>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>item</strong> is <strong>nil</strong> or an empty collection</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 102</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_make_xml'>make_xml</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='comma'>,</span> <span class='label'>separator:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>serializer:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='id identifier rubyid_serializer'>serializer</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Bs.html" title="Bs (module)">Bs</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Bs/Api.html" title="Bs::Api (module)">Api</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Bs/Api/Serializer.html" title="Bs::Api::Serializer (class)">Serializer</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Bs/Api/Serializer/Xml.html" title="Bs::Api::Serializer::Xml (class)">Xml</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="Api/Serializer.html#initialize-instance_method" title="Api::Serializer#initialize (method)">new</a></span></span>
+    <span class='id identifier rubyid_make_opt'>make_opt</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>separator:</span> <span class='id identifier rubyid_separator'>separator</span><span class='comma'>,</span> <span class='label'>serializer:</span> <span class='id identifier rubyid_serializer'>serializer</span> <span class='rbrace'>}</span>
+    <span class='comment'># @type [Symbol] k
+</span>    <span class='comment'># @type [*]      v
+</span>    <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+      <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_make_xml'>make_xml</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_make_opt'>make_opt</span><span class='rparen'>)</span>
+      <span class='kw'>next</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_serializer'>serializer</span><span class='period'>.</span><span class='id identifier rubyid_render_nil?'>render_nil?</span>
+      <span class='id identifier rubyid_name'>name</span>  <span class='op'>=</span> <span class='id identifier rubyid_serializer'>serializer</span><span class='period'>.</span><span class='id identifier rubyid_element_render_name'>element_render_name</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='rparen'>)</span>
+      <span class='comment'># noinspection RubyNilAnalysis
+</span>      <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_separator'>separator</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_separator'>separator</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_end_with?'>end_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_content'>&lt;/</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>&gt;</span><span class='tstring_end'>&quot;</span></span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_separator'>separator</span><span class='rparen'>)</span>
+
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='id identifier rubyid_make_opt'>make_opt</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>separator:</span> <span class='id identifier rubyid_separator'>separator</span><span class='comma'>,</span> <span class='label'>serializer:</span> <span class='id identifier rubyid_serializer'>serializer</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_make_xml'>make_xml</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_make_opt'>make_opt</span><span class='rparen'>)</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='id identifier rubyid_separator'>separator</span><span class='rparen'>)</span>
+
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:to_xml</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='kw'>if</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='id identifier rubyid_name'>name</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_serializer'>serializer</span> <span class='op'>||</span> <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_serializer'>serializer</span><span class='lparen'>(</span><span class='symbol'>:xml</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_element_render_name'>element_render_name</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_xml'>to_xml</span><span class='lparen'>(</span><span class='label'>wrap:</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+
+  <span class='kw'>elsif</span> <span class='op'>!</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+    <span class='const'>CGI</span><span class='period'>.</span><span class='id identifier rubyid_escape_html'>escape_html</span><span class='lparen'>(</span><span class='id identifier rubyid_item'>item</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="posting_html?-instance_method">
+  
+    #<strong>posting_html?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the request originated from an HTML page.</p>
+
+<p>NOTE: This is probably insufficient.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71
+72
+73</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_posting_html?'>posting_html?</span>
+  <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:request</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_get?'>get?</span>
+  <span class='comment'># noinspection RubyResolve
+</span>  <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_html?'>html?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_js?'>js?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='op'>!</span><span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_xhr?'>xhr?</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rendering_html?-instance_method">
+  
+    #<strong>rendering_html?</strong>(p = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the ultimate target format is HTML.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>p</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `params`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+30
+31
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 30</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rendering_html?'>rendering_html?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_p'>p</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span>
+  <span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>=</span> <span class='id identifier rubyid_p'>p</span><span class='lbracket'>[</span><span class='symbol'>:format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>html</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:request</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_html?'>html?</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rendering_json?-instance_method">
+  
+    #<strong>rendering_json?</strong>(p = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the ultimate target format is JSON.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>p</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `params`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+48
+49
+50
+51
+52
+53</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 48</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rendering_json?'>rendering_json?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_p'>p</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span>
+  <span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>=</span> <span class='id identifier rubyid_p'>p</span><span class='lbracket'>[</span><span class='symbol'>:format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+  <span class='comment'># noinspection RubyResolve
+</span>  <span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>json</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:request</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_json?'>json?</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rendering_non_html?-instance_method">
+  
+    #<strong>rendering_non_html?</strong>(p = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the ultimate target format is something other than HTML.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>p</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `params`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rendering_non_html?'>rendering_non_html?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='op'>!</span><span class='id identifier rubyid_rendering_html?'>rendering_html?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="rendering_xml?-instance_method">
+  
+    #<strong>rendering_xml?</strong>(p = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the ultimate target format is XML.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>p</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `params`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+59
+60
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/serialization_helper.rb', line 59</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_rendering_xml?'>rendering_xml?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_p'>p</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span>
+  <span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>=</span> <span class='id identifier rubyid_p'>p</span><span class='lbracket'>[</span><span class='symbol'>:format</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span>
+  <span class='lparen'>(</span><span class='id identifier rubyid_fmt'>fmt</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>xml</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:request</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_request'>request</span><span class='period'>.</span><span class='id identifier rubyid_format'>format</span><span class='period'>.</span><span class='id identifier rubyid_xml?'>xml?</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:23 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

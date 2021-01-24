@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: SearchTerm
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "SearchTerm";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (S)</a> &raquo;
+    
+    
+    <span class="title">SearchTerm</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: SearchTerm
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">SearchTerm</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="LayoutHelper/SearchControls.html" title="LayoutHelper::SearchControls (module)">LayoutHelper::SearchControls</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/search_term.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>An object containing information needed for displaying a search term field and its values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="LayoutHelper/SearchControls.html" title="LayoutHelper::SearchControls (module)">LayoutHelper::SearchControls</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LayoutHelper/SearchControls.html#ADV_SEARCH_CLOSER_LABEL-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#ADV_SEARCH_CLOSER_TIP-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#ADV_SEARCH_CONFIG-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CONFIG (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CONFIG</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#ADV_SEARCH_OPENER_LABEL-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL (constant)">LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#ADV_SEARCH_OPENER_TIP-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP (constant)">LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#REVERSE_SORT_SUFFIX-constant" title="LayoutHelper::SearchControls::REVERSE_SORT_SUFFIX (constant)">LayoutHelper::SearchControls::REVERSE_SORT_SUFFIX</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_CONTROLS_CONFIG-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_CONFIG (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_CONFIG</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_CONTROLS_INITIALLY_OPEN-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_INITIALLY_OPEN (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_INITIALLY_OPEN</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_CONTROLS_ROOT-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_ROOT (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_ROOT</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_MENU_BASE-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_BASE (constant)">LayoutHelper::SearchControls::SEARCH_MENU_BASE</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_MENU_DEFAULT-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_DEFAULT (constant)">LayoutHelper::SearchControls::SEARCH_MENU_DEFAULT</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_MENU_MAP-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_MAP (constant)">LayoutHelper::SearchControls::SEARCH_MENU_MAP</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_PARAMETERS-constant" title="LayoutHelper::SearchControls::SEARCH_PARAMETERS (constant)">LayoutHelper::SearchControls::SEARCH_PARAMETERS</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_PARAMETER_MENU_MAP-constant" title="LayoutHelper::SearchControls::SEARCH_PARAMETER_MENU_MAP (constant)">LayoutHelper::SearchControls::SEARCH_PARAMETER_MENU_MAP</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#SEARCH_RESET_CONTROL-constant" title="LayoutHelper::SearchControls::SEARCH_RESET_CONTROL (constant)">LayoutHelper::SearchControls::SEARCH_RESET_CONTROL</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="LayoutHelper/Common.html" title="LayoutHelper::Common (module)">LayoutHelper::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LayoutHelper/Common.html#PANEL_CLOSER_LABEL-constant" title="LayoutHelper::Common::PANEL_CLOSER_LABEL (constant)">LayoutHelper::Common::PANEL_CLOSER_LABEL</a></span>, <span class='object_link'><a href="LayoutHelper/Common.html#PANEL_CLOSER_TIP-constant" title="LayoutHelper::Common::PANEL_CLOSER_TIP (constant)">LayoutHelper::Common::PANEL_CLOSER_TIP</a></span>, <span class='object_link'><a href="LayoutHelper/Common.html#PANEL_CONFIG-constant" title="LayoutHelper::Common::PANEL_CONFIG (constant)">LayoutHelper::Common::PANEL_CONFIG</a></span>, <span class='object_link'><a href="LayoutHelper/Common.html#PANEL_OPENER_LABEL-constant" title="LayoutHelper::Common::PANEL_OPENER_LABEL (constant)">LayoutHelper::Common::PANEL_OPENER_LABEL</a></span>, <span class='object_link'><a href="LayoutHelper/Common.html#PANEL_OPENER_TIP-constant" title="LayoutHelper::Common::PANEL_OPENER_TIP (constant)">LayoutHelper::Common::PANEL_OPENER_TIP</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchTermsHelper.html#DEFAULT_SEARCH_CONTROLLER-constant" title="SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER (constant)">SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#LIST_SEARCH_SEPARATOR-constant" title="SearchTermsHelper::LIST_SEARCH_SEPARATOR (constant)">SearchTermsHelper::LIST_SEARCH_SEPARATOR</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#NON_SEARCH_KEYS-constant" title="SearchTermsHelper::NON_SEARCH_KEYS (constant)">SearchTermsHelper::NON_SEARCH_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">SearchTermsHelper::NULL_SEARCH</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#QUERY_PARAMETERS-constant" title="SearchTermsHelper::QUERY_PARAMETERS (constant)">SearchTermsHelper::QUERY_PARAMETERS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_CONTROLLERS-constant" title="SearchTermsHelper::SEARCH_CONTROLLERS (constant)">SearchTermsHelper::SEARCH_CONTROLLERS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_KEYS-constant" title="SearchTermsHelper::SEARCH_KEYS (constant)">SearchTermsHelper::SEARCH_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_SORT_KEYS-constant" title="SearchTermsHelper::SEARCH_SORT_KEYS (constant)">SearchTermsHelper::SEARCH_SORT_KEYS</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#SEARCH_TYPE-constant" title="SearchTermsHelper::SEARCH_TYPE (constant)">SearchTermsHelper::SEARCH_TYPE</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#BANG-constant" title="Emma::Unicode::BANG (constant)">Emma::Unicode::BANG</a></span>, <span class='object_link'><a href="Emma/Unicode.html#BLACK_CIRCLE-constant" title="Emma::Unicode::BLACK_CIRCLE (constant)">Emma::Unicode::BLACK_CIRCLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#CHECK_MARK-constant" title="Emma::Unicode::CHECK_MARK (constant)">Emma::Unicode::CHECK_MARK</a></span>, <span class='object_link'><a href="Emma/Unicode.html#DELTA-constant" title="Emma::Unicode::DELTA (constant)">Emma::Unicode::DELTA</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_DASH-constant" title="Emma::Unicode::EM_DASH (constant)">Emma::Unicode::EM_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EM_SPACE-constant" title="Emma::Unicode::EM_SPACE (constant)">Emma::Unicode::EM_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_DASH-constant" title="Emma::Unicode::EN_DASH (constant)">Emma::Unicode::EN_DASH</a></span>, <span class='object_link'><a href="Emma/Unicode.html#EN_SPACE-constant" title="Emma::Unicode::EN_SPACE (constant)">Emma::Unicode::EN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">Emma::Unicode::HEAVY_X</a></span>, <span class='object_link'><a href="Emma/Unicode.html#QUESTION-constant" title="Emma::Unicode::QUESTION (constant)">Emma::Unicode::QUESTION</a></span>, <span class='object_link'><a href="Emma/Unicode.html#STAR-constant" title="Emma::Unicode::STAR (constant)">Emma::Unicode::STAR</a></span>, <span class='object_link'><a href="Emma/Unicode.html#THIN_SPACE-constant" title="Emma::Unicode::THIN_SPACE (constant)">Emma::Unicode::THIN_SPACE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#TRIANGLE-constant" title="Emma::Unicode::TRIANGLE (constant)">Emma::Unicode::TRIANGLE</a></span>, <span class='object_link'><a href="Emma/Unicode.html#WARNING_SIGN-constant" title="Emma::Unicode::WARNING_SIGN (constant)">Emma::Unicode::WARNING_SIGN</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#COMPRESSION_MARKER-constant" title="ParamsHelper::COMPRESSION_MARKER (constant)">ParamsHelper::COMPRESSION_MARKER</a></span>, <span class='object_link'><a href="ParamsHelper.html#IGNORED_PARAMETERS-constant" title="ParamsHelper::IGNORED_PARAMETERS (constant)">ParamsHelper::IGNORED_PARAMETERS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#GRID_OPTS-constant" title="HtmlHelper::GRID_OPTS (constant)">HtmlHelper::GRID_OPTS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HEX_RAND_DEFAULT_DIGITS-constant" title="HtmlHelper::HEX_RAND_DEFAULT_DIGITS (constant)">HtmlHelper::HEX_RAND_DEFAULT_DIGITS</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_MAX_LENGTH-constant" title="HtmlHelper::HTML_TRUNCATE_MAX_LENGTH (constant)">HtmlHelper::HTML_TRUNCATE_MAX_LENGTH</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_OMISSION-constant" title="HtmlHelper::HTML_TRUNCATE_OMISSION (constant)">HtmlHelper::HTML_TRUNCATE_OMISSION</a></span>, <span class='object_link'><a href="HtmlHelper.html#HTML_TRUNCATE_SEPARATOR-constant" title="HtmlHelper::HTML_TRUNCATE_SEPARATOR (constant)">HtmlHelper::HTML_TRUNCATE_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Constants.html" title="Emma::Constants (module)">Emma::Constants</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Constants.html#CONTACT_EMAIL-constant" title="Emma::Constants::CONTACT_EMAIL (constant)">Emma::Constants::CONTACT_EMAIL</a></span>, <span class='object_link'><a href="Emma/Constants.html#HTML_NEW_LINE-constant" title="Emma::Constants::HTML_NEW_LINE (constant)">Emma::Constants::HTML_NEW_LINE</a></span>, <span class='object_link'><a href="Emma/Constants.html#PROJECT_EMAIL-constant" title="Emma::Constants::PROJECT_EMAIL (constant)">Emma::Constants::PROJECT_EMAIL</a></span>, <span class='object_link'><a href="Emma/Constants.html#PROJECT_SITE-constant" title="Emma::Constants::PROJECT_SITE (constant)">Emma::Constants::PROJECT_SITE</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#label-instance_method" title="#label (instance method)">#<strong>label</strong>  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The label to use for this search term.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#pairs-instance_method" title="#pairs (instance method)">#<strong>pairs</strong>  &#x21d2; Hash{String=&gt;String} </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The label/value pairs for each value associated with this search term.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#parameter-instance_method" title="#parameter (instance method)">#<strong>parameter</strong>  &#x21d2; Symbol </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The URL parameter associated with this search term.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#count-instance_method" title="#count (instance method)">#<strong>count</strong>  &#x21d2; Integer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The number of field values associated with this instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#empty%3F-instance_method" title="#empty? (instance method)">#<strong>empty?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this instance is unassociated with any field values.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#facet%3F-instance_method" title="#facet? (instance method)">#<strong>facet?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this search term represents facet value(s).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(url_param, values = nil, label = nil)  &#x21d2; SearchTerm </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize a new instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#multiple%3F-instance_method" title="#multiple? (instance method)">#<strong>multiple?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this instance is associated with multiple field values.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#names-instance_method" title="#names (instance method)">#<strong>names</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Return just the textual descriptions of the field value(s) associated with this instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#null_search%3F-instance_method" title="#null_search? (instance method)">#<strong>null_search?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this search term represents a “null search”.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#query%3F-instance_method" title="#query? (instance method)">#<strong>query?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this is a query (text-only) search term.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#single%3F-instance_method" title="#single? (instance method)">#<strong>single?</strong>  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether this instance is associated with a single field values.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#values-instance_method" title="#values (instance method)">#<strong>values</strong>  &#x21d2; Array&lt;String&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Return just the field value(s) associated with this instance.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="LayoutHelper/SearchControls.html" title="LayoutHelper::SearchControls (module)">LayoutHelper::SearchControls</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LayoutHelper/SearchControls.html#advanced_search_button-instance_method" title="LayoutHelper::SearchControls#advanced_search_button (method)">#advanced_search_button</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#current_menu_config-instance_method" title="LayoutHelper::SearchControls#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#search_controls-instance_method" title="LayoutHelper::SearchControls#search_controls (method)">#search_controls</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#show_search_controls%3F-instance_method" title="LayoutHelper::SearchControls#show_search_controls? (method)">#show_search_controls?</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls.html#url_parameter_menu_config-instance_method" title="LayoutHelper::SearchControls#url_parameter_menu_config (method)">#url_parameter_menu_config</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html" title="LayoutHelper::SearchControls::ClassMethods (module)">LayoutHelper::SearchControls::ClassMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#ascending_sort-instance_method" title="LayoutHelper::SearchControls::ClassMethods#ascending_sort (method)">#ascending_sort</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#current_menu_config-instance_method" title="LayoutHelper::SearchControls::ClassMethods#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#descending_sort-instance_method" title="LayoutHelper::SearchControls::ClassMethods#descending_sort (method)">#descending_sort</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#is_reverse%3F-instance_method" title="LayoutHelper::SearchControls::ClassMethods#is_reverse? (method)">#is_reverse?</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#make_menu-instance_method" title="LayoutHelper::SearchControls::ClassMethods#make_menu (method)">#make_menu</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#make_menu_label-instance_method" title="LayoutHelper::SearchControls::ClassMethods#make_menu_label (method)">#make_menu_label</a></span>, <span class='object_link'><a href="LayoutHelper/SearchControls/ClassMethods.html#search_menu_config-instance_method" title="LayoutHelper::SearchControls::ClassMethods#search_menu_config (method)">#search_menu_config</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="LayoutHelper/Common.html" title="LayoutHelper::Common (module)">LayoutHelper::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LayoutHelper/Common.html#toggle_button-instance_method" title="LayoutHelper::Common#toggle_button (method)">#toggle_button</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchTermsHelper.html#list_search_terms-instance_method" title="SearchTermsHelper#list_search_terms (method)">#list_search_terms</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_menu_pairs-instance_method" title="SearchTermsHelper#search_menu_pairs (method)">#search_menu_pairs</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_parameters-instance_method" title="SearchTermsHelper#search_parameters (method)">#search_parameters</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_target-instance_method" title="SearchTermsHelper#search_target (method)">#search_target</a></span>, <span class='object_link'><a href="SearchTermsHelper.html#search_terms-instance_method" title="SearchTermsHelper#search_terms (method)">#search_terms</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Unicode.html#char-instance_method" title="Emma::Unicode#char (method)">#char</a></span>, <span class='object_link'><a href="Emma/Unicode.html#pad_char-instance_method" title="Emma::Unicode#pad_char (method)">#pad_char</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Json.html#json_parse-instance_method" title="Emma::Json#json_parse (method)">#json_parse</a></span>, <span class='object_link'><a href="Emma/Json.html#pretty_json-instance_method" title="Emma::Json#pretty_json (method)">#pretty_json</a></span>, <span class='object_link'><a href="Emma/Json.html#safe_json_parse-instance_method" title="Emma::Json#safe_json_parse (method)">#safe_json_parse</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="ParamsHelper.html" title="ParamsHelper (module)">ParamsHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="ParamsHelper.html#compress_value-instance_method" title="ParamsHelper#compress_value (method)">#compress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#compressed_value%3F-instance_method" title="ParamsHelper#compressed_value? (method)">#compressed_value?</a></span>, <span class='object_link'><a href="ParamsHelper.html#decompress_value-instance_method" title="ParamsHelper#decompress_value (method)">#decompress_value</a></span>, <span class='object_link'><a href="ParamsHelper.html#local_request%3F-instance_method" title="ParamsHelper#local_request? (method)">#local_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameter_count-instance_method" title="ParamsHelper#request_parameter_count (method)">#request_parameter_count</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_parameters-instance_method" title="ParamsHelper#request_parameters (method)">#request_parameters</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_path-instance_method" title="ParamsHelper#request_path (method)">#request_path</a></span>, <span class='object_link'><a href="ParamsHelper.html#request_xhr%3F-instance_method" title="ParamsHelper#request_xhr? (method)">#request_xhr?</a></span>, <span class='object_link'><a href="ParamsHelper.html#route_request%3F-instance_method" title="ParamsHelper#route_request? (method)">#route_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#same_request%3F-instance_method" title="ParamsHelper#same_request? (method)">#same_request?</a></span>, <span class='object_link'><a href="ParamsHelper.html#session_section-instance_method" title="ParamsHelper#session_section (method)">#session_section</a></span>, <span class='object_link'><a href="ParamsHelper.html#url_parameters-instance_method" title="ParamsHelper#url_parameters (method)">#url_parameters</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="HtmlHelper.html#append_css_classes-instance_method" title="HtmlHelper#append_css_classes (method)">#append_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_css_classes!-instance_method" title="HtmlHelper#append_css_classes! (method)">#append_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes-instance_method" title="HtmlHelper#append_grid_cell_classes (method)">#append_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#append_grid_cell_classes!-instance_method" title="HtmlHelper#append_grid_cell_classes! (method)">#append_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_class_array-instance_method" title="HtmlHelper#css_class_array (method)">#css_class_array</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_classes-instance_method" title="HtmlHelper#css_classes (method)">#css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#css_randomize-instance_method" title="HtmlHelper#css_randomize (method)">#css_randomize</a></span>, <span class='object_link'><a href="HtmlHelper.html#download_link-instance_method" title="HtmlHelper#download_link (method)">#download_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#external_link-instance_method" title="HtmlHelper#external_link (method)">#external_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#extract_url-instance_method" title="HtmlHelper#extract_url (method)">#extract_url</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_cell_classes-instance_method" title="HtmlHelper#grid_cell_classes (method)">#grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#grid_table-instance_method" title="HtmlHelper#grid_table (method)">#grid_table</a></span>, <span class='object_link'><a href="HtmlHelper.html#has_class%3F-instance_method" title="HtmlHelper#has_class? (method)">#has_class?</a></span>, <span class='object_link'><a href="HtmlHelper.html#hex_rand-instance_method" title="HtmlHelper#hex_rand (method)">#hex_rand</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_div-instance_method" title="HtmlHelper#html_div (method)">#html_div</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_span-instance_method" title="HtmlHelper#html_span (method)">#html_span</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_tag-instance_method" title="HtmlHelper#html_tag (method)">#html_tag</a></span>, <span class='object_link'><a href="HtmlHelper.html#html_truncate-class_method" title="HtmlHelper.html_truncate (method)">html_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">#icon_button</a></span>, <span class='object_link'><a href="HtmlHelper.html#make_link-instance_method" title="HtmlHelper#make_link (method)">#make_link</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options-instance_method" title="HtmlHelper#merge_html_options (method)">#merge_html_options</a></span>, <span class='object_link'><a href="HtmlHelper.html#merge_html_options!-instance_method" title="HtmlHelper#merge_html_options! (method)">#merge_html_options!</a></span>, <span class='object_link'><a href="HtmlHelper.html#placeholder_element-instance_method" title="HtmlHelper#placeholder_element (method)">#placeholder_element</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes-instance_method" title="HtmlHelper#prepend_css_classes (method)">#prepend_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_css_classes!-instance_method" title="HtmlHelper#prepend_css_classes! (method)">#prepend_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes-instance_method" title="HtmlHelper#prepend_grid_cell_classes (method)">#prepend_grid_cell_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#prepend_grid_cell_classes!-instance_method" title="HtmlHelper#prepend_grid_cell_classes! (method)">#prepend_grid_cell_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes-instance_method" title="HtmlHelper#remove_css_classes (method)">#remove_css_classes</a></span>, <span class='object_link'><a href="HtmlHelper.html#remove_css_classes!-instance_method" title="HtmlHelper#remove_css_classes! (method)">#remove_css_classes!</a></span>, <span class='object_link'><a href="HtmlHelper.html#safe_truncate-instance_method" title="HtmlHelper#safe_truncate (method)">#safe_truncate</a></span>, <span class='object_link'><a href="HtmlHelper.html#xml_truncate-class_method" title="HtmlHelper.xml_truncate (method)">xml_truncate</a></span></p>
+
+  
+  
+  
+  
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(url_param, values = nil, label = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="SearchTerm (class)">SearchTerm</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize a new instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>url_param</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>values</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>Array</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>label</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 51</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_url_param'>url_param</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_label'>label</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='ivar'>@parameter</span> <span class='op'>=</span> <span class='id identifier rubyid_url_param'>url_param</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+  <span class='id identifier rubyid_config'>config</span>     <span class='op'>=</span> <span class='id identifier rubyid_url_parameter_menu_config'>url_parameter_menu_config</span><span class='lparen'>(</span><span class='ivar'>@parameter</span><span class='rparen'>)</span>
+  <span class='ivar'>@pairs</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+      <span class='comment'># noinspection RubyNilAnalysis
+</span>      <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_stringify_keys'>stringify_keys</span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+        <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_strip_quotes'>strip_quotes</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_term'>term</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:menu</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_lbl'>lbl</span><span class='comma'>,</span> <span class='id identifier rubyid_val'>val</span><span class='op'>|</span> <span class='kw'>break</span> <span class='id identifier rubyid_lbl'>lbl</span> <span class='kw'>if</span> <span class='id identifier rubyid_val'>val</span> <span class='op'>==</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_term'>term</span> <span class='op'>||=</span> <span class='const'>ISO_639</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_english_name'>english_name</span> <span class='kw'>if</span> <span class='id identifier rubyid_url_param'>url_param</span> <span class='op'>==</span> <span class='symbol'>:language</span>
+        <span class='id identifier rubyid_term'>term</span> <span class='op'>||=</span> <span class='id identifier rubyid_v'>v</span>
+        <span class='lbracket'>[</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_term'>term</span><span class='rbracket'>]</span>
+      <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+    <span class='kw'>end</span>
+  <span class='ivar'>@pairs</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@label</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:label</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_label'>label</span> <span class='op'>||</span> <span class='id identifier rubyid_labelize'>labelize</span><span class='lparen'>(</span><span class='ivar'>@parameter</span><span class='comma'>,</span> <span class='ivar'>@pairs</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="label-instance_method">
+  
+    #<strong>label</strong>  &#x21d2; <tt>String</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The label to use for this search term.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+31
+32
+33</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 31</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_label'>label</span>
+  <span class='ivar'>@label</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="pairs-instance_method">
+  
+    #<strong>pairs</strong>  &#x21d2; <tt>Hash{String=&gt;String}</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The label/value pairs for each value associated with this search term.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{String=&gt;String}</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+37
+38
+39</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 37</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_pairs'>pairs</span>
+  <span class='ivar'>@pairs</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id=""></span>
+      <div class="method_details ">
+  <h3 class="signature " id="parameter-instance_method">
+  
+    #<strong>parameter</strong>  &#x21d2; <tt>Symbol</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The URL parameter associated with this search term.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+25
+26
+27</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 25</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_parameter'>parameter</span>
+  <span class='ivar'>@parameter</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="count-instance_method">
+  
+    #<strong>count</strong>  &#x21d2; <tt>Integer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>The number of field values associated with this instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Integer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+98
+99
+100</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 98</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_count'>count</span>
+  <span class='id identifier rubyid_pairs'>pairs</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="empty?-instance_method">
+  
+    #<strong>empty?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this instance is unassociated with any field values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+122
+123
+124</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 122</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_empty?'>empty?</span>
+  <span class='id identifier rubyid_pairs'>pairs</span><span class='period'>.</span><span class='id identifier rubyid_empty?'>empty?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="facet?-instance_method">
+  
+    #<strong>facet?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this search term represents facet value(s).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+110
+111
+112</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 110</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_facet?'>facet?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_query?'>query?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="multiple?-instance_method">
+  
+    #<strong>multiple?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this instance is associated with multiple field values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+134
+135
+136</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 134</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_multiple?'>multiple?</span>
+  <span class='id identifier rubyid_count'>count</span> <span class='op'>&gt;</span> <span class='int'>1</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="names-instance_method">
+  
+    #<strong>names</strong>  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Return just the textual descriptions of the field value(s) associated with this instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+90
+91
+92</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 90</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_names'>names</span>
+  <span class='id identifier rubyid_pairs'>pairs</span><span class='period'>.</span><span class='id identifier rubyid_values'>values</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="null_search?-instance_method">
+  
+    #<strong>null_search?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this search term represents a “null search”.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+116
+117
+118</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 116</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_null_search?'>null_search?</span>
+  <span class='id identifier rubyid_query?'>query?</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_names'>names</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">NULL_SEARCH</a></span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="query?-instance_method">
+  
+    #<strong>query?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this is a query (text-only) search term.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+104
+105
+106</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 104</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_query?'>query?</span>
+  <span class='const'><span class='object_link'><a href="SearchTermsHelper.html#QUERY_PARAMETERS-constant" title="SearchTermsHelper::QUERY_PARAMETERS (constant)">QUERY_PARAMETERS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_parameter'>parameter</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="single?-instance_method">
+  
+    #<strong>single?</strong>  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether this instance is associated with a single field values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+128
+129
+130</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 128</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_single?'>single?</span>
+  <span class='op'>!</span><span class='id identifier rubyid_multiple?'>multiple?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="values-instance_method">
+  
+    #<strong>values</strong>  &#x21d2; <tt>Array&lt;String&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Return just the field value(s) associated with this instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;String&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+81
+82
+83</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/search_term.rb', line 81</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_values'>values</span>
+  <span class='id identifier rubyid_pairs'>pairs</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:18:36 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

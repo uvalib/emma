@@ -1,0 +1,2829 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Shrine::AttacherDebug
+
+    &mdash; Documentation by YARD 0.9.26
+
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Shrine::AttacherDebug";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+
+    <a href="../_index.html">Index (A)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Shrine.html" title="Shrine (class)">Shrine</a></span></span>
+     &raquo;
+    <span class="title">AttacherDebug</span>
+
+</div>
+
+        <div id="search">
+
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Shrine::AttacherDebug
+
+
+
+</h1>
+<div class="box_info">
+
+
+
+
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="AttacherDebug/DebugMethods.html" title="Shrine::AttacherDebug::DebugMethods (module)">DebugMethods</a></span></dd>
+  </dl>
+
+
+
+  <dl>
+      <dt>Includes:</dt>
+      <dd>Shrine::Attacher::InstanceMethods, <span class='object_link'><a href="AttacherDebug/DebugMethods.html" title="Shrine::AttacherDebug::DebugMethods (module)">DebugMethods</a></span>, Plugins::Activerecord::AttacherMethods, Plugins::Entity::AttacherMethods</dd>
+  </dl>
+
+
+
+
+
+
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>lib/ext/shrine/lib/shrine/attacher.rb</dd>
+  </dl>
+
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+
+<p>– noinspection RubyTooManyMethodsInspection ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><h2>Defined Under Namespace</h2>
+<p class="children">
+
+
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="AttacherDebug/DebugMethods.html" title="Shrine::AttacherDebug::DebugMethods (module)">DebugMethods</a></span>
+
+
+
+
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+
+
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+
+
+
+
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_after_destroy-instance_method" title="#activerecord_after_destroy (instance method)">#<strong>activerecord_after_destroy</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_after_destroy.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_after_save-instance_method" title="#activerecord_after_save (instance method)">#<strong>activerecord_after_save</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_after_save.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_before_save-instance_method" title="#activerecord_before_save (instance method)">#<strong>activerecord_before_save</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_before_save.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_persist-instance_method" title="#activerecord_persist (instance method)">#<strong>activerecord_persist</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_persist.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_reload-instance_method" title="#activerecord_reload (instance method)">#<strong>activerecord_reload</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_reload.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#activerecord_validate-instance_method" title="#activerecord_validate (instance method)">#<strong>activerecord_validate</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>activerecord_validate.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#assign-instance_method" title="#assign (instance method)">#<strong>assign</strong>(value, **options)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>assign.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#attach-instance_method" title="#attach (instance method)">#<strong>attach</strong>(io, storage: store_key, **options)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>attach.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#attach_cached-instance_method" title="#attach_cached (instance method)">#<strong>attach_cached</strong>(value, **options)  &#x21d2; Shrine::UploadedFile </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>attach_cached.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#change-instance_method" title="#change (instance method)">#<strong>change</strong>(file)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>change.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#destroy-instance_method" title="#destroy (instance method)">#<strong>destroy</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>destroy.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#destroy_attached-instance_method" title="#destroy_attached (instance method)">#<strong>destroy_attached</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>destroy_attached.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#destroy_previous-instance_method" title="#destroy_previous (instance method)">#<strong>destroy_previous</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>destroy_previous.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#file!-instance_method" title="#file! (instance method)">#<strong>file!</strong>  &#x21d2; Shrine::UploadedFile </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>file!.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#file=-instance_method" title="#file= (instance method)">#<strong>file=</strong>(file)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the attached file.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#finalize-instance_method" title="#finalize (instance method)">#<strong>finalize</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>finalize.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#get-instance_method" title="#get (instance method)">#<strong>get</strong>  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>Returns the attached file.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(file: nil, cache: :cache, store: :store)  &#x21d2; Object </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>initialize.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#load_data-instance_method" title="#load_data (instance method)">#<strong>load_data</strong>(data)  &#x21d2; UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>load_data.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#load_entity-instance_method" title="#load_entity (instance method)">#<strong>load_entity</strong>(record, name)  &#x21d2; FileUploader </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>load_entity.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#promote-instance_method" title="#promote (instance method)">#<strong>promote</strong>(storage: store_key, **options)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>promote.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#promote_cached-instance_method" title="#promote_cached (instance method)">#<strong>promote_cached</strong>(**options)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>promote_cached.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#reload-instance_method" title="#reload (instance method)">#<strong>reload</strong>  &#x21d2; FileUploader </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>reload.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#save-instance_method" title="#save (instance method)">#<strong>save</strong>  &#x21d2; void </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>save.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#set-instance_method" title="#set (instance method)">#<strong>set</strong>(file)  &#x21d2; Shrine::UploadedFile<sup>?</sup> </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>Sets the attached file.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#set_entity-instance_method" title="#set_entity (instance method)">#<strong>set_entity</strong>(record, name)  &#x21d2; FileUploader </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>set_entity.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#upload-instance_method" title="#upload (instance method)">#<strong>upload</strong>(io, storage = store_key, **options)  &#x21d2; Shrine::UploadedFile </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>upload.</p>
+</div></span>
+
+</li>
+
+
+        <li class="public ">
+  <span class="summary_signature">
+
+      <a href="#uploaded_file-instance_method" title="#uploaded_file (instance method)">#<strong>uploaded_file</strong>(value)  &#x21d2; Shrine::UploadedFile </a>
+
+
+
+  </span>
+
+
+
+
+
+
+
+
+
+    <span class="summary_desc"><div class='inline'>
+<p>uploaded_file.</p>
+</div></span>
+
+</li>
+
+
+    </ul>
+
+
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="AttacherDebug/DebugMethods.html" title="Shrine::AttacherDebug::DebugMethods (module)">DebugMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="AttacherDebug/DebugMethods.html#__debug_attacher-instance_method" title="Shrine::AttacherDebug::DebugMethods#__debug_attacher (method)">__debug_attacher</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+
+
+
+
+
+
+
+
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+
+
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+
+      <div class="method_details first">
+  <h3 class="signature first" id="activerecord_after_destroy-instance_method">
+
+    #<strong>activerecord_after_destroy</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_after_destroy</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+309
+310
+311
+312</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 309</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_after_destroy'>activerecord_after_destroy</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="activerecord_after_save-instance_method">
+
+    #<strong>activerecord_after_save</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_after_save</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+300
+301
+302
+303</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 300</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_after_save'>activerecord_after_save</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="activerecord_before_save-instance_method">
+
+    #<strong>activerecord_before_save</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_before_save</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+291
+292
+293
+294</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 291</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_before_save'>activerecord_before_save</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="activerecord_persist-instance_method">
+
+    #<strong>activerecord_persist</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_persist</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+318
+319
+320
+321</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 318</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_persist'>activerecord_persist</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="activerecord_reload-instance_method">
+
+    #<strong>activerecord_reload</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_reload</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+327
+328
+329
+330</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 327</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_reload'>activerecord_reload</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="activerecord_validate-instance_method">
+
+    #<strong>activerecord_validate</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>activerecord_validate</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+282
+283
+284
+285</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 282</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_activerecord_validate'>activerecord_validate</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="assign-instance_method">
+
+    #<strong>assign</strong>(value, **options)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>assign</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>value</span>
+
+
+        <span class='type'>(<tt>String</tt>, <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>, <tt>IO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+52
+53
+54
+55
+56
+57
+58
+59</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 52</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_assign'>assign</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+    <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_result'>result</span><span class='op'>|</span>
+      <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RESULT -&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+        <span class='lbrace'>{</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="attach-instance_method">
+
+    #<strong>attach</strong>(io, storage: store_key, **options)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>attach</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>io</span>
+
+
+        <span class='type'>(<tt>IO</tt>, <tt>StringIO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>storage</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>store_key</tt>)</em>
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>Passed to #upload.</p>
+</div>
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+88
+89
+90
+91
+92
+93</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 88</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_attach'>attach</span><span class='lparen'>(</span><span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='label'>storage:</span> <span class='id identifier rubyid_store_key'>store_key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='lbrace'>{</span> <span class='label'>io:</span> <span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='label'>storage:</span> <span class='id identifier rubyid_storage'>storage</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="attach_cached-instance_method">
+
+    #<strong>attach_cached</strong>(value, **options)  &#x21d2; <tt>Shrine::UploadedFile</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>attach_cached</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>value</span>
+
+
+        <span class='type'>(<tt>String</tt>, <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>, <tt>IO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>To #attach if <strong>value</strong> is an IO.</p>
+</div>
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::Error</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If the file is not in :cache storage.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+70
+71
+72
+73
+74
+75
+76
+77
+78</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 70</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_attach_cached'>attach_cached</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+    <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_result'>result</span><span class='op'>|</span>
+      <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RESULT -&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+        <span class='lbrace'>{</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="change-instance_method">
+
+    #<strong>change</strong>(file)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>change</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>file</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If <strong>file</strong> is not an UploadedFile or <strong>nil</strong></p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+190
+191
+192
+193</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 190</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_change'>change</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>file:</span> <span class='id identifier rubyid_file'>file</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="destroy-instance_method">
+
+    #<strong>destroy</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>destroy</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+177
+178
+179
+180</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 177</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="destroy_attached-instance_method">
+
+    #<strong>destroy_attached</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>destroy_attached</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+168
+169
+170
+171</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 168</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_destroy_attached'>destroy_attached</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="destroy_previous-instance_method">
+
+    #<strong>destroy_previous</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>destroy_previous</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+159
+160
+161
+162</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 159</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_destroy_previous'>destroy_previous</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="file!-instance_method">
+
+    #<strong>file!</strong>  &#x21d2; <tt>Shrine::UploadedFile</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>file!</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::Error</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If no file is attached.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+250
+251
+252
+253</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 250</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_file!'>file!</span>
+  <span class='kw'>super</span>
+    <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_res'>res</span><span class='op'>|</span> <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RESULT -&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="file=-instance_method">
+
+    #<strong>file=</strong>(file)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>Sets the attached file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>file</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If <strong>file</strong> is an invalid type.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+239
+240
+241
+242</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 239</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_file='>file=</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_file'>file</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>file:</span> <span class='id identifier rubyid_file'>file</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="finalize-instance_method">
+
+    #<strong>finalize</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>finalize</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+99
+100
+101
+102</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 99</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_finalize'>finalize</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="get-instance_method">
+
+    #<strong>get</strong>  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>Returns the attached file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+212
+213
+214
+215</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 212</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get'>get</span>
+  <span class='kw'>super</span>
+    <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_res'>res</span><span class='op'>|</span> <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RESULT -&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="initialize-instance_method">
+
+    #<strong>initialize</strong>(file: nil, cache: :cache, store: :store)  &#x21d2; <tt><span class='object_link'><a href="../Object.html" title="Object (class)">Object</a></span></tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>initialize</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>file</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>cache</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>:cache</tt>)</em>
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>store</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>:store</tt>)</em>
+
+
+    </li>
+
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+40
+41
+42
+43</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 40</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>file:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>cache:</span> <span class='symbol'>:cache</span><span class='comma'>,</span> <span class='label'>store:</span> <span class='symbol'>:store</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NEW</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>file:</span> <span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>cache:</span> <span class='id identifier rubyid_cache'>cache</span><span class='comma'>,</span> <span class='label'>store:</span> <span class='id identifier rubyid_store'>store</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="load_data-instance_method">
+
+    #<strong>load_data</strong>(data)  &#x21d2; <tt>UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>load_data</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>data</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If <strong>value</strong> is an invalid type.</p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+225
+226
+227
+228
+229</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 225</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_load_data'>load_data</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_data'>data</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_data'>data</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>data:</span> <span class='id identifier rubyid_data'>data</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="load_entity-instance_method">
+
+    #<strong>load_entity</strong>(record, name)  &#x21d2; <tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>load_entity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>record</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>name</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+345
+346
+347
+348</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 345</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_load_entity'>load_entity</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>record:</span> <span class='id identifier rubyid_record'>record</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="promote-instance_method">
+
+    #<strong>promote</strong>(storage: store_key, **options)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>promote</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>storage</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>store_key</tt>)</em>
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+132
+133
+134
+135
+136</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 132</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_promote'>promote</span><span class='lparen'>(</span><span class='label'>storage:</span> <span class='id identifier rubyid_store_key'>store_key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>storage:</span> <span class='id identifier rubyid_storage'>storage</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="promote_cached-instance_method">
+
+    #<strong>promote_cached</strong>(**options)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>promote_cached</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>Passed to #promote.</p>
+</div>
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+119
+120
+121
+122
+123</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 119</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_promote_cached'>promote_cached</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="reload-instance_method">
+
+    #<strong>reload</strong>  &#x21d2; <tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>reload</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+370
+371
+372
+373
+374</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 370</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_reload'>reload</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="save-instance_method">
+
+    #<strong>save</strong>  &#x21d2; <tt>void</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>save</p>
+
+
+  </div>
+</div>
+<div class="tags">
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+108
+109
+110
+111</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 108</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_save'>save</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="set-instance_method">
+
+    #<strong>set</strong>(file)  &#x21d2; <tt>Shrine::UploadedFile</tt><sup>?</sup>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>Sets the attached file.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>file</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt>nil</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If <strong>file</strong> is not an UploadedFile or <strong>nil</strong></p>
+</div>
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+203
+204
+205
+206</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 203</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_set'>set</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>file:</span> <span class='id identifier rubyid_file'>file</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="set_entity-instance_method">
+
+    #<strong>set_entity</strong>(record, name)  &#x21d2; <tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>set_entity</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>record</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>name</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../FileUploader.html" title="FileUploader (class)">FileUploader</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+357
+358
+359
+360
+361
+362
+363
+364</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 357</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_set_entity'>set_entity</span><span class='lparen'>(</span><span class='id identifier rubyid_record'>record</span><span class='comma'>,</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span>
+  <span class='kw'>super</span>
+    <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_res'>res</span><span class='op'>|</span>
+      <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>RESULT @context = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_res'>res</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='kw'>do</span>
+        <span class='lbrace'>{</span> <span class='label'>name:</span> <span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='label'>record:</span> <span class='id identifier rubyid_record'>record</span> <span class='rbrace'>}</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="upload-instance_method">
+
+    #<strong>upload</strong>(io, storage = store_key, **options)  &#x21d2; <tt>Shrine::UploadedFile</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>upload</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>io</span>
+
+
+        <span class='type'>(<tt>IO</tt>, <tt>StringIO</tt>)</span>
+
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>storage</span>
+
+
+        <span class='type'>(<tt>Symbol</tt>)</span>
+
+
+        <em class="default">(defaults to: <tt>store_key</tt>)</em>
+
+
+    </li>
+
+    <li>
+
+        <span class='name'>options</span>
+
+
+        <span class='type'>(<tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+
+      <li>InstanceMethods#upload</li>
+
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+148
+149
+150
+151
+152
+153</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 148</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_upload'>upload</span><span class='lparen'>(</span><span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='id identifier rubyid_storage'>storage</span> <span class='op'>=</span> <span class='id identifier rubyid_store_key'>store_key</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='lbrace'>{</span> <span class='label'>io:</span> <span class='id identifier rubyid_io'>io</span><span class='comma'>,</span> <span class='label'>storage:</span> <span class='id identifier rubyid_storage'>storage</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+      <div class="method_details ">
+  <h3 class="signature " id="uploaded_file-instance_method">
+
+    #<strong>uploaded_file</strong>(value)  &#x21d2; <tt>Shrine::UploadedFile</tt>
+
+
+
+
+
+</h3><div class="docstring">
+  <div class="discussion">
+
+<p>uploaded_file</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+
+    <li>
+
+        <span class='name'>value</span>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>, <tt><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></tt>, <tt>String</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+
+    <li>
+
+
+        <span class='type'>(<tt>Shrine::UploadedFile</tt>)</span>
+
+
+
+    </li>
+
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+
+    <li>
+
+
+        <span class='type'>(<tt>ArgumentError</tt>)</span>
+
+
+
+        &mdash;
+        <div class='inline'>
+<p>If <strong>value</strong> is an invalid type.</p>
+</div>
+
+    </li>
+
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+
+      <li>ClassMethods#uploaded_file</li>
+
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+265
+266
+267
+268
+269
+270</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/ext/shrine/lib/shrine/attacher.rb', line 265</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_uploaded_file'>uploaded_file</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_attacher'>__debug_attacher</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="../Hash.html" title="Hash (class)">Hash</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>:</span> <span class='lbrace'>{</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='kw'>super</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sat Jan 23 11:12:19 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Module: Upload::LookupMethods
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="../css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="../css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "Upload::LookupMethods";
+  relpath = '../';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="../js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="../js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="../class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="../_index.html">Index (L)</a> &raquo;
+    <span class='title'><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></span>
+     &raquo; 
+    <span class="title">LookupMethods</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="../class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Module: Upload::LookupMethods
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+
+  
+  
+  <dl>
+      <dt>Extended by:</dt>
+      <dd><span class='object_link'><a href="" title="Upload::LookupMethods (module)">LookupMethods</a></span></dd>
+  </dl>
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="WorkflowMethods.html" title="Upload::WorkflowMethods (module)">WorkflowMethods</a></span></dd>
+  </dl>
+  
+  
+
+  
+  <dl>
+    <dt>Included in:</dt>
+    <dd><span class='object_link'><a href="" title="Upload::LookupMethods (module)">LookupMethods</a></span></dd>
+  </dl>
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/models/upload/lookup_methods.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Class methods for accessing Upload records.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="SEARCH_RECORDS_TEMPLATE-constant" class="">SEARCH_RECORDS_TEMPLATE =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>The #search_records method returns a hash with these fields in this order.</p>
+
+<pre class="code ruby"><code class="ruby">:offset   The list offset for display purposes (not the SQL OFFSET).
+:limit    The page size.
+:page     The ordinal number of the current page.
+:first    If the given :page is the first page of the record set.
+:last     If the given :page is the last page of the record set.
+:total    Count of all matching records.
+:min_id   The :id of the first matching record.
+:max_id   The :id of the last matching record.
+:groups   Table of counts for each state group.
+:pages    An array of arrays where each element has the IDs for that page
+:list     An array of matching Upload records.
+</code></pre>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='lbrace'>{</span>
+  <span class='label'>offset:</span> <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>limit:</span>  <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>page:</span>   <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>first:</span>  <span class='kw'>true</span><span class='comma'>,</span>
+  <span class='label'>last:</span>   <span class='kw'>true</span><span class='comma'>,</span>
+  <span class='label'>total:</span>  <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>min_id:</span> <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>max_id:</span> <span class='int'>0</span><span class='comma'>,</span>
+  <span class='label'>groups:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='comma'>,</span>
+  <span class='label'>pages:</span>  <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span>
+  <span class='label'>list:</span>   <span class='lbracket'>[</span><span class='rbracket'>]</span><span class='comma'>,</span>
+<span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+        <dt id="SEARCH_RECORDS_OPTIONS-constant" class="">SEARCH_RECORDS_OPTIONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Local options consumed by #search_records.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='tstring_content'>offset</span><span class='words_sep'> </span><span class='tstring_content'>limit</span><span class='words_sep'> </span><span class='tstring_content'>page</span><span class='words_sep'> </span><span class='tstring_content'>pages</span><span class='words_sep'> </span><span class='tstring_content'>groups</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="WorkflowMethods.html" title="Upload::WorkflowMethods (module)">WorkflowMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="WorkflowMethods.html#DEFAULT_AUTO_REVIEWABLE-constant" title="Upload::WorkflowMethods::DEFAULT_AUTO_REVIEWABLE (constant)">WorkflowMethods::DEFAULT_AUTO_REVIEWABLE</a></span>, <span class='object_link'><a href="WorkflowMethods.html#DEFAULT_REVIEW_REQUIRED-constant" title="Upload::WorkflowMethods::DEFAULT_REVIEW_REQUIRED (constant)">WorkflowMethods::DEFAULT_REVIEW_REQUIRED</a></span>, <span class='object_link'><a href="WorkflowMethods.html#REVERSE_STATE_GROUP-constant" title="Upload::WorkflowMethods::REVERSE_STATE_GROUP (constant)">WorkflowMethods::REVERSE_STATE_GROUP</a></span>, <span class='object_link'><a href="WorkflowMethods.html#REVERT_DATA_FIELDS-constant" title="Upload::WorkflowMethods::REVERT_DATA_FIELDS (constant)">WorkflowMethods::REVERT_DATA_FIELDS</a></span>, <span class='object_link'><a href="WorkflowMethods.html#STATE_COLUMNS-constant" title="Upload::WorkflowMethods::STATE_COLUMNS (constant)">WorkflowMethods::STATE_COLUMNS</a></span>, <span class='object_link'><a href="WorkflowMethods.html#STATE_GROUP-constant" title="Upload::WorkflowMethods::STATE_GROUP (constant)">WorkflowMethods::STATE_GROUP</a></span>, <span class='object_link'><a href="WorkflowMethods.html#USER_COLUMNS-constant" title="Upload::WorkflowMethods::USER_COLUMNS (constant)">WorkflowMethods::USER_COLUMNS</a></span>, <span class='object_link'><a href="WorkflowMethods.html#WORKFLOW_PHASE_COLUMN-constant" title="Upload::WorkflowMethods::WORKFLOW_PHASE_COLUMN (constant)">WorkflowMethods::WORKFLOW_PHASE_COLUMN</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="WorkflowMethods.html" title="Upload::WorkflowMethods (module)">WorkflowMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="WorkflowMethods.html#revert_data-instance_method" title="Upload::WorkflowMethods#revert_data (method)">#revert_data</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_record-instance_method" title="#get_record (instance method)">#<strong>get_record</strong>(identifier)  &#x21d2; Upload<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get the Upload record by either :id or :submission_id.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_records-instance_method" title="#get_records (instance method)">#<strong>get_records</strong>(*identifiers, **opt)  &#x21d2; Array&lt;Upload&gt; </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get Upload records specified by either :id or :submission_id.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#get_relation-instance_method" title="#get_relation (instance method)">#<strong>get_relation</strong>(*identifiers, **opt)  &#x21d2; ActiveRecord::Relation </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate an ActiveRecord relation for Upload records specified by either :id or :submission_id.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#included-instance_method" title="#included (instance method)">#<strong>included</strong>(base)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_records-instance_method" title="#search_records (instance method)">#<strong>search_records</strong>(*identifiers, **opt)  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Get the Upload records specified by either :id or :submission_id.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="WorkflowMethods.html" title="Upload::WorkflowMethods (module)">WorkflowMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="WorkflowMethods.html#active_state-instance_method" title="Upload::WorkflowMethods#active_state (method)">#active_state</a></span>, <span class='object_link'><a href="WorkflowMethods.html#active_user-instance_method" title="Upload::WorkflowMethods#active_user (method)">#active_user</a></span>, <span class='object_link'><a href="WorkflowMethods.html#auto_reviewable%3F-instance_method" title="Upload::WorkflowMethods#auto_reviewable? (method)">#auto_reviewable?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#begin_editing-instance_method" title="Upload::WorkflowMethods#begin_editing (method)">#begin_editing</a></span>, <span class='object_link'><a href="WorkflowMethods.html#being_created%3F-instance_method" title="Upload::WorkflowMethods#being_created? (method)">#being_created?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#being_indexed%3F-instance_method" title="Upload::WorkflowMethods#being_indexed? (method)">#being_indexed?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#being_modified%3F-instance_method" title="Upload::WorkflowMethods#being_modified? (method)">#being_modified?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#being_removed%3F-instance_method" title="Upload::WorkflowMethods#being_removed? (method)">#being_removed?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#being_submitted%3F-instance_method" title="Upload::WorkflowMethods#being_submitted? (method)">#being_submitted?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#completed%3F-instance_method" title="Upload::WorkflowMethods#completed? (method)">#completed?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#edit_phase-instance_method" title="Upload::WorkflowMethods#edit_phase (method)">#edit_phase</a></span>, <span class='object_link'><a href="WorkflowMethods.html#existing_entry%3F-instance_method" title="Upload::WorkflowMethods#existing_entry? (method)">#existing_entry?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#finish_editing-instance_method" title="Upload::WorkflowMethods#finish_editing (method)">#finish_editing</a></span>, <span class='object_link'><a href="WorkflowMethods.html#get_phase-instance_method" title="Upload::WorkflowMethods#get_phase (method)">#get_phase</a></span>, <span class='object_link'><a href="WorkflowMethods.html#get_revert_data-instance_method" title="Upload::WorkflowMethods#get_revert_data (method)">#get_revert_data</a></span>, <span class='object_link'><a href="WorkflowMethods.html#get_state-instance_method" title="Upload::WorkflowMethods#get_state (method)">#get_state</a></span>, <span class='object_link'><a href="WorkflowMethods.html#in_process%3F-instance_method" title="Upload::WorkflowMethods#in_process? (method)">#in_process?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#new_submission%3F-instance_method" title="Upload::WorkflowMethods#new_submission? (method)">#new_submission?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#phase_column-instance_method" title="Upload::WorkflowMethods#phase_column (method)">#phase_column</a></span>, <span class='object_link'><a href="WorkflowMethods.html#review_required%3F-instance_method" title="Upload::WorkflowMethods#review_required? (method)">#review_required?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#sealed%3F-instance_method" title="Upload::WorkflowMethods#sealed? (method)">#sealed?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#set_phase-instance_method" title="Upload::WorkflowMethods#set_phase (method)">#set_phase</a></span>, <span class='object_link'><a href="WorkflowMethods.html#set_revert_data-instance_method" title="Upload::WorkflowMethods#set_revert_data (method)">#set_revert_data</a></span>, <span class='object_link'><a href="WorkflowMethods.html#set_state-instance_method" title="Upload::WorkflowMethods#set_state (method)">#set_state</a></span>, <span class='object_link'><a href="WorkflowMethods.html#state_column-instance_method" title="Upload::WorkflowMethods#state_column (method)">#state_column</a></span>, <span class='object_link'><a href="WorkflowMethods.html#state_group-instance_method" title="Upload::WorkflowMethods#state_group (method)">#state_group</a></span>, <span class='object_link'><a href="WorkflowMethods.html#state_group-class_method" title="Upload::WorkflowMethods.state_group (method)">state_group</a></span>, <span class='object_link'><a href="WorkflowMethods.html#state_group_label-class_method" title="Upload::WorkflowMethods.state_group_label (method)">state_group_label</a></span>, <span class='object_link'><a href="WorkflowMethods.html#timestamp_column-instance_method" title="Upload::WorkflowMethods#timestamp_column (method)">#timestamp_column</a></span>, <span class='object_link'><a href="WorkflowMethods.html#under_review%3F-instance_method" title="Upload::WorkflowMethods#under_review? (method)">#under_review?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#unsealed%3F-instance_method" title="Upload::WorkflowMethods#unsealed? (method)">#unsealed?</a></span>, <span class='object_link'><a href="WorkflowMethods.html#user_column-instance_method" title="Upload::WorkflowMethods#user_column (method)">#user_column</a></span>, <span class='object_link'><a href="WorkflowMethods.html#workflow_phase-instance_method" title="Upload::WorkflowMethods#workflow_phase (method)">#workflow_phase</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="../Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="../Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="../Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="../Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="../Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="../Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="../Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="../Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="../Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="../Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="../Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="../Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="../Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="../Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="../Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="../Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="get_record-instance_method">
+  
+    #<strong>get_record</strong>(identifier)  &#x21d2; <tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get the Upload record by either :id or :submission_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>identifier</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>, <tt>Integer</tt>, <tt>Hash</tt>, <tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+32
+33
+34</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload/lookup_methods.rb', line 32</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_record'>get_record</span><span class='lparen'>(</span><span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_find_by'>find_by</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_id_term'>id_term</span><span class='lparen'>(</span><span class='id identifier rubyid_identifier'>identifier</span><span class='rparen'>)</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_records-instance_method">
+  
+    #<strong>get_records</strong>(*identifiers, **opt)  &#x21d2; <tt>Array&lt;<span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span>&gt;</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get Upload records specified by either :id or :submission_id.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>identifiers</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span>, String, Integer, Array&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>@see #get_relation</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span>&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload/lookup_methods.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_records'>get_records</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_get_relation'>get_relation</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_records'>records</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="get_relation-instance_method">
+  
+    #<strong>get_relation</strong>(*identifiers, **opt)  &#x21d2; <tt>ActiveRecord::Relation</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate an ActiveRecord relation for Upload records specified by either :id or :submission_id.</p>
+
+<p>Additional constraints may be supplied via <strong>opt</strong>.  If no <strong>identifiers</strong> are supplied then this method is essentially an invocation of #where which returns the matching records.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>identifiers</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span>, String, Integer, Array&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #where except</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:offset</span>
+          <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:limit</span>
+          <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveRecord::Relation</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Upload#exapand_ids</li>
+    
+      <li>ActiveRecord::Relation#where</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload/lookup_methods.rb', line 194</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_get_relation'>get_relation</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_terms'>terms</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+
+  <span class='id identifier rubyid_ids'>ids</span>  <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:id</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_sids'>sids</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:submission_id</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_identifiers'>identifiers</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_identifiers'>identifiers</span> <span class='op'>=</span> <span class='id identifier rubyid_expand_ids'>expand_ids</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_term'>term</span><span class='op'>|</span> <span class='id identifier rubyid_id_term'>id_term</span><span class='lparen'>(</span><span class='id identifier rubyid_term'>term</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+    <span class='id identifier rubyid_ids'>ids</span>  <span class='op'>=</span> <span class='id identifier rubyid_identifiers'>identifiers</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_term'>term</span><span class='op'>|</span> <span class='id identifier rubyid_term'>term</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>            <span class='rbrace'>}</span> <span class='op'>+</span> <span class='id identifier rubyid_ids'>ids</span>
+    <span class='id identifier rubyid_sids'>sids</span> <span class='op'>=</span> <span class='id identifier rubyid_identifiers'>identifiers</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_term'>term</span><span class='op'>|</span> <span class='id identifier rubyid_term'>term</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='rbrace'>}</span> <span class='op'>+</span> <span class='id identifier rubyid_sids'>sids</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_ids'>ids</span>  <span class='op'>=</span> <span class='id identifier rubyid_ids'>ids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_sids'>sids</span> <span class='op'>=</span> <span class='id identifier rubyid_sids'>sids</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_ids'>ids</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_sids'>sids</span>
+    <span class='id identifier rubyid_terms'>terms</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_sql_terms'>sql_terms</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='id identifier rubyid_ids'>ids</span><span class='comma'>,</span> <span class='label'>submission_id:</span> <span class='id identifier rubyid_sids'>sids</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:or</span><span class='rparen'>)</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_ids'>ids</span>
+    <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_ids'>ids</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_sids'>sids</span>
+    <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:submission_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_sids'>sids</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_user_opt'>user_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_extract!'>extract!</span><span class='lparen'>(</span><span class='op'>*</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="WorkflowMethods.html#USER_COLUMNS-constant" title="Upload::WorkflowMethods::USER_COLUMNS (constant)">USER_COLUMNS</a></span></span> <span class='op'>-</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>review_user</span><span class='tstring_end'>]</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_terms'>terms</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_sql_terms'>sql_terms</span><span class='lparen'>(</span><span class='id identifier rubyid_user_opt'>user_opt</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:or</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_user_opt'>user_opt</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_state_opt'>state_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_extract!'>extract!</span><span class='lparen'>(</span><span class='op'>*</span><span class='const'><span class='object_link'><a href="WorkflowMethods.html#STATE_COLUMNS-constant" title="Upload::WorkflowMethods::STATE_COLUMNS (constant)">STATE_COLUMNS</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_terms'>terms</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_sql_terms'>sql_terms</span><span class='lparen'>(</span><span class='id identifier rubyid_state_opt'>state_opt</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:or</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_state_opt'>state_opt</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+
+  <span class='id identifier rubyid_limit'>limit</span>  <span class='op'>=</span> <span class='id identifier rubyid_positive'>positive</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:limit</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_offset'>offset</span> <span class='op'>=</span> <span class='id identifier rubyid_positive'>positive</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:offset</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_terms'>terms</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>id &gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_offset'>offset</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_offset'>offset</span>
+
+  <span class='id identifier rubyid_query'>query</span>  <span class='op'>=</span> <span class='id identifier rubyid_sql_terms'>sql_terms</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:and</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_limit'>limit</span><span class='lparen'>(</span><span class='id identifier rubyid_limit'>limit</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_limit'>limit</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="included-instance_method">
+  
+    #<strong>included</strong>(base)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+12
+13
+14</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload/lookup_methods.rb', line 12</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_included'>included</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:extend</span><span class='comma'>,</span> <span class='kw'>self</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_records-instance_method">
+  
+    #<strong>search_records</strong>(*identifiers, **opt)  &#x21d2; <tt>Hash</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Get the Upload records specified by either :id or :submission_id.</p>
+
+<p>Additional constraints may be supplied via <strong>opt</strong>.  If no <strong>identifiers</strong> are supplied then this method is essentially an invocation of #where which returns the matching records.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>identifiers</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../Upload.html" title="Upload (class)">Upload</a></span>, String, Integer, Array&gt;</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #where except</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:offset</span>
+          <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:limit</span>
+          <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:page</span>
+          <span class="type">(<tt>Integer</tt>, <tt>nil</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:pages</span>
+          <span class="type">(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Return array of arrays of record IDs.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:groups</span>
+          <span class="type">(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Return state group counts; if :only then do not return :list.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>@see #SEARCH_RECORDS_TEMPLATE</p>
+</div>
+      
+    </li>
+  
+</ul>
+<p class="tag_title">Raises:</p>
+<ul class="raise">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>RangeError</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If :page is not valid.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>ActiveRecord::Relation#where</li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/upload/lookup_methods.rb', line 111</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_records'>search_records</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_local_opt'>local_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>*</span><span class='const'><span class='object_link'><a href="#SEARCH_RECORDS_OPTIONS-constant" title="Upload::LookupMethods::SEARCH_RECORDS_OPTIONS (constant)">SEARCH_RECORDS_OPTIONS</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SEARCH_RECORDS_TEMPLATE-constant" title="Upload::LookupMethods::SEARCH_RECORDS_TEMPLATE (constant)">SEARCH_RECORDS_TEMPLATE</a></span></span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>
+
+  <span class='comment'># Handle the case where a range has been specified which resolves to an
+</span>  <span class='comment'># empty set of identifiers.  Otherwise, #get_relation will treat this case
+</span>  <span class='comment'># identically to one where no identifiers where specified to limit results.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_identifiers'>identifiers</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_identifiers'>identifiers</span> <span class='op'>=</span> <span class='id identifier rubyid_expand_ids'>expand_ids</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_result'>result</span> <span class='kw'>if</span> <span class='id identifier rubyid_identifiers'>identifiers</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Start by looking at results for all matches (without :limit or :offset).
+</span>  <span class='id identifier rubyid_all'>all</span> <span class='op'>=</span> <span class='id identifier rubyid_get_relation'>get_relation</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+
+  <span class='comment'># Handle the case where only a :groups summary is expected.
+</span>  <span class='kw'>if</span> <span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:groups</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:only</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:groups</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_group_by_state'>group_by_state</span><span class='lparen'>(</span><span class='id identifier rubyid_all'>all</span><span class='rparen'>)</span>
+    <span class='kw'>return</span> <span class='id identifier rubyid_result'>result</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># noinspection RailsParamDefResolve
+</span>  <span class='id identifier rubyid_all_ids'>all_ids</span> <span class='op'>=</span> <span class='id identifier rubyid_all'>all</span><span class='period'>.</span><span class='id identifier rubyid_pluck'>pluck</span><span class='lparen'>(</span><span class='symbol'>:id</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_page'>page</span>    <span class='op'>=</span> <span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:page</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_i'>to_i</span>
+  <span class='id identifier rubyid_offset'>offset</span>  <span class='op'>=</span> <span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:offset</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_limit'>limit</span>   <span class='op'>=</span> <span class='id identifier rubyid_positive'>positive</span><span class='lparen'>(</span><span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:limit</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_pg_size'>pg_size</span> <span class='op'>=</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>||</span> <span class='int'>10</span> <span class='comment'># TODO: fall-back page size for grouping
+</span>  <span class='id identifier rubyid_pages'>pages</span>   <span class='op'>=</span> <span class='id identifier rubyid_all_ids'>all_ids</span><span class='period'>.</span><span class='id identifier rubyid_in_groups_of'>in_groups_of</span><span class='lparen'>(</span><span class='id identifier rubyid_pg_size'>pg_size</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:compact</span><span class='rparen'>)</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_page'>page</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_page'>page</span> <span class='op'>&gt;</span> <span class='int'>1</span>
+      <span class='id identifier rubyid_ids_on_page'>ids_on_page</span> <span class='op'>=</span> <span class='id identifier rubyid_pages'>pages</span><span class='lbracket'>[</span><span class='id identifier rubyid_page'>page</span> <span class='op'>-</span> <span class='int'>2</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_raise'>raise</span> <span class='const'>RangeError</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Page </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_page'>page</span><span class='embexpr_end'>}</span><span class='tstring_content'> is invalid</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_ids_on_page'>ids_on_page</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
+      <span class='id identifier rubyid_offset'>offset</span> <span class='op'>=</span> <span class='id identifier rubyid_ids_on_page'>ids_on_page</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
+    <span class='kw'>else</span>
+      <span class='id identifier rubyid_page'>page</span>   <span class='op'>=</span> <span class='int'>1</span>
+      <span class='id identifier rubyid_offset'>offset</span> <span class='op'>=</span> <span class='kw'>nil</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:page</span><span class='rbracket'>]</span>   <span class='op'>=</span> <span class='id identifier rubyid_page'>page</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:first</span><span class='rbracket'>]</span>  <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span> <span class='op'>==</span> <span class='int'>1</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:last</span><span class='rbracket'>]</span>   <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span> <span class='op'>&gt;=</span> <span class='id identifier rubyid_pages'>pages</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:limit</span><span class='rbracket'>]</span>  <span class='op'>=</span> <span class='id identifier rubyid_limit'>limit</span> <span class='op'>=</span> <span class='id identifier rubyid_pg_size'>pg_size</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:offset</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='lparen'>(</span><span class='id identifier rubyid_page'>page</span> <span class='op'>-</span> <span class='int'>1</span><span class='rparen'>)</span> <span class='op'>*</span> <span class='id identifier rubyid_pg_size'>pg_size</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:limit</span><span class='rbracket'>]</span>  <span class='op'>=</span> <span class='id identifier rubyid_limit'>limit</span>
+    <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:offset</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_offset'>offset</span>
+  <span class='kw'>end</span>
+
+  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:total</span><span class='rbracket'>]</span>  <span class='op'>=</span> <span class='id identifier rubyid_all_ids'>all_ids</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span>
+  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:min_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_all_ids'>all_ids</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:max_id</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_all_ids'>all_ids</span><span class='period'>.</span><span class='id identifier rubyid_last'>last</span>
+
+  <span class='comment'># Include the array of arrays of database IDs if requested.
+</span>  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:pages</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_pages'>pages</span> <span class='kw'>if</span> <span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:pages</span><span class='rbracket'>]</span>
+
+  <span class='comment'># Generate a :groups summary if requested.
+</span>  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:groups</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_group_by_state'>group_by_state</span><span class='lparen'>(</span><span class='id identifier rubyid_all'>all</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_local_opt'>local_opt</span><span class='lbracket'>[</span><span class='symbol'>:groups</span><span class='rbracket'>]</span>
+
+  <span class='comment'># Finally, get the specific set of results.
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='label'>limit:</span> <span class='id identifier rubyid_limit'>limit</span><span class='comma'>,</span> <span class='label'>offset:</span> <span class='id identifier rubyid_offset'>offset</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_result'>result</span><span class='lbracket'>[</span><span class='symbol'>:list</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_get_relation'>get_relation</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_identifiers'>identifiers</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_records'>records</span>
+
+  <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:16:23 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

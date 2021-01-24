@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: ApiService
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "ApiService";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (A)</a> &raquo;
+    
+    
+    <span class="title">ApiService</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: ApiService
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Object</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">ApiService</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Api.html" title="Api (module)">Api</a></span>, <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/services/concerns/api_service.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Send/receive messages to/from a remote service.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="file.config.html" title="config">config</a></li>
+    
+      <li><a href="file.devise.html" title="devise">devise</a></li>
+    
+  </ul>
+
+</div><div id="subclasses">
+  <h2>Direct Known Subclasses</h2>
+  <p class="children"><span class='object_link'><a href="AwsS3Service.html" title="AwsS3Service (class)">AwsS3Service</a></span>, <span class='object_link'><a href="BookshareService.html" title="BookshareService (class)">BookshareService</a></span>, <span class='object_link'><a href="IaDownloadService.html" title="IaDownloadService (class)">IaDownloadService</a></span>, <span class='object_link'><a href="IngestService.html" title="IngestService (class)">IngestService</a></span>, <span class='object_link'><a href="SearchService.html" title="SearchService (class)">SearchService</a></span></p>
+</div>
+<h2>Defined Under Namespace</h2>
+<p class="children">
+  
+    
+      <strong class="modules">Modules:</strong> <span class='object_link'><a href="ApiService/Common.html" title="ApiService::Common (module)">Common</a></span>, <span class='object_link'><a href="ApiService/Definition.html" title="ApiService::Definition (module)">Definition</a></span>, <span class='object_link'><a href="ApiService/Properties.html" title="ApiService::Properties (module)">Properties</a></span>, <span class='object_link'><a href="ApiService/Status.html" title="ApiService::Status (module)">Status</a></span>
+    
+  
+    
+      <strong class="classes">Classes:</strong> <span class='object_link'><a href="ApiService/AuthError.html" title="ApiService::AuthError (class)">AuthError</a></span>, <span class='object_link'><a href="ApiService/CommError.html" title="ApiService::CommError (class)">CommError</a></span>, <span class='object_link'><a href="ApiService/ConnectError.html" title="ApiService::ConnectError (class)">ConnectError</a></span>, <span class='object_link'><a href="ApiService/EmptyResultError.html" title="ApiService::EmptyResultError (class)">EmptyResultError</a></span>, <span class='object_link'><a href="ApiService/Error.html" title="ApiService::Error (class)">Error</a></span>, <span class='object_link'><a href="ApiService/HtmlResultError.html" title="ApiService::HtmlResultError (class)">HtmlResultError</a></span>, <span class='object_link'><a href="ApiService/NoInputError.html" title="ApiService::NoInputError (class)">NoInputError</a></span>, <span class='object_link'><a href="ApiService/ParseError.html" title="ApiService::ParseError (class)">ParseError</a></span>, <span class='object_link'><a href="ApiService/RecvError.html" title="ApiService::RecvError (class)">RecvError</a></span>, <span class='object_link'><a href="ApiService/RedirectLimitError.html" title="ApiService::RedirectLimitError (class)">RedirectLimitError</a></span>, <span class='object_link'><a href="ApiService/RedirectionError.html" title="ApiService::RedirectionError (class)">RedirectionError</a></span>, <span class='object_link'><a href="ApiService/RequestError.html" title="ApiService::RequestError (class)">RequestError</a></span>, <span class='object_link'><a href="ApiService/ResponseError.html" title="ApiService::ResponseError (class)">ResponseError</a></span>, <span class='object_link'><a href="ApiService/SessionError.html" title="ApiService::SessionError (class)">SessionError</a></span>, <span class='object_link'><a href="ApiService/TimeoutError.html" title="ApiService::TimeoutError (class)">TimeoutError</a></span>, <span class='object_link'><a href="ApiService/XmitError.html" title="ApiService::XmitError (class)">XmitError</a></span>
+    
+  
+</p>
+
+
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+
+
+  <h2>Instance Attribute Summary <small><a href="#" class="summary_toggle">collapse</a></small></h2>
+  <ul class="summary">
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#options-instance_method" title="#options (instance method)">#<strong>options</strong>  &#x21d2; Hash </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+      <span class="note title readonly">readonly</span>
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Internal service options along with connection options.</p>
+</div></span>
+  
+</li>
+
+    
+  </ul>
+
+
+
+
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#clear-class_method" title="clear (class method)">.<strong>clear</strong>  &#x21d2; Hash{Class=&gt;ApiService} </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Remove all service instances.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#inherited-class_method" title="inherited (class method)">.<strong>inherited</strong>(subclass)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Each subclass gets its own distinct set of service state variables.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#table-class_method" title="table (class method)">.<strong>table</strong>  &#x21d2; Hash{Class=&gt;ApiService} </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A table of all service instances.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(user: nil, base_url: nil, **opt)  &#x21d2; ApiService </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize a new instance.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+<div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(user: nil, base_url: nil, **opt)  &#x21d2; <tt><span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize a new instance</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>User instance which includes a Bookshare user identity and token.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>base_url</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Base URL to the external service (instead of #BASE_URL defined by the subclass).</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Stored in @options</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_service.rb', line 45</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='label'>user:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>base_url:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='ivar'>@options</span>  <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='rbrace'>}</span>
+  <span class='ivar'>@base_url</span> <span class='op'>=</span> <span class='id identifier rubyid_base_url'>base_url</span>
+  <span class='id identifier rubyid_set_user'>set_user</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+  <div id="instance_attr_details" class="attr_details">
+    <h2>Instance Attribute Details</h2>
+    
+      
+      <span id=""></span>
+      <div class="method_details first">
+  <h3 class="signature first" id="options-instance_method">
+  
+    #<strong>options</strong>  &#x21d2; <tt>Hash</tt>  <span class="extras">(readonly)</span>
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Internal service options along with connection options.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>ApiService::Common#SERVICE_OPTIONS</li>
+    
+      <li><span class='object_link'>ApiService::Common#make_connection</span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+35
+36
+37</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_service.rb', line 35</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_options'>options</span>
+  <span class='ivar'>@options</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="clear-class_method">
+  
+    .<strong>clear</strong>  &#x21d2; <tt>Hash{Class=&gt;<span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span>}</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Remove all service instances.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{Class=&gt;<span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span>}</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+69
+70
+71</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_service.rb', line 69</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+  <span class='id identifier rubyid_table'>table</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="inherited-class_method">
+  
+    .<strong>inherited</strong>(subclass)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Each subclass gets its own distinct set of service state variables.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>subclass</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_service.rb', line 83</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_inherited'>inherited</span><span class='lparen'>(</span><span class='id identifier rubyid_subclass'>subclass</span><span class='rparen'>)</span>
+
+  <span class='comment'># == Maintain a distinct instance of each service in ApiService#table
+</span>
+  <span class='id identifier rubyid_subclass'>subclass</span><span class='period'>.</span><span class='id identifier rubyid_class_exec'>class_exec</span> <span class='kw'>do</span>
+
+    <span class='comment'># The single instance of this class.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @param [Hash, nil] opt        Passed to ApiService#initialize.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [ApiService]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># == Usage Notes
+</span>    <span class='comment'># For special purposes (like overriding :no_raise for all API requests
+</span>    <span class='comment'># within a single method), use `ApiService.new` rather than
+</span>    <span class='comment'># `ApiService.instance`.  Providing modified options to this method
+</span>    <span class='comment'># creates a new single instance; if the options are the same as the
+</span>    <span class='comment'># current options then the existing instance is returned.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># == Implementation Notes
+</span>    <span class='comment'># The Singleton pattern is avoided so that the instance is unique
+</span>    <span class='comment'># per-request and not per-thread (potentially spanning multiple requests
+</span>    <span class='comment'># by different users).
+</span>    <span class='comment'>#
+</span>    <span class='comment'>#--
+</span>    <span class='comment'># noinspection RubyNilAnalysis
+</span>    <span class='comment'>#++
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_instance'>instance</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_reject_blanks'>reject_blanks</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_srv'>srv</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_table'><span class='object_link'><a href="#table-class_method" title="ApiService.table (method)">table</a></span></span><span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span>
+      <span class='id identifier rubyid_use_existing'>use_existing</span>   <span class='op'>=</span> <span class='id identifier rubyid_srv'>srv</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+      <span class='id identifier rubyid_use_existing'>use_existing</span> <span class='op'>&amp;&amp;=</span> <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_match?'><span class='object_link'><a href="ApplicationRecord.html#match%3F-class_method" title="ApplicationRecord.match? (method)">match?</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:user</span><span class='rbracket'>]</span><span class='comma'>,</span> <span class='id identifier rubyid_srv'>srv</span><span class='period'>.</span><span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_use_existing'>use_existing</span> <span class='op'>&amp;&amp;=</span> <span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='symbol'>:user</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='id identifier rubyid_srv'>srv</span><span class='period'>.</span><span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_use_existing'>use_existing</span> <span class='op'>?</span> <span class='id identifier rubyid_srv'>srv</span> <span class='op'>:</span> <span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_table'><span class='object_link'><a href="#table-class_method" title="ApiService.table (method)">table</a></span></span><span class='lbracket'>[</span><span class='kw'>self</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Update the service instance with new information.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @param [Hash, nil] opt           Passed to ApiService#initialize.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [ApiService]
+</span>    <span class='comment'>#
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_update'>update</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_instance'>instance</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Remove the single instance of the class so that a fresh instance will
+</span>    <span class='comment'># be generated the next time #instance is accessed.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [nil]
+</span>    <span class='comment'>#
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span>
+      <span class='const'><span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span></span><span class='period'>.</span><span class='id identifier rubyid_table'><span class='object_link'><a href="#table-class_method" title="ApiService.table (method)">table</a></span></span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='kw'>self</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+  <span class='comment'># == Each service maintains a tables its request methods
+</span>
+  <span class='id identifier rubyid_subclass'>subclass</span><span class='period'>.</span><span class='id identifier rubyid_class_exec'>class_exec</span> <span class='kw'>do</span>
+
+    <span class='comment'># Add a method name and its properties to #api_methods.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @param [Hash{Symbol=&gt;Hash{Symbol=&gt;*}}] prop
+</span>    <span class='comment'># @param [String, nil]                   topic
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [void]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># == Usage Notes
+</span>    <span class='comment'># The definition of each API request method is followed by a block which
+</span>    <span class='comment'># invokes this method in order to register the properties of the method
+</span>    <span class='comment'># and its associated API endpoint.  The *prop* argument is expected to be
+</span>    <span class='comment'># a hash with a single entry whose key is the symbol for the method and
+</span>    <span class='comment'># whose value is a Hash containing the properties.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># All keys in the property hash are optional, however :reference_id must
+</span>    <span class='comment'># be included for methods that map on to documented API requests.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :alias          One or more identifiers which associate a method named
+</span>    <span class='comment'>#                 argument with the name of the API parameter it
+</span>    <span class='comment'>#                 represents. (This is not needed for arguments with
+</span>    <span class='comment'>#                 names that are the same as the documented API
+</span>    <span class='comment'>#                 parameter.)
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :required       One or more API parameters which are mandatory, which
+</span>    <span class='comment'>#                 may include either Path or Query parameters.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :optional       One or more API optional Query parameters.
+</span>    <span class='comment'>#                 (Path parameters are never optional.)
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :multi          An array of one or more parameters that can be passed
+</span>    <span class='comment'>#                 in as a single value or as an array.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :role           If given as :anonymous this is a hint that the request
+</span>    <span class='comment'>#                 should succeed even if the current user is not logged
+</span>    <span class='comment'>#                 in.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :reference_id   This is the HTML element ID of the request on the
+</span>    <span class='comment'>#                 Bookshare API documentation page.  If this is not
+</span>    <span class='comment'>#                 provided then the method is not treated as a true API
+</span>    <span class='comment'>#                 method.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># :topic          The base of the module in which the method was defined
+</span>    <span class='comment'>#                 added by this method as a hint for the API Explorer.
+</span>    <span class='comment'>#
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_add_api'>add_api</span><span class='lparen'>(</span><span class='id identifier rubyid_prop'>prop</span><span class='comma'>,</span> <span class='id identifier rubyid_topic'>topic</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_prop'>prop</span> <span class='op'>=</span> <span class='id identifier rubyid_prop'>prop</span><span class='period'>.</span><span class='id identifier rubyid_transform_values'>transform_values</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>topic:</span> <span class='id identifier rubyid_topic'>topic</span><span class='rparen'>)</span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_topic'>topic</span>
+      <span class='lparen'>(</span><span class='ivar'>@all_methods</span>  <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_prop'>prop</span><span class='rparen'>)</span>
+      <span class='lparen'>(</span><span class='ivar'>@true_methods</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_prop'>prop</span><span class='period'>.</span><span class='id identifier rubyid_select'>select</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_v'>v</span><span class='lbracket'>[</span><span class='symbol'>:reference_id</span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='rparen'>)</span>
+    <span class='kw'>end</span>
+
+    <span class='comment'># Properties for each method which implements an API request.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @param [Hash, Symbol, String, nil] arg
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [Hash, nil]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># == Variations
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @overload api_methods(arg)
+</span>    <span class='comment'>#   @param [Hash, nil] arg
+</span>    <span class='comment'>#   @option arg [Boolean] :synthetic  Default: false.
+</span>    <span class='comment'>#   @return [Hash{Symbol=&gt;Hash}]      Properties of all methods.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @overload api_methods(arg)
+</span>    <span class='comment'>#   @param [Symbol, String] arg       Method name.
+</span>    <span class='comment'>#   @return [Hash, nil]               Properties of the named method.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># == Usage Notes
+</span>    <span class='comment'># By default only true (documented) API methods are returned, unless:
+</span>    <span class='comment'># - If :synthetic is *true* then &quot;fake&quot; methods (which implement
+</span>    <span class='comment'>#     functionality not directly supported by the API) are also included.
+</span>    <span class='comment'># - If :synthetic is :only then only the &quot;fake&quot; methods are returned.
+</span>    <span class='comment'>#
+</span>    <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_api_methods'>api_methods</span><span class='lparen'>(</span><span class='id identifier rubyid_arg'>arg</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+      <span class='ivar'>@all_methods</span>  <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+      <span class='ivar'>@true_methods</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+      <span class='comment'># noinspection RubyNilAnalysis
+</span>      <span class='kw'>if</span> <span class='id identifier rubyid_arg'>arg</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_arg'>arg</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Symbol</span><span class='rparen'>)</span>
+        <span class='ivar'>@all_methods</span><span class='lbracket'>[</span><span class='id identifier rubyid_arg'>arg</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span>
+      <span class='kw'>elsif</span> <span class='lparen'>(</span><span class='id identifier rubyid_synthetic'>synthetic</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_arg'>arg</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_arg'>arg</span><span class='lbracket'>[</span><span class='symbol'>:synthetic</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>==</span> <span class='symbol'>:only</span>
+        <span class='ivar'>@all_methods</span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='op'>*</span><span class='ivar'>@true_methods</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='rparen'>)</span>
+      <span class='kw'>else</span>
+        <span class='id identifier rubyid_synthetic'>synthetic</span> <span class='op'>?</span> <span class='ivar'>@all_methods</span> <span class='op'>:</span> <span class='ivar'>@true_methods</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>end</span>
+
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="table-class_method">
+  
+    .<strong>table</strong>  &#x21d2; <tt>Hash{Class=&gt;<span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span>}</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A table of all service instances.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{Class=&gt;<span class='object_link'><a href="" title="ApiService (class)">ApiService</a></span>}</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+61
+62
+63</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_service.rb', line 61</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_table'>table</span>
+  <span class='ivar'>@table</span> <span class='op'>||=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:19:01 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>

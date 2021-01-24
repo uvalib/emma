@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>
+  Class: ApiCachingMiddleware
+  
+    &mdash; Documentation by YARD 0.9.26
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" />
+
+<script type="text/javascript">
+  pathId = "ApiCachingMiddleware";
+  relpath = '';
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div class="nav_wrap">
+      <iframe id="nav" src="class_list.html?1"></iframe>
+      <div id="resizer"></div>
+    </div>
+
+    <div id="main" tabindex="-1">
+      <div id="header">
+        <div id="menu">
+  
+    <a href="_index.html">Index (A)</a> &raquo;
+    
+    
+    <span class="title">ApiCachingMiddleware</span>
+  
+</div>
+
+        <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+
+        <svg width="24" height="24">
+          <rect x="0" y="4" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="12" width="24" height="4" rx="1" ry="1"></rect>
+          <rect x="0" y="20" width="24" height="4" rx="1" ry="1"></rect>
+        </svg>
+    </a>
+  
+</div>
+        <div class="clear"></div>
+      </div>
+
+      <div id="content"><h1>Class: ApiCachingMiddleware
+  
+  
+  
+</h1>
+<div class="box_info">
+  
+  <dl>
+    <dt>Inherits:</dt>
+    <dd>
+      <span class="inheritName">Faraday::Middleware</span>
+      
+        <ul class="fullTree">
+          <li>Object</li>
+          
+            <li class="next">Faraday::Middleware</li>
+          
+            <li class="next">ApiCachingMiddleware</li>
+          
+        </ul>
+        <a href="#" class="inheritanceTree">show all</a>
+      
+    </dd>
+  </dl>
+  
+
+  
+  
+  
+  
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="CachingMiddleware/Concern.html" title="CachingMiddleware::Concern (module)">CachingMiddleware::Concern</a></span></dd>
+  </dl>
+  
+  
+
+  
+
+  
+  <dl>
+    <dt>Defined in:</dt>
+    <dd>app/services/concerns/api_caching_middleware.rb</dd>
+  </dl>
+  
+</div>
+
+<h2>Overview</h2><div class="docstring">
+  <div class="discussion">
+    
+<p>Caching for items from an external API.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+  
+    <h2>
+      Constant Summary
+      <small><a href="#" class="constants_summary_toggle">collapse</a></small>
+    </h2>
+
+    <dl class="constants">
+      
+        <dt id="DEFAULT_OPTIONS-constant" class="">DEFAULT_OPTIONS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Default options.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="CachingMiddleware.html" title="CachingMiddleware (module)">CachingMiddleware</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="CachingMiddleware/Defaults.html" title="CachingMiddleware::Defaults (module)">Defaults</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="CachingMiddleware/Defaults.html#DEFAULT_OPTIONS-constant" title="CachingMiddleware::Defaults::DEFAULT_OPTIONS (constant)">DEFAULT_OPTIONS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span>
+  <span class='label'>namespace:</span>  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>api</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
+  <span class='label'>expires_in:</span> <span class='const'><span class='object_link'><a href="CachingMiddleware/Defaults.html#DEFAULT_EXPIRATION-constant" title="CachingMiddleware::Defaults::DEFAULT_EXPIRATION (constant)">DEFAULT_EXPIRATION</a></span></span><span class='comma'>,</span>
+<span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
+      
+    </dl>
+  
+
+
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="CachingMiddleware/Defaults.html" title="CachingMiddleware::Defaults (module)">CachingMiddleware::Defaults</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="CachingMiddleware/Defaults.html#CACHE_ROOT_DIR-constant" title="CachingMiddleware::Defaults::CACHE_ROOT_DIR (constant)">CachingMiddleware::Defaults::CACHE_ROOT_DIR</a></span>, <span class='object_link'><a href="CachingMiddleware/Defaults.html#DEFAULT_EXPIRATION-constant" title="CachingMiddleware::Defaults::DEFAULT_EXPIRATION (constant)">CachingMiddleware::Defaults::DEFAULT_EXPIRATION</a></span>, <span class='object_link'><a href="CachingMiddleware/Defaults.html#FARADAY_CACHE_DIR-constant" title="CachingMiddleware::Defaults::FARADAY_CACHE_DIR (constant)">CachingMiddleware::Defaults::FARADAY_CACHE_DIR</a></span></p>
+
+
+
+
+  <h2>Instance Attribute Summary</h2>
+  
+  <h3 class="inherited">Attributes included from <span class='object_link'><a href="CachingMiddleware/Concern.html" title="CachingMiddleware::Concern (module)">CachingMiddleware::Concern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="CachingMiddleware/Concern.html#cacheable_paths-instance_method" title="CachingMiddleware::Concern#cacheable_paths (method)">#cacheable_paths</a></span>, <span class='object_link'><a href="CachingMiddleware/Concern.html#http_header-instance_method" title="CachingMiddleware::Concern#http_header (method)">#http_header</a></span>, <span class='object_link'><a href="CachingMiddleware/Concern.html#logger-instance_method" title="CachingMiddleware::Concern#logger (method)">#logger</a></span>, <span class='object_link'><a href="CachingMiddleware/Concern.html#store-instance_method" title="CachingMiddleware::Concern#store (method)">#store</a></span>, <span class='object_link'><a href="CachingMiddleware/Concern.html#store_options-instance_method" title="CachingMiddleware::Concern#store_options (method)">#store_options</a></span></p>
+
+
+  
+    <h2>
+      Instance Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#initialize-instance_method" title="#initialize (instance method)">#<strong>initialize</strong>(app, opt = nil)  &#x21d2; ApiCachingMiddleware </a>
+    
+
+    
+  </span>
+  
+  
+    <span class="note title constructor">constructor</span>
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Initialize an instance.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#key-instance_method" title="#key (instance method)">#<strong>key</strong>(env)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate cache key.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="CachingMiddleware/Concern.html" title="CachingMiddleware::Concern (module)">CachingMiddleware::Concern</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="CachingMiddleware/Concern.html#call-instance_method" title="CachingMiddleware::Concern#call (method)">#call</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  <div id="constructor_details" class="method_details_list">
+  <h2>Constructor Details</h2>
+  
+    <div class="method_details first">
+  <h3 class="signature first" id="initialize-instance_method">
+  
+    #<strong>initialize</strong>(app, opt = nil)  &#x21d2; <tt><span class='object_link'><a href="" title="ApiCachingMiddleware (class)">ApiCachingMiddleware</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Initialize an instance.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>app</span>
+      
+      
+        <span class='type'>(<tt>Faraday::Middleware</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:logger</span>
+          <span class="type">(<tt>Logger</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:cache_dir</span>
+          <span class="type">(<tt>String</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:store</span>
+          <span class="type">(<tt>Symbol</tt>, <tt>ActiveSupport::Cache::Store</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:store_options</span>
+          <span class="type">(<tt>Hash</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:expires_in</span>
+          <span class="type">(<tt>ActiveSupport::Duration</tt>, <tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+    </ul>
+  
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+43
+44
+45
+46
+47
+48
+49</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_caching_middleware.rb', line 43</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#DEFAULT_OPTIONS-constant" title="ApiCachingMiddleware::DEFAULT_OPTIONS (constant)">DEFAULT_OPTIONS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_deep_merge'>deep_merge</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
+  <span class='ivar'>@store_options</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:store_options</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='ivar'>@expires_in</span>    <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:expires_in</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='ivar'>@store_options</span><span class='lbracket'>[</span><span class='symbol'>:expires_in</span><span class='rbracket'>]</span>
+  <span class='ivar'>@store_options</span><span class='lbracket'>[</span><span class='symbol'>:expires_in</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='ivar'>@expires_in</span>
+  <span class='kw'>super</span><span class='lparen'>(</span><span class='id identifier rubyid_app'>app</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+  
+</div>
+
+
+  <div id="instance_method_details" class="method_details_list">
+    <h2>Instance Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="key-instance_method">
+  
+    #<strong>key</strong>(env)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate cache key.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>env</span>
+      
+      
+        <span class='type'>(<tt>Faraday::Env</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If there is no request active.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+64
+65
+66</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/concerns/api_caching_middleware.rb', line 64</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_key'>key</span><span class='lparen'>(</span><span class='id identifier rubyid_env'>env</span><span class='rparen'>)</span>
+  <span class='kw'>super</span><span class='period'>.</span><span class='id identifier rubyid_sub'>sub</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>([?&amp;])api=[^&amp;]+</span><span class='regexp_end'>/</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>\1</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'># TODO: include user ID
+</span><span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
+</div>
+
+      <div id="footer">
+  Generated on Sun Jan 24 16:20:00 2021 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.9.26 (ruby-2.7.2).
+</div>
+
+    </div>
+  </body>
+</html>
