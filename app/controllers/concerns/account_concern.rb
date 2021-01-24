@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# AccountConcern
+# Support methods for the "/account" controller.
 #
 module AccountConcern
 

@@ -61,6 +61,8 @@ module UploadWorkflow::Bulk::Remove::Events
   include UploadWorkflow::Bulk::Remove::Simulation
 end
 
+# Overridden state transition methods specific to bulk removal.
+#
 module UploadWorkflow::Bulk::Remove::States
 
   include UploadWorkflow::Bulk::States

@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # Promote a file from :cache to :store.
 #
+# @note Currently unused
+#
 class Attachment::PromoteJob < ApplicationJob
 
   include Emma::Debug
@@ -16,6 +18,8 @@ class Attachment::PromoteJob < ApplicationJob
   # @param [Upload] record
   # @param [Symbol] name              Should be :file.
   # @param [*]      data              :file_data
+  #
+  # @note Currently unused
   #
   def perform(record, name, data)
     __debug_args(binding)

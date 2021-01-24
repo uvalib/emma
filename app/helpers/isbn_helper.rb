@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module IsbnHelper
 
+  # @private
   def self.included(base)
     __included(base, '[IsbnHelper]')
   end

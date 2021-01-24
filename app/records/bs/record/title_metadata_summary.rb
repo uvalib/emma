@@ -39,7 +39,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
 #
-# @note This duplicates Bs::Message::TitleMetadataSummary
+# @see Bs::Message::TitleMetadataSummary (duplicate schema)
 #
 # == Implementation Notes
 # Similar to Bs::Record::AssignedTitleMetadataSummary, but without fields:
@@ -57,15 +57,15 @@ __loading_begin(__FILE__)
 #   :site
 #   :translators
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Record::TitleMetadataSummary < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  #--
+  # noinspection DuplicatedCode
+  #++
   schema do
     has_many  :allows,            AllowsType
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated

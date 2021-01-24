@@ -37,17 +37,17 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary
 #
-# @note This duplicates Bs::Record::TitleMetadataSummary
+# @see Bs::Record::TitleMetadataSummary (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Message::TitleMetadataSummary < Bs::Api::Message
 
   include Bs::Shared::ArtifactMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  #--
+  # noinspection DuplicatedCode
+  #++
   schema do
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :authors,           Bs::Record::Name          # NOTE: deprecated

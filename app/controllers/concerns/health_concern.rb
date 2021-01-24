@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HealthConcern
+# Support methods for the "/health" controller.
 #
 module HealthConcern
 

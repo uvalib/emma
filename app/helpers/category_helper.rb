@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# CategoryHelper
+# View helper methods for "/category" pages.
 #
 module CategoryHelper
 
+  # @private
   def self.included(base)
     __included(base, '[CategoryHelper]')
   end

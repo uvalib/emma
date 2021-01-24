@@ -22,11 +22,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_reading_list_user_view
 #
-# @note This duplicates Bs::Record::ReadingListUserView
+# @see Bs::Record::ReadingListUserView (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Message::ReadingListUserView < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

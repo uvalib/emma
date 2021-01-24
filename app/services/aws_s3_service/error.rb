@@ -13,6 +13,7 @@ class AwsS3Service::Error < ApiService::Error
   #
   module Methods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -49,7 +50,7 @@ class AwsS3Service::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# noinspection LongLine, DuplicatedCode
+# noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class AwsS3Service::AuthError          < ApiService::AuthError;          include AwsS3Service::Error::Methods; end # 'en.emma.error.aws_s3.auth'            || 'en.emma.error.api.auth'

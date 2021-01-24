@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Facilities for working with received URL parameters.
+# Controller callbacks for working with received URL parameters.
 #
 # @see ParamsHelper
 #

@@ -17,8 +17,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_active_book_list
 #
-# NOTE: This duplicates the form of:
-# @see Bs::Message::ActivePeriodicalList
+# @see Bs::Message::ActivePeriodicalList (similar schema)
 #
 class Bs::Message::ActiveBookList < Bs::Api::Message
 

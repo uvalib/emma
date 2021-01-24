@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Pagination support methods.
+# View helper methods supporting pagination.
 #
 module PaginationHelper
 
+  # @private
   def self.included(base)
     __included(base, '[PaginationHelper]')
   end

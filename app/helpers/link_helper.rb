@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# LinkHelper
+# View helper methods supporting the creation of links.
 #
 module LinkHelper
 
+  # @private
   def self.included(base)
     __included(base, '[LinkHelper]')
   end

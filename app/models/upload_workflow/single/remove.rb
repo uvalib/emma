@@ -41,6 +41,8 @@ module UploadWorkflow::Single::Remove::Data
   include UploadWorkflow::Single::Remove::External
 end
 
+# New and overridden action methods specific to single-entry removal.
+#
 module UploadWorkflow::Single::Remove::Actions
 
   include UploadWorkflow::Single::Actions
@@ -90,6 +92,8 @@ module UploadWorkflow::Single::Remove::Events
   include UploadWorkflow::Single::Remove::Simulation
 end
 
+# Overridden state transition methods specific to single-entry removal.
+#
 module UploadWorkflow::Single::Remove::States
 
   include UploadWorkflow::Single::States
@@ -234,7 +238,7 @@ end
 
 public
 
-# Single (or multiple) submission workflow.
+# Single-entry removal workflow.
 #
 class UploadWorkflow::Single::Remove < UploadWorkflow::Single
 

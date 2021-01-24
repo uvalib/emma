@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# MemberHelper
+# View helper methods for "/member" pages.
 #
 module MemberHelper
 
+  # @private
   def self.included(base)
     __included(base, '[MemberHelper]')
   end

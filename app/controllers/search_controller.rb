@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SearchController
+# Handle "/search" requests.
 #
 class SearchController < ApplicationController
 

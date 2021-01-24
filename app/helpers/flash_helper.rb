@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Flash message methods.
+# Methods for creating and displaying flash messages.
 #
 module FlashHelper
 
+  # @private
   def self.included(base)
     __included(base, '[FlashHelper]')
   end

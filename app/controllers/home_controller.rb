@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Home pages.
+# Handle "/home" pages.
 #
 # @see file:app/views/home
 #

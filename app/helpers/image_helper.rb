@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# ImageHelper
+# View helper methods supporting the display of images.
 #
 module ImageHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ImageHelper]')
   end

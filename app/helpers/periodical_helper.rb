@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# PeriodicalHelper
+# View helper methods for "/periodical" pages.
 #
 module PeriodicalHelper
 
+  # @private
   def self.included(base)
     __included(base, '[PeriodicalHelper]')
   end
@@ -186,7 +187,7 @@ module PeriodicalHelper
   # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was nil or *item* resolved to nil.
+  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
   #
   # @see ModelHelper#render_value
   #

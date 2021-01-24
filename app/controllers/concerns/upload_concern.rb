@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 require 'net/http'
 
-# UploadConcern
+# Support methods for the "/upload" controller.
 #
 module UploadConcern
 

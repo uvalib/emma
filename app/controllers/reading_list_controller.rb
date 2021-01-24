@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ReadingListController
+# Handle Bookshare-only "/reading_list" pages.
 #
 # @see ReadingListHelper
 #
@@ -49,7 +49,7 @@ class ReadingListController < ApplicationController
   public
 
   # == GET /reading_list
-  # 
+  #
   # List all reading lists available to the user (private lists, shared lists,
   # or organization list to which the user is subscribed).
   #
@@ -68,7 +68,7 @@ class ReadingListController < ApplicationController
   end
 
   # == GET /reading_list/:id
-  # 
+  #
   # Display details of a reading list.
   #
   def show
@@ -87,7 +87,7 @@ class ReadingListController < ApplicationController
   end
 
   # == GET /reading_list/new[?id=:id]
-  # 
+  #
   # Add details for a new reading list.
   #
   def new
@@ -96,7 +96,7 @@ class ReadingListController < ApplicationController
   end
 
   # == POST /reading_list/:id
-  # 
+  #
   # Create a new reading list.
   #
   def create
@@ -106,7 +106,7 @@ class ReadingListController < ApplicationController
   end
 
   # == GET /reading_list/:id/edit
-  # 
+  #
   # Modify metadata of an existing reading list.
   #
   def edit
@@ -116,7 +116,7 @@ class ReadingListController < ApplicationController
 
   # == PUT   /reading_list/:id
   # == PATCH /reading_list/:id
-  # 
+  #
   # Update the entry for an existing reading list.
   #
   def update
@@ -132,7 +132,7 @@ class ReadingListController < ApplicationController
   end
 
   # == DELETE /reading_list/:id
-  # 
+  #
   # Remove an existing reading list.
   #
   def destroy

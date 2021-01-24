@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# UserConcern
+# Controller support methods for working with authentication and user identity.
 #
 module UserConcern
 

@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Authentication-related methods.
+# View helper methods related to authentication.
 #
 module SessionsHelper
 
+  # @private
   def self.included(base)
     __included(base, '[SessionsHelper]')
   end

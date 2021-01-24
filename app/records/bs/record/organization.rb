@@ -21,11 +21,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_organization
 #
-# @note This duplicates Bs::Message::Organization
+# @see Bs::Message::Organization (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Record::Organization < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

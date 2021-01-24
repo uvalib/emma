@@ -18,11 +18,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_message
 #
-# @note This duplicates Bs::Record::UserMessage
+# @see Bs::Record::UserMessage (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Message::UserMessage < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

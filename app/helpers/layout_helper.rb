@@ -5,13 +5,15 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting general page layout.
+# View helper methods supporting general page layout.
 #
 module LayoutHelper
 
   # Include the submodules defined in "app/helpers/layout_helper/*.rb".
   #
   # @param [Module] base
+  #
+  # @private
   #
   def self.included(base)
     __included(base, '[LayoutHelper]')

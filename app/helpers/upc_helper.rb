@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module UpcHelper
 
+  # @private
   def self.included(base)
     __included(base, '[UpcHelper]')
   end

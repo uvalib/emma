@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::PageTitle
+# View helper methods for setting/getting the <title> meta-tag.
 #
 module HeadHelper::PageTitle
 

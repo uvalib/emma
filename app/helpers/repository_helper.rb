@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting variations for the member repositories.
+# View helper methods supporting variations for the member repositories.
 #
 module RepositoryHelper
 
+  # @private
   def self.included(base)
     __included(base, '[RepositoryHelper]')
   end

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# FlashConcern
+# Controller support methods for creation of flash messages.
 #
 module FlashConcern
 

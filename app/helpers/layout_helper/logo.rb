@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::Logo
+# View helper methods for the <header> logo.
 #
 module LayoutHelper::Logo
 

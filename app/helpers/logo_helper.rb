@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Repository logos.
+# View helper methods supporting the creation of repository logos.
 #
 module LogoHelper
 
+  # @private
   def self.included(base)
     __included(base, '[LogoHelper]')
   end

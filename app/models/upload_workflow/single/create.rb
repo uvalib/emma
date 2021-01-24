@@ -41,6 +41,8 @@ module UploadWorkflow::Single::Create::Data
   include UploadWorkflow::Single::Create::External
 end
 
+# New and overridden action methods specific to single-entry submission.
+#
 module UploadWorkflow::Single::Create::Actions
 
   include UploadWorkflow::Single::Actions
@@ -128,6 +130,8 @@ module UploadWorkflow::Single::Create::Events
   include UploadWorkflow::Single::Create::Simulation
 end
 
+# Overridden state transition methods specific to single-entry submission.
+#
 module UploadWorkflow::Single::Create::States
 
   include UploadWorkflow::Single::States

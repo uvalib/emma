@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 require 'prometheus/client'
 
-# MetricsConcern
+# Support methods for the Prometheus metrics.
 #
 module MetricsConcern
 

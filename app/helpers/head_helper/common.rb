@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::Common
+# Shared view helper methods supporting document "<head>" entries.
 #
 module HeadHelper::Common
 

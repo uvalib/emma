@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module IngestService::Properties
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end

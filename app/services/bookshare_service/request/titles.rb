@@ -218,7 +218,7 @@ module BookshareService::Request::Titles
   # @return [Bs::Message::ArtifactMetadata]
   # @return [nil]                     If the requested format was not present.
   #
-  # NOTE: This is not a real Bookshare API call.
+  # @note This is not a real Bookshare API call.
   #
   def get_artifact_metadata(bookshareId:, format:, **opt)
     title = get_title(bookshareId: bookshareId, **opt)

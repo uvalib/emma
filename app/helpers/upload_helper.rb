@@ -5,10 +5,12 @@
 
 __loading_begin(__FILE__)
 
-# Upload configuration values for Uppy.
+# View helper methods supporting the display and creation of Upload records,
+# including support for file upload via Uppy.
 #
 module UploadHelper
 
+  # @private
   def self.included(base)
     __included(base, '[UploadHelper]')
   end
@@ -423,7 +425,7 @@ module UploadHelper
   # @param [Hash]          opt        Passed to inner #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                       If #UPLOAD_PAGE_FILTERING is false.
+  # @return [nil]                       If #UPLOAD_PAGE_FILTERING is *false*.
   #
   # @see #UPLOAD_STATE_GROUP
   # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()

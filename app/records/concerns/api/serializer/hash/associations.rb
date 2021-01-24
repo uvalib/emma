@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # Overrides for Hash serializers.
 #
-#--
-# noinspection DuplicatedCode
-#++
 module Api::Serializer::Hash::Associations
 
   extend ActiveSupport::Concern

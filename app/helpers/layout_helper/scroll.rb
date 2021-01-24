@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::Scroll
+# View helper methods supporting page scrolling.
 #
 module LayoutHelper::Scroll
 

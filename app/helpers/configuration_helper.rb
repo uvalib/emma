@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting I18n lookup.
+# Methods supporting "/config/locales" configuration lookup.
 #
 module ConfigurationHelper
 
+  # @private
   def self.included(base)
 
     __included(base, '[ConfigurationHelper]')

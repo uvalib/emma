@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Hidden "skip navigation" menu.
+# View helper methods for setting/getting the hidden "skip navigation" menu.
 #
 module LayoutHelper::SkipNav
 

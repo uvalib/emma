@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# PeriodicalController
+# Handle Bookshare-only "/periodical" pages.
 #
 # @see PeriodicalHelper
 #
@@ -49,7 +49,7 @@ class PeriodicalController < ApplicationController
   public
 
   # == GET /periodical
-  # 
+  #
   # List all periodicals.
   #
   def index
@@ -67,7 +67,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == GET /periodical/:id
-  # 
+  #
   # Display details of an existing periodical.
   #
   def show
@@ -84,7 +84,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == GET /periodical/new[?id=:id]
-  # 
+  #
   # Add metadata for a new periodical.
   #
   def new
@@ -92,7 +92,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == POST /periodical/:id
-  # 
+  #
   # Create an entry for a new periodical.
   #
   def create
@@ -100,7 +100,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == GET /periodical/:id/edit
-  # 
+  #
   # Modify metadata of an existing periodical entry.
   #
   def edit
@@ -109,7 +109,7 @@ class PeriodicalController < ApplicationController
 
   # == PUT   /periodical/:id
   # == PATCH /periodical/:id
-  # 
+  #
   # Update the entry for an existing periodical.
   #
   def update
@@ -117,7 +117,7 @@ class PeriodicalController < ApplicationController
   end
 
   # == DELETE /periodical/:id
-  # 
+  #
   # Remove an existing periodical entry.
   #
   def destroy

@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Shared HTML support methods.
+# Shared view helper HTML support methods.
 #
 module HtmlHelper
 
+  # @private
   def self.included(base)
 
     __included(base, '[HtmlHelper]')

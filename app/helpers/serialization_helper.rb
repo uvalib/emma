@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# SerializationHelper
+# View helper methods supporting non-HTML rendering.
 #
 module SerializationHelper
 
+  # @private
   def self.included(base)
     __included(base, '[SerializationHelper]')
   end

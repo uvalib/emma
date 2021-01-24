@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# IaDownloadConcern
+# Controller support methods for downloads from Internet Archive.
 #
 module IaDownloadConcern
 
@@ -20,7 +20,7 @@ module IaDownloadConcern
   end
 
   include ActionController::DataStreaming
-  
+
   include ApiConcern
   include SerializationHelper
 

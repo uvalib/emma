@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::SearchBar
+# View helper methods for the <header> search bar.
 #
 module LayoutHelper::SearchBar
 

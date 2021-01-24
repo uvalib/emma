@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::Footer
+# View helper methods for the page <footer>.
 #
 module LayoutHelper::Footer
 

@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Support methods related to `#session`.
+# View helper support methods related to `#session`.
 #
 module SessionDebugHelper
 
+  # @private
   def self.included(base)
     __included(base, '[SessionDebugHelper]')
   end

@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Support methods related to `params` and `session`.
+# View helper support methods related to `params` and `session`.
 #
 module ParamsHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ParamsHelper]')
   end

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::PageClasses
+# View helper methods support CSS class annotation of the <body> element.
 #
 module LayoutHelper::PageClasses
 

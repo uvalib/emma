@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# ReadingListHelper
+# View helper methods for "/reading_list" pages.
 #
 module ReadingListHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ReadingListHelper]')
   end
@@ -136,7 +137,7 @@ module ReadingListHelper
   # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was nil or *item* resolved to nil.
+  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
   #
   # @see ModelHelper#render_value
   #

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 require 'net/http'
 
-# AwsConcern
+# Controller support methods for access to the AWS S3 API service.
 #
 module AwsConcern
 

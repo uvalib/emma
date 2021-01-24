@@ -7,9 +7,6 @@ __loading_begin(__FILE__)
 
 # Overrides for JSON serializers.
 #
-#--
-# noinspection DuplicatedCode
-#++
 module Api::Serializer::Json::Associations
 
   extend ActiveSupport::Concern

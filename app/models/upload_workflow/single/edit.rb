@@ -41,6 +41,8 @@ module UploadWorkflow::Single::Edit::Data
   include UploadWorkflow::Single::Edit::External
 end
 
+# New and overridden action methods specific to single-entry update.
+#
 module UploadWorkflow::Single::Edit::Actions
 
   include UploadWorkflow::Single::Actions
@@ -156,6 +158,8 @@ module UploadWorkflow::Single::Edit::Events
   include UploadWorkflow::Single::Edit::Simulation
 end
 
+# Overridden state transition methods specific to single-entry update.
+#
 module UploadWorkflow::Single::Edit::States
 
   include UploadWorkflow::Single::States

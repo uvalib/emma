@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SerializationConcern
+# Controller support methods for non-HTML responses.
 #
 module SerializationConcern
 

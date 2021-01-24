@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting processing and display of search terms.
+# View helper methods supporting processing and display of search terms.
 #
 module SearchTermsHelper
 
+  # @private
   def self.included(base)
     __included(base, '[SearchTermsHelper]')
   end

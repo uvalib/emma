@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Common helper methods.
+# Common view helper methods.
 #
 module ApplicationHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ApplicationHelper]')
   end

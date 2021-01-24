@@ -30,6 +30,8 @@ end
 
 public
 
+# Upload mechanisms specific to bulk-upload workflows.
+#
 module UploadWorkflow::Bulk::External
 
   include UploadWorkflow::External
@@ -505,6 +507,8 @@ module UploadWorkflow::Bulk::External
 
 end
 
+# Workflow execution status information specific to bulk-upload workflows.
+#
 module UploadWorkflow::Bulk::Data
 
   include UploadWorkflow::Data
@@ -599,6 +603,8 @@ module UploadWorkflow::Bulk::Data
 
 end
 
+# New and overridden action methods specific to bulk-upload workflows.
+#
 module UploadWorkflow::Bulk::Actions
 
   include UploadWorkflow::Actions
@@ -657,6 +663,8 @@ module UploadWorkflow::Bulk::Events
   include UploadWorkflow::Bulk::Simulation
 end
 
+# Overridden state transition methods specific to bulk-upload workflows.
+#
 module UploadWorkflow::Bulk::States
 
   include UploadWorkflow::States
@@ -996,7 +1004,7 @@ if UploadWorkflow::Bulk::SIMULATION
   require_relative '../../../lib/sim/models/upload_workflow/bulk'
 end
 
-# Standard create/update/delete workflows.
+# Base class for bulk-upload workflows.
 #
 class UploadWorkflow::Bulk < UploadWorkflow
 

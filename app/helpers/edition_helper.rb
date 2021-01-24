@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# EditionHelper
+# View helper methods for "/edition" pages.
 #
 module EditionHelper
 
+  # @private
   def self.included(base)
     __included(base, '[EditionHelper]')
   end

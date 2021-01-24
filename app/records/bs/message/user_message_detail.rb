@@ -20,11 +20,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_message_detail
 #
-# @note This duplicates Bs::Record::UserMessageDetail
+# @see Bs::Record::UserMessageDetail (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Message::UserMessageDetail < Bs::Api::Message
 
   include Bs::Shared::LinkMethods

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Included by a controller to use the Bookshare API.
+# Controller support methods for access to the Bookshare API service.
 #
 module BookshareConcern
 

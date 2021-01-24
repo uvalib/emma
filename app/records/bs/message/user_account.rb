@@ -28,7 +28,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
-# @note This duplicates Bs::Record::UserAccount
+# @see Bs::Record::UserAccount (duplicate schema)
 #
 # == Implementation Notes
 # Similar to Bs::Message::MyAccountSummary, but adds the following fields:
@@ -39,9 +39,6 @@ __loading_begin(__FILE__)
 #   :roles
 #   :site
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Message::UserAccount < Bs::Api::Message
 
   include Bs::Shared::AccountMethods

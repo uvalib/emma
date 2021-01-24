@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Help pages.
+# Handle "/help" pages.
 #
 # @see file:app/views/help
 #

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SessionConcern
+# Controller callbacks and support methods for working with `session`.
 #
 module SessionConcern
 

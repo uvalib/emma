@@ -81,15 +81,15 @@ __loading_begin(__FILE__)
 #   :titleSource
 #   :withdrawalDate
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Record::TitleMetadataComplete < Bs::Api::Record
 
   include Bs::Shared::ArtifactMethods
   include Bs::Shared::LinkMethods
   include Bs::Shared::TitleMethods
 
+  #--
+  # noinspection DuplicatedCode
+  #++
   schema do
     has_one   :adultContent,          Boolean
     has_one   :allowRecommend,        Boolean

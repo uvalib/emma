@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::Scripts
+# View helper methods for setting/getting <script> meta-tags.
 #
 module HeadHelper::Scripts
 

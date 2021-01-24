@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# CategoryController
+# Handle Bookshare-only "/category" pages.
 #
 # @see CategoryHelper
 #
@@ -51,7 +51,7 @@ class CategoryController < ApplicationController
   public
 
   # == GET /category
-  # 
+  #
   # List all categories.
   #
   def index
