@@ -28,11 +28,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
-# @note This duplicates Bs::Message::UserAccount
+# @see Bs::Message::UserAccount (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Record::UserAccount < Bs::Api::Record
 
   include Bs::Shared::AccountMethods

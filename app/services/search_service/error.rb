@@ -11,6 +11,7 @@ class SearchService::Error < ApiService::Error
   #
   module Methods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -47,7 +48,7 @@ class SearchService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# noinspection LongLine, DuplicatedCode
+# noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class SearchService::AuthError          < ApiService::AuthError;          include SearchService::Error::Methods; end # 'en.emma.error.search.auth'            || 'en.emma.error.api.auth'

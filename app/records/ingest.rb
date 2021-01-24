@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects de-serialized from the EMMA Unified Search API.
+# Namespace for objects serialized to the Federated Ingest API.
 #
 # @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3
 # @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3

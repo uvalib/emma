@@ -11,6 +11,7 @@ require 'multi_json'
 #
 module Emma::Json
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end

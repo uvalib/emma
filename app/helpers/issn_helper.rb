@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module IssnHelper
 
+  # @private
   def self.included(base)
     __included(base, '[IssnHelper]')
   end

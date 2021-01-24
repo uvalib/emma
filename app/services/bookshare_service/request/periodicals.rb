@@ -154,7 +154,7 @@ module BookshareService::Request::Periodicals
   # @return [Bs::Record::PeriodicalEdition]
   # @return [nil]
   #
-  # NOTE: This is not a real Bookshare API call.
+  # @note This is not a real Bookshare API call.
   #
   def get_periodical_edition(seriesId:, editionId:, **opt)
     opt[:seriesId] = seriesId

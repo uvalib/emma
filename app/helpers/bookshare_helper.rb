@@ -5,13 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting access and linkages to the Bookshare API.
+# View helper methods supporting access and linkages to the Bookshare API.
 #
-#--
-# noinspection DuplicatedCode
-#++
 module BookshareHelper
 
+  # @private
   def self.included(base)
     __included(base, '[BookshareHelper]')
   end

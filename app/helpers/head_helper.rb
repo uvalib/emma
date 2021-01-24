@@ -5,13 +5,15 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting document "<head>" entries.
+# View helper methods supporting document "<head>" entries.
 #
 module HeadHelper
 
   # Include the submodules defined in "app/helpers/head_helper/*.rb".
   #
   # @param [Module] base
+  #
+  # @private
   #
   def self.included(base)
     __included(base, '[HeadHelper]')

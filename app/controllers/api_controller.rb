@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ApiController
+# Handle "Bookshare API Explorer" ("/api" page) requests.
 #
 # @see ApiExplorerConcern
 # @see file:app/views/api/**

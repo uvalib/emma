@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# SearchConcern
+# Support methods for the "/search" controller.
 #
 module SearchConcern
 

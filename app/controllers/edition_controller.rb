@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# EditionController
+# Handle Bookshare-only "/edition" pages.
 #
 # @see EditionHelper
 #
@@ -56,7 +56,7 @@ class EditionController < ApplicationController
   public
 
   # == GET /edition?seriesId=:seriesId
-  # 
+  #
   # List all editions for a periodical.
   #
   def index
@@ -75,7 +75,7 @@ class EditionController < ApplicationController
 
   # == GET /edition/:id?seriesId=:seriesId
   # == GET /edition/:editionId?seriesId=:seriesId
-  # 
+  #
   # Display details of an existing edition.
   #
   def show
@@ -91,7 +91,7 @@ class EditionController < ApplicationController
 
   # == GET /edition/new[?id=:id]
   # == GET /edition/new[?editionId=:editionId]
-  # 
+  #
   # Add metadata for a new edition.
   #
   def new
@@ -100,7 +100,7 @@ class EditionController < ApplicationController
 
   # == POST /edition/:id
   # == POST /edition/:editionId
-  # 
+  #
   # Upload a new edition.
   #
   def create
@@ -109,7 +109,7 @@ class EditionController < ApplicationController
 
   # == GET /edition/:id/edit
   # == GET /edition/:editionId/edit
-  # 
+  #
   # Modify metadata of an existing edition entry.
   #
   def edit
@@ -120,7 +120,7 @@ class EditionController < ApplicationController
   # == PUT   /edition/:editionId
   # == PATCH /edition/:id
   # == PATCH /edition/:editionId
-  # 
+  #
   # Upload a replacement for an existing edition.
   #
   def update
@@ -129,7 +129,7 @@ class EditionController < ApplicationController
 
   # == DELETE /edition/:id
   # == DELETE /edition/:editionId
-  # 
+  #
   # Remove an existing edition entry.
   #
   def destroy
@@ -138,7 +138,7 @@ class EditionController < ApplicationController
 
   # == GET /edition/:id/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
   # == GET /edition/:editionId/:fmt?seriesId=:seriesId&member=BS_ACCOUNT_ID
-  # 
+  #
   # Download a periodical edition.
   #
   def download

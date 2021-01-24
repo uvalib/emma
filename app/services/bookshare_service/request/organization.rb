@@ -70,7 +70,7 @@ module BookshareService::Request::Organization
   #
   # @return [Bs::Message::UserAccount]
   #
-  # NOTE: This is not a real Bookshare API call.
+  # @note This is not a real Bookshare API call.
   #
   def get_my_organization_member(user:, **opt)
     opt = get_parameters(__method__, **opt)

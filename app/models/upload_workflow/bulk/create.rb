@@ -41,6 +41,8 @@ module UploadWorkflow::Bulk::Create::Data
   include UploadWorkflow::Bulk::Create::External
 end
 
+# New and overridden action methods specific to bulk submission.
+#
 module UploadWorkflow::Bulk::Create::Actions
 
   include UploadWorkflow::Bulk::Actions
@@ -109,6 +111,8 @@ module UploadWorkflow::Bulk::Create::Events
   include UploadWorkflow::Bulk::Create::Simulation
 end
 
+# Overridden state transition methods specific to bulk submission.
+#
 module UploadWorkflow::Bulk::Create::States
 
   include UploadWorkflow::Bulk::States

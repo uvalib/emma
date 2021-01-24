@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting access to AWS S3.
+# View helper methods supporting access and linkages to AWS S3.
 #
 module AwsHelper
 
+  # @private
   def self.included(base)
     __included(base, '[AwsHelper]')
   end
@@ -190,7 +191,7 @@ module AwsHelper
   # @option opt [Boolean]          :html            Default: *true*.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Array<Hash>]                           If *html* is false.
+  # @return [Array<Hash>]                           If *html* is *false*.
   #
   def render_s3_bucket(bucket, objects, **opt)
     opt, html_opt = partition_options(opt, *AWS_BUCKET_OPT)
@@ -302,7 +303,7 @@ module AwsHelper
   # @param [Hash] opt                         Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Hash]                            If *html* is false.
+  # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object_headings(**opt)
     headings = s3_object_values(nil)
@@ -315,7 +316,7 @@ module AwsHelper
   # @param [Hash] opt                         Passed to #render_s3_object
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Hash]                            If *html* is false.
+  # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object_row(obj, **opt)
     prepend_css_classes!(opt, 'row')
@@ -333,7 +334,7 @@ module AwsHelper
   # @option opt [Boolean] :html               Default: *true*.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Hash]                            If *html* is false.
+  # @return [Hash]                            If *html* is *false*.
   #
   def render_s3_object(obj, **opt)
     opt.except!(:object)
@@ -379,7 +380,7 @@ module AwsHelper
   # @param [Hash]                                   opt     For *label*.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [Hash]                                          If *html* is false.
+  # @return [Hash]                        If *html* is *false*.
   #
   def render_s3_object_placeholder(label: nil, html: nil, **opt)
     html    = !false?(html)

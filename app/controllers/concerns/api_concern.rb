@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Methods for any API service(s) that have been activated.
+# Controller support methods for any API service(s) that have been activated.
 #
 module ApiConcern
 

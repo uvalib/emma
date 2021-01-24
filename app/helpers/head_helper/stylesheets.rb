@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::Stylesheets
+# View helper methods for setting/getting <link rel="stylesheet"> meta-tags.
 #
 module HeadHelper::Stylesheets
 

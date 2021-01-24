@@ -36,6 +36,8 @@ module UploadWorkflow::Single::External
   include UploadWorkflow::Single::Events
 end
 
+# Workflow execution status information specific to single-item workflows.
+#
 module UploadWorkflow::Single::Data
 
   include UploadWorkflow::Data
@@ -279,6 +281,8 @@ module UploadWorkflow::Single::Data
 
 end
 
+# New and overridden action methods specific to single-item upload workflows.
+#
 module UploadWorkflow::Single::Actions
 
   include UploadWorkflow::Actions
@@ -603,6 +607,8 @@ module UploadWorkflow::Single::Events
   include UploadWorkflow::Single::Simulation
 end
 
+# Overridden state transition methods specific to single-item upload workflows.
+#
 #--
 # noinspection RubyTooManyMethodsInspection
 #++
@@ -1309,7 +1315,7 @@ if UploadWorkflow::Single::SIMULATION
   require_relative '../../../lib/sim/models/upload_workflow/single'
 end
 
-# Standard create/update/delete workflows.
+# Base class for single-item upload workflows.
 #
 class UploadWorkflow::Single < UploadWorkflow
 

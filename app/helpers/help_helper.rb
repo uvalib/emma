@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# HelpHelper
+# View helper methods for "/help" pages.
 #
 module HelpHelper
 
+  # @private
   def self.included(base)
     __included(base, '[HelpHelper]')
     include Emma::Unicode
@@ -312,7 +313,7 @@ module HelpHelper
   # @param [Hash]        opt          Passed to #help_container.
   #
   # @return [ActiveSupport::SafeBuffer]   Help contents section element.
-  # @return [nil]                         No content and *wrap* is false.
+  # @return [nil]                         No content and *wrap* is *false*.
   #
   def help_section(item: nil, wrap: true, **opt)
     append_css_classes!(opt, 'help-section')
@@ -326,7 +327,7 @@ module HelpHelper
   # @param [Hash]        opt          Passed to #help_container.
   #
   # @return [ActiveSupport::SafeBuffer]   Help contents list element.
-  # @return [nil]                         No content and *wrap* is false.
+  # @return [nil]                         No content and *wrap* is *false*.
   #
   def help_list_entry(item: nil, wrap: false, **opt)
     help_container(item: item, wrap: wrap, **opt)
@@ -339,7 +340,7 @@ module HelpHelper
   # @param [Hash]        opt          Passed to #html_div.
   #
   # @return [ActiveSupport::SafeBuffer]   Help contents element.
-  # @return [nil]                         No content and *wrap* is false.
+  # @return [nil]                         No content and *wrap* is *false*.
   #
   # @see config/locales/controllers/help.en.yml
   #

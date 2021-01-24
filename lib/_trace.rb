@@ -22,7 +22,7 @@ CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
 #
 # Normally __output (and __debug) are not displayed in IRB or other non-Rails
 # invocations of the code.  The environment variable should normally be *false*
-# ()or missing) in order to avoid extraneous output during rake, irb, etc.
+# (or missing) in order to avoid extraneous output during rake, irb, etc.
 #
 CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
 
@@ -300,37 +300,36 @@ if TRACE_NOTIFICATIONS
   # Notification specifications can be a single String, Regexp, or Array of
   # either.
   #
-  # @example /.*/
-  #   All notifications.
+  # @example All notifications
+  #   /.*/
   #
-  # @example /^cache_.*/
-  #   Only caching notifications.
+  # @example Only caching notifications
+  #   /^cache_.*/
   #
-  # @example [/\.action_dispatch/, /^.*process.*\.action_controller$/]
-  #   Notifications related to route processing.
+  # @example Notifications related to route processing
+  #   [/\.action_dispatch/, /^.*process.*\.action_controller$/]
   #
   # @example Others
+  #   * 'load_config_initializer.railties'
   #
-  # 'load_config_initializer.railties'
+  #   * 'request.action_dispatch'
   #
-  # 'request.action_dispatch'
+  #   * '!connection.active_record'
+  #   * 'sql.active_record'
+  #   * 'instantiation.active_record'
   #
-  # '!connection.active_record'
-  # 'sql.active_record'
-  # 'instantiation.active_record'
+  #   * 'start_processing.action_controller'
+  #   * 'process_action.action_controller'
+  #   * 'redirect_to.action_controller'
+  #   * 'halted_callback.action_controller'
   #
-  # 'start_processing.action_controller'
-  # 'process_action.action_controller'
-  # 'redirect_to.action_controller'
-  # 'halted_callback.action_controller'
+  #   * '!compile_template.action_view'
+  #   * '!render_template.action_view'
+  #   * 'render_template.action_view'
+  #   * 'render_partial.action_view'
   #
-  # '!compile_template.action_view'
-  # '!render_template.action_view'
-  # 'render_template.action_view'
-  # 'render_partial.action_view'
-  #
-  # 'cache_read.active_support'
-  # 'cache_write.active_support'
+  #   * 'cache_read.active_support'
+  #   * 'cache_write.active_support'
   #
   # @see http://guides.rubyonrails.org/active_support_instrumentation.html
   #

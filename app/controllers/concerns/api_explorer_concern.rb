@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ApiExplorerConcern
+# Support methods for the "/api" controller.
 #
 module ApiExplorerConcern
 

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::Favicon
+# View helper methods for setting/getting the "favicon" meta-tag.
 #
 module HeadHelper::Favicon
 

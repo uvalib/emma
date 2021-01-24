@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Support for managing pagination.
+# Controller support methods for managing pagination.
 #
 module PaginationConcern
 

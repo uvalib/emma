@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Namespace for objects serialized to and de-serialized from the Bookshare API.
+# Namespace for objects serialized/de-serialized via an external API.
 #
 module Api
 end

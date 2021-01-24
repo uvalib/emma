@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::SearchControls
+# View helper methods for the <header> search filter controls.
 #
 module LayoutHelper::SearchControls
 
@@ -19,6 +19,7 @@ module LayoutHelper::SearchControls
 
   module ClassMethods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# ArtifactController
+# Handle Bookshare download requests.
 #
 # @see ArtifactHelper
 #

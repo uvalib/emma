@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LogConcern
+# Support methods for per-controller control of logging behavior.
 #
 module LogConcern
 

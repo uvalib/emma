@@ -13,7 +13,7 @@ require 'bookshare_service'
 require 'search_service'
 require 'ingest_service'
 
-# ApplicationController
+# Base class for all controllers.
 #
 class ApplicationController < ActionController::Base
 

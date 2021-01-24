@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# BsDownloadConcern
+# Controller support methods for downloads from Bookshare.
 #
 module BsDownloadConcern
 

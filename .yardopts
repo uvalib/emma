@@ -1,4 +1,5 @@
---tag type:Type
---hide-tag type
+--no-private
 --exclude lib/ext/
 --exclude lib/sim/
+--tag type:Type
+--hide-tag type

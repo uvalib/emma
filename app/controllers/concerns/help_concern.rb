@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HelpConcern
+# Support methods for the "/help" controller.
 #
 module HelpConcern
 

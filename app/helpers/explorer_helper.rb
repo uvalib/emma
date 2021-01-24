@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# Support for the "Bookshare API Explorer".
+# View helper methods for the "Bookshare API Explorer" ("/api" pages).
 #
 module ExplorerHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ExplorerHelper]')
   end

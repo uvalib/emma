@@ -44,12 +44,8 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# NOTE: This duplicates:
-# @see Search::Record::MetadataRecord
+# @see Search::Record::MetadataRecord (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Search::Message::SearchRecord < Search::Api::Message
 
   include Search::Shared::TitleMethods

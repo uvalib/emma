@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# AccountHelper
+# View helper methods for "/account" pages.
 #
 module AccountHelper
 
+  # @private
   def self.included(base)
     __included(base, '[AccountHelper]')
   end

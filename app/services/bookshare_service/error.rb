@@ -11,6 +11,7 @@ class BookshareService::Error < ApiService::Error
   #
   module Methods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -47,7 +48,7 @@ class BookshareService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# noinspection LongLine, DuplicatedCode
+# noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class BookshareService::AuthError          < ApiService::AuthError;          include BookshareService::Error::Methods; end # 'en.emma.error.bookshare.auth'           || 'en.emma.error.api.auth'

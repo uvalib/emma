@@ -23,11 +23,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_periodical_series_metadata_summary
 #
-# @note This duplicates Bs::Message::PeriodicalSeriesMetadataSummary
+# @see Bs::Message::PeriodicalSeriesMetadataSummary (duplicate schema)
 #
-#--
-# noinspection RubyClassModuleNamingConvention, DuplicatedCode
-#++
 class Bs::Record::PeriodicalSeriesMetadataSummary < Bs::Api::Record
 
   include Bs::Shared::LinkMethods

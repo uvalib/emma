@@ -17,8 +17,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_title_metadata_summary_list
 #
-# NOTE: This duplicates the form of:
-# @see Bs::Message::AssignedTitleMetadataSummaryList
+# @see Bs::Message::AssignedTitleMetadataSummaryList (similar schema)
 #
 class Bs::Message::TitleMetadataSummaryList < Bs::Api::Message
 

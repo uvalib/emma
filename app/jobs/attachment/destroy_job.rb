@@ -7,6 +7,8 @@ __loading_begin(__FILE__)
 
 # Remove a file.
 #
+# @note Currently unused
+#
 class Attachment::DestroyJob < ApplicationJob
 
   include Emma::Debug
@@ -14,6 +16,8 @@ class Attachment::DestroyJob < ApplicationJob
   # perform
   #
   # @param [*] data
+  #
+  # @note Currently unused
   #
   def perform(data)
     __debug_args(binding)

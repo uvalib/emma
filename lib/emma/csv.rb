@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module Emma::Csv
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end
@@ -28,7 +29,7 @@ module Emma::Csv
   # @param [Hash]    opt
   #
   # @return [Array<Hash>]
-  # @return [nil]                     Only if *no_raise* is true.
+  # @return [nil]                     Only if *no_raise* is *true*.
   #
   # == Variations
   #

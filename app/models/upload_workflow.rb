@@ -62,7 +62,7 @@ end
 
 public
 
-# UploadWorkflow::Errors
+# Support for handling errors generated within the upload workflow.
 #
 module UploadWorkflow::Errors
 
@@ -105,6 +105,7 @@ module UploadWorkflow::Errors
 
   module RenderMethods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -265,7 +266,7 @@ module UploadWorkflow::Errors
 
 end
 
-# UploadWorkflow::Properties
+# Workflow properties that can be set via URL parameters.
 #
 #--
 # noinspection RubyClassVariableUsageInspection
@@ -606,7 +607,12 @@ end
 
 public
 
-# UploadWorkflow::External
+# Fundamental upload mechanisms for managing submissions which entail:
+#
+# * File storage/retrieval/removal
+# * Database create/update/delete
+# * Federated Index create/update/delete
+# * Member repository submission queue (AWS S3) create/update/delete
 #
 module UploadWorkflow::External
 
@@ -1546,14 +1552,14 @@ module UploadWorkflow::External
 
 end
 
-# UploadWorkflow::Data
+# Workflow execution status information.
 #
 module UploadWorkflow::Data
   include Workflow::Base::Data
   include UploadWorkflow::External
 end
 
-# UploadWorkflow::Actions
+# Methods used in the context of responding to workflow events.
 #
 module UploadWorkflow::Actions
 
@@ -1665,7 +1671,7 @@ module UploadWorkflow::Actions
 
 end
 
-# UploadWorkflow::Simulation
+# Stubs for methods supporting internal workflow simulated activity.
 #
 module UploadWorkflow::Simulation
   include Workflow::Base::Simulation
@@ -1677,14 +1683,14 @@ end
 
 public
 
-# UploadWorkflow::Events
+# Methods which are executed to initiate state transitions.
 #
 module UploadWorkflow::Events
   include Workflow::Base::Events
   include UploadWorkflow::Simulation
 end
 
-# UploadWorkflow::States
+# Methods executed on transition into and out of a state.
 #
 module UploadWorkflow::States
   include Workflow::Base::States

@@ -175,7 +175,7 @@ module BookshareService::Request::ReadingLists
   #
   # @return [Bs::Message::ReadingListList]
   #
-  # NOTE: This is an undocumented Bookshare API call.
+  # @note This is an undocumented Bookshare API call.
   #
   def get_all_reading_lists(**opt)
     opt = get_parameters(__method__, **opt)
@@ -203,7 +203,7 @@ module BookshareService::Request::ReadingLists
   #
   # @return [Bs::Message::ReadingListUserView]
   #
-  # NOTE: This is not a real Bookshare API call.
+  # @note This is not a real Bookshare API call.
   #
   def get_reading_list(readingListId:, **opt)
     all = get_all_reading_lists(limit: :max, **opt)

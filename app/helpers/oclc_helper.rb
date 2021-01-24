@@ -11,6 +11,7 @@ __loading_begin(__FILE__)
 #
 module OclcHelper
 
+  # @private
   def self.included(base)
     __included(base, '[OclcHelper]')
   end

@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# ArtifactHelper
+# View helper methods for "/artifact" pages.
 #
 module ArtifactHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ArtifactHelper]')
   end

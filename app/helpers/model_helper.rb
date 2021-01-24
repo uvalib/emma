@@ -5,10 +5,12 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting controllers that manipulate received items.
+# View helper methods supporting the display and creation of Model instances
+# (both database items and API messages).
 #
 module ModelHelper
 
+  # @private
   def self.included(base)
     __included(base, '[ModelHelper]')
   end
@@ -498,7 +500,7 @@ module ModelHelper
   # @param [Hash]                opt    Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was nil or *item* resolved to nil.
+  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
   #
   def render_value(item, value, model: nil, **opt)
     # noinspection RubyAssignmentExpressionInConditionalInspection
@@ -610,7 +612,7 @@ module ModelHelper
   # @param [Hash]              opt    Options (used only if appropriate).
   #
   # @return [Object]                  HTML or scalar value.
-  # @return [nil]                     If executed method returned nil.
+  # @return [nil]                     If executed method returned *nil*.
   #
   def execute(item, m, **opt)
     if item.respond_to?(m)
@@ -695,7 +697,7 @@ module ModelHelper
   # @param [Hash]         opt         Passed to inner #html_tag.
   #
   # @return [ActiveSupport::SafeBuffer]
-  # @return [nil]                         If *item* or *index* is nil.
+  # @return [nil]                         If *item* or *index* is *nil*.
   #
   # @yield [index,offset] To supply additional parts within .number element.
   # @yieldparam  [Integer] index      The effective index number.

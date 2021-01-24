@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HealthController
+# Handle health-check requests.
 #
 # == Usage Notes
 # The endpoints implemented by this controller render only JSON and do not

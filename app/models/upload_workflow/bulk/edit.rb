@@ -41,6 +41,8 @@ module UploadWorkflow::Bulk::Edit::Data
   include UploadWorkflow::Bulk::Edit::External
 end
 
+# New and overridden action methods specific to bulk update.
+#
 module UploadWorkflow::Bulk::Edit::Actions
 
   include UploadWorkflow::Bulk::Actions
@@ -108,6 +110,8 @@ module UploadWorkflow::Bulk::Edit::Events
   include UploadWorkflow::Bulk::Edit::Simulation
 end
 
+# Overridden state transition methods specific to bulk update.
+#
 module UploadWorkflow::Bulk::Edit::States
 
   include UploadWorkflow::Bulk::States

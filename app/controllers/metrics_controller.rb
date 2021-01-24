@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# MetricsController
+# Handle metrics requests.
 #
 # NOTE: "GET /metrics" is handled by Prometheus::Middleware::Exporter
 #
@@ -36,7 +36,7 @@ class MetricsController < ApplicationController
   public
 
   # == GET /metrics/test
-  # 
+  #
   # A temporary endpoint to test various Prometheus metrics.
   #
   # * A *counter* is a metric for a quantity that accumulates a numerical
@@ -50,7 +50,7 @@ class MetricsController < ApplicationController
   #
   # * A *summary* is a metric...
   #
-  # NOTE: This is out of date.
+  # @note This is out of date.
   #
   def test
     value = rand(0..100)

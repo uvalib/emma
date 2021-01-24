@@ -11,6 +11,7 @@ class IaDownloadService::Error < ApiService::Error
   #
   module Methods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -102,7 +103,7 @@ class IaDownloadService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# noinspection LongLine, DuplicatedCode
+# noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
   class IaDownloadService::AuthError          < ApiService::AuthError;          include IaDownloadService::Error::Methods; end # 'en.emma.error.ia_download.auth'           || 'en.emma.error.api.auth'

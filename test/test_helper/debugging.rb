@@ -334,7 +334,7 @@ module TestHelper::Debugging
       #
       # @param [Module] base
       #
-      # @return [void]
+      # @private
       #
       def self.included(base)
         base.class_eval do

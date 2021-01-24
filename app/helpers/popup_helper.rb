@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# PopupHelper
+# View helper methods supporting the display of popups.
 #
 module PopupHelper
 
+  # @private
   def self.included(base)
     __included(base, '[PopupHelper]')
   end

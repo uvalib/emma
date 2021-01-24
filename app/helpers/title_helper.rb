@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# TitleHelper
+# View helper methods for "/title" pages.
 #
 module TitleHelper
 
+  # @private
   def self.included(base)
     __included(base, '[TitleHelper]')
   end
@@ -63,7 +64,7 @@ module TitleHelper
   # @param [Hash]                   opt   Passed to #image_element.
   #
   # @return [ActiveSupport::SafeBuffer]   HTML image or placeholder element.
-  # @return [nil]                         If *item* is nil.
+  # @return [nil]                         If *item* is *nil*.
   #
   # == Usage Notes
   # If *item* does not contain a thumbnail, the method returns a "blank" HTML
@@ -305,7 +306,7 @@ module TitleHelper
   # @param [Hash]            opt        Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was nil or *item* resolved to nil.
+  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
   #
   # @see ModelHelper#render_value
   #

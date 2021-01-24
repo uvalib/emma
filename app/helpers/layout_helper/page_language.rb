@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::PageLanguage
+# View helper methods support language annotation of the <html> element.
 #
 module LayoutHelper::PageLanguage
 

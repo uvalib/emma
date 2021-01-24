@@ -59,9 +59,9 @@ end
 
 public
 
-# Workflow::Base::Roles
+# Classes of users recognized within *workflow* definitions.
 #
-# @todo Harmonize with existing roles
+# @note TODO: harmonize with existing roles
 #
 module Workflow::Base::Roles
 
@@ -244,7 +244,7 @@ module Workflow::Base::Roles
 
 end
 
-# Workflow::Base::Properties
+# Support for workflow properties that can be set via URL parameters.
 #
 module Workflow::Base::Properties
 
@@ -262,7 +262,7 @@ end
 
 public
 
-# Workflow::Base::Data
+# Workflow execution status information.
 #
 module Workflow::Base::Data
 
@@ -364,13 +364,13 @@ module Workflow::Base::Data
 
 end
 
-# Workflow::Base::Actions
+# Support for methods used in the context of responding to workflow events.
 #
 module Workflow::Base::Actions
   include Workflow::Base::Data
 end
 
-# Workflow::Base::Simulation
+# Stubs for methods supporting internal workflow simulated activity.
 #
 module Workflow::Base::Simulation
 
@@ -397,7 +397,11 @@ end
 
 public
 
-# Methods invoked when the named event occurs.
+# Methods which are executed to initiate state transitions.
+#
+# The Workflow gem dynamically creates helper methods based on the *workflow*
+# definition.  This module creates "shims" for each of these that insert
+# additional logging support.
 #
 # @!method start!
 # @!method start?
@@ -591,6 +595,8 @@ module Workflow::Base::Events
     #
     # @see Workflow::ClassMethods#workflow
     #
+    # @private
+    #
     def self.included(base)
       return unless base.respond_to?(:workflow)
       base.class_eval do
@@ -644,6 +650,8 @@ module Workflow::Base::Events
     #
     # @see Workflow::ClassMethods#workflow
     #
+    # @private
+    #
     def self.included(base)
       return unless base.respond_to?(:workflow)
       base.class_eval do
@@ -673,7 +681,7 @@ module Workflow::Base::Events
 
 end
 
-# Hooks executed on transition into and out of a state.
+# Methods executed on transition into and out of a state.
 #
 # @!method on_starting_entry
 # @!method on_starting_exit

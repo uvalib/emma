@@ -44,15 +44,11 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# NOTE: This duplicates:
-# @see Search::Message::SearchRecord
+# @see Search::Record::SearchRecord (duplicate schema)
 #
 # @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/MetadataRecord
 # @see file:config/locales/records/upload.en.yml en.emma.upload.record.emma_data
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Search::Record::MetadataRecord < Search::Api::Record
 
   include Search::Shared::TitleMethods

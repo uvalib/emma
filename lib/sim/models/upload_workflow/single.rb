@@ -343,6 +343,8 @@ module UploadWorkflow::Single::Simulation
   #
   # @see #OVERRIDE_WORKFLOW_METHODS
   #
+  # @private
+  #
   def self.included(class_or_module)
     return unless class_or_module < Workflow::Base
     class_or_module.class_eval do

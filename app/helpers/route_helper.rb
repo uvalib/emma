@@ -5,10 +5,11 @@
 
 __loading_begin(__FILE__)
 
-# RouteHelper
+# View helper methods for dynamic references to local URLs.
 #
 module RouteHelper
 
+  # @private
   def self.included(base)
 
     __included(base, '[RouteHelper]')

@@ -18,11 +18,8 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement
 #
-# @note This duplicates Bs::Message::UserSignedAgreement
+# @see Bs::Message::UserSignedAgreement (duplicate schema)
 #
-#--
-# noinspection DuplicatedCode
-#++
 class Bs::Record::UserSignedAgreement < Bs::Api::Record
 
   include Bs::Shared::AgreementMethods

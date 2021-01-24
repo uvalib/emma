@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# LayoutHelper::Common
+# Shared view helper methods supporting general page layout.
 #
 module LayoutHelper::Common
 

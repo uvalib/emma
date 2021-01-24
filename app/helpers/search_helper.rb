@@ -5,13 +5,12 @@
 
 __loading_begin(__FILE__)
 
-# Methods supporting access and linkages to the "EMMA Unified Search" API.
+# View helper methods supporting access and linkages to the
+# "EMMA Unified Search" API.
 #
-#--
-# noinspection DuplicatedCode
-#++
 module SearchHelper
 
+  # @private
   def self.included(base)
     __included(base, '[SearchHelper]')
   end
@@ -75,7 +74,7 @@ module SearchHelper
   # @param [Hash]                opt    Passed to render method.
   #
   # @return [Object]  HTML or scalar value.
-  # @return [nil]     If *value* was nil or *item* resolved to nil.
+  # @return [nil]     If *value* was *nil* or *item* resolved to *nil*.
   #
   # @see ModelHelper#render_value
   #

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# HeadHelper::MetaTags
+# View helper methods for setting/getting <meta> tags.
 #
 module HeadHelper::MetaTags
 

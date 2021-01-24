@@ -12,7 +12,7 @@ __loading_begin(__FILE__)
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_status_model
 #
-# @note This duplicates Bs::Record::StatusModel
+# @see Bs::Record::StatusModel (duplicate schema)
 #
 class Bs::Message::StatusModel < Bs::Api::Message
 
