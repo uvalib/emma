@@ -864,15 +864,15 @@
       <pre class="lines">
 
 
+1032
+1033
+1034
+1035
 1036
-1037
-1038
-1039
-1040
-1041</pre>
+1037</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1036</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1032</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='ivar'>@parameters</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:params</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -931,6 +931,10 @@
       <pre class="lines">
 
 
+989
+990
+991
+992
 993
 994
 995
@@ -1261,14 +1265,10 @@
 1320
 1321
 1322
-1323
-1324
-1325
-1326
-1327</pre>
+1323</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 993</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 989</span>
 
 <span class='kw'>class</span> <span class='const'>Workflow</span><span class='op'>::</span><span class='const'>Base</span>
 
@@ -1656,12 +1656,12 @@
       <pre class="lines">
 
 
-1210
-1211
-1212</pre>
+1206
+1207
+1208</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1210</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1206</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_configuration'>configuration</span>
   <span class='const'><span class='object_link'><a href="#CONFIGURATION-constant" title="Workflow::Base::CONFIGURATION (constant)">CONFIGURATION</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_workflow_type'>workflow_type</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -1710,12 +1710,12 @@
       <pre class="lines">
 
 
-1268
-1269
-1270</pre>
+1264
+1265
+1266</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1268</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1264</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_default_variant'>default_variant</span>
   <span class='symbol'>:create</span>
@@ -1764,12 +1764,12 @@
       <pre class="lines">
 
 
-1231
-1232
-1233</pre>
+1227
+1228
+1229</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1231</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1227</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_final_state'>final_state</span>
   <span class='const'><span class='object_link'><a href="#FINAL_STATE-constant" title="Workflow::Base::FINAL_STATE (constant)">FINAL_STATE</a></span></span>
@@ -1869,14 +1869,14 @@
       <pre class="lines">
 
 
-1308
-1309
-1310
-1311
-1312</pre>
+1304
+1305
+1306
+1307
+1308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1308</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1304</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_generate'>generate</span><span class='lparen'>(</span><span class='id identifier rubyid_data'>data</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_variant'>variant</span>  <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:variant</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:event</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1927,17 +1927,17 @@
       <pre class="lines">
 
 
+1214
+1215
+1216
+1217
 1218
 1219
 1220
-1221
-1222
-1223
-1224
-1225</pre>
+1221</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1218</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1214</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_state_label'>state_label</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_configuration'>configuration</span><span class='lbracket'>[</span><span class='symbol'>:state</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_state'>state</span><span class='comma'>,</span> <span class='id identifier rubyid_properties'>properties</span><span class='op'>|</span>
@@ -2006,12 +2006,12 @@
       <pre class="lines">
 
 
-1294
-1295
-1296</pre>
+1290
+1291
+1292</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1294</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1290</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_variant?'>variant?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_variant_types'>variant_types</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span>
@@ -2060,12 +2060,12 @@
       <pre class="lines">
 
 
-1276
-1277
-1278</pre>
+1272
+1273
+1274</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1276</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1272</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_variant_table'>variant_table</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>To be overridden by the workflow subclass</span><span class='tstring_end'>&#39;</span></span>
@@ -2114,11 +2114,11 @@
       <pre class="lines">
 
 
-1261
-1262</pre>
+1257
+1258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1261</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1257</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_variant_type'>variant_type</span>
 <span class='kw'>end</span></pre>
@@ -2166,12 +2166,12 @@
       <pre class="lines">
 
 
-1284
-1285
-1286</pre>
+1280
+1281
+1282</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1284</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1280</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_variant_types'>variant_types</span>
   <span class='id identifier rubyid_variant_table'>variant_table</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
@@ -2251,12 +2251,12 @@
       <pre class="lines">
 
 
-1196
-1197
-1198</pre>
+1192
+1193
+1194</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1196</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1192</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_workflow_column'>workflow_column</span><span class='lparen'>(</span><span class='id identifier rubyid_column_name'>column_name</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>To be overridden by the workflow subclass</span><span class='tstring_end'>&#39;</span></span>
@@ -2305,12 +2305,12 @@
       <pre class="lines">
 
 
-1252
-1253
-1254</pre>
+1248
+1249
+1250</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1252</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1248</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_workflow_phase'>workflow_phase</span>
   <span class='id identifier rubyid_variant_type'>variant_type</span>
@@ -2359,11 +2359,11 @@
       <pre class="lines">
 
 
-1245
-1246</pre>
+1241
+1242</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1245</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1241</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_workflow_type'>workflow_type</span>
 <span class='kw'>end</span></pre>
@@ -2417,12 +2417,12 @@
       <pre class="lines">
 
 
-1092
-1093
-1094</pre>
+1088
+1089
+1090</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1092</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1088</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_curr_state'>curr_state</span>
   <span class='id identifier rubyid_current_state'>current_state</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -2471,12 +2471,12 @@
       <pre class="lines">
 
 
-1108
-1109
-1110</pre>
+1104
+1105
+1106</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1108</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1104</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_final_state'>final_state</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_final_state'>final_state</span>
@@ -2525,12 +2525,12 @@
       <pre class="lines">
 
 
-1100
-1101
-1102</pre>
+1096
+1097
+1098</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1100</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1096</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_init_state'>init_state</span>
   <span class='id identifier rubyid_spec'>spec</span><span class='period'>.</span><span class='id identifier rubyid_initial_state'>initial_state</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -2579,12 +2579,12 @@
       <pre class="lines">
 
 
-1177
-1178
-1179</pre>
+1173
+1174
+1175</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1177</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1173</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_variant_type'>variant_type</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_variant_type'>variant_type</span>
@@ -2633,12 +2633,12 @@
       <pre class="lines">
 
 
-1152
-1153
-1154</pre>
+1148
+1149
+1150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1152</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1148</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_workflow_column'>workflow_column</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_workflow_column'>workflow_column</span>
@@ -2687,12 +2687,12 @@
       <pre class="lines">
 
 
-1168
-1169
-1170</pre>
+1164
+1165
+1166</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1168</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1164</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_workflow_phase'>workflow_phase</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_workflow_phase'>workflow_phase</span>
@@ -2741,12 +2741,12 @@
       <pre class="lines">
 
 
-1160
-1161
-1162</pre>
+1156
+1157
+1158</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1160</span>
+      <pre class="code"><span class="info file"># File 'app/models/workflow.rb', line 1156</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_workflow_type'>workflow_type</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_workflow_type'>workflow_type</span>
@@ -2761,7 +2761,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:50:55 2021 by
+  Generated on Mon Jan 25 14:10:06 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

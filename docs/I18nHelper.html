@@ -397,17 +397,17 @@
       <pre class="lines">
 
 
+278
 279
 280
 281
 282
 283
 284
-285
-286</pre>
+285</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 279</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 278</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_erb_interpolate'>erb_interpolate</span><span class='lparen'>(</span><span class='id identifier rubyid_val'>val</span><span class='comma'>,</span> <span class='id identifier rubyid_loc'>loc</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_val'>val</span>
@@ -504,6 +504,7 @@
       <pre class="lines">
 
 
+163
 164
 165
 166
@@ -525,11 +526,10 @@
 182
 183
 184
-185
-186</pre>
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 164</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 163</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_i18n_button_values'>i18n_button_values</span><span class='lparen'>(</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='id identifier rubyid_action'>action</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_item_keys'>item_keys</span>    <span class='op'>=</span> <span class='qsymbols_beg'>%i[</span><span class='tstring_content'>label</span><span class='words_sep'> </span><span class='tstring_content'>tooltip</span><span class='tstring_end'>]</span></span>
@@ -616,14 +616,14 @@
       <pre class="lines">
 
 
+265
 266
 267
 268
-269
-270</pre>
+269</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 266</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 265</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_i18n_erb'>i18n_erb</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
@@ -798,6 +798,7 @@
       <pre class="lines">
 
 
+103
 104
 105
 106
@@ -831,11 +832,10 @@
 134
 135
 136
-137
-138</pre>
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 104</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 103</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_i18n_lookup'>i18n_lookup</span><span class='lparen'>(</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='id identifier rubyid_partial_path'>partial_path</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_defaults'>defaults</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_i18n_opt'>i18n_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:mode</span><span class='comma'>,</span> <span class='symbol'>:one</span><span class='comma'>,</span> <span class='symbol'>:many</span><span class='comma'>,</span> <span class='symbol'>:default</span><span class='rparen'>)</span>
@@ -946,6 +946,7 @@
       <pre class="lines">
 
 
+75
 76
 77
 78
@@ -955,11 +956,10 @@
 82
 83
 84
-85
-86</pre>
+85</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_i18n_lookup_order'>i18n_lookup_order</span><span class='lparen'>(</span><span class='id identifier rubyid_controller'>controller</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_action'>action</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -1081,6 +1081,7 @@
       <pre class="lines">
 
 
+52
 53
 54
 55
@@ -1094,11 +1095,10 @@
 63
 64
 65
-66
-67</pre>
+66</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 52</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_unit_of'>unit_of</span><span class='lparen'>(</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_i18n_opt'>i18n_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:plural</span><span class='comma'>,</span> <span class='symbol'>:capitalize</span><span class='rparen'>)</span>
@@ -1195,13 +1195,13 @@
       <pre class="lines">
 
 
+36
 37
 38
-39
-40</pre>
+39</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 37</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/i18n_helper.rb', line 36</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_units_of'>units_of</span><span class='lparen'>(</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_controller'>controller</span> <span class='op'>||=</span> <span class='id identifier rubyid_request_parameters'>request_parameters</span><span class='lbracket'>[</span><span class='symbol'>:controller</span><span class='rbracket'>]</span>
@@ -1217,7 +1217,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:47:58 2021 by
+  Generated on Mon Jan 25 14:07:17 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

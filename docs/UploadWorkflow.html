@@ -457,12 +457,12 @@
       <pre class="lines">
 
 
+1751
 1752
-1753
-1754</pre>
+1753</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1752</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1751</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_workflow_column'>workflow_column</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="Upload.html" title="Upload (class)">Upload</a></span></span><span class='op'>::</span><span class='const'>PRIMARY_STATE_COLUMN</span>
@@ -511,12 +511,12 @@
       <pre class="lines">
 
 
+1765
 1766
-1767
-1768</pre>
+1767</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1766</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1765</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_workflow_type'>workflow_type</span>
   <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_underscore'>underscore</span><span class='period'>.</span><span class='id identifier rubyid_remove'>remove</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>_+workflow|workflow_*</span><span class='regexp_end'>/i</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_tr'>tr</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>/</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -571,12 +571,12 @@
       <pre class="lines">
 
 
+1734
 1735
-1736
-1737</pre>
+1736</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1735</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1734</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_existing_entry?'>existing_entry?</span>
   <span class='op'>!</span><span class='id identifier rubyid_new_submission?'>new_submission?</span>
@@ -625,12 +625,12 @@
       <pre class="lines">
 
 
+1727
 1728
-1729
-1730</pre>
+1729</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1728</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 1727</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_new_submission?'>new_submission?</span>
   <span class='id identifier rubyid_workflow_column'>workflow_column</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_workflow_column'>workflow_column</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="Upload.html" title="Upload (class)">Upload</a></span></span><span class='op'>::</span><span class='const'>PRIMARY_STATE_COLUMN</span><span class='rparen'>)</span>
@@ -645,7 +645,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:50:58 2021 by
+  Generated on Mon Jan 25 14:10:08 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

@@ -398,14 +398,14 @@
       <pre class="lines">
 
 
+232
 233
 234
 235
-236
-237</pre>
+236</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 233</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 232</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ascending_sort'>ascending_sort</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_suffix'>suffix</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
@@ -496,15 +496,15 @@
       <pre class="lines">
 
 
+69
 70
 71
 72
 73
-74
-75</pre>
+74</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 70</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 69</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_current_menu_config'>current_menu_config</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_name'>menu_name</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_type'>type</span>   <span class='op'>=</span> <span class='id identifier rubyid_type'>type</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -613,14 +613,14 @@
       <pre class="lines">
 
 
+246
 247
 248
 249
-250
-251</pre>
+250</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 247</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 246</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_descending_sort'>descending_sort</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_suffix'>suffix</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
@@ -709,13 +709,13 @@
       <pre class="lines">
 
 
+219
 220
 221
-222
-223</pre>
+222</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 220</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 219</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_is_reverse?'>is_reverse?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_suffix'>suffix</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_suffix'>suffix</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../SearchControls.html#REVERSE_SORT_SUFFIX-constant" title="LayoutHelper::SearchControls::REVERSE_SORT_SUFFIX (constant)">REVERSE_SORT_SUFFIX</a></span></span>
@@ -1092,6 +1092,7 @@
       <pre class="lines">
 
 
+109
 110
 111
 112
@@ -1124,11 +1125,10 @@
 139
 140
 141
-142
-143</pre>
+142</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 109</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_make_menu'>make_menu</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_name'>menu_name</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_config'>config</span>  <span class='op'>=</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_values'>values</span> <span class='op'>:</span> <span class='id identifier rubyid_current_menu_config'>current_menu_config</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_name'>menu_name</span><span class='rparen'>)</span>
@@ -1287,6 +1287,7 @@
       <pre class="lines">
 
 
+168
 169
 170
 171
@@ -1295,11 +1296,10 @@
 174
 175
 176
-177
-178</pre>
+177</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 168</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_make_menu_label'>make_menu_label</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_name'>menu_name</span><span class='comma'>,</span> <span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_label'>label</span>  <span class='op'>=</span> <span class='id identifier rubyid_label'>label</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_squish'>squish</span>
@@ -1381,6 +1381,7 @@
       <pre class="lines">
 
 
+41
 42
 43
 44
@@ -1397,11 +1398,10 @@
 55
 56
 57
-58
-59</pre>
+58</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 42</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_controls.rb', line 41</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_search_menu_config'>search_menu_config</span><span class='lparen'>(</span><span class='id identifier rubyid_menu_name'>menu_name</span><span class='comma'>,</span> <span class='id identifier rubyid_properties'>properties</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="../SearchControls.html#SEARCH_MENU_DEFAULT-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_DEFAULT (constant)">SEARCH_MENU_DEFAULT</a></span></span><span class='period'>.</span><span class='id identifier rubyid_deep_merge'>deep_merge</span><span class='lparen'>(</span><span class='id identifier rubyid_properties'>properties</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_deep_dup'>deep_dup</span><span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_cfg'>cfg</span><span class='op'>|</span>
@@ -1431,7 +1431,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:50:25 2021 by
+  Generated on Mon Jan 25 14:09:35 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

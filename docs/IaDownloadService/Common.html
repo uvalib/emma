@@ -146,6 +146,41 @@
   <p class="inherited"><span class='object_link'><a href="../ApiService/Common.html#action-instance_method" title="ApiService::Common#action (method)">#action</a></span>, <span class='object_link'><a href="../ApiService/Common.html#exception-instance_method" title="ApiService::Common#exception (method)">#exception</a></span>, <span class='object_link'><a href="../ApiService/Common.html#params-instance_method" title="ApiService::Common#params (method)">#params</a></span>, <span class='object_link'><a href="../ApiService/Common.html#response-instance_method" title="ApiService::Common#response (method)">#response</a></span>, <span class='object_link'><a href="../ApiService/Common.html#user-instance_method" title="ApiService::Common#user (method)">#user</a></span>, <span class='object_link'><a href="../ApiService/Common.html#verb-instance_method" title="ApiService::Common#verb (method)">#verb</a></span></p>
 
 
+  
+    <h2>
+      Class Method Summary
+      <small><a href="#" class="summary_toggle">collapse</a></small>
+    </h2>
+
+    <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#included-class_method" title="included (class method)">.<strong>included</strong>(base)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Include the shared data structure which holds the definition of the API requests and parameters.</p>
+</div></span>
+  
+</li>
+
+      
+    </ul>
+  
+
 
   
   
@@ -153,7 +188,7 @@
   
   
   
-  <h2>Method Summary</h2>
+  
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Properties.html" title="IaDownloadService::Properties (module)">Properties</a></span></h3>
   <p class="inherited"><span class='object_link'><a href="Properties.html#api_key-instance_method" title="IaDownloadService::Properties#api_key (method)">#api_key</a></span>, <span class='object_link'><a href="Properties.html#api_version-instance_method" title="IaDownloadService::Properties#api_version (method)">#api_version</a></span>, <span class='object_link'><a href="Properties.html#base_url-instance_method" title="IaDownloadService::Properties#base_url (method)">#base_url</a></span>, <span class='object_link'><a href="Properties.html#max_redirects-instance_method" title="IaDownloadService::Properties#max_redirects (method)">#max_redirects</a></span></p>
@@ -225,10 +260,72 @@
   <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
 
+  <div id="class_method_details" class="method_details_list">
+    <h2>Class Method Details</h2>
+
+    
+      <div class="method_details first">
+  <h3 class="signature first" id="included-class_method">
+  
+    .<strong>included</strong>(base)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Include the shared data structure which holds the definition of the API requests and parameters.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>base</span>
+      
+      
+        <span class='type'>(<tt>Module</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+17
+18
+19</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/services/ia_download_service/common.rb', line 17</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_included'>included</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:include</span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="../IaDownloadService.html" title="IaDownloadService (class)">IaDownloadService</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="Definition.html" title="IaDownloadService::Definition (module)">Definition</a></span></span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+  </div>
+
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:50:00 2021 by
+  Generated on Mon Jan 25 14:09:12 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

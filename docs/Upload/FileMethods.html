@@ -199,7 +199,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Represents a file that was uploaded to a storage as a replacement for the originally-submitted file.</p>
+</div></span>
   
 </li>
 
@@ -226,7 +228,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Saves information about the uploaded replacement as an attachment to a record (saving the file data to the :edit_file_data database column).</p>
+</div></span>
   
 </li>
 
@@ -253,7 +257,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Represents a file that was uploaded to a storage.</p>
+</div></span>
   
 </li>
 
@@ -280,7 +286,9 @@
   
 
   
-    <span class="summary_desc"><div class='inline'></div></span>
+    <span class="summary_desc"><div class='inline'>
+<p>Saves information about the uploaded file as an attachment to a record (saving the file data to the :file_data database column).</p>
+</div></span>
   
 </li>
 
@@ -750,6 +758,8 @@
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Represents a file that was uploaded to a storage as a replacement for the originally-submitted file.</p>
+
 
   </div>
 </div>
@@ -768,6 +778,13 @@
     </li>
   
 </ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#file-instance_method" title="Upload::FileMethods#file (method)">#file</a></span></li>
+    
+  </ul>
 
 </div><table class="source_code">
   <tr>
@@ -1272,7 +1289,34 @@
 521
 522
 523
-524</pre>
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 27</span>
@@ -1286,16 +1330,43 @@
 </span>  <span class='comment'># :nocov:
 </span>  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../top-level-namespace.html#ONLY_FOR_DOCUMENTATION-constant" title="ONLY_FOR_DOCUMENTATION (constant)">ONLY_FOR_DOCUMENTATION</a></span></span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see Shrine::ClassMethods#inherited (Created via Shrine)
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded file as an attachment to a record
+</span>    <span class='comment'># (saving the file data to the :file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file_attacher</span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage as a replacement for the
+</span>    <span class='comment'># originally-submitted file.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded replacement as an attachment to a
+</span>    <span class='comment'># record (saving the file data to the :edit_file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file_attacher
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file_attacher</span>
 
   <span class='kw'>end</span>
@@ -1794,6 +1865,10 @@
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Saves information about the uploaded replacement as an attachment to a record (saving the file data to the :edit_file_data database column).</p>
+
+<p>The attaching process requires a temporary and a permanent storage to be registered (by default that&#39;s :cache and :store).</p>
+
 
   </div>
 </div>
@@ -1812,6 +1887,13 @@
     </li>
   
 </ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#file_attacher-instance_method" title="Upload::FileMethods#file_attacher (method)">#file_attacher</a></span></li>
+    
+  </ul>
 
 </div><table class="source_code">
   <tr>
@@ -2316,7 +2398,34 @@
 521
 522
 523
-524</pre>
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 27</span>
@@ -2330,16 +2439,43 @@
 </span>  <span class='comment'># :nocov:
 </span>  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../top-level-namespace.html#ONLY_FOR_DOCUMENTATION-constant" title="ONLY_FOR_DOCUMENTATION (constant)">ONLY_FOR_DOCUMENTATION</a></span></span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see Shrine::ClassMethods#inherited (Created via Shrine)
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded file as an attachment to a record
+</span>    <span class='comment'># (saving the file data to the :file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file_attacher</span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage as a replacement for the
+</span>    <span class='comment'># originally-submitted file.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded replacement as an attachment to a
+</span>    <span class='comment'># record (saving the file data to the :edit_file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file_attacher
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file_attacher</span>
 
   <span class='kw'>end</span>
@@ -2838,6 +2974,8 @@
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Represents a file that was uploaded to a storage.</p>
+
 
   </div>
 </div>
@@ -2856,6 +2994,13 @@
     </li>
   
 </ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>(Created via Shrine)</li>
+    
+  </ul>
 
 </div><table class="source_code">
   <tr>
@@ -3360,7 +3505,34 @@
 521
 522
 523
-524</pre>
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 27</span>
@@ -3374,16 +3546,43 @@
 </span>  <span class='comment'># :nocov:
 </span>  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../top-level-namespace.html#ONLY_FOR_DOCUMENTATION-constant" title="ONLY_FOR_DOCUMENTATION (constant)">ONLY_FOR_DOCUMENTATION</a></span></span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see Shrine::ClassMethods#inherited (Created via Shrine)
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded file as an attachment to a record
+</span>    <span class='comment'># (saving the file data to the :file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file_attacher</span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage as a replacement for the
+</span>    <span class='comment'># originally-submitted file.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded replacement as an attachment to a
+</span>    <span class='comment'># record (saving the file data to the :edit_file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file_attacher
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file_attacher</span>
 
   <span class='kw'>end</span>
@@ -3882,6 +4081,10 @@
 </h3><div class="docstring">
   <div class="discussion">
     
+<p>Saves information about the uploaded file as an attachment to a record (saving the file data to the :file_data database column).</p>
+
+<p>The attaching process requires a temporary and a permanent storage to be registered (by default that&#39;s :cache and :store).</p>
+
 
   </div>
 </div>
@@ -4404,7 +4607,34 @@
 521
 522
 523
-524</pre>
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534
+535
+536
+537
+538
+539
+540
+541
+542
+543
+544
+545
+546
+547
+548
+549
+550
+551</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 27</span>
@@ -4418,16 +4648,43 @@
 </span>  <span class='comment'># :nocov:
 </span>  <span class='kw'>unless</span> <span class='const'><span class='object_link'><a href="../top-level-namespace.html#ONLY_FOR_DOCUMENTATION-constant" title="ONLY_FOR_DOCUMENTATION (constant)">ONLY_FOR_DOCUMENTATION</a></span></span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see Shrine::ClassMethods#inherited (Created via Shrine)
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded file as an attachment to a record
+</span>    <span class='comment'># (saving the file data to the :file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:file_attacher</span>
 
-    <span class='comment'># @return [FileUploader::UploadedFile]
+    <span class='comment'># Represents a file that was uploaded to a storage as a replacement for the
+</span>    <span class='comment'># originally-submitted file.
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::UploadedFile]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file</span>
 
-    <span class='comment'># @return [FileUploader::Attacher]
+    <span class='comment'># Saves information about the uploaded replacement as an attachment to a
+</span>    <span class='comment'># record (saving the file data to the :edit_file_data database column).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># The attaching process requires a temporary and a permanent storage to be
+</span>    <span class='comment'># registered (by default that&#39;s :cache and :store).
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @return [FileUploader::Attacher]
+</span>    <span class='comment'>#
+</span>    <span class='comment'># @see #file_attacher
+</span>    <span class='comment'>#
 </span>    <span class='id identifier rubyid_attr_reader'>attr_reader</span> <span class='symbol'>:edit_file_attacher</span>
 
   <span class='kw'>end</span>
@@ -4972,12 +5229,12 @@
       <pre class="lines">
 
 
-150
-151
-152</pre>
+177
+178
+179</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 150</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 177</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_active_attached_file'>active_attached_file</span>
   <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_edit_attached_file'>edit_attached_file</span> <span class='op'>||</span> <span class='id identifier rubyid_attached_file'>attached_file</span>
@@ -5026,12 +5283,12 @@
       <pre class="lines">
 
 
-389
-390
-391</pre>
+416
+417
+418</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 389</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 416</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_active_file'>active_file</span>
   <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>?</span> <span class='id identifier rubyid_edit_file'>edit_file</span> <span class='op'>:</span> <span class='id identifier rubyid_file'>file</span>
@@ -5080,12 +5337,12 @@
       <pre class="lines">
 
 
-397
-398
-399</pre>
+424
+425
+426</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 397</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 424</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_active_file_attacher'>active_file_attacher</span>
   <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>?</span> <span class='id identifier rubyid_edit_file_attacher'>edit_file_attacher</span> <span class='op'>:</span> <span class='id identifier rubyid_file_attacher'>file_attacher</span>
@@ -5134,12 +5391,12 @@
       <pre class="lines">
 
 
-405
-406
-407</pre>
+432
+433
+434</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 405</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 432</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_active_file_data'>active_file_data</span>
   <span class='kw'>self</span><span class='lbracket'>[</span><span class='id identifier rubyid_file_data_column'>file_data_column</span><span class='rbracket'>]</span>
@@ -5202,13 +5459,13 @@
       <pre class="lines">
 
 
-140
-141
-142
-143</pre>
+167
+168
+169
+170</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 140</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 167</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_active_filename'>active_filename</span>
   <span class='comment'># noinspection RubyYardReturnMatch
@@ -5272,12 +5529,12 @@
       <pre class="lines">
 
 
-112
-113
-114</pre>
+139
+140
+141</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 112</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 139</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_attached_file'>attached_file</span>
   <span class='id identifier rubyid_file'>file</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_file_attacher'>file_attacher</span><span class='period'>.</span><span class='id identifier rubyid_load_data'>load_data</span><span class='lparen'>(</span><span class='id identifier rubyid_file_data'>file_data</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_file_data'>file_data</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span><span class='rparen'>)</span>
@@ -5353,26 +5610,26 @@
       <pre class="lines">
 
 
-224
-225
-226
-227
-228
-229
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239
-240</pre>
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 224</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 251</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete_file'>delete_file</span><span class='lparen'>(</span><span class='label'>no_raise:</span> <span class='kw'>true</span><span class='comma'>,</span> <span class='label'>field:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
@@ -5469,13 +5726,13 @@
       <pre class="lines">
 
 
-256
-257
-258
-259</pre>
+283
+284
+285
+286</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 256</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 283</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_download_url'>download_url</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:expires_in</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#ONE_TIME_USE_EXPIRATION-constant" title="Upload::FileMethods::ONE_TIME_USE_EXPIRATION (constant)">ONE_TIME_USE_EXPIRATION</a></span></span>
@@ -5539,13 +5796,13 @@
       <pre class="lines">
 
 
-130
-131
-132
-133</pre>
+157
+158
+159
+160</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 130</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 157</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_attached_file'>edit_attached_file</span>
   <span class='id identifier rubyid_edit_file'>edit_file</span> <span class='op'>||</span>
@@ -5609,12 +5866,12 @@
       <pre class="lines">
 
 
-121
-122
-123</pre>
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 121</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 148</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit_filename'>edit_filename</span>
   <span class='id identifier rubyid_edit_attached_file'>edit_attached_file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_original_filename'>original_filename</span><span class='op'>&amp;.</span><span class='id identifier rubyid_dup'>dup</span>
@@ -5720,25 +5977,25 @@
       <pre class="lines">
 
 
-292
-293
-294
-295
-296
-297
-298
-299
-300
-301
-302
-303
-304
-305
-306
-307</pre>
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 292</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 319</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_fetch_and_upload_file'>fetch_and_upload_file</span><span class='lparen'>(</span><span class='id identifier rubyid_file_path'>file_path</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_meth'>meth</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:meth</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid___method__'>__method__</span>
@@ -5800,12 +6057,12 @@
       <pre class="lines">
 
 
-375
-376
-377</pre>
+402
+403
+404</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 375</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 402</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_file_data_column'>file_data_column</span>
   <span class='id identifier rubyid_edit_phase'>edit_phase</span> <span class='op'>?</span> <span class='symbol'>:edit_file_data</span> <span class='op'>:</span> <span class='symbol'>:file_data</span>
@@ -5868,12 +6125,12 @@
       <pre class="lines">
 
 
-103
-104
-105</pre>
+130
+131
+132</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 103</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 130</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_filename'>filename</span>
   <span class='ivar'>@filename</span> <span class='op'>||=</span> <span class='id identifier rubyid_attached_file'>attached_file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_original_filename'>original_filename</span><span class='op'>&amp;.</span><span class='id identifier rubyid_dup'>dup</span>
@@ -5933,13 +6190,13 @@
       <pre class="lines">
 
 
-210
-211
-212
-213</pre>
+237
+238
+239
+240</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 210</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 237</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_promote_file'>promote_file</span><span class='lparen'>(</span><span class='label'>no_raise:</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
@@ -5989,12 +6246,12 @@
       <pre class="lines">
 
 
-265
-266
-267</pre>
+292
+293
+294</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 265</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload/file_methods.rb', line 292</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s3_object'>s3_object</span>
   <span class='id identifier rubyid_attached_file'>attached_file</span><span class='op'>&amp;.</span><span class='id identifier rubyid_storage'>storage</span><span class='op'>&amp;.</span><span class='id identifier rubyid_object'>object</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
@@ -6009,7 +6266,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:48:15 2021 by
+  Generated on Mon Jan 25 14:07:33 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

@@ -127,30 +127,6 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#authenticate_user!-instance_method" title="#authenticate_user! (instance method)">#<strong>authenticate_user!</strong>  &#x21d2; void </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Defined by Devise.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
       <a href="#get_account_details-instance_method" title="#get_account_details (instance method)">#<strong>get_account_details</strong>(id: nil)  &#x21d2; ( Bs::Message::MyAccountSummary, Bs::Message::MyAccountPreferences, Bs::Message::TitleDownloadList, (nil,nil,nil) </a>
     
 
@@ -214,51 +190,7 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="authenticate_user!-instance_method">
-  
-    #<strong>authenticate_user!</strong>  &#x21d2; <tt>void</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    <p class="note returns_void">This method returns an undefined value.</p>
-<p>Defined by Devise.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li>Devise::Controllers::Helpers#define_helpers</li>
-    
-  </ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-28</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/user_concern.rb', line 28</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_authenticate_user!'>authenticate_user!</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="get_account_details-instance_method">
+  <h3 class="signature first" id="get_account_details-instance_method">
   
     #<strong>get_account_details</strong>(id: nil)  &#x21d2; <tt>(
 <span class='object_link'><a href="Bs/Message/MyAccountSummary.html" title="Bs::Message::MyAccountSummary (class)">Bs::Message::MyAccountSummary</a></span>,
@@ -340,8 +272,6 @@
       <pre class="lines">
 
 
-53
-54
 55
 56
 57
@@ -393,10 +323,12 @@
 103
 104
 105
-106</pre>
+106
+107
+108</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/user_concern.rb', line 53</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/user_concern.rb', line 55</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_account_details'>get_account_details</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_error'>error</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -462,7 +394,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sun Jan 24 16:49:24 2021 by
+  Generated on Mon Jan 25 14:08:37 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
