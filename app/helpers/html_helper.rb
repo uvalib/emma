@@ -9,7 +9,6 @@ __loading_begin(__FILE__)
 #
 module HtmlHelper
 
-  # @private
   def self.included(base)
 
     __included(base, '[HtmlHelper]')

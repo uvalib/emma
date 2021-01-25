@@ -334,8 +334,6 @@ module TestHelper::Debugging
       #
       # @param [Module] base
       #
-      # @private
-      #
       def self.included(base)
         base.class_eval do
           %i[get put post patch delete head].each do |method|

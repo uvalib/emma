@@ -13,7 +13,6 @@ class AwsS3Service::Error < ApiService::Error
   #
   module Methods
 
-    # @private
     def self.included(base)
       base.send(:extend, self)
     end
@@ -50,7 +49,6 @@ class AwsS3Service::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
-# @private
 # noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION

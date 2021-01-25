@@ -20,8 +20,6 @@ module TestHelper::SystemTests
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|
       next if (name == :Bookshare) && !TESTING_BOOKSHARE_API

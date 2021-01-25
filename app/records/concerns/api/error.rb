@@ -212,7 +212,6 @@ class Api::Error < RuntimeError
 
   module Methods
 
-    # @private
     def self.included(base)
       base.send(:extend, self)
     end

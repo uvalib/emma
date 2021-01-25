@@ -291,8 +291,6 @@ module Workflow::Base::Transitions
   #
   # @see Workflow::ClassMethods#workflow
   #
-  # @private
-  #
   def self.included(base)
     return unless base.respond_to?(:workflow)
     base.class_eval do

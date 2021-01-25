@@ -48,7 +48,6 @@ module Representable
 
   module AppDebug
 
-    # @private
     def self.included(mod)
       mod.send(:extend, self)
     end

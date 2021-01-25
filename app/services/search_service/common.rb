@@ -14,8 +14,6 @@ module SearchService::Common
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
     base.send(:include, SearchService::Definition)
   end
