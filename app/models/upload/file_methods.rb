@@ -33,16 +33,43 @@ module Upload::FileMethods
   # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
+    # Represents a file that was uploaded to a storage.
+    #
     # @return [FileUploader::UploadedFile]
+    #
+    # @see Shrine::ClassMethods#inherited (Created via Shrine)
+    #
     attr_reader :file
 
+    # Saves information about the uploaded file as an attachment to a record
+    # (saving the file data to the :file_data database column).
+    #
+    # The attaching process requires a temporary and a permanent storage to be
+    # registered (by default that's :cache and :store).
+    #
     # @return [FileUploader::Attacher]
+    #
     attr_reader :file_attacher
 
+    # Represents a file that was uploaded to a storage as a replacement for the
+    # originally-submitted file.
+    #
     # @return [FileUploader::UploadedFile]
+    #
+    # @see #file
+    #
     attr_reader :edit_file
 
+    # Saves information about the uploaded replacement as an attachment to a
+    # record (saving the file data to the :edit_file_data database column).
+    #
+    # The attaching process requires a temporary and a permanent storage to be
+    # registered (by default that's :cache and :store).
+    #
     # @return [FileUploader::Attacher]
+    #
+    # @see #file_attacher
+    #
     attr_reader :edit_file_attacher
 
   end

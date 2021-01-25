@@ -187,34 +187,54 @@ module TestHelper::IntegrationTests::Authentication
   # :nocov:
   unless ONLY_FOR_DOCUMENTATION
 
+    # HTTP GET *url* as *user*.
+    #
     # @param [String] user
     # @param [String] url
     # @param [Hash]   opt
+    #
     # @see #send_as
+    #
     def get_as(user, url, **opt, &block); end
 
+    # HTTP PUT *url* as *user*.
+    #
     # @param [String] user
     # @param [String] url
     # @param [Hash]   opt
+    #
     # @see #send_as
+    #
     def put_as(user, url, **opt, &block); end
 
+    # HTTP POST *url* as *user*.
+    #
     # @param [String] user
     # @param [String] url
     # @param [Hash]   opt
+    #
     # @see #send_as
+    #
     def post_as(user, url, **opt, &block); end
 
+    # HTTP PUT *url* as *user*.
+    #
     # @param [String] user
     # @param [String] url
     # @param [Hash]   opt
+    #
     # @see #send_as
+    #
     def patch_as(user, url, **opt, &block); end
 
+    # HTTP DELETE *url* as *user*.
+    #
     # @param [String] user
     # @param [String] url
     # @param [Hash]   opt
+    #
     # @see #send_as
+    #
     def delete_as(user, url, **opt, &block); end
 
   end

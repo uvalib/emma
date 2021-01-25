@@ -25,6 +25,8 @@ module UserConcern
     #
     # @see Devise::Controllers::Helpers#define_helpers
     #
+    # @private
+    #
     def authenticate_user!; end
 
   end
