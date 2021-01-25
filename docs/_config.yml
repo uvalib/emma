@@ -1,1 +1,4 @@
+# docs/_config.yml
 theme: jekyll-theme-cayman
+include:
+  - _index.html
