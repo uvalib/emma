@@ -9,7 +9,6 @@ __loading_begin(__FILE__)
 #
 module Emma::Csv
 
-  # @private
   def self.included(base)
     base.send(:extend, self)
   end

@@ -14,8 +14,6 @@ module AwsS3Service::Common
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
     base.send(:include, AwsS3Service::Definition)
   end

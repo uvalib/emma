@@ -595,8 +595,6 @@ module Workflow::Base::Events
     #
     # @see Workflow::ClassMethods#workflow
     #
-    # @private
-    #
     def self.included(base)
       return unless base.respond_to?(:workflow)
       base.class_eval do
@@ -649,8 +647,6 @@ module Workflow::Base::Events
     # @param [Workflow, *] base
     #
     # @see Workflow::ClassMethods#workflow
-    #
-    # @private
     #
     def self.included(base)
       return unless base.respond_to?(:workflow)

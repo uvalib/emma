@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 #
 module AwsS3Service::Definition
 
-  # @private
   def self.included(base)
     base.send(:include, ApiService::Definition)
   end

@@ -13,11 +13,12 @@ module LayoutHelper
   #
   # @param [Module] base
   #
-  # @private
-  #
   def self.included(base)
+
     __included(base, '[LayoutHelper]')
+
     include_submodules(base)
+
   end
 
 end
