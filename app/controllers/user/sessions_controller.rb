@@ -24,6 +24,7 @@ class User::SessionsController < Devise::SessionsController
     protected
 
     # @return [Devise::Mapping]
+    # @private
     def devise_mapping; end
 
   end
@@ -223,6 +224,7 @@ end
 #
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
+  # @private
   class Devise::Mapping
     def authenticatable?          ; end
     def confirmable?              ; end

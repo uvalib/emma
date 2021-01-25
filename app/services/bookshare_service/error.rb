@@ -48,6 +48,7 @@ class BookshareService::Error < ApiService::Error
 end
 
 # Non-functional hints for RubyMine type checking.
+# @private
 # noinspection LongLine
 # :nocov:
 unless ONLY_FOR_DOCUMENTATION
