@@ -70,7 +70,9 @@ class AccountController < ApplicationController
     @item = User.new
   end
 
-  # == POST /account
+  # == POST  /account/create
+  # == PUT   /account/create
+  # == PATCH /account/create
   #
   # Create a new user account.
   #
@@ -91,6 +93,7 @@ class AccountController < ApplicationController
 
   # == GET /account/edit/:id
   # == GET /account/edit/SELECT
+  # == GET /account/edit_select
   #
   # Display a form for modification of an existing user account.
   #
@@ -123,6 +126,7 @@ class AccountController < ApplicationController
 
   # == GET /account/delete/:id
   # == GET /account/delete/SELECT
+  # == GET /account/delete_select
   #
   # Remove an existing user account.
   #
@@ -136,7 +140,7 @@ class AccountController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == DELETE /destroy/:id
+  # == DELETE /account/destroy/:id
   #
   # Remove an existing user account.
   #
