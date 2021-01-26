@@ -1,49 +1,35 @@
 #! /bin/bash
 #
-# Deploy changes to production EMMA.
+# Deploy YARD documentation changes.
 #
-# CI workflow causes changes to the https://github.com/uvalib/emma "master"
-# branch to be automatically deployed to the staging environment ($DEV_HOST).
+# In order to support GitHub Pages, documentation is stored in the "/docs"
+# subdirectory which is only present on the "docs" Git branch.
 #
-# When https://github.com/uvalib/emma-production-deploy is changed, CI workflow
-# automatically deploys to the production environment ($PROD_HOST) the
-# container identified by $DEPLOY_TAG.
+# NOTE:
 #
-# This script updates $DEPLOY_TAG based on the currently-deployed staging
-# version.
+# [1] "All Files" is true by default because when specific files are given to
+#     YARD I'm not sure that the resultant pages actually have all of the
+#     linkages that they should.
 #
-# NOTE: Staging services are turned off between 11 PM and 6 AM.
-# That means that this script will not work during that time period because
-# the staging service will not be able to report the latest build version.
+# [2] "Push Changes" is false by default because the usual practice is to
+#     review the changes from RubyMine and write the commit message there.
 :
 #==============================================================================
 # Constants
 #==============================================================================
 
 APP='emma'
-ENV='production'
 
-# Local git repos.
+# Local git repo.
 
 SRC_DIR="$HOME/Work"
 APP_DIR="$SRC_DIR/$APP"
-DEPLOY_DIR="$SRC_DIR/$APP-production-deploy"
-DEPLOY_TAG="tags/$APP.tag"
+DOC_DIR="$APP_DIR/docs"
 
-# Service deployments.
+# Git repo branches.
 
-DEV_HOST='https://emmadev.internal.lib.virginia.edu'
-PROD_HOST='https://emma.lib.virginia.edu'
-
-# AWS pipelines.
-
-BUILD_PIPELINE='uva-emma-codepipeline'
-DEPLOY_PIPELINE='uva-emma-production-deploy-codepipeline'
-
-AWS_REGION='us-east-1'
-AWS_PIPELINES='https://console.aws.amazon.com/codesuite/codepipeline/pipelines'
-AWS_BUILD_PIPELINE="$AWS_PIPELINES/$BUILD_PIPELINE/view?region=$AWS_REGION"
-AWS_DEPLOY_PIPELINE="$AWS_PIPELINES/$DEPLOY_PIPELINE/view?region=$AWS_REGION"
+MAIN_BRANCH='master'
+DOCS_BRANCH='docs'
 
 # Other constants.
 
@@ -59,7 +45,9 @@ declare -a GIT_ARGS=()
 QUIET=''
 VERBOSE=''
 DRY_RUN=''
-APP_VERSION=''
+ALL_FILES='true'  # See NOTE [1] above
+PUSH_CHANGES=''   # See NOTE [2] above
+CHANGED_FILES=''
 
 #==============================================================================
 # Functions
@@ -124,7 +112,8 @@ function Abort() # [-h|--help] [message...]
 #
 function Help()
 {
-    Announce -f "-e|--env ENVIRONMENT  Build environment (default: $ENV)"
+    Announce -f '-a|--all              Pass all files to yard not just changes'
+    Announce -f "-p|--push             Push changes to origin/$DOCS_BRANCH"
     Announce -f '-n|--dry-run          Do not actually perform actions'
     Announce -f '-q|--quiet            No added output to stdout'
     Announce -f '-v|--verbose          Verbose output to stdout'
@@ -176,51 +165,40 @@ function Git() # [-f|--force] git_args...
 }
 
 #------------------------------------------------------------------------------
-# Get the current application version build tag from the version deployed to
-# AWS staging.
+# List changed files (but only the ones yard can deal with).
 #
-# The JSON output from "/version" should look like this:
-#
-#   {"version":"build-20200722011917"}
-#
-# If the output doesn't contain this, the result of the function will be blank.
-#
-function GetStagingVersion()
+function ChangedFiles()
 {
-    local OUTPUT=`curl --no-progress-meter "$DEV_HOST/version" 2>&1`
-    local RESULT=`
-      echo "$OUTPUT" |
-      sed -n -r '/^.*"version"\s*:\s*"(build\-[0-9]+)".*$/ { s//\1/; p; q }'
-    `
-    [ "$RESULT" ] || Verbose "Invalid version output:$NL$OUTPUT"
-    echo "$RESULT"
+    Git --force diff --name-only "origin/$MAIN_BRANCH" |
+    grep '\(\.rb\|\.md\)$'
 }
 
 #------------------------------------------------------------------------------
-# Update the version the deploy directory's tag file.
+# Checkout the git branch.
 #
-function UpdateDeployedVersion()
+function CurrentBranch()
 {
-    local VERSION="$1"
-    local TARGET="$DEPLOY_DIR/$DEPLOY_TAG"
+    Git --force branch --show-current
+}
 
-    [ "$VERSION" ] || VERSION="$APP_VERSION"
-    [ "$DRY_RUN" ] && TARGET="$TARGET.tmp$$"
+#------------------------------------------------------------------------------
+# Checkout the git branch.
+#
+function Checkout() # branch
+{
+    local CURRENT=`CurrentBranch`
+    local REQUESTED="$1"
+    [ "$CURRENT" == "$REQUESTED" ] || Git --force checkout "$REQUESTED"
+}
 
-    echo "$VERSION" > "$TARGET" && [ "`cat \"$TARGET\"`" = "$VERSION" ]
-    local -i SUCCESS=$?
-
-    if [ $SUCCESS -eq 0 ] ; then
-        Verbose "Committing '$TARGET'"
-        Git commit -a -m "Deploying version $APP_VERSION"
-    else
-        Verbose "Restoring '$TARGET'"
-        Git restore "$DEPLOY_TAG"
-    fi
-
-    [ "$DRY_RUN" ] && rm -f "$TARGET"
-
-    return $SUCCESS
+#------------------------------------------------------------------------------
+# Commit documentation changes.
+#
+function UpdateDocsBranch() # [commit_message]
+{
+    local COMMIT_MESSAGE='Documentation update'
+    [ "$1" ] && COMMIT_MESSAGE="$1"
+    Git commit -m "$COMMIT_MESSAGE" && Git push
 }
 
 #==============================================================================
@@ -229,7 +207,8 @@ function UpdateDeployedVersion()
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        -e|--env|--environment) ENV="$2"; shift ;;
+        -a|--all)               ALL_FILES=true ;;     # See NOTE [1] above
+        -p|--push)              PUSH_CHANGES=true ;;  # See NOTE [2] above
         -n|--dry-run|--dry*)    DRY_RUN=true ;;
         -q|--quiet)             QUIET=true ;;
         -v|--verbose)           VERBOSE=true ;;
@@ -245,12 +224,6 @@ done
 # Validate options.
 #==============================================================================
 
-case "$ENV" in
-    prod|production) ENV='production' ;;
-    dev|development) ENV='development' ;;
-    *)               Abort "$ENV: invalid -e option" ;;
-esac
-
 [ "$DRY_RUN" ] && VERBOSE=true
 
 if [ "$VERBOSE" -a "$QUIET" ] ; then
@@ -261,46 +234,43 @@ fi
 GIT_ARGS+=$@
 
 : =============================================================================
-  Announce "Getting current build version from '$DEV_HOST'"
-: =============================================================================
-
-[ "$APP_VERSION" ] || APP_VERSION=`GetStagingVersion`
-[ "$APP_VERSION" ] || Abort "Could not get current version from $DEV_HOST"
-
-: =============================================================================
-  Announce "Checking local git repo '$APP_DIR'"
+  Announce "Merging changes from '$MAIN_BRANCH' branch"
 : =============================================================================
 
 cd_to "$APP_DIR"
-Git fetch --all
-Git pull
-Git gc --quiet
+ORIGINAL_BRANCH=`CurrentBranch`
 
-# The production deployment should be a clone of the staging deployment.
-# Since CI causes the staging deployment to be updated whenever changes are
-# pushed, if there are un-pushed changes then they have definitely not been
-# vetted via staging so production should not yet be deployed.
+Checkout "$MAIN_BRANCH"
+[ "$ALL_FILES" -o "$CHANGED_FILES" ] || CHANGED_FILES=`ChangedFiles`
 
-MODIFIED=`Git --force status --porcelain`
-if [ "$MODIFIED" ] ; then
-    MESSAGE="Cannot deploy production with untested changes:$NL$MODIFIED"
-    if [ "$DRY_RUN" ] ; then
-        Announce "$MESSAGE"
-        Announce '*** DURING NORMAL OPERATION EXECUTION WOULD END HERE ***'
+Checkout "$DOCS_BRANCH"
+Git merge --no-edit "$MAIN_BRANCH"
+
+: =============================================================================
+  Announce 'Generating YARD documentation'
+: =============================================================================
+
+declare -i STATUS=0
+FINAL_MESSAGE=''
+
+if Run yard doc -o "$DOC_DIR" $CHANGED_FILES ; then
+    Announce 'Adding updates'
+    Git add "$DOC_DIR" &&
+    if [ ! "$PUSH_CHANGES" ] ; then
+        FINAL_MESSAGE="$DOC_DIR ready for review on the $DOCS_BRANCH branch"
+    elif UpdateDocsBranch ; then
+        FINAL_MESSAGE="Updated 'origin/$DOCS_BRANCH'"
     else
-        Abort "$MESSAGE"
+        STATUS=$?
+        FINAL_MESSAGE="Failed to update 'origin/$DOCS_BRANCH'"
     fi
+else
+    STATUS=$?
+    FINAL_MESSAGE='YARD failure'
 fi
 
-: =============================================================================
-  Announce "Updating '$DEPLOY_DIR' to '$APP_VERSION'"
-: =============================================================================
+Checkout "$ORIGINAL_BRANCH"
 
-cd_to "$DEPLOY_DIR"
-Git fetch --all
-Git pull
-Git gc --quiet
-UpdateDeployedVersion "$APP_VERSION" || Abort "Could not update '$DEPLOY_TAG"
-Git push
+[ "$FINAL_MESSAGE" ] && Announce "$FINAL_MESSAGE"
+exit $STATUS
 
-Announce "${NL}Deploy of $APP is now in progress at:$NL$AWS_DEPLOY_PIPELINE$NL"
