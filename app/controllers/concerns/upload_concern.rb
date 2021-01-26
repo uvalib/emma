@@ -340,9 +340,9 @@ module UploadConcern
   # @return [nil]                     Bad data and/or no object created.
   #
   def proxy_get_record(sid, host)
-    data = sid && Faraday.get("#{host}/upload/#{sid}.json").body.presence
-    data &&= json_parse(data)
-    data &&= data[:entry]
+    data = sid && Faraday.get("#{host}/upload/show/#{sid}.json").body
+    data = json_parse(data) || {}
+    data = data[:response]  || data
     Upload.new(data) if data.present?
   end
 
