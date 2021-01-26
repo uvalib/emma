@@ -96,7 +96,13 @@ function asString(item, limit) {
 
     } else {
         // A generic object.
-        let pairs = function(v, k) { return `"${k}": ${asString(v)}`; };
+        let pairs = function(v, k) {
+            let pair;
+            if (item.hasOwnProperty(k)) {
+                pair = `"${k}": ${asString(v)}`;
+            }
+            return pair;
+        };
         result = $.map(item, pairs).join(', ');
         left   = '{';
         right  = '}';

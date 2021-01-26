@@ -735,8 +735,22 @@ $form-gap-narrow: $form-gap / 3;
     }
 
     // Inserted by Uppy via file-upload.js.
-    // Doesn't need grid adjustment.
-    .uppy-Informer { }
+    .uppy-Informer {
+
+        @include grid-row(1);
+        @include grid-column-span;
+
+        display:         inline-flex;
+        justify-content: center;
+        align-items:     center;
+        position:        unset;
+        z-index:         10000;
+
+        p {
+            word-break: break-word;
+            box-shadow: 0 0 0.5rem 0.625rem white;
+        }
+    }
 }
 
 // Area filled by the client with on-going results from bulk upload.

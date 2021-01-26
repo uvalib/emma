@@ -335,13 +335,26 @@ $(document).on('turbolinks:load', function() {
         debugging:      DEBUGGING
     });
 
+    // noinspection MagicNumberJS
+    /**
+     * How long to wait for the server to confirm the upload.
+     *
+     * The default is 30 seconds but that has been seen to be too short for
+     * certain files (either because of size or because of complexity when
+     * parsing for metadata).
+     *
+     * @constant
+     * @type {number}
+     */
+    const UPLOAD_TIMEOUT = 90 * SECONDS;
+
     /**
      * How long to display transient messages.
      *
      * @constant
      * @type {number}
      */
-    const MESSAGE_DURATION = 3 * SECONDS;
+    const MESSAGE_DURATION = 2 * UPLOAD_TIMEOUT;
 
     /**
      * How long to wait after the user enters characters into a field before
@@ -1066,10 +1079,11 @@ $(document).on('turbolinks:load', function() {
      * @param {Selector} [form]       Passed to {@link formElement}.
      */
     function setupSubmitButton(form) {
-        let $form = formElement(form);
-        submitButton($form)
-            .attr('title', submitTooltip($form))
-            .text(submitLabel($form));
+        let $form   = formElement(form);
+        const label = submitLabel($form);
+        const tip   = submitTooltip($form);
+        let $button = submitButton($form).attr('title', tip).text(label);
+        handleClickAndKeypress($button, clearFlash);
     }
 
     /**
@@ -1083,11 +1097,12 @@ $(document).on('turbolinks:load', function() {
      * is not relied upon because it only clears form fields but not file data.
      */
     function setupCancelButton(form) {
-        let $form     = formElement(form);
-        const tooltip = cancelTooltip($form);
-        const label   = cancelLabel($form);
-        let $button   = cancelButton($form).attr('title', tooltip).text(label);
+        let $form   = formElement(form);
+        const label = cancelLabel($form);
+        const tip   = cancelTooltip($form);
+        let $button = cancelButton($form).attr('title', tip).text(label);
         handleClickAndKeypress($button, cancelSubmission);
+        handleClickAndKeypress($button, clearFlash);
     }
 
     /**
@@ -1097,12 +1112,14 @@ $(document).on('turbolinks:load', function() {
      */
     function setupFileSelectButton(form) {
         let $form   = formElement(form);
-        let $button = fileSelectButton($form);
+        const label = fileSelectLabel($form);
+        const tip   = fileSelectTooltip($form);
+        let $button = fileSelectContainer($form).children('button');
+        $button.addClass('file-select-button').attr('title', tip).text(label);
         if (isCreateForm($form)) {
             $button.addClass('best-choice');
         }
-        $button.attr('title', fileSelectTooltip($form));
-        $button.text(fileSelectLabel($form));
+        handleClickAndKeypress($button, clearFlash);
     }
 
     /**
@@ -1292,6 +1309,7 @@ $(document).on('turbolinks:load', function() {
         uppy.use(Uppy.XHRUpload, {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
+            timeout:   UPLOAD_TIMEOUT,
             limit:     1,
             headers:   { 'X-CSRF-Token': Rails.csrfToken() }
         });
@@ -1443,7 +1461,11 @@ $(document).on('turbolinks:load', function() {
          */
         function onFileUploadError(file, error, response) {
             consoleWarn('Uppy:', 'upload-error', file, error, response);
-            showFlashError(`ERROR: ${error.message || error}`); // TODO: I18n
+            showFlashError(error && error.message || error);
+            // In case the user wants to press "Select file" again:
+            uppy.getFiles().forEach(function(file) {
+                uppy.removeFile(file.id);
+            });
         }
 
         /**
@@ -1467,12 +1489,9 @@ $(document).on('turbolinks:load', function() {
      */
     function setupMessages(uppy, features) {
 
-        let info;
-        if (features.popup_messages) {
-            info = function(txt, time, lvl) { uppyInfo(uppy, txt, time, lvl); }
-        } else {
-            info = function() {}; // A placeholder "null function".
-        }
+        const info  = (text) => uppyInfo(uppy, text);
+        const warn  = (text) => uppyWarn(uppy, text);
+        const error = (text) => uppyError(uppy, text);
 
         uppy.on('upload-started', function(file) {
             consoleWarn('Uppy:', 'upload-started', file);
@@ -1486,14 +1505,14 @@ $(document).on('turbolinks:load', function() {
 
         uppy.on('upload-retry', function(file_id) {
             debug('Uppy:', 'upload-retry', file_id);
-            info('Retrying...'); // TODO: I18n
+            warn('Retrying...'); // TODO: I18n
         });
 
         uppy.on('retry-all', function(files) {
             debug('Uppy:', 'retry-all', files);
             const count   = files ? files.length : 0;
             const uploads = (count === 1) ? 'upload' : `${count} uploads`;
-            info(`Retrying ${uploads}...`); // TODO: I18n
+            warn(`Retrying ${uploads}...`); // TODO: I18n
         });
 
         uppy.on('pause-all', function() {
@@ -1503,20 +1522,22 @@ $(document).on('turbolinks:load', function() {
 
         uppy.on('cancel-all', function() {
             debug('Uppy:', 'cancel-all');
-            info('Uploading CANCELED'); // TODO: I18n
+            warn('Uploading CANCELED'); // TODO: I18n
         });
 
         uppy.on('resume-all', function() {
             debug('Uppy:', 'resume-all');
-            info('Uploading RESUMED'); // TODO: I18n
+            warn('Uploading RESUMED'); // TODO: I18n
         });
 
-        uppy.on('restriction-failed', function(file, error) {
-            consoleWarn('Uppy:', 'restriction-failed', file, error);
+        uppy.on('restriction-failed', function(file, msg) {
+            consoleWarn('Uppy:', 'restriction-failed', file, msg);
+            error(msg);
         });
 
-        uppy.on('error', function(error) {
-            consoleWarn('Uppy:', 'error', error);
+        uppy.on('error', function(msg) {
+            consoleWarn('Uppy:', 'error', msg);
+            error(msg);
         });
 
     }
@@ -1635,17 +1656,36 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Invoke `uppy.info`.
+     * Invoke `uppy.info` with an error message.
      *
      * @param {Uppy}   uppy
      * @param {string} text
-     * @param {number} [time]
-     * @param {string} [message_level]
+     */
+    function uppyError(uppy, text) {
+        uppyInfo(uppy, text, (2 * MESSAGE_DURATION), 'error');
+    }
+
+    /**
+     * Invoke `uppy.info` with a warning message.
+     *
+     * @param {Uppy}   uppy
+     * @param {string} text
+     */
+    function uppyWarn(uppy, text) {
+        uppyInfo(uppy, text, (2 * MESSAGE_DURATION), 'warning');
+    }
+
+    /**
+     * Invoke `uppy.info`.
+     *
+     * @param {Uppy}                     uppy
+     * @param {string}                   text
+     * @param {number}                   [time]
+     * @param {'info'|'warning'|'error'} [message_level]
      */
     function uppyInfo(uppy, text, time, message_level) {
         const level    = message_level || 'info';
         const duration = time || MESSAGE_DURATION;
-        // noinspection JSCheckFunctionSignatures
         uppy.info(text, level, duration);
     }
 
@@ -1664,9 +1704,11 @@ $(document).on('turbolinks:load', function() {
      * This function shouldn't be necessary, but the 'hideAfterFinish' option
      * for ProgressBar *only* sets 'aria-hidden' -- it doesn't actually hide
      * the control itself.
+     *
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
-    function hideUppyProgressBar() {
-        let $control = formContainer().find('.uppy-ProgressBar');
+    function hideUppyProgressBar(form) {
+        let $control = formContainer(form).find('.uppy-ProgressBar');
         $control.attr('aria-hidden', true);
         $control.css('visibility', 'hidden');
     }
@@ -3394,23 +3436,24 @@ $(document).on('turbolinks:load', function() {
      *          mime_type: string,
      *      }
      * }} file_data
-     * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
-    function displayUploadedFilename(file_data, element) {
+    function displayUploadedFilename(file_data, form) {
         const metadata = file_data && file_data.metadata;
         const filename = metadata  && metadata.filename;
-        displayFilename(filename, element);
+        displayFilename(filename, form);
     }
 
     /**
      * Display the name of the file selected by the user.
      *
      * @param {String}   filename
-     * @param {Selector} [element]    Default: {@link uploadedFilenameDisplay}.
+     * @param {Selector} [form]       Default: {@link formElement}.
      */
-    function displayFilename(filename, element) {
+    function displayFilename(filename, form) {
         if (isPresent(filename)) {
-            let $element = uploadedFilenameDisplay(element);
+            let $form    = formElement(form);
+            let $element = uploadedFilenameDisplay($form);
             if (isPresent($element)) {
                 let $filename = $element.find('.filename');
                 if (isPresent($filename)) {
@@ -3420,7 +3463,7 @@ $(document).on('turbolinks:load', function() {
                 }
                 $element.addClass('complete');
             }
-            hideUppyProgressBar();
+            hideUppyProgressBar($form);
         }
     }
 
@@ -3622,7 +3665,7 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_submit_button"
      */
     function submitButton(form) {
-        return buttonTray(form).children('[type="submit"]').first();
+        return buttonTray(form).children('.submit-button');
     }
 
     /**
@@ -3636,7 +3679,7 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_cancel_button"
      */
     function cancelButton(form) {
-        return buttonTray(form).children('.cancel-button').first();
+        return buttonTray(form).children('.cancel-button');
     }
 
     /**
@@ -3691,7 +3734,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {jQuery}
      */
     function fileSelectButton(form) {
-        return fileSelectContainer(form).children('button,label');
+        return fileSelectContainer(form).children('.file-select-button');
     }
 
     /**
