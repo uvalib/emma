@@ -50,6 +50,10 @@ preload_app!
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
+# Certain uploads seem to take Uppy a while to accumulate before it actually
+# starts to send the request.
+first_data_timeout 90 # seconds
+
 # =============================================================================
 # Logging
 # =============================================================================
