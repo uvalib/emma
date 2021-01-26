@@ -1300,8 +1300,8 @@ $(document).on('turbolinks:load', function() {
         if (features.upload_to_aws) {
             // noinspection JSUnresolvedVariable, JSUnresolvedFunction
             uppy.use(Uppy.AwsS3, {
-                limit:        2,
-                timeout:      Uppy.ms('1 minute'),
+                // limit:     2,
+                timeout:      UPLOAD_TIMEOUT,
                 companionUrl: 'https://companion.myapp.com/' // TODO: ???
             });
         }
@@ -1310,7 +1310,7 @@ $(document).on('turbolinks:load', function() {
             endpoint:   Emma.Upload.Path.endpoint,
             fieldName: 'file',
             timeout:   UPLOAD_TIMEOUT,
-            limit:     1,
+            // limit:  1,
             headers:   { 'X-CSRF-Token': Rails.csrfToken() }
         });
         return uppy;
