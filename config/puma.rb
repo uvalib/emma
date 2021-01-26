@@ -54,12 +54,17 @@ plugin :tmp_restart
 # Logging
 # =============================================================================
 
-debug if true?(ENV['PUMA_DEBUG'])
-log_requests true?(ENV['PUMA_LOG_REQUESTS'])
+if true?(ENV['PUMA_LOG_REQUESTS'])
+  log_requests
+end
 
-before_fork        { puts 'PUMA before_fork: starting workers' }
-on_worker_boot     { puts 'PUMA on_worker_boot' }
-on_worker_fork     { puts 'PUMA on_worker_fork' }
-after_worker_fork  { puts 'PUMA after_worker_fork' }
-on_worker_shutdown { puts 'PUMA on_worker_shutdown' }
-out_of_band        { puts 'PUMA worker idle' }
+if true?(ENV['PUMA_DEBUG'])
+  debug
+  before_fork        { puts 'PUMA before_fork: starting workers' }
+  on_worker_boot     { puts 'PUMA on_worker_boot' }
+  on_worker_shutdown { puts 'PUMA on_worker_shutdown' }
+  on_worker_fork     { puts 'PUMA on_worker_fork' }
+  after_worker_fork  { puts 'PUMA after_worker_fork' }
+  on_refork          { puts 'PUMA on_refork' }
+  out_of_band        { puts 'PUMA worker idle' }
+end

@@ -81,7 +81,6 @@ class FileUploader < Shrine
 
   Attacher.validate do
     # @see Shrine::Plugins::Validation::AttacherClassMethods#validate
-    $stderr.puts "*** START >>> Attacher.validate"
     if FileNaming::STRICT_FORMATS
       fmt      = FileNaming.mime_to_fmt[file.mime_type]&.first
       exts     = fmt && FileNaming.file_extensions[fmt] || [file.extension]
@@ -93,7 +92,6 @@ class FileUploader < Shrine
     else
       validate_min_size(MIN_SIZE, message: (ERROR[:min_size] % nil).squish)
     end
-    $stderr.puts "*** END   <<< Attacher.validate | errors = #{errors.inspect}"
   end
 
   # ===========================================================================

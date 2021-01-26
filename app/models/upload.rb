@@ -49,17 +49,13 @@ class Upload < ApplicationRecord
   # ===========================================================================
 
   validate on: %i[create] do
-    $stderr.puts '*** START >>> AR create'
     attached_file_valid?
     required_fields_valid? if FIELD_VALIDATION
-    $stderr.puts "*** END   <<< AR create - errors = #{errors.values.inspect}"
   end
 
   validate on: %i[update] do
-    $stderr.puts '*** START >>> AR update'
     attached_file_valid?
     required_fields_valid? if FIELD_VALIDATION
-    $stderr.puts "*** END   <<< AR update - errors = #{errors.values.inspect}"
   end
 
   # ===========================================================================
