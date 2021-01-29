@@ -123,9 +123,8 @@ module OAuth2
       # @see OAuth2::AccessToken#refresh!
       #
       def refresh!(params = {})
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # Make a request using the Access Token.

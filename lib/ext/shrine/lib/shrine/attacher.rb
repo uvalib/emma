@@ -357,8 +357,8 @@ class Shrine
       # @return [FileUploader]
       #
       def set_entity(record, name)
-        super.tap do |res|
-          __shrine_debug(__method__, "RESULT @context = #{res.inspect}") do
+        super.tap do |result|
+          __shrine_debug(__method__, "RESULT @context = #{result.inspect}") do
             { name: name, record: record }
           end
         end

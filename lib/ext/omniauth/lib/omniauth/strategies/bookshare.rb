@@ -224,9 +224,8 @@ module OmniAuth
       # @return [Hash]
       #
       def authorize_params
-        super.tap do |result|
-          __auth_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
       end if DEBUG_OAUTH
 
       # token_params
@@ -234,9 +233,8 @@ module OmniAuth
       # @return [Hash]
       #
       def token_params
-        super.tap do |result|
-          __auth_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
       end if DEBUG_OAUTH
 
       # callback_phase
@@ -335,9 +333,8 @@ module OmniAuth
         prms = token_params.to_hash(symbolize_keys: true)
         # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
-        client.auth_code.get_token(code, prms, opts).tap do |result|
-          __auth_debug(__method__, "=> #{result.inspect}")
-        end
+        client.auth_code.get_token(code, prms, opts)
+          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
       end
 
       # =======================================================================

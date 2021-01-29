@@ -230,9 +230,8 @@ module OAuth2
       # @see OAuth2::Client#authorize_url
       #
       def authorize_url(params = {})
-        super.tap do |result|
-          __oauth2_debug(__method__, " => #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, " => #{result.inspect}") }
       end
 
       # The token endpoint URL of the OAuth2 provider
@@ -245,9 +244,8 @@ module OAuth2
       # @see OAuth2::Client#token_url
       #
       def token_url(params = nil)
-        super.tap do |result|
-          __oauth2_debug(__method__, " => #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, " => #{result.inspect}") }
       end
 
       # Makes a request relative to the specified site root.
@@ -349,9 +347,8 @@ module OAuth2
       #
       def get_token(params, access_token_opts = {}, access_token_class = AccessToken)
         __oauth2_debug(__method__, binding)
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # The Authorization Code strategy
@@ -362,9 +359,8 @@ module OAuth2
       # @see OAuth2::Client#auth_code
       #
       def auth_code
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # The Implicit strategy
@@ -375,9 +371,8 @@ module OAuth2
       # @see OAuth2::Client#implicit
       #
       def implicit
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # The Resource Owner Password Credentials strategy
@@ -390,9 +385,8 @@ module OAuth2
       # @see OAuth2::Client#password
       #
       def password
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # The Client Credentials strategy
@@ -405,9 +399,8 @@ module OAuth2
       # @see OAuth2::Client#client_credentials
       #
       def client_credentials
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
       # The Client Assertion Strategy
@@ -418,9 +411,8 @@ module OAuth2
       # @see OAuth2::Client#assertion
       #
       def assertion
-        super.tap do |result|
-          __oauth2_debug(__method__, "=> #{result.inspect}")
-        end
+        super
+          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
       end
 
     end
