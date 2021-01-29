@@ -70,10 +70,10 @@ module Emma::Json
       # noinspection RubyYardReturnMatch
       MultiJson.load(arg, opt)
     else
-      Log.error { "#{__method__}: #{arg.class} unexpected: #{arg.inspect}" }
-      raise "#{__method__}: #{arg.class} unexpected"
+      raise "#{arg.class} unexpected"
     end
   rescue => error
+    Log.info { "#{__method__}: #{error.class}: #{error.message}" }
     raise error unless no_raise
   end
 

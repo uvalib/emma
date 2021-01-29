@@ -57,14 +57,14 @@ class PdfParser < FileParser
   #
   def method_missing(name, *args)
     if pdf_reader.respond_to?(name)
-      __debug_args(binding) { "#{name} [via pdf_reader]" }
+      __debug_items(binding) { "#{name} [via pdf_reader]" }
       pdf_reader.send(name, *args)
     elsif pdf_reader.present?
-      __debug_args(binding) { "#{name} [via pdf_reader.info]" }
+      __debug_items(binding) { "#{name} [via pdf_reader.info]" }
       # noinspection RubyNilAnalysis
       pdf_reader.info[name.to_s.camelize.to_sym]
     else
-      __debug_args(binding) { "#{name} [FAILED - no pdf_reader]" }
+      __debug_items(binding) { "#{name} [FAILED - no pdf_reader]" }
     end
   end
 

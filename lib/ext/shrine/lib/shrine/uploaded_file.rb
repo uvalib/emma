@@ -89,168 +89,143 @@ class Shrine
 
   end
 
-  module UploadedFileDebug
+  if DEBUG_SHRINE
 
-    # Non-functional hints for RubyMine type checking.
-    # :nocov:
-    include Shrine::UploadedFileExt unless ONLY_FOR_DOCUMENTATION
-    # :nocov:
+    module UploadedFileDebug
 
-    # =========================================================================
-    # :section: Shrine::UploadedFile overrides
-    # =========================================================================
+      include ExtensionDebugging
 
-    public
+      # Non-functional hints for RubyMine type checking.
+      # :nocov:
+      include Shrine::UploadedFileExt unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
 
-    # initialize
-    #
-    # @param [Hash] data
-    #
-    def initialize(data)
-      __debug_upload('NEW') { data.is_a?(Hash) ? data : { data: data } }
-      super
-    end
+      # =======================================================================
+      # :section: Shrine::UploadedFile overrides
+      # =======================================================================
 
-    # open
-    #
-    # @param [Hash] options
-    #
-    # @return [IO]
-    # @return [*]                   Return from block if block given.
-    #
-    def open(**options)
-      __debug_upload(__method__) { options }
-      # noinspection RubyYardReturnMatch
-      super
-    end
+      public
 
-    # download
-    #
-    # @param [Hash] options
-    #
-    # @return [Tempfile]
-    # @return [*]                   Return from block if block given.
-    #
-    def download(**options)
-      __debug_upload(__method__) { options }
-      super
-    end
-
-    # stream
-    #
-    # @param [String, IO, StringIO] destination
-    # @param [Hash]                 options
-    #
-    # @return [Tempfile]
-    #
-    def stream(destination, **options)
-      __debug_upload(__method__) do
-        { destination: destination, options: options }
-      end
-      # noinspection RubyYardReturnMatch
-      super
-    end
-
-    # read
-    #
-    # @param [Array] args           Passed to IO#read.
-    #
-    # @return [String]
-    #
-    def read(*args)
-      __debug_upload(__method__, *args)
-      super
-    end
-
-    # rewind
-    #
-    # @return [void]
-    #
-    def rewind
-      __debug_upload(__method__)
-      super
-    end
-
-    # close
-    #
-    # @return [void]
-    #
-    def close
-      __debug_upload(__method__)
-      super
-    end
-
-    # replace
-    #
-    # @param [IO, StringIO] io
-    # @param [Hash]         options
-    #
-    # @return [void]
-    #
-    def replace(io, **options)
-      __debug_upload(__method__) { { io: io, options: options } }
-      super
-    end
-
-    # delete
-    #
-    # @return [void]
-    #
-    def delete
-      __debug_upload(__method__)
-      super
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    # extract_file_metadata
-    #
-    # @return [Hash{Symbol=>*}]
-    #
-    # This method overrides:
-    # @see Shrine::UploadedFileExt#extract_file_metadata
-    #
-    def extract_file_metadata
-      __debug_upload(__method__)
-      super
-    end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    module DebugMethods
-
-      include Emma::Debug
-
-      # Debug method for this class.
+      # initialize
       #
-      # @param [Array] args
-      # @param [Hash]  opt
-      # @param [Proc]  block            Passed to #__debug_items.
+      # @param [Hash] data
+      #
+      def initialize(data)
+        __shrine_debug('NEW') { data.is_a?(Hash) ? data : { data: data } }
+        super
+      end
+
+      # open
+      #
+      # @param [Hash] options
+      #
+      # @return [IO]
+      # @return [*]                   Return from block if block given.
+      #
+      def open(**options)
+        __shrine_debug(__method__) { options }
+        # noinspection RubyYardReturnMatch
+        super
+      end
+
+      # download
+      #
+      # @param [Hash] options
+      #
+      # @return [Tempfile]
+      # @return [*]                   Return from block if block given.
+      #
+      def download(**options)
+        __shrine_debug(__method__) { options }
+        super
+      end
+
+      # stream
+      #
+      # @param [String, IO, StringIO] destination
+      # @param [Hash]                 options
+      #
+      # @return [Tempfile]
+      #
+      def stream(destination, **options)
+        __shrine_debug(__method__) do
+          { destination: destination, options: options, '@io' => @io }
+        end
+        # noinspection RubyYardReturnMatch
+        super
+      end
+
+      # read
+      #
+      # @param [Array] args           Passed to IO#read.
+      #
+      # @return [String]
+      #
+      def read(*args)
+        __shrine_debug(__method__, *args)
+        super
+      end
+
+      # rewind
       #
       # @return [void]
       #
-      def __debug_upload(*args, **opt, &block)
-        meth = args.shift
-        meth = meth.to_s.upcase if meth.is_a?(Symbol)
-        opt[:leader] = ':::SHRINE::: UploadedFile'
-        opt[:separator] ||= ' | '
-        __debug_items(meth, *args, opt, &block)
+      def rewind
+        __shrine_debug(__method__)
+        super
+      end
+
+      # close
+      #
+      # @return [void]
+      #
+      def close
+        __shrine_debug(__method__)
+        super
+      end
+
+      # replace
+      #
+      # @param [IO, StringIO] io
+      # @param [Hash]         options
+      #
+      # @return [void]
+      #
+      def replace(io, **options)
+        __shrine_debug(__method__) { { io: io, options: options } }
+        super
+      end
+
+      # delete
+      #
+      # @return [void]
+      #
+      def delete
+        __shrine_debug(__method__)
+        super
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      public
+
+      # extract_file_metadata
+      #
+      # @return [Hash{Symbol=>*}]
+      #
+      # This method overrides:
+      # @see Shrine::UploadedFileExt#extract_file_metadata
+      #
+      def extract_file_metadata
+        __shrine_debug(__method__)
+        super
       end
 
     end
 
-    include DebugMethods
-    extend  DebugMethods
-
-  end if SHRINE_DEBUG
+  end
 
 end
 
@@ -259,6 +234,6 @@ end
 # =============================================================================
 
 override Shrine::UploadedFile => Shrine::UploadedFileExt
-override Shrine::UploadedFile => Shrine::UploadedFileDebug if SHRINE_DEBUG
+override Shrine::UploadedFile => Shrine::UploadedFileDebug if DEBUG_SHRINE
 
 __loading_end(__FILE__)

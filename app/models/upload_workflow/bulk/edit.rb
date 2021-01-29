@@ -63,7 +63,7 @@ module UploadWorkflow::Bulk::Edit::Actions
   # @see UploadWorkflow::Bulk::External#bulk_upload_edit
   #
   def wf_validate_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = event_args.extract_options!&.dup || {}
     opt[:index]        = false unless opt.key?(:index)
     opt[:user]       ||= current_user #@user
@@ -83,7 +83,7 @@ module UploadWorkflow::Bulk::Edit::Actions
   # @see UploadWorkflow::Bulk::External#bulk_update_in_index
   #
   def wf_index_update(*_event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     if succeeded.blank?
       self.failures << "#{__method__}: NO ENTRIES - INTERNAL WORKFLOW ERROR"
     else

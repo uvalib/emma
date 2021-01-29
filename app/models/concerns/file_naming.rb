@@ -10,7 +10,6 @@ __loading_begin(__FILE__)
 module FileNaming
 
   include Emma::Mime
-  include Emma::Debug
 
   # If *true*, only known file types are considered acceptable.
   #

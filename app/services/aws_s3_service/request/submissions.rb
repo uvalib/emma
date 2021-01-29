@@ -151,7 +151,7 @@ module AwsS3Service::Request::Submissions
   # @see #api_operation
   #
   def list_records(*items, **opt)
-    __debug_args(binding)
+    __debug_items(binding)
     opt[:meth] ||= __method__
     api_operation(:api_list, *items, **opt)
   end
@@ -309,7 +309,7 @@ module AwsS3Service::Request::Submissions
   # @see #api_get_file
   #
   def api_list(*sids, bucket:, **opt)
-    __debug_args(binding)
+    __debug_items(binding)
     raise 'no AWS S3 bucket'  if bucket.blank?
     raise 'no submission IDs' if sids.blank?
     opt.delete(:atomic) # Not used in this method.

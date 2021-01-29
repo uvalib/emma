@@ -62,19 +62,21 @@ class Upload < ApplicationRecord
   # :section: Callbacks
   # ===========================================================================
 
-  before_validation { note_cb(:before_validation) } if SHRINE_DEBUG
-  after_validation  { note_cb(:after_validation) }  if SHRINE_DEBUG
-  before_save       { note_cb(:before_save) }       if SHRINE_DEBUG
-  before_create     { note_cb(:before_create) }     if SHRINE_DEBUG
-  after_create      { note_cb(:after_create) }      if SHRINE_DEBUG
-  before_update     { note_cb(:before_update) }     if SHRINE_DEBUG
-  after_update      { note_cb(:after_update) }      if SHRINE_DEBUG
-  before_destroy    { note_cb(:before_destroy) }    if SHRINE_DEBUG
-  after_destroy     { note_cb(:after_destroy) }     if SHRINE_DEBUG
-  after_save        { note_cb(:after_save) }        if SHRINE_DEBUG
-  before_commit     { note_cb(:before_commit) }     if SHRINE_DEBUG
-  after_commit      { note_cb(:after_commit) }      if SHRINE_DEBUG
-  after_rollback    { note_cb(:after_rollback) }    if SHRINE_DEBUG
+  if DEBUG_SHRINE
+    before_validation { note_cb(:before_validation) }
+    after_validation  { note_cb(:after_validation) }
+    before_save       { note_cb(:before_save) }
+    before_create     { note_cb(:before_create) }
+    after_create      { note_cb(:after_create) }
+    before_update     { note_cb(:before_update) }
+    after_update      { note_cb(:after_update) }
+    before_destroy    { note_cb(:before_destroy) }
+    after_destroy     { note_cb(:after_destroy) }
+    after_save        { note_cb(:after_save) }
+    before_commit     { note_cb(:before_commit) }
+    after_commit      { note_cb(:after_commit) }
+    after_rollback    { note_cb(:after_rollback) }
+  end
 
   before_save    :promote_cached_file
   after_rollback :delete_cached_file, on: %i[create]
@@ -98,7 +100,7 @@ class Upload < ApplicationRecord
   # @see ActiveRecord::Core#initialize
   #
   def initialize(opt = nil, &block)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = opt.attributes if opt.is_a?(Upload)
     opt = opt.merge(initializing: true).except!(:reset) if opt.is_a?(Hash)
     super(opt, &block)
@@ -187,7 +189,7 @@ class Upload < ApplicationRecord
   # @see ActiveModel::AttributeAssignment#assign_attributes
   #
   def assign_attributes(opt)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = opt.attributes if opt.is_a?(Upload)
     control, fields = partition_options(opt, *ASSIGN_CONTROL_OPTIONS)
     mode = ASSIGN_MODES.find { |m| control[m].present? }
@@ -371,7 +373,7 @@ class Upload < ApplicationRecord
     fetch_and_upload_file(@file_path) if fetch_file
 
   rescue => error # TODO: remove - testing
-    Log.error { "#{__method__}: #{error.class}: #{error.message}"}
+    Log.warn { "#{__method__}: #{error.class}: #{error.message}"}
     raise error
   end
 

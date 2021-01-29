@@ -70,7 +70,7 @@ class Ingest::Record::IdentifierRecord < Ingest::Api::Record
     if self.emma_recordId.present? || identifier.nil?
       # Valid record or blank record.
     elsif (value = identifier(no_version: true)).nil?
-      Log.Error { "IdentifierRecord: invalid: #{value.inspect}" }
+      Log.error { "IdentifierRecord: invalid: #{value.inspect}" }
     end
   end
 

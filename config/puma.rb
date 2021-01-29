@@ -4,7 +4,7 @@
 # warn_indent:           true
 
 # Only needed when running "yard server".
-require_relative 'boot.rb' if $0.end_with?('/yard')
+require_relative 'boot'
 
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
@@ -62,7 +62,7 @@ if true?(ENV['PUMA_LOG_REQUESTS'])
   log_requests
 end
 
-if true?(ENV['PUMA_DEBUG'])
+if true?(ENV['DEBUG_PUMA'])
   debug
   before_fork        { puts 'PUMA before_fork: starting workers' }
   on_worker_boot     { puts 'PUMA on_worker_boot' }

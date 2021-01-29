@@ -69,7 +69,7 @@ module Upload::BulkMethods
   #
   def import_transform(fields, importer_name)
     importer = Import.get_importer(importer_name)
-    Log.warn { "#{__method__}: #{importer_name}: invalid" } if importer.blank?
+    Log.error { "#{__method__}: #{importer_name}: invalid" } if importer.blank?
     return fields if fields.blank? || importer.blank?
 
     known_names = field_names + INDEX_FIELDS + LOCAL_FIELDS

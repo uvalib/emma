@@ -65,7 +65,7 @@ module UploadWorkflow::Bulk::External
   # noinspection DuplicatedCode
   #++
   def bulk_upload_create(entries, index: true, atomic: true, **opt)
-    __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
 
     # Batch-execute this method unless it is being invoked within a batch.
     if opt[:bulk].blank?
@@ -109,7 +109,7 @@ module UploadWorkflow::Bulk::External
   # noinspection DuplicatedCode
   #++
   def bulk_upload_edit(entries, index: true, atomic: true, **opt)
-    __debug_args("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD #{__method__}", binding)
 
     # Batch-execute this method unless it is being invoked within a batch.
     if opt[:bulk].blank?
@@ -147,7 +147,7 @@ module UploadWorkflow::Bulk::External
   # the need to fetch each record in order to call :delete_file on it.
   #
   def bulk_upload_remove(id_specs, index: true, atomic: true, **opt)
-    __debug_args("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD #{__method__}", binding)
     batch_upload_remove(id_specs, index: index, atomic: atomic, **opt)
   end
 
@@ -278,7 +278,7 @@ module UploadWorkflow::Bulk::External
   # this issue, it's untested.
   #
   def bulk_db_delete(ids, atomic: true, **)
-    __debug_args("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD #{__method__}", binding)
     db_action = ->() {
       find_records(*ids, force: false).each(&:delete_file)
       Upload.delete(ids)
@@ -346,7 +346,7 @@ module UploadWorkflow::Bulk::External
   # available work-around.
   #
   def bulk_db_operation(op, records, atomic: true, size: nil, **)
-    __debug_args((dbg = "UPLOAD #{__method__}"), binding)
+    __debug_items((dbg = "UPLOAD #{__method__}"), binding)
     size ||= BULK_DB_BATCH_SIZE
     succeeded, failed =
       if records.size <= size
@@ -472,7 +472,7 @@ module UploadWorkflow::Bulk::External
   #                                     and records to roll back.
   #
   def bulk_add_to_index(*items, atomic: true, **opt)
-    __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
     batch_upload_operation(:add_to_index, items, atomic: atomic, **opt)
   end
 
@@ -487,7 +487,7 @@ module UploadWorkflow::Bulk::External
   #                                     and records to roll back.
   #
   def bulk_update_in_index(*items, **opt)
-    __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
     batch_upload_operation(:update_in_index, items, **opt)
   end
 
@@ -501,7 +501,7 @@ module UploadWorkflow::Bulk::External
   # @return [(Array,Array)]   Succeeded items and failed item messages.
   #
   def bulk_remove_from_index(*items, **opt)
-    __debug_args("WORKFLOW UPLOAD #{__method__}", binding)
+    __debug_items("WORKFLOW UPLOAD #{__method__}", binding)
     batch_upload_operation(:remove_from_index, items, **opt)
   end
 
@@ -939,7 +939,7 @@ module UploadWorkflow::Bulk::States
     __debug_sim("[prev_state == #{prev_state.inspect}]")
     __debug_sim('The submission has been completed successfully.')
 
-    halt unless Workflow::Base::WORKFLOW_DEBUG
+    halt unless DEBUG_WORKFLOW
     self
   end
 

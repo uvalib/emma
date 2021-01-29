@@ -7,12 +7,6 @@
 
 __loading_begin(__FILE__)
 
-# When *true* invocation of each low-level IO operation triggers a log entry.
-#
-# @type [Boolean]
-#
-SHRINE_DEBUG = true?(ENV['SHRINE_DEBUG'])
-
 require 'shrine'
 require_subdirs(__FILE__)
 

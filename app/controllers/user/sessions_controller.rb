@@ -188,7 +188,7 @@ class User::SessionsController < Devise::SessionsController
       auth_data || OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
     ).tap { |data| OmniAuth::Strategies::Bookshare.stored_auth_update(data) }
     __debug_route(action: action, auth: (auth_data || '-')) do
-      { "session['omniauth.auth']": session['omniauth.auth'] }
+      { "session['omniauth.auth']" => session['omniauth.auth'] }
     end
     User.from_omniauth(session['omniauth.auth'])
   end

@@ -304,7 +304,7 @@ module UploadWorkflow::Single::Actions
   # @see UploadWorkflow::Single::Data#set_record
   #
   def wf_start_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     data = event_args.extract_options!.presence || event_args.first
     case existing_record
       when false then set_record(data)
@@ -322,7 +322,7 @@ module UploadWorkflow::Single::Actions
   # @see UploadWorkflow::Single::Data#set_record
   #
   def wf_validate_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     data = event_args.extract_options!.presence || event_args.first
     set_record(data)
     self.succeeded << record.id unless failures?
@@ -335,7 +335,7 @@ module UploadWorkflow::Single::Actions
   # @return [void]
   #
   def wf_list_items(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     super
     self.results = succeeded
   end
@@ -347,7 +347,7 @@ module UploadWorkflow::Single::Actions
   # @return [void]
   #
   def wf_remove_items(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = event_args.extract_options!
     event_args << record if event_args.empty?
     super(*event_args, opt)
@@ -361,7 +361,7 @@ module UploadWorkflow::Single::Actions
   # @return [void]
   #
   def wf_finalize_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
   end
 
   # wf_cancel_submission
@@ -371,7 +371,7 @@ module UploadWorkflow::Single::Actions
   # @return [void]
   #
   def wf_cancel_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
   end
 
   # wf_index_update
@@ -381,7 +381,7 @@ module UploadWorkflow::Single::Actions
   # @return [void]
   #
   def wf_index_update(*_event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     assert_record_present
   end
 
@@ -400,7 +400,7 @@ module UploadWorkflow::Single::Actions
   # @see UploadWorkflow::Single::External#upload_file
   #
   def wf_upload_file(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = event_args.extract_options!.presence || event_args.first || {}
     opt[:meth] ||= calling_method
 
@@ -591,7 +591,7 @@ module UploadWorkflow::Single::Simulation
   attr_reader :submission
 
   def set_submission(*)
-    raise "#{__method__} only available if WORKFLOW_DEBUG is true"
+    raise "#{__method__} only available if DEBUG_WORKFLOW is true"
   end
 
 end
@@ -1250,7 +1250,7 @@ module UploadWorkflow::Single::States
     __debug_sim("[prev_state == #{prev_state.inspect}]")
     __debug_sim('The submission has been completed successfully.')
 
-    halt unless Workflow::Base::WORKFLOW_DEBUG
+    halt unless DEBUG_WORKFLOW
     self
   end
 

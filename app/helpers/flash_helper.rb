@@ -525,7 +525,7 @@ module FlashHelper
         trace  ||=
           !excp.is_a?(UploadWorkflow::SubmitError) &&
           !excp.is_a?(Net::ProtocolError)
-        Log.error do
+        Log.warn do
           err_msg = +"#{meth}: "
           err_msg << "#{status}: " if status.present?
           err_msg << "#{excp.class}: "

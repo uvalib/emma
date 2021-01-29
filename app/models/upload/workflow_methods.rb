@@ -465,7 +465,7 @@ module Upload::WorkflowMethods
   # @return [Boolean, nil]
   #
   def begin_editing(**opt)
-    __debug_args(binding)
+    __debug_items(binding)
     opt[:edit_file_data] ||= nil
     opt[:edit_emma_data] ||= emma_data&.dup
     dynamic_set_fields(opt)
@@ -479,7 +479,7 @@ module Upload::WorkflowMethods
   # @return [Boolean, nil]
   #
   def finish_editing(**opt)
-    __debug_args(binding)
+    __debug_items(binding)
     data = reject_blanks(file_data: edit_file_data, emma_data: edit_emma_data)
     if data.blank?
       Log.warn { "#{__method__}: update with edit data: FAILED (no data)" }

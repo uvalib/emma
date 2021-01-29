@@ -553,7 +553,7 @@ class UploadController < ApplicationController
     elsif bs_link?(@url)
       redirect_to bs_retrieval_path(url: @url, forUser: @member)
     else
-      Log.error { "/retrieval can't handle #{@url.inspect}"}
+      Log.error { "/retrieval can't handle #{@url.inspect}" }
     end
   end
 

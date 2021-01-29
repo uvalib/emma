@@ -64,7 +64,7 @@ module UploadWorkflow::Single::Edit::Actions
   # @see Upload#begin_editing
   #
   def wf_start_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     super
     record.begin_editing
   end
@@ -79,7 +79,7 @@ module UploadWorkflow::Single::Edit::Actions
   # @see UploadWorkflow::External#repository_edit
   #
   def wf_finalize_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     assert_record_present
     record.finish_editing
     if record.emma_native?
@@ -106,7 +106,7 @@ module UploadWorkflow::Single::Edit::Actions
   # @return [void]
   #
   def wf_cancel_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = event_args.extract_options!&.except(:redirect) || {}
     reset_record(opt)
     if (revert_data = opt[:revert])

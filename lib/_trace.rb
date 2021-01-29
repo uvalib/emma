@@ -3,85 +3,22 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Loader debugging.
+# Console output and loader debugging.
 
-# =============================================================================
-# Constants
-# =============================================================================
-
-public
-
-# Control console debugging output.
-#
-# During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable.
-#
-CONSOLE_DEBUGGING = true?(ENV['CONSOLE_DEBUGGING'])
-
-# Control console output.
-#
-# Normally __output (and __debug) are not displayed in IRB or other non-Rails
-# invocations of the code.  The environment variable should normally be *false*
-# (or missing) in order to avoid extraneous output during rake, irb, etc.
-#
-CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
-
-# Control tracking of file load order.
-#
-# During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable.
-#
-# @see #__loading
-#
-TRACE_LOADING = true?(ENV['TRACE_LOADING'])
-
-# Control tracking of invocation of Concern "included" blocks.
-#
-# During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable.
-#
-# @see #__included
-#
-TRACE_CONCERNS = true?(ENV['TRACE_CONCERNS'])
-
-# Control tracking of Rails notifications.
-#
-# During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable.
-#
-# @see #NOTIFICATIONS
-#
-TRACE_NOTIFICATIONS = true?(ENV['TRACE_NOTIFICATIONS'])
-
-# =============================================================================
-# Module methods
-# =============================================================================
-
-public
-
-# Replace method definitions.
-#
-# @param [Array<Symbol>] methods
-#
-def neutralize_methods(*methods)
-  methods.compact.each { |m| eval("def #{m}(*); end") }
-end
+require 'io/console'
 
 # =============================================================================
 # Debugging - console output
 # =============================================================================
 
-require 'io/console'
+public
 
 # For AWS, add indentation prefix characters to help make debugging output
 # stand out from normal Rails.logger entries.
+#
+# @type [String]
+#
 CONS_INDENT = $stderr.isatty ? '' : '_   '
-
-# Initial characters which mark a debug line.
-DEBUG_LEADER = ''
-
-# Truncate long debug output lines to this number of characters.
-DEBUG_MAX = 2048
 
 # Write indented line(s) to $stderr.
 #
@@ -103,7 +40,7 @@ DEBUG_MAX = 2048
 # $stderr output.  If not deployed, the log entry is created in addition to
 # $stderr output.
 #
-def __output(*args)
+def __output_impl(*args)
   return if defined?(Log) && Log.silenced?
   opt = args.extract_options!
   sep = opt[:separator] || "\n"
@@ -159,6 +96,30 @@ def __output(*args)
   nil
 end
 
+if not CONSOLE_OUTPUT
+  def __output(*); end
+else
+  def __output(*args, &block); __output_impl(*args, &block); end
+end
+
+# =============================================================================
+# Debugging - console debugging
+# =============================================================================
+
+public
+
+# Initial characters which mark a debug line.
+#
+# @type [String]
+#
+DEBUG_LEADER = ''
+
+# Truncate long debug output lines to this number of characters.
+#
+# @type [Integer]
+#
+DEBUG_MAX = 2048
+
 # Write indented debug line(s) to $stderr.
 #
 # @param [Array] args                 Passed to #__output.
@@ -166,23 +127,32 @@ end
 #
 # @return [nil]
 #
-def __debug(*args, &block)
+def __debug_impl(*args, &block)
   # noinspection RubyNilAnalysis
   opt = args.extract_options!.merge(debug: true)
   opt[:leader]   ||= DEBUG_LEADER
   opt[:max]      ||= DEBUG_MAX
   opt[:omission] ||= '...'
-  __output(*args, opt, &block)
+  __output_impl(*args, opt, &block)
 end
 
-neutralize_methods(:__output) unless CONSOLE_OUTPUT
-neutralize_methods(:__debug)  unless CONSOLE_DEBUGGING
+if not CONSOLE_DEBUGGING
+  def __debug(*); end
+else
+  def __debug(*args, &block); __debug_impl(*args, &block); end
+end
 
 # =============================================================================
 # Debugging - file load/require
 # =============================================================================
 
-if TRACE_LOADING
+if not TRACE_LOADING
+
+  def __loading(*);       end
+  def __loading_begin(*); end
+  def __loading_end(*);   end
+
+else
 
   __output { "TRACE_LOADING = #{TRACE_LOADING.inspect}" }
 
@@ -260,17 +230,17 @@ if TRACE_LOADING
     @load_table.clear if @load_level.zero?
   end
 
-else
-
-  neutralize_methods(:__loading, :__loading_begin, :__loading_end)
-
 end
 
 # =============================================================================
 # Debugging - Concerns
 # =============================================================================
 
-if TRACE_CONCERNS
+if not TRACE_CONCERNS
+
+  def __included(*); end
+
+else
 
   __output { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" }
 
@@ -284,10 +254,6 @@ if TRACE_CONCERNS
   def __included(base, concern)
     __output { "... including #{concern} in #{base}" }
   end
-
-else
-
-  neutralize_methods(:__included)
 
 end
 

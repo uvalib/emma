@@ -51,7 +51,7 @@ require 'shrine'
 #   @return [Shrine::Attacher]
 #
 # == Implementation Notes
-# If #SHRINE_DEBUG is true then the overrides defined in Shrine::UploaderDebug
+# If #DEBUG_SHRINE is true then the overrides defined in Shrine::UploaderDebug
 # (lib/ext/shrine/lib/shrine.rb) apply to the methods inherited from Shrine.
 #
 class FileUploader < Shrine
@@ -100,7 +100,10 @@ class FileUploader < Shrine
 
   public
 
-  if SHRINE_DEBUG
+  if DEBUG_SHRINE
+
+    include Shrine::ExtensionDebugging
+    extend  Shrine::ExtensionDebugging
 
     # =========================================================================
     # :section: Shrine::ClassMethods overrides
@@ -117,7 +120,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.upload(io, storage, **options)
-      __debug_uploader(__method__) do
+      __shrine_debug(__method__) do
         { io: io, storage: storage, options: options }
       end
       super
@@ -132,7 +135,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.uploaded_file(object)
-      __debug_uploader(__method__) { { object: object } }
+      __shrine_debug(__method__) { { object: object } }
       super
     end
 
@@ -143,7 +146,7 @@ class FileUploader < Shrine
     # @return [void]
     #
     def self.with_file(io)
-      __debug_uploader(__method__) { { io: io } }
+      __shrine_debug(__method__) { { io: io } }
       super
     end
 
@@ -158,7 +161,7 @@ class FileUploader < Shrine
     # @param [Symbol] storage_key
     #
     def initialize(storage_key)
-      __debug_uploader('NEW') { { storage_key: storage_key } }
+      __shrine_debug('NEW') { { storage_key: storage_key } }
       super
     end
 
@@ -170,7 +173,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def upload(io, **options)
-      __debug_uploader(__method__.to_s) { { io: io, options: options } }
+      __shrine_debug(__method__) { { io: io, options: options } }
       super
     end
 
@@ -183,7 +186,7 @@ class FileUploader < Shrine
     # @return [String]
     #
     def generate_location(io, metadata: {}, **options)
-      __debug_uploader(__method__.to_s) do
+      __shrine_debug(__method__) do
         { io: io, metadata: metadata, options: options }
       end
       super
@@ -197,40 +200,9 @@ class FileUploader < Shrine
     # @return [Hash{String=>String,Integer}]
     #
     def extract_metadata(io, **options)
-      __debug_uploader(__method__.to_s) { { io: io, options: options } }
+      __shrine_debug(__method__) { { io: io, options: options } }
       super
     end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    module DebugMethods
-
-      include Emma::Debug
-
-      # Debug method for this class.
-      #
-      # @param [Array] args
-      # @param [Hash]  opt
-      # @param [Proc]  block            Passed to #__debug_items.
-      #
-      # @return [void]
-      #
-      def __debug_uploader(*args, **opt, &block)
-        meth = args.shift
-        meth = meth.to_s.upcase if meth.is_a?(Symbol)
-        opt[:leader] = ':::SHRINE::: FileUploader'
-        opt[:separator] ||= ' | '
-        __debug_items(meth, *args, opt, &block)
-      end
-
-    end
-
-    include DebugMethods
-    extend  DebugMethods
 
   end
 
