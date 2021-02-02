@@ -77,16 +77,20 @@ class User::SessionsController < Devise::SessionsController
     end
   end
 
-  # == DELETE /users/sign_out
+  # == DELETE /users/sign_out[?revoke=(true|false)]
   #
   # End login session.
   #
+  # If the "revoke" parameter is missing or "true" then the local session is
+  # ended _and_ its associated OAuth2 token is revoked.  If "revoke" is "false"
+  # then only the local session is ended.
+  #
   def destroy
-    auth_data = session.delete('omniauth.auth')
-    __debug_route { { "session['omniauth.auth']" => auth_data } }
+    username = current_user&.uid&.dup
+    local_sign_out if false?(params[:revoke])
     super do
       api_clear
-      set_flash_notice(__method__, auth_data)
+      set_flash_notice(__method__, username)
     end
   end
 

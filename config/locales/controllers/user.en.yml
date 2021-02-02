@@ -31,11 +31,13 @@ en:
 
         create:
           success:      'Signed in as %{user}.'
+          failure:      'An unexpected error occurred.'
 
         destroy:
           label:        'Sign out'
           tooltip:      'End your session.'
           success:      'Signed out (%{user}).'
+          failure:      'An unexpected error occurred.'
 
         sign_in_as:
           label:        'Sign in as %{user}'

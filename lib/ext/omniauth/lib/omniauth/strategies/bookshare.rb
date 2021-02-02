@@ -25,6 +25,11 @@ module OmniAuth
     class Bookshare < OmniAuth::Strategies::OAuth2
 
       include Emma::Json
+      include OmniAuth::ExtensionDebugging
+
+      # =======================================================================
+      # :section: Configuration
+      # =======================================================================
 
       args %i[client_id client_secret]
 
@@ -43,6 +48,7 @@ module OmniAuth
       option :token_options,          []
       option :token_params,           {}
       option :provider_ignores_state, false
+      option :revoke_path,            '/users/sign_out'
 
       credentials do
         {
@@ -119,13 +125,13 @@ module OmniAuth
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       def request_call
-        __auth_debug(__method__)
+        __ext_debug
         setup_phase
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
-        session['omniauth.params'] = params = normalize_parameters(request)
-        __auth_debug(__method__, "#{request.request_method}") do
+        params = session['omniauth.params'] = url_parameters(request)
+        __ext_debug("#{request.request_method}") do
           { options: options, session: __debug_session_hash }
         end
 
@@ -156,29 +162,13 @@ module OmniAuth
             log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
           end
           session['omniauth.origin'] = org ||= ref
-          __auth_debug(__method__) { { "session['omniauth.origin']": org } }
+          __ext_debug { { "session['omniauth.origin']": org } }
           request_phase
 
         else
           request_phase
         end
       end
-
-      # Performs the steps necessary to run the callback phase of a strategy.
-      #
-      def callback_call
-        __auth_debug(__method__)
-        super
-      end if DEBUG_OAUTH
-
-      # call_app!
-      #
-      # @return [*]
-      #
-      def call_app!(env = @env)
-        __auth_debug(__method__) { env }
-        super
-      end if DEBUG_OAUTH
 
       # =======================================================================
       # :section: OmniAuth::Strategies::OAuth2 overrides
@@ -199,7 +189,7 @@ module OmniAuth
             deep_symbolize(options.client_options)
           ).tap do |result|
             result.options[:redirect_uri] ||= callback_url.sub(/\?.*/, '')
-            __auth_debug(__method__, "=> #{result.inspect}")
+            __ext_debug("--> #{result.inspect}")
           end
       end
 
@@ -211,31 +201,13 @@ module OmniAuth
       #
       def request_phase
         OmniAuth.config.before_request_phase&.call(env)
-        __auth_debug(__method__, (req = request.request_method))
+        __ext_debug((req = request.request_method))
         code = client.auth_code
         prms = authorize_params
         url  = code.authorize_url(prms)
-        __auth_debug(__method__, req) { { authorize_url: url } }
+        __ext_debug(req) { { authorize_url: url } }
         redirect(url)
       end
-
-      # authorize_params
-      #
-      # @return [Hash]
-      #
-      def authorize_params
-        super
-          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
-      end if DEBUG_OAUTH
-
-      # token_params
-      #
-      # @return [Hash]
-      #
-      def token_params
-        super
-          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
-      end if DEBUG_OAUTH
 
       # callback_phase
       #
@@ -248,12 +220,12 @@ module OmniAuth
       # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
       #
       #--
-      # noinspection RubyScope
+      # noinspection RubyScope, RubyStringKeysInHashInspection
       #++
       def callback_phase
-        __auth_debug(__method__)
+        __ext_debug
         result = nil
-        params = request.params.reject { |_, v| v.blank? }
+        params = url_parameters(request)
         e_type = params['error_reason'] || params['error']
 
         # Raise an exception if the response indicated an error.
@@ -271,16 +243,16 @@ module OmniAuth
           end
         end
 
-        # noinspection RubyStringKeysInHashInspection
+        original_params = url_parameters(env['omniauth.params'])
         result =
-          if (op = normalize_parameters).key?(:commit)
+          if original_params.key?(:commit)
             # Special case for locally-provided uid/token causes a redirect to
             # the special endpoint for direct token sign-in.
-            self.access_token        = synthetic_access_token(op)
-            session['omniauth.auth'] = synthetic_auth_hash(op)
+            self.access_token        = synthetic_access_token(original_params)
+            session['omniauth.auth'] = synthetic_auth_hash(original_params)
             [302, { 'Location' => '/users/sign_in_as' }, []]
 
-          elsif (username = current_user&.uid)
+          elsif (username = current_uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
@@ -297,19 +269,19 @@ module OmniAuth
           end
 
       rescue ::OAuth2::Error, CallbackError => error
-        __auth_debug(__method__, 'INVALID', error.class, error.message)
+        __ext_debug('INVALID', error.class, error.message)
         e_type ||= :invalid_credentials
 
       rescue ::Timeout::Error, ::Errno::ETIMEDOUT => error
-        __auth_debug(__method__, 'TIMEOUT', error.class, error.message)
+        __ext_debug('TIMEOUT', error.class, error.message)
         e_type = :timeout
 
       rescue ::SocketError => error
-        __auth_debug(__method__, 'CONNECT', error.class, error.message)
+        __ext_debug('CONNECT', error.class, error.message)
         e_type = :failed_to_connect
 
       rescue => error
-        __auth_debug(__method__, 'EXCEPTION', error.class, error.message)
+        __ext_debug('EXCEPTION', error.class, error.message)
         e_type = :unexpected_error
 
       ensure
@@ -328,13 +300,64 @@ module OmniAuth
       # @return [::OAuth2::AccessToken]
       #
       def build_access_token
-        __auth_debug(__method__)
+        __ext_debug
         code = request.params['code']
         prms = token_params.to_hash(symbolize_keys: true)
         # noinspection RubyResolve
         opts = deep_symbolize(options.auth_token_params)
         client.auth_code.get_token(code, prms, opts)
-          .tap { |result| __auth_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      public
+
+      # The strategy was called outside of the request sequence.
+      #
+      # The only current use-case is token revocation, which causes a POST to
+      # the OAuth2 token revocation endpoint, but in all cases the method
+      # continues on with the rest of the call stack.
+      #
+      # @see OmniAuth::Strategy#call!
+      #
+      def other_phase
+        if on_revoke_path?
+          if !application_deployed?
+            __ext_debug('TOKEN NOT REVOKED ON localhost')
+
+          elsif debug_user?
+            __ext_debug("TOKEN NOT REVOKED FOR #{current_uid}")
+
+          elsif false?(url_parameters[:revoke])
+            __ext_debug('TOKEN NOT REVOKED DUE TO revoke PARAMETER')
+
+          elsif current_access_token.blank?
+            __ext_debug('NO TOKEN TO REVOKE')
+
+          else
+            revoke_access_token
+          end
+          session.delete('omniauth.auth')
+        end
+        app.call(env)
+      end
+
+      # Indicate whether the current request is for token revocation.
+      #
+      def on_revoke_path?
+        on_path?(revoke_path)
+      end
+
+      # The request path indicating a token revocation.
+      #
+      # @return [String]
+      #
+      def revoke_path
+        @revoke_path ||=
+          options[:revoke_path] || "#{path_prefix}/#{name}/revoke"
       end
 
       # =======================================================================
@@ -343,7 +366,32 @@ module OmniAuth
 
       protected
 
-      # current_user
+      # Terminate the session with the OAuth2 provider telling it to revoke the
+      # access token.
+      #
+      # @param [OAuth2::AccessToken, nil] token   Default: `#access_token`.
+      #
+      # @return [OAuth2::Response]
+      # @return [nil]                 If no token was given or present.
+      #
+      def revoke_access_token(token = nil)
+        entry = 'Token revocation'
+        entry = "#{entry} for #{token.inspect}" if token
+        if (token ||= access_token)
+          log :info, entry
+          client.auth_code.revoke_token(token)
+        else
+          Log.warn { "#{__method__}: no token given" }
+        end
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # The currently signed-in user.
       #
       # @return [User]
       # @return [nil]
@@ -352,23 +400,53 @@ module OmniAuth
         request&.env['warden']&.user
       end
 
-      # normalize_parameters
+      # The user name of the currently signed-in user.
+      #
+      # @return [String]
+      # @return [nil]
+      #
+      def current_uid
+        current_user&.uid
+      end
+
+      # Indicate whether the user is one is capable of short-circuiting the
+      # authorization process.
+      #
+      # @param [String, nil] uid      Default: `#current_uid`
+      #
+      def debug_user?(uid = nil)
+        session['debug'].present? && self.class.debug_user?(uid || current_uid)
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # Normalize URL parameters from the item or *request* if none was given.
       #
       # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
       #
       # @return [Hash{Symbol=>*}]
       #
-      def normalize_parameters(params = nil)
-        if params
-          self.class.normalize_parameters(params)
-        else
-          env['omniauth.params'] || {}
-        end
+      def url_parameters(params = nil)
+        self.class.url_parameters(params || request)
+      end
+
+      # Retrieve access_token, setting it from from "omniauth.auth" if not
+      # already present.
+      #
+      # @return [::OAuth2::AccessToken, nil]
+      #
+      def current_access_token
+        self.access_token ||= synthetic_access_token(env['omniauth.auth'])
+        self.access_token ||= synthetic_access_token(session['omniauth.auth'])
       end
 
       # Generate an access token based on fixed information.
       #
-      # @param [::OAuth2::AccessToken, ActionController::Parameters, Hash, String] id
+      # @param [::OAuth2::AccessToken, ActionController::Parameters, Hash, String] src
       #
       # @return [::OAuth2::AccessToken, nil]
       #
@@ -377,8 +455,8 @@ module OmniAuth
       # @overload synthetic_access_token(atoken)
       #   @param [::OAuth2::AccessToken] atoken
       #
-      # @overload synthetic_access_token(id)
-      #   @param [String] id          Bookshare user identity (email address).
+      # @overload synthetic_access_token(uid)
+      #   @param [String] uid         Bookshare user identity (email address).
       #
       # @overload synthetic_access_token(params)
       #   @param [ActionController::Parameters, Hash] params
@@ -390,35 +468,33 @@ module OmniAuth
       #--
       # noinspection RubyYardParamTypeMatch
       #++
-      def synthetic_access_token(id)
-        token = hash = nil
-        case id
-          when ::OAuth2::AccessToken
-            token  = id
-          when String
-            hash   = self.class.stored_auth[id]
-          else
-            params = normalize_parameters(id)
-            token  = params[:access_token] || params[:token]
+      def synthetic_access_token(src)
+        entry = token = nil
+        if src.is_a?(String)
+          entry = self.class.stored_auth[src]
+        elsif src.is_a?(::OAuth2::AccessToken)
+          token = src
+        elsif (p = url_parameters(src)).present?
+          token = p[:access_token] || p[:token] || p.dig(:credentials, :token)
         end
         return token if token.is_a?(::OAuth2::AccessToken)
-        return unless token.present? || hash.present?
-        hash ||= self.class.stored_auth_entry(token)
-        ::OAuth2::AccessToken.from_hash(client, hash)
+        entry ||= token && self.class.stored_auth_entry(token)
+        ::OAuth2::AccessToken.from_hash(client, entry) if entry.present?
       end
 
       # Generate an auth hash based on fixed information.
       #
-      # @param [ActionController::Parameters, Hash, String] id
-      # @param [String, nil]                                token
+      # @param [ActionController::Parameters, OmniAuth::AuthHash, Hash, String] src
       #
       # @return [OmniAuth::AuthHash, nil]
       #
       # == Variations
       #
-      # @overload synthetic_auth_hash(id, token = nil)
-      #   @param [String] id          Bookshare user identity (email address).
-      #   @param [String] token       Default from #stored_auth.
+      # @overload synthetic_auth_hash(uid)
+      #   @param [String] uid         Bookshare user identity (email address).
+      #
+      # @overload synthetic_auth_hash(auth_hash)
+      #   @param [OmniAuth::AuthHash] auth_hash
       #
       # @overload synthetic_auth_hash(params)
       #   @param [ActionController::Parameters, Hash] params
@@ -431,32 +507,31 @@ module OmniAuth
       #--
       # noinspection RubyYardParamTypeMatch, RubyYardReturnMatch
       #++
-      def synthetic_auth_hash(id, token = nil)
-        if token.is_a?(::OAuth2::AccessToken)
-          atoken = token
-        elsif token.is_a?(String)
-          atoken = synthetic_access_token(token: token)
-        elsif id.is_a?(OmniAuth::AuthHash)
-          return id
-        elsif id.is_a?(String)
-          atoken = synthetic_access_token(id)
-        elsif (prm = normalize_parameters(id))[:auth].is_a?(OmniAuth::AuthHash)
-          return prm[:auth]
+      def synthetic_auth_hash(src)
+        if src.is_a?(OmniAuth::AuthHash)
+          return src
+        elsif src.is_a?(String)
+          uid   = src
+          token = synthetic_access_token(src)
+        elsif (params = url_parameters(src))[:auth].is_a?(OmniAuth::AuthHash)
+          return params[:auth]
         else
-          id     = prm[:uid] || prm[:id]
-          atoken = synthetic_access_token(prm)
+          uid   = params[:uid] || params[:id]
+          token = synthetic_access_token(params)
         end
-        abort "#{__method__}: id must be a string" unless id.is_a?(String)
-        return unless atoken.present?
+        if uid && !uid.is_a?(String)
+          Log.warn("#{__method__}: invalid id: #{uid.inspect}")
+        end
+        return unless uid.is_a?(String) && token.is_a?(::OAuth2::AccessToken)
         OmniAuth::AuthHash.new(
           provider:    name,
-          uid:         id,
-          info:        { email: id }.compact.stringify_keys,
+          uid:         uid,
+          info:        { email: uid }.stringify_keys,
           credentials: {
-            token:         atoken.token,
-            expires:       (expires = atoken.expires?),
-            expires_at:    (atoken.expires_at    if expires),
-            refresh_token: (atoken.refresh_token if expires)
+            token:         token.token,
+            expires:       (expires = token.expires?),
+            expires_at:    (token.expires_at    if expires),
+            refresh_token: (token.refresh_token if expires)
           }.compact.stringify_keys
         )
       end
@@ -467,34 +542,36 @@ module OmniAuth
 
       public
 
-      # normalize_parameters
+      # Normalize URL parameters.
       #
       # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
       #
       # @return [Hash{Symbol=>*}]
       #
       #--
-      # noinspection RubyNilAnalysis
+      # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
       #++
-      def self.normalize_parameters(params)
+      def self.url_parameters(params)
         params = params.params      if params.respond_to?(:params)
         params = params.to_unsafe_h if params.respond_to?(:to_unsafe_h)
-        params ||= {}
-        params.symbolize_keys
+        params.is_a?(Hash) ? reject_blanks(params.deep_symbolize_keys) : {}
       end
 
       # Generate an auth hash based on fixed information.
       #
-      # @param [ActionController::Parameters, Hash, String] id
-      # @param [String, nil]                                token
+      # @param [ActionController::Parameters, OmniAuth::AuthHash, Hash, String] src
+      # @param [String, nil] token
       #
       # @return [OmniAuth::AuthHash, nil]
       #
       # == Variations
       #
-      # @overload synthetic_auth_hash(id, token = nil)
-      #   @param [String] id          Bookshare user identity (email address).
+      # @overload synthetic_auth_hash(uid, token = nil)
+      #   @param [String] uid         Bookshare user identity (email address).
       #   @param [String] token       Default from #stored_auth.
+      #
+      # @overload synthetic_auth_hash(auth_hash)
+      #   @param [OmniAuth::AuthHash] auth_hash
       #
       # @overload synthetic_auth_hash(params)
       #   @param [ActionController::Parameters, Hash] params
@@ -507,24 +584,28 @@ module OmniAuth
       #--
       # noinspection RubyYardParamTypeMatch
       #++
-      def self.synthetic_auth_hash(id, token = nil)
+      def self.synthetic_auth_hash(src, token = nil)
         if token.present?
-          abort "#{__method__}: id must be a string" unless id.is_a?(String)
-        elsif id.is_a?(OmniAuth::AuthHash)
-          return id
-        elsif id.is_a?(String)
-          # Lookup token below.
-        elsif (prm = normalize_parameters(id))[:auth].is_a?(OmniAuth::AuthHash)
-          return prm[:auth]
+          uid = src
+        elsif src.is_a?(OmniAuth::AuthHash)
+          return src
+        elsif src.is_a?(String)
+          uid = src
+        elsif (p = url_parameters(src))[:auth].is_a?(OmniAuth::AuthHash)
+          return p[:auth]
         else
-          id    = prm[:uid]          || prm[:id]
-          token = prm[:access_token] || prm[:token] # or lookup token below
+          uid = p[:uid] || p[:id]
+          token = p[:access_token] || p[:token] || p.dig(:credentials, :token)
         end
-        token ||= stored_auth.dig(id, :access_token)
+        if uid && !uid.is_a?(String)
+          Log.warn("#{__method__}: invalid uid: #{uid.inspect}")
+        end
+        token ||= stored_auth.dig(uid, :access_token)
+        return unless uid.is_a?(String) && token.is_a?(String)
         OmniAuth::AuthHash.new(
           provider:    default_options[:name],
-          uid:         id,
-          info:        { email: id }.stringify_keys,
+          uid:         uid,
+          info:        { email: uid }.stringify_keys,
           credentials: { token: token, expires: false }.stringify_keys
         )
       end
@@ -642,35 +723,96 @@ module OmniAuth
       end
 
       # =======================================================================
-      # :section: Debugging
+      # :section: Class methods
       # =======================================================================
 
       public
 
-      if not DEBUG_OAUTH
+      # Indicate whether the user is one that is capable of short-circuiting
+      # the authorization process by using a stored token.
+      #
+      # @param [*] uid
+      #
+      def self.debug_user?(uid)
+        stored_auth.key?(uid)
+      end
 
-        def __auth_debug(*); end
+    end
 
-      else
+    if DEBUG_OAUTH
 
-        include Emma::Debug::OutputMethods
+      # Overrides adding extra debugging around method calls.
+      #
+      module BookshareDebug
 
-        # Debug method for the including class.
+        include OmniAuth::ExtensionDebugging
+
+        # =====================================================================
+        # :section: OmniAuth::Strategy overrides
+        # =====================================================================
+
+        # Performs the steps necessary to run the callback phase of a strategy.
         #
-        # @param [String, Symbol] meth
-        # @param [Array]          args
-        # @param [Hash]           opt
-        # @param [Proc]           block   Passed to #__debug_items.
+        def callback_call
+          __ext_debug
+          super
+        end
+
+        # call_app!
         #
-        # @return [nil]
+        # @return [*]
         #
-        def __auth_debug(meth, *args, **opt, &block)
-          opt[:leader]      = 'OMNIAUTH-BOOKSHARE'
-          opt[:separator] ||= ' | '
-          __debug_items(meth, *args, opt, &block)
+        def call_app!(env = @env)
+          __ext_debug { env }
+          super
+        end
+
+        # =====================================================================
+        # :section: OmniAuth::Strategies::OAuth2 overrides
+        # =====================================================================
+
+        public
+
+        # authorize_params
+        #
+        # @return [Hash]
+        #
+        def authorize_params
+          super
+            .tap { |result| __ext_debug("--> #{result.inspect}") }
+        end
+
+        # token_params
+        #
+        # @return [Hash]
+        #
+        def token_params
+          super
+            .tap { |result| __ext_debug("--> #{result.inspect}") }
+        end
+
+        # =====================================================================
+        # :section:
+        # =====================================================================
+
+        protected
+
+        # Terminate the session with the OAuth2 provider telling it to revoke
+        # the access token.
+        #
+        # @param [OAuth2::AccessToken, nil] token   Default: `#access_token`.
+        #
+        # @return [OAuth2::Response]
+        # @return [nil]               If no token was given or present.
+        #
+        def revoke_access_token(token = nil)
+          __ext_debug(*token)
+          super
         end
 
       end
+
+      override Bookshare => BookshareDebug
 
     end
 

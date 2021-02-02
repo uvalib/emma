@@ -83,7 +83,7 @@ module TestHelper::IntegrationTests::Authentication
     set_current_user(user) if !follow_redirect || response.successful?
   end
 
-  # Sign out.
+  # Sign out of the local session.
   #
   # If the request was not successful then `#current_user` will be unchanged.
   #
@@ -92,7 +92,7 @@ module TestHelper::IntegrationTests::Authentication
   # @return [void]
   #
   def get_sign_out(follow_redirect: true)
-    delete destroy_user_session_url
+    delete destroy_user_session_url(revoke: false)
     follow_redirect!   if follow_redirect  && response.redirection?
     clear_current_user if !follow_redirect || response.successful?
   end

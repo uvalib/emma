@@ -193,6 +193,26 @@ module SessionConcern
     !devise_controller? && !request_xhr?
   end
 
+  # Sign out of the local (EMMA) session *without* revoking the OAuth2 token
+  # (which signs out of the OAuth2 session).
+  #
+  # @see Devise::Controllers::SignInOut#sign_out
+  # @see OmniAuth::Strategies::Bookshare#other_phase
+  #
+  def local_sign_out
+    session.delete('omniauth.auth')
+    sign_out
+  end
+
+  # Sign out of the local session and the OAuth2 session.
+  #
+  # (This is the normal sign-out but named as a convenience for places in the
+  # where the distinction with #local_sign_out needs to be stressed.)
+  #
+  def global_sign_out
+    sign_out
+  end
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
@@ -231,7 +251,6 @@ module SessionConcern
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     end
     sign_out
-    session.delete('omniauth.auth')
     @reset_browser_cache = true
   end
 
