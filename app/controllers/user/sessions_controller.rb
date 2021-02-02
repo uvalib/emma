@@ -75,6 +75,8 @@ class User::SessionsController < Devise::SessionsController
       api_update(user: resource)
       set_flash_notice(__method__)
     end
+  rescue => error
+    flash_now_failure(error)
   end
 
   # == DELETE /users/sign_out[?revoke=(true|false)]
@@ -92,6 +94,8 @@ class User::SessionsController < Devise::SessionsController
       api_clear
       set_flash_notice(__method__, username)
     end
+  rescue => error
+    flash_now_failure(error)
   end
 
   # ===========================================================================
@@ -129,6 +133,8 @@ class User::SessionsController < Devise::SessionsController
     else
       redirect_to after_sign_in_path_for(user)
     end
+  rescue => error
+    flash_now_failure(error)
   end
 
   # ===========================================================================
