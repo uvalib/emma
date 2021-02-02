@@ -153,9 +153,11 @@ module OAuth2
 
   if DEBUG_OAUTH
 
+    # Overrides adding extra debugging around method calls.
+    #
     module ClientDebug
 
-      include ExtensionDebugging
+      include OAuth2::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
       # :nocov:
@@ -216,7 +218,7 @@ module OAuth2
       # @see OAuth2::Client#initialize
       #
       def initialize(client_id, client_secret, options = {}, &block)
-        __oauth2_debug(__method__, binding)
+        __ext_debug(binding)
         super
       end
 
@@ -231,7 +233,7 @@ module OAuth2
       #
       def authorize_url(params = {})
         super
-          .tap { |result| __oauth2_debug(__method__, " => #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The token endpoint URL of the OAuth2 provider
@@ -245,7 +247,7 @@ module OAuth2
       #
       def token_url(params = nil)
         super
-          .tap { |result| __oauth2_debug(__method__, " => #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # Makes a request relative to the specified site root.
@@ -346,9 +348,9 @@ module OAuth2
       # @see OAuth2::Client#get_token
       #
       def get_token(params, access_token_opts = {}, access_token_class = AccessToken)
-        __oauth2_debug(__method__, binding)
+        __ext_debug(binding)
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The Authorization Code strategy
@@ -360,7 +362,7 @@ module OAuth2
       #
       def auth_code
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The Implicit strategy
@@ -372,7 +374,7 @@ module OAuth2
       #
       def implicit
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The Resource Owner Password Credentials strategy
@@ -386,7 +388,7 @@ module OAuth2
       #
       def password
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The Client Credentials strategy
@@ -400,7 +402,7 @@ module OAuth2
       #
       def client_credentials
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # The Client Assertion Strategy
@@ -412,7 +414,7 @@ module OAuth2
       #
       def assertion
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
     end

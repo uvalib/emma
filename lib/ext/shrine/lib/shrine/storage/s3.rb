@@ -15,9 +15,11 @@ class Shrine
 
     if DEBUG_SHRINE
 
+      # Overrides adding extra debugging around method calls.
+      #
       module S3Debug
 
-        include ExtensionDebugging
+        include Shrine::ExtensionDebugging
 
         # =====================================================================
         # :section: Shrine::Storage::S3 overrides
@@ -49,7 +51,7 @@ class Shrine
           public:              nil,
           **s3_options
         )
-          __shrine_debug('NEW') do
+          __ext_debug do
             {
               bucket:              bucket,
               client:              client,
@@ -75,7 +77,7 @@ class Shrine
         # @see Shrine::Storage::S3#upload
         #
         def upload(io, id, shrine_metadata: {}, **upload_options)
-          __shrine_debug(__method__) do
+          __ext_debug do
             {
               io:              io,
               id:              id,
@@ -96,7 +98,7 @@ class Shrine
         # @see Shrine::Storage::S3#open
         #
         def open(id, rewindable: true, **options)
-          __shrine_debug(__method__) { { id: id, options: options } }
+          __ext_debug { { id: id, options: options } }
           super
         end
 
@@ -108,7 +110,7 @@ class Shrine
         # @see Shrine::Storage::S3#delete
         #
         def delete(id)
-          __shrine_debug(__method__) { { id: id } }
+          __ext_debug { { id: id } }
           super
         end
 
@@ -128,7 +130,7 @@ class Shrine
         # @see Shrine::Storage::S3#put
         #
         def put(io, id, **options)
-          __shrine_debug(__method__) { { io: io, id: id, options: options } }
+          __ext_debug { { io: io, id: id, options: options } }
           super
         end
 
@@ -142,7 +144,7 @@ class Shrine
         # @see Shrine::Storage::S3#copy
         #
         def copy(io, id, **options)
-          __shrine_debug(__method__) { { io: io, id: id, options: options } }
+          __ext_debug { { io: io, id: id, options: options } }
           super
         end
 
@@ -157,11 +159,12 @@ class Shrine
         # @see Shrine::Storage::S3#presign_put
         #
         def presign_post(id, options)
-          super.tap do |result|
-            __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-              { id: id, options: options }
+          super
+            .tap do |result|
+              __ext_debug("--> #{result.inspect}") do
+                { id: id, options: options }
+              end
             end
-          end
         end
 
         # presign_put
@@ -175,11 +178,12 @@ class Shrine
         # @see Shrine::Storage::S3#presign_put
         #
         def presign_put(id, options)
-          super.tap do |result|
-            __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-              { id: id, options: options }
+          super
+            .tap do |result|
+              __ext_debug("--> #{result.inspect}") do
+                { id: id, options: options }
+              end
             end
-          end
         end
 
         # part_size
@@ -192,11 +196,8 @@ class Shrine
         # @see Shrine::Storage::S3#part_size
         #
         def part_size(io)
-          super.tap do |result|
-            __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-              { io: io }
-            end
-          end
+          super
+            .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
         end
 
         # get_object
@@ -210,11 +211,12 @@ class Shrine
         # @see Shrine::Storage::S3#get_object
         #
         def get_object(object, params)
-          super.tap do |result|
-            __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-              { object: object, params: params }
+          super
+            .tap do |result|
+              __ext_debug("--> #{result.inspect}") do
+                { object: object, params: params }
+              end
             end
-          end
         end
 
         # copyable?
@@ -225,11 +227,8 @@ class Shrine
         # @see Shrine::Storage::S3#copyable?
         #
         def copyable?(io)
-          super.tap do |result|
-            __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-              { io: io }
-            end
-          end
+          super
+            .tap { |res| __ext_debug("--> #{res.inspect}") { { io: io } } }
         end
 
         # delete_objects
@@ -242,7 +241,7 @@ class Shrine
         # @see Shrine::Storage::S3#delete_objects
         #
         def delete_objects(objects)
-          __shrine_debug(__method__, "#{objects.size} objects")
+          __ext_debug("#{objects.size} objects")
           super
         end
 

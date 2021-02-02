@@ -91,9 +91,11 @@ class Shrine
 
   if DEBUG_SHRINE
 
+    # Overrides adding extra debugging around method calls.
+    #
     module UploadedFileDebug
 
-      include ExtensionDebugging
+      include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
       # :nocov:
@@ -111,7 +113,7 @@ class Shrine
       # @param [Hash] data
       #
       def initialize(data)
-        __shrine_debug('NEW') { data.is_a?(Hash) ? data : { data: data } }
+        __ext_debug { data.is_a?(Hash) ? data : { data: data } }
         super
       end
 
@@ -123,7 +125,7 @@ class Shrine
       # @return [*]                   Return from block if block given.
       #
       def open(**options)
-        __shrine_debug(__method__) { options }
+        __ext_debug { options }
         # noinspection RubyYardReturnMatch
         super
       end
@@ -136,7 +138,7 @@ class Shrine
       # @return [*]                   Return from block if block given.
       #
       def download(**options)
-        __shrine_debug(__method__) { options }
+        __ext_debug { options }
         super
       end
 
@@ -148,7 +150,7 @@ class Shrine
       # @return [Tempfile]
       #
       def stream(destination, **options)
-        __shrine_debug(__method__) do
+        __ext_debug do
           { destination: destination, options: options, '@io' => @io }
         end
         # noinspection RubyYardReturnMatch
@@ -162,7 +164,7 @@ class Shrine
       # @return [String]
       #
       def read(*args)
-        __shrine_debug(__method__, *args)
+        __ext_debug(*args)
         super
       end
 
@@ -171,7 +173,7 @@ class Shrine
       # @return [void]
       #
       def rewind
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -180,7 +182,7 @@ class Shrine
       # @return [void]
       #
       def close
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -192,7 +194,7 @@ class Shrine
       # @return [void]
       #
       def replace(io, **options)
-        __shrine_debug(__method__) { { io: io, options: options } }
+        __ext_debug { { io: io, options: options } }
         super
       end
 
@@ -201,7 +203,7 @@ class Shrine
       # @return [void]
       #
       def delete
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -219,7 +221,7 @@ class Shrine
       # @see Shrine::UploadedFileExt#extract_file_metadata
       #
       def extract_file_metadata
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 

@@ -44,14 +44,35 @@ class Shrine
 
   if DEBUG_SHRINE
 
+    # Overrides adding extra debugging around method calls.
+    #
     module UploadEndpointDebug
 
-      include ExtensionDebugging
+      include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
       # :nocov:
       include Shrine::UploadEndpointExt unless ONLY_FOR_DOCUMENTATION
       # :nocov:
+
+      # =======================================================================
+      # :section: Shrine::UploadEndpoint overrides
+      # =======================================================================
+
+      public
+
+      # call
+      #
+      # @param [Hash] env
+      #
+      # This method overrides:
+      # @see Shrine::UploadEndpoint#call
+      #
+      def call(env)
+        start = timestamp
+        super
+          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+      end
 
       # =======================================================================
       # :section: Shrine::UploadEndpoint overrides
@@ -69,11 +90,11 @@ class Shrine
       # @see Shrine::UploadEndpoint#handle_request
       #
       def handle_request(request)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { request: request }
+        start = timestamp
+        super
+          .tap do |result|
+            __ext_debug(start, "-> #{result.inspect}") { { request: request } }
           end
-        end
       end
 
       # get_io
@@ -86,11 +107,24 @@ class Shrine
       # @see Shrine::UploadEndpoint#get_io
       #
       def get_io(request)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { request: request }
-          end
-        end
+        start = timestamp
+        super
+          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
+      end
+
+      # get_multipart_upload
+      #
+      # @param [ActionDispatch::Request] request
+      #
+      # @return [Shrine::RackFile]
+      #
+      # This method overrides:
+      # @see Shrine::UploadEndpoint#get_io
+      #
+      def get_multipart_upload(request)
+        start = timestamp
+        super
+          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
       end
 
       # get_context
@@ -103,11 +137,9 @@ class Shrine
       # @see Shrine::UploadEndpoint#get_context
       #
       def get_context(request)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { request: request }
-          end
-        end
+        start = timestamp
+        super
+          .tap { |result| __ext_debug(start, "-> #{result.inspect}") }
       end
 
       # upload
@@ -122,11 +154,13 @@ class Shrine
       # @see Shrine::UploadEndpoint#upload
       #
       def upload(io, context, request)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { io: io, context: context, request: request }
+        start = timestamp
+        super
+          .tap do |result|
+            __ext_debug(start, "-> #{result.inspect}") do
+              { io: io, context: context, request: request }
+            end
           end
-        end
       end
 
       # make_response
@@ -140,11 +174,13 @@ class Shrine
       # @see Shrine::UploadEndpointExt#make_response
       #
       def make_response(uploaded_file, request)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { uploaded_file: uploaded_file, request: request }
+        start = timestamp
+        super
+          .tap do |result|
+            __ext_debug(start, "-> #{result.inspect}") do
+              { uploaded_file: uploaded_file, request: request }
+            end
           end
-        end
       end
 
     end

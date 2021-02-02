@@ -60,9 +60,11 @@ module OAuth2
 
   if DEBUG_OAUTH
 
+    # Overrides adding extra debugging around method calls.
+    #
     module AccessTokenDebug
 
-      include ExtensionDebugging
+      include OAuth2::ExtensionDebugging
 
       # =======================================================================
       # :section: OAuth2::AccessToken overrides
@@ -106,7 +108,7 @@ module OAuth2
       #
       def initialize(client, token, opts = {}) # rubocop:disable Metrics/AbcSize
         super
-      __oauth2_debug(__method__, binding) do
+        __ext_debug(binding) do
           { '@expires_in': @expires_in, '@options': @options }
         end
       end
@@ -124,7 +126,7 @@ module OAuth2
       #
       def refresh!(params = {})
         super
-          .tap { |result| __oauth2_debug(__method__, "=> #{result.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # Make a request using the Access Token.
@@ -140,9 +142,8 @@ module OAuth2
       # @see OAuth2::AccessToken#request
       #
       def request(verb, path, opts = {}, &block)
-        configure_authentication!(opts)
-        __oauth2_debug(__method__, binding)
-        @client.request(verb, path, opts, &block)
+        __ext_debug(binding)
+        super
       end
 
     end

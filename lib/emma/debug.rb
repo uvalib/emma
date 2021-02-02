@@ -381,12 +381,17 @@ module Emma::Debug
       trace = opt.delete(:trace)
       args << "#{label} #{exception.class}"
       args << "ERROR: #{exception.message}"
-      args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
-      args +=
-        ApiService.table.map { |service, instance|
-          error = instance.error_message
-          "#{service} ERROR: #{error.inspect}" if error.present?
-        }.compact
+
+      # Parts that are only relevant from a controller/view.
+      if defined?(flash)
+        args << "flash.now[:alert] = #{flash.now[:alert].inspect}"
+        args +=
+          ApiService.table.map { |service, instance|
+            error = instance.error_message
+            "#{service} ERROR: #{error.inspect}" if error.present?
+          }.compact
+      end
+
       __debug_line(*args, opt, &block)
       Log.warn { exception.full_message(order: :top) } if trace
     end

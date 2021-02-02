@@ -1,19 +1,19 @@
-# lib/ext/shrine/lib/shrine/_debug.rb
+# lib/ext/puma/lib/puma/_debug.rb
 #
 # frozen_string_literal: true
 # warn_indent:           true
 #
-# Debugging for Shrine gem extensions.
+# Debugging for Puma gem extensions.
 
 __loading_begin(__FILE__)
 
-require 'shrine'
+require 'puma'
 
-class Shrine
+module Puma
 
   module ExtensionDebugging
 
-    if DEBUG_SHRINE
+    if DEBUG_PUMA
       include Emma::Extension::Debugging
     else
       include Emma::Extension::NoDebugging
@@ -26,7 +26,16 @@ class Shrine
     public
 
     def __ext_log_leader
-      super('SHRINE')
+      super('PUMA')
+    end
+
+    def __ext_log_tag
+      case self
+        when Puma::Client  then 'CLI  '
+        when Puma::Server  then 'SRV >'
+        when Puma::Reactor then 'React'
+        else                    '     '
+      end
     end
 
   end

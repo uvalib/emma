@@ -120,9 +120,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.upload(io, storage, **options)
-      __shrine_debug(__method__) do
-        { io: io, storage: storage, options: options }
-      end
+      __ext_debug { { io: io, storage: storage, options: options } }
       super
     end
 
@@ -135,7 +133,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.uploaded_file(object)
-      __shrine_debug(__method__) { { object: object } }
+      __ext_debug { { object: object } }
       super
     end
 
@@ -146,8 +144,10 @@ class FileUploader < Shrine
     # @return [void]
     #
     def self.with_file(io)
-      __shrine_debug(__method__) { { io: io } }
+      __ext_debug { { io: io } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # =========================================================================
@@ -161,7 +161,7 @@ class FileUploader < Shrine
     # @param [Symbol] storage_key
     #
     def initialize(storage_key)
-      __shrine_debug('NEW') { { storage_key: storage_key } }
+      __ext_debug { { storage_key: storage_key } }
       super
     end
 
@@ -173,8 +173,10 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def upload(io, **options)
-      __shrine_debug(__method__) { { io: io, options: options } }
+      __ext_debug { { io: io, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # generate_location
@@ -186,10 +188,10 @@ class FileUploader < Shrine
     # @return [String]
     #
     def generate_location(io, metadata: {}, **options)
-      __shrine_debug(__method__) do
-        { io: io, metadata: metadata, options: options }
-      end
+      __ext_debug { { io: io, metadata: metadata, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # extract_metadata
@@ -200,8 +202,10 @@ class FileUploader < Shrine
     # @return [Hash{String=>String,Integer}]
     #
     def extract_metadata(io, **options)
-      __shrine_debug(__method__) { { io: io, options: options } }
+      __ext_debug { { io: io, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
   end

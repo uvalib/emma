@@ -13,31 +13,20 @@ module OAuth2
 
   module ExtensionDebugging
 
-    include Emma::Debug::OutputMethods
-
-    # Debug method for the including class.
-    #
-    # @param [String, Symbol] meth
-    # @param [Array]          args
-    # @param [Hash]           opt
-    # @param [Proc]           block   Passed to #__debug_items.
-    #
-    # @return [nil]
-    #
-    def __oauth2_debug(meth, *args, **opt, &block)
-      opt[:leader]      = "OAUTH2 #{__oauth2_debug_tag}"
-      opt[:separator] ||= ' | '
-      __debug_items(meth, *args, opt, &block)
+    if DEBUG_OAUTH
+      include Emma::Extension::Debugging
+    else
+      include Emma::Extension::NoDebugging
     end
 
-    private
+    # =========================================================================
+    # :section: Emma::Extension::Debugging overrides
+    # =========================================================================
 
-    # Log output tag for the including class.
-    #
-    # @return [String]
-    #
-    def __oauth2_debug_tag
-      self.class.name.remove(/^[^:]+::/)
+    public
+
+    def __ext_log_leader
+      super('OAUTH2')
     end
 
   end

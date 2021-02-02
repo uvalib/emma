@@ -3,8 +3,16 @@
 # frozen_string_literal: true
 # warn_indent:           true
 #
+# Setup and initialization for the Shrine gem.
+#
 # @see https://shrinerb.com/docs/getting-started
 # @see https://shrinerb.com/rdoc/files/doc/design_md.html
+
+# =============================================================================
+# Logging
+# =============================================================================
+
+public
 
 # Use cloud storage except for desktop development.
 #
@@ -29,7 +37,7 @@ require 'shrine/storage/file_system' unless SHRINE_CLOUD_STORAGE
 # =============================================================================
 
 Shrine.logger       = Log.logger
-Shrine.logger.level = Log::DEBUG
+Shrine.logger.level = DEBUG_SHRINE ? Log::DEBUG : Log::INFO
 
 # =============================================================================
 # Plugins
@@ -68,6 +76,8 @@ end
 # =============================================================================
 # Storage setup
 # =============================================================================
+
+public
 
 # There are four distinct sets of S3 buckets -- three to provide a pickup
 # location for submission of remediated items back to member repositories

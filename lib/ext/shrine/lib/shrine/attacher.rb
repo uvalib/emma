@@ -13,12 +13,14 @@ class Shrine
 
   if DEBUG_SHRINE
 
+    # Overrides adding extra debugging around method calls.
+    #
     #--
     # noinspection RubyTooManyMethodsInspection
     #++
     module AttacherDebug
 
-      include ExtensionDebugging
+      include Shrine::ExtensionDebugging
 
       # Non-functional hints for RubyMine type checking.
       # :nocov:
@@ -42,7 +44,7 @@ class Shrine
       # @param [Symbol]               store
       #
       def initialize(file: nil, cache: :cache, store: :store)
-        __shrine_debug('NEW') { { file: file, cache: cache, store: store } }
+        __ext_debug { { file: file, cache: cache, store: store } }
         super
       end
 
@@ -54,11 +56,12 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def assign(value, **options)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { value: value, options: options }
+        super
+          .tap do |result|
+            __ext_debug("--> #{result.inspect}") do
+              { value: value, options: options }
+            end
           end
-        end
       end
 
       # attach_cached
@@ -72,11 +75,12 @@ class Shrine
       #
       def attach_cached(value, **options)
         # noinspection RubyYardReturnMatch
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT -> #{result.inspect}") do
-            { value: value, options: options }
+        super
+          .tap do |result|
+            __ext_debug("--> #{result.inspect}") do
+              { value: value, options: options }
+            end
           end
-        end
       end
 
       # attach
@@ -88,9 +92,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def attach(io, storage: store_key, **options)
-        __shrine_debug(__method__) do
-          { io: io, storage: storage, options: options }
-        end
+        __ext_debug { { io: io, storage: storage, options: options } }
         super
       end
 
@@ -99,7 +101,7 @@ class Shrine
       # @return [void]
       #
       def finalize
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -108,7 +110,7 @@ class Shrine
       # @return [void]
       #
       def save
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -119,7 +121,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def promote_cached(**options)
-        __shrine_debug(__method__) { options }
+        __ext_debug { options }
         # noinspection RubyYardReturnMatch
         super
       end
@@ -132,7 +134,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def promote(storage: store_key, **options)
-        __shrine_debug(__method__) { { storage: storage, options: options } }
+        __ext_debug { { storage: storage, options: options } }
         # noinspection RubyYardReturnMatch
         super
       end
@@ -148,9 +150,7 @@ class Shrine
       # @see Shrine::InstanceMethods#upload
       #
       def upload(io, storage = store_key, **options)
-        __shrine_debug(__method__) do
-          { io: io, storage: storage, options: options }
-        end
+        __ext_debug { { io: io, storage: storage, options: options } }
         super
       end
 
@@ -159,7 +159,7 @@ class Shrine
       # @return [void]
       #
       def destroy_previous
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -168,7 +168,7 @@ class Shrine
       # @return [void]
       #
       def destroy_attached
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -177,7 +177,7 @@ class Shrine
       # @return [void]
       #
       def destroy
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -190,7 +190,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def change(file)
-        __shrine_debug(__method__) { { file: file } }
+        __ext_debug { { file: file } }
         super
       end
 
@@ -203,7 +203,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def set(file)
-        __shrine_debug(__method__) { { file: file } }
+        __ext_debug { { file: file } }
         super
       end
 
@@ -213,7 +213,7 @@ class Shrine
       #
       def get
         super
-          .tap { |res| __shrine_debug(__method__, "RESULT -> #{res.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # load_data
@@ -225,7 +225,7 @@ class Shrine
       # @return [UploadedFile, nil]
       #
       def load_data(data)
-        __shrine_debug(__method__) { data.is_a?(Hash) ? data : { data: data } }
+        __ext_debug { data.is_a?(Hash) ? data : { data: data } }
         # noinspection RubyYardReturnMatch
         super
       end
@@ -239,7 +239,7 @@ class Shrine
       # @return [Shrine::UploadedFile, nil]
       #
       def file=(file)
-        __shrine_debug(__method__) { file.is_a?(Hash) ? file : { file: file } }
+        __ext_debug { file.is_a?(Hash) ? file : { file: file } }
         super
       end
 
@@ -251,7 +251,7 @@ class Shrine
       #
       def file!
         super
-          .tap { |res| __shrine_debug(__method__, "RESULT -> #{res.inspect}") }
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
       # uploaded_file
@@ -265,15 +265,13 @@ class Shrine
       # @see Shrine::ClassMethods#uploaded_file
       #
       def uploaded_file(value)
-        __shrine_debug(__method__) do
-          value.is_a?(Hash) ? value : { value: value }
-        end
+        __ext_debug { value.is_a?(Hash) ? value : { value: value } }
         super
       end
 
-      # =========================================================================
+      # =======================================================================
       # :section: Shrine::Plugins::Activerecord::AttacherMethods overrides
-      # =========================================================================
+      # =======================================================================
 
       public
 
@@ -282,7 +280,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_validate
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -291,7 +289,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_before_save
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -300,7 +298,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_after_save
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -309,7 +307,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_after_destroy
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -318,7 +316,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_persist
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -327,7 +325,7 @@ class Shrine
       # @return [void]
       #
       def activerecord_reload
-        __shrine_debug(__method__)
+        __ext_debug
         super
       end
 
@@ -345,7 +343,7 @@ class Shrine
       # @return [FileUploader]
       #
       def load_entity(record, name)
-        __shrine_debug(__method__) { { name: name, record: record } }
+        __ext_debug { { name: name, record: record } }
         super
       end
 
@@ -357,11 +355,12 @@ class Shrine
       # @return [FileUploader]
       #
       def set_entity(record, name)
-        super.tap do |result|
-          __shrine_debug(__method__, "RESULT @context = #{result.inspect}") do
-            { name: name, record: record }
+        super
+          .tap do |result|
+            __ext_debug("--> @context = #{result.inspect}") do
+              { name: name, record: record }
+            end
           end
-        end
       end
 
       # reload
@@ -369,7 +368,7 @@ class Shrine
       # @return [FileUploader]
       #
       def reload
-        __shrine_debug(__method__)
+        __ext_debug
         # noinspection RubyYardReturnMatch
         super
       end

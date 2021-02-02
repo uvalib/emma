@@ -44,7 +44,9 @@ DEBUG_REPRESENTABLE =
 
 module Representable
 
-  module AppDebug
+  # Overrides adding extra debugging around method calls.
+  #
+  module RepresentableDebug
 
     def self.included(mod)
       mod.send(:extend, self)
@@ -240,9 +242,13 @@ module Representable
 
   end
 
+end
+
+module Representable
+
   module CreateObject
 
-    include AppDebug
+    include RepresentableDebug
 
     remove_const(:Class) if const_defined?(:Class, false)
 
@@ -269,7 +275,7 @@ module Representable
 
     class Binding
 
-      include AppDebug
+      include RepresentableDebug
 
       def read(hash, as)
         __debug_show(:input) { ["Hash.#{__method__}", as: as, hash: hash] }
@@ -310,13 +316,9 @@ module Representable
     input unless options[:binding].skipable_empty_value?(input)
   end
 
-end
+  if DEBUG_REPRESENTABLE
 
-if DEBUG_REPRESENTABLE
-
-  module Representable
-
-    include AppDebug
+    include RepresentableDebug
 
     # =========================================================================
     # :section: representable/deserializer.rb replacements
@@ -346,7 +348,7 @@ if DEBUG_REPRESENTABLE
 
     module CreateObject
 
-      include AppDebug
+      include RepresentableDebug
 
       __debug_lambda(:input, :Instance)
 
@@ -384,7 +386,7 @@ if DEBUG_REPRESENTABLE
 
       class Binding
 
-        include AppDebug
+        include RepresentableDebug
 
         __debug_method(:input, 'Object', :read)
 
@@ -394,7 +396,7 @@ if DEBUG_REPRESENTABLE
 
     module ForCollection
 
-      include AppDebug
+      include RepresentableDebug
 
       __debug_method('ForCollection', %i[
         for_collection
