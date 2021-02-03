@@ -134,6 +134,88 @@ module SessionConcern
 
   public
 
+  # Redirect after a successful authorization operation.
+  #
+  # @param [String, nil]       path     Default: `#after_sign_in_path_for`.
+  # @param [String, User, nil] user     Default: `#resource`.
+  # @param [*]                 message  Optionally passed to #flash_notice.
+  #
+  def auth_success_redirect(path = nil, user: nil, message: nil)
+    set_flash_notice(message) if message.present?
+    path ||= params[:redirect] || after_sign_in_path_for(user || resource)
+    redirect_to path
+  end
+
+  # Redirect after a failed authorization operation.
+  #
+  # @param [String, nil]       path     Default: `#after_sign_out_path_for`.
+  # @param [String, User, nil] user     Default: `#resource`.
+  # @param [*]                 message  Optionally passed to #flash_alert.
+  #
+  def auth_failure_redirect(path = nil, user: nil, message: nil)
+    set_flash_alert(message) if message.present?
+    path ||= after_sign_out_path_for(user || resource)
+    redirect_to path
+  end
+
+  # Set `flash[:notice]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def set_flash_notice(message = nil, action: nil, user: nil)
+    message ||= status_message(status: :success, action: action, user: user)
+    flash_notice(message)
+  end
+
+  # Set `flash[:alert]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def set_flash_alert(message = nil, action: nil, user: nil)
+    message ||= status_message(status: :failure, action: action, user: user)
+    flash_alert(message)
+  end
+
+  # Configured success or failure message.
+  #
+  # @param [String, Symbol]          status
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def status_message(status:, action: nil, user: nil)
+    action ||= params[:action]
+    user   ||= resource
+    user     = user['uid'] if user.is_a?(Hash)
+    user     = user.uid    if user.respond_to?(:uid)
+    user     = user.to_s.presence || 'unknown user' # TODO: I18n
+    I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Information about the last operation performed in this session.
   #
   # @return [Hash]
