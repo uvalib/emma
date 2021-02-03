@@ -334,10 +334,11 @@ module OmniAuth
           elsif false?(url_parameters[:revoke])
             __ext_debug('TOKEN NOT REVOKED DUE TO revoke PARAMETER')
 
-          elsif current_access_token.blank?
+          elsif current_token.blank?
             __ext_debug('NO TOKEN TO REVOKE')
 
           else
+            __ext_debug("REVOKING TOKEN #{current_token.inspect}")
             revoke_access_token
           end
           session.delete('omniauth.auth')
@@ -434,14 +435,12 @@ module OmniAuth
         self.class.url_parameters(params || request)
       end
 
-      # Retrieve access_token, setting it from from "omniauth.auth" if not
-      # already present.
+      # Retrieve the token from :access_token or from "omniauth.auth".
       #
-      # @return [::OAuth2::AccessToken, nil]
+      # @return [String, nil]
       #
-      def current_access_token
-        self.access_token ||= synthetic_access_token(env['omniauth.auth'])
-        self.access_token ||= synthetic_access_token(session['omniauth.auth'])
+      def current_token
+        access_token&.token || session['omniauth.auth']
       end
 
       # Generate an access token based on fixed information.

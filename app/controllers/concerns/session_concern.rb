@@ -200,7 +200,8 @@ module SessionConcern
   # @see OmniAuth::Strategies::Bookshare#other_phase
   #
   def local_sign_out
-    session.delete('omniauth.auth')
+    token = session.delete('omniauth.auth')
+    __debug { "#{__method__}: omniauth.auth was: #{token.inspect}" } if token
     sign_out
   end
 
@@ -210,6 +211,8 @@ module SessionConcern
   # where the distinction with #local_sign_out needs to be stressed.)
   #
   def global_sign_out
+    token = session['omniauth.auth']
+    __debug { "#{__method__}: omniauth.auth is: #{token.inspect}" } if token
     sign_out
   end
 
@@ -250,7 +253,7 @@ module SessionConcern
       __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     end
-    sign_out
+    local_sign_out
     @reset_browser_cache = true
   end
 
