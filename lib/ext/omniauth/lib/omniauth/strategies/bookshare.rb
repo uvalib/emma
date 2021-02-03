@@ -329,18 +329,21 @@ module OmniAuth
       # @see OmniAuth::Strategy#call!
       #
       def other_phase
+        __ext_debug("current_path    = #{current_path.inspect}")
+        __ext_debug("revoke_path     = #{revoke_path.inspect}")
+        __ext_debug("on_revoke_path? = #{on_revoke_path?}")
         if on_revoke_path?
           if !application_deployed?
-            __ext_debug('TOKEN NOT REVOKED ON localhost')
+            __ext_debug('NOT REVOKING TOKEN ON localhost')
 
           elsif debug_user?
-            __ext_debug("TOKEN NOT REVOKED FOR #{current_uid}")
+            __ext_debug("NOT REVOKING TOKEN FOR #{current_uid}")
 
           elsif false?(url_parameters[:revoke])
-            __ext_debug('TOKEN NOT REVOKED DUE TO revoke PARAMETER')
+            __ext_debug('NOT REVOKING TOKEN DUE TO revoke=false PARAMETER')
 
           elsif current_token.blank?
-            __ext_debug('NO TOKEN TO REVOKE')
+            __ext_debug('NOT REVOKING TOKEN - NO TOKEN')
 
           else
             __ext_debug("REVOKING TOKEN #{current_token.inspect}")
