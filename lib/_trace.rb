@@ -154,7 +154,7 @@ if not TRACE_LOADING
 
 else
 
-  __output { "TRACE_LOADING = #{TRACE_LOADING.inspect}" }
+  __output_impl { "TRACE_LOADING = #{TRACE_LOADING.inspect}" }
 
   # Indentation for #__loading_level.
   @load_level = 0
@@ -185,7 +185,7 @@ else
   # Place as the first non-comment line of a Ruby source file.
   #
   def __loading(file)
-    __output { "====== #{__loading_level}#{file}" }
+    __output_impl { "====== #{__loading_level}#{file}" }
   end
 
   # Display console output to indicate that a file is being loaded.
@@ -205,7 +205,7 @@ else
     warning = warning.join(' <<<<<<<<<< ')
     @load_level += 1
     @load_table[file] = [@load_level, true]
-    __output { "====-> #{__loading_level}#{file}#{warning}" }
+    __output_impl { "====-> #{__loading_level}#{file}#{warning}" }
   end
 
   # Display console output to indicate the end of a file that is being loaded.
@@ -224,7 +224,7 @@ else
     warning << "UNBALANCED - expected level #{expected}" if unbalanced
     warning << 'ALREADY CLOSED' unless still_open
     warning = warning.join(' <<<<<<<<<< ')
-    __output { "<-==== #{__loading_level}#{file}#{warning}" }
+    __output_impl { "<-==== #{__loading_level}#{file}#{warning}" }
     @load_table[file] = [@load_level, !still_open]
     @load_level -= 1
     @load_table.clear if @load_level.zero?
@@ -242,7 +242,7 @@ if not TRACE_CONCERNS
 
 else
 
-  __output { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" }
+  __output_impl { "TRACE_CONCERNS = #{TRACE_CONCERNS.inspect}" }
 
   # Indicate invocation of a Concern's "included" block.
   #
@@ -252,7 +252,7 @@ else
   # @return [void]
   #
   def __included(base, concern)
-    __output { "... including #{concern} in #{base}" }
+    __output_impl { "... including #{concern} in #{base}" }
   end
 
 end
@@ -306,7 +306,7 @@ if TRACE_NOTIFICATIONS
       else             /.*/
     end
 
-  __output { "TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}" }
+  __output_impl { "TRACE_NOTIFICATIONS = #{NOTIFICATIONS.inspect}" }
 
   # Limit each notification display to this number of characters.
   MAX_NOTIFICATION_SIZE = 1024
@@ -320,7 +320,7 @@ if TRACE_NOTIFICATIONS
     args.shift(4)
     args.map! { |arg| arg.inspect.truncate(MAX_NOTIFICATION_SIZE) }
     line = "@@@ NOTIFIER [#{tid}] %-35s (%.2f ms)" % [evt.name, evt.duration]
-    __output { line << ' ' << args.join(', ') }
+    __output_impl { line << ' ' << args.join(', ') }
   end
 
 end

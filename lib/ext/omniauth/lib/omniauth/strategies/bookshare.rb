@@ -130,13 +130,14 @@ module OmniAuth
         log :info, 'Request phase initiated.'
 
         # Store query params to be passed back via #callback_call.
-        params = session['omniauth.params'] = url_parameters(request)
+        session['omniauth.params'] = url_parameters(request)
         __ext_debug("#{request.request_method}") do
           { options: options, session: __debug_session_hash }
         end
+        OmniAuth.config.before_request_phase&.call(env)
 
         # noinspection RubyResolve
-        if params.key?(:commit)
+        if session['omniauth.params'].key?(:commit)
           log :info, 'By-passing request_phase (local developer uid/token)'
           authorize_params # Generate session['omniauth.state']
           callback_call
@@ -155,19 +156,21 @@ module OmniAuth
           call_app!
 
         elsif options.origin_param
-          org = request.params[options.origin_param].presence
-          ref = env['HTTP_REFERER'].presence
-          ref = nil if ref&.end_with?(request_path)
-          if org || ref
-            log :info, "Origin from #{org ? 'request.params' : 'HTTP_REFERER'}"
+          origin  = request.params[options.origin_param].presence
+          referer = env['HTTP_REFERER'].presence
+          origin ||= (referer if referer && !referer.end_with?(request_path))
+          session['omniauth.origin'] = origin if origin
+          __ext_debug do
+            { "session['omniauth.origin']" => session['omniauth.origin'] }
           end
-          session['omniauth.origin'] = org ||= ref
-          __ext_debug { { "session['omniauth.origin']": org } }
           request_phase
 
         else
           request_phase
         end
+      rescue error # TODO: remove - testing
+        __debug_exception("#{__ext_class} #{__method__}", error)
+        raise error
       end
 
       # =======================================================================
@@ -200,7 +203,6 @@ module OmniAuth
       # @see ::OAuth2::ClientExt#request
       #
       def request_phase
-        OmniAuth.config.before_request_phase&.call(env)
         __ext_debug((req = request.request_method))
         code = client.auth_code
         prms = authorize_params
@@ -226,18 +228,19 @@ module OmniAuth
         __ext_debug
         result = nil
         params = url_parameters(request)
-        e_type = params['error_reason'] || params['error']
+        e_type = params[:error_reason] || params[:error]
 
         # Raise an exception if the response indicated an error.
         if e_type
-          description = params['error_description'] || params['error_reason']
-          raise CallbackError.new(e_type, description, params['error_uri'])
+          desc = params[:error_description] || params[:error_reason]
+          raise CallbackError.new(params[:error], desc, params[:error_uri])
         end
 
         # Raise an exception if the returned state doesn't match.
         # noinspection RubyResolve
         unless options.provider_ignores_state
-          unless params['state'] == session.delete('omniauth.state')
+          state = params[:state]
+          if state.blank? || (state != session.delete('omniauth.state'))
             e_type = :csrf_detected
             raise CallbackError.new(e_type, 'CSRF detected')
           end
@@ -263,6 +266,8 @@ module OmniAuth
             # Normal case results in a call to the remote service.
             self.access_token = build_access_token
             self.access_token = access_token.refresh! if access_token.expired?
+            # Can't call *super* -- have to perform the actions of
+            # OmniAuth::Strategy#callback_phase manually here:
             env['omniauth.auth'] = auth_hash
             call_app!
 

@@ -129,7 +129,7 @@ module Representable
           end
         items += args
         line << SEPARATOR << items.join(SEPARATOR) if items.present?
-        __output(line)
+        __output_impl(line)
       end
 
       # Override one or more lambdas in order to "inject" a debug statement

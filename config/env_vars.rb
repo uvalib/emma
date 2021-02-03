@@ -248,8 +248,7 @@ CONSOLE_OUTPUT = rails_application? || CONSOLE_DEBUGGING
 # Control tracking of file load order.
 #
 # During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable, however
-# no output will appear if CONSOLE_OUTPUT is *false*.
+# value here or override dynamically with the environment variable.
 #
 # @see #__loading
 #
@@ -258,8 +257,7 @@ TRACE_LOADING = true?(ENV['TRACE_LOADING'])
 # Control tracking of invocation of Concern "included" blocks.
 #
 # During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable, however
-# # no output will appear if CONSOLE_OUTPUT is *false*.
+# value here or override dynamically with the environment variable.
 #
 # @see #__included
 #
@@ -268,8 +266,7 @@ TRACE_CONCERNS = true?(ENV['TRACE_CONCERNS'])
 # Control tracking of Rails notifications.
 #
 # During normal operation this should be set to *false*.  Change the default
-# value here or override dynamically with the environment variable, however
-# # no output will appear if CONSOLE_OUTPUT is *false*.
+# value here or override dynamically with the environment variable.
 #
 # @see #NOTIFICATIONS
 #
