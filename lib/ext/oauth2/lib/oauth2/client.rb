@@ -218,23 +218,31 @@ module OAuth2
     # The token revocation endpoint URL of the OAuth2 provider.
     #
     # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash] params       Additional query parameters.
+    # @param [Hash, nil] params       Additional query parameters.
     #
     # @return [String]
+    # @return [nil]                   If no token was provided or found.
     #
-    def revoke_url(token, params = {})
-      # noinspection RubyRedundantSafeNavigation
-      params = params&.dup || {}
-      params[:token] ||=
-        case token
-          when OAuth2::AccessToken
-            token.token
-          when Hash
-            token.symbolize_keys.values_at(:token, :access_token).compact.first
-          else
-            token
-        end
-      connection.build_url(options[:revoke_url], params).to_s
+    def revoke_url(token, params = nil)
+      params = params&.symbolize_keys || {}
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case token
+        when OAuth2::AccessToken
+          token = token.token
+        when Hash
+          h = token.deep_symbolize_keys
+          token = h[:access_token] || h[:token] || h.dig(:credentials, :token)
+      end
+      token = token.presence
+      if token && params[:token]
+        Log.warn("#{__method__}: params[token] = #{params[:token]} ignored")
+      end
+      # noinspection RubyYardParamTypeMatch
+      if (params[:token] = token || params[:token])
+        connection.build_url(options[:revoke_url], params).to_s
+      else
+        Log.warn("#{__method__}: no token")
+      end
     end
 
     # Revoke the token (to end the session).
@@ -244,11 +252,12 @@ module OAuth2
     # @param [Hash] opts              Options passed to #request.
     #
     # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
     #
     def revoke_token(token, params = {}, opts = {})
       url  = revoke_url(token, params)
       opts = opts.merge(raise_errors: false) unless opts.key?(:raise_errors)
-      request(options[:token_method], url, opts)
+      request(options[:token_method], url, opts) if url
     end
 
   end
@@ -447,6 +456,7 @@ module OAuth2
       # @param [Hash] opts              Options passed to #request.
       #
       # @return [OAuth2::Response]
+      # @return [nil]                   If no token was provided or found.
       #
       def revoke_token(token, params = {}, opts = {})
         super

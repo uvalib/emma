@@ -45,33 +45,6 @@ class User::SessionsController < Devise::SessionsController
 
   append_around_action :session_update
 
-=begin
-  # Engage the OmniAuth Bookshare strategy to terminate the OAuth2 session by
-  # revoking the OAuth2 token (unless not appropriate).
-  #
-  # @type [User]          _user
-  # @type [Warden::Proxy] warden
-  # @type [Hash]          _opts       Specifically, "{ scope: :user }".
-  #
-  Warden::Manager.before_logout do |_user, warden, _opts|
-
-    # This is pretty sleazy, but I couldn't figure out the "right" way to
-    # engage the strategy from here.  (Yes, I could have set up an
-    # OAuth2::Client directly, but it seemed wrong to have to duplicate the
-    # configuration information here in order to do that).
-
-    # @type [OmniAuth::Strategies::Bookshare] bookshare
-    if (bookshare = warden.manager.instance_variable_get(:@app))
-      bookshare.revoke_token(warden.env)
-    else
-      Log.error do
-        'revoke_token: could not get OmniAuth::Strategies::Bookshare'
-      end
-    end
-
-  end
-=end
-
   # ===========================================================================
   # :section: Devise::SessionsController overrides
   # ===========================================================================
@@ -110,7 +83,7 @@ class User::SessionsController < Devise::SessionsController
   # ended _and_ its associated OAuth2 token is revoked.  If "revoke" is "false"
   # then only the local session is ended.
   #
-  # @see OmniAuth::Strategies::Bookshare#revoke_token
+  # @see SessionConcern#delete_token
   #
   def destroy
     __debug_route

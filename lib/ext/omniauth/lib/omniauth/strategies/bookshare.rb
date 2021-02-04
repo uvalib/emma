@@ -313,81 +313,6 @@ module OmniAuth
           .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
-=begin
-      # =======================================================================
-      # :section:
-      # =======================================================================
-
-      public
-
-      # Terminate the OAuth2 session by revoking the OAuth2 token (unless not
-      # appropriate).
-      #
-      # @param [Hash] warden_env
-      #
-      # @see User::SessionsController#destroy
-      #
-      # == Usage Notes
-      # This is intended to be called from a Warden :before_logout hook.
-      #
-      # == Implementation Notes
-      # At some point 'oauth2' and 'omniauth-oauth2' will probably support the
-      # upcoming standard for OAuth2 token revocation, but at this point this
-      # method has to be called explicitly.
-      #
-      def revoke_token(warden_env)
-
-        # This will have to be supplied since the class instance will not have
-        # been provided it yet.
-        @env = warden_env
-
-        # Delete the provider token if appropriate.
-        if !application_deployed?
-          __ext_debug('NOT REVOKING TOKEN ON localhost')
-
-        elsif debug_user?
-          __ext_debug("NOT REVOKING TOKEN FOR #{current_uid}")
-
-        elsif false?(url_parameters[:revoke])
-          __ext_debug('NOT REVOKING TOKEN DUE TO revoke=false PARAMETER')
-
-        elsif (token = current_token).blank?
-          __ext_debug('NOT REVOKING TOKEN - NO TOKEN')
-
-        else
-          revoke_access_token(token)
-        end
-
-        # Delete the local cookie whether or not the OAuth2 token is revoked.
-        session.delete('omniauth.auth')
-      end
-
-      # =======================================================================
-      # :section:
-      # =======================================================================
-
-      protected
-
-      # Terminate the session with the OAuth2 provider telling it to revoke the
-      # access token.
-      #
-      # @param [OAuth2::AccessToken, String, nil] token   Def: `#access_token`.
-      #
-      # @return [OAuth2::Response]
-      # @return [nil]                 If no token was given or present.
-      #
-      def revoke_access_token(token = nil)
-        entry = 'Token revocation'
-        entry = "#{entry} for #{token.inspect}" if token
-        if (token ||= access_token)
-          log :info, entry
-          client.auth_code.revoke_token(token)
-        else
-          Log.warn { "#{__method__}: no token given" }
-        end
-      end
-=end
-
       # =======================================================================
       # :section:
       # =======================================================================
@@ -403,33 +328,6 @@ module OmniAuth
         request&.env['warden']&.user
       end
 
-=begin
-      # The user name of the currently signed-in user.
-      #
-      # @return [String]
-      # @return [nil]
-      #
-      def current_uid
-        current_user&.uid
-      end
-
-      # Indicate whether the user is one is capable of short-circuiting the
-      # authorization process.
-      #
-      # @param [User, String, nil] user   Default: `#current_user`
-      #
-      def debug_user?(user = nil)
-        session['debug'].present? &&
-          self.class.debug_user?(user || current_user)
-      end
-
-      # =======================================================================
-      # :section:
-      # =======================================================================
-
-      protected
-=end
-
       # Normalize URL parameters from the item or *request* if none was given.
       #
       # @param [ActionController::Parameters, Hash, Rack::Request, nil] params
@@ -439,22 +337,6 @@ module OmniAuth
       def url_parameters(params = nil)
         self.class.url_parameters(params || request)
       end
-
-=begin
-      # Retrieve the token from :access_token or from "omniauth.auth".
-      #
-      # @return [String, nil]
-      #
-      def current_token
-        auth_data = access_token || session['omniauth.auth']
-        if auth_data.is_a?(::OAuth2::AccessToken)
-          auth_data.token
-        elsif auth_data.is_a?(Hash)
-          hash = url_parameters(auth_data)
-          hash[:access_token] || hash[:token] || hash.dig(:credentials, :token)
-        end
-      end
-=end
 
       # Generate an access token based on fixed information.
       #

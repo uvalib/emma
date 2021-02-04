@@ -312,6 +312,8 @@ module SessionConcern
   #
   # @return [void]
   #
+  # @see #revoke_access_token
+  #
   def delete_token(revoke: true)
     token = session.delete('omniauth.auth')
     return unless revoke
@@ -347,21 +349,26 @@ module SessionConcern
   #
   # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
   #
-  # @return [void]
+  # @return [OAuth2::Response]
+  # @return [nil]                     If no token was provided or found.
   #
   #--
-  # noinspection RubyResolve
+  # noinspection RubyNilAnalysis, RubyResolve
   #++
   def revoke_access_token(token = nil)
     token ||= session['omniauth.auth']
+    token   = OmniAuth::AuthHash.new(token) if token.is_a?(Hash)
+    token   = token.credentials.token       if token.is_a?(OmniAuth::AuthHash)
     return Log.warn { "#{__method__}: no token present" } if token.blank?
     Log.info { "#{__method__}: #{token.inspect}" }
+
     # @type [OmniAuth::Strategy::Options] opt
-    opt = OmniAuth::Strategies::Bookshare.default_options
+    opt     = OmniAuth::Strategies::Bookshare.default_options
     id      = opt.client_id
     secret  = opt.client_secret
     options = opt.client_options.deep_symbolize_keys
     __debug_line(__method__) { { id: id, secret: secret, options: options } }
+
     OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token)
   end
 

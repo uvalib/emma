@@ -50,34 +50,40 @@ module OAuth2
 
     # The required query parameters for the revoke URL
     #
-    # @param [Hash] params            Additional query parameters.
+    # @param [Hash, nil] params       Additional query parameters.
     #
     # @return [Hash]
     #
-    def revoke_params(params = {})
-      (params || {}).merge(grant_type: 'authorization_code')
+    def revoke_params(params = nil)
+      result = { grant_type: 'authorization_code' }
+      # noinspection RubyYardReturnMatch
+      params&.symbolize_keys&.merge!(result) || result
     end
 
     # The token revocation endpoint URL of the OAuth2 provider.
     #
     # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash] params            Additional query parameters.
+    # @param [Hash, nil] params       Additional query parameters.
     #
     # @return [String]
+    # @return [nil]                   If no token was provided or found.
     #
-    def revoke_url(token, params = {})
-      @client.revoke_url(token, revoke_params.merge(params))
+    def revoke_url(token, params = nil)
+      @client.revoke_url(token, revoke_params(params))
     end
 
     # Indicate to the provider that the token should be invalidated (in order
     # to terminate the session).
     #
     # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash] params            Additional query parameters.
-    # @param [Hash] opts              Options.
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
     #
-    def revoke_token(token, params = {}, opts = {})
-      @client.revoke_token(token, revoke_params.merge(params), opts)
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    def revoke_token(token, params = nil, opts = nil)
+      @client.revoke_token(token, revoke_params(params), opts)
     end
 
   end
