@@ -241,9 +241,12 @@ module OAuth2
         return
       end
 
+      # Prepare data values including the token.
       method  = options[:token_method]
       auth    = Authenticator.new(id, secret, options[:auth_scheme])
-      params  = auth.apply(params || {})
+      params  = auth.apply(params || {}).merge!(token: token)
+
+      # Prepare headers and other options.
       opts    = opts&.dup || {}
       headers = opts[:headers]&.dup || {}
       headers.merge!(params.delete(:headers)) if params[:headers]
