@@ -248,15 +248,19 @@ module OAuth2
     # Revoke the token (to end the session).
     #
     # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash] params            Additional query parameters.
-    # @param [Hash] opts              Options passed to #request.
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
     #
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
-    def revoke_token(token, params = {}, opts = {})
-      url  = revoke_url(token, params)
-      opts = opts.merge(raise_errors: false) unless opts.key?(:raise_errors)
+    def revoke_token(token, params = nil, opts = nil)
+      url = revoke_url(token, params)
+      unless opts&.key?(:raise_errors)
+        opts = opts&.dup || {}
+        opts[:raise_errors] = false
+      end
+      # noinspection RubyYardParamTypeMatch
       request(options[:token_method], url, opts) if url
     end
 
@@ -452,13 +456,13 @@ module OAuth2
       # Revoke the token (to end the session).
       #
       # @param [OAuth2::AccessToken, Hash, String] token
-      # @param [Hash] params            Additional query parameters.
-      # @param [Hash] opts              Options passed to #request.
+      # @param [Hash, nil] params       Additional query parameters.
+      # @param [Hash, nil] opts         Options.
       #
       # @return [OAuth2::Response]
       # @return [nil]                   If no token was provided or found.
       #
-      def revoke_token(token, params = {}, opts = {})
+      def revoke_token(token, params = nil, opts = nil)
         super
           .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
