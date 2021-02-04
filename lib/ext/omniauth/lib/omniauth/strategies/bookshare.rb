@@ -48,7 +48,6 @@ module OmniAuth
       option :token_options,          []
       option :token_params,           {}
       option :provider_ignores_state, false
-      option :revoke_path,            '/users/sign_out'
 
       credentials do
         {
@@ -320,53 +319,46 @@ module OmniAuth
 
       public
 
-      # The strategy was called outside of the request sequence.
+      # Terminate the OAuth2 session by revoking the OAuth2 token (unless not
+      # appropriate).
       #
-      # The only current use-case is token revocation, which causes a POST to
-      # the OAuth2 token revocation endpoint, but in all cases the method
-      # continues on with the rest of the call stack.
+      # @param [Hash] warden_env
       #
-      # @see OmniAuth::Strategy#call!
+      # @see User::SessionsController#destroy
       #
-      def other_phase
-        __ext_debug("current_path    = #{current_path.inspect}")
-        __ext_debug("revoke_path     = #{revoke_path.inspect}")
-        __ext_debug("on_revoke_path? = #{on_revoke_path?}")
-        if on_revoke_path?
-          if !application_deployed?
-            __ext_debug('NOT REVOKING TOKEN ON localhost')
+      # == Usage Notes
+      # This is intended to be called from a Warden :before_logout hook.
+      #
+      # == Implementation Notes
+      # At some point 'oauth2' and 'omniauth-oauth2' will probably support the
+      # upcoming standard for OAuth2 token revocation, but at this point this
+      # method has to be called explicitly.
+      #
+      def revoke_token(warden_env)
 
-          elsif debug_user?
-            __ext_debug("NOT REVOKING TOKEN FOR #{current_uid}")
+        # This will have to be supplied since the class instance will not have
+        # been provided it yet.
+        @env ||= warden_env
 
-          elsif false?(url_parameters[:revoke])
-            __ext_debug('NOT REVOKING TOKEN DUE TO revoke=false PARAMETER')
+        # Delete the provider token if appropriate.
+        if !application_deployed?
+          __ext_debug('NOT REVOKING TOKEN ON localhost')
 
-          elsif current_token.blank?
-            __ext_debug('NOT REVOKING TOKEN - NO TOKEN')
+        elsif debug_user?
+          __ext_debug("NOT REVOKING TOKEN FOR #{current_uid}")
 
-          else
-            __ext_debug("REVOKING TOKEN #{current_token.inspect}")
-            revoke_access_token
-          end
-          session.delete('omniauth.auth')
+        elsif false?(url_parameters[:revoke])
+          __ext_debug('NOT REVOKING TOKEN DUE TO revoke=false PARAMETER')
+
+        elsif (token = current_token).blank?
+          __ext_debug('NOT REVOKING TOKEN - NO TOKEN')
+
+        else
+          revoke_access_token(token)
         end
-        app.call(env)
-      end
 
-      # Indicate whether the current request is for token revocation.
-      #
-      def on_revoke_path?
-        on_path?(revoke_path)
-      end
-
-      # The request path indicating a token revocation.
-      #
-      # @return [String]
-      #
-      def revoke_path
-        @revoke_path ||=
-          options[:revoke_path] || "#{path_prefix}/#{name}/revoke"
+        # Delete the local cookie whether or not the OAuth2 token is revoked.
+        session.delete('omniauth.auth')
       end
 
       # =======================================================================
@@ -378,7 +370,7 @@ module OmniAuth
       # Terminate the session with the OAuth2 provider telling it to revoke the
       # access token.
       #
-      # @param [OAuth2::AccessToken, nil] token   Default: `#access_token`.
+      # @param [OAuth2::AccessToken, String, nil] token   Def: `#access_token`.
       #
       # @return [OAuth2::Response]
       # @return [nil]                 If no token was given or present.
@@ -421,10 +413,11 @@ module OmniAuth
       # Indicate whether the user is one is capable of short-circuiting the
       # authorization process.
       #
-      # @param [String, nil] uid      Default: `#current_uid`
+      # @param [User, String, nil] user   Default: `#current_user`
       #
-      def debug_user?(uid = nil)
-        session['debug'].present? && self.class.debug_user?(uid || current_uid)
+      def debug_user?(user = nil)
+        session['debug'].present? &&
+          self.class.debug_user?(user || current_user)
       end
 
       # =======================================================================
@@ -448,7 +441,13 @@ module OmniAuth
       # @return [String, nil]
       #
       def current_token
-        access_token&.token || session['omniauth.auth']
+        auth_data = access_token || session['omniauth.auth']
+        if auth_data.is_a?(::OAuth2::AccessToken)
+          auth_data.token
+        elsif auth_data.is_a?(Hash)
+          hash = url_parameters(auth_data)
+          hash[:access_token] || hash[:token] || hash.dig(:credentials, :token)
+        end
       end
 
       # Generate an access token based on fixed information.
@@ -738,10 +737,11 @@ module OmniAuth
       # Indicate whether the user is one that is capable of short-circuiting
       # the authorization process by using a stored token.
       #
-      # @param [*] uid
+      # @param [User, String] user
       #
-      def self.debug_user?(uid)
-        stored_auth.key?(uid)
+      def self.debug_user?(user)
+        user = user.uid if user.is_a?(User)
+        stored_auth.key?(user)
       end
 
     end
@@ -807,7 +807,7 @@ module OmniAuth
         # Terminate the session with the OAuth2 provider telling it to revoke
         # the access token.
         #
-        # @param [OAuth2::AccessToken, nil] token   Default: `#access_token`.
+        # @param [OAuth2::AccessToken, String, nil] token  Def: `#access_token`
         #
         # @return [OAuth2::Response]
         # @return [nil]               If no token was given or present.

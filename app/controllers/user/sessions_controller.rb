@@ -39,9 +39,30 @@ class User::SessionsController < Devise::SessionsController
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
   prepend_before_action :no_devise_timeout,            only: %i[create destroy sign_in_as]
 
-=begin # TODO: configure_sign_in_params ???
-  before_action :configure_sign_in_params, only: [:create]
-=end
+  # Engage the OmniAuth Bookshare strategy to terminate the OAuth2 session by
+  # revoking the OAuth2 token (unless not appropriate).
+  #
+  # @type [User]          _user
+  # @type [Warden::Proxy] warden
+  # @type [Hash]          _opts       Specifically, "{ scope: :user }".
+  #
+  Warden::Manager.before_logout do |_user, warden, _opts|
+
+    # This is pretty sleazy, but I couldn't figure out the "right" way to
+    # engage the strategy from here.  (Yes, I could have set up an
+    # OAuth2::Client directly, but it seemed wrong to have to duplicate the
+    # configuration information here in order to do that).
+
+    # @type [OmniAuth::Strategies::Bookshare] bookshare
+    if (bookshare = warden.manager.instance_variable_get(:@app))
+      bookshare.revoke_token(warden.env)
+    else
+      Log.error do
+        'revoke_token: could not get OmniAuth::Strategies::Bookshare'
+      end
+    end
+
+  end
 
   # ===========================================================================
   # :section: Session management
@@ -87,11 +108,12 @@ class User::SessionsController < Devise::SessionsController
   # ended _and_ its associated OAuth2 token is revoked.  If "revoke" is "false"
   # then only the local session is ended.
   #
+  # @see OmniAuth::Strategies::Bookshare#revoke_token
+  #
   def destroy
     __debug_route
     __debug_request
     username = current_user&.uid&.dup
-    local_sign_out if false?(params[:revoke])
     super do
       api_clear
       set_flash_notice(user: username)
@@ -196,16 +218,6 @@ class User::SessionsController < Devise::SessionsController
   def no_devise_timeout
     request.env['devise.skip_timeout'] = true
   end
-
-=begin # TODO: configure_sign_in_params ???
-  # If you have extra params to permit, append them to the sanitizer.
-  #
-  # @return [void]
-  #
-  def configure_sign_in_params
-    devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
-  end
-=end
 
 end
 
