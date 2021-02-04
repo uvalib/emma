@@ -338,7 +338,7 @@ module OmniAuth
 
         # This will have to be supplied since the class instance will not have
         # been provided it yet.
-        @env ||= warden_env
+        @env = warden_env
 
         # Delete the provider token if appropriate.
         if !application_deployed?

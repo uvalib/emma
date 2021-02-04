@@ -246,7 +246,8 @@ module OAuth2
     # @return [OAuth2::Response]
     #
     def revoke_token(token, params = {}, opts = {})
-      url = revoke_url(token, params)
+      url  = revoke_url(token, params)
+      opts = opts.merge(raise_errors: false) unless opts.key?(:raise_errors)
       request(options[:token_method], url, opts)
     end
 

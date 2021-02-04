@@ -39,6 +39,12 @@ class User::SessionsController < Devise::SessionsController
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
   prepend_before_action :no_devise_timeout,            only: %i[create destroy sign_in_as]
 
+  # ===========================================================================
+  # :section: Session management
+  # ===========================================================================
+
+  append_around_action :session_update
+
   # Engage the OmniAuth Bookshare strategy to terminate the OAuth2 session by
   # revoking the OAuth2 token (unless not appropriate).
   #
@@ -63,12 +69,6 @@ class User::SessionsController < Devise::SessionsController
     end
 
   end
-
-  # ===========================================================================
-  # :section: Session management
-  # ===========================================================================
-
-  append_around_action :session_update
 
   # ===========================================================================
   # :section: Devise::SessionsController overrides
