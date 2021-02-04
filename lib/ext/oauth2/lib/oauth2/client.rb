@@ -215,36 +215,6 @@ module OAuth2
 
     public
 
-    # The token revocation endpoint URL of the OAuth2 provider.
-    #
-    # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash, nil] params       Additional query parameters.
-    #
-    # @return [String]
-    # @return [nil]                   If no token was provided or found.
-    #
-    def revoke_url(token, params = nil)
-      params = params&.symbolize_keys || {}
-      # noinspection RubyCaseWithoutElseBlockInspection
-      case token
-        when OAuth2::AccessToken
-          token = token.token
-        when Hash
-          h = token.deep_symbolize_keys
-          token = h[:access_token] || h[:token] || h.dig(:credentials, :token)
-      end
-      token = token.presence
-      if token && params[:token]
-        Log.warn("#{__method__}: params[token] = #{params[:token]} ignored")
-      end
-      # noinspection RubyYardParamTypeMatch
-      if (params[:token] = token || params[:token])
-        connection.build_url(options[:revoke_url], params).to_s
-      else
-        Log.warn("#{__method__}: no token")
-      end
-    end
-
     # Revoke the token (to end the session).
     #
     # @param [OAuth2::AccessToken, Hash, String] token
@@ -254,14 +224,40 @@ module OAuth2
     # @return [OAuth2::Response]
     # @return [nil]                   If no token was provided or found.
     #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
     def revoke_token(token, params = nil, opts = nil)
-      url = revoke_url(token, params)
-      unless opts&.key?(:raise_errors)
-        opts = opts&.dup || {}
-        opts[:raise_errors] = false
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case token
+        when OAuth2::AccessToken
+          token = token.token
+        when Hash
+          h = token.deep_symbolize_keys
+          token = h[:access_token] || h[:token] || h.dig(:credentials, :token)
       end
+      if token.blank?
+        Log.warn("#{__method__}: no token")
+        return
+      end
+
+      method  = options[:token_method]
+      auth    = Authenticator.new(id, secret, options[:auth_scheme])
+      params  = auth.apply(params || {})
+      opts    = opts&.dup || {}
+      headers = opts[:headers]&.dup || {}
+      headers.merge!(params.delete(:headers)) if params[:headers]
+      if method == :get
+        opts[:params] = params
+      else
+        opts[:body] = params
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      end
+      opts[:headers] = headers
+      opts[:raise_errors] = false unless opts.key?(:raise_errors)
+
       # noinspection RubyYardParamTypeMatch
-      request(options[:token_method], url, opts) if url
+      request(method, options[:revoke_url], opts)
     end
 
   end

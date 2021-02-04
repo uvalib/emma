@@ -60,18 +60,6 @@ module OAuth2
       params&.symbolize_keys&.merge!(result) || result
     end
 
-    # The token revocation endpoint URL of the OAuth2 provider.
-    #
-    # @param [OAuth2::AccessToken, Hash, String] token
-    # @param [Hash, nil] params       Additional query parameters.
-    #
-    # @return [String]
-    # @return [nil]                   If no token was provided or found.
-    #
-    def revoke_url(token, params = nil)
-      @client.revoke_url(token, revoke_params(params))
-    end
-
     # Indicate to the provider that the token should be invalidated (in order
     # to terminate the session).
     #
