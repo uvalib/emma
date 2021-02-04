@@ -45,6 +45,7 @@ class User::SessionsController < Devise::SessionsController
 
   append_around_action :session_update
 
+=begin
   # Engage the OmniAuth Bookshare strategy to terminate the OAuth2 session by
   # revoking the OAuth2 token (unless not appropriate).
   #
@@ -69,6 +70,7 @@ class User::SessionsController < Devise::SessionsController
     end
 
   end
+=end
 
   # ===========================================================================
   # :section: Devise::SessionsController overrides
@@ -114,6 +116,7 @@ class User::SessionsController < Devise::SessionsController
     __debug_route
     __debug_request
     username = current_user&.uid&.dup
+    delete_token
     super do
       api_clear
       set_flash_notice(user: username)

@@ -275,11 +275,17 @@ module SessionConcern
     !devise_controller? && !request_xhr?
   end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Sign out of the local (EMMA) session *without* revoking the OAuth2 token
   # (which signs out of the OAuth2 session).
   #
   # @see Devise::Controllers::SignInOut#sign_out
-  # @see OmniAuth::Strategies::Bookshare#other_phase
+  # @see #delete_token
   #
   def local_sign_out
     token = session.delete('omniauth.auth')
@@ -296,6 +302,67 @@ module SessionConcern
     token = session['omniauth.auth']
     __debug { "#{__method__}: omniauth.auth is: #{token.inspect}" } if token
     sign_out
+  end
+
+  # Terminate the local login session ('omniauth.auth') and the session with
+  # the OAuth2 provider (if appropriate)
+  #
+  # @param [Boolean] revoke           If set to *false*, do not revoke the
+  #                                     token with the OAuth2 provider.
+  #
+  # @return [void]
+  #
+  def delete_token(revoke: true)
+    token = session.delete('omniauth.auth')
+    return unless revoke
+    no_revoke_reason =
+      if !application_deployed?
+        'localhost'
+      elsif debug_user?
+        "USER #{current_user.uid} DEBUGGING"
+      elsif false?(params[:revoke])
+        'revoke=false'
+      elsif token.blank?
+        'NO TOKEN'
+      end
+    if no_revoke_reason
+      __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }
+    else
+      revoke_access_token(token)
+    end
+  end
+
+  # Indicate whether the user is one is capable of short-circuiting the
+  # authorization process.
+  #
+  # @param [User, String, nil] user   Default: `#current_user`
+  #
+  def debug_user?(user = nil)
+    # noinspection RubyYardParamTypeMatch
+    session.key?('debug') &&
+      OmniAuth::Strategies::Bookshare.debug_user?(user || current_user)
+  end
+
+  # revoke_access_token
+  #
+  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyResolve
+  #++
+  def revoke_access_token(token = nil)
+    token ||= session['omniauth.auth']
+    return Log.warn { "#{__method__}: no token present" } if token.blank?
+    Log.info { "#{__method__}: #{token.inspect}" }
+    # @type [OmniAuth::Strategy::Options] opt
+    opt = OmniAuth::Strategies::Bookshare.default_options
+    id      = opt.client_id
+    secret  = opt.client_secret
+    options = opt.client_options.deep_symbolize_keys
+    __debug_line(__method__) { { id: id, secret: secret, options: options } }
+    #OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token) # TODO: restore - testing
   end
 
   # ===========================================================================

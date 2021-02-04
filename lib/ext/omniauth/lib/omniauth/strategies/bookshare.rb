@@ -254,7 +254,7 @@ module OmniAuth
             session['omniauth.auth'] = synthetic_auth_hash(original_params)
             [302, { 'Location' => '/users/sign_in_as' }, []]
 
-          elsif (username = current_uid)
+          elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
@@ -313,6 +313,7 @@ module OmniAuth
           .tap { |result| __ext_debug("--> #{result.inspect}") }
       end
 
+=begin
       # =======================================================================
       # :section:
       # =======================================================================
@@ -385,6 +386,7 @@ module OmniAuth
           Log.warn { "#{__method__}: no token given" }
         end
       end
+=end
 
       # =======================================================================
       # :section:
@@ -401,6 +403,7 @@ module OmniAuth
         request&.env['warden']&.user
       end
 
+=begin
       # The user name of the currently signed-in user.
       #
       # @return [String]
@@ -425,6 +428,7 @@ module OmniAuth
       # =======================================================================
 
       protected
+=end
 
       # Normalize URL parameters from the item or *request* if none was given.
       #
@@ -436,6 +440,7 @@ module OmniAuth
         self.class.url_parameters(params || request)
       end
 
+=begin
       # Retrieve the token from :access_token or from "omniauth.auth".
       #
       # @return [String, nil]
@@ -449,6 +454,7 @@ module OmniAuth
           hash[:access_token] || hash[:token] || hash.dig(:credentials, :token)
         end
       end
+=end
 
       # Generate an access token based on fixed information.
       #
@@ -484,7 +490,7 @@ module OmniAuth
           token = p[:access_token] || p[:token] || p.dig(:credentials, :token)
         end
         return token if token.is_a?(::OAuth2::AccessToken)
-        entry ||= token && self.class.stored_auth_entry(token)
+        entry ||= token && self.class.stored_auth_entry_value(token)
         ::OAuth2::AccessToken.from_hash(client, entry) if entry.present?
       end
 
@@ -547,6 +553,16 @@ module OmniAuth
       # =======================================================================
 
       public
+
+      # Indicate whether the user is one that is capable of short-circuiting
+      # the authorization process by using a stored token.
+      #
+      # @param [User, String] user
+      #
+      def self.debug_user?(user)
+        user = user.uid if user.is_a?(User)
+        stored_auth.key?(user)
+      end
 
       # Normalize URL parameters.
       #
@@ -622,19 +638,6 @@ module OmniAuth
 
       public
 
-      # A table of pre-authorized user/token pairs for development purposes.
-      #
-      # @type [Hash{String=>String}]
-      #
-      CONFIGURED_AUTH =
-        reject_blanks(safe_json_parse(BOOKSHARE_TEST_USERS)).tap { |entries|
-          if entries.present? && rails_application?
-            users  = entries.keys
-            tokens = entries.values.map { |v| { access_token: v } }
-            User.update(users, tokens)
-          end
-        }.deep_freeze
-
       # Table of user names/tokens acquired for use in non-production deploys.
       #
       # Token are taken from the User table entries that have an :access_token
@@ -648,8 +651,8 @@ module OmniAuth
       # == Usage Notes
       # Because the logic is only performed once, direct changes to the User
       # table will not be reflected here, however changes made indirectly via
-      # #stored_auth_update will change both the value returned by this method
-      # and the associated User table entry.
+      # #stored_auth_update and/or #stored_auth_update_user will change both
+      # the value returned by this method and the associated User table entry.
       #
       #--
       # noinspection RubyClassVariableUsageInspection
@@ -658,8 +661,21 @@ module OmniAuth
         @@stored_auth = nil if refresh
         @@stored_auth ||=
           User.where.not(access_token: nil).map { |u|
-            [u.email, stored_auth_entry(u.access_token)]
+            [u.email, stored_auth_entry_value(u.access_token)]
           }.to_h
+      end
+
+      # Add or update one or more user name/token entries.
+      #
+      # @params [Hash{String=>String}, nil] pairs
+      #
+      # @return [Hash{String=>Hash}]
+      #
+      def self.stored_auth_update(entries)
+        reject_blanks(entries).each_pair do |user, token|
+          token = { access_token: token } unless token.is_a?(Hash)
+          User.update(user, token.slice(:access_token))
+        end
       end
 
       # Add or update a user name/token entry.
@@ -673,14 +689,14 @@ module OmniAuth
       #
       # == Variations
       #
-      # @overload stored_auth_update(auth)
+      # @overload stored_auth_update_user(auth)
       #   @param [OmniAuth::AuthHash]            auth   User/token to add
       #
-      # @overload stored_auth_update(auth)
+      # @overload stored_auth_update_user(auth)
       #   @param [String]                        uid    User to add.
       #   @param [String, ::OAuth2::AccessToken] token  Associated token.
       #
-      def self.stored_auth_update(uid, token = nil)
+      def self.stored_auth_update_user(uid, token = nil)
         if (auth = uid).is_a?(OmniAuth::AuthHash)
           uid, token = [auth.uid, auth.credentials.token]
         elsif (atoken = token).is_a?(::OAuth2::AccessToken)
@@ -702,7 +718,7 @@ module OmniAuth
         # Create or update the dynamic table entry.
         if stored_auth[uid].blank?
           # noinspection RubyYardParamTypeMatch
-          stored_auth[uid] = stored_auth_entry(token)
+          stored_auth[uid] = stored_auth_entry_value(token)
         elsif stored_auth[uid][:access_token] != token
           stored_auth[uid][:access_token] = token
         else
@@ -724,24 +740,22 @@ module OmniAuth
       #
       # @return [Hash{Symbol=>String}]
       #
-      def self.stored_auth_entry(token)
+      def self.stored_auth_entry_value(token)
         { access_token: token, token_type: 'bearer', scope: 'basic' }
       end
 
-      # =======================================================================
-      # :section: Class methods
-      # =======================================================================
+      if rails_application?
 
-      public
+        # A table of pre-authorized user/token pairs for development purposes.
+        # (Not generated for non-Rails-application executions.)
+        #
+        # @type [Hash{String=>String}, nil]
+        #
+        CONFIGURED_AUTH ||=
+          safe_json_parse(BOOKSHARE_TEST_USERS, default: {}).tap { |entries|
+            stored_auth_update(entries)
+          }.deep_freeze
 
-      # Indicate whether the user is one that is capable of short-circuiting
-      # the authorization process by using a stored token.
-      #
-      # @param [User, String] user
-      #
-      def self.debug_user?(user)
-        user = user.uid if user.is_a?(User)
-        stored_auth.key?(user)
       end
 
     end
@@ -798,6 +812,7 @@ module OmniAuth
             .tap { |result| __ext_debug("--> #{result.inspect}") }
         end
 
+=begin
         # =====================================================================
         # :section:
         # =====================================================================
@@ -816,6 +831,7 @@ module OmniAuth
           __ext_debug(*token)
           super
         end
+=end
 
       end
 
