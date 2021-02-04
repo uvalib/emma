@@ -362,7 +362,7 @@ module SessionConcern
     secret  = opt.client_secret
     options = opt.client_options.deep_symbolize_keys
     __debug_line(__method__) { { id: id, secret: secret, options: options } }
-    #OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token) # TODO: restore - testing
+    OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token)
   end
 
   # ===========================================================================
