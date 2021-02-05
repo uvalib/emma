@@ -153,6 +153,7 @@ module SessionConcern
   # @param [*]                 message  Optionally passed to #flash_alert.
   #
   def auth_failure_redirect(path = nil, user: nil, message: nil)
+    local_sign_out # Make sure no remnants of the local session are left.
     set_flash_alert(message) if message.present?
     path ||= after_sign_out_path_for(user || resource)
     redirect_to path

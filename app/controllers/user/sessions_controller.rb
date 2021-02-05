@@ -14,6 +14,7 @@ class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
   include FlashConcern
+  include BookshareConcern
 
   # Non-functional hints for RubyMine type checking.
   # :nocov:
@@ -128,6 +129,7 @@ class User::SessionsController < Devise::SessionsController
     end
     sign_in(resource_name, user)
     api_update(user: user)
+    check_user_validity
     set_flash_notice(action: :create)
     auth_success_redirect
   rescue => error
@@ -181,6 +183,17 @@ class User::SessionsController < Devise::SessionsController
       OmniAuth::Strategies::Bookshare.stored_auth_update(new_auth)
     end
     User.from_omniauth(session['omniauth.auth'])
+  end
+
+  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
+  # OAuth2 token.
+  #
+  # @return [void]
+  #
+  # @raise [StandardError]  If Bookshare account info was unavailable.
+  #
+  def check_user_validity
+    bs_api.get_user_identity
   end
 
   # ===========================================================================

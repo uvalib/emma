@@ -519,8 +519,8 @@ module FlashHelper
     # Log exceptions or messages.
     unless false?(local[:log])
       if excp
-        status ||= (excp.code            if excp.respond_to?(:code))
-        status ||= (excp.response.status if excp.respond_to?(:response))
+        status ||= (excp.code             if excp.respond_to?(:code))
+        status ||= (excp.response&.status if excp.respond_to?(:response))
         trace    = true?(local[:trace])
         trace  ||=
           !excp.is_a?(UploadWorkflow::SubmitError) &&

@@ -19,6 +19,13 @@ module OmniAuth
     #
     # @see https://github.com/omniauth/omniauth-oauth2
     #
+    # == Implementation Notes
+    # The base implementation of #uid, #info, #credentials, and #extra and
+    # their use of associated blocks within the class definition seem to be
+    # problematic used in conjunction with retrieving account information from
+    # Bookshare.  Thus, these methods are overridden explicitly in order to
+    # ensure consistency.
+    #
     #--
     # noinspection LongLine
     #++
@@ -48,58 +55,6 @@ module OmniAuth
       option :token_options,          []
       option :token_params,           {}
       option :provider_ignores_state, false
-
-      credentials do
-        {
-          token:         access_token.token,
-          expires:       (expires = access_token.expires?),
-          expires_at:    (access_token.expires_at    if expires),
-          refresh_token: (access_token.refresh_token if expires)
-        }.compact.stringify_keys
-      end
-
-      # The following are called only after authentication has succeeded.
-
-      uid do
-        raw_info[:username].to_s.downcase
-      end
-
-      info do
-        {
-          first_name: raw_info.dig(:name, :firstName),
-          last_name:  raw_info.dig(:name, :lastName),
-          email:      raw_info[:username]
-        }
-      end
-
-      # Information about the user account.
-      #
-      # @return [Hash{Symbol=>Object}]
-      #
-      # == Implementation Notes
-      # NOTE: Needs to relate to:
-      # @see BookshareService::UserAccount#get_user_identity
-      #
-      # E.g.:
-      #
-      # !{
-      #   username: 'john@smith.com',
-      #   links: [],
-      #   !{
-      #     firstName: 'John',
-      #     lastName:  'Smith',
-      #     middle:    nil,
-      #     prefix:    nil,
-      #     suffix:    nil,
-      #     links:     []
-      #   }
-      # }
-      #
-      def raw_info
-        @raw_info ||=
-          access_token.get("#{BOOKSHARE_BASE_URL}/me").parsed
-            .deep_symbolize_keys
-      end
 
       # =======================================================================
       # :section: OmniAuth::Strategy overrides
@@ -170,6 +125,114 @@ module OmniAuth
       rescue error # TODO: remove - testing
         __debug_exception("#{__ext_class} #{__method__}", error)
         raise error
+      end
+
+      # User login name.
+      #
+      # @return [String]
+      #
+      def uid
+        account_info[:username]&.to_s&.downcase || current_user&.uid
+      end
+
+      # User account details.
+      #
+      # @return [Hash, nil]
+      #
+      def info
+        {
+          first_name: account_info.dig(:name, :firstName),
+          last_name:  account_info.dig(:name, :lastName),
+          email:      account_info[:username]
+        }.compact
+      end
+
+      # Credential information for the authenticated user from #access_token.
+      #
+      # @return [Hash]
+      #
+      def credentials
+        {
+          token:         access_token.token,
+          expires:       (expires = access_token.expires?),
+          expires_at:    (access_token.expires_at    if expires),
+          refresh_token: (access_token.refresh_token if expires)
+        }.compact
+      end
+
+      # Extra information.
+      #
+      # @return [Hash, nil]           Currently always *nil*.
+      #
+      def extra
+      end
+
+      # Generate authorization information for the authenticated user.
+      #
+      # @return [OmniAuth::AuthHash]
+      #
+      def auth_hash
+        data = {
+          provider:    name,
+          uid:         uid,
+          info:        (info unless skip_info?),
+          credentials: credentials,
+          extra:       extra
+        }.compact
+        OmniAuth::AuthHash.new(data)
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # Information about the user account.
+      #
+      # @return [Hash{Symbol=>*}]
+      #
+      def account_info
+        @account_info ||= get_account_info
+      end
+
+      # Acquire information about the user account from Bookshare.
+      #
+      # @param [Hash, nil] opt        Passed to ::OAuth2::AccessToken#get
+      #
+      # @return [Hash]
+      #
+      # == Implementation Notes
+      # NOTE: Needs to relate to:
+      # @see BookshareService::UserAccount#get_user_identity
+      #
+      # E.g.:
+      #
+      # !{
+      #   username: 'john@smith.com',
+      #   links: [],
+      #   !{
+      #     firstName: 'John',
+      #     lastName:  'Smith',
+      #     middle:    nil,
+      #     prefix:    nil,
+      #     suffix:    nil,
+      #     links:     []
+      #   }
+      # }
+      #
+      def get_account_info(opt = nil)
+        __ext_debug
+        opt = { raise_errors: false }.merge!(opt || {})
+        rsp = access_token.get("#{BOOKSHARE_BASE_URL}/me", opt)
+        if (err = rsp.error)
+          Log.warn { "#{__method__}: #{err.class} #{err.inspect}" }
+          res = nil
+        elsif !(res = rsp.parsed).is_a?(Hash)
+          Log.warn { "#{__method__}: returned #{res.inspect}" }
+          res = nil
+        end
+        res&.deep_symbolize_keys! || {}
       end
 
       # =======================================================================
@@ -252,14 +315,14 @@ module OmniAuth
             # the special endpoint for direct token sign-in.
             self.access_token        = synthetic_access_token(original_params)
             session['omniauth.auth'] = synthetic_auth_hash(original_params)
-            [302, { 'Location' => '/users/sign_in_as' }, []]
+            call_redirect('/users/sign_in_as', params: original_params)
 
           elsif (username = current_user&.uid)
             # Special case for a fixed user causes a redirect to the special
             # endpoint for direct sign-in.
             self.access_token        = synthetic_access_token(username)
             session['omniauth.auth'] = synthetic_auth_hash(username)
-            [302, { 'Location' => "/users/sign_in_as?id=#{username}" }, []]
+            call_redirect("/users/sign_in_as?id=#{username}")
 
           else
             # Normal case results in a call to the remote service.
@@ -291,6 +354,42 @@ module OmniAuth
       ensure
         fail!(e_type, error) if e_type || error
         return result
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      protected
+
+      # An alternative to call_app! which generates a response for a redirect.
+      #
+      # @param [String] location
+      # @param [Hash]   log_extra
+      #
+      # @return [(Integer, Rack::Utils::HeaderHash, Rack::BodyProxy)]
+      #
+      def call_redirect(location, **log_extra)
+        __ext_debug do
+          {
+            location:        location,
+            'omniauth.auth': session['omniauth.auth'],
+            access_token:    access_token
+          }.merge!(log_extra)
+        end
+        check_user_validity
+        [302, { 'Location' => location }, []]
+      end
+
+      # Trigger an exception if the signed-in user doesn't have a valid
+      # Bookshare OAuth2 token.
+      #
+      # @return [void]
+      #
+      # @raise [StandardError]  If Bookshare account info was unavailable.
+      #
+      def check_user_validity
+        get_account_info(raise_errors: true)
       end
 
       # =======================================================================
@@ -405,28 +504,28 @@ module OmniAuth
         if src.is_a?(OmniAuth::AuthHash)
           return src
         elsif src.is_a?(String)
-          uid   = src
+          user  = src
           token = synthetic_access_token(src)
         elsif (params = url_parameters(src))[:auth].is_a?(OmniAuth::AuthHash)
           return params[:auth]
         else
-          uid   = params[:uid] || params[:id]
+          user  = params[:uid] || params[:id]
           token = synthetic_access_token(params)
         end
-        if uid && !uid.is_a?(String)
-          Log.warn("#{__method__}: invalid id: #{uid.inspect}")
+        if user && !user.is_a?(String)
+          Log.warn("#{__method__}: invalid id: #{user.inspect}")
         end
-        return unless uid.is_a?(String) && token.is_a?(::OAuth2::AccessToken)
+        return unless user.is_a?(String) && token.is_a?(::OAuth2::AccessToken)
         OmniAuth::AuthHash.new(
           provider:    name,
-          uid:         uid,
-          info:        { email: uid }.stringify_keys,
+          uid:         user,
+          info:        { email: user },
           credentials: {
             token:         token.token,
             expires:       (expires = token.expires?),
             expires_at:    (token.expires_at    if expires),
             refresh_token: (token.refresh_token if expires)
-          }.compact.stringify_keys
+          }.compact
         )
       end
 
@@ -490,27 +589,27 @@ module OmniAuth
       #++
       def self.synthetic_auth_hash(src, token = nil)
         if token.present?
-          uid = src
+          user = src
         elsif src.is_a?(OmniAuth::AuthHash)
           return src
         elsif src.is_a?(String)
-          uid = src
+          user = src
         elsif (p = url_parameters(src))[:auth].is_a?(OmniAuth::AuthHash)
           return p[:auth]
         else
-          uid = p[:uid] || p[:id]
+          user  = p[:uid] || p[:id]
           token = p[:access_token] || p[:token] || p.dig(:credentials, :token)
         end
-        if uid && !uid.is_a?(String)
-          Log.warn("#{__method__}: invalid uid: #{uid.inspect}")
+        if user && !user.is_a?(String)
+          Log.warn("#{__method__}: invalid user: #{user.inspect}")
         end
-        token ||= stored_auth.dig(uid, :access_token)
-        return unless uid.is_a?(String) && token.is_a?(String)
+        token ||= stored_auth.dig(user, :access_token)
+        return unless user.is_a?(String) && token.is_a?(String)
         OmniAuth::AuthHash.new(
           provider:    default_options[:name],
-          uid:         uid,
-          info:        { email: uid }.stringify_keys,
-          credentials: { token: token, expires: false }.stringify_keys
+          uid:         user,
+          info:        { email: user },
+          credentials: { token: token, expires: false }
         )
       end
 
@@ -564,7 +663,7 @@ module OmniAuth
       #
       # If input parameters were invalid then no change will be made.
       #
-      # @param [OmniAuth::AuthHash, String]         uid
+      # @param [OmniAuth::AuthHash, String]         user
       # @param [String, ::OAuth2::AccessToken, nil] token
       #
       # @return [Hash{String=>Hash}]  The updated set of saved user/tokens.
@@ -575,22 +674,22 @@ module OmniAuth
       #   @param [OmniAuth::AuthHash]            auth   User/token to add
       #
       # @overload stored_auth_update_user(auth)
-      #   @param [String]                        uid    User to add.
+      #   @param [String]                        user   User to add.
       #   @param [String, ::OAuth2::AccessToken] token  Associated token.
       #
-      def self.stored_auth_update_user(uid, token = nil)
-        if (auth = uid).is_a?(OmniAuth::AuthHash)
-          uid, token = [auth.uid, auth.credentials.token]
+      def self.stored_auth_update_user(user, token = nil)
+        if user.is_a?(OmniAuth::AuthHash)
+          user, token = [user.uid, user.credentials.token]
         elsif (atoken = token).is_a?(::OAuth2::AccessToken)
           # noinspection RubyNilAnalysis
           token = atoken.token
         end
 
-        if uid.blank? || token.blank?
+        if user.blank? || token.blank?
           Log.warn do
             msg = %W(#{__method__}: missing)
-            msg << 'uid'   if uid.blank?
-            msg << 'and'   if uid.blank? && token.blank?
+            msg << 'user'  if user.blank?
+            msg << 'and'   if user.blank? && token.blank?
             msg << 'token' if token.blank?
             msg.join(' ')
           end
@@ -598,22 +697,22 @@ module OmniAuth
         end
 
         # Create or update the dynamic table entry.
-        if stored_auth[uid].blank?
+        if stored_auth[user].blank?
           # noinspection RubyYardParamTypeMatch
-          stored_auth[uid] = stored_auth_entry_value(token)
-        elsif stored_auth[uid][:access_token] != token
-          stored_auth[uid][:access_token] = token
+          stored_auth[user] = stored_auth_entry_value(token)
+        elsif stored_auth[user][:access_token] != token
+          stored_auth[user][:access_token] = token
         else
           token = nil
         end
 
         # Update the database table if there was a change.
         if token
-          User.find_or_create_by(email: uid) { |u| u.access_token = token }
+          User.find_or_create_by(email: user) { |u| u.access_token = token }
         end
 
         # Return with the relevant entry.
-        stored_auth.slice(uid)
+        stored_auth.slice(user)
       end
 
       # Produce a stored_auth table entry value.
