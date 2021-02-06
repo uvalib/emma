@@ -137,117 +137,6 @@
         </dt>
         <dd><pre class="code"><span class='kw'>true</span></pre></dd>
       
-        <dt id="CONSOLE_DEBUGGING-constant" class="">CONSOLE_DEBUGGING =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Control console debugging output.</p>
-
-<p>During normal operation this should be set to <strong>false</strong>.  Change the default value here or override dynamically with the environment variable.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>CONSOLE_DEBUGGING</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
-        <dt id="CONSOLE_OUTPUT-constant" class="">CONSOLE_OUTPUT =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Control console output.</p>
-
-<p>Normally __output (and __debug) are not displayed in IRB or other non-Rails invocations of the code.  The environment variable should normally be <strong>false</strong> (or missing) in order to avoid extraneous output during rake, irb, etc.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_rails_application?'>rails_application?</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="top-level-namespace.html#CONSOLE_DEBUGGING-constant" title="CONSOLE_DEBUGGING (constant)">CONSOLE_DEBUGGING</a></span></span></pre></dd>
-      
-        <dt id="TRACE_LOADING-constant" class="">TRACE_LOADING =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Control tracking of file load order.</p>
-
-<p>During normal operation this should be set to <strong>false</strong>.  Change the default value here or override dynamically with the environment variable.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li><span class='object_link'><a href="#__loading-instance_method" title="#__loading (method)">#__loading</a></span></li>
-    
-  </ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TRACE_LOADING</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
-        <dt id="TRACE_CONCERNS-constant" class="">TRACE_CONCERNS =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Control tracking of invocation of Concern “included” blocks.</p>
-
-<p>During normal operation this should be set to <strong>false</strong>.  Change the default value here or override dynamically with the environment variable.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li><span class='object_link'><a href="#__included-instance_method" title="#__included (method)">#__included</a></span></li>
-    
-  </ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TRACE_CONCERNS</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
-        <dt id="TRACE_NOTIFICATIONS-constant" class="">TRACE_NOTIFICATIONS =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Control tracking of Rails notifications.</p>
-
-<p>During normal operation this should be set to <strong>false</strong>.  Change the default value here or override dynamically with the environment variable.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li><span class='object_link'><a href="#NOTIFICATIONS-constant" title="NOTIFICATIONS (constant)">NOTIFICATIONS</a></span></li>
-    
-  </ul>
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>TRACE_NOTIFICATIONS</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
         <dt id="CONS_INDENT-constant" class="">CONS_INDENT =
           <div class="docstring">
   <div class="discussion">
@@ -369,9 +258,9 @@
 
 </div>
         </dt>
-        <dd><pre class="code"><span class='kw'>case</span> <span class='const'><span class='object_link'><a href="top-level-namespace.html#TRACE_NOTIFICATIONS-constant" title="TRACE_NOTIFICATIONS (constant)">TRACE_NOTIFICATIONS</a></span></span>
-  <span class='kw'>when</span> <span class='const'>String</span> <span class='kw'>then</span> <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="top-level-namespace.html#TRACE_NOTIFICATIONS-constant" title="TRACE_NOTIFICATIONS (constant)">TRACE_NOTIFICATIONS</a></span></span><span class='rparen'>)</span>
-  <span class='kw'>when</span> <span class='const'>Regexp</span> <span class='kw'>then</span> <span class='const'><span class='object_link'><a href="top-level-namespace.html#TRACE_NOTIFICATIONS-constant" title="TRACE_NOTIFICATIONS (constant)">TRACE_NOTIFICATIONS</a></span></span>
+        <dd><pre class="code"><span class='kw'>case</span> <span class='const'>TRACE_NOTIFICATIONS</span>
+  <span class='kw'>when</span> <span class='const'>String</span> <span class='kw'>then</span> <span class='const'>Regexp</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='const'>TRACE_NOTIFICATIONS</span><span class='rparen'>)</span>
+  <span class='kw'>when</span> <span class='const'>Regexp</span> <span class='kw'>then</span> <span class='const'>TRACE_NOTIFICATIONS</span>
   <span class='kw'>else</span>             <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>.*</span><span class='regexp_end'>/</span></span>
 <span class='kw'>end</span></pre></dd>
       
@@ -445,7 +334,29 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="top-level-namespace.html#__debug-instance_method" title="#__debug (instance method)">#<strong>__debug</strong>(*args, &amp;block)  &#x21d2; nil </a>
+      <a href="top-level-namespace.html#__debug-instance_method" title="#__debug (instance method)">#<strong>__debug</strong>(*args, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#__debug_impl-instance_method" title="#__debug_impl (instance method)">#<strong>__debug_impl</strong>(*args, &amp;block)  &#x21d2; nil </a>
     
 
     
@@ -589,7 +500,29 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="top-level-namespace.html#__output-instance_method" title="#__output (instance method)">#<strong>__output</strong>(*args) { ... } &#x21d2; nil </a>
+      <a href="top-level-namespace.html#__output-instance_method" title="#__output (instance method)">#<strong>__output</strong>(*args, &amp;block)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'></div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="top-level-namespace.html#__output_impl-instance_method" title="#__output_impl (instance method)">#<strong>__output_impl</strong>(*args) { ... } &#x21d2; nil </a>
     
 
     
@@ -629,30 +562,6 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Include submodules.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="top-level-namespace.html#neutralize_methods-instance_method" title="#neutralize_methods (instance method)">#<strong>neutralize_methods</strong>(*methods)  &#x21d2; Object </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>Replace method definitions.</p>
 </div></span>
   
 </li>
@@ -790,7 +699,33 @@
       <div class="method_details first">
   <h3 class="signature first" id="__debug-instance_method">
   
-    #<strong>__debug</strong>(*args, &amp;block)  &#x21d2; <tt>nil</tt> 
+    #<strong>__debug</strong>(*args, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+140</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 140</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid___debug'>__debug</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="__debug_impl-instance_method">
+  
+    #<strong>__debug_impl</strong>(*args, &amp;block)  &#x21d2; <tt>nil</tt> 
   
 
   
@@ -862,25 +797,25 @@
       <pre class="lines">
 
 
-169
-170
-171
-172
-173
-174
-175
-176</pre>
+130
+131
+132
+133
+134
+135
+136
+137</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 169</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 130</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___debug'>__debug</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid___debug_impl'>__debug_impl</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyNilAnalysis
 </span>  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span><span class='period'>.</span><span class='id identifier rubyid_merge'>merge</span><span class='lparen'>(</span><span class='label'>debug:</span> <span class='kw'>true</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:leader</span><span class='rbracket'>]</span>   <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#DEBUG_LEADER-constant" title="DEBUG_LEADER (constant)">DEBUG_LEADER</a></span></span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:max</span><span class='rbracket'>]</span>      <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#DEBUG_MAX-constant" title="DEBUG_MAX (constant)">DEBUG_MAX</a></span></span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:omission</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>...</span><span class='tstring_end'>&#39;</span></span>
-  <span class='id identifier rubyid___output'><span class='object_link'><a href="#__output-instance_method" title="#__output (method)">__output</a></span></span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___output_impl'><span class='object_link'><a href="#__output_impl-instance_method" title="#__output_impl (method)">__output_impl</a></span></span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -939,16 +874,12 @@
       <pre class="lines">
 
 
-284
-285
-286</pre>
+254</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 284</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 254</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___included'>__included</span><span class='lparen'>(</span><span class='id identifier rubyid_base'>base</span><span class='comma'>,</span> <span class='id identifier rubyid_concern'>concern</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid___output'><span class='object_link'><a href="#__output-instance_method" title="#__output (method)">__output</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>... including </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_concern'>concern</span><span class='embexpr_end'>}</span><span class='tstring_content'> in </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_base'>base</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
-<span class='kw'>end</span></pre>
+<span class='kw'>def</span> <span class='id identifier rubyid___included'>__included</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -1004,16 +935,12 @@
       <pre class="lines">
 
 
-217
-218
-219</pre>
+187</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 217</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 187</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___loading'>__loading</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid___output'><span class='object_link'><a href="#__output-instance_method" title="#__output (method)">__output</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>====== </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___loading_level'><span class='object_link'><a href="#__loading_level-instance_method" title="#__loading_level (method)">__loading_level</a></span></span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
-<span class='kw'>end</span></pre>
+<span class='kw'>def</span> <span class='id identifier rubyid___loading'>__loading</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span>       <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -1069,30 +996,12 @@
       <pre class="lines">
 
 
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239</pre>
+200</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 230</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 200</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___loading_begin'>__loading_begin</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_level'>level</span><span class='comma'>,</span> <span class='id identifier rubyid_still_open'>still_open</span> <span class='op'>=</span> <span class='ivar'>@load_table</span><span class='lbracket'>[</span><span class='id identifier rubyid_file'>file</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='kw'>nil</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>REPEATED - last at level </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_level'>level</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_level'>level</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>UNCLOSED</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_still_open'>still_open</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>=</span> <span class='id identifier rubyid_warning'>warning</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='ivar'>@load_level</span> <span class='op'>+=</span> <span class='int'>1</span>
-  <span class='ivar'>@load_table</span><span class='lbracket'>[</span><span class='id identifier rubyid_file'>file</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='ivar'>@load_level</span><span class='comma'>,</span> <span class='kw'>true</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid___output'><span class='object_link'><a href="#__output-instance_method" title="#__output (method)">__output</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>====-&gt; </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___loading_level'><span class='object_link'><a href="#__loading_level-instance_method" title="#__loading_level (method)">__loading_level</a></span></span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_warning'>warning</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
-<span class='kw'>end</span></pre>
+<span class='kw'>def</span> <span class='id identifier rubyid___loading_begin'>__loading_begin</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -1148,34 +1057,12 @@
       <pre class="lines">
 
 
-250
-251
-252
-253
-254
-255
-256
-257
-258
-259
-260
-261</pre>
+220</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 250</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 220</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___loading_end'>__loading_end</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_expected'>expected</span><span class='comma'>,</span> <span class='id identifier rubyid_still_open'>still_open</span> <span class='op'>=</span> <span class='ivar'>@load_table</span><span class='lbracket'>[</span><span class='id identifier rubyid_file'>file</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_unbalanced'>unbalanced</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='ivar'>@load_level</span> <span class='op'>!=</span> <span class='id identifier rubyid_expected'>expected</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='kw'>nil</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>UNBALANCED - expected level </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_expected'>expected</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_unbalanced'>unbalanced</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ALREADY CLOSED</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_still_open'>still_open</span>
-  <span class='id identifier rubyid_warning'>warning</span> <span class='op'>=</span> <span class='id identifier rubyid_warning'>warning</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='id identifier rubyid___output'><span class='object_link'><a href="#__output-instance_method" title="#__output (method)">__output</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&lt;-==== </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___loading_level'><span class='object_link'><a href="#__loading_level-instance_method" title="#__loading_level (method)">__loading_level</a></span></span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_file'>file</span><span class='embexpr_end'>}</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_warning'>warning</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
-  <span class='ivar'>@load_table</span><span class='lbracket'>[</span><span class='id identifier rubyid_file'>file</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='ivar'>@load_level</span><span class='comma'>,</span> <span class='op'>!</span><span class='id identifier rubyid_still_open'>still_open</span><span class='rbracket'>]</span>
-  <span class='ivar'>@load_level</span> <span class='op'>-=</span> <span class='int'>1</span>
-  <span class='ivar'>@load_table</span><span class='period'>.</span><span class='id identifier rubyid_clear'>clear</span> <span class='kw'>if</span> <span class='ivar'>@load_level</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
-<span class='kw'>end</span></pre>
+<span class='kw'>def</span> <span class='id identifier rubyid___loading_end'>__loading_end</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span>   <span class='kw'>end</span></pre>
     </td>
   </tr>
 </table>
@@ -1242,15 +1129,15 @@
       <pre class="lines">
 
 
-201
-202
-203
-204
-205
-206</pre>
+171
+172
+173
+174
+175
+176</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 201</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 171</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid___loading_level'>__loading_level</span><span class='lparen'>(</span><span class='id identifier rubyid_level'>level</span> <span class='op'>=</span> <span class='ivar'>@load_level</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='op'>+</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span>
@@ -1266,7 +1153,33 @@
       <div class="method_details ">
   <h3 class="signature " id="__output-instance_method">
   
-    #<strong>__output</strong>(*args) { ... } &#x21d2; <tt>nil</tt> 
+    #<strong>__output</strong>(*args, &amp;block)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+100</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 100</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid___output'>__output</span><span class='lparen'>(</span><span class='op'>*</span><span class='rparen'>)</span><span class='semicolon'>;</span> <span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="__output_impl-instance_method">
+  
+    #<strong>__output_impl</strong>(*args) { ... } &#x21d2; <tt>nil</tt> 
   
 
   
@@ -1376,66 +1289,66 @@
       <pre class="lines">
 
 
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147
-148
-149
-150
-151
-152
-153
-154
-155
-156
-157
-158
-159
-160</pre>
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 106</span>
+      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 43</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid___output'>__output</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid___output_impl'>__output_impl</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='kw'>if</span> <span class='kw'>defined?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#Log-constant" title="Log (constant)">Log</a></span></span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='const'><span class='object_link'><a href="#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_silenced?'>silenced?</span>
   <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_args'>args</span><span class='period'>.</span><span class='id identifier rubyid_extract_options!'>extract_options!</span>
   <span class='id identifier rubyid_sep'>sep</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:separator</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span>
@@ -1674,62 +1587,6 @@
     <span class='id identifier rubyid_base'>base</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='symbol'>:include</span><span class='comma'>,</span> <span class='id identifier rubyid_mod'>mod</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_mod'>mod</span>
   <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="neutralize_methods-instance_method">
-  
-    #<strong>neutralize_methods</strong>(*methods)  &#x21d2; <tt>Object</tt> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>Replace method definitions.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>methods</span>
-      
-      
-        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>)</span>
-      
-      
-      
-    </li>
-  
-</ul>
-
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-66
-67
-68</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'lib/_trace.rb', line 66</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_neutralize_methods'>neutralize_methods</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_methods'>methods</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_methods'>methods</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_m'>m</span><span class='op'>|</span> <span class='id identifier rubyid_eval'>eval</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>def </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_m'>m</span><span class='embexpr_end'>}</span><span class='tstring_content'>(*); end</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2365,7 +2222,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:07:14 2021 by
+  Generated on Sat Feb  6 16:05:25 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

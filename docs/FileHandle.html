@@ -89,7 +89,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd><span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></dd>
+      <dd><span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></dd>
   </dl>
   
   
@@ -124,22 +124,6 @@
 
     <dl class="constants">
       
-        <dt id="IO_DEBUG-constant" class="">IO_DEBUG =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>When <strong>true</strong> invocation of each low-level IO operation triggers a log debug entry.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IO_DEBUG</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
         <dt id="VALID_BASE_TYPE-constant" class="">VALID_BASE_TYPE =
           <div class="docstring">
   <div class="discussion">
@@ -164,8 +148,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+     from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_COMMON-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_MAX-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_OMISSION-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::FormatMethods::DEBUG_SEPARATOR (constant)">Emma::Debug::FormatMethods::DEBUG_SEPARATOR</a></span></p>
 
   
   
@@ -290,8 +274,19 @@
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_exception-instance_method" title="Emma::Debug::OutputMethods#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_items-instance_method" title="Emma::Debug::OutputMethods#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_line-instance_method" title="Emma::Debug::OutputMethods#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_request-instance_method" title="Emma::Debug::OutputMethods#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_route-instance_method" title="Emma::Debug::OutputMethods#__debug_route (method)">#__debug_route</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_env_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_header_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect (method)">#__debug_inspect</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_item-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_item (method)">#__debug_inspect_item</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_items-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_items (method)">#__debug_inspect_items</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_label-instance_method" title="Emma::Debug::FormatMethods#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_route_label-instance_method" title="Emma::Debug::FormatMethods#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_session_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
   
   
@@ -468,19 +463,19 @@
       <pre class="lines">
 
 
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83</pre>
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 74</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 65</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_handle'>__debug_handle</span><span class='lparen'>(</span><span class='id identifier rubyid_file'>file</span><span class='comma'>,</span> <span class='label'>leader:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>initialize | </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_file'>file</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span>
@@ -581,26 +576,24 @@
       <pre class="lines">
 
 
-110
-111
-112
-113
-114
-115
-116
-117
-118</pre>
+123
+124
+125
+126
+127
+128
+129
+130</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 110</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 123</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_method_missing'>method_missing</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_handle'>__debug_handle</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='label'>leader:</span> <span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='ivar'>@handle</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> %-4s</span><span class='tstring_end'>&quot;</span></span> <span class='op'>%</span> <span class='id identifier rubyid_name'>name</span><span class='rparen'>)</span><span class='rparen'>)</span>
   <span class='ivar'>@handle</span><span class='period'>.</span><span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span><span class='comma'>,</span> <span class='op'>*</span><span class='id identifier rubyid_args'>args</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
-<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_error'>error</span>
+<span class='kw'>rescue</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_err'>err</span>
   <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='kw'>do</span>
-    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>!!! EXCEPTION IN FileHandle: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='tstring_end'>&quot;</span></span> <span class='op'>+</span>
-      <span class='id identifier rubyid_caller'>caller</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>FileHandle: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_err'>err</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_err'>err</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span><span class='embexpr_end'>}</span><span class='tstring_content'>\n</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_caller'>caller</span><span class='period'>.</span><span class='id identifier rubyid_pretty_inspect'>pretty_inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -641,12 +634,12 @@
       <pre class="lines">
 
 
-55
-56
-57</pre>
+46
+47
+48</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 46</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_handle'>handle</span>
   <span class='ivar'>@handle</span>
@@ -717,12 +710,12 @@
       <pre class="lines">
 
 
-41
-42
-43</pre>
+32
+33
+34</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/file_handle.rb', line 32</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_compatible?'>compatible?</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="FileHandle (class)">FileHandle</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="#VALID_BASE_TYPE-constant" title="FileHandle::VALID_BASE_TYPE (constant)">VALID_BASE_TYPE</a></span></span><span class='period'>.</span><span class='id identifier rubyid_any?'>any?</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='id identifier rubyid_t'>t</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
@@ -737,7 +730,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:10:16 2021 by
+  Generated on Sat Feb  6 16:08:12 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

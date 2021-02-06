@@ -73,7 +73,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd><span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span>, <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></dd>
+      <dd><span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></dd>
   </dl>
   
   
@@ -123,22 +123,6 @@
 
     <dl class="constants">
       
-        <dt id="IMPORT_DEBUG-constant" class="">IMPORT_DEBUG =
-          <div class="docstring">
-  <div class="discussion">
-    
-<p>Set to show low-level bulk import processing.</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  
-
-</div>
-        </dt>
-        <dd><pre class="code"><span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='const'>ENV</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IMPORT_DEBUG</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='rparen'>)</span></pre></dd>
-      
         <dt id="DEFAULT_NAME_PREFIX-constant" class="">DEFAULT_NAME_PREFIX =
           <div class="docstring">
   <div class="discussion">
@@ -163,8 +147,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+     from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_COMMON-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_MAX-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_OMISSION-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::FormatMethods::DEBUG_SEPARATOR (constant)">Emma::Debug::FormatMethods::DEBUG_SEPARATOR</a></span></p>
 
   
   
@@ -685,8 +669,19 @@
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_exception-instance_method" title="Emma::Debug::OutputMethods#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_items-instance_method" title="Emma::Debug::OutputMethods#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_line-instance_method" title="Emma::Debug::OutputMethods#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_request-instance_method" title="Emma::Debug::OutputMethods#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_route-instance_method" title="Emma::Debug::OutputMethods#__debug_route (method)">#__debug_route</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_env_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_header_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect (method)">#__debug_inspect</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_item-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_item (method)">#__debug_inspect_item</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_items-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_items (method)">#__debug_inspect_items</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_label-instance_method" title="Emma::Debug::FormatMethods#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_route_label-instance_method" title="Emma::Debug::FormatMethods#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_session_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
   
   
@@ -758,19 +753,19 @@
       <pre class="lines">
 
 
+381
+382
+383
+384
+385
+386
+387
 388
 389
-390
-391
-392
-393
-394
-395
-396
-397</pre>
+390</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 388</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 381</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_importer'>get_importer</span><span class='lparen'>(</span><span class='id identifier rubyid_mod'>mod</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_arg'>arg</span> <span class='op'>=</span> <span class='id identifier rubyid_mod'>mod</span>
@@ -898,14 +893,14 @@
       <pre class="lines">
 
 
-158
-159
-160
-161
-162</pre>
+151
+152
+153
+154
+155</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 158</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 151</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_array_value'>array_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='op'>&amp;</span><span class='id identifier rubyid_block'>block</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_array'>array</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:blank?</span><span class='rparen'>)</span>
@@ -1004,15 +999,15 @@
       <pre class="lines">
 
 
-326
-327
-328
-329
-330
-331</pre>
+319
+320
+321
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 326</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 319</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default'>default</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_name_prefix'>name_prefix</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_import'>__debug_import</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
@@ -1092,20 +1087,20 @@
       <pre class="lines">
 
 
+95
+96
+97
+98
+99
+100
+101
 102
 103
 104
-105
-106
-107
-108
-109
-110
-111
-112</pre>
+105</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 102</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 95</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_default_name'>default_name</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_prefix'>prefix</span> <span class='op'>=</span> <span class='id identifier rubyid_name_prefix'>name_prefix</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_k'>k</span> <span class='op'>=</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span>
@@ -1177,12 +1172,12 @@
       <pre class="lines">
 
 
-222
-223
-224</pre>
+215
+216
+217</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 222</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 215</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_doi_values'>doi_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_identifier_values'>identifier_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>doi:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1262,18 +1257,18 @@
       <pre class="lines">
 
 
+280
+281
+282
+283
+284
+285
+286
 287
-288
-289
-290
-291
-292
-293
-294
-295</pre>
+288</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 287</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 280</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_enum_value'>enum_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_val'>val</span> <span class='op'>=</span> <span class='id identifier rubyid_string_value'>string_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='label'>first:</span> <span class='kw'>true</span><span class='rparen'>)</span>
@@ -1343,12 +1338,12 @@
       <pre class="lines">
 
 
-120
-121
-122</pre>
+113
+114
+115</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 120</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 113</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_hash_key'>hash_key</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_squish'>squish</span><span class='period'>.</span><span class='id identifier rubyid_downcase'>downcase</span><span class='period'>.</span><span class='id identifier rubyid_tr'>tr</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>^a-z0-9</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
@@ -1412,6 +1407,13 @@
       <pre class="lines">
 
 
+256
+257
+258
+259
+260
+261
+262
 263
 264
 265
@@ -1420,17 +1422,10 @@
 268
 269
 270
-271
-272
-273
-274
-275
-276
-277
-278</pre>
+271</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 263</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 256</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_identifier_values'>identifier_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='id identifier rubyid_prefix'>prefix</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='lbracket'>[</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
@@ -1507,12 +1502,12 @@
       <pre class="lines">
 
 
-232
-233
-234</pre>
+225
+226
+227</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 232</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 225</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_isbn_values'>isbn_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_identifier_values'>identifier_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>isbn:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1576,12 +1571,12 @@
       <pre class="lines">
 
 
-242
-243
-244</pre>
+235
+236
+237</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 242</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 235</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_issn_values'>issn_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_identifier_values'>identifier_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>issn:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1645,12 +1640,12 @@
       <pre class="lines">
 
 
-212
-213
-214</pre>
+205
+206
+207</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 212</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 205</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_language_values'>language_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_array_value'>array_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_lang'>lang</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="IsoLanguage.html" title="IsoLanguage (class)">IsoLanguage</a></span></span><span class='period'>.</span><span class='id identifier rubyid_find'><span class='object_link'><a href="IsoLanguage.html#find-class_method" title="IsoLanguage.find (method)">find</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_lang'>lang</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_alpha3'>alpha3</span> <span class='op'>||</span> <span class='id identifier rubyid_lang'>lang</span> <span class='rbrace'>}</span>
@@ -1714,12 +1709,12 @@
       <pre class="lines">
 
 
-252
-253
-254</pre>
+245
+246
+247</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 252</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 245</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_lccn_values'>lccn_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_identifier_values'>identifier_values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>lccn:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -1768,12 +1763,12 @@
       <pre class="lines">
 
 
-91
-92
-93</pre>
+84
+85
+86</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 91</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 84</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_name_prefix'>name_prefix</span>
   <span class='const'><span class='object_link'><a href="#DEFAULT_NAME_PREFIX-constant" title="Import::DEFAULT_NAME_PREFIX (constant)">DEFAULT_NAME_PREFIX</a></span></span>
@@ -1837,13 +1832,13 @@
       <pre class="lines">
 
 
-189
-190
-191
-192</pre>
+182
+183
+184
+185</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 189</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 182</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_ordinal_value'>ordinal_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_string_value'>string_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
@@ -1893,12 +1888,12 @@
       <pre class="lines">
 
 
-82
-83
-84</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 82</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 75</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_schema'>schema</span>
   <span class='id identifier rubyid_raise'>raise</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: must be defined by subclass</span><span class='tstring_end'>&quot;</span></span>
@@ -1982,13 +1977,13 @@
       <pre class="lines">
 
 
-312
-313
-314
-315</pre>
+305
+306
+307
+308</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 312</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 305</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_skip'>skip</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid___debug_import'>__debug_import</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
@@ -2089,16 +2084,16 @@
       <pre class="lines">
 
 
-175
-176
-177
-178
-179
-180
-181</pre>
+168
+169
+170
+171
+172
+173
+174</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 175</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 168</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_string_value'>string_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>first:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
@@ -2170,6 +2165,13 @@
       <pre class="lines">
 
 
+45
+46
+47
+48
+49
+50
+51
 52
 53
 54
@@ -2181,17 +2183,10 @@
 60
 61
 62
-63
-64
-65
-66
-67
-68
-69
-70</pre>
+63</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 45</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_translate_fields'>translate_fields</span><span class='lparen'>(</span><span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -2275,15 +2270,15 @@
       <pre class="lines">
 
 
-141
-142
-143
-144
-145
-146</pre>
+134
+135
+136
+137
+138
+139</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 134</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_values'>values</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*;\s*</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>;</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -2350,14 +2345,14 @@
       <pre class="lines">
 
 
-200
-201
-202
-203
-204</pre>
+193
+194
+195
+196
+197</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 200</span>
+      <pre class="code"><span class="info file"># File 'app/models/concerns/import.rb', line 193</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_year_value'>year_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_string_value'>string_value</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span>
@@ -2374,7 +2369,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:07:22 2021 by
+  Generated on Sat Feb  6 16:05:31 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

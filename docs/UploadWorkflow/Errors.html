@@ -181,7 +181,21 @@
 </div>
         </dt>
         <dd><pre class="code"><span class='lbracket'>[</span>
-  <span class='const'>NoMethodError</span>
+  <span class='const'>NoMemoryError</span><span class='comma'>,</span>
+  <span class='const'>ScriptError</span><span class='comma'>,</span>
+  <span class='const'>SignalException</span><span class='comma'>,</span>
+  <span class='const'>ArgumentError</span><span class='comma'>,</span>
+  <span class='const'>IndexError</span><span class='comma'>,</span>
+  <span class='const'>LocalJumpError</span><span class='comma'>,</span>
+  <span class='const'>NameError</span><span class='comma'>,</span>
+  <span class='const'>RangeError</span><span class='comma'>,</span>
+  <span class='const'>RegexpError</span><span class='comma'>,</span>
+  <span class='const'>SecurityError</span><span class='comma'>,</span>
+  <span class='const'>SystemCallError</span><span class='comma'>,</span>
+  <span class='const'>SystemStackError</span><span class='comma'>,</span>
+  <span class='const'>ThreadError</span><span class='comma'>,</span>
+  <span class='const'>TypeError</span><span class='comma'>,</span>
+  <span class='const'>ZeroDivisionError</span>
 <span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
       
     </dl>
@@ -198,8 +212,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+     from <span class='object_link'><a href="../Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug/FormatMethods.html#DEBUG_INSPECT_COMMON-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#DEBUG_INSPECT_MAX-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#DEBUG_INSPECT_OMISSION-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::FormatMethods::DEBUG_SEPARATOR (constant)">Emma::Debug::FormatMethods::DEBUG_SEPARATOR</a></span></p>
 
   
   
@@ -267,7 +281,29 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug.html#included-class_method" title="Emma::Debug.included (method)">included</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug/OutputMethods.html#__debug_exception-instance_method" title="Emma::Debug::OutputMethods#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="../Emma/Debug/OutputMethods.html#__debug_items-instance_method" title="Emma::Debug::OutputMethods#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="../Emma/Debug/OutputMethods.html#__debug_line-instance_method" title="Emma::Debug::OutputMethods#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="../Emma/Debug/OutputMethods.html#__debug_request-instance_method" title="Emma::Debug::OutputMethods#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="../Emma/Debug/OutputMethods.html#__debug_route-instance_method" title="Emma::Debug::OutputMethods#__debug_route (method)">#__debug_route</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_env_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_header_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_inspect-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect (method)">#__debug_inspect</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_inspect_item-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_item (method)">#__debug_inspect_item</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_inspect_items-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_items (method)">#__debug_inspect_items</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_label-instance_method" title="Emma::Debug::FormatMethods#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_route_label-instance_method" title="Emma::Debug::FormatMethods#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="../Emma/Debug/FormatMethods.html#__debug_session_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
   
   
@@ -383,20 +419,6 @@
       <pre class="lines">
 
 
-226
-227
-228
-229
-230
-231
-232
-233
-234
-235
-236
-237
-238
-239
 240
 241
 242
@@ -421,16 +443,32 @@
 261
 262
 263
-264</pre>
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 226</span>
+      <pre class="code"><span class="info file"># File 'app/models/upload_workflow.rb', line 240</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_failure'>failure</span><span class='lparen'>(</span><span class='id identifier rubyid_problem'>problem</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid___debug_args'>__debug_args</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>UPLOAD </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug_items'>__debug_items</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>UPLOAD </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_binding'>binding</span><span class='rparen'>)</span>
 
-  <span class='comment'># If any failure is actually a internally error, re-raise it now so that
-</span>  <span class='comment'># it will result in a stack trace when it is caught and processed.
+  <span class='comment'># If any failure is actually an internal error, re-raise it now so that it
+</span>  <span class='comment'># will result in a stack trace when it is caught and processed.
 </span>  <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='rparen'>)</span>
   <span class='const'><span class='object_link'><a href="#INTERNAL_EXCEPTION-constant" title="UploadWorkflow::Errors::INTERNAL_EXCEPTION (constant)">INTERNAL_EXCEPTION</a></span></span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_e'>e</span><span class='op'>|</span>
     <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_problem'>problem</span> <span class='kw'>if</span> <span class='id identifier rubyid_problem'>problem</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='id identifier rubyid_e'>e</span><span class='rparen'>)</span>
@@ -438,6 +476,7 @@
   <span class='kw'>end</span>
   <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&lt;=</span> <span class='int'>1</span>
 
+  <span class='id identifier rubyid_err'>err</span> <span class='op'>=</span> <span class='kw'>nil</span>
   <span class='kw'>case</span> <span class='id identifier rubyid_problem'>problem</span>
     <span class='kw'>when</span> <span class='const'>Symbol</span>              <span class='kw'>then</span> <span class='id identifier rubyid_msg'>msg</span><span class='comma'>,</span> <span class='id identifier rubyid_err'>err</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#UPLOAD_ERROR-constant" title="UploadWorkflow::Errors::UPLOAD_ERROR (constant)">UPLOAD_ERROR</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_problem'>problem</span><span class='rbracket'>]</span>
     <span class='kw'>when</span> <span class='const'>ActiveModel</span><span class='op'>::</span><span class='const'>Errors</span> <span class='kw'>then</span> <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='id identifier rubyid_problem'>problem</span><span class='period'>.</span><span class='id identifier rubyid_full_messages'>full_messages</span>
@@ -445,6 +484,8 @@
     <span class='kw'>when</span> <span class='const'>Exception</span>           <span class='kw'>then</span> <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='id identifier rubyid_problem'>problem</span><span class='period'>.</span><span class='id identifier rubyid_message'>message</span>
     <span class='kw'>else</span>                          <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='id identifier rubyid_problem'>problem</span>
   <span class='kw'>end</span>
+  <span class='id identifier rubyid_err'>err</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Errors/SubmitError.html" title="UploadWorkflow::Errors::SubmitError (class)">SubmitError</a></span></span>
+
   <span class='id identifier rubyid_msg'>msg</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#DEFAULT_ERROR_MESSAGE-constant" title="UploadWorkflow::Errors::DEFAULT_ERROR_MESSAGE (constant)">DEFAULT_ERROR_MESSAGE</a></span></span>
   <span class='id identifier rubyid_msg'>msg</span>   <span class='op'>=</span> <span class='id identifier rubyid_msg'>msg</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>; </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_msg'>msg</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_intp'>intp</span>  <span class='op'>=</span> <span class='id identifier rubyid_msg'>msg</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_msg'>msg</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>%</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='comment'># Should interpolate value?
@@ -461,7 +502,6 @@
     <span class='kw'>else</span>
       <span class='id identifier rubyid_msg'>msg</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_msg'>msg</span><span class='embexpr_end'>}</span><span class='tstring_content'>:</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='const'><span class='object_link'><a href="Errors/ErrorEntry.html" title="UploadWorkflow::Errors::ErrorEntry (class)">ErrorEntry</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_value'>value</span><span class='rbracket'>]</span><span class='rbracket'>]</span>
   <span class='kw'>end</span>
-  <span class='id identifier rubyid_err'>err</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="Errors/SubmitError.html" title="UploadWorkflow::Errors::SubmitError (class)">SubmitError</a></span></span>
 
   <span class='id identifier rubyid_raise'>raise</span> <span class='id identifier rubyid_err'>err</span><span class='comma'>,</span> <span class='id identifier rubyid_msg'>msg</span>
 <span class='kw'>end</span></pre>
@@ -475,7 +515,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:07:22 2021 by
+  Generated on Sat Feb  6 16:05:32 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

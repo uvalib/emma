@@ -185,8 +185,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+     from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_COMMON-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_MAX-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_OMISSION-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::FormatMethods::DEBUG_SEPARATOR (constant)">Emma::Debug::FormatMethods::DEBUG_SEPARATOR</a></span></p>
 
   
   
@@ -410,7 +410,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<h2 id="label-PUT+-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D.">PUT /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a>.</h2>
+<h2 id="label-PUT+++-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D+-3D-3D+PATCH+-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D.">PUT   /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a> == PATCH /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a>.</h2>
 </div></span>
   
 </li>
@@ -482,7 +482,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<h2 id="label-POST+-2Fupload.">POST /upload.</h2>
+<h2 id="label-POST++-2Fupload-2Fcreate+-3D-3D+PUT+++-2Fupload-2Fcreate+-3D-3D+PATCH+-2Fupload-2Fcreate.">POST  /upload/create == PUT   /upload/create == PATCH /upload/create.</h2>
 </div></span>
   
 </li>
@@ -506,7 +506,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<h2 id="label-GET+-2Fupload-2Fdelete-2F-3Aid-5B-3Fforce-3Dtrue-26truncate-3Dtrue-26emergency-3Dtrue-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FSID-5B-3F...-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FRANGE_LIST-5B-3F...-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FSELECT-5B-3F...-5D.">GET /<a href="?force=true&truncate=true&emergency=true">upload/delete/:id</a> == GET /<a href="?...">upload/delete/SID</a> == GET /<a href="?...">upload/delete/RANGE_LIST</a> == GET /<a href="?...">upload/delete/SELECT</a>.</h2>
+<h2 id="label-GET+-2Fupload-2Fdelete-2F-3Aid-5B-3Fforce-3Dtrue-26truncate-3Dtrue-26emergency-3Dtrue-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FSID-5B-3F...-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FRANGE_LIST-5B-3F...-5D+-3D-3D+GET+-2Fupload-2Fdelete-2FSELECT-5B-3F...-5D+-3D-3D+GET+-2Fupload-2Fdelete_select.">GET /<a href="?force=true&truncate=true&emergency=true">upload/delete/:id</a> == GET /<a href="?...">upload/delete/SID</a> == GET /<a href="?...">upload/delete/RANGE_LIST</a> == GET /<a href="?...">upload/delete/SELECT</a> == GET /upload/delete_select.</h2>
 </div></span>
   
 </li>
@@ -578,7 +578,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<h2 id="label-GET+-2Fupload-2Fedit-2F-3Aid+-3D-3D+GET+-2Fupload-2Fedit-2FSELECT.">GET /upload/edit/:id == GET /upload/edit/SELECT.</h2>
+<h2 id="label-GET+-2Fupload-2Fedit-2F-3Aid+-3D-3D+GET+-2Fupload-2Fedit-2FSELECT+-3D-3D+GET+-2Fupload-2Fedit_select.">GET /upload/edit/:id == GET /upload/edit/SELECT == GET /upload/edit_select.</h2>
 </div></span>
   
 </li>
@@ -937,7 +937,29 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#included-class_method" title="Emma::Debug.included (method)">included</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_exception-instance_method" title="Emma::Debug::OutputMethods#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_items-instance_method" title="Emma::Debug::OutputMethods#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_line-instance_method" title="Emma::Debug::OutputMethods#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_request-instance_method" title="Emma::Debug::OutputMethods#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_route-instance_method" title="Emma::Debug::OutputMethods#__debug_route (method)">#__debug_route</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_env_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_header_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect (method)">#__debug_inspect</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_item-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_item (method)">#__debug_inspect_item</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_items-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_items (method)">#__debug_inspect_items</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_label-instance_method" title="Emma::Debug::FormatMethods#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_route_label-instance_method" title="Emma::Debug::FormatMethods#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_session_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
   
   
@@ -1007,7 +1029,7 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="SessionConcern.html" title="SessionConcern (module)">SessionConcern</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="SessionConcern.html#last_operation-instance_method" title="SessionConcern#last_operation (method)">#last_operation</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_time-instance_method" title="SessionConcern#last_operation_time (method)">#last_operation_time</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_update-instance_method" title="SessionConcern#last_operation_update (method)">#last_operation_update</a></span>, <span class='object_link'><a href="SessionConcern.html#session_keys-instance_method" title="SessionConcern#session_keys (method)">#session_keys</a></span>, <span class='object_link'><a href="SessionConcern.html#session_updatable%3F-instance_method" title="SessionConcern#session_updatable? (method)">#session_updatable?</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="SessionConcern.html#auth_failure_redirect-instance_method" title="SessionConcern#auth_failure_redirect (method)">#auth_failure_redirect</a></span>, <span class='object_link'><a href="SessionConcern.html#auth_success_redirect-instance_method" title="SessionConcern#auth_success_redirect (method)">#auth_success_redirect</a></span>, <span class='object_link'><a href="SessionConcern.html#debug_user%3F-instance_method" title="SessionConcern#debug_user? (method)">#debug_user?</a></span>, <span class='object_link'><a href="SessionConcern.html#delete_token-instance_method" title="SessionConcern#delete_token (method)">#delete_token</a></span>, <span class='object_link'><a href="SessionConcern.html#global_sign_out-instance_method" title="SessionConcern#global_sign_out (method)">#global_sign_out</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation-instance_method" title="SessionConcern#last_operation (method)">#last_operation</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_time-instance_method" title="SessionConcern#last_operation_time (method)">#last_operation_time</a></span>, <span class='object_link'><a href="SessionConcern.html#last_operation_update-instance_method" title="SessionConcern#last_operation_update (method)">#last_operation_update</a></span>, <span class='object_link'><a href="SessionConcern.html#local_sign_out-instance_method" title="SessionConcern#local_sign_out (method)">#local_sign_out</a></span>, <span class='object_link'><a href="SessionConcern.html#revoke_access_token-instance_method" title="SessionConcern#revoke_access_token (method)">#revoke_access_token</a></span>, <span class='object_link'><a href="SessionConcern.html#session_keys-instance_method" title="SessionConcern#session_keys (method)">#session_keys</a></span>, <span class='object_link'><a href="SessionConcern.html#session_updatable%3F-instance_method" title="SessionConcern#session_updatable? (method)">#session_updatable?</a></span>, <span class='object_link'><a href="SessionConcern.html#set_flash_alert-instance_method" title="SessionConcern#set_flash_alert (method)">#set_flash_alert</a></span>, <span class='object_link'><a href="SessionConcern.html#set_flash_notice-instance_method" title="SessionConcern#set_flash_notice (method)">#set_flash_notice</a></span>, <span class='object_link'><a href="SessionConcern.html#status_message-instance_method" title="SessionConcern#status_message (method)">#status_message</a></span></p>
 
   
   
@@ -1114,18 +1136,18 @@
       <pre class="lines">
 
 
-566
-567
-568
-569
-570
 571
 572
 573
-574</pre>
+574
+575
+576
+577
+578
+579</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 566</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 571</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_admin'>admin</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1189,20 +1211,20 @@
       <pre class="lines">
 
 
-310
-311
-312
-313
 314
 315
 316
 317
 318
 319
-320</pre>
+320
+321
+322
+323
+324</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 310</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 314</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_create'>bulk_create</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1270,15 +1292,15 @@
       <pre class="lines">
 
 
-368
-369
-370
-371
-372
-373</pre>
+373
+374
+375
+376
+377
+378</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 368</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 373</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_delete'>bulk_delete</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1337,21 +1359,21 @@
       <pre class="lines">
 
 
-381
-382
-383
-384
-385
 386
 387
 388
 389
 390
 391
-392</pre>
+392
+393
+394
+395
+396
+397</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 381</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 386</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_destroy'>bulk_destroy</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1407,15 +1429,15 @@
       <pre class="lines">
 
 
-330
-331
-332
-333
 334
-335</pre>
+335
+336
+337
+338
+339</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 330</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 334</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_edit'>bulk_edit</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1456,14 +1478,14 @@
       <pre class="lines">
 
 
-280
-281
-282
-283
-284</pre>
+284
+285
+286
+287
+288</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 280</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 284</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_index'>bulk_index</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1512,15 +1534,15 @@
       <pre class="lines">
 
 
-294
-295
-296
-297
 298
-299</pre>
+299
+300
+301
+302
+303</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 294</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 298</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_new'>bulk_new</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1545,7 +1567,9 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<h2 id="label-PUT+-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D">PUT /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a></h2>
+<h2 id="label-PUT+++-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D">PUT   /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a></h2>
+
+<h2 id="label-PATCH+-2Fupload-2Fbulk-5B-3Fsource-3DFILE-26batch-3Dtrue-7CSIZE-26prefix-3DSTRING-5D">PATCH /<a href="?source=FILE&batch=true|SIZE&prefix=STRING">upload/bulk</a></h2>
 
 <p>Modify or create the specified Upload entries, download and store the associated files (if changed), and post the new/modified entries to the Federated Ingest API.</p>
 
@@ -1581,20 +1605,20 @@
       <pre class="lines">
 
 
-347
-348
-349
-350
-351
 352
 353
 354
 355
 356
-357</pre>
+357
+358
+359
+360
+361
+362</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 347</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 352</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_bulk_update'>bulk_update</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1660,11 +1684,6 @@
       <pre class="lines">
 
 
-447
-448
-449
-450
-451
 452
 453
 454
@@ -1674,10 +1693,15 @@
 458
 459
 460
-461</pre>
+461
+462
+463
+464
+465
+466</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 447</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 452</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_cancel'>cancel</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1736,20 +1760,20 @@
       <pre class="lines">
 
 
-471
-472
-473
-474
-475
 476
 477
 478
 479
 480
-481</pre>
+481
+482
+483
+484
+485
+486</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 471</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 476</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_check'>check</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1779,7 +1803,11 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<h2 id="label-POST+-2Fupload">POST /upload</h2>
+<h2 id="label-POST++-2Fupload-2Fcreate">POST  /upload/create</h2>
+
+<h2 id="label-PUT+++-2Fupload-2Fcreate">PUT   /upload/create</h2>
+
+<h2 id="label-PATCH+-2Fupload-2Fcreate">PATCH /upload/create</h2>
 
 <p>Invoked from the handler for the Uppy &#39;upload-success&#39; event to finalize the creation of a new EMMA entry.</p>
 
@@ -1826,18 +1854,18 @@
       <pre class="lines">
 
 
-163
-164
 165
 166
 167
 168
 169
 170
-171</pre>
+171
+172
+173</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 163</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 165</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_create'>create</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -1872,6 +1900,8 @@
 <h2 id="label-GET+-2Fupload-2Fdelete-2FRANGE_LIST-5B-3F...-5D">GET /<a href="?...">upload/delete/RANGE_LIST</a></h2>
 
 <h2 id="label-GET+-2Fupload-2Fdelete-2FSELECT-5B-3F...-5D">GET /<a href="?...">upload/delete/SELECT</a></h2>
+
+<h2 id="label-GET+-2Fupload-2Fdelete_select">GET /upload/delete_select</h2>
 
 <p>Initiate removal of an existing EMMA entry along with its associated file.</p>
 
@@ -1922,18 +1952,18 @@
       <pre class="lines">
 
 
-231
-232
-233
-234
 235
 236
 237
 238
-239</pre>
+239
+240
+241
+242
+243</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 231</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 235</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_delete'>delete</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2012,10 +2042,6 @@
       <pre class="lines">
 
 
-255
-256
-257
-258
 259
 260
 261
@@ -2025,10 +2051,14 @@
 265
 266
 267
-268</pre>
+268
+269
+270
+271
+272</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 255</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 259</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_destroy'>destroy</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2108,19 +2138,19 @@
       <pre class="lines">
 
 
-529
-530
-531
-532
-533
 534
 535
 536
 537
-538</pre>
+538
+539
+540
+541
+542
+543</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 529</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 534</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_download'>download</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2153,6 +2183,8 @@
 
 <h2 id="label-GET+-2Fupload-2Fedit-2FSELECT">GET /upload/edit/SELECT</h2>
 
+<h2 id="label-GET+-2Fupload-2Fedit_select">GET /upload/edit_select</h2>
+
 <p>Initiate modification of an existing EMMA entry by prompting for metadata changes and/or upload of a replacement file.</p>
 
 <p>If :id is “SELECT” then a menu of editable items is presented.</p>
@@ -2178,15 +2210,15 @@
       <pre class="lines">
 
 
-184
-185
-186
 187
 188
-189</pre>
+189
+190
+191
+192</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 187</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_edit'>edit</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2240,11 +2272,6 @@
       <pre class="lines">
 
 
-498
-499
-500
-501
-502
 503
 504
 505
@@ -2253,10 +2280,15 @@
 508
 509
 510
-511</pre>
+511
+512
+513
+514
+515
+516</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 498</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 503</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_endpoint'>endpoint</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2469,20 +2501,20 @@
       <pre class="lines">
 
 
-420
-421
-422
-423
-424
 425
 426
 427
 428
 429
-430</pre>
+430
+431
+432
+433
+434
+435</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 420</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 425</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_reedit'>reedit</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2528,20 +2560,20 @@
       <pre class="lines">
 
 
-404
-405
-406
-407
-408
 409
 410
 411
 412
 413
-414</pre>
+414
+415
+416
+417
+418
+419</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 404</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 409</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_renew'>renew</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2587,19 +2619,19 @@
       <pre class="lines">
 
 
-544
-545
-546
-547
-548
 549
 550
 551
 552
-553</pre>
+553
+554
+555
+556
+557
+558</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 544</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 549</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_retrieval'>retrieval</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2608,7 +2640,7 @@
   <span class='kw'>elsif</span> <span class='id identifier rubyid_bs_link?'>bs_link?</span><span class='lparen'>(</span><span class='ivar'>@url</span><span class='rparen'>)</span>
     <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_bs_retrieval_path'>bs_retrieval_path</span><span class='lparen'>(</span><span class='label'>url:</span> <span class='ivar'>@url</span><span class='comma'>,</span> <span class='label'>forUser:</span> <span class='ivar'>@member</span><span class='rparen'>)</span>
   <span class='kw'>else</span>
-    <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/retrieval can&#39;t handle </span><span class='embexpr_beg'>#{</span><span class='ivar'>@url</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='rbrace'>}</span>
+    <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/retrieval can&#39;t handle </span><span class='embexpr_beg'>#{</span><span class='ivar'>@url</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -2790,19 +2822,19 @@
       <pre class="lines">
 
 
-202
-203
-204
 205
 206
 207
 208
 209
 210
-211</pre>
+211
+212
+213
+214</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 202</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/upload_controller.rb', line 205</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_update'>update</span>
   <span class='id identifier rubyid___debug_route'>__debug_route</span>
@@ -2824,7 +2856,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:10:23 2021 by
+  Generated on Sat Feb  6 16:08:18 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

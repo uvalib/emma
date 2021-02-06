@@ -175,8 +175,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::DEBUG_SEPARATOR (constant)">Emma::Debug::DEBUG_SEPARATOR</a></span></p>
+     from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_COMMON-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_COMMON</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_MAX-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_MAX</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_INSPECT_OMISSION-constant" title="Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION (constant)">Emma::Debug::FormatMethods::DEBUG_INSPECT_OMISSION</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#DEBUG_SEPARATOR-constant" title="Emma::Debug::FormatMethods::DEBUG_SEPARATOR (constant)">Emma::Debug::FormatMethods::DEBUG_SEPARATOR</a></span></p>
 
 
 
@@ -189,6 +189,126 @@
     </h2>
 
     <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth_failure_redirect-instance_method" title="#auth_failure_redirect (instance method)">#<strong>auth_failure_redirect</strong>(path = nil, user: nil, message: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Redirect after a failed authorization operation.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#auth_success_redirect-instance_method" title="#auth_success_redirect (instance method)">#<strong>auth_success_redirect</strong>(path = nil, user: nil, message: nil)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Redirect after a successful authorization operation.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#debug_user%3F-instance_method" title="#debug_user? (instance method)">#<strong>debug_user?</strong>(user = nil)  &#x21d2; Boolean </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Indicate whether the user is one is capable of short-circuiting the authorization process.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#delete_token-instance_method" title="#delete_token (instance method)">#<strong>delete_token</strong>(revoke: true)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Terminate the local login session (&#39;omniauth.auth&#39;) and the session with the OAuth2 provider (if appropriate).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#global_sign_out-instance_method" title="#global_sign_out (instance method)">#<strong>global_sign_out</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sign out of the local session and the OAuth2 session.</p>
+</div></span>
+  
+</li>
+
       
         <li class="public ">
   <span class="summary_signature">
@@ -265,6 +385,54 @@
         <li class="public ">
   <span class="summary_signature">
     
+      <a href="#local_sign_out-instance_method" title="#local_sign_out (instance method)">#<strong>local_sign_out</strong>  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Sign out of the local (EMMA) session <strong>without</strong> revoking the OAuth2 token (which signs out of the OAuth2 session).</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#revoke_access_token-instance_method" title="#revoke_access_token (instance method)">#<strong>revoke_access_token</strong>(token = nil)  &#x21d2; OAuth2::Response<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>revoke_access_token.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#session_keys-instance_method" title="#session_keys (instance method)">#<strong>session_keys</strong>  &#x21d2; Array&lt;String&gt; </a>
     
 
@@ -305,6 +473,78 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Indicate whether handling of the current request should be wrapped by #session_update.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#set_flash_alert-instance_method" title="#set_flash_alert (instance method)">#<strong>set_flash_alert</strong>(message = nil, action: nil, user: nil)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Set `<a href=":alert">flash</a>` based on the current action and user name.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#set_flash_notice-instance_method" title="#set_flash_notice (instance method)">#<strong>set_flash_notice</strong>(message = nil, action: nil, user: nil)  &#x21d2; void </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Set `<a href=":notice">flash</a>` based on the current action and user name.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#status_message-instance_method" title="#status_message (instance method)">#<strong>status_message</strong>(status:, action: nil, user: nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Configured success or failure message.</p>
 </div></span>
   
 </li>
@@ -411,7 +651,29 @@
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug.html" title="Emma::Debug (module)">Emma::Debug</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#__debug_args-instance_method" title="Emma::Debug#__debug_args (method)">#__debug_args</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_env_hash-instance_method" title="Emma::Debug#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_exception-instance_method" title="Emma::Debug#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_header_hash-instance_method" title="Emma::Debug#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_items-instance_method" title="Emma::Debug#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_label-instance_method" title="Emma::Debug#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_line-instance_method" title="Emma::Debug#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_request-instance_method" title="Emma::Debug#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route-instance_method" title="Emma::Debug#__debug_route (method)">#__debug_route</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_route_label-instance_method" title="Emma::Debug#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug.html#__debug_session_hash-instance_method" title="Emma::Debug#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug.html#included-class_method" title="Emma::Debug.included (method)">included</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/OutputMethods.html" title="Emma::Debug::OutputMethods (module)">Emma::Debug::OutputMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_exception-instance_method" title="Emma::Debug::OutputMethods#__debug_exception (method)">#__debug_exception</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_items-instance_method" title="Emma::Debug::OutputMethods#__debug_items (method)">#__debug_items</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_line-instance_method" title="Emma::Debug::OutputMethods#__debug_line (method)">#__debug_line</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_request-instance_method" title="Emma::Debug::OutputMethods#__debug_request (method)">#__debug_request</a></span>, <span class='object_link'><a href="Emma/Debug/OutputMethods.html#__debug_route-instance_method" title="Emma::Debug::OutputMethods#__debug_route (method)">#__debug_route</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Debug/FormatMethods.html" title="Emma::Debug::FormatMethods (module)">Emma::Debug::FormatMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_env_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_env_hash (method)">#__debug_env_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_header_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_header_hash (method)">#__debug_header_hash</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect (method)">#__debug_inspect</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_item-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_item (method)">#__debug_inspect_item</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_inspect_items-instance_method" title="Emma::Debug::FormatMethods#__debug_inspect_items (method)">#__debug_inspect_items</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_label-instance_method" title="Emma::Debug::FormatMethods#__debug_label (method)">#__debug_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_route_label-instance_method" title="Emma::Debug::FormatMethods#__debug_route_label (method)">#__debug_route_label</a></span>, <span class='object_link'><a href="Emma/Debug/FormatMethods.html#__debug_session_hash-instance_method" title="Emma::Debug::FormatMethods#__debug_session_hash (method)">#__debug_session_hash</a></span></p>
 
 
   <div id="instance_method_details" class="method_details_list">
@@ -419,7 +681,444 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="last_operation-instance_method">
+  <h3 class="signature first" id="auth_failure_redirect-instance_method">
+  
+    #<strong>auth_failure_redirect</strong>(path = nil, user: nil, message: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Redirect after a failed authorization operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>path</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#after_sign_out_path_for`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#resource`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt>*</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Optionally passed to #flash_alert.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+155
+156
+157
+158
+159
+160</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 155</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_auth_failure_redirect'>auth_failure_redirect</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_local_sign_out'>local_sign_out</span> <span class='comment'># Make sure no remnants of the local session are left.
+</span>  <span class='id identifier rubyid_set_flash_alert'>set_flash_alert</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>||=</span> <span class='id identifier rubyid_after_sign_out_path_for'>after_sign_out_path_for</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span> <span class='op'>||</span> <span class='id identifier rubyid_resource'>resource</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_path'>path</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="auth_success_redirect-instance_method">
+  
+    #<strong>auth_success_redirect</strong>(path = nil, user: nil, message: nil)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Redirect after a successful authorization operation.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>path</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#after_sign_in_path_for`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#resource`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt>*</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Optionally passed to #flash_notice.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+143
+144
+145
+146
+147</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 143</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_auth_success_redirect'>auth_success_redirect</span><span class='lparen'>(</span><span class='id identifier rubyid_path'>path</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>message:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_set_flash_notice'>set_flash_notice</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_message'>message</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_path'>path</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:redirect</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_after_sign_in_path_for'>after_sign_in_path_for</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span> <span class='op'>||</span> <span class='id identifier rubyid_resource'>resource</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_redirect_to'>redirect_to</span> <span class='id identifier rubyid_path'>path</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="debug_user?-instance_method">
+  
+    #<strong>debug_user?</strong>(user = nil)  &#x21d2; <tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Indicate whether the user is one is capable of short-circuiting the authorization process.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#current_user`</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+343
+344
+345
+346
+347</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 343</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_debug_user?'>debug_user?</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='comment'># noinspection RubyYardParamTypeMatch
+</span>  <span class='id identifier rubyid_session'>session</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>debug</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
+    <span class='const'>OmniAuth</span><span class='op'>::</span><span class='const'>Strategies</span><span class='op'>::</span><span class='const'>Bookshare</span><span class='period'>.</span><span class='id identifier rubyid_debug_user?'>debug_user?</span><span class='lparen'>(</span><span class='id identifier rubyid_user'>user</span> <span class='op'>||</span> <span class='id identifier rubyid_current_user'>current_user</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="delete_token-instance_method">
+  
+    #<strong>delete_token</strong>(revoke: true)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Terminate the local login session (&#39;omniauth.auth&#39;) and the session with the OAuth2 provider (if appropriate)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>revoke</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>true</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If set to <strong>false</strong>, do not revoke the token with the OAuth2 provider.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#revoke_access_token-instance_method" title="SessionConcern#revoke_access_token (method)">#revoke_access_token</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 318</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_delete_token'>delete_token</span><span class='lparen'>(</span><span class='label'>revoke:</span> <span class='kw'>true</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_session'>session</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>omniauth.auth</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_revoke'>revoke</span>
+  <span class='id identifier rubyid_no_revoke_reason'>no_revoke_reason</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_application_deployed?'>application_deployed?</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>localhost</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_debug_user?'>debug_user?</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>USER </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_current_user'>current_user</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span><span class='embexpr_end'>}</span><span class='tstring_content'> DEBUGGING</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:revoke</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>revoke=false</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+      <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NO TOKEN</span><span class='tstring_end'>&#39;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_no_revoke_reason'>no_revoke_reason</span>
+    <span class='id identifier rubyid___debug'><span class='object_link'><a href="top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: NOT REVOKING TOKEN - </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_no_revoke_reason'>no_revoke_reason</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_revoke_access_token'>revoke_access_token</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="global_sign_out-instance_method">
+  
+    #<strong>global_sign_out</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sign out of the local session and the OAuth2 session.</p>
+
+<p>(This is the normal sign-out but named as a convenience for places in the where the distinction with #local_sign_out needs to be stressed.)</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+302
+303
+304
+305
+306</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 302</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_global_sign_out'>global_sign_out</span>
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>omniauth.auth</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid___debug'><span class='object_link'><a href="top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: omniauth.auth is: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_token'>token</span>
+  <span class='id identifier rubyid_sign_out'>sign_out</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="last_operation-instance_method">
   
     #<strong>last_operation</strong>  &#x21d2; <tt>Hash</tt> 
   
@@ -457,12 +1156,12 @@
       <pre class="lines">
 
 
-141
-142
-143</pre>
+224
+225
+226</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 141</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 224</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_last_operation'>last_operation</span>
   <span class='id identifier rubyid_session_section'>session_section</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>last_op</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
@@ -511,12 +1210,12 @@
       <pre class="lines">
 
 
-149
-150
-151</pre>
+232
+233
+234</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 149</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 232</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_last_operation_time'>last_operation_time</span>
   <span class='id identifier rubyid_last_operation'>last_operation</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>time</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
@@ -623,24 +1322,24 @@
       <pre class="lines">
 
 
-161
-162
-163
-164
-165
-166
-167
-168
-169
-170
-171
-172
-173
-174
-175</pre>
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 161</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 244</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_last_operation_update'>last_operation_update</span><span class='lparen'>(</span><span class='label'>time:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>path:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>req_params:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_req_params'>req_params</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span>
@@ -656,6 +1355,178 @@
     <span class='period'>.</span><span class='id identifier rubyid_tap'>tap</span> <span class='kw'>do</span>
       <span class='id identifier rubyid___debug'><span class='object_link'><a href="top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>session_update &#39;time&#39; = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_last_operation_time'>last_operation_time</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
     <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="local_sign_out-instance_method">
+  
+    #<strong>local_sign_out</strong>  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Sign out of the local (EMMA) session <strong>without</strong> revoking the OAuth2 token (which signs out of the OAuth2 session).</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li>Devise::Controllers::SignInOut#sign_out</li>
+    
+      <li><span class='object_link'><a href="#delete_token-instance_method" title="SessionConcern#delete_token (method)">#delete_token</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+291
+292
+293
+294
+295</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 291</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_local_sign_out'>local_sign_out</span>
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='id identifier rubyid_session'>session</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>omniauth.auth</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid___debug'><span class='object_link'><a href="top-level-namespace.html#__debug-instance_method" title="#__debug (method)">__debug</a></span></span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: omniauth.auth was: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_token'>token</span>
+  <span class='id identifier rubyid_sign_out'>sign_out</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="revoke_access_token-instance_method">
+  
+    #<strong>revoke_access_token</strong>(token = nil)  &#x21d2; <tt>OAuth2::Response</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>revoke_access_token</p>
+
+<p>– noinspection RubyNilAnalysis, RubyResolve ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>token</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `<a href="'omniauth.auth'">session</a>`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>OAuth2::Response</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If no token was provided or found.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 359</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_revoke_access_token'>revoke_access_token</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_token'>token</span> <span class='op'>||=</span> <span class='id identifier rubyid_session'>session</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>omniauth.auth</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_token'>token</span>   <span class='op'>=</span> <span class='const'>OmniAuth</span><span class='op'>::</span><span class='const'>AuthHash</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_token'>token</span>   <span class='op'>=</span> <span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_credentials'>credentials</span><span class='period'>.</span><span class='id identifier rubyid_token'>token</span>       <span class='kw'>if</span> <span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>OmniAuth</span><span class='op'>::</span><span class='const'>AuthHash</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: no token present</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+  <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_info'>info</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_token'>token</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+
+  <span class='comment'># @type [OmniAuth::Strategy::Options] opt
+</span>  <span class='id identifier rubyid_opt'>opt</span>     <span class='op'>=</span> <span class='const'>OmniAuth</span><span class='op'>::</span><span class='const'>Strategies</span><span class='op'>::</span><span class='const'>Bookshare</span><span class='period'>.</span><span class='id identifier rubyid_default_options'>default_options</span>
+  <span class='id identifier rubyid_id'>id</span>      <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_client_id'>client_id</span>
+  <span class='id identifier rubyid_secret'>secret</span>  <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_client_secret'>client_secret</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_client_options'>client_options</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys'>deep_symbolize_keys</span>
+  <span class='id identifier rubyid___debug_line'>__debug_line</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='rparen'>)</span> <span class='lbrace'>{</span> <span class='lbrace'>{</span> <span class='label'>id:</span> <span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='label'>secret:</span> <span class='id identifier rubyid_secret'>secret</span><span class='comma'>,</span> <span class='label'>options:</span> <span class='id identifier rubyid_options'>options</span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+
+  <span class='const'>OAuth2</span><span class='op'>::</span><span class='const'>Client</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_secret'>secret</span><span class='comma'>,</span> <span class='id identifier rubyid_options'>options</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_auth_code'>auth_code</span><span class='period'>.</span><span class='id identifier rubyid_revoke_token'>revoke_token</span><span class='lparen'>(</span><span class='id identifier rubyid_token'>token</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -701,16 +1572,16 @@
       <pre class="lines">
 
 
-181
-182
-183
-184
-185
-186
-187</pre>
+264
+265
+266
+267
+268
+269
+270</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 181</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 264</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_session_keys'>session_keys</span>
   <span class='id identifier rubyid_session'>session</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_reject'>reject</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
@@ -763,15 +1634,328 @@
       <pre class="lines">
 
 
-192
-193
-194</pre>
+275
+276
+277</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 192</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 275</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_session_updatable?'>session_updatable?</span>
   <span class='op'>!</span><span class='id identifier rubyid_devise_controller?'>devise_controller?</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_request_xhr?'>request_xhr?</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="set_flash_alert-instance_method">
+  
+    #<strong>set_flash_alert</strong>(message = nil, action: nil, user: nil)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Set `<a href=":alert">flash</a>` based on the current action and user name.</p>
+
+<p>– noinspection RubyYardParamTypeMatch ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>action</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `<a href=":action">params</a>`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `current_user`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+189
+190
+191
+192</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 189</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_set_flash_alert'>set_flash_alert</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>action:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_message'>message</span> <span class='op'>||=</span> <span class='id identifier rubyid_status_message'>status_message</span><span class='lparen'>(</span><span class='label'>status:</span> <span class='symbol'>:failure</span><span class='comma'>,</span> <span class='label'>action:</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_flash_alert'>flash_alert</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="set_flash_notice-instance_method">
+  
+    #<strong>set_flash_notice</strong>(message = nil, action: nil, user: nil)  &#x21d2; <tt>void</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    <p class="note returns_void">This method returns an undefined value.</p>
+<p>Set `<a href=":notice">flash</a>` based on the current action and user name.</p>
+
+<p>– noinspection RubyYardParamTypeMatch ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>message</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>action</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `<a href=":action">params</a>`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `current_user`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+173
+174
+175
+176</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 173</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_set_flash_notice'>set_flash_notice</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>action:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_message'>message</span> <span class='op'>||=</span> <span class='id identifier rubyid_status_message'>status_message</span><span class='lparen'>(</span><span class='label'>status:</span> <span class='symbol'>:success</span><span class='comma'>,</span> <span class='label'>action:</span> <span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_flash_notice'>flash_notice</span><span class='lparen'>(</span><span class='id identifier rubyid_message'>message</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="status_message-instance_method">
+  
+    #<strong>status_message</strong>(status:, action: nil, user: nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Configured success or failure message.</p>
+
+<p>– noinspection RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>status</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>action</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `<a href=":action">params</a>`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>user</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>, <tt><span class='object_link'><a href="User.html" title="User (class)">User</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `current_user`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+205
+206
+207
+208
+209
+210
+211
+212</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/session_concern.rb', line 205</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_status_message'>status_message</span><span class='lparen'>(</span><span class='label'>status:</span><span class='comma'>,</span> <span class='label'>action:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>user:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_action'>action</span> <span class='op'>||=</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:action</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_user'>user</span>   <span class='op'>||=</span> <span class='id identifier rubyid_resource'>resource</span>
+  <span class='id identifier rubyid_user'>user</span>     <span class='op'>=</span> <span class='id identifier rubyid_user'>user</span><span class='lbracket'>[</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>uid</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user'>user</span>     <span class='op'>=</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_uid'>uid</span>    <span class='kw'>if</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:uid</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_user'>user</span>     <span class='op'>=</span> <span class='id identifier rubyid_user'>user</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>unknown user</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
+</span>  <span class='const'>I18n</span><span class='period'>.</span><span class='id identifier rubyid_t'>t</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>emma.user.sessions.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_action'>action</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_status'>status</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span><span class='comma'>,</span> <span class='label'>user:</span> <span class='id identifier rubyid_user'>user</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -783,7 +1967,7 @@
 </div>
 
       <div id="footer">
-  Generated on Mon Jan 25 14:09:13 2021 by
+  Generated on Sat Feb  6 16:07:15 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
