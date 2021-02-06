@@ -134,6 +134,89 @@ module SessionConcern
 
   public
 
+  # Redirect after a successful authorization operation.
+  #
+  # @param [String, nil]       path     Default: `#after_sign_in_path_for`.
+  # @param [String, User, nil] user     Default: `#resource`.
+  # @param [*]                 message  Optionally passed to #flash_notice.
+  #
+  def auth_success_redirect(path = nil, user: nil, message: nil)
+    set_flash_notice(message) if message.present?
+    path ||= params[:redirect] || after_sign_in_path_for(user || resource)
+    redirect_to path
+  end
+
+  # Redirect after a failed authorization operation.
+  #
+  # @param [String, nil]       path     Default: `#after_sign_out_path_for`.
+  # @param [String, User, nil] user     Default: `#resource`.
+  # @param [*]                 message  Optionally passed to #flash_alert.
+  #
+  def auth_failure_redirect(path = nil, user: nil, message: nil)
+    local_sign_out # Make sure no remnants of the local session are left.
+    set_flash_alert(message) if message.present?
+    path ||= after_sign_out_path_for(user || resource)
+    redirect_to path
+  end
+
+  # Set `flash[:notice]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def set_flash_notice(message = nil, action: nil, user: nil)
+    message ||= status_message(status: :success, action: action, user: user)
+    flash_notice(message)
+  end
+
+  # Set `flash[:alert]` based on the current action and user name.
+  #
+  # @param [String, nil]             message
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [void]
+  #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
+  def set_flash_alert(message = nil, action: nil, user: nil)
+    message ||= status_message(status: :failure, action: action, user: user)
+    flash_alert(message)
+  end
+
+  # Configured success or failure message.
+  #
+  # @param [String, Symbol]          status
+  # @param [Symbol, nil]             action   Default: `params[:action]`.
+  # @param [String, Hash, User, nil] user     Default: `current_user`.
+  #
+  # @return [String]
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def status_message(status:, action: nil, user: nil)
+    action ||= params[:action]
+    user   ||= resource
+    user     = user['uid'] if user.is_a?(Hash)
+    user     = user.uid    if user.respond_to?(:uid)
+    user     = user.to_s.presence || 'unknown user' # TODO: I18n
+    I18n.t("emma.user.sessions.#{action}.#{status}", user: user)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Information about the last operation performed in this session.
   #
   # @return [Hash]
@@ -194,6 +277,103 @@ module SessionConcern
   end
 
   # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Sign out of the local (EMMA) session *without* revoking the OAuth2 token
+  # (which signs out of the OAuth2 session).
+  #
+  # @see Devise::Controllers::SignInOut#sign_out
+  # @see #delete_token
+  #
+  def local_sign_out
+    token = session.delete('omniauth.auth')
+    __debug { "#{__method__}: omniauth.auth was: #{token.inspect}" } if token
+    sign_out
+  end
+
+  # Sign out of the local session and the OAuth2 session.
+  #
+  # (This is the normal sign-out but named as a convenience for places in the
+  # where the distinction with #local_sign_out needs to be stressed.)
+  #
+  def global_sign_out
+    token = session['omniauth.auth']
+    __debug { "#{__method__}: omniauth.auth is: #{token.inspect}" } if token
+    sign_out
+  end
+
+  # Terminate the local login session ('omniauth.auth') and the session with
+  # the OAuth2 provider (if appropriate)
+  #
+  # @param [Boolean] revoke           If set to *false*, do not revoke the
+  #                                     token with the OAuth2 provider.
+  #
+  # @return [void]
+  #
+  # @see #revoke_access_token
+  #
+  def delete_token(revoke: true)
+    token = session.delete('omniauth.auth')
+    return unless revoke
+    no_revoke_reason =
+      if !application_deployed?
+        'localhost'
+      elsif debug_user?
+        "USER #{current_user.uid} DEBUGGING"
+      elsif false?(params[:revoke])
+        'revoke=false'
+      elsif token.blank?
+        'NO TOKEN'
+      end
+    if no_revoke_reason
+      __debug { "#{__method__}: NOT REVOKING TOKEN - #{no_revoke_reason}" }
+    else
+      revoke_access_token(token)
+    end
+  end
+
+  # Indicate whether the user is one is capable of short-circuiting the
+  # authorization process.
+  #
+  # @param [User, String, nil] user   Default: `#current_user`
+  #
+  def debug_user?(user = nil)
+    # noinspection RubyYardParamTypeMatch
+    session.key?('debug') &&
+      OmniAuth::Strategies::Bookshare.debug_user?(user || current_user)
+  end
+
+  # revoke_access_token
+  #
+  # @param [Hash, nil] token          Default: `session['omniauth.auth']`.
+  #
+  # @return [OAuth2::Response]
+  # @return [nil]                     If no token was provided or found.
+  #
+  #--
+  # noinspection RubyNilAnalysis, RubyResolve
+  #++
+  def revoke_access_token(token = nil)
+    token ||= session['omniauth.auth']
+    token   = OmniAuth::AuthHash.new(token) if token.is_a?(Hash)
+    token   = token.credentials.token       if token.is_a?(OmniAuth::AuthHash)
+    return Log.warn { "#{__method__}: no token present" } if token.blank?
+    Log.info { "#{__method__}: #{token.inspect}" }
+
+    # @type [OmniAuth::Strategy::Options] opt
+    opt     = OmniAuth::Strategies::Bookshare.default_options
+    id      = opt.client_id
+    secret  = opt.client_secret
+    options = opt.client_options.deep_symbolize_keys
+    __debug_line(__method__) { { id: id, secret: secret, options: options } }
+
+    OAuth2::Client.new(id, secret, options).auth_code.revoke_token(token)
+  end
+
+  # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
 
@@ -230,8 +410,7 @@ module SessionConcern
       __debug  { "last_operation_time #{t_last} < BOOT_TIME #{t_boot}" }
       Log.info { "Signed out #{current_user&.to_s || 'user'} after reboot." }
     end
-    sign_out
-    session.delete('omniauth.auth')
+    local_sign_out
     @reset_browser_cache = true
   end
 

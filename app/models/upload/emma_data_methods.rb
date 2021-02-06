@@ -283,7 +283,7 @@ module Upload::EmmaDataMethods
       [k, v] if allow_blank || v.present? || v.is_a?(FalseClass)
     }.compact.sort.to_h
   rescue => error
-    Log.error do
+    Log.warn do
       msg = [__method__, error.message]
       msg << "for #{data.inspect}" if Log.debug?
       msg.join(': ')

@@ -28,15 +28,7 @@ module OAuth2
   module ClientExt
 
     include Emma::Common
-    include Emma::Debug
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    public
-
-    OAUTH_DEBUG = true?(ENV['OAUTH_DEBUG'])
+    include OAuth2::ExtensionDebugging
 
     # =========================================================================
     # :section: OAuth2::Client overrides
@@ -44,38 +36,42 @@ module OAuth2
 
     public
 
-    # Instantiate a new OAuth 2.0 client using the Client ID and Client Secret
-    # registered to your application.
+    # Instantiate a new OAuth 2.0 client using the Client ID and Client
+    # Secret registered to your application.
     #
     # @param [String] client_id
     # @param [String] client_secret
     # @param [Hash]   options
     # @param [Proc]   block           @see OAuth2::Client#initialize
     #
-    # @option options [String]  :site             The OAuth2 provider site host
+    # @option options [String]  :site             The OAuth2 provider site
+    #                                             host.
     #
     # @option options [String]  :redirect_uri     The absolute URI to the
-    #                                             Redirection Endpoint for use
-    #                                             in authorization grants and
-    #                                             token exchange.
+    #                                             Redirection Endpoint for
+    #                                             use in authorization grants
+    #                                             and token exchange.
     #
-    # @option options [String]  :authorize_url    Absolute or relative URL path
-    #                                             to the Authorization endpoint
-    #                                             Default: '/oauth/authorize'.
+    # @option options [String]  :authorize_url    Absolute or relative URL
+    #                                             path to the Authorization
+    #                                             endpoint.
+    #                                             Default: '/oauth/authorize'
     #
-    # @option options [String]  :token_url        Absolute or relative URL path
-    #                                             to the Token endpoint.
-    #                                             Default: '/oauth/token'.
+    # @option options [String]  :token_url        Absolute or relative URL
+    #                                             path to the Token endpoint.
+    #                                             Default: '/oauth/token'
     #
-    # @option options [Symbol]  :token_method     HTTP method to use to request
-    #                                             the token. Default: :post.
+    # @option options [Symbol]  :token_method     HTTP method to use to
+    #                                             request the token.
+    #                                             Default: :post
     #
     # @option options [Symbol]  :auth_scheme      Method to use to authorize
     #                                             request: :basic_auth or
     #                                             :request_body (default).
     #
-    # @option options [Hash]    :connection_opts  Hash of connection options to
-    #                                             pass to initialize Faraday.
+    # @option options [Hash]    :connection_opts  Hash of connection options
+    #                                             to pass to initialize
+    #                                             Faraday.
     #
     # @option options [FixNum]  :max_redirects    Maximum number of redirects
     #                                             to follow. Default: 5.
@@ -88,8 +84,8 @@ module OAuth2
     # @see OAuth2::Client#initialize
     #
     def initialize(client_id, client_secret, options = {}, &block)
-      __debug_args("OAUTH2 #{__method__}", binding)
       super
+      @options[:revoke_url] = '/oauth/revocations'
     end
 
     # The Faraday connection object.
@@ -106,7 +102,7 @@ module OAuth2
     def connection
       @connection ||=
         Faraday.new(site, options[:connection_opts]) do |bld|
-          log_options = { bodies: { request: true, response: OAUTH_DEBUG } }
+          log_options = { bodies: { request: true, response: DEBUG_OAUTH } }
           bld.response :logger, Log.logger, log_options
           if options[:connection_build]
             options[:connection_build].call(bld)
@@ -114,36 +110,6 @@ module OAuth2
             bld.adapter Faraday.default_adapter
           end
         end
-    end
-
-    # The authorize endpoint URL of the OAuth2 provider
-    #
-    # @param [Hash] params            Additional query parameters.
-    #
-    # @return [String]
-    #
-    # This method overrides:
-    # @see OAuth2::Client#authorize_url
-    #
-    def authorize_url(params = {})
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
-    end
-
-    # The token endpoint URL of the OAuth2 provider
-    #
-    # @param [Hash] params            Additional query parameters.
-    #
-    # @return [String]
-    #
-    # This method overrides:
-    # @see OAuth2::Client#token_url
-    #
-    def token_url(params = nil)
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
     end
 
     # Makes a request relative to the specified site root.
@@ -178,7 +144,7 @@ module OAuth2
     # @see OmniAuth::Strategies::Bookshare#request_phase
     #
     def request(verb, url, opts = {})
-      __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
+      __ext_debug(binding)
       body = opts[:body]
       body = opts[:body] = url_query(body) if body.is_a?(Hash)
       hdrs = opts[:headers]
@@ -188,17 +154,17 @@ module OAuth2
       response =
         connection.run_request(verb, url, body, hdrs) do |req|
           req.params.update(prms) if prms.present?
-          __debug_line(dbg) { [verb.to_s.upcase, url, req.params] }
+          __ext_debug(verb.to_s.upcase, url, req.params)
           yield(req) if block_given?
         end
-      __debug_line(dbg) { ['RESPONSE', response] }
-      response = Response.new(response, parse: opts.slice(:parse))
+      __ext_debug('RESPONSE', response)
+      response = Response.new(response, opts.slice(:parse))
 
       case response.status
 
         when 301, 302, 303, 307
           # Redirect, or keep this response if beyond the limit of redirects.
-          __debug_line(dbg) { "REDIRECT #{response.status}" }
+          __ext_debug("REDIRECT #{response.status}")
           opts[:redirect_count] ||= 0
           opts[:redirect_count] += 1
           if (max = options[:max_redirects]) && (opts[:redirect_count] <= max)
@@ -212,111 +178,23 @@ module OAuth2
 
         when 200..299, 300..399
           # On non-redirecting 3xx statuses, just return the response.
-          __debug_line(dbg) { "REDIRECT #{response.status}" }
+          __ext_debug("REDIRECT #{response.status}")
 
         when 400..599
           # Server error.
-          __debug_line(dbg) { "ERROR #{response.status}" }
+          __ext_debug("ERROR #{response.status}")
           error = Error.new(response)
-          raise(error) if opts[:raise_errors] || options[:raise_errors]
+          raise(error) if opts.fetch(:raise_errors, options[:raise_errors])
           response.error = error
 
         else
           # Other error.
-          __debug_line(dbg) { "UNEXPECTED #{response.status}" }
+          __ext_debug("UNEXPECTED #{response.status}")
           error = Error.new(response)
           raise(error, "Unhandled status code value of #{response.status}")
 
       end
       response
-    end
-
-    # Initializes an AccessToken by making a request to the token endpoint.
-    #
-    # @param [Hash]  params               For the token endpoint.
-    # @param [Hash]  access_token_opts    Passed to the AccessToken object.
-    # @param [Class] access_token_class   Class of access token for easier
-    #                                       subclassing of OAuth2::AccessToken.
-    #
-    # @return [AccessToken]               The initialized AccessToken.
-    #
-    # This method overrides:
-    # @see OAuth2::Client#get_token
-    #
-    def get_token(params, access_token_opts={}, access_token_class=AccessToken)
-      __debug_args((dbg = "OAUTH2 #{__method__}"), binding)
-      super.tap do |result|
-        __debug { "#{dbg} => #{result.inspect}" }
-      end
-    end
-
-    # The Authorization Code strategy
-    #
-    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.1
-    #
-    # This method overrides:
-    # @see OAuth2::Client#auth_code
-    #
-    def auth_code
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
-    end
-
-    # The Implicit strategy
-    #
-    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.2
-    #
-    # This method overrides:
-    # @see OAuth2::Client#implicit
-    #
-    def implicit
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
-    end
-
-    # The Resource Owner Password Credentials strategy
-    #
-    # @return [OAuth2::Strategy::Password]
-    #
-    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.3
-    #
-    # This method overrides:
-    # @see OAuth2::Client#password
-    #
-    def password
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
-    end
-
-    # The Client Credentials strategy
-    #
-    # @return [OAuth2::Strategy::ClientCredentials]
-    #
-    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.4
-    #
-    # This method overrides:
-    # @see OAuth2::Client#client_credentials
-    #
-    def client_credentials
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
-    end
-
-    # The Client Assertion Strategy
-    #
-    # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-4.1.3
-    #
-    # This method overrides:
-    # @see OAuth2::Client#assertion
-    #
-    def assertion
-      super.tap do |result|
-        __debug { "OAUTH2 #{__method__} => #{result.inspect}" }
-      end
     end
 
     # The redirect_uri parameters dynamically assigned in
@@ -331,6 +209,265 @@ module OAuth2
       options.slice(:redirect_uri).stringify_keys
     end
 
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # Revoke the token (to end the session).
+    #
+    # @param [OAuth2::AccessToken, Hash, String] token
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
+    #
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    #--
+    # noinspection RubyNilAnalysis
+    #++
+    def revoke_token(token, params = nil, opts = nil)
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case token
+        when OAuth2::AccessToken
+          token = token.token
+        when Hash
+          h = token.deep_symbolize_keys
+          token = h[:access_token] || h[:token] || h.dig(:credentials, :token)
+      end
+      if token.blank?
+        Log.warn("#{__method__}: no token")
+        return
+      end
+
+      # Prepare data values including the token.
+      method  = options[:token_method]
+      auth    = Authenticator.new(id, secret, options[:auth_scheme])
+      params  = auth.apply(params || {}).merge!(token: token)
+
+      # Prepare headers and other options.
+      opts    = opts&.dup || {}
+      headers = opts[:headers]&.dup || {}
+      headers.merge!(params.delete(:headers)) if params[:headers]
+      if method == :get
+        opts[:params] = params
+      else
+        opts[:body] = params
+        headers['Content-Type'] = 'application/x-www-form-urlencoded'
+      end
+      opts[:headers] = headers
+      opts[:raise_errors] = false unless opts.key?(:raise_errors)
+
+      # noinspection RubyYardParamTypeMatch
+      request(method, options[:revoke_url], opts)
+    end
+
+  end
+
+  if DEBUG_OAUTH
+
+    # Overrides adding extra debugging around method calls.
+    #
+    module ClientDebug
+
+      include OAuth2::ExtensionDebugging
+
+      # Non-functional hints for RubyMine type checking.
+      # :nocov:
+      include OAuth2::ClientExt unless ONLY_FOR_DOCUMENTATION
+      # :nocov:
+
+      # =======================================================================
+      # :section: OAuth2::Client overrides
+      # =======================================================================
+
+      public
+
+      # Instantiate a new OAuth 2.0 client using the Client ID and Client
+      # Secret registered to your application.
+      #
+      # @param [String] client_id
+      # @param [String] client_secret
+      # @param [Hash]   options
+      # @param [Proc]   block           @see OAuth2::Client#initialize
+      #
+      # @option options [String]  :site             The OAuth2 provider site
+      #                                             host.
+      #
+      # @option options [String]  :redirect_uri     The absolute URI to the
+      #                                             Redirection Endpoint for
+      #                                             use in authorization grants
+      #                                             and token exchange.
+      #
+      # @option options [String]  :authorize_url    Absolute or relative URL
+      #                                             path to the Authorization
+      #                                             endpoint.
+      #                                             Default: '/oauth/authorize'
+      #
+      # @option options [String]  :token_url        Absolute or relative URL
+      #                                             path to the Token endpoint.
+      #                                             Default: '/oauth/token'
+      #
+      # @option options [Symbol]  :token_method     HTTP method to use to
+      #                                             request the token.
+      #                                             Default: :post
+      #
+      # @option options [Symbol]  :auth_scheme      Method to use to authorize
+      #                                             request: :basic_auth or
+      #                                             :request_body (default).
+      #
+      # @option options [Hash]    :connection_opts  Hash of connection options
+      #                                             to pass to initialize
+      #                                             Faraday.
+      #
+      # @option options [FixNum]  :max_redirects    Maximum number of redirects
+      #                                             to follow. Default: 5.
+      #
+      # @option options [Boolean] :raise_errors     If *false*, 400+ response
+      #                                             statuses do not raise
+      #                                             OAuth2::Error.
+      #
+      # This method overrides:
+      # @see OAuth2::Client#initialize
+      #
+      def initialize(client_id, client_secret, options = {}, &block)
+        __ext_debug(binding)
+        super
+      end
+
+      # The authorize endpoint URL of the OAuth2 provider
+      #
+      # @param [Hash] params            Additional query parameters.
+      #
+      # @return [String]
+      #
+      # This method overrides:
+      # @see OAuth2::Client#authorize_url
+      #
+      def authorize_url(params = {})
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The token endpoint URL of the OAuth2 provider
+      #
+      # @param [Hash] params            Additional query parameters.
+      #
+      # @return [String]
+      #
+      # This method overrides:
+      # @see OAuth2::Client#token_url
+      #
+      def token_url(params = nil)
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # Initializes an AccessToken by making a request to the token endpoint.
+      #
+      # @param [Hash]  params               For the token endpoint.
+      # @param [Hash]  access_token_opts    Passed to the AccessToken object.
+      # @param [Class] access_token_class   Class of access token for easier
+      #                                     subclassing of OAuth2::AccessToken.
+      #
+      # @return [AccessToken]               The initialized AccessToken.
+      #
+      # This method overrides:
+      # @see OAuth2::Client#get_token
+      #
+      def get_token(params, access_token_opts = {}, access_token_class = AccessToken)
+        __ext_debug(binding)
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The Authorization Code strategy
+      #
+      # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.1
+      #
+      # This method overrides:
+      # @see OAuth2::Client#auth_code
+      #
+      def auth_code
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The Implicit strategy
+      #
+      # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-26#section-4.2
+      #
+      # This method overrides:
+      # @see OAuth2::Client#implicit
+      #
+      def implicit
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The Resource Owner Password Credentials strategy
+      #
+      # @return [OAuth2::Strategy::Password]
+      #
+      # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.3
+      #
+      # This method overrides:
+      # @see OAuth2::Client#password
+      #
+      def password
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The Client Credentials strategy
+      #
+      # @return [OAuth2::Strategy::ClientCredentials]
+      #
+      # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-15#section-4.4
+      #
+      # This method overrides:
+      # @see OAuth2::Client#client_credentials
+      #
+      def client_credentials
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # The Client Assertion Strategy
+      #
+      # @see http://tools.ietf.org/html/draft-ietf-oauth-v2-10#section-4.1.3
+      #
+      # This method overrides:
+      # @see OAuth2::Client#assertion
+      #
+      def assertion
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+      # =======================================================================
+      # :section:
+      # =======================================================================
+
+      public
+
+      # Revoke the token (to end the session).
+      #
+      # @param [OAuth2::AccessToken, Hash, String] token
+      # @param [Hash, nil] params       Additional query parameters.
+      # @param [Hash, nil] opts         Options.
+      #
+      # @return [OAuth2::Response]
+      # @return [nil]                   If no token was provided or found.
+      #
+      def revoke_token(token, params = nil, opts = nil)
+        super
+          .tap { |result| __ext_debug("--> #{result.inspect}") }
+      end
+
+    end
+
   end
 
 end
@@ -340,5 +477,6 @@ end
 # =============================================================================
 
 override OAuth2::Client => OAuth2::ClientExt
+override OAuth2::Client => OAuth2::ClientDebug if DEBUG_OAUTH
 
 __loading_end(__FILE__)

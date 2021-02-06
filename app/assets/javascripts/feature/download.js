@@ -32,9 +32,9 @@ $(document).on('turbolinks:load', function() {
      * @typedef {{
      *      firstName:  string,
      *      lastName:   string,
-     *      middle:     string,
-     *      prefix:     string,
-     *      suffix:     string
+     *      middle:     [string],
+     *      prefix:     [string],
+     *      suffix:     [string]
      * }} MemberName
      */
 
@@ -45,7 +45,8 @@ $(document).on('turbolinks:load', function() {
      *      allowAdultContent:          boolean,
      *      canDownload:                boolean,
      *      dateOfBirth:                string,
-     *      emailAddress:               string,
+     *      deleted:                    boolean,
+     *      emailAddress:               [string],
      *      hasAgreement:               boolean,
      *      language:                   string,
      *      links:                      Linkage[],
@@ -453,19 +454,15 @@ $(document).on('turbolinks:load', function() {
             const info    = data || message;
             const members = info.members && info.members.list || [];
             members.forEach(function(entry) {
-                const member = entry.member;
-                const part   = member.name || {};
-                let name     = '';
-                name += part.prefix    + ' ';
-                name += part.lastName  + ' ';
-                name += part.suffix    + ',';
-                name += part.firstName + ' ';
-                name += part.middle;
-                name = name.replace(/\s+/g, ' ');
-                name = name.replace(/\s?,\s?/g, ', ');
-                name = name.trim();
-                name = name || `id: ${member.userAccountId}`;
-                result[member.userAccountId] = name;
+                const member      = entry.member;
+                const name        = member.name || {};
+                const family_name = [name.prefix, name.lastName, name.suffix];
+                const given_name  = [name.firstName, name.middle];
+                const family      = compact(family_name).join(' ');
+                const given       = compact(given_name).join(' ');
+                const full_name   = compact([family, given]).join(', ');
+                result[member.userAccountId] =
+                    full_name || `id: ${member.userAccountId}`;
             });
             return result;
         }

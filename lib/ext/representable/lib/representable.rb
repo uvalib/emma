@@ -33,20 +33,20 @@ require 'representable/coercion'
 # @type [Boolean, Symbol]
 #
 DEBUG_REPRESENTABLE =
-  ENV.fetch('DEBUG_REPRESENTABLE', false).yield_self do |v|
-    if v.is_a?(String)
-      case (v = v.to_s.strip.downcase)
-        when *TRUE_VALUES  then v = true
-        when *FALSE_VALUES then v = false
-        else                    v = v.sub(/^:/, '').to_sym
-      end
+  ENV.fetch('DEBUG_REPRESENTABLE', false).then do |v|
+    case (v.is_a?(String) ? (v = v.strip.downcase) : v)
+      when *TRUE_VALUES  then true
+      when *FALSE_VALUES then false
+      when String        then v.sub(/^:/, '').to_sym
+      else                    v
     end
-    v
   end
 
 module Representable
 
-  module AppDebug
+  # Overrides adding extra debugging around method calls.
+  #
+  module RepresentableDebug
 
     def self.included(mod)
       mod.send(:extend, self)
@@ -54,11 +54,13 @@ module Representable
 
     private
 
-    def __debug_show(*);   end
-    def __debug_lambda(*); end
-    def __debug_method(*); end
+    if not DEBUG_REPRESENTABLE
 
-    if DEBUG_REPRESENTABLE
+      def __debug_show(*);   end
+      def __debug_lambda(*); end
+      def __debug_method(*); end
+
+    else
 
       DEBUG_MODES = [:input, :output, true, false, nil]
       DEBUG_REPRESENTABLE.tap do |value|
@@ -127,7 +129,7 @@ module Representable
           end
         items += args
         line << SEPARATOR << items.join(SEPARATOR) if items.present?
-        __output(line)
+        __output_impl(line)
       end
 
       # Override one or more lambdas in order to "inject" a debug statement
@@ -240,9 +242,13 @@ module Representable
 
   end
 
+end
+
+module Representable
+
   module CreateObject
 
-    include AppDebug
+    include RepresentableDebug
 
     remove_const(:Class) if const_defined?(:Class, false)
 
@@ -269,7 +275,7 @@ module Representable
 
     class Binding
 
-      include AppDebug
+      include RepresentableDebug
 
       def read(hash, as)
         __debug_show(:input) { ["Hash.#{__method__}", as: as, hash: hash] }
@@ -302,105 +308,106 @@ module Representable
   # unexpected when serializing to generate a message.
   #
   # Since this method is not used when parsing, it can be safely redefined.
-  #
+
   remove_const(:RenderDefault)
+
   # noinspection RubyConstantNamingConvention
   RenderDefault = ->(input, options) do
     input unless options[:binding].skipable_empty_value?(input)
   end
 
-end
+  if DEBUG_REPRESENTABLE
 
-module Representable
+    include RepresentableDebug
 
-  include AppDebug
+    # =========================================================================
+    # :section: representable/deserializer.rb replacements
+    # =========================================================================
 
-  # ===========================================================================
-  # :section: representable/deserializer.rb replacements
-  # ===========================================================================
+    __debug_lambda(:input, %i[
+      AssignFragment
+      ReadFragment
+      Reader
+      OverwriteOnNil
+      Default
+      SkipParse
+      Deserializer
+      Deserialize
+      ParseFilter
+      Setter
+      SetValue
+    ])
 
-  __debug_lambda(:input, %i[
-    AssignFragment
-    ReadFragment
-    Reader
-    OverwriteOnNil
-    Default
-    SkipParse
-    Deserializer
-    Deserialize
-    ParseFilter
-    Setter
-    SetValue
-  ])
+    __debug_lambda(%i[
+      StopOnNotFound
+      StopOnNil
+      Stop
+      If
+      StopOnExcluded
+    ])
 
-  __debug_lambda(%i[
-    StopOnNotFound
-    StopOnNil
-    Stop
-    If
-    StopOnExcluded
-  ])
+    module CreateObject
 
-  module CreateObject
+      include RepresentableDebug
 
-    include AppDebug
+      __debug_lambda(:input, :Instance)
 
-    __debug_lambda(:input, :Instance)
+    end
 
-  end
+    # =========================================================================
+    # :section: representable/serializer.rb replacements
+    # =========================================================================
 
-  # ===========================================================================
-  # :section: representable/serializer.rb replacements
-  # ===========================================================================
+    __debug_lambda(:output, %i[
+      Getter
+      GetValue
+      Reader
+      Writer
+      RenderDefault
+      StopOnSkipable
+      RenderFilter
+      SkipRender
+      Serializer
+      Serialize
+      WriteFragment
+    ])
 
-  __debug_lambda(:output, %i[
-    Getter
-    GetValue
-    Reader
-    Writer
-    RenderDefault
-    StopOnSkipable
-    RenderFilter
-    SkipRender
-    Serializer
-    Serialize
-    WriteFragment
-  ])
+    __debug_lambda(%i[
+      As
+      AssignAs
+      AssignName
+    ])
 
-  __debug_lambda(%i[
-    As
-    AssignAs
-    AssignName
-  ])
+    # =========================================================================
+    # :section: Other replacements
+    # =========================================================================
 
-  # ===========================================================================
-  # :section: Other replacements
-  # ===========================================================================
+    module Object
 
-  module Object
+      class Binding
 
-    class Binding
+        include RepresentableDebug
 
-      include AppDebug
+        __debug_method(:input, 'Object', :read)
 
-      __debug_method(:input, 'Object', :read)
+      end
+
+    end
+
+    module ForCollection
+
+      include RepresentableDebug
+
+      __debug_method('ForCollection', %i[
+        for_collection
+        collection_representer!
+        collection_representer
+      ])
 
     end
 
   end
 
-  module ForCollection
-
-    include AppDebug
-
-    __debug_method('ForCollection', %i[
-      for_collection
-      collection_representer!
-      collection_representer
-    ])
-
-  end
-
-end if DEBUG_REPRESENTABLE
+end
 
 __loading_end(__FILE__)

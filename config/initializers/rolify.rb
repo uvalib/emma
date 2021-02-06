@@ -2,6 +2,8 @@
 #
 # frozen_string_literal: true
 # warn_indent:           true
+#
+# Setup and initialization for the Rolify gem.
 
 Rolify.configure do |config|
 

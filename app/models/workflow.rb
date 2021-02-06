@@ -15,25 +15,19 @@ class Workflow::Base
 
   include Workflow
 
-  # WORKFLOW_DEBUG
-  #
-  # @type [Boolean]
-  #
-  WORKFLOW_DEBUG = true?(ENV['WORKFLOW_DEBUG'])
-
   # Even if workflow debugging is enabled, displaying transition hooks may be
   # too noisy.
   #
   # @type [Boolean]
   #
-  TRANSITION_DEBUG = WORKFLOW_DEBUG && false
+  DEBUG_TRANSITION = DEBUG_WORKFLOW && false
 
   # Engage a simulated submission record instead of the actual database to
   # simplify trials at the command line or within IRB.
   #
   # @type [Boolean]
   #
-  SIMULATION = WORKFLOW_DEBUG && false
+  SIMULATION = DEBUG_WORKFLOW && false
 
   # Root workflow configuration.
   #
@@ -91,9 +85,6 @@ module Workflow::Base::Roles
     [primary, all]
   }.to_h.deep_freeze
 
-  # @type [Boolean]
-  WORKFLOW_DEBUG = Workflow::Base::WORKFLOW_DEBUG
-
   # ===========================================================================
   # :section: Workflow event definition options
   # ===========================================================================
@@ -107,8 +98,8 @@ module Workflow::Base::Roles
   IF_SYSTEM     = { if: ->(wf) { wf.system? } }
   IF_DEV        = { if: ->(wf) { wf.developer? } }
 
-  IF_SYS_DEBUG  = { if: ->(wf) { WORKFLOW_DEBUG && wf.system? } }
-  IF_DEV_DEBUG  = { if: ->(wf) { WORKFLOW_DEBUG && wf.developer? } }
+  IF_SYS_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.system? } }
+  IF_DEV_DEBUG  = { if: ->(wf) { DEBUG_WORKFLOW && wf.developer? } }
 
   # ===========================================================================
   # :section:
@@ -558,13 +549,51 @@ module Workflow::Base::Events
   end
 
   # ===========================================================================
+  # :section: Workflow overrides
+  # ===========================================================================
+
+  public
+
+  # Override :workflow for a Workflow subclass in order to redefine the
+  # workflow event methods.
+  #
+  # @param [Workflow, *] base
+  #
+  # @see Workflow::ClassMethods#workflow
+  #
+  def self.included(base)
+    return unless base.respond_to?(:workflow)
+    base.class_eval do
+
+      def self.workflow(&specification)
+        super(&specification)
+        EVENTS.each do |event|
+
+          # Override the method used to invoke the event to return *nil* if
+          # there are failures.
+          #
+          define_method("#{event}!") do |*args|
+            result = process_event!(event, *args)
+            result unless failures?
+          rescue => error
+            self.failures << error unless failures?
+            Log.warn { "#{event}!: #{error.class} #{error.message}" }
+          end
+
+        end
+      end
+
+    end
+  end
+
+  # ===========================================================================
   # :section: Workflow debugging
   # ===========================================================================
 
-  if Workflow::Base::WORKFLOW_DEBUG
+  if DEBUG_WORKFLOW
 
     include Workflow::Base::Roles
-    include Emma::Debug
+    include Emma::Debug::OutputMethods
 
     # =========================================================================
     # :section:
@@ -632,40 +661,6 @@ module Workflow::Base::Events
             end
 
             protected event
-
-          end
-        end
-
-      end
-    end
-
-  else
-
-    # Override :workflow for a Workflow subclass in order to redefine the
-    # workflow event methods.
-    #
-    # @param [Workflow, *] base
-    #
-    # @see Workflow::ClassMethods#workflow
-    #
-    def self.included(base)
-      return unless base.respond_to?(:workflow)
-      base.class_eval do
-
-        def self.workflow(&specification)
-          super(&specification)
-          EVENTS.each do |event|
-
-            # Override the method used to invoke the event to return *nil* if
-            # there are failures.
-            #
-            define_method("#{event}!") do |*args|
-              result = process_event!(event, *args)
-              result unless failures?
-            rescue => error
-              self.failures << error unless failures?
-              Log.warn { "#{event}!: #{error.class} #{error.message}" }
-            end
 
           end
         end
@@ -925,38 +920,49 @@ module Workflow::Base::States
 
   protected
 
-  # __debug_entry
-  #
-  # @param [Workflow::State] state        State that is being entered.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
-  #
-  def __debug_entry(state, _event = nil, *_event_args)
-    __debug_line do
-      state = state_object(state)
-      trans =
-        state.events.map { |evt, entry|
-          # noinspection RubyYardParamTypeMatch
-          event_label(evt, number: false) << '->' <<
-            entry.map { |e|
-              state_label(e.transitions_to, number: false)
-            }.join(',')
-        }.join('; ')
-      state = state_label(state)
-      "WORKFLOW >>>>> ENTER #{state} => [#{trans}]"
-    end
-  end
+  if not DEBUG_WORKFLOW
 
-  # __debug_exit
-  #
-  # @param [Workflow::State] state        State that is being exited.
-  # @param [Symbol]          _event       Triggering event
-  # @param [Array]           _event_args
-  #
-  def __debug_exit(state, _event = nil, *_event_args)
-    __debug_line do
-      'WORKFLOW <<<<< LEAVE ' + state_label(state)
+    def __debug_entry(*); end
+    def __debug_exit(*);  end
+
+  else
+
+    include Emma::Debug::OutputMethods
+
+    # __debug_entry
+    #
+    # @param [Workflow::State] state        State that is being entered.
+    # @param [Symbol]          _event       Triggering event
+    # @param [Array]           _event_args
+    #
+    def __debug_entry(state, _event = nil, *_event_args)
+      __debug_line do
+        state = state_object(state)
+        trans =
+          state.events.map { |evt, entry|
+            # noinspection RubyYardParamTypeMatch
+            event_label(evt, number: false) << '->' <<
+              entry.map { |e|
+                state_label(e.transitions_to, number: false)
+              }.join(',')
+          }.join('; ')
+        state = state_label(state)
+        "WORKFLOW >>>>> ENTER #{state} => [#{trans}]"
+      end
     end
+
+    # __debug_exit
+    #
+    # @param [Workflow::State] state        State that is being exited.
+    # @param [Symbol]          _event       Triggering event
+    # @param [Array]           _event_args
+    #
+    def __debug_exit(state, _event = nil, *_event_args)
+      __debug_line do
+        'WORKFLOW <<<<< LEAVE ' + state_label(state)
+      end
+    end
+
   end
 
 end
@@ -999,7 +1005,7 @@ class Workflow::Base
 
   public
 
-  IF_DEBUG    = { if: ->(*)  { WORKFLOW_DEBUG } }
+  IF_DEBUG    = { if: ->(*)  { DEBUG_WORKFLOW } }
   IF_COMPLETE = { if: ->(wf) { wf.user? && wf.complete? } }
   IF_READY    = { if: ->(wf) { wf.user? && wf.ready? } }
 
@@ -1305,19 +1311,6 @@ class Workflow::Base
     variant  = (opt.delete(:variant) || opt[:event])&.to_sym
     subclass = variant_table[variant] || variant_table[default_variant] || self
     subclass.new(data, **opt)
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  public
-
-  # Neutralize debugging methods when not debugging.
-  unless WORKFLOW_DEBUG
-    protected_instance_methods.each do |m|
-      module_eval("def #{m}(*); end") if m.start_with?('__debug')
-    end
   end
 
 end

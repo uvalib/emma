@@ -64,7 +64,7 @@ module UploadWorkflow::Single::Create::Actions
   # @see UploadWorkflow::External#repository_edit
   #
   def wf_finalize_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     assert_record_present
     if record.emma_native?
       self.succeeded = [record]
@@ -86,7 +86,7 @@ module UploadWorkflow::Single::Create::Actions
   # @see UploadWorkflow::Single::Actions#wf_remove_items
   #
   def wf_cancel_submission(*event_args)
-    __debug_args(binding)
+    __debug_items(binding)
     opt = event_args.extract_options!&.except(:redirect) || {}
     opt.reverse_merge!(index: false, force: false)
     wf_remove_items(*event_args, opt)

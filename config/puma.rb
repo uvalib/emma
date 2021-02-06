@@ -4,7 +4,7 @@
 # warn_indent:           true
 
 # Only needed when running "yard server".
-require_relative 'boot.rb' if $0.end_with?('/yard')
+require_relative 'boot'
 
 # Puma can serve each request in a thread from an internal thread pool.
 # The `threads` method setting takes two numbers: a minimum and maximum.
@@ -50,16 +50,25 @@ preload_app!
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart
 
+# Certain uploads seem to take Uppy a while to accumulate before it actually
+# starts to send the request.
+first_data_timeout 90 # seconds
+
 # =============================================================================
 # Logging
 # =============================================================================
 
-debug if true?(ENV['PUMA_DEBUG'])
-log_requests true?(ENV['PUMA_LOG_REQUESTS'])
+if true?(ENV['PUMA_LOG_REQUESTS'])
+  log_requests
+end
 
-before_fork        { puts 'PUMA before_fork: starting workers' }
-on_worker_boot     { puts 'PUMA on_worker_boot' }
-on_worker_fork     { puts 'PUMA on_worker_fork' }
-after_worker_fork  { puts 'PUMA after_worker_fork' }
-on_worker_shutdown { puts 'PUMA on_worker_shutdown' }
-out_of_band        { puts 'PUMA worker idle' }
+if true?(ENV['DEBUG_PUMA'])
+  debug
+  before_fork        { puts 'PUMA before_fork: starting workers' }
+  on_worker_boot     { puts 'PUMA on_worker_boot' }
+  on_worker_shutdown { puts 'PUMA on_worker_shutdown' }
+  on_worker_fork     { puts 'PUMA on_worker_fork' }
+  after_worker_fork  { puts 'PUMA after_worker_fork' }
+  on_refork          { puts 'PUMA on_refork' }
+  out_of_band        { puts 'PUMA worker idle' }
+end

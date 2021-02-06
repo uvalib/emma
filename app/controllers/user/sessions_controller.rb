@@ -14,6 +14,7 @@ class User::SessionsController < Devise::SessionsController
 
   include SessionConcern
   include FlashConcern
+  include BookshareConcern
 
   # Non-functional hints for RubyMine type checking.
   # :nocov:
@@ -38,10 +39,6 @@ class User::SessionsController < Devise::SessionsController
   prepend_before_action :allow_params_authentication!, only: %i[create sign_in_as]
   prepend_before_action :verify_signed_out_user,       only: %i[destroy]
   prepend_before_action :no_devise_timeout,            only: %i[create destroy sign_in_as]
-
-=begin # TODO: configure_sign_in_params ???
-  before_action :configure_sign_in_params, only: [:create]
-=end
 
   # ===========================================================================
   # :section: Session management
@@ -73,21 +70,33 @@ class User::SessionsController < Devise::SessionsController
     __debug_request
     super do
       api_update(user: resource)
-      set_flash_notice(__method__)
+      set_flash_notice
     end
+  rescue => error
+    auth_failure_redirect(message: error)
   end
 
-  # == DELETE /users/sign_out
+  # == DELETE /users/sign_out[?revoke=(true|false)]
   #
   # End login session.
   #
+  # If the "revoke" parameter is missing or "true" then the local session is
+  # ended _and_ its associated OAuth2 token is revoked.  If "revoke" is "false"
+  # then only the local session is ended.
+  #
+  # @see SessionConcern#delete_token
+  #
   def destroy
-    auth_data = session.delete('omniauth.auth')
-    __debug_route { { "session['omniauth.auth']" => auth_data } }
+    __debug_route
+    __debug_request
+    username = current_user&.uid&.dup
+    delete_token
     super do
       api_clear
-      set_flash_notice(__method__, auth_data)
+      set_flash_notice(user: username)
     end
+  rescue => error
+    auth_failure_redirect(message: error)
   end
 
   # ===========================================================================
@@ -107,24 +116,24 @@ class User::SessionsController < Devise::SessionsController
   # performed from OmniAuth::Strategies::Bookshare#callback_phase which
   # provides the value for 'omniauth.auth'.
   #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
   def sign_in_as
-    action = params[:action]
-    uid    = params[:uid] || params[:id]
-    token  = params[:token]
-    data   = params[:auth]
-    # noinspection RubyYardParamTypeMatch
-    self.resource = user =
-      uid &&
-        user_from_id(action, uid, token) ||
-        user_from_auth_data(action, data)
+    __debug_route
+    __debug_request
+    self.resource = user = user_from_id || user_from_auth_data
+    raise 'No authentication data' if user.blank?
+    __debug do
+      "#{__method__}: #{user.uid.inspect} #{session['omniauth.auth'].inspect}"
+    end
     sign_in(resource_name, user)
     api_update(user: user)
-    set_flash_notice(:create)
-    if params[:redirect]
-      redirect_to params[:redirect]
-    else
-      redirect_to after_sign_in_path_for(user)
-    end
+    check_user_validity
+    set_flash_notice(action: :create)
+    auth_success_redirect
+  rescue => error
+    auth_failure_redirect(message: error)
   end
 
   # ===========================================================================
@@ -133,39 +142,20 @@ class User::SessionsController < Devise::SessionsController
 
   protected
 
-  # Set `flash[:notice]` based on the current action and user name.
-  #
-  # @param [Symbol, String]          action
-  # @param [String, Hash, User, nil] user     Default: `current_user`.
-  #
-  # @return [void]
-  #
-  #--
-  # noinspection RubyNilAnalysis
-  #++
-  def set_flash_notice(action, user = nil)
-    user ||= resource
-    user = user['uid']    if user.is_a?(Hash)
-    user = user.uid       if user.respond_to?(:uid)
-    user = 'unknown user' if user.blank?
-    user = user.to_s
-    flash_notice(I18n.t("emma.user.sessions.#{action}.success", user: user))
-  end
-
   # Lookup (and update) User by login name.
   #
-  # @param [Symbol, String] action
-  # @param [String]         uid
-  # @param [String, nil]    token
+  # @param [String, nil] uid          Default: params[:uid] or params[:id].
+  # @param [String, nil] token        Default: params[:token]
   #
   # @return [User]                    The updated record of the indicated user.
   # @return [nil]                     No record for the indicated user.
   #
-  def user_from_id(action, uid, token = nil)
+  def user_from_id(uid: nil, token: nil)
+    uid ||= params[:uid] || params[:id]
+    return unless (uid = uid.to_s.strip.presence)
+    token  ||= params[:token]
+    # noinspection RubyNilAnalysis
     user_name = uid.downcase
-    __debug_route(action: action, uid: uid, token: (token || '-')) do
-      { email: user_name }
-    end
     session['omniauth.auth'] ||=
       OmniAuth::Strategies::Bookshare.synthetic_auth_hash(user_name, token)
     User.find_by(email: user_name).tap do |u|
@@ -176,21 +166,34 @@ class User::SessionsController < Devise::SessionsController
   # Create a User from authentication data (from the session or from the
   # User table of the database).
   #
-  # @param [Symbol, String]          action
-  # @param [OmniAuth::AuthHash, nil] auth_data
+  # @param [OmniAuth::AuthHash, nil] auth_data  Default: params[:auth]
   #
   # @return [User]                    Updated record of the indicated user.
   # @return [nil]                     If `session['omniauth.auth']` is invalid.
   #
-  def user_from_auth_data(action, auth_data = nil)
-    session.delete('omniauth.auth') if auth_data.is_a?(OmniAuth::AuthHash)
-    session['omniauth.auth'] ||= (
-      auth_data || OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
-    ).tap { |data| OmniAuth::Strategies::Bookshare.stored_auth_update(data) }
-    __debug_route(action: action, auth: (auth_data || '-')) do
-      { "session['omniauth.auth']": session['omniauth.auth'] }
+  def user_from_auth_data(auth_data = nil)
+    new_auth =
+      if auth_data.is_a?(OmniAuth::AuthHash)
+        auth_data
+      elsif !session['omniauth.auth']
+        OmniAuth::Strategies::Bookshare.synthetic_auth_hash(params)
+      end
+    if new_auth
+      session['omniauth.auth'] = new_auth
+      OmniAuth::Strategies::Bookshare.stored_auth_update(new_auth)
     end
     User.from_omniauth(session['omniauth.auth'])
+  end
+
+  # Trigger an exception if the signed-in user doesn't have a valid Bookshare
+  # OAuth2 token.
+  #
+  # @return [void]
+  #
+  # @raise [StandardError]  If Bookshare account info was unavailable.
+  #
+  def check_user_validity
+    bs_api.get_user_identity
   end
 
   # ===========================================================================
@@ -204,16 +207,6 @@ class User::SessionsController < Devise::SessionsController
   def no_devise_timeout
     request.env['devise.skip_timeout'] = true
   end
-
-=begin # TODO: configure_sign_in_params ???
-  # If you have extra params to permit, append them to the sanitizer.
-  #
-  # @return [void]
-  #
-  def configure_sign_in_params
-    devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
-  end
-=end
 
 end
 

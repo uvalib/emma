@@ -158,7 +158,7 @@ module UploadConcern
   # @return [Array<Hash>]
   #
   def fetch_data(**opt)
-    __debug_args("UPLOAD #{__method__}", binding)
+    __debug_items("UPLOAD #{__method__}", binding)
     src  = opt[:src].presence
     data = opt[:data].presence
     if data
@@ -326,7 +326,7 @@ module UploadConcern
     elsif Upload.id_term(id).values.first.blank?
       failure(:file_id)
     else
-      Log.error { "#{__method__}: #{id}: non-existent record" }
+      Log.warn { "#{__method__}: #{id}: non-existent record" }
       failure(:find, id)
     end
   end
@@ -340,9 +340,9 @@ module UploadConcern
   # @return [nil]                     Bad data and/or no object created.
   #
   def proxy_get_record(sid, host)
-    data = sid && Faraday.get("#{host}/upload/#{sid}.json").body.presence
-    data &&= json_parse(data)
-    data &&= data[:entry]
+    data = sid && Faraday.get("#{host}/upload/show/#{sid}.json").body
+    data = json_parse(data) || {}
+    data = data[:response]  || data
     Upload.new(data) if data.present?
   end
 
@@ -478,7 +478,7 @@ module UploadConcern
   #
   def post_response(status, item = nil, redirect: nil, xhr: nil, meth: nil)
     meth ||= calling_method
-    __debug_args("UPLOAD #{meth} #{__method__}", binding)
+    __debug_items("UPLOAD #{meth} #{__method__}", binding)
     status, item = [nil, status] if status.is_a?(Exception)
 
     if item.is_a?(Exception)

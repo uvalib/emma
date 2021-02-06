@@ -29,6 +29,16 @@ module UserConcern
     #
     def authenticate_user!; end
 
+    # Defined by Devise.
+    #
+    # @return [User, nil]
+    #
+    # @see Devise::Controllers::Helpers#define_helpers
+    #
+    # @private
+    #
+    def current_user; end
+
   end
   # :nocov:
 
@@ -118,9 +128,8 @@ module UserConcern
   # @return [void]
   #
   def update_user
-    data   = session['omniauth.auth']
-    warden = request.env['warden']
-    @user  = data && warden&.set_user(User.from_omniauth(data))
+    data  = session['omniauth.auth']
+    @user = data && warden.set_user(User.from_omniauth(data))
   end
 
 end

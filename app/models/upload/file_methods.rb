@@ -235,7 +235,7 @@ module Upload::FileMethods
   # @return [void]
   #
   def promote_file(no_raise: true)
-    __debug_args(binding)
+    __debug_items(binding)
     promote_cached_file(no_raise: no_raise)
   end
 
@@ -249,7 +249,7 @@ module Upload::FileMethods
   # @return [void]
   #
   def delete_file(no_raise: true, field: nil)
-    __debug_args(binding)
+    __debug_items(binding)
     return if destroyed?
     if field.nil? && active_attached_file
       active_file_attacher.destroy
@@ -493,7 +493,7 @@ module Upload::FileMethods
   # @return [void]
   #
   def promote_cached_file(no_raise: false, keep_cached: false)
-    __debug_args(binding)
+    __debug_items(binding)
     return unless active_attach_cached
     old_file   = !keep_cached
     old_file &&= active_file&.data
@@ -512,7 +512,7 @@ module Upload::FileMethods
   # @return [void]
   #
   def delete_cached_file(no_raise: false)
-    __debug_args(binding)
+    __debug_items(binding)
     return unless active_attach_cached
     active_file_attacher.destroy
     active_file_attacher.set(nil)
@@ -530,11 +530,11 @@ module Upload::FileMethods
   # Add a log message for an exception.
   #
   # @param [Exception] excp
-  # @param [Symbol]    method         Calling method.
+  # @param [Symbol]    meth           Calling method.
   #
   # @return [nil]
   #
-  def log_exception(excp, method = nil)
+  def log_exception(excp, meth = nil)
     error = warning = nil
     case excp
       when Shrine::FileNotFound      then warning = 'FILE_NOT_FOUND'
@@ -544,7 +544,7 @@ module Upload::FileMethods
       else                                error   = "#{excp.class} unexpected"
     end
     Log.add(error ? Log::ERROR : Log::WARN) do
-      "#{method || __method__}: #{excp.message} [#{error || warning}]"
+      "#{meth || __method__}: #{excp.message} [#{error || warning}]"
     end
   end
 

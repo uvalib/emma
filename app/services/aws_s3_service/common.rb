@@ -213,7 +213,7 @@ module AwsS3Service::Common
   # noinspection RubyScope, RubyNilAnalysis
   #++
   def api_list_objects(bucket, filter = nil, **opt)
-    __debug_args(binding)
+    __debug_items(binding)
     client   = opt.delete(:client)
     client ||= (bucket.client if bucket.is_a?(Aws::S3::Bucket))
     client ||= s3_client(**opt)

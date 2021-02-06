@@ -15,23 +15,11 @@ module OAuth2
   #
   module Strategy::AuthCodeExt
 
-=begin
-    # The required query parameters for the authorize URL
-    #
-    # @param [Hash] params additional query parameters
-    def authorize_params(params = {})
-      params.merge('response_type' => 'code', 'client_id' => @client.id)
-    end
-=end
+    # =========================================================================
+    # :section: OAuth2::Strategy::AuthCode overrides
+    # =========================================================================
 
-=begin
-    # The authorization URL endpoint of the provider
-    #
-    # @param [Hash] params additional query parameters for the URL
-    def authorize_url(params = {})
-      @client.authorize_url(authorize_params.merge(params))
-    end
-=end
+    public
 
     # Retrieve an access token given the specified validation code.
     #
@@ -52,6 +40,38 @@ module OAuth2
       token_params.merge!(params)
       token_params.stringify_keys!
       @client.get_token(token_params, opts)
+    end
+
+    # =========================================================================
+    # :section:
+    # =========================================================================
+
+    public
+
+    # The required query parameters for the revoke URL
+    #
+    # @param [Hash, nil] params       Additional query parameters.
+    #
+    # @return [Hash]
+    #
+    def revoke_params(params = nil)
+      result = { grant_type: 'authorization_code' }
+      # noinspection RubyYardReturnMatch
+      params&.symbolize_keys&.merge!(result) || result
+    end
+
+    # Indicate to the provider that the token should be invalidated (in order
+    # to terminate the session).
+    #
+    # @param [OAuth2::AccessToken, Hash, String] token
+    # @param [Hash, nil] params       Additional query parameters.
+    # @param [Hash, nil] opts         Options.
+    #
+    # @return [OAuth2::Response]
+    # @return [nil]                   If no token was provided or found.
+    #
+    def revoke_token(token, params = nil, opts = nil)
+      @client.revoke_token(token, revoke_params(params), opts)
     end
 
   end

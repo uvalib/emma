@@ -55,7 +55,15 @@ $(document).on('turbolinks:before-cache', function() {
  * @returns {jQuery}
  */
 function flashContainer(selector) {
-    return $(selector || FLASH_ROOT_SELECTOR);
+    let $fc;
+    if (selector instanceof jQuery) {
+        $fc = selector;
+    } else if (typeof selector === 'string') {
+        $fc = $(selector);
+    } else {
+        $fc = $(FLASH_ROOT_SELECTOR);
+    }
+    return $fc;
 }
 
 /**

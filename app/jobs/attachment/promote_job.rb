@@ -22,10 +22,10 @@ class Attachment::PromoteJob < ApplicationJob
   # @note Currently unused
   #
   def perform(record, name, data)
-    __debug_args(binding)
+    __debug_items(binding)
     attacher =
       FileUploader::Attacher.retrieve(model: record, name: name, file: data)
-    __debug("JOB #{__method__} | attacher = #{attacher.inspect}")
+    __debug_line("JOB #{__method__}") { { attacher: attacher } }
     # attacher.create_derivatives if record.is_a?(Album)
     attacher.atomic_promote
   rescue Shrine::AttachmentChanged => e

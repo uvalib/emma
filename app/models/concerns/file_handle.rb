@@ -13,15 +13,6 @@ require 'down/chunked_io'
 #
 class FileHandle
 
-  include Emma::Debug
-
-  # When *true* invocation of each low-level IO operation triggers a log debug
-  # entry.
-  #
-  # @type [Boolean]
-  #
-  IO_DEBUG = true?(ENV['IO_DEBUG'])
-
   # ===========================================================================
   # :section: Class methods
   # ===========================================================================
@@ -88,7 +79,29 @@ class FileHandle
 
   private
 
-  if IO_DEBUG
+  if not DEBUG_IO
+
+    def __debug_handle(*); end
+
+    delegate_missing_to :@handle
+
+  else
+
+    include Emma::Debug::OutputMethods
+
+    # Debug method for this class.
+    #
+    # @param [Array] args
+    # @param [Hash]  opt
+    # @param [Proc]  block              Passed to #__debug_items.
+    #
+    # @return [void]
+    #
+    def __debug_handle(*args, **opt, &block)
+      sep = opt[:separator] ||= ' | '
+      opt[:leader] = [*opt[:leader], 'FileHandle'].compact.join(sep)
+      __debug_items(*args, opt, &block)
+    end
 
     # Indicate whether the underlying object implements the given method.
     #
@@ -110,37 +123,12 @@ class FileHandle
     def method_missing(name, *args, &block)
       __debug_handle(*args, leader: ("#{@handle.class} %-4s" % name))
       @handle.send(name, *args, &block)
-    rescue => error
+    rescue => err
       Log.error do
-        "!!! EXCEPTION IN FileHandle: #{error.class} #{error.message}\n" +
-          caller.pretty_inspect
+        "FileHandle: #{err.class} #{err.message}\n#{caller.pretty_inspect}"
       end
     end
 
-  else
-
-    delegate_missing_to :@handle
-
-  end
-
-  # ===========================================================================
-  # :section:
-  # ===========================================================================
-
-  protected
-
-  # Debug method for this class.
-  #
-  # @param [Array] args
-  # @param [Hash]  opt
-  # @param [Proc]  block              Passed to #__debug_items.
-  #
-  # @return [void]
-  #
-  def __debug_handle(*args, **opt, &block)
-    opt[:separator] ||= ' | '
-    opt[:leader] = [*opt[:leader], 'FileHandle'].compact.join(opt[:separator])
-    __debug_items(*args, opt, &block)
   end
 
 end

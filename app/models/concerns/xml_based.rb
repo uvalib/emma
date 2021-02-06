@@ -240,18 +240,13 @@ module XmlBased
 
   protected
 
-  DEBUGGING_PARSE = true
+  if not DEBUG_XML_PARSE
 
-  if !DEBUGGING_PARSE
-
-    # The debugging method is neutralized unless #DEBUGGING_PARSE is *true*.
     def __debug_parse(*); end
 
   else
 
-    include Emma::Debug
-
-    public
+    include Emma::Debug::OutputMethods
 
     # Display console output.
     #

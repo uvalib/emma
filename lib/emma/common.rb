@@ -342,12 +342,10 @@ module Emma::Common
     # noinspection RubyYardReturnMatch
     call_stack&.find do |line|
       _file_line, name = line.to_s.split(/:in\s+/)
-      name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1').presence
-      case name
-        when nil, 'each', 'map', '__output' then next
-        when /^(block|rescue)\s+in\s+(.*)$/ then return $2
-        else                                     return name
-      end
+      name = name.to_s.sub(/^[ `]*(.*?)[' ]*$/, '\1')
+      next if name.blank?
+      next if %w(each map __output __output_impl).include?(name)
+      return name.match(/^(block|rescue)\s+in\s+(.*)$/) ? $2 : name
     end
   end
 

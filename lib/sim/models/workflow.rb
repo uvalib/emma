@@ -18,8 +18,8 @@ public
 
 module Workflow::Base::Simulation
 
-  include Emma::Debug
   include Workflow::Base::Data
+  include Emma::Debug::OutputMethods
 
   # ===========================================================================
   # :section: Classes
@@ -308,6 +308,6 @@ module Workflow::Base::Transitions
     end
   end
 
-end if Workflow::Base::TRANSITION_DEBUG
+end if Workflow::Base::DEBUG_TRANSITION
 
 __loading_end(__FILE__)

@@ -51,7 +51,7 @@ require 'shrine'
 #   @return [Shrine::Attacher]
 #
 # == Implementation Notes
-# If #SHRINE_DEBUG is true then the overrides defined in Shrine::UploaderDebug
+# If #DEBUG_SHRINE is true then the overrides defined in Shrine::UploaderDebug
 # (lib/ext/shrine/lib/shrine.rb) apply to the methods inherited from Shrine.
 #
 class FileUploader < Shrine
@@ -81,7 +81,6 @@ class FileUploader < Shrine
 
   Attacher.validate do
     # @see Shrine::Plugins::Validation::AttacherClassMethods#validate
-    $stderr.puts "*** START >>> Attacher.validate"
     if FileNaming::STRICT_FORMATS
       fmt      = FileNaming.mime_to_fmt[file.mime_type]&.first
       exts     = fmt && FileNaming.file_extensions[fmt] || [file.extension]
@@ -93,7 +92,6 @@ class FileUploader < Shrine
     else
       validate_min_size(MIN_SIZE, message: (ERROR[:min_size] % nil).squish)
     end
-    $stderr.puts "*** END   <<< Attacher.validate | errors = #{errors.inspect}"
   end
 
   # ===========================================================================
@@ -102,7 +100,10 @@ class FileUploader < Shrine
 
   public
 
-  if SHRINE_DEBUG
+  if DEBUG_SHRINE
+
+    include Shrine::ExtensionDebugging
+    extend  Shrine::ExtensionDebugging
 
     # =========================================================================
     # :section: Shrine::ClassMethods overrides
@@ -119,9 +120,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.upload(io, storage, **options)
-      __debug_uploader(__method__) do
-        { io: io, storage: storage, options: options }
-      end
+      __ext_debug { { io: io, storage: storage, options: options } }
       super
     end
 
@@ -134,7 +133,7 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def self.uploaded_file(object)
-      __debug_uploader(__method__) { { object: object } }
+      __ext_debug { { object: object } }
       super
     end
 
@@ -145,8 +144,10 @@ class FileUploader < Shrine
     # @return [void]
     #
     def self.with_file(io)
-      __debug_uploader(__method__) { { io: io } }
+      __ext_debug { { io: io } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # =========================================================================
@@ -160,7 +161,7 @@ class FileUploader < Shrine
     # @param [Symbol] storage_key
     #
     def initialize(storage_key)
-      __debug_uploader('NEW') { { storage_key: storage_key } }
+      __ext_debug { { storage_key: storage_key } }
       super
     end
 
@@ -172,8 +173,10 @@ class FileUploader < Shrine
     # @return [Shrine::UploadedFile]
     #
     def upload(io, **options)
-      __debug_uploader(__method__.to_s) { { io: io, options: options } }
+      __ext_debug { { io: io, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # generate_location
@@ -185,10 +188,10 @@ class FileUploader < Shrine
     # @return [String]
     #
     def generate_location(io, metadata: {}, **options)
-      __debug_uploader(__method__.to_s) do
-        { io: io, metadata: metadata, options: options }
-      end
+      __ext_debug { { io: io, metadata: metadata, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
 
     # extract_metadata
@@ -199,40 +202,11 @@ class FileUploader < Shrine
     # @return [Hash{String=>String,Integer}]
     #
     def extract_metadata(io, **options)
-      __debug_uploader(__method__.to_s) { { io: io, options: options } }
+      __ext_debug { { io: io, options: options } }
+      start = timestamp
       super
+        .tap { __ext_debug(start) }
     end
-
-    # =========================================================================
-    # :section:
-    # =========================================================================
-
-    private
-
-    module DebugMethods
-
-      include Emma::Debug
-
-      # Debug method for this class.
-      #
-      # @param [Array] args
-      # @param [Hash]  opt
-      # @param [Proc]  block            Passed to #__debug_items.
-      #
-      # @return [void]
-      #
-      def __debug_uploader(*args, **opt, &block)
-        meth = args.shift
-        meth = meth.to_s.upcase if meth.is_a?(Symbol)
-        opt[:leader] = ':::SHRINE::: FileUploader'
-        opt[:separator] ||= ' | '
-        __debug_items(meth, *args, opt, &block)
-      end
-
-    end
-
-    include DebugMethods
-    extend  DebugMethods
 
   end
 

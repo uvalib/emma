@@ -12,7 +12,6 @@ __loading_begin(__FILE__)
 #
 class FileObject
 
-  include Emma::Debug
   include FileNaming
 
   # ===========================================================================
@@ -90,12 +89,6 @@ class FileObject
 
     include FileNaming
 
-    # Set to show registration of unique MIME types during startup.
-    #
-    # @type [Boolean]
-    #
-    MIME_TYPE_DEBUG = true?(ENV['MIME_TYPE_DEBUG'])
-
     # =========================================================================
     # :section:
     # =========================================================================
@@ -160,19 +153,25 @@ class FileObject
 
     private
 
-    # __debug_mime
-    #
-    # @param [Binding] bind           Passed to #__debug_args.
-    # @param [Proc]    block          Passed to #__debug_args.
-    #
-    # @return [void]
-    #
-    def __debug_mime(bind, &block)
-      __debug_args(bind, &block)
-    end
+    if not DEBUG_MIME_TYPE
 
-    unless MIME_TYPE_DEBUG
       def __debug_mime(*); end
+
+    else
+
+      include Emma::Debug::OutputMethods
+
+      # __debug_mime
+      #
+      # @param [Binding] bind         Passed to #__debug_items.
+      # @param [Proc]    block        Passed to #__debug_items.
+      #
+      # @return [nil]
+      #
+      def __debug_mime(bind, &block)
+        __debug_items(bind, &block)
+      end
+
     end
 
   end

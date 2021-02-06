@@ -149,7 +149,9 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == POST /upload
+  # == POST  /upload/create
+  # == PUT   /upload/create
+  # == PATCH /upload/create
   #
   # Invoked from the handler for the Uppy 'upload-success' event to finalize
   # the creation of a new EMMA entry.
@@ -172,6 +174,7 @@ class UploadController < ApplicationController
 
   # == GET /upload/edit/:id
   # == GET /upload/edit/SELECT
+  # == GET /upload/edit_select
   #
   # Initiate modification of an existing EMMA entry by prompting for metadata
   # changes and/or upload of a replacement file.
@@ -214,6 +217,7 @@ class UploadController < ApplicationController
   # == GET /upload/delete/SID[?...]
   # == GET /upload/delete/RANGE_LIST[?...]
   # == GET /upload/delete/SELECT[?...]
+  # == GET /upload/delete_select
   #
   # Initiate removal of an existing EMMA entry along with its associated file.
   #
@@ -334,7 +338,8 @@ class UploadController < ApplicationController
     flash_now_failure(error)
   end
 
-  # == PUT /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # == PUT   /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
+  # == PATCH /upload/bulk[?source=FILE&batch=true|SIZE&prefix=STRING]
   #
   # Modify or create the specified Upload entries, download and store the
   # associated files (if changed), and post the new/modified entries to the
@@ -548,7 +553,7 @@ class UploadController < ApplicationController
     elsif bs_link?(@url)
       redirect_to bs_retrieval_path(url: @url, forUser: @member)
     else
-      Log.error { "/retrieval can't handle #{@url.inspect}"}
+      Log.error { "/retrieval can't handle #{@url.inspect}" }
     end
   end
 

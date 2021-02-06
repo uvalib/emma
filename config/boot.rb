@@ -52,7 +52,7 @@ TRUE_VALUES  = %w(1 yes true on).freeze
 #
 FALSE_VALUES = %w(0 no false off).freeze
 
-# Indicate whether the item represents a true value.
+# Indicate whether the item represents an explicit *true* value.
 #
 # @param [TrueClass, FalseClass, String, Symbol, *] value
 #
@@ -62,7 +62,7 @@ def true?(value)
   TRUE_VALUES.include?(value.to_s.strip.downcase)
 end
 
-# Indicate whether the item represents a true value.
+# Indicate whether the item represents an explicit *false* value.
 #
 # @param [TrueClass, FalseClass, String, Symbol, *] value
 #
@@ -127,12 +127,18 @@ def rails_application?
     @in_rails &&= $*.none? { |arg| %w(-h --help).include?(arg) }
     @in_rails &&= (
       !!ENV['IN_PASSENGER'] ||
-      $0.to_s.start_with?('spring app') ||
-      ($0.to_s.end_with?('rails', 'spring') && $*.include?('server'))
+      $0.start_with?('spring app') ||
+      ($0.end_with?('rails', 'spring') && $*.include?('server'))
     )
   end
   @in_rails
 end
+
+# =============================================================================
+# Environment variables
+# =============================================================================
+
+require_relative 'env_vars'
 
 # =============================================================================
 # Pre-startup output.
@@ -158,7 +164,7 @@ if rails_application?
         .gsub(/"([^"]+)"=>/, '... \1 = ')
   end
 
-elsif !$0.to_s.end_with?('rails', 'rake')
+elsif !$0.end_with?('rails', 'rake')
 
   # Announce atypical executions (like irb or pry).
   STDERR.puts "Running #{$0.inspect}"

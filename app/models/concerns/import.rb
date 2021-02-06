@@ -10,19 +10,12 @@ __loading_begin(__FILE__)
 module Import
 
   include Emma::Common
-  include Emma::Debug
 
   # ===========================================================================
   # :section:
   # ===========================================================================
 
   public
-
-  # Set to show low-level bulk import processing.
-  #
-  # @type [Boolean]
-  #
-  IMPORT_DEBUG = true?(ENV['IMPORT_DEBUG'])
 
   # The prefix applied to imported field names that have not otherwise been
   # assigned a field name to be used within :emma_data.
@@ -402,15 +395,29 @@ module Import
 
   protected
 
-  def __debug_import(label, k, v)
-    label = label.to_s.upcase
-    __debug_line('import', label, leader: ',,,,,,,,,,') do
-      { k: k, v: v }
-    end
-  end
+  if not DEBUG_IMPORT
 
-  unless IMPORT_DEBUG
     def __debug_import(*); end
+
+  else
+
+    include Emma::Debug::OutputMethods
+
+    # __debug_import
+    #
+    # @param [String, Symbol] label
+    # @param [String, Symbol] k
+    # @param [*]              v
+    #
+    # @return [nil]
+    #
+    def __debug_import(label, k, v)
+      label = label.to_s.upcase
+      __debug_line('import', label, leader: ',,,,,,,,,,') do
+        { k: k, v: v }
+      end
+    end
+
   end
 
 end

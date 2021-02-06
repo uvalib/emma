@@ -33,7 +33,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # == GET  /users/auth/bookshare
   # == POST /users/auth/bookshare
-  # 
+  #
   # Initiate authentication with the remote service.
   #
   def passthru
@@ -44,7 +44,7 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   # == GET  /users/auth/bookshare/callback
   # == POST /users/auth/bookshare/callback
-  # 
+  #
   # Callback from the Bookshare auth service to finalize authentication.
   #
   def bookshare
@@ -52,28 +52,36 @@ class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     auth_data &&= OmniAuth::AuthHash.new(auth_data)
     __debug_route { { "env['omniauth.auth']" => auth_data } }
     __debug_request
-    user = User.from_omniauth(auth_data)
-    if user&.persisted?
-      __debug_line { [__debug_route_label, 'user persisted'] }
-      session['omniauth.auth'] = auth_data
-      last_operation_update
-      sign_in_and_redirect(user)
-      set_flash_message(:notice, :success, kind: 'Bookshare')
-
-    else
-      __debug_line { [__debug_route_label, 'USER NOT PERSISTED'] }
-      failure
+    if auth_data.blank?
+      raise 'No authentication information received' # TODO: I18n
+    elsif (user = User.from_omniauth(auth_data)).blank?
+      raise 'Could not locate user account' # TODO: I18n
+    elsif !user&.persisted?
+      raise 'Could not create user account' # TODO: I18n
     end
+    __debug_line { [__debug_route_label, 'user persisted'] }
+    session['omniauth.auth'] = auth_data
+    last_operation_update
+    set_flash_message(:notice, :success, kind: 'Bookshare')
+    sign_in_and_redirect(user)
+  rescue => error
+    auth_failure_redirect(message: error)
   end
 
   # == GET /users/auth/bookshare/failure
-  # 
+  #
   # Called from OmniAuth::FailureEndpoint#redirect_to_failure and redirects to
   # Devise::OmniauthCallbacksController#after_omniauth_failure_path_for.
   #
   def failure
+    __debug { "failure endpoint: request_format          = #{request_format.inspect}"}  # TODO: remove - testing
+    __debug { "failure endpoint: is_navigational_format? = #{is_navigational_format?}"} # TODO: remove - testing
+    __debug { "failure endpoint: is_flashing_format?     = #{is_flashing_format?}"}     # TODO: remove - testing
+    __debug { "failure endpoint: failed_strategy         = #{failed_strategy.inspect}"} # TODO: remove?
+    __debug { "failure endpoint: failure_message         = #{failure_message.inspect}"} # TODO: remove?
     __debug_route
     __debug_request
+    set_flash_alert # TODO: remove? - testing
     super
   end
 
