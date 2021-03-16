@@ -51,10 +51,10 @@ class IaDownloadService::Error < ApiService::Error
           result += notes
           row = 0
           result.map! do |line|
-            css = %w(line)
-            css << 'first' if row.zero?
+            classes = %w(line)
+            classes << 'first' if row.zero?
             row += 1
-            html_div(line, class: css_classes(css))
+            html_div(line, class: css_classes(*classes))
           end
         end
       end

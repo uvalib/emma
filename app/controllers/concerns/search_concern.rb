@@ -46,15 +46,15 @@ module SearchConcern
   #
   # @return [*]                       Same type as *value*.
   #
-  def normalize_keys(value)
+  def sanitize_keys(value)
     if value.is_a?(Hash)
       value
         .transform_keys   { |k| k.to_s.downcase.tr('^a-z0-9_', '_') }
-        .transform_values { |v| normalize_keys(v) }
+        .transform_values { |v| sanitize_keys(v) }
     elsif value.is_a?(Array) && (value.size > 1)
-      value.map { |v| normalize_keys(v) }
+      value.map { |v| sanitize_keys(v) }
     elsif value.is_a?(Array)
-      normalize_keys(value.first)
+      sanitize_keys(value.first)
     elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
       value.split(FileFormat::FILE_FORMAT_SEP).reject(&:blank?)
     else

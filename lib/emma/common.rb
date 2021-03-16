@@ -251,16 +251,19 @@ module Emma::Common
     return opt, rem
   end
 
-  # Recursive remove blank items from a hash.
+  # Recursively remove blank items from a hash.
   #
-  # @param [Hash, nil] item
+  # @param [Hash, nil]    item
+  # @param [Boolean, nil] reduce      If *true* transform arrays with a single
+  #                                     element into scalars.
   #
   # @return [Hash]
   #
   # @see #_remove_blanks
   #
-  def reject_blanks(item)
-    _remove_blanks(item) || {}
+  def reject_blanks(item, reduce = false)
+    # noinspection RubyYardReturnMatch
+    item.is_a?(Hash) && _remove_blanks(item, reduce) || {}
   end
 
   # ===========================================================================
@@ -272,37 +275,41 @@ module Emma::Common
   # Recursively remove blank items from an object.
   #
   # @param [Hash, Array, *] item
+  # @param [Boolean, nil]   reduce    If *true* transform arrays with a single
+  #                                     element into scalars.
   #
   # @return [Hash, Array, *, nil]
   #
   # == Variations
   #
-  # @overload remove_blanks(hash)
-  #   @param [Hash] hash
+  # @overload _remove_blanks(hash)
+  #   @param [Hash]         hash
+  #   @param [Boolean, nil] reduce
   #   @return [Hash, nil]
   #
-  # @overload remove_blanks(array)
-  #   @param [Array] array
+  # @overload _remove_blanks(array)
+  #   @param [Array]        array
+  #   @param [Boolean, nil] reduce
   #   @return [Array, nil]
   #
-  # @overload remove_blanks(item)
-  #   @param [*] item
+  # @overload _remove_blanks(item)
+  #   @param [*]            item
+  #   @param [Boolean, nil] reduce
   #   @return [*, nil]
   #
   # == Usage Notes
   # Empty strings and nils are considered blank, however an item or element
   # with the explicit value of *false* is not considered blank.
   #
-  def _remove_blanks(item)
-    case item
-      when TrueClass, FalseClass
-        item
-      when Hash
-        item.map { |k, v| [k, send(__method__, v)] }.to_h.compact.presence
-      when Array
-        item.map { |v| send(__method__, v) }.compact.presence
-      else
-        item.presence
+  def _remove_blanks(item, reduce = false)
+    if item.is_a?(Hash)
+      item.transform_values { |v| _remove_blanks(v, reduce) }.compact.presence
+    elsif item.is_a?(Array)
+      result = item.map { |v| _remove_blanks(v, reduce) }.compact.presence
+      (reduce && (result&.size == 1)) ? result.first : result
+    else
+      # noinspection RubyYardReturnMatch
+      item.is_a?(FalseClass) ? item : item.presence
     end
   end
 

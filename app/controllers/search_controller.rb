@@ -138,7 +138,7 @@ class SearchController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **)
-    normalize_keys(item)
+    sanitize_keys(item)
   end
 
 end
