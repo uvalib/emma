@@ -214,16 +214,16 @@ $(document).on('turbolinks:load', function() {
      * Display a description of the workflow state group button of interest
      * within the element dedicated to that purpose.
      *
-     * @param {jQuery.Event|Selector} ev
+     * @param {SelectorOrEvent} ev
      */
     function showGroupNote(ev) {
-        let target   = (typeof ev === 'object') && ev.currentTarget || ev;
+        let target   = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
         let $target  = $(target);
         const indent = $target.position().left;
         const text   = $target.attr('aria-label') || $target.attr('title');
         $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
-        $group_select_note.css('visibility', 'visible');
+        toggleVisibility($group_select_note, true);
     }
 
     /**
@@ -232,7 +232,7 @@ $(document).on('turbolinks:load', function() {
      */
     function hideGroupNote() {
         $group_select_note.html('&nbsp;'); // Keep filled to maintain height.
-        $group_select_note.css('visibility', 'hidden');
+        toggleVisibility($group_select_note, false);
     }
 
     // ========================================================================

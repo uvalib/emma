@@ -1,14 +1,11 @@
 <%# app/views/layouts/_page_controls.html.erb -%>
 <%-
   # Controller- and action-specific page controls.
-
-  # noinspection RubyUnusedLocalVariable
-  skip     ||= !show_page_controls? and return
-  label_id ||= 'page-controls'
-  controls   = render_page_controls(label_id: label_id) or return
-
+  l_id   ||= unique_id('page-controls')
+  controls = (render_page_controls(label_id: l_id) if show_page_controls?)
+  return unless controls.present?
 -%>
 
-<nav class="layout-section page controls" aria-labelledby="<%= label_id -%>">
+<nav class="layout-section page controls" aria-labelledby="<%= l_id -%>">
   <%= controls %>
 </nav>

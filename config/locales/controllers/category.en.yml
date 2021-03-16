@@ -22,7 +22,7 @@ en:
       search_bar:
         enabled:        false
 
-      search_controls:
+      search_filters:
 
         size:
           tooltip:      'Specify the number of categories per page'

@@ -38,9 +38,11 @@ en:
           placeholder:  'Enter catalog search terms...'
 
       search_bar:
+        enabled:        true
         label:          'Catalog Search'
 
-      search_controls:
+      search_filters:
+        enabled:        true
 
         format:
           values:       !ruby/symbol BsFormatType

@@ -18,6 +18,18 @@
     visibility: hidden !important;
 }
 
+// Hide the contents of the element while maintaining horizontal displacement.
+%invisible-height {
+    @extend %invisible;
+    height: 0;
+}
+
+// Hide the contents of the element while maintaining vertical displacement.
+%invisible-width {
+    @extend %invisible;
+    width: 0;
+}
+
 // Make focus outline more easily seen.
 %focus {
     outline:        2px solid $focus-accent;
@@ -282,7 +294,16 @@ fieldset {
 // Include to hide the contents of an element while maintaining the space it
 // occupies on the display.
 .invisible {
+
     @extend %invisible;
+
+    &.preserve-width {
+        @extend %invisible-height;
+    }
+
+    &.preserve-height {
+        @extend %invisible-width;
+    }
 }
 
 // Include to "de-activate" an active element like a button or link.

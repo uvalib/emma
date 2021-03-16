@@ -80,9 +80,10 @@ module TestHelper::SystemTests::Index
   def title_terms(**terms)
     show_type   = !terms.key?(:label) || terms.delete(:label)
     quote_value = !terms.key?(:quote) || terms.delete(:quote)
+    query_keys  = SearchTermsHelper::QUERY_PARAMETERS[:search]
     terms.map { |k, v|
       k =
-        if show_type && !SearchTermsHelper::QUERY_PARAMETERS.include?(k)
+        if show_type && !query_keys.include?(k)
           n = v.is_a?(Enumerable) ? v.size : 1
           inflection(k.to_s.capitalize, n)
         end

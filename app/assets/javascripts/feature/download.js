@@ -183,7 +183,7 @@ $(document).on('turbolinks:load', function() {
         name:    'member-select',
         panel: {
             tag:     'form',
-            class:   cssClasses('member-select', Emma.Popup.panel.class),
+            class:   cssClass('member-select', Emma.Popup.panel.class),
             tooltip: ''
         },
         title: {

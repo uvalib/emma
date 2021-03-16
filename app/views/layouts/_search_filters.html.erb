@@ -1,0 +1,16 @@
+<%# app/views/layouts/_search_filters.html.erb -%>
+<%-
+  # Search filter controls.
+  position   ||= :complete
+  target     ||= search_input_target
+  filter_panel = target && search_filter_container(target: target)
+  return unless filter_panel.present?
+-%>
+
+<div class="layout-section search filters"  data-target="<%= target -%>">
+  <div class="enclosure shadow <%= position -%>">
+    <%= filter_panel %>
+    <%= search_controls %>
+    <%= search_mode_marker %>
+  </div>
+</div>

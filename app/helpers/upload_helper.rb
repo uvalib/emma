@@ -1035,7 +1035,7 @@ module UploadHelper
   def upload_parent_entry_select(**opt)
     css_selector = '.parent-entry-select'
     id     = 'parent-entry-search'
-    type   = :search
+    target = :search
     b_opt  = { role: 'button', tabindex: 0 }
 
     # Directions.
@@ -1047,10 +1047,10 @@ module UploadHelper
     title  = html_div(title, id: t_id, class: 'search-title')
 
     # Text input.
-    input  = search_input(id, type)
+    input  = search_input(id, target)
 
     # Submit button.
-    submit = search_button_label(type)
+    submit = search_button_label(target)
     submit = html_div(submit, b_opt.merge(class: 'search-button'))
 
     # Cancel button.
@@ -1287,7 +1287,7 @@ module UploadHelper
                 f.text_field(url_param, value: opt[url_param].presence)
             end
           elsif opt[url_param].present?
-            hidden_url_parameter(nil, url_param, opt[url_param])
+            hidden_input(url_param, opt[url_param])
           end
 
         # === Batch size control
@@ -1469,7 +1469,7 @@ module UploadHelper
   def bulk_delete_option(f, param_and_value, debug_only: false)
     url_param, value = param_and_value.first
     if debug_only && !session_debug?
-      hidden_url_parameter(nil, url_param, value)
+      hidden_input(url_param, value)
     else
       label = f.label(url_param, BULK_DELETE_OPTION_LABEL[url_param])
       check = f.check_box(url_param, checked: value)

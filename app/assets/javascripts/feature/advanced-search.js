@@ -32,7 +32,7 @@ $(document).on('turbolinks:load', function() {
     const DEBUGGING = true;
 
     /**
-     * State value indicating that the advanced search control panel is open.
+     * State value indicating the search filter panel is open (expanded).
      *
      * @constant
      * @type {string}
@@ -40,7 +40,7 @@ $(document).on('turbolinks:load', function() {
     const OPEN = 'open';
 
     /**
-     * State value indicating that the advanced search control panel is closed.
+     * State value indicating the search filter panel is closed (contracted).
      *
      * @constant
      * @type {string}
@@ -48,7 +48,7 @@ $(document).on('turbolinks:load', function() {
     const CLOSED = 'closed';
 
     /**
-     * Marker class indicating that the advanced search control panel is open.
+     * Marker class indicating the search filter panel is open (expanded).
      *
      * @constant
      * @type {string}
@@ -56,12 +56,20 @@ $(document).on('turbolinks:load', function() {
     const OPEN_MARKER = 'open';
 
     /**
+     * The search target controller embedded in the HTML.
+     *
+     * @constant
+     * @type {string}
+     */
+    const SEARCH_TARGET = $search_sections.attr('data-target') || 'search';
+
+    /**
      * Search types and their display properties.
      *
      * @constant
      * @type {object}
      */
-    const SEARCH_TYPE = Emma.AdvSearch.search_type;
+    const SEARCH_TYPE = Emma.AdvSearch.search_type[SEARCH_TARGET] || [];
 
     /**
      * Search types.
@@ -71,9 +79,28 @@ $(document).on('turbolinks:load', function() {
      */
     const SEARCH_TYPES = deepFreeze(Object.keys(SEARCH_TYPE));
 
+    /**
+     * How long to wait after the user enters characters into a search input
+     * box before re-checking search readiness.
+     *
+     * @constant
+     * @type {number}
+     *
+     * @see monitorSearchFields
+     */
+    const DEBOUNCE_DELAY = 1000; // milliseconds
+
     // ========================================================================
     // Constants - multi-select menus
     // ========================================================================
+
+    /**
+     * Selector for <select> elements managed by Select2.
+     *
+     * @constant
+     * @type {string}
+     */
+    const SELECT2_MULTI_SELECT = '.select2-hidden-accessible';
 
     /**
      * Events exposed by Select2.
@@ -104,13 +131,8 @@ $(document).on('turbolinks:load', function() {
      *
      * @see logSelectEvent
      */
-    const MULTI_SELECT_EVENTS_WIDTH = (function() {
-        let max = 0;
-        MULTI_SELECT_EVENTS.forEach(function(type) {
-            max = Math.max(max, type.length);
-        });
-        return max;
-    })();
+    const MULTI_SELECT_EVENTS_WIDTH =
+        MULTI_SELECT_EVENTS.reduce((v, type) => Math.max(v, type.length), 0);
 
     /**
      * Select2 events which precede the change which causes a new search to be
@@ -168,60 +190,87 @@ $(document).on('turbolinks:load', function() {
     let $search_bar_container = $search_sections.find('.search-bar-container');
 
     /**
-     * The menu which changes the search type.
+     * One or more rows containing a search bar and, optionally, a search input
+     * select menu and search row controls.
      *
      * @type {jQuery}
      */
-    let $input_select = $search_bar_container.find('.search-input-select');
+    let $search_bar_rows = $search_bar_container.find('.search-bar-row');
 
     /**
-     * The form enclosing the search input box.
+     * The menu(s) which change the type for their associated search input.
      *
      * @type {jQuery}
      */
-    let $search_input_form = $search_bar_container.find('.search-input-bar');
+    let $search_input_select = $search_bar_rows.find('.search-input-select');
 
     /**
-     * The input box associated with the advanced search toggle.
+     * The search term input boxes.
      *
      * @type {jQuery}
      */
-    let $search_input = $search_input_form.find('.search-input');
+    let $search_input = $search_bar_rows.find('.search-input');
 
     /**
-     * The input clear button.
+     * The search term input clear buttons.
      *
      * @type {jQuery}
      */
-    let $search_clear = $search_input_form.find('.search-clear');
+    let $search_clear = $search_bar_rows.find('.search-clear');
+
+    /**
+     * Buttons to reveal the next search term input row.
+     *
+     * @type {jQuery}
+     */
+    let $row_show_buttons =
+        $search_bar_container.find('.search-row-control.add');
+
+    /**
+     * Buttons to hide the current search term input row (and remove it from
+     * the search request).
+     *
+     * @type {jQuery}
+     */
+    let $row_hide_buttons =
+        $search_bar_container.find('.search-row-control.remove');
 
     /**
      * The button that performs the search.
      *
      * @type {jQuery}
      */
-    let $search_button = $search_input_form.find('.search-button');
+    let $search_button = $search_sections.find('.search-button');
 
     /**
-     * The search controls container.
+     * The search filters container.
      *
      * @type {jQuery}
      */
-    let $control_panel = $search_sections.find('.search-controls');
+    let $filter_controls = $search_sections.find('.search-filter-container');
 
     /**
-     * The search control menu <form> elements.
+     * The search filter controls (menu containers).
      *
      * @type {jQuery}
      */
-    let $controls = $control_panel.find('.menu-control');
+    let $search_filters = $filter_controls.find('.menu-control');
+
+    /**
+     * Single-select dropdown menus.
+     *
+     * @type {jQuery}
+     */
+    let $single_select_menus =
+        $search_filters.filter('.single').children('select');
 
     /**
      * Multi-select dropdown menus.
      *
      * @type {jQuery}
      */
-    let $multi_select = $controls.find('select[multiple]');
+    let $multi_select_menus =
+        $search_filters.filter('.multiple').children('select');
 
     /**
      * An indicator that is presented during a time-consuming search.
@@ -230,19 +279,30 @@ $(document).on('turbolinks:load', function() {
      */
     let $search_in_progress = $('body').children('.search-in-progress');
 
+    /**
+     * Indicate whether search filters take immediate effect (causing a new
+     * search using the selected value).
+     *
+     * @const
+     * @type {boolean}
+     */
+    const IMMEDIATE_SEARCH =
+        isPresent($filter_controls.siblings('.immediate-search-marker'));
+
     // ========================================================================
     // Event handlers
     // ========================================================================
 
-    handleEvent($controls,     'change', showInProgress);
-    handleEvent($input_select, 'change', updateSearchType);
-    handleEvent($search_input, 'change', updateSearchTerms);
-    handleEvent($search_input, 'keyup',  setSearchClearButton);
+    handleClickAndKeypress($search_button,    performSearch);
+    handleClickAndKeypress($search_clear,     clearSearchTerm);
+    handleClickAndKeypress($row_show_buttons, showNextRow);
+    handleClickAndKeypress($row_hide_buttons, hideThisRow);
+    handleClickAndKeypress($advanced_toggle,  toggleFilterPanel);
 
-    handleClickAndKeypress($search_button,   showInProgress);
-    handleClickAndKeypress($reset_button,    showInProgress);
-    handleClickAndKeypress($search_clear,    clearSearchTerms);
-    handleClickAndKeypress($advanced_toggle, toggleControlPanel);
+    if (IMMEDIATE_SEARCH) {
+        handleClickAndKeypress($reset_button, showInProgress);
+        handleEvent($search_filters, 'change', showInProgress);
+    }
 
     // ========================================================================
     // Actions
@@ -252,57 +312,456 @@ $(document).on('turbolinks:load', function() {
     hideInProgress();
 
     // ========================================================================
-    // Functions
+    // Functions - initialization
     // ========================================================================
 
     /**
-     * Set the current state of advanced search controls.
+     * Set the current state of advanced search inputs and controls.
      */
     function initializeAdvancedSearch() {
-        if (isMissing($control_panel)) {
-            $advanced_toggle.hide();
-            $reset_button.hide();
+        if (isMissing($filter_controls)) {
+            $advanced_toggle.toggleClass('hidden', true);
+            $reset_button.toggleClass('hidden', true);
         } else {
-            let was_open = getControlPanelState();
-            let is_open = $control_panel.hasClass(OPEN_MARKER) ? OPEN : CLOSED;
+
+            guaranteeSearchButton();
+
+            // If there is only one row of filter buttons, take away the
+            // toggle and make sure that the panel is open (regardless of the
+            // persisted state).
+            let was_open;
+            if (isMissing($search_filters.filter('.row-2'))) {
+                $advanced_toggle.toggleClass('visible', false);
+                $advanced_toggle.toggleClass('hidden',  true);
+                was_open = true;
+            } else {
+                was_open = getFilterPanelState();
+            }
+
+            // Put the filter panel in the last state set by the user (unless
+            // in this case it's required to be open no matter what).
+            let is_open = isExpandedFilterPanel() ? OPEN : CLOSED;
             if (was_open !== is_open) {
                 if (was_open === OPEN) {
-                    setControlPanelDisplay(true);
+                    setFilterPanelDisplay(true);
                 } else if (was_open === CLOSED) {
-                    setControlPanelDisplay(false);
+                    setFilterPanelDisplay(false);
                 } else {
-                    setControlPanelState(is_open);
+                    setFilterPanelState(is_open);
                 }
             }
+
+            initializeSingleSelect();
             initializeMultiSelect();
         }
-        updateSearchType();
-        setSearchClearButton();
+
+        let url_params = urlParameters();
+        initializeSearchTerms(url_params);
+        initializeSearchFilters(url_params);
+
+        if (IMMEDIATE_SEARCH) {
+            initializeSearchFormParams();
+            initializeSearchFilterParams();
+            persistImmediateSearch();
+        }
+
+        updateSearchReady();
+        monitorSearchFields();
+    }
+
+    /**
+     * Initialize input select menus and search boxes.
+     *
+     * The menus will have been pre-filled on the initial page load, however
+     * multiple terms of the same type will have already been squashed into a
+     * single input.  This function wipes those assignments and starts over so
+     * that distinct
+     *
+     * @param {object} [url_params]   Default: {@link urlParameters}
+     */
+    function initializeSearchTerms(url_params) {
+        const func   = 'initializeSearchTerms';
+        const params = url_params || urlParameters();
+        let $rows    = $search_bar_rows;
+
+        // Reset search selection menus and inputs.
+        $rows.each(function() {
+            let $row   = $(this);
+            const type = SEARCH_TYPES[0];
+            setSearchType($row, type, func, false);
+            setSearchInput($row, '', func, false);
+        });
+
+        // noinspection FunctionWithInconsistentReturnsJS
+        $.each(SEARCH_TYPES, function(index, type) {
+            let param = compact(arrayWrap(params[type]));
+            if (isEmpty(param)) { return true; } // continue
+
+            let $matching_rows = $rows.has(`input[name="${type}"]`);
+            // noinspection FunctionWithInconsistentReturnsJS
+            $matching_rows.each(function() {
+                let $row   = $(this);
+                let $input = getSearchInput($row);
+                if (isEmpty($input.val())) {
+                    setSearchInput($row, param.shift(), func, true);
+                    $row.removeClass('hidden');
+                    if (isEmpty(param)) { return false; } // break inner loop
+                }
+            });
+            if (isEmpty(param)) { return true; } // continue outer loop
+
+            /** @type {jQuery[]} */
+            let remaining_rows = [];
+            $rows.not($matching_rows).each(function() {
+                let $row = $(this);
+                if (!searchTerm($row)) {
+                    remaining_rows.push($row);
+                }
+            });
+            if (isEmpty(remaining_rows)) {
+                console.error(`${func}: ignoring`, type, param.join(','));
+                return true; // continue outer loop
+            }
+
+            // If there aren't enough remaining rows, collapse the last two
+            // param rows until there are.
+            while (param.length > remaining_rows.length) {
+                debug(`${func}: condensing ${type} param:`, param);
+                param = [...param.slice(0, -2), param.slice(-2).join(' ')];
+            }
+
+            // Fill remaining rows with param term(s).
+            param.forEach(function(term) {
+                let $row = remaining_rows.shift();
+                setSearchType($row,  type, func, true);
+                setSearchInput($row, term, func, true);
+                $row.removeClass('hidden');
+            });
+        });
+    }
+
+    /**
+     * Initialize search filter control menus.
+     *
+     * Although the menus will have been pre-filled on the initial page load,
+     * this is necessary to restore the settings after a "history.back()".
+     *
+     * @param {object} [url_params]   Default: {@link urlParameters}
+     */
+    function initializeSearchFilters(url_params) {
+        const func   = 'initializeSearchFilters';
+        const params = url_params || urlParameters();
+        $search_filters.each(function() {
+            let $menu   = getSearchFilterMenu(this);
+            const name  = $menu.attr('name');
+            const type  = name.replace('[]', '');
+            const param = params[type] || $menu.attr('data-default');
+            let value;
+            if ((type === name) && Array.isArray(param)) {
+                value = param.pop();
+            } else {
+                value = param;
+            }
+            if (value !== $menu.val()) {
+                $menu.val(value);
+                if ($menu.is(SELECT2_MULTI_SELECT)) {
+                    initializeSelect2Menu($menu);
+                }
+            }
+        });
+    }
+
+    /**
+     * For the edge case of a controller type which does not have search term
+     * inputs -- only search filters -- make sure that the hidden search button
+     * within the filter controls is enabled.
+     */
+    function guaranteeSearchButton() {
+        /** @type {jQuery} */
+        let $controls, $filter_sb;
+        $controls  = $filter_controls.siblings('.search-controls');
+        $filter_sb = $controls.find('.search-button');
+        if (isMissing($search_button.filter(':visible'))) {
+            if (!$search_button.attr('value')) {
+                $search_button.attr('value', 'Search'); // TODO: I18n
+                $search_button.css('row-gap', '0.5rem');
+            }
+            $filter_sb.toggleClass('visible', true);
+            $filter_sb.toggleClass('hidden',  false);
+        } else if ($filter_sb.is(':visible')) {
+            $filter_sb.toggleClass('visible', false);
+            $filter_sb.toggleClass('hidden',  true);
+        }
+    }
+
+    /**
+     * Add "immediate=true" as a hidden input to the search form and all
+     * filter controls (menu form wrappers).
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function persistImmediateSearch() {
+        let $form   = getSearchForm();
+        const id    = $form.attr('id');
+        const name  = 'immediate_search';
+        const value = 'true';
+        addHiddenInputTo($form, value, { name: name, id: `${id}-${name}` });
+        setSearchFilterParams(name, value);
     }
 
     // ========================================================================
-    // Functions - control panel
+    // Functions - search
     // ========================================================================
 
     /**
-     * Toggle visibility of advanced search controls.
+     * Actions to take before the search happens.
+     *
+     * @param {Event} event
      */
-    function toggleControlPanel() {
-        const opening = !$control_panel.hasClass(OPEN_MARKER);
+    function performSearch(event) {
+        debug('performSearch:', event);
+        resolveFormFields();
+        showInProgress();
+    }
+
+    /**
+     * Before completing the search request:
+     *
+     * * Hide fields which are not intended to be part of the search terms by
+     *   blanking their "name" attributes.
+     *
+     * * If multiple instances of the same "name" are present, ensure that it
+     *   is transformed to "name[]" so that they will be present in the form
+     *   submission as multiple values.
+     */
+    function resolveFormFields() {
+        const func  = 'resolveFormFields';
+        let $rows   = $search_bar_rows;
+        let $hidden = $rows.find('input[type="hidden"]');
+        let count   = {};
+
+        // Check search input fields.
+        $rows.each(function() {
+            let $row        = $(this);
+            let $input      = getSearchInput($row);
+            const ignore_if = $row.hasClass('hidden');
+            checkInput($input, ignore_if);
+        });
+
+        // Check hidden input fields (if any).
+        $hidden.each(function() {
+            let $input      = $(this);
+            const ignore_if = (value)=>(value === '*');
+            checkInput($input, ignore_if);
+        });
+
+        // Make sure that if a name is repeated, each element will be included
+        // in the form parameters.
+        $rows.each(function()   { adjustInputName(getSearchInput(this)); });
+        $hidden.each(function() { adjustInputName(this); });
+
+        // Disregard any filter which has has the default value to avoid adding
+        // a URL parameter that is unneeded.
+        getSearchFilter().each(function() {
+            let $menu = getSearchFilterMenu(this);
+            if ($menu.val() === $menu.attr('data-default')) {
+                $menu.attr('name', '');
+            }
+        });
+
+        /**
+         * Blank name if the input should definitely be ignored; add to the
+         * count otherwise.
+         *
+         * @param {jQuery}           $input
+         * @param {function|boolean} [skip]     If resolves to *true* the
+         *                                          input should be ignored.
+         */
+        function checkInput($input, skip) {
+            const name  = $input.attr('name');
+            if (!name) { return; }
+            const type  = name.replace('[]', '');
+            count[type] = count[type] || 0;
+            const text  = ($input.val() || '').trim();
+            if (!text || ((typeof skip === 'function') ? skip(text) : skip)) {
+                $input.attr('name', '');
+                debug(`${func}: ignoring ${type} ("${text}")`);
+            } else {
+                count[type] += 1;
+            }
+        }
+
+        /**
+         * Adjust the name if there are multiple inputs of the given type.
+         *
+         * @param {jQuery} $input
+         */
+        function adjustInputName($input) {
+            const curr = $input.attr('name');
+            if (!curr) { return; }
+            const type = curr.replace('[]', '');
+            let name;
+            switch (count[type]) {
+                case 0:  name = '';          break; // "can't happen"
+                case 1:  name = type;        break;
+                default: name = `${type}[]`; break;
+            }
+            $input.attr('name', name);
+        }
+    }
+
+    // ========================================================================
+    // Functions - search readiness
+    // ========================================================================
+
+    /**
+     * Indicate whether a new search has been defined.
+     *
+     * @returns {boolean}
+     */
+    function searchReady() {
+        return $search_button.hasClass('ready');
+    }
+
+    /**
+     * Evaluate whether the search button should indicate readiness for a new
+     * search.
+     */
+    function updateSearchReady() {
+        setSearchReady();
+    }
+
+    /**
+     * Change the state of the search button to indicate whether a new search
+     * has been specified.
+     *
+     * If a new state is not given, readiness is determined based on whether
+     * search terms and/or filters have been added and/or modified.
+     *
+     * @param {boolean} [state]
+     */
+    function setSearchReady(state) {
+        let ready = state;
+        if (notDefined(ready)) {
+            let $rows = $search_bar_rows;
+            ready = ready || isPresent(newSearchTerms($rows));
+            ready = ready || isPresent(newSearchFilters());
+            ready = ready && isPresent(compact(allSearchTerms($rows)));
+        }
+        const tooltip = ready ? 'data-ready' : 'data-not-ready';
+        const title   = $search_button.attr(tooltip);
+        if (isDefined(title)) {
+            $search_button.attr('title', title);
+        }
+        $search_button.toggleClass('ready', ready);
+    }
+
+    /**
+     * Listen for changes on search box input fields.
+     *
+     * @see updatedSearchTerm
+     */
+    function monitorSearchFields() {
+
+        const pause = DEBOUNCE_DELAY;
+
+        handleEvent($search_input_select, 'change', updatedSearchType);
+
+        handleEvent($search_input, 'change', onChange);
+        handleEvent($search_input, 'cut',    debounce(onCut));
+        handleEvent($search_input, 'paste',  debounce(onPaste));
+        handleEvent($search_input, 'keyup',  debounce(onKeyUp, pause));
+        handleEvent($search_input, 'input',  debounce(onInput, pause));
+
+        /**
+         * Check readiness after the element's content changes.
+         *
+         * @param {jQuery.Event} event
+         */
+        function onChange(event) {
+            // debug('*** CHANGE ***');
+            updatedSearchTerm(event);
+        }
+
+        /**
+         * Check readiness after cut-to-clipboard has completed.
+         *
+         * @param {jQuery.Event|ClipboardEvent} event
+         */
+        function onCut(event) {
+            // debug('*** CUT ***');
+            updatedSearchTerm(event);
+        }
+
+        /**
+         * Check readiness after the paste-from-clipboard has completed.
+         *
+         * @param {jQuery.Event|ClipboardEvent} event
+         */
+        function onPaste(event) {
+            // debug('*** PASTE ***');
+            updatedSearchTerm(event);
+        }
+
+        /**
+         * Respond to key presses only after the user has paused, rather than
+         * re-validating the entire form with every key stroke.
+         *
+         * @param {jQuery.Event|KeyboardEvent} event
+         *
+         * @returns {function}
+         */
+        function onKeyUp(event) {
+            // debug('*** KEYUP ***');
+            updatedSearchTerm(event);
+        }
+
+        /**
+         * This covers the case of selection from Firefox's menu of previous
+         * input values --
+         *
+         * @param {jQuery.Event|KeyboardEvent} event
+         *
+         * @returns {function}
+         */
+        function onInput(event) {
+            // debug('*** INPUT ***');
+            updatedSearchTerm(event);
+        }
+    }
+
+    // ========================================================================
+    // Functions - search filter panel
+    // ========================================================================
+
+    /**
+     * Indicate whether the search filter panel is expanded (open).
+     *
+     * @returns {boolean}
+     */
+    function isExpandedFilterPanel() {
+        return $filter_controls.hasClass(OPEN_MARKER);
+    }
+
+    /**
+     * Toggle visibility of search filters.
+     */
+    function toggleFilterPanel() {
+        const opening = !isExpandedFilterPanel();
         if (DEBUGGING) {
             const action = opening ? 'SHOW' : 'HIDE';
-            debug(action, 'advanced search controls');
+            debug(action, 'search filters');
         }
-        setControlPanelState(opening);
-        setControlPanelDisplay(opening);
+        setFilterPanelState(opening);
+        setFilterPanelDisplay(opening);
     }
 
     /**
-     * Save the state of advanced search controls in the session.
+     * Save the state of search filters in the session.
      *
      * @param {boolean|string} opening
      */
-    function setControlPanelState(opening) {
+    function setFilterPanelState(opening) {
         let state = opening;
         if (typeof state !== 'string') {
             state = state ? OPEN : CLOSED;
@@ -311,31 +770,31 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
-     * Get the state of advanced search controls.
+     * Get the state of search filters.
      *
      * @returns {string}
      */
-    function getControlPanelState() {
+    function getFilterPanelState() {
         return sessionStorage.getItem('search-controls');
     }
 
     /**
-     * Set the state of the control panel display.
+     * Set the state of the filter panel display.
      *
      * @param {boolean} opening
      */
-    function setControlPanelDisplay(opening) {
-        setControlPanelToggle(opening);
+    function setFilterPanelDisplay(opening) {
+        setFilterPanelToggle(opening);
         setResetButton(opening);
-        $control_panel.toggleClass(OPEN_MARKER, opening);
+        $filter_controls.toggleClass(OPEN_MARKER, opening);
     }
 
     /**
-     * Set the state of the control panel toggle button label.
+     * Set the state of the filter panel toggle button label.
      *
      * @param {boolean} opening
      */
-    function setControlPanelToggle(opening) {
+    function setFilterPanelToggle(opening) {
         /** @type {{label: string, tooltip: string}} */
         const value = opening ? Emma.AdvSearch.closer : Emma.AdvSearch.opener;
         $advanced_toggle.html(value.label).attr('title', value.tooltip);
@@ -344,79 +803,227 @@ $(document).on('turbolinks:load', function() {
     /**
      * Set the state of the search reset button.
      *
-     * Each specific .menu-button element may have custom CSS properties set
-     * according to the layout determined by the width of the medium:
-     *
-     * If '--manage-visibility' is set to 'true', then this function should
-     *   modify the visibility of the element (toggling between 'visible' and
-     *   'hidden').
-     *
      * @param {boolean} opening
      *
-     * @see file:app/assets/stylesheets/shared/_header.scss .search-bar-container.menu-button.reset
+     * @see "LayoutHelper::SearchFilters#reset_button"
+     * @see file:app/assets/stylesheets/shared/_header.scss .menu-button.reset
      */
     function setResetButton(opening) {
-        const state = opening ? 'visible' : 'hidden';
-        // noinspection JSUnresolvedFunction
-        $reset_button.each(function() {
-            let $button = $(this);
-            let manage  = $button.css('--manage-visibility');
-            if (isDefined(manage) && (manage.trim() === 'true')) {
-                $button.css('visibility', state);
-            }
-        });
+        $reset_button.toggleClass('hidden', !opening);
     }
 
     // ========================================================================
-    // Functions - search terms
+    // Functions - search inputs
     // ========================================================================
 
     /**
-     * The current search terms as defined by the contents of the input box.
+     * Get the search <form> element.
+     *
+     * @param {Selector} [form]       Default: {@link $search_bar_container}.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchForm(form) {
+        const selector = 'form';
+        const $form    = form ? $(form) : $search_bar_container;
+        return $form.is(selector) ? $form : $form.find(selector).first();
+    }
+
+    /**
+     * Get the search bar input row associated with the target.
+     *
+     * All search bar rows are returned if *target* is not given.
+     *
+     * @param {SelectorOrEvent} [target]
+     * @param {string}          [caller]    For logging.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchRow(target, caller) {
+        const selector = '.search-bar-row';
+        const target_  = target || getSearchForm();
+        const func     = caller || 'getSearchRow';
+        return getContainerElement(target_, selector, func);
+    }
+
+    /**
+     * Get the search type selection menu associated with the target.
+     *
+     * @param {SelectorOrEvent} [target]
+     * @param {string}          [caller]    For logging.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchInputSelect(target, caller) {
+        const selector = '.search-input-select';
+        return getContainedElement(target, selector, caller, getSearchRow);
+    }
+
+    /**
+     * Get the search input box associated with the target.
+     *
+     * @param {SelectorOrEvent} [target]
+     * @param {string}          [caller]    For logging.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchInput(target, caller) {
+        const selector = '.search-input';
+        return getContainedElement(target, selector, caller, getSearchRow);
+    }
+
+    /**
+     * Get the clear-search control associated with the target.
+     *
+     * @param {SelectorOrEvent} [target]
+     * @param {string}          [caller]    For logging.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchClear(target, caller) {
+        const selector = '.search-clear';
+        return getContainedElement(target, selector, caller, getSearchRow);
+    }
+
+    // ========================================================================
+    // Functions - search inputs - row controls
+    // ========================================================================
+
+    /**
+     * Cause the first hidden search bar row in the sequence to be revealed.
+     *
+     * @param {Event|jQuery.Event} event
+     */
+    function showNextRow(event) {
+        const func      = 'showNextRow';
+        let $this_row   = getSearchRow(event, func);
+        /** @type {jQuery} */
+        let $hidden     = $this_row.siblings('.hidden');
+        const available = $hidden.length;
+        if (available >= 1) { $hidden.first().removeClass('hidden'); }
+        if (available <= 1) { toggleVisibility($row_show_buttons, false); }
+        updateSearchReady();
+    }
+
+    /**
+     * Hide the search bar row associated with this control.
+     *
+     * The implementation assumes that the first row cannot be deleted.
+     *
+     * @param {Event|jQuery.Event} event
+     */
+    function hideThisRow(event) {
+        const func    = 'hideThisRow';
+        let $this_row = getSearchRow(event, func);
+        if ($this_row.is('.first')) {
+            console.error(`${func}: cannot hide first row`);
+        } else {
+            $this_row.addClass('hidden');
+            toggleVisibility($row_show_buttons, true);
+            updateSearchReady();
+        }
+    }
+
+    // ========================================================================
+    // Functions - search inputs - search terms
+    // ========================================================================
+
+    /**
+     * The current search terms as defined by the contents of the input box
+     * associated with the target.
+     *
+     * @param {Selector} target       Passed to {@link getSearchInput}
      *
      * @returns {string}
      */
-    function searchTerms() {
-        return $search_input.val();
+    function searchTerm(target) {
+        return getSearchInput(target, 'searchTerm').val() || '';
     }
 
     /**
-     * Sets (or clears) the contents of the search input box.
+     * Set (or clear) the contents of the given search input.
      *
-     * @param {string} [new_terms]    New search terms ('' if missing).
+     * If there was a change, the new search input box value is returned; or
+     * undefined if no change.
+     *
+     * @param {Selector}        target          Passed to {@link getSearchRow}
+     * @param {string|string[]} [new_terms]     New search terms (default: '').
+     * @param {string}          [caller]        For logging.
+     * @param {boolean}         [set_original]  If true update 'data-original'.
+     *
+     * @returns {string|undefined}
      */
-    function setSearchInput(new_terms) {
-        let terms = undefined;
-        if (new_terms) {
-            terms = new_terms.replace(/\+/g, ' ');
-            terms = decodeURIComponent(terms);
-            if (terms === '*') { terms = ''; }
+    function setSearchInput(target, new_terms, caller, set_original) {
+        if (!target) {
+            const func = caller || 'setSearchInput';
+            console.error(`${func}: target: missing/empty`);
+            return;
         }
-        $search_input.val(terms || '');
-        setSearchClearButton();
+        let $row   = getSearchRow(target);
+        let $input = getSearchInput($row);
+        let terms  = new_terms &&
+            arrayWrap(new_terms)
+                .map(term => term && term.trim())
+                .filter(term => term)
+                .map(term => decodeURIComponent(term.replace(/\+/g, ' ')))
+                .join(' ');
+        if (terms === '*') { terms = ''; }
+
+        $input.val(terms);
+        updateSearchClear($input);
+
+        if (notDefined(set_original)) {
+            const original = $input.attr('data-original');
+            if (notDefined(original)) {
+                $input.attr('data-original', '');
+            } else if (terms === original) {
+                terms = undefined;
+            }
+            updateSearchReady();
+        } else if (set_original) {
+            $input.attr('data-original', terms);
+        }
+        return terms;
     }
 
     /**
-     * The current search terms as defined by the contents of the input box.
+     * Set (or clear) the search term of the given search input.
      *
-     * @param {string} new_terms      Sets the new search terms if provided.
+     * @param {SelectorOrEvent} target
+     * @param {string}          new_terms   Sets or clears the input box.
+     * @param {string}          [caller]    For logging.
      */
-    function setSearchTerms(new_terms) {
-        setSearchInput(new_terms);
-        setMenuParameters();
+    function setSearchTerm(target, new_terms, caller) {
+        const func = caller || 'setSearchTerm';
+        setSearchInput(target, new_terms, func);
+        if (IMMEDIATE_SEARCH) {
+            setSearchFilterParams(searchType(target), searchTerm(target));
+        }
     }
 
     /**
-     * Update the search box and menus.
+     * Respond to a user-initiated change in the content of a search input.
      *
      * @param {jQuery.Event} event
+     *
+     * @see monitorSearchFields
      */
-    function updateSearchTerms(event) {
-        setSearchTerms(event.target.value);
+    function updatedSearchTerm(event) {
+        const func   = 'updatedSearchTerm';
+        const target = event.currentTarget || event.target;
+        let $input   = getSearchInput(target, func);
+        const prev_t = $input.data('timestamp');
+        const this_t = event.timeStamp;
+        if (!prev_t || (prev_t < this_t)) {
+            $input.data('timestamp', this_t);
+        }
+        if (!prev_t || ((prev_t + (2 * DEBOUNCE_DELAY)) < this_t)) {
+            setSearchTerm($input, $input.val(), func);
+        }
     }
 
     /**
-     * Clear the search box.
+     * Clear the associated search input.
      *
      * @param {jQuery.Event} [event]
      * @param {boolean} [allow_default]   If *true*, do not mark the event as
@@ -424,160 +1031,313 @@ $(document).on('turbolinks:load', function() {
      *                                      the '.search-clear' control is an
      *                                      <a> in order to preserve tab order)
      */
-    function clearSearchTerms(event, allow_default) {
-        if (event && !allow_default) { event.preventDefault(); }
-        setSearchTerms('');
+    function clearSearchTerm(event, allow_default) {
+        const func   = 'clearSearchTerm';
+        const target = event.currentTarget || event.target;
+        setSearchTerm(target, '', func);
+        if (isEvent(event) && !allow_default) {
+            event.preventDefault();
+        }
     }
 
     /**
-     * Do not show the search clear control if this search box is empty.
+     * Show the search-clear control if the associated search input has content
+     * and hide it if it does not.
+     *
+     * @param {SelectorOrEvent} [target]    Passed to {@link getSearchInput}
      */
-    function setSearchClearButton() {
-        const state = $search_input.val() ? 'visible' : 'hidden';
-        $search_clear.css('visibility', state);
+    function updateSearchClear(target) {
+        let $input  = getSearchInput(target);
+        let $button = getSearchClear($input);
+        const text  = ($input.val() || '').trim();
+        toggleVisibility($button, isPresent(text));
+    }
+
+    /**
+     * A table of search types and queries.
+     *
+     * Search types which are disabled will appear in the result with a blank
+     * query (regardless of whether the input control happens to have a value).
+     *
+     * @param {Selector} [target]     Default: all rows.
+     * @param {string}   [caller]     For logging.
+     * @param {boolean}  [new_only]   If *true* include only non-blank entries
+     *                                  that have been added/modified.
+     *
+     * @returns {{type: string, query: string|string[]}}
+     */
+    function allSearchTerms(target, caller, new_only) {
+        const func  = caller || 'allSearchTerms';
+        let $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
+        let queries = {}
+        // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS
+        $rows.each(function() {
+            let $row     = $(this);
+            let $input   = getSearchInput($row);
+            let $menu    = getSearchInputSelect($row);
+            const hidden = $row.hasClass('hidden');
+            const name   = $input.attr('name') || '';
+            const type   = isPresent($menu) ? searchType($menu) : name;
+            const value  = $input.val().trim();
+
+            let skip;
+            if (!name) {
+                skip = 'ignored';
+            } else if (new_only) {
+                const original_value = $input.attr('data-original') || '';
+                const original_type  = $menu.attr('data-original');
+                if (original_type && (type !== original_type)) {
+                    // Whatever the value, if the type has changed then this
+                    // constitutes a new search, so this type should appear in
+                    // the return value.
+                } else if (hidden && original_value) {
+                    // If an original row has been hidden, we want that to show
+                    // up as a change (to guarantee that newSearchTerms() will
+                    // not return an empty object.
+                } else if (hidden) {
+                    skip = 'hidden';
+                //} else if (!value) {
+                //    skip = 'empty value';
+                } else if (value === original_value) {
+                    skip = `"${value}" same as data-original`;
+                }
+            } else if (hidden) {
+                skip = 'hidden';
+            }
+
+            if (skip) {
+                debug(`${func}: skipping ${type}: ${skip}`);
+            } else if (Array.isArray(queries[type])) {
+                queries[type].push(value);
+            } else if (isDefined(queries[type])) {
+                queries[type] = [queries[type], value];
+            } else {
+                queries[type] = value;
+            }
+        });
+        return queries;
+    }
+
+    /**
+     * A table of added/modified search types and queries.
+     *
+     * The result will include entries only for non-blank search terms.
+     *
+     * @param {Selector} [target]     Default: all rows.
+     *
+     * @returns {{type: string, query: string|string[]}}
+     */
+    function newSearchTerms(target) {
+        return allSearchTerms(target, 'newSearchTerms', true);
     }
 
     // ========================================================================
-    // Functions - search type
+    // Functions - search inputs - search type
     // ========================================================================
 
     /**
-     * The current search type as defined by the input selection menu.
+     * The current search type as defined by the search type selection menu.
+     *
+     * @param {Selector} target       Passed to {@link getSearchInputSelect}
      *
      * @returns {string}
      */
-    function searchType() {
-        return $input_select.val();
+    function searchType(target) {
+        return getSearchInputSelect(target, 'searchType').val() || '';
     }
 
     /**
-     * The current search type as defined by the input selection menu.
+     * Set the search type for a search bar as defined by its search type
+     * selection menu.
      *
-     * @param {string} new_type       Sets the new search type.
-     * @param {string} [new_terms]    Sets the search terms if provided.
+     * If there was a change, the new search type is returned; or undefined if
+     * no change.
+     *
+     * @param {Selector}        target          Passed to {@link getSearchRow}
+     * @param {string}          new_type        Sets the new search type.
+     * @param {string}          [caller]        For logging.
+     * @param {boolean}         [set_original]  If true update 'data-original'.
+     *
+     * @returns {string|undefined}
      */
-    function setSearchType(new_type, new_terms) {
-        const search_type  = new_type  || searchType();
-        const search_terms = new_terms || searchTerms();
-        $input_select.val(search_type);
-        setSearchInput(search_terms);
-        setSearchBar(search_type);
-        setMenuParameters(search_type);
-    }
+    function setSearchType(target, new_type, caller, set_original) {
+        if (!target) {
+            const func = caller || 'setSearchType';
+            console.error(`${func}: target: missing/empty`);
+            return;
+        }
+        let $row     = getSearchRow(target);
+        let $menu    = getSearchInputSelect($row);
+        const name   = new_type ? new_type.trim().toLowerCase() : '';
+        let type     = name.replace('[]', '');
+        const config = SEARCH_TYPE[type];
 
-    /**
-     * Update the search input based on the selected search type and create
-     * blank hidden inputs for the other search types.
-     *
-     * @param {string} [new_type]
-     */
-    function setSearchBar(new_type) {
-        const search_type = new_type || searchType();
-        let $hidden       = $search_input_form.find('input[type="hidden"]');
-        SEARCH_TYPES.forEach(function(type) {
-            // noinspection JSCheckFunctionSignatures
-            let $input = $hidden.filter(`[name="${type}"]`);
-            if (type === search_type) {
-                // Make sure that there is no hidden input for this type then
-                // update the search input element.
-                $input.remove();
-                $search_input.attr({
-                    'name':        type,
-                    'placeholder': SEARCH_TYPE[type].placeholder
-                });
-            } else if (isMissing($input)) {
-                // Create a hidden input for this type.
-                // noinspection ReuseOfLocalVariableJS
-                $input = $('<input type="hidden">');
-                $input.attr('name', type);
-                $input.attr('id',   `search-input-select-${type}`);
-                $input.appendTo($search_input_form);
-                $input.val('');
-            } else {
-                $input.val('');
+        $menu.val(type);
+        let $input = getSearchInput($row);
+        $input.attr({ name: name, placeholder: config.placeholder });
+        $input.siblings('.search-input-label').val(config.label);
+
+        if (notDefined(set_original)) {
+            const original = $menu.attr('data-original');
+            if (notDefined(original)) {
+                $menu.attr('data-original', '');
+            } else if (type === original) {
+                type = undefined;
             }
-        });
+            updateSearchReady();
+        } else if (set_original) {
+            $menu.attr('data-original', type);
+        }
+        return type;
     }
 
     /**
-     * Update the input select menu, search box, and menus.
+     * Respond to a user-initiated change in a search input selection menu.
      *
-     * @param {jQuery.Event} [event]
+     * @param {jQuery.Event} event
      */
-    function updateSearchType(event) {
-        let [type, query] = [];
-        if (event) {
-            type = event.target.value;
-        } else {
-            $.each(urlParameters(), function(param, value) {
-                if (SEARCH_TYPES.includes(param)) {
-                    type  = param;
-                    query = value;
+    function updatedSearchType(event) {
+        const func = 'updatedSearchType';
+        let $menu  = getSearchInputSelect(event.currentTarget || event.target);
+        const type = $menu.val();
+        setSearchType($menu, type, func);
+        if (IMMEDIATE_SEARCH) {
+            setSearchFilterParams(type, searchTerm($menu));
+        }
+    }
+
+    // ========================================================================
+    // Functions - search filters
+    // ========================================================================
+
+    /**
+     * Get the search filter control associated with the target.
+     *
+     * All search filter controls are returned if *target* is not given.
+     *
+     * @param {SelectorOrEvent} [target]
+     * @param {string}          [caller]    For logging.
+     *
+     * @returns {jQuery}
+     */
+    function getSearchFilter(target, caller) {
+        const selector = '.menu-control';
+        const target_  = target || $search_filters;
+        const func     = caller || 'getSearchFilter';
+        return getContainerElement(target_, selector, func);
+    }
+
+    /**
+     * Get the search filter menu associated with the target.
+     *
+     * @param {SelectorOrEvent} target
+     * @param {string}          [caller]
+     *
+     * @returns {jQuery}
+     */
+    function getSearchFilterMenu(target, caller) {
+        const selector = 'select';
+        return getContainedElement(target, selector, caller, getSearchFilter);
+    }
+
+    /**
+     * A table of current search filter values.
+     *
+     * @param {Selector} [target]     Default: {@link $search_filters}.
+     * @param {string}   [caller]     For logging.
+     * @param {boolean}  [new_only]   If *true* include only non-blank entries
+     *                                  that have been added/modified.
+     *
+     * @returns {{type: string, query: string|string[]}}
+     */
+    function allSearchFilters(target, caller, new_only) {
+        const func  = caller || 'allSearchFilters';
+        let filters = {}
+        // noinspection OverlyComplexFunctionJS
+        getSearchFilter(target).each(function() {
+            let $control = $(this);
+            let $menu    = getSearchFilterMenu($control);
+            const name   = $menu.attr('name') || '';
+            const arr    = name.endsWith('[]');
+            const type   = arr ? name.replace('[]', '')  : name;
+            let value    = arr ? valueArray($menu.val()) : ($menu.val() || '');
+
+            let skip;
+            if (!name) {
+                skip = 'ignored';
+            } else if ($control.hasClass('hidden')) {
+                skip = 'hidden';
+            } else if (new_only) {
+                let original = $menu.attr('data-original');
+                let val      = value.toString();
+                if (notDefined(original) && !val) {
+                    skip = 'empty value';
+                } else if (val === valueArray(original).toString()) {
+                    skip = `"${val}" same as data-original`;
                 }
-            });
-        }
-        // noinspection JSUnusedAssignment
-        setSearchType(type, query);
-    }
-
-    // ========================================================================
-    // Functions - menus
-    // ========================================================================
-
-    /**
-     * Modify the hidden input parameters of each menu control based on the new
-     * search type and search terms.
-     *
-     * @param {string} [new_type]     Default: {@link searchType}.
-     * @param {string} [new_value]    Default: {@link searchTerms}.
-     */
-    function setMenuParameters(new_type, new_value) {
-        const type  = new_type  || searchType();
-        const query = new_value || searchTerms();
-        // noinspection JSUnresolvedFunction
-        $controls.each(function() {
-            setHiddenParameters(this, type, query);
-        });
-    }
-
-    /**
-     * Add and/or subtract hidden input parameters from a menu control so that
-     * selecting it will result in the proper search URL.
-     *
-     * @param {Selector} control      Menu control to modify.
-     * @param {string}   [new_type]   Default: {@link searchType}.
-     * @param {string}   [new_value]  Default: {@link searchTerms}.
-     */
-    function setHiddenParameters(control, new_type, new_value) {
-        const search = new_type  || searchType();
-        const query  = new_value || searchTerms();
-        let $control, $menu;
-        let $this = $(control);
-        if ($this.hasClass('menu-control')) {
-            $control = $this;
-            $menu    = $this.children('select');
-        } else {
-            $control = $this.parents('.menu-control');
-            $menu    = $this;
-        }
-        const menu_id = $menu.attr('id');
-        let $hidden   = $control.find('input[type="hidden"]');
-        SEARCH_TYPES.forEach(function(type) {
-            let $input = $hidden.filter(`[name="${type}"]`);
-            if (isMissing($input)) {
-                // noinspection ReuseOfLocalVariableJS
-                $input = $('<input type="hidden">');
-                $input.attr('name', type);
-                $input.attr('id',   `${menu_id}-${type}`);
-                $input.appendTo($control);
             }
-            $input.val((type === search) ? query : '');
+
+            if (skip) {
+                debug(`${func}: skipping ${type}: ${skip}`);
+            } else if (isDefined(filters[type])) {
+                let current = new Set(arrayWrap(filters[type]));
+                arrayWrap(value).forEach(v => current.add(v));
+                filters[type] = [...current];
+            } else {
+                filters[type] = value;
+            }
         });
+        return filters;
+
+        /**
+         * Convert a <select> value to an array of selections.
+         *
+         * @param {string[]|string|undefined} item
+         *
+         * @returns {string[]}
+         */
+        function valueArray(item) {
+            if (isEmpty(item)) {
+                return [];
+            } else {
+                return (Array.isArray(item) ? item : item.split(',')).sort();
+            }
+        }
+    }
+
+    /**
+     * A table of modified search filter values.
+     *
+     * The result will include entries only for non-blank selections.
+     *
+     * @param {Selector} [target]     Default: all rows.
+     *
+     * @returns {{type: string, query: string|string[]}}
+     */
+    function newSearchFilters(target) {
+        return allSearchFilters(target, 'newSearchFilters', true);
     }
 
     // ========================================================================
-    // Functions - multi-select menus
+    // Functions - search filters - menus
     // ========================================================================
+
+    /**
+     * Initialize single-select menus.
+     */
+    function initializeSingleSelect() {
+        let $menus    = $single_select_menus;
+        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
+        $menus.each(function() {
+            let $menu   = $(this);
+            const value = $menu.val() || '';
+            $menu.attr('data-original', value);
+            if (form_id) {
+                $menu.attr('form', form_id);
+            }
+        });
+        handleEvent($menus, 'change', updateSearchReady);
+    }
 
     /**
      * Initialize Select2 for multi-select menus.
@@ -586,42 +1346,69 @@ $(document).on('turbolinks:load', function() {
      * @see https://select2.org/programmatic-control/events
      */
     function initializeMultiSelect() {
-        let $select = $multi_select.not('.select2-hidden-accessible');
-        if (isPresent($select)) {
-            $select.select2({
-                width:      '100%',
-                allowClear: true,
-                debug:      DEBUGGING,
-                language:   select2Language()
-            });
-            $select.each(function() {
-                let attrs      = {};
-                let $control   = $(this);
-                const label    = $control.attr('aria-label');
-                const label_id = $control.attr('aria-labelledby');
-                if (label)    { attrs['aria-label']      = label; }
-                if (label_id) { attrs['aria-labelledby'] = label_id; }
-                // noinspection JSCheckFunctionSignatures
-                $control.siblings('.select2').find('input').attr(attrs);
-            });
-            if (DEBUGGING) {
-                MULTI_SELECT_EVENTS.forEach(function(type) {
-                    handleEvent($select, type, logSelectEvent);
-                });
+        let $menus = $multi_select_menus.not(SELECT2_MULTI_SELECT);
+        if (isMissing($menus)) {
+            debug('initializeMultiSelect: none found');
+            return;
+        }
+        initializeSelect2Menu($menus);
+
+        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
+        $menus.each(function() {
+            let $menu = $(this);
+            const value = $menu.val() || '';
+            $menu.attr('data-original', value);
+            if (form_id) {
+                $menu.attr('form', form_id);
             }
-            PRE_CHANGE_EVENTS.forEach(function(type) {
-                handleEvent($select, type, updateHiddenParameters);
+            let attrs = compact(Object.fromEntries(
+                ['aria-label', 'aria-labelledby'].map(a => [a, $menu.attr(a)])
+            ));
+            if (isPresent(attrs)) {
+                // noinspection JSCheckFunctionSignatures
+                $menu.siblings().find('[aria-haspopup]').attr(attrs);
+            }
+        });
+
+        if (DEBUGGING) {
+            MULTI_SELECT_EVENTS.forEach(function(type) {
+                handleEvent($menus, type, logSelectEvent);
             });
+        }
+
+        POST_CHANGE_EVENTS.forEach(function(type) {
+            handleEvent($menus, type, updateSearchReady);
+        });
+
+        if (IMMEDIATE_SEARCH) {
+/*
+            PRE_CHANGE_EVENTS.forEach(function(type) {
+                handleEvent($menus, type, preChange);
+            });
+*/
             POST_CHANGE_EVENTS.forEach(function(type) {
-                handleEvent($select, type, updateEvent);
+                handleEvent($menus, type, multiSelectPostChange);
             });
             CHECK_SUPPRESS_MENU_EVENTS.forEach(function(type) {
-                handleEvent($select, type, suppressMenuOpen);
+                handleEvent($menus, type, suppressMenuOpen);
             });
         }
     }
 
-    // noinspection FunctionNamingConventionJS
+    /**
+     * Setup one or more <select> elements managed by Select2.
+     *
+     * @param {Selector} menu
+     */
+    function initializeSelect2Menu(menu) {
+        $(menu).select2({
+            width:      '100%',
+            allowClear: true,
+            debug:      DEBUGGING,
+            language:   select2Language()
+        });
+    }
+
     /**
      * Generate message translations for Select2.
      *
@@ -677,29 +1464,34 @@ $(document).on('turbolinks:load', function() {
         return translations;
     }
 
-    /**
-     * Update the hidden query input for the menu from the characters currently
-     * in the query input box.
-     *
-     * This supports the ability for a multi-select menu to be used to modify
-     * search results without having to also press "Search".
+/*
+    /!**
+     * Actions before a multi-select menu selection is changed.
      *
      * @param {jQuery.Event} event
-     */
-    function updateHiddenParameters(event) {
-        // noinspection JSCheckFunctionSignatures
-        setHiddenParameters(event.target);
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     *
+     * @note Not currently used.
+     *!/
+    function preChange(event) {
+        let menu = event.currentTarget || event.target;
+        // setSearchFormParamsFromFilters(menu);
+        // setSearchFilterParamsFromFilters(menu);
     }
+*/
 
     /**
-     * Cause the current event to be remembered for coordination with the
-     * {@link suppressMenuOpen} handler.
+     * Cause the current event to be remembered for coordination with
+     * {@link suppressMenuOpen}.
      *
      * @param {jQuery.Event} event
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
-    function updateEvent(event) {
-        let $target = $(event.target);
-        $target.prop('ongoing-event', event.type);
+    function multiSelectPostChange(event) {
+        let $menu = $(event.currentTarget || event.target);
+        $menu.prop('ongoing-event', event.type);
     }
 
     /**
@@ -710,13 +1502,15 @@ $(document).on('turbolinks:load', function() {
      * unnecessary opening-and-closing of the drop down menu.
      *
      * @param {jQuery.Event} event
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
      */
     function suppressMenuOpen(event) {
-        let $target = $(event.target);
-        if ($target.prop('ongoing-event')) {
+        let $menu = $(event.currentTarget || event.target);
+        if ($menu.prop('ongoing-event')) {
             event.preventDefault();
             event.stopImmediatePropagation();
-            $target.removeProp('ongoing-event').select2('close');
+            $menu.removeProp('ongoing-event').select2('close');
         }
     }
 
@@ -729,35 +1523,335 @@ $(document).on('turbolinks:load', function() {
         const type   = event.type;
         const spaces = Math.max(0, (MULTI_SELECT_EVENTS_WIDTH - type.length));
         const evt    = type + ' '.repeat(spaces);
-        const tgt    = event.target;
+        const menu   = event.currentTarget || event.target;
         let target   = '';
-      //if (tgt.localName) { target += tgt.localName; }
-        if (tgt.id)        { target += '#' + tgt.id; }
-      //if (tgt.className) { target += '.' + tgt.className; }
-      //if (tgt.type)      { target += `[${tgt.type}]`; }
+      //if (menu.localName) { target += menu.localName; }
+        if (menu.id)        { target += '#' + menu.id; }
+      //if (menu.className) { target += '.' + menu.className; }
+      //if (menu.type)      { target += `[${menu.type}]`; }
         // noinspection JSCheckFunctionSignatures
-        let $selected  = $(tgt).siblings().find('[aria-activedescendant]');
+        let $selected  = $(menu).siblings().find('[aria-activedescendant]');
         const selected = $selected.attr('aria-activedescendant');
         if (selected) { target += ' ' + selected; }
         console.log('SELECT2', evt, target);
     }
 
     // ========================================================================
-    // Functions - search overlay
+    // Functions - search filters - immediate mode - inputs hidden parameters
     // ========================================================================
+
+    /**
+     * Set hidden inputs for the search input form.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function initializeSearchFormParams() {
+        setSearchFormParamsFromFilters();
+    }
+
+    /**
+     * Set search input form hidden inputs from search filters.
+     *
+     * @param {Selector} [src]        Default: {@link $search_filters}.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFormParamsFromFilters(src) {
+        setSearchFormParams($search_bar_container, src);
+    }
+
+    /**
+     * Update all hidden inputs in the destination element which track the
+     * settings of search filters.
+     *
+     * @param {Selector} [dst]        Default: {@link $search_bar_container}.
+     * @param {Selector} [src]        Default: {@link $search_filters}.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFormParams(dst, src) {
+        let $dst = dst ? $(dst) : $search_bar_container;
+        let $src = src ? $(src) : $search_filters;
+        $src.each(function() {
+            setSearchFormHiddenInputs($dst, this);
+        });
+    }
+
+    /**
+     * Create/modify/delete a hidden input from a destination element which
+     * tracks tracks the settings of search filters.
+     *
+     * @param {Selector} dst          Destination with hidden inputs.
+     * @param {Selector} src          Source filter control.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFormHiddenInputs(dst, src) {
+        // noinspection JSUnusedLocalSymbols
+        let $menu = getSearchFilterMenu(src);
+        updateHiddenInputs(dst, $menu);
+    }
+
+    // ========================================================================
+    // Functions - search filters - immediate mode - filters hidden parameters
+    // ========================================================================
+
+    /**
+     * Set hidden input parameters for each search filter control.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function initializeSearchFilterParams() {
+        setSearchFilterParamsFromInputs();
+        setSearchFilterParamsFromFilters();
+    }
+
+    /**
+     * Set search input form hidden inputs from search filters.
+     *
+     * @param {Selector} [src]        Default: all search inputs.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFilterParamsFromInputs(src) {
+        const terms = allSearchTerms(src);
+        setSearchFilterParams(terms);
+    }
+
+    /**
+     * Update all hidden inputs in the destination element which track the
+     * settings of search filters.
+     *
+     * @param {Selector} [src]        Default: {@link $search_filters}.
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFilterParamsFromFilters(src) {
+        let $controls = src ? $(src) : $search_filters;
+        $controls.each(function() {
+            let $this = getSearchFilter(this);
+            let $menu = getSearchFilterMenu($this);
+            let $dst  = $controls.not($this);
+            updateHiddenInputs($dst, $menu);
+        });
+    }
+
+    /**
+     * Modify the hidden input parameters of each filter control based on the
+     * new search type and search terms.
+     *
+     * @param {object|string} new_type
+     * @param {string}        [new_value]
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFilterParams(new_type, new_value) {
+        $search_filters.each(function() {
+            setSearchFilterHiddenInputs(this, new_type, new_value);
+        });
+    }
+
+    /**
+     * Add and/or subtract hidden input parameters from a filter control so
+     * that selecting it will result in the proper search URL.
+     *
+     * @param {Selector}      control       Filter control to modify.
+     * @param {object|string} new_type
+     * @param {string}        [new_value]
+     *
+     * @note Only applicable if {@link IMMEDIATE_SEARCH} is true.
+     */
+    function setSearchFilterHiddenInputs(control, new_type, new_value) {
+        let $control = getSearchFilter(this);
+        let $menu    = getSearchFilterMenu($control);
+        updateHiddenInputs($control, $menu, new_type, new_value);
+    }
+
+    // ========================================================================
+    // Functions - search filters - immediate mode - general
+    // ========================================================================
+
+    /**
+     * Create/update/delete hidden input(s) on *dst*.
+     *
+     * @param {Selector}           dst
+     * @param {Selector|undefined} menu
+     * @param {string|object}      [new_type]
+     * @param {string}             [new_value]
+     */
+    function updateHiddenInputs(dst, menu, new_type, new_value) {
+        const func = 'updateHiddenInputs';
+        let $menu  = menu && $(menu);
+        const base = $menu && $menu.attr('name').replace('[]', '') || 'input';
+        let values;
+        if (typeof new_type === 'object') {
+            values = new_type;
+        } else if (new_type) {
+            values = Object.fromEntries([[new_type, new_value]]);
+        } else if ($menu) {
+            values = Object.fromEntries([[$menu.attr('name'), $menu.val()]]);
+        } else {
+            console.error(`${func}: no menu selector given`);
+            return;
+        }
+        $(dst).each(function() {
+            let $dst      = $(this);
+            let $hidden   = $dst.find('input[type="hidden"]');
+            const base_id = $dst.attr('id') || randomizeClass(base);
+            $.each(values, function(name, value) {
+                const type     = name.replace('[]', '');
+                const selector = `[name="${type}"]`;
+                const input_id = `${base_id}-${type}`;
+                if ((type !== name) || Array.isArray(value)) {
+                    // Blow away any matching hidden inputs and re-create.
+                    $hidden.filter(selector + `, [name="${type}[]"]`).remove();
+                    let attr = { name: `${type}[]` };
+                    compact(arrayWrap(value)).forEach(function(v, i) {
+                        attr.id = `${input_id}-${i}`;
+                        addHiddenInputTo($dst, v, attr);
+                    });
+                } else {
+                    let $input = $hidden.filter(selector);
+                    if (isPresent($input)) {
+                        if (value) {
+                            $input.val(value);
+                        } else {
+                            $input.remove();
+                        }
+                    } else if (value) {
+                        const attr = { name: type, id: input_id };
+                        addHiddenInputTo($dst, value, attr);
+                    }
+                }
+            });
+        });
+    }
+
+    /**
+     * Create a hidden <input> and prepend to the given element.
+     *
+     * (Because it is prepended, a control inside the element having the same
+     * "name" attribute will take precedence.)
+     *
+     * @param {Selector} dst          Destination for hidden input.
+     * @param {string} [value]
+     * @param {object} [attributes]
+     *
+     * @returns {jQuery}
+     */
+    function addHiddenInputTo(dst, value, attributes) {
+        let $input = $('<input type="hidden">');
+        if (isDefined(attributes)) { $input.attr(attributes); }
+        if (isDefined(value))      { $input.val(value); }
+        if (isDefined(dst))        { $input.prependTo($(dst)); }
+        return $input;
+    }
+
+    // ========================================================================
+    // Functions - general
+    // ========================================================================
+
+    /**
+     * Get the element associated with the target, which encloses one or more
+     * elements accessible via {@link getContainedElement}.
+     *
+     * @param {SelectorOrEvent}   target
+     * @param {Selector}          selector
+     * @param {string}            caller        For logging.
+     * @param {Selector|function} [def_target]
+     *
+     * @returns {jQuery}
+     */
+    function getContainerElement(target, selector, caller, def_target) {
+        /** @type {jQuery} */
+        let $target;
+        let func    = caller || 'getContainerElement';
+        if (isEvent(target)) {
+            func    = caller || `${target.type} handler`;
+            $target = $(target.currentTarget || target.target);
+        } else if (target) {
+            $target = $(target);
+        } else if (typeof def_target === 'function') {
+            $target = def_target();
+        } else if (def_target) {
+            $target = $(def_target);
+        }
+        /** @type {jQuery} */
+        let $result, $inside, $outside;
+        if (isMissing($target)) {
+            console.error(`${func}: target missing/empty`);
+        } else if ($target.is(selector)) {
+            $result = $target;
+        } else if (isPresent(($outside = $target.parents(selector)))) {
+            $result = $outside;
+        } else if (isPresent(($inside = $target.find(selector)))) {
+            $result = $inside;
+        } else {
+            console.error(`${func}: invalid target:`, target);
+        }
+        return $result || $();
+    }
+
+    /**
+     * Get the element associated with the target, which is contained within
+     * an element accessible via {@link getContainerElement}.
+     *
+     * @param {SelectorOrEvent}   target
+     * @param {Selector}          selector
+     * @param {string}            caller        For logging.
+     * @param {Selector|function} container
+     *
+     * @returns {jQuery}
+     */
+    function getContainedElement(target, selector, caller, container) {
+        /** @type {jQuery} */
+        let $target;
+        let func    = caller || 'getContainedElement';
+        if (isEvent(target)) {
+            func    = caller || `${target.type} handler`;
+            $target = $(target.currentTarget || target.target);
+        } else if (target) {
+            $target = $(target);
+        }
+        /** @type {jQuery} */
+        let $result;
+        if (isMissing($target)) {
+            console.error(`${func}: target missing/empty`);
+        } else if ($target.is(selector)) {
+            $result = $target;
+        } else if (typeof container === 'function') {
+            $result = container($target, func).find(selector);
+        } else if (container) {
+            $result = $(container).find(selector);
+        }
+        return $result || $();
+    }
+
+    // ========================================================================
+    // Functions - search-in-progress overlay
+    // ========================================================================
+
+    /**
+     * The hidden overlay displayed during a long search.
+     *
+     * @returns {jQuery}
+     */
+    function inProgressOverlay() {
+        return $search_in_progress;
+    }
 
     /**
      * Show the indicator that is presented during a time-consuming search.
      */
     function showInProgress() {
-        $search_in_progress.toggleClass('visible', true);
+        inProgressOverlay().toggleClass('visible', true);
     }
 
     /**
      * Hide the indicator that is presented during a time-consuming search.
      */
     function hideInProgress() {
-        $search_in_progress.toggleClass('visible', false);
+        inProgressOverlay().toggleClass('visible', false);
     }
 
     // ========================================================================

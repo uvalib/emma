@@ -30,6 +30,11 @@ en:
       # Layout
       # =======================================================================
 
+      search_bar:
+        enabled:        true
+        min_rows:       3
+        max_rows:       ~
+
       page_controls:
         label:
           one:          'Manage this record:'

@@ -118,6 +118,8 @@ en:
     search_bar:         &SEARCH_BAR
       label:            'Search'
       enabled:          true
+      min_rows:         1
+      max_rows:         1
 
       button:
         label:          'Search'
@@ -129,7 +131,7 @@ en:
           <<:           *PANEL_OPEN_TOGGLE
           tooltip:      'Hide additional search filters'
 
-    search_controls:    &SEARCH_CONTROLS
+    search_filters:     &SEARCH_FILTERS
       enabled:          true
       expanded:         true        # False/missing => collapsed initially.
 
@@ -148,7 +150,7 @@ en:
 
       _reset:
         label:          'Reset'
-        tooltip:        'Clear all search filters'
+        tooltip:        'Set all search filters to their default values'
 
       a11y_feature:
         service:        search
@@ -246,7 +248,7 @@ en:
         tooltip:        'Specify the order in which results are presented'
         placeholder:    ~
         values:         !ruby/symbol SearchSort # NOTE: Override per-controller
-        default:        relevance
+        default:        title
         multiple:       false
         reverse:
           enabled:      false
@@ -413,8 +415,8 @@ en:
         <<:             *SEARCH_BAR
         label:          '%{Item} Search'
 
-      search_controls:
-        <<:             *SEARCH_CONTROLS
+      search_filters:
+        <<:             *SEARCH_FILTERS
         layout:
           - [sort,   size,           repository  ]
           - [format, format_feature, a11y_feature]

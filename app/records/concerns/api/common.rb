@@ -557,6 +557,16 @@ class EnumType < ScalarType
     enumerations.dig(entry.to_sym, :pairs)
   end
 
+  # The default for an enumeration.
+  #
+  # @param [Symbol, String] entry
+  #
+  # @return [String]
+  #
+  def self.default_for(entry)
+    enumerations.dig(entry.to_sym, :default)
+  end
+
 end
 
 # =============================================================================

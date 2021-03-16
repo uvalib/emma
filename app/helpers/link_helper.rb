@@ -208,8 +208,7 @@ module LinkHelper
 
     prepend_classes!(opt, css_selector, 'menu-control')
     opt[:method] ||= :get
-    # noinspection RubyYardReturnMatch
-    form_tag(path, opt) do
+    html_form(path, opt) do
       select_tag(:selected, options_for_select(menu), select_opt)
     end
   end

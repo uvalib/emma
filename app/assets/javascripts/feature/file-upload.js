@@ -1710,8 +1710,7 @@ $(document).on('turbolinks:load', function() {
      */
     function hideUppyProgressBar(form) {
         let $control = formContainer(form).find('.uppy-ProgressBar');
-        $control.attr('aria-hidden', true);
-        $control.css('visibility', 'hidden');
+        toggleVisibility($control, false);
     }
 
     // ========================================================================

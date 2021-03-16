@@ -95,6 +95,28 @@ module HtmlHelper
     content_tag(tag, safe_join(content, separator), options)
   end
 
+  # Invoke #form_tag after normalizing element contents provided via the
+  # parameter list and/or the block.
+  #
+  # @param [String] url_or_path
+  # @param [Array]  args              Passed to #form_tag except for:
+  #
+  # @option args.last [String] :separator   Default: "\n"
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def html_form(url_or_path, *args)
+    options   = args.last.is_a?(Hash) ? args.pop.dup : {}
+    separator = options.delete(:separator) || "\n"
+    content   = args.flatten
+    content  += Array.wrap(yield) if block_given?
+    content.reject!(&:blank?)
+    # noinspection RubyYardReturnMatch
+    form_tag(url_or_path, options) do
+      safe_join(content, separator)
+    end
+  end
+
   # An "empty" element that can be used as a placeholder.
   #
   # @param [Hash] opt                 Passed to #html_div except for:
@@ -133,24 +155,21 @@ module HtmlHelper
   #--
   # noinspection RubyYardParamTypeMatch
   #++
-  def icon_button(icon = nil, text = nil, url = nil, **opt)
-    opt, html_opt = partition_options(opt, :icon, :text, :url)
-    icon = opt[:icon] || icon || STAR
-    text = opt[:text] || text || html_opt[:title] || 'Action' # TODO: I18n
-    url  = opt[:url]  || url
-    link = +''.html_safe
+  def icon_button(icon: nil, text: nil, url: nil, **opt)
+    icon           ||= STAR
+    text           ||= opt[:title] || 'Action' # TODO: I18n
+    opt[:title]    ||= text
+    opt[:role]     ||= 'button'
+    opt[:tabindex] ||= 0 unless url
 
-    # Screen-reader only text.
-    link << html_span(text, class: 'text sr-only')
+    sr_only = html_span(text, class: 'text sr-only')
+    symbol  = html_span(icon, class: 'symbol', 'aria-hidden': true)
+    link    = sr_only << symbol
 
-    # Non-screen-reader symbol.
-    link << html_span(icon, class: 'symbol', 'aria-hidden': true)
-
-    html_opt[:title] ||= text
     if url
-      link_to(link, url, html_opt)
+      link_to(link, url, opt)
     else
-      html_span(link, html_opt)
+      html_span(link, opt)
     end
   end
 

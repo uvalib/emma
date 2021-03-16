@@ -149,7 +149,9 @@ function flashError(text, type, role, fc) {
  */
 function showFlash(fc) {
     let $fc = flashContainer(fc);
-    $fc.removeClass('hidden').removeClass('invisible');
+    $fc.removeClass('hidden');
+    $fc.removeClass('invisible');
+    $fc.removeAttr('aria-hidden');
     return scrollIntoView($fc);
 }
 
@@ -224,7 +226,7 @@ function flashDisplayed(fc) {
 function addFlashMessage(text, type, role, fc) {
     const css_class = type || 'notice';
     const aria_role = role || 'alert';
-    const msg       = text ? text.replace("\n", '<br/>') : '???';
+    const msg       = text ? text.replace(/\n/g, '<br/>') : '???';
     let $msg = $('<p>').addClass(css_class).attr('role', aria_role).html(msg);
     return showFlash(fc).append($msg);
 }

@@ -1,0 +1,11 @@
+<%# app/views/layouts/_search.html.erb -%>
+<%-
+  # Search inputs, filters, and related controls.
+  sb = show_search_bar?
+  sf = show_search_filters?
+  return unless sb || sf
+  position = %i[top bottom]
+-%>
+
+<%= render 'layouts/search_bar',     position: (sf && position.shift) if sb %>
+<%= render 'layouts/search_filters', position: (sb && position.shift) if sf %>

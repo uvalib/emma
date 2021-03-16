@@ -528,11 +528,14 @@ module Emma::Common
   #                                           (default: *true*).
   # @option opt [Boolean] :quote            Quote string values
   #                                           (default: *false*)
+  # @option opt [Boolean] :inspect          Replace "v" with "v.inspect"
+  #                                           (default: *false*)
   #
   # @return [Array<String>]
   #
   def normalized_list(values, **opt)
     opt[:sanitize] = true unless opt.key?(:sanitize)
+    sanitize = opt[:sanitize]
     Array.wrap(values).flat_map { |value|
       case value
         when Hash
@@ -547,10 +550,14 @@ module Emma::Common
         when Array
           array_string(value, **opt)
         else
-          value = value.to_s
-          value = sanitized_string(value) if opt[:sanitize]
-          value = quote(value)            if opt[:quote]
-          value
+          value = sanitized_string(value) if sanitize && value.is_a?(String)
+          if opt[:inspect]
+            value.inspect
+          elsif opt[:quote]
+            quote(value)
+          else
+            value.to_s
+          end
       end
     }.reject(&:blank?)
   end
@@ -638,22 +645,52 @@ module Emma::Common
     ERB::Util.h(result)
   end
 
-  # Transform a string into a value safe for use as an HTML ID (or class name).
+  # ASCII characters.
   #
-  # @param [String, Symbol] text
-  # @param [Boolean]        camelize    If *false* leave as underscored.
+  # @type [String]
+  #
+  ASCII = (1..255).map(&:chr).join.freeze
+
+  # Work break characters (for use with #tr or #delete). Sequences of any of
+  # these in #html_id will be replaced by a single separator character.
+  #
+  # @type [String]
+  #
+  HTML_ID_WORD_BREAK = (ASCII.remove(/[[:graph:]]/) << '._\-').freeze
+
+  # Characters (for use with #tr or #delete) that are ignored by #html_id.
+  #
+  # @type [String]
+  #
+  HTML_ID_IGNORED = ASCII.remove(/[^[:punct:]]/)
+
+  # Combine parts into a value safe for use as an HTML ID (or class name).
+  #
+  # A 'Z' is prepended if the result would not have started with a letter.
+  #
+  # @param [Array]   parts
+  # @param [String]  separator        Separator between parts.
+  # @param [Boolean] underscore
+  # @param [Boolean] camelize         Replace underscores with caps.
   #
   # @return [String]
   #
-  def html_id(text, camelize: true)
-    # noinspection RubyYardParamTypeMatch
-    text = sanitized_string(text) if text.is_a?(ActiveSupport::SafeBuffer)
-    text = text.to_s.gsub(/[^[:graph:]]/, '_')
-    text = text.tr('_', ' ').remove(/[[:punct:]]/).squish.tr(' ', '_')
-    text = text.underscore
-    text = text.camelize if camelize
-    # noinspection RubyYardReturnMatch
-    text
+  def html_id(*parts, separator: '-', underscore: true, camelize: false, **)
+    separator ||= ''
+    word_break  = HTML_ID_WORD_BREAK + separator
+    ignored     = HTML_ID_IGNORED.delete(separator)
+    parts.map { |part|
+      part = sanitized_string(part) if part.is_a?(ActiveSupport::SafeBuffer)
+      part = part.to_s
+      part = part.tr_s(word_break, ' ').strip.tr(' ', separator)
+      part = part.delete(ignored)
+      part = part.underscore if underscore || camelize
+      part = part.camelize   if camelize
+      part.presence
+    }.compact.join(separator).tap { |result|
+      # noinspection RubyResolve
+      result.prepend('Z') if result.start_with?(/[^a-z]/i)
+    }
   end
 
   # ===========================================================================

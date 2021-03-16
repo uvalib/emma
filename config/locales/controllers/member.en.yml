@@ -29,7 +29,7 @@ en:
       search_bar:
         enabled:        false
 
-      search_controls:
+      search_filters:
 
         format:
           multiple:     false

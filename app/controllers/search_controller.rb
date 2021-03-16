@@ -59,6 +59,7 @@ class SearchController < ApplicationController
     q_params.reject! { |_, v| v.blank? }
     if q_params.present?
       opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      set_immediate_search(opt.delete(:immediate_search))
       @list = search_api.get_records(**opt)
       save_search(**opt)
       self.page_items  = @list.records

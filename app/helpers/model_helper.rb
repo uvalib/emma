@@ -415,7 +415,7 @@ module ModelHelper
     return if value.blank?
     model ||= params[:controller]
     prop = Field.configuration_for(field, model)
-    rng  = html_id(label || 'None')
+    rng  = html_id((label || 'None'), camelize: true)
     type = "field-#{rng}"
     v_id = type.dup
     l_id = +"label-#{rng}"
@@ -1227,7 +1227,7 @@ module ModelHelper
     **opt
   )
     # Pre-process label to derive names and identifiers.
-    base = html_id(label || 'None')
+    base = html_id((label || 'None'), camelize: true)
     type = "field-#{base}"
     name = field&.to_s || base
     model ||= params[:controller]

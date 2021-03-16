@@ -17,6 +17,7 @@ module SearchTermsHelper
   include Emma::Common
   include Emma::Json
   include Emma::Unicode
+  include ConfigurationHelper
 
   # ===========================================================================
   # :section:
@@ -30,7 +31,7 @@ module SearchTermsHelper
   #
   NULL_SEARCH = '*'
 
-  # EMMA Unified Search types.
+  # Table of search types for each controller.
   #
   # Each entry may have:
   #
@@ -40,16 +41,25 @@ module SearchTermsHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  #--
-  # noinspection RailsI18nInspection
-  #++
-  SEARCH_TYPE = I18n.t('emma.search_type').deep_freeze
+  SEARCH_TYPE =
+    ApplicationHelper::APP_CONTROLLERS.map { |controller|
+      opt   = { controller: controller, mode: false }
+      entry = config_lookup('search_type', **opt) || {}
+      entry.each_pair do |type, config|
+        config[:url_parameter] = config[:url_parameter]&.to_sym || type
+        config[:name] ||= type.to_s.camelize
+      end
+      [controller, entry]
+    }.to_h.deep_freeze
 
-  # Non-facet search fields.
+  # Non-facet search fields per controller.
   #
-  # @type [Array<Symbol>]
+  # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  QUERY_PARAMETERS = SEARCH_TYPE.keys.freeze
+  QUERY_PARAMETERS =
+    SEARCH_TYPE.transform_values { |types|
+      types.map { |type, cfg| cfg[:url_parameter]&.to_sym || type }
+    }.freeze
 
   # URL parameters that are definitely not search parameters.
   #
@@ -100,17 +110,25 @@ module SearchTermsHelper
 
   public
 
-  # The current type of search (as indicated by the current controller).
+  # The current search target (the current controller by default).
   #
-  # @param [Hash, Symbol, String, nil] type   Default: `params[:controller]`.
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt
   #
-  # @return [Symbol]                    The controller used for searching.
-  # @return [nil]                       If searching should not be enabled.
+  # @return [Symbol]                  The controller used for searching.
+  # @return [nil]                     If searching should not be enabled.
   #
-  def search_target(type = nil)
-    type ||= request_parameters[:controller]
-    type = type[:controller] if type.is_a?(Hash)
-    type&.to_sym
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def search_target(target = nil, **opt)
+    opt = request_parameters if target.blank? && opt.blank?
+    # noinspection RubyCaseWithoutElseBlockInspection, RubyNilAnalysis
+    case target
+      when Hash           then opt.merge!(target.symbolize_keys)
+      when Symbol, String then opt[:target] = target.to_sym
+    end
+    (opt[:target] || opt[:controller])&.to_sym
   end
 
   # ===========================================================================
@@ -122,15 +140,29 @@ module SearchTermsHelper
   # Prepare label/value pairs that can be used with #options_for_select to
   # generate a search type selection menu.
   #
-  # @param [String, Symbol] _target_type   *ignored*
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt      Passed to #search_target.
   #
   # @return [Array<Array<(String,Symbol)>>]
   #
-  def search_menu_pairs(_target_type = nil)
-    SEARCH_TYPE.map do |type, config|
-      label = config[:name] || type.to_s.camelize
-      [label, type]
+  def search_query_menu_pairs(target = nil, **opt)
+    target = search_target(target, **opt)
+    types  = SEARCH_TYPE[target] || {}
+    types.map do |type, config|
+      [config[:name], type]
     end
+  end
+
+  # The URL parameters associated with queries for the indicated search target.
+  #
+  # @param [Hash, Symbol, String, nil] target
+  # @param [Hash]                      opt      Passed to #search_target.
+  #
+  # @return [Array<Symbol>]
+  #
+  def search_query_keys(target = nil, **opt)
+    target = search_target(target, **opt)
+    QUERY_PARAMETERS[target] || []
   end
 
   # Active query parameters.
@@ -139,9 +171,11 @@ module SearchTermsHelper
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
-  def search_parameters(prm = nil)
+  def search_parameters(prm = nil, **opt)
+    keys  = search_query_keys(**opt)
     prm ||= url_parameters
-    prm.slice(*QUERY_PARAMETERS).transform_values { |v| Array.wrap(v) }
+    # noinspection RubyYardReturnMatch
+    prm.slice(*keys).transform_values { |v| Array.wrap(v) }
   end
 
   # ===========================================================================
@@ -155,21 +189,31 @@ module SearchTermsHelper
   # The result is ordered such that text-only (query) fields(s) come before
   # facet selection fields.
   #
+  # @param [Hash, Symbol, String, nil]  target  Passed to #search_target.
   # @param [Hash{Symbol=>String,Array}] pairs   Default: `#url_parameters`.
   # @param [Symbol, Array<Symbol>]      only
   # @param [Symbol, Array<Symbol>]      except
+  # @param [Hash]                       opt     Passed to #search_target.
   #
   # @return [Hash{Symbol=>SearchTerm}]
   #
-  def search_terms(pairs: nil, only: nil, except: nil)
+  def search_terms(target = nil, pairs: nil, only: nil, except: nil, **opt)
+    target = search_target(target, **opt)
     only   = Array.wrap(only).compact.uniq.presence
     except = [*except, *NON_SEARCH_KEYS].compact.uniq.presence
     pairs  = (only || except) && pairs&.dup || url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
-    # noinspection RubyYardParamTypeMatch
-    term_list = pairs.map { |f, values| [f, SearchTerm.new(f, values)] }.to_h
-    queries, filters = partition_options(term_list, *QUERY_PARAMETERS)
+    # noinspection xRubyYardParamTypeMatch
+    qcfg = SEARCH_TYPE[target] || {}
+    fcfg = LayoutHelper::SearchFilters::SEARCH_PARAMETER_MENU_MAP[target] || {}
+    term_list =
+      pairs.map { |prm, values|
+        st_opt = { config: qcfg[prm] || fcfg[prm] }
+        st_opt[:query] = qcfg[prm].present? if st_opt[:config]
+        [prm, SearchTerm.new(prm, values, **st_opt)]
+      }.to_h
+    queries, filters = partition_options(term_list, *qcfg.keys)
     queries.merge!(filters)
   end
 
@@ -194,9 +238,9 @@ module SearchTermsHelper
     term_list.map { |_field, term|
       next if term.blank?
       if term.query?
-        array_string(term.names, quote: true)
+        array_string(term.names, inspect: true)
       else
-        "#{term.label}: " + array_string(term.values, quote: true)
+        "#{term.label}: " + array_string(term.values, inspect: true)
       end
     }.compact.join(separator)
   end

@@ -110,6 +110,26 @@ module SearchConcern
     end
   end
 
+  # Indicate whether search menu selections should take immediate effect.
+  #
+  # @param [*] value
+  #
+  # @return [Symbol]                  New setting value.
+  # @return [nil]                     If the setting was not changed.
+  #
+  # @see LayoutHelper#immediate_search?
+  #
+  def set_immediate_search(value)
+    # TODO: accept only for authenticated user
+    if %i[true false].include?(value)
+      @immediate_search = value
+    elsif true?(value)
+      @immediate_search = :true
+    elsif false?(value)
+      @immediate_search = :false
+    end
+  end
+
   # ===========================================================================
   # :section: Callbacks
   # ===========================================================================
@@ -161,7 +181,7 @@ module SearchConcern
   #
   def identifier_keyword_redirect
     opt = request_parameters
-    QUERY_PARAMETERS.find do |q_param|
+    search_query_keys(**opt).find do |q_param|
       next if (q_param == :identifier) || (query = opt[q_param]).blank?
       next if (identifier = PublicationIdentifier.cast(query)).blank?
       opt[:identifier] = identifier.to_s

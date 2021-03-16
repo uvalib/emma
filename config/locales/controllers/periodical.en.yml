@@ -38,9 +38,10 @@ en:
           placeholder:  'Search periodical titles...'
 
       search_bar:
+        enabled:        true
         label:          'Periodical Search'
 
-      search_controls:
+      search_filters:
 
         format:
           values:       !ruby/symbol BsPeriodicalFormat
