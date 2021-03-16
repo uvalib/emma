@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Bs::Record::ActivePeriodical
 #
 # @attr [String]                        activeTitleId
-# @attr [Array<AllowsType>]             allows
+# @attr [Array<BsAllowsType>]           allows
 # @attr [String]                        assignedBy
 # @attr [IsoDate]                       dateAdded
 # @attr [Bs::Record::Format]            format
@@ -31,7 +31,7 @@ class Bs::Record::ActivePeriodical < Bs::Api::Record
 
   schema do
     has_one   :activeTitleId
-    has_many  :allows,              AllowsType
+    has_many  :allows,              BsAllowsType
     has_one   :assignedBy
     has_one   :dateAdded,           IsoDate
     has_one   :downloadStatus,      Bs::Record::StatusModel

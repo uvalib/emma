@@ -7,21 +7,21 @@ __loading_begin(__FILE__)
 
 # Bs::Record::ArtifactMetadata
 #
-# @attr [String]                  brailleCode
-# @attr [BrailleGrade]            brailleGrade
-# @attr [BrailleMusicScoreLayout] brailleMusicScoreLayout
-# @attr [BrailleType]             brailleType
-# @attr [IsoDate]                 dateAdded
-# @attr [IsoDuration]             duration
-# @attr [String]                  externalIdentifierCode
-# @attr [String]                  format
-# @attr [String]                  fundingSource
-# @attr [String]                  globalBookServiceId
-# @attr [Bs::Record::Narrator]    narrator
-# @attr [Integer]                 numberOfVolumes
-# @attr [String]                  producer
-# @attr [String]                  supplier
-# @attr [Bs::Record::Name]        transcriber
+# @attr [String]                    brailleCode
+# @attr [BsBrailleGrade]            brailleGrade
+# @attr [BsBrailleMusicScoreLayout] brailleMusicScoreLayout
+# @attr [BsBrailleType]             brailleType
+# @attr [IsoDate]                   dateAdded
+# @attr [IsoDuration]               duration
+# @attr [String]                    externalIdentifierCode
+# @attr [String]                    format
+# @attr [String]                    fundingSource
+# @attr [String]                    globalBookServiceId
+# @attr [Bs::Record::Narrator]      narrator
+# @attr [Integer]                   numberOfVolumes
+# @attr [String]                    producer
+# @attr [String]                    supplier
+# @attr [Bs::Record::Name]          transcriber
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_artifact_metadata
 #
@@ -31,9 +31,9 @@ class Bs::Record::ArtifactMetadata < Bs::Api::Record
 
   schema do
     has_one   :brailleCode
-    has_one   :brailleGrade,            BrailleGrade
-    has_one   :brailleMusicScoreLayout, BrailleMusicScoreLayout
-    has_one   :brailleType,             BrailleType
+    has_one   :brailleGrade,            BsBrailleGrade
+    has_one   :brailleMusicScoreLayout, BsBrailleMusicScoreLayout
+    has_one   :brailleType,             BsBrailleType
     has_one   :dateAdded,               IsoDate
     has_one   :duration,                IsoDuration
     has_one   :externalIdentifierCode

@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::AssignedTitleMetadataSummaryList
 #
-# @attr [Array<AllowsType>]                               allows
+# @attr [Array<BsAllowsType>]                             allows
 # @attr [Integer]                                         limit
 # @attr [Array<Bs::Record::Link>]                         links
 # @attr [Bs::Record::StatusModel]                         message
@@ -27,7 +27,7 @@ class Bs::Message::AssignedTitleMetadataSummaryList < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many  :allows,       AllowsType
+    has_many  :allows,       BsAllowsType
     has_one   :limit,        Integer
     has_many  :links,        Bs::Record::Link
     has_one   :message,      Bs::Record::StatusModel

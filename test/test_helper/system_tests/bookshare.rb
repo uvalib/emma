@@ -47,7 +47,7 @@ module TestHelper::SystemTests::Bookshare
   #
   # @type [Array<String>]
   #
-  API_ENUMS_DOCUMENTED_AS_RECORDS = %w(ContentWarning)
+  API_ENUMS_DOCUMENTED_AS_RECORDS = %w(BsContentWarning)
 
   # A mapping of documentation element ID to request method name.
   #
@@ -70,7 +70,7 @@ module TestHelper::SystemTests::Bookshare
   #
   API_RECORD_TYPES = {
     studentstatus:          'StudentStatus',
-    content_warning_values: 'ContentWarning',
+    content_warning_values: 'BsContentWarning',
     myaccount_preferences:  'MyAccountPreferences',
     myaccount_summary:      'MyAccountSummary',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.deep_freeze
@@ -90,15 +90,15 @@ module TestHelper::SystemTests::Bookshare
   # @type [Hash{String=>String}]
   #
   API_TYPE_MAP = {
-    AllowsType:           'String',
-    DisabilityType:       'String',
-    FormatType:           'String',
-    IsoDuration:          'String',
-    LexileCode:           'String',
-    PeriodicalFormatType: 'String',
-    SiteType:             'String',
-    BsSeriesType:         'enum (newspaper, magazine, journal)',
-    IsoDate:              'string (date-time)',
+    BsAllowsType:       'String',
+    BsDisabilityType:   'String',
+    BsFormatType:       'String',
+    IsoDuration:        'String',
+    BsLexileCode:       'String',
+    BsPeriodicalFormat: 'String',
+    BsSiteType:         'String',
+    BsSeriesType:       'enum (newspaper, magazine, journal)',
+    IsoDate:            'string (date-time)',
   }.map { |k, v| [k.to_s, v.to_s] }.to_h.freeze
 
   # @type [String, Integer]
@@ -286,7 +286,7 @@ module TestHelper::SystemTests::Bookshare
         parts = type.sub($1, '').tr('(),', ' ').squish
         found = parts = parts.presence&.split(' ')&.sort
         found &&=
-          %w(AllowsType).find { |k| (parts - API_ENUMERATIONS[k]).blank? } ||
+          %w(BsAllowsType).find { |k| (parts - API_ENUMERATIONS[k]).blank? } ||
           API_ENUMERATIONS.find { |k, values| break k if parts == values }
         found || type
 

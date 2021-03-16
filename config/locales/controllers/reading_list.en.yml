@@ -39,7 +39,7 @@ en:
           values:       [10, 25, 50, 100]
 
         sort:
-          values:       !ruby/symbol MyReadingListSortOrder
+          values:       !ruby/symbol BsMyReadingListSortOrder
           reverse:
             enabled:    true
 

@@ -7,8 +7,8 @@ __loading_begin(__FILE__)
 
 # Bs::Record::ReadingListUserView
 #
-# @attr [Access]                              access
-# @attr [Array<AllowsType>]                   allows
+# @attr [BsAccess]                            access
+# @attr [Array<BsAllowsType>]                 allows
 # @attr [String]                              assignedBy
 # @attr [IsoDate]                             dateUpdated
 # @attr [String]                              description
@@ -30,8 +30,8 @@ class Bs::Record::ReadingListUserView < Bs::Api::Record
   include Bs::Shared::ReadingListMethods
 
   schema do
-    has_one   :access,        Access
-    has_many  :allows,        AllowsType
+    has_one   :access,        BsAccess
+    has_many  :allows,        BsAllowsType
     has_one   :assignedBy
     has_one   :dateUpdated,   IsoDate
     has_one   :description,   default: DEF_READING_LIST_DESCRIPTION

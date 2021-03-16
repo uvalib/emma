@@ -160,7 +160,7 @@ en:
         url_parameter:  'brailleType'
         label:          'Braille'
         tooltip:        'Limit by Braille type'
-        values:         !ruby/symbol BrailleType
+        values:         !ruby/symbol BsBrailleType
 
       category:
         url_parameter:  'categories'
@@ -172,7 +172,7 @@ en:
         url_parameter:  'titleContentType'
         label:          'Content Type'
         tooltip:        'Limit by type of source material'
-        values:         !ruby/symbol TitleContentType
+        values:         !ruby/symbol BsTitleContentType
 
       country:
         url_parameter:  'country'
@@ -204,13 +204,13 @@ en:
         url_parameter:  'narratorType'
         label:          'Narrator'
         tooltip:        'Limit by audio narrator type'
-        values:         !ruby/symbol NarratorType
+        values:         !ruby/symbol BsNarratorType
 
       periodical_format:
         url_parameter:  'fmt' # NOTE: not 'format' due to Rails constraints.
         label:          'Format'
         tooltip:        'Limit by remediated content type'
-        values:         !ruby/symbol PeriodicalFormatType
+        values:         !ruby/symbol BsPeriodicalFormat
 
       repository:
         url_parameter:  'repository'
@@ -246,13 +246,13 @@ en:
         url_parameter:  'excludedContentWarnings'
         label:          'Without'
         tooltip:        'Limit by excluded content warnings'
-        values:         !ruby/symbol ContentWarning
+        values:         !ruby/symbol BsContentWarning
 
       warnings_inc:
         url_parameter:  'includedContentWarnings'
         label:          'Warnings'
         tooltip:        'Limit by included content warnings'
-        values:         !ruby/symbol ContentWarning
+        values:         !ruby/symbol BsContentWarning
 
     page_controls:      &PAGE_CONTROLS
       label:            'Actions'

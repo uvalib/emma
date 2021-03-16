@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::UserPodList
 #
-# @attr [Array<AllowsType>]          allows
+# @attr [Array<BsAllowsType>]        allows
 # @attr [Array<Bs::Record::UserPod>] disabilities
 # @attr [Array<Bs::Record::Link>]    links
 #
@@ -18,7 +18,7 @@ class Bs::Message::UserPodList < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many :allows,       AllowsType
+    has_many :allows,       BsAllowsType
     has_many :disabilities, Bs::Record::UserPod
     has_many :links,        Bs::Record::Link
   end

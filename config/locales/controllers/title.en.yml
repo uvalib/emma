@@ -43,7 +43,7 @@ en:
       search_controls:
 
         format:
-          values:       !ruby/symbol FormatType
+          values:       !ruby/symbol BsFormatType
           multiple:     false
 
         size:
@@ -51,7 +51,7 @@ en:
           values:       [10, 25, 50, 100]
 
         sort:
-          values:       !ruby/symbol TitleSortOrder
+          values:       !ruby/symbol BsTitleSortOrder
           reverse:
             enabled:    true
 

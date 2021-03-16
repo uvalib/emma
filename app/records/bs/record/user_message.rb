@@ -7,12 +7,12 @@ __loading_begin(__FILE__)
 
 # Bs::Record::UserMessage
 #
-# @attr [Array<AllowsType>]       allows
+# @attr [Array<BsAllowsType>]     allows
 # @attr [IsoDate]                 createdDate
 # @attr [Array<Bs::Record::Link>] links
 # @attr [String]                  messageId
-# @attr [MessageType]             messageType
-# @attr [MessagePriority]         priority
+# @attr [BsMessageType]           messageType
+# @attr [BsMessagePriority]       priority
 # @attr [Boolean]                 read
 # @attr [String]                  text
 #
@@ -26,12 +26,12 @@ class Bs::Record::UserMessage < Bs::Api::Record
   include Bs::Shared::MessageMethods
 
   schema do
-    has_many  :allows,      AllowsType
+    has_many  :allows,      BsAllowsType
     has_one   :createdDate, IsoDate
     has_many  :links,       Bs::Record::Link
     has_one   :messageId
-    has_one   :messageType, MessageType
-    has_one   :priority,    MessagePriority
+    has_one   :messageType, BsMessageType
+    has_one   :priority,    BsMessagePriority
     has_one   :read,        Boolean
     has_one   :text
   end

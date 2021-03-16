@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::ReadingListTitlesList
 #
-# @attr [Array<AllowsType>]                   allows
+# @attr [Array<BsAllowsType>]                 allows
 # @attr [Integer]                             limit
 # @attr [Array<Bs::Record::Link>]             links
 # @attr [String]                              next
@@ -23,7 +23,7 @@ class Bs::Message::ReadingListTitlesList < Bs::Api::Message
   include Bs::Shared::ReadingListMethods
 
   schema do
-    has_many  :allows,        AllowsType
+    has_many  :allows,        BsAllowsType
     has_one   :limit,         Integer
     has_many  :links,         Bs::Record::Link
     has_one   :next

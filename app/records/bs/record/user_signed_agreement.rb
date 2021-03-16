@@ -7,14 +7,14 @@ __loading_begin(__FILE__)
 
 # Bs::Record::UserSignedAgreement
 #
-# @attr [String]        agreementId
-# @attr [AgreementType] agreementType
-# @attr [String]        dateExpired
-# @attr [String]        dateSigned
-# @attr [String]        printName
-# @attr [String]        recordingUser
-# @attr [Boolean]       signedByLegalGuardian
-# @attr [String]        username
+# @attr [String]          agreementId
+# @attr [BsAgreementType] agreementType
+# @attr [String]          dateExpired
+# @attr [String]          dateSigned
+# @attr [String]          printName
+# @attr [String]          recordingUser
+# @attr [Boolean]         signedByLegalGuardian
+# @attr [String]          username
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_user_signed_agreement
 #
@@ -26,7 +26,7 @@ class Bs::Record::UserSignedAgreement < Bs::Api::Record
 
   schema do
     has_one   :agreementId
-    has_one   :agreementType,         AgreementType
+    has_one   :agreementType,         BsAgreementType
     has_one   :dateExpired
     has_one   :dateSigned
     has_one   :printName

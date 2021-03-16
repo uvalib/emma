@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Record::ReadingListTitle
 #
-# @attr [Array<AllowsType>]         allows
+# @attr [Array<BsAllowsType>]       allows
 # @attr [Array<Bs::Record::Name>]   authors            *deprecated*
 # @attr [Boolean]                   available
 # @attr [String]                    award
@@ -42,7 +42,7 @@ class Bs::Record::ReadingListTitle < Bs::Api::Record
   include Bs::Shared::TitleMethods
 
   schema do
-    has_many  :allows,           AllowsType
+    has_many  :allows,           BsAllowsType
     has_many  :authors,          Bs::Record::Name           # NOTE: deprecated
     has_one   :available,        Boolean
     has_one   :award

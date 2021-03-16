@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [Array<Bs::Record::Link>]     links
 # @attr [Bs::Record::ContributorName] name
-# @attr [ContributorType]             type
+# @attr [BsContributorType]           type
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_contributor
 #
@@ -20,7 +20,7 @@ class Bs::Record::Contributor < Bs::Api::Record
   schema do
     has_many  :links, Bs::Record::Link
     has_one   :name,  Bs::Record::ContributorName
-    has_one   :type,  ContributorType
+    has_one   :type,  BsContributorType
   end
 
   # ===========================================================================

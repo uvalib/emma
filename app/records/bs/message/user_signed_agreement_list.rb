@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::UserSignedAgreementList
 #
-# @attr [Array<AllowsType>]                      allows
+# @attr [Array<BsAllowsType>]                    allows
 # @attr [Array<Bs::Record::Link>]                links
 # @attr [Array<Bs::Record::UserSignedAgreement>] signedAgreements
 #
@@ -18,7 +18,7 @@ class Bs::Message::UserSignedAgreementList < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many :allows,           AllowsType
+    has_many :allows,           BsAllowsType
     has_many :links,            Bs::Record::Link
     has_many :signedAgreements, Bs::Record::UserSignedAgreement
   end

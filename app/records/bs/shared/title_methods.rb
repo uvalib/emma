@@ -172,13 +172,13 @@ module Bs::Shared::TitleMethods
 
   # All contributors to this catalog title keyed by contributor type.
   #
-  # @param [Array<String>] roles      Default: `ContributorType#values`
+  # @param [Array<String>] roles      Default: `BsContributorType#values`
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
   def contributor_table(*roles)
     return {} unless respond_to?(:contributors)
-    roles = roles.compact.presence || ContributorType.values
+    roles = roles.compact.presence || BsContributorType.values
     roles.map { |role|
       k = role.to_sym
       v = contributors.map { |c| c.label if c.type == role }.compact
@@ -241,7 +241,7 @@ module Bs::Shared::TitleMethods
 
   # All artifacts associated with this catalog title.
   #
-  # @param [Array<FormatType>] types  Default: `FormatType#values`
+  # @param [Array<BsFormatType>] types  Default: `BsFormatType#values`
   #
   # @return [Array<String>]
   #

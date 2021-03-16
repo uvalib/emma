@@ -15,9 +15,9 @@ __loading_begin(__FILE__)
 # @attr [Array<Bs::Record::Link>]   links
 # @attr [Bs::Record::Name]          name
 # @attr [String]                    phoneNumber
-# @attr [ProofOfDisabilityStatus]   proofOfDisabilityStatus
+# @attr [BsProofOfDisabilityStatus] proofOfDisabilityStatus
 # @attr [Bs::Record::StudentStatus] studentStatus
-# @attr [SubscriptionStatus]        subscriptionStatus
+# @attr [BsSubscriptionStatus]      subscriptionStatus
 # @attr [String]                    username
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_myaccount_summary
@@ -46,9 +46,9 @@ class Bs::Message::MyAccountSummary < Bs::Api::Message
     has_many  :links,                   Bs::Record::Link
     has_one   :name,                    Bs::Record::Name
     has_one   :phoneNumber
-    has_one   :proofOfDisabilityStatus, ProofOfDisabilityStatus
+    has_one   :proofOfDisabilityStatus, BsProofOfDisabilityStatus
     has_one   :studentStatus,           Bs::Record::StudentStatus
-    has_one   :subscriptionStatus,      SubscriptionStatus
+    has_one   :subscriptionStatus,      BsSubscriptionStatus
     has_one   :username
   end
 

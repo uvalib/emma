@@ -59,7 +59,7 @@ module ApiService::Properties
   # @type [Array<Symbol>]
   #
   # == Usage Notes
-  # Compare with AllowsType#values.
+  # Compare with BsAllowsType#values.
   #
   HTTP_METHODS =
     %w(GET PUT POST DELETE)

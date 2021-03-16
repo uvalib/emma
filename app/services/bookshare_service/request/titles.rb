@@ -97,9 +97,9 @@ module BookshareService::Request::Titles
   # == 2.1.3. Download a title
   # Request download of Bookshare artifact (a title in a specific format).
   #
-  # @param [String]     bookshareId
-  # @param [FormatType] format
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       bookshareId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
   #
   # @option opt [String] :forUser     For restricted items, this is *not*
   #                                     optional -- it must be the
@@ -118,7 +118,7 @@ module BookshareService::Request::Titles
       add_api method => {
         required: {
           bookshareId: String,
-          format:      FormatType,
+          format:      BsFormatType,
         },
         optional: {
           forUser:     String,
@@ -134,28 +134,28 @@ module BookshareService::Request::Titles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]                :title
-  # @option opt [String, Array<String>] :author
-  # @option opt [String, Array<String>] :narrator
-  # @option opt [String, Array<String>] :composer
-  # @option opt [String]                :keyword
-  # @option opt [String]                :isbn
-  # @option opt [String, Array<String>] :categories
-  # @option opt [IsoLanguage]           :language
-  # @option opt [String]                :country
-  # @option opt [FormatType]            :format
-  # @option opt [NarratorType]          :narratorType
-  # @option opt [BrailleType]           :brailleType
-  # @option opt [Integer]               :readingAge
-  # @option opt [Array<ContentWarning>] :excludedContentWarnings
-  # @option opt [Array<ContentWarning>] :includedContentWarnings
-  # @option opt [String]                :externalIdentifierCode
-  # @option opt [IsoDuration]           :maxDuration
-  # @option opt [TitleContentType]      :titleContentType
-  # @option opt [String]                :start
-  # @option opt [Integer]               :limit
-  # @option opt [TitleSortOrder]        :sortOrder
-  # @option opt [Direction]             :direction
+  # @option opt [String]                  :title
+  # @option opt [String, Array<String>]   :author
+  # @option opt [String, Array<String>]   :narrator
+  # @option opt [String, Array<String>]   :composer
+  # @option opt [String]                  :keyword
+  # @option opt [String]                  :isbn
+  # @option opt [String, Array<String>]   :categories
+  # @option opt [IsoLanguage]             :language
+  # @option opt [String]                  :country
+  # @option opt [BsFormatType]            :format
+  # @option opt [BsNarratorType]          :narratorType
+  # @option opt [BsBrailleType]           :brailleType
+  # @option opt [Integer]                 :readingAge
+  # @option opt [Array<BsContentWarning>] :excludedContentWarnings
+  # @option opt [Array<BsContentWarning>] :includedContentWarnings
+  # @option opt [String]                  :externalIdentifierCode
+  # @option opt [IsoDuration]             :maxDuration
+  # @option opt [BsTitleContentType]      :titleContentType
+  # @option opt [String]                  :start
+  # @option opt [Integer]                 :limit
+  # @option opt [BsTitleSortOrder]        :sortOrder
+  # @option opt [BsSortDirection]         :direction
   #
   # @return [Bs::Message::TitleMetadataSummaryList]
   #
@@ -184,19 +184,19 @@ module BookshareService::Request::Titles
           categories:              String,
           language:                IsoLanguage,
           country:                 String,
-          format:                  FormatType,
-          narratorType:            NarratorType,
-          brailleType:             BrailleType,
+          format:                  BsFormatType,
+          narratorType:            BsNarratorType,
+          brailleType:             BsBrailleType,
           readingAge:              Integer,
-          excludedContentWarnings: ContentWarning,
-          includedContentWarnings: ContentWarning,
+          excludedContentWarnings: BsContentWarning,
+          includedContentWarnings: BsContentWarning,
           externalIdentifierCode:  String,
           maxDuration:             IsoDuration,
-          titleContentType:        TitleContentType,
+          titleContentType:        BsTitleContentType,
           start:                   String,
           limit:                   Integer,
-          sortOrder:               TitleSortOrder,
-          direction:               Direction,
+          sortOrder:               BsTitleSortOrder,
+          direction:               BsSortDirection,
         },
         multi: %i[
           author narrator composer categories
@@ -211,9 +211,9 @@ module BookshareService::Request::Titles
   #
   # Get the metadata of an existing artifact.
   #
-  # @param [String]     bookshareId
-  # @param [FormatType] format
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       bookshareId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
   #
   # @return [Bs::Message::ArtifactMetadata]
   # @return [nil]                     If the requested format was not present.
@@ -229,7 +229,7 @@ module BookshareService::Request::Titles
       add_api method => {
         required: {
           bookshareId: String,
-          format:      FormatType,
+          format:      BsFormatType,
         },
         reference_id:  nil,
       }
@@ -245,9 +245,9 @@ module BookshareService::Request::Titles
   #
   # == 2.1.4. Get a list of title file resources
   #
-  # @param [String]     bookshareId
-  # @param [FormatType] format
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       bookshareId
+  # @param [BsFormatType] format
+  # @param [Hash]         opt         Passed to #api.
   #
   # @option opt [String] :start
   #
@@ -264,7 +264,7 @@ module BookshareService::Request::Titles
       add_api method => {
         required: {
           bookshareId: String,
-          format:      FormatType,
+          format:      BsFormatType,
         },
         optional: {
           start:       String,
@@ -277,10 +277,10 @@ module BookshareService::Request::Titles
   #
   # == 2.1.5. Download a title file resource
   #
-  # @param [String]     bookshareId
-  # @param [FormatType] format
-  # @param [String]     resourceId
-  # @param [Hash]       opt           Passed to #api.
+  # @param [String]       bookshareId
+  # @param [BsFormatType] format
+  # @param [String]       resourceId
+  # @param [Hash]         opt         Passed to #api.
   #
   # @option opt [String] :size        *REQUIRED*
   #
@@ -297,7 +297,7 @@ module BookshareService::Request::Titles
       add_api method => {
         required: {
           bookshareId: String,
-          format:      FormatType,
+          format:      BsFormatType,
           resourceId:  String,
           size:        String,
         },

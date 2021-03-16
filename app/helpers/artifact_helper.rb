@@ -129,8 +129,8 @@ module ArtifactHelper
     # noinspection RubyResolve
     if item.is_a?(Bs::Api::Record)
       repo    = 'bookshare'
-      type    = FormatType
-      type    = PeriodicalFormatType if item.class.name.include?('Periodical')
+      type    = BsFormatType
+      type    = BsPeriodicalFormat if item.class.name.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= bs_download_path(bookshareId: item.identifier, fmt: format)
@@ -190,7 +190,7 @@ module ArtifactHelper
   # @param [Api::Record] item
   # @param [Hash]        opt          Passed to #artifact_link except for:
   #
-  # @option opt [String] :fmt         One of `FormatType#values`
+  # @option opt [String] :fmt         One of `BsFormatType#values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]

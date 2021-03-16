@@ -34,11 +34,11 @@ module BookshareService::Request::MembershipMessages
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [User, String]      :userIdentifier
-  # @option opt [User, String]      :user         Alias for :userIdentifier
-  # @option opt [MessageType]       :messageType
-  # @option opt [MessageSortOrder]  :sortOrder    Default: 'dateCreated'
-  # @option opt [Direction]         :direction    Default: 'asc'
+  # @option opt [User, String]       :userIdentifier
+  # @option opt [User, String]       :user          Alias for :userIdentifier
+  # @option opt [BsMessageType]      :messageType
+  # @option opt [BsMessageSortOrder] :sortOrder     Default: 'dateCreated'
+  # @option opt [BsSortDirection]    :direction     Default: 'asc'
   #
   # @return [Bs::Message::UserMessageDetailList]
   #
@@ -56,9 +56,9 @@ module BookshareService::Request::MembershipMessages
         },
         optional: {
           userIdentifier: String,
-          messageType:    MessageType,
-          sortOrder:      MessageSortOrder,
-          direction:      Direction,
+          messageType:    BsMessageType,
+          sortOrder:      BsMessageSortOrder,
+          direction:      BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_get-messages'
@@ -73,12 +73,12 @@ module BookshareService::Request::MembershipMessages
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]          :text                             *REQUIRED*
-  # @option opt [MessagePriority] :messagePriority                  *REQUIRED*
-  # @option opt [MessageType]     :messageType                      *REQUIRED*
-  # @option opt [IsoDay]          :expirationDate                   *REQUIRED*
-  # @option opt [User, String]    :userIdentifier
-  # @option opt [User, String]    :user             Alias for :userIdentifier
+  # @option opt [String]            :text                           *REQUIRED*
+  # @option opt [BsMessagePriority] :messagePriority                *REQUIRED*
+  # @option opt [BsMessageType]     :messageType                    *REQUIRED*
+  # @option opt [IsoDay]            :expirationDate                 *REQUIRED*
+  # @option opt [User, String]      :userIdentifier
+  # @option opt [User, String]      :user             Alias for :userIdentifier
   #
   # @return [Bs::Message::UserMessageDetail]
   #
