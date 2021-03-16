@@ -267,7 +267,7 @@ module ArtifactHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js appendFailureMessage()
+  # @see file:app/assets/javascripts/feature/download.js *appendFailureMessage()*
   #
   def download_failure(**opt)
     css_selector = DOWNLOAD_FAILURE_CLASS

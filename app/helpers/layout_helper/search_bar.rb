@@ -20,8 +20,7 @@ module LayoutHelper::SearchBar
 
   public
 
-  # A table of controllers and whether their pages should show search input in
-  # the page heading.
+  # A table of search bar behavior for each controller.
   #
   # @type [Hash{Symbol=>Boolean,Array<String>}]
   #

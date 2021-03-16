@@ -480,7 +480,7 @@ module Emma::Common
 
   # Strip HTML from value strings.
   #
-  # @param [String] string
+  # @param [String, Symbol] string
   #
   # @return [String]
   #

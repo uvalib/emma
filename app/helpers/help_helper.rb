@@ -111,7 +111,7 @@ module HelpHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   def help_popup(topic, sub_topic = nil, **opt)
     css_selector = '.help-popup'
@@ -207,7 +207,7 @@ module HelpHelper
   # A table of contents element with a link for each help topic.
   #
   # @param [Array<Symbol,Array>] topics   Passed to #help_links.
-  # @param [Hash]                opt      Passed to outer #html_div except:
+  # @param [Hash]                opt      Passed to outer #html_div except for:
   #
   # @option opt [Symbol]        :type     Passed to #help_links.
   # @option opt [Symbol,String] :tag      Default: :ul.

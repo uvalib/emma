@@ -50,7 +50,8 @@ module HtmlHelper
     html_tag(:span, *args, &block)
   end
 
-  # Short-cut for generating an HTML element.
+  # Short-cut for generating an HTML element which normalizes element contents
+  # provided via the parameter list and/or the block.
   #
   # If *tag* is a number it is translated to 'h1'-'h6'.  If *tag* is 0 or *nil*
   # then it defaults to 'div'.

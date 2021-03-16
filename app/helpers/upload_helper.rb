@@ -269,7 +269,7 @@ module UploadHelper
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/controllers/upload.en.yml
+  # @see file:config/locales/controllers/upload.en.yml *en.emma.upload.state_group*
   #
   #--
   # noinspection RailsI18nInspection
@@ -325,7 +325,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
+  # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
@@ -428,7 +428,7 @@ module UploadHelper
   # @return [nil]                       If #UPLOAD_PAGE_FILTERING is *false*.
   #
   # @see #UPLOAD_STATE_GROUP
-  # @see file:app/assets/javascripts/feature/records.js filterPageDisplay()
+  # @see file:app/assets/javascripts/feature/records.js *filterPageDisplay()*
   #
   # == Usage Notes
   # This is invoked from ModelHelper#page_filter.
@@ -519,7 +519,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see filterOptionToggle() in javascripts/feature/records.js
+  # @see file:app/assets/javascripts/feature/records.js *filterOptionToggle()*
   #
   def upload_page_filter_options(*list, **opt)
     css_selector = UPLOAD_FILTER_OPTIONS_CLASS
@@ -745,7 +745,7 @@ module UploadHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   #--
   # noinspection RubyResolve
@@ -917,7 +917,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see submitButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *submitButton()*
   #
   def upload_submit_button(**opt)
     opt[:config] ||= UPLOAD_ACTION_VALUES
@@ -935,7 +935,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js cancelButton()
+  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def upload_cancel_button(**opt)
     url = opt.delete(:url)
@@ -990,7 +990,7 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see #UPLOAD_FIELD_GROUP
-  # @see fieldDisplayFilterSelect() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *fieldDisplayFilterSelect()*
   #
   def upload_field_group(**opt)
     css_selector = '.upload-field-group'
@@ -1030,7 +1030,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/file-upload.js monitorSourceRepository()
+  # @see file:app/assets/javascripts/feature/file-upload.js *monitorSourceRepository()*
   #
   def upload_parent_entry_select(**opt)
     css_selector = '.parent-entry-select'
@@ -1107,7 +1107,7 @@ module UploadHelper
   # @param [Symbol, String] action    Default: `params[:action]`
   # @param [User, String]   user      Default: `@user`
   # @param [String]         prompt
-  # @param [Hash]           opt       Passed to #form_tag.
+  # @param [Hash]           opt       Passed to #page_items_menu.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -1200,7 +1200,7 @@ module UploadHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelAction() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
   #
   def upload_delete_cancel(**opt)
     opt[:action]  ||= :delete

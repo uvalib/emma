@@ -408,7 +408,7 @@ module UploadConcern
   #
   # @param [Array, :unset, nil] rec
   # @param [Array, :unset, nil] data
-  # @param [Hash]               opt   To workflow initializer except:
+  # @param [Hash]               opt   To workflow initializer except for:
   #
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event

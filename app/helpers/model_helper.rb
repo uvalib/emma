@@ -789,7 +789,7 @@ module ModelHelper
   #
   # @type [Boolean]
   #
-  # @see .grid-table.sticky-head in stylesheets/shared/controls/_table.scss
+  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .sticky-head"
   #
   STICKY_HEAD = true
 
@@ -797,7 +797,7 @@ module ModelHelper
   #
   # @type [Boolean]
   #
-  # @see .grid-table.dark-head in stylesheets/shared/controls/_table.scss
+  # @see file:app/assets/stylesheets/shared/controls/_table.scss "CSS class .dark-head"
   #
   DARK_HEAD = true
 
@@ -817,7 +817,7 @@ module ModelHelper
   # Render model items as a table.
   #
   # @param [Model, Array<Model>] list
-  # @param [Hash]                opt    Passed to outer #html_tag except:
+  # @param [Hash]                opt    Passed to outer #html_tag except for:
   #
   # @option opt [Symbol, String]            :model
   # @option opt [ActiveSupport::SafeBuffer] :thead  Pre-generated <thead>.
@@ -1322,7 +1322,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateMenu() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *updateMenu()*
   #
   def render_form_menu_single(name, value, range:, **opt)
     css_selector = '.menu.single'
@@ -1363,7 +1363,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateFieldsetCheckboxes() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *updateFieldsetCheckboxes()*
   #
   def render_form_menu_multi(name, value, range:, **opt)
     css_selector = '.menu.multi'
@@ -1409,7 +1409,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateFieldsetInputs() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *updateFieldsetInputs()*
   #
   def render_form_input_multi(name, value, **opt)
     css_selector = '.input.multi'
@@ -1424,7 +1424,7 @@ module ModelHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see updateTextInputField() in javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *updateTextInputField()*
   #
   def render_form_input(name, value, **opt)
     css_selector = '.input.single'

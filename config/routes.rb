@@ -14,6 +14,7 @@ Rails.application.routes.draw do
 
   root 'home#main'
 
+  # noinspection RailsParamDefResolve
   resource :home, controller: 'home', as: '', only: [] do
     get :main, as: 'home'
     get :welcome
@@ -137,6 +138,7 @@ Rails.application.routes.draw do
   # Health check
   # ===========================================================================
 
+  # noinspection RailsParamDefResolve
   resource :health, controller: 'health', only: [] do
     get :version
     get :check

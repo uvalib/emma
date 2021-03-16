@@ -175,7 +175,7 @@ module LinkHelper
   # @param [User, String, nil]   user         Default: `current_user`
   # @param [String, nil]         prompt
   # @param [Hash{Symbol=>Hash}]  table
-  # @param [Hash]                opt          Passed to #form_tag except:
+  # @param [Hash]                opt          Passed to #form_tag except for:
   #
   # @option opt [String, Hash] :ujs
   #

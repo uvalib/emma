@@ -887,7 +887,7 @@ module LayoutHelper::SearchControls
 
   protected
 
-  # The controls for resetting filter menu selections to their default state.
+  # The control for resetting filter menu selections to their default state.
   #
   # @param [Hash] opt                 Passed to #menu_spacer and #reset_button.
   #

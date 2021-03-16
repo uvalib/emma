@@ -297,8 +297,8 @@ module Import
   # associated import field should be skipped and not included in data stored
   # in the record.
   #
-  # @param [Symbol] k                 Imported field being skipped.
-  # @param [*]      v
+  # @param [*] k                      Imported field being skipped.
+  # @param [*] v
   #
   # @return [(nil,nil)]
   #
@@ -406,7 +406,7 @@ module Import
     # __debug_import
     #
     # @param [String, Symbol] label
-    # @param [String, Symbol] k
+    # @param [*]              k
     # @param [*]              v
     #
     # @return [nil]

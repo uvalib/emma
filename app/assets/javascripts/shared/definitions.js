@@ -144,7 +144,6 @@ function fromJSON(item, caller) {
     return result;
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Generate a copy of the item without blank elements.
  *
@@ -286,7 +285,6 @@ function notDefined(item) {
     return typeof item === 'undefined';
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Indicate whether the item does not contain a value.
  *
@@ -295,7 +293,6 @@ function notDefined(item) {
  * @returns {boolean}
  */
 function isEmpty(item) {
-    // noinspection NegatedIfStatementJS
     if (!item) {
         return true;
     } else if (isDefined(item.length)) {
@@ -455,7 +452,6 @@ function selector(...args) {
     return result.join('').trim();
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Return an identifying selector for an element -- based on the element ID if
  * it has one.
@@ -550,7 +546,6 @@ function create(element, properties) {
  */
 function urlFrom(arg) {
     let result = undefined;
-    // noinspection IfStatementWithTooManyBranchesJS
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
     } else if ((typeof arg !== 'object') || Array.isArray(arg)) {
@@ -623,7 +618,7 @@ function makeUrl(...parts) {
     // Accumulate path parts and param parts.
     parts.forEach(processPart);
 
-    // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS, OverlyComplexFunctionJS, FunctionTooLongJS
+    // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS, FunctionTooLongJS
     /**
      * @param {string|string[]|object} arg
      *
@@ -638,7 +633,6 @@ function makeUrl(...parts) {
         } else if (typeof arg === 'object') {
             return $.extend(params, arg);
         }
-        // noinspection IfStatementWithTooManyBranchesJS, NegatedIfStatementJS
         if (!part) {
             return;
 
@@ -969,7 +963,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
     // handler is not added twice.
     return handleEvent($elements, 'keydown', handleKeypress);
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Translate a carriage return to a click, except for links (where the
      * key press will be handled by the browser itself).
@@ -991,7 +985,6 @@ function handleKeypressAsClick(selector, direct, match, except) {
     }
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Allow a click anywhere within the element holding a label/button pair
  * to be delegated to the enclosed input.  This broadens the "click target"

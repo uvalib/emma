@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /** @type {jQuery} */
@@ -350,6 +349,7 @@ $(document).on('turbolinks:load', function() {
         function onSubmit(event) {
             event.preventDefault();
             let members = [];
+            // noinspection JSCheckFunctionSignatures
             $panel.find(':checked').each(function() {
                 members.push(this.value);
                 this.checked = false; // Reset for later iteration.

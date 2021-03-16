@@ -27,7 +27,7 @@ class Shrine
     #
     # @return [(Integer, Hash, Array<String>)]
     #
-    # @see file:app/assets/javascripts/feature/download.js onFileUploadSuccess()
+    # @see file:app/assets/javascripts/feature/download.js *onFileUploadSuccess()*
     #
     # This method overrides:
     # @see Shrine::UploadEndpoint#make_response

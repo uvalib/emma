@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     let $iframe_body = $('body.modal');
@@ -54,7 +53,7 @@ $(document).on('turbolinks:load', function() {
     // Functions
     // ========================================================================
 
-    // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
+    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Intercept anchor links to scroll to the element on the page inside the
      * <iframe>.

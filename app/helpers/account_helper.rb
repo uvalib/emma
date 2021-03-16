@@ -93,10 +93,10 @@ module AccountHelper
 
   # Render an account metadata listing.
   #
-  # @param [User]            item
-  # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
-  # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [User]      item
+  # @param [String, Symbol, Array<String,Symbol,nil>, nil] columns
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #item_details.
   #
   def account_details(item, columns: nil, pairs: nil, **opt)
     pairs = account_field_values(item, columns: columns).merge(pairs || {})
@@ -202,8 +202,8 @@ module AccountHelper
 
   # account_columns
   #
-  # @param [User] item
-  # @param [Hash] opt                 Passed to #account_field_values
+  # @param [User, nil] item
+  # @param [Hash]      opt            Passed to #account_field_values
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -317,7 +317,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js submitButton()
+  # @see file:app/assets/javascripts/feature/download.js *submitButton()*
   #
   def account_submit_button(**opt)
     opt[:config] ||= ACCOUNT_ACTION_VALUES
@@ -335,7 +335,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def account_cancel_button(**opt)
     opt[:model]  ||= :account
@@ -374,7 +374,7 @@ module AccountHelper
   # @param [Symbol, String] action    Default: `params[:action]`
   # @param [User, String]   user      Default: '@user'
   # @param [String]         prompt
-  # @param [Hash]           opt       Passed to #form_tag.
+  # @param [Hash]           opt       Passed to #page_items_menu.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -439,7 +439,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js cancelAction()
+  # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
   #
   def account_delete_cancel(**opt)
     opt[:action] ||= :delete
