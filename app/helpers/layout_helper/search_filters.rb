@@ -485,10 +485,10 @@ module LayoutHelper::SearchControls
       label = ADV_SEARCH_OPENER_LABEL
       tip   = ADV_SEARCH_OPENER_TIP
     end
-    prepend_css_classes!(opt, 'advanced-search-toggle')
-    opt[:title] ||= tip
+    css_selector  = '.advanced-search-toggle'
     opt[:type]  ||= 'button'
-    button_tag(label, opt)
+    opt[:title] ||= tip
+    button_tag(label, prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================
@@ -894,7 +894,6 @@ module LayoutHelper::SearchControls
   # @return [ActiveSupport::SafeBuffer]
   #
   def reset_menu(**opt)
-    append_css_classes!(opt, 'reset')
     # noinspection RubyYardReturnMatch
     menu_spacer(**opt) << reset_button(**opt)
   end
@@ -914,13 +913,14 @@ module LayoutHelper::SearchControls
   # @see HtmlHelper#grid_cell_classes
   #
   def reset_button(**opt)
-    opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
+    css_selector  = '.menu-button.reset.preserve-width'
+    opt, html_opt = partition_options(opt, :url, :class, :label, *MENU_OPTS)
     label = opt[:label] || SEARCH_RESET_CONTROL[:label]
     label = non_breaking(label)
     url   = opt[:url] || reset_parameters
     url   = url_for(url) if url.is_a?(Hash)
-    prepend_grid_cell_classes!(html_opt, 'reset', 'menu-button', **opt)
     html_opt[:title] ||= SEARCH_RESET_CONTROL[:tooltip]
+    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
     link_to(label, url, **html_opt)
   end
 
@@ -938,7 +938,7 @@ module LayoutHelper::SearchControls
     opt.except(*keys)
   end
 
-  # A button to reset all filter menu selections to their default state.
+  # A blank element used for occupying "voids" in the search control panel.
   #
   # @param [Hash] opt            Passed to #html_div except for #GRID_OPTS and:
   #
@@ -946,13 +946,16 @@ module LayoutHelper::SearchControls
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see HtmlHelper#prepend_grid_cell_classes!
+  # @see HtmlHelper#grid_cell_classes
   #
   def menu_spacer(**opt)
+    css_selector  = '.menu-spacer'
     opt, html_opt = partition_options(opt, :class, *MENU_OPTS)
-    opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
-    prepend_grid_cell_classes!(html_opt, 'menu-spacer', **opt)
     html_opt[:'aria-hidden'] = true
+    opt.delete(:col_max) # Spacers shouldn't have the 'col-last' CSS class.
+
+    # Add CSS classes which indicate the position of the control.
+    prepend_grid_cell_classes!(html_opt, css_selector, **opt)
     html_div('&nbsp;'.html_safe, html_opt)
   end
 

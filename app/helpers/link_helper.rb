@@ -48,18 +48,19 @@ module LinkHelper
   # @return [nil]                         A valid URL could not be determined.
   #
   def link_to_action(label, link_opt: nil, path: nil, **path_opt)
+    css_selector = '.control'
     # noinspection RubyNilAnalysis
-    controller, action =
+    ctrlr, action =
       case path
-        when Hash  then path.values_at(:controller, :action)
-        else            Array.wrap(path)
+        when Hash then path.values_at(:controller, :action)
+        else           Array.wrap(path)
       end
-    controller ||= params[:controller]
-    action     ||= params[:action]
-    path         = get_path_for(controller, action, **path_opt) or return
-    look_opt     = { controller: controller }
-    label      ||= config_lookup("#{action}.label", **look_opt) || path
-    html_opt = prepend_css_classes(link_opt, 'control')
+    ctrlr   ||= params[:controller]
+    action  ||= params[:action]
+    path      = get_path_for(ctrlr, action, **path_opt) or return
+    look_opt  = { controller: ctrlr }
+    label   ||= config_lookup("#{action}.label", **look_opt) || path
+    html_opt  = prepend_classes(link_opt, css_selector)
     html_opt[:method] ||= :delete if action == :destroy
     html_opt[:title]  ||= config_lookup("#{action}.tooltip", **look_opt)
     # noinspection RubyYardParamTypeMatch
@@ -181,6 +182,7 @@ module LinkHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def page_items_menu(controller: nil, action: nil, model:, user: nil, prompt: nil, table: nil, **opt)
+    css_selector = '.select-entry'
     controller ||= params[:controller]
     action     ||= params[:action]
     table      ||= page_action_links(controller: controller)
@@ -204,7 +206,7 @@ module LinkHelper
     ujs = ujs.is_a?(Hash) ? ujs.dup : { onchange: ujs }
     select_opt = ujs.merge!(prompt: prompt || 'Select an entry') # TODO: I18n
 
-    prepend_css_classes!(opt, 'select-entry', 'menu-control')
+    prepend_classes!(opt, css_selector, 'menu-control')
     opt[:method] ||= :get
     # noinspection RubyYardReturnMatch
     form_tag(path, opt) do
@@ -297,12 +299,13 @@ module LinkHelper
     tag:        :p,
     **opt
   )
-    type = type&.to_s&.delete_suffix('_html')&.to_sym || :text
+    css_selector = '.page-text-section'
+    type   = type&.to_s&.delete_suffix('_html')&.to_sym || :text
     text ||= page_text(controller: controller, action: action, type: type)
     return if text.blank?
     text = tag ? html_tag(tag, text) : ERB::Util.h(text) unless text.html_safe?
-    append_css_classes!(opt, 'page-text-section')
-    append_css_classes!(opt, *type) unless type == :text
+    prepend_classes!(opt, css_selector)
+    append_classes!(opt, *type) unless type == :text
     # noinspection RubyYardParamTypeMatch
     html_div(text, opt)
   end

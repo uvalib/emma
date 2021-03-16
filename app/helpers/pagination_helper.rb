@@ -96,14 +96,14 @@ module PaginationHelper
   # @return [Integer]
   #
   def get_page_size(**opt)
-    opt  = request_parameters.slice(:controller, :action) if opt.blank?
-    controller = opt[:controller].presence
-    action     = controller && opt[:action].presence
+    opt    = request_parameters.slice(:controller, :action) if opt.blank?
+    ctrlr  = opt[:controller].presence
+    action = ctrlr && opt[:action].presence
     keys = []
-    keys << :"emma.#{controller}.#{action}.pagination.page_size" if action
-    keys << :"emma.#{controller}.#{action}.page_size"            if action
-    keys << :"emma.#{controller}.pagination.page_size"           if controller
-    keys << :"emma.#{controller}.page_size"                      if controller
+    keys << :"emma.#{ctrlr}.#{action}.pagination.page_size" if action
+    keys << :"emma.#{ctrlr}.#{action}.page_size"            if action
+    keys << :"emma.#{ctrlr}.pagination.page_size"           if ctrlr
+    keys << :"emma.#{ctrlr}.page_size"                      if ctrlr
     keys << :'emma.generic.pagination.page_size'
     keys << :'emma.generic.page_size'
     keys << :'emma.pagination.page_size'
@@ -308,10 +308,10 @@ module PaginationHelper
   # @return [nil]                         If *count* is negative.
   #
   def page_number(page, opt = nil)
-    page     = page.to_i and return if page.negative?
-    pages    = get_page_number_label(count: page)&.upcase_first
-    html_opt = prepend_css_classes(opt, 'page-count')
-    html_div("#{pages} #{page}", html_opt)
+    css_selector = '.page-count'
+    page         = page.to_i and return if page.negative?
+    pages        = get_page_number_label(count: page)&.upcase_first
+    html_div("#{pages} #{page}", prepend_classes(opt, css_selector))
   end
 
   # Page count display element.
@@ -324,7 +324,7 @@ module PaginationHelper
   #
   def pagination_count(count, opt = nil)
     count    = count.to_i and return if count.negative?
-    html_opt = prepend_css_classes(opt, 'search-count')
+    html_opt = prepend_classes!(opt, 'search-count')
     found    = get_page_count_label(count: count)
     count    = number_with_delimiter(count)
     html_div("#{count} #{found}", html_opt)
@@ -347,8 +347,8 @@ module PaginationHelper
     sep: PAGINATION_SEPARATOR,
     **opt
   )
-    prepend_css_classes!(opt, 'pagination')
-    html_tag(:nav, opt) do
+    css_selector = '.pagination-controls'
+    html_tag(:nav, prepend_classes!(opt, css_selector)) do
       link_opt = { class: 'link', 'data-turbolinks-track': false }
       controls = [
         pagination_control(FIRST_PAGE, fp, **link_opt),
@@ -413,7 +413,7 @@ module PaginationHelper
     if link
       link_to(label, path, opt)
     else
-      html_span(label, append_css_classes!(opt, 'disabled'))
+      html_span(label, append_classes!(opt, 'disabled'))
     end
   end
 

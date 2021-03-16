@@ -78,7 +78,9 @@ module LayoutHelper::Common
   # @see file:app/assets/javascripts/feature/panel.js
   #
   def toggle_button(id:, label: nil, selector: nil, **opt)
-    prepend_css_classes!(opt, 'toggle')
+    css_selector  = '.toggle'
+    opt[:type]  ||= 'button'
+    opt[:title] ||= PANEL_OPENER_TIP
     opt[:'aria-controls'] = id       if id.present?
     opt[:'data-selector'] = selector if selector.present?
     raise 'no target id given' if opt[:'aria-controls'].blank?
@@ -86,9 +88,7 @@ module LayoutHelper::Common
       opt[:data] = opt[:data].except(:selector)
     end
     label = label ? non_breaking(label) : PANEL_OPENER_LABEL
-    opt[:type]  ||= 'button'
-    opt[:title] ||= PANEL_OPENER_TIP
-    button_tag(label, opt)
+    button_tag(label, prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================

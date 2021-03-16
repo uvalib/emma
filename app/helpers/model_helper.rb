@@ -257,8 +257,9 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def record_links(links, **opt)
+    css_selector  = '.external-link'
     opt, html_opt = partition_options(opt, :no_link, :separator)
-    prepend_css_classes!(html_opt, 'external-link')
+    prepend_classes!(html_opt, css_selector)
     separator = opt[:separator] || DEFAULT_ELEMENT_SEPARATOR
     no_link   = opt[:no_link]
     links = links.record_links if links.respond_to?(:record_links)
@@ -459,10 +460,10 @@ module ModelHelper
     status ||= ('numeric'   if prop[:type] == 'number')
     status ||= ('hierarchy' if prop[:type] == 'json')
     status ||= (prop[:type] if prop[:type].is_a?(String))
-    prepend_css_classes!(opt, "row-#{row}", type, status)
+    prepend_classes!(opt, "row-#{row}", type, status)
 
     # Label and label HTML options.
-    l_opt = prepend_css_classes(opt, 'label').merge!(id: l_id)
+    l_opt = prepend_classes(opt, 'label').merge!(id: l_id)
     label = prop[:label] || label
     unless label.is_a?(ActiveSupport::SafeBuffer)
       label ||= labelize(field)
@@ -472,7 +473,7 @@ module ModelHelper
     label = html_div(label, l_opt)
 
     # Value and value HTML options.
-    v_opt = prepend_css_classes(opt, 'value').merge!(id: v_id)
+    v_opt = prepend_classes(opt, 'value').merge!(id: v_id)
     v_opt[:'aria-labelledby'] = l_id
     value = html_div(value, v_opt)
 
@@ -713,6 +714,7 @@ module ModelHelper
     row:    nil,
     **opt
   )
+    css_selector = '.number'
     return unless item && index
     opt.except!(*ITEM_ENTRY_OPT)
     index  = non_negative(index)
@@ -732,13 +734,13 @@ module ModelHelper
     parts += Array.wrap(yield(index, offset)) if block_given?
 
     # Wrap parts in a container for group positioning:
-    inner_opt = prepend_css_classes(opt, 'container')
+    inner_opt = prepend_classes(opt, 'container')
     container = html_tag(level, parts, inner_opt)
 
     # Wrap the container in the actual number grid element.
-    outer_opt = { class: 'number' }
-    outer_opt[:'data-group'] = group             if group
-    append_css_classes!(outer_opt, "row-#{row}") if row
+    outer_opt = { class: css_classes(css_selector) }
+    append_classes!(outer_opt, "row-#{row}") if row
+    outer_opt[:'data-group'] = group         if group
     html_div(container, outer_opt)
   end
 
@@ -756,11 +758,12 @@ module ModelHelper
   # noinspection RubyNilAnalysis
   #++
   def item_list_entry(item, model:, pairs: nil, **opt, &block)
-    row = positive(opt[:row])
-    html_opt = { class: "#{model}-list-entry" }
-    append_css_classes!(html_opt, "row-#{row}") if row
+    css_selector = ".#{model}-list-entry"
+    html_opt     = { class: css_classes(css_selector) }
+    row          = positive(opt[:row])
+    append_classes!(html_opt, "row-#{row}") if row
     if item.nil?
-      append_css_classes!(html_opt, 'empty')
+      append_classes!(html_opt, 'empty')
     elsif item.is_a?(Upload)
       html_opt[:'data-group'] = opt[:group] = item.state_group
       html_opt[:id]           = "#{model}-#{item.submission_id}"
@@ -836,7 +839,8 @@ module ModelHelper
   def item_table(list, **opt)
     opt, html_opt = partition_options(opt, *ITEM_TABLE_OPTIONS)
     opt.reverse_merge!(sticky: STICKY_HEAD, dark: DARK_HEAD)
-    model = opt.delete(:model)&.to_s || 'item'
+    model        = opt.delete(:model)&.to_s || 'item'
+    css_selector = ".#{model}-table"
 
     parts = %i[thead tbody tfoot].map { |k| [k, opt.delete(k)] }.to_h
     yield(parts, list, **opt) if block_given?
@@ -844,10 +848,10 @@ module ModelHelper
     parts[:tbody] ||= item_table_entries(list, **opt)
     count = parts[:thead].scan(/<th[>\s]/).size
 
-    prepend_css_classes!(html_opt, "#{model}-table")
-    append_css_classes!(html_opt, "columns-#{count}") if count.positive?
-    append_css_classes!(html_opt, 'sticky-head')      if opt[:sticky]
-    append_css_classes!(html_opt, 'dark-head')        if opt[:dark]
+    prepend_classes!(html_opt, css_selector)
+    append_classes!(html_opt, "columns-#{count}") if count.positive?
+    append_classes!(html_opt, 'sticky-head')      if opt[:sticky]
+    append_classes!(html_opt, 'dark-head')        if opt[:dark]
     html_tag(:table, html_opt) do
       parts.map { |tag, content| html_tag(tag, content) if content }
     end
@@ -875,8 +879,8 @@ module ModelHelper
     rows.map! do |item|
       row += 1
       row_opt = opt.merge(row: row)
-      append_css_classes!(row_opt, 'row-first') if row == first_row
-      append_css_classes!(row_opt, 'row-last')  if row == last_row
+      append_classes!(row_opt, 'row-first') if row == first_row
+      append_classes!(row_opt, 'row-last')  if row == last_row
       if block_given?
         yield(item, **row_opt)
       else
@@ -929,8 +933,8 @@ module ModelHelper
         pairs.map do |field, value|
           # noinspection RubyYardParamTypeMatch
           row_opt = item_rc_options(field, row, col, opt)
-          append_css_classes!(row_opt, 'col-first') if col == first_col
-          append_css_classes!(row_opt, 'col-last')  if col == last_col
+          append_classes!(row_opt, 'col-first') if col == first_col
+          append_classes!(row_opt, 'col-last')  if col == last_col
           col += 1
           html_tag(inner_tag, value, row_opt)
         end
@@ -991,8 +995,8 @@ module ModelHelper
       last_col  = fields.size + col - 1
       fields.map! do |field|
         row_opt = item_rc_options(field, row, col, opt)
-        append_css_classes!(row_opt, 'col-first') if col == first_col
-        append_css_classes!(row_opt, 'col-last')  if col == last_col
+        append_classes!(row_opt, 'col-first') if col == first_col
+        append_classes!(row_opt, 'col-last')  if col == last_col
         col += 1
         html_tag(inner_tag, row_opt) { labelize(field) }
       end
@@ -1048,10 +1052,10 @@ module ModelHelper
   # @return [Hash]
   #
   def item_rc_options(field, row = nil, col = nil, opt = nil)
-    field = html_id(field, camelize: false)
-    prepend_css_classes(opt, field).tap do |html_opt|
-      append_css_classes!(html_opt, "row-#{row}") if row
-      append_css_classes!(html_opt, "col-#{col}") if col
+    field = html_id(field)
+    prepend_classes(opt, field).tap do |html_opt|
+      append_classes!(html_opt, "row-#{row}") if row
+      append_classes!(html_opt, "col-#{col}") if col
       html_opt[:id] ||= [field, row, col].compact.join('-')
     end
   end
@@ -1077,8 +1081,9 @@ module ModelHelper
   #
   def item_details(item, model:, pairs: nil, **opt, &block)
     return if item.blank?
-    # noinspection RubyYardParamTypeMatch
-    html_div(class: css_classes("#{model}-details", opt.delete(:class))) do
+    css_selector = ".#{model}-details"
+    classes      = css_classes(css_selector, opt.delete(:class))
+    html_div(class: classes) do
       render_field_values(item, model: model, pairs: pairs, **opt, &block)
     end
   end
@@ -1263,13 +1268,13 @@ module ModelHelper
     marker = status_marker(status: status, label: label)
 
     # Option settings for both label and value.
-    prepend_css_classes!(opt, "row-#{row}", type, *status)
+    prepend_classes!(opt, "row-#{row}", type, *status)
     l_id = "label-#{base}"
     v_id = index ? "#{type}-#{index}" : type
     fieldset = false # (render_method == :render_form_menu_multi)
 
     # Label for input element.
-    l_opt = append_css_classes(opt, 'label')
+    l_opt = append_classes(opt, 'label')
     l_opt[:id]      = l_id
     l_opt[:for]     = v_id
     l_opt[:title] ||= prop[:tooltip] if prop[:tooltip]
@@ -1283,7 +1288,7 @@ module ModelHelper
     label  = fieldset ? html_div(label, l_opt) : label_tag(name, label, l_opt)
 
     # Input element pre-populated with value.
-    v_opt = append_css_classes(opt, 'value')
+    v_opt = append_classes(opt, 'value')
     v_opt[:id]                = v_id
     v_opt[:name]              = name
     v_opt[:title]             = 'System-generated; not modifiable.' if disabled # TODO: I18n
@@ -1320,12 +1325,13 @@ module ModelHelper
   # @see updateMenu() in javascripts/feature/file-upload.js
   #
   def render_form_menu_single(name, value, range:, **opt)
+    css_selector = '.menu.single'
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
     opt, html_opt = partition_options(opt, :readonly, :base, :name)
-    append_css_classes!(html_opt, 'menu', 'single')
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
+    prepend_classes!(html_opt, css_selector)
 
     selected = Array.wrap(value).compact.presence || ['']
 
@@ -1360,12 +1366,13 @@ module ModelHelper
   # @see updateFieldsetCheckboxes() in javascripts/feature/file-upload.js
   #
   def render_form_menu_multi(name, value, range:, **opt)
+    css_selector = '.menu.multi'
     valid_range?(range, exception: true)
     normalize_attributes!(opt)
     opt, html_opt = partition_options(opt, :id, :readonly, :base, :name)
-    append_css_classes!(html_opt, 'menu', 'multi')
     field = html_opt[:'data-field']
     name  = opt[:name] || name || opt[:base] || field
+    prepend_classes!(html_opt, css_selector)
 
     # Checkbox elements.
     selected = Array.wrap(value).compact.presence
@@ -1405,8 +1412,8 @@ module ModelHelper
   # @see updateFieldsetInputs() in javascripts/feature/file-upload.js
   #
   def render_form_input_multi(name, value, **opt)
-    append_css_classes!(opt, 'input', 'multi')
-    render_field_item(name, value, **opt)
+    css_selector = '.input.multi'
+    render_field_item(name, value, **prepend_classes!(opt, css_selector))
   end
 
   # render_form_input
@@ -1420,8 +1427,8 @@ module ModelHelper
   # @see updateTextInputField() in javascripts/feature/file-upload.js
   #
   def render_form_input(name, value, **opt)
-    append_css_classes!(opt, 'input', 'single')
-    render_field_item(name, value, **opt)
+    css_selector = '.input.single'
+    render_field_item(name, value, **prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================
@@ -1440,11 +1447,12 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_submit_button(config:, action: nil, label: nil, **opt)
+    css_selector = '.submit-button'
     action ||= params[:action]
     config   = config.dig(action&.to_sym, :submit) || {}
     label  ||= config[:label]
 
-    prepend_css_classes!(opt, 'submit-button', 'uppy-FileInput-btn')
+    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
     opt[:title] ||= config.dig(:disabled, :tooltip)
     # noinspection RubyYardReturnMatch
     submit_tag(label, opt)
@@ -1461,11 +1469,12 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def form_cancel_button(config:, action: nil, label: nil, url: nil, **opt)
+    css_selector = '.cancel-button'
     action ||= params[:action]
-    config = config.dig(action&.to_sym, :cancel) || {}
+    config   = config.dig(action&.to_sym, :cancel) || {}
     label  ||= config[:label]
 
-    prepend_css_classes!(opt, 'cancel-button', 'uppy-FileInput-btn')
+    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
     opt[:title] ||= config[:tooltip]
     opt[:type]  ||= 'reset'
 
@@ -1576,6 +1585,7 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_check_box(name, value, **opt)
+    css_selector  = '.checkbox.single'
     opt, html_opt = partition_options(opt, *CHECK_OPTIONS)
     normalize_attributes!(opt)
 
@@ -1589,8 +1599,9 @@ module ModelHelper
     label    = label_tag(name, label, lbl_opt)
 
     # Checkbox/label combination.
-    append_css_classes!(html_opt, 'checkbox', 'single')
-    html_div(html_opt) { checkbox << label }
+    html_div(prepend_classes!(html_opt, css_selector)) do
+      checkbox << label
+    end
   end
 
   # STATUS_MARKER
@@ -1611,16 +1622,13 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def status_marker(status: nil, label: nil, **opt)
-    status = Array.wrap(status).compact
-    prepend_css_classes!(opt, 'status-marker', *status)
+    css_selector  = '.status-marker'
+    status    = Array.wrap(status).compact
     icon, tip =
       %i[required disabled invalid valid].find { |state|
         next unless status.include?(state) && (entry = STATUS_MARKER[state])
         break entry.values
       } || STATUS_MARKER.values.last.values
-    if icon
-      opt[:'data-icon'] = icon
-    end
     if tip
       if tip.include?('%')
         label &&= label.to_s.sub(/[[:punct:]]+$/, '')
@@ -1631,7 +1639,8 @@ module ModelHelper
     else
       opt[:'aria-hidden'] = true
     end
-    html_span(icon, opt)
+    opt[:'data-icon'] = icon if icon
+    html_span(icon, prepend_classes!(opt, css_selector, *status))
   end
 
   # ===========================================================================
@@ -1658,25 +1667,23 @@ module ModelHelper
   #
   # @return [Hash]                    The potentially-modified *opt* hash.
   #
+  # == Implementation Notes
+  # Disabled input fields are given the :readonly attribute because the
+  # :disabled attribute prevents those fields from being included in the data
+  # sent with the form submission.
+  #
   def normalize_attributes!(opt)
-
-    field = opt.delete(:field)
-    opt[:'data-field'] = field if field
-
+    field    = opt.delete(:field)    || opt[:'data-field']
     required = opt.delete(:required) || opt[:'data-required']
-    opt[:'data-required'] = true         if required
-    append_css_classes!(opt, 'required') if required
+    readonly = opt.delete(:disabled) || opt[:readonly]
 
-    # Disabled input fields are given the :readonly attribute because the
-    # :disabled attribute prevents those fields from being included in the data
-    # sent with the form submission.
-    disabled = opt.delete(:disabled)
-    readonly = opt[:readonly] || disabled
-    opt[:readonly] = true                if readonly
-    append_css_classes!(opt, 'disabled') if readonly
+    opt[:'data-field']    = field    if field
+    opt[:'data-required'] = true     if required
+    opt[:readonly]        = true     if readonly
 
+    append_classes!(opt, 'required') if required
+    append_classes!(opt, 'disabled') if readonly
     opt
-
   end
 
   # ===========================================================================
@@ -1696,15 +1703,15 @@ module ModelHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def delete_submit_button(config:, action: nil, label: nil, url: nil, **opt)
+    css_selector = '.submit-button'
     action ||= params[:action] || :delete
     config   = config.dig(action&.to_sym, :submit) || {}
     label  ||= config[:label]
-
-    prepend_css_classes!(opt, 'submit-button', 'uppy-FileInput-btn')
-    append_css_classes!(opt, (url ? 'best-choice' : 'forbidden'))
     opt[:title]  ||= config.dig(:disabled, :tooltip)
     opt[:role]   ||= 'button'
     opt[:method] ||= :delete
+    prepend_classes!(opt, css_selector, 'uppy-FileInput-btn')
+    append_classes!(opt, (url ? 'best-choice' : 'forbidden'))
     button_to(label, url, opt)
   end
 

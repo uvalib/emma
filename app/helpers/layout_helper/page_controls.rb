@@ -41,10 +41,11 @@ module LayoutHelper::PageControls
   # @return [nil]                       If no page_controls configured.
   #
   def render_page_controls(**opt)
-    opt        = request_parameters.merge(opt)
-    controller = opt[:controller].to_sym
-    action     = opt[:action].to_sym
-    id         = opt[:selected] || opt[:id]
+    css_selector = '.page-controls'
+    opt          = request_parameters.merge(opt)
+    controller   = opt[:controller].to_sym
+    action       = opt[:action].to_sym
+    id           = opt[:selected] || opt[:id]
 
     select  = (id == 'SELECT') && %i[new edit delete].include?(action)
     route   = select ? "#{action}_select" : action
@@ -63,7 +64,9 @@ module LayoutHelper::PageControls
     c_opt    = { class: 'controls', 'aria-labelledby': label_id, id: anchor }
     controls = html_div(c_opt) { page_controls(*actions, id: id) }
 
-    html_div(class: 'page-controls') { label << controls }
+    html_div(class: css_classes(css_selector)) do
+      label << controls
+    end
   end
 
   # Generate a list of controller/action pairs that the current user is able to

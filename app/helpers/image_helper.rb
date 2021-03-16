@@ -86,7 +86,7 @@ module ImageHelper
         image_tag(url, alt: alt)
       end
     row = positive(row)
-    append_css_classes!(opt, "row-#{row}") if row
+    append_classes!(opt, "row-#{row}") if row
     if link.present?
       opt, link_opt = partition_options(opt, :class, :style)
       opt[:'aria-hidden'] ||= true
@@ -108,14 +108,13 @@ module ImageHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def image_placeholder(url, image: nil, **opt)
-    prepend_css_classes!(opt, PLACEHOLDER_IMAGE_CLASS)
-    data = { path: url, 'turbolinks-track': false }
-    data[:alt] = opt[:alt] if opt[:alt]
-    opt[:data] = opt[:data]&.merge(data) || data
-    opt[:alt]  = PLACEHOLDER_IMAGE_ALT
-    image ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
+    css_selector = PLACEHOLDER_IMAGE_CLASS
+    image      ||= asset_path(PLACEHOLDER_IMAGE_ASSET)
+    data         = opt.slice(:alt).merge!(path: url, 'turbolinks-track': false)
+    opt[:data]   = opt[:data]&.merge(data) || data
+    opt[:alt]    = PLACEHOLDER_IMAGE_ALT
     # noinspection RubyYardReturnMatch
-    image_tag(image, opt)
+    image_tag(image, prepend_classes!(opt, css_selector))
   end
 
 end

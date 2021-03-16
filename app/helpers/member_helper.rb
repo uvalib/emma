@@ -112,10 +112,10 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_history_title(label, opt = nil)
+    css_selector  = '.list-heading'
     opt, html_opt = partition_options(opt, :level)
     label ||= t('emma.member.history.title')
-    prepend_css_classes!(html_opt, 'list-heading')
-    html_tag(opt[:level], h(label), html_opt)
+    html_tag(opt[:level], h(label), prepend_classes!(html_opt, css_selector))
   end
 
   # member_history_title
@@ -139,14 +139,15 @@ module MemberHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def member_history(item, id:, pairs: nil, **opt)
-    item = item.titleDownloads if item.respond_to?(:titleDownloads)
+    css_selector  = '.history-entry'
+    item          = item.titleDownloads if item.respond_to?(:titleDownloads)
     opt[:model]   = :member
     opt[:pairs]   = MEMBER_HISTORY_FIELDS.merge(pairs || {})
     opt[:index] ||= 0
     html_div(id: id, class: MEMBER_HISTORY_CSS_CLASS) do
       Array.wrap(item).map do |entry|
         opt[:index] += 1
-        html_div(class: "history-entry row-#{opt[:index]}") do
+        html_div(class: css_classes(css_selector, "row-#{opt[:index]}")) do
           render_field_values(entry, **opt)
         end
       end

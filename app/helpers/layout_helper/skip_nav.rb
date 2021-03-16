@@ -91,8 +91,8 @@ module LayoutHelper::SkipNav
   # @return [ActiveSupport::SafeBuffer]
   #
   def render_skip_nav(opt = nil)
-    opt = prepend_css_classes(opt, 'skip-nav-menu')
-    html_tag(:ul, opt) do
+    css_selector = '.skip-nav-menu'
+    html_tag(:ul, prepend_classes(opt, css_selector)) do
       skip_nav.flat_map { |entry|
         if entry.is_a?(Hash)
           # noinspection RubyYardParamTypeMatch
@@ -114,6 +114,7 @@ module LayoutHelper::SkipNav
   # @return [nil]                         If *label* or *link* is missing.
   #
   def render_skip_nav_link(label, link, **opt)
+    css_selector = '.skip-nav-link'
     return if label.blank? || link.blank?
 
     unless label.is_a?(String)
@@ -142,8 +143,7 @@ module LayoutHelper::SkipNav
       link = '#' + link
     end
 
-    prepend_css_classes!(opt, 'skip-nav-link')
-    link_to(label, link, opt)
+    link_to(label, link, prepend_classes!(opt, css_selector))
   end
 
 end

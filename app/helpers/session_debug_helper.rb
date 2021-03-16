@@ -50,6 +50,8 @@ module SessionDebugHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def session_debug(**opt)
+    css_selector = '.session-debug-table'
+    table = { SESSION: 'DEBUG' }
     pairs =
       session.to_hash.except!(*SESSION_SKIP_KEYS).transform_values! do |v|
         if compressed_value?(v)
@@ -59,8 +61,8 @@ module SessionDebugHelper
           v.inspect.sub(/^{(.*)}$/, '{ \1 }').gsub(/=>/, ' \0 ')
         end
       end
-    table = { SESSION: 'DEBUG' }.merge(pairs)
-    prepend_css_classes!(opt, 'session-debug-table')
+    table.merge!(pairs)
+    prepend_classes!(opt, css_selector)
     grid_table(table, **opt)
   end
 
