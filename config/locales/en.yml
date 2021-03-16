@@ -92,24 +92,35 @@ en:
     search_type:        &SEARCH_TYPE
 
       identifier:
+        url_parameter:  'identifier'
         name:           'ISBN / ISSN / etc.'
         label:          'Standard identifier:'
         tooltip:        'Search for creative works or specific editions/issues by a standard identifier (ISBN, ISSN, OCLC, UPC, etc.)'
         placeholder:    'Enter an identifier or title...'
 
       title:
+        url_parameter:  'title'
         name:           'Title'
         label:          'Title terms:'
         tooltip:        'Search for one or more terms matching the title of a work'
         placeholder:    'Enter title terms...'
 
       creator:
+        url_parameter:  'creator'
         name:           'Creator'
         label:          'Creator terms:'
-        tooltip:        'Search for one or more terms matching the name of the author or creator of a work'
+        tooltip:        'Search for one or more terms matching the author or creator of a work'
         placeholder:    'Enter author/creator terms...'
 
+      publisher:
+        url_parameter:  'publisher'
+        name:           'Publisher'
+        label:          'Publisher terms:'
+        tooltip:        'Search for one or more terms matching the publisher of a work'
+        placeholder:    'Enter publisher terms...'
+
       q:
+        url_parameter:  'q'
         name:           'Keyword'
         label:          'Search terms:'
         tooltip:        'Search for one or more keywords matching anywhere in the description of entries'

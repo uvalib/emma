@@ -25,15 +25,19 @@ module SearchService::Request::Records
   # EMMA Unified Search
   #
   # === Search Types
-  # There are four search types:
+  # There are five(-ish) search types:
   #
   #   :q          General (keyword) search
   #   :creator    Author search
   #   :title      Title search
   #   :identifier ISBN/ISSN/OCN/etc search.
+  #   :publisher  Publisher "filter" search.
   #
   # If two or more of these are supplied, the index treats the search as the
   # logical-AND of the search terms.
+  #
+  # The :publisher search is unique in that it can't be used by itself -- only
+  # in conjunction with another search type and/or a filter selection.
   #
   # === Control Parameters
   # The single-select :sort parameter controls the order in which items of the
