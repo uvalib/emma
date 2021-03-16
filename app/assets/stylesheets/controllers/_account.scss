@@ -20,7 +20,11 @@
 // Grid table of local EMMA user accounts.
 .account-table {
 
-    @extend .grid-table;
+    @extend .item-table;
+
+    td {
+        min-width: max-content;
+    }
 
     td.actions {
         .icon {

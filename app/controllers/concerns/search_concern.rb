@@ -24,6 +24,18 @@ module SearchConcern
 
   public
 
+  # Indicate whether search calls should be recorded by default.
+  #
+  # @type [Boolean]
+  #
+  SAVE_SEARCHES = true?(ENV.fetch('SAVE_SEARCHES', true))
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
   # Access the EMMA Unified Search API service.
   #
   # @return [SearchService]
@@ -31,6 +43,42 @@ module SearchConcern
   def search_api
     # noinspection RubyYardReturnMatch
     api_service(SearchService)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether the current search should be recorded.
+  #
+  # @param [User, nil] user           Default: `#current_user`.
+  #
+  def save_search?(user = nil)
+    SAVE_SEARCHES # TODO: criteria?
+  end
+
+  # Record a search call.
+  #
+  # @param [User, nil]    user        Default: `#current_user`.
+  # @param [Array, #to_a] result      Default: @list.
+  # @param [Boolean]      force       Save even if #save_search? is *false*.
+  # @param [Hash]         parameters  Default: `#url_parameters`.
+  #
+  # @return [SearchCall]              New record.
+  # @return [nil]                     If saving was not possible.
+  #
+  def save_search(user: nil, result: nil, force: false, **parameters)
+    user ||= current_user
+    return unless force || save_search?(user)
+    attr = url_parameters(parameters)
+    attr[:controller] ||= :search
+    attr[:action]     ||= :index
+    attr[:user]       ||= user
+    attr[:result]     ||= result || @list
+    # noinspection RubyYardReturnMatch
+    SearchCall.create(attr)
   end
 
   # ===========================================================================

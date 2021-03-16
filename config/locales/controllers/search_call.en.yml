@@ -1,0 +1,79 @@
+# config/locales/controllers/search_call.en.yml
+#
+# SearchCallsController pages
+
+en:
+
+  emma:
+
+    search_call:
+
+      # NOTE: Some of these definitions require parameters to be supplied:
+      #
+      # %{terms}        Current list of search terms.
+
+      unit:
+        brief:          'call'
+        long:           'search call record'
+      label:            'Searches'
+      title:            'Search Calls'
+      tooltip:          'List search call records.'
+
+      # =======================================================================
+      # Search endpoint
+      # =======================================================================
+
+      search:
+        action:         index
+
+      # =======================================================================
+      # Layout
+      # =======================================================================
+
+      search_type:
+
+        like:
+          name:         'Filter'
+          label:        'Filter by query or filter:'
+          placeholder:  'Enter query or filter...'
+
+      search_bar:
+        #enabled:        [index]
+        enabled:        false
+        label:          'Search Call Filter'
+
+      search_filters:
+        #enabled:        [index]
+        enabled:        false
+
+        layout:
+          - [sort, size, ~, ~]
+
+      page_controls:
+        label:
+          one:          'Manage this record:'
+          many:         'Record Actions:'
+
+      # =======================================================================
+      # Pages
+      # =======================================================================
+
+      index:
+        label:          'Search Calls'
+        title:          'Search Call Records'
+        tooltip:        'List search call records.'
+
+        display_fields: # @see 'en.emma.search_call.record'
+          - !ruby/symbol all
+
+      # =======================================================================
+
+      show:
+        label:          'Search Call'
+        title:          'Search Call Record'
+        tooltip:        'See details about this search call record.'
+
+        display_fields: # @see 'en.emma.search_call.record'
+          - !ruby/symbol all
+
+      # =======================================================================

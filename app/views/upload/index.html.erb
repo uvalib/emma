@@ -4,26 +4,27 @@
 
   title ||= t('emma.upload.index.title')
   list  ||= page_items
-  count ||= total_items
+  total ||= total_items
   terms ||= search_terms
   row   ||= 1
   help  ||= help_popup(:upload)
 
   page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_options(terms, *page_opt)
-  page = (page_terms[:page]&.values&.first).to_i
-  page = nil unless page > 1
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
 
   unless modal?
+    label = t('emma.upload.index.label', default: title)
     group = page_terms[:group]&.values&.first
     group = Upload::WorkflowMethods.state_group_label(group) if group
     terms = search
-    terms = terms.merge(page: page_terms[:page]) if page
-    set_page_title(t('emma.upload.index.label', default: title))
-    append_page_title('-', group)                    if group.present?
-    append_page_title('-', list_search_terms(terms)) if terms.present?
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    set_page_title(label)
+    append_page_title('-', group)                    if group
+    append_page_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
+    set_page_robots(:nofollow)
   end
 
   title += " (#{count})" if list.blank?

@@ -203,6 +203,12 @@ Rails.application.routes.draw do
   get    '/account/show/:id',      to: 'account#show',       as: 'show_account'
   get    '/account',               to: 'account#index',      as: 'account_index'
 
+  # ===========================================================================
+  # Search call viewer
+  # ===========================================================================
+
+  resources :search_call, only: %i[index show]
+
 end
 
 # Non-functional hints for RubyMine type checking.

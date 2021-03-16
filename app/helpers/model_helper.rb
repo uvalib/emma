@@ -872,7 +872,7 @@ module ModelHelper
   # @yieldparam  [Hash]  opt          Row-specific options.
   # @yieldreturn [ActiveSupport::SafeBuffer]
   #
-  def item_table_entries(list, separator: "\n", row: 0, **opt)
+  def item_table_entries(list, separator: "\n", row: 1, **opt)
     rows      = Array.wrap(list).dup
     first_row = row + 1
     last_row  = row + rows.size
@@ -988,7 +988,7 @@ module ModelHelper
       end
     fields = fields.dup  if fields.is_a?(Array)
     fields = fields.keys if fields.is_a?(Hash)
-    fields = Array.wrap(fields)
+    fields = Array.wrap(fields).compact
 
     if inner_tag
       first_col = col
@@ -998,10 +998,12 @@ module ModelHelper
         append_classes!(row_opt, 'col-first') if col == first_col
         append_classes!(row_opt, 'col-last')  if col == last_col
         col += 1
-        html_tag(inner_tag, row_opt) { labelize(field) }
+        html_tag(inner_tag, row_opt) do
+          html_div(labelize(field), class: 'field')
+        end
       end
     else
-      fields.map! { |field| labelize(field) unless field.nil? }.compact!
+      fields.map! { |field| labelize(field) }
     end
 
     if outer_tag
@@ -1019,7 +1021,7 @@ module ModelHelper
 
   # Specified field selections from the given model instance.
   #
-  # @param [Model, nil]                                item
+  # @param [Model, Hash, nil]                          item
   # @param [String, Symbol, Array<String,Symbol>, nil] columns
   # @param [String, Symbol, Array<String,Symbol>, nil] default
   # @param [String, Regexp, Array<String,Regexp>, nil] filter
@@ -1030,10 +1032,11 @@ module ModelHelper
   # noinspection RubyNilAnalysis
   #++
   def item_field_values(item, columns: nil, default: nil, filter: nil, **)
-    return {} unless item.respond_to?(:attributes)
+    pairs   = item.respond_to?(:attributes) ? item.attributes : item
+    return {} unless pairs.is_a?(Hash)
+    pairs   = pairs.dup
     columns = Array.wrap(columns || default).compact.map(&:to_s)
     columns = nil if columns == %w(all)
-    pairs   = item.attributes.dup
     pairs.keep_if { |field, _| columns.include?(field) } if columns.present?
     Array.wrap(filter).each do |pattern|
       has = pattern.is_a?(Regexp) ? :match? : :include?

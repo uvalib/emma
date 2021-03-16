@@ -10,9 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_19_225121) do
+ActiveRecord::Schema.define(version: 2021_02_07_220010) do
 
-  create_table "artifacts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "artifacts", charset: "utf8", force: :cascade do |t|
     t.string "format"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -21,19 +21,19 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["entry_type", "entry_id"], name: "index_artifacts_on_entry_type_and_entry_id"
   end
 
-  create_table "artifacts_editions", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "artifacts_editions", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "artifact_id", null: false
     t.integer "edition_id", null: false
     t.index ["artifact_id", "edition_id"], name: "index_artifacts_editions_on_artifact_id_and_edition_id"
   end
 
-  create_table "artifacts_titles", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "artifacts_titles", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "artifact_id", null: false
     t.integer "title_id", null: false
     t.index ["artifact_id", "title_id"], name: "index_artifacts_titles_on_artifact_id_and_title_id"
   end
 
-  create_table "editions", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "editions", charset: "utf8", force: :cascade do |t|
     t.string "editionId"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -41,19 +41,19 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["periodical_id"], name: "index_editions_on_periodical_id"
   end
 
-  create_table "editions_periodicals", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "editions_periodicals", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "edition_id", null: false
     t.integer "periodical_id", null: false
     t.index ["edition_id", "periodical_id"], name: "index_editions_periodicals_on_edition_id_and_periodical_id"
   end
 
-  create_table "editions_reading_lists", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "editions_reading_lists", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "edition_id", null: false
     t.integer "reading_list_id", null: false
     t.index ["edition_id", "reading_list_id"], name: "index_editions_reading_lists_on_edition_id_and_reading_list_id"
   end
 
-  create_table "members", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "members", charset: "utf8", force: :cascade do |t|
     t.string "emailAddress"
     t.boolean "institutional"
     t.datetime "created_at", precision: 6, null: false
@@ -62,19 +62,19 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["user_id"], name: "index_members_on_user_id"
   end
 
-  create_table "members_reading_lists", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "members_reading_lists", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "member_id", null: false
     t.integer "reading_list_id", null: false
     t.index ["member_id", "reading_list_id"], name: "index_members_reading_lists_on_member_id_and_reading_list_id"
   end
 
-  create_table "periodicals", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "periodicals", charset: "utf8", force: :cascade do |t|
     t.string "seriesId"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "reading_lists", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "reading_lists", charset: "utf8", force: :cascade do |t|
     t.string "readingListId"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -82,13 +82,13 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["user_id"], name: "index_reading_lists_on_user_id"
   end
 
-  create_table "reading_lists_titles", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "reading_lists_titles", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "reading_list_id", null: false
     t.integer "title_id", null: false
     t.index ["reading_list_id", "title_id"], name: "index_reading_lists_titles_on_reading_list_id_and_title_id"
   end
 
-  create_table "roles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "roles", charset: "utf8", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
     t.integer "resource_id"
@@ -99,13 +99,40 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource_type_and_resource_id"
   end
 
-  create_table "titles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "search_calls", charset: "utf8", force: :cascade do |t|
+    t.json "query"
+    t.json "filter"
+    t.json "sort"
+    t.json "page"
+    t.json "result"
+    t.bigint "user_id"
+    t.datetime "created_at"
+    t.index ["user_id"], name: "index_search_calls_on_user_id"
+  end
+
+  create_table "search_calls_results", id: false, charset: "utf8", force: :cascade do |t|
+    t.bigint "search_call_id", null: false
+    t.bigint "search_result_id", null: false
+    t.index ["search_call_id", "search_result_id"], name: "index_searches_on_call_id_and_result_id"
+  end
+
+  create_table "search_results", charset: "utf8", force: :cascade do |t|
+    t.string "title"
+    t.string "description"
+    t.string "format"
+    t.string "formatVersion"
+    t.string "identifier"
+    t.string "repository"
+    t.string "repositoryRecordId"
+  end
+
+  create_table "titles", charset: "utf8", force: :cascade do |t|
     t.string "bookshareId"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "uploads", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "uploads", charset: "utf8", force: :cascade do |t|
     t.text "file_data"
     t.text "emma_data"
     t.bigint "user_id"
@@ -129,7 +156,7 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["user_id"], name: "index_uploads_on_user_id"
   end
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users", charset: "utf8", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -145,7 +172,7 @@ ActiveRecord::Schema.define(version: 2020_10_19_225121) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  create_table "users_roles", id: false, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "users_roles", id: false, charset: "utf8", force: :cascade do |t|
     t.integer "user_id"
     t.integer "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"

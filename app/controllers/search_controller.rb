@@ -60,6 +60,7 @@ class SearchController < ApplicationController
     if q_params.present?
       opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
       @list = search_api.get_records(**opt)
+      save_search(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
       self.next_page   = next_page_path(@list, opt) # TODO: ???

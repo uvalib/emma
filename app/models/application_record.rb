@@ -31,23 +31,6 @@ class ApplicationRecord < ActiveRecord::Base
 
   public
 
-  # Find records with fields containing matches on the given search terms.
-  #
-  # @param [Array<Hash,String>]  terms
-  # @param [Hash]                opt    Passed to #sql_match.
-  #
-  # @return [ActiveRecord::Relation]
-  #
-  def self.matching(*terms, **opt)
-    where(sql_match(*terms, **opt))
-  end
-
-  # ===========================================================================
-  # :section: Class methods
-  # ===========================================================================
-
-  public
-
   # The fields defined in the schema for this record.
   #
   # @return [Array<Symbol>]
@@ -157,11 +140,28 @@ class ApplicationRecord < ActiveRecord::Base
   #   sql_clause(id: %w(123 456 789))  -> "id IN ('123','456','789')"
   #
   def self.sql_clause(k, v = nil)
-    k, v = *k.first if k.is_a?(Hash)
-    v = v.strip if v.is_a?(String)
+    k, v = *k.first        if k.is_a?(Hash)
+    v = v.strip            if v.is_a?(String)
     v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
     v = Array.wrap(v).map { |s| "'#{s}'" }.join(',')
     v.include?(',') ? "#{k} IN (#{v})" : "#{k} = #{v}"
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Find records with columns containing matches on the given search terms.
+  #
+  # @param [Array<Hash,String>]  terms
+  # @param [Hash]                opt    Passed to #sql_match.
+  #
+  # @return [ActiveRecord::Relation]
+  #
+  def self.matching(*terms, **opt)
+    where(sql_match(*terms, **opt))
   end
 
   # Translate hash keys/values into SQL LIKE statements.
@@ -174,18 +174,101 @@ class ApplicationRecord < ActiveRecord::Base
   # @return [String]  SQL expression.
   # @return [Array]   SQL clauses if *connector* is set to *nil*.
   #
-  def self.sql_match(*terms, join: :or, connector: join, **opt)
-    connector = connector.to_s.strip.upcase unless connector.nil?
-    opt[:fields] &&= Array.wrap(opt[:fields]).compact.map(&:to_sym).presence
-    opt[:fields] ||= field_names
+  def self.sql_match(*terms, join: :and, connector: join, **opt)
+    opt[:columns] &&= Array.wrap(opt[:columns]).compact.map(&:to_sym).presence
+    opt[:columns] ||= field_names
+    sql_matcher = (opt[:type] == :json) ? :sql_match_json : :sql_match_pattern
     result =
       merge_match_terms(*terms, **opt).flat_map do |field, matches|
-        matches.map do |string|
-          string = "%#{string}%" unless string.match?(/[^\\][%_]/)
-          "(#{field} LIKE '#{string}')"
-        end
+        matches.map { |text| send(sql_matcher, field, text) }
       end
-    connector ? result.join(" #{connector} ") : result
+    connector ? result.join(' %s ' % connector.to_s.strip.upcase) : result
+  end
+
+  # Look for a value in a standard database field.
+  #
+  # @param [Symbol, String] column
+  # @param [String]         text
+  # @param [Boolean]        exact
+  # @param [Boolean]        match_case
+  #
+  # == Usage Notes
+  # Does not handle "match_case: true".
+  #
+  def self.sql_match_pattern(column, text, exact: false, match_case: false)
+    Log.warn { "#{__method__}: match_case not implemented" } if match_case
+    value   = sql_json_pattern(text, exact: exact)
+    exact   = true unless value.is_a?(String)
+    matches = exact ? '=' : 'LIKE'
+    "(#{column} #{matches} #{value})"
+  end
+
+  # Look for value in a JSON-type database column.
+  #
+  # @param [Symbol, String] column
+  # @param [String, #to_s]  text
+  # @param [Boolean]        exact
+  # @param [Boolean]        match_case
+  #
+  # @see https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html
+  # @see https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql
+  #
+  # == Usage Notes
+  # Does not handle "exact: false" for field names yet, only field values.
+  #
+  def self.sql_match_json(column, text, exact: false, match_case: false)
+
+    # JSON_CONTAINS(json_doc, candidate[, path])
+    # JSON_CONTAINS_PATH(json_doc, 'one'|'all', path[, path, ...])
+    # JSON_EXTRACT(json_doc, path[, path, ...])
+    # JSON_KEYS(json_doc[, path])
+    # JSON_OVERLAPS(json_doc1, json_doc2)
+    # JSON_SEARCH(json_doc, 'one'|'all', search_str[, esc_char[, path, ...]])
+    # JSON_VALUE(json_doc, path)
+
+    key, value =
+      if text.is_a?(String) && text.include?(':')
+        text.split(':', 2)
+      else
+        [nil, text]
+      end
+
+    if key.blank?
+      pattern = sql_json_pattern(value, exact: exact, match_case: match_case)
+      "(JSON_SEARCH(#{column}, 'one', #{pattern}) IS NOT NULL)"
+
+    elsif (value = value&.to_s&.strip).blank? || (value == '*')
+      Log.warn { "#{__method__}: field match is always exact" } unless exact
+      "JSON_CONTAINS_PATH(#{column}, '$.#{key}')"
+
+    else
+      # function = match_case ? "#{column}->'$.#{key}'" : "CAST(#{column}->>'$.#{key}' AS CHAR)"
+      function = "JSON_EXTRACT(#{column}, '$.#{key}')"
+      function = "CAST(JSON_UNQUOTE(#{function}) AS CHAR)" unless match_case
+      sql_match_pattern(function, value, exact: exact, match_case: match_case)
+    end
+  end
+
+  # Prepare a string for matching.
+  #
+  # @param [String, *] text
+  # @param [Boolean]   exact
+  # @param [Boolean]   match_case
+  #
+  # @return [String, *]
+  #
+  def self.sql_json_pattern(text, exact: false, match_case: false)
+    if text.is_a?(String) || text.is_a?(Symbol)
+      text = text.to_s.strip
+      if digits_only?(text)
+        text = text.to_i
+      elsif digits_only?(text.delete('.'))
+        text = text.to_f
+      end
+    end
+    return text unless text.is_a?(String)
+    text = "%#{text}%" unless exact || text.match?(/^[%_]|[^\\][%_]/)
+    match_case ? "'#{text}'" : "CAST('#{text}' AS CHAR)"
   end
 
   # ===========================================================================
@@ -196,35 +279,50 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Accumulate match pairs.
   #
-  # @param [String, Array, Hash] term
+  # @param [String, Array, Hash] terms
   # @param [Hash]                opt    Passed to #merge_match_terms!
   #
-  def self.merge_match_terms(*term, **opt)
-    merge_match_terms!({}, *term, **opt)
+  def self.merge_match_terms(*terms, **opt)
+    merge_match_terms!({}, *terms, **opt)
   end
 
   # Accumulate match pairs.
   #
   # @param [Hash]                dst
   # @param [String, Array, Hash] terms
-  # @param [Array<Symbol>]       fields     Limit fields to match.
+  # @param [Array<Symbol>]       columns    Limit fields to match.
+  # @param [Symbol]              type       Ignored unless :json.
   # @param [Boolean]             sanitize   If *false* do not escape '%', '_'.
   #
   # @return [Hash{Symbol=>Array<String>}] The modified *dst* hash.
   #
-  def self.merge_match_terms!(dst, *terms, fields: nil, sanitize: true, **)
-    fields ||= field_names
+  def self.merge_match_terms!(
+    dst,
+    *terms,
+    columns:  nil,
+    type:     nil,
+    sanitize: (type != :json),
+    **        # Ignore any others
+  )
+    columns &&= field_names.select { |f| columns.include?(f) }
+    columns ||= field_names
     terms.flatten!
     terms.compact!
     terms.each do |term|
-      term = term.deep_dup                     if term.is_a?(Hash)
-      term = fields.map { |f| [f, term] }.to_h unless term.is_a?(Hash)
+      term =
+        if term.is_a?(Hash)
+          term.deep_symbolize_keys
+        else
+          columns.map { |col| [col, term] }.to_h
+        end
       term.transform_values! do |v|
         v = Array.wrap(v).reject(&:blank?)
+        v.map!(&:to_s)
         v.map! { |s| sanitize_sql_like(s) } if sanitize
         v.presence
       end
       term.compact!
+      # noinspection RubyYardParamTypeMatch
       dst.rmerge!(term)
     end
     dst
@@ -232,7 +330,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   # Make a string safe to use within an SQL LIKE statement.
   #
-  # @param [String] string
+  # @param [String] text
   # @param [String] escape_character
   #
   # @return [String]
@@ -240,10 +338,195 @@ class ApplicationRecord < ActiveRecord::Base
   # This method overrides:
   # ActiveRecord::Sanitization::ClassMethods#sanitize_sql_like
   #
-  def self.sanitize_sql_like(string, escape_character = '\\')
-    string.gsub(/(^|.)([%_])/) do |s|
+  def self.sanitize_sql_like(text, escape_character = '\\')
+    text.to_s.gsub(/(^|.)([%_])/) do |s|
       ($1 == escape_character) ? s : [$1, escape_character, $2].compact.join
     end
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  public
+
+  # Dynamically create a derived table with JSON fields expanded into columns.
+  #
+  # @param [String, Hash, nil] extra  Passed to #sql_extended_table
+  # @param [Hash]              opt    Passed to #sql_extended_table
+  #
+  # @return [ActiveRecord::Result]
+  #
+  def self.extended_table(extra = nil, **opt)
+    sql = sql_extended_table(extra, **opt)
+    ActiveRecord::Base.connection.exec_query(sql)
+  end
+
+  # Generate the SQL statement for dynamically creating a derived table with
+  # JSON fields expanded into columns.
+  #
+  # @param [String, Hash, nil]           extra      More SQL appended to FROM.
+  # @param [Hash{Symbol=>Array<Symbol>}] field_map
+  # @param [Array<Symbol>, Symbol, nil]  only
+  # @param [Array<Symbol>, Symbol, nil]  except
+  # @param [Hash]                        where      WHERE clause elements.
+  #
+  # @return [String]
+  #
+  def self.sql_extended_table(
+    extra       = nil,
+    field_map:, # Must be supplied by the subclass.
+    only:       nil,
+    except:     nil,
+    **where
+  )
+    if !field_map.is_a?(Hash)
+      Log.warn do
+        "#{self.class}.#{__method__}: " \
+        "field_map: #{field_map.class} instead of Hash"
+      end
+      field_map = {}
+    elsif only || except
+      only         = Array.wrap(only).map(&:to_sym)
+      except       = Array.wrap(except).map(&:to_sym)
+      field_map = field_map.slice(*only)    if only.present?
+      field_map = field_map.except(*except) if except.present?
+    end
+    table_alias = field_map.map { |col, _| [col, "#{col}_columns"] }.to_h
+
+    options =
+      Array.wrap(extra).flatten.map { |v|
+        if v.is_a?(Hash)
+          where = v.deep_symbolize_keys.merge!(where)
+          next
+        end
+        v.presence
+      }.compact
+    clause = where.presence && sql_where_clause(**where)
+    options << "WHERE #{clause}" if clause.present?
+    options = options.join(' ')
+
+    json_tables =
+      field_map.map { |column, json_fields|
+        sql_json_table(column, fields: json_fields, name: table_alias[column])
+      }.join(', ')
+
+    columns_to_show =
+      field_names.map { |column|
+        (name = table_alias[column]) ? "#{name}.*" : "#{table_name}.#{column}"
+      }.join(', ')
+
+    "SELECT #{columns_to_show} FROM #{table_name}, #{json_tables} #{options};"
+  end
+
+  # Generate a SQL JSON_TABLE definition.
+  #
+  # @param [Symbol, String]              column
+  # @param [String, nil]                 name       Def: derived from *column*.
+  # @param [Array, String, Symbol]       fields     JSON fields for *column*.
+  # @param [Hash{Symbol=>Array<Symbol>}] field_map  If *fields* not given.
+  #
+  # @return [String]
+  #
+  # == Implementation Notes
+  # * Documentation indicates that '$[*]' should work but only '$' seems to.
+  #
+  def self.sql_json_table(column, fields: nil, name: nil, field_map: nil)
+    alias_name   = name   || "#{column}_columns"
+    json_fields  = fields || field_map&.dig(column)
+    json_columns =
+      Array.wrap(json_fields).map { |key|
+        column_name = key.presence && sanitize_sql_name(column, key)
+        "#{column_name} JSON PATH '$.#{key}' NULL ON EMPTY" if column_name
+      }.join(', ')
+    "JSON_TABLE(#{column}, '$' COLUMNS(#{json_columns})) AS #{alias_name}"
+  end
+
+  # Generate condition(s) for a WHERE clause.
+  #
+  # @param [Hash{Symbol=>Array<Symbol>}] field_map  For JSON fields.
+  # @param [Hash{Symbol=>Hash}]          param_map  For JSON fields.
+  # @param [Hash]                        matches    Field assertions.
+  #
+  # @return [String]                  Blank if no valid field assertions.
+  #
+  #--
+  # noinspection RubyNilAnalysis
+  #++
+  def self.sql_where_clause(field_map: nil, param_map: nil, **matches)
+    fm_valid    = field_map.is_a?(Hash)
+    pm_valid    = param_map.is_a?(Hash)
+    json_fields = fm_valid && pm_valid
+    unless json_fields || (!field_map && !param_map)
+      error = []
+      error << 'have field_map but missing param_map' if fm_valid && !param_map
+      error << 'have param_map but missing field_map' if pm_valid && !field_map
+      field_map = nil if fm_valid
+      param_map = nil if pm_valid
+      error << "field_map: #{field_map.class} instead of Hash" if field_map
+      error << "param_map: #{param_map.class} instead of Hash" if param_map
+      error.each { |err| Log.warn { "#{self.class}.#{__method__}: #{err}" } }
+    end
+    matches.map { |field, match|
+      name =
+        if json_fields
+          column, _ = field_map.find { |_, fields| fields.include?(field) }
+          json_field =
+            if column
+              field
+            else
+              col_part, fld_part = field.to_s.split('_', 2).map(&:to_sym)
+              column, _  = field_map.find { |_, flds| flds.include?(fld_part) }
+              fld_part if column == col_part
+            end
+          sanitize_sql_name(*param_map.dig(column, json_field)) if json_field
+        end
+      name ||= (field if field_names.include?(field))
+      if name.blank?
+        Log.warn { "#{__method__}: ignoring invalid field #{field.inspect}" }
+        next
+      end
+      match = match.strip if match.is_a?(String)
+      match = true        if true?(match)
+      match = false       if false?(match)
+      condition =
+        case match
+          when Array                then 'IN (%s)' % quote(match)
+          when true                 then '= TRUE'
+          when false                then '= FALSE'
+          when nil, 'null', 'NULL'  then 'IS NULL'
+          when '*', 'any',  'ANY'   then 'IS NOT NULL'
+          when /^[<>=!]+\s*\d+$/    then "#{match}"
+          when String               then "LIKE '%#{match}%'"
+          when Symbol               then "= '#{match}'"
+          else                           "= #{match}"
+        end
+      "(#{name} #{condition})"
+    }.compact.join(' AND ')
+  end
+
+  # ===========================================================================
+  # :section: Class methods
+  # ===========================================================================
+
+  protected
+
+  # Mapping of digits to visibly similar letters.
+  #
+  # @type [Hash{String=>String}]
+  #
+  DIGIT_TO_ALPHA = { '0' => 'O', '1' => 'l', '5' => 'S' }.deep_freeze
+
+  # Some JSON key names have numbers in them but SQL seems to have a problem
+  # with that for the names defined within "COLUMNS()".
+  #
+  # @param [Array<String,Symbol>] name
+  #
+  # @return [String]
+  # @return [nil]                     If *name* was blank.
+  #
+  def self.sanitize_sql_name(*name)
+    name.join('_').presence&.gsub(/\d/) { |d| DIGIT_TO_ALPHA[d] || '_' }
   end
 
 end

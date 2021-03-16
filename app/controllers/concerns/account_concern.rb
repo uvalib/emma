@@ -21,12 +21,19 @@ module AccountConcern
 
   public
 
+  # @type [Array<Symbol>]
+  UA_PARAMETERS = User.field_names
+
+  # Columns searched for generic (:like) matches.
+  #
+  # @type [Array<Symbol>]
+  #
+  UA_MATCH_COLUMNS = %i[email last_name first_name].freeze
+
   # noinspection RailsI18nInspection
   UA_MESSAGES     = I18n.t('emma.account.messages', default: {}).deep_freeze
   UA_SUCCESSFULLY = UA_MESSAGES[:success]
   UA_FAILED_TO    = UA_MESSAGES[:failure]
-
-  UA_MATCH_FIELDS = %i[email last_name first_name].freeze
 
   # ===========================================================================
   # :section:
@@ -36,15 +43,17 @@ module AccountConcern
 
   # Only allow a list of trusted parameters through. # TODO: strong params
   #
+  # @param [ActionController::Parameters, Hash, nil] p   Default: `params`.
+  #
   # @return [Hash]
   #
-  def user_params
+  def user_params(p = nil)
 =begin
     params.require(:user).permit!
     # noinspection RubyYardReturnMatch
     params.fetch(:user, {})
 =end
-    url_parameters.slice(*User.field_names)
+    url_parameters(p).slice(*UA_PARAMETERS)
   end
 
   # ===========================================================================
@@ -53,15 +62,25 @@ module AccountConcern
 
   public
 
-  # Matching User account records.
+  # Get matching User account records or all records if no terms are given.
   #
   # @param [Array<String,Hash,Array>] terms
-  # @param [Array, nil]               fields
+  # @param [Array, nil]               columns      Default: #UA_MATCH_COLUMNS
+  # @param [Hash]                     hash_terms
   #
   # @return [ActiveRecord::Relation]
   #
-  def match_accounts(*terms, fields: UA_MATCH_FIELDS)
-    User.matching(*terms, fields: fields)
+  def get_accounts(*terms, columns: nil, **hash_terms)
+    terms.flatten!
+    terms.map! { |t| t.is_a?(Hash) ? t.deep_symbolize_keys : t if t.present? }
+    terms.compact!
+    terms << hash_terms if hash_terms.present?
+    if terms.blank?
+      User.all
+    else
+      columns ||= UA_MATCH_COLUMNS
+      User.matching(*terms, columns: columns, join: :or) # TODO: Is :or really correct here?
+    end
   end
 
   # ===========================================================================

@@ -4,14 +4,22 @@
 
   title ||= t('emma.category.index.title')
   list  ||= page_items
-  count ||= total_items
+  total ||= total_items
+  terms ||= search_terms
   row   ||= 1
   help  ||= nil
 
+  page_opt = Upload::SEARCH_RECORDS_OPTIONS
+  page_terms, search = partition_options(terms, *page_opt)
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
+
   unless modal?
-    terms ||= search_terms
-    set_page_title(t('emma.category.index.label', default: title))
-    append_page_title('-', list_search_terms(terms)) if terms.present?
+    label = t('emma.category.index.label', default: title)
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    set_page_title(label)
+    append_page_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
   end
 
