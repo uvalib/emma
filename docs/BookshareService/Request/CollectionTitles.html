@@ -132,7 +132,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -401,7 +401,8 @@
 74
 75
 76
-77</pre>
+77
+78</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'app/services/bookshare_service/request/collection_titles.rb', line 57</span>
@@ -416,12 +417,13 @@
     <span class='label'>optional:</span> <span class='lbrace'>{</span>
       <span class='label'>country:</span>          <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>isbn:</span>             <span class='const'>String</span><span class='comma'>,</span>
+      <span class='label'>titleStatus:</span>      <span class='const'><span class='object_link'><a href="../../BsTitleStatus.html" title="BsTitleStatus (class)">BsTitleStatus</a></span></span><span class='comma'>,</span>
       <span class='label'>startUpdatedDate:</span> <span class='const'><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></span><span class='comma'>,</span>
       <span class='label'>endUpdatedDate:</span>   <span class='const'><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></span><span class='comma'>,</span>
       <span class='label'>start:</span>            <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>limit:</span>            <span class='const'>Integer</span><span class='comma'>,</span>
-      <span class='label'>sortOrder:</span>        <span class='const'><span class='object_link'><a href="../../CatalogSortOrder.html" title="CatalogSortOrder (class)">CatalogSortOrder</a></span></span><span class='comma'>,</span>
-      <span class='label'>direction:</span>        <span class='const'><span class='object_link'><a href="../../Direction.html" title="Direction (class)">Direction</a></span></span><span class='comma'>,</span>
+      <span class='label'>sortOrder:</span>        <span class='const'><span class='object_link'><a href="../../BsCatalogSortOrder.html" title="BsCatalogSortOrder (class)">BsCatalogSortOrder</a></span></span><span class='comma'>,</span>
+      <span class='label'>direction:</span>        <span class='const'><span class='object_link'><a href="../../BsSortDirection.html" title="BsSortDirection (class)">BsSortDirection</a></span></span><span class='comma'>,</span>
     <span class='rbrace'>}</span><span class='comma'>,</span>
     <span class='label'>reference_page:</span>     <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>catalog</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>
     <span class='label'>reference_id:</span>       <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_catalog-search</span><span class='tstring_end'>&#39;</span></span>
@@ -437,7 +439,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:07:42 2021 by
+  Generated on Tue Mar 16 14:51:00 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

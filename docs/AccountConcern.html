@@ -113,6 +113,27 @@
 
     <dl class="constants">
       
+        <dt id="UA_PARAMETERS-constant" class="">UA_PARAMETERS =
+          
+        </dt>
+        <dd><pre class="code"><span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_field_names'><span class='object_link'><a href="Model.html#field_names-instance_method" title="Model#field_names (method)">field_names</a></span></span></pre></dd>
+      
+        <dt id="UA_MATCH_COLUMNS-constant" class="">UA_MATCH_COLUMNS =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>Columns searched for generic (:like) matches.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='tstring_content'>email</span><span class='words_sep'> </span><span class='tstring_content'>last_name</span><span class='words_sep'> </span><span class='tstring_content'>first_name</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
         <dt id="UA_MESSAGES-constant" class="">UA_MESSAGES =
           <div class="docstring">
   <div class="discussion">
@@ -139,11 +160,6 @@
         </dt>
         <dd><pre class="code"><span class='const'><span class='object_link'><a href="#UA_MESSAGES-constant" title="AccountConcern::UA_MESSAGES (constant)">UA_MESSAGES</a></span></span><span class='lbracket'>[</span><span class='symbol'>:failure</span><span class='rbracket'>]</span></pre></dd>
       
-        <dt id="UA_MATCH_FIELDS-constant" class="">UA_MATCH_FIELDS =
-          
-        </dt>
-        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='tstring_content'>email</span><span class='words_sep'> </span><span class='tstring_content'>last_name</span><span class='words_sep'> </span><span class='tstring_content'>first_name</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
-      
     </dl>
   
 
@@ -164,7 +180,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#match_accounts-instance_method" title="#match_accounts (instance method)">#<strong>match_accounts</strong>(*terms, fields: UA_MATCH_FIELDS)  &#x21d2; ActiveRecord::Relation </a>
+      <a href="#get_accounts-instance_method" title="#get_accounts (instance method)">#<strong>get_accounts</strong>(*terms, columns: nil, **hash_terms)  &#x21d2; ActiveRecord::Relation </a>
     
 
     
@@ -179,7 +195,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Matching User account records.</p>
+<p>Get matching User account records or all records if no terms are given.</p>
 </div></span>
   
 </li>
@@ -236,7 +252,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#user_params-instance_method" title="#user_params (instance method)">#<strong>user_params</strong>  &#x21d2; Hash </a>
+      <a href="#user_params-instance_method" title="#user_params (instance method)">#<strong>user_params</strong>(p = nil)  &#x21d2; Hash </a>
     
 
     
@@ -268,9 +284,9 @@
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="match_accounts-instance_method">
+  <h3 class="signature first" id="get_accounts-instance_method">
   
-    #<strong>match_accounts</strong>(*terms, fields: UA_MATCH_FIELDS)  &#x21d2; <tt>ActiveRecord::Relation</tt> 
+    #<strong>get_accounts</strong>(*terms, columns: nil, **hash_terms)  &#x21d2; <tt>ActiveRecord::Relation</tt> 
   
 
   
@@ -279,7 +295,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Matching User account records.</p>
+<p>Get matching User account records or all records if no terms are given.</p>
 
 
   </div>
@@ -301,13 +317,29 @@
   
     <li>
       
-        <span class='name'>fields</span>
+        <span class='name'>columns</span>
       
       
         <span class='type'>(<tt>Array</tt>, <tt>nil</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>UA_MATCH_FIELDS</tt>)</em>
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: #UA_MATCH_COLUMNS</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>hash_terms</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
       
       
     </li>
@@ -334,15 +366,33 @@
       <pre class="lines">
 
 
-63
-64
-65</pre>
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 63</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 73</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_match_accounts'>match_accounts</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>fields:</span> <span class='const'><span class='object_link'><a href="#UA_MATCH_FIELDS-constant" title="AccountConcern::UA_MATCH_FIELDS (constant)">UA_MATCH_FIELDS</a></span></span><span class='rparen'>)</span>
-  <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_matching'><span class='object_link'><a href="ApplicationRecord.html#matching-class_method" title="ApplicationRecord.matching (method)">matching</a></span></span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>fields:</span> <span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_get_accounts'>get_accounts</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>columns:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_hash_terms'>hash_terms</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_terms'>terms</span><span class='period'>.</span><span class='id identifier rubyid_flatten!'>flatten!</span>
+  <span class='id identifier rubyid_terms'>terms</span><span class='period'>.</span><span class='id identifier rubyid_map!'>map!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_t'>t</span><span class='op'>|</span> <span class='id identifier rubyid_t'>t</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_t'>t</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys'>deep_symbolize_keys</span> <span class='op'>:</span> <span class='id identifier rubyid_t'>t</span> <span class='kw'>if</span> <span class='id identifier rubyid_t'>t</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_terms'>terms</span><span class='period'>.</span><span class='id identifier rubyid_compact!'>compact!</span>
+  <span class='id identifier rubyid_terms'>terms</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_hash_terms'>hash_terms</span> <span class='kw'>if</span> <span class='id identifier rubyid_hash_terms'>hash_terms</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_terms'>terms</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_all'>all</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_columns'>columns</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#UA_MATCH_COLUMNS-constant" title="AccountConcern::UA_MATCH_COLUMNS (constant)">UA_MATCH_COLUMNS</a></span></span>
+    <span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_matching'><span class='object_link'><a href="ApplicationRecord.html#matching-class_method" title="ApplicationRecord.matching (method)">matching</a></span></span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>columns:</span> <span class='id identifier rubyid_columns'>columns</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:or</span><span class='rparen'>)</span> <span class='comment'># TODO: Is :or really correct here?
+</span>  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -444,33 +494,33 @@
       <pre class="lines">
 
 
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
 127
 128
 129
 130
-131</pre>
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 108</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 127</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redirect_failure'>redirect_failure</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>error:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_target'>target</span>    <span class='op'>=</span> <span class='id identifier rubyid_to'>to</span>
@@ -583,20 +633,20 @@
       <pre class="lines">
 
 
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94</pre>
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 84</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 103</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_redirect_success'>redirect_success</span><span class='lparen'>(</span><span class='id identifier rubyid_action'>action</span><span class='comma'>,</span> <span class='id identifier rubyid_message'>message</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>to:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_target'>target</span> <span class='op'>=</span> <span class='id identifier rubyid_to'>to</span> <span class='op'>||</span> <span class='id identifier rubyid_account_index_path'>account_index_path</span>
@@ -617,7 +667,7 @@
       <div class="method_details ">
   <h3 class="signature " id="user_params-instance_method">
   
-    #<strong>user_params</strong>  &#x21d2; <tt>Hash</tt> 
+    #<strong>user_params</strong>(p = nil)  &#x21d2; <tt>Hash</tt> 
   
 
   
@@ -632,7 +682,29 @@
   </div>
 </div>
 <div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
   
+    <li>
+      
+        <span class='name'>p</span>
+      
+      
+        <span class='type'>(<tt>ActionController::Parameters</tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `params`.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
 <p class="tag_title">Returns:</p>
 <ul class="return">
   
@@ -653,25 +725,25 @@
       <pre class="lines">
 
 
-41
-42
-43
-44
-45
-46
-47
-48</pre>
+50
+51
+52
+53
+54
+55
+56
+57</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'app/controllers/concerns/account_concern.rb', line 50</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_user_params'>user_params</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_user_params'>user_params</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
 <span class='embdoc_beg'>=begin
 </span><span class='embdoc'>  params.require(:user).permit!
 </span><span class='embdoc'>  # noinspection RubyYardReturnMatch
 </span><span class='embdoc'>  params.fetch(:user, {})
 </span><span class='embdoc_end'>=end
-</span>  <span class='id identifier rubyid_url_parameters'>url_parameters</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='op'>*</span><span class='const'><span class='object_link'><a href="User.html" title="User (class)">User</a></span></span><span class='period'>.</span><span class='id identifier rubyid_field_names'><span class='object_link'><a href="Model.html#field_names-instance_method" title="Model#field_names (method)">field_names</a></span></span><span class='rparen'>)</span>
+</span>  <span class='id identifier rubyid_url_parameters'>url_parameters</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='op'>*</span><span class='const'><span class='object_link'><a href="#UA_PARAMETERS-constant" title="AccountConcern::UA_PARAMETERS (constant)">UA_PARAMETERS</a></span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -683,7 +755,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:07:14 2021 by
+  Generated on Tue Mar 16 14:50:31 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

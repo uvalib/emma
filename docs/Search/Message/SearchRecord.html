@@ -113,9 +113,9 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Search::Message::SearchRecord</p>
+<p>Metadata record schema for EMMA Federated Search Index.</p>
 
-<h3 id="label-Fields+also+defined+in+Search-3A-3ARecord-3A-3AMetadataCommonRecord">Fields also defined in Search::Record::MetadataCommonRecord</h3>
+<p>– Fields also defined in Search::Record::MetadataCommonRecord: ++</p>
 
 
   </div>
@@ -125,6 +125,16 @@
 
   <p class="tag_title">See Also:</p>
   <ul class="see">
+    
+      <li><a href="https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/MetadataRecord" target="_parent" title="Search API documentation">Search API documentation</a></li>
+    
+      <li><a href="https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/MetadataRecord" target="_parent" title="HTML schema documentation">HTML schema documentation</a></li>
+    
+      <li><a href="https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3" target="_parent" title="JSON schema specification">JSON schema specification</a></li>
+    
+      <li><a href="../../file.upload.en.html" title="*en.emma.upload.record.emma_data*">*en.emma.upload.record.emma_data*</a></li>
+    
+      <li><span class='object_link'><a href="../Record/MetadataCommonRecord.html" title="Search::Record::MetadataCommonRecord (class)">(schema subset)</a></span></li>
     
       <li><span class='object_link'><a href="../Record/MetadataRecord.html" title="Search::Record::MetadataRecord (class)">(duplicate schema)</a></span></li>
     
@@ -149,7 +159,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -818,6 +828,33 @@
       <li class="public ">
   <span class="summary_signature">
     
+      <a href="#emma_sortDate-instance_method" title="#emma_sortDate (instance method)">#<strong>emma_sortDate</strong>  &#x21d2; IsoDate </a>
+    
+
+    
+  </span>
+  
+  
+  
+    
+    
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>The current value of emma_sortDate.</p>
+</div></span>
+  
+</li>
+
+    
+      <li class="public ">
+  <span class="summary_signature">
+    
       <a href="#emma_titleId-instance_method" title="#emma_titleId (instance method)">#<strong>emma_titleId</strong>  &#x21d2; String </a>
     
 
@@ -1282,12 +1319,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_creator'>dc_creator</span>
   <span class='ivar'>@dc_creator</span>
@@ -1343,12 +1380,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_description'>dc_description</span>
   <span class='ivar'>@dc_description</span>
@@ -1404,12 +1441,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_format'>dc_format</span>
   <span class='ivar'>@dc_format</span>
@@ -1465,12 +1502,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_identifier'>dc_identifier</span>
   <span class='ivar'>@dc_identifier</span>
@@ -1526,12 +1563,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_language'>dc_language</span>
   <span class='ivar'>@dc_language</span>
@@ -1587,12 +1624,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_provenance'>dc_provenance</span>
   <span class='ivar'>@dc_provenance</span>
@@ -1648,12 +1685,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_publisher'>dc_publisher</span>
   <span class='ivar'>@dc_publisher</span>
@@ -1709,12 +1746,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_relation'>dc_relation</span>
   <span class='ivar'>@dc_relation</span>
@@ -1770,12 +1807,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_rights'>dc_rights</span>
   <span class='ivar'>@dc_rights</span>
@@ -1831,12 +1868,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_subject'>dc_subject</span>
   <span class='ivar'>@dc_subject</span>
@@ -1892,12 +1929,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_title'>dc_title</span>
   <span class='ivar'>@dc_title</span>
@@ -1953,12 +1990,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_type'>dc_type</span>
   <span class='ivar'>@dc_type</span>
@@ -2014,12 +2051,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dcterms_dateAccepted'>dcterms_dateAccepted</span>
   <span class='ivar'>@dcterms_dateAccepted</span>
@@ -2075,12 +2112,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dcterms_dateCopyright'>dcterms_dateCopyright</span>
   <span class='ivar'>@dcterms_dateCopyright</span>
@@ -2136,12 +2173,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_collection'>emma_collection</span>
   <span class='ivar'>@emma_collection</span>
@@ -2197,12 +2234,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_formatFeature'>emma_formatFeature</span>
   <span class='ivar'>@emma_formatFeature</span>
@@ -2258,12 +2295,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_formatVersion'>emma_formatVersion</span>
   <span class='ivar'>@emma_formatVersion</span>
@@ -2319,12 +2356,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_lastRemediationDate'>emma_lastRemediationDate</span>
   <span class='ivar'>@emma_lastRemediationDate</span>
@@ -2380,12 +2417,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_lastRemediationNote'>emma_lastRemediationNote</span>
   <span class='ivar'>@emma_lastRemediationNote</span>
@@ -2441,12 +2478,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_recordId'>emma_recordId</span>
   <span class='ivar'>@emma_recordId</span>
@@ -2502,12 +2539,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_repository'>emma_repository</span>
   <span class='ivar'>@emma_repository</span>
@@ -2563,12 +2600,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_repositoryMetadataUpdateDate'>emma_repositoryMetadataUpdateDate</span>
   <span class='ivar'>@emma_repositoryMetadataUpdateDate</span>
@@ -2624,12 +2661,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_repositoryRecordId'>emma_repositoryRecordId</span>
   <span class='ivar'>@emma_repositoryRecordId</span>
@@ -2685,15 +2722,76 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_retrievalLink'>emma_retrievalLink</span>
   <span class='ivar'>@emma_retrievalLink</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      
+      <span id="emma_sortDate=-instance_method"></span>
+      <div class="method_details ">
+  <h3 class="signature " id="emma_sortDate-instance_method">
+  
+    #<strong>emma_sortDate</strong>  &#x21d2; <tt><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Returns the current value of emma_sortDate.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>the current value of emma_sortDate</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+57
+58
+59</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_emma_sortDate'>emma_sortDate</span>
+  <span class='ivar'>@emma_sortDate</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -2746,12 +2844,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_titleId'>emma_titleId</span>
   <span class='ivar'>@emma_titleId</span>
@@ -2807,12 +2905,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_webPageLink'>emma_webPageLink</span>
   <span class='ivar'>@emma_webPageLink</span>
@@ -2868,12 +2966,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessibilityAPI'>s_accessibilityAPI</span>
   <span class='ivar'>@s_accessibilityAPI</span>
@@ -2929,12 +3027,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessibilityControl'>s_accessibilityControl</span>
   <span class='ivar'>@s_accessibilityControl</span>
@@ -2990,12 +3088,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessibilityFeature'>s_accessibilityFeature</span>
   <span class='ivar'>@s_accessibilityFeature</span>
@@ -3051,12 +3149,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessibilityHazard'>s_accessibilityHazard</span>
   <span class='ivar'>@s_accessibilityHazard</span>
@@ -3112,12 +3210,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessibilitySummary'>s_accessibilitySummary</span>
   <span class='ivar'>@s_accessibilitySummary</span>
@@ -3173,12 +3271,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessMode'>s_accessMode</span>
   <span class='ivar'>@s_accessMode</span>
@@ -3234,12 +3332,12 @@
       <pre class="lines">
 
 
-49
-50
-51</pre>
+57
+58
+59</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 49</span>
+      <pre class="code"><span class="info file"># File 'app/records/search/message/search_record.rb', line 57</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_s_accessModeSufficient'>s_accessModeSufficient</span>
   <span class='ivar'>@s_accessModeSufficient</span>
@@ -3255,7 +3353,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:09:05 2021 by
+  Generated on Tue Mar 16 14:52:31 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

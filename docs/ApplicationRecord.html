@@ -89,6 +89,11 @@
   
   
   
+  <dl>
+      <dt>Includes:</dt>
+      <dd><span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></dd>
+  </dl>
+  
   
 
   
@@ -114,10 +119,16 @@
 
 </div><div id="subclasses">
   <h2>Direct Known Subclasses</h2>
-  <p class="children"><span class='object_link'><a href="Artifact.html" title="Artifact (class)">Artifact</a></span>, <span class='object_link'><a href="Edition.html" title="Edition (class)">Edition</a></span>, <span class='object_link'><a href="Member.html" title="Member (class)">Member</a></span>, <span class='object_link'><a href="Periodical.html" title="Periodical (class)">Periodical</a></span>, <span class='object_link'><a href="ReadingList.html" title="ReadingList (class)">ReadingList</a></span>, <span class='object_link'><a href="Role.html" title="Role (class)">Role</a></span>, <span class='object_link'><a href="Title.html" title="Title (class)">Title</a></span>, <span class='object_link'><a href="Upload.html" title="Upload (class)">Upload</a></span>, <span class='object_link'><a href="User.html" title="User (class)">User</a></span></p>
+  <p class="children"><span class='object_link'><a href="Artifact.html" title="Artifact (class)">Artifact</a></span>, <span class='object_link'><a href="Edition.html" title="Edition (class)">Edition</a></span>, <span class='object_link'><a href="Member.html" title="Member (class)">Member</a></span>, <span class='object_link'><a href="Periodical.html" title="Periodical (class)">Periodical</a></span>, <span class='object_link'><a href="ReadingList.html" title="ReadingList (class)">ReadingList</a></span>, <span class='object_link'><a href="Role.html" title="Role (class)">Role</a></span>, <span class='object_link'><a href="SearchCall.html" title="SearchCall (class)">SearchCall</a></span>, <span class='object_link'><a href="SearchResult.html" title="SearchResult (class)">SearchResult</a></span>, <span class='object_link'><a href="Title.html" title="Title (class)">Title</a></span>, <span class='object_link'><a href="Upload.html" title="Upload (class)">Upload</a></span>, <span class='object_link'><a href="User.html" title="User (class)">User</a></span></p>
 </div>
 
 
+
+  <h2>Constant Summary</h2>
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
 
 
@@ -130,6 +141,30 @@
     </h2>
 
     <ul class="summary">
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#extended_table-class_method" title="extended_table (class method)">.<strong>extended_table</strong>(extra = nil, **opt)  &#x21d2; ActiveRecord::Result </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Dynamically create a derived table with JSON fields expanded into columns.</p>
+</div></span>
+  
+</li>
+
       
         <li class="public ">
   <span class="summary_signature">
@@ -197,7 +232,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Find records with fields containing matches on the given search terms.</p>
+<p>Find records with columns containing matches on the given search terms.</p>
 </div></span>
   
 </li>
@@ -254,7 +289,79 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#sql_match-class_method" title="sql_match (class method)">.<strong>sql_match</strong>(*terms, join: :or, connector: join, **opt)  &#x21d2; String, Array </a>
+      <a href="#sql_extended_table-class_method" title="sql_extended_table (class method)">.<strong>sql_extended_table</strong>(extra = nil, field_map:, only: nil, except: nil, **where)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate the SQL statement for dynamically creating a derived table with JSON fields expanded into columns.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_json_pattern-class_method" title="sql_json_pattern (class method)">.<strong>sql_json_pattern</strong>(text, exact: false, match_case: false)  &#x21d2; String, * </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Prepare a string for matching.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_json_table-class_method" title="sql_json_table (class method)">.<strong>sql_json_table</strong>(column, fields: nil, name: nil, field_map: nil)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate a SQL JSON_TABLE definition.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_match-class_method" title="sql_match (class method)">.<strong>sql_match</strong>(*terms, join: :and, connector: join, **opt)  &#x21d2; String, Array </a>
     
 
     
@@ -270,6 +377,54 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Translate hash keys/values into SQL LIKE statements.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_match_json-class_method" title="sql_match_json (class method)">.<strong>sql_match_json</strong>(column, text, exact: false, match_case: false)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Look for value in a JSON-type database column.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_match_pattern-class_method" title="sql_match_pattern (class method)">.<strong>sql_match_pattern</strong>(column, text, exact: false, match_case: false)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Look for a value in a standard database field.</p>
 </div></span>
   
 </li>
@@ -294,6 +449,30 @@
   
     <span class="summary_desc"><div class='inline'>
 <p>Translate hash keys/values into SQL conditions.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#sql_where_clause-class_method" title="sql_where_clause (class method)">.<strong>sql_where_clause</strong>(field_map: nil, param_map: nil, **matches)  &#x21d2; String </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate condition(s) for a WHERE clause.</p>
 </div></span>
   
 </li>
@@ -337,13 +516,118 @@
 
 
   
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#array_string-instance_method" title="Emma::Common#array_string (method)">#array_string</a></span>, <span class='object_link'><a href="Emma/Common.html#boolean%3F-instance_method" title="Emma::Common#boolean? (method)">#boolean?</a></span>, <span class='object_link'><a href="Emma/Common.html#build_query_options-instance_method" title="Emma::Common#build_query_options (method)">#build_query_options</a></span>, <span class='object_link'><a href="Emma/Common.html#calling_method-instance_method" title="Emma::Common#calling_method (method)">#calling_method</a></span>, <span class='object_link'><a href="Emma/Common.html#digits_only%3F-instance_method" title="Emma::Common#digits_only? (method)">#digits_only?</a></span>, <span class='object_link'><a href="Emma/Common.html#get_method-instance_method" title="Emma::Common#get_method (method)">#get_method</a></span>, <span class='object_link'><a href="Emma/Common.html#get_params-instance_method" title="Emma::Common#get_params (method)">#get_params</a></span>, <span class='object_link'><a href="Emma/Common.html#hash_string-instance_method" title="Emma::Common#hash_string (method)">#hash_string</a></span>, <span class='object_link'><a href="Emma/Common.html#html_id-instance_method" title="Emma::Common#html_id (method)">#html_id</a></span>, <span class='object_link'><a href="Emma/Common.html#inflection-instance_method" title="Emma::Common#inflection (method)">#inflection</a></span>, <span class='object_link'><a href="Emma/Common.html#labelize-instance_method" title="Emma::Common#labelize (method)">#labelize</a></span>, <span class='object_link'><a href="Emma/Common.html#make_path-instance_method" title="Emma::Common#make_path (method)">#make_path</a></span>, <span class='object_link'><a href="Emma/Common.html#named_format_references-instance_method" title="Emma::Common#named_format_references (method)">#named_format_references</a></span>, <span class='object_link'><a href="Emma/Common.html#non_breaking-instance_method" title="Emma::Common#non_breaking (method)">#non_breaking</a></span>, <span class='object_link'><a href="Emma/Common.html#non_negative-instance_method" title="Emma::Common#non_negative (method)">#non_negative</a></span>, <span class='object_link'><a href="Emma/Common.html#normalized_list-instance_method" title="Emma::Common#normalized_list (method)">#normalized_list</a></span>, <span class='object_link'><a href="Emma/Common.html#partition_options-instance_method" title="Emma::Common#partition_options (method)">#partition_options</a></span>, <span class='object_link'><a href="Emma/Common.html#positive-instance_method" title="Emma::Common#positive (method)">#positive</a></span>, <span class='object_link'><a href="Emma/Common.html#quote-instance_method" title="Emma::Common#quote (method)">#quote</a></span>, <span class='object_link'><a href="Emma/Common.html#reject_blanks-instance_method" title="Emma::Common#reject_blanks (method)">#reject_blanks</a></span>, <span class='object_link'><a href="Emma/Common.html#sanitized_string-instance_method" title="Emma::Common#sanitized_string (method)">#sanitized_string</a></span>, <span class='object_link'><a href="Emma/Common.html#strip_quotes-instance_method" title="Emma::Common#strip_quotes (method)">#strip_quotes</a></span>, <span class='object_link'><a href="Emma/Common.html#url_escape-instance_method" title="Emma::Common#url_escape (method)">#url_escape</a></span>, <span class='object_link'><a href="Emma/Common.html#url_query-instance_method" title="Emma::Common#url_query (method)">#url_query</a></span></p>
+
+  
 
   <div id="class_method_details" class="method_details_list">
     <h2>Class Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="field_names-class_method">
+  <h3 class="signature first" id="extended_table-class_method">
+  
+    .<strong>extended_table</strong>(extra = nil, **opt)  &#x21d2; <tt>ActiveRecord::Result</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Dynamically create a derived table with JSON fields expanded into columns.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>extra</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #sql_extended_table</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #sql_extended_table</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveRecord::Result</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+362
+363
+364
+365</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 362</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_extended_table'>extended_table</span><span class='lparen'>(</span><span class='id identifier rubyid_extra'>extra</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_sql'>sql</span> <span class='op'>=</span> <span class='id identifier rubyid_sql_extended_table'>sql_extended_table</span><span class='lparen'>(</span><span class='id identifier rubyid_extra'>extra</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='const'>ActiveRecord</span><span class='op'>::</span><span class='const'>Base</span><span class='period'>.</span><span class='id identifier rubyid_connection'>connection</span><span class='period'>.</span><span class='id identifier rubyid_exec_query'>exec_query</span><span class='lparen'>(</span><span class='id identifier rubyid_sql'>sql</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="field_names-class_method">
   
     .<strong>field_names</strong>  &#x21d2; <tt>Array&lt;Symbol&gt;</tt> 
   
@@ -381,12 +665,12 @@
       <pre class="lines">
 
 
-55
-56
-57</pre>
+40
+41
+42</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 55</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 40</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_field_names'>field_names</span>
   <span class='id identifier rubyid_columns_hash'>columns_hash</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span> <span class='kw'>rescue</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
@@ -461,14 +745,14 @@
       <pre class="lines">
 
 
-64
-65
-66
-67
-68</pre>
+49
+50
+51
+52
+53</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 49</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='id identifier rubyid_rec_1'>rec_1</span><span class='comma'>,</span> <span class='id identifier rubyid_rec_2'>rec_2</span><span class='rparen'>)</span>
   <span class='lparen'>(</span><span class='id identifier rubyid_rec_1'>rec_1</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="ApplicationRecord (class)">ApplicationRecord</a></span></span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_rec_2'>rec_2</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="" title="ApplicationRecord (class)">ApplicationRecord</a></span></span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span>
@@ -492,7 +776,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Find records with fields containing matches on the given search terms.</p>
+<p>Find records with columns containing matches on the given search terms.</p>
 
 
   </div>
@@ -550,12 +834,12 @@
       <pre class="lines">
 
 
-41
-42
-43</pre>
+165
+166
+167</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 41</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 165</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_matching'>matching</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_sql_match'>sql_match</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='rparen'>)</span>
@@ -754,20 +1038,20 @@
       <pre class="lines">
 
 
-159
-160
-161
-162
-163
-164
-165</pre>
+144
+145
+146
+147
+148
+149
+150</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 159</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 144</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_clause'>sql_clause</span><span class='lparen'>(</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='op'>*</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='kw'>if</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='op'>*</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>        <span class='kw'>if</span> <span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>            <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>\s*,\s*</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_s'>s</span><span class='op'>|</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_s'>s</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
   <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>,</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'> IN (</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_v'>v</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_k'>k</span><span class='embexpr_end'>}</span><span class='tstring_content'> = </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_v'>v</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
@@ -907,14 +1191,14 @@
       <pre class="lines">
 
 
-123
-124
-125
-126
-127</pre>
+108
+109
+110
+111
+112</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 123</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 108</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_clauses'>sql_clauses</span><span class='lparen'>(</span><span class='id identifier rubyid_hash'>hash</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:and</span><span class='comma'>,</span> <span class='label'>connector:</span> <span class='id identifier rubyid_join'>join</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_connector'>connector</span> <span class='op'>=</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_upcase'>upcase</span> <span class='kw'>unless</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -927,9 +1211,479 @@
 </div>
     
       <div class="method_details ">
+  <h3 class="signature " id="sql_extended_table-class_method">
+  
+    .<strong>sql_extended_table</strong>(extra = nil, field_map:, only: nil, except: nil, **where)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate the SQL statement for dynamically creating a derived table with JSON fields expanded into columns.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>extra</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>More SQL appended to FROM.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>field_map</span>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;Array&lt;Symbol&gt;}</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>only</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>, <tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>except</span>
+      
+      
+        <span class='type'>(<tt>Array&lt;Symbol&gt;</tt>, <tt>Symbol</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>where</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>WHERE clause elements.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406
+407
+408
+409
+410
+411
+412
+413
+414
+415
+416
+417
+418
+419
+420
+421
+422</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 378</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_extended_table'>sql_extended_table</span><span class='lparen'>(</span>
+  <span class='id identifier rubyid_extra'>extra</span>       <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>field_map:</span><span class='comma'>,</span> <span class='comment'># Must be supplied by the subclass.
+</span>  <span class='label'>only:</span>       <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>except:</span>     <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='op'>**</span><span class='id identifier rubyid_where'>where</span>
+<span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='op'>!</span><span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='kw'>do</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='tstring_end'>&quot;</span></span> \
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>field_map: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> instead of Hash</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_only'>only</span> <span class='op'>||</span> <span class='id identifier rubyid_except'>except</span>
+    <span class='id identifier rubyid_only'>only</span>         <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_only'>only</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_except'>except</span>       <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_except'>except</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_only'>only</span><span class='rparen'>)</span>    <span class='kw'>if</span> <span class='id identifier rubyid_only'>only</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_except'>except</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_except'>except</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_table_alias'>table_alias</span> <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_col'>col</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_col'>col</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_col'>col</span><span class='embexpr_end'>}</span><span class='tstring_content'>_columns</span><span class='tstring_end'>&quot;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span>
+    <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_extra'>extra</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flatten'>flatten</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+        <span class='id identifier rubyid_where'>where</span> <span class='op'>=</span> <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_deep_symbolize_keys'>deep_symbolize_keys</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_where'>where</span><span class='rparen'>)</span>
+        <span class='kw'>next</span>
+      <span class='kw'>end</span>
+      <span class='id identifier rubyid_v'>v</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='id identifier rubyid_clause'>clause</span> <span class='op'>=</span> <span class='id identifier rubyid_where'>where</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_sql_where_clause'>sql_where_clause</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_where'>where</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>WHERE </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_clause'>clause</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_clause'>clause</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_options'>options</span> <span class='op'>=</span> <span class='id identifier rubyid_options'>options</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_json_tables'>json_tables</span> <span class='op'>=</span>
+    <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid_json_fields'>json_fields</span><span class='op'>|</span>
+      <span class='id identifier rubyid_sql_json_table'>sql_json_table</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='label'>fields:</span> <span class='id identifier rubyid_json_fields'>json_fields</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='id identifier rubyid_table_alias'>table_alias</span><span class='lbracket'>[</span><span class='id identifier rubyid_column'>column</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_columns_to_show'>columns_to_show</span> <span class='op'>=</span>
+    <span class='id identifier rubyid_field_names'>field_names</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_column'>column</span><span class='op'>|</span>
+      <span class='lparen'>(</span><span class='id identifier rubyid_name'>name</span> <span class='op'>=</span> <span class='id identifier rubyid_table_alias'>table_alias</span><span class='lbracket'>[</span><span class='id identifier rubyid_column'>column</span><span class='rbracket'>]</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.*</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_table_name'>table_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>SELECT </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_columns_to_show'>columns_to_show</span><span class='embexpr_end'>}</span><span class='tstring_content'> FROM </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_table_name'>table_name</span><span class='embexpr_end'>}</span><span class='tstring_content'>, </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_json_tables'>json_tables</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_options'>options</span><span class='embexpr_end'>}</span><span class='tstring_content'>;</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql_json_pattern-class_method">
+  
+    .<strong>sql_json_pattern</strong>(text, exact: false, match_case: false)  &#x21d2; <tt>String</tt>, <tt>*</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Prepare a string for matching.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>text</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>exact</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>match_case</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>*</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 262</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_json_pattern'>sql_json_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>match_case:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Symbol</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_digits_only?'>digits_only?</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_to_i'>to_i</span>
+    <span class='kw'>elsif</span> <span class='id identifier rubyid_digits_only?'>digits_only?</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_to_f'>to_f</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+  <span class='kw'>return</span> <span class='id identifier rubyid_text'>text</span> <span class='kw'>unless</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_text'>text</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>%</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_text'>text</span><span class='embexpr_end'>}</span><span class='tstring_content'>%</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_exact'>exact</span> <span class='op'>||</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[%_]|[^\\][%_]</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_match_case'>match_case</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>&#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_text'>text</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CAST(&#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_text'>text</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; AS CHAR)</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql_json_table-class_method">
+  
+    .<strong>sql_json_table</strong>(column, fields: nil, name: nil, field_map: nil)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate a SQL JSON_TABLE definition.</p>
+
+<h2 id="label-Implementation+Notes">Implementation Notes</h2>
+<ul><li>
+<p>Documentation indicates that &#39;$[*]&#39; should work but only &#39;$&#39; seems to.</p>
+</li></ul>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>column</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>name</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Def: derived from <strong>column</strong>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>fields</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>, <tt>String</tt>, <tt>Symbol</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>JSON fields for <strong>column</strong>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>field_map</span>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;Array&lt;Symbol&gt;}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>fields</strong> not given.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+436
+437
+438
+439
+440
+441
+442
+443
+444
+445</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 436</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_json_table'>sql_json_table</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='label'>fields:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>name:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>field_map:</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_alias_name'>alias_name</span>   <span class='op'>=</span> <span class='id identifier rubyid_name'>name</span>   <span class='op'>||</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'>_columns</span><span class='tstring_end'>&quot;</span></span>
+  <span class='id identifier rubyid_json_fields'>json_fields</span>  <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span> <span class='op'>||</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='op'>&amp;.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_json_columns'>json_columns</span> <span class='op'>=</span>
+    <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_json_fields'>json_fields</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
+      <span class='id identifier rubyid_column_name'>column_name</span> <span class='op'>=</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_sanitize_sql_name'>sanitize_sql_name</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid_key'>key</span><span class='rparen'>)</span>
+      <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column_name'>column_name</span><span class='embexpr_end'>}</span><span class='tstring_content'> JSON PATH &#39;$.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39; NULL ON EMPTY</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_column_name'>column_name</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>, </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>JSON_TABLE(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'>, &#39;$&#39; COLUMNS(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_json_columns'>json_columns</span><span class='embexpr_end'>}</span><span class='tstring_content'>)) AS </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_alias_name'>alias_name</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
   <h3 class="signature " id="sql_match-class_method">
   
-    .<strong>sql_match</strong>(*terms, join: :or, connector: join, **opt)  &#x21d2; <tt>String</tt>, <tt>Array</tt> 
+    .<strong>sql_match</strong>(*terms, join: :and, connector: join, **opt)  &#x21d2; <tt>String</tt>, <tt>Array</tt> 
   
 
   
@@ -984,7 +1738,7 @@
         <span class='type'>(<tt>String</tt>, <tt>Symbol</tt>, <tt>nil</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>:or</tt>)</em>
+        <em class="default">(defaults to: <tt>:and</tt>)</em>
       
       
         &mdash;
@@ -1051,8 +1805,6 @@
       <pre class="lines">
 
 
-177
-178
 179
 180
 181
@@ -1062,24 +1814,289 @@
 185
 186
 187
-188
-189</pre>
+188</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 177</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 179</span>
 
-<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_match'>sql_match</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:or</span><span class='comma'>,</span> <span class='label'>connector:</span> <span class='id identifier rubyid_join'>join</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_connector'>connector</span> <span class='op'>=</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_upcase'>upcase</span> <span class='kw'>unless</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
-  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:fields</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:fields</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
-  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:fields</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_field_names'>field_names</span>
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_match'>sql_match</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:and</span><span class='comma'>,</span> <span class='label'>connector:</span> <span class='id identifier rubyid_join'>join</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:columns</span><span class='rbracket'>]</span> <span class='op'>&amp;&amp;=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:columns</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:columns</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_field_names'>field_names</span>
+  <span class='id identifier rubyid_sql_matcher'>sql_matcher</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:type</span><span class='rbracket'>]</span> <span class='op'>==</span> <span class='symbol'>:json</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='symbol'>:sql_match_json</span> <span class='op'>:</span> <span class='symbol'>:sql_match_pattern</span>
   <span class='id identifier rubyid_result'>result</span> <span class='op'>=</span>
     <span class='id identifier rubyid_merge_match_terms'>merge_match_terms</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_flat_map'>flat_map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_matches'>matches</span><span class='op'>|</span>
-      <span class='id identifier rubyid_matches'>matches</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_string'>string</span><span class='op'>|</span>
-        <span class='id identifier rubyid_string'>string</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>%</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_string'>string</span><span class='embexpr_end'>}</span><span class='tstring_content'>%</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_string'>string</span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>[^\\][%_]</span><span class='regexp_end'>/</span></span><span class='rparen'>)</span>
-        <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field'>field</span><span class='embexpr_end'>}</span><span class='tstring_content'> LIKE &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_string'>string</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;)</span><span class='tstring_end'>&quot;</span></span>
-      <span class='kw'>end</span>
+      <span class='id identifier rubyid_matches'>matches</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_text'>text</span><span class='op'>|</span> <span class='id identifier rubyid_send'>send</span><span class='lparen'>(</span><span class='id identifier rubyid_sql_matcher'>sql_matcher</span><span class='comma'>,</span> <span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_text'>text</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
     <span class='kw'>end</span>
-  <span class='id identifier rubyid_connector'>connector</span> <span class='op'>?</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_connector'>connector</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_result'>result</span>
+  <span class='id identifier rubyid_connector'>connector</span> <span class='op'>?</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> %s </span><span class='tstring_end'>&#39;</span></span> <span class='op'>%</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_upcase'>upcase</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql_match_json-class_method">
+  
+    .<strong>sql_match_json</strong>(column, text, exact: false, match_case: false)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Look for value in a JSON-type database column.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>Does not handle “exact: false” for field names yet, only field values.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>column</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>text</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>#to_s</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>exact</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>match_case</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html" target="_parent" title="https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html">https://dev.mysql.com/doc/refman/8.0/en/json-function-reference.html</a></li>
+    
+      <li><a href="https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql" target="_parent" title="https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql">https://stackoverflow.com/questions/49782240/can-i-do-case-insensitive-search-with-json-extract-in-mysql</a></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 221</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_match_json'>sql_match_json</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>match_case:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+
+  <span class='comment'># JSON_CONTAINS(json_doc, candidate[, path])
+</span>  <span class='comment'># JSON_CONTAINS_PATH(json_doc, &#39;one&#39;|&#39;all&#39;, path[, path, ...])
+</span>  <span class='comment'># JSON_EXTRACT(json_doc, path[, path, ...])
+</span>  <span class='comment'># JSON_KEYS(json_doc[, path])
+</span>  <span class='comment'># JSON_OVERLAPS(json_doc1, json_doc2)
+</span>  <span class='comment'># JSON_SEARCH(json_doc, &#39;one&#39;|&#39;all&#39;, search_str[, esc_char[, path, ...]])
+</span>  <span class='comment'># JSON_VALUE(json_doc, path)
+</span>
+  <span class='id identifier rubyid_key'>key</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_text'>text</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>:</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>2</span><span class='rparen'>)</span>
+    <span class='kw'>else</span>
+      <span class='lbracket'>[</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_text'>text</span><span class='rbracket'>]</span>
+    <span class='kw'>end</span>
+
+  <span class='kw'>if</span> <span class='id identifier rubyid_key'>key</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+    <span class='id identifier rubyid_pattern'>pattern</span> <span class='op'>=</span> <span class='id identifier rubyid_sql_json_pattern'>sql_json_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='id identifier rubyid_exact'>exact</span><span class='comma'>,</span> <span class='label'>match_case:</span> <span class='id identifier rubyid_match_case'>match_case</span><span class='rparen'>)</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(JSON_SEARCH(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'>, &#39;one&#39;, </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_pattern'>pattern</span><span class='embexpr_end'>}</span><span class='tstring_content'>) IS NOT NULL)</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='kw'>elsif</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='id identifier rubyid_value'>value</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='op'>&amp;.</span><span class='id identifier rubyid_strip'>strip</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='id identifier rubyid_value'>value</span> <span class='op'>==</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+    <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: field match is always exact</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_exact'>exact</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>JSON_CONTAINS_PATH(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'>, &#39;$.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;)</span><span class='tstring_end'>&quot;</span></span>
+
+  <span class='kw'>else</span>
+    <span class='comment'># function = match_case ? &quot;#{column}-&gt;&#39;$.#{key}&#39;&quot; : &quot;CAST(#{column}-&gt;&gt;&#39;$.#{key}&#39; AS CHAR)&quot;
+</span>    <span class='id identifier rubyid_function'>function</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>JSON_EXTRACT(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'>, &#39;$.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_key'>key</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;)</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_function'>function</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>CAST(JSON_UNQUOTE(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_function'>function</span><span class='embexpr_end'>}</span><span class='tstring_content'>) AS CHAR)</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>unless</span> <span class='id identifier rubyid_match_case'>match_case</span>
+    <span class='id identifier rubyid_sql_match_pattern'>sql_match_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_function'>function</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='id identifier rubyid_exact'>exact</span><span class='comma'>,</span> <span class='label'>match_case:</span> <span class='id identifier rubyid_match_case'>match_case</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql_match_pattern-class_method">
+  
+    .<strong>sql_match_pattern</strong>(column, text, exact: false, match_case: false)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Look for a value in a standard database field.</p>
+
+<h2 id="label-Usage+Notes">Usage Notes</h2>
+
+<p>Does not handle “match_case: true”.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>column</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>text</span>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>exact</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>match_case</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+200
+201
+202
+203
+204
+205
+206</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 200</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_match_pattern'>sql_match_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='label'>match_case:</span> <span class='kw'>false</span><span class='rparen'>)</span>
+  <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: match_case not implemented</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='kw'>if</span> <span class='id identifier rubyid_match_case'>match_case</span>
+  <span class='id identifier rubyid_value'>value</span>   <span class='op'>=</span> <span class='id identifier rubyid_sql_json_pattern'>sql_json_pattern</span><span class='lparen'>(</span><span class='id identifier rubyid_text'>text</span><span class='comma'>,</span> <span class='label'>exact:</span> <span class='id identifier rubyid_exact'>exact</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_exact'>exact</span>   <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>unless</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_matches'>matches</span> <span class='op'>=</span> <span class='id identifier rubyid_exact'>exact</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>=</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>LIKE</span><span class='tstring_end'>&#39;</span></span>
+  <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_column'>column</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_matches'>matches</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_value'>value</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1241,21 +2258,21 @@ sql_terms(ids) -&gt; &quot;(id IN (123, 456))&quot;</code></pre>
       <pre class="lines">
 
 
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104</pre>
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 93</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 78</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_terms'>sql_terms</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_terms'>terms</span><span class='comma'>,</span> <span class='label'>join:</span> <span class='symbol'>:and</span><span class='comma'>,</span> <span class='label'>connector:</span> <span class='id identifier rubyid_join'>join</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_connector'>connector</span> <span class='op'>=</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span><span class='period'>.</span><span class='id identifier rubyid_upcase'>upcase</span> <span class='kw'>unless</span> <span class='id identifier rubyid_connector'>connector</span><span class='period'>.</span><span class='id identifier rubyid_nil?'>nil?</span>
@@ -1268,6 +2285,219 @@ sql_terms(ids) -&gt; &quot;(id IN (123, 456))&quot;</code></pre>
       <span class='id identifier rubyid_term'>term</span><span class='period'>.</span><span class='id identifier rubyid_start_with?'>start_with?</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>(</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_term'>term</span> <span class='op'>:</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_term'>term</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_term'>term</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
     <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
   <span class='id identifier rubyid_connector'>connector</span> <span class='op'>?</span> <span class='id identifier rubyid_result'>result</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_connector'>connector</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_result'>result</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="sql_where_clause-class_method">
+  
+    .<strong>sql_where_clause</strong>(field_map: nil, param_map: nil, **matches)  &#x21d2; <tt>String</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate condition(s) for a WHERE clause.</p>
+
+<p>– noinspection RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>field_map</span>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;Array&lt;Symbol&gt;}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>For JSON fields.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>param_map</span>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;Hash}</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>For JSON fields.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>matches</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Field assertions.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Blank if no valid field assertions.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474
+475
+476
+477
+478
+479
+480
+481
+482
+483
+484
+485
+486
+487
+488
+489
+490
+491
+492
+493
+494
+495
+496
+497
+498
+499
+500
+501
+502
+503
+504
+505
+506
+507
+508</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 458</span>
+
+<span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_sql_where_clause'>sql_where_clause</span><span class='lparen'>(</span><span class='label'>field_map:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>param_map:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_matches'>matches</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_fm_valid'>fm_valid</span>    <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_pm_valid'>pm_valid</span>    <span class='op'>=</span> <span class='id identifier rubyid_param_map'>param_map</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_json_fields'>json_fields</span> <span class='op'>=</span> <span class='id identifier rubyid_fm_valid'>fm_valid</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_pm_valid'>pm_valid</span>
+  <span class='kw'>unless</span> <span class='id identifier rubyid_json_fields'>json_fields</span> <span class='op'>||</span> <span class='lparen'>(</span><span class='op'>!</span><span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_param_map'>param_map</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_error'>error</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='rbracket'>]</span>
+    <span class='id identifier rubyid_error'>error</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>have field_map but missing param_map</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_fm_valid'>fm_valid</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_param_map'>param_map</span>
+    <span class='id identifier rubyid_error'>error</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>have param_map but missing field_map</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_pm_valid'>pm_valid</span> <span class='op'>&amp;&amp;</span> <span class='op'>!</span><span class='id identifier rubyid_field_map'>field_map</span>
+    <span class='id identifier rubyid_field_map'>field_map</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_fm_valid'>fm_valid</span>
+    <span class='id identifier rubyid_param_map'>param_map</span> <span class='op'>=</span> <span class='kw'>nil</span> <span class='kw'>if</span> <span class='id identifier rubyid_pm_valid'>pm_valid</span>
+    <span class='id identifier rubyid_error'>error</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>field_map: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> instead of Hash</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_field_map'>field_map</span>
+    <span class='id identifier rubyid_error'>error</span> <span class='op'>&lt;&lt;</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>param_map: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_param_map'>param_map</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'> instead of Hash</span><span class='tstring_end'>&quot;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_param_map'>param_map</span>
+    <span class='id identifier rubyid_error'>error</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_err'>err</span><span class='op'>|</span> <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='embexpr_end'>}</span><span class='tstring_content'>.</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_err'>err</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span> <span class='rbrace'>}</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_matches'>matches</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_match'>match</span><span class='op'>|</span>
+    <span class='id identifier rubyid_name'>name</span> <span class='op'>=</span>
+      <span class='kw'>if</span> <span class='id identifier rubyid_json_fields'>json_fields</span>
+        <span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span> <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_fields'>fields</span><span class='op'>|</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+        <span class='id identifier rubyid_json_field'>json_field</span> <span class='op'>=</span>
+          <span class='kw'>if</span> <span class='id identifier rubyid_column'>column</span>
+            <span class='id identifier rubyid_field'>field</span>
+          <span class='kw'>else</span>
+            <span class='id identifier rubyid_col_part'>col_part</span><span class='comma'>,</span> <span class='id identifier rubyid_fld_part'>fld_part</span> <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='period'>.</span><span class='id identifier rubyid_split'>split</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>_</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='int'>2</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_sym</span><span class='rparen'>)</span>
+            <span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid__'>_</span>  <span class='op'>=</span> <span class='id identifier rubyid_field_map'>field_map</span><span class='period'>.</span><span class='id identifier rubyid_find'>find</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid__'>_</span><span class='comma'>,</span> <span class='id identifier rubyid_flds'>flds</span><span class='op'>|</span> <span class='id identifier rubyid_flds'>flds</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_fld_part'>fld_part</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+            <span class='id identifier rubyid_fld_part'>fld_part</span> <span class='kw'>if</span> <span class='id identifier rubyid_column'>column</span> <span class='op'>==</span> <span class='id identifier rubyid_col_part'>col_part</span>
+          <span class='kw'>end</span>
+        <span class='id identifier rubyid_sanitize_sql_name'>sanitize_sql_name</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_param_map'>param_map</span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='id identifier rubyid_column'>column</span><span class='comma'>,</span> <span class='id identifier rubyid_json_field'>json_field</span><span class='rparen'>)</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_json_field'>json_field</span>
+      <span class='kw'>end</span>
+    <span class='id identifier rubyid_name'>name</span> <span class='op'>||=</span> <span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span> <span class='kw'>if</span> <span class='id identifier rubyid_field_names'>field_names</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='rparen'>)</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_name'>name</span><span class='period'>.</span><span class='id identifier rubyid_blank?'>blank?</span>
+      <span class='const'><span class='object_link'><a href="top-level-namespace.html#Log-constant" title="Log (constant)">Log</a></span></span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='lbrace'>{</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid___method__'>__method__</span><span class='embexpr_end'>}</span><span class='tstring_content'>: ignoring invalid field </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field'>field</span><span class='period'>.</span><span class='id identifier rubyid_inspect'>inspect</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span> <span class='rbrace'>}</span>
+      <span class='kw'>next</span>
+    <span class='kw'>end</span>
+    <span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='id identifier rubyid_match'>match</span><span class='period'>.</span><span class='id identifier rubyid_strip'>strip</span> <span class='kw'>if</span> <span class='id identifier rubyid_match'>match</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>String</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='kw'>true</span>        <span class='kw'>if</span> <span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_match'>match</span> <span class='op'>=</span> <span class='kw'>false</span>       <span class='kw'>if</span> <span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_condition'>condition</span> <span class='op'>=</span>
+      <span class='kw'>case</span> <span class='id identifier rubyid_match'>match</span>
+        <span class='kw'>when</span> <span class='const'>Array</span>                <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IN (%s)</span><span class='tstring_end'>&#39;</span></span> <span class='op'>%</span> <span class='id identifier rubyid_quote'>quote</span><span class='lparen'>(</span><span class='id identifier rubyid_match'>match</span><span class='rparen'>)</span>
+        <span class='kw'>when</span> <span class='kw'>true</span>                 <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>= TRUE</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>when</span> <span class='kw'>false</span>                <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>= FALSE</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>when</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>null</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>NULL</span><span class='tstring_end'>&#39;</span></span>  <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IS NULL</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>when</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>*</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>any</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span>  <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>ANY</span><span class='tstring_end'>&#39;</span></span>   <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>IS NOT NULL</span><span class='tstring_end'>&#39;</span></span>
+        <span class='kw'>when</span> <span class='tstring'><span class='regexp_beg'>/</span><span class='tstring_content'>^[&lt;&gt;=!]+\s*\d+$</span><span class='regexp_end'>/</span></span>    <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_match'>match</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>when</span> <span class='const'>String</span>               <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>LIKE &#39;%</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_match'>match</span><span class='embexpr_end'>}</span><span class='tstring_content'>%&#39;</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>when</span> <span class='const'>Symbol</span>               <span class='kw'>then</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>= &#39;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_match'>match</span><span class='embexpr_end'>}</span><span class='tstring_content'>&#39;</span><span class='tstring_end'>&quot;</span></span>
+        <span class='kw'>else</span>                           <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>= </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_match'>match</span><span class='embexpr_end'>}</span><span class='tstring_end'>&quot;</span></span>
+      <span class='kw'>end</span>
+    <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>(</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_name'>name</span><span class='embexpr_end'>}</span><span class='tstring_content'> </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_condition'>condition</span><span class='embexpr_end'>}</span><span class='tstring_content'>)</span><span class='tstring_end'>&quot;</span></span>
+  <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_join'>join</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'> AND </span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1334,12 +2564,12 @@ sql_terms(ids) -&gt; &quot;(id IN (123, 456))&quot;</code></pre>
       <pre class="lines">
 
 
-24
-25
-26</pre>
+26
+27
+28</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 24</span>
+      <pre class="code"><span class="info file"># File 'app/models/application_record.rb', line 26</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_class'>class</span><span class='period'>.</span><span class='id identifier rubyid_match?'>match?</span><span class='lparen'>(</span><span class='kw'>self</span><span class='comma'>,</span> <span class='id identifier rubyid_other'>other</span><span class='rparen'>)</span>
@@ -1354,7 +2584,7 @@ sql_terms(ids) -&gt; &quot;(id IN (123, 456))&quot;</code></pre>
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:08:08 2021 by
+  Generated on Tue Mar 16 14:51:27 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

@@ -220,7 +220,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -1931,7 +1931,7 @@
       
         &mdash;
         <div class='inline'>
-<p>To workflow initializer except:</p>
+<p>To workflow initializer except for:</p>
 </div>
       
     </li>
@@ -2387,7 +2387,7 @@
       <pre class="code"><span class="info file"># File 'app/controllers/concerns/upload_concern.rb', line 394</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_wf_single_check'>wf_single_check</span><span class='lparen'>(</span><span class='label'>rec:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_from'>from</span>           <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:from</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='id identifier rubyid_calling_method'>calling_method</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:from</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_rec'>rec</span>          <span class='op'>||=</span> <span class='ivar'>@db_id</span> <span class='op'>||</span> <span class='ivar'>@identifier</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:user</span><span class='rbracket'>]</span>   <span class='op'>||=</span> <span class='ivar'>@user</span>
   <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:params</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_workflow_parameters'>workflow_parameters</span>
@@ -2468,7 +2468,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:07:14 2021 by
+  Generated on Tue Mar 16 14:50:31 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

@@ -111,7 +111,7 @@
 <h2>Overview</h2><div class="docstring">
   <div class="discussion">
     
-<p>Ingest::Record::IdentifierRecord</p>
+<p>Metadata to uniquely identify a record in the EMMA Federated Search Index.</p>
 
 <p>Either:</p>
 
@@ -126,7 +126,11 @@
   <p class="tag_title">See Also:</p>
   <ul class="see">
     
-      <li><a href="https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IdentifierRecord" target="_parent" title="https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IdentifierRecord">https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IdentifierRecord</a></li>
+      <li><a href="https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/IdentifierRecord" target="_parent" title="Ingest API documentation">Ingest API documentation</a></li>
+    
+      <li><a href="https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/IdentifierRecord" target="_parent" title="HTML schema documentation">HTML schema documentation</a></li>
+    
+      <li><a href="https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3" target="_parent" title="JSON schema specification">JSON schema specification</a></li>
     
   </ul>
 
@@ -137,7 +141,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -582,8 +586,6 @@
       <pre class="lines">
 
 
-52
-53
 54
 55
 56
@@ -605,10 +607,12 @@
 72
 73
 74
-75</pre>
+75
+76
+77</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 54</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_src'>src</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='ivar'>@serializer_type</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../../Api/Schema.html#DEFAULT_SERIALIZER_TYPE-constant" title="Api::Schema::DEFAULT_SERIALIZER_TYPE (constant)">DEFAULT_SERIALIZER_TYPE</a></span></span>
@@ -690,12 +694,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_dc_format'>dc_format</span>
   <span class='ivar'>@dc_format</span>
@@ -751,12 +755,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_formatVersion'>emma_formatVersion</span>
   <span class='ivar'>@emma_formatVersion</span>
@@ -812,12 +816,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_recordId'>emma_recordId</span>
   <span class='ivar'>@emma_recordId</span>
@@ -873,12 +877,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_repository'>emma_repository</span>
   <span class='ivar'>@emma_repository</span>
@@ -934,12 +938,12 @@
       <pre class="lines">
 
 
-23
-24
-25</pre>
+25
+26
+27</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 23</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 25</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_emma_repositoryRecordId'>emma_repositoryRecordId</span>
   <span class='ivar'>@emma_repositoryRecordId</span>
@@ -1017,16 +1021,16 @@
       <pre class="lines">
 
 
-89
-90
 91
 92
 93
 94
-95</pre>
+95
+96
+97</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 89</span>
+      <pre class="code"><span class="info file"># File 'app/records/ingest/record/identifier_record.rb', line 91</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_identifier'>identifier</span><span class='lparen'>(</span><span class='label'>no_version:</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyYardReturnMatch
@@ -1045,7 +1049,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:09:11 2021 by
+  Generated on Tue Mar 16 14:52:38 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

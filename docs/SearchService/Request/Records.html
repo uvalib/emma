@@ -126,7 +126,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../../Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="../../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="../../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -367,34 +367,12 @@
   
 </ul>
 
-  <p class="tag_title">See Also:</p>
-  <ul class="see">
-    
-      <li><a href="https://app.swaggerhub.com/apis/kden/emma-federated-search-api" target="_parent" title="https://app.swaggerhub.com/apis/kden/emma-federated-search-api">https://app.swaggerhub.com/apis/kden/emma-federated-search-api</a></li>
-    
-  </ul>
-
 </div><table class="source_code">
   <tr>
     <td>
       <pre class="lines">
 
 
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
 102
 103
 104
@@ -414,12 +392,38 @@
 118
 119
 120
-121</pre>
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/services/search_service/request/records.rb', line 87</span>
+      <pre class="code"><span class="info file"># File 'app/services/search_service/request/records.rb', line 102</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_get_records'>get_records</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_slice'>slice</span><span class='lparen'>(</span><span class='symbol'>:prev_id</span><span class='comma'>,</span> <span class='symbol'>:prev_value</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='comma'>,</span> <span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='const'>CGI</span><span class='period'>.</span><span class='id identifier rubyid_unescape'>unescape</span><span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
 <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_get_parameters'>get_parameters</span><span class='lparen'>(</span><span class='id identifier rubyid___method__'>__method__</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
 <span class='id identifier rubyid_api'>api</span><span class='lparen'>(</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
 <span class='const'><span class='object_link'><a href="../../Search.html" title="Search (module)">Search</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Search/Message.html" title="Search::Message (module)">Message</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../../Search/Message/SearchRecordList.html" title="Search::Message::SearchRecordList (class)">SearchRecordList</a></span></span><span class='period'>.</span><span class='id identifier rubyid_new'><span class='object_link'><a href="../../Search/Message/SearchRecordList.html#initialize-instance_method" title="Search::Message::SearchRecordList#initialize (method)">new</a></span></span><span class='lparen'>(</span><span class='id identifier rubyid_response'>response</span><span class='comma'>,</span> <span class='label'>error:</span> <span class='id identifier rubyid_exception'>exception</span><span class='rparen'>)</span>
@@ -429,6 +433,10 @@
     <span class='label'>alias:</span> <span class='lbrace'>{</span>
       <span class='label'>author:</span>               <span class='symbol'>:creator</span><span class='comma'>,</span>
       <span class='label'>fmt:</span>                  <span class='symbol'>:format</span><span class='comma'>,</span>
+      <span class='label'>keyword:</span>              <span class='symbol'>:q</span><span class='comma'>,</span>
+      <span class='label'>limit:</span>                <span class='symbol'>:size</span><span class='comma'>,</span>
+      <span class='label'>prev_id:</span>              <span class='symbol'>:searchAfterId</span><span class='comma'>,</span>
+      <span class='label'>prev_value:</span>           <span class='symbol'>:searchAfterValue</span><span class='comma'>,</span>
       <span class='label'>query:</span>                <span class='symbol'>:q</span><span class='comma'>,</span>
     <span class='rbrace'>}</span><span class='comma'>,</span>
     <span class='label'>optional:</span> <span class='lbrace'>{</span>
@@ -436,6 +444,7 @@
       <span class='label'>creator:</span>              <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>title:</span>                <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>identifier:</span>           <span class='const'>String</span><span class='comma'>,</span>
+      <span class='label'>publisher:</span>            <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>format:</span>               <span class='const'><span class='object_link'><a href="../../DublinCoreFormat.html" title="DublinCoreFormat (class)">DublinCoreFormat</a></span></span><span class='comma'>,</span>
       <span class='label'>formatFeature:</span>        <span class='const'><span class='object_link'><a href="../../FormatFeature.html" title="FormatFeature (class)">FormatFeature</a></span></span><span class='comma'>,</span>
       <span class='label'>formatVersion:</span>        <span class='const'>String</span><span class='comma'>,</span>
@@ -443,7 +452,11 @@
       <span class='label'>repository:</span>           <span class='const'><span class='object_link'><a href="../../EmmaRepository.html" title="EmmaRepository (class)">EmmaRepository</a></span></span><span class='comma'>,</span>
       <span class='label'>collection:</span>           <span class='const'>String</span><span class='comma'>,</span>
       <span class='label'>lastRemediationDate:</span>  <span class='const'><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></span><span class='comma'>,</span>
+      <span class='label'>sortDate:</span>             <span class='const'><span class='object_link'><a href="../../IsoDate.html" title="IsoDate (class)">IsoDate</a></span></span><span class='comma'>,</span>
       <span class='label'>sort:</span>                 <span class='const'><span class='object_link'><a href="../../SearchSort.html" title="SearchSort (class)">SearchSort</a></span></span><span class='comma'>,</span>
+      <span class='label'>searchAfterId:</span>        <span class='const'>String</span><span class='comma'>,</span>
+      <span class='label'>searchAfterValue:</span>     <span class='const'>String</span><span class='comma'>,</span>
+      <span class='label'>size:</span>                 <span class='const'>Integer</span><span class='comma'>,</span>
     <span class='rbrace'>}</span><span class='comma'>,</span>
     <span class='label'>multi:</span> <span class='qsymbols_beg'>%i[</span><span class='words_sep'>
       </span><span class='tstring_content'>format</span><span class='words_sep'>
@@ -464,7 +477,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:07:37 2021 by
+  Generated on Tue Mar 16 14:50:55 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

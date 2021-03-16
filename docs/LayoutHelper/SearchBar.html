@@ -73,7 +73,7 @@
   
   <dl>
       <dt>Includes:</dt>
-      <dd><span class='object_link'><a href="../ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span>, <span class='object_link'><a href="../I18nHelper.html" title="I18nHelper (module)">I18nHelper</a></span>, <span class='object_link'><a href="SearchControls.html" title="LayoutHelper::SearchControls (module)">SearchControls</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></dd>
+      <dd><span class='object_link'><a href="../ConfigurationHelper.html" title="ConfigurationHelper (module)">ConfigurationHelper</a></span>, <span class='object_link'><a href="../I18nHelper.html" title="I18nHelper (module)">I18nHelper</a></span>, <span class='object_link'><a href="SearchFilters.html" title="LayoutHelper::SearchFilters (module)">SearchFilters</a></span></dd>
   </dl>
   
   
@@ -108,11 +108,11 @@
 
     <dl class="constants">
       
-        <dt id="SEARCH_INPUT_ENABLED-constant" class="">SEARCH_INPUT_ENABLED =
+        <dt id="SEARCH_BAR-constant" class="">SEARCH_BAR =
           <div class="docstring">
   <div class="discussion">
     
-<p>A table of controllers and whether their pages should show search input in the page heading.</p>
+<p>A table of search bar behavior for each controller.</p>
 
 
   </div>
@@ -123,10 +123,22 @@
 </div>
         </dt>
         <dd><pre class="code"><span class='const'><span class='object_link'><a href="../ApplicationHelper.html" title="ApplicationHelper (module)">ApplicationHelper</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../ApplicationHelper.html#APP_CONTROLLERS-constant" title="ApplicationHelper::APP_CONTROLLERS (constant)">APP_CONTROLLERS</a></span></span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_controller'>controller</span><span class='op'>|</span>
-  <span class='id identifier rubyid_look_opt'>look_opt</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>controller:</span> <span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
-  <span class='id identifier rubyid_enabled'>enabled</span>  <span class='op'>=</span> <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_bar.enabled</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_look_opt'>look_opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_enabled'>enabled</span>  <span class='op'>=</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_true?'>true?</span><span class='lparen'>(</span><span class='id identifier rubyid_enabled'>enabled</span><span class='rparen'>)</span>
-  <span class='lbracket'>[</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_opt'>opt</span>   <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>controller:</span> <span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='label'>mode:</span> <span class='kw'>false</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_entry'>entry</span> <span class='op'>=</span> <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_bar</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+  <span class='id identifier rubyid_enabled'>enabled</span><span class='comma'>,</span> <span class='id identifier rubyid_min_rows'>min_rows</span><span class='comma'>,</span> <span class='id identifier rubyid_max_rows'>max_rows</span> <span class='op'>=</span>
+    <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_values_at'>values_at</span><span class='lparen'>(</span><span class='symbol'>:enabled</span><span class='comma'>,</span> <span class='symbol'>:min_rows</span><span class='comma'>,</span> <span class='symbol'>:max_rows</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_enabled'>enabled</span>  <span class='op'>=</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span> <span class='op'>?</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='op'>!</span><span class='id identifier rubyid_false?'>false?</span><span class='lparen'>(</span><span class='id identifier rubyid_enabled'>enabled</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='op'>=</span> <span class='id identifier rubyid_positive'>positive</span><span class='lparen'>(</span><span class='id identifier rubyid_min_rows'>min_rows</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_max_rows'>max_rows</span> <span class='op'>=</span> <span class='id identifier rubyid_positive'>positive</span><span class='lparen'>(</span><span class='id identifier rubyid_max_rows'>max_rows</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_max_rows'>max_rows</span>
+    <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='op'>=</span> <span class='id identifier rubyid_max_rows'>max_rows</span> <span class='kw'>if</span> <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_max_rows'>max_rows</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_min_rows'>min_rows</span>
+    <span class='id identifier rubyid_max_rows'>max_rows</span> <span class='op'>=</span> <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='kw'>unless</span> <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_key?'>key?</span><span class='lparen'>(</span><span class='symbol'>:max_rows</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_min_rows'>min_rows</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_max_rows'>max_rows</span> <span class='op'>||=</span> <span class='int'>1</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_entry'>entry</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='label'>enabled:</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='comma'>,</span> <span class='label'>min_rows:</span> <span class='id identifier rubyid_min_rows'>min_rows</span><span class='comma'>,</span> <span class='label'>max_rows:</span> <span class='id identifier rubyid_max_rows'>max_rows</span><span class='rparen'>)</span>
+  <span class='lbracket'>[</span><span class='id identifier rubyid_controller'>controller</span><span class='comma'>,</span> <span class='id identifier rubyid_entry'>entry</span><span class='rbracket'>]</span>
 <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span><span class='period'>.</span><span class='id identifier rubyid_deep_freeze'>deep_freeze</span></pre></dd>
       
         <dt id="CLEAR_SEARCH_ICON-constant" class="">CLEAR_SEARCH_ICON =
@@ -145,6 +157,32 @@
         </dt>
         <dd><pre class="code"><span class='const'><span class='object_link'><a href="../Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">HEAVY_X</a></span></span></pre></dd>
       
+        <dt id="SEARCH_READY_TOOLTIP-constant" class="">SEARCH_READY_TOOLTIP =
+          
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span></pre></dd>
+      
+        <dt id="SEARCH_NOT_READY_TOOLTIP-constant" class="">SEARCH_NOT_READY_TOOLTIP =
+          <div class="docstring">
+  <div class="discussion">
+    
+<p>TODO: I18n</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  
+
+</div>
+        </dt>
+        <dd><pre class="code"><span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>To perform a new search, add/modify search terms or filter selections.</span><span class='tstring_end'>&quot;</span></span></pre></dd>
+      
+        <dt id="SEARCH_CONTROLS-constant" class="">SEARCH_CONTROLS =
+          
+        </dt>
+        <dd><pre class="code"><span class='qsymbols_beg'>%i[</span><span class='tstring_content'>reset</span><span class='words_sep'> </span><span class='tstring_content'>search</span><span class='words_sep'> </span><span class='tstring_content'>toggle</span><span class='tstring_end'>]</span></span><span class='period'>.</span><span class='id identifier rubyid_freeze'>freeze</span></pre></dd>
+      
     </dl>
   
 
@@ -160,7 +198,7 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../Emma/Common.html" title="Emma::Common (module)">Emma::Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Common.html#ASCII-constant" title="Emma::Common::ASCII (constant)">Emma::Common::ASCII</a></span>, <span class='object_link'><a href="../Emma/Common.html#BOOLEAN_VALUES-constant" title="Emma::Common::BOOLEAN_VALUES (constant)">Emma::Common::BOOLEAN_VALUES</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_ID_IGNORED-constant" title="Emma::Common::HTML_ID_IGNORED (constant)">Emma::Common::HTML_ID_IGNORED</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_ID_WORD_BREAK-constant" title="Emma::Common::HTML_ID_WORD_BREAK (constant)">Emma::Common::HTML_ID_WORD_BREAK</a></span>, <span class='object_link'><a href="../Emma/Common.html#HTML_QUOTES-constant" title="Emma::Common::HTML_QUOTES (constant)">Emma::Common::HTML_QUOTES</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_PLURAL-constant" title="Emma::Common::INFLECT_PLURAL (constant)">Emma::Common::INFLECT_PLURAL</a></span>, <span class='object_link'><a href="../Emma/Common.html#INFLECT_SINGULAR-constant" title="Emma::Common::INFLECT_SINGULAR (constant)">Emma::Common::INFLECT_SINGULAR</a></span>, <span class='object_link'><a href="../Emma/Common.html#LIST_SEPARATOR-constant" title="Emma::Common::LIST_SEPARATOR (constant)">Emma::Common::LIST_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#PAIR_SEPARATOR-constant" title="Emma::Common::PAIR_SEPARATOR (constant)">Emma::Common::PAIR_SEPARATOR</a></span>, <span class='object_link'><a href="../Emma/Common.html#QUOTE_MARKS-constant" title="Emma::Common::QUOTE_MARKS (constant)">Emma::Common::QUOTE_MARKS</a></span></p>
 
   
   
@@ -171,20 +209,8 @@
   
   
   <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../SearchTermsHelper.html#DEFAULT_SEARCH_CONTROLLER-constant" title="SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER (constant)">SearchTermsHelper::DEFAULT_SEARCH_CONTROLLER</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#LIST_SEARCH_SEPARATOR-constant" title="SearchTermsHelper::LIST_SEARCH_SEPARATOR (constant)">SearchTermsHelper::LIST_SEARCH_SEPARATOR</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#NON_SEARCH_KEYS-constant" title="SearchTermsHelper::NON_SEARCH_KEYS (constant)">SearchTermsHelper::NON_SEARCH_KEYS</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">SearchTermsHelper::NULL_SEARCH</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#QUERY_PARAMETERS-constant" title="SearchTermsHelper::QUERY_PARAMETERS (constant)">SearchTermsHelper::QUERY_PARAMETERS</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#SEARCH_CONTROLLERS-constant" title="SearchTermsHelper::SEARCH_CONTROLLERS (constant)">SearchTermsHelper::SEARCH_CONTROLLERS</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#SEARCH_KEYS-constant" title="SearchTermsHelper::SEARCH_KEYS (constant)">SearchTermsHelper::SEARCH_KEYS</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#SEARCH_SORT_KEYS-constant" title="SearchTermsHelper::SEARCH_SORT_KEYS (constant)">SearchTermsHelper::SEARCH_SORT_KEYS</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#SEARCH_TYPE-constant" title="SearchTermsHelper::SEARCH_TYPE (constant)">SearchTermsHelper::SEARCH_TYPE</a></span></p>
-
-  
-  
-  <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="../Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Emma/Unicode.html#BANG-constant" title="Emma::Unicode::BANG (constant)">Emma::Unicode::BANG</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#BLACK_CIRCLE-constant" title="Emma::Unicode::BLACK_CIRCLE (constant)">Emma::Unicode::BLACK_CIRCLE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#CHECK_MARK-constant" title="Emma::Unicode::CHECK_MARK (constant)">Emma::Unicode::CHECK_MARK</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#DELTA-constant" title="Emma::Unicode::DELTA (constant)">Emma::Unicode::DELTA</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EM_DASH-constant" title="Emma::Unicode::EM_DASH (constant)">Emma::Unicode::EM_DASH</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EM_SPACE-constant" title="Emma::Unicode::EM_SPACE (constant)">Emma::Unicode::EM_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EN_DASH-constant" title="Emma::Unicode::EN_DASH (constant)">Emma::Unicode::EN_DASH</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EN_SPACE-constant" title="Emma::Unicode::EN_SPACE (constant)">Emma::Unicode::EN_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">Emma::Unicode::HEAVY_X</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#QUESTION-constant" title="Emma::Unicode::QUESTION (constant)">Emma::Unicode::QUESTION</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#STAR-constant" title="Emma::Unicode::STAR (constant)">Emma::Unicode::STAR</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#THIN_SPACE-constant" title="Emma::Unicode::THIN_SPACE (constant)">Emma::Unicode::THIN_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#TRIANGLE-constant" title="Emma::Unicode::TRIANGLE (constant)">Emma::Unicode::TRIANGLE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#WARNING_SIGN-constant" title="Emma::Unicode::WARNING_SIGN (constant)">Emma::Unicode::WARNING_SIGN</a></span></p>
-
-  
-  
-  <h3 class="inherited">Constants included
-     from <span class='object_link'><a href="SearchControls.html" title="LayoutHelper::SearchControls (module)">SearchControls</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="SearchControls.html#ADV_SEARCH_CLOSER_LABEL-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL</a></span>, <span class='object_link'><a href="SearchControls.html#ADV_SEARCH_CLOSER_TIP-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP</a></span>, <span class='object_link'><a href="SearchControls.html#ADV_SEARCH_CONFIG-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_CONFIG (constant)">LayoutHelper::SearchControls::ADV_SEARCH_CONFIG</a></span>, <span class='object_link'><a href="SearchControls.html#ADV_SEARCH_OPENER_LABEL-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL (constant)">LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL</a></span>, <span class='object_link'><a href="SearchControls.html#ADV_SEARCH_OPENER_TIP-constant" title="LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP (constant)">LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP</a></span>, <span class='object_link'><a href="SearchControls.html#REVERSE_SORT_SUFFIX-constant" title="LayoutHelper::SearchControls::REVERSE_SORT_SUFFIX (constant)">LayoutHelper::SearchControls::REVERSE_SORT_SUFFIX</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_CONTROLS_CONFIG-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_CONFIG (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_CONFIG</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_CONTROLS_INITIALLY_OPEN-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_INITIALLY_OPEN (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_INITIALLY_OPEN</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_CONTROLS_ROOT-constant" title="LayoutHelper::SearchControls::SEARCH_CONTROLS_ROOT (constant)">LayoutHelper::SearchControls::SEARCH_CONTROLS_ROOT</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_MENU_BASE-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_BASE (constant)">LayoutHelper::SearchControls::SEARCH_MENU_BASE</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_MENU_DEFAULT-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_DEFAULT (constant)">LayoutHelper::SearchControls::SEARCH_MENU_DEFAULT</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_MENU_MAP-constant" title="LayoutHelper::SearchControls::SEARCH_MENU_MAP (constant)">LayoutHelper::SearchControls::SEARCH_MENU_MAP</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_PARAMETERS-constant" title="LayoutHelper::SearchControls::SEARCH_PARAMETERS (constant)">LayoutHelper::SearchControls::SEARCH_PARAMETERS</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_PARAMETER_MENU_MAP-constant" title="LayoutHelper::SearchControls::SEARCH_PARAMETER_MENU_MAP (constant)">LayoutHelper::SearchControls::SEARCH_PARAMETER_MENU_MAP</a></span>, <span class='object_link'><a href="SearchControls.html#SEARCH_RESET_CONTROL-constant" title="LayoutHelper::SearchControls::SEARCH_RESET_CONTROL (constant)">LayoutHelper::SearchControls::SEARCH_RESET_CONTROL</a></span></p>
+     from <span class='object_link'><a href="SearchFilters.html" title="LayoutHelper::SearchFilters (module)">SearchFilters</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchFilters.html#ADV_SEARCH_CLOSER_LABEL-constant" title="LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_LABEL (constant)">LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_LABEL</a></span>, <span class='object_link'><a href="SearchFilters.html#ADV_SEARCH_CLOSER_TIP-constant" title="LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_TIP (constant)">LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_TIP</a></span>, <span class='object_link'><a href="SearchFilters.html#ADV_SEARCH_CONFIG-constant" title="LayoutHelper::SearchFilters::ADV_SEARCH_CONFIG (constant)">LayoutHelper::SearchFilters::ADV_SEARCH_CONFIG</a></span>, <span class='object_link'><a href="SearchFilters.html#ADV_SEARCH_OPENER_LABEL-constant" title="LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_LABEL (constant)">LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_LABEL</a></span>, <span class='object_link'><a href="SearchFilters.html#ADV_SEARCH_OPENER_TIP-constant" title="LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_TIP (constant)">LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_TIP</a></span>, <span class='object_link'><a href="SearchFilters.html#IMMEDIATE_SEARCH-constant" title="LayoutHelper::SearchFilters::IMMEDIATE_SEARCH (constant)">LayoutHelper::SearchFilters::IMMEDIATE_SEARCH</a></span>, <span class='object_link'><a href="SearchFilters.html#REVERSE_SORT_SUFFIX-constant" title="LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX (constant)">LayoutHelper::SearchFilters::REVERSE_SORT_SUFFIX</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_FILTERS_CONFIG-constant" title="LayoutHelper::SearchFilters::SEARCH_FILTERS_CONFIG (constant)">LayoutHelper::SearchFilters::SEARCH_FILTERS_CONFIG</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_FILTERS_ROOT-constant" title="LayoutHelper::SearchFilters::SEARCH_FILTERS_ROOT (constant)">LayoutHelper::SearchFilters::SEARCH_FILTERS_ROOT</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_FILTERS_START_EXPANDED-constant" title="LayoutHelper::SearchFilters::SEARCH_FILTERS_START_EXPANDED (constant)">LayoutHelper::SearchFilters::SEARCH_FILTERS_START_EXPANDED</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_MENU_BASE-constant" title="LayoutHelper::SearchFilters::SEARCH_MENU_BASE (constant)">LayoutHelper::SearchFilters::SEARCH_MENU_BASE</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_MENU_DEFAULT-constant" title="LayoutHelper::SearchFilters::SEARCH_MENU_DEFAULT (constant)">LayoutHelper::SearchFilters::SEARCH_MENU_DEFAULT</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_MENU_MAP-constant" title="LayoutHelper::SearchFilters::SEARCH_MENU_MAP (constant)">LayoutHelper::SearchFilters::SEARCH_MENU_MAP</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_PARAMETERS-constant" title="LayoutHelper::SearchFilters::SEARCH_PARAMETERS (constant)">LayoutHelper::SearchFilters::SEARCH_PARAMETERS</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_PARAMETER_MENU_MAP-constant" title="LayoutHelper::SearchFilters::SEARCH_PARAMETER_MENU_MAP (constant)">LayoutHelper::SearchFilters::SEARCH_PARAMETER_MENU_MAP</a></span>, <span class='object_link'><a href="SearchFilters.html#SEARCH_RESET_CONTROL-constant" title="LayoutHelper::SearchFilters::SEARCH_RESET_CONTROL (constant)">LayoutHelper::SearchFilters::SEARCH_RESET_CONTROL</a></span></p>
 
   
   
@@ -196,7 +222,19 @@
   
   <h3 class="inherited">Constants included
      from <span class='object_link'><a href="../HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../HtmlHelper.html#GRID_OPTS-constant" title="HtmlHelper::GRID_OPTS (constant)">HtmlHelper::GRID_OPTS</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HEX_RAND_DEFAULT_DIGITS-constant" title="HtmlHelper::HEX_RAND_DEFAULT_DIGITS (constant)">HtmlHelper::HEX_RAND_DEFAULT_DIGITS</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_MAX_LENGTH-constant" title="HtmlHelper::HTML_TRUNCATE_MAX_LENGTH (constant)">HtmlHelper::HTML_TRUNCATE_MAX_LENGTH</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_OMISSION-constant" title="HtmlHelper::HTML_TRUNCATE_OMISSION (constant)">HtmlHelper::HTML_TRUNCATE_OMISSION</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_SEPARATOR-constant" title="HtmlHelper::HTML_TRUNCATE_SEPARATOR (constant)">HtmlHelper::HTML_TRUNCATE_SEPARATOR</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="../HtmlHelper.html#GRID_OPTS-constant" title="HtmlHelper::GRID_OPTS (constant)">HtmlHelper::GRID_OPTS</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_MAX_LENGTH-constant" title="HtmlHelper::HTML_TRUNCATE_MAX_LENGTH (constant)">HtmlHelper::HTML_TRUNCATE_MAX_LENGTH</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_OMISSION-constant" title="HtmlHelper::HTML_TRUNCATE_OMISSION (constant)">HtmlHelper::HTML_TRUNCATE_OMISSION</a></span>, <span class='object_link'><a href="../HtmlHelper.html#HTML_TRUNCATE_SEPARATOR-constant" title="HtmlHelper::HTML_TRUNCATE_SEPARATOR (constant)">HtmlHelper::HTML_TRUNCATE_SEPARATOR</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../CssHelper.html" title="CssHelper (module)">CssHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../CssHelper.html#HEX_RAND_DEFAULT_DIGITS-constant" title="CssHelper::HEX_RAND_DEFAULT_DIGITS (constant)">CssHelper::HEX_RAND_DEFAULT_DIGITS</a></span></p>
+
+  
+  
+  <h3 class="inherited">Constants included
+     from <span class='object_link'><a href="../Emma/Unicode.html" title="Emma::Unicode (module)">Emma::Unicode</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../Emma/Unicode.html#ASTERISK-constant" title="Emma::Unicode::ASTERISK (constant)">Emma::Unicode::ASTERISK</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#BANG-constant" title="Emma::Unicode::BANG (constant)">Emma::Unicode::BANG</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#BLACK_CIRCLE-constant" title="Emma::Unicode::BLACK_CIRCLE (constant)">Emma::Unicode::BLACK_CIRCLE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#CHECK_MARK-constant" title="Emma::Unicode::CHECK_MARK (constant)">Emma::Unicode::CHECK_MARK</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#DELTA-constant" title="Emma::Unicode::DELTA (constant)">Emma::Unicode::DELTA</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EM_DASH-constant" title="Emma::Unicode::EM_DASH (constant)">Emma::Unicode::EM_DASH</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EM_SPACE-constant" title="Emma::Unicode::EM_SPACE (constant)">Emma::Unicode::EM_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EN_DASH-constant" title="Emma::Unicode::EN_DASH (constant)">Emma::Unicode::EN_DASH</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#EN_SPACE-constant" title="Emma::Unicode::EN_SPACE (constant)">Emma::Unicode::EN_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#HEAVY_MINUS-constant" title="Emma::Unicode::HEAVY_MINUS (constant)">Emma::Unicode::HEAVY_MINUS</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#HEAVY_PLUS-constant" title="Emma::Unicode::HEAVY_PLUS (constant)">Emma::Unicode::HEAVY_PLUS</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#HEAVY_X-constant" title="Emma::Unicode::HEAVY_X (constant)">Emma::Unicode::HEAVY_X</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#QUESTION-constant" title="Emma::Unicode::QUESTION (constant)">Emma::Unicode::QUESTION</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#STAR-constant" title="Emma::Unicode::STAR (constant)">Emma::Unicode::STAR</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#THIN_SPACE-constant" title="Emma::Unicode::THIN_SPACE (constant)">Emma::Unicode::THIN_SPACE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#TRIANGLE-constant" title="Emma::Unicode::TRIANGLE (constant)">Emma::Unicode::TRIANGLE</a></span>, <span class='object_link'><a href="../Emma/Unicode.html#WARNING_SIGN-constant" title="Emma::Unicode::WARNING_SIGN (constant)">Emma::Unicode::WARNING_SIGN</a></span></p>
 
   
   
@@ -219,31 +257,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_bar_label-instance_method" title="#search_bar_label (instance method)">#<strong>search_bar_label</strong>(type = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
-    
-
-    
-  </span>
-  
-  
-  
-  
-  
-  
-  
-
-  
-    <span class="summary_desc"><div class='inline'>
-<p>search_bar_label.</p>
-</div></span>
-  
-</li>
-
-      
-        <li class="public ">
-  <span class="summary_signature">
-    
-      <a href="#search_input_bar-instance_method" title="#search_input_bar (instance method)">#<strong>search_input_bar</strong>(id: nil, type: nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer<sup>?</sup> </a>
+      <a href="#search_bar-instance_method" title="#search_bar (instance method)">#<strong>search_bar</strong>(field, value = nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer<sup>?</sup> </a>
     
 
     
@@ -267,7 +281,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_input_default-instance_method" title="#search_input_default (instance method)">#<strong>search_input_default</strong>(type = nil, **opt)  &#x21d2; Hash{Symbol=&gt;Symbol,String} </a>
+      <a href="#search_bar_container-instance_method" title="#search_bar_container (instance method)">#<strong>search_bar_container</strong>(target: nil, fields: nil, values: nil, only: nil, except: nil, maximum: nil, minimum: nil, **form_opt)  &#x21d2; ActiveSupport::SafeBuffer<sup>?</sup> </a>
     
 
     
@@ -282,7 +296,7 @@
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Properties of the default search input type.</p>
+<p>search_bar_container.</p>
 </div></span>
   
 </li>
@@ -291,7 +305,175 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_input_field-instance_method" title="#search_input_field (instance method)">#<strong>search_input_field</strong>(type = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
+      <a href="#search_bar_label-instance_method" title="#search_bar_label (instance method)">#<strong>search_bar_label</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>search_bar_label.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_bar_row-instance_method" title="#search_bar_row (instance method)">#<strong>search_bar_row</strong>(field, value = nil, first: nil, last: nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate a row within a search-bar-group.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_button-instance_method" title="#search_button (instance method)">#<strong>search_button</strong>(ctrlr = nil, target: nil, label: nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate a form submit control.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_button_label-instance_method" title="#search_button_label (instance method)">#<strong>search_button_label</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; String<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>search_button_label.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_clear_button-instance_method" title="#search_clear_button (instance method)">#<strong>search_clear_button</strong>(**opt)  &#x21d2; ActiveSupport::SafeBuffer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>search_clear_button.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_controls-instance_method" title="#search_controls (instance method)">#<strong>search_controls</strong>(ctrlr = nil, target: nil, form: nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>A container for the search submit, filter reset, and filter toggle buttons.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_input-instance_method" title="#search_input (instance method)">#<strong>search_input</strong>(field, ctrlr = nil, target: nil, value: nil, **opt)  &#x21d2; ActiveSupport::SafeBuffer </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Generate a form search field input control.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_input_field-instance_method" title="#search_input_field (instance method)">#<strong>search_input_field</strong>(ctrlr = nil, **opt)  &#x21d2; Symbol<sup>?</sup> </a>
     
 
     
@@ -315,7 +497,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_input_label-instance_method" title="#search_input_label (instance method)">#<strong>search_input_label</strong>(type = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
+      <a href="#search_input_label-instance_method" title="#search_input_label (instance method)">#<strong>search_input_label</strong>(ctrlr = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
     
 
     
@@ -339,7 +521,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_input_placeholder-instance_method" title="#search_input_placeholder (instance method)">#<strong>search_input_placeholder</strong>(type = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
+      <a href="#search_input_placeholder-instance_method" title="#search_input_placeholder (instance method)">#<strong>search_input_placeholder</strong>(ctrlr = nil, **opt)  &#x21d2; String<sup>?</sup> </a>
     
 
     
@@ -387,7 +569,55 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#search_input_types-instance_method" title="#search_input_types (instance method)">#<strong>search_input_types</strong>(type = nil, **opt)  &#x21d2; Hash{Symbol=&gt;Hash} </a>
+      <a href="#search_input_target-instance_method" title="#search_input_target (instance method)">#<strong>search_input_target</strong>(ctrlr = nil, target: nil)  &#x21d2; Symbol<sup>?</sup> </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>search_input_target.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_input_type-instance_method" title="#search_input_type (instance method)">#<strong>search_input_type</strong>(ctrlr = nil, target: nil, field: nil, **opt)  &#x21d2; Hash{Symbol=&gt;Symbol,String} </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Properties of the indicated search input type.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_input_types-instance_method" title="#search_input_types (instance method)">#<strong>search_input_types</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; Hash{Symbol=&gt;Hash} </a>
     
 
     
@@ -411,7 +641,55 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#show_input_select%3F-instance_method" title="#show_input_select? (instance method)">#<strong>show_input_select?</strong>(type = nil)  &#x21d2; Boolean </a>
+      <a href="#search_row_add-instance_method" title="#search_row_add (instance method)">#<strong>search_row_add</strong>(**opt)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Reveal the next search-bar-row in the current search-bar-group.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#search_row_remove-instance_method" title="#search_row_remove (instance method)">#<strong>search_row_remove</strong>(**opt)  &#x21d2; Object </a>
+    
+
+    
+  </span>
+  
+  
+  
+  
+  
+  
+  
+
+  
+    <span class="summary_desc"><div class='inline'>
+<p>Reveal the associated search-bar-row.</p>
+</div></span>
+  
+</li>
+
+      
+        <li class="public ">
+  <span class="summary_signature">
+    
+      <a href="#show_input_select%3F-instance_method" title="#show_input_select? (instance method)">#<strong>show_input_select?</strong>(ctrlr = nil, **opt)  &#x21d2; Boolean </a>
     
 
     
@@ -435,7 +713,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#show_search_bar%3F-instance_method" title="#show_search_bar? (instance method)">#<strong>show_search_bar?</strong>(p = nil)  &#x21d2; Boolean </a>
+      <a href="#show_search_bar%3F-instance_method" title="#show_search_bar? (instance method)">#<strong>show_search_bar?</strong>(ctrlr = nil, opt = nil)  &#x21d2; Boolean </a>
     
 
     
@@ -512,8 +790,52 @@
   
   
   
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../SearchTermsHelper.html#list_search_terms-instance_method" title="SearchTermsHelper#list_search_terms (method)">#list_search_terms</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#search_menu_pairs-instance_method" title="SearchTermsHelper#search_menu_pairs (method)">#search_menu_pairs</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#search_parameters-instance_method" title="SearchTermsHelper#search_parameters (method)">#search_parameters</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#search_target-instance_method" title="SearchTermsHelper#search_target (method)">#search_target</a></span>, <span class='object_link'><a href="../SearchTermsHelper.html#search_terms-instance_method" title="SearchTermsHelper#search_terms (method)">#search_terms</a></span></p>
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchFilters.html" title="LayoutHelper::SearchFilters (module)">SearchFilters</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchFilters.html#advanced_search_button-instance_method" title="LayoutHelper::SearchFilters#advanced_search_button (method)">#advanced_search_button</a></span>, <span class='object_link'><a href="SearchFilters.html#config_tooltip-instance_method" title="LayoutHelper::SearchFilters#config_tooltip (method)">#config_tooltip</a></span>, <span class='object_link'><a href="SearchFilters.html#current_menu_config-instance_method" title="LayoutHelper::SearchFilters#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="SearchFilters.html#immediate_search%3F-instance_method" title="LayoutHelper::SearchFilters#immediate_search? (method)">#immediate_search?</a></span>, <span class='object_link'><a href="SearchFilters.html#search_filter_container-instance_method" title="LayoutHelper::SearchFilters#search_filter_container (method)">#search_filter_container</a></span>, <span class='object_link'><a href="SearchFilters.html#search_mode_marker-instance_method" title="LayoutHelper::SearchFilters#search_mode_marker (method)">#search_mode_marker</a></span>, <span class='object_link'><a href="SearchFilters.html#show_search_filters%3F-instance_method" title="LayoutHelper::SearchFilters#show_search_filters? (method)">#show_search_filters?</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchFilters/ClassMethods.html" title="LayoutHelper::SearchFilters::ClassMethods (module)">LayoutHelper::SearchFilters::ClassMethods</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="SearchFilters/ClassMethods.html#ascending_sort-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#ascending_sort (method)">#ascending_sort</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#current_menu_config-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#descending_sort-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#descending_sort (method)">#descending_sort</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#is_reverse%3F-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#is_reverse? (method)">#is_reverse?</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#make_menu-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#make_menu (method)">#make_menu</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#make_menu_label-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#make_menu_label (method)">#make_menu_label</a></span>, <span class='object_link'><a href="SearchFilters/ClassMethods.html#search_menu_config-instance_method" title="LayoutHelper::SearchFilters::ClassMethods#search_menu_config (method)">#search_menu_config</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="Common.html" title="LayoutHelper::Common (module)">Common</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="Common.html#search_form-instance_method" title="LayoutHelper::Common#search_form (method)">#search_form</a></span>, <span class='object_link'><a href="Common.html#toggle_button-instance_method" title="LayoutHelper::Common#toggle_button (method)">#toggle_button</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../HtmlHelper.html#download_link-instance_method" title="HtmlHelper#download_link (method)">#download_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#external_link-instance_method" title="HtmlHelper#external_link (method)">#external_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#extract_url-instance_method" title="HtmlHelper#extract_url (method)">#extract_url</a></span>, <span class='object_link'><a href="../HtmlHelper.html#grid_table-instance_method" title="HtmlHelper#grid_table (method)">#grid_table</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_div-instance_method" title="HtmlHelper#html_div (method)">#html_div</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_form-instance_method" title="HtmlHelper#html_form (method)">#html_form</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_span-instance_method" title="HtmlHelper#html_span (method)">#html_span</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_tag-instance_method" title="HtmlHelper#html_tag (method)">#html_tag</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_truncate-class_method" title="HtmlHelper.html_truncate (method)">html_truncate</a></span>, <span class='object_link'><a href="../HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">#icon_button</a></span>, <span class='object_link'><a href="../HtmlHelper.html#make_link-instance_method" title="HtmlHelper#make_link (method)">#make_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#merge_html_options-instance_method" title="HtmlHelper#merge_html_options (method)">#merge_html_options</a></span>, <span class='object_link'><a href="../HtmlHelper.html#merge_html_options!-instance_method" title="HtmlHelper#merge_html_options! (method)">#merge_html_options!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#placeholder_element-instance_method" title="HtmlHelper#placeholder_element (method)">#placeholder_element</a></span>, <span class='object_link'><a href="../HtmlHelper.html#safe_truncate-instance_method" title="HtmlHelper#safe_truncate (method)">#safe_truncate</a></span>, <span class='object_link'><a href="../HtmlHelper.html#xml_truncate-class_method" title="HtmlHelper.xml_truncate (method)">xml_truncate</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="../CssHelper.html" title="CssHelper (module)">CssHelper</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="../CssHelper.html#append_classes-instance_method" title="CssHelper#append_classes (method)">#append_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#append_classes!-instance_method" title="CssHelper#append_classes! (method)">#append_classes!</a></span>, <span class='object_link'><a href="../CssHelper.html#append_grid_cell_classes-instance_method" title="CssHelper#append_grid_cell_classes (method)">#append_grid_cell_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#append_grid_cell_classes!-instance_method" title="CssHelper#append_grid_cell_classes! (method)">#append_grid_cell_classes!</a></span>, <span class='object_link'><a href="../CssHelper.html#css_class_array-instance_method" title="CssHelper#css_class_array (method)">#css_class_array</a></span>, <span class='object_link'><a href="../CssHelper.html#css_classes-instance_method" title="CssHelper#css_classes (method)">#css_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#css_randomize-instance_method" title="CssHelper#css_randomize (method)">#css_randomize</a></span>, <span class='object_link'><a href="../CssHelper.html#grid_cell_classes-instance_method" title="CssHelper#grid_cell_classes (method)">#grid_cell_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#has_class%3F-instance_method" title="CssHelper#has_class? (method)">#has_class?</a></span>, <span class='object_link'><a href="../CssHelper.html#hex_rand-instance_method" title="CssHelper#hex_rand (method)">#hex_rand</a></span>, <span class='object_link'><a href="../CssHelper.html#prepend_classes-instance_method" title="CssHelper#prepend_classes (method)">#prepend_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#prepend_classes!-instance_method" title="CssHelper#prepend_classes! (method)">#prepend_classes!</a></span>, <span class='object_link'><a href="../CssHelper.html#prepend_grid_cell_classes-instance_method" title="CssHelper#prepend_grid_cell_classes (method)">#prepend_grid_cell_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#prepend_grid_cell_classes!-instance_method" title="CssHelper#prepend_grid_cell_classes! (method)">#prepend_grid_cell_classes!</a></span>, <span class='object_link'><a href="../CssHelper.html#remove_classes-instance_method" title="CssHelper#remove_classes (method)">#remove_classes</a></span>, <span class='object_link'><a href="../CssHelper.html#remove_classes!-instance_method" title="CssHelper#remove_classes! (method)">#remove_classes!</a></span></p>
 
   
   
@@ -532,183 +854,15 @@
   
   
   
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="../Emma/Json.html" title="Emma::Json (module)">Emma::Json</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../Emma/Json.html#json_parse-instance_method" title="Emma::Json#json_parse (method)">#json_parse</a></span>, <span class='object_link'><a href="../Emma/Json.html#pretty_json-instance_method" title="Emma::Json#pretty_json (method)">#pretty_json</a></span>, <span class='object_link'><a href="../Emma/Json.html#safe_json_parse-instance_method" title="Emma::Json#safe_json_parse (method)">#safe_json_parse</a></span></p>
-
-  
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchControls.html" title="LayoutHelper::SearchControls (module)">SearchControls</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="SearchControls.html#advanced_search_button-instance_method" title="LayoutHelper::SearchControls#advanced_search_button (method)">#advanced_search_button</a></span>, <span class='object_link'><a href="SearchControls.html#current_menu_config-instance_method" title="LayoutHelper::SearchControls#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="SearchControls.html#search_controls-instance_method" title="LayoutHelper::SearchControls#search_controls (method)">#search_controls</a></span>, <span class='object_link'><a href="SearchControls.html#show_search_controls%3F-instance_method" title="LayoutHelper::SearchControls#show_search_controls? (method)">#show_search_controls?</a></span>, <span class='object_link'><a href="SearchControls.html#url_parameter_menu_config-instance_method" title="LayoutHelper::SearchControls#url_parameter_menu_config (method)">#url_parameter_menu_config</a></span></p>
-
-  
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="SearchControls/ClassMethods.html" title="LayoutHelper::SearchControls::ClassMethods (module)">LayoutHelper::SearchControls::ClassMethods</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="SearchControls/ClassMethods.html#ascending_sort-instance_method" title="LayoutHelper::SearchControls::ClassMethods#ascending_sort (method)">#ascending_sort</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#current_menu_config-instance_method" title="LayoutHelper::SearchControls::ClassMethods#current_menu_config (method)">#current_menu_config</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#descending_sort-instance_method" title="LayoutHelper::SearchControls::ClassMethods#descending_sort (method)">#descending_sort</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#is_reverse%3F-instance_method" title="LayoutHelper::SearchControls::ClassMethods#is_reverse? (method)">#is_reverse?</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#make_menu-instance_method" title="LayoutHelper::SearchControls::ClassMethods#make_menu (method)">#make_menu</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#make_menu_label-instance_method" title="LayoutHelper::SearchControls::ClassMethods#make_menu_label (method)">#make_menu_label</a></span>, <span class='object_link'><a href="SearchControls/ClassMethods.html#search_menu_config-instance_method" title="LayoutHelper::SearchControls::ClassMethods#search_menu_config (method)">#search_menu_config</a></span></p>
-
-  
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="Common.html" title="LayoutHelper::Common (module)">Common</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Common.html#toggle_button-instance_method" title="LayoutHelper::Common#toggle_button (method)">#toggle_button</a></span></p>
-
-  
-  
-  
-  
-  
-  
-  
-  
-  <h3 class="inherited">Methods included from <span class='object_link'><a href="../HtmlHelper.html" title="HtmlHelper (module)">HtmlHelper</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="../HtmlHelper.html#append_css_classes-instance_method" title="HtmlHelper#append_css_classes (method)">#append_css_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#append_css_classes!-instance_method" title="HtmlHelper#append_css_classes! (method)">#append_css_classes!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#append_grid_cell_classes-instance_method" title="HtmlHelper#append_grid_cell_classes (method)">#append_grid_cell_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#append_grid_cell_classes!-instance_method" title="HtmlHelper#append_grid_cell_classes! (method)">#append_grid_cell_classes!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#css_class_array-instance_method" title="HtmlHelper#css_class_array (method)">#css_class_array</a></span>, <span class='object_link'><a href="../HtmlHelper.html#css_classes-instance_method" title="HtmlHelper#css_classes (method)">#css_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#css_randomize-instance_method" title="HtmlHelper#css_randomize (method)">#css_randomize</a></span>, <span class='object_link'><a href="../HtmlHelper.html#download_link-instance_method" title="HtmlHelper#download_link (method)">#download_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#external_link-instance_method" title="HtmlHelper#external_link (method)">#external_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#extract_url-instance_method" title="HtmlHelper#extract_url (method)">#extract_url</a></span>, <span class='object_link'><a href="../HtmlHelper.html#grid_cell_classes-instance_method" title="HtmlHelper#grid_cell_classes (method)">#grid_cell_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#grid_table-instance_method" title="HtmlHelper#grid_table (method)">#grid_table</a></span>, <span class='object_link'><a href="../HtmlHelper.html#has_class%3F-instance_method" title="HtmlHelper#has_class? (method)">#has_class?</a></span>, <span class='object_link'><a href="../HtmlHelper.html#hex_rand-instance_method" title="HtmlHelper#hex_rand (method)">#hex_rand</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_div-instance_method" title="HtmlHelper#html_div (method)">#html_div</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_span-instance_method" title="HtmlHelper#html_span (method)">#html_span</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_tag-instance_method" title="HtmlHelper#html_tag (method)">#html_tag</a></span>, <span class='object_link'><a href="../HtmlHelper.html#html_truncate-class_method" title="HtmlHelper.html_truncate (method)">html_truncate</a></span>, <span class='object_link'><a href="../HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">#icon_button</a></span>, <span class='object_link'><a href="../HtmlHelper.html#make_link-instance_method" title="HtmlHelper#make_link (method)">#make_link</a></span>, <span class='object_link'><a href="../HtmlHelper.html#merge_html_options-instance_method" title="HtmlHelper#merge_html_options (method)">#merge_html_options</a></span>, <span class='object_link'><a href="../HtmlHelper.html#merge_html_options!-instance_method" title="HtmlHelper#merge_html_options! (method)">#merge_html_options!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#placeholder_element-instance_method" title="HtmlHelper#placeholder_element (method)">#placeholder_element</a></span>, <span class='object_link'><a href="../HtmlHelper.html#prepend_css_classes-instance_method" title="HtmlHelper#prepend_css_classes (method)">#prepend_css_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#prepend_css_classes!-instance_method" title="HtmlHelper#prepend_css_classes! (method)">#prepend_css_classes!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#prepend_grid_cell_classes-instance_method" title="HtmlHelper#prepend_grid_cell_classes (method)">#prepend_grid_cell_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#prepend_grid_cell_classes!-instance_method" title="HtmlHelper#prepend_grid_cell_classes! (method)">#prepend_grid_cell_classes!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#remove_css_classes-instance_method" title="HtmlHelper#remove_css_classes (method)">#remove_css_classes</a></span>, <span class='object_link'><a href="../HtmlHelper.html#remove_css_classes!-instance_method" title="HtmlHelper#remove_css_classes! (method)">#remove_css_classes!</a></span>, <span class='object_link'><a href="../HtmlHelper.html#safe_truncate-instance_method" title="HtmlHelper#safe_truncate (method)">#safe_truncate</a></span>, <span class='object_link'><a href="../HtmlHelper.html#xml_truncate-class_method" title="HtmlHelper.xml_truncate (method)">xml_truncate</a></span></p>
-
-  
-  
-  
-  
-  
-  
 
   <div id="instance_method_details" class="method_details_list">
     <h2>Instance Method Details</h2>
 
     
       <div class="method_details first">
-  <h3 class="signature first" id="search_bar_label-instance_method">
+  <h3 class="signature first" id="search_bar-instance_method">
   
-    #<strong>search_bar_label</strong>(type = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
-  
-
-  
-
-  
-</h3><div class="docstring">
-  <div class="discussion">
-    
-<p>search_bar_label</p>
-
-
-  </div>
-</div>
-<div class="tags">
-  <p class="tag_title">Parameters:</p>
-<ul class="param">
-  
-    <li>
-      
-        <span class='name'>type</span>
-      
-      
-        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
-      
-      
-        <em class="default">(defaults to: <tt>nil</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>Default: `#search_input_target`</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-        <span class='name'>opt</span>
-      
-      
-        <span class='type'>(<tt>Hash</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>Passed to #config_lookup.</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-<p class="tag_title">Returns:</p>
-<ul class="return">
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>String</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>The specified value.</p>
-</div>
-      
-    </li>
-  
-    <li>
-      
-      
-        <span class='type'>(<tt>nil</tt>)</span>
-      
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>No non-empty value was found.</p>
-</div>
-      
-    </li>
-  
-</ul>
-
-</div><table class="source_code">
-  <tr>
-    <td>
-      <pre class="lines">
-
-
-121
-122
-123
-124</pre>
-    </td>
-    <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 121</span>
-
-<span class='kw'>def</span> <span class='id identifier rubyid_search_bar_label'>search_bar_label</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_type'>type</span> <span class='op'>||=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span> <span class='kw'>or</span> <span class='kw'>return</span>
-  <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_bar.label</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>controller:</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-<span class='kw'>end</span></pre>
-    </td>
-  </tr>
-</table>
-</div>
-    
-      <div class="method_details ">
-  <h3 class="signature " id="search_input_bar-instance_method">
-  
-    #<strong>search_input_bar</strong>(id: nil, type: nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt><sup>?</sup> 
+    #<strong>search_bar</strong>(field, value = nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt><sup>?</sup> 
   
 
   
@@ -728,37 +882,25 @@
   
     <li>
       
-        <span class='name'>id</span>
+        <span class='name'>field</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
       
       
-        <em class="default">(defaults to: <tt>nil</tt>)</em>
-      
-      
-        &mdash;
-        <div class='inline'>
-<p>Default: `#search_input_field(type)`</p>
-</div>
       
     </li>
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>value</span>
       
       
-        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
       
       
         <em class="default">(defaults to: <tt>nil</tt>)</em>
       
-      
-        &mdash;
-        <div class='inline'>
-<p>Default: `#search_input_target`</p>
-</div>
       
     </li>
   
@@ -773,12 +915,60 @@
       
         &mdash;
         <div class='inline'>
-<p>Passed to #search_form.</p>
+<p>Passed to #html_div except for:</p>
 </div>
       
     </li>
   
 </ul>
+
+  
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:target</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:unique</span>
+          <span class="type">(<tt>String</tt>, <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:index</span>
+          <span class="type">(<tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
 
 <p class="tag_title">Returns:</p>
 <ul class="return">
@@ -806,7 +996,234 @@
       
         &mdash;
         <div class='inline'>
-<p>If search is not available for <strong>type</strong>.</p>
+<p>Search unavailable for target.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><span class='object_link'><a href="#search_input-instance_method" title="LayoutHelper::SearchBar#search_input (method)">#search_input</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 275</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_bar'>search_bar</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-bar</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_id_opt'>id_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span>  <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:target</span><span class='comma'>,</span> <span class='symbol'>:unique</span><span class='comma'>,</span> <span class='symbol'>:index</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_target'>target</span> <span class='op'>=</span> <span class='id identifier rubyid_id_opt'>id_opt</span><span class='lbracket'>[</span><span class='symbol'>:target</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_target'>target</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_show_search_bar?'>show_search_bar?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_html_div'>html_div</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_search_input'>search_input</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_bar_container-instance_method">
+  
+    #<strong>search_bar_container</strong>(target: nil, fields: nil, values: nil, only: nil, except: nil, maximum: nil, minimum: nil, **form_opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>search_bar_container</p>
+
+<p>– noinspection RubyNilAnalysis ++</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_target`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>fields</span>
+      
+      
+        <span class='type'>(<tt>Array</tt>, <tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_types`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>values</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#url_parameters`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>only</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>except</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>maximum</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Maximum input rows in group.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>minimum</span>
+      
+      
+        <span class='type'>(<tt>Integer</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Minimum input rows in group.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>form_opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #html_form.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
+      
+      
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Search unavailable for <strong>target</strong>.</p>
 </div>
       
     </li>
@@ -819,30 +1236,144 @@
       <pre class="lines">
 
 
-101
-102
-103
-104
 105
 106
 107
 108
 109
 110
-111</pre>
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 101</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 105</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_bar'>search_input_bar</span><span class='lparen'>(</span><span class='label'>id:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>type:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_type'>type</span> <span class='op'>||=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span>
-  <span class='id identifier rubyid_id'>id</span>   <span class='op'>||=</span> <span class='id identifier rubyid_search_input_field'>search_input_field</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_id'>id</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_type'>type</span>
-  <span class='id identifier rubyid_skip_nav_append'>skip_nav_append</span><span class='lparen'>(</span><span class='id identifier rubyid_search_bar_label'>search_bar_label</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_id'>id</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_prepend_css_classes!'>prepend_css_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search-input-bar</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_bar_container'>search_bar_container</span><span class='lparen'>(</span>
+  <span class='label'>target:</span>   <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>fields:</span>   <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>values:</span>   <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>only:</span>     <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>except:</span>   <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>maximum:</span>  <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='label'>minimum:</span>  <span class='kw'>nil</span><span class='comma'>,</span>
+  <span class='op'>**</span><span class='id identifier rubyid_form_opt'>form_opt</span>
+<span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-bar-container</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_target'>target</span>   <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span> <span class='kw'>or</span> <span class='kw'>return</span>
+  <span class='id identifier rubyid_config'>config</span>   <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SEARCH_BAR-constant" title="LayoutHelper::SearchBar::SEARCH_BAR (constant)">SEARCH_BAR</a></span></span><span class='lbracket'>[</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span> <span class='op'>||</span> <span class='id identifier rubyid_params'>params</span><span class='lbracket'>[</span><span class='symbol'>:controller</span><span class='rbracket'>]</span><span class='rparen'>)</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_minimum'>minimum</span>  <span class='op'>=</span> <span class='id identifier rubyid_minimum'>minimum</span> <span class='op'>?</span> <span class='lbracket'>[</span><span class='id identifier rubyid_minimum'>minimum</span><span class='comma'>,</span> <span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span> <span class='op'>:</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:min_rows</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_maximum'>maximum</span>  <span class='op'>=</span> <span class='id identifier rubyid_maximum'>maximum</span> <span class='op'>?</span> <span class='lbracket'>[</span><span class='id identifier rubyid_maximum'>maximum</span><span class='comma'>,</span> <span class='int'>1</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_max'>max</span> <span class='op'>:</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='symbol'>:max_rows</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_types'>types</span>    <span class='op'>=</span> <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_prm_map'>prm_map</span>  <span class='op'>=</span>
+    <span class='id identifier rubyid_types'>types</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='id identifier rubyid_cfg'>cfg</span><span class='op'>|</span>
+      <span class='id identifier rubyid_prm'>prm</span> <span class='op'>=</span> <span class='id identifier rubyid_cfg'>cfg</span><span class='lbracket'>[</span><span class='symbol'>:url_parameter</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='op'>||</span> <span class='id identifier rubyid_type'>type</span>
+      <span class='lbracket'>[</span><span class='id identifier rubyid_prm'>prm</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span>
+    <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span>
+
+  <span class='comment'># A search box row will be created for every search type.
+</span>  <span class='id identifier rubyid_fields'>fields</span> <span class='op'>||=</span> <span class='id identifier rubyid_types'>types</span>
+  <span class='id identifier rubyid_fields'>fields</span>   <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_dup'>dup</span>  <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_fields'>fields</span>   <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span> <span class='kw'>if</span> <span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyYardParamTypeMatch
-</span>  <span class='id identifier rubyid_search_form'>search_form</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='kw'>do</span>
-    <span class='id identifier rubyid_search_input'>search_input</span><span class='lparen'>(</span><span class='id identifier rubyid_id'>id</span><span class='comma'>,</span> <span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span> <span class='op'>+</span> <span class='id identifier rubyid_search_button'>search_button</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
+</span>  <span class='id identifier rubyid_fields'>fields</span>   <span class='op'>=</span> <span class='id identifier rubyid_filter'>filter</span><span class='lparen'>(</span><span class='id identifier rubyid_fields'>fields</span><span class='comma'>,</span> <span class='label'>only:</span> <span class='id identifier rubyid_only'>only</span><span class='comma'>,</span> <span class='label'>except:</span> <span class='id identifier rubyid_except'>except</span><span class='rparen'>)</span>
+
+  <span class='comment'># Accumulate search term values limited to the selected set of fields.
+</span>  <span class='comment'># The initial determination of the order and initial input type selections
+</span>  <span class='comment'># will be determined by the data supplied.
+</span>  <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span> <span class='op'>||</span> <span class='id identifier rubyid_url_parameters'>url_parameters</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_except'>except</span><span class='lparen'>(</span><span class='op'>*</span><span class='const'><span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../SearchTermsHelper.html#NON_SEARCH_KEYS-constant" title="SearchTermsHelper::NON_SEARCH_KEYS (constant)">NON_SEARCH_KEYS</a></span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_transform_keys!'>transform_keys!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_k'>k</span><span class='op'>|</span> <span class='id identifier rubyid_prm_map'>prm_map</span><span class='lbracket'>[</span><span class='id identifier rubyid_k'>k</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rbracket'>]</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_slice!'>slice!</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_fields'>fields</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_transform_values!'>transform_values!</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_v'>v</span><span class='op'>|</span> <span class='lparen'>(</span><span class='id identifier rubyid_v'>v</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">NULL_SEARCH</a></span></span><span class='rparen'>)</span> <span class='op'>?</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='op'>:</span> <span class='id identifier rubyid_v'>v</span> <span class='rbrace'>}</span>
+
+  <span class='comment'># This is a major section of the page so it should be present in the
+</span>  <span class='comment'># skip menu.
+</span>  <span class='id identifier rubyid_row_opt'>row_opt</span> <span class='op'>=</span> <span class='lbrace'>{</span> <span class='label'>target:</span> <span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='label'>unique:</span> <span class='id identifier rubyid_hex_rand'>hex_rand</span> <span class='rbrace'>}</span>
+  <span class='id identifier rubyid_form_opt'>form_opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_row_opt'>row_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_skip_nav_append'>skip_nav_append</span><span class='lparen'>(</span><span class='id identifier rubyid_search_bar_label'>search_bar_label</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_form_opt'>form_opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+
+  <span class='comment'># Search input row elements.
+</span>  <span class='id identifier rubyid_blank'>blank</span> <span class='op'>=</span> <span class='id identifier rubyid_fields'>fields</span> <span class='op'>-</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span>
+  <span class='id identifier rubyid_rows'>rows</span>  <span class='op'>=</span> <span class='id identifier rubyid_values'>values</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_blank'>blank</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='op'>|</span> <span class='lbracket'>[</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_to_h'>to_h</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_to_a'>to_a</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_maximum'>maximum</span> <span class='op'>&amp;&amp;</span> <span class='lparen'>(</span><span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='id identifier rubyid_maximum'>maximum</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_rows'>rows</span> <span class='op'>=</span> <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_take'>take</span><span class='lparen'>(</span><span class='id identifier rubyid_maximum'>maximum</span><span class='rparen'>)</span>
+  <span class='kw'>elsif</span> <span class='id identifier rubyid_minimum'>minimum</span>
+    <span class='id identifier rubyid_rows'>rows</span> <span class='op'>&lt;&lt;</span> <span class='lbracket'>[</span><span class='id identifier rubyid_fields'>fields</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='rbracket'>]</span> <span class='kw'>while</span> <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&lt;</span> <span class='id identifier rubyid_minimum'>minimum</span>
+  <span class='kw'>end</span>
+  <span class='id identifier rubyid_index'>index</span> <span class='op'>=</span> <span class='int'>0</span>
+  <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_map!'>map!</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='op'>|</span>
+    <span class='id identifier rubyid_row_opt'>row_opt</span><span class='lbracket'>[</span><span class='symbol'>:first</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_index'>index</span><span class='period'>.</span><span class='id identifier rubyid_zero?'>zero?</span>
+    <span class='id identifier rubyid_row_opt'>row_opt</span><span class='lbracket'>[</span><span class='symbol'>:index</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span> <span class='op'>+=</span> <span class='int'>1</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_row_opt'>row_opt</span><span class='lbracket'>[</span><span class='symbol'>:last</span><span class='rbracket'>]</span>  <span class='op'>=</span> <span class='lparen'>(</span><span class='id identifier rubyid_index'>index</span> <span class='op'>==</span> <span class='id identifier rubyid_rows'>rows</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_search_bar_row'>search_bar_row</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_row_opt'>row_opt</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Components.
+</span>  <span class='id identifier rubyid_input_group'>input_group</span> <span class='op'>=</span> <span class='id identifier rubyid_html_div'>html_div</span><span class='lparen'>(</span><span class='id identifier rubyid_rows'>rows</span><span class='comma'>,</span> <span class='label'>class:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search-bar-group</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_controls'>controls</span>    <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='period'>.</span><span class='id identifier rubyid_html_safe'>html_safe</span> <span class='comment'># NOTE: moving search button...
+</span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_form_opt'>form_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_search_form'>search_form</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_form_opt'>form_opt</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_input_group'>input_group</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_controls'>controls</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
@@ -851,9 +1382,9 @@
 </div>
     
       <div class="method_details ">
-  <h3 class="signature " id="search_input_default-instance_method">
+  <h3 class="signature " id="search_bar_label-instance_method">
   
-    #<strong>search_input_default</strong>(type = nil, **opt)  &#x21d2; <tt>Hash{Symbol=&gt;Symbol,String}</tt> 
+    #<strong>search_bar_label</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -862,7 +1393,7 @@
 </h3><div class="docstring">
   <div class="discussion">
     
-<p>Properties of the default search input type.</p>
+<p>search_bar_label</p>
 
 
   </div>
@@ -873,7 +1404,25 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -913,7 +1462,224 @@
     <li>
       
       
-        <span class='type'>(<tt>Hash{Symbol=&gt;Symbol,String}</tt>)</span>
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The specified value.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>No non-empty value was found.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+295
+296
+297
+298</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 295</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_bar_label'>search_bar_label</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_target'>target</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span> <span class='kw'>or</span> <span class='kw'>return</span>
+  <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_bar.label</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>controller:</span> <span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_bar_row-instance_method">
+  
+    #<strong>search_bar_row</strong>(field, value = nil, first: nil, last: nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate a row within a search-bar-group.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>field</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_input.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_input.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>first</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>true</strong> this is the first row.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>last</span>
+      
+      
+        <span class='type'>(<tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If <strong>true</strong> this is the last row.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to outer #html_div except:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:target</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:unique</span>
+          <span class="type">(<tt>String</tt>, <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:index</span>
+          <span class="type">(<tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
       
       
       
@@ -927,17 +1693,906 @@
       <pre class="lines">
 
 
-172
-173
-174
-175</pre>
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 172</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 188</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_default'>search_input_default</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
-  <span class='id identifier rubyid_values'>values</span> <span class='op'>?</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='id identifier rubyid_field'>field</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_bar_row'>search_bar_row</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>first:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>last:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-bar-row</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_id_opt'>id_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span>  <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:target</span><span class='comma'>,</span> <span class='symbol'>:unique</span><span class='comma'>,</span> <span class='symbol'>:index</span><span class='rparen'>)</span>
+
+  <span class='comment'># Row elements.
+</span>  <span class='id identifier rubyid_input'>input</span>  <span class='op'>=</span> <span class='id identifier rubyid_search_bar'>search_bar</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_menu'>menu</span>   <span class='op'>=</span> <span class='id identifier rubyid_search_input_select'>search_input_select</span><span class='lparen'>(</span><span class='label'>selected:</span> <span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ctrl'>ctrl</span>   <span class='op'>=</span> <span class='id identifier rubyid_menu'>menu</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span>
+  <span class='id identifier rubyid_ctrl'>ctrl</span> <span class='op'>&amp;&amp;=</span> <span class='id identifier rubyid_first'>first</span> <span class='op'>?</span> <span class='id identifier rubyid_search_row_add'>search_row_add</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='id identifier rubyid_search_row_remove'>search_row_remove</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+
+  <span class='comment'># Row container.
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='id identifier rubyid_css_selector'>css_selector</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_append_classes!'>append_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>first</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>  <span class='kw'>if</span> <span class='id identifier rubyid_first'>first</span>
+  <span class='id identifier rubyid_append_classes!'>append_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>last</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>   <span class='kw'>if</span> <span class='id identifier rubyid_last'>last</span>
+  <span class='id identifier rubyid_append_classes!'>append_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>hidden</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span> <span class='kw'>unless</span> <span class='id identifier rubyid_first'>first</span> <span class='op'>||</span> <span class='id identifier rubyid_value'>value</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_html_div'>html_div</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='lbracket'>[</span><span class='id identifier rubyid_menu'>menu</span><span class='comma'>,</span> <span class='id identifier rubyid_input'>input</span><span class='comma'>,</span> <span class='id identifier rubyid_ctrl'>ctrl</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_button-instance_method">
+  
+    #<strong>search_button</strong>(ctrlr = nil, target: nil, label: nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate a form submit control.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_target`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>label</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_button_label`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #submit_tag.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+489
+490
+491
+492
+493
+494
+495
+496</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 489</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_button'>search_button</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>label:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-button</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_label'>label</span>      <span class='op'>||=</span> <span class='id identifier rubyid_search_button_label'>search_button_label</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:&#39;data-ready&#39;</span><span class='rbracket'>]</span>     <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#SEARCH_READY_TOOLTIP-constant" title="LayoutHelper::SearchBar::SEARCH_READY_TOOLTIP (constant)">SEARCH_READY_TOOLTIP</a></span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:&#39;data-not-ready&#39;</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#SEARCH_NOT_READY_TOOLTIP-constant" title="LayoutHelper::SearchBar::SEARCH_NOT_READY_TOOLTIP (constant)">SEARCH_NOT_READY_TOOLTIP</a></span></span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_submit_tag'>submit_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_button_label-instance_method">
+  
+    #<strong>search_button_label</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>search_button_label</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_target`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #config_lookup.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>String</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The specified value.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>No non-empty value was found.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+507
+508
+509
+510</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 507</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_button_label'>search_button_label</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_target'>target</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span> <span class='kw'>or</span> <span class='kw'>return</span>
+  <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_bar.button.label</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>controller:</span> <span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_clear_button-instance_method">
+  
+    #<strong>search_clear_button</strong>(**opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>search_clear_button</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #link_to except for:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:unique</span>
+          <span class="type">(<tt>String</tt>, <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:index</span>
+          <span class="type">(<tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+  <p class="tag_title">See Also:</p>
+  <ul class="see">
+    
+      <li><a href="../file.advanced-search.html" title="*clearSearch()*">*clearSearch()*</a></li>
+    
+      <li><span class='object_link'><a href="../HtmlHelper.html#icon_button-instance_method" title="HtmlHelper#icon_button (method)">HtmlHelper#icon_button</a></span></li>
+    
+  </ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+524
+525
+526
+527
+528
+529
+530
+531
+532
+533
+534</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 524</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_clear_button'>search_clear_button</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-clear</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_id_opt'>id_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span>  <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:unique</span><span class='comma'>,</span> <span class='symbol'>:index</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_except!'>except!</span><span class='lparen'>(</span><span class='symbol'>:field</span><span class='comma'>,</span> <span class='op'>*</span><span class='const'>MENU_OPTS</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:title</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Clear search terms</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:icon</span><span class='rbracket'>]</span>  <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="#CLEAR_SEARCH_ICON-constant" title="LayoutHelper::SearchBar::CLEAR_SEARCH_ICON (constant)">CLEAR_SEARCH_ICON</a></span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:url</span><span class='rbracket'>]</span>   <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>#</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>    <span class='op'>||=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='id identifier rubyid_css_selector'>css_selector</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_icon_button'>icon_button</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_controls-instance_method">
+  
+    #<strong>search_controls</strong>(ctrlr = nil, target: nil, form: nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>A container for the search submit, filter reset, and filter toggle buttons.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_button`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>form</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Form element identifier.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #html_div except:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:only</span>
+          <span class="type">(<tt>Symbol</tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>One or more #SEARCH_CONTROLS.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:except</span>
+          <span class="type">(<tt>Symbol</tt>, <tt>Array&lt;Symbol&gt;</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>One or more #SEARCH_CONTROLS.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+550
+551
+552
+553
+554
+555
+556
+557
+558
+559
+560
+561
+562
+563
+564
+565
+566</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 550</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_controls'>search_controls</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>form:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span>  <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-controls</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_html_opt'>html_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:only</span><span class='comma'>,</span> <span class='symbol'>:except</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_target'>target</span>  <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_buttons'>buttons</span> <span class='op'>=</span> <span class='id identifier rubyid_filter'>filter</span><span class='lparen'>(</span><span class='const'><span class='object_link'><a href="#SEARCH_CONTROLS-constant" title="LayoutHelper::SearchBar::SEARCH_CONTROLS (constant)">SEARCH_CONTROLS</a></span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_html_opt'>html_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_html_div'>html_div</span><span class='lparen'>(</span><span class='id identifier rubyid_html_opt'>html_opt</span><span class='rparen'>)</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_buttons'>buttons</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_key'>key</span><span class='op'>|</span>
+      <span class='comment'># noinspection RubyCaseWithoutElseBlockInspection
+</span>      <span class='kw'>case</span> <span class='id identifier rubyid_key'>key</span>
+        <span class='kw'>when</span> <span class='symbol'>:toggle</span> <span class='kw'>then</span> <span class='id identifier rubyid_advanced_search_button'>advanced_search_button</span>
+        <span class='kw'>when</span> <span class='symbol'>:reset</span>  <span class='kw'>then</span> <span class='id identifier rubyid_reset_button'>reset_button</span>
+        <span class='kw'>when</span> <span class='symbol'>:search</span> <span class='kw'>then</span> <span class='id identifier rubyid_search_button'>search_button</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='label'>form:</span> <span class='id identifier rubyid_form'>form</span><span class='rparen'>)</span>
+      <span class='kw'>end</span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_input-instance_method">
+  
+    #<strong>search_input</strong>(field, ctrlr = nil, target: nil, value: nil, **opt)  &#x21d2; <tt>ActiveSupport::SafeBuffer</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Generate a form search field input control.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>field</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_field`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_target`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>value</span>
+      
+      
+        <span class='type'>(<tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `<a href="field">params</a>`.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_field_tag except:</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:unique</span>
+          <span class="type">(<tt>String</tt>, <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:index</span>
+          <span class="type">(<tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>ActiveSupport::SafeBuffer</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+437
+438
+439
+440
+441
+442
+443
+444
+445
+446
+447
+448
+449
+450
+451
+452
+453
+454
+455
+456
+457
+458
+459
+460
+461
+462
+463
+464
+465
+466
+467
+468
+469
+470
+471
+472
+473
+474</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 437</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input'>search_input</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>value:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-input</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_target'>target</span>  <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_field'>field</span> <span class='op'>||=</span> <span class='id identifier rubyid_search_input_field'>search_input_field</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_field'>field</span>   <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
+
+  <span class='id identifier rubyid_id_opt'>id_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:unique</span><span class='comma'>,</span> <span class='symbol'>:index</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='id identifier rubyid_id_opt'>id_opt</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+    <span class='id identifier rubyid_label_id'>label_id</span> <span class='op'>=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='id identifier rubyid_css_selector'>css_selector</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>label</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_input_id'>input_id</span> <span class='op'>=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='id identifier rubyid_css_selector'>css_selector</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_label_id'>label_id</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_field'>field</span><span class='embexpr_end'>}</span><span class='tstring_content'>_label</span><span class='tstring_end'>&quot;</span></span>
+    <span class='id identifier rubyid_input_id'>input_id</span> <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span>
+  <span class='kw'>end</span>
+
+  <span class='comment'># Screen-reader-only label element.
+</span>  <span class='id identifier rubyid_label'>label</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_label'>search_input_label</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='label'>field:</span> <span class='id identifier rubyid_field'>field</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_label'>label</span> <span class='op'>&amp;&amp;=</span> <span class='id identifier rubyid_html_span'>html_span</span><span class='lparen'>(</span><span class='id identifier rubyid_label'>label</span><span class='comma'>,</span> <span class='label'>id:</span> <span class='id identifier rubyid_label_id'>label_id</span><span class='comma'>,</span> <span class='label'>class:</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search-input-label</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_label'>label</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='period'>.</span><span class='id identifier rubyid_html_safe'>html_safe</span>
+
+  <span class='comment'># Input field contents.
+</span>  <span class='id identifier rubyid_value'>value</span> <span class='op'>||=</span> <span class='id identifier rubyid_request_parameters'>request_parameters</span><span class='lbracket'>[</span><span class='id identifier rubyid_field'>field</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_value'>value</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span> <span class='kw'>if</span> <span class='id identifier rubyid_value'>value</span> <span class='op'>==</span> <span class='const'><span class='object_link'><a href="../SearchTermsHelper.html" title="SearchTermsHelper (module)">SearchTermsHelper</a></span></span><span class='op'>::</span><span class='const'><span class='object_link'><a href="../SearchTermsHelper.html#NULL_SEARCH-constant" title="SearchTermsHelper::NULL_SEARCH (constant)">NULL_SEARCH</a></span></span>
+
+  <span class='comment'># Input field element.
+</span>  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:&#39;aria-labelledby&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='id identifier rubyid_label_id'>label_id</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:placeholder</span><span class='rbracket'>]</span>     <span class='op'>||=</span> <span class='id identifier rubyid_search_input_placeholder'>search_input_placeholder</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='label'>field:</span> <span class='id identifier rubyid_field'>field</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>              <span class='op'>||=</span> <span class='id identifier rubyid_input_id'>input_id</span>
+  <span class='id identifier rubyid_input'>input</span> <span class='op'>=</span> <span class='id identifier rubyid_search_field_tag'>search_field_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_value'>value</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+
+  <span class='comment'># Control for clearing search terms.
+</span>  <span class='id identifier rubyid_clear'>clear</span> <span class='op'>=</span> <span class='id identifier rubyid_search_clear_button'>search_clear_button</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span>
+
+  <span class='comment'># Result.
+</span>  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='id identifier rubyid_label'>label</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_input'>input</span> <span class='op'>&lt;&lt;</span> <span class='id identifier rubyid_clear'>clear</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -947,7 +2602,7 @@
       <div class="method_details ">
   <h3 class="signature " id="search_input_field-instance_method">
   
-    #<strong>search_input_field</strong>(type = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+    #<strong>search_input_field</strong>(ctrlr = nil, **opt)  &#x21d2; <tt>Symbol</tt><sup>?</sup> 
   
 
   
@@ -967,7 +2622,7 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -994,7 +2649,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Passed to #config_lookup.</p>
+<p>Passed to #search_input_type.</p>
 </div>
       
     </li>
@@ -1007,7 +2662,7 @@
     <li>
       
       
-        <span class='type'>(<tt>String</tt>)</span>
+        <span class='type'>(<tt>Symbol</tt>)</span>
       
       
       
@@ -1040,17 +2695,17 @@
       <pre class="lines">
 
 
-134
-135
-136
-137</pre>
+341
+342
+343
+344</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 134</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 341</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_field'>search_input_field</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_field'>search_input_field</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyYardReturnMatch
-</span>  <span class='id identifier rubyid_search_input_default'>search_input_default</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:field</span><span class='rbracket'>]</span>
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:field</span><span class='rbracket'>]</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span> <span class='op'>||</span> <span class='id identifier rubyid_search_input_type'>search_input_type</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:field</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1060,7 +2715,7 @@
       <div class="method_details ">
   <h3 class="signature " id="search_input_label-instance_method">
   
-    #<strong>search_input_label</strong>(type = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+    #<strong>search_input_label</strong>(ctrlr = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -1080,7 +2735,7 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -1091,7 +2746,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Default: `#search_input_target`</p>
+<p>Passed to #search_input_type.</p>
 </div>
       
     </li>
@@ -1107,7 +2762,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Passed to #config_lookup.</p>
+<p>Passed to #search_input_type.</p>
 </div>
       
     </li>
@@ -1153,17 +2808,17 @@
       <pre class="lines">
 
 
-147
-148
-149
-150</pre>
+354
+355
+356
+357</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 147</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 354</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_label'>search_input_label</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_label'>search_input_label</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyYardReturnMatch
-</span>  <span class='id identifier rubyid_search_input_default'>search_input_default</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:label</span><span class='rbracket'>]</span>
+</span>  <span class='id identifier rubyid_search_input_type'>search_input_type</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:label</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1173,7 +2828,7 @@
       <div class="method_details ">
   <h3 class="signature " id="search_input_placeholder-instance_method">
   
-    #<strong>search_input_placeholder</strong>(type = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
+    #<strong>search_input_placeholder</strong>(ctrlr = nil, **opt)  &#x21d2; <tt>String</tt><sup>?</sup> 
   
 
   
@@ -1193,7 +2848,7 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -1204,7 +2859,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Default: `#search_input_target`</p>
+<p>Passed to #search_input_type.</p>
 </div>
       
     </li>
@@ -1220,7 +2875,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Passed to #config_lookup.</p>
+<p>Passed to #search_input_type.</p>
 </div>
       
     </li>
@@ -1266,17 +2921,17 @@
       <pre class="lines">
 
 
-160
-161
-162
-163</pre>
+367
+368
+369
+370</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 160</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 367</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_placeholder'>search_input_placeholder</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_placeholder'>search_input_placeholder</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
   <span class='comment'># noinspection RubyYardReturnMatch
-</span>  <span class='id identifier rubyid_search_input_default'>search_input_default</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:placeholder</span><span class='rbracket'>]</span>
+</span>  <span class='id identifier rubyid_search_input_type'>search_input_type</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='symbol'>:placeholder</span><span class='rbracket'>]</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1315,12 +2970,56 @@
       
         &mdash;
         <div class='inline'>
-<p>Passed to #select_tag except for: #MENU_OPTS</p>
+<p>Passed to #select_tag except for #MENU_OPTS and:</p>
 </div>
       
     </li>
   
 </ul>
+
+  
+    
+    
+    <p class="tag_title">Options Hash (<tt>**opt</tt>):</p>
+    <ul class="option">
+      
+        <li>
+          <span class="name">:target</span>
+          <span class="type">(<tt>String</tt>, <tt>Symbol</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+        </li>
+      
+        <li>
+          <span class="name">:unique</span>
+          <span class="type">(<tt>String</tt>, <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+        <li>
+          <span class="name">:index</span>
+          <span class="type">(<tt>Integer</tt>)</span>
+          <span class="default">
+            
+          </span>
+          
+            &mdash; <div class='inline'>
+<p>Passed to #unique_id.</p>
+</div>
+          
+        </li>
+      
+    </ul>
+  
 
 <p class="tag_title">Returns:</p>
 <ul class="return">
@@ -1348,7 +3047,7 @@
       
         &mdash;
         <div class='inline'>
-<p>If search is not available for <strong>type</strong>.</p>
+<p>Search unavailable for target.</p>
 </div>
       
     </li>
@@ -1361,39 +3060,302 @@
       <pre class="lines">
 
 
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
-89
-90</pre>
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 76</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 241</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_search_input_select'>search_input_select</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span>
-  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_show_input_select?'>show_input_select?</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_html_opt'>html_opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='op'>*</span><span class='const'>MENU_OPTS</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_url_param'>url_param</span>   <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:url_parameter</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='symbol'>:input_select</span> <span class='comment'># TODO
-</span>  <span class='id identifier rubyid_multiple'>multiple</span>    <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:multiple</span><span class='rbracket'>]</span>      <span class='op'>||</span> <span class='kw'>false</span>
-  <span class='id identifier rubyid_default'>default</span>     <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:default</span><span class='rbracket'>]</span>       <span class='op'>||</span> <span class='id identifier rubyid_search_input_field'>search_input_field</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_selected'>selected</span>    <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:selected</span><span class='rbracket'>]</span> <span class='op'>||</span> <span class='id identifier rubyid_search_parameters'>search_parameters</span><span class='period'>.</span><span class='id identifier rubyid_keys'>keys</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='id identifier rubyid_default'>default</span>
-  <span class='id identifier rubyid_selected'>selected</span>    <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_selected'>selected</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span>
-  <span class='id identifier rubyid_option_tags'>option_tags</span> <span class='op'>=</span> <span class='id identifier rubyid_options_for_select'>options_for_select</span><span class='lparen'>(</span><span class='id identifier rubyid_search_menu_pairs'>search_menu_pairs</span><span class='comma'>,</span> <span class='id identifier rubyid_selected'>selected</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_prepend_css_classes!'>prepend_css_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_html_opt'>html_opt</span><span class='comma'>,</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search-input-select</span><span class='tstring_end'>&#39;</span></span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_html_opt'>html_opt</span><span class='lbracket'>[</span><span class='symbol'>:multiple</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='kw'>true</span> <span class='kw'>if</span> <span class='id identifier rubyid_multiple'>multiple</span>
-  <span class='id identifier rubyid_html_opt'>html_opt</span><span class='lbracket'>[</span><span class='symbol'>:&#39;aria-label&#39;</span><span class='rbracket'>]</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Search Type</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
-</span>  <span class='id identifier rubyid_select_tag'>select_tag</span><span class='lparen'>(</span><span class='id identifier rubyid_url_param'>url_param</span><span class='comma'>,</span> <span class='id identifier rubyid_option_tags'>option_tags</span><span class='comma'>,</span> <span class='id identifier rubyid_html_opt'>html_opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_css_selector'>css_selector</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>.search-input-select</span><span class='tstring_end'>&#39;</span></span>
+  <span class='id identifier rubyid_target'>target</span>       <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:target</span><span class='rparen'>)</span><span class='rparen'>)</span>
+  <span class='kw'>return</span> <span class='kw'>unless</span> <span class='id identifier rubyid_target'>target</span> <span class='op'>&amp;&amp;</span> <span class='id identifier rubyid_show_input_select?'>show_input_select?</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_pairs'>pairs</span>    <span class='op'>=</span> <span class='id identifier rubyid_search_query_menu_pairs'>search_query_menu_pairs</span><span class='lparen'>(</span><span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_selected'>selected</span> <span class='op'>=</span> <span class='const'>Array</span><span class='period'>.</span><span class='id identifier rubyid_wrap'>wrap</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_delete'>delete</span><span class='lparen'>(</span><span class='symbol'>:selected</span><span class='rparen'>)</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span><span class='lparen'>(</span><span class='op'>&amp;</span><span class='symbol'>:to_s</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_uniq'>uniq</span>
+  <span class='id identifier rubyid_option_tags'>option_tags</span> <span class='op'>=</span> <span class='id identifier rubyid_options_for_select'>options_for_select</span><span class='lparen'>(</span><span class='id identifier rubyid_pairs'>pairs</span><span class='comma'>,</span> <span class='id identifier rubyid_selected'>selected</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_except!'>except!</span><span class='lparen'>(</span><span class='symbol'>:field</span><span class='comma'>,</span> <span class='op'>*</span><span class='const'>MENU_OPTS</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_id_opt'>id_opt</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_partition_options'>partition_options</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='symbol'>:unique</span><span class='comma'>,</span> <span class='symbol'>:index</span><span class='rparen'>)</span>
+
+  <span class='id identifier rubyid_prepend_classes!'>prepend_classes!</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='comma'>,</span> <span class='id identifier rubyid_css_selector'>css_selector</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:id</span><span class='rbracket'>]</span>           <span class='op'>||=</span> <span class='id identifier rubyid_unique_id'>unique_id</span><span class='lparen'>(</span><span class='id identifier rubyid_css_selector'>css_selector</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_id_opt'>id_opt</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_id_opt'>id_opt</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:&#39;aria-label&#39;</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Search Type</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
+</span>  <span class='comment'># NOTE: Blank name so that it is not included with form submission data.
+</span>  <span class='id identifier rubyid_select_tag'>select_tag</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='id identifier rubyid_option_tags'>option_tags</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_input_target-instance_method">
+  
+    #<strong>search_input_target</strong>(ctrlr = nil, target: nil)  &#x21d2; <tt>Symbol</tt><sup>?</sup> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>search_input_target</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_target`</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>The controller used for searching.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>nil</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>If search input should not be enabled</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+412
+413
+414
+415
+416</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 412</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='id identifier rubyid_search_target'>search_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='comment'># noinspection RubyYardReturnMatch
+</span>  <span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='kw'>if</span> <span class='const'><span class='object_link'><a href="#SEARCH_BAR-constant" title="LayoutHelper::SearchBar::SEARCH_BAR (constant)">SEARCH_BAR</a></span></span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='symbol'>:enabled</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_input_type-instance_method">
+  
+    #<strong>search_input_type</strong>(ctrlr = nil, target: nil, field: nil, **opt)  &#x21d2; <tt>Hash{Symbol=&gt;Symbol,String}</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Properties of the indicated search input type.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_types`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: `#search_input_types`</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>field</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Input type; first one if not given.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_input_types.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+<p class="tag_title">Returns:</p>
+<ul class="return">
+  
+    <li>
+      
+      
+        <span class='type'>(<tt>Hash{Symbol=&gt;Symbol,String}</tt>)</span>
+      
+      
+      
+    </li>
+  
+</ul>
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+381
+382
+383
+384
+385
+386
+387
+388
+389</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 381</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_type'>search_input_type</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>field:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_config'>config</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='id identifier rubyid_target'>target</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='lparen'>(</span><span class='id identifier rubyid_field'>field</span> <span class='op'>=</span> <span class='id identifier rubyid_field'>field</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='rparen'>)</span>
+    <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='lbracket'>[</span><span class='id identifier rubyid_field'>field</span><span class='rbracket'>]</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_field'>field</span><span class='comma'>,</span> <span class='id identifier rubyid_values'>values</span> <span class='op'>=</span> <span class='id identifier rubyid_config'>config</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span> <span class='comment'># Assume first type is the default type.
+</span>  <span class='kw'>end</span>
+  <span class='id identifier rubyid_values'>values</span> <span class='op'>?</span> <span class='lbrace'>{</span> <span class='label'>field:</span> <span class='id identifier rubyid_field'>field</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_merge!'>merge!</span><span class='lparen'>(</span><span class='id identifier rubyid_values'>values</span><span class='rparen'>)</span> <span class='op'>:</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1403,7 +3365,7 @@
       <div class="method_details ">
   <h3 class="signature " id="search_input_types-instance_method">
   
-    #<strong>search_input_types</strong>(type = nil, **opt)  &#x21d2; <tt>Hash{Symbol=&gt;Hash}</tt> 
+    #<strong>search_input_types</strong>(ctrlr = nil, target: nil, **opt)  &#x21d2; <tt>Hash{Symbol=&gt;Hash}</tt> 
   
 
   
@@ -1423,7 +3385,25 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <strong>target</strong></p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>target</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -1477,17 +3457,147 @@
       <pre class="lines">
 
 
-184
-185
-186
-187</pre>
+399
+400
+401
+402</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 184</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 399</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_type'>type</span> <span class='op'>||=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span>
-  <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_type</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>controller:</span> <span class='id identifier rubyid_type'>type</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='label'>target:</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='id identifier rubyid_search_input_target'>search_input_target</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||</span> <span class='id identifier rubyid_target'>target</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_config_lookup'>config_lookup</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>search_type</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='label'>controller:</span> <span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span> <span class='op'>||</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_row_add-instance_method">
+  
+    #<strong>search_row_add</strong>(**opt)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Reveal the next search-bar-row in the current search-bar-group.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_row_control.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+213
+214
+215
+216
+217</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 213</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_row_add'>search_row_add</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:title</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Include another search term type.</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:icon</span><span class='rbracket'>]</span>  <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Emma/Unicode.html#HEAVY_PLUS-constant" title="Emma::Unicode::HEAVY_PLUS (constant)">HEAVY_PLUS</a></span></span>
+  <span class='id identifier rubyid_search_row_control'>search_row_control</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>add</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+<span class='kw'>end</span></pre>
+    </td>
+  </tr>
+</table>
+</div>
+    
+      <div class="method_details ">
+  <h3 class="signature " id="search_row_remove-instance_method">
+  
+    #<strong>search_row_remove</strong>(**opt)  &#x21d2; <tt>Object</tt> 
+  
+
+  
+
+  
+</h3><div class="docstring">
+  <div class="discussion">
+    
+<p>Reveal the associated search-bar-row.</p>
+
+
+  </div>
+</div>
+<div class="tags">
+  <p class="tag_title">Parameters:</p>
+<ul class="param">
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_row_control.</p>
+</div>
+      
+    </li>
+  
+</ul>
+
+
+</div><table class="source_code">
+  <tr>
+    <td>
+      <pre class="lines">
+
+
+223
+224
+225
+226
+227</pre>
+    </td>
+    <td>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 223</span>
+
+<span class='kw'>def</span> <span class='id identifier rubyid_search_row_remove'>search_row_remove</span><span class='lparen'>(</span><span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:title</span><span class='rbracket'>]</span> <span class='op'>||=</span> <span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>Remove this search term</span><span class='tstring_end'>&#39;</span></span> <span class='comment'># TODO: I18n
+</span>  <span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:icon</span><span class='rbracket'>]</span>  <span class='op'>||=</span> <span class='const'><span class='object_link'><a href="../Emma/Unicode.html#HEAVY_MINUS-constant" title="Emma::Unicode::HEAVY_MINUS (constant)">HEAVY_MINUS</a></span></span>
+  <span class='id identifier rubyid_search_row_control'>search_row_control</span><span class='lparen'>(</span><span class='tstring'><span class='tstring_beg'>&#39;</span><span class='tstring_content'>remove</span><span class='tstring_end'>&#39;</span></span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1497,7 +3607,7 @@
       <div class="method_details ">
   <h3 class="signature " id="show_input_select?-instance_method">
   
-    #<strong>show_input_select?</strong>(type = nil)  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+    #<strong>show_input_select?</strong>(ctrlr = nil, **opt)  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
   
 
   
@@ -1517,7 +3627,7 @@
   
     <li>
       
-        <span class='name'>type</span>
+        <span class='name'>ctrlr</span>
       
       
         <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
@@ -1528,7 +3638,23 @@
       
         &mdash;
         <div class='inline'>
-<p>Default: `#search_input_target`</p>
+<p>Passed to #search_input_types.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
+      
+      
+        <span class='type'>(<tt>Hash</tt>)</span>
+      
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Passed to #search_input_types.</p>
 </div>
       
     </li>
@@ -1555,15 +3681,15 @@
       <pre class="lines">
 
 
-64
-65
-66</pre>
+78
+79
+80</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 78</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_show_input_select?'>show_input_select?</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_type'>type</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>1</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_show_input_select?'>show_input_select?</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_search_input_types'>search_input_types</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='op'>**</span><span class='id identifier rubyid_opt'>opt</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_size'>size</span> <span class='op'>&gt;</span> <span class='int'>1</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1573,7 +3699,7 @@
       <div class="method_details ">
   <h3 class="signature " id="show_search_bar?-instance_method">
   
-    #<strong>show_search_bar?</strong>(p = nil)  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
+    #<strong>show_search_bar?</strong>(ctrlr = nil, opt = nil)  &#x21d2; <tt><span class='object_link'><a href="../top-level-namespace.html#Boolean-constant" title="Boolean (constant)">Boolean</a></span></tt> 
   
 
   
@@ -1593,7 +3719,25 @@
   
     <li>
       
-        <span class='name'>p</span>
+        <span class='name'>ctrlr</span>
+      
+      
+        <span class='type'>(<tt>Symbol</tt>, <tt>String</tt>, <tt>nil</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>nil</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Default: <a href=":controller">params</a>.</p>
+</div>
+      
+    </li>
+  
+    <li>
+      
+        <span class='name'>opt</span>
       
       
         <span class='type'>(<tt>Hash</tt>, <tt>nil</tt>)</span>
@@ -1631,23 +3775,27 @@
       <pre class="lines">
 
 
-52
-53
-54
-55
-56
-57
-58</pre>
+63
+64
+65
+66
+67
+68
+69
+70
+71</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 52</span>
+      <pre class="code"><span class="info file"># File 'app/helpers/layout_helper/search_bar.rb', line 63</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_show_search_bar?'>show_search_bar?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_p'>p</span>     <span class='op'>||=</span> <span class='id identifier rubyid_request_parameters'>request_parameters</span>
-  <span class='id identifier rubyid_type'>type</span>    <span class='op'>=</span> <span class='id identifier rubyid_search_target'>search_target</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SEARCH_INPUT_ENABLED-constant" title="LayoutHelper::SearchBar::SEARCH_INPUT_ENABLED (constant)">SEARCH_INPUT_ENABLED</a></span></span><span class='lbracket'>[</span><span class='id identifier rubyid_type'>type</span><span class='rbracket'>]</span>
-  <span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_p'>p</span><span class='lbracket'>[</span><span class='symbol'>:action</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_enabled'>enabled</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_show_search_bar?'>show_search_bar?</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='comma'>,</span> <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='lbracket'>[</span><span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='rbracket'>]</span> <span class='kw'>if</span> <span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Hash</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_opt'>opt</span> <span class='op'>=</span> <span class='id identifier rubyid_opt'>opt</span><span class='op'>&amp;.</span><span class='id identifier rubyid_symbolize_keys'>symbolize_keys</span> <span class='op'>||</span> <span class='id identifier rubyid_request_parameters'>request_parameters</span>
+  <span class='comment'># noinspection RubyNilAnalysis
+</span>  <span class='id identifier rubyid_ctrlr'>ctrlr</span> <span class='op'>||=</span> <span class='id identifier rubyid_opt'>opt</span><span class='period'>.</span><span class='id identifier rubyid_values_at'>values_at</span><span class='lparen'>(</span><span class='symbol'>:controller</span><span class='comma'>,</span> <span class='symbol'>:target</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_first'>first</span>
+  <span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='const'><span class='object_link'><a href="#SEARCH_BAR-constant" title="LayoutHelper::SearchBar::SEARCH_BAR (constant)">SEARCH_BAR</a></span></span><span class='period'>.</span><span class='id identifier rubyid_dig'>dig</span><span class='lparen'>(</span><span class='id identifier rubyid_ctrlr'>ctrlr</span><span class='op'>&amp;.</span><span class='id identifier rubyid_to_sym'>to_sym</span><span class='comma'>,</span> <span class='symbol'>:enabled</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_enabled'>enabled</span> <span class='op'>=</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_include?'>include?</span><span class='lparen'>(</span><span class='id identifier rubyid_opt'>opt</span><span class='lbracket'>[</span><span class='symbol'>:action</span><span class='rbracket'>]</span><span class='period'>.</span><span class='id identifier rubyid_to_s'>to_s</span><span class='rparen'>)</span> <span class='kw'>if</span> <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_is_a?'>is_a?</span><span class='lparen'>(</span><span class='const'>Array</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_enabled'>enabled</span><span class='period'>.</span><span class='id identifier rubyid_present?'>present?</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -1659,7 +3807,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:06:32 2021 by
+  Generated on Tue Mar 16 14:49:47 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>

@@ -805,13 +805,13 @@
         <span class='name'>types</span>
       
       
-        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../FormatType.html" title="FormatType (class)">FormatType</a></span>&gt;</tt>)</span>
+        <span class='type'>(<tt>Array&lt;<span class='object_link'><a href="../../BsFormatType.html" title="BsFormatType (class)">BsFormatType</a></span>&gt;</tt>)</span>
       
       
       
         &mdash;
         <div class='inline'>
-<p>Default: `FormatType#values`</p>
+<p>Default: `BsFormatType#values`</p>
 </div>
       
     </li>
@@ -1208,7 +1208,7 @@
       
         &mdash;
         <div class='inline'>
-<p>Default: `ContributorType#values`</p>
+<p>Default: `BsContributorType#values`</p>
 </div>
       
     </li>
@@ -1250,7 +1250,7 @@
 
 <span class='kw'>def</span> <span class='id identifier rubyid_contributor_table'>contributor_table</span><span class='lparen'>(</span><span class='op'>*</span><span class='id identifier rubyid_roles'>roles</span><span class='rparen'>)</span>
   <span class='kw'>return</span> <span class='lbrace'>{</span><span class='rbrace'>}</span> <span class='kw'>unless</span> <span class='id identifier rubyid_respond_to?'>respond_to?</span><span class='lparen'>(</span><span class='symbol'>:contributors</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_roles'>roles</span> <span class='op'>=</span> <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../../ContributorType.html" title="ContributorType (class)">ContributorType</a></span></span><span class='period'>.</span><span class='id identifier rubyid_values'><span class='object_link'><a href="../../EnumType.html#values-class_method" title="EnumType.values (method)">values</a></span></span>
+  <span class='id identifier rubyid_roles'>roles</span> <span class='op'>=</span> <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span><span class='period'>.</span><span class='id identifier rubyid_presence'>presence</span> <span class='op'>||</span> <span class='const'><span class='object_link'><a href="../../BsContributorType.html" title="BsContributorType (class)">BsContributorType</a></span></span><span class='period'>.</span><span class='id identifier rubyid_values'><span class='object_link'><a href="../../EnumType.html#values-class_method" title="EnumType.values (method)">values</a></span></span>
   <span class='id identifier rubyid_roles'>roles</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_role'>role</span><span class='op'>|</span>
     <span class='id identifier rubyid_k'>k</span> <span class='op'>=</span> <span class='id identifier rubyid_role'>role</span><span class='period'>.</span><span class='id identifier rubyid_to_sym'>to_sym</span>
     <span class='id identifier rubyid_v'>v</span> <span class='op'>=</span> <span class='id identifier rubyid_contributors'>contributors</span><span class='period'>.</span><span class='id identifier rubyid_map'>map</span> <span class='lbrace'>{</span> <span class='op'>|</span><span class='id identifier rubyid_c'>c</span><span class='op'>|</span> <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_label'>label</span> <span class='kw'>if</span> <span class='id identifier rubyid_c'>c</span><span class='period'>.</span><span class='id identifier rubyid_type'>type</span> <span class='op'>==</span> <span class='id identifier rubyid_role'>role</span> <span class='rbrace'>}</span><span class='period'>.</span><span class='id identifier rubyid_compact'>compact</span>
@@ -2232,7 +2232,7 @@
 </div>
 
       <div id="footer">
-  Generated on Sat Feb  6 16:06:31 2021 by
+  Generated on Tue Mar 16 14:49:46 2021 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.26 (ruby-2.7.2).
 </div>
