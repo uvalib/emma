@@ -13,6 +13,7 @@ __loading_begin(__FILE__)
 # @attr [String]                        emma_retrievalLink
 # @attr [String]                        emma_webPageLink
 # @attr [IsoDate]                       emma_lastRemediationDate
+# @attr [IsoDate]                       emma_sortDate
 # @attr [IsoDate]                       emma_repositoryMetadataUpdateDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
@@ -39,10 +40,11 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# NOTE: These fields are a subset of:
-# @see Search::Record::MetadataRecord
+# @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/MetadataCommonRecord                               Search API documentation
+# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/MetadataCommonRecord  HTML schema documentation
+# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3                                           JSON schema specification
 #
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/MetadataCommonRecord
+# @see Search::Record::MetadataRecord (schema superset)
 #
 #--
 # noinspection DuplicatedCode
@@ -58,6 +60,7 @@ class Search::Record::MetadataCommonRecord < Search::Api::Record
     has_one   :emma_retrievalLink
     has_one   :emma_webPageLink
     has_one   :emma_lastRemediationDate,          IsoDate
+    has_one   :emma_sortDate,                     IsoDate
     has_one   :emma_repositoryMetadataUpdateDate, IsoDate
     has_one   :emma_lastRemediationNote
     has_one   :emma_formatVersion

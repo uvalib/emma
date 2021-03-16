@@ -622,7 +622,8 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/repository.en.yml en.emma.repository
+  # @see file:config/locales/repository.en.yml *en.emma.repository*
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/EmmaRepository
   #
   REPOSITORY =
     REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze

@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Ingest::Record::IngestionRecord
+# Metadata ingestion schema for EMMA Federated Search Index.
 #
 # @attr [EmmaRepository]                emma_repository             *REQUIRED*
 # @attr [Array<String>]                 emma_collection
@@ -39,11 +39,12 @@ __loading_begin(__FILE__)
 # @attr [Array<A11yAccessMode>]         s_accessMode
 # @attr [Array<A11ySufficient>]         s_accessModeSufficient
 #
-# NOTE: These fields are identical to:
-# @see Search::Record::MetadataCommonRecord
+# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/IngestionRecord                             Ingest API documentation
+# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/IngestionRecord   HTML schema documentation
+# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3                                       JSON schema specification
+# @see file:config/locales/records/upload.en.yml *en.emma.upload.record.emma_data*
 #
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IngestionRecord
-# @see file:config/locales/records/upload.en.yml en.emma.upload.record.emma_data
+# @see Search::Record::MetadataCommonRecord (duplicate schema)
 #
 #--
 # noinspection DuplicatedCode

@@ -5,19 +5,20 @@
 
 __loading_begin(__FILE__)
 
-# Search::Record::MetadataRecord
+# Metadata record schema for EMMA Federated Search Index.
 #
 # @attr [String]                        emma_recordId
 # @attr [String]                        emma_titleId
-#
-# === Fields also defined in Search::Record::MetadataCommonRecord
-#
+#--
+# Fields also defined in Search::Record::MetadataCommonRecord:
+#++
 # @attr [EmmaRepository]                emma_repository
 # @attr [Array<String>]                 emma_collection
 # @attr [String]                        emma_repositoryRecordId
 # @attr [String]                        emma_retrievalLink
 # @attr [String]                        emma_webPageLink
 # @attr [IsoDate]                       emma_lastRemediationDate
+# @attr [IsoDate]                       emma_sortDate
 # @attr [IsoDate]                       emma_repositoryMetadataUpdateDate
 # @attr [String]                        emma_lastRemediationNote
 # @attr [String]                        emma_formatVersion
@@ -46,9 +47,6 @@ __loading_begin(__FILE__)
 #
 # @see Search::Record::SearchRecord (duplicate schema)
 #
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/MetadataRecord
-# @see file:config/locales/records/upload.en.yml en.emma.upload.record.emma_data
-#
 class Search::Record::MetadataRecord < Search::Api::Record
 
   include Search::Shared::TitleMethods
@@ -62,6 +60,7 @@ class Search::Record::MetadataRecord < Search::Api::Record
     has_one   :emma_retrievalLink
     has_one   :emma_webPageLink
     has_one   :emma_lastRemediationDate,          IsoDate
+    has_one   :emma_sortDate,                     IsoDate
     has_one   :emma_repositoryMetadataUpdateDate, IsoDate
     has_one   :emma_lastRemediationNote
     has_one   :emma_formatVersion

@@ -71,6 +71,7 @@ module SearchService::Request::Records
   # @option opt [String]                                  :creator
   # @option opt [String]                                  :title
   # @option opt [String]                                  :identifier
+  # @option opt [String]                                  :publisher
   # @option opt [DublinCoreFormat, Array<DublinCoreFormat>] :fmt
   # @option opt [FormatFeature, Array<FormatFeature>]     :formatFeature
   # @option opt [String]                                  :formatVersion
@@ -78,11 +79,21 @@ module SearchService::Request::Records
   # @option opt [EmmaRepository]                          :repository
   # @option opt [String, Array<String>]                   :collection
   # @option opt [IsoDate]                                 :lastRemediationDate
+  # @option opt [IsoDate]                                 :sortDate
   # @option opt [SearchSort]                              :sort
+  # @option opt [String]                                  :searchAfterId
+  # @option opt [String]                                  :searchAfterValue
+  # @option opt [Integer]                                 :size
   #
   # @return [Search::Message::SearchRecordList]
   #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/search/searchMetadata  HTML API documentation
+  # @see https://api.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/paths/search           JSON API specification
+  #
+  # == HTTP response codes
+  #
+  # 200 Accepted        Metadata records matching the search criteria.
+  # 400 Bad Request     Bad query parameter.
   #
   def get_records(**opt)
     opt = get_parameters(__method__, **opt)
@@ -94,6 +105,10 @@ module SearchService::Request::Records
         alias: {
           author:               :creator,
           fmt:                  :format,
+          keyword:              :q,
+          limit:                :size,
+          prev_id:              :searchAfterId,
+          prev_value:           :searchAfterValue,
           query:                :q,
         },
         optional: {
@@ -101,6 +116,7 @@ module SearchService::Request::Records
           creator:              String,
           title:                String,
           identifier:           String,
+          publisher:            String,
           format:               DublinCoreFormat,
           formatFeature:        FormatFeature,
           formatVersion:        String,
@@ -108,7 +124,11 @@ module SearchService::Request::Records
           repository:           EmmaRepository,
           collection:           String,
           lastRemediationDate:  IsoDate,
+          sortDate:             IsoDate,
           sort:                 SearchSort,
+          searchAfterId:        String,
+          searchAfterValue:     String,
+          size:                 Integer,
         },
         multi: %i[
           format
@@ -127,8 +147,6 @@ module SearchService::Request::Records
   # @param [Hash]   opt               Passed to #api.
   #
   # @return [Search::Message::SearchRecord]
-  #
-  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api
   #
   # NOTE: This is theoretical -- the endpoint is not yet defined
   #
