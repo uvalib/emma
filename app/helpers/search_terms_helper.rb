@@ -61,11 +61,24 @@ module SearchTermsHelper
       types.map { |type, cfg| cfg[:url_parameter]&.to_sym || type }
     }.freeze
 
-  # URL parameters that are definitely not search parameters.
+  # URL parameters that are search-related but "out-of-band".
   #
   # @type [Array<Symbol>]
   #
-  NON_SEARCH_KEYS = %i[offset start limit api_key modal].freeze
+  PAGINATION_KEYS = %i[start offset page prev_id prev_value].freeze
+
+  # URL parameters that are not directly used in searches.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_KEYS = [:api_key, :modal, :limit, *PAGINATION_KEYS].freeze
+
+  # URL parameters that do not represent relevant search result
+  # characteristics for #search_terms.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_SEARCH_TERM_KEYS = (NON_SEARCH_KEYS - %i[page]).freeze
 
   # Term separator for #list_search_terms.
   #
@@ -76,6 +89,8 @@ module SearchTermsHelper
   # URL parameters related to search menu settings.
   #
   # @type [Array<Symbol>]
+  #
+  # TODO: This may be questionable...
   #
   SEARCH_KEYS = %i[keyword sort limit language prefix]
 
@@ -200,7 +215,7 @@ module SearchTermsHelper
   def search_terms(target = nil, pairs: nil, only: nil, except: nil, **opt)
     target = search_target(target, **opt)
     only   = Array.wrap(only).compact.uniq.presence
-    except = [*except, *NON_SEARCH_KEYS].compact.uniq.presence
+    except = [*except, *NON_SEARCH_TERM_KEYS].compact.uniq.presence
     pairs  = (only || except) && pairs&.dup || url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except

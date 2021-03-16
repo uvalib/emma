@@ -27,15 +27,11 @@
     set_page_robots(:nofollow)
   end
 
-  title += " (#{count})" if list.blank?
+  opt = { list: list, total: total, page: page, row: row }
+  top_controls, bottom_controls = index_controls(**opt)
+  opt[:row] += 1 if top_controls
 
-  index_opt = { count: count, row: row }
-  index_opt[:page]  = page if page.present? # Show page if beyond the first.
-  index_opt[:count] = -1   if search.blank? # Don't show count normally.
-  top_controls, bottom_controls = index_controls(**index_opt)
-  row += 1 if top_controls
-
-  template_opt = { list: list, count: count, row: row, skip: :title }
+  template_opt = opt.merge!(skip: :title)
 
 -%>
 

@@ -7,8 +7,7 @@
 // Pagination controls.
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
-.pagination {
+.pagination-controls {
 
     @extend %control-group;
 
@@ -16,19 +15,73 @@
     height:        min-content;
     padding-left:  0.625rem;
     padding-right: 0.625rem;
+    line-height:   1.5;
     border-radius: 0.75rem;
 
-    > * {
+    @media #{$narrow-screen} {
+        margin:    0 auto;
+        font-size: medium;
+    }
 
-        font-weight: bold;
+    //=========================================================================
+    // Components
+    //=========================================================================
 
-        @media #{$not-narrow-screen} {
-            font-size: small;
+    .first,
+    .prev,
+    .next,
+    .last {
+
+        // Increase the click target size.
+        margin:          -0.125rem;
+        padding:         0.125rem 0.25rem;
+        text-decoration: none;
+
+        &:focus {
+            outline:        2px solid $button-accent;
+            outline-offset: -0.125rem;
+        }
+
+        .icon,
+        .label {
+
+            font-weight: bold;
+
+            @media #{$not-narrow-screen} {
+                font-size: small;
+            }
+        }
+
+        .label {
+            text-decoration: underline;
+        }
+
+        .icon:not(.hidden) + .label,
+        .label + .icon:not(.hidden) {
+            margin-left: 0.375rem;
+        }
+
+        &.disabled {
+            .icon {
+                color: gray;
+            }
+            .label {
+                text-decoration: none;
+            }
         }
     }
 
-    a:focus {
-        outline:        1px solid gray;
-        outline-offset: 1px;
+    .separator {
+
+        margin:      -1px 0.375rem 3px;
+        padding:     0;
+        line-height: 0.75;
+        font-size:   large;
+        font-weight: bold;
+        color:       gray;
+
+        @media #{$not-narrow-screen} {
+            font-size: x-large;
+        }
     }
 }

@@ -11,6 +11,21 @@
 // Unified Search pages
 //=============================================================================
 
+$row-separation:        0.75rem;
+$row-separation-narrow: 1rem;
+$value-right-margin:    calc(2 * #{$flex-gap-x});
+
+// The "top" values for sticky positioning -- the "narrow" version is much
+// larger because it is actually applied only to the the .field-Title element,
+// which needs to stick lower in order to keep from scrolling over the already-
+// stuck item number.  Also, this isn't using "vh" units because this seemed to
+// be inconsistent between emulations of, e.g., iPhone 5 and Galaxy Note 9.
+
+$sticky-top-wide:       2vh;
+$sticky-top-medium:     1.5vh;
+//$sticky-top-narrow:   7.5vh; // Don't scroll over sticky item number.
+$sticky-top-narrow:     2.75rem;
+
 // Use to display text as a substitute for a logo.
 %text-logo {
     padding:       1px 0.5rem;
@@ -52,14 +67,12 @@
 // Label/value pairs appropriate for either .search-list-entry or .file-info.
 .search-label-value-pairs {
 
-    $row-separation: 0.75rem;
-
     @extend .label-value-pairs;
 
     @include grid-row-gap($row-separation);
 
     @media #{$narrow-screen} {
-        @include grid-row-gap(1rem);
+        @include grid-row-gap($row-separation-narrow);
     }
 
     //=========================================================================
@@ -90,8 +103,6 @@
 
     .value {
 
-        $value-right-margin: calc(2 * #{$flex-gap-x});
-
         @media #{$wide-screen} {
             margin-right: $value-right-margin;
         }
@@ -101,10 +112,10 @@
             display:         flex;
             flex-direction:  row;
             justify-content: space-between;
+            gap:             $flex-gap-y $flex-gap-x;
             margin:          0 0 auto;
             font-size:       x-large;
             font-weight:     bold;
-            gap:             $flex-gap-y $flex-gap-x;
 
             @media #{$narrow-screen} {
 
@@ -119,26 +130,16 @@
 
             // @see SearchHelper#title_and_source
             .title {
-                flex:    0.33 1 auto;
-                margin:  0.5rem 0 auto;
+                flex:   0.33 1 auto;
+                margin: 0.5rem 0 auto;
             }
 
             // @see SearchHelper#title_and_source_logo
             .repository {
 
-                flex:       0 0 auto;
-                max-height: 3rem;
-
-                @media #{$wide-screen} {
-                    margin-right: $value-right-margin;
-                }
-
-                @media #{$not-wide-screen} {
-                    margin-top: 0.25rem;
-                }
+                flex: 0 0 auto;
 
                 img {
-                    height:     3rem;
                     max-height: 3rem;
                 }
             }
@@ -302,6 +303,12 @@
     @extend .item-list-entry;
     @extend .search-label-value-pairs;
 
+    // If this item is *false* then the label for the title field is displayed
+    // like other metadata labels.  If it is *true* then the label is not
+    // visible and the title expands across all columns.
+
+    $title-spans-entry: true;
+
     //=========================================================================
     // Components
     //=========================================================================
@@ -309,8 +316,27 @@
     > .label {
 
         &.field-Title {
-            @media #{$narrow-screen} {
+
+            @if $title-spans-entry {
+
                 @include screen-reader-only;
+
+                position:       unset !important;
+
+            } @else {
+
+                position:	    sticky;
+                top:		    2vh;
+                z-index:        1;
+                display:	    flex;
+                flex-direction: row;
+                align-items:	flex-start;
+                margin:		    0;
+                padding-top:    1.25rem;
+                background:	    white;
+                box-shadow:
+                    0.5rem  -0.5rem  0       0.5rem white,
+                    0.25rem -0.25rem 0.75rem 0.5rem white;
             }
         }
 
@@ -329,6 +355,116 @@
     }
 
     > .value {
+
+        &.field-Title {
+
+            position:      sticky;
+            top:           2vh;
+            z-index:       1;
+            align-items:   flex-start;
+            margin:        0;
+            font-size:     x-large;
+            font-weight:   bold;
+            background:	   white;
+            border-bottom: 1px solid darkgray;
+
+            @if $title-spans-entry {
+                @include grid-column-span;
+            }
+
+            @media #{$wide-screen} {
+                top:        $sticky-top-wide;
+                box-shadow:
+                    -0.5rem -1rem     0        0.5rem   white,
+                     0       0        0.25rem  0.25rem  white;
+            }
+
+            @media #{$medium-width} {
+                top:        $sticky-top-medium;
+                column-gap: calc(3 * #{$flex-gap-x});
+                box-shadow:
+                     0      -1rem     0        0.5rem   white,
+                     0       0        0.25rem  0.25rem  white;
+            }
+
+            @media #{$narrow-screen} {
+                top:            $sticky-top-narrow;
+                margin-top:     -0.5rem;
+                padding-bottom: 0.5rem;
+                border-color:   black;
+                box-shadow:
+                     0      -0.5rem   0        0.25rem  white,
+                     0       0.25rem  0.25rem  0        white;
+            }
+
+            // @see SearchHelper#title_and_source
+            .title {
+
+                margin: 0;
+
+                @media #{$not-narrow-screen} {
+                    height: 100%;
+                    flex:   1 1 auto;
+                }
+
+                @media #{$wide-screen} {
+                    padding-bottom: 1rem;
+                    font-size:      larger;
+                }
+
+                @media #{$medium-width} {
+                    padding-bottom: 0.75rem;
+                }
+
+                /**
+                 * NOTE: Height is limited to avoid edge-case titles taking up
+                 * a large portion of the screen -- using "em" units in order
+                 * to relate to the element's own font.  Most titles can be
+                 * shown in 3 lines or less; a little extra height is given so
+                 * that if the title needs to be scrolled, the fourth line is
+                 * partially displayed but clipped.
+                 */
+                @media #{$narrow-screen} {
+                    max-height:    4em;
+                    padding-right: $scroll-easement;
+                    overflow-y:    auto;
+                    flex:          1 1 100%;
+                }
+            }
+
+            // @see SearchHelper#title_and_source_logo
+            .repository {
+
+                display:         flex;
+                justify-content: flex-end;
+
+                @media #{$wide-screen} {
+                    flex-basis:     15%;
+                    margin-left:    $value-right-margin;
+                    padding-bottom: 1rem;
+                }
+
+                @media #{$medium-width} {
+                    flex-basis:     20%;
+                    margin-top:     0.25rem;
+                    margin-left:    $value-right-margin;
+                    padding-bottom: 0.75rem;
+                }
+
+                @media #{$narrow-screen} {
+                    padding-bottom: 0.5rem;
+                }
+
+                img {
+
+                    height: auto;
+
+                    @media #{$not-wide-screen} {
+                        max-height: 2.5rem;
+                    }
+                }
+            }
+        }
 
         &.field-Format {
             font-weight: bold;
@@ -382,6 +518,81 @@
     // Components
     //=========================================================================
 
+    $item-number-bg:     lighter($uva-accent-blue, 97.5%);
+    $item-number-border: $uva-accent-blue;
+
+    .pagination-top {
+
+        display:        flex;
+        flex-wrap:      wrap;
+        flex-direction: row;
+
+        @media #{$not-narrow-screen} {
+            align-items: center;
+            max-width:   inherit;
+        }
+
+        @media #{$narrow-screen} {
+            flex-direction: column;
+        }
+
+        //=====================================================================
+        // Components
+        //=====================================================================
+
+        .pagination-controls {
+            flex: 0 0 auto;
+        }
+
+        .counts {
+
+            flex:        0 1 auto;
+            line-height: 1.25;
+
+            @media #{$not-narrow-screen} {
+                margin-left: 1.5rem;
+            }
+
+            @media #{$medium-width} {
+                flex-basis: 50%; // Push .upload-page-filter-panel to next row.
+            }
+
+            @media #{$narrow-screen} {
+                flex-direction: column;
+                align-items:    center;
+                margin:         1rem 0 0;
+            }
+
+            .page-count {
+                display:       inline-block;
+                padding:       0.25rem 0.625rem;
+                font-weight:   bold;
+                word-spacing:  0.125rem;
+                color:         white;
+                background:    $uva-blue;
+                border:        2px solid lightgray;
+                border-radius: 4px;
+            }
+
+            .search-count {
+
+                display: inline-block;
+                margin:  auto 0;
+
+                @media #{$narrow-screen} {
+                    margin: 0.5rem 0 0;
+                }
+            }
+
+            .page-count + .search-count,
+            .search-count + .page-count {
+                @media #{$not-narrow-screen} {
+                    margin-left: 1rem;
+                }
+            }
+        }
+    }
+
     .number {
 
         margin-top:    0;
@@ -393,87 +604,101 @@
         font-weight:   bold;
 
         @media #{$not-narrow-screen} {
-            background-color: lighter($uva-accent-blue, 97.5%);
-            border:           1px solid $uva-accent-blue;
+            background: $item-number-bg;
+            border:     1px solid $item-number-border;
         }
 
         @media #{$narrow-screen} {
-            position:         sticky;
-            top:              0;
-            padding:          0 0 0.25rem;
-            text-align:       center;
-            font-size:        x-large;
-            background-color: white;
+            position:      sticky;
+            top:           0;
+            margin-bottom: 0;
+            padding:       0;
+            text-align:    center;
+            background:    white;
+            box-shadow:    0 0 0 0.75rem white;
         }
 
         .container {
 
+            @media #{$wide-screen} {
+                top:            $sticky-top-wide;
+                margin-top:     0.625rem;
+            }
+
+            @media #{$medium-width} {
+                top:            $sticky-top-medium;
+                margin-top:     0.75rem;
+            }
+
             @media #{$narrow-screen} {
-                flex-direction:   row;
-                background-color: lighter($uva-accent-blue, 97.5%);
-                border-bottom:    1px solid $uva-accent-blue;
-                box-shadow:       0 -0.375rem 0 0.375rem white;
+                top:            0;
+                flex-direction: row;
             }
 
             .value {
 
-                margin-top: $gap-y;
+                margin: 0;
+
+                @media #{$wide-screen} {
+                    padding-top:   0.25rem;
+                }
 
                 @media #{$medium-width} {
-                    margin-top: calc(#{$gap-y} / 2);
+                    padding-top:   0.125rem;
                 }
 
                 @media #{$narrow-screen} {
+                    height:        1.75rem;
+                    padding-top:   0.125rem;
                     margin-bottom: $gap-y;
+                    background:    $item-number-bg;
+                    border-bottom: 1px solid $item-number-border;
                     flex:          1 0 auto;
                 }
             }
 
             .icon-tray {
 
-                padding-top:    $icon-pad / 2;
-                padding-bottom: $icon-pad / 2;
 
                 @media #{$not-narrow-screen} {
-                    margin-left:    1px;
+                    margin-top:     1rem;
+                    margin-left:    0;
                     margin-right:   -$icon-pad;
+                    padding-top:    $icon-pad / 2;
+                    padding-bottom: $icon-pad / 2;
+                    box-shadow:     2px 2px 1px 1px lightgray;
                 }
 
                 @media #{$narrow-screen} {
                     position:       absolute;
-                    right:          0.5rem;
+                    top:            0.125rem;
+                    right:          0;
                     flex-direction: row;
                     margin:         0;
-                    padding-left:   $icon-pad / 2;
-                    padding-right:  $icon-pad / 2;
+                    padding:        0 ($icon-pad / 2);
                 }
             }
 
             .icon {
                 @media #{$narrow-screen} {
+
                     margin: 0;
+
+                    & + .icon {
+                        margin-left: 0.25rem;
+                    }
                 }
             }
         }
     }
 
+    /**
+     * NOTE: This is tuned to account for the varying types of fields
+     * across the records displayed in search.  Without some adjustment,
+     * the grid of each record aligns only to the widest label that it
+     * happens to be displaying.
+     */
     .search-list-entry {
-
-        @media #{$wide-screen} {
-
-            border-right: 1px solid $uva-accent-blue;
-
-            &.empty {
-                border-right: none;
-            }
-        }
-
-        /**
-         * NOTE: This is tuned to account for the varying types of fields
-         * across the records displayed in search.  Without some adjustment,
-         * the grid of each record aligns only to the widest label that it
-         * happens to be displaying.
-         */
         @media #{$wide-screen} {
             grid-template-columns: [label] minmax(auto, 0.1375fr) [value] 1fr;
         }
@@ -486,7 +711,8 @@
     .search-list-entry {
 
         @media #{$not-narrow-screen} {
-            margin-bottom: calc(2 * #{$results-entry-gap-y});
+            margin-bottom:  calc(2 * #{$results-entry-gap-y});
+            padding-bottom: 0.5rem;
         }
 
         @media #{$medium-width} {

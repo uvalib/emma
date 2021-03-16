@@ -638,30 +638,54 @@ module ModelHelper
 
   public
 
+  # Options used with template :locals.
+  #
+  # @type [Array<Symbol>]
+  #
+  VIEW_TEMPLATE_OPT = %i[list page count row level skip].freeze
+
   # Method options which are processed internally and not passed on as HTML
   # options.
   #
   # @type [Array<Symbol>]
   #
-  ITEM_ENTRY_OPT = %i[index offset level row group skip].freeze
+  ITEM_ENTRY_OPT = %i[index offset group row level skip].freeze
 
   # Generate applied search terms and top/bottom pagination controls.
   #
-  # @param [Integer] count            Default: `#total_items`.
-  # @param [Integer] page
-  # @param [Integer] row
-  # @param [Hash]    opt              Passed to #page_filter.
+  # @param [Array, nil]          list   Default: #page_items.
+  # @param [Integer, #to_i, nil] count  Default: *list* size.
+  # @param [Integer, #to_i, nil] total  Default: count.
+  # @param [Integer, #to_i, nil] page
+  # @param [Integer, #to_i, nil] size   Default: #page_size.
+  # @param [Integer, #to_i, nil] row    Default: 2.
+  # @param [Hash]    opt                Passed to #page_filter.
   #
   # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
-  def index_controls(count: nil, page: nil, row: nil, **opt)
-    count ||= total_items
-    page    = page.to_i
-    row     = (row || 1) + 1
+  def index_controls(
+    list:   nil,
+    count:  nil,
+    total:  nil,
+    page:   nil,
+    size:   nil,
+    row:    nil,
+    **opt
+  )
+    opt.except!(*VIEW_TEMPLATE_OPT)
+    items   = list        || page_items
+    count   = count&.to_i || items.size
+    total   = total&.to_i || count
+    page    = page&.to_i  || 1
+    size    = size&.to_i  || page_size
+    row     = (row&.to_i  || 1) + 1
+    paging  = (page > 1)
+    more    = (count <  total) || (count == size)
+    final   = (count == total) || (count <  size)
     links   = pagination_controls
     counts  = []
-    counts << page_number(page)       if page > 1
-    counts << pagination_count(count) unless count.negative?
+    counts << page_number(page)              if paging || more
+    counts << pagination_count(count, total) if paging || final
     counts  = html_div(*counts, class: 'counts')
     filter  = page_filter(**opt)
     top = html_div(links, counts, filter, class: "pagination-top row-#{row}")

@@ -9,6 +9,8 @@ __loading_begin(__FILE__)
 #
 class ApplicationRecord < ActiveRecord::Base
 
+  include Emma::Common
+
   self.abstract_class = true
 
   # ===========================================================================

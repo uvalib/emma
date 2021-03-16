@@ -48,10 +48,6 @@ en:
           values:       !ruby/symbol BsFormatType
           multiple:     false
 
-        size:
-          tooltip:      'Specify the number of search results per page'
-          values:       [10, 25, 50, 100]
-
         sort:
           values:       !ruby/symbol BsTitleSortOrder
           reverse:

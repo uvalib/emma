@@ -100,6 +100,7 @@ module SearchService::Request::Records
   # 400 Bad Request     Bad query parameter.
   #
   def get_records(**opt)
+    opt.slice(:prev_id, :prev_value).each { |k, v| opt[k] = CGI.unescape(v) }
     opt = get_parameters(__method__, **opt)
     api(:get, 'search', **opt)
     Search::Message::SearchRecordList.new(response, error: exception)

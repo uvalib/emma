@@ -47,10 +47,6 @@ en:
           values:       !ruby/symbol BsPeriodicalFormat
           multiple:     false
 
-        size:
-          tooltip:      'Specify the number of search results per page'
-          values:       [10, 25, 50, 100]
-
         sort:
           values:       !ruby/symbol BsPeriodicalSortOrder
           reverse:

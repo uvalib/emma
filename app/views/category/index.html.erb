@@ -23,12 +23,11 @@
     set_page_description(title)
   end
 
-  title += " (#{count})" if list.blank?
+  opt = { list: list, total: total, page: page, row: row }
+  top_controls, bottom_controls = index_controls(**opt)
+  opt[:row] += 1 if top_controls
 
-  top_controls, bottom_controls = index_controls(count: count, row: row)
-  row += 1 if top_controls
-
-  template_opt = { list: list, count: count, row: row, skip: :title }
+  template_opt = opt.merge!(skip: :title)
 
 -%>
 

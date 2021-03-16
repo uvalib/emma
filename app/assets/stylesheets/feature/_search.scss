@@ -20,26 +20,33 @@
 }
 
 .pagination-top {
+
     margin-top:    $results-entry-gap-y;
     margin-bottom: calc(2 * #{$results-entry-gap-y});
+
+    @media #{$narrow-screen} {
+        margin-bottom: $results-entry-gap-y;
+    }
 }
 
 .pagination-bottom {
-    margin-top:    $results-entry-gap-y;
-    margin-bottom: 0;
-}
 
-// noinspection SassScssResolvedByNameOnly
-@media #{$narrow-screen} {
-    .pagination-top,
-    .pagination-bottom {
+    margin-top:    calc(#{$results-entry-gap-y} / 2);
+    margin-bottom: 0;
+
+    @media #{$not-wide-screen} {
         margin-top: calc(2 * #{$results-entry-gap-y});
     }
 }
 
 .counts {
 
-    display: inline-block;
+    display: inline-flex;
+
+    // Current page of results.
+    .page-count {
+        // TODO: ??? .counts .page-count
+    }
 
     // A total count of the number of search results.
     .search-count {
@@ -50,11 +57,6 @@
         @media #{$narrow-screen} {
             margin-top: 0.5rem;
         }
-    }
-
-    // Current page of results.
-    .page-count {
-        // TODO: ???
     }
 }
 

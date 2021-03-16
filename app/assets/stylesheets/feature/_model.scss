@@ -18,7 +18,7 @@ $results-entry-gap-y: $page-padding;
 $results-entry-margin-y: 0.67rem;
 
 // Padding for control icons (.number .container .icon-tray .icon).
-$icon-pad: 4px;
+$icon-pad: 0.25rem;
 
 // Padding for control icon holder (.number .container .icon-tray).
 $tray-pad: 1.5 * $icon-pad;
@@ -116,10 +116,7 @@ $data-list-border-color: none;
     @extend .label-value-pairs;
 
     &.empty {
-
-        margin-top:    $results-entry-gap-y;
-        margin-bottom: 0;
-
+        margin-bottom:         0;
         grid-template-columns: 0 max-content;
     }
 
@@ -131,9 +128,7 @@ $data-list-border-color: none;
 
     .value {
         &.field-None {
-
-            width:         max-content;
-            margin-bottom: $results-entry-gap-y;
+            width: max-content;
         }
     }
 }
@@ -194,7 +189,7 @@ $data-list-border-color: none;
                 margin-left:    -$tray-pad;
                 margin-right:   -$tray-pad;
                 background:     whitesmoke;
-                border:         1px solid lightgray;
+                border:         1px solid black;
                 border-radius:  0.25rem;
 
                 @media #{$narrow-screen} {

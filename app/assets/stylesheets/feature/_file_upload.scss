@@ -468,9 +468,20 @@ $form-gap-narrow: $form-gap / 3;
         // Components
         //=====================================================================
 
+        // noinspection CssReplaceWithShorthandSafely
         %upload-tray-control {
-            flex:   0 1 auto;
-            margin: 0 0.5rem 1rem 0;
+
+            flex:         0 1 auto;
+            margin:       0;
+            margin-right: 0.5rem;
+
+            @media #{$not-narrow-screen} {
+                margin-bottom: 1rem;
+            }
+
+            @media #{$narrow-screen} {
+                margin-bottom: 0.5rem;
+            }
         }
 
         .submit-button {

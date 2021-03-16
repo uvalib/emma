@@ -64,7 +64,7 @@ class SearchController < ApplicationController
       save_search(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
-      self.next_page   = next_page_path(@list, opt) # TODO: ???
+      self.next_page   = next_page_path(**opt)
       respond_to do |format|
         format.html
         format.json { render_json index_values }

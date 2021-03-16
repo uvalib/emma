@@ -158,7 +158,7 @@ module Emma::Common
   # @see #build_query_options
   #
   def url_query(*args)
-    opt = { decorate: true }.merge!(args.extract_options!)
+    opt = { decorate: true, unescape: false }.merge!(args.extract_options!)
     build_query_options(*args, opt).flat_map { |k, v|
       v.is_a?(Array) ? v.map { |e| "#{k}=#{e}" } : "#{k}=#{v}"
     }.compact.join('&')
@@ -180,17 +180,22 @@ module Emma::Common
   #                                           then values are accumulated as
   #                                           arrays (default: *false*).
   #
+  # @option args.last [Boolean] :unescape   If *false*, do not unescape values.
+  #
   # @return [Hash{String=>String}]
   #
   def build_query_options(*args)
     opt = {
       minimize: true,
       decorate: false,
-      replace:  false
+      replace:  false,
+      unescape: true
     }.merge!(args.extract_options!)
     minimize = opt.delete(:minimize)
     decorate = opt.delete(:decorate)
     replace  = opt.delete(:replace)
+    unescape = opt.delete(:unescape)
+    opt      = reject_blanks(opt)
     args << opt if opt.present?
     result = {}
     args.each do |arg|
@@ -202,8 +207,10 @@ module Emma::Common
       arg.each do |pair|
         k, v = pair.is_a?(Array) ? pair : pair.to_s.split('=', 2)
         k = CGI.unescape(k.to_s).delete_suffix('[]')
-        v = Array.wrap(v).reject(&:blank?).map { |s| CGI.unescape(s.to_s) }
+        v = Array.wrap(v).reject(&:blank?)
         next if k.blank? || v.blank?
+        v.map!(&:to_s)
+        v.map! { |s| CGI.unescape(s) } if unescape
         if replace || !res[k]
           res[k] = v
         else

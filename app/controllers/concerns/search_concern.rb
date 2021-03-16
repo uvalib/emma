@@ -11,9 +11,34 @@ module SearchConcern
 
   extend ActiveSupport::Concern
 
+  # Because #next_page_path is intended to override the PaginationConcern
+  # method, that module must have already been included in the including
+  # class.
+  #
+  # @type [Array<Class>]
+  #
+  SEARCH_CONCERN_PREREQUISITES = [PaginationConcern]
+
   included do |base|
+
     __included(base, 'SearchConcern')
+
+    (SEARCH_CONCERN_PREREQUISITES - base.ancestors).each do |mod|
+      message = "#{self.class} must be included after #{mod}"
+      if application_deployed?
+        Log.warn(message)
+        base.include(mod)
+      else
+        raise message
+      end
+    end
+
   end
+
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  include PaginationConcern unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   include ApiConcern
   include SearchHelper
@@ -86,6 +111,59 @@ module SearchConcern
   # ===========================================================================
 
   public
+
+  # Analyze the *list* object to generate the path for the next page of
+  # results.
+  #
+  # @param [Array<Search::Record::MetadataRecord>, nil] list
+  # @param [Hash, nil] url_params     Current request parameters.
+  #
+  # @return [String]                  Path to generate next page of results.
+  # @return [nil]                     If there is no next page.
+  #
+  # @see PaginationConcern#next_page_path
+  #
+  def next_page_path(list: nil, **url_params)
+    list = list&.to_a || self.page_items
+    # noinspection RubyNilAnalysis
+    return if (list.size < page_size) || (last = list.last).blank?
+
+    opt    = url_parameters(url_params)
+    page   = positive(opt.delete(:page))
+    offset = positive(opt.delete(:offset))
+    limit  = positive(opt.delete(:limit))
+    size   = limit || page_size
+    if offset && page
+      offset = nil if offset == ((page - 1) * size)
+    elsif offset
+      page   = (offset / size) + 1
+      offset = nil
+    else
+      page ||= 1
+    end
+    opt[:page]   = page   + 1    if page
+    opt[:offset] = offset + size if offset
+    opt[:limit]  = limit         if limit && (limit != default_page_size)
+
+    # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+    opt[:prev_id]    = url_escape(last.emma_recordId)
+    opt[:prev_value] = url_escape(
+      case opt[:sort]&.to_sym
+        when :relevance           then last.dc_title                 # NOTE [1]
+        when :title               then last.dc_title
+        when :sortDate            then last.emma_sortDate            # NOTE [2]
+        when :lastRemediationDate then last.emma_lastRemediationDate
+        else                           last.dc_title                 # NOTE [3]
+      end
+    )
+    # NOTE [1] :relevance isn't a real option
+    # NOTE [2] not per documentation, but why not?
+    # NOTE [3] assuming :title is the default sort.
+
+    opt[:immediate_search] = immediate_search?.presence
+
+    make_path(request.path, opt)
+  end
 
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
