@@ -1,14 +1,13 @@
 // app/assets/stylesheets/layouts/_content.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Main content area.
 //=============================================================================
 
 // The <main> content area of the page.
-//
-// noinspection SassScssResolvedByNameOnly
 .layout-content {
 
     margin:    $page-padding-y $page-padding-x;
@@ -29,8 +28,6 @@
 }
 
 // For the heading at the top of the content area.
-//
-// noinspection SassScssResolvedByNameOnly
 .heading {
 
     display:     flex;
@@ -46,8 +43,6 @@
 }
 
 // For enclosing the actual heading in a line with other items.
-//
-// noinspection SassScssResolvedByNameOnly
 .heading.container {
 
     display: grid;

@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_pagination.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Pagination controls.

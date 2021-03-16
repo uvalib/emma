@@ -1,12 +1,12 @@
 // app/assets/stylesheets/feature/_download.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Artifact download controls
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .artifact {
 
     // @see ArtifactHelper#artifact_link

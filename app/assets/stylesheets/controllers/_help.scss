@@ -1,6 +1,9 @@
 // app/assets/stylesheets/controllers/_help.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Mixins
@@ -24,7 +27,6 @@
     line-height: 1.35;
 }
 
-// noinspection SassScssResolvedByNameOnly
 %help-layout {
     @media #{$wide-screen} {
         max-width: 50vw;
@@ -34,7 +36,6 @@
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 %help-styles {
 
     @include help-interior;
@@ -102,9 +103,8 @@
             margin-bottom: $flex-gap-y;
 
             a {
-                display: inline-block;
-                margin:  0 -0.25rem 0 -0.5rem;
-                border:  0.125rem solid transparent;
+                margin: 0 -0.25rem 0 -0.5rem;
+                border: 0.125rem solid transparent;
             }
         }
     }
@@ -138,7 +138,6 @@
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 %help-elements {
 
     // Major sub-heading.
@@ -165,7 +164,7 @@
             flex:    0 1 auto;
 
             @media #{$not-narrow-screen} {
-                margin: auto 0 auto 1rem;
+                margin: auto 0.5rem;
             }
 
             @media #{$narrow-screen} {
@@ -285,7 +284,6 @@
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 %help-panel {
 
     @extend %panel;
@@ -331,7 +329,6 @@
 //=============================================================================
 
 // Help metadata label/value pairs for index listings.
-// noinspection SassScssResolvedByNameOnly
 .help-list-entry {
 
     @extend .item-list-entry;
@@ -347,7 +344,6 @@
 }
 
 // Zero or more .help-list-entry elements.
-// noinspection SassScssResolvedByNameOnly
 .help-list {
 
     @extend .item-list;
@@ -401,7 +397,6 @@ body.help {
 //
 // @see file:app/assets/javascripts/feature/help.js
 //
-// noinspection SassScssResolvedByNameOnly
 .help-section {
 
     // An inline rendering of the panel "More/Less" toggle button.
@@ -483,14 +478,11 @@ body.help {
 
 body.help.modal {
 
-    // noinspection SassScssResolvedByNameOnly
-    @media #{$wide-screen} {
-        .help-intro,
-        .help-toc,
-        .help-list,
-        .help-container {
-            max-width: unset;
-        }
+    .help-intro,
+    .help-toc,
+    .help-list,
+    .help-container {
+        max-width: unset;
     }
 }
 

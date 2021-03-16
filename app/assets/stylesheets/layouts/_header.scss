@@ -1,7 +1,7 @@
 // app/assets/stylesheets/layouts/_header.scss
 
-// @use 'shared/controls/buttons'; // TODO: SASS 4.0
-// @use 'shared/controls/grids';   // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Constants
@@ -17,7 +17,7 @@ $search-button-width:    6rem;
 
 // The <header> area of the page.
 //
-// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+// noinspection CssReplaceWithShorthandSafely
 .layout-header {
 
     position:        relative;

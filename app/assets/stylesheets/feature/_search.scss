@@ -1,13 +1,15 @@
 // app/assets/stylesheets/feature/_search.scss
 
-// @use 'feature/model';   // TODO: SASS 4.0
-// @use 'feature/overlay'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/functions'      as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Search controls
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-top,
 .pagination-bottom {
 
@@ -17,13 +19,11 @@
     margin:    0;
 }
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-top {
     margin-top:    $results-entry-gap-y;
     margin-bottom: calc(2 * #{$results-entry-gap-y});
 }
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-bottom {
     margin-top:    $results-entry-gap-y;
     margin-bottom: 0;
@@ -47,7 +47,6 @@
         display: inline-block;
         margin:  0 0 0 0.75rem;
 
-        // noinspection SassScssResolvedByNameOnly
         @media #{$narrow-screen} {
             margin-top: 0.5rem;
         }
@@ -64,7 +63,6 @@
 //=============================================================================
 
 // An indicator that is presented during a time-consuming search.
-// noinspection SassScssResolvedByNameOnly
 .search-in-progress {
 
     @extend .overlay;

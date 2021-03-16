@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_edition.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
 
 //=============================================================================
 // Periodical edition index page

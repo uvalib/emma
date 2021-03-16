@@ -1,20 +1,17 @@
 // app/assets/stylesheets/feature/_model.scss
 
-// @use 'shared/mixins';         // TODO: SASS 4.0
-// @use 'shared/common';         // TODO: SASS 4.0
-// @use 'shared/controls/grids'; // TODO: SASS 4.0
-// @use 'shared/controls/lists'; // TODO: SASS 4.0
-// @use 'shared/controls/table'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/functions'      as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as *;
 
 //=============================================================================
 // Definitions
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
-$results-entry-gap-x:    $page-padding-x;
-
-// noinspection SassScssResolvedByNameOnly
-$results-entry-gap-y:    $page-padding;
+$results-entry-gap-x: $page-padding-x;
+$results-entry-gap-y: $page-padding;
 
 // This fixed value will maintain an acceptable separation between links
 // without being scaled to display dimensions.
@@ -35,7 +32,7 @@ $data-list-border-color: none;
 
 // A collection of one or more label/value pairs.
 //
-// noinspection SassScssResolvedByNameOnly, CssOverwrittenProperties
+// noinspection CssOverwrittenProperties
 .label-value-pairs {
 
     @extend .list-2-column;
@@ -118,7 +115,6 @@ $data-list-border-color: none;
 
     @extend .label-value-pairs;
 
-    // noinspection SassScssResolvedByNameOnly
     &.empty {
 
         margin-top:    $results-entry-gap-y;
@@ -143,8 +139,6 @@ $data-list-border-color: none;
 }
 
 // Zero or more .item-list-entry elements.
-//
-// noinspection SassScssResolvedByNameOnly
 .item-list {
 
     @extend .list-2-column;
@@ -239,12 +233,12 @@ $data-list-border-color: none;
 
 // Model entry fields for index listings.
 //
-// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+// noinspection CssReplaceWithShorthandSafely
 .item-list-entry-panel {
 
-    $item-padding:           0.5rem;
-    $value-separation:       2px;
-    $max-columns:            20;
+    $item-padding:     0.5rem;
+    $value-separation: 2px;
+    $max-columns:      20;
 
     @extend .item-list-entry;
 
@@ -418,8 +412,6 @@ $data-list-border-color: none;
 }
 
 // Metadata in tabular form.
-//
-// noinspection SassScssResolvedByNameOnly
 .item-table {
     @extend .grid-table;
 }
@@ -446,8 +438,6 @@ $data-list-border-color: none;
 
 // Wrapper for item details which supports a second column of information to
 // the right of the details listing.
-//
-// noinspection SassScssResolvedByNameOnly
 .item-container {
 
     display:        flex;
@@ -468,7 +458,7 @@ $data-list-border-color: none;
 
         &:last-child {
             img {
-                width: 100%;
+                max-width: 100%;
             }
         }
 

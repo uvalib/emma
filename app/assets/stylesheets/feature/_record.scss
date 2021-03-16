@@ -1,12 +1,12 @@
 // app/assets/stylesheets/feature/_record.scss
 
-// @use 'shared/controls/popup'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Repository record popup control
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .record-popup {
 
     @extend .popup-container;

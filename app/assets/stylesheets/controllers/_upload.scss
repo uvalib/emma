@@ -1,7 +1,12 @@
 // app/assets/stylesheets/controllers/_upload.scss
 
-// @use 'feature/model';  // TODO: SASS 4.0
-// @use 'feature/search'; // TODO: SASS 4.0
+@use 'shared/variables'        as *;
+@use 'shared/common'           as *;
+@use 'shared/functions'        as *;
+@use 'shared/mixins'           as *;
+@use 'shared/controls/buttons' as *;
+@use 'shared/controls/grids'   as *;
+@use 'feature/model'           as *;
 
 //=============================================================================
 // Upload index page
@@ -11,7 +16,7 @@ $upload-padding:   0.5rem;
 $upload-entry-gap: 2rem;
 
 // Upload entry fields for index listings.
-// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+// noinspection CssReplaceWithShorthandSafely
 .upload-list-entry {
 
     @extend .item-list-entry-panel;
@@ -111,7 +116,6 @@ $upload-entry-gap: 2rem;
 }
 
 // Zero or more .upload-list-entry elements.
-// noinspection SassScssResolvedByNameOnly
 .upload-list {
 
     @extend .item-list;
@@ -218,12 +222,10 @@ $upload-entry-gap: 2rem;
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .check-status-popup {
 
     @extend .popup-container;
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$medium-width} {
         top: 0;
     }
@@ -240,7 +242,6 @@ $upload-entry-gap: 2rem;
     }
 
     // The panel displaying content which is hidden until activated.
-    // noinspection SassScssResolvedByNameOnly
     .popup-panel {
 
         @media #{$wide-screen} {
@@ -306,7 +307,6 @@ form.select-entry {
 
     margin: 3rem 0;
 
-    // noinspection SassScssResolvedByNameOnly
     select {
 
         @extend %control-shadow;
@@ -330,7 +330,6 @@ form.select-entry {
 
 .selected-item {
 
-    // noinspection SassScssResolvedByNameOnly
     .selected-header {
 
         margin:    $page-padding 0;
@@ -345,7 +344,6 @@ form.select-entry {
 
         @extend .toggle-panel;
 
-        // noinspection SassScssResolvedByNameOnly
         @media #{$not-narrow-screen} {
             margin-left:  2rem;
             margin-right: 2rem;
@@ -367,7 +365,6 @@ form.select-entry {
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .upload-fields {
 
     display:     grid;
@@ -692,10 +689,8 @@ body.upload {
 // Upload admin page
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 $aws-bucket-color:          $uva-blue;
 $aws-bucket-padding:        0.5rem;
-// noinspection SassScssResolvedByNameOnly
 $upload-admin-section-gap:  calc(2 * #{$page-padding});
 $upload-admin-column-space: 0.75rem;
 
@@ -730,7 +725,6 @@ $upload-admin-column-space: 0.75rem;
         [size]   0.5fr
         [date]   1fr;
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$medium-width} {
         grid-template-columns:
             [prefix] 0.6fr
@@ -739,7 +733,6 @@ $upload-admin-column-space: 0.75rem;
             [date]   1fr;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$narrow-screen} {
         grid-template-columns: 1fr;
         margin-bottom:         1rem;
@@ -756,7 +749,6 @@ $upload-admin-column-space: 0.75rem;
         grid-column: 1/-1;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     &.row {
         .last_modified {
             @media #{$medium-width} {
@@ -766,7 +758,6 @@ $upload-admin-column-space: 0.75rem;
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .aws-bucket {
     @media #{$narrow-screen} {
 
@@ -801,7 +792,6 @@ $upload-admin-column-space: 0.75rem;
     margin-top: $upload-admin-column-space;
 }
 
-// noinspection SassScssResolvedByNameOnly
 .aws-link {
     @include link-button(lightgray);
     @extend %control-button;

@@ -1,12 +1,13 @@
 // app/assets/stylesheets/controllers/_home.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Welcome page
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .panel {
 
     @extend %panel;
@@ -33,7 +34,6 @@ body.home-main,
 body.home-welcome,
 body.home-dashboard {
 
-    // noinspection SassScssResolvedByNameOnly
     .sign-in {
 
         margin-top:    $page-padding;

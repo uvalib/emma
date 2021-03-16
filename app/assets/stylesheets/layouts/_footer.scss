@@ -1,6 +1,7 @@
 // app/assets/stylesheets/layouts/_footer.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Page footer.
@@ -10,7 +11,7 @@ $footer-margin-top: 1rem;
 
 // The <footer> at the bottom of every page.
 //
-// noinspection SassScssResolvedByNameOnly, CssReplaceWithShorthandSafely
+// noinspection CssReplaceWithShorthandSafely
 .layout-footer {
     position:       relative;
     z-index:        $z-raised;
@@ -23,7 +24,6 @@ $footer-margin-top: 1rem;
     box-shadow:     0 0 1rem -0.25rem $header-bg;
 }
 
-// noinspection SassScssResolvedByNameOnly
 .footer-section {
 
     @extend %banner;

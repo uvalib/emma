@@ -1,6 +1,7 @@
 // app/assets/stylesheets/shared/_common.scss
 
-// @use 'shared/variables'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // Placeholder classes
@@ -18,8 +19,6 @@
 }
 
 // Make focus outline more easily seen.
-//
-// noinspection SassScssResolvedByNameOnly
 %focus {
     outline:        2px solid $focus-accent;
     outline-offset: 2px;
@@ -35,8 +34,6 @@
 }
 
 // Make an element only visible to screen readers.
-//
-// noinspection SassScssResolvedByNameOnly
 %sr-only {
     @include screen-reader-only;
 }
@@ -69,8 +66,6 @@
 }
 
 // An element that spans the entire width of the display.
-//
-// noinspection SassScssResolvedByNameOnly
 %banner {
 
     display:          flex;
@@ -108,8 +103,6 @@
 }
 
 // A panel for highlighting content.
-//
-// noinspection SassScssResolvedByNameOnly
 %panel {
     display:          block;
     padding:          0.5rem;
@@ -151,7 +144,6 @@
 
     @extend %panel;
 
-    // noinspection SassScssResolvedByNameOnly
     @include user-select(none);
 
     display:     inline-flex;
@@ -166,8 +158,6 @@
 }
 
 // Highlight button on hover.
-//
-// noinspection SassScssResolvedByNameOnly
 %button-hover {
 
     cursor: pointer;
@@ -197,8 +187,6 @@
 // The baseline appearance inherits (conceptually) from .uppy-FileInput-btn.
 // Classes that extend this may need to add "color: inherit" to get the
 // intended color for text (and, by default, borders).
-//
-// noinspection SassScssResolvedByNameOnly
 %control-button {
 
     @extend %button-hover;
@@ -223,7 +211,6 @@
     text-decoration:    none;
     font-size:          large;
 
-    // noinspection SassScssResolvedByNameOnly
     &.disabled,
     &.forbidden {
         background-color: $input-disabled-bg;
@@ -238,19 +225,16 @@
 }
 
 // A pop-out effect for panels.
-// noinspection SassScssResolvedByNameOnly
 %popup-shadow {
     box-shadow: $popup-shadow;
 }
 
 // A subtle pop-out effect for text blocks.
-// noinspection SassScssResolvedByNameOnly
 %block-shadow {
     box-shadow: $block-shadow;
 }
 
 // A very subtle pop-out effect for controls.
-// noinspection SassScssResolvedByNameOnly
 %control-shadow {
 
     box-shadow: $control-shadow;
@@ -318,8 +302,6 @@ fieldset {
 }
 
 // Include to make an element only visible to screen readers.
-//
-// noinspection SassScssResolvedByNameOnly
 .sr-only {
     @include screen-reader-only;
 }
@@ -336,7 +318,6 @@ fieldset {
 //=============================================================================
 
 // @see LayoutHelper#toggle_button
-// noinspection SassScssResolvedByNameOnly
 .toggle {
 
     @extend %control-button;
@@ -352,7 +333,6 @@ fieldset {
 }
 
 // Holds title text and a .toggle button.
-// noinspection SassScssResolvedByNameOnly
 .toggle-panel-title {
 
     display:        inline-flex;

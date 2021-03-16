@@ -1,14 +1,17 @@
 // app/assets/stylesheets/controllers/_search.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/functions'      as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Unified Search pages
 //=============================================================================
 
 // Use to display text as a substitute for a logo.
-//
-// noinspection SassScssResolvedByNameOnly
 %text-logo {
     padding:       1px 0.5rem;
     font-size:     medium;
@@ -20,8 +23,6 @@
 }
 
 // @see LogoHelper#repository_source_logo
-//
-// noinspection SassScssResolvedByNameOnly
 .repository {
 
     &.name {
@@ -49,8 +50,6 @@
 }
 
 // Label/value pairs appropriate for either .search-list-entry or .file-info.
-//
-// noinspection SassScssResolvedByNameOnly
 .search-label-value-pairs {
 
     $row-separation: 0.75rem;
@@ -214,8 +213,6 @@
 }
 
 // File format information section.
-//
-// noinspection SassScssResolvedByNameOnly
 .file-info {
 
     @extend .item-list-entry;
@@ -300,8 +297,6 @@
 //=============================================================================
 
 // Metadata record label/value pairs for index listings.
-//
-// noinspection SassScssResolvedByNameOnly
 .search-list-entry {
 
     @extend .item-list-entry;
@@ -375,8 +370,6 @@
 }
 
 // Zero or more .search-list-entry elements.
-//
-// noinspection SassScssResolvedByNameOnly
 .search-list {
 
     @extend .item-list;

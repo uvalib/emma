@@ -1,6 +1,8 @@
 // app/assets/stylesheets/controllers/_member.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
 
 //=============================================================================
 // Member index page
@@ -42,7 +44,6 @@
 }
 
 // Member download history.
-// noinspection SassScssResolvedByNameOnly
 .member-history {
 
     display: block;
@@ -68,8 +69,6 @@
 
 // Container for a .member-details and .member-preferences in a two-column
 // format for wide screens.
-//
-// noinspection SassScssResolvedByNameOnly
 .member-container {
 
     @extend .item-container;
