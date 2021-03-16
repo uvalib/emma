@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Message::ActiveBookProfile
 #
-# @attr [Array<AllowsType>]                 allows
+# @attr [Array<BsAllowsType>]               allows
 # @attr [Array<Bs::Record::Link>]           links
 # @attr [Integer]                           maxContributions
 # @attr [Bs::Record::ActiveBookPreferences] preferences
@@ -23,7 +23,7 @@ class Bs::Message::ActiveBookProfile < Bs::Api::Message
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many  :allows,                AllowsType
+    has_many  :allows,                BsAllowsType
     has_many  :links,                 Bs::Record::Link
     has_one   :maxContributions,      Integer
     has_one   :preferences,           Bs::Record::ActiveBookPreferences

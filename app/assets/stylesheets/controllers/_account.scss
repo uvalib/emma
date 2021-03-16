@@ -1,6 +1,7 @@
 // app/assets/stylesheets/controllers/_account.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Account index page
@@ -17,11 +18,13 @@
 }
 
 // Grid table of local EMMA user accounts.
-//
-// noinspection SassScssResolvedByNameOnly
 .account-table {
 
-    @extend .grid-table;
+    @extend .item-table;
+
+    td {
+        min-width: max-content;
+    }
 
     td.actions {
         .icon {
@@ -52,7 +55,6 @@
     @extend .upload-fields;
 }
 
-// noinspection SassScssResolvedByNameOnly
 .account-form,
 .account-delete-form {
 
@@ -63,7 +65,6 @@
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .account-form-container {
 
     display:       grid;

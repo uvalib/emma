@@ -1,21 +1,16 @@
 <%# app/views/devise/mailer/email_changed.html.erb -%>
 <%-
   set_page_robots(:noindex, :nofollow) unless modal?
+
+  unconfirmed = @resource.try(:unconfirmed_email) || @resource.email
 -%>
 
 <p>Hello <%= @email -%>!</p>
 
-<%- if @resource.try(:unconfirmed_email?) -%>
-  <p>
-    We're contacting you to notify you that your email is being changed to
-    <%= @resource.unconfirmed_email -%>.
-  </p>
-<%- else -%>
-  <p>
-    We're contacting you to notify you that your email has been changed to
-    <%= @resource.email -%>.
-  </p>
-<%- end -%>
+<p>
+  We're contacting you to notify you that your email is being changed to
+  <%= unconfirmed -%>.
+</p>
 
 <%-
   abort 'devise/mailer/email_changed - This is not expected to be used'

@@ -5,11 +5,12 @@
 
 __loading_begin(__FILE__)
 
-# Ingest::Message::IngestionRecordList
+# List of metadata ingestion records.
 #
 # @attr [Array<Ingest::Record::IngestionRecord>] records
 #
-# @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/components/schemas/IngestionRecordList
+# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/IngestionRecordList                     Ingest API documentation
+# @see https://api.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/components/schemas/IngestionRecordList  JSON schema specification
 #
 class Ingest::Message::IngestionRecordList < Ingest::Api::Message
 

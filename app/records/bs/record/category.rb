@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Record::Category
 #
-# @attr [CategoryType]            categoryType
+# @attr [BsCategoryType]          categoryType
 # @attr [String]                  code
 # @attr [String]                  description
 # @attr [Array<Bs::Record::Link>] links
@@ -21,7 +21,7 @@ class Bs::Record::Category < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    has_one   :categoryType, CategoryType
+    has_one   :categoryType, BsCategoryType
     has_one   :code
     has_one   :description
     has_many  :links,        Bs::Record::Link

@@ -108,7 +108,7 @@ var Emma = (function() {
     // Javascript has valid syntax even before pre-processing.
     // ========================================================================
 
-    // noinspection FunctionNamingConventionJS, FunctionWithMultipleReturnPointsJS
+    // noinspection FunctionNamingConventionJS
     /**
      * Interpret a string as a boolean value.
      *
@@ -124,7 +124,7 @@ var Emma = (function() {
         }
     }
 
-    // noinspection FunctionNamingConventionJS, FunctionWithMultipleReturnPointsJS
+    // noinspection FunctionNamingConventionJS
     /**
      * Interpret a string as a integer value.
      *
@@ -167,7 +167,7 @@ var Emma = (function() {
       return result;
     }
 
-    // noinspection FunctionNamingConventionJS, FunctionWithMultipleReturnPointsJS
+    // noinspection FunctionNamingConventionJS
     /**
      * Interpret a string as an Object definition.
      *
@@ -178,7 +178,7 @@ var Emma = (function() {
     function o$(arg) {
         switch (typeof arg) {
             case 'object': return arg;
-            case 'string': return JSON.parse(arg.replace('\n', '\\n'));
+            case 'string': return JSON.parse(arg.replace(/\n/g, '\\n'));
             default:       return {};
         }
     }
@@ -290,17 +290,17 @@ var Emma = (function() {
          * @type {{
          *    opener:       ElementProperties,
          *    closer:       ElementProperties,
-         *    search_type:  ElementProperties
+         *    search_type:  { string: ElementProperties }
          * }}
          */
         AdvSearch: {
             opener: {
-                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_LABEL %>",
-                tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_OPENER_TIP %>"
+                label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_LABEL %>",
+                tooltip: "<%= LayoutHelper::SearchFilters::ADV_SEARCH_OPENER_TIP %>"
             },
             closer: {
-                label:   "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_LABEL %>",
-                tooltip: "<%= LayoutHelper::SearchControls::ADV_SEARCH_CLOSER_TIP %>"
+                label:   "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_LABEL %>",
+                tooltip: "<%= LayoutHelper::SearchFilters::ADV_SEARCH_CLOSER_TIP %>"
             },
             search_type: o$('<%= SearchTermsHelper::SEARCH_TYPE.to_json %>')
         },

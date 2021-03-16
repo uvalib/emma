@@ -7,14 +7,14 @@ __loading_begin(__FILE__)
 
 # Bs::Record::TitleMetadataSummary
 #
-# @attr [Array<AllowsType>]              allows
+# @attr [Array<BsAllowsType>]            allows
 # @attr [Array<Bs::Record::Name>]        arrangers         *deprecated*
 # @attr [Array<Bs::Record::Name>]        authors           *deprecated*
 # @attr [Boolean]                        available
 # @attr [String]                         bookshareId
 # @attr [Array<Bs::Record::Category>]    categories
 # @attr [Array<Bs::Record::Name>]        composers         *deprecated*
-# @attr [Array<ContentWarning>]          contentWarnings
+# @attr [Array<BsContentWarning>]        contentWarnings
 # @attr [Array<Bs::Record::Contributor>] contributors
 # @attr [IsoYear]                        copyrightDate
 # @attr [Array<Bs::Record::Format>]      externalFormats
@@ -67,14 +67,14 @@ class Bs::Record::TitleMetadataSummary < Bs::Api::Record
   # noinspection DuplicatedCode
   #++
   schema do
-    has_many  :allows,            AllowsType
+    has_many  :allows,            BsAllowsType
     has_many  :arrangers,         Bs::Record::Name          # NOTE: deprecated
     has_many  :authors,           Bs::Record::Name          # NOTE: deprecated
     has_one   :available,         Boolean
     has_one   :bookshareId
     has_many  :categories,        Bs::Record::Category
     has_many  :composers,         Bs::Record::Name          # NOTE: deprecated
-    has_many  :contentWarnings,   ContentWarning
+    has_many  :contentWarnings,   BsContentWarning
     has_many  :contributors,      Bs::Record::Contributor
     has_one   :copyrightDate,     IsoYear
     has_many  :externalFormats,   Bs::Record::Format

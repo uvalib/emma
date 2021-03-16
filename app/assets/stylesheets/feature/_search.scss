@@ -1,13 +1,15 @@
 // app/assets/stylesheets/feature/_search.scss
 
-// @use 'feature/model';   // TODO: SASS 4.0
-// @use 'feature/overlay'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/functions'      as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Search controls
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-top,
 .pagination-bottom {
 
@@ -17,29 +19,34 @@
     margin:    0;
 }
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-top {
+
     margin-top:    $results-entry-gap-y;
     margin-bottom: calc(2 * #{$results-entry-gap-y});
+
+    @media #{$narrow-screen} {
+        margin-bottom: $results-entry-gap-y;
+    }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .pagination-bottom {
-    margin-top:    $results-entry-gap-y;
-    margin-bottom: 0;
-}
 
-// noinspection SassScssResolvedByNameOnly
-@media #{$narrow-screen} {
-    .pagination-top,
-    .pagination-bottom {
+    margin-top:    calc(#{$results-entry-gap-y} / 2);
+    margin-bottom: 0;
+
+    @media #{$not-wide-screen} {
         margin-top: calc(2 * #{$results-entry-gap-y});
     }
 }
 
 .counts {
 
-    display: inline-block;
+    display: inline-flex;
+
+    // Current page of results.
+    .page-count {
+        // TODO: ??? .counts .page-count
+    }
 
     // A total count of the number of search results.
     .search-count {
@@ -47,15 +54,9 @@
         display: inline-block;
         margin:  0 0 0 0.75rem;
 
-        // noinspection SassScssResolvedByNameOnly
         @media #{$narrow-screen} {
             margin-top: 0.5rem;
         }
-    }
-
-    // Current page of results.
-    .page-count {
-        // TODO: ???
     }
 }
 
@@ -64,7 +65,6 @@
 //=============================================================================
 
 // An indicator that is presented during a time-consuming search.
-// noinspection SassScssResolvedByNameOnly
 .search-in-progress {
 
     @extend .overlay;

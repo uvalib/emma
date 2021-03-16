@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Bs::Record::ActiveBook
 #
 # @attr [String]                           activeTitleId
-# @attr [Array<AllowsType>]                allows
+# @attr [Array<BsAllowsType>]              allows
 # @attr [String]                           assignedBy
 # @attr [Bs::Record::TitleMetadataSummary] book
 # @attr [IsoDate]                          dateAdded
@@ -29,7 +29,7 @@ class Bs::Record::ActiveBook < Bs::Api::Record
 
   schema do
     has_one   :activeTitleId
-    has_many  :allows,              AllowsType
+    has_many  :allows,              BsAllowsType
     has_one   :assignedBy
     has_one   :book,                Bs::Record::TitleMetadataSummary
     has_one   :dateAdded,           IsoDate

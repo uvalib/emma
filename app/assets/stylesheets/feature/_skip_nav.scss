@@ -1,13 +1,14 @@
 // app/assets/stylesheets/feature/_skip_nav.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'shared/mixins'    as *;
 
 //=============================================================================
 // "Skip navigation" menu
 //=============================================================================
 
 // Make the "skip navigation" menu visible when one of its links gets focus.
-// noinspection SassScssResolvedByNameOnly
 .skip-nav {
 
     $sn-padding:   0.25rem;
@@ -29,7 +30,6 @@
     &         { z-index: $z-hidden }
     &.visible { z-index: $z-popup; }
 
-    // noinspection CssBrowserCompatibilityForProperties
     .skip-nav-heading {
 
         @extend %clear-default-styling;

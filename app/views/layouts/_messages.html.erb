@@ -11,11 +11,11 @@
   messages &&= messages.unshift(nil).push(nil) # For leading/trailing newlines
   messages &&= safe_join(messages, "\n")
 
-  css = 'flash-messages'
-  css = css_classes(css, 'hidden') if messages.blank?
+  classes = 'flash-messages'
+  classes = css_classes(classes, 'hidden') if messages.blank?
 
 -%>
 
-<div class="<%= css -%>">
+<div class="<%= classes -%>">
   <%= messages %>
 </div>

@@ -33,10 +33,10 @@ module BookshareService::Request::AssignedTitles
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]              :start
-  # @option opt [Integer]             :limit        Default: 10
-  # @option opt [MyAssignedSortOrder] :sortOrder    Default: 'title'
-  # @option opt [Direction]           :direction    Default: 'asc'
+  # @option opt [String]                :start
+  # @option opt [Integer]               :limit        Default: 10
+  # @option opt [BsMyAssignedSortOrder] :sortOrder    Default: 'title'
+  # @option opt [BsSortDirection]       :direction    Default: 'asc'
   #
   # @return [Bs::Message::TitleMetadataSummaryList]
   #
@@ -50,10 +50,10 @@ module BookshareService::Request::AssignedTitles
     .tap do |method|
       add_api method => {
         optional: {
-          start:      String,
-          limit:      Integer,
-          sortOrder:  MyAssignedSortOrder,
-          direction:  Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMyAssignedSortOrder,
+          direction: BsSortDirection,
         },
         reference_id: '_my-assigned-titles'
       }
@@ -67,10 +67,10 @@ module BookshareService::Request::AssignedTitles
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]            :start
-  # @option opt [Integer]           :limit        Default: 10
-  # @option opt [AssignedSortOrder] :sortOrder    Default: 'title'
-  # @option opt [Direction]         :direction    Default: 'asc'
+  # @option opt [String]              :start
+  # @option opt [Integer]             :limit        Default: 10
+  # @option opt [BsAssignedSortOrder] :sortOrder    Default: 'title'
+  # @option opt [BsSortDirection]     :direction    Default: 'asc'
   #
   # @return [Bs::Message::AssignedTitleMetadataSummaryList]
   #
@@ -94,10 +94,10 @@ module BookshareService::Request::AssignedTitles
           userIdentifier: String,
         },
         optional: {
-          start:          String,
-          limit:          Integer,
-          sortOrder:      AssignedSortOrder,
-          direction:      Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsAssignedSortOrder,
+          direction: BsSortDirection,
         },
         reference_id:     '_titles-assigned-member'
       }

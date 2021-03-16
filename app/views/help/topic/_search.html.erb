@@ -5,9 +5,9 @@
   search        = 'Search'
   search        = help_span(search, class: 'search-button')
   panel_closer  = LayoutHelper::Common::PANEL_CLOSER_LABEL
-  panel_closer  = help_span(panel_closer, class: 'advanced-search-toggle')
+  panel_closer  = help_span(panel_closer, class: 'toggle')
   panel_opener  = LayoutHelper::Common::PANEL_OPENER_LABEL
-  panel_opener  = help_span(panel_opener, class: 'advanced-search-toggle')
+  panel_opener  = help_span(panel_opener, class: 'toggle')
   x             = LayoutHelper::SearchBar::CLEAR_SEARCH_ICON
   x             = html_span(x, 'aria-label': 'X')
   type_closed   = help_image(:search_type_closed)
@@ -439,10 +439,6 @@
     thousands) of results.
     This filter gives you control over how large result sets are broken into
     easier-to-handle chunks.
-  </p>
-
-  <p class="caveat">
-    NOTE: This capability is not implemented in the current version of EMMA.
   </p>
 
 </section>

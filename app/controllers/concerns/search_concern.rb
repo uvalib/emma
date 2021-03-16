@@ -11,12 +11,49 @@ module SearchConcern
 
   extend ActiveSupport::Concern
 
+  # Because #next_page_path is intended to override the PaginationConcern
+  # method, that module must have already been included in the including
+  # class.
+  #
+  # @type [Array<Class>]
+  #
+  SEARCH_CONCERN_PREREQUISITES = [PaginationConcern]
+
   included do |base|
+
     __included(base, 'SearchConcern')
+
+    (SEARCH_CONCERN_PREREQUISITES - base.ancestors).each do |mod|
+      message = "#{self.class} must be included after #{mod}"
+      if application_deployed?
+        Log.warn(message)
+        base.include(mod)
+      else
+        raise message
+      end
+    end
+
   end
+
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  include PaginationConcern unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   include ApiConcern
   include SearchHelper
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Indicate whether search calls should be recorded by default.
+  #
+  # @type [Boolean]
+  #
+  SAVE_SEARCHES = true?(ENV.fetch('SAVE_SEARCHES', true))
 
   # ===========================================================================
   # :section:
@@ -39,6 +76,95 @@ module SearchConcern
 
   public
 
+  # Indicate whether the current search should be recorded.
+  #
+  # @param [User, nil] user           Default: `#current_user`.
+  #
+  def save_search?(user = nil)
+    SAVE_SEARCHES # TODO: criteria?
+  end
+
+  # Record a search call.
+  #
+  # @param [User, nil]    user        Default: `#current_user`.
+  # @param [Array, #to_a] result      Default: @list.
+  # @param [Boolean]      force       Save even if #save_search? is *false*.
+  # @param [Hash]         parameters  Default: `#url_parameters`.
+  #
+  # @return [SearchCall]              New record.
+  # @return [nil]                     If saving was not possible.
+  #
+  def save_search(user: nil, result: nil, force: false, **parameters)
+    user ||= current_user
+    return unless force || save_search?(user)
+    attr = url_parameters(parameters)
+    attr[:controller] ||= :search
+    attr[:action]     ||= :index
+    attr[:user]       ||= user
+    attr[:result]     ||= result || @list
+    # noinspection RubyYardReturnMatch
+    SearchCall.create(attr)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # Analyze the *list* object to generate the path for the next page of
+  # results.
+  #
+  # @param [Array<Search::Record::MetadataRecord>, nil] list
+  # @param [Hash, nil] url_params     Current request parameters.
+  #
+  # @return [String]                  Path to generate next page of results.
+  # @return [nil]                     If there is no next page.
+  #
+  # @see PaginationConcern#next_page_path
+  #
+  def next_page_path(list: nil, **url_params)
+    list = list&.to_a || self.page_items
+    # noinspection RubyNilAnalysis
+    return if (list.size < page_size) || (last = list.last).blank?
+
+    opt    = url_parameters(url_params)
+    page   = positive(opt.delete(:page))
+    offset = positive(opt.delete(:offset))
+    limit  = positive(opt.delete(:limit))
+    size   = limit || page_size
+    if offset && page
+      offset = nil if offset == ((page - 1) * size)
+    elsif offset
+      page   = (offset / size) + 1
+      offset = nil
+    else
+      page ||= 1
+    end
+    opt[:page]   = page   + 1    if page
+    opt[:offset] = offset + size if offset
+    opt[:limit]  = limit         if limit && (limit != default_page_size)
+
+    # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+    opt[:prev_id]    = url_escape(last.emma_recordId)
+    opt[:prev_value] = url_escape(
+      case opt[:sort]&.to_sym
+        when :relevance           then last.dc_title                 # NOTE [1]
+        when :title               then last.dc_title
+        when :sortDate            then last.emma_sortDate            # NOTE [2]
+        when :lastRemediationDate then last.emma_lastRemediationDate
+        else                           last.dc_title                 # NOTE [3]
+      end
+    )
+    # NOTE [1] :relevance isn't a real option
+    # NOTE [2] not per documentation, but why not?
+    # NOTE [3] assuming :title is the default sort.
+
+    opt[:immediate_search] = immediate_search?.presence
+
+    make_path(request.path, opt)
+  end
+
   # Eliminate values from keys that would be problematic when rendering the
   # hash as JSON or XML.
   #
@@ -46,19 +172,39 @@ module SearchConcern
   #
   # @return [*]                       Same type as *value*.
   #
-  def normalize_keys(value)
+  def sanitize_keys(value)
     if value.is_a?(Hash)
       value
         .transform_keys   { |k| k.to_s.downcase.tr('^a-z0-9_', '_') }
-        .transform_values { |v| normalize_keys(v) }
+        .transform_values { |v| sanitize_keys(v) }
     elsif value.is_a?(Array) && (value.size > 1)
-      value.map { |v| normalize_keys(v) }
+      value.map { |v| sanitize_keys(v) }
     elsif value.is_a?(Array)
-      normalize_keys(value.first)
+      sanitize_keys(value.first)
     elsif value.is_a?(String) && value.include?(FileFormat::FILE_FORMAT_SEP)
       value.split(FileFormat::FILE_FORMAT_SEP).reject(&:blank?)
     else
       value
+    end
+  end
+
+  # Indicate whether search menu selections should take immediate effect.
+  #
+  # @param [*] value
+  #
+  # @return [Symbol]                  New setting value.
+  # @return [nil]                     If the setting was not changed.
+  #
+  # @see LayoutHelper#immediate_search?
+  #
+  def set_immediate_search(value)
+    # TODO: accept only for authenticated user
+    if %i[true false].include?(value)
+      @immediate_search = value
+    elsif true?(value)
+      @immediate_search = :true
+    elsif false?(value)
+      @immediate_search = :false
     end
   end
 
@@ -113,7 +259,7 @@ module SearchConcern
   #
   def identifier_keyword_redirect
     opt = request_parameters
-    QUERY_PARAMETERS.find do |q_param|
+    search_query_keys(**opt).find do |q_param|
       next if (q_param == :identifier) || (query = opt[q_param]).blank?
       next if (identifier = PublicationIdentifier.cast(query)).blank?
       opt[:identifier] = identifier.to_s

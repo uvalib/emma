@@ -1,14 +1,15 @@
 // app/assets/stylesheets/controllers/_periodical.scss
 
-// @use 'feature/model'; // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Periodical index page
 //=============================================================================
 
 // Periodical metadata label/value pairs for index listings.
-//
-// noinspection SassScssResolvedByNameOnly
 .periodical-list-entry {
 
     @extend .item-list-entry;
@@ -57,8 +58,6 @@
 
 // Container for a .periodical-details and .edition-list in a two-column format
 // for wide screens.
-//
-// noinspection SassScssResolvedByNameOnly
 .periodical-container {
 
     @extend .item-container;

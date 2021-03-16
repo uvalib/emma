@@ -1,12 +1,13 @@
 // app/assets/stylesheets/feature/_help.scss
 
-// @use 'shared/controls/popup'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'shared/functions' as *;
 
 //=============================================================================
 // Help popup control
 //=============================================================================
 
-// noinspection SassScssResolvedByNameOnly
 .help-popup {
 
     @extend .popup-container;

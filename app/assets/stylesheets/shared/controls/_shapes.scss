@@ -1,0 +1,60 @@
+// app/assets/stylesheets/shared/controls/_shapes.scss
+
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+
+// ============================================================================
+// CSS "icons"
+// ============================================================================
+
+/// Produce a left- or right-pointing triangle.
+///
+/// @param {String} $direction        Either "left" or "right".
+/// @param {String} $height           Scaled to surrounding font by default.
+///
+@mixin triangle-icon($direction: left, $height: 1em) {
+
+    width:         0;
+    height:        0;
+    margin:        auto 0;
+    padding:       0;
+    border-top:    ($height / 2) solid transparent;
+    border-bottom: ($height / 2) solid transparent;
+
+    @if $direction == left {
+        border-left:  none;
+        border-right: $height solid;
+    }
+    @if $direction == right {
+        border-left:  $height solid;
+        border-right: none;
+    }
+}
+
+/// Produce a hollow square.
+///
+/// @param {String} $height           Scaled to surrounding font by default.
+///
+@mixin square-icon($height: 0.3275em) {
+    width:   $height;
+    height:  $height;
+    margin:  auto 0;
+    padding: 0;
+    border:  $height solid;
+}
+
+// ============================================================================
+// CSS "icons"
+// ============================================================================
+
+.left-triangle-icon {
+    @include triangle-icon(left);
+}
+
+.right-triangle-icon {
+    @include triangle-icon(right);
+}
+
+.square-icon {
+    @include square-icon;
+}

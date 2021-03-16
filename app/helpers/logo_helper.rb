@@ -14,6 +14,8 @@ module LogoHelper
     __included(base, '[LogoHelper]')
   end
 
+  include HtmlHelper
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -32,13 +34,14 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source_logo(item = nil, opt = nil)
+    css_selector  = '.repository.logo'
     opt, html_opt = partition_options(opt, :source, :name, :logo)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
     logo = repository_logo(repo)
     if logo.present?
-      prepend_css_classes!(html_opt, 'repository', 'logo', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
+      prepend_classes!(html_opt, css_selector, repo)
       html_span(html_opt) { image_tag(asset_path(logo), alt: "#{name} logo") }
     else
       # noinspection RubyYardParamTypeMatch
@@ -57,12 +60,13 @@ module LogoHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def repository_source(item, opt = nil)
+    css_selector  = '.repository.name'
     opt, html_opt = partition_options(opt, :source, :name)
     repo = normalize_repository(opt[:source] || item)
     name = opt[:name] || repository_name(repo)
     if name.present?
-      prepend_css_classes!(html_opt, 'repository', 'name', repo)
       html_opt[:title] ||= repository_tooltip(item, name)
+      prepend_classes!(html_opt, css_selector, repo)
       html_div(html_opt) { html_div(name) }
     else
       ''.html_safe

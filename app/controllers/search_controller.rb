@@ -54,15 +54,18 @@ class SearchController < ApplicationController
   def index
     __debug_route
     opt      = pagination_setup
-    s_params = opt.except(*NON_SEARCH_KEYS)
-    q_params, s_params = partition_options(s_params, *QUERY_PARAMETERS)
+    search   = opt.delete(:search_call) || opt
+    s_params = search.except(*NON_SEARCH_KEYS)
+    q_params, s_params = partition_options(s_params, *search_query_keys)
     q_params.reject! { |_, v| v.blank? }
     if q_params.present?
       opt = opt.slice(*NON_SEARCH_KEYS).merge!(s_params, q_params)
+      set_immediate_search(opt.delete(:immediate_search))
       @list = search_api.get_records(**opt)
+      save_search(**opt)
       self.page_items  = @list.records
       self.total_items = @list.totalResults
-      self.next_page   = next_page_path(@list, opt) # TODO: ???
+      self.next_page   = next_page_path(**opt)
       respond_to do |format|
         format.html
         format.json { render_json index_values }
@@ -138,7 +141,7 @@ class SearchController < ApplicationController
   # @return [Hash{Symbol=>Hash}]
   #
   def show_values(item = @item, **)
-    normalize_keys(item)
+    sanitize_keys(item)
   end
 
 end

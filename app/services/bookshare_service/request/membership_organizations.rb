@@ -60,23 +60,23 @@ module BookshareService::Request::MembershipOrganizations
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]   :organizationName                        *REQUIRED*
-  # @option opt [String]   :address1                                *REQUIRED*
-  # @option opt [String]   :address2
-  # @option opt [String]   :city                                    *REQUIRED*
-  # @option opt [String]   :state
-  # @option opt [String]   :country                                 *REQUIRED*
-  # @option opt [String]   :postalCode                              *REQUIRED*
-  # @option opt [String]   :phoneNumber
-  # @option opt [String]   :website
-  # @option opt [String]   :organizationType                        *REQUIRED*
-  # @option opt [String]   :subscriptionType
-  # @option opt [SiteType] :site
-  # @option opt [String]   :contactFirstName                        *REQUIRED*
-  # @option opt [String]   :contactLastName                         *REQUIRED*
-  # @option opt [String]   :contactPhoneNumber                      *REQUIRED*
-  # @option opt [String]   :contactTitle                            *REQUIRED*
-  # @option opt [String]   :contactEmailAddress                     *REQUIRED*
+  # @option opt [String]     :organizationName                      *REQUIRED*
+  # @option opt [String]     :address1                              *REQUIRED*
+  # @option opt [String]     :address2
+  # @option opt [String]     :city                                  *REQUIRED*
+  # @option opt [String]     :state
+  # @option opt [String]     :country                               *REQUIRED*
+  # @option opt [String]     :postalCode                            *REQUIRED*
+  # @option opt [String]     :phoneNumber
+  # @option opt [String]     :website
+  # @option opt [String]     :organizationType                      *REQUIRED*
+  # @option opt [String]     :subscriptionType
+  # @option opt [BsSiteType] :site
+  # @option opt [String]     :contactFirstName                      *REQUIRED*
+  # @option opt [String]     :contactLastName                       *REQUIRED*
+  # @option opt [String]     :contactPhoneNumber                    *REQUIRED*
+  # @option opt [String]     :contactTitle                          *REQUIRED*
+  # @option opt [String]     :contactEmailAddress                   *REQUIRED*
   #
   # @return [Bs::Message::Organization]
   #
@@ -108,7 +108,7 @@ module BookshareService::Request::MembershipOrganizations
           phoneNumber:          String,
           website:              String,
           subscriptionType:     String,
-          site:                 SiteType,
+          site:                 BsSiteType,
         },
         reference_page:         'membership',
         reference_id:           '_create-organization'
@@ -123,10 +123,10 @@ module BookshareService::Request::MembershipOrganizations
   # @param [String] organization
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [String]          :start
-  # @option opt [Integer]         :limit      Default: 10
-  # @option opt [MemberSortOrder] :sortOrder  Default: 'lastName'
-  # @option opt [Direction]       :direction  Default: 'asc'
+  # @option opt [String]            :start
+  # @option opt [Integer]           :limit      Default: 10
+  # @option opt [BsMemberSortOrder] :sortOrder  Default: 'lastName'
+  # @option opt [BsSortDirection]   :direction  Default: 'asc'
   #
   # @return [Bs::Message::UserAccountList]
   #
@@ -146,10 +146,10 @@ module BookshareService::Request::MembershipOrganizations
           organizationId: String,
         },
         optional: {
-          start:          String,
-          limit:          Integer,
-          sortOrder:      MemberSortOrder,
-          direction:      Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsMemberSortOrder,
+          direction: BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_get-organization-members'
@@ -164,15 +164,15 @@ module BookshareService::Request::MembershipOrganizations
   # @param [String] organization
   # @param [Hash]   opt               Passed to #api.
   #
-  # @option opt [String]                  :firstName                *REQUIRED*
-  # @option opt [String]                  :lastName                 *REQUIRED*
-  # @option opt [String]                  :dateOfBirth              *REQUIRED*
-  # @option opt [String]                  :grade                    *REQUIRED*
-  # @option opt [String]                  :username
-  # @option opt [String]                  :password
-  # @option opt [DisabilityType]          :disabilityType
-  # @option opt [ProofOfDisabilitySource] :proofSource
-  # @option opt [Array<DisabilityPlan>]   :disabilityPlan
+  # @option opt [String]                    :firstName              *REQUIRED*
+  # @option opt [String]                    :lastName               *REQUIRED*
+  # @option opt [String]                    :dateOfBirth            *REQUIRED*
+  # @option opt [String]                    :grade                  *REQUIRED*
+  # @option opt [String]                    :username
+  # @option opt [String]                    :password
+  # @option opt [BsDisabilityType]          :disabilityType
+  # @option opt [BsProofOfDisabilitySource] :proofSource
+  # @option opt [Array<BsDisabilityPlan>]   :disabilityPlan
   #
   # @return [Bs::Message::UserAccount]
   #
@@ -198,9 +198,9 @@ module BookshareService::Request::MembershipOrganizations
         optional: {
           username:       String,
           password:       String,
-          disabilityType: DisabilityType,
-          proofSource:    ProofOfDisabilitySource,
-          disabilityPlan: DisabilityPlan,
+          disabilityType: BsDisabilityType,
+          proofSource:    BsProofOfDisabilitySource,
+          disabilityPlan: BsDisabilityPlan,
         },
         multi:            %i[disabilityPlan],
         reference_page:   'membership',

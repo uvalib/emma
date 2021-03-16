@@ -1,0 +1,93 @@
+// app/assets/stylesheets/layouts/header/_page_controls.scss
+
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'layouts/header/common' as *;
+
+//=============================================================================
+// Sections - controller/action
+//=============================================================================
+
+// Controller- and action-specific sections.
+.layout-section.page {
+
+    padding: 0 2vw;
+
+    //=========================================================================
+    // Elements
+    //=========================================================================
+
+    .label {
+        display:   block;
+        margin:    0;
+        font-size: larger;
+    }
+
+    .controls {
+        display:        flex;
+        flex-direction: row;
+        flex-wrap:      wrap;
+        margin:         0;
+    }
+
+    // @see LayoutHelper#page_controls
+    .control {
+
+        @extend %control-button;
+
+        font-size: larger;
+        color:     inherit;
+        border:    1.5px solid;
+    }
+}
+
+// Controller- and action-specific page controls.
+.layout-section.page.controls {
+
+    // @see LayoutHelper#render_page_controls
+    .page-controls {
+
+        @extend %header-search-section;
+        @extend %header-control-panel;
+
+        $page-control-gap-x: $gap-x;
+        $page-control-gap-y: calc(#{$gap-y} / 2);
+
+        width:           max-content;
+        margin-bottom:   2vh;
+        flex-wrap:       wrap;
+        justify-content: flex-start;
+        align-items:     baseline;
+
+        @media #{$narrow-screen} {
+            max-width: 95%;
+        }
+
+        //=====================================================================
+        // Elements
+        //=====================================================================
+
+        // noinspection CssReplaceWithShorthandSafely
+        .label {
+            margin:      $page-control-gap-y $page-control-gap-x;
+            margin-left: 0;
+        }
+
+        .controls {
+
+            margin-bottom: $page-control-gap-y;
+
+            // noinspection CssReplaceWithShorthandSafely
+            .control {
+
+                margin:       0;
+                margin-right: $page-control-gap-x;
+
+                @media #{$narrow-screen} {
+                    margin-top:    $page-control-gap-y;
+                    margin-bottom: $page-control-gap-y;
+                }
+            }
+        }
+    }
+}

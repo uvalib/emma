@@ -4,24 +4,31 @@
 
   title ||= t('emma.artifact.index.title')
   list  ||= page_items
-  count ||= total_items
+  total ||= total_items
+  terms ||= search_terms
   row   ||= 1
   help  ||= nil
 
+  page_opt = Upload::SEARCH_RECORDS_OPTIONS
+  page_terms, search = partition_options(terms, *page_opt)
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
+
   unless modal?
-    terms ||= search_terms
-    set_page_title(t('emma.artifact.index.label', default: title))
-    append_page_title('-', list_search_terms(terms)) if terms.present?
+    label = t('emma.artifact.index.label', default: title)
+    terms = search
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
+    set_page_title(label)
+    append_page_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
+    set_page_robots(:nofollow)
   end
 
-  title += " (#{count})" if list.blank?
+  opt = { list: list, total: total, page: page, row: row }
+  top_controls, bottom_controls = index_controls(**opt)
+  opt[:row] += 1 if top_controls
 
-  top_controls, bottom_controls = index_controls(count: count, row: row)
-  row += 1 if top_controls
-
-  template_opt = { list: list, count: count, row: row, skip: :title }
+  template_opt = opt.merge!(skip: :title)
 
 -%>
 

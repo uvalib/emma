@@ -7,24 +7,24 @@ __loading_begin(__FILE__)
 
 # Bs::Record::UserAccount
 #
-# @attr [Bs::Record::Address]     address
-# @attr [Boolean]                 allowAdultContent
-# @attr [Boolean]                 canDownload
-# @attr [String]                  dateOfBirth
-# @attr [Boolean]                 deleted
-# @attr [String]                  emailAddress
-# @attr [Bs::Record::Name]        guardian
-# @attr [Boolean]                 hasAgreement
-# @attr [String]                  language
-# @attr [Array<Bs::Record::Link>] links
-# @attr [Boolean]                 locked
-# @attr [Bs::Record::Name]        name
-# @attr [String]                  phoneNumber
-# @attr [ProofOfDisabilityStatus] proofOfDisabilityStatus
-# @attr [Array<String>]           roles
-# @attr [SiteType]                site
-# @attr [SubscriptionStatus]      subscriptionStatus
-# @attr [String]                  userAccountId
+# @attr [Bs::Record::Address]       address
+# @attr [Boolean]                   allowAdultContent
+# @attr [Boolean]                   canDownload
+# @attr [String]                    dateOfBirth
+# @attr [Boolean]                   deleted
+# @attr [String]                    emailAddress
+# @attr [Bs::Record::Name]          guardian
+# @attr [Boolean]                   hasAgreement
+# @attr [String]                    language
+# @attr [Array<Bs::Record::Link>]   links
+# @attr [Boolean]                   locked
+# @attr [Bs::Record::Name]          name
+# @attr [String]                    phoneNumber
+# @attr [BsProofOfDisabilityStatus] proofOfDisabilityStatus
+# @attr [Array<String>]             roles
+# @attr [BsSiteType]                site
+# @attr [BsSubscriptionStatus]      subscriptionStatus
+# @attr [String]                    userAccountId
 #
 # @see https://apidocs.bookshare.org/reference/index.html#_user_account
 #
@@ -49,10 +49,10 @@ class Bs::Record::UserAccount < Bs::Api::Record
     has_one   :locked,                  Boolean
     has_one   :name,                    Bs::Record::Name
     has_one   :phoneNumber
-    has_one   :proofOfDisabilityStatus, ProofOfDisabilityStatus
+    has_one   :proofOfDisabilityStatus, BsProofOfDisabilityStatus
     has_many  :roles
-    has_one   :site,                    SiteType
-    has_one   :subscriptionStatus,      SubscriptionStatus
+    has_one   :site,                    BsSiteType
+    has_one   :subscriptionStatus,      BsSubscriptionStatus
     has_one   :userAccountId
   end
 

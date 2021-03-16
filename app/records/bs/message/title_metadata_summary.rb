@@ -13,7 +13,7 @@ __loading_begin(__FILE__)
 # @attr [String]                         bookshareId
 # @attr [Array<Bs::Record::Category>]    categories
 # @attr [Array<Bs::Record::Name>]        composers         *deprecated*
-# @attr [Array<ContentWarning>]          contentWarnings
+# @attr [Array<BsContentWarning>]        contentWarnings
 # @attr [Array<Bs::Record::Contributor>] contributors
 # @attr [IsoYear]                        copyrightDate
 # @attr [Array<Bs::Record::Format>]      formats
@@ -55,7 +55,7 @@ class Bs::Message::TitleMetadataSummary < Bs::Api::Message
     has_one   :bookshareId
     has_many  :categories,        Bs::Record::Category
     has_many  :composers,         Bs::Record::Name          # NOTE: deprecated
-    has_many  :contentWarnings,   ContentWarning
+    has_many  :contentWarnings,   BsContentWarning
     has_many  :contributors,      Bs::Record::Contributor
     has_one   :copyrightDate,     IsoYear
     has_many  :formats,           Bs::Record::Format

@@ -1,0 +1,150 @@
+// app/assets/stylesheets/controllers/_search_call.scss
+
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
+
+//=============================================================================
+// Search call index page
+//=============================================================================
+
+// Local EMMA user search_call metadata label/value pairs for index listings.
+.search_call-list-entry {
+    @extend .item-list-entry-panel;
+}
+
+// Zero or more .search_call-list-entry elements.
+.search_call-list {
+    @extend .item-list;
+}
+
+// Grid table of search calls.
+.search_call-table {
+
+    @extend .item-table;
+
+    &.extended {
+
+        td {
+            min-height: 3rem;
+        }
+
+        &.dark-head {
+            thead {
+                tr.spanner {
+                    height: 4.25rem;
+                }
+            }
+        }
+
+        &.sticky-head.dark-head {
+            thead {
+                th {
+
+                    padding-top: 0.25rem;
+                    line-height: revert;
+
+                    .field {
+                        width: min-content;
+                    }
+                }
+            }
+        }
+    }
+
+    .col-last {
+        margin-right: 1rem;
+    }
+
+    .key-value-pair {
+
+        display:               grid;
+        grid-template-columns: min-content 1fr;
+        gap:                   0.375rem;
+    }
+
+    .key {
+
+        font-weight: bold;
+
+        .name {
+            // TODO: ??? .search_call-table .key .name
+        }
+    }
+
+    .value {
+
+        .item {
+
+            color: blue;
+
+            & + .item {
+                margin-left: 0.25rem;
+            }
+
+            &.star {
+                vertical-align: top;
+                font-size:      smaller;
+                cursor:         help;
+            }
+        }
+
+        // The OR connector element is assumed to be surrounded by spaces
+        // so that the content is legible when copied and pasted.
+        .or {
+            margin:     0 0.0625rem;
+            font-style: italic;
+            font-size:  smaller;
+        }
+    }
+
+    .query {
+        min-width: max-content;
+    }
+
+    .filter {
+        min-width: min-content;
+    }
+
+    .created_at {
+        min-width: max-content;
+    }
+
+    // Only for the "extended table" where JSON subfields are broken out.
+
+    .query_identifier,
+    .query_title,
+    .query_creator,
+    .query_keyword {
+        min-width: max-content;
+    }
+
+    .filter_ally_feature,
+    .filter_braille,
+    .filter_category,
+    .filter_content_type,
+    .filter_country,
+    .filter_format,
+    .filter_format_feature,
+    .filter_language,
+    .filter_narrator,
+    .filter_repository,
+    .filter_warnings_exc,
+    .filter_warnings_inc {
+        // min-width: min-content; // TODO: word wrap in table header
+    }
+}
+
+//=============================================================================
+// Search call show page
+//=============================================================================
+
+// Search call metadata values.
+.search_call-details {
+    @extend .search_call-list-entry; // INSTEAD OF @extend .item-details;
+}
+
+// Container for an .search_call-details.
+.search_call-container {
+    @extend .item-container;
+}

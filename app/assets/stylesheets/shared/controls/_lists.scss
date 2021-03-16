@@ -1,6 +1,8 @@
 // app/assets/stylesheets/shared/controls/_lists.scss
 
-// @use 'shared/controls/grids';  // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
 
 //=============================================================================
 // List definitions.
@@ -18,7 +20,6 @@
 /// overall grid.  Increasing the margin below grid cell elements does not seem
 /// to have this problem.
 ///
-// noinspection SassScssResolvedByNameOnly
 @mixin tabular-list($columns, $y-gap: 0, $x-gap: 2%, $template: false) {
 
     display: grid;

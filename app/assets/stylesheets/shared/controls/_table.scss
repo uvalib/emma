@@ -1,10 +1,10 @@
 // app/assets/stylesheets/shared/controls/_table.scss
 
-// @use 'shared/controls/grids';  // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/controls/grids' as *;
 
 // Grid-based table.
-//
-// noinspection SassScssResolvedByNameOnly
 .grid-table {
 
     $table-gap:        1.75rem;
@@ -24,7 +24,7 @@
     // Grid layout
     //=========================================================================
 
-    $max-columns: 20;
+    $max-columns: 50;
 
     gap: $table-gap;
 
@@ -59,8 +59,7 @@
     }
 
     td {
-        min-width: max-content;
-        z-index:   -2;
+        z-index: -2;
     }
 
     //=========================================================================

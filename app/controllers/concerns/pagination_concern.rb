@@ -33,6 +33,7 @@ module PaginationConcern
 
   include Emma::Common
   include ParamsHelper
+  include SearchTermsHelper
   include PaginationHelper
 
   # ===========================================================================
@@ -55,59 +56,63 @@ module PaginationConcern
   def pagination_setup(opt = nil)
 
     opt = url_parameters(opt)
-    ss  = session_section
 
-    # Clean up the session and return if the current controller does not
-    # support pagination.
-    if self.page_size.zero?
-      keys = %i[limit offset].each { |k| ss.delete(k.to_s) }
-      # noinspection RubyYardReturnMatch
-      return opt.except(*keys)
-    end
+    # Remove pagination parameters and return if the current controller does
+    # not support pagination.
+    # noinspection RubyYardReturnMatch
+    return opt.except!(:limit, *PAGINATION_KEYS) if page_size.zero?
 
-    # Get values from parameters or session.
-    page_size   = opt[:limit]&.to_i  || ss['limit']&.to_i  || self.page_size
-    page_offset = opt[:offset]&.to_i || ss['offset']&.to_i || self.page_offset
+    # Get pagination values.
+    limit, page, offset =
+      opt.values_at(:limit, :page, :offset).map { |v| v&.to_i }
+    limit  ||= page_size
+    page   ||= (offset / limit) + 1 if offset
+    offset ||= (page - 1) * limit   if page
 
     # Get first and current page paths; adjust values if currently on the first
     # page of results.
-    current    = make_path(request.original_fullpath)
-    main_page  = current.sub(/\?.*$/, '')
-    first_page = main_page
-    on_first   = (current == first_page)
+    main_page    = request.path
+    path_opt     = { decorate: true, unescape: true }
+    mp_opt       = opt.merge(path_opt)
+    current_page = make_path(main_page, mp_opt)
+    first_page   = main_page
+    on_first     = (current_page == first_page)
     unless on_first
-      first_page = make_path(main_page, opt.except(:start, :offset))
-      on_first   = (current == first_page)
+      mp_opt     = opt.except(*PAGINATION_KEYS).merge!(path_opt)
+      first_page = make_path(main_page, mp_opt)
+      on_first   = (current_page == first_page)
     end
     unless on_first
-      first_page = make_path(main_page, opt.except(:start, :offset, :limit))
-      on_first   = (current == first_page)
+      mp_opt     = opt.except(:limit, *PAGINATION_KEYS).merge!(path_opt)
+      first_page = make_path(main_page, mp_opt)
+      on_first   = (current_page == first_page)
     end
-    prev_page  =
+
+    # The previous page link is just 'history.back()', however this is special-
+    # cased on the second page because of issues observed in Google Chrome.
+    prev_page =
       if on_first
-        page_offset = 0
-        first_page  = nil
+        offset = 0
+        first_page = nil
+      elsif page == 2
+        first_page
       elsif local_request?
         :back
       end
 
     # Set current values for the including controller.
-    self.page_size   = page_size
-    self.page_offset = page_offset
+    self.page_size   = limit
+    self.page_offset = offset
     self.first_page  = first_page
     self.prev_page   = prev_page
 
-    # Set session values to be used by the subsequent page.
-    ss['limit']  = page_size
-    ss['offset'] = page_offset + page_size
-
-    # Adjust parameters to be transmitted to the API.
-    opt[:limit] = page_size
-    if page_offset.zero?
-      opt.delete(:offset)
+    # Adjust parameters to be transmitted to the Bookshare API.
+    if offset&.nonzero?
+      opt[:offset] = offset
     else
-      opt[:offset] = page_offset
+      opt.delete(:offset)
     end
+    opt[:limit] = page_size
 
     # noinspection RubyYardReturnMatch
     opt
@@ -117,13 +122,16 @@ module PaginationConcern
   # Analyze the *list* object to generate the path for the next page of
   # results.
   #
-  # @param [Object]    list
-  # @param [Hash, nil] url_params     For `list.next`.
+  # @param [Array, #next, #get_link] list
+  # @param [Hash]                    url_params For `list.next`.
   #
   # @return [String]                  Path to generate next page of results.
   # @return [nil]                     If there is no next page.
   #
-  def next_page_path(list, url_params = nil)
+  # @see SearchConcern#next_page_path
+  #
+  def next_page_path(list: nil, **url_params)
+    list ||= @list || self.page_items
     if (start = list.respond_to?(:next) && list.next).present?
       opt = url_params&.dup || {}
       opt[:start]    = start
@@ -150,9 +158,9 @@ module PaginationConcern
   def cleanup_pagination
     original_count = request_parameter_count
 
-    # Eliminate :offset if :start is not present.
-    if params[:offset].present? && params[:start].blank?
-      params.delete(:offset)
+    # Eliminate :offset if not still paginating.
+    if params[:offset].present?
+      params.delete(:offset) unless params[:start] || params[:prev_id]
     end
 
     # If parameters were removed, redirect to the corrected URL.

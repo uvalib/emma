@@ -147,7 +147,7 @@ module Roles
   # (Create a user account).
   #
   # It's not clear how these map on to #BOOKSHARE_USER_TYPES but they have been
-  # included as :RoleType in Bs::ENUMERATIONS.
+  # included as :BsRoleType in Bs::ENUMERATIONS.
   #
   # NOTE: This is only for documentation at this time.
   # TODO: Harmonize with EMMA_ROLES.
@@ -155,7 +155,7 @@ module Roles
   # @type [Hash{Symbol=>String}]
   #
   # Compare with:
-  # @see RoleType#values
+  # @see BsRoleType#values
   #
   # == Implementation Notes
   # With no role (due to lack of user information) an unauthenticated user

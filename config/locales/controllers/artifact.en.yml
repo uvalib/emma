@@ -19,7 +19,7 @@ en:
       # Layout
       # =======================================================================
 
-      search_controls:
+      search_filters:
 
         format:
           multiple:     false

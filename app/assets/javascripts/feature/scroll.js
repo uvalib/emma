@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS
 $(document).on('turbolinks:load', function() {
 
     /**

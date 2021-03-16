@@ -266,7 +266,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that the user was not authorized to perform
   # the requested remote service action.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.auth
+  # @see file:config/locales/error.en.yml *en.emma.error.api.auth*
   #
   class ApiService::AuthError < ApiService::Error
     include ApiService::Error::Methods
@@ -275,7 +275,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that there was a (transient) network error
   # when communicating with the remote service.
   #
-  # @see 'en.emma.error.api.comm' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.comm*
   #
   class ApiService::CommError < ApiService::Error
     include ApiService::Error::Methods
@@ -284,7 +284,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that there was a session error in
   # communication with the remote service.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.session
+  # @see file:config/locales/error.en.yml *en.emma.error.api.session*
   #
   class ApiService::SessionError < ApiService::Error
     include ApiService::Error::Methods
@@ -293,7 +293,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that there was a problem establishing a
   # connection to the remote service.
   #
-  # @see 'en.emma.error.api.connect' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.connect*
   #
   class ApiService::ConnectError < ApiService::Error
     include ApiService::Error::Methods
@@ -302,7 +302,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that the connection to the remote service
   # timed out.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.timeout
+  # @see file:config/locales/error.en.yml *en.emma.error.api.timeout*
   #
   class ApiService::TimeoutError < ApiService::Error
     include ApiService::Error::Methods
@@ -311,7 +311,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that there was network error while sending to
   # the remote service.
   #
-  # @see 'en.emma.error.api.xmit' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.xmit*
   #
   class ApiService::XmitError < ApiService::Error
     include ApiService::Error::Methods
@@ -320,7 +320,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that there was network error while receiving
   # from the remote service.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.recv
+  # @see file:config/locales/error.en.yml *en.emma.error.api.recv*
   #
   class ApiService::RecvError < ApiService::Error
     include ApiService::Error::Methods
@@ -329,7 +329,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that the remote service returned malformed
   # data.
   #
-  # @see 'en.emma.error.api.parse' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.parse*
   #
   class ApiService::ParseError < ApiService::Error
     include ApiService::Error::Methods
@@ -344,7 +344,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate a generic or unique issue with the request to
   # the remote service API.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.request
+  # @see file:config/locales/error.en.yml *en.emma.error.api.request*
   #
   class ApiService::RequestError < ApiService::Error
     include ApiService::Error::Methods
@@ -353,7 +353,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that no (valid) inputs were provided so no
   # service request was made.
   #
-  # @see 'en.emma.error.api.no_input' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.no_input*
   #
   class ApiService::NoInputError < ApiService::Error
     include ApiService::Error::Methods
@@ -368,7 +368,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate a generic or unique issue with the response
   # from the remote service API.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.response
+  # @see file:config/locales/error.en.yml *en.emma.error.api.response*
   #
   class ApiService::ResponseError < ApiService::Error
     include ApiService::Error::Methods
@@ -377,7 +377,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that a valid message was received but it had
   # no body or its body was empty.
   #
-  # @see 'en.emma.error.api.empty_result' in config/locales/error.en.yml
+  # @see file:config/locales/error.en.yml *en.emma.error.api.empty_result*
   #
   class ApiService::EmptyResultError < ApiService::Error
     include ApiService::Error::Methods
@@ -386,7 +386,7 @@ unless ONLY_FOR_DOCUMENTATION
   # Exception raised to indicate that a message with an HTML body was received
   # when HTML was not expected.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.html_result
+  # @see file:config/locales/error.en.yml *en.emma.error.api.html_result*
   #
   class ApiService::HtmlResultError < ApiService::Error
     include ApiService::Error::Methods
@@ -394,7 +394,7 @@ unless ONLY_FOR_DOCUMENTATION
 
   # Exception raised to indicate a invalid redirect destination.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.redirection
+  # @see file:config/locales/error.en.yml *en.emma.error.api.redirection*
   #
   class ApiService::RedirectionError < ApiService::Error
     include ApiService::Error::Methods
@@ -402,7 +402,7 @@ unless ONLY_FOR_DOCUMENTATION
 
   # Exception raised to indicate that there were too many redirects.
   #
-  # @see file:config/locales/error.en.yml en.emma.error.api.redirect_limit
+  # @see file:config/locales/error.en.yml *en.emma.error.api.redirect_limit*
   #
   class ApiService::RedirectLimitError < ApiService::Error
     include ApiService::Error::Methods

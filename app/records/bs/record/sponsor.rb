@@ -17,7 +17,7 @@ __loading_begin(__FILE__)
 # @attr [Boolean]                 locked
 # @attr [Bs::Record::Name]        name
 # @attr [String]                  phoneNumber
-# @attr [SiteType]                site
+# @attr [BsSiteType]               site
 # @attr [String]                  title
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_sponsor
@@ -38,7 +38,7 @@ class Bs::Record::Sponsor < Bs::Api::Record
     has_one   :locked,            Boolean
     has_one   :name,              Bs::Record::Name
     has_one   :phoneNumber
-    has_one   :site,              SiteType
+    has_one   :site,              BsSiteType
     has_one   :title
   end
 

@@ -18,7 +18,7 @@ module ParamsConcern
     __included(base, 'ParamsConcern')
 
     # Needed for #set_sort_params.
-    include LayoutHelper::SearchControls
+    include LayoutHelper::SearchFilters
 
     # Non-functional hints for RubyMine type checking.
     # :nocov:

@@ -447,7 +447,7 @@ class UploadController < ApplicationController
   #
   # @see UploadWorkflow::Single::States#on_canceled_entry
   # @see UploadWorkflow::Bulk::States#on_canceled_entry
-  # @see cancelForm() in app/assets/javascripts/feature/file-upload.js
+  # @see file:app/assets/javascripts/feature/file-upload.js *cancelForm()*
   #
   def cancel
     __debug_route
@@ -529,7 +529,7 @@ class UploadController < ApplicationController
   # @raise [Net::HTTPNotFound]
   #
   # @see UploadConcern#get_record
-  # @see Upload#download_url.
+  # @see Upload#download_url
   #
   def download
     __debug_route

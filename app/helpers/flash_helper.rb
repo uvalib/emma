@@ -14,8 +14,8 @@ module FlashHelper
     __included(base, '[FlashHelper]')
   end
 
-  include HtmlHelper
   include Emma::Common
+  include HtmlHelper
 
   # ===========================================================================
   # :section:
@@ -154,7 +154,7 @@ module FlashHelper
     # @see #render_part
     #
     def render(**opt)
-      prepend_css_classes!(opt, 'line').merge!(separator: ' ')
+      prepend_classes!(opt, 'line').merge!(separator: ' ')
       html_div(opt) do
         if @parts.size > 1
           n = 0
@@ -191,7 +191,7 @@ module FlashHelper
       elsif position == last
         part = last_part(part, html: true)
       end
-      prepend_css_classes!(opt, classes)
+      prepend_classes!(opt, *classes)
       html_div(part, opt)
     end
 

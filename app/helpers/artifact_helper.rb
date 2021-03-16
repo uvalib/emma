@@ -129,8 +129,8 @@ module ArtifactHelper
     # noinspection RubyResolve
     if item.is_a?(Bs::Api::Record)
       repo    = 'bookshare'
-      type    = FormatType
-      type    = PeriodicalFormatType if item.class.name.include?('Periodical')
+      type    = BsFormatType
+      type    = BsPeriodicalFormat if item.class.name.include?('Periodical')
       format  = format&.to_s || type.default
       lbl_key = "emma.bookshare.type.#{type}.#{format}"
       url   ||= bs_download_path(bookshareId: item.identifier, fmt: format)
@@ -146,7 +146,7 @@ module ArtifactHelper
     fmt_name  = I18n.t(lbl_key, default: fmt_name)
 
     # Initialize link options.
-    append_css_classes!(opt, 'link')
+    append_classes!(opt, 'link')
     opt[:label] ||= fmt_name
     opt[:path]    = url
 
@@ -190,7 +190,7 @@ module ArtifactHelper
   # @param [Api::Record] item
   # @param [Hash]        opt          Passed to #artifact_link except for:
   #
-  # @option opt [String] :fmt         One of `FormatType#values`
+  # @option opt [String] :fmt         One of `BsFormatType#values`
   # @option opt [String] :separator   Default: #DEFAULT_ELEMENT_SEPARATOR.
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -202,7 +202,7 @@ module ArtifactHelper
     permitted = can?(:download, Artifact)
     unless permitted
       added_class = (signed_in?) ? 'disabled' : 'sign-in-required'
-      append_css_classes!(html_opt, added_class)
+      append_classes!(html_opt, added_class)
     end
     if item.respond_to?(:formats)
       # === Bs::Api::Record ===
@@ -252,13 +252,13 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_progress(image: nil, **opt)
-    prepend_css_classes!(opt, DOWNLOAD_PROGRESS_CLASS)
+    css_selector  = DOWNLOAD_PROGRESS_CLASS
+    image       ||= asset_path(DOWNLOAD_PROGRESS_ASSET)
     opt[:title] ||= DOWNLOAD_PROGRESS_TIP
     opt[:alt]   ||= DOWNLOAD_PROGRESS_ALT_TEXT
     opt[:role]  ||= 'button'
-    image       ||= asset_path(DOWNLOAD_PROGRESS_ASSET)
     # noinspection RubyYardReturnMatch
-    image_tag(image, opt)
+    image_tag(image, prepend_classes!(opt, css_selector))
   end
 
   # An element to indicate failure.
@@ -267,11 +267,11 @@ module ArtifactHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js appendFailureMessage()
+  # @see file:app/assets/javascripts/feature/download.js *appendFailureMessage()*
   #
   def download_failure(**opt)
-    prepend_css_classes!(opt, DOWNLOAD_FAILURE_CLASS)
-    html_span('', opt)
+    css_selector = DOWNLOAD_FAILURE_CLASS
+    html_span('', prepend_classes!(opt, css_selector))
   end
 
   # An element for direct download of an artifact.
@@ -283,13 +283,13 @@ module ArtifactHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def download_button(label: nil, fmt: nil, **opt)
-    label ||= DOWNLOAD_BUTTON_LABEL
-    fmt = format_label(fmt)
-    prepend_css_classes!(opt, DOWNLOAD_BUTTON_CLASS)
+    css_selector  = DOWNLOAD_BUTTON_CLASS
+    label       ||= DOWNLOAD_BUTTON_LABEL
+    fmt           = format_label(fmt)
     opt[:title] ||= I18n.t('emma.download.button.tooltip', fmt: fmt)
     opt[:role]  ||= 'button'
     # noinspection RubyYardParamTypeMatch
-    make_link(label, '#', **opt)
+    make_link(label, '#', **prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================

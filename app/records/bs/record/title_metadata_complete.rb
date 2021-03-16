@@ -9,7 +9,7 @@ __loading_begin(__FILE__)
 #
 # @attr [Boolean]                             adultContent
 # @attr [Boolean]                             allowRecommend
-# @attr [Array<AllowsType>]                   allows
+# @attr [Array<BsAllowsType>]                 allows
 # @attr [Array<Bs::Record::Name>]             arrangers            *deprecated*
 # @attr [Array<Bs::Record::ArtifactMetadata>] artifacts
 # @attr [Array<Bs::Record::Name>]             authors              *deprecated*
@@ -17,7 +17,7 @@ __loading_begin(__FILE__)
 # @attr [String]                              bookshareId
 # @attr [Array<Bs::Record::Category>]         categories
 # @attr [Array<Bs::Record::Name>]             composers            *deprecated*
-# @attr [Array<ContentWarning>]               contentWarnings
+# @attr [Array<BsContentWarning>]             contentWarnings
 # @attr [Array<Bs::Record::Contributor>]      contributors
 # @attr [String]                              copyright            *deprecated*
 # @attr [IsoYear]                             copyrightDate
@@ -93,7 +93,7 @@ class Bs::Record::TitleMetadataComplete < Bs::Api::Record
   schema do
     has_one   :adultContent,          Boolean
     has_one   :allowRecommend,        Boolean
-    has_many  :allows,                AllowsType
+    has_many  :allows,                BsAllowsType
     has_many  :arrangers,             Bs::Record::Name       # NOTE: deprecated
     has_many  :artifacts,             Bs::Record::ArtifactMetadata
     has_many  :authors,               Bs::Record::Name       # NOTE: deprecated
@@ -101,7 +101,7 @@ class Bs::Record::TitleMetadataComplete < Bs::Api::Record
     has_one   :bookshareId
     has_many  :categories,            Bs::Record::Category
     has_many  :composers,             Bs::Record::Name       # NOTE: deprecated
-    has_many  :contentWarnings,       ContentWarning
+    has_many  :contentWarnings,       BsContentWarning
     has_many  :contributors,          Bs::Record::Contributor
     has_one   :copyright                                     # NOTE: deprecated
     has_one   :copyrightDate,         IsoYear

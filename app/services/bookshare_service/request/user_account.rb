@@ -88,9 +88,9 @@ module BookshareService::Request::UserAccount
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [Integer]          :limit
-  # @option opt [HistorySortOrder] :sortOrder   Default: 'title'
-  # @option opt [Direction2]       :direction   Default: 'desc'
+  # @option opt [Integer]            :limit
+  # @option opt [BsHistorySortOrder] :sortOrder   Default: 'title'
+  # @option opt [BsSortDirectionRev] :direction   Default: 'desc'
   #
   # @return [Bs::Message::TitleDownloadList]
   #
@@ -105,8 +105,8 @@ module BookshareService::Request::UserAccount
       add_api method => {
         optional: {
           limit:      Integer,
-          sortOrder:  HistorySortOrder,
-          direction:  Direction2,
+          sortOrder:  BsHistorySortOrder,
+          direction:  BsSortDirectionRev,
         },
         reference_id: '_get-myaccount-downloads'
       }
@@ -147,14 +147,14 @@ module BookshareService::Request::UserAccount
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [Boolean]       :allowAdultContent
-  # @option opt [Boolean]       :showAllBooks           Default: *false*
-  # @option opt [IsoLanguage]   :language
-  # @option opt [FormatType]    :format
-  # @option opt [BrailleGrade]  :brailleGrade
-  # @option opt [BrailleFmt]    :brailleFormat
-  # @option opt [Integer]       :brailleCellLineWidth
-  # @option opt [Boolean]       :useUeb                 Default: *false*
+  # @option opt [Boolean]        :allowAdultContent
+  # @option opt [Boolean]        :showAllBooks          Default: *false*
+  # @option opt [IsoLanguage]    :language
+  # @option opt [BsFormatType]   :format
+  # @option opt [BsBrailleGrade] :brailleGrade
+  # @option opt [BsBrailleFmt]   :brailleFormat
+  # @option opt [Integer]        :brailleCellLineWidth
+  # @option opt [Boolean]        :useUeb                Default: *false*
   #
   # @return [Bs::Message::MyAccountPreferences]
   #
@@ -174,9 +174,9 @@ module BookshareService::Request::UserAccount
           allowAdultContent:    Boolean,
           showAllBooks:         Boolean,
           language:             IsoLanguage,
-          format:               FormatType,
-          brailleGrade:         BrailleGrade,
-          brailleFormat:        BrailleFmt,
+          format:               BsFormatType,
+          brailleGrade:         BsBrailleGrade,
+          brailleFormat:        BsBrailleFmt,
           brailleCellLineWidth: Integer,
           useUeb:               Boolean,
         },
@@ -220,16 +220,16 @@ module BookshareService::Request::UserAccount
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [Boolean]               :includeGlobalCollection  Def: *false*.
-  # @option opt [NarratorType]          :narratorType
-  # @option opt [Gender]                :narratorGender
-  # @option opt [Integer]               :readingAge
-  # @option opt [Array<ContentWarning>] :excludedContentWarnings
-  # @option opt [Array<ContentWarning>] :includedContentWarnings
-  # @option opt [String, Array<String>] :excludedCategories
-  # @option opt [String, Array<String>] :includedCategories
-  # @option opt [String, Array<String>] :excludedAuthors
-  # @option opt [String, Array<String>] :includedAuthors
+  # @option opt [Boolean]                 :includeGlobalCollection  Def: *false*.
+  # @option opt [BsNarratorType]          :narratorType
+  # @option opt [BsGender]                :narratorGender
+  # @option opt [Integer]                 :readingAge
+  # @option opt [Array<BsContentWarning>] :excludedContentWarnings
+  # @option opt [Array<BsContentWarning>] :includedContentWarnings
+  # @option opt [String, Array<String>]   :excludedCategories
+  # @option opt [String, Array<String>]   :includedCategories
+  # @option opt [String, Array<String>]   :excludedAuthors
+  # @option opt [String, Array<String>]   :includedAuthors
   #
   # @return [Bs::Message::RecommendationProfile]
   #
@@ -244,11 +244,11 @@ module BookshareService::Request::UserAccount
       add_api method => {
         optional: {
           includeGlobalCollection: Boolean,
-          narratorType:            NarratorType,
-          narratorGender:          Gender,
+          narratorType:            BsNarratorType,
+          narratorGender:          BsGender,
           readingAge:              Integer,
-          excludedContentWarnings: ContentWarning,
-          includedContentWarnings: ContentWarning,
+          excludedContentWarnings: BsContentWarning,
+          includedContentWarnings: BsContentWarning,
           excludedCategories:      String,
           includedCategories:      String,
           excludedAuthors:         String,

@@ -102,14 +102,14 @@ module SearchHelper
   # noinspection RubyResolve, RubyYardReturnMatch
   #++
   def title_and_source_logo(item, **opt)
+    css_selector = '.title'
     title  = item.full_title
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
     logo   = repository_source_logo(source)
     if logo.present?
-      prepend_css_classes!(opt, 'title', source)
-      title = html_div(title, opt)
-      title << logo
+      prepend_classes!(opt, css_selector, source)
+      html_div(title, opt) << logo
     else
       title_and_source(item, **opt)
     end
@@ -126,15 +126,15 @@ module SearchHelper
   # noinspection RubyResolve, RubyYardReturnMatch
   #++
   def title_and_source(item, **opt)
+    css_selector = '.title'
     title  = item.full_title
     source = item.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
     name   = source&.titleize || 'LOGO'
     logo   = name && repository_source(item, source: source, name: name)
     if logo.present?
-      prepend_css_classes!(opt, 'title', *source)
-      title = html_div(title, opt)
-      title << logo
+      prepend_classes!(opt, css_selector, source)
+      html_div(title, opt) << logo
     else
       ERB::Util.h(title)
     end
@@ -196,7 +196,7 @@ module SearchHelper
     # Adjust the link depending on whether the current session is permitted to
     # perform the download.
     permitted = can?(:download, Artifact)
-    append_css_classes!(html_opt, 'sign-in-required') unless permitted
+    append_classes!(html_opt, 'sign-in-required') unless permitted
 
     # To account for the handful of "EMMA" items that are actually Bookshare
     # items from the "EMMA collection", change the reported repository based on
@@ -259,13 +259,13 @@ module SearchHelper
   # @option opt [Hash] :attr            Options for deferred content.
   # @option opt [Hash] :placeholder     Options for transient placeholder.
   #
-  # @see file:app/assets/javascripts/feature/popup.js togglePopup()
+  # @see file:app/assets/javascripts/feature/popup.js *togglePopup()*
   #
   #--
   # noinspection RubyResolve
   #++
   def record_popup(item, **opt)
-    append_css_classes!(opt, 'record-popup')
+    css_selector = '.record-popup'
     ph_opt = opt.delete(:placeholder)
     attr   = opt.delete(:attr)&.dup || {}
     rid    = item.emma_repositoryRecordId
@@ -275,8 +275,8 @@ module SearchHelper
     opt[:title]   ||= 'View this repository record.' # TODO: I18n
     opt[:control] ||= { text: ERB::Util.h(rid) }
 
-    popup_container(**opt) do
-      ph_opt = prepend_css_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
+    popup_container(**prepend_classes!(opt, css_selector)) do
+      ph_opt = prepend_classes(ph_opt, 'iframe', POPUP_DEFERRED_CLASS)
       ph_txt = ph_opt.delete(:text) || 'Loading record...' # TODO: I18n
       ph_opt[:'data-path'] = show_upload_path(id: rid, modal: true)
       ph_opt[:'data-attr'] = attr.to_json

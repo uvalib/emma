@@ -62,7 +62,7 @@ class MemberController < ApplicationController
     @list = bs_api.get_my_organization_members(**opt)
     self.page_items  = @list.userAccounts
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

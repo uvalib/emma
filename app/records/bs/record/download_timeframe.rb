@@ -7,14 +7,14 @@ __loading_begin(__FILE__)
 
 # Bs::Record::DownloadTimeframe
 #
-# @attr [Timeframe] name
+# @attr [BsTimeframe] name
 #
 # @see https://apidocs.bookshare.org/membership/index.html#_download_timeframe
 #
 class Bs::Record::DownloadTimeframe < Bs::Api::Record
 
   schema do
-    has_one :name, Timeframe
+    has_one :name, BsTimeframe
   end
 
   # ===========================================================================

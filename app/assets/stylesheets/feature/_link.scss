@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_link.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Common page text sections
@@ -10,8 +11,6 @@ $page-section-gap:       3rem;
 $page-section-gap-small: $page-section-gap / 2;
 
 // Text sections on pages.
-//
-// noinspection SassScssResolvedByNameOnly
 .page-text-section {
 
     margin: $page-padding 0;
@@ -75,13 +74,11 @@ ul.page-actions {
         margin-top:          0.5rem;
         list-style-position: inside;
 
-        // noinspection SassScssResolvedByNameOnly
         .control:focus {
             outline-color:   $text-focus;
             outline-offset:  2.5px;
         }
 
-        // noinspection SassScssResolvedByNameOnly
         @media #{$narrow-screen} {
 
             margin-top: 0.75rem;
