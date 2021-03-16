@@ -1,6 +1,7 @@
 // app/assets/stylesheets/shared/_debug.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Debugging.
@@ -42,7 +43,6 @@
         font-weight: bold;
     }
 
-    // noinspection SassScssResolvedByNameOnly
     @media #{$narrow-screen} {
 
         .session-debug-table {
@@ -62,14 +62,12 @@
 
     }
 
-    // noinspection SassScssResolvedByNameOnly
     .note {
         color:       $debug-fg;
         margin-left: 0.5rem;
     }
 }
 
-// noinspection SassScssResolvedByNameOnly
 .ability-debug {
 
     width:         50%;

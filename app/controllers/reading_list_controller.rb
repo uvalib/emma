@@ -59,7 +59,7 @@ class ReadingListController < ApplicationController
     @list = bs_api.get_all_reading_lists(**opt)
     self.page_items  = @list.lists
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -78,7 +78,7 @@ class ReadingListController < ApplicationController
     @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
     self.page_items  = @list.titles
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json show_values }

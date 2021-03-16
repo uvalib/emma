@@ -1,0 +1,23 @@
+<%# app/views/search_call/show.html.erb -%>
+<%-
+  # Search call record.
+
+  item  ||= @item
+  title ||= t('emma.search_call.show.title')
+  help  ||= nil # help_popup(:search_call, :show) # TODO: ???
+
+  unless modal?
+    set_page_title(title)
+    set_page_description(Search: title)
+    set_page_robots(:nofollow)
+  end
+
+-%>
+
+<h1 class="heading"><%= title -%><%= help -%></h1>
+<%= page_description_section %>
+
+<%= render 'details', item: item %>
+
+<%= page_notes_section %>
+<%= page_action_list unless modal? %>

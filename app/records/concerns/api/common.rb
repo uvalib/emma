@@ -557,6 +557,16 @@ class EnumType < ScalarType
     enumerations.dig(entry.to_sym, :pairs)
   end
 
+  # The default for an enumeration.
+  #
+  # @param [Symbol, String] entry
+  #
+  # @return [String]
+  #
+  def self.default_for(entry)
+    enumerations.dig(entry.to_sym, :default)
+  end
+
 end
 
 # =============================================================================
@@ -579,7 +589,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/en.yml en.emma.application.deployment
+  # @see file:config/locales/en.yml *en.emma.application.deployment*
   #
   #--
   # noinspection RailsI18nInspection
@@ -614,7 +624,7 @@ module Api::Common
   #
   # @type [String]
   #
-  # @see 'en.emma.repository._default' in config/locales/repository.en.yml
+  # @see file:config/locales/repository.en.yml *en.emma.repository._default*
   #
   DEFAULT_REPOSITORY = REPOSITORY_CONFIG[:_default]
 
@@ -622,7 +632,8 @@ module Api::Common
   #
   # @type [Hash{Symbol=>Hash}]
   #
-  # @see file:config/locales/repository.en.yml en.emma.repository
+  # @see file:config/locales/repository.en.yml *en.emma.repository*
+  # @see https://app.swaggerhub.com/apis/kden/emma-federated-search-api/0.0.3#/EmmaRepository
   #
   REPOSITORY =
     REPOSITORY_CONFIG.reject { |k, _| k.start_with?('_') }.deep_freeze
@@ -649,7 +660,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see 'en.emma.categories' in config/locale/types.en.yml
+  # @see file:config/locales/types.en.yml *en.emma.categories*
   #
   #--
   # noinspection RailsI18nInspection
@@ -683,7 +694,7 @@ module Api::Common
   #
   # @type [Hash{Symbol=>String}]
   #
-  # @see file:config/locales/types.en.yml en.emma.language.list
+  # @see file:config/locales/types.en.yml *en.emma.language.list*
   #
   LANGUAGE = LANGUAGE_CONFIG[:list] || {}.freeze
 
@@ -691,7 +702,7 @@ module Api::Common
   #
   # @type [Array<Symbol>]
   #
-  # @see file:config/locales/types.en.yml en.emma.language.primary
+  # @see file:config/locales/types.en.yml *en.emma.language.primary*
   #
   PRIMARY_LANGUAGES = (LANGUAGE_CONFIG[:primary]&.map(&:to_sym) || []).freeze
 

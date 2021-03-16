@@ -7,7 +7,7 @@
 
 // import Uppy from 'uppy'; // NOTE: This is not acceptable to Uglifier
 
-// noinspection FunctionWithMultipleReturnPointsJS,JSUnresolvedVariable
+// noinspection JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -133,7 +133,7 @@ $(document).on('turbolinks:load', function() {
      *      }
      * }} FileData
      *
-     * @see 'en.emma.upload.record.file_data'
+     * @see "en.emma.upload.record.file_data"
      */
 
     /**
@@ -186,8 +186,8 @@ $(document).on('turbolinks:load', function() {
      *      rem_status:                         string,
      * }} EmmaData
      *
-     * @see 'en.emma.upload.record.emma_data'
-     * @see 'AwsS3::Record::SubmissionPackage'
+     * @see "en.emma.upload.record.emma_data"
+     * @see "AwsS3::Record::SubmissionPackage"
      */
 
     /**
@@ -217,7 +217,7 @@ $(document).on('turbolinks:load', function() {
      *      reviewed_at:    string
      * }} UploadRecord
      *
-     * @see 'en.emma.upload.record'
+     * @see "en.emma.upload.record"
      */
 
     /**
@@ -273,7 +273,7 @@ $(document).on('turbolinks:load', function() {
      *      s_accessModeSufficient:             string[]?
      * }} SearchResultEntry
      *
-     * @see 'en.emma.search.record'
+     * @see "en.emma.search.record"
      */
 
     /**
@@ -1358,6 +1358,7 @@ $(document).on('turbolinks:load', function() {
             debug('Uppy:', 'upload', data);
             clearFlash();
             const upload = uppy.getPlugin('XHRUpload');
+            // noinspection JSUnresolvedFunction
             const url    = upload.getOptions({}).endpoint;
             const db_id  = dbId($form);
             if (isMissing(url)) {
@@ -1709,8 +1710,7 @@ $(document).on('turbolinks:load', function() {
      */
     function hideUppyProgressBar(form) {
         let $control = formContainer(form).find('.uppy-ProgressBar');
-        $control.attr('aria-hidden', true);
-        $control.css('visibility', 'hidden');
+        toggleVisibility($control, false);
     }
 
     // ========================================================================
@@ -1771,7 +1771,6 @@ $(document).on('turbolinks:load', function() {
     function updateInputField(field, new_value, trim, init) {
         let $field = $(field);
 
-        // noinspection IfStatementWithTooManyBranchesJS
         if ($field.is('fieldset.input.multi')) {
             updateFieldsetInputs($field, new_value, trim, init);
 
@@ -1833,7 +1832,7 @@ $(document).on('turbolinks:load', function() {
                     value = value.trim();
                 }
                 let index = -1;
-                // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
+                // noinspection FunctionWithInconsistentReturnsJS
                 $inputs.each(function(i) {
                     const old_value = this.value || '';
                     if (old_value === value) {
@@ -2046,7 +2045,7 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionTooLongJS, OverlyComplexFunctionJS
+    // noinspection OverlyComplexFunctionJS, FunctionTooLongJS
     /**
      * Use {@link FIELD_RELATIONSHIP} to determine whether the state of the
      * indicated field should change the state of other field(s) with which it
@@ -2368,7 +2367,6 @@ $(document).on('turbolinks:load', function() {
     // Functions - source repository
     // ========================================================================
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Monitor attempts to change to the "Source Repository" menu selection.
      *
@@ -2432,7 +2430,6 @@ $(document).on('turbolinks:load', function() {
             searchFailure();
         });
 
-        // noinspection FunctionWithMultipleReturnPointsJS
         /**
          * Extract the title information from the search results.
          *
@@ -2617,7 +2614,6 @@ $(document).on('turbolinks:load', function() {
         }
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Get EMMA index entries via search.
      *
@@ -2630,7 +2626,6 @@ $(document).on('turbolinks:load', function() {
         let search_terms = {};
 
         // Create a search URL from the given search term(s).
-        // noinspection IfStatementWithTooManyBranchesJS
         if (isEmpty(search)) {
             console.error(func, 'empty search terms');
             return;
@@ -2712,7 +2707,6 @@ $(document).on('turbolinks:load', function() {
             error = `${status}: ${xhr.status} ${message}`;
         }
 
-        // noinspection FunctionWithMultipleReturnPointsJS
         /**
          * Actions after the request is completed.  If there was no error, the
          * search result list is passed to the callback function.
@@ -3303,12 +3297,15 @@ $(document).on('turbolinks:load', function() {
     /**
      * Update field display filtering.
      *
-     * @overload filterFieldDisplay(form_sel)
-     *  @param {Selector} [form_sel]
+     * @param {string|null} [new_mode]
+     * @param {Selector}    [form_sel]
      *
      * @overload filterFieldDisplay(new_mode, form_sel)
-     *  @param {string|null} [new_mode]
+     *  @param {string|null} new_mode
      *  @param {Selector}    [form_sel]
+     *
+     * @overload filterFieldDisplay(form_sel)
+     *  @param {Selector}    form_sel
      *
      * @see "UploadHelper#upload_field_group"
      */

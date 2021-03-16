@@ -101,7 +101,7 @@ module ApiExplorerConcern
       subscriptionId: '???',      # TODO: ???
       messageId:      '???',      # TODO: ???
       organization:   'emma',     # TODO: ???
-      format:         FormatType.default,
+      format:         BsFormatType.default,
       limit:          5,
     }.deep_freeze
 

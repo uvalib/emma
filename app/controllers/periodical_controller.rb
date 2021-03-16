@@ -58,7 +58,7 @@ class PeriodicalController < ApplicationController
     @list = bs_api.get_periodicals(**opt)
     self.page_items  = @list.periodicals
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

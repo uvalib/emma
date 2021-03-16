@@ -16,6 +16,7 @@ module ApplicationHelper
 
   include Emma::Constants
   include Emma::Common
+  include HtmlHelper
 
   # ===========================================================================
   # :section:
@@ -100,7 +101,7 @@ module ApplicationHelper
   #
   def page_description(controller: nil, action: nil, **opt)
     text = page_text(controller: controller, action: action)
-    html_div(text, prepend_css_classes!(opt, 'panel')) if text.present?
+    html_div(text, prepend_classes!(opt, 'panel')) if text.present?
   end
 
   # Get the configured page description.

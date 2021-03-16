@@ -1,11 +1,8 @@
 <%# app/views/layouts/_nav_bar.html.erb -%>
 <%-
   # Navigation bar.
-
-  # noinspection RubyUnusedLocalVariable
-  skip ||= !show_nav_bar? and return
-  controls = nav_bar_links.presence or return
-
+  controls = (nav_bar_links if show_nav_bar?)
+  return unless controls.present?
 -%>
 
 <nav class="layout-navbar">

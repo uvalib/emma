@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_overlay.scss
 
-// @use 'shared/controls/popup'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Content overlay frames
@@ -17,7 +18,6 @@
     background: #ffffff40;
 
     // Add the "visible" class to the element to make the overlay appear.
-    // noinspection SassScssResolvedByNameOnly
     &.visible {
         z-index:    $z-overlay;
         opacity:    1;
@@ -25,7 +25,6 @@
     }
 
     // Without the addition of the "visible" class, the overlay remains hidden.
-    // noinspection SassScssResolvedByNameOnly
     &:not(.visible) {
         z-index: $z-hidden;
         opacity: 0;

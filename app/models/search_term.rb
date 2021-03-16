@@ -10,7 +10,7 @@ __loading_begin(__FILE__)
 #
 class SearchTerm
 
-  include LayoutHelper::SearchControls
+  include Emma::Common
 
   # ===========================================================================
   # :section:
@@ -36,6 +36,12 @@ class SearchTerm
   #
   attr_reader :pairs
 
+  # Indicates whether this is a query (text-only) search term.
+  #
+  # @return [Boolean]
+  #
+  attr_reader :query
+
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -47,10 +53,13 @@ class SearchTerm
   # @param [String, Symbol]           url_param
   # @param [Hash, Array, String, nil] values
   # @param [String, nil]              label
+  # @param [Boolean, nil]             query
+  # @param [Hash, nil]                config
   #
-  def initialize(url_param, values = nil, label = nil)
+  def initialize(url_param, values = nil, label: nil, query: nil, config: nil)
     @parameter = url_param.to_sym
-    config     = url_parameter_menu_config(@parameter)
+    @query     = query.present?
+    config   ||= {}
     @pairs =
       if values.is_a?(Hash)
         # noinspection RubyNilAnalysis
@@ -102,13 +111,13 @@ class SearchTerm
   # Indicate whether this is a query (text-only) search term.
   #
   def query?
-    QUERY_PARAMETERS.include?(parameter)
+    @query
   end
 
   # Indicate whether this search term represents facet value(s).
   #
   def facet?
-    !query?
+    !@query
   end
 
   # Indicate whether this search term represents a "null search".

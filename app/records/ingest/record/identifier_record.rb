@@ -5,7 +5,7 @@
 
 __loading_begin(__FILE__)
 
-# Ingest::Record::IdentifierRecord
+# Metadata to uniquely identify a record in the EMMA Federated Search Index.
 #
 # Either:
 #
@@ -18,7 +18,9 @@ __loading_begin(__FILE__)
 # @attr [String]            emma_formatVersion        (optional)
 # @attr [DublinCoreFormat]  dc_format
 #
-# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.2#/components/schemas/IdentifierRecord
+# @see https://app.swaggerhub.com/apis/kden/emma-federated-ingestion-api/0.0.3#/IdentifierRecord                            Ingest API documentation
+# @see https://app.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3#/components/schemas/IdentifierRecord  HTML schema documentation
+# @see https://api.swaggerhub.com/domains/kden/emma-federated-shared-components/0.0.3                                       JSON schema specification
 #
 class Ingest::Record::IdentifierRecord < Ingest::Api::Record
 

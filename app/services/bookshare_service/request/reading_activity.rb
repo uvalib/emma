@@ -32,12 +32,12 @@ module BookshareService::Request::ReadingActivity
   #
   # @param [Hash] opt                 Passed to #api.
   #
-  # @option opt [String]     :bookshareId                           *REQUIRED*
-  # @option opt [FormatType] :format                                *REQUIRED*
-  # @option opt [String]     :location                              *REQUIRED*
-  # @option opt [String]     :locationDescription
-  # @option opt [Integer]    :metric                                *REQUIRED*
-  # @option opt [MetricType] :metricType                            *REQUIRED*
+  # @option opt [String]       :bookshareId                          *REQUIRED*
+  # @option opt [BsFormatType] :format                               *REQUIRED*
+  # @option opt [String]       :location                             *REQUIRED*
+  # @option opt [String]       :locationDescription
+  # @option opt [Integer]      :metric                               *REQUIRED*
+  # @option opt [BsMetricType] :metricType                           *REQUIRED*
   #
   # @return [Bs::Message::StatusModel]
   #
@@ -55,10 +55,10 @@ module BookshareService::Request::ReadingActivity
         },
         required: {
           bookshareId:          String,
-          format:               FormatType,
+          format:               BsFormatType,
           location:             String,
           metric:               Integer,
-          metricType:           MetricType,
+          metricType:           BsMetricType,
         },
         optional: {
           locationDescription:  String,

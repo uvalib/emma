@@ -1,15 +1,14 @@
 // app/assets/stylesheets/controllers/_category.scss
 
-// @use 'feature/model';  // TODO: SASS 4.0
-// @use 'feature/search'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+@use 'feature/model'    as *;
 
 //=============================================================================
 // Category index page
 //=============================================================================
 
 // Category metadata label/value pairs for index listings.
-//
-// noinspection SassScssResolvedByNameOnly
 .category-list-entry {
 
     @extend .item-list-entry;
@@ -42,8 +41,6 @@
 }
 
 // Zero or more .category-list-entry elements.
-//
-// noinspection SassScssResolvedByNameOnly
 .category-list {
 
     @extend .item-list;

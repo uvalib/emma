@@ -392,7 +392,7 @@ module UploadConcern
   # @see UploadWorkflow::Single#check_status
   #
   def wf_single_check(rec: nil, **opt)
-    from           = (opt.delete(:from) || calling_method)&.to_sym
+    opt.delete(:from)
     rec          ||= @db_id || @identifier
     opt[:user]   ||= @user
     opt[:params] ||= workflow_parameters
@@ -408,7 +408,7 @@ module UploadConcern
   #
   # @param [Array, :unset, nil] rec
   # @param [Array, :unset, nil] data
-  # @param [Hash]               opt   To workflow initializer except:
+  # @param [Hash]               opt   To workflow initializer except for:
   #
   # @option opt [Symbol] :from        Default: `#calling_method`.
   # @option opt [Symbol] :event

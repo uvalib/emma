@@ -46,11 +46,11 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def account_link(item, **opt)
-    prepend_css_classes!(opt, 'button')
+    css_selector  = '.button'
     opt[:role]  ||= 'button'
     opt[:label] ||= 'Show' # TODO: ?
     opt[:path]  ||= show_account_path(item)
-    item_link(item, **opt)
+    item_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # Create a link to the edit page for the given item.
@@ -61,12 +61,12 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def edit_account_link(item, **opt)
-    prepend_css_classes!(opt, 'icon')
+    css_selector         = '.icon'
     opt[:role]         ||= 'button'
     opt[:label]        ||= UploadHelper::UPLOAD_ICONS.dig(:edit, :icon) # TODO: ?
     opt[:'aria-label'] ||= 'Edit'
     opt[:path]         ||= edit_account_path(item)
-    item_link(item, **opt)
+    item_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # Create a link to remove the given item.
@@ -77,12 +77,12 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def delete_account_link(item, **opt)
-    prepend_css_classes!(opt, 'icon')
+    css_selector         = '.icon'
     opt[:role]         ||= 'button'
     opt[:label]        ||= UploadHelper::UPLOAD_ICONS.dig(:delete, :icon) # TODO: ?
     opt[:'aria-label'] ||= 'Delete'
     opt[:path]         ||= delete_select_account_path(selected: item)
-    item_link(item, **opt)
+    item_link(item, **prepend_classes!(opt, css_selector))
   end
 
   # ===========================================================================
@@ -93,16 +93,16 @@ module AccountHelper
 
   # Render an account metadata listing.
   #
-  # @param [User]            item
-  # @param [String, Symbol, nil, Array<String,Symbol,nil>] columns
-  # @param [Hash, nil]       pairs    Additional field mappings.
-  # @param [Hash]            opt      Passed to #item_details.
+  # @param [User]      item
+  # @param [String, Symbol, Array<String,Symbol,nil>, nil] columns
+  # @param [Hash, nil] pairs          Additional field mappings.
+  # @param [Hash]      opt            Passed to #item_details.
   #
   def account_details(item, columns: nil, pairs: nil, **opt)
     pairs = account_field_values(item, columns: columns).merge(pairs || {})
     # noinspection RubyNilAnalysis
     count = pairs.size
-    append_css_classes!(opt, "columns-#{count}") if count.positive?
+    append_classes!(opt, "columns-#{count}") if count.positive?
     item_details(item, model: :account, pairs: pairs, **opt)
   end
 
@@ -202,8 +202,8 @@ module AccountHelper
 
   # account_columns
   #
-  # @param [User] item
-  # @param [Hash] opt                 Passed to #account_field_values
+  # @param [User, nil] item
+  # @param [Hash]      opt            Passed to #account_field_values
   #
   # @return [Hash{Symbol=>*}]
   #
@@ -273,6 +273,7 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def account_form(item, label: nil, action: nil, **opt)
+    css_selector = '.account-form'
     action ||= params[:action]
     cancel   = opt.delete(:cancel)
 
@@ -287,10 +288,8 @@ module AccountHelper
     opt[:multipart]    = true
     opt[:autocomplete] = 'off'
 
-    prepend_css_classes!(opt, 'account-form', action)
-
     html_div(class: "account-form-container #{action}") do
-      form_with(model: item, **opt) do
+      form_with(model: item, **prepend_classes!(opt, css_selector, action)) do
         # Button tray.
         tray = []
         tray << account_submit_button(action: action, label: label)
@@ -318,7 +317,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js submitButton()
+  # @see file:app/assets/javascripts/feature/download.js *submitButton()*
   #
   def account_submit_button(**opt)
     opt[:config] ||= ACCOUNT_ACTION_VALUES
@@ -336,7 +335,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see cancelButton() in app/assets/javascripts/feature/download.js
+  # @see file:app/assets/javascripts/feature/download.js *cancelButton()*
   #
   def account_cancel_button(**opt)
     opt[:model]  ||= :account
@@ -358,8 +357,8 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def account_field_container(item, **opt)
-    prepend_css_classes!(opt, 'account-fields')
-    html_div(opt) do
+    css_selector = '.account-fields'
+    html_div(prepend_classes!(opt, css_selector)) do
       account_form_fields(item)
     end
   end
@@ -375,7 +374,7 @@ module AccountHelper
   # @param [Symbol, String] action    Default: `params[:action]`
   # @param [User, String]   user      Default: '@user'
   # @param [String]         prompt
-  # @param [Hash]           opt       Passed to #form_tag.
+  # @param [Hash]           opt       Passed to #page_items_menu.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -408,12 +407,14 @@ module AccountHelper
   # @return [ActiveSupport::SafeBuffer]
   #
   def account_delete_form(*items, label: nil, **opt)
+    css_selector  = '.account-form-delete'
     opt, html_opt = partition_options(opt, :cancel)
     cancel = account_delete_cancel(url: opt[:cancel])
     submit = account_delete_submit(*items, label: label)
     html_div(class: 'account-form-container delete') do
-      prepend_css_classes!(html_opt, 'account-delete-form')
-      html_div(html_opt) { submit << cancel }
+      html_div(prepend_classes!(html_opt, css_selector)) do
+        submit << cancel
+      end
     end
   end
 
@@ -438,7 +439,7 @@ module AccountHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  # @see file:app/assets/javascripts/feature/download.js cancelAction()
+  # @see file:app/assets/javascripts/feature/download.js *cancelAction()*
   #
   def account_delete_cancel(**opt)
     opt[:action] ||= :delete

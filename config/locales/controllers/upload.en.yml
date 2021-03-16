@@ -41,7 +41,7 @@ en:
         enabled:        [admin]
         label:          'Prefix Filter'
 
-      search_controls:
+      search_filters:
         enabled:        [admin]
 
         after:

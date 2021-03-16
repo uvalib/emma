@@ -8,7 +8,7 @@ __loading_begin(__FILE__)
 # Bs::Record::PeriodicalSubscription
 #
 # @attr [IsoDate]                                     dateSubscribed
-# @attr [PeriodicalFormatType]                        format
+# @attr [BsPeriodicalFormat]                          format
 # @attr [Array<Bs::Record::Link>]                     links
 # @attr [Bs::Record::PeriodicalSeriesMetadataSummary] periodical
 #
@@ -21,7 +21,7 @@ class Bs::Record::PeriodicalSubscription < Bs::Api::Record
 
   schema do
     has_one   :dateSubscribed, IsoDate
-    has_one   :format,         PeriodicalFormatType
+    has_one   :format,         BsPeriodicalFormat
     has_many  :links,          Bs::Record::Link
     has_one   :periodical,     Bs::Record::PeriodicalSeriesMetadataSummary
   end

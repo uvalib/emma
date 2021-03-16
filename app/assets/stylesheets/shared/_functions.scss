@@ -1,5 +1,8 @@
 // app/assets/stylesheets/shared/_functions.scss
 
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
+
 //=============================================================================
 // SASS functions - numeric
 //=============================================================================
@@ -12,7 +15,6 @@
 /// This replaces the SASS percentage() function in order to accept either a
 /// percentage or a unit-less number.
 ///
-// noinspection CssInvalidFunction
 @function percent($value) {
     $result: $value + 0%;
     @return if((abs($result) < 1%), ($result * 100), $result);
@@ -40,7 +42,6 @@
 /// Use this in place of the SASS lighten() or darken() functions since the
 ///     may have unintended consequences versus scale-color():
 ///
-// noinspection CssInvalidFunction
 @function lighter($color, $level) {
     @return scale-color($color, $lightness: percent($level));
 }

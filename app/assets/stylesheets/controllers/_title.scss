@@ -1,21 +1,17 @@
 // app/assets/stylesheets/controllers/_title.scss
 
-// @use 'shared/mixins';         // TODO: SASS 4.0
-// @use 'shared/common';         // TODO: SASS 4.0
-// @use 'shared/controls/grids'; // TODO: SASS 4.0
-// @use 'shared/controls/lists'; // TODO: SASS 4.0
-// @use 'feature/download';      // TODO: SASS 4.0
-// @use 'feature/images';        // TODO: SASS 4.0
-// @use 'feature/search';        // TODO: SASS 4.0
-// @use 'feature/model';         // TODO: SASS 4.0
+@use 'shared/variables'      as *;
+@use 'shared/common'         as *;
+@use 'shared/mixins'         as *;
+@use 'shared/controls/grids' as *;
+@use 'feature/images'        as *;
+@use 'feature/model'         as *;
 
 //=============================================================================
 // Catalog Title index page
 //=============================================================================
 
 // Catalog title metadata label/value pairs for index listings.
-//
-// noinspection SassScssResolvedByNameOnly
 .title-list-entry {
 
     @extend .item-list-entry;
@@ -82,8 +78,6 @@
 }
 
 // Zero or more .title-list-entry elements.
-//
-// noinspection SassScssResolvedByNameOnly
 .title-list {
 
     @extend .item-list;
@@ -136,8 +130,6 @@
 //=============================================================================
 
 // Catalog Title metadata values.
-//
-// noinspection SassScssResolvedByNameOnly
 .title-details {
 
     @extend .item-details;
@@ -255,8 +247,6 @@
 
 // Wrapper for .title-details which displays the full-size cover image to the
 // right on large screens.
-//
-// noinspection SassScssResolvedByNameOnly
 .title-container {
 
     @extend .item-container;

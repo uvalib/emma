@@ -60,7 +60,7 @@ class CategoryController < ApplicationController
     @list = bs_api.get_categories(**opt)
     self.page_items  = @list.categories
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

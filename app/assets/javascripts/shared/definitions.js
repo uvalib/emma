@@ -8,6 +8,10 @@
  * @typedef {string|jQuery|HTMLElement|EventTarget} Selector
  */
 
+/**
+ * @typedef {Selector|Event|jQuery.Event} SelectorOrEvent
+ */
+
 // ============================================================================
 // Basic values and enumerations
 // ============================================================================
@@ -61,6 +65,17 @@ function arrayWrap(item) {
 }
 
 /**
+ * Transform an object into an array of key-value pairs.
+ *
+ * @param {object} item
+ *
+ * @returns {[string, any][]}
+ */
+function objectEntries(item) {
+    return Object.entries(item).filter(kv => item.hasOwnProperty(kv[0]));
+}
+
+/**
  * Render an item as a string (used in place of `JSON.stringify`).
  *
  * @param {*}      item
@@ -86,7 +101,7 @@ function asString(item, limit) {
 
     } else if (Array.isArray(item)) {
         // An array object.
-        result = item.map(function(v) { return asString(v) }).join(', ');
+        result = item.map(v => asString(v)).join(', ');
         left   = '[';
         right  = ']';
 
@@ -96,14 +111,8 @@ function asString(item, limit) {
 
     } else {
         // A generic object.
-        let pairs = function(v, k) {
-            let pair;
-            if (item.hasOwnProperty(k)) {
-                pair = `"${k}": ${asString(v)}`;
-            }
-            return pair;
-        };
-        result = $.map(item, pairs).join(', ');
+        let pr = objectEntries(item);
+        result = pr.map(kv => `"${kv[0]}": ${asString(kv[1])}`).join(', ');
         left   = '{';
         right  = '}';
         if (result) { space = ' '; }
@@ -144,7 +153,6 @@ function fromJSON(item, caller) {
     return result;
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Generate a copy of the item without blank elements.
  *
@@ -158,20 +166,11 @@ function compact(item, trim) {
         return (trim === false) ? item : item.trim();
 
     } else if (Array.isArray(item)) {
-        let arr = [];
-        item.forEach(function(v) {
-            const value = compact(v, trim);
-            if (isPresent(value)) { arr.push(...arrayWrap(value)); }
-        });
-        return arr;
+        return item.map(v => compact(v, trim)).filter(v => isPresent(v));
 
     } else if (typeof item === 'object') {
-        let obj = {};
-        $.each(item, function(k, v) {
-            const value = compact(v, trim);
-            if (isPresent(value)) { obj[k] = value; }
-        });
-        return obj;
+        let pr = objectEntries(item).map(kv => [kv[0], compact(kv[1], trim)]);
+        return Object.fromEntries(pr.filter(kv => isPresent(kv[1])));
 
     } else {
         return item;
@@ -188,10 +187,9 @@ function compact(item, trim) {
 function flatten(item) {
     let result = [];
     if (arguments.length > 1) {
-        const args = Array.from(arguments);
-        args.forEach(function(v) { result.push(...flatten(v)); });
+        Array.from(arguments).forEach(v => result.push(...flatten(v)));
     } else if (Array.isArray(item)) {
-        item.forEach(function(v) { result.push(...flatten(v)); });
+        item.forEach(v => result.push(...flatten(v)));
     } else {
         const value = (typeof item === 'string') ? item.trim() : item;
         if (value) { result.push(value); }
@@ -209,15 +207,10 @@ function flatten(item) {
 function deepFreeze(item) {
     let new_item;
     if (Array.isArray(item)) {
-        new_item = item.map(function(v) { return deepFreeze(v); });
+        new_item = item.map(v => deepFreeze(v));
     } else if (typeof item === 'object') {
-        new_item = {};
-        const prop_names = Object.getOwnPropertyNames(item);
-        $.each(item, function(k, v) {
-            if (prop_names.includes(k)) {
-                new_item[k] = deepFreeze(v);
-            }
-        });
+        let prs  = objectEntries(item).map(kv => [kv[0], deepFreeze(kv[1])]);
+        new_item = Object.fromEntries(prs);
     } else {
         new_item = item;
     }
@@ -286,7 +279,6 @@ function notDefined(item) {
     return typeof item === 'undefined';
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Indicate whether the item does not contain a value.
  *
@@ -295,7 +287,6 @@ function notDefined(item) {
  * @returns {boolean}
  */
 function isEmpty(item) {
-    // noinspection NegatedIfStatementJS
     if (!item) {
         return true;
     } else if (isDefined(item.length)) {
@@ -400,62 +391,97 @@ function randomizeClass(css_class) {
  * @param {boolean}             [setting]
  */
 function toggleClass(sel, cls, setting) {
-    arrayWrap(sel).forEach(function(e) { $(e).toggleClass(cls, setting); });
+    arrayWrap(sel).forEach(element => $(element).toggleClass(cls, setting));
 }
 
 /**
- * Join one or more CSS class names or arrays of class names.
+ * Normalize singletons and/or arrays of CSS class names.
  *
  * @param {...string|Array} args
  *
- * @returns {string}
+ * @returns {string[]}
  */
 function cssClasses(...args) {
     let result = [];
     args.forEach(function(arg) {
         let values = undefined;
         if (typeof arg === 'string') {
-            values = arg.trim().replace(/\s+/, ' ').split(' ');
+            values = arg.trim().replace(/\s+/g, ' ').split(' ');
         } else if (Array.isArray(arg)) {
             values = cssClasses(...arg);
         } else if (typeof arg === 'object') {
-            values = cssClasses(...arg['class']);
+            values = cssClasses(arg['class']);
         }
+        values = compact(values);
         if (isPresent(values)) {
             result.push(...values);
         }
     });
-    return result.join(' ');
+    return result;
+}
+
+/**
+ * Join one or more CSS class names or arrays of class names with spaces.
+ *
+ * @param {...string|Array} args      Passed to {@link cssClasses}.
+ *
+ * @returns {string}
+ */
+function cssClass(...args) {
+    return cssClasses(...args).join(' ');
 }
 
 /**
  * Form a selector from one or more selectors or class names.
  *
- * @param {...string|Array} args
+ * @param {...string|Array} args      Passed to {@link cssClasses}.
  *
  * @returns {string}
  */
 function selector(...args) {
     let result = [];
-    cssClasses(...args).split(' ').forEach(function(v) {
-        if (v === ',') {
-            result.push(', ');
-        } else if (v.includes(',')) {
-            const parts  = v.split(',');
-            const values = cssClasses(...parts).join(', ');
-            result.push(values);
-        } else if (v[0] === '#') {    // ID selector
-            result.unshift(v);
-        } else if (v[0] === '.') {    // CSS class selector
-            result.push(v);
-        } else {                      // CSS class
-            result.push('.' + v);
+    args.forEach(function(arg) {
+        let entry;
+        if (isEmpty(arg)) {
+            console.warn(`selector: skipping empty ${typeof arg} = ${arg}`);
+
+        } else if (Array.isArray(arg)) {
+            entry = arg.map(v => v.trim().replace(/\s*,$/, ''));
+            entry = entry.map(v => v.startsWith('.') ? v : `.${v}`);
+            entry = entry.join(', ');
+
+        } else if (typeof arg === 'object') {
+            entry = selector(arg['class']);
+
+        } else if (typeof arg !== 'string') {
+            console.warn(`selector: ignored ${typeof arg} = ${arg}`);
+
+        } else if (arg === ',') {
+            entry = ', ';
+
+        } else if (arg.includes(',')) {
+            entry = arg.trim().replace(/\s*,\s*/g, ',').split(',');
+            entry = cssClasses(...entry);
+            entry = entry.map(v => v.startsWith('.') ? v : `.${v}`);
+            entry = entry.join(', ');
+
+        } else if (arg[0] === '#') {    // ID selector
+            result.unshift(arg);
+
+        } else if (arg[0] === '.') {    // CSS class selector
+            entry = arg;
+
+        } else {                        // CSS class
+            entry = `.${arg}`;
+        }
+        entry = compact(entry);
+        if (isPresent(entry)) {
+            result.push(entry);
         }
     });
     return result.join('').trim();
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Return an identifying selector for an element -- based on the element ID if
  * it has one.
@@ -550,7 +576,6 @@ function create(element, properties) {
  */
 function urlFrom(arg) {
     let result = undefined;
-    // noinspection IfStatementWithTooManyBranchesJS
     if (typeof arg === 'string') {      // Assumedly the caller expecting a URL
         result = arg;
     } else if ((typeof arg !== 'object') || Array.isArray(arg)) {
@@ -578,10 +603,21 @@ function asParams(item) {
     let result = {};
     if (typeof item === 'string') {
         item.trim().replace(/^[?&]+/, '').split('&').forEach(function(pair) {
-            let parts = pair.split('=');
-            const k   = parts.shift();
-            if (k) {
-                result[k] = parts.join('=');
+            let kv = decodeURIComponent(pair).split('=');
+            let k  = kv.shift();
+            let v  = kv.join('=');
+            if (k && v) {
+                const array = k.endsWith('[]');
+                if (array) {
+                    k = k.replace('[]', '');
+                }
+                if (notDefined(result[k])) {
+                    result[k] = array ? [v] : v;
+                } else if (Array.isArray(result[k])) {
+                    result[k] = [...result[k], v];
+                } else {
+                    result[k] = [result[k], v];
+                }
             }
         });
     } else if (typeof item !== 'object') {
@@ -623,7 +659,7 @@ function makeUrl(...parts) {
     // Accumulate path parts and param parts.
     parts.forEach(processPart);
 
-    // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS, OverlyComplexFunctionJS, FunctionTooLongJS
+    // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS, FunctionTooLongJS
     /**
      * @param {string|string[]|object} arg
      *
@@ -638,7 +674,6 @@ function makeUrl(...parts) {
         } else if (typeof arg === 'object') {
             return $.extend(params, arg);
         }
-        // noinspection IfStatementWithTooManyBranchesJS, NegatedIfStatementJS
         if (!part) {
             return;
 
@@ -717,16 +752,16 @@ function makeUrl(...parts) {
         path.unshift(window.location.origin);
     } else {
         let tmp_path = [path_starter];
-        tmp_path.push(...path.slice(0, starter_index));
-        tmp_path.push(...path.slice(starter_index + 1));
+        tmp_path.push(path.slice(0, starter_index));
+        tmp_path.push(path.slice(starter_index + 1));
         path = tmp_path;
     }
 
     // Assemble the parts of the parameters.
     let url = path.join('/');
+    params = compact(params);
     if (isPresent(params)) {
-        url += '?';
-        url += $.map(params, function(v, k) { return `${k}=${v}`; }).join('&');
+        url += '?' + $.map(params, (v,k) => `${k}=${v}`).join('&');
     }
     return url;
 }
@@ -969,7 +1004,7 @@ function handleKeypressAsClick(selector, direct, match, except) {
     // handler is not added twice.
     return handleEvent($elements, 'keydown', handleKeypress);
 
-    // noinspection FunctionWithMultipleReturnPointsJS, FunctionWithInconsistentReturnsJS
+    // noinspection FunctionWithInconsistentReturnsJS
     /**
      * Translate a carriage return to a click, except for links (where the
      * key press will be handled by the browser itself).
@@ -991,7 +1026,6 @@ function handleKeypressAsClick(selector, direct, match, except) {
     }
 }
 
-// noinspection FunctionWithMultipleReturnPointsJS
 /**
  * Allow a click anywhere within the element holding a label/button pair
  * to be delegated to the enclosed input.  This broadens the "click target"
@@ -1044,6 +1078,34 @@ function focusable(element) {
  */
 function focusableIn(element) {
     return $(element).find(FOCUS_SELECTOR).not(NO_FOCUS_SELECTOR);
+}
+
+/**
+ * Hide/show elements by adding/removing the CSS "invisible" class.
+ *
+ * If *visible* is not given then visibility is toggled to the opposite state.
+ *
+ * @param {Selector} element
+ * @param {boolean}  [visible]
+ *
+ * @returns {boolean} If *true* then *element* is becoming visible.
+ */
+function toggleVisibility(element, visible) {
+    const invisibility_marker = 'invisible';
+    let $element = $(element);
+    let make_visible, hidden, visibility;
+    if (isDefined(visible)) {
+        make_visible = visible;
+    } else if (isDefined((hidden = $.attr('aria-hidden')))) {
+        make_visible = hidden && (hidden !== 'false');
+    } else if (isDefined((visibility = $element.css('visibility')))) {
+        make_visible = (visibility === 'hidden');
+    } else {
+        make_visible = $element.hasClass(invisibility_marker);
+    }
+    $element.toggleClass(invisibility_marker, !make_visible);
+    $element.attr('aria-hidden', !make_visible);
+    return make_visible;
 }
 
 // ============================================================================

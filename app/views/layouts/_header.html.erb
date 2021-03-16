@@ -1,18 +1,11 @@
 <%# app/views/layouts/_header.html.erb -%>
 <%-
   # Application header.
-
-  skip_nav_bar         ||= false
-  skip_search_bar      ||= false
-  skip_search_controls ||= false
-  skip_page_controls   ||= false
-
 -%>
 
 <header class="layout-header">
   <%= render 'layouts/banner' %>
-  <%= render 'layouts/nav_bar',         skip: skip_nav_bar %>
-  <%= render 'layouts/search_bar',      skip: skip_search_bar %>
-  <%= render 'layouts/search_controls', skip: skip_search_controls %>
-  <%= render 'layouts/page_controls',   skip: skip_page_controls %>
+  <%= render 'layouts/nav_bar'       if show_nav_bar? %>
+  <%= render 'layouts/search' %>
+  <%= render 'layouts/page_controls' if show_page_controls? %>
 </header>

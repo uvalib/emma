@@ -1,6 +1,7 @@
 // app/assets/stylesheets/feature/_images.scss
 
-// @use 'shared/common'; // TODO: SASS 4.0
+@use 'shared/variables' as *;
+@use 'shared/common'    as *;
 
 //=============================================================================
 // Common <img> properties.
@@ -15,7 +16,6 @@ $image-border-color: gray;
     border-radius: 3px;
 }
 
-// noinspection SassScssResolvedByNameOnly
 %thumbnail-dimensions {
 
     max-width:  $thumbnail-max-x;
@@ -64,7 +64,6 @@ $image-border-color: gray;
 
     min-width: $min-thumbnail-width;
 
-    // noinspection SassScssResolvedByNameOnly
     img {
         @extend %image;
         @extend %thumbnail-dimensions;
@@ -94,7 +93,6 @@ $image-border-color: gray;
 
             outline: none;
 
-            // noinspection SassScssResolvedByNameOnly
             img {
                 @extend %focus;
             }

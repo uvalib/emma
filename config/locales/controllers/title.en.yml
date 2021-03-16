@@ -38,20 +38,18 @@ en:
           placeholder:  'Enter catalog search terms...'
 
       search_bar:
+        enabled:        true
         label:          'Catalog Search'
 
-      search_controls:
+      search_filters:
+        enabled:        true
 
         format:
-          values:       !ruby/symbol FormatType
+          values:       !ruby/symbol BsFormatType
           multiple:     false
 
-        size:
-          tooltip:      'Specify the number of search results per page'
-          values:       [10, 25, 50, 100]
-
         sort:
-          values:       !ruby/symbol TitleSortOrder
+          values:       !ruby/symbol BsTitleSortOrder
           reverse:
             enabled:    true
 

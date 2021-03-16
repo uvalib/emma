@@ -77,7 +77,7 @@ class TitleController < ApplicationController
       @list = bs_api.get_titles(**opt)
       self.page_items  = @list.titles
       self.total_items = @list.totalResults
-      self.next_page   = next_page_path(@list, opt)
+      self.next_page   = next_page_path(**opt)
     end
     respond_to do |format|
       format.html

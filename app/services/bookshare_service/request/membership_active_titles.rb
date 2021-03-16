@@ -34,10 +34,10 @@ module BookshareService::Request::MembershipActiveTitles
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]            :start
-  # @option opt [Integer]           :limit      Default: 10
-  # @option opt [AssignedSortOrder] :sortOrder  Default: 'title'
-  # @option opt [Direction]         :direction  Default: 'asc'
+  # @option opt [String]              :start
+  # @option opt [Integer]             :limit      Default: 10
+  # @option opt [BsAssignedSortOrder] :sortOrder  Default: 'title'
+  # @option opt [BsSortDirection]     :direction  Default: 'asc'
   #
   # @return [Bs::Message::ActiveBookList]
   #
@@ -58,10 +58,10 @@ module BookshareService::Request::MembershipActiveTitles
           userIdentifier: String,
         },
         optional: {
-          start:          String,
-          limit:          Integer,
-          sortOrder:      AssignedSortOrder,
-          direction:      Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsAssignedSortOrder,
+          direction: BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_user-active-books'
@@ -152,10 +152,10 @@ module BookshareService::Request::MembershipActiveTitles
   # @param [User, String, nil] user   Default: `@user`.
   # @param [Hash]              opt    Passed to #api.
   #
-  # @option opt [String]            :start
-  # @option opt [Integer]           :limit      Default: 10
-  # @option opt [AssignedSortOrder] :sortOrder  Default: 'title'
-  # @option opt [Direction]         :direction  Default: 'asc'
+  # @option opt [String]              :start
+  # @option opt [Integer]             :limit      Default: 10
+  # @option opt [BsAssignedSortOrder] :sortOrder  Default: 'title'
+  # @option opt [BsSortDirection]     :direction  Default: 'asc'
   #
   # @return [Bs::Message::ActivePeriodicalList]
   #
@@ -176,10 +176,10 @@ module BookshareService::Request::MembershipActiveTitles
           userIdentifier: String,
         },
         optional: {
-          start:          String,
-          limit:          Integer,
-          sortOrder:      AssignedSortOrder,
-          direction:      Direction,
+          start:     String,
+          limit:     Integer,
+          sortOrder: BsAssignedSortOrder,
+          direction: BsSortDirection,
         },
         reference_page:   'membership',
         reference_id:     '_user-active-periodicals'

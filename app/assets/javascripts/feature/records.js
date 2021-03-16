@@ -4,7 +4,7 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionWithMultipleReturnPointsJS,JSUnresolvedVariable
+// noinspection JSUnresolvedVariable
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -196,7 +196,7 @@ $(document).on('turbolinks:load', function() {
         const groups  = group_list || Emma.Record.StateGroup;
         let $elements = (match ? $(match) : $record_lines).filter(':visible');
         let result    = undefined;
-        // noinspection FunctionWithInconsistentReturnsJS, FunctionWithMultipleReturnPointsJS
+        // noinspection FunctionWithInconsistentReturnsJS
         $.each(groups, function(_, group) {
             if ($elements.has(`[data-group="${group}"]`)) {
                 result = group;
@@ -214,16 +214,16 @@ $(document).on('turbolinks:load', function() {
      * Display a description of the workflow state group button of interest
      * within the element dedicated to that purpose.
      *
-     * @param {jQuery.Event|Selector} ev
+     * @param {SelectorOrEvent} ev
      */
     function showGroupNote(ev) {
-        let target   = (typeof ev === 'object') && ev.currentTarget || ev;
+        let target   = isEvent(ev) ? (ev.currentTarget || ev.target) : ev;
         let $target  = $(target);
         const indent = $target.position().left;
         const text   = $target.attr('aria-label') || $target.attr('title');
         $group_select_note.css('margin-left', indent);
         $group_select_note.text(text);
-        $group_select_note.css('visibility', 'visible');
+        toggleVisibility($group_select_note, true);
     }
 
     /**
@@ -232,7 +232,7 @@ $(document).on('turbolinks:load', function() {
      */
     function hideGroupNote() {
         $group_select_note.html('&nbsp;'); // Keep filled to maintain height.
-        $group_select_note.css('visibility', 'hidden');
+        toggleVisibility($group_select_note, false);
     }
 
     // ========================================================================
@@ -248,7 +248,6 @@ $(document).on('turbolinks:load', function() {
         return $page_filter_radio_buttons.filter(':checked').val();
     }
 
-    // noinspection FunctionWithMultipleReturnPointsJS
     /**
      * Update the current record filtering selection (and trigger a change to
      * the displayed set of records).
@@ -334,7 +333,9 @@ $(document).on('turbolinks:load', function() {
             }
         });
         if (all) {
+            // noinspection JSUnusedAssignment
             all.checked       = !!(checked && !unchecked);
+            // noinspection JSUnusedAssignment
             all.indeterminate = !!(checked && unchecked);
         }
         return !!checked;
@@ -359,6 +360,7 @@ $(document).on('turbolinks:load', function() {
             $filter_options_checkboxes.each(function() {
                 let $this = $(this);
                 if ($this.val() === 'ALL_FILTERS') {
+                    // noinspection JSUnusedGlobalSymbols
                     this.indeterminate = false;
                 } else {
                     $this.prop('checked', enable);

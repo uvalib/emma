@@ -7,7 +7,7 @@ __loading_begin(__FILE__)
 
 # Bs::Record::ReadingListSubscription
 #
-# @attr [Array<AllowsType>]        allows
+# @attr [Array<BsAllowsType>]      allows
 # @attr [Boolean]                  enabled
 # @attr [Array<Bs::Record::Link>]  links
 #
@@ -18,7 +18,7 @@ class Bs::Record::ReadingListSubscription < Bs::Api::Record
   include Bs::Shared::LinkMethods
 
   schema do
-    has_many  :allows,  AllowsType
+    has_many  :allows,  BsAllowsType
     has_one   :enabled, Boolean
     has_many  :links,   Bs::Record::Link
   end

@@ -66,7 +66,7 @@ class ArtifactController < ApplicationController
     @list = bs_api.get_artifact_list(**opt)
     self.page_items  = @list.artifacts
     self.total_items = @list.totalResults
-    self.next_page   = next_page_path(@list, opt)
+    self.next_page   = next_page_path(**opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }

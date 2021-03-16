@@ -38,20 +38,17 @@ en:
           placeholder:  'Search periodical titles...'
 
       search_bar:
+        enabled:        true
         label:          'Periodical Search'
 
-      search_controls:
+      search_filters:
 
         format:
-          values:       !ruby/symbol PeriodicalFormatType
+          values:       !ruby/symbol BsPeriodicalFormat
           multiple:     false
 
-        size:
-          tooltip:      'Specify the number of search results per page'
-          values:       [10, 25, 50, 100]
-
         sort:
-          values:       !ruby/symbol PeriodicalSortOrder
+          values:       !ruby/symbol BsPeriodicalSortOrder
           reverse:
             enabled:    true
 

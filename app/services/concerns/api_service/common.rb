@@ -596,11 +596,13 @@ module ApiService::Common
     # @type [Symbol] k
     # @type [*]      v
     opt.slice(*specified_keys).map { |k, v|
+      v = v.first if v.is_a?(Array) && (v.size <= 1)
+      next if v.blank?
       k = key_alias[k] || k
       v = quote(v, separator: ' ') if v.is_a?(Array) && !multi.include?(k)
       k = encode_parameter(k)
       [k, v]
-    }.to_h
+    }.compact.to_h
   end
 
   # Preserve a key that would be mistaken for an ignored system parameter.

@@ -11,19 +11,19 @@
 
   page_opt = Upload::SEARCH_RECORDS_OPTIONS.dup << :group
   page_terms, search = partition_options(terms, *page_opt)
-  page = (page_terms[:page]&.values&.first).to_i
-  page = nil unless page > 1
+  page   = page_terms[:page]&.values&.first&.to_i || 1
+  search = search.presence
 
   unless modal?
     terms = search
-    terms = terms.merge(page: page_terms[:page]) if page
+    terms = terms.merge(page: page_terms[:page]) if terms && (page > 1)
     set_page_title(t('emma.account.index.label', default: title))
-    append_page_title('-', list_search_terms(terms)) if terms.present?
+    append_page_title('-', list_search_terms(terms)) if terms
     set_page_description(title)
-    set_page_robots(:noindex, :nofollow)
+    set_page_robots(:nofollow)
   end
 
-  title += " (#{count})" if list.blank?
+  title += " (#{count} %s)" % (search ? 'matches' : 'total')
 
 -%>
 
