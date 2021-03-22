@@ -32,6 +32,14 @@ const SECOND = 1000;
  */
 const SECONDS = SECOND;
 
+/**
+ * Kilobyte multiplier.
+ *
+ * @constant
+ * @type {number}
+ */
+const K = 1024;
+
 // ============================================================================
 // Functions - Math
 // ============================================================================
@@ -47,6 +55,35 @@ const SECONDS = SECOND;
 function percent(part, total) {
     // noinspection MagicNumberJS
     return total ? ((part / total) * 100) : 0;
+}
+
+/**
+ * Show the given value as a multiple of 1024.
+ *
+ * @param {number|string} value
+ * @param {boolean}       [full]      If *true*, show full unit name.
+ *
+ * @returns {string}                  Blank if *value* is not a number.
+ */
+function asSize(value, full) {
+    const n = Number.parseFloat(value);
+    if (!n && (n !== 0)) {
+        return '';
+    }
+    let i = 0;
+    // noinspection OverlyComplexBooleanExpressionJS, IncrementDecrementResultUsedJS
+    let magnitude =
+        ((n < Math.pow(K, ++i)) && i) || // B
+        ((n < Math.pow(K, ++i)) && i) || // KB
+        ((n < Math.pow(K, ++i)) && i) || // MB
+        ++i;                             // GB
+    magnitude--;
+    const size_name = ['Bytes', 'Kilobytes', 'Megabytes', 'Gigabytes'];
+    const size_abbr = ['B', 'KB', 'MB', 'GB'];
+    const units     = full ? size_name[magnitude] : size_abbr[magnitude];
+    const precision = Math.min(magnitude, 2);
+    const result    = (n / Math.pow(K, magnitude)).toFixed(precision);
+    return `${result} ${units}`;
 }
 
 // ============================================================================
@@ -84,20 +121,36 @@ function objectEntries(item) {
  * @returns {string}
  */
 function asString(item, limit) {
-    let result = '';
-    let left   = '';
-    let right  = '';
-    let space  = '';
+    const s_quote = "'";
+    const d_quote = '"';
+    let result    = '';
+    let left      = '';
+    let right     = '';
+    let space     = '';
 
     if (typeof item === 'string') {
         // A string value.
         result += item;
-        left   = '"';
-        right  = '"';
+        if ((item[0] !== s_quote) && (item[0] !== d_quote)) {
+            left = right = d_quote;
+        }
 
-    } else if (!item || (typeof item !== 'object')) {
-        // A numeric, boolean, undefined, or null value.
-        result += item;
+    } else if (typeof item === 'boolean') {
+        // A true/false value.
+        result += item.toString();
+
+    } else if (typeof item === 'number') {
+        // A numeric, NaN, or Infinity value.
+        result += (item || (item === 0)) ? item.toString() : 'null';
+
+    } else if (item instanceof Date) {
+        // A date value.
+        result += asDateTime(item);
+        left = right = d_quote;
+
+    } else if (!item) {
+        // Undefined or null value.
+        result += 'null';
 
     } else if (Array.isArray(item)) {
         // An array object.
@@ -251,6 +304,36 @@ function secondsSince(start_time, time_now) {
     const start = timeOf(start_time);
     const now   = timeOf(time_now);
     return (now - start) / SECOND;
+}
+
+/**
+ * Show the given date value as "YYYY-MM-DD hh:mm:ss".
+ *
+ * @param {string|number|Date} value
+ * @param {object}             [opt]
+ *
+ * @param {string}  [opt.separator]  Default: ' '.
+ * @param {boolean} [opt.dateOnly]   If *true* do not show time.
+ * @param {boolean} [opt.timeOnly]   If *true* do not show date.
+ *
+ * @returns {string}                        Blank if *value* is not a date.
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/DateTimeFormat
+ */
+function asDateTime(value, opt = {}) {
+    const separator  = opt.separator || ' ';
+    const date_value = (value instanceof Date) ? value : new Date(value);
+    let date, time;
+    if (date_value.getFullYear()) {
+        if (opt.dateOnly || !opt.timeOnly) {
+            let parts = date_value.toLocaleDateString('en-GB').split('/');
+            date = [parts.pop(), ...parts].join('-');
+        }
+        if (opt.timeOnly || !opt.dateOnly) {
+            time = date_value.toLocaleTimeString([], { hour12: false });
+        }
+    }
+    return compact([date, time]).join(separator);
 }
 
 // ============================================================================

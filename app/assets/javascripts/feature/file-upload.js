@@ -474,6 +474,32 @@ $(document).on('turbolinks:load', function() {
      */
     const BULK_UPLOAD_RESULTS_SELECTOR = '.file-upload-results';
 
+    /**
+     * Item name for sessionStorage of a trace of bulk upload activity.
+     *
+     * @constant
+     * @type {string}
+     */
+    const BULK_UPLOAD_STORAGE_KEY = 'bulk-upload';
+
+    /**
+     * CSS class indicating that the bulk upload results panel contains the
+     * results of the previous run (from sessionStorage), not the current run.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OLD_DATA_MARKER = 'previous';
+
+    /**
+     * CSS selector indicating that the bulk upload results panel contains the
+     * results of the previous run (from sessionStorage), not the current run.
+     *
+     * @constant
+     * @type {string}
+     */
+    const OLD_DATA = '.' + OLD_DATA_MARKER;
+
     // noinspection PointlessArithmeticExpressionJS
     /**
      * Interval for checking the contents of the "upload" table.
@@ -556,6 +582,14 @@ $(document).on('turbolinks:load', function() {
         // Start with submit disabled until a bulk control file is supplied.
         disableSubmit($form);
 
+        // Show the results of the most recent bulk upload run (if available).
+        let $results = bulkUploadResults().empty().addClass(OLD_DATA_MARKER);
+        let previous = getBulkUploadTrace();
+        if (previous && showBulkUploadResults($results, previous)) {
+            $results.removeClass('hidden');
+            bulkUploadResultsLabel($results).removeClass('hidden');
+        }
+
         // When the bulk control file is submitted, begin a running tally of
         // the items that have been added/changed.
         handleEvent($form, 'submit', monitorBulkUpload);
@@ -611,6 +645,21 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * The element displayed above upload results.
+     *
+     * @param {Selector} [results]
+     *
+     * @returns {jQuery}
+     *
+     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results-label
+     */
+    function bulkUploadResultsLabel(results) {
+        let $results = bulkUploadResults(results);
+        const lbl_id = $results.attr('aria-labelledby');
+        return lbl_id ? $('#' + lbl_id) : $();
+    }
+
+    /**
      * The first database ID to monitor for results, defaulting to "1".
      *
      * If *record* is given, the first database ID is set to be the one which
@@ -661,11 +710,23 @@ $(document).on('turbolinks:load', function() {
 
     /**
      * Setup the element which shows intermediate results during a bulk upload.
+     *
+     * @param {jQuery.Event} [event]
      */
-    function monitorBulkUpload() {
+    function monitorBulkUpload(event) {
+        const target = event && (event.currentTarget || event.target);
+        let $form    = target ? $(target) : $bulk_operation_form;
+        disableSubmit($form);
+        disableFileSelectButton($form);
 
-        let $results = bulkUploadResults().removeClass('hidden');
-        addBulkUploadResult($results, TMP_LINE_CLASS, TMP_LINE);
+        let $results = bulkUploadResults();
+        let $label   = bulkUploadResultsLabel($results);
+        $results.removeClass(OLD_DATA_MARKER).empty();
+        addBulkUploadResult($results, TMP_LINE, TMP_LINE_CLASS);
+        $label.text('Upload results:').removeClass('hidden'); // TODO: I18n
+        $results.removeClass('hidden');
+
+        clearBulkUploadTrace();
         fetchUploadEntries('$', null, startMonitoring);
 
         /**
@@ -697,7 +758,7 @@ $(document).on('turbolinks:load', function() {
         if (isPresent(timer)) {
             clearTimeout(timer);
         }
-        if ($results.is(':visible')) {
+        if ($results.not(OLD_DATA).is(':visible')) {
             const new_timer = setTimeout(checkBulkUploadResults, period);
             $results.data(name, new_timer);
         }
@@ -707,14 +768,16 @@ $(document).on('turbolinks:load', function() {
      * Display new entries that have appeared since the last check.
      */
     function checkBulkUploadResults() {
-
-        let $results   = bulkUploadResults();
+        let $results = bulkUploadResults();
+        if ($results.is(OLD_DATA)) {
+            return;
+        }
         const start_id = bulkUploadResultsNextId($results);
         fetchUploadEntries(start_id, '$', addNewLines);
 
         /**
-         * Add lines for any entries that appeared since the last round then
-         * schedule a new round.
+         * Add lines for any entries that have appeared since the last round
+         * then schedule a new round.
          *
          * @param {UploadRecord[]} list
          */
@@ -729,10 +792,14 @@ $(document).on('turbolinks:load', function() {
                 // Add a line for each record.
                 let last_id = 0;
                 let row     = $lines.length;
+                let entries = [];
                 list.forEach(function(record) {
-                    addBulkUploadResult($results, row++, record);
+                    // noinspection IncrementDecrementResultUsedJS
+                    const entry = addBulkUploadResult($results, record, row++);
                     last_id = Math.max(record.id, last_id);
+                    entries.push(entry);
                 });
+                addBulkUploadTrace(entries);
 
                 // Update the next ID to fetch.
                 if (last_id) {
@@ -747,57 +814,102 @@ $(document).on('turbolinks:load', function() {
      * Add a line to bulk upload results.
      *
      * @param {Selector}                   results
-     * @param {number|string}              index
      * @param {UploadRecord|object|string} entry
+     * @param {number|string}              [index]
      * @param {Date|number}                [time]
      *
-     * @returns {jQuery}              The element appended to results.
+     * @returns {string}              The added result entry.
+     *
+     * @see file:app/assets/stylesheets/feature/_file_upload.scss .file-upload-results
      */
-    function addBulkUploadResult(results, index, entry, time) {
+    function addBulkUploadResult(results, entry, index, time) {
         let $results = bulkUploadResults(results);
-        let $line    = $('<div>');
+        let data;
+        if (typeof entry !== 'object') {
+            data = entry.toString();
+        } else if (isMissing(entry.submission_id)) {
+            // A generic object.
+            data = asString(entry, (K / 2));
+        } else {
+            // An object which is a de-serialized Upload record.
+            const start = bulkUploadResultsStartTime($results);
+            const date  = time            || new Date();
+            const fd    = entry.file_data || {};
+            const md    = fd.metadata     || {};
+            const file  = md.filename;
+            data = {
+                date: asDateTime(date),
+                time: secondsSince(start, date).toFixed(1),
+                id:   (entry.id            || '(missing)'),
+                sid:  (entry.submission_id || '(missing)'),
+                size: (asSize(md.size)     || '(missing)'),
+                file: (file && `"${file}"` || '(missing)')
+            };
+        }
+        let $line = makeBulkUploadResult(data, index);
+        $line.appendTo($results);
+        scrollIntoView($line);
+        return (typeof data === 'string') ? data : asString(data);
+    }
 
-        // CSS classes for the added line.
+    /**
+     * Generate a line for inclusion in the bulk upload results element.
+     *
+     * @param {object|string} entry
+     * @param {number|string} [index]
+     *
+     * @returns {jQuery}
+     */
+    function makeBulkUploadResult(entry, index) {
+        const func = 'makeBulkUploadResult';
+        let $line  = $('<div>');
+
+        // CSS classes for the new line.
         let row = (typeof index === 'number') ? `row-${index}` : (index || '');
         if (!row.includes('line')) {
             row = `line ${row}`.trim();
         }
         $line.addClass(row);
 
-        // Text content for the added line.
-        let text = '';
-        let html = '';
-        if (typeof entry !== 'object') {
-            text = entry.toString();
-        } else if (isMissing(entry.submission_id)) {
-            // A generic object.
-            text = asString(entry, 512);
-        } else {
-            // An object which is a de-serialized Upload record.
-            const start = bulkUploadResultsStartTime($results);
-            const fd    = entry.file_data     || {};
-            const file  = fd.metadata && fd.metadata.filename;
-            const pair  = {
-                time: secondsSince(start, time).toFixed(1),
-                id:   (entry.id            || '(missing id)'),
-                sid:  (entry.submission_id || '(missing submission_id)'),
-                file: (file && `"${file}"` || '(missing filename)')
-            };
-            $.each(pair, function(k, v) {
-                html += `<span class="label">${k}</span>`;
-                html += `<span class="value">${v}</span>`;
+        // Content for the new line.
+        let text, html = '';
+        if (typeof entry === 'object') {
+            $.each(entry, function(k, v) {
+                html += `<span class="label ${k}">${k}</span> `;
+                html += `<span class="value ${k}">${v}</span>\n`;
             });
+        } else if (typeof entry === 'string') {
+            text = entry;
+        } else {
+            console.error(`${func}: ${typeof entry} invalid`);
         }
         if (html) {
             $line.html(html);
-        } else {
+        } else if (text) {
             $line.text(text);
         }
-
-        // Append the line and scroll it into view.
-        $line.appendTo($results);
-        scrollIntoView($line);
         return $line;
+    }
+
+    /**
+     * Display previous bulk upload results.
+     *
+     * @param {Selector} results
+     * @param {string}   [data]       Default: {@link getBulkUploadTrace}.
+     *
+     * @returns {number}              Number of entries to be shown.
+     */
+    function showBulkUploadResults(results, data) {
+        let $results = bulkUploadResults(results);
+        let entries  = data || getBulkUploadTrace();
+        if (entries && !entries.startsWith('[')) {
+            entries  = `[${entries}]`;
+        }
+        const list = entries && fromJSON(entries) || [];
+        $.each(list, function(row, record) {
+            makeBulkUploadResult(record, (row + 1)).appendTo($results);
+        });
+        return list.length;
     }
 
     /**
@@ -884,6 +996,69 @@ $(document).on('turbolinks:load', function() {
                 consoleError(func, `${url}:`, 'unknown failure');
             }
         }
+    }
+
+    // ========================================================================
+    // Functions - Bulk session storage
+    // ========================================================================
+
+    /**
+     * Get stored value.
+     *
+     * @param {string} [name]         Default: {@link BULK_UPLOAD_STORAGE_KEY}.
+     *
+     * @returns {string}
+     */
+    function getBulkUploadTrace(name) {
+        const key = name || BULK_UPLOAD_STORAGE_KEY;
+        return sessionStorage.getItem(key) || '';
+    }
+
+    /**
+     * Clear stored value.
+     *
+     * @param {string} [name]         Passed to {@link setBulkUploadTrace}.
+     *
+     * @returns {string}              New stored value.
+     */
+    function clearBulkUploadTrace(name) {
+        return setBulkUploadTrace('', name, false);
+    }
+
+    /**
+     * Add to stored value.
+     *
+     * @param {string|string[]|object} value
+     * @param {string}                 [name]   To {@link setBulkUploadTrace}.
+     *
+     * @returns {string}                        New stored value.
+     */
+    function addBulkUploadTrace(value, name) {
+        return setBulkUploadTrace(value, name, true);
+    }
+
+    /**
+     * Set stored value.
+     *
+     * @param {string|object|string[]|object[]} value
+     * @param {string}  [name]        Def: {@link BULK_UPLOAD_STORAGE_KEY}.
+     * @param {boolean} [append]      If *true* append to current
+     *
+     * @returns {string}              New stored value.
+     */
+    function setBulkUploadTrace(value, name, append) {
+        const key = name || BULK_UPLOAD_STORAGE_KEY;
+        let entry = append && getBulkUploadTrace(key) || '';
+        if (isPresent(value)) {
+            let trace = (v) => (typeof v === 'string') ? v : asString(v);
+            let parts = arrayWrap(value).map(v => trace(v));
+            if (entry) {
+                parts.unshift(entry);
+            }
+            entry = parts.join(', ');
+        }
+        sessionStorage.setItem(key, entry);
+        return entry;
     }
 
     // ========================================================================

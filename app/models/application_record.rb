@@ -143,10 +143,31 @@ class ApplicationRecord < ActiveRecord::Base
   #
   def self.sql_clause(k, v = nil)
     k, v = *k.first        if k.is_a?(Hash)
+    v = Array.wrap(v)      if v.is_a?(Range)
     v = v.strip            if v.is_a?(String)
     v = v.split(/\s*,\s*/) if v.is_a?(String) && v.include?(',')
-    v = Array.wrap(v).map { |s| "'#{s}'" }.join(',')
-    v.include?(',') ? "#{k} IN (#{v})" : "#{k} = #{v}"
+    if v.is_a?(Array)
+      v = v.compact.sort.uniq if v.size > 1
+      ranges = v.chunk_while { |prev, this| prev.succ == this }.to_a
+      ranges.map! { |r| (r.size >= 5) ? Range.new(r.first, r.last) : r }
+      ranges, singles = ranges.partition { |r| r.is_a?(Range) }
+      ranges.map! do |range|
+        first, last = range.minmax.map { |s| sql_quote(s) }
+        "#{k} BETWEEN #{first} AND #{last}"
+      end
+      if singles.present?
+        singles.flatten!
+        singles.map! { |s| sql_quote(s) }
+        ranges << "#{k} IN (%s)" % singles.join(',')
+      end
+      if ranges.size > 1
+        ranges.map! { |s| "(#{s})" }.join(' OR ')
+      else
+        ranges.first
+      end
+    else
+      "#{k} = %s" % sql_quote(v)
+    end
   end
 
   # ===========================================================================
@@ -529,6 +550,21 @@ class ApplicationRecord < ActiveRecord::Base
   #
   def self.sanitize_sql_name(*name)
     name.join('_').presence&.gsub(/\d/) { |d| DIGIT_TO_ALPHA[d] || '_' }
+  end
+
+  # Return the value, quoted if necessary.
+  #
+  # @param [Integer, Float, String]
+  #
+  # @return [Integer, Float, String]
+  #
+  def self.sql_quote(value)
+    case value
+      when Integer, Float         then value
+      when /^\d+$/                then value.to_i
+      when /^-?(\.\d+|\d+\.\d*)$/ then value.to_f
+      else                             "'#{value}'"
+    end
   end
 
 end

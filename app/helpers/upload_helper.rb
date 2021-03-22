@@ -1223,7 +1223,19 @@ module UploadHelper
   #
   def bulk_upload_results(**opt)
     css_selector = '.file-upload-results'
-    html_div(prepend_classes!(opt, css_selector, 'hidden'))
+
+    l_sel = "#{css_selector}-label"
+    l_id  = unique_id(l_sel)
+    label = 'Previous upload results:' # TODO: I18n
+    label = html_div(label, id: l_id, class: css_classes(l_sel, 'hidden'))
+
+    prepend_classes!(opt, css_selector)
+    append_classes!(opt, 'hidden')
+    opt[:'aria-labelledby'] = l_id
+    panel = html_div(opt)
+
+    # noinspection RubyYardReturnMatch
+    label << panel
   end
 
   # ===========================================================================

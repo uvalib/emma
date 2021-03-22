@@ -757,6 +757,9 @@ $form-gap-narrow: $form-gap / 3;
 }
 
 // Area filled by the client with on-going results from bulk upload.
+//
+// @see file:app/assets/javascripts/feature/file-upload.js *addBulkUploadResult()*
+//
 .file-upload-results {
 
     @extend %panel;
@@ -774,10 +777,12 @@ $form-gap-narrow: $form-gap / 3;
         $lbl-col: minmax(auto, 0.05fr);
 
         grid-template-columns:
-                [time_lbl] $lbl-col [time_val] minmax(auto, 0.15fr)
-                [id_lbl]   $lbl-col [id_val]   minmax(auto, 0.10fr)
-                [rid_lbl]  $lbl-col [rid_val]  minmax(auto, 0.25fr)
-                [file_lbl] $lbl-col [file_val] 1fr;
+            [date_lbl] 0        [date_val] minmax(auto, 0.25fr)
+            [time_lbl] $lbl-col [time_val] minmax(auto, 0.10fr)
+            [  id_lbl] $lbl-col [  id_val] minmax(auto, 0.10fr)
+            [ sid_lbl] $lbl-col [ sid_val] minmax(auto, 0.25fr)
+            [size_lbl] $lbl-col [size_val] minmax(auto, 0.10fr)
+            [file_lbl] $lbl-col [file_val] 1fr;
 
         > * {
 
@@ -789,13 +794,30 @@ $form-gap-narrow: $form-gap / 3;
         }
 
         .label {
+
             font-weight: bold;
+
+            &.date {
+                @extend %sr-only;
+                position: unset !important;
+            }
         }
 
         .value {
-            word-break: break-all;
+            &.file {
+                //word-break: break-all;
+            }
         }
     }
+}
+
+// Label visible to note that old bulk upload results are being displayed.
+//
+// @see file:app/assets/javascripts/feature/file-upload.js *bulkUploadResultsLabel()*
+//
+.file-upload-results-label {
+    font-size:     x-large;
+    margin-bottom: 0.5rem;
 }
 
 // The element which contains bulk operation forms.
@@ -813,8 +835,8 @@ $form-gap-narrow: $form-gap / 3;
         }
     }
 
+    & + .file-upload-results-label,
     & + .file-upload-results {
-        width:      47.75vw;
         margin-top: 2 * $bulk-vertical-adjust;
     }
 }
