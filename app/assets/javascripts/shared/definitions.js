@@ -659,7 +659,7 @@ function makeUrl(...parts) {
     // Accumulate path parts and param parts.
     parts.forEach(processPart);
 
-    // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS, FunctionTooLongJS
+    // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS
     /**
      * @param {string|string[]|object} arg
      *

@@ -842,7 +842,6 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(data, status, xhr) {
             // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -943,7 +942,6 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(data, status, xhr) {
             // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2045,7 +2043,6 @@ $(document).on('turbolinks:load', function() {
         });
     }
 
-    // noinspection OverlyComplexFunctionJS, FunctionTooLongJS
     /**
      * Use {@link FIELD_RELATIONSHIP} to determine whether the state of the
      * indicated field should change the state of other field(s) with which it
@@ -2681,7 +2678,6 @@ $(document).on('turbolinks:load', function() {
          */
         function onSuccess(data, status, xhr) {
             // debug(func, 'received', (data ? data.length : 0), 'bytes.');
-            // noinspection AssignmentResultUsedJS
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {

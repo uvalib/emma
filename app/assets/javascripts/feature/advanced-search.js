@@ -4,7 +4,6 @@
 //= require shared/definitions
 //= require shared/logging
 
-// noinspection FunctionTooLongJS
 $(document).on('turbolinks:load', function() {
 
     /**
@@ -1070,7 +1069,7 @@ $(document).on('turbolinks:load', function() {
         const func  = caller || 'allSearchTerms';
         let $rows   = target ? getSearchRow(target, func) : $search_bar_rows;
         let queries = {}
-        // noinspection FunctionWithInconsistentReturnsJS, OverlyComplexFunctionJS
+        // noinspection FunctionWithInconsistentReturnsJS
         $rows.each(function() {
             let $row     = $(this);
             let $input   = getSearchInput($row);
@@ -1096,8 +1095,6 @@ $(document).on('turbolinks:load', function() {
                     // not return an empty object.
                 } else if (hidden) {
                     skip = 'hidden';
-                //} else if (!value) {
-                //    skip = 'empty value';
                 } else if (value === original_value) {
                     skip = `"${value}" same as data-original`;
                 }
@@ -1253,7 +1250,6 @@ $(document).on('turbolinks:load', function() {
     function allSearchFilters(target, caller, new_only) {
         const func  = caller || 'allSearchFilters';
         let filters = {}
-        // noinspection OverlyComplexFunctionJS
         getSearchFilter(target).each(function() {
             let $control = $(this);
             let $menu    = getSearchFilterMenu($control);

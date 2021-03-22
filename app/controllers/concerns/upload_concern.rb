@@ -447,7 +447,7 @@ module UploadConcern
   # @param [Workflow] wf
   #
   def wf_check_partial_failure(wf = @workflow)
-    return if (problems = wf.failed).blank?
+    return if (problems = wf.failures).blank?
     post_response(nil, problems, redirect: false, xhr: false)
   end
 
