@@ -274,7 +274,13 @@ module ApiService::Common
   rescue Faraday::ConnectionFailed, Net::OpenTimeout => error
     @exception = connect_error(error)
 
+  rescue Down::ConnectionError => error
+    @exception = connect_error(error)
+
   rescue Faraday::TimeoutError, Net::ReadTimeout, Net::WriteTimeout => error
+    @exception = timeout_error(error)
+
+  rescue Down::TimeoutError => error
     @exception = timeout_error(error)
 
   rescue Faraday::ServerError => error

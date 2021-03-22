@@ -35,7 +35,8 @@ module Import::IaBulk
   #     since this is just be used internally by IA to distinguish these items.
   #
   # [2] The name of the contributed file is always the basename of the URL in
-  #     the :download field.
+  #     the :download field if it is present.  Otherwise it can be derived from
+  #     :identifier and :contributed_file.
   #
   # [3] Items that are only for IA internal use can be ignored since they are
   #     not relevant to EMMA metadata.
@@ -51,7 +52,7 @@ module Import::IaBulk
     # Underscored name    Translator method or field  Value translator method
     #-------------------- --------------------------- -------------------------
     collection:           :skip,                      # NOTE: [1]
-    contributed_file:     :skip,                      # NOTE: [2]
+    contributed_file:     [:contributed_file, :string_value], # NOTE: [2]
     contributed_format:   :translate_formats,
     contributor:          [:rem_source,               :string_value],
     creator:              [:dc_creator,               :values],
@@ -62,7 +63,7 @@ module Import::IaBulk
     format:               :skip,                      # NOTE: [3]
     free_to_download:     :skip,
     free_to_view:         :skip,
-    identifier:           :skip,                      # NOTE: [3] IA item id.
+    identifier:           [:identifier, :string_value], # NOTE: [2]
     'identifier-access':  :skip,                      # NOTE: [3]
     'identifier-ark':     :skip,                      # NOTE: [3]
     imagecount:           [:rem_image_count,          :ordinal_value],
@@ -253,6 +254,23 @@ module Import::IaBulk
   # @return [Hash]
   #
   def normalize_results(fields)
+
+    # If :download was not provided but :identifier and :contributed_file were
+    # then construct the download link.
+    unless fields[:file_path]
+      path, fields = partition_options(fields, :identifier, :contributed_file)
+      if path[:identifier] && path[:contributed_file]
+        fields[:file_path] = [IA_DOWNLOAD_BASE_URL, *path.values].join('/')
+      else
+        Log.warn do
+          path.select! { |_, v| v.nil? }
+          keys = [:download, *path.keys].map! { |key| "'#{key}'" }
+          last = keys.pop
+          keys = keys.join(', ') << " and #{last}"
+          "Import::IaBulk: missing #{keys}"
+        end
+      end
+    end
 
     # Correct an issue caused by "contributed_format" == "Audio" items which
     # incorrectly have "mediatype" == "texts".
