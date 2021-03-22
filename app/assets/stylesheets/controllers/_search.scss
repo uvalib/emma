@@ -522,75 +522,7 @@ $sticky-top-narrow:     2.75rem;
     $item-number-border: $uva-accent-blue;
 
     .pagination-top {
-
-        display:        flex;
-        flex-wrap:      wrap;
-        flex-direction: row;
-
-        @media #{$not-narrow-screen} {
-            align-items: center;
-            max-width:   inherit;
-        }
-
-        @media #{$narrow-screen} {
-            flex-direction: column;
-        }
-
-        //=====================================================================
-        // Components
-        //=====================================================================
-
-        .pagination-controls {
-            flex: 0 0 auto;
-        }
-
-        .counts {
-
-            flex:        0 1 auto;
-            line-height: 1.25;
-
-            @media #{$not-narrow-screen} {
-                margin-left: 1.5rem;
-            }
-
-            @media #{$medium-width} {
-                flex-basis: 50%; // Push .upload-page-filter-panel to next row.
-            }
-
-            @media #{$narrow-screen} {
-                flex-direction: column;
-                align-items:    center;
-                margin:         1rem 0 0;
-            }
-
-            .page-count {
-                display:       inline-block;
-                padding:       0.25rem 0.625rem;
-                font-weight:   bold;
-                word-spacing:  0.125rem;
-                color:         white;
-                background:    $uva-blue;
-                border:        2px solid lightgray;
-                border-radius: 4px;
-            }
-
-            .search-count {
-
-                display: inline-block;
-                margin:  auto 0;
-
-                @media #{$narrow-screen} {
-                    margin: 0.5rem 0 0;
-                }
-            }
-
-            .page-count + .search-count,
-            .search-count + .page-count {
-                @media #{$not-narrow-screen} {
-                    margin-left: 1rem;
-                }
-            }
-        }
+        // TODO: ???
     }
 
     .number {
