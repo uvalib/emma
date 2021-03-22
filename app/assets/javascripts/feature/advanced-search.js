@@ -451,7 +451,7 @@ $(document).on('turbolinks:load', function() {
         const func   = 'initializeSearchFilters';
         const params = url_params || urlParameters();
         $search_filters.each(function() {
-            let $menu   = getSearchFilterMenu(this);
+            let $menu   = getSearchFilterMenu(this, func);
             const name  = $menu.attr('name');
             const type  = name.replace('[]', '');
             const param = params[type] || $menu.attr('data-default');

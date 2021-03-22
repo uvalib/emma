@@ -219,7 +219,6 @@ module SearchTermsHelper
     pairs  = (only || except) && pairs&.dup || url_parameters
     pairs.slice!(*only)    if only
     pairs.except!(*except) if except
-    # noinspection xRubyYardParamTypeMatch
     qcfg = SEARCH_TYPE[target] || {}
     fcfg = LayoutHelper::SearchFilters::SEARCH_PARAMETER_MENU_MAP[target] || {}
     term_list =

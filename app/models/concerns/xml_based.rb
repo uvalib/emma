@@ -54,7 +54,7 @@ module XmlBased
 
   # parse_metadata
   #
-  # @param [Nokogiri::XML::Element, Nokogiri::XML::Nodeset] section
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
@@ -72,7 +72,7 @@ module XmlBased
 
   # parse_elements
   #
-  # @param [Nokogiri::XML::Element, Nokogiri::XML::Nodeset] section
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
   #
   # @return [Hash{Symbol=>Array<String>}]
   #
@@ -118,7 +118,7 @@ module XmlBased
 
   # parse_metas
   #
-  # @param [Nokogiri::XML::Element, Nokogiri::XML::Nodeset] section
+  # @param [Nokogiri::XML::Element, Nokogiri::XML::NodeSet] section
   #
   # @return [Hash{Symbol=>Array<String>}]
   #

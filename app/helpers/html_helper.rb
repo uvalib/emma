@@ -467,6 +467,7 @@ module HtmlHelper
     separator  = opt[:separator].presence
     max_length = len || HTML_TRUNCATE_MAX_LENGTH
     length     = (opt[:content] ? xml.content : xml.to_s).size
+    doc        = xml.document
 
     if max_length >= length
       xml.dup
@@ -509,7 +510,7 @@ module HtmlHelper
             part.join
           end
         text << omission
-        Nokogiri::XML::Text.new(text, xml.parent)
+        Nokogiri::XML::Text.new(text, doc)
       end
 
     elsif xml.children[0].is_a?(Nokogiri::XML::Text) && xml.children[1].nil?
@@ -522,13 +523,13 @@ module HtmlHelper
         if size >= omission.size
           node << text
         elsif max_length >= (node_chars + omission.size)
-          node << Nokogiri::XML::Text.new(omission, node)
+          node << Nokogiri::XML::Text.new(omission, doc)
         end
       end
       if node.children.present?
         node
       elsif max_length >= omission.size
-        Nokogiri::XML::Text.new(omission, xml.parent)
+        Nokogiri::XML::Text.new(omission, doc)
       end
 
     else
@@ -540,7 +541,7 @@ module HtmlHelper
         if remaining < omission.size
           break
         elsif remaining == omission.size
-          node << Nokogiri::XML::Text.new(omission, node) unless has_omission
+          node << Nokogiri::XML::Text.new(omission, doc) unless has_omission
           break
         elsif (child = xml_truncate(child, remaining, **opt)).nil?
           return

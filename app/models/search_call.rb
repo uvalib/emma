@@ -205,7 +205,7 @@ class SearchCall < ApplicationRecord
   #
   # @type [Hash{Symbol=>Array<Symbol>}]
   #
-  XNON_FILTER_PARAMETERS =
+  NON_FILTER_PARAMETERS =
     {}.merge(
       QUERY_PARAMETERS, PAGE_PARAMETERS, SORT_PARAMETERS, RESULT_PARAMETERS
     ).deep_freeze
@@ -221,7 +221,7 @@ class SearchCall < ApplicationRecord
       next if json_field.match?(/periodical/)
       [field, config[:url_parameter]].map do |f|
         next if (f = f&.to_sym).blank?
-        [f, [:filter, json_field]] unless XNON_FILTER_PARAMETERS.include?(f)
+        [f, [:filter, json_field]] unless NON_FILTER_PARAMETERS.include?(f)
       end
     }.compact.to_h.deep_freeze
 
