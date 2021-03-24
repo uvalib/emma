@@ -34,7 +34,7 @@ module LayoutHelper::Scroll
   SCROLL_TOP = {
     type:    'button',
     class:   'scroll-to-top',
-    label:   TRIANGLE, # TODO: I18n
+    label:   UP_TRIANGLE, # TODO: I18n
     tooltip: 'Go back to the top of the page', # TODO: I18n
   }.freeze
 

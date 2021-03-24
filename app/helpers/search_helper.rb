@@ -98,21 +98,18 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyResolve, RubyYardReturnMatch
-  #++
   def title_and_source_logo(item, **opt)
     css_selector = '.title'
     title  = item.full_title
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
+    prepend_classes!(opt, css_selector, source)
+    index  = opt.delete(:index)
+    title  = html_div(title, opt)
     logo   = repository_source_logo(source)
-    if logo.present?
-      prepend_classes!(opt, css_selector, source)
-      html_div(title, opt) << logo
-    else
-      title_and_source(item, **opt)
-    end
+    ctrl   = prev_next_controls(index: index)
+    # noinspection RubyYardReturnMatch
+    title << logo << ctrl
   end
 
   # Display title of the associated work along with the source repository.
@@ -122,22 +119,81 @@ module SearchHelper
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  #--
-  # noinspection RubyResolve, RubyYardReturnMatch
-  #++
   def title_and_source(item, **opt)
     css_selector = '.title'
     title  = item.full_title
     source = item.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
+    prepend_classes!(opt, css_selector, source)
+    index  = opt.delete(:index)
+    title  = html_div(title, opt)
     name   = source&.titleize || 'LOGO'
-    logo   = name && repository_source(item, source: source, name: name)
-    if logo.present?
-      prepend_classes!(opt, css_selector, source)
-      html_div(title, opt) << logo
-    else
-      ERB::Util.h(title)
+    logo   = repository_source(item, source: source, name: name)
+    ctrl   = prev_next_controls(index: index)
+    # noinspection RubyYardReturnMatch
+    title << logo << ctrl
+  end
+
+  # An element containing controls for moving up and down through the list.
+  #
+  # @param [Hash] opt   Passed to #prev_record_link and #next_record_link.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def prev_next_controls(**opt)
+    css_selector = '.prev-next'
+    curr_index   = positive(opt[:index]) || 0
+    min_index    = positive(opt[:min])   || 0
+    max_index    = positive(opt[:max])   || (1 << 32)
+    prev_index   = (curr_index - 1 if curr_index > min_index)
+    prev_index &&= prev_record_link(index: prev_index)
+    prev_index ||= html_div('&nbsp;'.html_safe)
+    next_index   = (curr_index + 1 if curr_index < max_index)
+    next_index &&= next_record_link(index: next_index)
+    next_index ||= html_div('&nbsp;'.html_safe)
+    html_div(class: css_classes(css_selector)) do
+      prev_index << next_index
     end
+  end
+
+  # Create a control for jumping to the previous record in the list.
+  #
+  # @param [Integer, #to_i] index
+  # @param [String, nil]    label     Default: #UP_TRIANGLE.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
+  #
+  def prev_record_link(index:, label: nil, **)
+    css_selector = '.prev'
+    opt = {
+      icon:  label || UP_TRIANGLE,
+      url:   "#field-Title-#{index}",
+      class: css_classes(css_selector),
+      title: 'Go to the previous record', # TODO: I18n
+    }
+    icon_button(**opt)
+  end
+
+  # Create a control for jumping to the next record in the list.
+  #
+  # @param [Integer, #to_i] index
+  # @param [String, nil]    label     Default: #DOWN_TRIANGLE.
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
+  #
+  def next_record_link(index:, label: nil, **)
+    css_selector = '.next'
+    opt = {
+      icon:  label || DOWN_TRIANGLE,
+      url:   "#field-Title-#{index}",
+      class: css_classes(css_selector),
+      title: 'Go to the next record', # TODO: I18n
+    }
+    icon_button(**opt)
   end
 
   # Make a clickable link to the display page for the title on the originating

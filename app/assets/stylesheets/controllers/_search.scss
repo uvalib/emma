@@ -375,16 +375,16 @@ $sticky-top-narrow:     2.75rem;
             @media #{$wide-screen} {
                 top:        $sticky-top-wide;
                 box-shadow:
-                    -0.5rem -1rem     0        0.5rem   white,
-                     0       0        0.25rem  0.25rem  white;
+                     0.50rem -2.00rem  1.00rem  2.00rem  white,
+                     0        0        0.25rem  0.50rem  white;
             }
 
             @media #{$medium-width} {
                 top:        $sticky-top-medium;
                 column-gap: calc(3 * #{$flex-gap-x});
                 box-shadow:
-                     0      -1rem     0        0.5rem   white,
-                     0       0        0.25rem  0.25rem  white;
+                     0       -1.00rem  0        0.50rem  white,
+                     0        0        0.25rem  0.25rem  white;
             }
 
             @media #{$narrow-screen} {
@@ -393,8 +393,8 @@ $sticky-top-narrow:     2.75rem;
                 padding-bottom: 0.5rem;
                 border-color:   black;
                 box-shadow:
-                     0      -0.5rem   0        0.25rem  white,
-                     0       0.25rem  0.25rem  0        white;
+                     0       -0.50rem  0        0.25rem  white,
+                     0        0.25rem  0.25rem  0        white;
             }
 
             // @see SearchHelper#title_and_source
@@ -462,6 +462,44 @@ $sticky-top-narrow:     2.75rem;
                     @media #{$not-wide-screen} {
                         max-height: 2.5rem;
                     }
+                }
+            }
+
+            // Controls for moving up and down through the list.
+            //
+            // @see "SearchHelper#prev_next_controls"
+            //
+            .prev-next {
+
+                display:        flex;
+                flex-direction: column;
+                flex:           0 0 auto;
+
+                .prev,
+                .next {
+
+                    @extend %button-hover;
+
+                    min-width:      unset;
+                    padding:        0 2px;
+                    border-radius:  50%;
+
+                    &:focus {
+                        text-decoration: none;
+                        outline-offset:  0;
+                    }
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+
+                .prev {
+                    margin-top: -0.5rem;
+                }
+
+                .next {
+                    margin-top: 0.25rem;
                 }
             }
         }

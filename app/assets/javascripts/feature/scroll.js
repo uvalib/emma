@@ -49,6 +49,22 @@ $(document).on('turbolinks:load', function() {
     const SCROLL_TARGET_SELECTORS =
         deepFreeze([SCROLL_TARGET_SELECTOR, '#main', 'body']);
 
+    /**
+     * Selector(s) for previous-list-item controls.
+     *
+     * @constant
+     * @type {string}
+     */
+    const PREV_SELECTOR = '.prev-next .prev';
+
+    /**
+     * Selector(s) for next-list-item controls.
+     *
+     * @constant
+     * @type {string}
+     */
+    const NEXT_SELECTOR = '.prev-next .next';
+
     // ========================================================================
     // Variables
     // ========================================================================
@@ -63,6 +79,8 @@ $(document).on('turbolinks:load', function() {
         $scroll_target = $(selector);
         return isMissing($scroll_target);
     });
+    let $prev_buttons = $(PREV_SELECTOR);
+    let $next_buttons = $(NEXT_SELECTOR);
 
     // ========================================================================
     // Event handlers
@@ -70,6 +88,8 @@ $(document).on('turbolinks:load', function() {
 
     handleEvent($(window), 'scroll', toggleScrollButton);
     handleClickAndKeypress($scroll_button, scrollToTop);
+    handleClickAndKeypress($prev_buttons,  scrollToPrev);
+    handleClickAndKeypress($next_buttons,  scrollToNext);
 
     // ========================================================================
     // Actions
@@ -109,6 +129,54 @@ $(document).on('turbolinks:load', function() {
         debug('scrollToTop');
         $scroll_target[0].scrollIntoView();
         //focusableIn($scroll_target).first().focus();
+    }
+
+    /**
+     * Scroll so that the previous list entry is fully displayed at the top of
+     * the screen.
+     *
+     * @param {jQuery.Event} event
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToPrev(event) {
+        debug('scrollToPrev');
+        let $button    = $(event.currentTarget || event.target);
+        const selector = $button.attr('href');
+        let $title     = $(selector);
+        const t_height = $title[0].scrollHeight;
+        const t_pos    = $title[0].offsetTop;
+        let $format    = $title.siblings('.field-Format').first();
+        const f_height = $format[0].scrollHeight;
+        const f_pos    = $format[0].offsetTop;
+        const y_delta  = t_height + f_height + t_pos - f_pos;
+        $title[0].scrollIntoView(true);
+        window.scrollBy({ top: -y_delta });
+        return false;
+    }
+
+    /**
+     * Scroll so that the next list entry is fully displayed at the top of the
+     * screen.
+     *
+     * @param {jQuery.Event} event
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToNext(event) {
+        debug('scrollToNext');
+        let $button    = $(event.currentTarget || event.target);
+        const selector = $button.attr('href');
+        let $title     = $(selector);
+        let $format    = $title.siblings('.field-Format').first();
+        const y_delta  = $format[0].scrollHeight;
+        $title[0].scrollIntoView(true);
+        window.scrollBy({ top: -y_delta });
+        return false;
     }
 
     // ========================================================================
