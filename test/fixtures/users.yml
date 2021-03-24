@@ -18,6 +18,7 @@ emmadso:
     - artifact_submitter
     - membership_viewer
     - membership_manager
+    - administrator
 
 emmacollection:
   email:        emmacollection@bookshare.org

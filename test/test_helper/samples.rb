@@ -20,15 +20,16 @@ module TestHelper::Samples
   # noinspection NonAsciiCharacters
   #++
   SAMPLE_FIXTURE = {
-    artifact:     :example,
-    edition:      :New_Yorker_1,
-    member:       :organization,
-    periodical:   :New_Yorker,
-    reading_list: :A_Member_List,
-    role:         :example,
-    search_call:  :Mansfield_Park,
-    title:        :Investigación,
-    user:         :example,
+    artifact:       :example,
+    edition:        :New_Yorker_1,
+    member:         :organization,
+    periodical:     :New_Yorker,
+    reading_list:   :A_Member_List,
+    role:           :example,
+    search_call:    :Mansfield_Park,
+    search_result:  :Mansfield_Park_1,
+    title:          :Investigación,
+    user:           :example,
   }.freeze
 
   # ===========================================================================
@@ -47,6 +48,7 @@ module TestHelper::Samples
   # @!method sample_reading_list
   # @!method sample_role
   # @!method sample_search_call
+  # @!method sample_search_result
   # @!method sample_title
   # @!method sample_user
   #

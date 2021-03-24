@@ -5,7 +5,9 @@
 
 ENV['RAILS_ENV'] ||= 'test'
 
+require_relative '../config/boot'
 require_relative '../config/environment'
+
 require 'rails/test_help'
 require 'webdrivers'
 

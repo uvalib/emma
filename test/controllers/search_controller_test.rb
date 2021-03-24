@@ -14,8 +14,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
   TEST_READERS = TEST_USERS
   TEST_WRITERS = [].freeze # Not relevant for this controller.
 
-  TEST_READERS = [ANONYMOUS]  # TODO: remove - testing
-  TEST_FORMATS = %i[html]     # TODO: remove - testing
+  TEST_FORMATS = %i[html] # TODO: remove - testing
 
   # ===========================================================================
   # :section: Read tests
@@ -34,12 +33,12 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'search index - sample search' do
-    search  = sample_search_call.query.title # TODO: build search from entry
+    search  = sample_search_call.query.symbolize_keys
     options = OPTIONS.merge(test: __method__, action: 'index')
     options[:expect] = :success
     TEST_READERS.each do |user|
       TEST_FORMATS.each do |fmt|
-        url = search_index_url(format: fmt)
+        url = search_index_url(format: fmt, **search)
         opt = options.merge(format: fmt)
         get_as(user, url, opt)
       end
@@ -47,7 +46,7 @@ class SearchControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'search show - details search result item' do
-    item    = sample_search_call.results.first.repositoryRecordId # TODO: extract search result
+    item    = sample_search_result.repositoryRecordId
     options = OPTIONS.merge(test: __method__, action: 'show')
     options[:expect] = :success
     TEST_READERS.each do |user|
