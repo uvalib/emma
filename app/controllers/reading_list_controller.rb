@@ -57,9 +57,7 @@ class ReadingListController < ApplicationController
     __debug_route
     opt   = pagination_setup
     @list = bs_api.get_all_reading_lists(**opt)
-    self.page_items  = @list.lists
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(**opt)
+    pagination_finalize(@list, :lists, **opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
@@ -73,12 +71,10 @@ class ReadingListController < ApplicationController
   #
   def show
     __debug_route
-    @item = bs_api.get_reading_list(readingListId: @id)
     opt   = pagination_setup
+    @item = bs_api.get_reading_list(readingListId: @id)
     @list = bs_api.get_reading_list_titles(readingListId: @id, no_raise: true)
-    self.page_items  = @list.titles
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(**opt)
+    pagination_finalize(@list, :titles, **opt)
     respond_to do |format|
       format.html
       format.json { render_json show_values }

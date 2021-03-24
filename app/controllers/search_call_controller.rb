@@ -63,9 +63,8 @@ class SearchCallController < ApplicationController
       else
         get_search_calls(search)
       end
-    self.page_items  = @list = @list.to_a
-    self.total_items = @list.size
-    self.next_page   = next_page_path(**search)
+    @list = @list.to_a
+    pagination_finalize(@list, **search)
     respond_to do |format|
       format.html
       format.json { render_json show_values }

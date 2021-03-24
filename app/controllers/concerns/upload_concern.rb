@@ -13,6 +13,14 @@ module UploadConcern
 
   extend ActiveSupport::Concern
 
+  # Because #pagination_finalize is intended to override the PaginationConcern
+  # method, that module must have already been included in the including
+  # class.
+  #
+  # @type [Array<Class>]
+  #
+  UPLOAD_CONCERN_PREREQUISITES = [PaginationConcern]
+
   included do |base|
 
     __included(base, 'UploadConcern')
@@ -20,12 +28,27 @@ module UploadConcern
     # Methods that are exposed for use in views.
     helper_method *UploadWorkflow::Properties.public_instance_methods(false)
 
+    (UPLOAD_CONCERN_PREREQUISITES - base.ancestors).each do |mod|
+      message = "#{self.class} must be included after #{mod}"
+      if application_deployed?
+        Log.warn(message)
+        base.include(mod)
+      else
+        raise message
+      end
+    end
+
   end
 
   include Emma::Csv
   include Emma::Json
   include ParamsHelper
   include UploadWorkflow::Properties
+
+  # Non-functional hints for RubyMine type checking.
+  # :nocov:
+  include PaginationConcern unless ONLY_FOR_DOCUMENTATION
+  # :nocov:
 
   # ===========================================================================
   # :section: Initialization
@@ -456,6 +479,28 @@ module UploadConcern
   # ===========================================================================
 
   public
+
+  # Finish setting of pagination values based on the result list and original
+  # URL parameters.
+  #
+  # @param [Hash] result              From #find_or_match_records.
+  # @param [Hash] opt                 Passed to #next_page_path.
+  #
+  # @return [void]
+  #
+  # @see PaginationConcern#pagination_finalize
+  #
+  def pagination_finalize(result, **opt)
+    self.page_items   = result[:list]
+    self.page_size    = result[:limit]
+    self.page_offset  = result[:offset]
+    self.total_items  = result[:total]
+    first, last, page = result.values_at(:first, :last, :page)
+    self.next_page    = (url_for(opt.merge(page: (page + 1))) unless last)
+    self.prev_page    = (url_for(opt.merge(page: (page - 1))) unless first)
+    self.first_page   = (url_for(opt.except(*PAGE_PARAMS))    unless first)
+    self.prev_page    = first_page if page == 2
+  end
 
   # Generate a response to a POST.
   #

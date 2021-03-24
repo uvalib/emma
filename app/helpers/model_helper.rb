@@ -663,6 +663,9 @@ module ModelHelper
   #
   # @return [(ActiveSupport::SafeBuffer,ActiveSupport::SafeBuffer)]
   #
+  #--
+  # noinspection RubyYardParamTypeMatch
+  #++
   def index_controls(
     list:   nil,
     count:  nil,
@@ -673,19 +676,18 @@ module ModelHelper
     **opt
   )
     opt.except!(*VIEW_TEMPLATE_OPT)
-    items   = list        || page_items
-    count   = count&.to_i || items.size
-    total   = total&.to_i || count
-    page    = page&.to_i  || 1
-    size    = size&.to_i  || page_size
-    row     = (row&.to_i  || 1) + 1
+    items   = list            || page_items
+    count   = positive(count) || items.size
+    total   = positive(total) || count
+    page    = positive(page)  || 1
+    size    = positive(size)  || page_size
+    row     = 1 + (row&.to_i  || 1)
     paging  = (page > 1)
-    more    = (count <  total) || (count == size)
-    final   = (count == total) || (count <  size)
+    more    = (count < total) || (count == size)
     links   = pagination_controls
     counts  = []
-    counts << page_number(page)              if paging || more
-    counts << pagination_count(count, total) if paging || final
+    counts << page_number(page) if paging || more
+    counts << pagination_count(count, total)
     counts  = html_div(*counts, class: 'counts')
     filter  = page_filter(**opt)
     top = html_div(links, counts, filter, class: "pagination-top row-#{row}")

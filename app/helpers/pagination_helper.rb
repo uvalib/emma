@@ -316,7 +316,7 @@ module PaginationHelper
 
   # Page count display element.
   #
-  # @param [Integer]      count
+  # @param [Integer, nil] count
   # @param [Integer, nil] total
   # @param [Hash]         opt         Options to .search-count wrapper element.
   #

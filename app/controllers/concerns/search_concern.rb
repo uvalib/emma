@@ -35,13 +35,13 @@ module SearchConcern
 
   end
 
+  include ApiConcern
+  include SearchHelper
+
   # Non-functional hints for RubyMine type checking.
   # :nocov:
   include PaginationConcern unless ONLY_FOR_DOCUMENTATION
   # :nocov:
-
-  include ApiConcern
-  include SearchHelper
 
   # ===========================================================================
   # :section:
@@ -124,10 +124,10 @@ module SearchConcern
   # @see PaginationConcern#next_page_path
   #
   def next_page_path(list: nil, **url_params)
-    list = list&.to_a || self.page_items
-    # noinspection RubyNilAnalysis
-    return if (list.size < page_size) || (last = list.last).blank?
+    items = list&.to_a || page_items
+    return if (items.size < page_size) || (last = items.last).blank?
 
+    # General pagination parameters.
     opt    = url_parameters(url_params)
     page   = positive(opt.delete(:page))
     offset = positive(opt.delete(:offset))
@@ -145,7 +145,7 @@ module SearchConcern
     opt[:offset] = offset + size if offset
     opt[:limit]  = limit         if limit && (limit != default_page_size)
 
-    # noinspection RubyNilAnalysis, RubyYardParamTypeMatch
+    # Parameters specific to the Unified Search API.
     opt[:prev_id]    = url_escape(last.emma_recordId)
     opt[:prev_value] = url_escape(
       case opt[:sort]&.to_sym
@@ -160,6 +160,7 @@ module SearchConcern
     # NOTE [2] not per documentation, but why not?
     # NOTE [3] assuming :title is the default sort.
 
+    # Internal-use parameters.
     opt[:immediate_search] = immediate_search?.presence
 
     make_path(request.path, opt)
@@ -199,13 +200,9 @@ module SearchConcern
   #
   def set_immediate_search(value)
     # TODO: accept only for authenticated user
-    if %i[true false].include?(value)
-      @immediate_search = value
-    elsif true?(value)
-      @immediate_search = :true
-    elsif false?(value)
-      @immediate_search = :false
-    end
+    @immediate_search   = (value  if %i[true false].include?(value))
+    @immediate_search ||= (:true  if true?(value))
+    @immediate_search ||= (:false if false?(value))
   end
 
   # ===========================================================================

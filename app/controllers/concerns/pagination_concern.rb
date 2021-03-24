@@ -112,11 +112,30 @@ module PaginationConcern
     else
       opt.delete(:offset)
     end
-    opt[:limit] = page_size
+    opt[:limit] = limit
 
     # noinspection RubyYardReturnMatch
     opt
 
+  end
+
+  # Finish setting of pagination values based on the result list and original
+  # URL parameters.
+  #
+  # @param [Api::Record, Array] list
+  # @param [Symbol, nil]        meth    Method to invoke from *list* for items.
+  # @param [Hash]               search  Passed to #next_page_path.
+  #
+  # @return [void]
+  #
+  # @see UploadConcern#pagination_finalize
+  #
+  def pagination_finalize(list, meth = nil, **search)
+    items = (meth && list.respond_to?(meth)) ? list.send(meth)   : list
+    count = list.respond_to?(:totalResults)  ? list.totalResults : list.size
+    self.page_items  = items || []
+    self.total_items = count || 0
+    self.next_page   = next_page_path(**search)
   end
 
   # Analyze the *list* object to generate the path for the next page of
@@ -132,14 +151,31 @@ module PaginationConcern
   #
   def next_page_path(list: nil, **url_params)
     list ||= @list || self.page_items
-    if (start = list.respond_to?(:next) && list.next).present?
-      opt = url_params&.dup || {}
-      opt[:start]    = start
-      opt[:limit]  ||= page_size
-      opt[:offset] ||= page_offset
-      opt[:offset]  += opt[:limit]
-      opt.delete(:limit) if opt[:limit] == default_page_size
+    if list.respond_to?(:next) && list.next.present?
+
+      # General pagination parameters.
+      opt    = url_parameters(url_params).except!(:start)
+      page   = positive(opt.delete(:page))
+      offset = positive(opt.delete(:offset))
+      limit  = positive(opt.delete(:limit))
+      size   = limit || page_size
+      if offset && page
+        offset = nil if offset == ((page - 1) * size)
+      elsif offset
+        page   = (offset / size) + 1
+        offset = nil
+      else
+        page ||= 1
+      end
+      opt[:page]   = page   + 1    if page
+      opt[:offset] = offset + size if offset
+      opt[:limit]  = limit         if limit && (limit != default_page_size)
+
+      # Parameters specific to the Bookshare API.
+      opt[:start] = list.next
+
       make_path(request.path, opt)
+
     elsif list.respond_to?(:get_link)
       list.get_link(:next)
     end

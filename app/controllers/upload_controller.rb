@@ -77,17 +77,10 @@ class UploadController < ApplicationController
     opt    = url_parameters.except!(*FORM_PARAMS)
     all    = opt[:group].nil? || (opt[:group].to_sym == :all)
     result = find_or_match_records(groups: all, **opt)
-    first, last, page, @list = result.values_at(:first, :last, :page, :list)
-    self.page_items  = @list
-    self.page_size   = result[:limit]
-    self.page_offset = result[:offset]
-    self.total_items = result[:total]
-    self.next_page   = (url_for(opt.merge(page: (page + 1))) unless last)
-    self.prev_page   = (url_for(opt.merge(page: (page - 1))) unless first)
-    self.first_page  = (url_for(opt.except(*PAGE_PARAMS))    unless first)
-    self.prev_page   = first_page if page == 2
+    pagination_finalize(result, **opt)
+    @list  = result[:list]
     result = find_or_match_records(groups: :only, **opt) if opt.delete(:group)
-    @group_counts    = result[:groups]
+    @group_counts = result[:groups]
     respond_to do |format|
       format.html
       format.json { render_json index_values }

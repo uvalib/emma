@@ -60,9 +60,7 @@ class MemberController < ApplicationController
     __debug_route
     opt   = pagination_setup
     @list = bs_api.get_my_organization_members(**opt)
-    self.page_items  = @list.userAccounts
-    self.total_items = @list.totalResults
-    self.next_page   = next_page_path(**opt)
+    pagination_finalize(@list, :userAccounts, **opt)
     respond_to do |format|
       format.html
       format.json { render_json index_values }
