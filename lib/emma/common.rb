@@ -569,6 +569,27 @@ module Emma::Common
     }.reject(&:blank?)
   end
 
+  # Transform a hash into a struct recursively.  (Any hash value which is
+  # itself a hash will be converted to a struct).
+  #
+  # @param [Hash]         hash
+  # @param [Boolean, nil] arrays      If *true*, convert hashes within arrays.
+  #
+  # @return [Struct]
+  #
+  def struct(hash, arrays = false)
+    keys   = hash.keys.map(&:to_sym)
+    values = hash.values_at(*keys)
+    values.map! do |v|
+      case v
+        when Array then arrays ? v.map { |elem| struct(elem, arrays) } : v
+        when Hash  then struct(v, arrays)
+        else            v
+      end
+    end
+    Struct.new(*keys).new(*values)
+  end
+
   # ===========================================================================
   # :section:
   # ===========================================================================
