@@ -418,7 +418,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            if (xhr.status === 401) {
+            if (xhr.status === HTTP.unauthorized) {
                 error = Emma.Download.failure.sign_in;
             } else {
                 error = `${status}: ${xhr.status} ${message}`;

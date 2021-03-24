@@ -40,6 +40,36 @@ const SECONDS = SECOND;
  */
 const K = 1024;
 
+/**
+ * HTTP response codes.
+ *
+ * @constant
+ * @type {object}
+ */
+const HTTP = Object.freeze({
+    ok:                     200,
+    created:                201,
+    accepted:               202,
+    non_authoritative:      203,
+    no_content:             204,
+    multiple_choices:       300,
+    moved_permanently:      301,
+    found:                  302,
+    not_modified:           304,
+    temporary_redirect:     307,
+    permanent_redirect:     308,
+    bad_request:            400,
+    unauthorized:           401,
+    forbidden:              403,
+    request_timeout:        408,
+    conflict:               409,
+    internal_server_error:  500,
+    not_implemented:        501,
+    bad_gateway:            502,
+    service_unavailable:    503,
+    gateway_timeout:        504,
+});
+
 // ============================================================================
 // Functions - Math
 // ============================================================================
@@ -200,7 +230,7 @@ function fromJSON(item, caller) {
             result = JSON.parse(item);
         }
         catch (err) {
-            consoleWarn(func, err, '-', 'item:', item);
+            console.warn(`${func}: ${err} - item:`, item);
         }
     }
     return result;
@@ -522,11 +552,12 @@ function cssClass(...args) {
  * @returns {string}
  */
 function selector(...args) {
+    const func = 'selector';
     let result = [];
     args.forEach(function(arg) {
         let entry;
         if (isEmpty(arg)) {
-            console.warn(`selector: skipping empty ${typeof arg} = ${arg}`);
+            console.warn(`${func}: skipping empty ${typeof arg} = ${arg}`);
 
         } else if (Array.isArray(arg)) {
             entry = arg.map(v => v.trim().replace(/\s*,$/, ''));
@@ -537,7 +568,7 @@ function selector(...args) {
             entry = selector(arg['class']);
 
         } else if (typeof arg !== 'string') {
-            console.warn(`selector: ignored ${typeof arg} = ${arg}`);
+            console.warn(`${func}: ignored ${typeof arg} = ${arg}`);
 
         } else if (arg === ',') {
             entry = ', ';

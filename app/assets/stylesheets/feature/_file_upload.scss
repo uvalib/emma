@@ -777,11 +777,11 @@ $form-gap-narrow: $form-gap / 3;
         $lbl-col: minmax(auto, 0.05fr);
 
         grid-template-columns:
-            [date_lbl] 0        [date_val] minmax(auto, 0.25fr)
-            [time_lbl] $lbl-col [time_val] minmax(auto, 0.10fr)
-            [  id_lbl] $lbl-col [  id_val] minmax(auto, 0.10fr)
-            [ sid_lbl] $lbl-col [ sid_val] minmax(auto, 0.25fr)
-            [size_lbl] $lbl-col [size_val] minmax(auto, 0.10fr)
+            [date_lbl] 0        [date_val] minmax(max-content, 0.25fr)
+            [time_lbl] $lbl-col [time_val] minmax(max-content, 0.10fr)
+            [  id_lbl] $lbl-col [  id_val] minmax(max-content, 0.10fr)
+            [ sid_lbl] $lbl-col [ sid_val] minmax(max-content, 0.20fr)
+            [size_lbl] $lbl-col [size_val] minmax(max-content, 0.15fr)
             [file_lbl] $lbl-col [file_val] 1fr;
 
         > * {

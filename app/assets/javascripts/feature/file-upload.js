@@ -920,9 +920,8 @@ $(document).on('turbolinks:load', function() {
      * @param {function(UploadRecord[])} callback
      */
     function fetchUploadEntries(min, max, callback) {
-        const func  = 'fetchUploadEntries:';
-        const start = Date.now();
 
+        const func = 'fetchUploadEntries';
         let range;
         if (min && max) { range = `${min}-${max}`; }
         else if (max)   { range = `1-${max}`; }
@@ -930,11 +929,12 @@ $(document).on('turbolinks:load', function() {
         else            { range = '*'; }
         const url = makeUrl('/upload.json', { selected: range });
 
-        debug(func, 'VIA', url);
+        debug(`${func}: VIA`, url);
 
         /** @type {UploadRecord[]} records */
-        let records = undefined;
-        let error   = '';
+        let records;
+        let warning, error;
+        const start = Date.now();
 
         $.ajax({
             url:      url,
@@ -953,7 +953,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -976,7 +976,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
         /**
@@ -987,13 +992,15 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
-            } else if (error) {
-                consoleWarn(func, `${url}:`, error);
+            } else if (warning) {
+                consoleWarn(`${func}: ${url}: ${warning}`);
+                callback([]);
             } else {
-                consoleError(func, `${url}:`, 'unknown failure');
+                const failure = error || 'unknown failure';
+                consoleError(`${func}: ${url}: ${failure} - aborting`);
             }
         }
     }
@@ -1094,7 +1101,7 @@ $(document).on('turbolinks:load', function() {
 
         /** @type {UploadRecord} record */
         let record  = undefined;
-        let error   = '';
+        let warning, error;
         const start = Date.now();
 
         $.ajax({
@@ -1116,7 +1123,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -1136,7 +1143,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
         /**
@@ -1150,13 +1162,13 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (record) {
-                debug(func, 'data from server:', record);
-            } else if (error) {
-                consoleWarn(func, `${url}:`, error);
+                debug(`${func}: data from server:`, record);
+            } else if (warning) {
+                consoleWarn(`${func}: ${url}:`, warning);
             } else {
-                consoleError(func, `${url}:`, 'unknown failure');
+                consoleError(`${func}: ${url}:`, (error || 'unknown failure'));
             }
             initializeUploadForm($form, record);
         }
@@ -1321,7 +1333,7 @@ $(document).on('turbolinks:load', function() {
      */
     function initializeFormFields(form, start_data) {
 
-        const func = 'initializeFormFields:';
+        const func = 'initializeFormFields';
         let $form  = formElement(form);
 
         let data = {};
@@ -2093,7 +2105,7 @@ $(document).on('turbolinks:load', function() {
      * @param {boolean}        [init]       If *true*, in initialization phase.
      */
     function updateCheckboxInputField(target, setting, init) {
-        const func     = 'updateCheckboxInputField:';
+        const func     = 'updateCheckboxInputField';
         let $input     = $(target);
         let $fieldset  = $input.parents('[data-field]').first();
         const checkbox = $input[0];
@@ -2113,7 +2125,7 @@ $(document).on('turbolinks:load', function() {
         if (isDefined(checked)) {
             setChecked($input, checked, init);
         } else {
-            consoleWarn(func, 'unexpected:', setting);
+            consoleWarn(`${func}: unexpected:`, setting);
         }
 
         // Update the enclosing fieldset.
@@ -2229,9 +2241,9 @@ $(document).on('turbolinks:load', function() {
      * @returns {undefined | { name: string, modified: boolean|undefined }}
      */
     function updateRelatedField(name, other_name) {
-        const func = 'updateRelatedField:';
+        const func = 'updateRelatedField';
         if (isMissing(name)) {
-            consoleError(func, 'missing primary argument');
+            consoleError(`${func}: missing primary argument`);
             return;
         }
 
@@ -2268,10 +2280,10 @@ $(document).on('turbolinks:load', function() {
             }
         }
         if (error) {
-            consoleError(func, error);
+            consoleError(`${func}:`, error);
             return;
         } else if (warn) {
-            // consoleWarn(func, warn);
+            // consoleWarn(`${func}:`, warn);
             return;
         }
 
@@ -2546,7 +2558,7 @@ $(document).on('turbolinks:load', function() {
      */
     function monitorSourceRepository(form) {
 
-        const func = 'monitorSourceRepository:';
+        const func = 'monitorSourceRepository';
         let $form  = formElement(form);
         let $menu  = sourceRepositoryMenu($form);
 
@@ -2620,10 +2632,10 @@ $(document).on('turbolinks:load', function() {
             if (isEmpty(list)) {
                 const query = parentEntrySearchTerms($form);
                 error = `${new_repo}: no match for "${query}"`;
-                console.warn(func, error);
+                console.warn(`${func}:`, error);
             } else if (!Array.isArray(list)) {
                 error = `${new_repo}: search error`;
-                console.error(func, `${new_repo}: arg is not an array`);
+                console.error(`${func}: ${new_repo}: arg is not an array`);
             }
             if (error) {
                 return searchFailure(error);
@@ -2638,7 +2650,7 @@ $(document).on('turbolinks:load', function() {
                 error = 'PROBLEM: ';
                 error += `new_repo == "${new_repo}" but parent `;
                 error += `emma_repository == "${parent.emma_repository}"`;
-                console.warn(func, error);
+                console.warn(`${func}:`, error);
             }
             if (isPresent(list)) {
                 const title_id = parent.emma_titleId;
@@ -2646,7 +2658,7 @@ $(document).on('turbolinks:load', function() {
                     if (entry.emma_titleId !== title_id) {
                         error = `ambiguous: Title ID ${entry.emma_titleId}`;
                         flashMessage(error);
-                        console.warn(func, `ambiguous: ${asString(entry)}`);
+                        console.warn(`${func}: ambiguous: ${asString(entry)}`);
                     }
                 });
             }
@@ -2781,7 +2793,7 @@ $(document).on('turbolinks:load', function() {
                 repository:      (new_repo || EMPTY_VALUE),
                 emma_repository: (new_repo || null)
             };
-            console.log(func, (new_repo || 'cleared'));
+            console.log(`${func}:`, (new_repo || 'cleared'));
             populateFormFields(set_repo, $form);
         }
     }
@@ -2794,19 +2806,19 @@ $(document).on('turbolinks:load', function() {
      * @param {function}                      [error_callback]
      */
     function fetchIndexEntries(search, callback, error_callback) {
-        const func = 'fetchIndexEntries:';
+        const func = 'fetchIndexEntries';
         let search_terms = {};
 
         // Create a search URL from the given search term(s).
         if (isEmpty(search)) {
-            console.error(func, 'empty search terms');
+            console.error(`${func}: empty search terms`);
             return;
         } else if (Array.isArray(search)) {
             let terms = [];
             search.forEach(function(term) {
                 const type = typeof(term);
                 if (type !== 'string') {
-                    console.warn(func, `cannot process ${type} search term`);
+                    console.warn(`${func}: can't process ${type} search term`);
                 } else if (!term) {
                     // Skip empty term.
                 } else if (term.match(/\s/)) {
@@ -2819,7 +2831,7 @@ $(document).on('turbolinks:load', function() {
         } else if (typeof search === 'object') {
             $.extend(search_terms, search);
         } else if (typeof search !== 'string') {
-            console.error(func, `cannot process ${typeof search} search`);
+            console.error(`${func}: can't process ${typeof search} search`);
             return;
         } else if (search.match(/\s/)) {
             search_terms['q'] = `"${search}"`;
@@ -2828,11 +2840,11 @@ $(document).on('turbolinks:load', function() {
         }
         const url = makeUrl('/search', search_terms);
 
-        debug(func, 'VIA', url);
+        debug(`${func}: VIA`, url);
 
         /** @type {SearchResultEntry[]} records */
         let records = undefined;
-        let error   = '';
+        let warning, error;
         const start = Date.now();
 
         $.ajax({
@@ -2852,7 +2864,7 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onSuccess(data, status, xhr) {
-            // debug(func, 'received', (data ? data.length : 0), 'bytes.');
+            // debug(`${func}: received`, (data ? data.length : 0), 'bytes.');
             if (isMissing(data)) {
                 error = 'no data';
             } else if (typeof(data) !== 'object') {
@@ -2875,7 +2887,12 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         message
          */
         function onError(xhr, status, message) {
-            error = `${status}: ${xhr.status} ${message}`;
+            const failure = `${status}: ${xhr.status} ${message}`;
+            if (transientError(xhr.status)) {
+                warning = failure;
+            } else {
+                error   = failure;
+            }
         }
 
         /**
@@ -2886,19 +2903,20 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         status
          */
         function onComplete(xhr, status) {
-            debug(func, 'complete', secondsSince(start), 'sec.');
-            let message;
+            debug(`${func}: complete`, secondsSince(start), 'sec.');
             if (records) {
                 callback(records);
-            } else if (error) {
-                message = `${url}: ${error}`;
-                consoleWarn(func, message);
             } else {
-                message = `${url}: unknown failure`;
-                consoleError(func, message);
-            }
-            if (message && error_callback) {
-                error_callback(message);
+                const failure = error || warning || 'unknown failure'
+                const message = `${url}: ${failure}`;
+                if (warning) {
+                    consoleWarn(`${func}:`, message);
+                } else {
+                    consoleError(`${func}:`, message);
+                }
+                if (error_callback) {
+                    error_callback(message);
+                }
             }
         }
     }
@@ -3335,14 +3353,14 @@ $(document).on('turbolinks:load', function() {
          * @param {XMLHttpRequest} xhr
          */
         function onCreateSuccess(data, status, xhr) {
-            const func  = 'onCreateSuccess:';
+            const func  = 'onCreateSuccess';
             const flash = compact(extractFlashMessage(xhr));
             const entry = (flash.length > 1) ? 'entries' : 'entry';
             let message = `EMMA ${entry} ${termActionOccurred()}`; // TODO: I18n
             if (isPresent(flash)) {
                 message += ' for: ' + flash.join(', ');
             }
-            debug(func, message);
+            debug(`${func}:`, message);
             showFlashMessage(message);
             setFormSubmitted($form);
         }
@@ -3358,7 +3376,7 @@ $(document).on('turbolinks:load', function() {
          * @param {string}         error
          */
         function onCreateError(xhr, status, error) {
-            const func      = 'onCreateError:';
+            const func      = 'onCreateError';
             const flash     = compact(extractFlashMessage(xhr));
             const processed = termActionOccurred($form);
             let message     = `EMMA entry not ${processed}:`; // TODO: I18n
@@ -3369,7 +3387,7 @@ $(document).on('turbolinks:load', function() {
             } else {
                 message += ` ${status}: ${error}`;
             }
-            consoleWarn(func, message);
+            consoleWarn(`${func}:`, message);
             showFlashError(message);
         }
 
@@ -3481,18 +3499,18 @@ $(document).on('turbolinks:load', function() {
      * @see "UploadHelper#upload_field_group"
      */
     function filterFieldDisplay(new_mode, form_sel) {
-        const func = 'filterFieldDisplay:';
+        const func = 'filterFieldDisplay';
         const obj  = (typeof new_mode === 'object');
         const form = obj ? new_mode  : form_sel;
         let $form  = formElement(form);
         const mode =
             (obj ? undefined : new_mode) || fieldDisplayFilterCurrent($form);
         switch (mode) {
-            case 'available': fieldDisplayAvailable($form);              break;
-            case 'invalid':   fieldDisplayInvalid($form);                break;
-            case 'filled':    fieldDisplayFilled($form);                 break;
-            case 'all':       fieldDisplayAll($form);                    break;
-            default:          consoleError(func, 'invalid mode:', mode); break;
+            case 'available': fieldDisplayAvailable($form); break;
+            case 'invalid':   fieldDisplayInvalid($form);   break;
+            case 'filled':    fieldDisplayFilled($form);    break;
+            case 'all':       fieldDisplayAll($form);       break;
+            default:          consoleError(`${func}: invalid mode:`, mode);
         }
         // Scroll so that the first visible field is at the top of the display
         // beneath the field display controls.
@@ -4260,7 +4278,7 @@ $(document).on('turbolinks:load', function() {
      * @returns {ElementProperties|null}
      */
     function buttonProperties(form, values, op_name, can_perform) {
-        const func  = 'buttonProperties:';
+        const func  = 'buttonProperties';
         let $form   = formElement(form);
         let perform = can_perform;
         if (notDefined(perform)) {
@@ -4268,7 +4286,7 @@ $(document).on('turbolinks:load', function() {
                 case 'submit': perform = canSubmit($form); break;
                 case 'cancel': perform = canCancel($form); break;
                 case 'select': perform = canSelect($form); break;
-                default:       consoleError(func, `Invalid: "${op_name}"`);
+                default:       consoleError(`${func}: invalid: "${op_name}"`);
             }
         }
         const op = isPresent(values) ? values : assetObject($form)[op_name];
@@ -4323,6 +4341,24 @@ $(document).on('turbolinks:load', function() {
     // ========================================================================
     // Functions - other
     // ========================================================================
+
+    /**
+     * Indicate whether the HTTP status code should be treated as a temporary
+     * condition.
+     *
+     * @param {number} code
+     *
+     * @returns {boolean}
+     */
+    function transientError(code) {
+        switch (code) {
+            case HTTP.service_unavailable:
+            case HTTP.gateway_timeout:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     /**
      * Emit a console message if debugging.
