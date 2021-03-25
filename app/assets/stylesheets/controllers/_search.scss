@@ -508,6 +508,11 @@ $sticky-top-narrow:     2.75rem;
             font-weight: bold;
         }
 
+        &.field-Description {
+            max-height: 20vh;
+            overflow-y: auto;
+        }
+
         &.field-RetrievalLink {
             @media #{$narrow-screen} {
                 margin-top:    0.5rem;
