@@ -656,6 +656,7 @@ $search-button-width:    6rem;
 
             margin-top:   calc(3 * #{$gap-y} / 2);
             margin-right: $gap-x;
+            user-select:  none;
 
             &.col-first {
                 @media #{$wide-screen} {

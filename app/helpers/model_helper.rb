@@ -348,12 +348,14 @@ module ModelHelper
     &block
   )
     return ''.html_safe unless item
-    pairs = field_values(item, pairs, &block)
+    pairs  = field_values(item, pairs, &block)
     model  = (model  || params[:controller])&.to_sym
     action = (action || params[:action])&.to_sym
 
     opt[:row]   = row_offset || 0
     opt[:model] = model
+
+    render_value_opt = opt.slice(:model, :index, :min_index, :max_index)
 
     # noinspection RubyNilAnalysis
     pairs.map { |label, value|
@@ -376,7 +378,7 @@ module ModelHelper
       opt[:row]  += 1
       opt[:field] = field
       # noinspection RubyYardParamTypeMatch
-      value = render_value(item, value, model: model, index: opt[:index])
+      value = render_value(item, value, **render_value_opt)
       render_pair(label, value, **opt) if value
     }.compact.unshift(nil).join(separator).html_safe
   end

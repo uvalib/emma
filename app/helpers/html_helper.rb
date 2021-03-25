@@ -92,7 +92,7 @@ module HtmlHelper
     content   = args.flatten
     content  += Array.wrap(yield) if block_given?
     content.reject!(&:blank?)
-    content_tag(tag, safe_join(content, separator), options)
+    content_tag(tag, safe_join(content, separator), html_options!(options))
   end
 
   # Invoke #form_tag after normalizing element contents provided via the
@@ -156,18 +156,17 @@ module HtmlHelper
   # noinspection RubyYardParamTypeMatch
   #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
-    icon           ||= STAR
-    text           ||= opt[:title] || 'Action' # TODO: I18n
-    opt[:title]    ||= text
-    opt[:role]     ||= 'button'
-    opt[:tabindex] ||= 0 unless url
+    icon        ||= STAR
+    text        ||= opt[:title] || 'Action' # TODO: I18n
+    opt[:title] ||= text
+    opt[:role]  ||= 'button'
 
     sr_only = html_span(text, class: 'text sr-only')
     symbol  = html_span(icon, class: 'symbol', 'aria-hidden': true)
     link    = sr_only << symbol
 
     if url
-      link_to(link, url, opt)
+      make_link(link, url, **opt)
     else
       html_span(link, opt)
     end
@@ -195,7 +194,7 @@ module HtmlHelper
   #
   def make_link(label, path, **opt, &block)
     sign_in  = has_class?(opt, 'sign-in-required')
-    disabled = has_class?(opt, 'disabled')
+    disabled = has_class?(opt, 'disabled', 'forbidden')
     if sign_in
       opt[:tabindex]   = 0 unless opt.key?(:tabindex)
       opt[:onkeypress] = 'return false;'
@@ -221,7 +220,7 @@ module HtmlHelper
       opt[:'aria-hidden'] = true if opt[:tabindex] == -1
     end
     label = opt.delete(:label) || label
-    link_to(label, path, opt, &block)
+    link_to(label, path, html_options!(opt), &block)
   end
 
   # Produce a link to an external site which opens in a new browser tab.

@@ -94,7 +94,8 @@ module SearchHelper
   # repository.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #html_div for title.
+  # @param [Hash]                opt    Passed to #html_div for title and to
+  #                                       #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -104,10 +105,9 @@ module SearchHelper
     source = item.emma_repository
     source = '' unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
-    index  = opt.delete(:index)
     title  = html_div(title, opt)
     logo   = repository_source_logo(source)
-    ctrl   = prev_next_controls(index: index)
+    ctrl   = prev_next_controls(**opt)
     # noinspection RubyYardReturnMatch
     title << logo << ctrl
   end
@@ -115,7 +115,8 @@ module SearchHelper
   # Display title of the associated work along with the source repository.
   #
   # @param [Search::Api::Record] item
-  # @param [Hash]                opt    Passed to #html_div for title.
+  # @param [Hash]                opt    Passed to #html_div for title and to
+  #                                       #prev_next_controls.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
@@ -125,11 +126,10 @@ module SearchHelper
     source = item.emma_repository
     source = nil unless EmmaRepository.values.include?(source)
     prepend_classes!(opt, css_selector, source)
-    index  = opt.delete(:index)
     title  = html_div(title, opt)
     name   = source&.titleize || 'LOGO'
     logo   = repository_source(item, source: source, name: name)
-    ctrl   = prev_next_controls(index: index)
+    ctrl   = prev_next_controls(**opt)
     # noinspection RubyYardReturnMatch
     title << logo << ctrl
   end
@@ -142,57 +142,62 @@ module SearchHelper
   #
   def prev_next_controls(**opt)
     css_selector = '.prev-next'
-    curr_index   = positive(opt[:index]) || 0
-    min_index    = positive(opt[:min])   || 0
-    max_index    = positive(opt[:max])   || (1 << 32)
-    prev_index   = (curr_index - 1 if curr_index > min_index)
-    prev_index &&= prev_record_link(index: prev_index)
-    prev_index ||= html_div('&nbsp;'.html_safe)
-    next_index   = (curr_index + 1 if curr_index < max_index)
-    next_index &&= next_record_link(index: next_index)
-    next_index ||= html_div('&nbsp;'.html_safe)
     html_div(class: css_classes(css_selector)) do
-      prev_index << next_index
+      prev_record_link(**opt) << next_record_link(**opt)
     end
   end
 
   # Create a control for jumping to the previous record in the list.
   #
-  # @param [Integer, #to_i] index
-  # @param [String, nil]    label     Default: #UP_TRIANGLE.
+  # @param [Integer, #to_i]      index      Current index.
+  # @param [Integer, #to_i, nil] min_index  Default: 0.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToPrev()*
   #
-  def prev_record_link(index:, label: nil, **)
+  def prev_record_link(index:, min_index: nil, **)
     css_selector = '.prev'
-    opt = {
-      icon:  label || UP_TRIANGLE,
-      url:   "#field-Title-#{index}",
-      class: css_classes(css_selector),
-      title: 'Go to the previous record', # TODO: I18n
-    }
+    index     = positive(index)     || 0
+    min_index = positive(min_index) || 0
+    opt = {}
+    if index > min_index
+      opt[:icon]  = UP_TRIANGLE
+      opt[:title] = 'Go to the previous record' # TODO: I18n
+      opt[:url]   = '#field-Title-%d' % (index - 1)
+    else
+      opt[:icon]  = DELTA
+      opt[:title] = 'This is the first record on the page' # TODO: I18n
+      append_classes!(opt, 'forbidden')
+    end
+    prepend_classes!(opt, css_selector)
     icon_button(**opt)
   end
 
   # Create a control for jumping to the next record in the list.
   #
-  # @param [Integer, #to_i] index
-  # @param [String, nil]    label     Default: #DOWN_TRIANGLE.
+  # @param [Integer, #to_i]      index      Current index.
+  # @param [Integer, #to_i, nil] max_index  Default: 1<<32.
   #
   # @return [ActiveSupport::SafeBuffer]
   #
   # @see file:app/assets/javascripts/feature/scroll.js *scrollToNext()*
   #
-  def next_record_link(index:, label: nil, **)
+  def next_record_link(index:, max_index: nil, **)
     css_selector = '.next'
-    opt = {
-      icon:  label || DOWN_TRIANGLE,
-      url:   "#field-Title-#{index}",
-      class: css_classes(css_selector),
-      title: 'Go to the next record', # TODO: I18n
-    }
+    index     = positive(index)     || 0
+    max_index = positive(max_index) || (1 << 32)
+    opt = {}
+    if index < max_index
+      opt[:icon]  = DOWN_TRIANGLE
+      opt[:title] = 'Go to the next record' # TODO: I18n
+      opt[:url]   = '#field-Title-%d' % (index + 1)
+    else
+      opt[:icon]  = REVERSE_DELTA
+      opt[:title] = 'This is the last record on the page' # TODO: I18n
+      append_classes!(opt, 'forbidden')
+    end
+    prepend_classes!(opt, css_selector)
     icon_button(**opt)
   end
 

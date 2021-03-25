@@ -112,7 +112,7 @@ module CssHelper
   # @param [Array<#to_s,Array>] classes   CSS class names.
   # @param [Proc]               block     Passed to #css_classes.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                        The modified *html_opt* hash.
   #
   # Compare with:
   # @see #prepend_classes!
@@ -162,7 +162,7 @@ module CssHelper
   # @param [Array<#to_s,Array>] classes   CSS class names.
   # @param [Proc]               block     Passed to #css_classes.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                        The modified *html_opt* hash.
   #
   # Compare with:
   # @see #append_classes!
@@ -192,7 +192,7 @@ module CssHelper
   # @param [Hash]               html_opt  The target options hash.
   # @param [Array<#to_s,Array>] classes   CSS class names.
   #
-  # @return [Hash]                        The modified *opt* hash.
+  # @return [Hash]                        The modified *html_opt* hash.
   #
   def remove_classes!(html_opt, *classes)
     if (current = css_class_array(html_opt[:class])).blank?
@@ -292,6 +292,47 @@ module CssHelper
   def prepend_grid_cell_classes!(html_opt, *classes, **opt)
     classes = grid_cell_classes(*classes, **opt)
     prepend_classes!(html_opt, *classes)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # These are observed hash keys which may travel alongside HTML attributes
+  # like :id, :class, :tabindex etc. when passed as named parameters, but
+  # should not be passed into methods which actually generate HTML elements.
+  #
+  # @type [Array<Symbol>]
+  #
+  NON_HTML_ATTRIBUTES = %i[
+    index
+    level
+    max_index
+    min_index
+    offset
+    skip
+  ].freeze
+
+  # Make a copy which has only valid HTML attributes.
+  #
+  # @param [Hash, nil] html_opt       The target options hash.
+  #
+  # @return [Hash]
+  #
+  def html_options(html_opt)
+    html_options!(html_opt&.dup || {})
+  end
+
+  # Retain only entries which are valid HTML attributes.
+  #
+  # @param [Hash] html_opt            The target options hash.
+  #
+  # @return [Hash]                    The modified *html_opt* hash.
+  #
+  def html_options!(html_opt)
+    html_opt.except!(*NON_HTML_ATTRIBUTES)
   end
 
   # ===========================================================================

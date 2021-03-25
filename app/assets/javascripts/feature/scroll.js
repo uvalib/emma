@@ -143,18 +143,7 @@ $(document).on('turbolinks:load', function() {
      */
     function scrollToPrev(event) {
         debug('scrollToPrev');
-        let $button    = $(event.currentTarget || event.target);
-        const selector = $button.attr('href');
-        let $title     = $(selector);
-        const t_height = $title[0].scrollHeight;
-        const t_pos    = $title[0].offsetTop;
-        let $format    = $title.siblings('.field-Format').first();
-        const f_height = $format[0].scrollHeight;
-        const f_pos    = $format[0].offsetTop;
-        const y_delta  = t_height + f_height + t_pos - f_pos;
-        $title[0].scrollIntoView(true);
-        window.scrollBy({ top: -y_delta });
-        return false;
+        return scrollToRecord(event, PREV_SELECTOR);
     }
 
     /**
@@ -169,13 +158,54 @@ $(document).on('turbolinks:load', function() {
      */
     function scrollToNext(event) {
         debug('scrollToNext');
-        let $button    = $(event.currentTarget || event.target);
-        const selector = $button.attr('href');
-        let $title     = $(selector);
-        let $format    = $title.siblings('.field-Format').first();
-        const y_delta  = $format[0].scrollHeight;
-        $title[0].scrollIntoView(true);
-        window.scrollBy({ top: -y_delta });
+        return scrollToRecord(event, NEXT_SELECTOR);
+    }
+
+    /**
+     * Scroll so that the indicated list entry is fully displayed at the top of
+     * the screen.
+     *
+     * @param {jQuery.Event} event
+     * @param {Selector}     button_selector
+     *
+     * @returns {boolean}             Always *false* to end event propagation.
+     *
+     * @see "SearchHelper#prev_next_controls"
+     */
+    function scrollToRecord(event, button_selector) {
+        let $button = $(event.currentTarget || event.target);
+        if (!$button.hasClass('disabled') && !$button.hasClass('forbidden')) {
+            const record_id = $button.attr('href');
+
+            let $title      = $(record_id);
+            let $format     = $title.siblings(':not(.field-Title)').first();
+            const t_height  = $title[0].scrollHeight;
+            const t_pos     = $title[0].offsetTop;
+            const f_height  = $format[0].scrollHeight;
+            const f_pos     = $format[0].offsetTop;
+            let y_delta     = t_height + f_height + (t_pos - f_pos);
+
+            // Scroll to the indicated entry then scroll up more so that the
+            // first metadata label is visible below the title.
+            $title[0].scrollIntoView(true);
+            window.scrollBy(0, -y_delta);
+
+            // The item number is at the same Y position as the entry for
+            // desktop and mobile ($wide-screen and $medium-width), but it is
+            // above the entry for the hand-held ($narrow-screen) form-factor.
+            // (For Firefox n_pos < e_pos, but for Chrome n_pos > e_pos.)
+            // This requires an additional adjustment.
+            let $entry  = $title.parent();
+            let $number = $entry.prev('.number');
+            const e_pos = $entry[0].offsetTop;
+            const n_pos = $number[0].offsetTop;
+            if (n_pos !== e_pos) {
+                window.scrollBy(0, -$number[0].scrollHeight);
+            }
+
+            // Set focus to the button which matches the original action.
+            $title.find(button_selector).focus();
+        }
         return false;
     }
 

@@ -26,8 +26,9 @@
 
         @extend %header-section;
 
-        flex-wrap: wrap;
-        font-size: x-large;
+        flex-wrap:   wrap;
+        font-size:   x-large;
+        user-select: none;
 
         > * {
 

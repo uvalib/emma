@@ -24,7 +24,7 @@ $value-right-margin:    calc(2 * #{$flex-gap-x});
 $sticky-top-wide:       2vh;
 $sticky-top-medium:     1.5vh;
 //$sticky-top-narrow:   7.5vh; // Don't scroll over sticky item number.
-$sticky-top-narrow:     2.75rem;
+$sticky-top-narrow:     3.125rem;
 
 // Use to display text as a substitute for a logo.
 %text-logo {
@@ -389,7 +389,6 @@ $sticky-top-narrow:     2.75rem;
 
             @media #{$narrow-screen} {
                 top:            $sticky-top-narrow;
-                margin-top:     -0.5rem;
                 padding-bottom: 0.5rem;
                 border-color:   black;
                 box-shadow:
@@ -402,18 +401,18 @@ $sticky-top-narrow:     2.75rem;
 
                 margin: 0;
 
-                @media #{$not-narrow-screen} {
-                    height: 100%;
-                    flex:   1 1 auto;
-                }
-
                 @media #{$wide-screen} {
+                    height:         100%;
                     padding-bottom: 1rem;
                     font-size:      larger;
+                    flex:           1 1 auto;
                 }
 
                 @media #{$medium-width} {
+                    height:         100%;
                     padding-bottom: 0.75rem;
+                    margin-right:   $value-right-margin;
+                    flex:           1 1 auto;
                 }
 
                 /**
@@ -425,39 +424,45 @@ $sticky-top-narrow:     2.75rem;
                  * partially displayed but clipped.
                  */
                 @media #{$narrow-screen} {
-                    max-height:    4em;
-                    padding-right: $scroll-easement;
-                    overflow-y:    auto;
-                    flex:          1 1 100%;
+                    max-height:     4em;
+                    margin-top:     0.5rem;
+                    padding-right:  $scroll-easement;
+                    overflow-y:     auto;
+                    flex:           1 1 100%;
                 }
             }
 
             // @see SearchHelper#title_and_source_logo
             .repository {
 
-                display:         flex;
-                justify-content: flex-end;
+                display: flex;
 
                 @media #{$wide-screen} {
-                    flex-basis:     15%;
-                    margin-left:    $value-right-margin;
-                    padding-bottom: 1rem;
+                    flex-basis:      15%;
+                    margin-left:     $value-right-margin;
+                    padding-bottom:  1rem;
+                    justify-content: flex-end;
                 }
 
                 @media #{$medium-width} {
-                    flex-basis:     20%;
-                    margin-top:     0.25rem;
-                    margin-left:    $value-right-margin;
-                    padding-bottom: 0.75rem;
+                    flex-basis:      20%;
+                    margin-left:     $value-right-margin;
+                    padding-bottom:  0.75rem;
+                    justify-content: flex-end;
                 }
 
                 @media #{$narrow-screen} {
-                    padding-bottom: 0.5rem;
+                    flex-basis:      66%;
+                    margin-top:      -0.5rem;
+                    justify-content: flex-start;
                 }
 
                 img {
 
-                    height: auto;
+                    height:     auto;
+                    padding:    0.5rem 0.75rem;
+                    border:     1px solid lightgray;
+                    box-shadow: 2px 2px 6px 0 lightgray;
 
                     @media #{$not-wide-screen} {
                         max-height: 2.5rem;
@@ -471,18 +476,38 @@ $sticky-top-narrow:     2.75rem;
             //
             .prev-next {
 
-                display:        flex;
-                flex-direction: column;
-                flex:           0 0 auto;
+                display:     flex;
+                align-items: center;
+                margin:      0;
+                flex:        0 0 auto;
+
+                @media #{$wide-screen} {
+                    flex-direction: column;
+                    margin-left:    $flex-gap-x;
+                    padding-top:    0.75rem;
+                }
+
+                @media #{$medium-width} {
+                    flex-direction: column;
+                    margin-left:    $flex-gap-x;
+                    padding-top:    0.5rem;
+                }
+
+                @media #{$narrow-screen} {
+                    flex-direction: row;
+                    margin-top:     -0.5rem;
+                    margin-bottom:  auto;
+                    line-height:    1.5;
+                }
 
                 .prev,
                 .next {
 
                     @extend %button-hover;
 
-                    min-width:      unset;
-                    padding:        0 2px;
-                    border-radius:  50%;
+                    min-width:     unset;
+                    padding:       0 2px;
+                    border-radius: 50%;
 
                     &:focus {
                         text-decoration: none;
@@ -492,14 +517,38 @@ $sticky-top-narrow:     2.75rem;
                     &:hover {
                         text-decoration: none;
                     }
+
+                    &.forbidden {
+
+                        color:  blue;
+                        cursor: default;
+
+                        @media #{$narrow-screen} {
+                            padding: 0 3px;
+                        }
+                    }
                 }
 
                 .prev {
-                    margin-top: -0.5rem;
+                    @media #{$not-narrow-screen} {
+
+                        margin-top: -0.5rem;
+
+                        &.forbidden {
+                            margin-top: -0.75rem;
+                        }
+                    }
                 }
 
                 .next {
-                    margin-top: 0.25rem;
+                    @media #{$not-narrow-screen} {
+
+                        margin-top: 0.25rem;
+
+                        &.forbidden {
+                            margin-top: 0;
+                        }
+                    }
                 }
             }
         }

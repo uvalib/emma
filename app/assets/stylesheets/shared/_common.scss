@@ -172,7 +172,8 @@
 // Highlight button on hover.
 %button-hover {
 
-    cursor: pointer;
+    cursor:      pointer;
+    user-select: none;
 
     &:focus {
         text-decoration: underline;
