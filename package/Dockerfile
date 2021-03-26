@@ -19,6 +19,7 @@ RUN apk upgrade && \
     libxslt-dev \
     mariadb-dev \
     nodejs \
+    shared-mime-info \
     tzdata \
     yarn
 
