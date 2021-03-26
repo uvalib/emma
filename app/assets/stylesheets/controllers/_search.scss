@@ -619,27 +619,39 @@ $sticky-top-narrow:     3.125rem;
 
     .number {
 
-        margin-top:    0;
-        margin-bottom: $results-entry-gap-y;
-        padding-left:  0.25rem;
-        padding-right: 0.5rem;
-        text-align:    right;
-        font-size:     large;
-        font-weight:   bold;
+        margin-top:  0;
+        font-size:   large;
+        font-weight: bold;
 
         @media #{$not-narrow-screen} {
-            background: $item-number-bg;
-            border:     1px solid $item-number-border;
+            margin-bottom:  calc(2 * #{$results-entry-gap-y});
+            padding-left:   0.25rem;
+            padding-right:  0.5rem;
+            text-align:     right;
+            background:     $item-number-bg;
+            border:         1px solid $item-number-border;
+        }
+
+        @media #{$wide-screen} {
+            padding-bottom: 1.75rem;
+        }
+
+        @media #{$medium-width} {
+            margin-top:     calc(2 * #{$results-entry-gap-y});
+            padding-bottom: 1.5rem;
         }
 
         @media #{$narrow-screen} {
-            position:      sticky;
-            top:           0;
-            margin-bottom: 0;
-            padding:       0;
-            text-align:    center;
-            background:    white;
-            box-shadow:    0 0 0 0.75rem white;
+
+            @include grid-column-span;
+
+            position:       sticky;
+            top:            0;
+            margin-bottom:  0;
+            padding:        0;
+            text-align:     center;
+            background:     white;
+            box-shadow:     0 0 0 0.75rem white;
         }
 
         .container {
@@ -723,24 +735,19 @@ $sticky-top-narrow:     3.125rem;
      * happens to be displaying.
      */
     .search-list-entry {
+
+        @media #{$not-narrow-screen} {
+            margin-bottom:         calc(2 * #{$results-entry-gap-y});
+            padding-bottom:        0.5rem;
+        }
+
         @media #{$wide-screen} {
             grid-template-columns: [label] minmax(auto, 0.1375fr) [value] 1fr;
         }
+
         @media #{$medium-width} {
+            margin-top:            calc(2 * #{$results-entry-gap-y});
             grid-template-columns: [label] minmax(auto, 0.25fr) [value] 1fr;
-        }
-    }
-
-    .number,
-    .search-list-entry {
-
-        @media #{$not-narrow-screen} {
-            margin-bottom:  calc(2 * #{$results-entry-gap-y});
-            padding-bottom: 0.5rem;
-        }
-
-        @media #{$medium-width} {
-            margin-top: calc(2 * #{$page-padding});
         }
 
         @media #{$narrow-screen} {
