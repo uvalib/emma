@@ -178,20 +178,15 @@ $sticky-top-narrow:     3.125rem;
             }
 
             @media #{$narrow-screen} {
-
-                margin-left: 0;
-
+                margin-left:           0;
                 grid-template-columns: 1fr;
             }
 
-            // noinspection CssReplaceWithShorthandSafely
             > * {
 
                 @extend %control-shadow;
 
                 display:             block;
-                margin:              $element-y-margin $element-x-margin;
-                margin-right:        1rem;
                 padding:             $element-y-padding $element-x-padding;
                 background:          ghostwhite;
                 border:              $element-border solid gray;
@@ -199,14 +194,19 @@ $sticky-top-narrow:     3.125rem;
                 border-bottom-color: black;
                 border-radius:       $element-x-padding / 2;
 
+                // noinspection CssReplaceWithShorthandSafely
+                @media #{$not-narrow-screen} {
+                    margin:          $element-y-margin $element-x-margin;
+                    margin-right:    1rem;
+                }
+
                 @media #{$wide-screen} {
-                    word-break: keep-all;
-                    word-wrap:  break-word;
+                    word-break:      keep-all;
+                    word-wrap:       break-word;
                 }
 
                 @media #{$narrow-screen} {
-                    margin-left:  0;
-                    margin-right: 0;
+                    margin:          $element-y-margin 0;
                 }
             }
         }
@@ -274,7 +274,7 @@ $sticky-top-narrow:     3.125rem;
                 word-break: normal;
 
                 @media #{$medium-width} {
-                    margin-left:  0;
+                    margin-left: 0;
                 }
             }
         }
@@ -400,19 +400,18 @@ $sticky-top-narrow:     3.125rem;
             .title {
 
                 margin: 0;
+                flex:   1 1 auto;
 
                 @media #{$wide-screen} {
                     height:         100%;
                     padding-bottom: 1rem;
                     font-size:      larger;
-                    flex:           1 1 auto;
                 }
 
                 @media #{$medium-width} {
                     height:         100%;
                     padding-bottom: 0.75rem;
                     margin-right:   $value-right-margin;
-                    flex:           1 1 auto;
                 }
 
                 /**
@@ -428,33 +427,32 @@ $sticky-top-narrow:     3.125rem;
                     margin-top:     0.5rem;
                     padding-right:  $scroll-easement;
                     overflow-y:     auto;
-                    flex:           1 1 100%;
+                    flex-basis:     100%;
                 }
             }
 
             // @see SearchHelper#title_and_source_logo
             .repository {
 
-                display: flex;
+                display:         flex;
+                justify-content: flex-end;
 
                 @media #{$wide-screen} {
-                    flex-basis:      15%;
                     margin-left:     $value-right-margin;
                     padding-bottom:  1rem;
-                    justify-content: flex-end;
+                    flex-basis:      15%;
                 }
 
                 @media #{$medium-width} {
-                    flex-basis:      20%;
                     margin-left:     $value-right-margin;
                     padding-bottom:  0.75rem;
-                    justify-content: flex-end;
+                    flex-basis:      20%;
                 }
 
                 @media #{$narrow-screen} {
-                    flex-basis:      66%;
-                    margin-top:      -0.5rem;
                     justify-content: flex-start;
+                    margin-top:      -0.5rem;
+                    flex-basis:      66%;
                 }
 
                 img {
@@ -476,19 +474,18 @@ $sticky-top-narrow:     3.125rem;
             //
             .prev-next {
 
-                display:     flex;
-                align-items: center;
-                margin:      0;
-                flex:        0 0 auto;
+                display:        flex;
+                flex-direction: column;
+                align-items:    center;
+                margin:         0;
+                flex:           0 0 auto;
 
                 @media #{$wide-screen} {
-                    flex-direction: column;
                     margin-left:    $flex-gap-x;
                     padding-top:    0.75rem;
                 }
 
                 @media #{$medium-width} {
-                    flex-direction: column;
                     margin-left:    $flex-gap-x;
                     padding-top:    0.5rem;
                 }
@@ -506,7 +503,7 @@ $sticky-top-narrow:     3.125rem;
                     @extend %button-hover;
 
                     min-width:     unset;
-                    padding:       0 2px;
+                    margin:        0;
                     border-radius: 50%;
 
                     &:focus {
@@ -519,35 +516,34 @@ $sticky-top-narrow:     3.125rem;
                     }
 
                     &.forbidden {
-
                         color:  blue;
                         cursor: default;
+                    }
+
+                    .symbol {
+
+                        display:    block;
+                        width:      1.25em; // em not rem
+                        text-align: center;
 
                         @media #{$narrow-screen} {
-                            padding: 0 3px;
+                            width:  1.5em; // em not rem
                         }
                     }
                 }
 
                 .prev {
                     @media #{$not-narrow-screen} {
-
                         margin-top: -0.5rem;
-
-                        &.forbidden {
-                            margin-top: -0.75rem;
-                        }
                     }
                 }
 
                 .next {
                     @media #{$not-narrow-screen} {
-
                         margin-top: 0.25rem;
-
-                        &.forbidden {
-                            margin-top: 0;
-                        }
+                    }
+                    @media #{$narrow-screen} {
+                        margin-left: 0.25rem;
                     }
                 }
             }
