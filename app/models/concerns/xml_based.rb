@@ -266,22 +266,22 @@ module XmlBased
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
     #
-    # @overload __debug_parse(method, element)
-    #   @param [Symbol]                 method
+    # @overload __debug_parse(meth, element)
+    #   @param [Symbol]                 meth
     #   @param [Nokogiri::XML::Element] element
     #
-    # @overload __debug_parse(method, element, inner)
-    #   @param [Symbol]                 method
+    # @overload __debug_parse(meth, element, inner)
+    #   @param [Symbol]                 meth
     #   @param [Nokogiri::XML::Element] element
     #   @param [Nokogiri::XML::Element] inner
     #
     def __debug_parse(*args)
       opt     = args.extract_options!
-      method  = args.first.is_a?(Symbol) ? args.shift : calling_method
+      meth    = args.first.is_a?(Symbol) ? args.shift : calling_method
       element = args.shift
       inner   = args.shift
       __debug_line(*args, opt) do
-        parts = [method, filename]
+        parts = [meth, filename]
         if element
           name =
             if element.respond_to?(:name)

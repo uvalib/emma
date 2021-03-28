@@ -1283,8 +1283,8 @@ module UploadWorkflow::External
       send(:define_method, m) { |*items, **| skip_index_ingest(m, *items) }
     end
 
-    def skip_index_ingest(method, *items)
-      __debug { "** SKIPPING ** UPLOAD #{method} | items = #{items.inspect}" }
+    def skip_index_ingest(meth, *items)
+      __debug { "** SKIPPING ** UPLOAD #{meth} | items = #{items.inspect}" }
       return items, []
     end
 

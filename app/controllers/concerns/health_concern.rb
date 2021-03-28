@@ -217,12 +217,12 @@ module HealthConcern
   #++
   def status_report(subsystem, entry = nil)
     entry ||= HEALTH_CHECK[subsystem] || INVALID_HEALTH_CHECK
-    method  = entry[:method]
+    meth    = entry[:method]
     start   = timestamp
     healthy, message =
-      case method
-        when Proc       then method.call
-        when Symbol     then send(method)
+      case meth
+        when Proc       then meth.call
+        when Symbol     then send(meth)
         when FalseClass then false
         else                 true
       end

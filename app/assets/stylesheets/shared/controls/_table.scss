@@ -47,19 +47,19 @@
 
         tr.spanner {
             display: none;
-            z-index: -1;
+            z-index: $z-hidden;
         }
 
         th {
             min-width:     max-content;
             text-align:    start;
             border-bottom: 2px solid $table-border-bg;
-            z-index:       0;
+            z-index:       $z-visible;
         }
     }
 
     td {
-        z-index: -2;
+        z-index: $z-hidden - 1;
     }
 
     //=========================================================================

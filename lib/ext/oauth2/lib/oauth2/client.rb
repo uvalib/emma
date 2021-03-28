@@ -242,15 +242,15 @@ module OAuth2
       end
 
       # Prepare data values including the token.
-      method  = options[:token_method]
-      auth    = Authenticator.new(id, secret, options[:auth_scheme])
-      params  = auth.apply(params || {}).merge!(token: token)
+      meth   = options[:token_method]
+      auth   = Authenticator.new(id, secret, options[:auth_scheme])
+      params = auth.apply(params || {}).merge!(token: token)
 
       # Prepare headers and other options.
       opts    = opts&.dup || {}
       headers = opts[:headers]&.dup || {}
       headers.merge!(params.delete(:headers)) if params[:headers]
-      if method == :get
+      if meth == :get
         opts[:params] = params
       else
         opts[:body] = params
@@ -260,7 +260,7 @@ module OAuth2
       opts[:raise_errors] = false unless opts.key?(:raise_errors)
 
       # noinspection RubyYardParamTypeMatch
-      request(method, options[:revoke_url], opts)
+      request(meth, options[:revoke_url], opts)
     end
 
   end

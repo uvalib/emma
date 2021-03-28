@@ -66,17 +66,17 @@ module ApiService::Definition
 
   # The optional API query parameters for the given method.
   #
-  # @param [Symbol, String] method
+  # @param [Symbol, String] meth
   #
   # @return [Array<Symbol>]
   #
-  def optional_parameters(method)
-    api_methods(method)&.dig(:optional)&.keys || []
+  def optional_parameters(meth)
+    api_methods(meth)&.dig(:optional)&.keys || []
   end
 
   # The required API query parameters for the given method.
   #
-  # @param [Symbol, String] method
+  # @param [Symbol, String] meth
   # @param [Boolean]        all
   #
   # @return [Array<Symbol>]
@@ -88,16 +88,16 @@ module ApiService::Definition
   # named parameters (translated to the name used in the documentation [e.g.,
   # "userIdentifier" instead of "user"]).
   #
-  def required_parameters(method, all: false)
-    result = api_methods(method)&.dig(:required)&.keys || []
-    result -= named_parameters(method) unless all
+  def required_parameters(meth, all: false)
+    result = api_methods(meth)&.dig(:required)&.keys || []
+    result -= named_parameters(meth) unless all
     result
   end
 
   # The subset of required API request parameters which are passed to the
   # implementation method via named parameters.
   #
-  # @param [Symbol, String] method
+  # @param [Symbol, String] meth
   # @param [Boolean]        no_alias
   #
   # @return [Array<Symbol>]
@@ -106,9 +106,9 @@ module ApiService::Definition
   # By default, the names are translated to the documented parameter names.
   # If :no_alias is *true* then the actual parameter names are returned.
   #
-  def named_parameters(method, no_alias: false)
-    alias_keys = !no_alias && api_methods(method)&.dig(:alias) || {}
-    method(method).parameters.map { |type, name|
+  def named_parameters(meth, no_alias: false)
+    alias_keys = !no_alias && api_methods(meth)&.dig(:alias) || {}
+    method(meth).parameters.map { |type, name|
       alias_keys[name] || name if %i[key keyreq].include?(type)
     }.compact
   end

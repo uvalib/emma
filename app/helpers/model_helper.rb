@@ -131,21 +131,21 @@ module ModelHelper
   def search_links(item, **opt)
 
     opt, html_opt = partition_options(opt, *SEARCH_LINKS_OPTIONS)
-    method = opt[:method]
-    field  = (opt[:field] || :title).to_s
+    meth  = opt[:method]
+    field = (opt[:field] || :title).to_s
     case field
       when 'creator_list'
-        method ||= field.to_sym
-        field    = :author
+        meth ||= field.to_sym
+        field  = :author
       when /_list$/
-        method ||= field.to_sym
-        field    = field.delete_suffix('_list').to_sym
+        meth ||= field.to_sym
+        field  = field.delete_suffix('_list').to_sym
       else
-        method ||= field.pluralize.to_sym
-        field    = field.to_sym
+        meth ||= field.pluralize.to_sym
+        field  = field.to_sym
     end
-    unless item.respond_to?(method)
-      __debug { "#{__method__}: #{item.class}: item.#{method} invalid" }
+    unless item.respond_to?(meth)
+      __debug { "#{__method__}: #{item.class}: item.#{meth} invalid" }
       return
     end
     html_opt[:field] = field
@@ -154,8 +154,8 @@ module ModelHelper
     link_method = opt[:link_method] || :search_link
     check_link  = !opt.key?(:no_link)
 
-    method_opt = (opt[:method_opt].presence if item.method(method).arity >= 0)
-    values = method_opt ? item.send(method, **method_opt) : item.send(method)
+    method_opt  = (opt[:method_opt].presence if item.method(meth).arity >= 0)
+    values      = method_opt ? item.send(meth, **method_opt) : item.send(meth)
     Array.wrap(values)
       .map { |record|
         link_opt = html_opt

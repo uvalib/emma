@@ -49,19 +49,19 @@ module ExplorerHelper
 
   # Invoke an API method.
   #
-  # @param [Symbol] method            One of ApiService#HTTP_METHODS.
+  # @param [Symbol] meth              One of ApiService#HTTP_METHODS.
   # @param [String] path
   # @param [Hash]   opt               Passed to #api_get, etc.
   #
   # @return [Hash{Symbol=>*}]
   #
-  def api_explorer(method, path, **opt)
-    method = method&.downcase&.to_sym || :get
+  def api_explorer(meth, path, **opt)
+    meth   = meth&.downcase&.to_sym || :get
     path   = url_escape(path)
-    data   = bs_api.api(method, path, **opt.merge(no_raise: true))
+    data   = bs_api.api(meth, path, **opt.merge(no_raise: true))
     data &&= data.body.presence
     {
-      method:    method.to_s.upcase,
+      method:    meth.to_s.upcase,
       path:      path,
       opt:       opt.presence || '',
       url:       api_explorer_url(path, **opt),

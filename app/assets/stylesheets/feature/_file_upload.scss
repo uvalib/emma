@@ -568,7 +568,7 @@ $form-gap-narrow: $form-gap / 3;
         background:    white;
         box-shadow:    0 -0.5rem 0      1.0rem white,
                        0  0.5rem 0.5rem 0.5rem white;
-        z-index:       $z-top;
+        z-index:       $z-controls;
 
         grid-template-columns: 1fr;
         gap:                   $form-gap;
@@ -747,7 +747,7 @@ $form-gap-narrow: $form-gap / 3;
         justify-content: center;
         align-items:     center;
         position:        unset;
-        z-index:         10000;
+        z-index:         $z-uppy-informer;
 
         p {
             word-break: break-word;

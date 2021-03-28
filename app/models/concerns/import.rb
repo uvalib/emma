@@ -353,9 +353,9 @@ module Import
     k     = k.to_sym
     field = schema[k]
     if field.is_a?(Array)
-      method = field.last
-      field  = field.first
-      value  = method.is_a?(Proc) ? method.call(v) : send(method, v)
+      meth  = field.last
+      field = field.first
+      value = meth.is_a?(Proc) ? meth.call(v) : send(meth, v)
       return field, value
     elsif field && respond_to?(field)
       send(field, k, v)

@@ -170,16 +170,16 @@ module ApiExplorerConcern
     def self.trial_methods(service:, **opt)
       param_value = VALUES.merge(opt)
       param_value[:user] = service.user.to_s if service.user.present?
-      METHODS.map { |method|
-        np = service.named_parameters(method, no_alias: true)
-        rp = service.required_parameters(method)
-        op = service.optional_parameters(method)
+      METHODS.map { |meth|
+        np = service.named_parameters(meth, no_alias: true)
+        rp = service.required_parameters(meth)
+        op = service.optional_parameters(meth)
         parameters =
           (np + rp + op).map { |k|
             v = param_value[k]
             [k, v] unless v.nil?
           }.compact.to_h
-        [method, parameters]
+        [meth, parameters]
       }.to_h
     end
 
@@ -194,12 +194,12 @@ module ApiExplorerConcern
       service = BookshareService.new(user: user, no_raise: true)
       methods = trial_methods(service: service) if methods.blank?
       # noinspection RubyNilAnalysis
-      methods.map { |method, opts|
+      methods.map { |meth, opts|
         param = opts.to_s.remove(/[{}]/).gsub(/:(.+?)=>/, '\1: ')
-        value = service.send(method, **opts) rescue nil
+        value = service.send(meth, **opts) rescue nil
         error =
           if value.nil?
-            "missing method - #{method.inspect}"
+            "missing method - #{meth.inspect}"
           elsif value.respond_to?(:exception)
             value.exception
           end
@@ -210,7 +210,7 @@ module ApiExplorerConcern
           value:      value,
           error:      error
         }.compact
-        [method, trial]
+        [meth, trial]
       }.to_h
     end
 

@@ -565,7 +565,7 @@ module ApiService::Common
 
   # Extract API parameters from *opt*.
   #
-  # @param [Symbol]  method
+  # @param [Symbol]  meth             Calling method.
   # @param [Boolean] check_req        Check for missing required keys.
   # @param [Boolean] check_opt        Check for extra optional keys.
   # @param [Hash]    opt
@@ -574,13 +574,13 @@ module ApiService::Common
   #
   # @return [Hash]                    Just the API parameters from *opt*.
   #
-  def get_parameters(method, check_req: true, check_opt: false, **opt)
-    properties     = api_methods(method)
+  def get_parameters(meth, check_req: true, check_opt: false, **opt)
+    properties     = api_methods(meth)
     errors         = properties ? [] : ['unregistered API method']
     properties   ||= {}
     multi          = Array.wrap(properties[:multi])
-    required_keys  = required_parameters(method)
-    optional_keys  = optional_parameters(method)
+    required_keys  = required_parameters(meth)
+    optional_keys  = optional_parameters(meth)
     key_alias      = properties[:alias] || {}
     specified_keys = required_keys + optional_keys + key_alias.keys
     specified_keys += SERVICE_OPTIONS
@@ -596,7 +596,7 @@ module ApiService::Common
       keys       = extra_keys.join(', ')
       errors << "invalid API #{parameters} #{keys}"
     end
-    invalid_params(method, *errors) if errors.present?
+    invalid_params(meth, *errors) if errors.present?
 
     # Return with the options needed for the API request.
     # @type [Symbol] k
@@ -679,7 +679,7 @@ module ApiService::Common
 
   # Report on errors in parameters supplied to an API method.
   #
-  # @param [String, Symbol] method
+  # @param [String, Symbol] meth
   # @param [Array<String>]  errors
   # @param [Boolean]        no_raise
   #
@@ -687,10 +687,10 @@ module ApiService::Common
   #
   # @return [nil]                     No errors or *no_raise* is *true*.
   #
-  def invalid_params(method, *errors, no_raise: !RAISE_ON_INVALID_PARAMS)
+  def invalid_params(meth, *errors, no_raise: !RAISE_ON_INVALID_PARAMS)
     return if errors.blank?
-    errors.each { |problem| Log.warn("#{method}: #{problem}") }
-    raise RuntimeError, ("#{method}: " + errors.join("\nAND ")) unless no_raise
+    errors.each { |problem| Log.warn("#{meth}: #{problem}") }
+    raise RuntimeError, ("#{meth}: " + errors.join("\nAND ")) unless no_raise
   end
 
   # ===========================================================================

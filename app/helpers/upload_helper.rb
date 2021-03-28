@@ -1337,7 +1337,7 @@ module UploadHelper
   # bulk_upload_file_select
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Symbol]                           method
+  # @param [Symbol]                           meth
   # @param [Hash]                             opt
   #
   # @return [ActiveSupport::SafeBuffer]
@@ -1345,14 +1345,14 @@ module UploadHelper
   # @see ActionView::Helpers::FormBuilder#label
   # @see ActionView::Helpers::FormBuilder#file_field
   #
-  def bulk_upload_file_select(f, method, **opt)
+  def bulk_upload_file_select(f, meth, **opt)
     l_opt = { class: 'file-select', role: 'button', tabindex: 0 }
     l_opt = merge_html_options(opt, l_opt)
-    label = f.label(method, 'Select', l_opt) # TODO: I18n
+    label = f.label(meth, 'Select', l_opt) # TODO: I18n
 
     i_opt = { class: 'uppy-FileInput-btn', tabindex: -1 }
     i_opt = merge_html_options(opt, i_opt)
-    input = f.file_field(method, i_opt)
+    input = f.file_field(meth, i_opt)
 
     html_div(class: 'uppy-FileInput-container bulk') do
       label << input
