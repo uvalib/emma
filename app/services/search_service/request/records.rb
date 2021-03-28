@@ -169,6 +169,51 @@ module SearchService::Request::Records
       }
     end
 
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  NON_PUBLISHER_SEARCH = (%i[
+    collection
+    formatVersion
+    lastRemediationDate
+    publisher
+    repository
+    searchAfterId
+    searchAfterValue
+    size
+    sort
+    sortDate
+  ] + SERVICE_OPTIONS).freeze
+
+  # This override silently works around a limitation of the Unified Search
+  # index's handling of publisher searches.  The index treats this as a kind of
+  # hybrid between a search query and a search filter -- it does not accept a
+  # search which is only comprised of publisher search terms(s) alone.
+  #
+  # Its error message indicates that a publisher search can only be performed
+  # in conjunction with another search type ("identifier", "title", "creator",
+  # or "q" [keyword]) or with a filter selection from "format" ("Format" menu),
+  # "formatFeature" ("Feature" menu), or "accessibilityFeature"
+  # ("Accessibility" menu).
+  #
+  # If *opt* contains only :publisher then it adds filter selections for all of
+  # the known format types.  Unless there are records without at least one
+  # format type, this should make the :publisher term(s) search across all of
+  # the records.
+  #
+  # @see ApiService::Common#get_parameters
+  #
+  def get_parameters(meth, check_req: true, check_opt: false, **opt)
+    super.tap do |result|
+      if result.key?(:publisher) && result.except(*NON_PUBLISHER_SEARCH).blank?
+        result[encode_parameter(:format)] = DublinCoreFormat.values
+      end
+    end
+  end
+
 end
 
 __loading_end(__FILE__)
