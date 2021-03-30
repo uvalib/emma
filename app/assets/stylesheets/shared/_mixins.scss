@@ -153,4 +153,9 @@
     // Satisfy accessibility checks for contrast.
     color:      black !important;
     background: white !important;
+
+    * {
+        color:      inherit !important;
+        background: inherit !important;
+    }
 }

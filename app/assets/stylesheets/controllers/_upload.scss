@@ -86,6 +86,12 @@ $upload-entry-gap: 2rem;
         }
     }
 
+    .field-Title {
+        &.value {
+            font-weight: bold;
+        }
+    }
+
     // If hierarchical areas don't have a border then they look better if
     // they're tightened up.
     @if $data-list-border-color == none {

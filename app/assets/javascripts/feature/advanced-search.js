@@ -1322,16 +1322,8 @@ $(document).on('turbolinks:load', function() {
      * Initialize single-select menus.
      */
     function initializeSingleSelect() {
-        let $menus    = $single_select_menus;
-        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
-        $menus.each(function() {
-            let $menu   = $(this);
-            const value = $menu.val() || '';
-            $menu.attr('data-original', value);
-            if (form_id) {
-                $menu.attr('form', form_id);
-            }
-        });
+        let $menus = $single_select_menus;
+        initializeGenericMenu($menus);
         handleEvent($menus, 'change', updateSearchReady);
     }
 
@@ -1347,24 +1339,8 @@ $(document).on('turbolinks:load', function() {
             debug('initializeMultiSelect: none found');
             return;
         }
+        initializeGenericMenu($menus);
         initializeSelect2Menu($menus);
-
-        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
-        $menus.each(function() {
-            let $menu = $(this);
-            const value = $menu.val() || '';
-            $menu.attr('data-original', value);
-            if (form_id) {
-                $menu.attr('form', form_id);
-            }
-            let attrs = compact(Object.fromEntries(
-                ['aria-label', 'aria-labelledby'].map(a => [a, $menu.attr(a)])
-            ));
-            if (isPresent(attrs)) {
-                // noinspection JSCheckFunctionSignatures
-                $menu.siblings().find('[aria-haspopup]').attr(attrs);
-            }
-        });
 
         if (DEBUGGING) {
             MULTI_SELECT_EVENTS.forEach(function(type) {
@@ -1392,16 +1368,47 @@ $(document).on('turbolinks:load', function() {
     }
 
     /**
+     * General menu setup.
+     *
+     * @param {Selector} menu
+     */
+    function initializeGenericMenu(menu) {
+        const form_id = !IMMEDIATE_SEARCH && getSearchForm().attr('id');
+        $(menu).each(function() {
+            let $menu   = $(this);
+            const value = $menu.val() || '';
+            $menu.attr('data-original', value);
+            if (form_id) {
+                $menu.attr('form', form_id);
+            }
+        });
+    }
+
+    /**
      * Setup one or more <select> elements managed by Select2.
      *
      * @param {Selector} menu
      */
     function initializeSelect2Menu(menu) {
-        $(menu).select2({
+        let $menus = $(menu);
+        $menus.select2({
             width:      '100%',
             allowClear: true,
             debug:      DEBUGGING,
             language:   select2Language()
+        });
+
+        // Nodes which Firefox Accessibility expects to be labelled:
+        const to_label_selector = '[aria-haspopup],[tabindex]';
+        $menus.each(function() {
+            let $menu = $(this);
+            let attrs = compact(Object.fromEntries(
+                ['aria-label', 'aria-labelledby'].map(a => [a, $menu.attr(a)])
+            ));
+            if (isPresent(attrs)) {
+                // noinspection JSCheckFunctionSignatures
+                $menu.siblings().find(to_label_selector).attr(attrs);
+            }
         });
     }
 

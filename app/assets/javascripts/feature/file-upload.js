@@ -1251,7 +1251,8 @@ $(document).on('turbolinks:load', function() {
 
         // This hidden element is inappropriately part of the tab order.
         let $uppy_file_input = $element.find('.uppy-FileInput-input');
-        $uppy_file_input.attr('tabindex', -1);
+        $uppy_file_input.attr('tabindex',        -1);
+        $uppy_file_input.attr('aria-hidden',     true);
         $uppy_file_input.attr('aria-labelledby', 'fi_label');
 
         // Set the tooltip for the file select button.
