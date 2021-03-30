@@ -426,11 +426,20 @@ module ModelHelper
     # Extract range values.
     value = value.content if value.is_a?(Field::Type)
 
-    # Mark invalid values.
+    # Format the content of certain fields.
     # noinspection RubyCaseWithoutElseBlockInspection
     case field
-      when :dc_language   then value = mark_invalid_languages(value)
-      when :dc_identifier then value = mark_invalid_identifiers(value)
+      when :dc_description
+        format_description(value).tap do |parts|
+          if parts.size > 1
+            value = parts
+            prop  = prop.merge(type: 'textarea')
+          end
+        end
+      when :dc_identifier
+        value = mark_invalid_identifiers(value)
+      when :dc_language
+        value = mark_invalid_languages(value)
     end
 
     # Pre-process value(s).
@@ -554,6 +563,111 @@ module ModelHelper
 
   protected
 
+  # Match a major section title in a table-of-contents listing.
+  #
+  # @type [Regexp]
+  #
+  #--
+  # noinspection SpellCheckingInspection
+  #++
+  SECTION_TITLE_RE = /^(PART|[CDILMVX]+\.?|[cdilmvx]+\.|\d+\.|v\.) +(.*)/
+
+  # For use with String#scan to step through quote/attribute pairs.
+  #
+  # @type [Regexp]
+  #
+  BLURB_RE = /([^\n]*?[[:punct:]]) *-- *([^\n]+?\.\s+|[^\n]+\s*)/
+
+  # Reformat descriptions which are structured in a way that one would find
+  # in MARC metadata.
+  #
+  # @param [String] text
+  #
+  # @return [Array<String>]
+  #
+  # == Usage Notes
+  # Descriptions like this don't currently seem to appear very often in search
+  # results.  Even for those that do, they may not adhere to the expected
+  # layout of information, and this method may not be that beneficial in those
+  # cases.
+  #
+  def format_description(text)
+    case text
+      when /"";/                      # Seen in some IA records.
+        text = text.gsub(/"" ""|""""/, '""; ""')
+
+      when /\.--v\. */                # Seen in some IA records.
+        text = text.sub(/(\S) +(v[^.\s]*\.) */, '\1 -- \2 ')
+        text.gsub!(/(\S) *-- *(v[^.\s]*\.) */, '\1; \2 ')
+
+      when /; *PART */i               # Seen in some IA records.
+      when /:;/                       # Observed in one unusual case.
+      when /[[:punct:]] *--.* +-- +/  # Blurbs/quotes with attribution.
+      when / +-- +.* +-- +/           # Table-of-contents title list.
+      when /(;[^;]+){4,}/             # Many sections indicated.
+
+      else                            # Otherwise not treated as "structured".
+      return [text]
+    end
+    q_section = nil
+    text.split(/ *; */).flat_map { |part|
+      next if (part = part.strip).blank?
+      case part
+        when /^""(.*)""$/
+          # == Rare type of table-of-contents listing entry
+          line = $1.to_s
+          if line.match(SECTION_TITLE_RE)
+            gap       = ("\n" unless q_section)
+            q_section = $1.to_s
+            [gap, "#{q_section} #{$2}", "\n"].compact
+          else
+            q_section = nil
+            line.match?(/^\d+ +/) ? line : "#{BLACK_CIRCLE}#{EN_SPACE}#{line}"
+          end
+
+        when / +-- +.* +-- +/
+          # === Table-of-contents listing
+          section = nil
+          part.split(/ +-- +/).flat_map { |line|
+            if line.match(SECTION_TITLE_RE)
+              gap     = ("\n" unless section)
+              section = $1.to_s.delete_suffix('.')
+              [gap, "#{section}. #{$2}", "\n"].compact
+            else
+              section = nil
+              "#{BLACK_CIRCLE}#{EN_SPACE}#{line}"
+            end
+          }.tap { |toc| toc << "\n" unless toc.last == "\n" }
+
+        when /[[:punct:]] *--/
+          # === Blurbs/quotes with attribution
+          part.scan(BLURB_RE).flat_map do |paragraph, attribution|
+            attribution.remove!(/[.\s]+$/)
+            ["#{paragraph} #{EM_DASH}#{attribution}.", "\n"]
+          end
+
+        when /^v[^.]*\. *\d/
+          # === Apparent table-of-contents volume title
+          [part]
+
+        else
+          # === Plain text section
+          part = "#{part}." unless part.match?(/[[:punct:]]$/)
+          [part, "\n"]
+      end
+    }.compact.map { |line|
+      line.gsub!(/---/, EM_DASH)
+      line.gsub!(/--/,  EN_DASH)
+      line
+    }
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
   VALID_LANGUAGE   = 'Provided value: %s' # TODO: I18n
   INVALID_LANGUAGE = 'The underlying data contains this value ' \
                      'instead of a valid ISO 639 language code.'
@@ -606,6 +720,12 @@ module ModelHelper
       else             value.present?
     end
   end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
 
   # Attempt to interpret *method* as an *item* method or as a method defined
   # in the current context.
