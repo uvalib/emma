@@ -516,8 +516,13 @@ $sticky-top-narrow:     3.125rem;
                     }
 
                     &.forbidden {
+
                         color:  blue;
                         cursor: default;
+
+                        &:focus {
+                            @extend %focus;
+                        }
                     }
 
                     .symbol {
