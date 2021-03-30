@@ -156,10 +156,11 @@ module HtmlHelper
   # noinspection RubyYardParamTypeMatch
   #++
   def icon_button(icon: nil, text: nil, url: nil, **opt)
-    icon        ||= STAR
-    text        ||= opt[:title] || 'Action' # TODO: I18n
-    opt[:title] ||= text
-    opt[:role]  ||= 'button'
+    icon           ||= STAR
+    text           ||= opt[:title] || 'Action' # TODO: I18n
+    opt[:title]    ||= text
+    opt[:role]     ||= 'button'
+    opt[:tabindex] ||= 0 unless url
 
     sr_only = html_span(text, class: 'text sr-only')
     symbol  = html_span(icon, class: 'symbol', 'aria-hidden': true)
