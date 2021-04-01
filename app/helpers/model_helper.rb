@@ -607,7 +607,7 @@ module ModelHelper
       when /(;[^;]+){4,}/             # Many sections indicated.
 
       else                            # Otherwise not treated as "structured".
-      return [text]
+        return [text]
     end
     q_section = nil
     text.split(/ *; */).flat_map { |part|
@@ -656,9 +656,7 @@ module ModelHelper
           [part, "\n"]
       end
     }.compact.map { |line|
-      line.gsub!(/---/, EM_DASH)
-      line.gsub!(/--/,  EN_DASH)
-      line
+      line.gsub(/---/, EM_DASH).gsub(/--/,  EN_DASH)
     }
   end
 
