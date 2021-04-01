@@ -9,6 +9,7 @@ __loading_begin(__FILE__)
 #
 module AwsS3Service::Status
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end

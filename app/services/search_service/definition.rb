@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 #
 module SearchService::Definition
 
+  # @private
   def self.included(base)
     base.send(:include, ApiService::Definition)
   end

@@ -10,6 +10,7 @@ __loading_begin(__FILE__)
 #
 module ApiService::Definition
 
+  # @private
   def self.included(base)
     base.send(:extend, self)
   end

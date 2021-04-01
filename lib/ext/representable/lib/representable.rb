@@ -48,8 +48,9 @@ module Representable
   #
   module RepresentableDebug
 
-    def self.included(mod)
-      mod.send(:extend, self)
+    # @private
+    def self.included(base)
+      base.send(:extend, self)
     end
 
     private

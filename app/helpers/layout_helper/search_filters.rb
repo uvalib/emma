@@ -19,6 +19,7 @@ module LayoutHelper::SearchFilters
 
   module ClassMethods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end

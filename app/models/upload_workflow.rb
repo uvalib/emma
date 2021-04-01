@@ -105,6 +105,7 @@ module UploadWorkflow::Errors
 
   module RenderMethods
 
+    # @private
     def self.included(base)
       base.send(:extend, self)
     end

@@ -84,6 +84,8 @@ module TestHelper
   #
   # @param [Module] base
   #
+  # @private
+  #
   def self.included(base)
     include_submodules(base, __FILE__) do |name|
       next if name == :SystemTests
