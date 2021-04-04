@@ -1,0 +1,23 @@
+<%# app/views/upload/bulk_reindex.html.erb -%>
+<%-
+  # Fall-back page for a failed bulk upload reindex action.
+  title ||= 'Bulk Re-indexing'
+  error ||= 'Items:'
+  list  ||= @list || []
+  list  &&=
+    html_tag(:ul) {
+      list.map { |item|
+        html_tag(:li) {
+          (item[:submission_id] if item.respond_to?(:[])) ||
+          (item.submission_id   if item.respond_to?(:submission_id)) ||
+          item.inspect
+        }
+      }
+    }
+-%>
+
+<%= render 'upload/fallback', title: title, error: error %>
+
+<ul>
+  <%= list %>
+</ul>

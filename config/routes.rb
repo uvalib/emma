@@ -79,6 +79,10 @@ Rails.application.routes.draw do
   get    '/upload/show/:id',      to: 'upload#show',          as: 'show_upload'
   get    '/upload',               to: 'upload#index',         as: 'upload_index'
 
+  # === Temporary
+
+  get '/upload/bulk_reindex',     to: 'upload#bulk_reindex',  as: 'bulk_reindex'
+
   # ===========================================================================
   # File download operations
   # ===========================================================================

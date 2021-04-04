@@ -45,7 +45,8 @@ class UploadController < ApplicationController
                                            edit     update
                                            delete   destroy
                                            cancel   check
-                                           endpoint download]
+                                           endpoint download
+                                           bulk_reindex]
   before_action :index_redirect,  only: %i[show]
   before_action :set_url,         only: %i[retrieval]
   before_action :set_member,      only: %i[retrieval]
@@ -387,6 +388,40 @@ class UploadController < ApplicationController
     post_response(:conflict, error, xhr: false)
   rescue => error
     post_response(error, xhr: false)
+  end
+
+  # == GET /upload/bulk_reindex?id=(:id|SID|RANGE_LIST)
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @note: This is very hacky and is meant to be temporary.
+  #
+  def bulk_reindex
+    __debug_route
+    @list  = @identifier && Upload.get_relation(@identifier).records || []
+    result = api_service(IngestService).put_records(*@list)
+    failed_sids    = []
+    failed_entries = []
+    if (errors = result.errors).present?
+      by_index = errors.select { |k| k.is_a?(Integer) }
+      if by_index.present?
+        by_index.transform_keys! { |idx| Upload.sid_for(@list[idx-1]) }
+        failed_sids    += by_index.keys
+        failed_entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
+        errors.except!(*by_index.keys)
+      end
+      failed_entries += errors if errors.present?
+    end
+    @list.each do |item|
+      sid = item.submission_id
+      if failed_sids.include?(sid)
+        Log.warn { "#{__method__}: #{sid}: still state #{item.state.inspect}" }
+      else
+        item.set_state(:created)
+      end
+    end
+    failure(:file_id, failed_entries) if failed_entries.present?
+  rescue => error
+    flash_now_failure(error)
   end
 
   # ===========================================================================
