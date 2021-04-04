@@ -185,8 +185,9 @@ module SearchHelper
   #
   def next_record_link(index:, max_index: nil, **)
     css_selector = '.next'
-    index     = positive(index)     || 0
-    max_index = positive(max_index) || (1 << 32)
+    index     = positive(index) || 0
+    max_index = max_index&.to_i
+    max_index = (1 << 32) unless max_index && (max_index >= 0)
     opt = {}
     if index < max_index
       opt[:icon]  = DOWN_TRIANGLE
