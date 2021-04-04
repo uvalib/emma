@@ -199,6 +199,7 @@ module UploadHelper
   #++
   def render_json_data(item, value, **opt)
     return unless item
+    opt[:no_format] ||= :dc_description
     pairs = json_parse(value)
     pairs &&=
       pairs.transform_values! do |v|
@@ -706,7 +707,9 @@ module UploadHelper
   # @return [ActiveSupport::SafeBuffer]   An HTML link element.
   # @return [nil]                         If *item* unrelated to a submission.
   #
+  #--
   # noinspection RubyNilAnalysis
+  #++
   def upload_action_icon(op, **opt)
     css_selector = '.icon'
     item         = opt.delete(:item)

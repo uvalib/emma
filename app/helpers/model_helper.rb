@@ -355,7 +355,7 @@ module ModelHelper
     opt[:row]   = row_offset || 0
     opt[:model] = model
 
-    render_value_opt = opt.slice(:model, :index, :min_index, :max_index)
+    value_opt = opt.slice(:model, :index, :min_index, :max_index, :no_format)
 
     # noinspection RubyNilAnalysis
     pairs.map { |label, value|
@@ -378,7 +378,7 @@ module ModelHelper
       opt[:row]  += 1
       opt[:field] = field
       # noinspection RubyYardParamTypeMatch
-      value = render_value(item, value, **render_value_opt)
+      value = render_value(item, value, **value_opt)
       render_pair(label, value, **opt) if value
     }.compact.unshift(nil).join(separator).html_safe
   end
@@ -392,7 +392,9 @@ module ModelHelper
   # @param [Integer, nil]        index      Offset to make unique element IDs.
   # @param [Integer, nil]        row        Display row.
   # @param [String, nil]         separator  Between parts if *value* is array.
-  # @param [Hash]                opt        Passed to each #html_div.
+  # @param [Hash]                opt        Passed to each #html_div except:
+  #
+  # @option opt [Symbol, Array<Symbol>] :no_format
   #
   # @return [ActiveSupport::SafeBuffer]     HTML label and value elements.
   # @return [nil]                           If *value* is blank.
@@ -427,19 +429,21 @@ module ModelHelper
     value = value.content if value.is_a?(Field::Type)
 
     # Format the content of certain fields.
-    # noinspection RubyCaseWithoutElseBlockInspection
-    case field
-      when :dc_description
-        format_description(value).tap do |parts|
-          if parts.size > 1
-            value = parts
-            prop  = prop.merge(type: 'textarea')
+    unless Array.wrap(opt.delete(:no_format)).include?(field)
+      # noinspection RubyCaseWithoutElseBlockInspection
+      case field
+        when :dc_description
+          format_description(value).tap do |parts|
+            if parts.size > 1
+              value = parts
+              prop  = prop.merge(type: 'textarea')
+            end
           end
-        end
-      when :dc_identifier
-        value = mark_invalid_identifiers(value)
-      when :dc_language
-        value = mark_invalid_languages(value)
+        when :dc_identifier
+          value = mark_invalid_identifiers(value)
+        when :dc_language
+          value = mark_invalid_languages(value)
+      end
     end
 
     # Pre-process value(s).
