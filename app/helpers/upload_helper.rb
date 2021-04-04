@@ -1132,7 +1132,18 @@ module UploadHelper
 
   public
 
-  UPLOAD_DELETE_OPTIONS        = %i[force truncate emergency].freeze
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n
+  #
+  # @type [Hash{Symbol=>String}]
+  #
+  UPLOAD_DELETE_LABEL = {
+    emergency:  'Attempt to remove index entries for bogus non-EMMA items?',
+    force:      'Try to remove index entries of items not in the database?',
+    truncate:   'Reset "uploads" id field to 1?' \
+                ' (Applies only when all records are being removed.)',
+  }.freeze
+
+  UPLOAD_DELETE_OPTIONS        = UPLOAD_DELETE_LABEL.keys.freeze
   UPLOAD_DELETE_FORM_OPTIONS   = [:cancel, *UPLOAD_DELETE_OPTIONS].freeze
   UPLOAD_DELETE_SUBMIT_OPTIONS = UPLOAD_DELETE_OPTIONS
 
@@ -1239,19 +1250,65 @@ module UploadHelper
   end
 
   # ===========================================================================
+  # :section: Bulk new/edit/delete pages
+  # ===========================================================================
+
+  protected
+
+  # An option checkbox for a bulk action form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param
+  # @param [*, nil]                           value
+  # @param [Hash{Symbol=>String}]             labels
+  # @param [Boolean]                          debug_only
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_option(f, param, value = nil, labels:, debug_only: false, **)
+    if debug_only && !session_debug?
+      hidden_input(param, value)
+    else
+      label = f.label(param, labels[param])
+      check = f.check_box(param, checked: value)
+      html_div(class: 'line') { check << label }
+    end
+  end
+
+  # An input element for a bulk action form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param
+  # @param [*, nil]                           value
+  # @param [Symbol]                           meth
+  # @param [Hash{Symbol=>String}]             labels
+  # @param [Hash]                             opt
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_input(f, param, value = nil, meth: :text_field, labels:, **opt)
+    label = f.label(param, labels[param])
+    input = f.send(meth, param, value: value, **opt)
+    html_div(class: 'line') { label << input }
+  end
+
+  # ===========================================================================
   # :section: Bulk new/edit pages
   # ===========================================================================
 
   public
 
-  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
+  # Labels for inputs associated with transmitted parameters. # TODO: I18n
   #
   # @type [Hash{Symbol=>String}]
   #
-  BULK_UPLOAD_OPTION_LABEL = {
+  BULK_UPLOAD_LABEL = {
     prefix: 'Title prefix:',
     batch:  'Batch size:'
   }.freeze
+
+  BULK_UPLOAD_OPTIONS      = BULK_UPLOAD_LABEL.keys.freeze
+  BULK_UPLOAD_FORM_OPTIONS = [:cancel, *BULK_UPLOAD_OPTIONS].freeze
 
   # Generate a form with controls for uploading a file, entering metadata, and
   # submitting.
@@ -1269,7 +1326,7 @@ module UploadHelper
   def bulk_upload_form(label: nil, action: nil, **opt)
     css_selector = '.file-upload-bulk'
     action = (action || params[:action])&.to_sym
-    opt, form_opt = partition_options(opt, :prefix, :batch, :cancel)
+    opt, form_opt = partition_options(opt, *BULK_UPLOAD_FORM_OPTIONS)
     opt[:prefix] ||= title_prefix
     opt[:batch]  ||= batch_size
 
@@ -1292,23 +1349,18 @@ module UploadHelper
 
         # === Batch title prefix input
         url_param = :prefix
-        lines <<
-          if session_debug?
-            html_div(class: 'line') do
-              f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
-                f.text_field(url_param, value: opt[url_param].presence)
-            end
-          elsif opt[url_param].present?
-            hidden_input(url_param, opt[url_param])
-          end
+        initial   = opt[url_param].presence
+        if session_debug?
+          lines << bulk_upload_input(f, url_param, initial)
+        elsif initial
+          lines << hidden_input(url_param, initial)
+        end
 
         # === Batch size control
         url_param = :batch
-        lines <<
-          html_div(class: 'line') do
-            f.label(url_param, BULK_UPLOAD_OPTION_LABEL[url_param]) <<
-              f.number_field(url_param, min: 0, value: opt[url_param].presence)
-          end
+        initial   = opt[url_param].presence
+        field_opt = { meth: :number_field, min: 0 }
+        lines << bulk_upload_input(f, url_param, initial, **field_opt)
 
         # === Form control panel
         lines <<
@@ -1333,6 +1385,34 @@ module UploadHelper
   # ===========================================================================
 
   protected
+
+  # An option checkbox for a bulk new/edit form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param   Passed to #bulk_option
+  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [Hash]                             opt     Passed to #bulk_option
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_option(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_UPLOAD_LABEL
+    bulk_option(f, param, value, **opt)
+  end
+
+  # An input element for a bulk new/edit form.
+  #
+  # @param [ActionView::Helpers::FormBuilder] f
+  # @param [Symbol]                           param   Passed to #bulk_input
+  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [Hash]                             opt     Passed to #bulk_input
+  #
+  # @return [ActiveSupport::SafeBuffer]
+  #
+  def bulk_upload_input(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_UPLOAD_LABEL
+    bulk_input(f, param, value, **opt)
+  end
 
   # bulk_upload_file_select
   #
@@ -1365,6 +1445,12 @@ module UploadHelper
 
   public
 
+  BULK_DELETE_LABEL =
+    UPLOAD_DELETE_LABEL.merge(selected: 'Items to delete:').freeze
+
+  BULK_DELETE_OPTIONS      = UPLOAD_DELETE_OPTIONS
+  BULK_DELETE_FORM_OPTIONS = UPLOAD_DELETE_FORM_OPTIONS
+
   # Generate a form with controls for getting a list of identifiers to pass on
   # to the "/upload/delete" page.
   #
@@ -1383,7 +1469,7 @@ module UploadHelper
     css_selector  = '.file-upload-bulk.delete'
     action        = :bulk_delete
     ids           = Array.wrap(ids).compact.presence
-    opt, form_opt = partition_options(opt, *UPLOAD_DELETE_FORM_OPTIONS)
+    opt, form_opt = partition_options(opt, *BULK_DELETE_FORM_OPTIONS)
 
     opt[:force]     = force_delete     unless opt.key?(:force)
     opt[:truncate]  = truncate_delete  unless opt.key?(:truncate)
@@ -1400,12 +1486,13 @@ module UploadHelper
         lines = []
 
         # === Options
-        lines << bulk_delete_option(f, opt.slice(:force))
-        lines << bulk_delete_option(f, opt.slice(:truncate),  debug_only: true)
-        lines << bulk_delete_option(f, opt.slice(:emergency), debug_only: true)
+        dbg = { debug_only: true }
+        { force: {}, truncate: dbg, emergency: dbg }.each_pair do |prm, opts|
+          lines << bulk_delete_option(f, prm, opt[prm], **opts)
+        end
 
         # === Item selection input
-        lines << bulk_delete_input(f, selected: ids)
+        lines << bulk_delete_input(f, :selected, ids)
 
         # === Form control panel
         lines <<
@@ -1456,59 +1543,32 @@ module UploadHelper
 
   protected
 
-  # Labels for check boxes associated with transmitted parameters. # TODO: I18n
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  BULK_DELETE_OPTION_LABEL = {
-    force:
-      'Attempt to remove index entries of items not in the database?',
-    truncate:
-      'Reset "uploads" id field to 1?' \
-      ' (Applies only when all records are being removed.)',
-    emergency:
-      'Attempt to remove index entries for bogus non-EMMA items?',
-  }.freeze
-
-  # bulk_delete_option
+  # An option checkbox for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Hash]                             param_and_value
-  # @param [Boolean]                          debug_only
+  # @param [Symbol]                           param   Passed to #bulk_option
+  # @param [*, nil]                           value   Passed to #bulk_option
+  # @param [Hash]                             opt     Passed to #bulk_option
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_option(f, param_and_value, debug_only: false)
-    url_param, value = param_and_value.first
-    if debug_only && !session_debug?
-      hidden_input(url_param, value)
-    else
-      label = f.label(url_param, BULK_DELETE_OPTION_LABEL[url_param])
-      check = f.check_box(url_param, checked: value)
-      html_div(class: 'line') { check << label }
-    end
+  def bulk_delete_option(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_DELETE_LABEL
+    bulk_option(f, param, value, **opt)
   end
 
-  # Labels for text fields associated with transmitted parameters. # TODO: I18n
-  #
-  # @type [Hash{Symbol=>String}]
-  #
-  BULK_DELETE_INPUT_LABEL = {
-    selected: 'Items to delete:'
-  }.freeze
-
-  # bulk_delete_input
+  # An input element for a bulk delete form.
   #
   # @param [ActionView::Helpers::FormBuilder] f
-  # @param [Hash]                             param_and_value
+  # @param [Symbol]                           param   Passed to #bulk_input
+  # @param [*, nil]                           value   Passed to #bulk_input
+  # @param [Hash]                             opt     Passed to #bulk_input
   #
   # @return [ActiveSupport::SafeBuffer]
   #
-  def bulk_delete_input(f, param_and_value)
-    url_param, value = param_and_value.first
-    label = f.label(url_param, BULK_DELETE_INPUT_LABEL[url_param])
-    input = f.text_field(url_param, value: value)
-    html_div(class: 'line') { label << input }
+  def bulk_delete_input(f, param, value = nil, **opt)
+    opt[:labels] ||= BULK_DELETE_LABEL
+    bulk_input(f, param, value, **opt)
   end
 
 end

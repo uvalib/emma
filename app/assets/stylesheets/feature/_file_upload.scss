@@ -805,7 +805,7 @@ $form-gap-narrow: $form-gap / 3;
 
         .value {
             &.file {
-                //word-break: break-all;
+                word-wrap: anywhere;
             }
         }
     }
