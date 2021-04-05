@@ -414,7 +414,7 @@ class UploadController < ApplicationController
         failed_entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
         errors.except!(*by_index.keys)
       end
-      failed_entries += errors if errors.present?
+      failed_entries << errors if errors.present?
     end
     Log.info { "#{__method__}: failed_sids: #{failed_sids.inspect}" } # TODO: remove
     Log.info { "#{__method__}: failed_entries: #{failed_entries.inspect}" } # TODO: remove
