@@ -390,48 +390,6 @@ class UploadController < ApplicationController
     post_response(error, xhr: false)
   end
 
-  # == GET /upload/bulk_reindex?id=(:id|SID|RANGE_LIST)
-  # Cause all of the listed items to be re-indexed.
-  #
-  # @note: This is very hacky and is meant to be temporary.
-  #
-  def bulk_reindex
-    __debug_route
-    Log.info { "#{__method__}: @identifier: #{@identifier.inspect}" } # TODO: remove
-    @list  = @identifier && Upload.get_relation(@identifier).records || []
-    Log.info { "#{__method__}: #{@list.size} records" } # TODO: remove
-    result = api_service(IngestService).put_records(*@list)
-    Log.info { "#{__method__}: put_records result: #{result.inspect}" } # TODO: remove
-    Log.info { "#{__method__}: result.errors: #{result.errors.inspect}" } # TODO: remove
-    failed_sids    = []
-    failed_entries = []
-    if (errors = result.errors).present?
-      by_index = errors.select { |k| k.is_a?(Integer) }
-      if by_index.present?
-        by_index.transform_keys! { |idx| Upload.sid_for(@list[idx-1]) }
-        Log.info { "#{__method__}: by_index: #{by_index.inspect}" } # TODO: remove
-        failed_sids    += by_index.keys
-        failed_entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
-        errors.except!(*by_index.keys)
-      end
-      failed_entries << errors if errors.present?
-    end
-    Log.info { "#{__method__}: failed_sids: #{failed_sids.inspect}" } # TODO: remove
-    Log.info { "#{__method__}: failed_entries: #{failed_entries.inspect}" } # TODO: remove
-    @list.each do |item|
-      sid = item.submission_id
-      if failed_sids.include?(sid)
-        Log.warn { "#{__method__}: #{sid}: still state #{item.state.inspect}" }
-      else
-        Log.info { "#{__method__}: accepted sid: #{sid.inspect}" } # TODO: remove
-        item.set_state(:created)
-      end
-    end
-    failure(:file_id, failed_entries) if failed_entries.present?
-  rescue => error
-    flash_now_failure(error)
-  end
-
   # ===========================================================================
   # :section:
   # ===========================================================================
@@ -612,6 +570,75 @@ class UploadController < ApplicationController
     @object_table = get_object_table(@repo, @deploy, **opt)
   rescue => error
     flash_now_failure(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  public
+
+  # == GET /upload/bulk_reindex?id=(:id|SID|RANGE_LIST)
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @note: This is very hacky and is meant to be temporary.
+  #
+  def bulk_reindex
+    __debug_route
+    @list  = @identifier && Upload.get_relation(@identifier).records || []
+    Log.info { "#{__method__}: #{@list.size} records" } # TODO: remove
+    size   = [1, params[:size].to_i].max
+    failed = @list.each_slice(size).flat_map { |items| reindex_record(items) }
+    failure(:file_id, failed.uniq) if failed.present?
+  rescue => error
+    flash_now_failure(error)
+  end
+
+  # ===========================================================================
+  # :section:
+  # ===========================================================================
+
+  protected
+
+  # Cause all of the listed items to be re-indexed.
+  #
+  # @param [Upload, Array<Upload>] list
+  #
+  # @return [Array]  List of error(s).
+  #
+  # @note: This is very hacky and is meant to be temporary.
+  #
+  def reindex_record(list)
+    meth    = :bulk_reindex
+    sids    = []
+    entries = []
+    list    = Array.wrap(list)
+    result  = api_service(IngestService).put_records(*list)
+    errors  = result.errors
+    Log.debug { "#{meth}: put_records result: #{result.inspect}" }
+    Log.debug { "#{meth}: result.errors: #{errors.inspect}" }
+    if errors.present?
+      by_index = errors.select { |k| k.is_a?(Integer) }
+      if by_index.present?
+        by_index.transform_keys! { |idx| Upload.sid_for(list[idx-1]) }
+        sids    += by_index.keys
+        entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
+        errors.except!(*by_index.keys)
+      end
+      entries << errors if errors.present?
+    end
+    Log.debug { "#{meth}: failed_sids: #{sids.inspect}" }
+    Log.debug { "#{meth}: failed_entries: #{entries.inspect}" }
+    list.each do |item|
+      sid = item.submission_id
+      if sids.include?(sid)
+        Log.warn { "#{meth}: #{sid}: still state #{item.state.inspect}" }
+      elsif errors.blank?
+        Log.debug { "#{meth}: accepted sid: #{sid.inspect}" }
+        item.set_state(:created)
+      end
+    end
+    entries
   end
 
   # ===========================================================================
