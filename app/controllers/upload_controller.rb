@@ -397,25 +397,33 @@ class UploadController < ApplicationController
   #
   def bulk_reindex
     __debug_route
+    Log.info { "#{__method__}: @identifier: #{@identifier.inspect}" } # TODO: remove
     @list  = @identifier && Upload.get_relation(@identifier).records || []
+    Log.info { "#{__method__}: #{@list.size} records" } # TODO: remove
     result = api_service(IngestService).put_records(*@list)
+    Log.info { "#{__method__}: put_records result: #{result.inspect}" } # TODO: remove
+    Log.info { "#{__method__}: result.errors: #{result.errors.inspect}" } # TODO: remove
     failed_sids    = []
     failed_entries = []
     if (errors = result.errors).present?
       by_index = errors.select { |k| k.is_a?(Integer) }
       if by_index.present?
         by_index.transform_keys! { |idx| Upload.sid_for(@list[idx-1]) }
+        Log.info { "#{__method__}: by_index: #{by_index.inspect}" } # TODO: remove
         failed_sids    += by_index.keys
         failed_entries += by_index.map { |sid, msg| ErrorEntry.new(sid, msg) }
         errors.except!(*by_index.keys)
       end
       failed_entries += errors if errors.present?
     end
+    Log.info { "#{__method__}: failed_sids: #{failed_sids.inspect}" } # TODO: remove
+    Log.info { "#{__method__}: failed_entries: #{failed_entries.inspect}" } # TODO: remove
     @list.each do |item|
       sid = item.submission_id
       if failed_sids.include?(sid)
         Log.warn { "#{__method__}: #{sid}: still state #{item.state.inspect}" }
       else
+        Log.info { "#{__method__}: accepted sid: #{sid.inspect}" } # TODO: remove
         item.set_state(:created)
       end
     end
